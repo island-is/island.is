@@ -3,6 +3,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -11,12 +12,10 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import type { SubstanceMap } from '@island.is/judicial-system/types'
-import {
-  IndictmentCountOffense,
-  IndictmentSubtype,
-} from '@island.is/judicial-system/types'
+import { IndictmentSubtype } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
+import { Offense } from './offense.model'
 
 @Table({
   tableName: 'indictment_count',
@@ -53,13 +52,9 @@ export class IndictmentCount extends Model {
   @ApiPropertyOptional({ type: String })
   vehicleRegistrationNumber?: string
 
-  @Column({ type: DataType.JSONB, allowNull: true })
-  @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
-  offenses?: IndictmentCountOffense[]
-
-  @Column({ type: DataType.JSONB, allowNull: true })
-  @ApiPropertyOptional({ type: Object })
-  substances?: SubstanceMap
+  @HasMany(() => Offense, 'indictmentCountId')
+  @ApiPropertyOptional({ type: () => Offense, isArray: true })
+  offenses?: Offense[]
 
   @Column({ type: DataType.JSONB, allowNull: true })
   @ApiPropertyOptional({ type: [Number, Number], isArray: true })

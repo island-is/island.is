@@ -82,21 +82,14 @@ describe('Utilts test', () => {
 
   describe('is kennitala valid test', () => {
     test('should return that national id is  valid', () => {
-      const validNationalId = isValidNationalId('010105-1450')
+      const validNationalId = isValidNationalId('010105-2180')
       expect(validNationalId).toEqual(true)
     })
   })
 
   describe('is kennitala valid test', () => {
     test('should return that national id is valid', () => {
-      const validNationalId = isValidNationalId('*010105-1450.')
-      expect(validNationalId).toEqual(true)
-    })
-  })
-
-  describe('is kennitala valid test', () => {
-    test('should return that national id is valid', () => {
-      const validNationalId = isValidNationalId('0101051450')
+      const validNationalId = isValidNationalId('0101052180')
       expect(validNationalId).toEqual(true)
     })
   })

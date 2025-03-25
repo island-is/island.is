@@ -152,4 +152,7 @@ export class CaseListEntry {
 
   @Field(() => String, { nullable: true })
   readonly caseSentToCourtDate?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isCompletedWithoutRuling?: boolean
 }

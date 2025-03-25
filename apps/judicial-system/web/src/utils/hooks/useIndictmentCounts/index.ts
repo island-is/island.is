@@ -2,23 +2,20 @@ import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
-import { SubstanceMap } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { UpdateIndictmentCountInput } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Case,
+  Offense,
+  UpdateIndictmentCountInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { indictmentCount } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Indictment/IndictmentCount.strings'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useCreateIndictmentCountMutation } from './createIndictmentCount.generated'
 import { useDeleteIndictmentCountMutation } from './deleteIndictmentCount.generated'
 import { useUpdateIndictmentCountMutation } from './updateIndictmentCount.generated'
 
 export interface UpdateIndictmentCount
-  extends Omit<
-    UpdateIndictmentCountInput,
-    'caseId' | 'indictmentCountId' | 'substances'
-  > {
-  substances?: SubstanceMap | null
-}
+  extends Omit<UpdateIndictmentCountInput, 'caseId' | 'indictmentCountId'> {}
 
 const useIndictmentCounts = () => {
   const { formatMessage } = useIntl()
@@ -103,6 +100,7 @@ const useIndictmentCounts = () => {
       indictmentCountId: string,
       update: UpdateIndictmentCount,
       setWorkingCase: Dispatch<SetStateAction<Case>>,
+      updatedOffenses?: Offense[],
     ) => {
       setWorkingCase((prevWorkingCase) => {
         if (!prevWorkingCase.indictmentCounts) {
@@ -119,6 +117,7 @@ const useIndictmentCounts = () => {
         newIndictmentCounts[indictmentCountIndexToUpdate] = {
           ...newIndictmentCounts[indictmentCountIndexToUpdate],
           ...update,
+          ...(updatedOffenses ? { offenses: updatedOffenses } : {}),
         }
 
         return { ...prevWorkingCase, indictmentCounts: newIndictmentCounts }

@@ -683,4 +683,9 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Í vinnslu hjá þér',
     description: 'In progress with you',
   },
+  dismissedTag: {
+    id: 'sia.application:dismissed.tag',
+    defaultMessage: 'Vísað frá',
+    description: 'Dismissed',
+  },
 })

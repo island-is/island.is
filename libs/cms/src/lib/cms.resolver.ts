@@ -1,21 +1,22 @@
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
-import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql'
+import {
+  Args,
+  Query,
+  Resolver,
+  ResolveField,
+  Parent,
+  ID,
+} from '@nestjs/graphql'
 import { Article } from './models/article.model'
 import { ContentSlug } from './models/contentSlug.model'
-import { AdgerdirPage } from './models/adgerdirPage.model'
 import { Organization } from './models/organization.model'
 import { Organizations } from './models/organizations.model'
-import { AdgerdirPages } from './models/adgerdirPages.model'
-import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { News } from './models/news.model'
 import { GetSingleNewsInput } from './dto/getSingleNews.input'
-import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
 import { GetOrganizationTagsInput } from './dto/getOrganizationTags.input'
-import { GetAdgerdirPagesInput } from './dto/getAdgerdirPages.input'
 import { GetOrganizationsInput } from './dto/getOrganizations.input'
 import { GetOrganizationInput } from './dto/getOrganization.input'
-import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
 import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { Namespace } from './models/namespace.model'
 import { AlertBanner } from './models/alertBanner.model'
@@ -29,8 +30,6 @@ import { GetAnchorPageInput } from './dto/getAnchorPage.input'
 import { GetAnchorPagesInput } from './dto/getAnchorPages.input'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
-import { AdgerdirTags } from './models/adgerdirTags.model'
-import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
 import { AnchorPage } from './models/anchorPage.model'
 import { OrganizationTags } from './models/organizationTags.model'
 import { CmsContentfulService } from './cms.contentful.service'
@@ -53,7 +52,10 @@ import { SubpageHeader } from './models/subpageHeader.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { ErrorPage } from './models/errorPage.model'
 import { OrganizationSubpage } from './models/organizationSubpage.model'
-import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
+import {
+  GetOrganizationSubpageByIdInput,
+  GetOrganizationSubpageInput,
+} from './dto/getOrganizationSubpage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { OrganizationPage } from './models/organizationPage.model'
 import { GetOrganizationPageInput } from './dto/getOrganizationPage.input'
@@ -139,6 +141,7 @@ import {
 import { GrantCardsList } from './models/grantCardsList.model'
 import { sortAlpha } from '@island.is/shared/utils'
 import { GetTeamMembersInputOrderBy } from './dto/getTeamMembers.input'
+import { IntroLinkImage } from './models/introLinkImage.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -199,17 +202,6 @@ export class CmsResolver {
     @Args('input') input: GetGenericOverviewPageInput,
   ): Promise<GenericOverviewPage | null> {
     return this.cmsContentfulService.getGenericOverviewPage(input)
-  }
-
-  @CacheControl(defaultCache)
-  @Query(() => AdgerdirPage, { nullable: true })
-  getAdgerdirPage(
-    @Args('input') input: GetAdgerdirPageInput,
-  ): Promise<AdgerdirPage | null> {
-    return this.cmsContentfulService.getAdgerdirPage(
-      input?.slug ?? '',
-      input?.lang ?? 'is-IS',
-    )
   }
 
   @CacheControl(defaultCache)
@@ -280,6 +272,17 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
+  @Query(() => OrganizationSubpage, { nullable: true })
+  async getOrganizationSubpageById(
+    @Args('input') input: GetOrganizationSubpageByIdInput,
+  ): Promise<OrganizationSubpage | null> {
+    return this.cmsContentfulService.getOrganizationSubpageById(
+      input.id,
+      input.lang,
+    )
+  }
+
+  @CacheControl(defaultCache)
   @Query(() => ServiceWebPage, { nullable: true })
   async getServiceWebPage(
     @Args('input') input: GetServiceWebPageInput,
@@ -318,14 +321,6 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => AdgerdirPages)
-  getAdgerdirPages(
-    @Args('input') input: GetAdgerdirPagesInput,
-  ): Promise<AdgerdirPages> {
-    return this.cmsContentfulService.getAdgerdirPages(input?.lang ?? 'is-IS')
-  }
-
-  @CacheControl(defaultCache)
   @Query(() => Organizations)
   getOrganizations(
     @Args('input', { nullable: true }) input: GetOrganizationsInput,
@@ -334,29 +329,11 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => AdgerdirTags, { nullable: true })
-  getAdgerdirTags(
-    @Args('input') input: GetAdgerdirTagsInput,
-  ): Promise<AdgerdirTags | null> {
-    return this.cmsContentfulService.getAdgerdirTags(input?.lang ?? 'is-IS')
-  }
-
-  @CacheControl(defaultCache)
   @Query(() => OrganizationTags, { nullable: true })
   getOrganizationTags(
     @Args('input') input: GetOrganizationTagsInput,
   ): Promise<OrganizationTags | null> {
     return this.cmsContentfulService.getOrganizationTags(input?.lang ?? 'is-IS')
-  }
-
-  @CacheControl(defaultCache)
-  @Query(() => AdgerdirFrontpage, { nullable: true })
-  getAdgerdirFrontpage(
-    @Args('input') input: GetAdgerdirFrontpageInput,
-  ): Promise<AdgerdirFrontpage | null> {
-    return this.cmsContentfulService.getAdgerdirFrontpage(
-      input?.lang ?? 'is-IS',
-    )
   }
 
   @CacheControl(defaultCache)
@@ -484,7 +461,7 @@ export class CmsResolver {
   getSingleNews(
     @Args('input') { lang, slug }: GetSingleNewsInput,
   ): Promise<News | null> {
-    return this.cmsContentfulService.getNews(lang, slug)
+    return this.cmsContentfulService.getSingleNewsItem(lang, slug)
   }
 
   @CacheControl(defaultCache)
@@ -518,6 +495,10 @@ export class CmsResolver {
   @CacheControl(defaultCache)
   @Query(() => NewsList)
   async getNews(@Args('input') input: GetNewsInput): Promise<NewsList> {
+    // When not filtering, fetch directly from CMS to avoid Elasticsearch's maximum result window size limit (10,000 items)
+    if (!input.year && !input.month && !input.tags?.length) {
+      return this.cmsContentfulService.getNews(input)
+    }
     return this.cmsElasticsearchService.getNews(
       getElasticsearchIndex(input.lang),
       input,
@@ -963,5 +944,17 @@ export class LatestGenericListItemsResolver {
       return null
     }
     return this.cmsElasticsearchService.getGenericListItems(input)
+  }
+}
+
+// Just in case the id field is missing from elasticsearch instances we return an empty string to prevent a graphql error since id field is non-nullable
+@Resolver(() => IntroLinkImage)
+export class IntroLinkImageResolver {
+  @ResolveField(() => ID)
+  async id(@Parent() { id }: IntroLinkImage) {
+    if (!id) {
+      return ''
+    }
+    return id
   }
 }

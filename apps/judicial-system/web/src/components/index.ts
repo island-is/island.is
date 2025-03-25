@@ -80,7 +80,7 @@ export {
 } from './SigningModal/SigningModal'
 export { default as Skeleton } from './Skeleton/Skeleton'
 export { default as TimeInputField } from './TimeInputField/TimeInputField'
-export { UserProvider, UserContext } from './UserProvider/UserProvider'
+export { UserProvider, UserContext, userRef } from './UserProvider/UserProvider'
 export {
   ViewportProvider,
   ViewportContext,
@@ -92,7 +92,8 @@ export { default as Conclusion } from './Conclusion/Conclusion'
 export { conclusion } from './Conclusion/Conclusion.strings'
 export { default as CaseResentExplanation } from './CaseResentExplanation/CaseResentExplanation'
 export { AlertBanner } from './AlertBanner'
-export { default as RulingDateLabel } from './RulingDateLabel/RulingDateLabel'
+export { default as RulingDateLabel } from './DateLabel/RulingDateLabel'
+export { default as DateLabel } from './DateLabel/DateLabel'
 export { default as SharedPageLayout } from './SharedPageLayout/SharedPageLayout'
 export { default as ReopenModal } from './ReopenModal/ReopenModal'
 export { default as RulingModifiedModal } from './RulingModifiedModal/RulingModifiedModal'
@@ -113,3 +114,6 @@ export {
   default as WithdrawAppealContextMenuModal,
   useWithdrawAppealMenuOption,
 } from './ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'
+export { default as ZipButton } from './ZipButton/ZipButton'
+export { default as RequestAppealRulingNotToBePublishedCheckbox } from './RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
+export { LawyerRegistryProvider } from './LawyerRegistryProvider/LawyerRegistryProvider'

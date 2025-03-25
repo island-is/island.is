@@ -13,8 +13,8 @@ import {
   daysInMonth,
   maxDaysToGiveOrReceive,
 } from '../../config'
-import { YES } from '../../constants'
 import { useEffectOnce } from 'react-use'
+import { YES } from '@island.is/application/core'
 
 const RequestDaysBoxChart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,

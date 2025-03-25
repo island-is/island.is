@@ -111,6 +111,16 @@ export const overview = {
       defaultMessage: 'Norðurlandamál',
       description: 'Selection nordic language label',
     },
+    requestDormitoryLabel: {
+      id: 'ss.application:overview.selection.requestDormitoryLabel',
+      defaultMessage: 'Heimavist',
+      description: 'Selection request dormitory label',
+    },
+    yesValue: {
+      id: 'ss.application:overview.selection.yesValue',
+      defaultMessage: 'Já',
+      description: 'Selection yes value',
+    },
   }),
   extraInformation: defineMessages({
     subtitle: {

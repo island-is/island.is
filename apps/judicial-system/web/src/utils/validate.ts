@@ -5,6 +5,7 @@ import {
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import {
+  Case,
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseFileCategory,
@@ -18,7 +19,6 @@ import {
   SessionArrangements,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { isBusiness } from './utils'
 
@@ -282,8 +282,7 @@ export const isProcessingStepValidIndictments = (
     : true
 
   return Boolean(
-    workingCase.prosecutor &&
-      workingCase.court &&
+    workingCase.court &&
       hasCivilClaimSelected &&
       allCivilClaimantsAreValid &&
       defendantsAreValid,
@@ -300,15 +299,24 @@ export const isIndictmentStepValid = (workingCase: Case): boolean => {
     return false
   }
 
-  const isValidSpeedingIndictmentCount = (indictmentCount: IndictmentCount) =>
-    indictmentCount.offenses?.includes(IndictmentCountOffense.SPEEDING)
+  const isValidSpeedingIndictmentCount = (indictmentCount: IndictmentCount) => {
+    return indictmentCount.offenses?.some(
+      (o) => o.offense === IndictmentCountOffense.SPEEDING,
+    )
       ? Boolean(indictmentCount.recordedSpeed) &&
-        Boolean(indictmentCount.speedLimit)
+          Boolean(indictmentCount.speedLimit)
       : true
+  }
+
+  const hasOffenses = (indictmentCount: IndictmentCount) => {
+    return Boolean(
+      indictmentCount.offenses && indictmentCount.offenses?.length > 0,
+    )
+  }
 
   const isValidTrafficViolation = (indictmentCount: IndictmentCount) =>
     Boolean(indictmentCount.policeCaseNumber) &&
-    Boolean(indictmentCount.offenses && indictmentCount.offenses?.length > 0) &&
+    hasOffenses(indictmentCount) &&
     Boolean(indictmentCount.vehicleRegistrationNumber) &&
     Boolean(indictmentCount.lawsBroken) &&
     Boolean(indictmentCount.incidentDescription) &&

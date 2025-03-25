@@ -95,8 +95,8 @@ const useInfoCardItems = () => {
 
   const indictmentCreated: Item = {
     id: 'indictment-created-item',
-    title: formatMessage(strings.indictmentCreated),
-    values: [formatDate(workingCase.created, 'PP')],
+    title: formatMessage(strings.indictmentSentToCourt),
+    values: [formatDate(workingCase.caseSentToCourtDate, 'PP')],
   }
 
   const prosecutor = (caseType?: CaseType | null): Item => ({
@@ -174,21 +174,6 @@ const useInfoCardItems = () => {
         workingCase.registrar?.name,
         workingCase.registrar?.email,
       ),
-    ],
-  }
-
-  const offense: Item = {
-    id: 'offense-item',
-    title: formatMessage(strings.offense),
-    values: [
-      <>
-        {readableIndictmentSubtypes(
-          workingCase.policeCaseNumbers,
-          workingCase.indictmentSubtypes,
-        ).map((subtype) => (
-          <Text key={subtype}>{capitalize(subtype)}</Text>
-        ))}
-      </>,
     ],
   }
 
@@ -392,7 +377,6 @@ const useInfoCardItems = () => {
     judge,
     caseType,
     registrar,
-    offense,
     requestedCourtDate,
     mergeCase,
     mergedCasePoliceCaseNumbers,

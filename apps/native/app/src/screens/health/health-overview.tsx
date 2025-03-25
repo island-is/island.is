@@ -170,6 +170,14 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
       ) ?? []
     : []
 
+  // Make sure to list both selected organs and the comment if it exists
+  const organLimitationsIncludingComment = [
+    Array.isArray(organLimitations) ? organLimitations.join(', ') : '',
+    organDonationData?.limitations?.comment,
+  ]
+    .filter(Boolean)
+    .join(', ')
+
   useConnectivityIndicator({
     componentId,
     refetching,
@@ -505,7 +513,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                   })}
                   value={
                     medicinePurchaseData?.levelNumber &&
-                    medicinePurchaseData?.levelPercentage
+                    medicinePurchaseData?.levelPercentage !== undefined
                       ? intl.formatMessage(
                           {
                             id: 'health.overview.levelStatusValue',
@@ -550,36 +558,38 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               }
             />
           )}
-          {isOrganDonationEnabled && (
-            <InputRow background>
-              <Input
-                label={intl.formatMessage({
-                  id: isOrganDonorWithLimitations
-                    ? 'health.organDonation.isDonorWithLimitations'
-                    : isOrganDonor
-                    ? 'health.organDonation.isDonor'
-                    : 'health.organDonation.isNotDonor',
-                })}
-                value={`${intl.formatMessage(
-                  {
+          {isOrganDonationEnabled &&
+            (organDonationRes.loading || organDonationRes.data) && (
+              <InputRow background>
+                <Input
+                  label={intl.formatMessage({
                     id: isOrganDonorWithLimitations
-                      ? 'health.organDonation.isDonorWithLimitationsDescription'
+                      ? 'health.organDonation.isDonorWithLimitations'
                       : isOrganDonor
-                      ? 'health.organDonation.isDonorDescription'
-                      : 'health.organDonation.isNotDonorDescription',
-                  },
-                  {
-                    limitations: isOrganDonorWithLimitations
-                      ? organLimitations?.join(', ')
-                      : '',
-                  },
-                )}`}
-                loading={organDonationRes.loading && !organDonationRes.data}
-                error={organDonationRes.error && !organDonationRes.data}
-                noBorder
-              />
-            </InputRow>
-          )}
+                      ? 'health.organDonation.isDonor'
+                      : 'health.organDonation.isNotDonor',
+                  })}
+                  value={`${intl.formatMessage(
+                    {
+                      id: isOrganDonorWithLimitations
+                        ? 'health.organDonation.isDonorWithLimitationsDescription'
+                        : isOrganDonor
+                        ? 'health.organDonation.isDonorDescription'
+                        : 'health.organDonation.isNotDonorDescription',
+                    },
+                    {
+                      limitations: isOrganDonorWithLimitations
+                        ? organLimitationsIncludingComment
+                        : '',
+                    },
+                  )}`}
+                  loadLabel={true}
+                  loading={organDonationRes.loading && !organDonationRes.data}
+                  error={organDonationRes.error && !organDonationRes.data}
+                  noBorder
+                />
+              </InputRow>
+            )}
           {isOrganDonationEnabled &&
             organDonationRes.error &&
             !organDonationRes.data &&

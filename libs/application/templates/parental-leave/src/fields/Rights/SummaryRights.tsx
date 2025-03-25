@@ -14,7 +14,8 @@ import {
   getMultipleBirthsDays,
 } from '../../lib/parentalLeaveUtils'
 import { daysToMonths } from '../../lib/directorateOfLabour.utils'
-import { SINGLE, YES, NO } from '../../constants'
+import { SINGLE } from '../../constants'
+import { NO, YES } from '@island.is/application/core'
 
 interface SummaryRightsProps {
   application: Application

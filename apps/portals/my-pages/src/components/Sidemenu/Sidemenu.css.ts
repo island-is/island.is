@@ -105,6 +105,7 @@ const dropdownBase: StyleWithSelectors = {
   right: spacing[0],
   left: spacing[0],
   borderRadius: 'unset',
+  height: `calc(100vh - ${theme.headerHeight.small}px)`,
   maxHeight: `calc(100vh - ${theme.headerHeight.small}px)`,
 }
 
@@ -113,6 +114,7 @@ const dropdownBaseMD: StyleWithSelectors = {
   width: 448,
   borderRadius: theme.border.radius.large,
   filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
+  height: 'auto',
 }
 
 export const dropdown = style({

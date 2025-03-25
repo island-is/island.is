@@ -9,24 +9,28 @@ import {
 
 import { UseGuards } from '@nestjs/common'
 
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import { DonorInput, Organ, OrganDonation } from './models/organ-donation.model'
-import type { Locale } from '@island.is/shared/types'
-import { Vaccinations } from './models/vaccinations.model'
-import { HealthDirectorateService } from './health-directorate.service'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import type { Locale } from '@island.is/shared/types'
+import { HealthDirectorateService } from './health-directorate.service'
+import { DonorInput, Organ, OrganDonation } from './models/organ-donation.model'
+import { Prescriptions } from './models/prescriptions.model'
+import { Referrals } from './models/referrals.model'
+import { Vaccinations } from './models/vaccinations.model'
+import { Waitlists } from './models/waitlists.model'
+
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver(() => OrganDonation)
@@ -88,5 +92,50 @@ export class HealthDirectorateResolver {
     @CurrentUser() user: User,
   ): Promise<Vaccinations | null> {
     return this.api.getVaccinations(user, locale)
+  }
+
+  /* Waitlists */
+  @Query(() => Waitlists, {
+    name: 'healthDirectorateWaitlists',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal)
+  @FeatureFlag(Features.servicePortalHealthWaitlistsPageEnabled)
+  getWaitlists(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @CurrentUser() user: User,
+  ): Promise<Waitlists | null> {
+    return this.api.getWaitlists(user, locale)
+  }
+
+  /* Referrals */
+  @Query(() => Referrals, {
+    name: 'healthDirectorateReferrals',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal)
+  @FeatureFlag(Features.servicePortalHealthReferralsPageEnabled)
+  getReferrals(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @CurrentUser() user: User,
+  ): Promise<Referrals | null> {
+    return this.api.getReferrals(user, locale)
+  }
+
+  /* Prescriptions */
+  @Query(() => Prescriptions, {
+    name: 'healthDirectoratePrescriptions',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal)
+  @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
+  getPrescriptions(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @CurrentUser() user: User,
+  ): Promise<Prescriptions | null> {
+    return this.api.getPrescriptions(user, locale)
   }
 }

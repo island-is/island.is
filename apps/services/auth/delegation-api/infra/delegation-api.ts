@@ -14,7 +14,7 @@ import {
 
 const REDIS_NODE_CONFIG = {
   dev: json([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
   ]),
   staging: json([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
@@ -51,7 +51,7 @@ export const serviceSetup = (services: {
       XROAD_NATIONAL_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
       XROAD_RSK_PROCURING_REDIS_NODES: REDIS_NODE_CONFIG,
       USER_NOTIFICATION_API_URL: {
-        dev: ref((h) => `http://${h.svc(services.userNotification)}`),
+        dev: "https://user-notification.internal.dev01.devland.is",
         staging: ref((h) => `http://${h.svc(services.userNotification)}`),
         prod: 'https://user-notification.internal.island.is',
       },
@@ -110,7 +110,7 @@ export const serviceSetup = (services: {
     .ingress({
       internal: {
         host: {
-          dev: 'auth-delegation-api',
+          dev: 'auth-delegation-api.internal.identity-server.dev01.devland.is',
           staging: 'auth-delegation-api',
           prod: 'auth-delegation-api.internal.innskra.island.is',
         },

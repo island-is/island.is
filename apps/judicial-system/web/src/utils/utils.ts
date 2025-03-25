@@ -1,14 +1,19 @@
 import { TagVariant } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
+import { isProsecutionUser } from '@island.is/judicial-system/types'
+import {
+  Case,
   CaseAppealState,
   CaseCustodyRestrictions,
   DefendantPlea,
   Gender,
   Notification,
   NotificationType,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export const getShortGender = (gender?: Gender): string => {
   switch (gender) {
@@ -139,3 +144,27 @@ export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
       !theCase.appealJudge3)
   )
 }
+
+export const shouldDisplayGeneratedPdfFiles = (theCase: Case, user?: User) =>
+  Boolean(
+    isProsecutionUser(user) ||
+      theCase.defendants?.some(
+        (defendant) =>
+          defendant.isDefenderChoiceConfirmed &&
+          defendant.caseFilesSharedWithDefender &&
+          defendant.defenderNationalId &&
+          normalizeAndFormatNationalId(user?.nationalId).includes(
+            defendant.defenderNationalId,
+          ),
+      ) ||
+      theCase.civilClaimants?.some(
+        (civilClaimant) =>
+          civilClaimant.hasSpokesperson &&
+          civilClaimant.isSpokespersonConfirmed &&
+          civilClaimant.caseFilesSharedWithSpokesperson &&
+          civilClaimant.spokespersonNationalId &&
+          normalizeAndFormatNationalId(user?.nationalId).includes(
+            civilClaimant.spokespersonNationalId,
+          ),
+      ),
+  )

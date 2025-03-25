@@ -27,6 +27,7 @@ import {
   PaymentSchedule,
   Properties,
   RskCompanyInfo,
+  SeminarsVer,
   SocialInsuranceAdministration,
   TransportAuthority,
   Vehicles,
@@ -41,6 +42,7 @@ import {
   UniversityCareers,
   Frigg,
   HealthDirectorateVaccination,
+  HealthDirectorateHealthService,
   HealthDirectorateOrganDonation,
   WorkAccidents,
   NationalRegistryB2C,
@@ -192,7 +194,7 @@ export const serviceSetup = (services: {
         prod: 'island-is-prod-fs-presign-bucket',
       },
       [GRAPHQL_API_URL_ENV_VAR_NAME]:
-        'http://web-api.islandis.svc.cluster.local',
+        'http://api.islandis.svc.cluster.local',
       INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: {
         dev: 'gunnar.ingi@fjr.is',
         staging: 'gunnar.ingi@fjr.is',
@@ -276,10 +278,10 @@ export const serviceSetup = (services: {
           )}/app/skilavottord/api/graphql`,
       ),
       UNIVERSITY_GATEWAY_API_URL: {
-        dev: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
+        dev: 'http://services-university-gateway.services-university-gateway.svc.cluster.local',
         staging:
-          'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
-        prod: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
+          'http://services-university-gateway.services-university-gateway.svc.cluster.local',
+        prod: 'http://services-university-gateway.services-university-gateway.svc.cluster.local',
       },
       SERVICE_USER_PROFILE_URL: ref(
         (h) => `http://${h.svc(services.servicePortalApi)}`,
@@ -317,6 +319,7 @@ export const serviceSetup = (services: {
       EHIC,
       DirectorateOfImmigration,
       SocialInsuranceAdministration,
+      SeminarsVer,
       OccupationalLicenses,
       SignatureCollection,
       WorkMachines,
@@ -326,6 +329,7 @@ export const serviceSetup = (services: {
       UniversityCareers,
       Frigg,
       HealthDirectorateVaccination,
+      HealthDirectorateHealthService,
       HealthDirectorateOrganDonation,
       WorkAccidents,
       SecondarySchool,

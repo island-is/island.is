@@ -9,7 +9,7 @@ import {
 } from 'sequelize-typescript'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { CreationOptional } from 'sequelize'
-import { FieldSettings } from '../../fieldSettings/models/fieldSettings.model'
+import { Field } from '../../fields/models/field.model'
 
 @Table({ tableName: 'list_item' })
 export class ListItem extends Model<ListItem> {
@@ -62,11 +62,11 @@ export class ListItem extends Model<ListItem> {
   })
   isSelected!: boolean
 
-  @ForeignKey(() => FieldSettings)
+  @ForeignKey(() => Field)
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    field: 'field_settings_id',
+    field: 'field_id',
   })
-  fieldSettingsId!: string
+  fieldId!: string
 }

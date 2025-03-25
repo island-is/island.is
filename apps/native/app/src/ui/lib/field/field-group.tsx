@@ -5,7 +5,6 @@ import { dynamicColor } from '../../utils'
 const Host = styled.View`
   width: 100%;
   margin-top: ${({ theme }) => theme.spacing[3]}px;
-  padding-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
   border-bottom-color: ${dynamicColor(
     ({ theme }) => ({
       dark: theme.shades.dark.shade500,

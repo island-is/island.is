@@ -6,6 +6,7 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   isDistrictCourtUser,
   isIndictmentCase,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
@@ -61,6 +62,12 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
         thead={[
           {
             title: formatMessage(tables.caseNumber),
+            sortBy: isProsecutionUser(user)
+              ? 'policeCaseNumbers'
+              : isDistrictCourtUser(user)
+              ? 'courtCaseNumber'
+              : undefined,
+            sortFn: 'number',
           },
           {
             title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
@@ -123,14 +130,7 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
                       text={formatMessage(indictmentCaseStateTag.text)}
                     />
                   ) : (
-                    <TagCaseState
-                      caseState={row.state}
-                      caseType={row.type}
-                      isCourtRole={isDistrictCourtUser(user)}
-                      isValidToDateInThePast={row.isValidToDateInThePast}
-                      indictmentRulingDecision={row.indictmentRulingDecision}
-                      indictmentDecision={row.indictmentDecision}
-                    />
+                    <TagCaseState theCase={row} />
                   )}
                   {row.appealState && (
                     <TagAppealState

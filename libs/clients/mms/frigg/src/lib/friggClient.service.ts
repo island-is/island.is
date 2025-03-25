@@ -26,7 +26,7 @@ export class FriggClientService {
   }
 
   async getAllSchoolsByMunicipality(user: User): Promise<OrganizationModel[]> {
-    return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality()
+    return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality({})
   }
 
   async getUserById(user: User, childNationalId: string): Promise<UserModel> {

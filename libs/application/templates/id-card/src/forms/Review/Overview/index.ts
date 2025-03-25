@@ -290,7 +290,6 @@ export const OverviewSection = buildSection({
         buildCustomField({
           id: 'overviewApproval',
           component: 'RejectApproveButtons',
-          title: '',
           description: '',
         }),
       ],

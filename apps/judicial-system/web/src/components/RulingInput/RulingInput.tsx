@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
 import { ruling as m } from '@island.is/judicial-system-web/messages'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -14,9 +14,15 @@ interface Props {
   workingCase: Case
   setWorkingCase: Dispatch<SetStateAction<Case>>
   rows?: number
+  disabled?: boolean
 }
 
-const RulingInput: FC<Props> = ({ workingCase, setWorkingCase, rows }) => {
+const RulingInput: FC<Props> = ({
+  workingCase,
+  setWorkingCase,
+  rows,
+  disabled = false,
+}) => {
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 
@@ -52,6 +58,7 @@ const RulingInput: FC<Props> = ({ workingCase, setWorkingCase, rows }) => {
         on: !rows,
         maxHeight: 600,
       }}
+      disabled={disabled}
     />
   )
 }

@@ -20,6 +20,7 @@ import { core, sections } from '@island.is/judicial-system-web/messages'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
+  Case,
   CaseAppealState,
   CaseState,
   CaseType,
@@ -28,7 +29,6 @@ import {
   InstitutionType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { shouldUseAppealWithdrawnRoutes } from '../../utils'
@@ -58,6 +58,7 @@ const useSections = (
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>,
 ) => {
   const { formatMessage } = useIntl()
+
   const router = useRouter()
   const isActive = (pathname: string) =>
     router.pathname.replace(/\/\[\w+\]/g, '') === pathname
@@ -474,6 +475,34 @@ const useSections = (
             {
               name: capitalize(
                 formatMessage(
+                  sections.indictmentCaseProsecutorSection.caseFiles,
+                ),
+              ),
+              href: `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`,
+              isActive: substepsShouldBeHidden
+                ? false
+                : isActive(constants.INDICTMENTS_CASE_FILES_ROUTE),
+              onClick:
+                !isActive(constants.INDICTMENTS_CASE_FILES_ROUTE) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_DEFENDANT_ROUTE,
+                    constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
+                    constants.INDICTMENTS_CASE_FILE_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(
+                        constants.INDICTMENTS_CASE_FILES_ROUTE,
+                      )
+                  : undefined,
+            },
+            {
+              name: capitalize(
+                formatMessage(
                   sections.indictmentCaseProsecutorSection.processing,
                 ),
               ),
@@ -487,6 +516,7 @@ const useSections = (
                     constants.INDICTMENTS_DEFENDANT_ROUTE,
                     constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
                     constants.INDICTMENTS_CASE_FILE_ROUTE,
+                    constants.INDICTMENTS_CASE_FILES_ROUTE,
                   ],
                   workingCase,
                 ) &&
@@ -511,6 +541,7 @@ const useSections = (
                     constants.INDICTMENTS_DEFENDANT_ROUTE,
                     constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
                     constants.INDICTMENTS_CASE_FILE_ROUTE,
+                    constants.INDICTMENTS_CASE_FILES_ROUTE,
                     constants.INDICTMENTS_PROCESSING_ROUTE,
                   ],
                   workingCase,
@@ -519,35 +550,6 @@ const useSections = (
                   ? async () =>
                       await onNavigationTo(
                         constants.INDICTMENTS_INDICTMENT_ROUTE,
-                      )
-                  : undefined,
-            },
-            {
-              name: capitalize(
-                formatMessage(
-                  sections.indictmentCaseProsecutorSection.caseFiles,
-                ),
-              ),
-              href: `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`,
-              isActive: substepsShouldBeHidden
-                ? false
-                : isActive(constants.INDICTMENTS_CASE_FILES_ROUTE),
-              onClick:
-                !isActive(constants.INDICTMENTS_CASE_FILES_ROUTE) &&
-                validateFormStepper(
-                  isValid,
-                  [
-                    constants.INDICTMENTS_DEFENDANT_ROUTE,
-                    constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
-                    constants.INDICTMENTS_CASE_FILE_ROUTE,
-                    constants.INDICTMENTS_PROCESSING_ROUTE,
-                  ],
-                  workingCase,
-                ) &&
-                onNavigationTo
-                  ? async () =>
-                      await onNavigationTo(
-                        constants.INDICTMENTS_CASE_FILES_ROUTE,
                       )
                   : undefined,
             },
@@ -567,8 +569,9 @@ const useSections = (
                     constants.INDICTMENTS_DEFENDANT_ROUTE,
                     constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE,
                     constants.INDICTMENTS_CASE_FILE_ROUTE,
-                    constants.INDICTMENTS_PROCESSING_ROUTE,
                     constants.INDICTMENTS_CASE_FILES_ROUTE,
+                    constants.INDICTMENTS_PROCESSING_ROUTE,
+                    constants.INDICTMENTS_INDICTMENT_ROUTE,
                   ],
                   workingCase,
                 ) &&
@@ -960,7 +963,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+              name: formatMessage(sections.indictmentsCourtSection.conclusion),
               isActive: isActive(constants.INDICTMENTS_CONCLUSION_ROUTE),
               href: `${constants.INDICTMENTS_CONCLUSION_ROUTE}/${id}`,
               onClick:

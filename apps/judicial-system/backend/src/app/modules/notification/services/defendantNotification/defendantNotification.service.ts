@@ -12,6 +12,7 @@ import { type ConfigType } from '@island.is/nest/config'
 
 import {
   DEFENDER_INDICTMENT_ROUTE,
+  PRISON_CASES_ROUTE,
   ROUTE_HANDLER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
@@ -62,14 +63,14 @@ export class DefendantNotificationService extends BaseNotificationService {
     for (const recipient of to) {
       if (recipient.email && recipient.name) {
         promises.push(
-          this.sendEmail(
+          this.sendEmail({
             subject,
-            body,
-            recipient.name,
-            recipient.email,
-            undefined,
-            true,
-          ),
+            html: body,
+            recipientName: recipient.name,
+            recipientEmail: recipient.email,
+            attachments: undefined,
+            skipTail: true,
+          }),
         )
       }
     }
@@ -101,6 +102,42 @@ export class DefendantNotificationService extends BaseNotificationService {
     return this.sendEmails(
       theCase,
       DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER,
+      formattedSubject,
+      formattedBody,
+      [
+        {
+          name: theCase.judge?.name,
+          email: theCase.judge?.email,
+        },
+        {
+          name: theCase.registrar?.name,
+          email: theCase.registrar?.email,
+        },
+      ],
+    )
+  }
+
+  private sendDefendantDelegatedDefenderChoiceNotification(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const formattedSubject = this.formatMessage(
+      strings.defendantDelegatedDefenderChoiceSubject,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
+    )
+
+    const formattedBody = this.formatMessage(
+      strings.defendantDelegatedDefenderChoiceBody,
+      {
+        linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      },
+    )
+
+    return this.sendEmails(
+      theCase,
+      DefendantNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE,
       formattedSubject,
       formattedBody,
       [
@@ -191,7 +228,7 @@ export class DefendantNotificationService extends BaseNotificationService {
       strings.indictmentSentToPrisonAdminBody,
       {
         courtCaseNumber: theCase.courtCaseNumber,
-        linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
+        linkStart: `<a href="${this.config.clientUrl}${PRISON_CASES_ROUTE}">`,
         linkEnd: '</a>',
       },
     )
@@ -261,6 +298,8 @@ export class DefendantNotificationService extends BaseNotificationService {
     switch (notificationType) {
       case DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER:
         return this.sendDefendantSelectedDefenderNotification(theCase)
+      case DefendantNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE:
+        return this.sendDefendantDelegatedDefenderChoiceNotification(theCase)
       case DefendantNotificationType.DEFENDER_ASSIGNED:
         return this.sendDefenderAssignedNotification(theCase, defendant)
       case DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN:

@@ -10,7 +10,6 @@ import {
   GridContainer,
   GridRow,
   Stack,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
@@ -98,18 +97,23 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
               href: searchUrl + '?deild=c-deild',
             },
             {
-              title: 'Grindavík',
-              href: searchUrl + '?malaflokkur=grindavik',
+              title: 'Lög',
+              href: searchUrl + '?tegund=a-deild-log',
+              variant: 'purple',
+            },
+            {
+              title: 'Reglugerðir',
+              href: searchUrl + '?tegund=b-deild-reglugerd',
               variant: 'purple',
             },
             {
               title: 'Gjaldskrár',
-              href: searchUrl + '?malaflokkur=gjaldskra',
+              href: searchUrl + '?tegund=b-deild-gjaldskra',
               variant: 'purple',
             },
             {
-              title: 'Covid 19',
-              href: searchUrl + '?malaflokkur=covid-19',
+              title: 'Rss',
+              href: '/stjornartidindi/rss',
               variant: 'purple',
             },
           ]}

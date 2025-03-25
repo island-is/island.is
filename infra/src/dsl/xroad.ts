@@ -240,6 +240,16 @@ export const AdrAndMachine = new XroadConf({
   },
 })
 
+export const SeminarsVer = new XroadConf({
+  env: {
+    XROAD_SEMINARS_VER_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/namskeid',
+      staging: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/namskeid',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/namskeid',
+    },
+  },
+})
+
 export const WorkAccidents = new XroadConf({
   env: {
     XROAD_WORK_ACCIDENT_PATH: {
@@ -888,7 +898,7 @@ export const OfficialJournalOfIceland = new XroadConf({
     XROAD_OFFICIAL_JOURNAL_PATH: {
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
       staging: 'IS-TEST/GOV/10014/DMR-Protected/official-journal',
-      prod: 'IS/GOV/10014/DMR-Protected/official-journal',
+      prod: 'IS/GOV/5804170510/DMR-Protected/official-journal',
     },
   },
 })
@@ -898,7 +908,7 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
     XROAD_OFFICIAL_JOURNAL_APPLICATION_PATH: {
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
       staging: 'IS-TEST/GOV/10014/DMR-Protected/official-journal-application',
-      prod: 'IS/GOV/10014/DMR-Protected/official-journal-application',
+      prod: 'IS/GOV/5804170510/DMR-Protected/official-journal-application',
     },
   },
 })
@@ -906,9 +916,9 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
 export const Frigg = new XroadConf({
   env: {
     XROAD_MMS_FRIGG_PATH: {
-      dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-service',
-      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-service',
-      prod: 'IS/GOV/10066/MMS-Protected/frigg-form-service',
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-api',
+      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-api',
+      prod: 'IS/GOV/10066/MMS-Protected/frigg-form-api',
     },
   },
 })
@@ -918,7 +928,7 @@ export const HealthDirectorateOrganDonation = new XroadConf({
     XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: {
       dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1',
       staging:
-        'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1',
+        'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1',
       prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1',
     },
   },
@@ -928,8 +938,20 @@ export const HealthDirectorateVaccination = new XroadConf({
   env: {
     XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH: {
       dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1',
-      staging: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1',
+      staging:
+        'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/vaccination-v1',
       prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/vaccination-v1',
+    },
+  },
+})
+
+export const HealthDirectorateHealthService = new XroadConf({
+  env: {
+    XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: {
+      dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1',
+      staging:
+        'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1',
+      prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1',
     },
   },
 })

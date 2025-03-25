@@ -203,8 +203,12 @@ const template: ApplicationTemplate<
                 logMessage: applicationHistoryMessages.changesAborted,
               },
               {
-                onEvent: ApplicationEvents.RECEIVED,
+                onEvent: ApplicationEvents.REVIEW_STARTED,
                 logMessage: coreHistoryMessages.applicationReceived,
+              },
+              {
+                onEvent: ApplicationEvents.REVIEW_COMPLETED,
+                logMessage: applicationHistoryMessages.reviewFinished,
               },
             ],
           },
@@ -212,7 +216,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAfterRegistrationCloses(application, 30),
+              pruneInDaysAfterRegistrationCloses(application, 2 * 30),
           },
           onExit: defineTemplateApi({
             action: ApiActions.submitApplication,
@@ -249,7 +253,12 @@ const template: ApplicationTemplate<
               write: 'all',
               actions: [
                 {
-                  event: ApplicationEvents.RECEIVED,
+                  event: ApplicationEvents.REVIEW_STARTED,
+                  name: overview.buttons.received,
+                  type: 'primary',
+                },
+                {
+                  event: ApplicationEvents.REVIEW_COMPLETED,
                   name: overview.buttons.received,
                   type: 'primary',
                 },
@@ -260,7 +269,8 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
           [DefaultEvents.ABORT]: { target: States.SUBMITTED },
-          [ApplicationEvents.RECEIVED]: { target: States.IN_REVIEW },
+          [ApplicationEvents.REVIEW_STARTED]: { target: States.IN_REVIEW },
+          [ApplicationEvents.REVIEW_COMPLETED]: { target: States.COMPLETED },
         },
       },
       [States.SUBMITTED]: {
@@ -273,7 +283,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAfterRegistrationCloses(application, 30),
+              pruneInDaysAfterRegistrationCloses(application, 2 * 30),
           },
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
@@ -294,8 +304,12 @@ const template: ApplicationTemplate<
                 logMessage: applicationHistoryMessages.edited,
               },
               {
-                onEvent: ApplicationEvents.RECEIVED,
+                onEvent: ApplicationEvents.REVIEW_STARTED,
                 logMessage: coreHistoryMessages.applicationReceived,
+              },
+              {
+                onEvent: ApplicationEvents.REVIEW_COMPLETED,
+                logMessage: applicationHistoryMessages.reviewFinished,
               },
             ],
           },
@@ -325,7 +339,12 @@ const template: ApplicationTemplate<
               write: 'all',
               actions: [
                 {
-                  event: ApplicationEvents.RECEIVED,
+                  event: ApplicationEvents.REVIEW_STARTED,
+                  name: overview.buttons.received,
+                  type: 'primary',
+                },
+                {
+                  event: ApplicationEvents.REVIEW_COMPLETED,
                   name: overview.buttons.received,
                   type: 'primary',
                 },
@@ -335,7 +354,8 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.EDIT]: { target: States.EDIT },
-          [ApplicationEvents.RECEIVED]: { target: States.IN_REVIEW },
+          [ApplicationEvents.REVIEW_STARTED]: { target: States.IN_REVIEW },
+          [ApplicationEvents.REVIEW_COMPLETED]: { target: States.COMPLETED },
         },
       },
       [States.IN_REVIEW]: {
@@ -362,7 +382,7 @@ const template: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: ApplicationEvents.RECEIVED,
+                onEvent: ApplicationEvents.REVIEW_COMPLETED,
                 logMessage: applicationHistoryMessages.reviewFinished,
               },
             ],
@@ -382,7 +402,7 @@ const template: ApplicationTemplate<
               write: 'all',
               actions: [
                 {
-                  event: ApplicationEvents.RECEIVED,
+                  event: ApplicationEvents.REVIEW_COMPLETED,
                   name: overview.buttons.received,
                   type: 'primary',
                 },
@@ -391,7 +411,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [ApplicationEvents.RECEIVED]: { target: States.COMPLETED },
+          [ApplicationEvents.REVIEW_COMPLETED]: { target: States.COMPLETED },
         },
       },
       [States.COMPLETED]: {

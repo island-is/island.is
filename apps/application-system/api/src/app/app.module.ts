@@ -42,6 +42,7 @@ import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
   HealthDirectorateOrganDonationClientConfig,
+  HealthDirectorateHealthClientConfig,
 } from '@island.is/clients/health-directorate'
 import {
   AgriculturalUniversityOfIcelandCareerClientConfig,
@@ -62,6 +63,7 @@ import { emailModuleConfig } from '@island.is/email-service'
 import { sharedModuleConfig } from '@island.is/application/template-api-modules'
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
+import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { AuditConfig } from '@island.is/nest/audit'
 
@@ -108,6 +110,7 @@ import { AuditConfig } from '@island.is/nest/audit'
         HealthDirectorateVaccinationsClientConfig,
         HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateClientConfig,
+        HealthDirectorateHealthClientConfig,
         AgriculturalUniversityOfIcelandCareerClientConfig,
         BifrostUniversityCareerClientConfig,
         UniversityOfAkureyriCareerClientConfig,
@@ -125,6 +128,7 @@ import { AuditConfig } from '@island.is/nest/audit'
         sharedModuleConfig,
         UserNotificationClientConfig,
         NationalRegistryV3ClientConfig,
+        SeminarsClientConfig,
         SecondarySchoolClientConfig,
         AuditConfig
       ],

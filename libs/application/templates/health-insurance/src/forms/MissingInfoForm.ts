@@ -9,8 +9,9 @@ import {
   buildSubmitField,
   buildTitleField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
-import { Application, Form, FormModes, YES } from '@island.is/application/types'
+import { Application, Form, FormModes } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { m } from '../lib/messages/messages'
 import { Logo } from '../assets/Logo'
@@ -43,17 +44,14 @@ export const MissingInfoForm: Form = buildForm({
             }),
             buildCustomField({
               id: 'missingInfo.date',
-              title: '',
               component: 'HiddenDateField',
             }),
             buildCustomField({
               id: 'missingInfo.remarks',
-              title: '',
               component: 'MissingInfoRemarks',
             }),
             buildFileUploadField({
               id: 'missingInfo[0].files',
-              title: '',
               introduction: '',
             }),
             buildTitleField({
@@ -61,12 +59,10 @@ export const MissingInfoForm: Form = buildForm({
             }),
             buildCustomField({
               id: 'submittedData',
-              title: '',
               component: 'Review',
             }),
             buildCheckboxField({
               id: 'confirmMissingInfo',
-              title: '',
               options: [
                 {
                   value: YES,

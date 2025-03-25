@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Box, toast } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
@@ -31,12 +31,12 @@ import Table, {
 } from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import {
+  Case,
   CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import CourtCaseNumberInput from '../CourtCaseNumber/CourtCaseNumberInput'
@@ -107,7 +107,11 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
           {cases.length > 0 ? (
             <Table
               thead={[
-                { title: formatMessage(tables.caseNumber) },
+                {
+                  title: formatMessage(tables.caseNumber),
+                  sortBy: 'courtCaseNumber',
+                  sortFn: 'number',
+                },
                 {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
@@ -119,7 +123,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                   title: capitalize(formatMessage(tables.sentToCourtDate)),
                   sortBy: 'caseSentToCourtDate',
                 },
-                { title: formatMessage(tables.state) },
+                { title: formatMessage(tables.state), sortBy: 'state' },
                 {
                   title: formatMessage(tables.hearingArrangementDate),
                   sortBy: 'courtDate',
@@ -154,16 +158,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                   ),
                 },
                 {
-                  cell: (row) => (
-                    <TagCaseState
-                      caseState={row.state}
-                      caseType={row.type}
-                      isCourtRole={true}
-                      courtDate={row.courtDate}
-                      indictmentDecision={row.indictmentDecision}
-                      defendants={row.defendants}
-                    />
-                  ),
+                  cell: (row) => <TagCaseState theCase={row} />,
                 },
                 {
                   cell: (row) =>

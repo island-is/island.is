@@ -1,11 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { S3Service } from '@island.is/nest/aws'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ADOPTION,
   ChildInformation,
   FileType,
-  NO,
   OTHER_NO_CHILDREN_FOUND,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -15,7 +14,6 @@ import {
   SINGLE,
   States,
   UnEmployedBenefitTypes,
-  YES,
   calculateDaysUsedByPeriods,
   calculatePeriodLength,
   getAdditionalSingleParentRightsInDays,
@@ -1075,6 +1073,25 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     } catch (e) {
       this.logger.warn(
         `Could not fetch applicationRights on nationalId with error: ${e}`,
+      )
+    }
+
+    return null
+  }
+
+  async setOtherParent({ application }: TemplateApiModuleActionProps) {
+    try {
+      const { otherParentId, otherParentName } =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
+
+      return { otherParentId, otherParentName }
+    } catch (e) {
+      this.logger.warn(
+        `Could not fetch otherParent on applicationId: ${application.id} with error: ${e}`,
       )
     }
 

@@ -45,14 +45,14 @@ env:
   IdentityServer__KeyManagement__Enabled: 'true'
   IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
   LOG_LEVEL: 'info'
-  MeUserProfileApiSettings__BaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-  NODE_OPTIONS: '--max-old-space-size=1843 -r dd-trace/init'
-  PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
+  MeUserProfileApiSettings__BaseAddress: 'https://service-portal-api.internal.dev01.devland.is'
+  NODE_OPTIONS: '--max-old-space-size=1843 --enable-source-maps -r dd-trace/init'
+  PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
   PersistenceSettings__DelegationsCacheEnabled: 'false'
-  RedisSettings__Address: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com'
+  RedisSettings__Address: 'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com'
   RedisSettings__Port: '6379'
   SERVERSIDE_FEATURES_ON: ''
-  SessionsApiSettings__BaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
+  SessionsApiSettings__BaseAddress: 'https://sessions-api.internal.dev01.devland.is'
 files:
   - 'ids-signing.pfx'
 grantNamespaces:
@@ -121,8 +121,7 @@ secrets:
   AudkenniSettings__ClientSecret: '/k8s/identity-server/AudkenniClientSecret'
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   ContentfulSettings__AccessToken: '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN'
-  Datadog__RUM__ApplicationId: '/k8s/ids/DD_RUM_APPLICATION_ID'
-  Datadog__RUM__ClientToken: '/k8s/ids/DD_RUM_CLIENT_TOKEN'
+  Datadog__ClientLogs__Token: '/k8s/identity-server/DD_LOGS_CLIENT_TOKEN'
   FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   IdentityServer__FakePersons: '/k8s/identity-server/FakePersons'
   IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey'
@@ -138,6 +137,6 @@ service:
   targetPort: 5000
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/identity-server'
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::324037283794:role/identity-server'
   create: true
   name: 'identity-server'

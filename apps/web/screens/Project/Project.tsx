@@ -279,7 +279,7 @@ const ProjectPage: Screen<PageProps> = ({
   return (
     <>
       <HeadWithSocialSharing
-        title={`${projectPage?.title} | Ísland.is`}
+        title={`${subpage?.title ?? projectPage?.title} | Ísland.is`}
         description={projectPage?.featuredDescription || projectPage?.intro}
         imageUrl={projectPage?.featuredImage?.url}
         imageContentType={projectPage?.featuredImage?.contentType}
@@ -337,12 +337,14 @@ const ProjectPage: Screen<PageProps> = ({
           )
         })}
       </Stack>
-      <ProjectFooter
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        projectPage={projectPage}
-        namespace={projectNamespace}
-      />
+      <Box marginTop="auto">
+        <ProjectFooter
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          projectPage={projectPage}
+          namespace={projectNamespace}
+        />
+      </Box>
     </>
   )
 }

@@ -4,6 +4,6 @@ export default {
     issuer:
       process.env.IDENTITY_SERVER_ISSUER_URL ??
       'https://identity-server.dev01.devland.is',
-    audience: '@island.is',
+    audience: ['@admin.island.is', '@island.is'],
   },
 }

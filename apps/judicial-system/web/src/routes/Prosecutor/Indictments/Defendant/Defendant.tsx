@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 
@@ -23,12 +23,12 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseOrigin,
   Defendant as TDefendant,
   PoliceCaseInfo as TPoliceCaseInfo,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDefendants,
@@ -36,9 +36,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { DefendantInfo } from '../../components'
+import { DefendantInfo, ProsecutorSection } from '../../components'
 import { getIndictmentIntroductionAutofill } from '../Indictment/Indictment'
-import { getIncidentDescription } from '../Indictment/IndictmentCount'
+import { getIncidentDescription } from '../Indictment/lib/getIncidentDescription'
 import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
@@ -293,22 +293,30 @@ const Defendant = () => {
             indictmentCount.policeCaseNumber === policeCaseNumber,
         )
         .forEach((indictmentCount) => {
+          const policeCaseNumberSubtypes = subtypes?.[policeCaseNumber] || []
+          const indictmentCountSubtypes =
+            indictmentCount.indictmentCountSubtypes || []
+
+          // handle changes based on police case subtype changes
+          const updatedIndictmentCountSubtypes = indictmentCountSubtypes.filter(
+            (subtype) => policeCaseNumberSubtypes.includes(subtype),
+          )
           const updatedIndictmentCount = {
             ...indictmentCount,
-            indictmentCountSubtypes: subtypes?.[policeCaseNumber],
+            indictmentCountSubtypes: updatedIndictmentCountSubtypes,
           }
-          const incidentDescription = getIncidentDescription(
-            updatedIndictmentCount,
-            formatMessage,
+
+          const incidentDescription = getIncidentDescription({
+            indictmentCount: updatedIndictmentCount,
             crimeScene,
-            subtypes,
-          )
+            formatMessage,
+            subtypesRecord: subtypes,
+          })
 
           updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
-            ...(subtypes && {
-              indictmentCountSubtypes: subtypes[policeCaseNumber],
-            }),
+            indictmentCountSubtypes: updatedIndictmentCountSubtypes,
+            policeCaseNumberSubtypes,
           })
         })
     }
@@ -467,6 +475,9 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(defendant.heading)}</PageTitle>
+        <Box component="section" marginBottom={5}>
+          <ProsecutorSection />
+        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}

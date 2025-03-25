@@ -203,8 +203,14 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       created
       modified
       vehicleRegistrationNumber
-      offenses
-      substances
+      offenses {
+        id
+        indictmentCountId
+        created
+        modified
+        offense
+        substances
+      }
       lawsBroken
       incidentDescription
       legalArguments
@@ -257,5 +263,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
     }
+    isCompletedWithoutRuling
+    caseSentToCourtDate
   }
 }

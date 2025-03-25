@@ -219,14 +219,6 @@ export const routesTemplate = {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
-  adgerdirpage: {
-    is: '/covid-adgerdir/[slug]',
-    en: '/en/covid-operations/[slug]',
-  },
-  adgerdirfrontpage: {
-    is: '/covid-adgerdir',
-    en: '/en/covid-operations',
-  },
   regulation: {
     is: '/reglugerdir/nr/[number]',
     en: '',
@@ -247,8 +239,16 @@ export const routesTemplate = {
     is: '/stjornartidindi/malaflokkar',
     en: '',
   },
+  ojoirss: {
+    is: '/stjornartidindi/rss',
+    en: '',
+  },
   ojoihome: {
     is: '/stjornartidindi',
+    en: '',
+  },
+  ojoihelp: {
+    is: '/stjornartidindi/leidbeiningar',
     en: '',
   },
   login: {

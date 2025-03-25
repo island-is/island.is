@@ -212,12 +212,6 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           slug
         }
 
-        ... on AdgerdirPage {
-          title
-          description
-          slug
-        }
-
         ... on SubArticle {
           id
           title
