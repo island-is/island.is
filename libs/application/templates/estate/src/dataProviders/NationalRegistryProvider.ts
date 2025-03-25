@@ -3,12 +3,13 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/types'
-import { DataProviderTypes, NationalRegistry } from '../types/index'
+import { NationalRegistryPerson } from '@island.is/api/schema'
+import { DataProviderTypes } from '../lib/constants'
 
 export class NationalRegistryProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.NationalRegistry
 
-  async provide(): Promise<NationalRegistry> {
+  async provide(): Promise<NationalRegistryPerson> {
     const query = `
         query NationalRegistryUserQuery {
           nationalRegistryUserV2 {
@@ -23,13 +24,13 @@ export class NationalRegistryProvider extends BasicDataProvider {
         }
       `
 
-    return this.useGraphqlGateway<NationalRegistry>(query)
+    return this.useGraphqlGateway<NationalRegistryPerson>(query)
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
           return this.handleError(response.errors)
         }
-        const returnObject: NationalRegistry =
+        const returnObject: NationalRegistryPerson =
           response.data.nationalRegistryUserV2
         return Promise.resolve(returnObject)
       })
@@ -48,7 +49,9 @@ export class NationalRegistryProvider extends BasicDataProvider {
       status: 'failure',
     }
   }
-  onProvideSuccess(result: NationalRegistry): SuccessfulDataProviderResult {
+  onProvideSuccess(
+    result: NationalRegistryPerson,
+  ): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

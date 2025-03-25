@@ -62,7 +62,7 @@ const OverviewV2 = () => {
 
   return (
     <IntroWrapper
-      title={m.occupationaLicenses}
+      title={m.occupationalLicenses}
       intro={formatMessage(m.occupationalLicensesDescription)}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}

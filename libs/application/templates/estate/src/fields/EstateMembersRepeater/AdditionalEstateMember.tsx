@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import {
@@ -7,7 +8,7 @@ import {
   PhoneInputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import * as kennitala from 'kennitala'
+import * as nationalId from 'kennitala'
 import {
   Box,
   GridColumn,
@@ -22,7 +23,6 @@ import { GenericFormField, Application } from '@island.is/application/types'
 import { ErrorValue, EstateMember } from '../../types'
 import { hasYes } from '@island.is/application/core'
 import { LookupPerson } from '../LookupPerson'
-import { useEffect } from 'react'
 
 export const AdditionalEstateMember = ({
   field,
@@ -58,7 +58,6 @@ export const AdditionalEstateMember = ({
 
   const advocatePhone = `${fieldIndex}.advocate.phone`
   const advocateEmail = `${fieldIndex}.advocate.email`
-
   const selectedEstate = application.answers.selectedEstate
 
   const foreignCitizenship = useWatch({
@@ -79,10 +78,10 @@ export const AdditionalEstateMember = ({
     hasForeignCitizenship && birthDate
       ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
           ?.years
-      : kennitala.info(currentEstateMember.nationalId)?.age
+      : nationalId.info(currentEstateMember.nationalId)?.age
 
   const hideContactInfo =
-    kennitala.isPerson(currentEstateMember.nationalId) &&
+    nationalId.isPerson(currentEstateMember.nationalId) &&
     memberAge !== undefined &&
     memberAge < 18
 
@@ -185,8 +184,7 @@ export const AdditionalEstateMember = ({
             required={!field.initial}
           />
         </GridColumn>
-        {application.answers.selectedEstate ===
-          EstateTypes.permitForUndividedEstate && (
+        {selectedEstate === EstateTypes.permitForUndividedEstate && (
           <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
             <SelectController
               key={relationWithApplicantField}
