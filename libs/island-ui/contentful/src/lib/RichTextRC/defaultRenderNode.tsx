@@ -291,10 +291,8 @@ export const defaultRenderNodeObject: RenderNode = {
         ) {
           return null
         }
-
         const prefix = getOrganizationPageUrlPrefix(entry.sys?.locale)
-
-        if (entry?.fields?.organizationParentSubpage?.fields?.slug) {
+        if (entry.fields.organizationParentSubpage?.fields?.slug) {
           return (
             <Hyperlink
               href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.organizationParentSubpage.fields.slug}/${entry.fields.slug}`}
