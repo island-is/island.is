@@ -50,8 +50,7 @@ function getTagname() {
     if (eventName === 'merge_group' || eventName === 'workflow_dispatch') {
         const dateString = new Date().toISOString().split('T')[0].replace(/-/g, '')
         if (typeOfDeployment.dev) {
-            // TODO: CHANGE THIS BACK
-            return `ddev_${dateString}_${randomTag}`
+            return `dev_${dateString}_${randomTag}`
         }
         if (typeOfDeployment.prod) {
             const version = targetBranch.replace('release/', '');
