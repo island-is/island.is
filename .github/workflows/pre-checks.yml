@@ -64,11 +64,6 @@ jobs:
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
     steps:
-      - name: Debug AWS Identity
-        run: |
-          aws sts get-caller-identity
-          env | grep AWS
-
       - name: Get git branch
         id: git-branch
         run: |
