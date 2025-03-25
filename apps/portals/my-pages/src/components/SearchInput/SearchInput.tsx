@@ -5,99 +5,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useMemo, useRef, useState } from 'react'
-import Fuse, { IFuseOptions } from 'fuse.js'
 import { LinkResolver } from '@island.is/portals/my-pages/core'
-import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
-import { FormatMessage, useLocale } from '@island.is/localization'
 import cn from 'classnames'
 
 import * as styles from './SearchInput.css'
-import { MessageDescriptor } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
-
-interface ModuleSet {
-  title: string
-  breadcrumbs: string[]
-  description?: string
-  intro?: string
-  keywords?: Array<string>
-  uri: string
-}
-
-const options: IFuseOptions<ModuleSet> = {
-  isCaseSensitive: false,
-  findAllMatches: true,
-  includeMatches: true,
-  includeScore: true,
-  minMatchCharLength: 2,
-  keys: [
-    { name: 'title', weight: 2 },
-    { name: 'description', weight: 0.5 },
-    { name: 'intro', weight: 0.5 },
-    { name: 'keywords', weight: 5 },
-  ],
-  threshold: 0.2,
-  shouldSort: true,
-  sortFn: (a, b) => a.score - b.score,
-}
-
-//Only load leaves into navigation results
-const getNavigationItems = (
-  data: PortalNavigationItem,
-  breadcrumbs: string[],
-  formatMessage: FormatMessage,
-): Array<ModuleSet> => {
-  let navigationItems: Array<ModuleSet> = []
-
-  const parseContent = (
-    messageId: MessageDescriptor | undefined,
-  ): string | undefined => {
-    if (!messageId) return undefined
-    const content = formatMessage(messageId)
-
-    if (content.length > 97) {
-      return content.substring(0, 97) + '...'
-    } else if (content.length < 1) {
-      return undefined
-    }
-    return content
-  }
-
-  if (data.children) {
-    navigationItems = data.children.flatMap((child) =>
-      getNavigationItems(
-        child,
-        [...breadcrumbs, formatMessage(data.name)],
-        formatMessage,
-      ),
-    )
-  }
-
-  const moduleName = formatMessage(data.name)
-
-  if (
-    !data.navHide &&
-    data.path &&
-    !data.active &&
-    !data.searchHide &&
-    data.enabled &&
-    navigationItems.findIndex((n) => n.title === moduleName) < 0
-  ) {
-    navigationItems.push({
-      title: moduleName,
-      breadcrumbs: [...breadcrumbs, formatMessage(data.name)],
-      description: parseContent(data.description),
-      intro: parseContent(data.intro),
-      uri: data.path,
-      keywords: data.searchTags
-        ? data.searchTags.map((st) => formatMessage(st))
-        : undefined,
-    })
-  }
-
-  return navigationItems
-}
+import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
 
 interface Props {
   white?: boolean
@@ -105,22 +18,16 @@ interface Props {
 }
 
 export const SearchInput = ({ white, colored }: Props) => {
-  const { formatMessage } = useLocale()
   const [query, setQuery] = useState<string>()
+  const search = usePortalModulesSearch()
 
   const navigate = useNavigate()
-
-  const data = useMemo(() => {
-    return getNavigationItems(MAIN_NAVIGATION, [], formatMessage)
-  }, [formatMessage])
-
-  const fuse = useMemo(() => new Fuse(data, options), [data])
 
   const ref = useRef<HTMLInputElement>(null)
 
   const searchResults: Array<AsyncSearchOption> = useMemo(() => {
     if (query && query.length > 1) {
-      const results = fuse.search(query, {
+      const results = search(query, {
         limit: 5,
       })
 
@@ -152,7 +59,7 @@ export const SearchInput = ({ white, colored }: Props) => {
     }
 
     return []
-  }, [fuse, query])
+  }, [search, query])
 
   return (
     <AsyncSearch
