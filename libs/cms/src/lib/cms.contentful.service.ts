@@ -93,6 +93,11 @@ import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import { NewsList } from './models/newsList.model'
 import { GetCmsNewsInput } from './dto/getNews.input'
+import { GetBloodDonationRestrictionsInput } from './dto/getBloodDonationRestrictions.input'
+import {
+  BloodDonationRestrictionList,
+  mapBloodDonationRestrictionListItem,
+} from './models/bloodDonationRestriction.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -1132,6 +1137,30 @@ export class CmsContentfulService {
       .catch(errorHandler('getGenericTag'))
 
     return (result.items as types.IGenericTag[]).map(mapGenericTag)
+  }
+
+  async getBloodDonationRestrictions(
+    input: GetBloodDonationRestrictionsInput,
+  ): Promise<BloodDonationRestrictionList> {
+    const itemsPerPage = 10
+    const currentPage = input.page ?? 1
+
+    const response = await this.contentfulRepository.getLocalizedEntries(
+      input.lang,
+      {
+        content_type: 'bloodDonationRestriction',
+        limit: itemsPerPage,
+        skip: (currentPage - 1) * itemsPerPage,
+      },
+    )
+
+    return {
+      total: response.total,
+      items: (response.items as types.IBloodDonationRestriction[]).map(
+        mapBloodDonationRestrictionListItem,
+      ),
+      input,
+    }
   }
 
   async getOrganizationParentSubpage(input: GetOrganizationParentSubpageInput) {
