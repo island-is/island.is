@@ -2,6 +2,11 @@ name: 'Prep Dependencies'
 on:
   workflow_call:
     inputs:
+      force_all_to_be_affected:
+        description: 'Should all be affected'
+        required: false
+        type: boolean
+        default: false
       main_branch:
         default: 'main'
         type: string
