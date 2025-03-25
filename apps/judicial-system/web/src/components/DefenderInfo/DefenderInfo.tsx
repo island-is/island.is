@@ -9,10 +9,10 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import {
+  Case,
   RequestSharedWithDefender,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { UpdateCase, useCase } from '../../utils/hooks'
 import RequiredStar from '../RequiredStar/RequiredStar'
