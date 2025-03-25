@@ -15,6 +15,7 @@ import { CodeOwners } from '@island.is/shared/constants'
 import { LegalGazetteAPIActions, LegalGazetteStates } from './constants'
 import { m } from './messages'
 import { pruneAfterDays } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -44,6 +45,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
   translationNamespaces: [ApplicationConfigurations.LegalGazette.translation],
   dataSchema: legalGazetteDataSchema,
   allowMultipleApplicationsInDraft: true,
+  featureFlag: Features.legalGazette,
   stateMachineConfig: {
     initial: LegalGazetteStates.PREREQUISITES,
     states: {
