@@ -7,7 +7,6 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 
 import { assign } from 'xstate'
 import { legalGazetteDataSchema } from './dataSchema'
@@ -40,7 +39,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
   name: getApplicationName,
   codeOwner: CodeOwners.Hugsmidjan,
   institution: m.institutionName,
-  translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
+  translationNamespaces: [ApplicationConfigurations.LegalGazette.translation],
   dataSchema: legalGazetteDataSchema,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
@@ -60,8 +59,8 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/PrerequisitesForm').then((module) =>
-                  Promise.resolve(module.Prerequisites),
+                import('../forms/RequirementsForm').then((module) =>
+                  Promise.resolve(module.RequirementsForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
@@ -76,6 +75,30 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: {
             target: LEGAL_GAZETTE_STATES.DRAFT,
           },
+        },
+      },
+      [LEGAL_GAZETTE_STATES.DRAFT]: {
+        meta: {
+          name: 'Uppsetning',
+          progress: 0.5,
+          status: 'draft',
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 24 * 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/DraftForm').then((module) =>
+                  Promise.resolve(module.DraftForm),
+                ),
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
+          ],
         },
       },
     },
