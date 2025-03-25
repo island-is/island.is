@@ -7,6 +7,7 @@ import {
   AdminStagingApi,
   AuthAdminApiClientConfig,
   AuthAdminApiClientModule,
+  ClientSso,
   ClientType,
   RefreshTokenExpiration,
 } from '@island.is/clients/auth/admin-api'
@@ -56,6 +57,7 @@ const baseResponse: AdminClientDto = {
   accessTokenLifetime: 3600,
   customClaims: [{ type: 'string', value: 'test' }],
   singleSession: false,
+  sso: ClientSso.enabled,
 }
 
 const secretResponse: ClientSecret = {
@@ -169,6 +171,7 @@ describe('ClientsService', () => {
         ],
         displayName: 'Test Application',
         tenantId: 'test-tenant-id',
+        sso: ClientSso.enabled,
       }
 
       const response = await clientsService.createClient(
@@ -201,6 +204,7 @@ describe('ClientsService', () => {
         environments: [Environment.Development],
         displayName: 'Test Application',
         tenantId: 'test-tenant-id',
+        sso: ClientSso.enabled,
       }
 
       const response = await clientsService.createClient(
@@ -220,6 +224,7 @@ describe('ClientsService', () => {
           clientType: CreateClientType.web,
           clientName: 'Test Application',
           contactEmail: 'test@test.is',
+          sso: ClientSso.enabled,
         },
         tenantId: 'test-tenant-id',
       })
