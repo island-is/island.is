@@ -20,7 +20,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         prod: 'https://innskra.island.is',
       },
       AUDIT_DEFAULT_NAMESPACE: '@island.is/form-system',
-      AUDIT_SERVICE_NAME: 'services-form-system',
+      AUDIT_SERVICE_NAME: 'services-form-system-api',
     })
     .ingress({
       primary: {
