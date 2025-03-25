@@ -414,7 +414,13 @@ const Layout: Screen<LayoutProps> = ({
             </ColorSchemeContext.Provider>
           )}
           <Main>
-            {wrapContent ? <Box width="full">{children}</Box> : children}
+            {wrapContent ? (
+              <Box width="full" display="flex" flexDirection="column">
+                {children}
+              </Box>
+            ) : (
+              children
+            )}
           </Main>
         </MenuTabsContext.Provider>
         {showFooter && (

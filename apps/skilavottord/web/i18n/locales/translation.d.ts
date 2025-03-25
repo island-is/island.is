@@ -73,6 +73,7 @@ export interface ModalInputs {
   role: Name
   partner: Name
   municipality: Name
+  recyclingCompanyOther: string
 }
 
 export interface Email {
