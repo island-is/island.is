@@ -10,7 +10,7 @@ export const legalGazetteDataSchema = z.object({
         (value) =>
           value.length === 1 && value.every((v) => v === YesOrNoEnum.YES),
         {
-          params: m.requirementsCheckboxError,
+          params: m.requirements.approval.checkboxError,
         },
       ),
   }),

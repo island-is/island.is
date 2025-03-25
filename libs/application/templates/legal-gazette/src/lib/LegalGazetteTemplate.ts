@@ -38,7 +38,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
   type: ApplicationTypes.LEGAL_GAZETTE,
   name: getApplicationName,
   codeOwner: CodeOwners.Hugsmidjan,
-  institution: m.institutionName,
+  institution: m.general.institution,
   translationNamespaces: [ApplicationConfigurations.LegalGazette.translation],
   dataSchema: legalGazetteDataSchema,
   allowMultipleApplicationsInDraft: true,

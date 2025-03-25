@@ -13,52 +13,60 @@ import { m } from '../lib/messages'
 
 export const RequirementsForm: Form = buildForm({
   id: 'RequirementsDraft',
-  title: m.requirementsSectionTitle,
+  title: m.requirements.approval.sectionTitle,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'requirements_section',
-      title: m.requirementsSectionTitle,
-      tabTitle: m.requirementsSectionTitle,
+      title: m.requirements.approval.sectionTitle,
       children: [
         buildMultiField({
           id: 'prerequisites_fields',
-          title: m.requirementsFormTitle,
+          title: m.requirements.approval.formTitle,
           children: [
             buildDescriptionField({
               id: 'prerequisites_description_one',
-              description: m.requirementsIntroPartOne,
+              description: m.requirements.approval.introPartOne,
             }),
             buildDescriptionField({
               id: 'prerequisites_description_two',
-              description: m.requirementsIntroPartTwo,
+              description: m.requirements.approval.introPartTwo,
             }),
             buildDescriptionField({
               id: 'prerequisites_description_three',
-              description: m.requirementsIntroPartThree,
+              description: m.requirements.approval.introPartThree,
             }),
             buildDescriptionField({
               id: 'prerequisites_description_four',
-              description: m.requirementsIntroPartFour,
+              description: m.requirements.approval.introPartFour,
             }),
             buildDescriptionField({
               id: 'prerequisites_description_five',
-              description: m.requirementsIntroPartFive,
+              description: m.requirements.approval.introPartFive,
             }),
             buildCheckboxField({
               id: 'requirements.approval',
               marginTop: 5,
               options: [
-                { value: YesOrNoEnum.YES, label: m.requirementsCheckboxLabel },
+                {
+                  value: YesOrNoEnum.YES,
+                  label: m.requirements.approval.checkboxLabel,
+                },
               ],
-              onSelect(s) {
-                console.log(s)
-              },
               required: true,
             }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      title: m.requirements.institution.sectionTitle,
+      children: [
+        buildMultiField({
+          title: m.requirements.institution.formTitle,
+          children: [
             buildSubmitField({
-              id: 'toDraft',
+              id: 'toinstitution',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

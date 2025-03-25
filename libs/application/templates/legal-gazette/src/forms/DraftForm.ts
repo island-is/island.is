@@ -8,18 +8,17 @@ import { m } from '../lib/messages'
 
 export const DraftForm: Form = buildForm({
   id: 'DraftDraft',
-  title: m.draftFormTitle,
+  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'draft_section',
-      title: m.draftFormTitle,
-      tabTitle: m.draftFormTitle,
+      title: m.requirements.institution.sectionTitle,
       children: [
         buildDescriptionField({
           id: 'draft_title',
-          title: m.draftFormTitle,
+          title: m.requirements.institution.formTitle,
         }),
       ],
     }),
