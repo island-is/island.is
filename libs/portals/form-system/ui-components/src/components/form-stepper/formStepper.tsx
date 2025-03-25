@@ -11,11 +11,13 @@ interface Props {
   sections: FormSystemSection[]
   currentSection: Current<FormSystemSection>
   currentScreen?: Current<FormSystemScreen>
+  //applicantTypes?: 
 }
 
 export const FormStepper = ({ sections, currentSection, currentScreen }: Props) => {
   const filteredSections = sections.filter((section) => section.sectionType !== SectionTypes.PREMISES)
   if (currentSection.index === 0) return null
+  console.log(sections)
   return (
     <FormStepperV2
       sections={filteredSections.map((section, sectionIndex) => (

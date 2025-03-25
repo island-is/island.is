@@ -32,7 +32,7 @@ export const Field = ({ field }: Props) => {
       {field.fieldType === FieldTypesEnum.EMAIL && (
         <Email {...fieldItems} />
       )}
-      {field.fieldType === FieldTypesEnum.DOCUMENT && (
+      {field.fieldType === FieldTypesEnum.FILE && (
         <FileUpload item={field} />
       )}
       {field.fieldType === FieldTypesEnum.NATIONAL_ID && (

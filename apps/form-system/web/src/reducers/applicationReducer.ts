@@ -2,6 +2,13 @@ import { FormSystemApplication, FormSystemScreen, FormSystemSection } from "@isl
 import { SectionTypes, Action, ApplicationState, initializeField } from "@island.is/form-system/ui"
 import { decrementWithoutScreens, decrementWithScreens, getDecrementVariables, getIncrementVariables, hasScreens, incrementWithoutScreens, incrementWithScreens } from "./reducerUtils"
 
+export const initialState = {
+  application: {} as FormSystemApplication,
+  sections: [],
+  screens: [],
+  currentSection: { data: {} as FormSystemSection, index: 0 },
+  currentScreen: undefined,
+}
 
 export const initialReducer = (
   state: ApplicationState
