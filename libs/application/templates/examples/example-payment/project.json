@@ -1,7 +1,7 @@
 {
-  "name": "application-templates-example-payment",
-  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/application/templates/example-payment/src",
+  "name": "example-payment",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/examples/example-payment/src",
   "projectType": "library",
   "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
@@ -11,23 +11,23 @@
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": [
-        "{workspaceRoot}/coverage/libs/application/templates/example-payment"
+        "{workspaceRoot}/coverage/libs/application/templates/examples/example-payment"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/example-payment/jest.config.ts",
+        "jestConfig": "libs/application/templates/examples/example-payment/jest.config.ts",
         "passWithNoTests": false
       }
     },
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/example-payment/src/**/*.{js,ts,tsx}'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/examples/example-payment/src/**/*.{js,ts,tsx}'"
       }
     },
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "graphql-codegen --config libs/application/templates/example-payment/codegen.yml"
+        "command": "graphql-codegen --config libs/application/templates/examples/example-payment/codegen.yml"
       }
     }
   }
