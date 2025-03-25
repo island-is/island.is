@@ -95,6 +95,11 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: String })
   nationalId?: string
 
+  // ATTENTION: This will contain they DOB from **LOKE** but we can migrate later internal DOB currently stored as nationalId in the same schema
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  dateOfBirth?: string
+
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   name?: string

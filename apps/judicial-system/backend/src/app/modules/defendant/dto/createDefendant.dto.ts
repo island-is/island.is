@@ -30,6 +30,11 @@ export class CreateDefendantDto {
 
   @IsOptional()
   @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly dateOfBirth?: string
+
+  @IsOptional()
+  @IsString()
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly name?: string

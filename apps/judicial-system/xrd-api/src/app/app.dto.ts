@@ -27,6 +27,11 @@ export class CreateCaseDto {
 
   @IsOptional()
   @IsString()
+  @ApiProperty()
+  readonly accusedDOB?: string
+
+  @IsOptional()
+  @IsString()
   @ApiPropertyOptional()
   readonly accusedName?: string
 
