@@ -32,6 +32,7 @@ import {
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
 } from '../../formatters'
+import { getCaseFileHash } from '../../formatters/getCaseFileHash'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant } from '../defendant'
 import { Subpoena, SubpoenaService } from '../subpoena'
@@ -245,13 +246,11 @@ export class PdfService {
     )
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state) && confirmation) {
-      const indictmentHash = CryptoJS.MD5(
-        generatedPdf.toString('binary'),
-      ).toString(CryptoJS.enc.Hex)
+      const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
       this.caseModel
-        .update({ indictmentHash }, { where: { id: theCase.id } })
+        .update({ hash, hashAlgorithm }, { where: { id: theCase.id } })
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,
@@ -331,13 +330,11 @@ export class PdfService {
     )
 
     if (subpoena) {
-      const subpoenaHash = CryptoJS.MD5(
-        generatedPdf.toString('binary'),
-      ).toString(CryptoJS.enc.Hex)
+      const subpoenaHash = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
       this.subpoenaService
-        .setHash(subpoena.id, subpoenaHash)
+        .setHash(subpoena.id, subpoenaHash.hash, subpoenaHash.hashAlgorithm)
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,

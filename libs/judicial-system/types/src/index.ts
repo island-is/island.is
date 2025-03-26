@@ -25,6 +25,7 @@ export {
   EventNotificationType,
   notificationTypes,
 } from './lib/notification'
+export { HashAlgorithm } from './lib/caseFile'
 export type { Institution } from './lib/institution'
 export {
   EventType,

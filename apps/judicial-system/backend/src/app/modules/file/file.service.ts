@@ -33,6 +33,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createConfirmedPdf } from '../../formatters'
+import { getCaseFileHash } from '../../formatters/getCaseFileHash'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { Case } from '../case/models/case.model'
@@ -190,11 +191,13 @@ export class FileService {
           throw new Error('Failed to create confirmed PDF')
         }
 
-        const binaryPdf = confirmedPdf.toString('binary')
-        const hash = CryptoJS.MD5(binaryPdf).toString(CryptoJS.enc.Hex)
+        const { hash, hashAlgorithm, binaryPdf } = getCaseFileHash(confirmedPdf)
 
         // No need to wait for the update to finish
-        this.fileModel.update({ hash }, { where: { id: file.id } })
+        this.fileModel.update(
+          { hash, hashAlgorithm },
+          { where: { id: file.id } },
+        )
 
         return binaryPdf
       })
