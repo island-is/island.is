@@ -26,13 +26,13 @@ import {
 import {
   CaseOrigin,
   Defendant,
+  IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
   Institution,
   Maybe,
   Offense,
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -227,7 +227,10 @@ const Indictment = () => {
       setDriversLicenseSuspensionRequest(
         workingCase.indictmentCounts?.map((count) =>
           count.id === indictmentCountId
-            ? { ...returnedIndictmentCount, offenses: updatedOffenses }
+            ? {
+                ...returnedIndictmentCount,
+                offenses: updatedOffenses ?? count.offenses,
+              }
             : count,
         ),
       )
