@@ -6,7 +6,16 @@ module.exports = {
       Promise.all([
         queryInterface.addColumn(
           'case_file',
-          'hashAlgorithm',
+          'hash_algorithm',
+          {
+            type: Sequelize.STRING,
+            allowNull: true,
+          },
+          { transaction: t },
+        ),
+        queryInterface.addColumn(
+          'subpoena',
+          'hash_algorithm',
           {
             type: Sequelize.STRING,
             allowNull: true,
@@ -16,9 +25,17 @@ module.exports = {
       ]).then(() =>
         queryInterface.sequelize.query(
           `
+          BEGIN;
+
           UPDATE "case_file"
-          SET "hashAlgorithm" = 'MD5' 
-          WHERE "hash" is not null
+          SET "hash_algorithm" = 'MD5' 
+          WHERE "hash" is not null;
+
+          UPDATE "subpoena"
+          SET "hash_algorithm" = 'MD5' 
+          WHERE "hash" is not null;
+
+          COMMIT;
           `,
           { transaction: t },
         ),
@@ -27,9 +44,14 @@ module.exports = {
   },
   async down(queryInterface) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.removeColumn('case_file', 'hashAlgorithm', {
-        transaction: t,
-      }),
+      Promise.all([
+        queryInterface.removeColumn('case_file', 'hash_algorithm', {
+          transaction: t,
+        }),
+        queryInterface.removeColumn('subpoena', 'hash_algorithm', {
+          transaction: t,
+        }),
+      ]),
     )
   },
 }
