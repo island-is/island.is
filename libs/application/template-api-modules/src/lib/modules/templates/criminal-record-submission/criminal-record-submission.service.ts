@@ -12,6 +12,7 @@ import { info } from 'kennitala'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core/messages'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class CriminalRecordSubmissionService extends BaseTemplateApiService {
@@ -61,7 +62,8 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
         uploadDataName,
         uploadDataId,
       )
-      .catch(async () => {
+      .catch(async (e) => {
+        logger.error(e)
         await this.sharedTemplateAPIService.sendEmail(
           generateSyslumennNotifyErrorEmail,
           application as unknown as Application,
