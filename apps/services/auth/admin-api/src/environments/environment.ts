@@ -46,6 +46,8 @@ const prodConfig = {
     process.env.ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE,
   zendeskIdentityConfirmationSecret:
     process.env.ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION,
+  zendeskDeleteGeneralMandateWebhookSecret:
+    process.env.ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE,
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
