@@ -41,6 +41,26 @@ export interface ChargeResponse {
   correlationId: string
 }
 
+export interface RefundResponse {
+  acquirerReferenceNumber: string
+  transactionID: string
+  transactionLifecycleId: string
+  maskedCardNumber: string
+  isSuccess: true
+  cardInformation: {
+    cardScheme: string
+    issuingCountry: string
+    cardUsage: string
+    cardCategory: string
+    outOfScaScope: string
+  }
+  authorizationIdentifier: string
+  responseCode: string
+  responseDescription: string
+  responseTime: string
+  correlationId: string
+}
+
 export interface CachePaymentFlowStatus {
   isVerified?: boolean
   correlationId?: string

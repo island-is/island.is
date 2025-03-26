@@ -43,6 +43,7 @@ export enum CardErrorCode {
   GenericDecline = 'GenericDecline',
   VerificationDeadlineExceeded = 'VerificationDeadlineExceeded',
   VerificationCancelledByUser = 'VerificationCancelledByUser',
+  RefundedBecauseOfSystemError = 'RefundedBecauseOfSystemError',
   UnknownCardError = 'UnknownCardError',
 }
 

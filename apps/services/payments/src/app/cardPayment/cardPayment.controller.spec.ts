@@ -229,7 +229,7 @@ describe('CardPaymentController', () => {
 
       const body = JSON.parse(options!.body as string)
 
-      expect(body.cardNumber).toBe(verifyPayload.cardNumber)
+      expect(body.cardNumber).toBe(verifyPayload.cardNumber.toString())
       expect(body.expirationMonth).toBe(verifyPayload.expiryMonth)
       expect(body.expirationYear).toBe(verifyPayload.expiryYear + 2000)
       expect(body.amount).toBe(expectedVerifiedAmount)
@@ -451,3 +451,12 @@ describe('CardPaymentController', () => {
     })
   })
 })
+
+// TODO
+// describe('edge cases', () => {
+//   it('should handle when payment is successful but fjs charge fails')
+//   // Never want to leave a hanging successful payment without refunding
+//   // if there's a reason to (like already paid)
+//   it('should handle when payment is successful but .... ')
+//   it('should not be possible pay with card if it is not one of available payment methods')
+// })

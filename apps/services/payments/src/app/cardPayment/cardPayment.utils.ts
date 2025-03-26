@@ -27,6 +27,8 @@ const MdSerializedSchema = z.object({
   iat: z.number(),
 })
 
+const iskToAur = (amount: number) => amount * 100
+
 export const generateMd = ({
   correlationId,
   paymentsTokenSigningSecret,
@@ -74,13 +76,14 @@ export const generateVerificationRequestOptions = ({
       [paymentsApiHeaderKey]: paymentsApiHeaderValue,
     },
     body: JSON.stringify({
-      cardNumber,
+      cardNumber: cardNumber.toString(),
       expirationMonth: expiryMonth,
       expirationYear: 2000 + expiryYear,
       cardholderDeviceType: 'WWW',
-      amount: amount * 100, // Convert to ISK (aurar)
+      amount: iskToAur(amount),
       currency: 'ISK',
-      authenticationUrl: `${environment.paymentsWeb.origin}/api/card/callback`,
+      // authenticationUrl: `${environment.paymentsWeb.origin}/api/card/callback`,
+      authenticationUrl: `https://webhook.site/8b1b7eeb-2e21-431c-b1a4-a6f59fbad8c1`,
       MD: md,
       systemCalling,
     }),
@@ -116,14 +119,53 @@ export const generateChargeRequestOptions = ({
     body: JSON.stringify({
       operation: 'Sale',
       transactionType: 'ECommerce',
-      cardNumber,
+      cardNumber: cardNumber.toString(),
       expirationMonth: expiryMonth,
       expirationYear: 2000 + expiryYear,
       cvc,
       currency: 'ISK',
-      amount: amount * 100, // Convert to ISK (aurar)
+      amount: iskToAur(amount),
       systemCalling,
       cardVerificationData: verificationData,
+    }),
+  }
+
+  return requestOptions
+}
+
+export const generateRefundRequestOptions = ({
+  amount,
+  cardNumber,
+  charge,
+  paymentApiConfig,
+}: {
+  amount: number
+  cardNumber: number
+  charge: ChargeResponse
+  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
+}) => {
+  const {
+    paymentsApiSecret,
+    paymentsApiHeaderKey,
+    paymentsApiHeaderValue,
+    systemCalling,
+  } = paymentApiConfig
+
+  const requestOptions: RequestInit = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: paymentsApiSecret,
+      [paymentsApiHeaderKey]: paymentsApiHeaderValue,
+    },
+    body: JSON.stringify({
+      operation: 'Refund',
+      transactionType: 'ECommerce',
+      cardNumber: cardNumber.toString(),
+      currency: 'ISK',
+      amount: iskToAur(amount),
+      acquirerReferenceNumber: charge.acquirerReferenceNumber,
+      systemCalling,
     }),
   }
 

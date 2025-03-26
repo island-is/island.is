@@ -13,6 +13,7 @@ import {
   CachePaymentFlowStatus,
   ChargeResponse,
   MdNormalised,
+  RefundResponse,
   SavedVerificationCompleteData,
   SavedVerificationPendingData,
   VerificationResponse,
@@ -21,6 +22,7 @@ import {
   generateCardChargeFJSPayload,
   generateChargeRequestOptions,
   generateMd,
+  generateRefundRequestOptions,
   generateVerificationRequestOptions,
   getPayloadFromMd,
   mapToCardErrorCode,
@@ -293,6 +295,51 @@ export class CardPaymentService {
     }
 
     return data
+  }
+
+  async refund(cardNumber: number, charge: ChargeResponse, amount: number) {
+    try {
+      const requestOptions = generateRefundRequestOptions({
+        amount,
+        cardNumber,
+        charge,
+        paymentApiConfig: this.config.paymentGateway,
+      })
+
+      const {
+        paymentGateway: { paymentsGatewayApiUrl },
+      } = this.config
+
+      const response = await fetch(
+        `${paymentsGatewayApiUrl}/Payment/CardPayment`,
+        requestOptions,
+      )
+
+      if (!response.ok) {
+        const responseBody = await response.text()
+        this.logger.error('Failed to refund payment', {
+          statusText: response.statusText,
+          responseBody,
+        })
+        throw new BadRequestException(response.statusText)
+      }
+
+      const data = (await response.json()) as RefundResponse
+
+      if (!data?.isSuccess) {
+        this.logger.error('Failed to charge card', {
+          responseCode: data?.responseCode,
+          responseDescription: data?.responseDescription,
+          correlationId: data?.correlationId,
+        })
+        throw new BadRequestException(mapToCardErrorCode(data.responseCode))
+      }
+
+      return data
+    } catch (e) {
+      this.logger.error('Failed to refund payment', e)
+      throw e
+    }
   }
 
   createCardPaymentChargePayload({
