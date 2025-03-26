@@ -251,7 +251,7 @@ jobs:
       - name: Get changed files
         id: changed-files
         run: |
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }} | tr '\n' ',' | sed 's/,$//')
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }} | grep -P '\.(ts|js|mjs|mts)' | tr '\n' ',' | sed 's/,$//')
           echo "CHANGED_FILES=${CHANGED_FILES}" | tee -a "$GITHUB_ENV"
 
       - name: Setup yarn
