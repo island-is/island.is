@@ -20,7 +20,7 @@ import {
   CertificationTypesEnum,
   ListTypesEnum,
   FieldTypesEnum,
-} from '@island.is/form-system/enums'
+} from '@island.is/form-system/shared'
 
 @Injectable()
 export class OrganizationsService {

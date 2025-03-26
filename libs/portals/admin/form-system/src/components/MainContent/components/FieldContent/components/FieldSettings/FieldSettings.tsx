@@ -6,7 +6,7 @@ import { TextFieldSettings } from './components/TextFieldSettings'
 import { ListSettings } from './components/ListSettings'
 import { ToggleConnection } from './components/ToggleConnection'
 import { FileUploadSettings } from './components/UploadSettings'
-import { FieldTypesEnum } from '@island.is/form-system/enums'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 
 export const FieldSettings = () => {
   const { control } = useContext(ControlContext)

@@ -12,7 +12,7 @@ import {
   DELETE_SCREEN,
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
-import { FieldTypesEnum } from '@island.is/form-system/enums'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 
 export const NavButtons = () => {
   const { control, controlDispatch } = useContext(ControlContext)

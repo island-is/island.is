@@ -13,7 +13,7 @@ import {
   CertificationTypesEnum,
   ListTypesEnum,
   FieldTypesEnum,
-} from '@island.is/form-system/enums'
+} from '@island.is/form-system/shared'
 
 @Table({ tableName: 'organization_permission' })
 export class OrganizationPermission extends Model<OrganizationPermission> {

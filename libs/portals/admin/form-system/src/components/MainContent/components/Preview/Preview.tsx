@@ -16,7 +16,7 @@ import {
   List,
   m,
 } from '@island.is/form-system/ui'
-import { FieldTypesEnum } from '@island.is/form-system/enums'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 import { useIntl } from 'react-intl'
 
 interface Props {

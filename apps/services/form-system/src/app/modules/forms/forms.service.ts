@@ -4,7 +4,7 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
-import { SectionTypes } from '@island.is/form-system/enums'
+import { SectionTypes } from '@island.is/form-system/shared'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
@@ -17,7 +17,10 @@ import { FormResponseDto } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
-import { UpdateFormResponse, UpdateFormError } from '@island.is/form-system/dto'
+import {
+  UpdateFormResponse,
+  UpdateFormError,
+} from '@island.is/form-system/shared'
 import {
   CertificationType,
   CertificationTypes,
@@ -44,7 +47,7 @@ import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationU
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { FormUrl } from '../formUrls/models/formUrl.model'
 import { FormUrlDto } from '../formUrls/models/dto/formUrl.dto'
-import { FormStatus } from '@island.is/form-system/enums'
+import { FormStatus } from '@island.is/form-system/shared'
 import { Option } from '../../dataTypes/option.model'
 import { Op, UniqueConstraintError } from 'sequelize'
 import { v4 as uuidV4 } from 'uuid'

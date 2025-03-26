@@ -1,4 +1,4 @@
-import { FieldTypesEnum } from '@island.is/form-system/enums'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 import { FieldSettings } from './fieldSettings.model'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'

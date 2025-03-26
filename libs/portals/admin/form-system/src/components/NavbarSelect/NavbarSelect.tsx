@@ -9,7 +9,7 @@ import {
   Maybe,
 } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../lib/utils/interfaces'
-import { SectionTypes } from '@island.is/form-system/enums'
+import { SectionTypes } from '@island.is/form-system/shared'
 
 const filterSections = (
   sections: Maybe<Maybe<FormSystemSection>[]> | undefined,

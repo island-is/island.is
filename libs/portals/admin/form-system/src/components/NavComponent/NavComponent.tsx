@@ -13,7 +13,7 @@ import cn from 'classnames'
 import { Box, Checkbox } from '@island.is/island-ui/core'
 import { truncateName } from '../../lib/utils/truncateText'
 import { NavButtons } from './components/NavButtons'
-import { SectionTypes } from '@island.is/form-system/enums'
+import { SectionTypes } from '@island.is/form-system/shared'
 
 type Props = {
   type: ItemType

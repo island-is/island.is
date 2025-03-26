@@ -19,7 +19,7 @@ import {
   ApplicationEvents,
   FieldTypesEnum,
   ApplicantTypesEnum,
-} from '@island.is/form-system/enums'
+} from '@island.is/form-system/shared'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
 import { ApplicationEvent } from './models/applicationEvent.model'

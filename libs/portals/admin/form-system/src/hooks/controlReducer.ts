@@ -11,7 +11,7 @@ import { UniqueIdentifier } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { removeTypename } from '../lib/utils/removeTypename'
 import { ActiveItem } from '../lib/utils/interfaces'
-import { SectionTypes } from '@island.is/form-system/enums'
+import { SectionTypes } from '@island.is/form-system/shared'
 
 // TODO
 // This is a very long reducer that is handling many responsibilities making it difficult to read and maintain. You can simplify it by splitting it into smaller more focused reducers.

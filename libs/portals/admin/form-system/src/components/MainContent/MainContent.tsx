@@ -17,7 +17,7 @@ import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepO
 import { useIntl } from 'react-intl'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
 import { m } from '@island.is/form-system/ui'
-import { SectionTypes } from '@island.is/form-system/enums'
+import { SectionTypes } from '@island.is/form-system/shared'
 
 export const MainContent = () => {
   const { control, controlDispatch, updateActiveItem, setFocus, focus } =

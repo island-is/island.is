@@ -16,7 +16,7 @@ import { FormApplicantType } from '../../formApplicantTypes/models/formApplicant
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
 import { FormUrl } from '../../formUrls/models/formUrl.model'
-import { FormStatus } from '@island.is/form-system/enums'
+import { FormStatus } from '@island.is/form-system/shared'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {

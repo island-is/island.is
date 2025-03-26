@@ -20,7 +20,7 @@ import {
   UPDATE_LIST_ITEM,
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
-import { FieldTypesEnum } from '@island.is/form-system/enums'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 
 interface Props {
   listItem: FormSystemListItem

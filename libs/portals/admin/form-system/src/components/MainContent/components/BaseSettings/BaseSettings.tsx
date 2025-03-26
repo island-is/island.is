@@ -11,7 +11,7 @@ import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
-import { UpdateFormResponse } from '@island.is/form-system/dto'
+import { UpdateFormResponse } from '@island.is/form-system/shared'
 import { convertToSlug } from '../../../../lib/utils/convertToSlug'
 
 export const BaseSettings = () => {

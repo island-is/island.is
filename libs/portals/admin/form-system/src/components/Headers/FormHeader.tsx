@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { useContext } from 'react'
 import { ControlContext } from '../../context/ControlContext'
-import { SectionTypes } from '@island.is/form-system/enums'
+import { SectionTypes } from '@island.is/form-system/shared'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
 
 export const FormHeader = () => {

@@ -23,7 +23,7 @@ import {
   UPDATE_SECTION_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
 import { updateFormFn } from '../lib/utils/updateFormFn'
-import { SectionTypes } from '@island.is/form-system/enums'
+import { SectionTypes } from '@island.is/form-system/shared'
 
 export const FormProvider: React.FC<{
   children: React.ReactNode

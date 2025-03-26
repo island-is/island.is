@@ -1,7 +1,7 @@
 export default {
   production: process.env.NODE_ENV === 'production',
   audit: {
-    defaultNamespace: '@island.is/form-system',
+    defaultNamespace: '@island.is/portals-admin-form-system',
     groupName: process.env.AUDIT_GROUP_NAME,
     // Same service name as in Nx project.json
     serviceName: 'services-form-system-api',
