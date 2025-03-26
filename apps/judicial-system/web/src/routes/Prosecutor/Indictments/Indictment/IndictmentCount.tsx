@@ -40,13 +40,13 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   UpdateIndictmentCount,
-  useIndictmentCounts,
+  useLawTag,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffenses'
 
 import { getIncidentDescription } from './lib/getIncidentDescription'
 import { Offenses } from './Offenses/Offenses'
-import { indictmentCount as strings } from './IndictmentCount.strings'
+import { strings } from './IndictmentCount.strings'
 import * as styles from './IndictmentCount.css'
 
 interface Props {
@@ -207,7 +207,7 @@ export const IndictmentCount: FC<Props> = ({
   setWorkingCase,
 }) => {
   const { formatMessage } = useIntl()
-  const { lawTag } = useIndictmentCounts()
+  const lawTag = useLawTag()
   const { deleteOffense } = useOffenses()
 
   // Use the gender of the single defendant if there is only one,

@@ -1,5 +1,4 @@
 import { FC, useState } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
 import { Substance as SubstanceEnum } from '@island.is/judicial-system/types'
@@ -8,7 +7,7 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
-import { substanceEnum } from '../Substances/SubstancesEnum.strings'
+import { strings } from './Substance.strings'
 
 interface Props {
   substance: SubstanceEnum
@@ -23,8 +22,6 @@ export const Substance: FC<Props> = ({
   onDelete,
   amount,
 }) => {
-  const { formatMessage } = useIntl()
-
   const [
     substanceAmountMissingErrorMessage,
     setSubstanceAmountMissingErrorMessage,
@@ -37,7 +34,7 @@ export const Substance: FC<Props> = ({
       key={`substance-${substance}`}
       name={substance}
       autoComplete="off"
-      label={`${formatMessage(substanceEnum[substance])} ${
+      label={`${strings[substance]} ${
         [SubstanceEnum.GABAPENTIN, SubstanceEnum.PREGABALIN].includes(substance)
           ? '(µg/ml)'
           : '(ng/ml)'
