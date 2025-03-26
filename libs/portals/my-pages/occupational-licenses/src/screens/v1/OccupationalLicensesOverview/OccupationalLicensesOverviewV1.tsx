@@ -76,7 +76,7 @@ const OverviewV1 = () => {
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
-        title={m.occupationaLicenses}
+        title={m.occupationalLicenses}
         intro={formatMessage(m.occupationalLicensesDescription)}
         serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
         serviceProviderTooltip={formatMessage(m.occupationalLicenseTooltip)}

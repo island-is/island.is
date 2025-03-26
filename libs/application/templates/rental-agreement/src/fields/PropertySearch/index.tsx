@@ -112,7 +112,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     { input: HmsSearchInput }
   >(ADDRESS_SEARCH_QUERY, {
     onError: (error) => {
-      console.error('Error fetching search results', error)
+      console.error('Error fetching address', error)
     },
     onCompleted: (data) => {
       if (data.hmsSearch) {
