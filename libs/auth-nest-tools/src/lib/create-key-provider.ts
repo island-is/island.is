@@ -88,14 +88,12 @@ const createMultiIssuerKeyProvider = ({
     }
 
     const payload = decodedJwtToken.payload
-    if (typeof payload === 'string') {
+    if (typeof payload === 'string')
       throw new Error(
         "Token payload is a plain string, don't know what to do 🤷",
       )
-    }
-    if (payload.iss === undefined) {
+    if (payload.iss === undefined)
       throw new Error('Issuer field is undefined 😠')
-    }
 
     const issuer = payload.iss
     const client = clients.get(issuer)
