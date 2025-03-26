@@ -264,12 +264,7 @@ jobs:
         run: yarn nx affected -t lint --base=origin/$GITHUB_BASE_REF --fix --lintFilePatterns="${CHANGED_FILES}" --verbose
 
       - name: Commit changed files
-        run: |
-          if git diff --exit-code; then exit 0; fi
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git commit -am "chore: Lintfix dirty files"
-          git push
+        run: ./infra/scripts/ci/git-check-dirty.sh . lintfix dirtybot
 
   linting:
     needs:
