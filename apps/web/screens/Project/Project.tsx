@@ -337,12 +337,14 @@ const ProjectPage: Screen<PageProps> = ({
           )
         })}
       </Stack>
-      <ProjectFooter
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        projectPage={projectPage}
-        namespace={projectNamespace}
-      />
+      <Box marginTop="auto">
+        <ProjectFooter
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          projectPage={projectPage}
+          namespace={projectNamespace}
+        />
+      </Box>
     </>
   )
 }

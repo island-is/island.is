@@ -33,6 +33,7 @@ import {
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems } from '../utils'
 import { CodeOwners } from '@island.is/shared/constants'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -70,11 +71,21 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/digitalTachographDriversCardForm/index').then(
-                  (module) =>
-                    Promise.resolve(module.DigitalTachographDriversCardForm),
-                ),
+              formLoader: async ({ featureFlagClient }) => {
+                const client = featureFlagClient as FeatureFlagClient
+                const allowFakeData = await client.getValue(
+                  Features.digitalTachographDriversCardAllowFakeData,
+                  false,
+                )
+
+                const getForm = await import(
+                  '../forms/digitalTachographDriversCardForm/index'
+                ).then((module) => module.getDigitalTachographDriversCardForm)
+
+                return getForm({
+                  allowFakeData,
+                })
+              },
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
