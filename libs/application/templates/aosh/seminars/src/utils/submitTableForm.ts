@@ -8,7 +8,6 @@ import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { ARE_INDIVIDUALS_VALID_QUERY } from '../graphql/queries'
 import { ParticipantWithValidation } from '../shared/types'
-import { participants as participantMessages } from '../lib/messages'
 
 export const submitTableForm = async (
   application: Application,
@@ -100,6 +99,10 @@ export const submitTableForm = async (
     dictionaryOfItems.push({
       path: 'participantValidityError',
       value: '',
+    })
+    dictionaryOfItems.push({
+      path: 'participantFinishedValidation',
+      value: 'true',
     })
   }
 
