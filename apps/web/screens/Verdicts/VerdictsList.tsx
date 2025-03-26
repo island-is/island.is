@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import {
@@ -77,6 +77,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
   initialData,
   customPageData,
 }) => {
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
   const [data, setData] = useState(initialData)
   const [page, setPage] = useState(1)
   const { format } = useDateUtils()
@@ -255,12 +256,17 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
               <Stack space={3}>
                 <Box className={styles.searchInput}>
                   <Input
+                    ref={searchInputRef}
                     name="verdict-search-input"
-                    onChange={(ev) => {
-                      setSearchTerm(ev.target.value)
-                      setPage(1)
+                    onKeyDown={(ev) => {
+                      if (ev.key === 'Enter') {
+                        setSearchTerm(searchInputRef.current?.value ?? '')
+                        setPage(1)
+
+                        // Remove focus from input field after pressing enter
+                        ;(ev.target as { blur?: () => void })?.blur?.()
+                      }
                     }}
-                    value={searchTerm}
                     placeholder={formatMessage(
                       m.listPage.searchInputPlaceholder,
                     )}
