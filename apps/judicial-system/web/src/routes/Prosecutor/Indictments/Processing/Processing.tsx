@@ -319,6 +319,7 @@ const Processing: FC = () => {
               title={formatMessage(strings.defendantPlea, {
                 defendantCount: workingCase.defendants.length,
               })}
+              heading="h2"
             />
             {workingCase.defendants.map((defendant) => (
               <Box marginBottom={2} key={defendant.id}>
@@ -392,12 +393,16 @@ const Processing: FC = () => {
           component="section"
           marginBottom={workingCase.hasCivilClaims === true ? 5 : 10}
         >
-          <SectionHeading title={formatMessage(strings.civilDemandsTitle)} />
+          <SectionHeading
+            title={formatMessage(strings.civilDemandsTitle)}
+            heading="h2"
+          />
           <BlueBox>
             <SectionHeading
               title={formatMessage(strings.isCivilClaim)}
               marginBottom={2}
-              heading="h4"
+              heading="h3"
+              variant="h4"
               required
             />
             <Box display="flex">
@@ -437,7 +442,10 @@ const Processing: FC = () => {
         {workingCase.hasCivilClaims && (
           <>
             <Box component="section" marginBottom={5}>
-              <SectionHeading title={formatMessage(strings.civilClaimant)} />
+              <SectionHeading
+                title={formatMessage(strings.civilClaimant)}
+                heading="h2"
+              />
               {workingCase.civilClaimants?.map((civilClaimant, index) => (
                 <Fragment key={civilClaimant.id}>
                   <Box marginBottom={3}>
@@ -724,7 +732,7 @@ const Processing: FC = () => {
               ))}
             </Box>
             <Box component="section" marginBottom={10}>
-              <SectionHeading title="Bótakrafa" />
+              <SectionHeading title="Bótakrafa" heading="h2" />
               <InputFileUpload
                 fileList={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
