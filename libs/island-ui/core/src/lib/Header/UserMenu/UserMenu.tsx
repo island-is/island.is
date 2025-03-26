@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from 'react'
-import { applyCase } from 'beygla'
+import { applyCase } from 'beygla/strict'
 
 import { Box } from '../../Box/Box'
 import { Button } from '../../Button/Button'
