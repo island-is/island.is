@@ -1091,6 +1091,10 @@ export const m = defineMessages({
     id: 'service.portal:no-search-resulsts',
     defaultMessage: 'Engar niðurstöður',
   },
+  noSearchResultsText: {
+    id: 'service.portal:no-search-results-text',
+    defaultMessage: 'Ekkert fannst við leit á „{arg}“',
+  },
   noDataFoundDetail: {
     id: 'service.portal:no-data-found-detail',
     defaultMessage:

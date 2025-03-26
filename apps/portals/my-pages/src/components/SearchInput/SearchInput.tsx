@@ -5,7 +5,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useMemo, useRef, useState } from 'react'
-import { LinkResolver } from '@island.is/portals/my-pages/core'
+import { LinkResolver, SearchPaths } from '@island.is/portals/my-pages/core'
 import cn from 'classnames'
 
 import * as styles from './SearchInput.css'
@@ -72,9 +72,11 @@ export const SearchInput = ({ white, colored }: Props) => {
       inputValue={query}
       openMenuOnFocus
       onSubmit={(_, option) => {
-        console.log(option)
-        const uri = option?.value
-        uri && navigate(uri)
+        if (option?.value) {
+          navigate(option?.value)
+        } else if (query) {
+          navigate(`${SearchPaths.Search}?query=${query}`)
+        } else navigate(SearchPaths.Search)
       }}
       onInputValueChange={(value) => {
         if (value && value !== query) {
