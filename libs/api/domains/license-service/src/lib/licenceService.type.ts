@@ -114,7 +114,8 @@ export type GenericLicenseMetadata = {
   type: GenericLicenseType
   provider: {
     id: GenericLicenseProviderId
-    referenceId: string
+    referenceId?: string
+    entryId: string
   }
   pkpass: boolean
   pkpassVerify: boolean
