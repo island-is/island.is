@@ -112,7 +112,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     { input: HmsSearchInput }
   >(ADDRESS_SEARCH_QUERY, {
     onError: (error) => {
-      console.error('Error fetching address', error)
+      console.error('Error fetching search results', error)
     },
     onCompleted: (data) => {
       if (data.hmsSearch) {
@@ -152,7 +152,11 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       ? storedValue.units?.concat({ ...unit, checked: true }) ?? [
           { ...unit, checked: true },
         ]
-      : storedValue.units?.filter((u: Unit) => u.unitCode !== unit.unitCode)
+      : storedValue.units?.filter((u: Unit) => {
+          const storedUnit = `${unit.propertyCode}_${unit.unitCode}`
+          const checkedUnit = `${u.propertyCode}_${u.unitCode}`
+          return storedUnit !== checkedUnit
+        })
 
     setValue(id, {
       ...storedValue,
@@ -160,11 +164,14 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       checkedUnits: {
         [unit.unitCode ?? '']: checked,
       },
+      checkedUnitsWithpropertyCode: {
+        [`${unit.propertyCode}_${unit.unitCode}`]: checked,
+      },
     })
 
     setCheckedUnits((prev) => ({
       ...prev,
-      [unit.unitCode ?? '']: checked,
+      [`${unit.propertyCode}_${unit.unitCode}`]: checked,
     }))
   }
 
@@ -207,6 +214,11 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     setSelectedAddress(selectedOption as AddressProps)
     setValue(id, selection ? selection : undefined)
   }
+
+  // Clear inital errors on mount
+  useEffect(() => {
+    clearErrors()
+  }, [])
 
   return (
     <>
