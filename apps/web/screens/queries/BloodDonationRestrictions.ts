@@ -34,6 +34,7 @@ export const GET_BLOOD_DONATION_RESTRICTION_DETAILS_QUERY = gql`
         ...HtmlFields
       }
       description
+      hasCardText
       hasDetailedText
       detailedText {
         ...HtmlFields

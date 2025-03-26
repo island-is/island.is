@@ -69,6 +69,9 @@ export class BloodDonationRestrictionDetails {
   @Field(() => String)
   description!: string
 
+  @Field(() => Boolean)
+  hasCardText!: boolean
+
   @CacheField(() => [SliceUnion])
   cardText!: Array<typeof SliceUnion>
 
@@ -86,6 +89,9 @@ export const mapBloodDonationRestrictionDetails = ({
   return {
     id: sys.id,
     title: fields.title ?? '',
+    hasCardText: fields.cardText
+      ? documentToPlainTextString(fields.cardText).trim().length > 0
+      : false,
     cardText: fields.cardText
       ? mapDocument(fields.cardText, sys.id + ':cardText')
       : [],

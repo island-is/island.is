@@ -91,18 +91,20 @@ const BloodDonationRestrictionDetails: CustomScreen<
             <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
           </Stack>
           {Boolean(item.description) && <Text>{item.description}</Text>}
-          <Box
-            background="dark100"
-            paddingX={3}
-            paddingY={2}
-            borderRadius="standard"
-            width="full"
-          >
-            <Text variant="h3" as="h2">
-              {formatMessage(m.listPage.cardSubheading)}
-            </Text>
-            <Text as="div">{webRichText(item.cardText)}</Text>
-          </Box>
+          {item.hasCardText && (
+            <Box
+              background="dark100"
+              paddingX={3}
+              paddingY={2}
+              borderRadius="standard"
+              width="full"
+            >
+              <Text variant="h3" as="h2">
+                {formatMessage(m.listPage.cardSubheading)}
+              </Text>
+              <Text as="div">{webRichText(item.cardText)}</Text>
+            </Box>
+          )}
           {item.hasDetailedText && (
             <Stack space={0}>
               <Text variant="h3" as="h2">
