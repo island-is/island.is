@@ -288,6 +288,14 @@ export class CaseController {
       }
     }
 
+    const hasCourtIdUpdate =
+      theCase.courtId && update.courtId && theCase.courtId !== update.courtId
+    if (hasCourtIdUpdate) {
+      update.courtCaseNumber = null
+      update.judgeId = null
+      update.registrarId = null
+    }
+
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
