@@ -1,4 +1,5 @@
 import { FC, PropsWithChildren, useContext } from 'react'
+import cn from 'classnames'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
@@ -91,7 +92,11 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
         }
       }}
     >
-      <span className={styles.fileNameContainer}>
+      <span
+        className={cn(styles.fileNameContainer, {
+          [styles.fileNameContainerWithChildren]: !!children,
+        })}
+      >
         <Text color="blue400" variant="h4">
           {title}
         </Text>
