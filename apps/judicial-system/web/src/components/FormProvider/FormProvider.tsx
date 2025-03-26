@@ -12,12 +12,12 @@ import { useRouter } from 'next/router'
 
 import { USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
+  Case,
   CaseOrigin,
   CaseState,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import { CaseQuery, useCaseLazyQuery } from './case.generated'
@@ -170,9 +170,7 @@ const FormProvider = ({ children }: Props) => {
   )
 
   useEffect(() => {
-    if (!isAuthenticated && router.pathname !== '/') {
-      router.push(`/api/auth/login?redirectRoute=${window.location.pathname}`)
-    } else if (
+    if (
       limitedAccess !== undefined && // Wait until limitedAccess is defined
       id &&
       (state === 'fetch' || state === 'refresh')

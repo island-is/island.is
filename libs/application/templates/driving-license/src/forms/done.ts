@@ -10,7 +10,6 @@ export const done: Form = buildForm({
   mode: FormModes.COMPLETED,
   children: [
     buildFormConclusionSection({
-      sectionTitle: '',
       multiFieldTitle: m.applicationDone,
       alertTitle: m.applicationDone,
       alertMessage: ({ answers }) =>

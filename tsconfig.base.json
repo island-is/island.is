@@ -203,6 +203,9 @@
       "@island.is/api/domains/secondary-school": [
         "libs/api/domains/secondary-school/src/index.ts"
       ],
+      "@island.is/api/domains/seminars-ver": [
+        "libs/api/domains/seminars-ver/src/index.ts"
+      ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
       ],
@@ -306,6 +309,9 @@
       "@island.is/application/templates/aosh/request-for-inspection": [
         "libs/application/templates/aosh/request-for-inspection/src/index.ts"
       ],
+      "@island.is/application/templates/aosh/seminars": [
+        "libs/application/templates/aosh/seminars/src/index.ts"
+      ],
       "@island.is/application/templates/aosh/street-registration": [
         "libs/application/templates/aosh/street-registration/src/index.ts"
       ],
@@ -389,6 +395,9 @@
       ],
       "@island.is/application/templates/examples/example-inputs": [
         "libs/application/templates/examples/example-inputs/src/index.ts"
+      ],
+      "@island.is/application/templates/examples/example-no-inputs": [
+        "libs/application/templates/examples/example-no-inputs/src/index.ts"
       ],
       "@island.is/application/templates/examples/example-state-transfers": [
         "libs/application/templates/examples/example-state-transfers/src/index.ts"
@@ -698,6 +707,7 @@
       "@island.is/clients/form-system": [
         "libs/clients/form-system/src/index.ts"
       ],
+      "@island.is/clients/grants": ["libs/clients/grants/src/index.ts"],
       "@island.is/clients/health-directorate": [
         "libs/clients/health-directorate/src/index.ts"
       ],
@@ -781,6 +791,9 @@
       ],
       "@island.is/clients/secondary-school": [
         "libs/clients/secondary-school/src/index.ts"
+      ],
+      "@island.is/clients/seminars-ver": [
+        "libs/clients/seminars-ver/src/index.ts"
       ],
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/ship-registry": [
@@ -921,6 +934,12 @@
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
       "@island.is/form-system": ["libs/portals/admin/form-system/src/index.ts"],
+      "@island.is/form-system/graphql": [
+        "libs/portals/form-system/graphql/src/index.ts"
+      ],
+      "@island.is/form-system/ui": [
+        "libs/portals/form-system/ui-components/src/index.ts"
+      ],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],
@@ -966,6 +985,9 @@
       ],
       "@island.is/judicial-system/types": [
         "libs/judicial-system/types/src/index.ts"
+      ],
+      "@island.is/libs/portals/form-system": [
+        "libs/portals/form-system/src/index.ts"
       ],
       "@island.is/localization": ["libs/localization/src/index.ts"],
       "@island.is/logging": ["libs/logging/src/index.ts"],
@@ -1165,8 +1187,14 @@
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
       ],
+      "application/templates/examples/example-no-inputs": [
+        "libs/application/templates/examples/example-no-inputs/src/index.ts"
+      ],
       "application/templates/inao/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
+      ],
+      "application/templates/name-of-application": [
+        "libs/application/templates/name-of-application/src/index.ts"
       ],
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
     }
