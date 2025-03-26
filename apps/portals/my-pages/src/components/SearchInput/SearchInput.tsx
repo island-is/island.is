@@ -72,6 +72,7 @@ export const SearchInput = ({ white, colored }: Props) => {
       inputValue={query}
       openMenuOnFocus
       onSubmit={(_, option) => {
+        console.log(option)
         const uri = option?.value
         uri && navigate(uri)
       }}
