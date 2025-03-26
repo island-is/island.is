@@ -1,5 +1,4 @@
 import {
-  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -11,7 +10,9 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { Case } from '../case/models/case.model'
+import { RequestSharedWhen } from '@island.is/judicial-system/types'
+
+import { Case } from '../../case/models/case.model'
 
 @Table({
   tableName: 'victim',
@@ -40,9 +41,9 @@ export class Victim extends Model {
   @ApiProperty({ type: String })
   caseId!: string
 
-  @BelongsTo(() => Case, 'caseId')
-  @ApiPropertyOptional({ type: () => Case })
-  case?: Case
+  // @BelongsTo(() => Case, 'caseId')
+  // @ApiPropertyOptional({ type: () => Case })
+  // case?: Case
 
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
@@ -76,7 +77,11 @@ export class Victim extends Model {
   @ApiPropertyOptional({ type: String })
   lawyerPhoneNumber?: string
 
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(RequestSharedWhen),
+  })
+  @ApiPropertyOptional({ enum: RequestSharedWhen })
   lawyerAccessToRequest?: string
 }

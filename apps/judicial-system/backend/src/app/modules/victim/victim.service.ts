@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { CreateVictimDto } from './dto/createVictim.dto'
 import { UpdateVictimDto } from './dto/updateVictim.dto'
-import { Victim } from './victim.model'
+import { Victim } from './models/victim.model'
 
 @Injectable()
 export class VictimService {
@@ -11,6 +11,16 @@ export class VictimService {
     @InjectModel(Victim)
     private readonly victimModel: typeof Victim,
   ) {}
+
+  async findById(victimId: string): Promise<Victim> {
+    const victim = await this.victimModel.findByPk(victimId)
+
+    if (!victim) {
+      throw new NotFoundException(`Victim ${victimId} not found`)
+    }
+
+    return victim
+  }
 
   async findByCaseId(caseId: string): Promise<Victim[]> {
     return this.victimModel.findAll({

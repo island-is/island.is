@@ -17,8 +17,8 @@ import {
   PoliceModule,
   SubpoenaModule,
   UserModule,
+  VictimModule,
 } from '../index'
-import { VictimModule } from '../victim/victim.module'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { CaseString } from './models/caseString.model'

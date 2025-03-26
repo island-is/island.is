@@ -1,4 +1,6 @@
 // src/app/case/guards/caseExists.guard.ts
+import { isUuid } from 'uuidv4'
+
 import {
   BadRequestException,
   CanActivate,
@@ -18,6 +20,10 @@ export class MinimalCaseExistsGuard implements CanActivate {
 
     if (!caseId) {
       throw new BadRequestException('Missing case id')
+    }
+
+    if (!isUuid(caseId)) {
+      throw new BadRequestException('Invalid case id format')
     }
 
     request.case = await this.caseService.findMinimalById(caseId)

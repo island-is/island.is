@@ -1,2 +1,2 @@
-export { Victim } from './victim.model'
+export { Victim } from './models/victim.model'
 export { VictimService } from './victim.service'

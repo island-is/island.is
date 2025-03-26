@@ -76,6 +76,7 @@ import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User } from '../user'
+import { Victim } from '../victim'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { Case } from './models/case.model'
@@ -316,6 +317,7 @@ export const include: Includeable[] = [
     order: [['created', 'ASC']],
     separate: true,
   },
+  { model: Victim, as: 'victims', required: false },
   {
     model: IndictmentCount,
     as: 'indictmentCounts',
@@ -1702,7 +1704,7 @@ export class CaseService {
         isArchived: false,
         state: { [Op.not]: CaseState.DELETED },
       },
-      attributes: ['id', 'state', 'isArchived'],
+      include: [],
     })
 
     if (!minimalCase) {

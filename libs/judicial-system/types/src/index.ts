@@ -77,6 +77,7 @@ export {
   CaseAppealRulingDecision,
   CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
+  RequestSharedWhen,
   SessionArrangements,
   indictmentCases,
   restrictionCases,

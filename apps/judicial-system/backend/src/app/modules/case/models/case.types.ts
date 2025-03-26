@@ -1,7 +1,29 @@
-import { CaseState } from '@island.is/judicial-system/types'
+import type { Case } from './case.model'
 
-export interface MinimalCase {
-  id: string
-  state: CaseState
-  isArchived?: boolean
-}
+export type MinimalCase = Omit<
+  Case,
+  | 'defendants'
+  | 'prosecutor'
+  | 'creatingProsecutor'
+  | 'court'
+  | 'registrar'
+  | 'judge'
+  | 'parentCase'
+  | 'childCase'
+  | 'caseFiles'
+  | 'notifications'
+  | 'eventLogs'
+  | 'dateLogs'
+  | 'caseStrings'
+  | 'mergedCases'
+  | 'mergeCase'
+  | 'prosecutorsOffice'
+  | 'sharedWithProsecutorsOffice'
+  | 'appealAssistant'
+  | 'appealJudge1'
+  | 'appealJudge2'
+  | 'appealJudge3'
+  | 'courtRecordSignatory'
+  | 'indictmentReviewer'
+  | 'civilClaimants'
+>
