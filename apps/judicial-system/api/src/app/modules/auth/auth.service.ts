@@ -32,9 +32,7 @@ export class AuthService {
   async findUsersByNationalId(nationalId: string): Promise<User[] | undefined> {
     const res = await fetch(
       `${this.config.backendUrl}/api/user/?nationalId=${nationalId}`,
-      {
-        headers: { authorization: `Bearer ${this.config.secretToken}` },
-      },
+      { headers: { authorization: `Bearer ${this.config.secretToken}` } },
     )
 
     if (!res.ok) {
@@ -48,9 +46,7 @@ export class AuthService {
     try {
       const res = await fetch(
         `${this.config.backendUrl}/api/cases/limitedAccess/defender?nationalId=${nationalId}`,
-        {
-          headers: { authorization: `Bearer ${this.config.secretToken}` },
-        },
+        { headers: { authorization: `Bearer ${this.config.secretToken}` } },
       )
       if (res.ok) {
         return await res.json()
