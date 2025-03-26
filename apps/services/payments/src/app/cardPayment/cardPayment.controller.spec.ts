@@ -401,8 +401,8 @@ describe('CardPaymentController', () => {
         cvc: 123,
       }
 
-      const getPaymentFlowWithPaymentDetailsSpy = jest
-        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowWithPaymentDetails')
+      const getPaymentFlowDetailsSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
         .mockRejectedValue(
           new BadRequestException(PaymentServiceCode.PaymentFlowNotFound),
         )
@@ -416,7 +416,7 @@ describe('CardPaymentController', () => {
       const errorCode = response.body.detail
       expect(errorCode).toBe(PaymentServiceCode.PaymentFlowNotFound)
 
-      getPaymentFlowWithPaymentDetailsSpy.mockRestore()
+      getPaymentFlowDetailsSpy.mockRestore()
     })
 
     it('should throw an error if trying to charge a payment flow that has already been paid', async () => {
@@ -429,13 +429,21 @@ describe('CardPaymentController', () => {
         cvc: 123,
       }
 
-      const getPaymentFlowWithPaymentDetailsSpy = jest
-        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowWithPaymentDetails')
+      const getPaymentFlowDetailsSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+        .mockResolvedValue({} as any)
+      const getPaymentFlowChargeDetailsSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
         .mockResolvedValue({
-          paymentDetails: {} as any,
-          paymentFlow: {} as any,
+          catalogItems: [],
+          totalPrice: 1000,
+          firstProductTitle: 'TODO',
+        })
+      const getPaymentFlowStatusSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowStatus')
+        .mockResolvedValue({
           paymentStatus: PaymentStatus.PAID,
-          updatedAt: new Date(),
+          updatedAt: new Date(Date.now() - 30 * 1000),
         })
 
       const response = await server
@@ -447,7 +455,9 @@ describe('CardPaymentController', () => {
       const errorCode = response.body.detail
       expect(errorCode).toBe(PaymentServiceCode.PaymentFlowAlreadyPaid)
 
-      getPaymentFlowWithPaymentDetailsSpy.mockRestore()
+      getPaymentFlowDetailsSpy.mockRestore()
+      getPaymentFlowChargeDetailsSpy.mockRestore()
+      getPaymentFlowStatusSpy.mockRestore()
     })
   })
 })

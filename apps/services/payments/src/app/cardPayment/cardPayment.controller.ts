@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
-import format from 'date-fns/format'
 
 import { CardPaymentService } from './cardPayment.service'
 import {
@@ -179,13 +178,16 @@ export class CardPaymentController {
     @Body() chargeCardInput: ChargeCardInput,
   ): Promise<ChargeCardResponse> {
     try {
-      const {
-        paymentFlow,
-        paymentDetails: { catalogItems, totalPrice },
-        paymentStatus,
-      } = await this.paymentFlowService.getPaymentFlowWithPaymentDetails(
+      const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
         chargeCardInput.paymentFlowId,
       )
+      const { catalogItems, totalPrice } =
+        await this.paymentFlowService.getPaymentFlowChargeDetails(
+          paymentFlow.organisationId,
+          paymentFlow.charges,
+        )
+      const { paymentStatus } =
+        await this.paymentFlowService.getPaymentFlowStatus(paymentFlow)
 
       if (paymentStatus === 'paid') {
         throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)

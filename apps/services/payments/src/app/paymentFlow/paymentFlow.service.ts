@@ -12,7 +12,11 @@ import {
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 
-import { PaymentFlow, PaymentFlowCharge } from './models/paymentFlow.model'
+import {
+  PaymentFlow,
+  PaymentFlowAttributes,
+  PaymentFlowCharge,
+} from './models/paymentFlow.model'
 
 import {
   PaymentFlowUpdateEvent,
@@ -109,7 +113,7 @@ export class PaymentFlowService {
     }
   }
 
-  private async getPaymentFlowChargeDetails(
+  async getPaymentFlowChargeDetails(
     organisationId: string,
     charges: Pick<PaymentFlowCharge, 'chargeItemCode' | 'price' | 'quantity'>[],
   ) {
@@ -203,7 +207,7 @@ export class PaymentFlowService {
     return true
   }
 
-  async getPaymentFlowWithPaymentDetails(id: string) {
+  async getPaymentFlowDetails(id: string) {
     const paymentFlow = (
       await this.paymentFlowModel.findOne({
         where: {
@@ -221,19 +225,18 @@ export class PaymentFlowService {
       throw new BadRequestException(PaymentServiceCode.PaymentFlowNotFound)
     }
 
+    return paymentFlow
+  }
+
+  async getPaymentFlowStatus(paymentFlow: PaymentFlowAttributes) {
     const paymentFlowSuccessEvent = (
       await this.paymentFlowEventModel.findOne({
         where: {
-          paymentFlowId: id,
+          paymentFlowId: paymentFlow.id,
           type: 'success',
         },
       })
     )?.toJSON()
-
-    const paymentDetails = await this.getPaymentFlowChargeDetails(
-      paymentFlow.organisationId,
-      paymentFlow.charges,
-    )
 
     const isAlreadyPaid = !!paymentFlowSuccessEvent
 
@@ -246,7 +249,7 @@ export class PaymentFlowService {
       const chargeConfirmation = (
         await this.paymentFlowFjsChargeConfirmationModel.findOne({
           where: {
-            paymentFlowId: id,
+            paymentFlowId: paymentFlow.id,
           },
         })
       )?.toJSON()
@@ -260,18 +263,19 @@ export class PaymentFlowService {
       }
     }
 
-    return {
-      paymentFlow,
-      paymentDetails,
-      paymentStatus,
-      updatedAt,
-    }
+    return { paymentStatus, updatedAt }
   }
 
   async getPaymentFlow(id: string): Promise<GetPaymentFlowDTO | null> {
     try {
-      const { paymentFlow, paymentDetails, paymentStatus, updatedAt } =
-        await this.getPaymentFlowWithPaymentDetails(id)
+      const paymentFlow = await this.getPaymentFlowDetails(id)
+      const paymentDetails = await this.getPaymentFlowChargeDetails(
+        paymentFlow.organisationId,
+        paymentFlow.charges,
+      )
+      const { paymentStatus, updatedAt } = await this.getPaymentFlowStatus(
+        paymentFlow,
+      )
 
       const payerName = await this.getPayerName(paymentFlow.payerNationalId)
 
