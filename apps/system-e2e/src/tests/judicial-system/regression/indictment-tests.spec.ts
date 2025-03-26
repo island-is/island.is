@@ -240,7 +240,7 @@ test.describe.serial('Indictment tests', () => {
     ])
 
     // Conclusion
-    await expect(page).toHaveURL(`domur/akaera/nidurstada/${caseId}`)
+    await expect(page).toHaveURL(`domur/akaera/stada-og-lyktir/${caseId}`)
 
     await page.locator('label').filter({ hasText: 'Lokið' }).click()
     await page.locator('label').filter({ hasText: 'Dómur' }).click()
