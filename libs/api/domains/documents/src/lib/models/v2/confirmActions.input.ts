@@ -9,7 +9,4 @@ export class DocumentConfirmActionsInput {
 
   @Field(() => Boolean, { nullable: true })
   readonly confirmed?: boolean
-
-  @Field(() => [String], { nullable: true })
-  readonly actions?: string[]
 }

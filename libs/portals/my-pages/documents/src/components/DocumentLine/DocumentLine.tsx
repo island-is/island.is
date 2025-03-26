@@ -145,8 +145,6 @@ export const DocumentLine: FC<Props> = ({
     fetchPolicy: 'no-cache',
   })
 
-  //TODO: When merged with V2
-  //refactor queries and move to shared file instead of importing from screens
   const [getDocument, { loading: fileLoading }] =
     useGetDocumentInboxLineV3LazyQuery({
       variables: {
@@ -259,12 +257,9 @@ export const DocumentLine: FC<Props> = ({
   }
 
   const confirmActionCaller = (confirmed: boolean | null) => {
-    const actions = documentLine.actions?.map(
-      (action) => `${action.title}: ${action.data}`,
-    )
     confirmAction({
       variables: {
-        input: { id: documentLine.id, confirmed: confirmed, actions: actions },
+        input: { id: documentLine.id, confirmed: confirmed },
       },
     })
   }

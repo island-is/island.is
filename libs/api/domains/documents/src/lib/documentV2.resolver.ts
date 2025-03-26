@@ -134,14 +134,12 @@ export class DocumentResolverV2 {
       meta: {
         confirmed: input.confirmed,
         isCourtCase: true,
-        actions: input.actions,
       },
     })
     this.logger.info('confirming urgent document modal', {
       category: LOG_CATEGORY,
       id: input.id,
       confirmed: input.confirmed,
-      actions: input.actions,
       isCourtCase: true,
     })
     return { id: input.id, confirmed: input.confirmed }
@@ -161,7 +159,11 @@ export class DocumentResolverV2 {
       namespace: '@island.is/api/document-v2',
       action: 'pdfRenderer',
       resources: input.id,
-      meta: { success: input.success, isCourtCase: input.isCourtCase },
+      meta: {
+        success: input.success,
+        isCourtCase: input.isCourtCase,
+        actions: input.actions,
+      },
     })
     if (!input.success) {
       this.logger.error('failed to render document pdf', {
@@ -170,6 +172,7 @@ export class DocumentResolverV2 {
         success: input.success,
         error: input.error,
         isCourtCase: input.isCourtCase,
+        actions: input.isCourtCase ? input.actions : undefined,
       })
     } else if (input.isCourtCase) {
       this.logger.info('succesfully rendered courtcase document pdf', {
@@ -177,6 +180,7 @@ export class DocumentResolverV2 {
         id: input.id,
         success: input.success,
         isCourtCase: input.isCourtCase,
+        actions: input.actions,
       })
     }
 

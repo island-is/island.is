@@ -114,6 +114,11 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
                   success: false,
                   error: error.message,
                   isCourtCase: isCourtCase,
+                  actions: isCourtCase
+                    ? document.actions?.map(
+                        (action) => `${action.title}: ${action.data}`,
+                      ) ?? []
+                    : undefined,
                 },
               },
             })
@@ -125,6 +130,11 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
                   id: document.id,
                   success: true,
                   isCourtCase: isCourtCase,
+                  actions: isCourtCase
+                    ? document.actions?.map(
+                        (action) => `${action.title}: ${action.data}`,
+                      ) ?? []
+                    : undefined,
                 },
               },
             })
