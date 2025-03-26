@@ -52,7 +52,7 @@ export class InternalCreateCaseDto {
 
   @IsOptional()
   @IsString()
-  @ApiProperty({ type: String })
+  @ApiPropertyOptional({ type: String })
   readonly accusedDOB?: string
 
   @IsOptional()
