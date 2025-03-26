@@ -62,6 +62,7 @@ const CaseFiles = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.criminalRecordSection)}
+            heading="h2"
           />
           <InputFileUpload
             fileList={uploadFiles.filter(
@@ -85,6 +86,7 @@ const CaseFiles = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.costBreakdownSection)}
+            heading="h2"
           />
           <InputFileUpload
             fileList={uploadFiles.filter(
@@ -108,6 +110,7 @@ const CaseFiles = () => {
         <Box component="section" marginBottom={10}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.otherDocumentsSection)}
+            heading="h2"
           />
           <InputFileUpload
             fileList={uploadFiles.filter(
