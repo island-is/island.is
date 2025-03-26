@@ -234,10 +234,23 @@ const registerProperty = z
     }
   })
 
-const specialProvisions = z.object({
-  descriptionInput: z.string().optional(),
-  rulesInput: z.string().optional(),
-}) // TODO: Add validation for descriptionInput if property size has been altered for chosen property unit/s
+const specialProvisions = z
+  .object({
+    descriptionInput: z.string().optional(),
+    rulesInput: z.string().optional(),
+    // This field is only available when descriptionInput is required
+    descriptionInputRequired: z.boolean().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data?.descriptionInputRequired && !data.descriptionInput) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.specialProvisions.housingInfo.inputRequiredErrorMessage,
+        path: ['descriptionInput'],
+      })
+    }
+  })
 
 const condition = z
   .object({

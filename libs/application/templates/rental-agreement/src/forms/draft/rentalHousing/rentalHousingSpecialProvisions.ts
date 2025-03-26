@@ -5,6 +5,7 @@ import {
   buildTextField,
   buildAlertMessageField,
   getValueViaPath,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import { specialProvisions } from '../../../lib/messages'
@@ -18,6 +19,19 @@ export const RentalHousingSpecialProvisions = buildSubSection({
       title: specialProvisions.subsection.pageTitle,
       description: specialProvisions.subsection.pageDescription,
       children: [
+        buildHiddenInput({
+          id: 'specialProvisions.descriptionInputRequired',
+          defaultValue: true,
+          // TODO: change condition to check if m2 have been altered
+          condition: (answers) => {
+            return (
+              getValueViaPath<string>(
+                answers,
+                'registerProperty.categoryClassGroup',
+              ) === 'studentHousing'
+            )
+          },
+        }),
         buildAlertMessageField({
           id: 'specialProvisions.descriptionInputAlert',
           alertType: 'warning',
