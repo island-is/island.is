@@ -1,9 +1,4 @@
-import { CourtDocument, SubstanceMap } from '@island.is/judicial-system/types'
-import {
-  Case,
-  CaseListEntry,
-  IndictmentCount,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export type ReactSelectOption = {
   label: string
@@ -167,26 +162,4 @@ export interface NationalRegistryResponseBusiness {
   items?: NationalRegistryBusiness[]
   meta?: NationalRegistryMeta
   error?: string
-}
-
-/**
- * We are in the process of stopping using the Case type and
- * using the generated Case type from /graphql/schema.tsx instead.
- * We use this type so that we don't have to migrate all the code
- * at once and this type will be removed when we are done.
- */
-export interface TempIndictmentCount
-  extends Omit<IndictmentCount, 'substances'> {
-  substances?: SubstanceMap | null
-}
-
-export interface TempCase
-  extends Omit<
-    Case,
-    'courtDocuments' | 'parentCase' | 'childCase' | 'indictmentCounts'
-  > {
-  courtDocuments?: CourtDocument[] | null
-  parentCase?: TempCase | null
-  childCase?: TempCase | null
-  indictmentCounts?: TempIndictmentCount[] | null
 }
