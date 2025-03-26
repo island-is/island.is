@@ -1,6 +1,7 @@
 import {
   buildAlertMessageField,
   buildCustomField,
+  buildHiddenInput,
   buildMultiField,
   buildSection,
   buildTableRepeaterField,
@@ -107,6 +108,10 @@ export const participantsSection = buildSection({
 
             return hasError === 'true'
           },
+        }),
+        buildHiddenInput({
+          id: 'participantFinishedValidation',
+          defaultValue: 'false',
         }),
       ],
     }),
