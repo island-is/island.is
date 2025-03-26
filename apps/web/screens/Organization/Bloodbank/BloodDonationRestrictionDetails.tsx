@@ -1,15 +1,7 @@
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import {
-  ArrowLink,
-  Box,
-  FocusableBox,
-  GridContainer,
-  Pagination,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
   OrganizationWrapper,
@@ -25,6 +17,8 @@ import {
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -37,7 +31,6 @@ import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_BLOOD_DONATION_RESTRICTION_DETAILS_QUERY } from '../../queries/BloodDonationRestrictions'
 import { getSubpageNavList } from '../SubPage'
 import { m } from './messages.strings'
-import { useI18n } from '@island.is/web/i18n'
 
 interface BlodDonationRestrictionDetailsProps {
   item: BloodDonationRestrictionDetailsItem
@@ -53,6 +46,8 @@ const BlodDonationRestrictionDetails: CustomScreen<
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
+
+  useLocalLinkTypeResolver()
 
   return (
     <OrganizationWrapper

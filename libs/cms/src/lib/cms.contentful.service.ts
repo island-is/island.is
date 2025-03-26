@@ -1155,6 +1155,7 @@ export class CmsContentfulService {
         content_type: 'bloodDonationRestriction',
         limit: itemsPerPage,
         skip: (currentPage - 1) * itemsPerPage,
+        'fields.title[exists]': true,
       },
     )
 

@@ -21,6 +21,7 @@ import {
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -60,6 +61,8 @@ const BloodDonationRestrictionList: CustomScreen<
   const router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+
+  useLocalLinkTypeResolver()
 
   return (
     <OrganizationWrapper
@@ -112,29 +115,31 @@ const BloodDonationRestrictionList: CustomScreen<
                   <Text variant="h4" color="blue400">
                     {item.title}
                   </Text>
-                  <Box
-                    background="dark100"
-                    paddingX={3}
-                    paddingY={2}
-                    borderRadius="standard"
-                    width="full"
-                  >
-                    <Text variant="h5">
-                      {formatMessage(m.listPage.cardSubheading)}
-                    </Text>
-                    <Text as="div">{webRichText(item.cardText)}</Text>
-                    {item.hasDetailedText && (
-                      <Button
-                        size="small"
-                        variant="text"
-                        icon="arrowForward"
-                        unfocusable={true}
-                        as="span"
-                      >
-                        {formatMessage(m.listPage.arrowLinkLabel)}
-                      </Button>
-                    )}
-                  </Box>
+                  {item.hasCardText && (
+                    <Box
+                      background="dark100"
+                      paddingX={3}
+                      paddingY={2}
+                      borderRadius="standard"
+                      width="full"
+                    >
+                      <Text variant="h5">
+                        {formatMessage(m.listPage.cardSubheading)}
+                      </Text>
+                      <Text as="div">{webRichText(item.cardText)}</Text>
+                      {item.hasDetailedText && (
+                        <Button
+                          size="small"
+                          variant="text"
+                          icon="arrowForward"
+                          unfocusable={true}
+                          as="span"
+                        >
+                          {formatMessage(m.listPage.arrowLinkLabel)}
+                        </Button>
+                      )}
+                    </Box>
+                  )}
                   {Boolean(item.description) && (
                     <Text variant="medium">
                       {formatMessage(m.listPage.cardDescriptionPrefix)}
@@ -199,6 +204,7 @@ BloodDonationRestrictionList.getProps = async ({
       variables: {
         input: {
           page,
+          lang: locale,
         },
       },
     }),
