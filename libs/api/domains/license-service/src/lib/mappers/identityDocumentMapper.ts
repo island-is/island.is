@@ -5,7 +5,10 @@ import {
 } from '../licenseService.constants'
 import { Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
-import { type IdentityDocument } from '@island.is/clients/passports'
+import {
+  IdentityDocumentChild,
+  type IdentityDocument,
+} from '@island.is/clients/passports'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
 import { GenericUserLicenseMetaTag } from '../dto/GenericUserLicenseMetaTag.dto'
@@ -22,6 +25,12 @@ import {
 } from '../licenceService.type'
 import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 
+const isChildDocument = (
+  passport: IdentityDocument | IdentityDocumentChild,
+): passport is IdentityDocumentChild => {
+  return (passport as IdentityDocumentChild).childNationalId !== undefined
+}
+
 @Injectable()
 export class IdentityDocumentMapper implements GenericLicenseMapper {
   constructor(private readonly intlService: IntlService) {}
@@ -29,32 +38,77 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
     payload: Array<unknown>,
     locale: Locale = 'is',
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
-    if (!payload.length) {
-      return Promise.resolve([])
-    }
-
     const { formatMessage } = await this.intlService.useIntl(
       [LICENSE_NAMESPACE],
       locale,
     )
 
-    const typedPayload = payload as Array<IdentityDocument>
+    if (!payload.length) {
+      return Promise.resolve([])
+    }
+
+    const typedPayload = payload as Array<
+      IdentityDocument | IdentityDocumentChild
+    >
 
     const mappedLicenses: Array<GenericLicenseMappedPayloadResponse> =
-      typedPayload.map((t) => {
-        return {
-          licenseName: formatMessage(m.identityDocument),
-          type: 'user' as const,
-          payload: this.mapDocument(t, formatMessage),
-        }
-      })
+      typedPayload
+        .map((t) => {
+          if (isChildDocument(t)) {
+            return this.mapChildDocument(t, formatMessage).map((document) => ({
+              licenseName: formatMessage(m.passport),
+              type: 'child' as const,
+              payload: document,
+            }))
+          } else {
+            return {
+              licenseName: formatMessage(m.passport),
+              type: 'user' as const,
+              payload: this.mapDocument(
+                t,
+                formatMessage,
+                formatMessage(m.identityDocument),
+              ),
+            }
+          }
+        })
+        .flat()
 
     return mappedLicenses
+  }
+
+  private mapChildDocument(
+    document: IdentityDocumentChild,
+    formatMessage: FormatMessage,
+  ): Array<Payload> {
+    if (document.passports?.length) {
+      return (
+        document.passports?.map((p) =>
+          this.mapDocument(p, formatMessage, document.childName ?? undefined),
+        ) ?? []
+      )
+    }
+
+    return [
+      {
+        data: [],
+        metadata: {
+          name: document.childName ?? '',
+          title: document.childName ?? '',
+          subtitle: formatMessage(m.noValidPassport),
+          ctaLink: {
+            label: formatMessage(m.apply),
+            value: formatMessage(m.applyPassportUrl),
+          },
+        },
+      },
+    ]
   }
 
   private mapDocument(
     document: IdentityDocument,
     formatMessage: FormatMessage,
+    licenseName?: string,
   ): Payload {
     const isExpired = document.expiryStatus?.toLowerCase() === 'expired'
 
@@ -102,11 +156,11 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
             tag: displayTag,
           }
         : null,
-      document.verboseType
+      document.mrzFirstName && document.mrzLastName
         ? {
             type: GenericLicenseDataFieldType.Value,
-            label: formatMessage(m.licenseType),
-            value: document.verboseType,
+            label: formatMessage(m.passportNameComputer),
+            value: `${document.mrzLastName} ${document.mrzFirstName}`,
           }
         : null,
     ].filter(isDefined)
@@ -127,9 +181,8 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
         expired: isExpired,
         expireDate: document.expirationDate?.toISOString() ?? undefined,
         displayTag,
-        name: document.verboseType ?? undefined,
-        title: document.verboseType ?? undefined,
-
+        name: licenseName ?? document.verboseType ?? undefined,
+        title: formatMessage(m.identityDocument) ?? undefined,
         description: [{ text: formatMessage(m.identityDocumentDescription) }],
       },
     }

@@ -18,6 +18,8 @@ import { m } from '../../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import { getPathFromType } from '../../../utils/mapPaths'
 import { PkPass } from '../../../components/QRCodeModal/PkPass'
+import { useEffect, useState } from 'react'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 export const LicensesOverviewV2 = () => {
   useNamespaces('sp.license')
@@ -32,9 +34,24 @@ export const LicensesOverviewV2 = () => {
     GenericLicenseType.HuntingLicense,
     GenericLicenseType.MachineLicense,
     GenericLicenseType.PCard,
-    GenericLicenseType.IdentityDocument,
     GenericLicenseType.Passport,
+    //GenericLicenseType.IdentityDocument,
   ]
+
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.isIdentityDocumentEnabled,
+        false,
+      )
+      if (ffEnabled) {
+        includedTypes.push(GenericLicenseType.IdentityDocument)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const { data, loading, error } = useGenericLicenseCollectionQuery({
     variables: {
