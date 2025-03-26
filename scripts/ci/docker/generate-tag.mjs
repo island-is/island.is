@@ -7,7 +7,7 @@ const randomTag = createRandomString(16)
 const context = github.context
 const eventName = context.eventName
 const sha = context.payload.pull_request?.head.sha || context.sha
-
+const shortSha = sha.slice(0, 7)
 const targetBranch = getTargetBranch()
 
 core.setOutput('SHOULD_RUN_BUILD', JSON.stringify(shouldRun()))
@@ -48,13 +48,12 @@ function getTagname() {
         // return `pr-${context.payload.pull_request.number}-${randomTag}`;
     }
     if (eventName === 'merge_group' || eventName === 'workflow_dispatch') {
-        const dateString = new Date().toISOString().split('T')[0].replace(/-/g, '')
         if (typeOfDeployment.dev) {
-            return `dev_${dateString}_${randomTag}`
+            return `dev_${shortSha}_${randomTag}`
         }
         if (typeOfDeployment.prod) {
             const version = targetBranch.replace('release/', '');
-            return `release_${version}_${randomTag}`
+            return `release_${version}_${shortSha}_${randomTag}`
         }
         throw new Error(`Unable to determine artifact name for merge_group event`)
     }
