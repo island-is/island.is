@@ -31,8 +31,7 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { createConfirmedPdf } from '../../formatters'
-import { getCaseFileHash } from '../../formatters/getCaseFileHash'
+import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { Case } from '../case/models/case.model'

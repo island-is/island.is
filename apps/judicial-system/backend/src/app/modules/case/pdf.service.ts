@@ -25,12 +25,12 @@ import {
   createRulingSentToPrisonAdminPdf,
   createServiceCertificate,
   createSubpoena,
+  getCaseFileHash,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
 } from '../../formatters'
-import { getCaseFileHash } from '../../formatters/getCaseFileHash'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant } from '../defendant'
 import { Subpoena, SubpoenaService } from '../subpoena'
