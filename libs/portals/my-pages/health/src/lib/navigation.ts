@@ -20,6 +20,45 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthOverview,
     },
     {
+      name: m.baseInfo,
+      path: HealthPaths.HealthBasicInformation,
+      children: [
+        {
+          name: messages.healthCenter,
+          path: HealthPaths.HealthCenter,
+          children: [
+            {
+              name: messages.healthCenterRegistrationTitle,
+              path: HealthPaths.HealthCenterRegistration,
+              navHide: true,
+            },
+          ],
+        },
+        {
+          name: m.dentists,
+          path: HealthPaths.HealthDentists,
+          children: [
+            {
+              name: messages.dentistRegisterationPageTitle,
+              path: HealthPaths.HealthDentistRegistration,
+              navHide: true,
+            },
+          ],
+        },
+        {
+          name: messages.organDonation,
+          path: HealthPaths.HealthOrganDonation,
+          children: [
+            {
+              name: messages.changeRegistration,
+              path: HealthPaths.HealthOrganDonationRegistration,
+              navHide: true,
+            },
+          ],
+        },
+      ],
+    },
+    {
       name: m.therapies,
       path: HealthPaths.HealthTherapies,
       children: [
