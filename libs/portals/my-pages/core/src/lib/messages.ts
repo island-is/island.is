@@ -1681,7 +1681,7 @@ export const m = defineMessages({
     defaultMessage: 'Fyrirkall',
   },
   urgent: {
-    id: 'service. dportal:urgent',
+    id: 'service.portal:urgent',
     defaultMessage: 'Áríðandi',
   },
   openErrand: {
