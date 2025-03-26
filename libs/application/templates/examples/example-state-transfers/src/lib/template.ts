@@ -39,7 +39,6 @@ import { CodeOwners } from '@island.is/shared/constants'
 import { exampleSchema } from './dataSchema'
 import { Features } from '@island.is/feature-flags'
 import { prerequisitesState } from './templateSplit/prerequisitesState'
-import { waitingToAssignState } from './templateSplit/waitingToAssignState'
 import { completedState } from './templateSplit/completedState'
 import {
   approveApplication,
@@ -50,6 +49,7 @@ import {
 import { approvedState } from './templateSplit/approvedState'
 import { rejectedState } from './templateSplit/rejectedState'
 import { DefaultStateLifeCycle } from '@island.is/application/core'
+import { inReviewState } from './templateSplit/inReviewState'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -104,12 +104,12 @@ const template: ApplicationTemplate<
             target: States.COMPLETED,
           },
           [DefaultEvents.ASSIGN]: {
-            target: States.WAITING_TO_ASSIGN,
+            target: States.IN_REVIEW,
             actions: 'assignUser',
           },
         },
       },
-      [States.WAITING_TO_ASSIGN]: waitingToAssignState,
+      [States.IN_REVIEW]: inReviewState,
       [States.COMPLETED]: completedState,
       [States.APPROVED]: approvedState,
       [States.REJECTED]: rejectedState,

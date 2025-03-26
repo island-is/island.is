@@ -1,4 +1,4 @@
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationContext,
   ApplicationStateSchema,
@@ -16,21 +16,27 @@ export const rejectedState: StateNodeConfig<
     name: 'Rejected',
     progress: 100,
     status: FormModes.REJECTED,
-    lifecycle: EphemeralStateLifeCycle,
+    lifecycle: DefaultStateLifeCycle,
     roles: [
       {
         id: Roles.APPLICANT,
         formLoader: () =>
-          import('../../forms/prerequisitesForm').then((module) =>
-            Promise.resolve(module.Prerequisites),
+          import('../../forms/applicantRejectedForm').then((module) =>
+            Promise.resolve(module.ApplicantRejectedForm),
           ),
+        write: 'all',
+        read: 'all',
+        delete: true,
       },
       {
         id: Roles.ASSIGNEE,
         formLoader: () =>
-          import('../../forms/prerequisitesForm').then((module) =>
-            Promise.resolve(module.Prerequisites),
+          import('../../forms/assigneeRejectedForm').then((module) =>
+            Promise.resolve(module.AssigneeRejectedForm),
           ),
+        write: 'all',
+        read: 'all',
+        delete: true,
       },
     ],
   },

@@ -34,7 +34,7 @@ export const overviewSection = buildSection({
         buildDescriptionField({
           id: 'description',
           description:
-            'If you choose to move the application to the WAITING_TO_ASSIGN state, then we have defined the action "assignUser" that will run on this event and assign the nationalId from the previous screen to be the assignee/reviewer of the application.',
+            'If you choose to move the application to the IN_REVIEW state, then we have defined the stateMachineOption action "assignUser" that will run on this event and assign the nationalId from the previous screen to be the assignee/reviewer of the application.',
         }),
         buildSubmitField({
           id: 'submitApplication2',
@@ -43,12 +43,12 @@ export const overviewSection = buildSection({
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: 'Move to state SUBMIT',
+              name: 'Move to state COMPLETED',
               type: 'primary',
             },
             {
               event: DefaultEvents.ASSIGN,
-              name: 'Move to state WAITING_TO_ASSIGN',
+              name: 'Move to state IN_REVIEW',
               type: 'subtle',
             },
           ],

@@ -9,31 +9,32 @@ import { Events } from '../../utils/constants'
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { StateNodeConfig } from 'xstate'
 
-export const waitingToAssignState: StateNodeConfig<
+export const inReviewState: StateNodeConfig<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   meta: {
-    name: 'In Progress',
+    name: 'In Review',
     status: FormModes.IN_PROGRESS,
     lifecycle: DefaultStateLifeCycle,
     roles: [
       {
         id: Roles.APPLICANT,
         formLoader: () =>
-          import('../../forms/waitingToAssignForm').then((module) =>
-            Promise.resolve(module.PendingReview),
+          import('../../forms/applicantInReviewForm').then((module) =>
+            Promise.resolve(module.ApplicantInReviewForm),
           ),
         read: 'all',
       },
       {
         id: Roles.ASSIGNEE,
         formLoader: () =>
-          import('../../forms/assigneeForm').then((module) =>
-            Promise.resolve(module.AssigneeForm),
+          import('../../forms/assigneeInReviewForm').then((module) =>
+            Promise.resolve(module.AssigneeInReviewForm),
           ),
         read: 'all',
+        write: 'all',
       },
     ],
   },
@@ -41,6 +42,12 @@ export const waitingToAssignState: StateNodeConfig<
     [DefaultEvents.EDIT]: {
       target: States.DRAFT,
       actions: 'unAssignUser',
+    },
+    [DefaultEvents.APPROVE]: {
+      target: States.APPROVED,
+    },
+    [DefaultEvents.REJECT]: {
+      target: States.REJECTED,
     },
   },
 }

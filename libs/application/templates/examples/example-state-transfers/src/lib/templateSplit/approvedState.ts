@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/types'
 import { Events, Roles } from '../../utils/constants'
 import { StateNodeConfig } from 'xstate'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 
 export const approvedState: StateNodeConfig<
   ApplicationContext,
@@ -16,21 +16,25 @@ export const approvedState: StateNodeConfig<
     name: 'Approved',
     progress: 100,
     status: FormModes.APPROVED,
-    lifecycle: EphemeralStateLifeCycle,
+    lifecycle: DefaultStateLifeCycle,
     roles: [
       {
         id: Roles.APPLICANT,
         formLoader: () =>
-          import('../../forms/prerequisitesForm').then((module) =>
-            Promise.resolve(module.Prerequisites),
+          import('../../forms/applicantApprovedForm').then((module) =>
+            Promise.resolve(module.ApplicantApprovedForm),
           ),
+        write: 'all',
+        read: 'all',
       },
       {
         id: Roles.ASSIGNEE,
         formLoader: () =>
-          import('../../forms/prerequisitesForm').then((module) =>
-            Promise.resolve(module.Prerequisites),
+          import('../../forms/assigneeApprovedForm').then((module) =>
+            Promise.resolve(module.AssigneeApprovedForm),
           ),
+        write: 'all',
+        read: 'all',
       },
     ],
   },

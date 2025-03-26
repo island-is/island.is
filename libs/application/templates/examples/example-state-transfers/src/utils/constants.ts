@@ -7,6 +7,8 @@ export type Events = {
     | DefaultEvents.SUBMIT
     | DefaultEvents.ASSIGN
     | DefaultEvents.EDIT
+    | DefaultEvents.APPROVE
+    | DefaultEvents.REJECT
     | 'customEvent'
 }
 
@@ -14,9 +16,7 @@ export type Events = {
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
-  WAITING_TO_ASSIGN = 'waitingToAssign',
-  EDIT = 'edit',
-  REVIEW = 'review',
+  IN_REVIEW = 'inReview',
   COMPLETED = 'completed',
   APPROVED = 'approved',
   REJECTED = 'rejected',
