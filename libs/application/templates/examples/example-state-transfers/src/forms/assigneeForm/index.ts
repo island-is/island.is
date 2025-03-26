@@ -21,9 +21,14 @@ export const AssigneeForm = buildForm({
           title: 'Assignee Info',
           children: [
             buildDescriptionField({
-              id: 'description',
+              id: 'assigneeDescription',
               description:
                 'You are now viewing this application as the assignee that is going to review and choose to approve or reject.',
+            }),
+            buildDescriptionField({
+              id: 'assigneeDescription2',
+              description:
+                'Here you can include an overview of the application to aid with the decision making process.',
             }),
             buildRadioField({
               id: 'approveOrReject',
@@ -45,7 +50,7 @@ export const AssigneeForm = buildForm({
               condition: (application) =>
                 getValueViaPath<string>(application, 'approveOrReject') ===
                 'approve',
-              id: 'submitApplication',
+              id: 'approveApplication',
               placement: 'footer',
               refetchApplicationAfterSubmit: true,
               actions: [{ event: 'APPROVE', name: 'Approve', type: 'primary' }],
@@ -54,10 +59,10 @@ export const AssigneeForm = buildForm({
               condition: (application) =>
                 getValueViaPath<string>(application, 'approveOrReject') ===
                 'reject',
-              id: 'submitApplication',
+              id: 'rejectApplication',
               placement: 'footer',
               refetchApplicationAfterSubmit: true,
-              actions: [{ event: 'REJECT', name: 'Reject', type: 'primary' }],
+              actions: [{ event: 'REJECT', name: 'Reject', type: 'reject' }],
             }),
           ],
         }),

@@ -528,7 +528,6 @@ export const buildSubmitField = (data: {
     refetchApplicationAfterSubmit,
     marginTop,
     marginBottom,
-    condition,
   } = data
   return {
     children: undefined,
@@ -546,7 +545,6 @@ export const buildSubmitField = (data: {
     marginBottom,
     type: FieldTypes.SUBMIT,
     component: FieldComponents.SUBMIT,
-    condition,
   }
 }
 
