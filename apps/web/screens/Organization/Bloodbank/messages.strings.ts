@@ -25,7 +25,7 @@ export const m = {
   }),
   detailsPage: defineMessages({
     detailTextHeading: {
-      id: 'web.bloodbank.bloodDonationRestrictions:listPage.detailTextHeading',
+      id: 'web.bloodbank.bloodDonationRestrictions:detailsPage.detailTextHeading',
       defaultMessage: 'Nánar um áhrif',
       description: 'Nánar um áhrif (heading fyrir ofan texta á details síðu)',
     },

@@ -32,14 +32,14 @@ import { GET_BLOOD_DONATION_RESTRICTION_DETAILS_QUERY } from '../../queries/Bloo
 import { getSubpageNavList } from '../SubPage'
 import { m } from './messages.strings'
 
-interface BlodDonationRestrictionDetailsProps {
+interface BloodDonationRestrictionDetailsProps {
   item: BloodDonationRestrictionDetailsItem
   namespace: Record<string, string>
   organizationPage: OrganizationPage
 }
 
-const BlodDonationRestrictionDetails: CustomScreen<
-  BlodDonationRestrictionDetailsProps
+const BloodDonationRestrictionDetails: CustomScreen<
+  BloodDonationRestrictionDetailsProps
 > = ({ item, organizationPage, namespace }) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -117,7 +117,7 @@ const BlodDonationRestrictionDetails: CustomScreen<
   )
 }
 
-BlodDonationRestrictionDetails.getProps = async ({
+BloodDonationRestrictionDetails.getProps = async ({
   query,
   apolloClient,
   customPageData,
@@ -201,7 +201,7 @@ BlodDonationRestrictionDetails.getProps = async ({
 export default withMainLayout(
   withCustomPageWrapper(
     CustomPageUniqueIdentifier.BloodDonationRestrictions,
-    BlodDonationRestrictionDetails,
+    BloodDonationRestrictionDetails,
   ),
   {
     footerVersion: 'organization',
