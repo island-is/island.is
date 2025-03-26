@@ -23,7 +23,7 @@ runs:
     - name: Get token
       id: get-token
       shell: bash
-      env:
+      env: 
         APP_ID: ${{ inputs.app-id }}
         PRIVATE_KEY: ${{ inputs.ssh-key }}
       run: |

@@ -4,8 +4,7 @@ import { zfd } from 'zod-form-data'
 import {
   AuthAdminTranslatedValue,
   AuthAdminRefreshTokenExpiration,
-  AuthAdminClientClaim,
-  AuthAdminClientSso,
+  AuthAdminClientClaim, AuthAdminClientSso,
 } from '@island.is/api/schema'
 
 import { booleanCheckbox } from '../../utils/forms'
@@ -194,7 +193,9 @@ export const schema = {
 
       return {
         ...rest,
-        sso: sso ? AuthAdminClientSso.enabled : AuthAdminClientSso.disabled,
+        sso: sso
+          ? AuthAdminClientSso.enabled
+          : AuthAdminClientSso.disabled,
       }
     }),
   [ClientFormTypes.permissions]: z

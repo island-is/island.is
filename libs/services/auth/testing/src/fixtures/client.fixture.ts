@@ -1,10 +1,5 @@
 import * as faker from 'faker'
-import {
-  Client,
-  ClientAllowedScope,
-  ClientType,
-  ClientSso,
-} from '@island.is/auth-api-lib'
+import { Client, ClientAllowedScope, ClientType, ClientSso } from '@island.is/auth-api-lib'
 
 export type CreateClient = Pick<
   Omit<Client, 'supportedDelegationTypes'>,

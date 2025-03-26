@@ -67,4 +67,5 @@ export class AdminCreateClientDto extends OmitType(AdminPatchClientDto, [
     enumName: 'ClientSso',
   })
   readonly sso!: ClientSso
+
 }

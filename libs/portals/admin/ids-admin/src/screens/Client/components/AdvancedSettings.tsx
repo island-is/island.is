@@ -39,7 +39,7 @@ export const AdvancedSettings = ({
   accessTokenLifetime,
   customClaims,
   singleSession,
-  sso,
+  sso
 }: AdvancedSettingsProps) => {
   const { formatMessage } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
@@ -93,7 +93,7 @@ export const AdvancedSettings = ({
         'supportTokenExchange',
         'accessTokenLifetime',
         'customClaims',
-        'sso',
+        'sso'
       ])}
     >
       <Stack space={3}>
@@ -241,15 +241,13 @@ export const AdvancedSettings = ({
               large
               disabled={!isSuperAdmin}
               defaultChecked={inputValues.sso === AuthAdminClientSso.enabled}
-              checked={inputValues.sso === AuthAdminClientSso.enabled}
+              checked={inputValues.sso  === AuthAdminClientSso.enabled}
               name="sso"
               value={inputValues.sso}
               onChange={(e) => {
                 setInputValues({
                   ...inputValues,
-                  sso: e.target.checked
-                    ? AuthAdminClientSso.enabled
-                    : AuthAdminClientSso.disabled,
+                  sso: e.target.checked ? AuthAdminClientSso.enabled : AuthAdminClientSso.disabled,
                 })
               }}
               subLabel={formatMessage(m.allowSSODescription)}

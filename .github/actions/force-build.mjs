@@ -3,4 +3,4 @@
  */
 const FORCE_REBUILD_VALUE = "2025-03-21-1";
 
-console.log(FORCE_REBUILD_VALUE)
+console.log(FORCE_REBUILD_VALUE);

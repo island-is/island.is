@@ -4,8 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsNotEmpty,
-  IsArray,
-  IsEnum,
+  IsArray, IsEnum,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { ClientSso, ClientType } from '../../../types'
