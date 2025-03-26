@@ -383,6 +383,7 @@ export class InternalCaseService {
             theCase.id,
             {
               nationalId: caseToCreate.accusedNationalId,
+              dateOfBirth: caseToCreate.accusedDOB,
               name: caseToCreate.accusedName,
               gender: caseToCreate.accusedGender,
               address: (caseToCreate.accusedAddress || '').trim(),

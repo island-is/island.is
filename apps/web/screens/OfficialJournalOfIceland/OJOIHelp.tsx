@@ -92,7 +92,7 @@ OJOIHelp.getProps = async ({ apolloClient, locale }) => {
 
 export default withMainLayout(
   withCustomPageWrapper(
-    CustomPageUniqueIdentifier.OfficialJournalOfIceland,
+    CustomPageUniqueIdentifier.OfficialJournalOfIcelandHelp,
     OJOIHelp,
   ),
 )
