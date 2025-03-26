@@ -54,7 +54,6 @@ import { m } from './translations.strings'
 import * as styles from './VerdictsList.css'
 
 const ITEMS_PER_PAGE = 10
-const DEBOUNCE_TIME_IN_MS = 1000
 
 const ALL_COURTS_TAG = ''
 const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómur Reykjavíkur'
@@ -89,7 +88,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
       .withOptions({
         clearOnDefault: true,
         shallow: false,
-        throttleMs: DEBOUNCE_TIME_IN_MS,
       })
       .withDefault(''),
   )
@@ -108,7 +106,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
     parseAsString
       .withOptions({
         clearOnDefault: true,
-        throttleMs: DEBOUNCE_TIME_IN_MS,
         shallow: false,
       })
       .withDefault(ALL_COURTS_TAG),
