@@ -142,8 +142,14 @@ import { GrantCardsList } from './models/grantCardsList.model'
 import { sortAlpha } from '@island.is/shared/utils'
 import { GetTeamMembersInputOrderBy } from './dto/getTeamMembers.input'
 import { IntroLinkImage } from './models/introLinkImage.model'
-import { GetBloodDonationRestrictionsInput } from './dto/getBloodDonationRestrictions.input'
-import { BloodDonationRestrictionList } from './models/bloodDonationRestriction.model'
+import {
+  GetBloodDonationRestrictionDetailsInput,
+  GetBloodDonationRestrictionsInput,
+} from './dto/getBloodDonationRestrictions.input'
+import {
+  BloodDonationRestrictionDetails,
+  BloodDonationRestrictionList,
+} from './models/bloodDonationRestriction.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -738,6 +744,14 @@ export class CmsResolver {
     @Args('input') input: GetBloodDonationRestrictionsInput,
   ): Promise<BloodDonationRestrictionList> {
     return this.cmsContentfulService.getBloodDonationRestrictions(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => BloodDonationRestrictionDetails, { nullable: true })
+  getBloodDonationRestrictionDetails(
+    @Args('input') input: GetBloodDonationRestrictionDetailsInput,
+  ): Promise<BloodDonationRestrictionDetails | null> {
+    return this.cmsContentfulService.getBloodDonationRestrictionDetails(input)
   }
 }
 

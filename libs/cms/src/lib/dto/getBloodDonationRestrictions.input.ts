@@ -9,3 +9,12 @@ export class GetBloodDonationRestrictionsInput {
   @Field(() => String)
   lang = 'is-IS'
 }
+
+@InputType()
+export class GetBloodDonationRestrictionDetailsInput {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => String)
+  lang = 'is-IS'
+}

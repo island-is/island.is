@@ -93,9 +93,13 @@ import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import { NewsList } from './models/newsList.model'
 import { GetCmsNewsInput } from './dto/getNews.input'
-import { GetBloodDonationRestrictionsInput } from './dto/getBloodDonationRestrictions.input'
+import {
+  GetBloodDonationRestrictionDetailsInput,
+  GetBloodDonationRestrictionsInput,
+} from './dto/getBloodDonationRestrictions.input'
 import {
   BloodDonationRestrictionList,
+  mapBloodDonationRestrictionDetails,
   mapBloodDonationRestrictionListItem,
 } from './models/bloodDonationRestriction.model'
 
@@ -1161,6 +1165,27 @@ export class CmsContentfulService {
       ),
       input,
     }
+  }
+
+  async getBloodDonationRestrictionDetails(
+    input: GetBloodDonationRestrictionDetailsInput,
+  ) {
+    const response = await this.contentfulRepository.getLocalizedEntries(
+      input.lang,
+      {
+        content_type: 'bloodDonationRestriction',
+        'sys.id': input.id,
+        limit: 1,
+      },
+    )
+
+    if (response.items.length === 0) {
+      return null
+    }
+
+    return mapBloodDonationRestrictionDetails(
+      response.items[0] as types.IBloodDonationRestriction,
+    )
   }
 
   async getOrganizationParentSubpage(input: GetOrganizationParentSubpageInput) {

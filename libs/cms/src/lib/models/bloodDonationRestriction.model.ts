@@ -1,12 +1,13 @@
 import { CacheField } from '@island.is/nest/graphql'
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 import { GetBloodDonationRestrictionsInput } from '../dto/getBloodDonationRestrictions.input'
 import { IBloodDonationRestriction } from '../generated/contentfulTypes'
 import { SliceUnion, mapDocument } from '../unions/slice.union'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 
 @ObjectType()
 export class BloodDonationRestrictionListItem {
-  @Field(() => String)
+  @Field(() => ID)
   id!: string
 
   @Field(() => String)
@@ -17,6 +18,9 @@ export class BloodDonationRestrictionListItem {
 
   @Field(() => String)
   description!: string
+
+  @Field(() => Boolean)
+  hasDetailedText!: boolean
 }
 
 @ObjectType()
@@ -42,5 +46,49 @@ export const mapBloodDonationRestrictionListItem = ({
       ? mapDocument(fields.cardText, sys.id + ':cardText')
       : [],
     description: fields.description ?? '',
+    hasDetailedText: fields.detailedText
+      ? documentToPlainTextString(fields.detailedText).trim().length > 0
+      : false,
+  }
+}
+
+@ObjectType()
+export class BloodDonationRestrictionDetails {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  title!: string
+
+  @Field(() => String)
+  description!: string
+
+  @CacheField(() => [SliceUnion])
+  cardText!: Array<typeof SliceUnion>
+
+  @CacheField(() => [SliceUnion])
+  detailedText!: Array<typeof SliceUnion>
+
+  @Field(() => Boolean)
+  hasDetailedText!: boolean
+}
+
+export const mapBloodDonationRestrictionDetails = ({
+  sys,
+  fields,
+}: IBloodDonationRestriction): BloodDonationRestrictionDetails => {
+  return {
+    id: sys.id,
+    title: fields.title ?? '',
+    cardText: fields.cardText
+      ? mapDocument(fields.cardText, sys.id + ':cardText')
+      : [],
+    description: fields.description ?? '',
+    hasDetailedText: fields.detailedText
+      ? documentToPlainTextString(fields.detailedText).trim().length > 0
+      : false,
+    detailedText: fields.detailedText
+      ? mapDocument(fields.detailedText, sys.id + ':detailedText')
+      : [],
   }
 }
