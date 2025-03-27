@@ -17,7 +17,7 @@ export const Image = ({ url, title, width, height }: ImageProps) => {
           ${url}?w=1500&fm=webp&q=75 2x,
           ${url}?w=2000&fm=webp&q=75 3x
         `}
-      alt={title || 'Image'}
+      alt={title || ''}
       height={height}
       width={width}
       loading="lazy"
