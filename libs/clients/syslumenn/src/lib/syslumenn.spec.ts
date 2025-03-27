@@ -43,7 +43,11 @@ import {
 import { PersonType } from './syslumennClient.types'
 import { SyslumennClientModule } from '../lib/syslumennClient.module'
 
-import { defineConfig, ConfigModule } from '@island.is/nest/config'
+import {
+  defineConfig,
+  ConfigModule,
+  IdsClientConfig,
+} from '@island.is/nest/config'
 
 const YEAR = 2021
 const PERSON = [
@@ -90,7 +94,10 @@ describe('SyslumennService', () => {
     const module = await Test.createTestingModule({
       imports: [
         SyslumennClientModule,
-        ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [config, IdsClientConfig],
+        }),
       ],
       providers: [SyslumennService],
     }).compile()
