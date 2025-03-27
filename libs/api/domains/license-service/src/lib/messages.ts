@@ -296,6 +296,10 @@ export const m = defineMessages({
     id: 'api.license-service:identity-document-apply-url',
     defaultMessage: 'https://island.is/saekja-um-nafnskirteini',
   },
+  identityDocumentNumberDisplay: {
+    id: 'api.license-service:identity-document-number-display',
+    defaultMessage: 'Númer nafnskírteinis: {arg}',
+  },
   passportNumberDisplay: {
     id: 'api.license-service:passport-number-display',
     defaultMessage: 'Númer vegabréfs: {arg}',

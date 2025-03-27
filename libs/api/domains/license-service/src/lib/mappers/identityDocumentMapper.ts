@@ -271,13 +271,13 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
         displayTag,
         name: licenseName ?? document.verboseType ?? undefined,
         title: formatMessage(m.identityDocument) ?? undefined,
-        subtitle: formatMessage(m.passportNumberDisplay, {
+        subtitle: formatMessage(m.identityDocumentNumberDisplay, {
           arg:
             document.subType && document.number
               ? `${document.subType}${document.number}`
               : formatMessage(m.unknown),
         }),
-        description: [{ text: formatMessage(m.passportDescription) }],
+        description: [{ text: formatMessage(m.identityDocumentDescription) }],
         alert,
       },
     }
