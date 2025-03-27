@@ -257,7 +257,6 @@ export const isHearingArrangementsStepValidIC = (
 
 export const isProcessingStepValidIndictments = (
   workingCase: Case,
-  allFilesDoneOrError: boolean,
 ): boolean => {
   const defendantsAreValid = workingCase.defendants?.every(
     (defendant) => validate([[defendant.defendantPlea, ['empty']]]).isValid,
@@ -279,7 +278,7 @@ export const isProcessingStepValidIndictments = (
                 : ['empty', 'national-id'],
             ],
           ]).isValid,
-      ) && allFilesDoneOrError
+      )
     : true
 
   return Boolean(

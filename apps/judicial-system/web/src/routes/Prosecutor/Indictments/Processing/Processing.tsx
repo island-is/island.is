@@ -140,10 +140,8 @@ const Processing: FC = () => {
     civilClaimantNationalIdUpdate?.nationalId,
   )
 
-  const stepIsValid = isProcessingStepValidIndictments(
-    workingCase,
-    allFilesDoneOrError,
-  )
+  const stepIsValid =
+    isProcessingStepValidIndictments(workingCase) && allFilesDoneOrError
 
   const handleSetAndSendDefendantToServer = (update: UpdateDefendant) => {
     setAndSendDefendantToServer(
