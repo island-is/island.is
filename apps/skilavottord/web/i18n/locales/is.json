@@ -599,7 +599,8 @@
           "rules": {
             "required": "Skylda er að fylla út sveitarfélag"
           }
-        }
+        },
+        "recyclingCompanyOther": "Aðrir"
       },
       "buttons": {
         "cancel": "Hætta við",

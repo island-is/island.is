@@ -70,17 +70,23 @@ export const AccessControlModal: FC<
   const [showMunicipalities, setShowMunicipalitiesSelection] = useState(false)
 
   useEffect(() => {
-    if (
-      currentPartner &&
-      currentPartner.role === AccessControlRole.municipality
+    const isCurrentPartnerMunicipality =
+      currentPartner?.role === AccessControlRole.municipality
+
+    if (user?.role === Role.municipality) {
+      setShowCompaniesSelection(!isCurrentPartnerMunicipality)
+      setShowMunicipalitiesSelection(false) // User with municipality role shall not be able to select other municipality
+    } else if (
+      currentPartner?.role === AccessControlRole.recyclingFund ||
+      currentPartner?.role === AccessControlRole.developer
     ) {
       setShowCompaniesSelection(false)
-      setShowMunicipalitiesSelection(true)
-    } else {
-      setShowCompaniesSelection(true)
       setShowMunicipalitiesSelection(false)
+    } else {
+      setShowCompaniesSelection(!isCurrentPartnerMunicipality)
+      setShowMunicipalitiesSelection(isCurrentPartnerMunicipality)
     }
-  }, [currentPartner])
+  }, [currentPartner, user])
 
   const handleRoleOnChange = (e: Option) => {
     // If the user selects municipality we don't need to select a recycling partner since muncipality can't be a recycling partner worker
@@ -98,10 +104,65 @@ export const AccessControlModal: FC<
       if (e && e.value === Role.municipality) {
         setShowCompaniesSelection(false)
         setShowMunicipalitiesSelection(true)
+      } else if (
+        e &&
+        (e.value === Role.recyclingFund || e.value === Role.developer)
+      ) {
+        setShowMunicipalitiesSelection(false)
+        setShowCompaniesSelection(false)
       } else {
         setShowMunicipalitiesSelection(false)
         setShowCompaniesSelection(true)
       }
+    }
+  }
+
+  const getOptions = () => {
+    if (hasMunicipalityRole(user?.role)) {
+      return recyclingPartners
+    } else {
+      // Group recycling companies without a municipality
+      const otherRecyclingCompanies = recyclingPartners
+        .filter(
+          (partner) =>
+            !municipalities?.some(
+              (municipality) => municipality.value === partner.municipalityId,
+            ),
+        )
+        .map((partner) => ({
+          label: partner.label,
+          value: partner.value,
+        }))
+
+      // Build the select options
+      return [
+        // Map municipalities and their recycling companies
+        ...(municipalities?.map((municipality) => {
+          const relatedRecyclingCompanies = recyclingPartners
+            .filter((partner) => partner.municipalityId === municipality.value)
+            .map((partner) => ({
+              label: partner.label,
+              value: partner.value,
+            }))
+
+          return {
+            label: municipality.label,
+            value: municipality.value,
+            options: [
+              {
+                label: municipality.label,
+                value: municipality.value,
+              },
+              ...relatedRecyclingCompanies,
+            ],
+          }
+        }) ?? []),
+        {
+          label: t.modal.inputs.recyclingCompanyOther,
+          value: '-1',
+          options: otherRecyclingCompanies,
+        },
+      ]
     }
   }
 
@@ -253,7 +314,7 @@ export const AccessControlModal: FC<
                     hasError={!!errors?.partnerId?.message}
                     errorMessage={errors?.partnerId?.message}
                     backgroundColor="blue"
-                    options={recyclingPartners}
+                    options={getOptions()}
                     onChange={onChange}
                     required={partnerIdRequired}
                     isCreatable
