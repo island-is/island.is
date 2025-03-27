@@ -262,6 +262,16 @@ export const m = defineMessages({
     defaultMessage:
       'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða. Þeir sem hyggast ferðast utan EES verða að hafa vegabréf sem gilda í amk 6 mánuði frá áætluðum ferðalokum.',
   },
+  invalidIdentityDocumentText: {
+    id: 'api.license-service:identity-document-invalid-text',
+    defaultMessage:
+      'Athugið að nafnskírteinið er ógilt og þarf að sækja um nýtt',
+  },
+  expiringIdentityDocumentText: {
+    id: 'api.license-service:identity-document-expiring-text',
+    defaultMessage:
+      'Athugið að nafnskírteinið þitt mun renna út innan næstu 6 mánaða.',
+  },
   renewPassport: {
     id: 'api.license-service:passport-renew',
     defaultMessage: 'Endurnýja vegabréf',
@@ -281,6 +291,10 @@ export const m = defineMessages({
   identityDocumentDescription: {
     id: 'api.license-service:identity-document-description',
     defaultMessage: 'Hér birtast upplýsingar um nafnskírteini þitt.',
+  },
+  identityDocumentApplyUrl: {
+    id: 'api.license-service:identity-document-apply-url',
+    defaultMessage: 'https://island.is/saekja-um-nafnskirteini',
   },
   passportNumberDisplay: {
     id: 'api.license-service:passport-number-display',
@@ -384,5 +398,9 @@ export const m = defineMessages({
   noValidPassport: {
     id: 'api.license-service:no-valid-passport',
     defaultMessage: 'Engin gild vegabréf',
+  },
+  noValidIdentityDocument: {
+    id: 'api.license-service:no-valid-identity-document',
+    defaultMessage: 'Engin gild nafnskírteini',
   },
 })

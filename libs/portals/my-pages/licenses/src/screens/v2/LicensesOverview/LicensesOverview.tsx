@@ -17,26 +17,28 @@ import {
 import { m } from '../../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import { getPathFromType } from '../../../utils/mapPaths'
-import { PkPass } from '../../../components/QRCodeModal/PkPass'
 import { useEffect, useState } from 'react'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+
+const BASE_INCLUDED_TYPES = [
+  GenericLicenseType.AdrLicense,
+  GenericLicenseType.DisabilityLicense,
+  GenericLicenseType.DriversLicense,
+  GenericLicenseType.Ehic,
+  GenericLicenseType.FirearmLicense,
+  GenericLicenseType.HuntingLicense,
+  GenericLicenseType.MachineLicense,
+  GenericLicenseType.PCard,
+  GenericLicenseType.Passport,
+]
 
 export const LicensesOverviewV2 = () => {
   useNamespaces('sp.license')
   const { formatMessage, lang } = useLocale()
 
-  const includedTypes = [
-    GenericLicenseType.AdrLicense,
-    GenericLicenseType.DisabilityLicense,
-    GenericLicenseType.DriversLicense,
-    GenericLicenseType.Ehic,
-    GenericLicenseType.FirearmLicense,
-    GenericLicenseType.HuntingLicense,
-    GenericLicenseType.MachineLicense,
-    GenericLicenseType.PCard,
-    GenericLicenseType.Passport,
-    //GenericLicenseType.IdentityDocument,
-  ]
+  const [includedTypes, setIncludedTypes] = useState<Array<GenericLicenseType>>(
+    [],
+  )
 
   const featureFlagClient = useFeatureFlagClient()
   useEffect(() => {
@@ -46,8 +48,11 @@ export const LicensesOverviewV2 = () => {
         false,
       )
       if (ffEnabled) {
-        includedTypes.push(GenericLicenseType.IdentityDocument)
-      }
+        setIncludedTypes([
+          ...BASE_INCLUDED_TYPES,
+          GenericLicenseType.IdentityDocument,
+        ])
+      } else setIncludedTypes(BASE_INCLUDED_TYPES)
     }
     isFlagEnabled()
     // eslint-disable-next-line react-hooks/exhaustive-deps
