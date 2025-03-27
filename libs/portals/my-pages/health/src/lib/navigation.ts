@@ -16,13 +16,13 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthRoot,
     },
     {
-      name: messages.myHealthOverview,
-      path: HealthPaths.HealthOverview,
-    },
-    {
       name: m.baseInfo,
-      path: HealthPaths.HealthBasicInformation,
+      path: HealthPaths.HealthOverview,
       children: [
+        {
+          name: messages.healthOverview,
+          path: HealthPaths.HealthOverview,
+        },
         {
           name: messages.healthCenter,
           path: HealthPaths.HealthCenter,
@@ -56,71 +56,13 @@ export const healthNavigation: PortalNavigationItem = {
             },
           ],
         },
-      ],
-    },
-    {
-      name: m.therapies,
-      path: HealthPaths.HealthTherapies,
-      children: [
         {
-          name: messages.physicalTherapy,
-          path: HealthPaths.HealthTherapiesPhysical,
-          navHide: true,
-        },
-        {
-          name: messages.speechTherapy,
-          path: HealthPaths.HealthTherapiesSpeech,
-          navHide: true,
-        },
-        {
-          name: messages.occupationalTherapy,
-          path: HealthPaths.HealthTherapiesOccupational,
-          navHide: true,
+          name: messages.hasHealthInsurance,
+          path: HealthPaths.HealthInsurance,
         },
       ],
     },
-    {
-      name: m.payments,
-      path: HealthPaths.HealthPayments,
-      children: [
-        {
-          name: messages.paymentParticipation,
-          path: HealthPaths.HealthPaymentParticipation,
-          navHide: true,
-        },
-        {
-          name: messages.paymentOverview,
-          path: HealthPaths.HealthPaymentOverview,
-          navHide: true,
-        },
-      ],
-    },
-    {
-      name: m.aidsAndNutrition,
-      path: HealthPaths.HealthAidsAndNutrition,
-    },
-    {
-      name: m.dentists,
-      path: HealthPaths.HealthDentists,
-      children: [
-        {
-          name: messages.dentistRegisterationPageTitle,
-          path: HealthPaths.HealthDentistRegistration,
-          navHide: true,
-        },
-      ],
-    },
-    {
-      name: m.healthCenter,
-      path: HealthPaths.HealthCenter,
-      children: [
-        {
-          name: messages.healthCenterRegistrationTitle,
-          path: HealthPaths.HealthCenterRegistration,
-          navHide: true,
-        },
-      ],
-    },
+
     {
       name: messages.medicineTitle,
       path: HealthPaths.HealthMedicine,
@@ -134,24 +76,7 @@ export const healthNavigation: PortalNavigationItem = {
           name: messages.medicineDelegation,
           path: HealthPaths.HealthMedicineDelegation,
         },
-        {
-          name: messages.medicinePaymentParticipation,
-          path: HealthPaths.HealthMedicinePaymentParticipation,
-          children: [
-            {
-              name: messages.medicinePurchaseTitle,
-              path: HealthPaths.HealthMedicinePurchase,
-              activeIfExact: true,
-              navHide: true,
-            },
-            {
-              name: messages.medicineCalculatorTitle,
-              path: HealthPaths.HealthMedicineCalculator,
-              activeIfExact: true,
-              navHide: true,
-            },
-          ],
-        },
+
         {
           name: messages.medicineLicenseTitle,
           path: HealthPaths.HealthMedicineCertificates,
@@ -187,12 +112,42 @@ export const healthNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: messages.organDonation,
-      path: HealthPaths.HealthOrganDonation,
+      name: messages.paymentsAndRights,
+      path: HealthPaths.HealthPayments,
       children: [
         {
-          name: messages.changeRegistration,
-          path: HealthPaths.HealthOrganDonationRegistration,
+          name: messages.paymentParticipation,
+          path: HealthPaths.HealthPaymentParticipation,
+          navHide: true,
+        },
+        {
+          name: messages.paymentOverview,
+          path: HealthPaths.HealthPaymentOverview,
+          navHide: true,
+        },
+      ],
+    },
+    {
+      name: m.aidsAndNutrition,
+      path: HealthPaths.HealthAidsAndNutrition,
+    },
+    {
+      name: m.therapies,
+      path: HealthPaths.HealthTherapies,
+      children: [
+        {
+          name: messages.physicalTherapy,
+          path: HealthPaths.HealthTherapiesPhysical,
+          navHide: true,
+        },
+        {
+          name: messages.speechTherapy,
+          path: HealthPaths.HealthTherapiesSpeech,
+          navHide: true,
+        },
+        {
+          name: messages.occupationalTherapy,
+          path: HealthPaths.HealthTherapiesOccupational,
           navHide: true,
         },
       ],

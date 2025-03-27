@@ -1,53 +1,39 @@
 import {
-  AlertMessage,
   Box,
-  Button,
   CategoryCard,
   GridColumn,
   GridContainer,
   GridRow,
   Icon,
-  SkeletonLoader,
-  Stack,
   Tag,
   Text,
   toast,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   InfoLine,
   InfoLineStack,
-  IntroWrapper,
-  SJUKRATRYGGINGAR_SLUG,
-  StackWithBottomDivider,
-  UserInfoLine,
-  amountFormat,
-  downloadLink,
   formatDate,
   isDateAfterToday,
   m,
 } from '@island.is/portals/my-pages/core'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
-import { useEffect, useState } from 'react'
-import { messages } from '../../lib/messages'
-import { HealthPaths } from '../../lib/paths'
-import {
-  CONTENT_GAP,
-  CONTENT_GAP_LG,
-  CONTENT_GAP_SM,
-  SECTION_GAP,
-} from '../../utils/constants'
-import {
-  useGetInsuranceConfirmationLazyQuery,
-  useGetInsuranceOverviewQuery,
-  useGetHealthCenterQuery,
-  useGetDentistsQuery,
-  useGetDonorStatusQuery,
-} from './HealthOverview.generated'
 import subYears from 'date-fns/subYears'
+import { useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
 import InfoBox from '../../components/InfoBox/InfoBox'
 import InfoBoxItem from '../../components/InfoBox/InfoBoxItem'
+import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
+import { CONTENT_GAP_LG } from '../../utils/constants'
+import * as styles from './HealthOverview.css'
+import {
+  useGetDentistsQuery,
+  useGetDonorStatusQuery,
+  useGetHealthCenterQuery,
+  useGetInsuranceOverviewQuery,
+} from './HealthOverview.generated'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -55,27 +41,12 @@ const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
 export const HealthOverview = () => {
   useNamespaces('sp.health')
 
-  const { formatMessage, formatDateFns, locale } = useLocale()
-  const user = useUserInfo()
+  const { formatMessage, locale } = useLocale()
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
 
   const [displayConfirmationErrorAlert, setDisplayConfirmationErrorAlert] =
     useState(false)
-
-  const [
-    getInsuranceConfirmationLazyQuery,
-    { loading: confirmationLoading, error: confirmationError },
-  ] = useGetInsuranceConfirmationLazyQuery()
-
-  const getInsuranceConfirmation = async () => {
-    const { data: fetchedData } = await getInsuranceConfirmationLazyQuery()
-    const downloadData = fetchedData?.rightsPortalInsuranceConfirmation
-
-    if (downloadData?.data && downloadData.fileName) {
-      downloadLink(downloadData.data, 'application/pdf', downloadData.fileName)
-    }
-  }
 
   const {
     data: healthCenterData,
@@ -127,12 +98,6 @@ export const HealthOverview = () => {
     donorStatusData?.healthDirectorateOrganDonation.donor?.isDonor
 
   useEffect(() => {
-    if (confirmationError) {
-      setDisplayConfirmationErrorAlert(true)
-    }
-  }, [confirmationError])
-
-  useEffect(() => {
     if (!loading && displayConfirmationErrorAlert) {
       toast.warning(
         formatMessage(messages.healthInsuranceConfirmationTransferError),
@@ -142,112 +107,164 @@ export const HealthOverview = () => {
   }, [displayConfirmationErrorAlert, loading, formatMessage])
 
   const insurance = data?.rightsPortalInsuranceOverview
+  const doctor =
+    healthCenterData?.rightsPortalHealthCenterRegistrationHistory?.current
+      ?.doctor
 
   const isEhicValid = isDateAfterToday(
     insurance?.ehicCardExpiryDate ?? undefined,
   )
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
+  const isTablet = width < theme.breakpoints.lg && !isMobile
 
   return (
-    <IntroWrapper
-      marginBottom={CONTENT_GAP_LG}
-      title={formatMessage(messages.myHealthOverview)}
-      intro={formatMessage(messages.overviewIntro)}
-      buttonGroup={[
-        <Button
-          variant="utility"
-          disabled={displayConfirmationErrorAlert}
-          size="small"
-          icon="fileTrayFull"
-          loading={confirmationLoading}
-          iconType="outline"
-          onClick={() => getInsuranceConfirmation()}
-        >
-          {formatMessage(messages.healthInsuranceConfirmation)}
-        </Button>,
-      ]}
-      img="./assets/images/jobs.svg"
-    >
-      {error ? (
-        <Problem error={error} noBorder={false} />
-      ) : (
-        <InfoLineStack space={1} label={formatMessage(m.baseInfo)}>
-          <InfoLine
-            label={formatMessage(messages.healthCenter)}
-            content={healthCenterName ?? ''}
-            loading={healthCenterLoading}
-          />
-          <InfoLine
-            label={formatMessage(messages.dentist)}
-            content={dentistName ?? ''}
-            loading={dentistsLoading}
-          />
-          <InfoLine
-            label={formatMessage(messages.organDonation)}
-            content={formatMessage(
-              isOrganDonor ? messages.iAmOrganDonor : messages.iAmNotOrganDonor,
+    <>
+      <GridRow marginBottom={CONTENT_GAP_LG}>
+        <GridColumn span={isMobile ? '8/8' : '5/8'}>
+          <>
+            <Text variant="h3" as={'h1'}>
+              {formatMessage(messages.healthOverview)}
+            </Text>
+
+            <Text variant="default" paddingTop={1}>
+              {formatMessage(messages.overviewIntro)}
+            </Text>
+          </>
+        </GridColumn>
+        {!isMobile && !isTablet && (
+          <GridColumn span={'3/8'}>
+            {/* right: -4px;
+              height: 253px;
+              top: -116px; */}
+            <Box
+              position="absolute"
+              className={styles.image}
+              alt=""
+              component="img"
+              src={'./assets/images/jobs.svg'}
+              marginRight={isMobile ? 2 : 0}
+            />
+          </GridColumn>
+        )}
+      </GridRow>
+
+      <Box marginTop={6}>
+        {error ? (
+          <Problem error={error} noBorder={false} />
+        ) : (
+          <InfoLineStack space={1} label={formatMessage(m.baseInfo)}>
+            <InfoLine
+              label={formatMessage(messages.healthCenter)}
+              content={healthCenterName ?? ''}
+              loading={healthCenterLoading}
+              button={{
+                to: HealthPaths.HealthCenter,
+                label: formatMessage(messages.seeMore),
+                type: 'link',
+                icon: 'arrowForward',
+              }}
+            />
+            {doctor && (
+              <InfoLine
+                label={formatMessage(messages.chooseDoctorPlaceholder)}
+                content={doctor}
+                loading={healthCenterLoading}
+              />
             )}
-            loading={donorStatusLoading}
-          />
-          <InfoLine
-            label={formatMessage(messages.hasHealthInsurance)}
-            content={
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                columnGap="p1"
-              >
-                <Text>
-                  {insurance?.isInsured &&
-                    formatMessage(messages.medicineValidFrom)}{' '}
-                  {formatDate(insurance?.from, 'dd.MM.yyyy')}
-                </Text>
-                <Icon
-                  icon={
-                    insurance?.isInsured ? 'checkmarkCircle' : 'closeCircle'
-                  }
-                  color={insurance?.isInsured ? 'mint600' : 'red600'}
-                  type="filled"
-                />
-                <Text fontWeight="semiBold" variant="small">
-                  {formatMessage(insurance?.isInsured ? m.valid : m.expired)}
-                </Text>
-              </Box>
-            }
-            loading={loading}
-          />
-          <InfoLine
-            label={formatMessage(messages.ehic)}
-            content={
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                columnGap="p1"
-              >
-                <Text>
-                  {insurance?.ehicCardExpiryDate &&
-                    formatMessage(
-                      isEhicValid
-                        ? messages.medicineValidFrom
-                        : messages.medicineValidTo,
-                    )}{' '}
-                  {formatDate(insurance?.ehicCardExpiryDate, 'dd.MM.yyyy')}
-                </Text>
-                <Icon
-                  icon={isEhicValid ? 'checkmarkCircle' : 'closeCircle'}
-                  color={isEhicValid ? 'mint600' : 'red600'}
-                  type="filled"
-                />
-                <Text fontWeight="semiBold" variant="small">
-                  {formatMessage(isEhicValid ? m.valid : m.expired)}
-                </Text>
-              </Box>
-            }
-            loading={loading}
-          />
-        </InfoLineStack>
-      )}
+            <InfoLine
+              label={formatMessage(messages.dentist)}
+              content={dentistName ?? ''}
+              loading={dentistsLoading}
+              button={{
+                to: HealthPaths.HealthDentists,
+                label: formatMessage(messages.seeMore),
+                type: 'link',
+                icon: 'arrowForward',
+              }}
+            />
+            <InfoLine
+              label={formatMessage(messages.organDonation)}
+              content={formatMessage(
+                isOrganDonor
+                  ? messages.iAmOrganDonor
+                  : messages.iAmNotOrganDonor,
+              )}
+              loading={donorStatusLoading}
+              button={{
+                to: HealthPaths.HealthOrganDonation,
+                label: formatMessage(messages.seeMore),
+                type: 'link',
+                icon: 'arrowForward',
+              }}
+            />
+            <InfoLine
+              label={formatMessage(messages.hasHealthInsurance)}
+              content={
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  columnGap="p1"
+                >
+                  <Text>
+                    {insurance?.isInsured &&
+                      formatMessage(messages.medicineValidFrom)}{' '}
+                    {formatDate(insurance?.from, 'dd.MM.yyyy')}
+                  </Text>
+                  <Icon
+                    icon={
+                      insurance?.isInsured ? 'checkmarkCircle' : 'closeCircle'
+                    }
+                    color={insurance?.isInsured ? 'mint600' : 'red600'}
+                    type="filled"
+                  />
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(insurance?.isInsured ? m.valid : m.expired)}
+                  </Text>
+                </Box>
+              }
+              loading={loading}
+              button={{
+                to: HealthPaths.HealthInsurance,
+                label: formatMessage(messages.seeMore),
+                type: 'link',
+                icon: 'arrowForward',
+              }}
+            />
+            <InfoLine
+              label={formatMessage(messages.ehic)}
+              content={
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  columnGap="p1"
+                >
+                  <Text>
+                    {insurance?.ehicCardExpiryDate &&
+                      formatMessage(
+                        isEhicValid
+                          ? messages.medicineValidFrom
+                          : messages.medicineValidTo,
+                      )}{' '}
+                    {formatDate(insurance?.ehicCardExpiryDate, 'dd.MM.yyyy')}
+                  </Text>
+                  <Icon
+                    icon={isEhicValid ? 'checkmarkCircle' : 'closeCircle'}
+                    color={isEhicValid ? 'mint600' : 'red600'}
+                    type="filled"
+                  />
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(isEhicValid ? m.valid : m.expired)}
+                  </Text>
+                </Box>
+              }
+              loading={loading}
+            />
+          </InfoLineStack>
+        )}
+      </Box>
       <Box
         display="flex"
         flexDirection="row"
@@ -435,7 +452,7 @@ export const HealthOverview = () => {
           </GridRow>
         </GridContainer>
       </Box>
-    </IntroWrapper>
+    </>
   )
 }
 

@@ -142,6 +142,10 @@ export const messages = defineMessages({
     id: 'sp.health:payments',
     defaultMessage: 'Greiðslur',
   },
+  paymentsAndRights: {
+    id: 'sp.health:payments-and-rights',
+    defaultMessage: 'Greiðslur og réttindi',
+  },
   paymentsIntro: {
     id: 'sp.health:payments-intro',
     defaultMessage:
@@ -193,9 +197,9 @@ export const messages = defineMessages({
     defaultMessage:
       'Ekki tókst að sækja gögn frá Sjúkratryggingum. Vinsamlegast reyndu aftur síðar.',
   },
-  myHealthOverview: {
-    id: 'sp.health:my-health-overview',
-    defaultMessage: 'Mitt heilsuyfirlit',
+  healthOverview: {
+    id: 'sp.health:health-overview',
+    defaultMessage: 'Heilsuyfirlit',
   },
   overviewTitle: {
     id: 'sp.health:overview-title',
@@ -209,6 +213,10 @@ export const messages = defineMessages({
   hasHealthInsurance: {
     id: 'sp.health:has-health-insurance',
     defaultMessage: 'Sjúkratrygging',
+  },
+  hasHealthInsuranceIntro: {
+    id: 'sp.health:has-health-insurance-intro',
+    defaultMessage: 'Sjúkratrygging - LÝSING',
   },
   healthInsuranceStart: {
     id: 'sp.health:health-insurance-start',

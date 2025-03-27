@@ -1,12 +1,16 @@
 export enum HealthPaths {
   HealthRoot = '/heilsa',
 
-  HealthOverview = '/heilsa/yfirlit',
-
   HealthBasicInformation = 'heilsa/grunnupplysingar',
+  HealthOverview = '/heilsa/grunnupplysingar/yfirlit',
 
-  HealthOrganDonation = '/heilsa/liffaeragjof',
-  HealthOrganDonationRegistration = '/heilsa/liffaeragjof/skraning',
+  HealthDentists = '/heilsa/grunnupplysingar/tannlaeknar',
+  HealthDentistRegistration = '/heilsa/grunnupplysingar/tannlaeknar/skraning',
+
+  HealthOrganDonation = '/heilsa/grunnupplysingar/liffaeragjof',
+  HealthOrganDonationRegistration = '/heilsa/grunnupplysingar/liffaeragjof/skraning',
+
+  HealthInsurance = '/heilsa/grunnupplysingar/sjukratryggingar',
 
   HealthTherapies = '/heilsa/thjalfun',
   HealthTherapiesPhysical = '/heilsa/thjalfun/sjukrathjalfun',
@@ -19,9 +23,6 @@ export enum HealthPaths {
 
   HealthAidsAndNutrition = '/heilsa/hjalpartaeki-og-naering',
 
-  HealthDentists = '/heilsa/tannlaeknar',
-  HealthDentistRegistration = '/heilsa/tannlaeknar/skraning',
-
   HealthMedicine = '/heilsa/lyf',
   HealthMedicinePaymentParticipation = '/heilsa/lyf/greidsluthatttaka',
   HealthMedicinePurchase = '/heilsa/lyf/greidsluthatttaka/lyfjakaup',
@@ -33,8 +34,8 @@ export enum HealthPaths {
   HealthMedicinePrescriptionHistory = '/heilsa/lyf/lyfjasaga',
   HealthMedicineDelegation = '/heilsa/lyf/lyfjaumbod',
 
-  HealthCenter = '/heilsa/heilsugaesla',
-  HealthCenterRegistration = '/heilsa/heilsugaesla/skraning',
+  HealthCenter = '/heilsa/grunnupplysingar/heilsugaesla',
+  HealthCenterRegistration = '/heilsa/grunnupplysingar/heilsugaesla/skraning',
 
   HealthVaccinations = '/heilsa/bolusetningar',
   HealthVaccinationsGeneral = '/heilsa/bolusetningar/almennar',

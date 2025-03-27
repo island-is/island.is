@@ -1,3 +1,28 @@
+query getHealthCenter($input: RightsPortalHealthCenterHistoryInput) {
+  rightsPortalHealthCenterRegistrationHistory(input: $input) {
+    current {
+      healthCenterName
+      doctor
+    }
+  }
+}
+
+query getDentists($input: RightsPortalDentistBillsInput!) {
+  rightsPortalUserDentistRegistration(input: $input) {
+    dentist {
+      name
+    }
+  }
+}
+
+query getDonorStatus($locale: String) {
+  healthDirectorateOrganDonation(locale: $locale) {
+    donor {
+      isDonor
+    }
+  }
+}
+
 query getInsuranceOverview {
   rightsPortalInsuranceOverview {
     isInsured
@@ -17,29 +42,5 @@ query getInsuranceConfirmation {
     fileName
     contentType
     data
-  }
-}
-
-query getHealthCenter($input: RightsPortalHealthCenterHistoryInput) {
-  rightsPortalHealthCenterRegistrationHistory(input: $input) {
-    current {
-      healthCenterName
-    }
-  }
-}
-
-query getDentists($input: RightsPortalDentistBillsInput!) {
-  rightsPortalUserDentistRegistration(input: $input) {
-    dentist {
-      name
-    }
-  }
-}
-
-query getDonorStatus($locale: String) {
-  healthDirectorateOrganDonation(locale: $locale) {
-    donor {
-      isDonor
-    }
   }
 }
