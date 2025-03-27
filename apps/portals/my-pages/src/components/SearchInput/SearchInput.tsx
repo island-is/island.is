@@ -71,6 +71,7 @@ export const SearchInput = ({ white, colored }: Props) => {
       options={searchResults ?? []}
       inputValue={query}
       openMenuOnFocus
+      closeMenuOnSubmit
       onSubmit={(_, option) => {
         if (option?.value) {
           navigate(option?.value)
