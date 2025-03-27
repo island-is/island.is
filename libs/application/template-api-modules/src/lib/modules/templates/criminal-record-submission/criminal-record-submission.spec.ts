@@ -12,6 +12,7 @@ import {
   SyslumennService,
   SyslumennClientModule,
 } from '@island.is/clients/syslumenn'
+import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
 import { ConfigService } from '@nestjs/config'
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
 import { createApplication } from '@island.is/application/testing'
@@ -48,6 +49,14 @@ describe('CriminalRecordSubmissionService', () => {
         },
         SyslumennService,
         AdapterService,
+        {
+          provide: CriminalRecordService,
+          useClass: jest.fn(() => ({
+            async newCriminalRecord() {
+              return { success: true }
+            },
+          })),
+        },
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
