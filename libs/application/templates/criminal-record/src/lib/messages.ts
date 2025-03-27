@@ -78,21 +78,10 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn þín um sakavottorð hefur verið staðfest',
     description: '',
   },
-  successAlertMessageDescription: {
-    id: 'cr.application:successAlertMessageDescription',
-    defaultMessage:
-      'Þú getur nálgast sakavottorðið þitt í stafrænu pósthólfi á Ísland.is.',
-    description: 'Description for success alert message',
-  },
-  successAlertMessageLinkText: {
-    id: 'cr.application:successAlertMessageLinkText',
-    defaultMessage: 'Opna pósthólf',
-    description: 'Link text for digital inbox on Ísland.is',
-  },
-  vertificationDescriptionWithLink: {
+  conclusionExpandableDescription: {
     id: 'cr.application:vertificationDescriptionWithLink',
     defaultMessage:
-      'Nánari upplýsingar um sannreyningu má finna á [island.is/sannreyna](https://island.is/sannreyna)',
+      '* Þú getur nálgast sakavottorðið þitt í [stafrænu pósthólfi á Ísland.is](/minarsidur/postholf).\n* Nánari upplýsingar um sannreyningu má finna á [island.is/sannreyna](https://island.is/sannreyna)',
     description:
       'The description and link for further information about the verification',
   },

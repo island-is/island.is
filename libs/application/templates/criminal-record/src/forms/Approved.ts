@@ -21,17 +21,9 @@ export const Approved: Form = buildForm({
     }),
     buildFormConclusionSection({
       sectionTitle: m.confirmation,
-      alertTitle: m.successTitle,
-      alertMessage: m.successAlertMessageDescription,
-      alertLinks: [
-        {
-          title: m.successAlertMessageLinkText,
-          url: '/minarsidur/postholf',
-          isExternal: false,
-        },
-      ],
+      alertMessage: m.successTitle,
       expandableIntro: '',
-      expandableDescription: m.vertificationDescriptionWithLink,
+      expandableDescription: m.conclusionExpandableDescription,
     }),
   ],
 })

@@ -19,7 +19,6 @@ import { conclusion } from './messages'
 type Props = Partial<{
   alertTitle: FormText
   alertMessage: FormTextWithLocale
-  alertLinks?: AlertMessageLink[]
   alertType: 'success' | 'warning' | 'error' | 'info'
   multiFieldTitle: StaticText
   secondButtonLink: StaticText
@@ -45,7 +44,6 @@ type Props = Partial<{
  *
  * @param  alertTitle  Title of the green alert message.
  * @param  alertMessage The message inside the green alert box.
- * @param  alertLinks The links inside the green alert box.
  * @param  alertType The type of alert, can be success, warning, error, info. * JUST ADDED *
  * @param  multiFieldTitle Title of the conclusion section. * JUST ADDED *
  * @param  accordion If false, there will be no accordion.
@@ -63,7 +61,6 @@ type Props = Partial<{
 export const buildFormConclusionSection = ({
   alertTitle = conclusion.alertMessageField.title,
   alertMessage = conclusion.alertMessageField.message,
-  alertLinks = [],
   alertType = 'success',
   multiFieldTitle = conclusion.information.formTitle,
   accordion = true,
@@ -114,7 +111,6 @@ export const buildFormConclusionSection = ({
             title: alertTitle,
             alertType: alertType,
             message: alertMessage,
-            links: alertLinks,
           }),
           ...expandableDescriptionField,
           buildMessageWithLinkButtonField({
