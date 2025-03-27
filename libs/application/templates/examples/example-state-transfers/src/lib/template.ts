@@ -57,7 +57,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
-  name: 'Example Common Actions',
+  name: 'Example state transfers',
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Stafrænt Ísland',
   dataSchema: exampleSchema,
