@@ -1,11 +1,11 @@
-import { Roles, States } from '../../utils/constants'
-
-import { ApplicationContext, DefaultEvents } from '@island.is/application/types'
-
+import { ApiActions, Events, Roles, States } from '../../utils/types'
+import {
+  ApplicationContext,
+  DefaultEvents,
+  defineTemplateApi,
+} from '@island.is/application/types'
 import { ApplicationStateSchema } from '@island.is/application/types'
-
 import { FormModes } from '@island.is/application/types'
-import { Events } from '../../utils/constants'
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { StateNodeConfig } from 'xstate'
 
@@ -18,6 +18,12 @@ export const inReviewState: StateNodeConfig<
     name: 'In Review',
     status: FormModes.IN_PROGRESS,
     lifecycle: DefaultStateLifeCycle,
+    onEntry: [
+      defineTemplateApi({
+        action: ApiActions.moveToReviewState,
+        order: 1,
+      }),
+    ],
     roles: [
       {
         id: Roles.APPLICANT,

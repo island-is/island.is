@@ -34,7 +34,7 @@ import {
   DefaultEvents,
   FormModes,
 } from '@island.is/application/types'
-import { Events, Roles, States } from '../utils/constants'
+import { Events, Roles, States } from '../utils/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { exampleSchema } from './dataSchema'
 import { Features } from '@island.is/feature-flags'

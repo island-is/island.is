@@ -2,8 +2,9 @@ import {
   ApplicationContext,
   FormModes,
   ApplicationStateSchema,
+  defineTemplateApi,
 } from '@island.is/application/types'
-import { Events, Roles } from '../../utils/constants'
+import { ApiActions, Events, Roles } from '../../utils/types'
 import { StateNodeConfig } from 'xstate'
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 
@@ -17,6 +18,12 @@ export const approvedState: StateNodeConfig<
     progress: 100,
     status: FormModes.APPROVED,
     lifecycle: DefaultStateLifeCycle,
+    onEntry: [
+      defineTemplateApi({
+        action: ApiActions.approveApplication,
+        order: 1,
+      }),
+    ],
     roles: [
       {
         id: Roles.APPLICANT,

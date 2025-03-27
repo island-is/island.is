@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/types'
 import set from 'lodash/set'
 import { ActionFunction, ActionObject, assign } from 'xstate'
-import { Events } from '../../utils/constants'
+import { Events } from '../../utils/types'
 
 type StateMachineAction =
   | ActionObject<ApplicationContext, Events>

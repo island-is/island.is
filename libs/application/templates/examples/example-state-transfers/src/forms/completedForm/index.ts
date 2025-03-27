@@ -11,6 +11,10 @@ export const completedForm = buildForm({
       alertMessage:
         "Now you are in the COMPLETED state. This state doesn't have any actions or an 'on' object. This means that this state is a dead end, the application is unable to state transfer out of this state.",
       alertType: 'success',
+      accordion: false,
+      sectionTitle: '',
+      descriptionFieldDescription:
+        'When entering this state, the method completeApplication in the template-api-module service was run. This is done through the onEntry property in the stateMachineCongig.states in the template.ts.',
     }),
   ],
 })

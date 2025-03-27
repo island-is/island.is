@@ -1,5 +1,4 @@
-import { Events, Roles } from '../../utils/constants'
-
+import { Events, Roles, States } from '../../utils/types'
 import {
   ApplicationContext,
   ApplicationStateSchema,
@@ -7,7 +6,6 @@ import {
   FormModes,
   UserProfileApi,
 } from '@island.is/application/types'
-import { States } from '../../utils/constants'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { StateNodeConfig } from 'xstate'
 

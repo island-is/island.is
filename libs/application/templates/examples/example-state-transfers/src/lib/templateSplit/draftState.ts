@@ -4,7 +4,7 @@ import {
   DefaultEvents,
   FormModes,
 } from '@island.is/application/types'
-import { Events, Roles, States } from '../../utils/constants'
+import { Events, Roles, States } from '../../utils/types'
 import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { StateNodeConfig } from 'xstate'
 
@@ -39,7 +39,7 @@ export const draftState: StateNodeConfig<
       target: States.COMPLETED,
     },
     [DefaultEvents.ASSIGN]: {
-      target: States.WAITING_TO_ASSIGN,
+      target: States.IN_REVIEW,
     },
   },
 }

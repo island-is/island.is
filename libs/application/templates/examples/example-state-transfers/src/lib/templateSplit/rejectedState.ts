@@ -2,9 +2,10 @@ import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationContext,
   ApplicationStateSchema,
+  defineTemplateApi,
   FormModes,
 } from '@island.is/application/types'
-import { Events, Roles } from '../../utils/constants'
+import { ApiActions, Events, Roles } from '../../utils/types'
 import { StateNodeConfig } from 'xstate'
 
 export const rejectedState: StateNodeConfig<
@@ -17,6 +18,12 @@ export const rejectedState: StateNodeConfig<
     progress: 100,
     status: FormModes.REJECTED,
     lifecycle: DefaultStateLifeCycle,
+    onEntry: [
+      defineTemplateApi({
+        action: ApiActions.rejectApplication,
+        order: 1,
+      }),
+    ],
     roles: [
       {
         id: Roles.APPLICANT,
