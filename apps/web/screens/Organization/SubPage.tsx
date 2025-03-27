@@ -317,6 +317,7 @@ const SubPage: Screen<SubPageProps, SubPageScreenContext> = ({
   backLink,
 }) => {
   const router = useRouter()
+  const { activeLocale } = useI18n()
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -362,7 +363,11 @@ const SubPage: Screen<SubPageProps, SubPageScreenContext> = ({
       }
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
-        items: getSubpageNavList(organizationPage, router),
+        items: getSubpageNavList(
+          organizationPage,
+          router,
+          activeLocale === 'is' ? 3 : 4,
+        ),
       }}
       mainContent={
         customContent ? (
