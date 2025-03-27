@@ -175,6 +175,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [SchoolsApi],
             },
           ],
         },
