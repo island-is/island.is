@@ -33,7 +33,7 @@ export const statesAndStatusSection = buildSection({
             'An example of custom states would be if many applicants need to fill in the application. Then you can have states like DRAFT_A and DRAFT_B but both states will have the same status "draft".',
         }),
         buildDescriptionField({
-          id: 'statesAndStatusesDescription4',
+          id: 'statesAndStatusesDescription5',
           description:
             'Another example of custom states would be if many organizations and/or users need to approve the filled in information. Then you can have states like REVIEW_USER, REVIEW_HMS, but both states will have the same status "inprogress".',
         }),
