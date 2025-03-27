@@ -1,4 +1,4 @@
-import yargs from 'yargs'
+import yargs, { ArgumentsCamelCase } from 'yargs'
 import AWS from 'aws-sdk'
 import { Envs } from './environments'
 import {
@@ -27,7 +27,7 @@ const charts: { [name in ChartName]: EnvironmentServices } = {
   'identity-server': IDSServices,
 }
 
-interface Arguments {
+interface Arguments extends ArgumentsCamelCase {
   feature: string
   images: string
   chart: ChartName
@@ -126,12 +126,18 @@ const deployedComment = (
 }
 
 yargs(process.argv.slice(2))
-  .command(
-    'values',
-    'get helm values file',
-    () => {},
-    async (argv: Arguments) => {
-      const { habitat, affectedServices, env } = parseArguments(argv)
+  .command({
+    command: 'values',
+    describe: 'get helm values file',
+    builder: (yargs) =>
+      yargs.option('withMocks', {
+        type: 'string',
+        description: 'Include mocks in the values file',
+        default: 'false',
+      }),
+    handler: async (argv) => {
+      const typedArgv = (argv as unknown) as Arguments
+      const { habitat, affectedServices, env } = parseArguments(typedArgv)
       const { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
@@ -143,18 +149,21 @@ yargs(process.argv.slice(2))
           env,
           habitat,
           featureYaml,
-          (argv.withMocks ?? 'false') === 'true' ? 'with-mocks' : 'no-mocks',
+          (typedArgv.withMocks ?? 'false') === 'true'
+            ? 'with-mocks'
+            : 'no-mocks',
         ),
-        argv.output,
+        typedArgv.output,
       )
     },
-  )
-  .command(
-    'ingress-comment',
-    'get helm values file',
-    () => {},
-    async (argv: Arguments) => {
-      const { habitat, affectedServices, env } = parseArguments(argv)
+  })
+  .command({
+    command: 'ingress-comment',
+    describe: 'get helm values file',
+    builder: (yargs) => yargs,
+    handler: async (argv) => {
+      const typedArgv = (argv as unknown) as Arguments
+      const { habitat, affectedServices, env } = parseArguments(typedArgv)
       const {
         included: featureYaml,
         excluded,
@@ -171,30 +180,31 @@ yargs(process.argv.slice(2))
       const includedServicesComment = deployedComment(featureYaml, excluded)
       await writeToOutput(
         `${ingressComment}\n\n${includedServicesComment}`,
-        argv.output,
+        typedArgv.output,
       )
     },
-  )
-  .command(
-    'jobs',
-    'get kubernetes jobs to bootstrap feature environment',
-    (yargs) => {
-      yargs.option('jobImage', {
+  })
+  .command({
+    command: 'jobs',
+    describe: 'get kubernetes jobs to bootstrap feature environment',
+    builder: (yargs) => {
+      return yargs.option('jobImage', {
         type: 'string',
         description: 'Image to run feature bootstrapping jobs',
         demandOption: true,
       })
     },
-    async (argv: Arguments) => {
-      const { affectedServices, env } = parseArguments(argv)
+    handler: async (argv) => {
+      const typedArgv = (argv as unknown) as Arguments
+      const { affectedServices, env } = parseArguments(typedArgv)
       const featureYaml = await renderHelmJobForFeature(
         env,
-        argv.jobImage!,
+        typedArgv.jobImage!,
         affectedServices,
       )
-      await writeToOutput(dumpJobYaml(featureYaml), argv.output)
+      await writeToOutput(dumpJobYaml(featureYaml), typedArgv.output)
     },
-  )
+  })
   .options({
     feature: {
       type: 'string',
@@ -208,7 +218,7 @@ yargs(process.argv.slice(2))
         'List of comma separated Docker image names that have changed',
     },
     chart: {
-      choices: ['islandis', 'identity-server'],
+      choices: ['islandis', 'identity-server'] as const,
       demandOption: true,
       description: 'Name of the umbrella chart to use',
     },
