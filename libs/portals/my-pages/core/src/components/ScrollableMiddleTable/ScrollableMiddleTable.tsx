@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import * as styles from './ScrollableMiddleTable.css'
+
 export interface Columns {
   first: string
   scrollableMiddle: Array<string>
@@ -42,8 +43,8 @@ const getBreakpointWidth = (width: number) => {
 }
 
 //Magic numbers
-const FIRST_COLUMN_WIDTH = 130
-const LAST_COLUMN_WIDTH = 144
+const FIRST_COLUMN_WIDTH = 256
+const LAST_COLUMN_WIDTH = 120
 const ICON_WIDTH = theme.spacing[6]
 
 export const ScrollableMiddleTable = ({
@@ -131,7 +132,14 @@ export const ScrollableMiddleTable = ({
           <T.Row>
             <T.HeadData
               box={{
-                className: cn(styles.firstColumn, styles.row, {
+                className: cn(styles.row, styles.header, styles.expandColumn, {
+                  [styles.sticky]: options?.firstColumn.sticky,
+                }),
+              }}
+            />
+            <T.HeadData
+              box={{
+                className: cn(styles.firstColumn, styles.header, styles.row, {
                   [styles.sticky]: options?.firstColumn.sticky,
                 }),
               }}
@@ -141,7 +149,12 @@ export const ScrollableMiddleTable = ({
               </Text>
             </T.HeadData>
             {header.scrollableMiddle.map((val, index) => (
-              <T.HeadData key={`nested-table-header-col-${index}`}>
+              <T.HeadData
+                box={{
+                  className: styles.header,
+                }}
+                key={`nested-table-header-col-${index}`}
+              >
                 <Text variant="small" fontWeight="medium">
                   {val}
                 </Text>
@@ -152,7 +165,7 @@ export const ScrollableMiddleTable = ({
                 width: isMobile ? 'initial' : LAST_COLUMN_WIDTH,
               }}
               box={{
-                className: cn(styles.lastColumn, styles.row, {
+                className: cn(styles.lastColumn, styles.header, styles.row, {
                   [styles.lastColumnSticky]: options?.firstColumn.sticky,
                 }),
               }}
@@ -166,6 +179,25 @@ export const ScrollableMiddleTable = ({
         <T.Body>
           {rows?.map((r, rowIdx) => (
             <T.Row key={`nested-table-row-${rowIdx}`}>
+              <T.Data
+                box={{
+                  className: cn(styles.row, styles.expandColumn, {
+                    [styles.sticky]: options?.firstColumn.sticky,
+                  }),
+                }}
+              >
+                <Button
+                  circle
+                  colorScheme="light"
+                  icon={'add'}
+                  iconType="filled"
+                  onClick={() => console.log('expand')}
+                  preTextIconType="filled"
+                  size="small"
+                  type="button"
+                  variant="primary"
+                />
+              </T.Data>
               <T.Data
                 box={{
                   className: cn(styles.firstColumn, styles.row, {
@@ -196,6 +228,13 @@ export const ScrollableMiddleTable = ({
           ))}
           {footer && (
             <T.Row>
+              <T.Data
+                box={{
+                  className: cn(styles.row, styles.expandColumn, {
+                    [styles.sticky]: options?.firstColumn.sticky,
+                  }),
+                }}
+              />
               <T.Data
                 box={{
                   className: cn(styles.firstColumn, styles.row, {

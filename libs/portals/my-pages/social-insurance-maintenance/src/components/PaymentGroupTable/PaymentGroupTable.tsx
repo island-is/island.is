@@ -1,15 +1,16 @@
-import { SocialInsurancePaymentGroupType } from '@island.is/api/schema'
-import { Table, Text } from '@island.is/island-ui/core'
+import {
+  ScrollableMiddleTable,
+  m as coreMessages,
+} from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   EmptyTable,
-  ExpandHeader,
+  MONTHS,
   amountFormat,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
-import { useGetPaymentPlanQuery } from './PaymentGroupTable.generated'
-import { PaymentGroupTableRow } from './PaymentGroupTableRow'
+import { useGetPaymentPlanQuery } from '../PaymentGroupTable/PaymentGroupTable.generated'
 
 export const PaymentGroupTable = () => {
   useNamespaces('sp.social-insurance-maintenance')
@@ -21,79 +22,60 @@ export const PaymentGroupTable = () => {
     return <Problem noBorder={false} size="small" />
   }
 
-  return (
-    <>
-      <Table.Table>
-        <ExpandHeader
-          data={[
-            { value: '', printHidden: true },
-            { value: formatMessage(m.paymentTypes) },
-            {
-              value: formatMessage(m.yearCumulativeTotal),
-              align: 'right',
-            },
-          ]}
-        />
+  const paymentPlan = data?.socialInsurancePaymentPlan
 
-        {!loading && !error && data?.socialInsurancePaymentPlan && (
-          <Table.Body>
-            {data.socialInsurancePaymentPlan?.paymentGroups
-              ?.filter(
-                (pg) => pg.type === SocialInsurancePaymentGroupType.PAYMENTS,
-              )
-              .map((pg, idx) => (
-                <PaymentGroupTableRow
-                  key={`payment-group-idx-${idx}`}
-                  data={pg}
-                  formatMessage={formatMessage}
-                />
-              ))}
-            <Table.Row>
-              <Table.Data colSpan={2}>
-                <Text fontWeight="semiBold">
-                  {formatMessage(m.paymentsTotal)}
-                </Text>
-              </Table.Data>
-              <Table.Data align="right" colSpan={2}>
-                <Text fontWeight="semiBold">
-                  {amountFormat(data.socialInsurancePaymentPlan?.totalPayments)}
-                </Text>
-              </Table.Data>
-            </Table.Row>
-            {data.socialInsurancePaymentPlan?.paymentGroups
-              ?.filter(
-                (pg) => pg.type === SocialInsurancePaymentGroupType.SUBTRACTION,
-              )
-              .map((pg, idx) => (
-                <PaymentGroupTableRow
-                  key={`payment-group-idx-subtraction-${idx}`}
-                  data={pg}
-                  formatMessage={formatMessage}
-                />
-              ))}
-            <Table.Row>
-              <Table.Data align="left" colSpan={2}>
-                <Text fontWeight="semiBold">
-                  {formatMessage(m.paymentsReceived)}
-                </Text>
-              </Table.Data>
-              <Table.Data align="right">
-                <Text fontWeight="semiBold">
-                  {amountFormat(
-                    data.socialInsurancePaymentPlan?.totalPaymentsReceived,
-                  )}
-                </Text>
-              </Table.Data>
-            </Table.Row>
-          </Table.Body>
-        )}
-      </Table.Table>
-      {!error && !data?.socialInsurancePaymentPlan && (
-        <EmptyTable
-          loading={loading}
-          message={formatMessage(m.noPaymentsFound)}
-        />
-      )}
-    </>
+  if (!error && !paymentPlan) {
+    return (
+      <EmptyTable
+        loading={loading}
+        message={formatMessage(m.noPaymentsFound)}
+      />
+    )
+  }
+
+  return (
+    <ScrollableMiddleTable
+      options={{
+        firstColumn: {
+          shadow: true,
+          sticky: true,
+        },
+        lastColumn: {
+          shadow: true,
+          sticky: true,
+        },
+      }}
+      header={{
+        first: formatMessage(m.type),
+        scrollableMiddle: MONTHS.map((month) =>
+          formatMessage(coreMessages[month as keyof typeof coreMessages]),
+        ),
+        last: formatMessage(m.year),
+      }}
+      rows={paymentPlan?.paymentGroups?.map((p) => ({
+        first: p.name,
+        scrollableMiddle: MONTHS.map((month) => {
+          const monthlyAmount = p.monthlyPaymentHistory.find(
+            (mph) => mph.monthIndex === MONTHS.indexOf(month) + 1,
+          )?.amount
+
+          return monthlyAmount ? amountFormat(monthlyAmount) : '-'
+        }),
+        last: `${amountFormat(p.totalYearCumulativeAmount)}`,
+      }))}
+      footer={{
+        first: formatMessage(m.totalPaymentsReceived),
+        scrollableMiddle: MONTHS.map((month) => {
+          const monthlyAmount = paymentPlan?.totalMonthlyPaymentHistory?.find(
+            (mph) => mph.monthIndex === MONTHS.indexOf(month),
+          )?.amount
+
+          return monthlyAmount ? amountFormat(monthlyAmount) : '-'
+        }),
+        last: paymentPlan?.totalPaymentsReceived
+          ? amountFormat(paymentPlan?.totalPaymentsReceived)
+          : '-',
+      }}
+    />
   )
 }
