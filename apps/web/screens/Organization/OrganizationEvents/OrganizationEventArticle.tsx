@@ -307,7 +307,7 @@ const OrganizationEventArticle: Screen<
                 renderComponent: {
                   Image: (slice: ImageSchema) => (
                     <Box className={styles.clearBoth}>
-                      <Image {...slice} url={slice.url + '?w=1000'} />
+                      <Image {...slice} url={slice.url} />
                     </Box>
                   ),
                 },
