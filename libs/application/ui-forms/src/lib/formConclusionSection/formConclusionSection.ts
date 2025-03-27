@@ -8,7 +8,6 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import {
-  AlertMessageLink,
   Condition,
   FormText,
   FormTextWithLocale,
