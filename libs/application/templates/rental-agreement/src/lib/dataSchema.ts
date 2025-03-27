@@ -170,21 +170,23 @@ const registerProperty = z
     searchresults: z
       .object({
         label: z.string().optional(),
-        units: z.array(
-          z.object({
-            size: z.number().optional(),
-            address: z.string().optional(),
-            checked: z.boolean().optional(),
-            sizeUnit: z.string().optional(),
-            unitCode: z.string().optional(),
-            addressCode: z.number().optional(),
-            propertyCode: z.number().optional(),
-            propertyValue: z.number().optional(),
-            appraisalUnitCode: z.number().optional(),
-            fireInsuranceValuation: z.number().optional(),
-            propertyUsageDescription: z.string().optional(),
-          }),
-        ),
+        units: z
+          .array(
+            z.object({
+              size: z.number().optional(),
+              address: z.string().optional(),
+              checked: z.boolean().optional(),
+              sizeUnit: z.string().optional(),
+              unitCode: z.string().optional(),
+              addressCode: z.number().optional(),
+              propertyCode: z.number().optional(),
+              propertyValue: z.number().optional(),
+              appraisalUnitCode: z.number().optional(),
+              fireInsuranceValuation: z.number().optional(),
+              propertyUsageDescription: z.string().optional(),
+            }),
+          )
+          .optional(),
         value: z.string().optional(),
         address: z.string().optional(),
         landCode: z.number().optional(),
