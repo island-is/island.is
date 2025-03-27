@@ -63,17 +63,235 @@ export class SocialInsuranceAdministrationClientService {
   getPaymentPlan(
     user: User,
   ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
-    return this.paymentPlanApiWithAuth(user).apiProtectedV1PaymentPlanGet({
-      year: undefined,
+    return Promise.resolve({
+      totalPayment: 999999,
+      subtracted: 20,
+      paidOut: 25,
+      groups: [
+        {
+          group: 'Óskattskyldar greiðslur',
+          groupId: 2,
+          total: 5000,
+          monthTotals: [
+            {
+              month: 1,
+              amount: 10,
+            },
+            {
+              month: 2,
+              amount: 20,
+            },
+            {
+              month: 3,
+              amount: 30,
+            },
+            {
+              month: 4,
+              amount: 40,
+            },
+            {
+              month: 5,
+              amount: 50,
+            },
+            {
+              month: 6,
+              amount: 60,
+            },
+            {
+              month: 7,
+              amount: 70,
+            },
+            {
+              month: 8,
+              amount: 80,
+            },
+            {
+              month: 9,
+              amount: 90,
+            },
+            {
+              month: 10,
+              amount: 100,
+            },
+            {
+              month: 11,
+              amount: 110,
+            },
+            {
+              month: 12,
+              amount: 120,
+            },
+          ],
+          rows: [
+            {
+              name: 'TEST 2',
+              total: 500009,
+              markWithAsterisk: true,
+              months: [
+                {
+                  month: 8,
+                  amount: 513215,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          group: 'Frádráttur',
+          groupId: 3,
+          total: 995,
+          monthTotals: [
+            {
+              month: 1,
+              amount: 10,
+            },
+            {
+              month: 2,
+              amount: 20,
+            },
+            {
+              month: 3,
+              amount: 30,
+            },
+            {
+              month: 4,
+              amount: 40,
+            },
+            {
+              month: 5,
+              amount: 50,
+            },
+            {
+              month: 6,
+              amount: 60,
+            },
+            {
+              month: 7,
+              amount: 70,
+            },
+            {
+              month: 8,
+              amount: 80,
+            },
+            {
+              month: 9,
+              amount: 90,
+            },
+            {
+              month: 10,
+              amount: 100,
+            },
+            {
+              month: 11,
+              amount: 110,
+            },
+            {
+              month: 12,
+              amount: 120,
+            },
+          ],
+          rows: [
+            {
+              name: 'Lífeyrir test',
+              total: 500009,
+              markWithAsterisk: true,
+              months: [
+                {
+                  month: 8,
+                  amount: 513215,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          group: 'Test cat 1',
+          groupId: 1,
+          total: 995,
+          monthTotals: [
+            {
+              month: 1,
+              amount: 10,
+            },
+            {
+              month: 2,
+              amount: 20,
+            },
+            {
+              month: 3,
+              amount: 30,
+            },
+            {
+              month: 4,
+              amount: 40,
+            },
+            {
+              month: 5,
+              amount: 50,
+            },
+            {
+              month: 6,
+              amount: 60,
+            },
+            {
+              month: 7,
+              amount: 70,
+            },
+            {
+              month: 8,
+              amount: 80,
+            },
+            {
+              month: 9,
+              amount: 90,
+            },
+            {
+              month: 10,
+              amount: 100,
+            },
+            {
+              month: 11,
+              amount: 110,
+            },
+            {
+              month: 12,
+              amount: 120,
+            },
+          ],
+          rows: [
+            {
+              name: 'Lífeyrir test',
+              total: 500009,
+              markWithAsterisk: true,
+              months: [
+                {
+                  month: 8,
+                  amount: 513215,
+                },
+              ],
+            },
+          ],
+        },
+      ],
     })
+
+    /*return this.paymentPlanApiWithAuth(user).apiProtectedV1PaymentPlanGet({
+      year: undefined,
+    })*/
   }
 
   async getPayments(
     user: User,
   ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments | null> {
-    return await this.paymentPlanApiWithAuth(user)
+    return Promise.resolve({
+      nextPayment: 100000,
+      previousPayment: 5000,
+    })
+
+    /*return await this.paymentPlanApiWithAuth(user)
       .apiProtectedV1PaymentPlanLegitimatepaymentsGet()
       .catch(handle404)
+      */
   }
 
   async getLatestIncomePlan(user: User): Promise<IncomePlanDto | null> {
