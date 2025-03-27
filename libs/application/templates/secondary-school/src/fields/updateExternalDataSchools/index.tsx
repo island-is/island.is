@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
@@ -11,9 +11,6 @@ export const UpdateExternalDataSchools: FC<FieldBaseProps> = ({
 }) => {
   const { locale } = useLocale()
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [schoolsDataStr, setSchoolsDataStr] = useState<string>(
-    JSON.stringify(application.externalData.schools.data),
-  )
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
@@ -35,6 +32,10 @@ export const UpdateExternalDataSchools: FC<FieldBaseProps> = ({
         },
       })
 
+      const schoolsDataStr = JSON.stringify(
+        application.externalData.schools.data,
+      )
+
       const updatedExternalData =
         res.data.updateApplicationExternalData.externalData
       const updatedschoolsDataStr = JSON.stringify(
@@ -42,7 +43,6 @@ export const UpdateExternalDataSchools: FC<FieldBaseProps> = ({
       )
 
       if (updatedschoolsDataStr !== schoolsDataStr) {
-        setSchoolsDataStr(updatedschoolsDataStr)
         refetch?.()
       }
     } finally {
@@ -71,7 +71,7 @@ export const UpdateExternalDataSchools: FC<FieldBaseProps> = ({
     'schools.date',
   )
 
-  useMemo(() => {
+  useEffect(() => {
     // Should only update external data and refetch if old data was fetched was over an hour ago
     if (
       !isLoading &&
