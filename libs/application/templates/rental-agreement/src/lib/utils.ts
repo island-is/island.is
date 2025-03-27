@@ -50,8 +50,13 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const formatCurrency = (answer: string) =>
-  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ISK'
+export const formatCurrency = (
+  answer: string,
+  options?: { skipCurrency: boolean },
+) =>
+  `${answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}${
+    options?.skipCurrency ? '' : ' ISK'
+  }`
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const propertyTypeOptions = getValueViaPath<RentalHousingCategoryTypes>(

@@ -629,6 +629,9 @@ const otherFees = z
     heatingCostMeterNumber: z.string().optional(),
     heatingCostMeterStatus: z.string().optional(),
     heatingCostMeterStatusDate: z.string().optional(),
+    otherCosts: z.array(z.string()).optional(),
+    otherCostsDescription: z.string().optional(),
+    otherCostsAmount: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     const tenantPaysHousingFund =

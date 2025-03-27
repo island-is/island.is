@@ -44,6 +44,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
     answers.otherFees.electricityCost === OtherFeesPayeeOptions.TENANT
   const tenantPaysHeating =
     answers.otherFees.heatingCost === OtherFeesPayeeOptions.TENANT
+  const tenantPaysOtherFees = answers.otherFees.otherCosts?.includes('true')
 
   return (
     <SummaryCard cardLabel={formatMessage(summary.otherCostsHeader)}>
@@ -156,13 +157,41 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
           editAction={goToScreen}
           route={route}
           hasChangeButton={hasChangeButton}
-          isLast={true}
+          isLast={!tenantPaysOtherFees}
         >
           <GridColumn span={['12/12']}>
             <KeyValue
               label={summary.houseFundAmountLabel}
               value={
                 formatCurrency(answers.otherFees.housingFundAmount as string) ||
+                '-'
+              }
+            />
+          </GridColumn>
+        </SummaryCardRow>
+      )}
+
+      {tenantPaysOtherFees && (
+        <SummaryCardRow
+          editAction={goToScreen}
+          route={route}
+          hasChangeButton={hasChangeButton}
+          isLast={true}
+        >
+          <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
+            <KeyValue
+              label={summary.otherCostsLabel}
+              value={`„${answers.otherFees.otherCostsDescription}“` || ''}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
+            <KeyValue
+              label={summary.otherCostsAmountLabel}
+              value={
+                (answers.otherFees.otherCostsAmount &&
+                  formatCurrency(answers.otherFees.otherCostsAmount, {
+                    skipCurrency: true,
+                  })) ||
                 '-'
               }
             />

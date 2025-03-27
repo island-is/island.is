@@ -190,6 +190,11 @@ export const summary = defineMessages({
     defaultMessage: 'Upphæð',
     description: 'Other costs amount label',
   },
+  otherCostsLabel: {
+    id: 'ra.application:summary.otherCostsLabel',
+    defaultMessage: 'Annar kostnaður',
+    description: 'Other costs amount label',
+  },
 
   // Property information
   propertyInfoHeader: {
