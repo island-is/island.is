@@ -47,8 +47,8 @@ import {
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { Subpoena } from '../subpoena'
+import { Victim } from '../victim'
 import { DeleteVictimResponse } from '../victim/models/deleteVictim.response'
-import { Victim } from '../victim/models/victim.model'
 import { backendModuleConfig } from './backend.config'
 
 @Injectable()

@@ -1,6 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { Field, ObjectType } from '@nestjs/graphql'
 
+@ObjectType()
 export class DeleteVictimResponse {
-  @ApiProperty({ type: Boolean })
+  @Field(() => Boolean)
   deleted!: boolean
 }
