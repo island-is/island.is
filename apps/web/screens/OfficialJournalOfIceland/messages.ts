@@ -3,11 +3,11 @@ import { defineMessages } from 'react-intl'
 export const m = {
   breadcrumb: defineMessages({
     frontpage: {
-      id: 'web.ojoi.breadcrumb.frontpage',
+      id: 'web.ojoi:breadcrumb.frontpage',
       defaultMessage: 'Ísland.is',
     },
     help: {
-      id: 'web.ojoi.breadcrumb.help',
+      id: 'web.ojoi:breadcrumb.help',
       defaultMessage: 'Leiðbeiningar',
     },
   }),
