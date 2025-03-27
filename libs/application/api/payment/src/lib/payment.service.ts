@@ -121,8 +121,6 @@ export class PaymentService {
     )
   }
 
-  // Trigger deployment
-
   async getStatus(user: User, applicationId: string): Promise<PaymentStatus> {
     const foundPayment = await this.findPaymentByApplicationId(applicationId)
     if (!foundPayment) {
