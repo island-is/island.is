@@ -12,10 +12,45 @@ export const m = {
       defaultMessage: 'Dómar frá öllum dómstigum á Íslandi',
       description: 'Lýsing',
     },
+    showAllCourts: {
+      id: 'web.verdicts:listPage.showAllCourts',
+      defaultMessage: 'Sýna allt',
+      description: 'Sýna allt',
+    },
+    showDistrictCourts: {
+      id: 'web.verdicts:listPage.showDistrictCourts',
+      defaultMessage: 'Héraðsdómstólar',
+      description: 'Héraðsdómstólar',
+    },
+    showCourtOfAppeal: {
+      id: 'web.verdicts:listPage.showCourtOfAppeal',
+      defaultMessage: 'Landsréttur',
+      description: 'Landsréttur',
+    },
+    showSupremeCourt: {
+      id: 'web.verdicts:listPage.showSupremeCourt',
+      defaultMessage: 'Hæstiréttur',
+      description: 'Hæstiréttur',
+    },
+    searchInputPlaceholder: {
+      id: 'web.verdicts:listPage.searchInputPlaceholder',
+      defaultMessage: 'Sláðu inn orð, málsnúmer, málsaðila',
+      description: 'Placeholder fyrir leitarbox',
+    },
     presentings: {
       id: 'web.verdicts:listPage.presentings',
       defaultMessage: 'Reifun',
       description: 'Reifun',
+    },
+    courtSelectLabel: {
+      id: 'web.verdicts:listPage.courtSelectLabel',
+      defaultMessage: 'Veldu dómstól',
+      description: 'Label á dómstól select einingu',
+    },
+    districtCourtSelectLabel: {
+      id: 'web.verdicts:listPage.districtCourtSelectLabel',
+      defaultMessage: 'Veldu héraðsdómstól',
+      description: 'Label á héraðsdómstól select einingu',
     },
     loadingMoreFailed: {
       id: 'web.verdicts:listPage.loadingMoreFailed',
@@ -43,6 +78,16 @@ export const m = {
       id: 'web.verdicts:listPage.sidebarFilterHeading',
       defaultMessage: 'Ítarleit',
       description: 'Ítarleit',
+    },
+    verdictsFoundPlural: {
+      id: 'web.verdicts:listPage.verdictsFoundPlural',
+      defaultMessage: 'dómar fundust',
+      description: 'dómar fundust (fleirtala)',
+    },
+    verdictsFoundSingular: {
+      id: 'web.verdicts:listPage.verdictsFound',
+      defaultMessage: 'dómur fannst',
+      description: 'dómur fannst (eintala)',
     },
   }),
   verdictPage: {

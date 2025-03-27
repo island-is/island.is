@@ -5,6 +5,7 @@ import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseTransition,
   IndictmentCaseState,
@@ -146,6 +147,28 @@ const indictmentCaseStateMachine: Map<
         ...update,
         state: CaseState.DELETED,
       }),
+    },
+  ],
+  [
+    IndictmentCaseTransition.REOPEN,
+    {
+      fromStates: [IndictmentCaseState.COMPLETED],
+      transition: (update: UpdateCase, theCase: Case) => {
+        if (
+          theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.WITHDRAWAL
+        ) {
+          throw new ForbiddenException(
+            'Cannot reopen a case that has been withdrawn',
+          )
+        }
+
+        return {
+          ...update,
+          state: CaseState.RECEIVED,
+          rulingDate: null,
+        }
+      },
     },
   ],
 ])

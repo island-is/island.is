@@ -334,6 +334,10 @@ export const setOnChangeSecondProgram = (
       key: `selection[${index}].secondProgram.registrationEndDate`,
       value: programInfo?.registrationEndDate,
     },
+    {
+      key: `selection[${index}].secondProgram.isSpecialNeedsProgram`,
+      value: programInfo?.isSpecialNeedsProgram,
+    },
   ]
 }
 
@@ -441,4 +445,48 @@ export const getAlertMessageAddThirdSelectionCondition = (
     'selection.2.include',
   )
   return isFreshman && !includeThirdSelection
+}
+
+export const getAlertSpecialNeedsProgramCondition = (
+  answers: FormValue,
+): boolean => {
+  const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
+    answers,
+    'selection',
+  )
+
+  return !!selection?.find(
+    (x) =>
+      x.firstProgram?.isSpecialNeedsProgram ||
+      x.secondProgram?.isSpecialNeedsProgram,
+  )
+}
+
+export const getAlertSpecialNeedsProgramMessage = (
+  answers: FormValue,
+  lang: Locale,
+) => {
+  const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
+    answers,
+    'selection',
+  )
+
+  const programNames =
+    selection?.flatMap(({ firstProgram, secondProgram }) =>
+      [firstProgram, secondProgram]
+        .filter((x) => x?.isSpecialNeedsProgram)
+        .map((x) =>
+          getTranslatedProgram(lang, {
+            nameIs: x?.nameIs,
+            nameEn: x?.nameEn,
+          }),
+        ),
+    ) || []
+
+  return {
+    ...school.selection.specialNeedsProgramAlertDescription,
+    values: {
+      programNameList: programNames.join(', '),
+    },
+  }
 }

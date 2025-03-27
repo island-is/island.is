@@ -1,4 +1,4 @@
-import ServicePortalDocumentsV3 from './Overview'
+import DocumentsOverview from './Overview'
 import { DocumentsProvider } from './DocumentContext'
 import { Box } from '@island.is/island-ui/core'
 
@@ -6,7 +6,7 @@ export const DocumentIndex = () => {
   return (
     <Box paddingTop={2}>
       <DocumentsProvider>
-        <ServicePortalDocumentsV3 />
+        <DocumentsOverview />
       </DocumentsProvider>
     </Box>
   )

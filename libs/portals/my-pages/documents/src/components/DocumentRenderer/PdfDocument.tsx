@@ -1,6 +1,6 @@
 import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Modal, m } from '@island.is/portals/my-pages/core'
+import { DOMSMAL_DOC_ID, Modal, m } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
 import { ActiveDocumentType2 } from '../../lib/types'
@@ -36,7 +36,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
     // Size of PDF Canvas
   }, [ref.current?.querySelectorAll('canvas')?.[0]?.width])
 
-  const isCourtCase = document.categoryId === '12' // Court case category ID
+  const isCourtCase = document.categoryId === DOMSMAL_DOC_ID
 
   return (
     <>

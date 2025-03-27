@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildCheckboxField,
   buildCustomField,
   buildForm,
   buildHiddenInputWithWatchedValue,
@@ -217,6 +218,24 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
               placeholder:
                 socialInsuranceAdministrationMessage.additionalInfo
                   .commentPlaceholder,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'asfteInstructions',
+          title: additionalSupportForTheElderyFormMessage.info.instructionsShortTitle,
+          children: [
+            buildCheckboxField({
+              id: 'infoCheckbox',
+              title: additionalSupportForTheElderyFormMessage.info.instructionsTitle,
+              description: additionalSupportForTheElderyFormMessage.info.instructionsDescription,
+              required: true,
+              options: [
+                {
+                  label: additionalSupportForTheElderyFormMessage.info.instructionsCheckbox,
+                  value: YES,
+                },
+              ],
             }),
           ],
         }),

@@ -71,6 +71,7 @@ export enum ApiModuleActions {
    */
   setVMSTPeriods = 'setVMSTPeriods',
   setApplicationRights = 'setApplicationRights',
+  setOtherParent = 'setOtherParent',
 }
 
 export enum StartDateOptions {
