@@ -247,7 +247,19 @@ export const getSubpageNavList = (
     return generateNavigationItems(organizationPage, pathname)
   }
 
-  const items = generateNavigationItems(
+  let items = generateNavigationItems(organizationPage, pathname)
+  const someItemIsActive = items.some(
+    (item) =>
+      Boolean(item.active) ||
+      Boolean(item.items?.some((subItem) => Boolean(subItem.active))),
+  )
+
+  if (someItemIsActive) {
+    return items
+  }
+
+  // Only match a potential smaller depth if no match is found otherwise
+  items = generateNavigationItems(
     organizationPage,
     pathname
       .split('/')
