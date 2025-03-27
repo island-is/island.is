@@ -20,6 +20,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
+import { GetPaymentFlowStatusDTO } from './dtos/getPaymentFlowStatus.dto'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -40,6 +41,25 @@ export class PaymentFlowController {
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<GetPaymentFlowDTO | null> {
     return this.paymentFlowService.getPaymentFlow(id)
+  }
+
+  @Get(':id/status')
+  @Documentation({
+    description: 'Retrieves payment flow information by ID.',
+    response: { status: 200, type: GetPaymentFlowStatusDTO },
+  })
+  async getPaymentFlowStatus(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<GetPaymentFlowStatusDTO | null> {
+    const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(id)
+    const status = await this.paymentFlowService.getPaymentFlowStatus(
+      paymentFlow,
+    )
+
+    return {
+      id: paymentFlow.id,
+      ...status,
+    }
   }
 
   @Delete(':id')

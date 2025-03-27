@@ -13,6 +13,7 @@ export enum PaymentServiceCode {
   PaymentFlowNotFound = 'PaymentFlowNotFound',
   PaymentFlowAlreadyPaid = 'PaymentFlowAlreadyPaid',
   CouldNotVerifyCallback = 'CouldNotVerifyCallback',
+  CouldNotCreatePaymentConfirmation = 'CouldNotCreatePaymentConfirmation',
 }
 
 export enum CardErrorCode {
@@ -42,6 +43,7 @@ export enum CardErrorCode {
   GenericDecline = 'GenericDecline',
   VerificationDeadlineExceeded = 'VerificationDeadlineExceeded',
   VerificationCancelledByUser = 'VerificationCancelledByUser',
+  RefundedBecauseOfSystemError = 'RefundedBecauseOfSystemError',
   UnknownCardError = 'UnknownCardError',
 }
 

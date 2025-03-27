@@ -4,13 +4,7 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-import {
-  Box,
-  Button,
-  GridColumn,
-  GridRow,
-  ModalBase,
-} from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'

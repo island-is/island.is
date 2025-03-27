@@ -12,7 +12,11 @@ import {
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 
-import { PaymentFlow, PaymentFlowCharge } from './models/paymentFlow.model'
+import {
+  PaymentFlow,
+  PaymentFlowAttributes,
+  PaymentFlowCharge,
+} from './models/paymentFlow.model'
 
 import {
   PaymentFlowUpdateEvent,
@@ -32,6 +36,9 @@ import {
   fjsErrorMessageToCode,
   generateChargeFJSPayload,
 } from '../../utils/fjsCharge'
+import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfirmation.model'
+import { ChargeResponse } from '../cardPayment/cardPayment.types'
+import { retry } from '@island.is/shared/utils/server'
 
 @Injectable()
 export class PaymentFlowService {
@@ -44,8 +51,10 @@ export class PaymentFlowService {
     private readonly paymentFlowEventModel: typeof PaymentFlowEvent,
     @InjectModel(PaymentFlowFjsChargeConfirmation)
     private readonly paymentFlowFjsChargeConfirmationModel: typeof PaymentFlowFjsChargeConfirmation,
+    @InjectModel(PaymentFlowPaymentConfirmation)
+    private readonly paymentFlowConfirmationModel: typeof PaymentFlowPaymentConfirmation,
     @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    private readonly logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private nationalRegistryV3: NationalRegistryV3ClientService,
     private companyRegistryApi: CompanyRegistryClientService,
@@ -104,7 +113,7 @@ export class PaymentFlowService {
     }
   }
 
-  private async getPaymentFlowChargeDetails(
+  async getPaymentFlowChargeDetails(
     organisationId: string,
     charges: Pick<PaymentFlowCharge, 'chargeItemCode' | 'price' | 'quantity'>[],
   ) {
@@ -198,7 +207,7 @@ export class PaymentFlowService {
     return true
   }
 
-  async getPaymentFlowWithPaymentDetails(id: string) {
+  async getPaymentFlowDetails(id: string) {
     const paymentFlow = (
       await this.paymentFlowModel.findOne({
         where: {
@@ -216,19 +225,18 @@ export class PaymentFlowService {
       throw new BadRequestException(PaymentServiceCode.PaymentFlowNotFound)
     }
 
+    return paymentFlow
+  }
+
+  async getPaymentFlowStatus(paymentFlow: PaymentFlowAttributes) {
     const paymentFlowSuccessEvent = (
       await this.paymentFlowEventModel.findOne({
         where: {
-          paymentFlowId: id,
+          paymentFlowId: paymentFlow.id,
           type: 'success',
         },
       })
     )?.toJSON()
-
-    const paymentDetails = await this.getPaymentFlowChargeDetails(
-      paymentFlow.organisationId,
-      paymentFlow.charges,
-    )
 
     const isAlreadyPaid = !!paymentFlowSuccessEvent
 
@@ -241,7 +249,7 @@ export class PaymentFlowService {
       const chargeConfirmation = (
         await this.paymentFlowFjsChargeConfirmationModel.findOne({
           where: {
-            paymentFlowId: id,
+            paymentFlowId: paymentFlow.id,
           },
         })
       )?.toJSON()
@@ -255,18 +263,19 @@ export class PaymentFlowService {
       }
     }
 
-    return {
-      paymentFlow,
-      paymentDetails,
-      paymentStatus,
-      updatedAt,
-    }
+    return { paymentStatus, updatedAt }
   }
 
   async getPaymentFlow(id: string): Promise<GetPaymentFlowDTO | null> {
     try {
-      const { paymentFlow, paymentDetails, paymentStatus, updatedAt } =
-        await this.getPaymentFlowWithPaymentDetails(id)
+      const paymentFlow = await this.getPaymentFlowDetails(id)
+      const paymentDetails = await this.getPaymentFlowChargeDetails(
+        paymentFlow.organisationId,
+        paymentFlow.charges,
+      )
+      const { paymentStatus, updatedAt } = await this.getPaymentFlowStatus(
+        paymentFlow,
+      )
 
       const payerName = await this.getPayerName(paymentFlow.payerNationalId)
 
@@ -282,7 +291,7 @@ export class PaymentFlowService {
         updatedAt,
       }
     } catch (e) {
-      this.logger.error('Failed to get payment flow', e)
+      this.logger.error(`Failed to get payment flow (${id})`, e)
       throw e
     }
   }
@@ -296,6 +305,9 @@ export class PaymentFlowService {
     message: string
     metadata?: object
   }) {
+    this.logger.info(
+      `Payment flow update [${update.paymentFlowId}][${update.type}][${update.message}]`,
+    )
     const paymentFlow = (
       await this.paymentFlowModel.findOne({
         where: {
@@ -309,12 +321,12 @@ export class PaymentFlowService {
     }
 
     try {
-      this.logger.info(
-        `Payment flow update [${update.paymentFlowId}][${update.type}]`,
-      )
       await this.paymentFlowEventModel.create(update)
     } catch (e) {
-      this.logger.error('Failed to log payment flow update', e)
+      this.logger.error(
+        `Failed to log payment flow update (${update.paymentFlowId})`,
+        e,
+      )
     }
 
     try {
@@ -349,7 +361,53 @@ export class PaymentFlowService {
       console.log('res.text', await res.text())
       console.log('=========================================')
     } catch (e) {
-      this.logger.error('Failed to notify onUpdateUrl', e)
+      this.logger.error(
+        `Failed to notify onUpdateUrl (${update.paymentFlowId})`,
+        e,
+      )
+    }
+  }
+
+  async createPaymentConfirmation({
+    paymentResult,
+    paymentFlowId,
+    totalPrice,
+  }: {
+    paymentResult: ChargeResponse
+    paymentFlowId: string
+    totalPrice: number
+  }) {
+    try {
+      return await retry(
+        () =>
+          this.paymentFlowConfirmationModel.create({
+            acquirerReferenceNumber: paymentResult.acquirerReferenceNumber,
+            authorizationCode: paymentResult.authorizationCode,
+            cardScheme: paymentResult.cardInformation.cardScheme,
+            maskedCardNumber: paymentResult.maskedCardNumber,
+            paymentFlowId,
+            cardUsage: paymentResult.cardInformation.cardUsage,
+            totalPrice,
+          }),
+        {
+          maxRetries: 3,
+          retryDelayMs: 1000,
+          shouldRetryOnError: (error) => {
+            // TODO: Check if error is a unique constraint violation
+            return true
+          },
+          logger: this.logger,
+          logPrefix: 'Failed to persist payment confirmation',
+        },
+      )
+    } catch {
+      this.logger.error(
+        `Failed to create payment confirmation (${paymentFlowId})`,
+      )
+
+      throw new BadRequestException(
+        PaymentServiceCode.CouldNotCreatePaymentConfirmation,
+      )
     }
   }
 
@@ -378,7 +436,7 @@ export class PaymentFlowService {
 
       return newChargeConfirmation
     } catch (e) {
-      this.logger.error('Failed to create payment charge', e)
+      this.logger.error(`Failed to create payment charge (${paymentFlowId})`, e)
 
       const message = e?.body?.error?.message ?? e.message ?? 'Unknown error'
       const mappedCode = fjsErrorMessageToCode(message)

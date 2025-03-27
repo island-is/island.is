@@ -81,6 +81,17 @@ describe('InvoicePaymentController', () => {
     jest
       .spyOn(chargeFjsService, 'validateCharge')
       .mockReturnValue(Promise.resolve(true))
+
+    jest.spyOn(chargeFjsService, 'getCatalogByPerformingOrg').mockReturnValue(
+      Promise.resolve({
+        item: charges.map((charge) => ({
+          ...charge,
+          priceAmount: charge.price,
+          performingOrgID: 'TODO',
+          chargeItemName: 'TODO',
+        })),
+      }),
+    )
   })
 
   beforeEach(async () => {
@@ -88,7 +99,8 @@ describe('InvoicePaymentController', () => {
     const response = await server.post('/v1/payments').send(createPayload)
 
     expect(response.status).toBe(200)
-    paymentFlowId = response.body.urls.is.split('/').pop()
+
+    paymentFlowId = response?.body?.urls?.is?.split('/').pop()
 
     logPaymentFlowUpdateSpy = jest
       .spyOn(paymentFlowService, 'logPaymentFlowUpdate')
@@ -96,7 +108,7 @@ describe('InvoicePaymentController', () => {
   })
 
   afterEach(() => {
-    logPaymentFlowUpdateSpy.mockRestore()
+    logPaymentFlowUpdateSpy?.mockRestore()
   })
 
   afterAll(async () => {
@@ -118,16 +130,29 @@ describe('InvoicePaymentController', () => {
     })
 
     it('should not be possible to create an invoice for a payment flow that has already been paid', async () => {
-      const paymentFlowServiceAlreadyPaidCheckSpy = jest
-        .spyOn(paymentFlowService, 'getPaymentFlowWithPaymentDetails')
-        .mockReturnValue(
-          Promise.resolve({
-            paymentDetails: {} as any,
-            paymentFlow: {} as any,
-            paymentStatus: PaymentStatus.PAID,
-            updatedAt: new Date(),
-          }),
-        )
+      const getPaymentFlowDetailsSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+        .mockResolvedValue({
+          charges,
+        } as any)
+      const getPaymentFlowChargeDetailsSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
+        .mockResolvedValue({
+          catalogItems: charges.map((charge) => ({
+            ...charge,
+            priceAmount: charge.price,
+            performingOrgID: 'TODO',
+            chargeItemName: 'TODO',
+          })),
+          totalPrice: 1000,
+          firstProductTitle: 'TODO',
+        })
+      const getPaymentFlowStatusSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowStatus')
+        .mockResolvedValue({
+          paymentStatus: PaymentStatus.PAID,
+          updatedAt: new Date(Date.now() - 30 * 1000),
+        })
 
       const response = await server
         .post('/v1/payments/invoice/create')
@@ -138,20 +163,35 @@ describe('InvoicePaymentController', () => {
       const errorCode = response.body.detail
       expect(errorCode).toBe(PaymentServiceCode.PaymentFlowAlreadyPaid)
 
-      paymentFlowServiceAlreadyPaidCheckSpy.mockRestore()
+      getPaymentFlowDetailsSpy.mockRestore()
+      getPaymentFlowChargeDetailsSpy.mockRestore()
+      getPaymentFlowStatusSpy.mockRestore()
     })
 
     it('should not be possible to create an invoice for a payment flow that already has an invoice', async () => {
-      const paymentFlowServiceAlreadyPaidCheckSpy = jest
-        .spyOn(paymentFlowService, 'getPaymentFlowWithPaymentDetails')
-        .mockReturnValue(
-          Promise.resolve({
-            paymentDetails: {} as any,
-            paymentFlow: {} as any,
-            paymentStatus: PaymentStatus.INVOICE_PENDING,
-            updatedAt: new Date(),
-          }),
-        )
+      const getPaymentFlowDetailsSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+        .mockResolvedValue({
+          charges,
+        } as any)
+      const getPaymentFlowChargeDetailsSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
+        .mockResolvedValue({
+          catalogItems: charges.map((charge) => ({
+            ...charge,
+            priceAmount: charge.price,
+            performingOrgID: 'TODO',
+            chargeItemName: 'TODO',
+          })),
+          totalPrice: 1000,
+          firstProductTitle: 'TODO',
+        })
+      const getPaymentFlowStatusSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowStatus')
+        .mockResolvedValue({
+          paymentStatus: PaymentStatus.INVOICE_PENDING,
+          updatedAt: new Date(Date.now() - 30 * 1000),
+        })
 
       const response = await server
         .post('/v1/payments/invoice/create')
@@ -162,29 +202,36 @@ describe('InvoicePaymentController', () => {
       const errorCode = response.body.detail
       expect(errorCode).toBe(InvoiceErrorCode.InvoiceAlreadyExists)
 
-      paymentFlowServiceAlreadyPaidCheckSpy.mockRestore()
+      getPaymentFlowDetailsSpy.mockRestore()
+      getPaymentFlowChargeDetailsSpy.mockRestore()
+      getPaymentFlowStatusSpy.mockRestore()
     })
 
     it('should be possible to create an invoice for a payment flow that has not been paid', async () => {
-      const getPaymentFlowSpy = jest
-        .spyOn(paymentFlowService, 'getPaymentFlowWithPaymentDetails')
-        .mockReturnValue(
-          Promise.resolve({
-            paymentDetails: {
-              catalogItems: [
-                {
-                  chargeType: 'A',
-                },
-              ],
-              totalPrice: 1000,
-            } as any,
-            paymentFlow: {
-              id: paymentFlowId,
-            } as any,
-            paymentStatus: PaymentStatus.UNPAID,
-            updatedAt: new Date(),
-          }),
-        )
+      const getPaymentFlowDetailsSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+        .mockResolvedValue({
+          id: paymentFlowId,
+          charges,
+        } as any)
+      const getPaymentFlowChargeDetailsSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
+        .mockResolvedValue({
+          catalogItems: charges.map((charge) => ({
+            ...charge,
+            priceAmount: charge.price,
+            performingOrgID: 'TODO',
+            chargeItemName: 'TODO',
+          })),
+          totalPrice: 1000,
+          firstProductTitle: 'TODO',
+        })
+      const getPaymentFlowStatusSpy = jest
+        .spyOn(PaymentFlowService.prototype, 'getPaymentFlowStatus')
+        .mockResolvedValue({
+          paymentStatus: PaymentStatus.UNPAID,
+          updatedAt: new Date(Date.now() - 30 * 1000),
+        })
 
       const createChargeSpy = jest
         .spyOn(paymentFlowService, 'createPaymentCharge')
@@ -198,7 +245,9 @@ describe('InvoicePaymentController', () => {
 
       expect(createChargeSpy).toHaveBeenCalledTimes(1)
 
-      getPaymentFlowSpy.mockRestore()
+      getPaymentFlowDetailsSpy.mockRestore()
+      getPaymentFlowChargeDetailsSpy.mockRestore()
+      getPaymentFlowStatusSpy.mockRestore()
       createChargeSpy.mockRestore()
     })
 

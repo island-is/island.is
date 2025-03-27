@@ -35,11 +35,6 @@ export default async function cardVerificationCallbackHandler(
     return res.status(400).json({ error: 'Invalid content-type' })
   }
 
-  // TODO remove
-  const keys = Object.keys(req.body)
-  logger.info('api.card.callback keys:')
-  logger.info({ keys })
-
   const parsed = VerificationCallbackSchema.parse(req.body)
 
   const { xid, mdStatus, MD, cavv } = parsed

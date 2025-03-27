@@ -18,6 +18,7 @@ import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentF
 import { ConfigModule } from '@nestjs/config'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { CardPaymentCacheModule } from './cardPayment.cache'
+import { PaymentFlowPaymentConfirmation } from '../paymentFlow/models/paymentFlowPaymentConfirmation.model'
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CardPaymentCacheModule } from './cardPayment.cache'
       PaymentFlowCharge,
       PaymentFlowEvent,
       PaymentFlowFjsChargeConfirmation,
+      PaymentFlowPaymentConfirmation,
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
