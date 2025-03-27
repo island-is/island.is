@@ -1,10 +1,8 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  CurrentUser,
   CurrentUser,
   IdsUserGuard,
   Scopes,
@@ -42,6 +40,7 @@ import {
 } from './models/v2/pdfRenderer.model'
 import { Sender } from './models/v2/sender.model'
 import { Type } from './models/v2/type.model'
+import { COURT_CASE_DOC_CATEGORY } from './helpers/constants'
 
 const LOG_CATEGORY = 'documents-resolver'
 
@@ -135,7 +134,6 @@ export class DocumentResolverV2 {
       meta: {
         confirmed: input.confirmed,
         isCourtCase: true,
-        isCourtCase: true,
       },
     })
     this.logger.info('confirming urgent urgent document modal', {
@@ -145,42 +143,6 @@ export class DocumentResolverV2 {
       isCourtCase: true,
     })
     return { id: input.id, confirmed: input.confirmed }
-  }
-
-  @Scopes(DocumentsScope.main)
-  @Query(() => DocumentPdfRenderer, {
-    nullable: true,
-    name: 'documentV2PdfRenderer',
-  })
-  async pdfRenderer(
-    @Args('input') input: DocumentPdfRendererInput,
-    @CurrentUser() user: User,
-  ) {
-    this.auditService.audit({
-      auth: user,
-      namespace: '@island.is/api/document-v2',
-      action: 'pdfRenderer',
-      resources: input.id,
-      meta: { success: input.success, isCourtCase: input.isCourtCase },
-    })
-    if (!input.success) {
-      this.logger.error('failed to render document pdf', {
-        category: LOG_CATEGORY,
-        id: input.id,
-        success: input.success,
-        error: input.error,
-        isCourtCase: input.isCourtCase,
-      })
-    } else if (input.isCourtCase) {
-      this.logger.info('succesfully rendered courtcase document pdf', {
-        category: LOG_CATEGORY,
-        id: input.id,
-        success: input.success,
-        isCourtCase: input.isCourtCase,
-      })
-    }
-
-    return { id: input.id, success: input.success }
   }
 
   @Scopes(DocumentsScope.main)
