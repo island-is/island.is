@@ -21,11 +21,16 @@ export const sendHnipp = async (
   }
 
   // This sends a hnipp to the assignee
-  await sendNotification({
-    type: NotificationType.ReferenceTemplate,
-    messageParties: {
-      recipient: assigneeNationalId,
-    },
-    applicationId: application.id,
-  })
+  try {
+    await sendNotification({
+      type: NotificationType.ReferenceTemplate,
+      messageParties: {
+        recipient: assigneeNationalId,
+      },
+      applicationId: application.id,
+    })
+  } catch (error) {
+    // Here we just swallow the error in order for this to work locally
+    // For production we need to handle the error better
+  }
 }
