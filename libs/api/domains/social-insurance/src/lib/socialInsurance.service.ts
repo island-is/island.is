@@ -74,7 +74,7 @@ export class SocialInsuranceService {
         (p) => p.monthIndex === month,
       )
 
-      if (indexOfMonth < 0) {
+      if (indexOfMonth <= 0) {
         totalMonthlyPayments.push({
           monthIndex: month,
           amount,
