@@ -1,23 +1,23 @@
 import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import { AccidentNotification } from '../lib/dataSchema'
-import {
-  AttachmentsEnum,
-  FileType,
-  PowerOfAttorneyUploadEnum,
-  WhoIsTheNotificationForEnum,
-} from '../types'
+import { FileType } from './types'
 import { attachments, overview } from '../lib/messages'
 import { FormatMessage } from '@island.is/localization'
 import { FormValue } from '@island.is/application/types'
 import {
   AccidentNotificationAttachmentStatus,
   AccidentNotifTypes,
-} from '../types'
+} from './types'
 import {
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfSelf,
 } from './reportingUtils'
 import { isFatalAccident } from './accidentUtils'
+import {
+  AttachmentsEnum,
+  PowerOfAttorneyUploadEnum,
+  WhoIsTheNotificationForEnum,
+} from './enums'
 
 export const hasAttachment = (attachment: Array<FileType> | undefined) =>
   attachment && attachment.length > 0
@@ -243,7 +243,7 @@ export const returnMissingDocumentsList = (
   formatMessage: FormatMessage,
 ) => {
   const injuryCertificate = answers.injuryCertificate
-  const whoIsTheNotificationFor = answers.whoIsTheNotificationFor.answer
+  const whoIsTheNotificationFor = answers?.whoIsTheNotificationFor?.answer
   const wasTheAccidentFatal = answers.wasTheAccidentFatal
   const missingDocuments = []
 

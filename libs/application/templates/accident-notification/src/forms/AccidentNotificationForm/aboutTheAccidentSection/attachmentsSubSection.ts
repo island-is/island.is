@@ -18,7 +18,7 @@ import {
   injuredPersonInformation,
 } from '../../../lib/messages'
 import { isRepresentativeOfCompanyOrInstitute } from '../../../utils/miscUtils'
-import { AttachmentsEnum } from '../../../types'
+import { AttachmentsEnum } from '../../../utils/types'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../utils/constants'
 import { isReportingOnBehalfOfInjured } from '../../../utils/reportingUtils'
 import { isFatalAccident } from '../../../utils/accidentUtils'

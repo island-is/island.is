@@ -21,7 +21,7 @@ import {
   ProfessionalAthleteAccidentLocationEnum,
   RescueWorkAccidentLocationEnum,
   StudiesAccidentLocationEnum,
-} from '../../../types'
+} from '../../../utils/types'
 import {
   isAgricultureAccident,
   isFishermanAccident,

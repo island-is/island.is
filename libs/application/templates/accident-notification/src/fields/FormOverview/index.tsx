@@ -17,7 +17,6 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 import kennitala from 'kennitala'
-import { States } from '../../utils/constants'
 import { AccidentNotification } from '../../lib/dataSchema'
 import {
   accidentDetails,
@@ -61,6 +60,7 @@ import {
   isHomeActivitiesAccident,
   isWorkAccident,
 } from '../../utils/accidentUtils'
+import { States } from '../../utils/enums'
 
 interface SubmittedApplicationData {
   data?: {
