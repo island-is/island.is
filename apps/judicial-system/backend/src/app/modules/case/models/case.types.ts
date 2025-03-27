@@ -26,4 +26,5 @@ export type MinimalCase = Omit<
   | 'courtRecordSignatory'
   | 'indictmentReviewer'
   | 'civilClaimants'
+  | 'victims'
 >
