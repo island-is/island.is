@@ -106,15 +106,8 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
 
   usePreventBodyScroll(dialog.visible && variant === 'dialog')
 
-  const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
-
-  useEffect(() => {
-    if (width < theme.breakpoints.sm) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width])
+  const isMobile = width < theme.breakpoints.sm
 
   const filterInputContent = hasFilterInput ? filterInput : null
   const filterCountNumber = filterCount > 9 ? '9+' : filterCount
@@ -336,7 +329,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
 
   if (isMobile) {
     return (
-      <FilterContext.Provider value={{ variant }}>
+      <FilterContext.Provider value={{ variant: 'popover' }}>
         <Box display="flex" alignItems="flexEnd">
           {filterInputContent}
 
