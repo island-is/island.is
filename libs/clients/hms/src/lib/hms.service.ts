@@ -5,6 +5,7 @@ import {
   AdalmatseiningApi,
   ApiFasteignByStadfangNrGetRequest,
   ApiStadfangSearchGetRequest,
+  BaseAPI,
   FasteignApi,
   StadfangApi,
 } from '../../gen/fetch'
@@ -17,8 +18,8 @@ export class HmsService {
     private readonly adalmatseiningApi: AdalmatseiningApi,
   ) {}
 
-  private apiWithAuth = <T>(api: T, user: User): T =>
-    (api as any).withMiddleware(new AuthMiddleware(user as Auth))
+  private apiWithAuth = <T extends BaseAPI>(api: T, user: User): T =>
+    api.withMiddleware(new AuthMiddleware(user as Auth))
 
   async hmsSearch(user: User, input: ApiStadfangSearchGetRequest) {
     const res = await this.apiWithAuth(

@@ -48,6 +48,11 @@ export const registerProperty = {
     },
 
     // Error messages
+    searchError: {
+      id: 'ra.application:registerProperty.info.searchError',
+      defaultMessage: 'Ekki tókst að sækja staðföng',
+      description: 'Error message when search fails',
+    },
     searchResultsEmptyError: {
       id: 'ra.application:registerProperty.category.searchResultsEmptyError',
       defaultMessage:
