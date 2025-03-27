@@ -34,32 +34,12 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
     (x) => !!x.person?.nationalId,
   )
 
-  const mainOtherContact = getValueViaPath<
-    SecondarySchoolAnswers['mainOtherContact']
-  >(application.answers, copyPrefix + 'mainOtherContact')
-
-  const otherContacts = (
+  const contacts = (
     getValueViaPath<SecondarySchoolAnswers['otherContacts']>(
       application.answers,
       copyPrefix + 'otherContacts',
     ) || []
   ).filter((x) => !!x.person.nationalId)
-
-  // merge together list of main other contact + other contacts
-  let contacts: {
-    person?: {
-      nationalId?: string
-      name?: string
-      email?: string
-      phone?: string
-    }
-  }[] = []
-  if (mainOtherContact?.person?.nationalId) {
-    contacts.push(mainOtherContact)
-  }
-  if (otherContacts.length > 0) {
-    contacts = contacts.concat(otherContacts)
-  }
 
   const onClick = (page: string) => {
     if (goToScreen) goToScreen(page)
