@@ -125,7 +125,7 @@ export const m = defineMessages({
   },
   successAlertMessageDescription: {
     id: 'cr.application:successAlertMessageDescription',
-    defaultMessage: 'Þú getur nú nálgast umsóknina þína í',
+    defaultMessage: 'Þú getur nálgast sakavottorðið þitt í',
     description: 'Description for success alert message',
   },
   successAlertMessageLinkText: {
