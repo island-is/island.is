@@ -1,6 +1,7 @@
 import { buildForm } from '@island.is/application/core'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { FormModes } from '@island.is/application/types'
+import { m } from '../../lib/messages'
 
 export const completedForm = buildForm({
   id: 'completedForm',
@@ -13,8 +14,7 @@ export const completedForm = buildForm({
       alertType: 'success',
       accordion: false,
       sectionTitle: '',
-      descriptionFieldDescription:
-        'When entering this state, the method completeApplication in the template-api-module service was run. This is done through the onEntry property in the stateMachineCongig.states in the template.ts.',
+      descriptionFieldDescription: m.hnippNote,
     }),
   ],
 })

@@ -4,13 +4,14 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
+import { m } from '../../lib/messages'
 
 export const AssigneeApprovedForm = buildForm({
   id: 'ApprovedForm',
   children: [
     buildSection({
       id: 'approvedSection',
-      tabTitle: 'Samþykkt',
+      tabTitle: 'Approved',
       children: [
         buildMultiField({
           id: 'approvedMultiField',
@@ -24,7 +25,15 @@ export const AssigneeApprovedForm = buildForm({
             buildDescriptionField({
               id: 'approvedDescription2',
               description:
-                'This state is a dead end in the state machine and the application can not be moved out of this state.',
+                'When entering this state, the method approveApplication in the template-api-module service was run. This is done through the onEntry property in the stateMachineConfig.states in the template.ts.',
+            }),
+            buildDescriptionField({
+              id: 'approvedDescription3',
+              description: m.hnippNote,
+            }),
+            buildDescriptionField({
+              id: 'approvedDescription4',
+              description: m.deadEnd,
             }),
           ],
         }),

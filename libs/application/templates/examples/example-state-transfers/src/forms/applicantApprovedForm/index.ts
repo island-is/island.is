@@ -4,14 +4,14 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
+import { m } from '../../lib/messages'
 
 export const ApplicantApprovedForm = buildForm({
   id: 'ApplicantApprovedForm',
-  title: 'Approved',
   children: [
     buildSection({
       id: 'approvedSection',
-      title: 'Samþykkt',
+      tabTitle: 'Approved',
       children: [
         buildMultiField({
           id: 'approvedMultiField',
@@ -24,8 +24,11 @@ export const ApplicantApprovedForm = buildForm({
             }),
             buildDescriptionField({
               id: 'approvedDescription2',
-              description:
-                'The application is now in the APPROVED state. This state is a dead end in the state machine and the application can not be moved out of this state.',
+              description: 'The application is now in the APPROVED state.',
+            }),
+            buildDescriptionField({
+              id: 'approvedDescription3',
+              description: m.deadEnd,
             }),
           ],
         }),

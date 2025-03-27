@@ -39,17 +39,11 @@ export const AssigneeInReviewForm = buildForm({
             buildDescriptionField({
               id: 'assigneeInReview4',
               description:
-                'Once the assignee has checked either the approve or reject radio option, you can add in an extra safeguard checkbox to make sure the assignee is sure about their decision.',
-            }),
-            buildDescriptionField({
-              id: 'assigneeInReview5',
-              description:
-                'Another common requirement is to have a reason for rejection that we can show the user when they reccives the rejection.',
+                'A common requirement is to have a reason for rejection that we can show the user when they reccives the rejection.',
             }),
 
             buildRadioField({
               id: 'approveOrReject',
-              title: 'Approve or reject',
               options: [
                 {
                   label: 'Move the application to the APPROVED state',

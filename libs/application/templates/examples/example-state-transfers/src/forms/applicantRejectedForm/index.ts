@@ -5,6 +5,7 @@ import {
   buildMultiField,
   getValueViaPath,
 } from '@island.is/application/core'
+import { m } from '../../lib/messages'
 
 export const ApplicantRejectedForm = buildForm({
   id: 'RejectedForm',
@@ -24,11 +25,14 @@ export const ApplicantRejectedForm = buildForm({
             }),
             buildDescriptionField({
               id: 'approvedDescription2',
-              description:
-                'The application is now in the REJECTED state. This state is a dead end in the state machine and the application can not be moved out of this state.',
+              description: 'The application is now in the REJECTED state.',
             }),
             buildDescriptionField({
               id: 'approvedDescription3',
+              description: m.deadEnd,
+            }),
+            buildDescriptionField({
+              id: 'approvedDescription4',
               description:
                 'The application was rejected with the following reason:',
             }),
