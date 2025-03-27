@@ -12,22 +12,13 @@ import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
 import { FileUpload } from '../types'
-import {
-  AttachmentLabel,
-  AttachmentTypes,
-  HouseholdSupplementHousing,
-} from './constants'
+import { AttachmentLabel, AttachmentTypes } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber = getValueViaPath(
     answers,
     'applicantInfo.phonenumber',
   ) as string
-
-  const householdSupplementHousing = getValueViaPath(
-    answers,
-    'householdSupplement.housing',
-  ) as HouseholdSupplementHousing
 
   const householdSupplementChildren = getValueViaPath(
     answers,
@@ -37,11 +28,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const schoolConfirmationAttachments = getValueViaPath(
     answers,
     'fileUpload.schoolConfirmation',
-  ) as FileType[]
-
-  const leaseAgreementAttachments = getValueViaPath(
-    answers,
-    'fileUpload.leaseAgreement',
   ) as FileType[]
 
   const selectedYear = getValueViaPath(answers, 'period.year') as string
@@ -76,10 +62,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   return {
     applicantPhonenumber,
-    householdSupplementHousing,
     householdSupplementChildren,
     schoolConfirmationAttachments,
-    leaseAgreementAttachments,
     selectedYear,
     selectedMonth,
     selectedYearHiddenInput,
@@ -205,6 +189,27 @@ export const isExistsCohabitantOlderThan25 = (
   return isOlderThan25
 }
 
+export const isExistsCohabitantBetween18and25 = (
+  externalData: Application['externalData'],
+) => {
+  const { cohabitants, applicantNationalId } =
+    getApplicationExternalData(externalData)
+
+  let isBetween18and25 = false
+  cohabitants.forEach((cohabitant) => {
+    if (cohabitant !== applicantNationalId) {
+      if (
+        kennitala.info(cohabitant).age >= 18 &&
+        kennitala.info(cohabitant).age <= 25
+      ) {
+        isBetween18and25 = true
+      }
+    }
+  })
+
+  return isBetween18and25
+}
+
 export const getAttachments = (application: Application) => {
   const getAttachmentDetails = (
     attachmentsArr: FileType[] | undefined,
@@ -221,19 +226,13 @@ export const getAttachments = (application: Application) => {
   const { answers } = application
   const {
     householdSupplementChildren,
-    householdSupplementHousing,
     additionalAttachments,
     additionalAttachmentsRequired,
   } = getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
   const fileUpload = answers.fileUpload as FileUpload
-  if (householdSupplementHousing === HouseholdSupplementHousing.RENTER) {
-    getAttachmentDetails(
-      fileUpload?.leaseAgreement,
-      AttachmentTypes.LEASE_AGREEMENT,
-    )
-  }
+
   if (householdSupplementChildren === YES) {
     getAttachmentDetails(
       fileUpload?.schoolConfirmation,

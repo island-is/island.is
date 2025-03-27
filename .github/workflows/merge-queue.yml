@@ -1,6 +1,7 @@
 name: Validate code in the merge queue (post merge)
 
 on:
+  workflow_dispatch: {}
   merge_group:
 
 defaults:
@@ -12,6 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  ACTIONS_STEP_DEBUG: 'true'
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
@@ -47,7 +49,8 @@ jobs:
     secrets: inherit
     with:
       run_merge_queue: true
-      main_branch: ${{ github.event.merge_group.base_ref  }}
+      force_all_to_be_affected: ${{ github.event_name == 'workflow_dispatch' }}
+      main_branch: ${{ github.event.merge_group.base_ref || github.ref_name }}
     needs:
       - pre-checks
   docker-build:
@@ -230,6 +233,35 @@ jobs:
           ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
           branch: ${{ needs.prepare.outputs.MQ_HELM_VALUES_BRANCH }}
+          commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
+      - name: Update judicial system
+        id: judicial-system
+        if: ${{ github.event.merge_group.base_ref == 'refs/heads/main' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHOULD_DEPLOY_JUDICIAL: true
+        run: |
+          node scripts/ci/docker/get-data.mjs --deploy-judicial
+      - name: Update helm-values repository with judicial system DEV
+        uses: ./.github/actions/update-helm-values
+        if: ${{ steps.judicial-system.outputs.MQ_HAS_OUTPUT == 'true' }}
+        with:
+          files: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_DEV }}
+          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
+          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+          commit-msg: ${{ steps.judicial-system.outputs.MQ_COMMIT_MSG }}
+          branch: main
+
+      - name: Update helm-values repository with judicial system PROD
+        uses: ./.github/actions/update-helm-values
+        if: ${{ steps.judicial-system.outputs.MQ_HAS_OUTPUT == 'true' }}
+        with:
+          files: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_PROD }}
+          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
+          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+          commit-msg: ${{ steps.judicial-system.outputs.MQ_COMMIT_MSG }}
+          branch: release
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -287,13 +319,13 @@ jobs:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check tests success
-        run: '[[ ${{ needs.tests.result }} != "failure" && ${{ needs.tests.result }} != "abandoned" ]] || exit 1'
+        run: '[[ ${{ needs.tests.result }} != "failure" && ${{ needs.tests.result }} != "abandoned" && ${{ needs.tests.result }} != "cancelled" ]] || exit 1'
       # - name: Check e2e success
       #   run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
       - name: Check build success
-        run: '[[ ${{ needs.docker-build.result }} != "failure" && ${{ needs.docker-build.result }} != "abandoned" ]] || exit 1'
+        run: '[[ ${{ needs.docker-build.result }} != "failure" && ${{ needs.docker-build.result }} != "abandoned" && ${{ needs.docker-build.result }} != "cancelled" ]] || exit 1'
       - name: Check post-build success
-        run: '[[ ${{ needs.post-docker-build.result }} != "failure" && ${{ needs.post-docker-build.result }} != "abandoned" ]] || exit 1'
+        run: '[[ ${{ needs.post-docker-build.result }} != "failure" && ${{ needs.post-docker-build.result }} != "abandoned" && ${{ needs.post-docker-build.result }} != "cancelled" ]] || exit 1'
 
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
