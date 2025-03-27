@@ -175,4 +175,3 @@ service-account.json
 # testing
 /coverage
 charts/bootstrap
-.qodo
