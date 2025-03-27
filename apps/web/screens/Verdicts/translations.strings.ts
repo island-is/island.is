@@ -96,11 +96,6 @@ export const m = {
       defaultMessage: 'Dómur',
       description: 'H1 titill á síðu dóms',
     },
-    print: {
-      id: 'web.verdicts:verdictPage.print',
-      defaultMessage: 'Prenta',
-      description: 'Texti á prenta hnapp',
-    },
     goBack: {
       id: 'web.verdicts:verdictPage.goBack',
       defaultMessage: 'Til baka',
