@@ -733,7 +733,9 @@ export class SyslumennService {
 
     const success = response.skilabod === UPLOAD_DATA_SUCCESS
     if (!success) {
-      throw new Error(`POST AfgreidaSakavottord was not successful`)
+      throw new Error(
+        `POST AfgreidaSakavottord was not successful, response.skilabod: ${response.skilabod}`,
+      )
     }
 
     return mapDataUploadResponse(response)
