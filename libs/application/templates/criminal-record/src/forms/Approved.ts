@@ -1,8 +1,5 @@
-import {
-  buildForm,
-  buildCustomField,
-  buildSection,
-} from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import Logo from '../assets/Logo'
@@ -22,15 +19,19 @@ export const Approved: Form = buildForm({
       title: m.payment,
       children: [],
     }),
-    buildSection({
-      id: 'confirmation',
-      title: m.confirmation,
-      children: [
-        buildCustomField({
-          component: 'ConfirmationField',
-          id: 'confirmationField',
-        }),
+    buildFormConclusionSection({
+      sectionTitle: m.confirmation,
+      alertTitle: m.successTitle,
+      alertMessage: m.successAlertMessageDescription,
+      alertLinks: [
+        {
+          title: m.successAlertMessageLinkText,
+          url: '/minarsidur/postholf',
+          isExternal: false,
+        },
       ],
+      expandableIntro: '',
+      expandableDescription: m.vertificationDescriptionWithLink,
     }),
   ],
 })
