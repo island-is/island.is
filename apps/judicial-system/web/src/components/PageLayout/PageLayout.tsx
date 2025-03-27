@@ -24,10 +24,10 @@ import {
   sections as formStepperSections,
 } from '@island.is/judicial-system-web/messages'
 import {
+  Case,
   InstitutionType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
 

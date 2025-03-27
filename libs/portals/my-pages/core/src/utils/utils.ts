@@ -13,11 +13,13 @@ export const getNameAbbreviation = (name: string) => {
   return initials
 }
 
-export const sanitizeSheetName = (sheetName: string) => {
-  return sheetName
-    .replace(/[:\\/?*[\]]/g, '_')
-    .trim()
-    .substring(0, 31) // Max length for a sheet name.
+export const sanitizeSheetName = (
+  sheetName: string,
+  uncapNameLength?: boolean,
+) => {
+  const name = sheetName.replace(/[:\\/?*[\]]/g, '_').trim()
+
+  return uncapNameLength ? name : name.substring(0, 31) // Max length for a sheet name.
 }
 
 export const tableStyles = {

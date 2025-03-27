@@ -1,6 +1,6 @@
 import { isDefined } from '@island.is/shared/utils'
 import XLSX from 'xlsx'
-import parse from 'csv-parse'
+import { parse } from 'csv-parse'
 
 export interface MileageRecord {
   vehicleId: string
@@ -118,7 +118,7 @@ const parseCsvString = (chunk: string): Promise<string[][]> => {
 
     const parser = parse({
       delimiter: [';', ','],
-      skipLinesWithEmptyValues: true,
+      skipRecordsWithEmptyValues: true,
       trim: true,
     })
 
