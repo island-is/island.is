@@ -31,6 +31,7 @@ import {
 import { api } from '@island.is/judicial-system-web/src/services'
 
 import { useGeoLocation } from '../../utils/hooks'
+import IconButton from '../IconButton/IconButton'
 import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -197,6 +198,9 @@ const HeaderContainer = () => {
                       </Text>
                     </Box>
                   </Box>
+                  <IconButton icon="swapHorizontal" colorScheme="blue">
+                    asddas
+                  </IconButton>
                 </div>
                 <div className={styles.dropdownItem}>
                   <Box marginRight={2}>
