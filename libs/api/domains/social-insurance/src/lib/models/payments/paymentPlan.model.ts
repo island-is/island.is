@@ -13,7 +13,7 @@ export class PaymentPlan {
   @Field(() => Int, { nullable: true })
   totalPaymentsReceived?: number
 
-  @Field(() => Array<PaymentMonth>, { nullable: true })
+  @Field(() => [PaymentMonth], { nullable: true })
   totalMonthlyPaymentHistory?: Array<PaymentMonth>
 
   @Field(() => [PaymentGroup], { nullable: true })
