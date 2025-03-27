@@ -1,7 +1,7 @@
 import * as kennitala from 'kennitala'
 import React, { BaseSyntheticEvent, FC, useContext } from 'react'
 import { Control, Controller, FieldError } from 'react-hook-form'
-import { FieldValues } from 'react-hook-form/dist/types'
+import { FieldValues, UseFormSetValue } from 'react-hook-form/dist/types'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
 
 import { gql, useQuery } from '@apollo/client'
@@ -21,8 +21,9 @@ import {
   hasMunicipalityRole,
 } from '@island.is/skilavottord-web/auth/utils'
 import UserContext from '@island.is/skilavottord-web/context/UserContext'
-import { Query } from '@island.is/skilavottord-web/graphql/schema'
+import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { encode } from '@island.is/skilavottord-web/utils/encodeUtils'
 
 interface RecyclingCompanyForm {
   onSubmit: (
@@ -33,6 +34,7 @@ interface RecyclingCompanyForm {
   control: Control<FieldValues>
   editView?: boolean
   isMunicipalityPage?: boolean | undefined
+  setValue: UseFormSetValue<FieldValues>
 }
 
 export const SkilavottordAllMunicipalitiesQuery = gql`
@@ -53,6 +55,7 @@ const RecyclingCompanyForm: FC<
   errors,
   editView = false,
   isMunicipalityPage = false,
+  setValue,
 }) => {
   const { user } = useContext(UserContext)
 
@@ -101,7 +104,7 @@ const RecyclingCompanyForm: FC<
                   },
                 }}
                 error={errors?.companyId?.message}
-                disabled={editView}
+                disabled={editView || user?.role === Role.municipality}
                 backgroundColor="blue"
               />
             </GridColumn>
@@ -124,6 +127,15 @@ const RecyclingCompanyForm: FC<
                 }}
                 error={errors?.companyName?.message}
                 backgroundColor="blue"
+                onChange={(event) => {
+                  // User the the municipality should not be able to create his own companyId
+                  if (!editView && user?.role === Role.municipality) {
+                    setValue(
+                      'companyId',
+                      user?.partnerId + '-' + encode(event.target.value),
+                    )
+                  }
+                }}
               />
             </GridColumn>
           </GridRow>

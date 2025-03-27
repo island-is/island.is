@@ -76,6 +76,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({
     mode: 'onChange',
     defaultValues: isMunicipalityPage
@@ -173,6 +174,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
           control={control}
           errors={errors}
           isMunicipalityPage={isMunicipalityPage}
+          setValue={setValue}
         />
       </Box>
     </PartnerPageLayout>
