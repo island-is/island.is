@@ -181,7 +181,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
           <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
             <KeyValue
               label={summary.otherCostsLabel}
-              value={`„${answers.otherFees.otherCostsDescription}“` || ''}
+              value={answers.otherFees.otherCostsDescription || ''}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
@@ -189,9 +189,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
               label={summary.otherCostsAmountLabel}
               value={
                 (answers.otherFees.otherCostsAmount &&
-                  formatCurrency(answers.otherFees.otherCostsAmount, {
-                    skipCurrency: true,
-                  })) ||
+                  formatCurrency(answers.otherFees.otherCostsAmount)) ||
                 '-'
               }
             />
