@@ -7,6 +7,7 @@ import { uuid } from 'uuidv4'
 import {
   Box,
   Button,
+  Checkbox,
   Input,
   Select,
   Text,
@@ -41,9 +42,11 @@ import {
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useCase,
   useDefendants,
+  useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -57,6 +60,7 @@ import {
 const Defendant = () => {
   const router = useRouter()
   const { updateDefendant, createDefendant, deleteDefendant } = useDefendants()
+  const { createVictim, updateVictim, deleteVictim } = useVictim()
 
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -401,6 +405,27 @@ const Defendant = () => {
             </motion.section>
           </AnimatePresence>
         </Box>
+        {workingCase.id && (
+          <Box component="section" marginBottom={5}>
+            <BlueBox>
+              <Box marginBottom={2}>
+                <Checkbox
+                  name="register-victim"
+                  label={'Skrá brotaþola'}
+                  checked={isNonEmptyArray(workingCase.victims)}
+                  onChange={(evt) => {
+                    if (evt.target.checked) {
+                      createVictim({ caseId: workingCase.id })
+                    }
+                  }}
+                  disabled={isNonEmptyArray(workingCase.victims)}
+                  filled
+                  large
+                />
+              </Box>
+            </BlueBox>
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

@@ -29,6 +29,7 @@ import { UpdateVictimDto } from './dto/updateVictim.dto'
 import { ValidateVictimGuard } from './guards/validateVictim.guard'
 import { CurrentVictim } from './guards/victim.decorator'
 import { VictimWriteGuard } from './guards/victimWrite.guard'
+import { DeleteVictimResponse } from './models/deleteVictim.response'
 import { Victim } from './models/victim.model'
 import { VictimService } from './victim.service'
 
@@ -71,27 +72,32 @@ export class VictimController {
     type: Victim,
     description: 'Updates a victim',
   })
-  updateVictim(
+  update(
     @Param('caseId') caseId: string,
     @Param('victimId') victimId: string,
     @CurrentVictim() victim: Victim,
     @Body() dto: UpdateVictimDto,
   ): Promise<Victim> {
     this.logger.debug(`Updating victim ${victimId} of case ${caseId}`)
-    return this.victimService.update(victimId, dto)
+    return this.victimService.update(victim.id, dto)
   }
 
   @UseGuards(VictimWriteGuard)
   @RolesRules(prosecutorRule, districtCourtJudgeRule)
   @Delete(':victimId')
   @ApiOkResponse({
-    description: 'Deletes a victim by ID',
+    type: DeleteVictimResponse,
+    description: 'Deletes a single victim by ID for a given case',
   })
-  deleteVictim(
+  async delete(
     @Param('caseId') caseId: string,
     @Param('victimId') victimId: string,
-  ): Promise<void> {
+    @CurrentVictim() victim: Victim,
+  ): Promise<DeleteVictimResponse> {
     this.logger.debug(`Deleting victim ${victimId} of case ${caseId}`)
-    return this.victimService.delete(victimId)
+
+    const deleted = await this.victimService.delete(victim.id)
+
+    return { deleted }
   }
 }

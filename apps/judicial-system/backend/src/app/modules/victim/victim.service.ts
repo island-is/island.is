@@ -1,5 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CreateVictimDto } from './dto/createVictim.dto'
 import { UpdateVictimDto } from './dto/updateVictim.dto'
@@ -10,6 +18,8 @@ export class VictimService {
   constructor(
     @InjectModel(Victim)
     private readonly victimModel: typeof Victim,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   async findById(victimId: string): Promise<Victim> {
@@ -22,13 +32,6 @@ export class VictimService {
     return victim
   }
 
-  async findByCaseId(caseId: string): Promise<Victim[]> {
-    return this.victimModel.findAll({
-      where: { caseId },
-      order: [['created', 'ASC']],
-    })
-  }
-
   async create(caseId: string, dto: CreateVictimDto): Promise<Victim> {
     return this.victimModel.create({
       ...dto,
@@ -37,22 +40,42 @@ export class VictimService {
   }
 
   async update(victimId: string, update: UpdateVictimDto): Promise<Victim> {
-    const victim = await this.victimModel.findByPk(victimId)
+    const [numberOfAffectedRows, updatedVictims] =
+      await this.victimModel.update(update, {
+        where: { id: victimId },
+        returning: true,
+      })
 
-    if (!victim) {
-      throw new NotFoundException(`Victim ${victimId} not found`)
+    if (numberOfAffectedRows > 1) {
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating victim ${victimId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not update victim ${victimId}`,
+      )
     }
 
-    return victim.update(update)
+    const updatedVictim = updatedVictims[0]
+
+    return updatedVictim
   }
 
-  async delete(victimId: string): Promise<void> {
-    const count = await this.victimModel.destroy({
+  async delete(victimId: string): Promise<boolean> {
+    const numberOfAffectedRows = await this.victimModel.destroy({
       where: { id: victimId },
     })
 
-    if (count === 0) {
-      throw new NotFoundException(`Victim ${victimId} not found`)
+    if (numberOfAffectedRows > 1) {
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting victim ${victimId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not delete victim ${victimId}`,
+      )
     }
+
+    return true
   }
 }

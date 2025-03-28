@@ -31,7 +31,7 @@ const canProsecutionUserEditVictim = (theCase: MinimalCase): boolean => {
 
 const canDistrictCourtUserEditVictim = (theCase: MinimalCase): boolean => {
   if ([CaseState.SUBMITTED, CaseState.RECEIVED].includes(theCase.state)) {
-    return true
+  return true
   }
 
   return false
