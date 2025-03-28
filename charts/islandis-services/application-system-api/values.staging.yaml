@@ -64,6 +64,8 @@ env:
   NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
   NOVA_ACCEPT_UNAUTHORIZED: 'false'
   NOVA_USERNAME: 'IslandIs_User_Development'
+  PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
+  PAYMENT_API_CALLBACK_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
   RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
   SERVERSIDE_FEATURES_ON: ''
@@ -142,6 +144,7 @@ env:
 files:
   - 'islyklar.p12'
 grantNamespaces:
+  - 'services-payments'
   - 'nginx-ingress-internal'
   - 'islandis'
 grantNamespacesEnabled: true
@@ -167,16 +170,17 @@ image:
 ingress:
   primary-alb:
     annotations:
-      kubernetes.io/ingress.class: 'nginx-internal-alb'
+      kubernetes.io/ingress.class: 'nginx-external-alb'
+      nginx.ingress.kubernetes.io/enable-global-auth: 'false'
       nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
       nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
-      - host: 'application-payment-callback-xrd.internal.staging01.devland.is'
+      - host: 'application-payment-callback-xrd.staging01.devland.is'
         paths:
           - '/application-payment'
           - '/applications'
-      - host: 'application-callback-xrd.internal.staging01.devland.is'
+      - host: 'application-callback-xrd.staging01.devland.is'
         paths:
           - '/application-payment'
           - '/applications'

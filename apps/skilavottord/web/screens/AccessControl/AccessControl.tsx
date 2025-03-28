@@ -52,6 +52,8 @@ import {
 import { SkilavottordRecyclingPartnersQuery } from '../RecyclingCompanies/RecyclingCompanies'
 import * as styles from './AccessControl.css'
 
+// DEPLOYME
+
 const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
   const { user } = useContext(UserContext)

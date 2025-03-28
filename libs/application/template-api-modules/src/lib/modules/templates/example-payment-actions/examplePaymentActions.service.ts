@@ -19,6 +19,7 @@ export class ExamplePaymentActionsService extends BaseTemplateApiService {
 
   async createCharge({
     application: { id, answers },
+    currentUserLocale,
     auth,
   }: TemplateApiModuleActionProps) {
     // Performing organization ID
@@ -41,6 +42,8 @@ export class ExamplePaymentActionsService extends BaseTemplateApiService {
       id,
       SYSLUMADUR_NATIONAL_ID,
       [{ code: chargeItemCode }],
+      undefined,
+      currentUserLocale,
     )
 
     // last chance to validate before the user receives a dummy

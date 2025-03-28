@@ -20,6 +20,7 @@ import {
   UserNotificationClientConfig,
   UserNotificationEagerClientModule,
 } from '@island.is/clients/user-notification'
+import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import {
         signingModuleConfig,
         ApplicationFilesConfig,
         FileStorageConfig,
+        PaymentsApiClientConfig,
       ],
     }),
   ],

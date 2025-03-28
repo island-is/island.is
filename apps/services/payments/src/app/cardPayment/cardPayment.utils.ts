@@ -82,8 +82,9 @@ export const generateVerificationRequestOptions = ({
       cardholderDeviceType: 'WWW',
       amount: iskToAur(amount),
       currency: 'ISK',
-      // authenticationUrl: `${environment.paymentsWeb.origin}/api/card/callback`,
-      authenticationUrl: `https://webhook.site/8b1b7eeb-2e21-431c-b1a4-a6f59fbad8c1`,
+      authenticationUrl: `${environment.paymentsWeb.origin}/api/card/callback`,
+      // authenticationUrl:
+      //   'https://webhook.site/17894ac9-1a34-4e29-9ffa-9ebb1f56cf09',
       MD: md,
       systemCalling,
     }),
