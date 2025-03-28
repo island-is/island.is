@@ -265,7 +265,9 @@ jobs:
         id: lint-base
         env:
           NX_SKIP_NX_CACHE: true
-        run: yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
+        run: |
+          set -x
+          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
@@ -273,7 +275,9 @@ jobs:
         id: lint-head
         env:
           NX_SKIP_NX_CACHE: true
-        run: yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
+        run: |
+          set -x
+          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
       - name: No new lint lines
         run: |
           if (( ${{steps.lint-head.output.lint-lines}} >= ${{steps.lint-base.output.lint-lines}} )); then
