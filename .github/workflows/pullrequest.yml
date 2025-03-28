@@ -238,7 +238,7 @@ jobs:
       - prepare
     runs-on: arc-runners
     timeout-minutes: 35
-    if: needs.prepare.outputs.LINT_CHUNKS
+    if: ${{ needs.prepare.outputs.LINT_CHUNKS && !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
