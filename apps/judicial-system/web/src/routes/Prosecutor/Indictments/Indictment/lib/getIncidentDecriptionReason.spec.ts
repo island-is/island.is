@@ -1,5 +1,8 @@
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
-import { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Gender,
+  IndictmentCountOffense,
+  Offense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { formatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'
@@ -13,9 +16,30 @@ describe('getIncidentDescriptionReason', () => {
       },
     ] as Offense[]
 
-    const result = getIncidentDescriptionReason(offenses, formatMessage)
+    const result = getIncidentDescriptionReason(
+      offenses,
+      Gender.MALE,
+      formatMessage,
+    )
 
     expect(result).toBe('sviptur ökurétti')
+  })
+
+  test('should return a gender based description for one offense', () => {
+    const offenses = [
+      {
+        offense: IndictmentCountOffense.DRIVING_WITHOUT_LICENCE,
+        substances: {},
+      },
+    ] as Offense[]
+
+    const result = getIncidentDescriptionReason(
+      offenses,
+      Gender.FEMALE,
+      formatMessage,
+    )
+
+    expect(result).toBe('svipt ökurétti')
   })
 
   test('should return a description for one offense for two offenses', () => {
@@ -30,7 +54,11 @@ describe('getIncidentDescriptionReason', () => {
       },
     ] as Offense[]
 
-    const result = getIncidentDescriptionReason(offenses, formatMessage)
+    const result = getIncidentDescriptionReason(
+      offenses,
+      Gender.MALE,
+      formatMessage,
+    )
 
     expect(result).toBe('sviptur ökurétti')
   })
@@ -44,7 +72,11 @@ describe('getIncidentDescriptionReason', () => {
       { offense: IndictmentCountOffense.DRUNK_DRIVING, substances: {} },
     ] as Offense[]
 
-    const result = getIncidentDescriptionReason(offenses, formatMessage)
+    const result = getIncidentDescriptionReason(
+      offenses,
+      Gender.MALE,
+      formatMessage,
+    )
 
     expect(result).toBe('sviptur ökurétti og undir áhrifum áfengis')
   })
@@ -61,10 +93,37 @@ describe('getIncidentDescriptionReason', () => {
       },
     ] as Offense[]
 
-    const result = getIncidentDescriptionReason(offenses, formatMessage)
+    const result = getIncidentDescriptionReason(
+      offenses,
+      Gender.MALE,
+      formatMessage,
+    )
 
     expect(result).toBe(
       'undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa slævandi lyfja',
+    )
+  })
+
+  test('should return a gender based description with prescription drugs', () => {
+    const offenses = [
+      {
+        offense: IndictmentCountOffense.DRUNK_DRIVING,
+        substances: {},
+      },
+      {
+        offense: IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
+        substances: {},
+      },
+    ] as Offense[]
+
+    const result = getIncidentDescriptionReason(
+      offenses,
+      Gender.OTHER,
+      formatMessage,
+    )
+
+    expect(result).toBe(
+      'undir áhrifum áfengis og óhæft til að stjórna henni örugglega vegna áhrifa slævandi lyfja',
     )
   })
 
@@ -77,7 +136,11 @@ describe('getIncidentDescriptionReason', () => {
       { offense: IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING, substances: {} },
     ] as Offense[]
 
-    const result = getIncidentDescriptionReason(offenses, formatMessage)
+    const result = getIncidentDescriptionReason(
+      offenses,
+      Gender.MALE,
+      formatMessage,
+    )
 
     expect(result).toBe(
       'undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna',
@@ -94,7 +157,11 @@ describe('getIncidentDescriptionReason', () => {
       { offense: IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING, substances: {} },
     ] as Offense[]
 
-    const result = getIncidentDescriptionReason(offenses, formatMessage)
+    const result = getIncidentDescriptionReason(
+      offenses,
+      Gender.MALE,
+      formatMessage,
+    )
 
     expect(result).toBe(
       'sviptur ökurétti, undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna',
@@ -114,7 +181,11 @@ describe('getIncidentDescriptionReason', () => {
       },
     ] as Offense[]
 
-    const result = getIncidentDescriptionReason(offenses, formatMessage)
+    const result = getIncidentDescriptionReason(
+      offenses,
+      Gender.MALE,
+      formatMessage,
+    )
 
     expect(result).toBe(
       'undir áhrifum áfengis og óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
@@ -133,7 +204,11 @@ describe('getIncidentDescriptionReason', () => {
       },
     ] as Offense[]
 
-    const result = getIncidentDescriptionReason(offenses, formatMessage)
+    const result = getIncidentDescriptionReason(
+      offenses,
+      Gender.MALE,
+      formatMessage,
+    )
 
     expect(result).toBe(
       'óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
@@ -152,7 +227,11 @@ describe('getIncidentDescriptionReason', () => {
       },
     ] as Offense[]
 
-    const result = getIncidentDescriptionReason(offenses, formatMessage)
+    const result = getIncidentDescriptionReason(
+      offenses,
+      Gender.MALE,
+      formatMessage,
+    )
 
     expect(result).toBe(
       'óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
