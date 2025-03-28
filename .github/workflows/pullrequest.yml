@@ -256,7 +256,7 @@ jobs:
       - name: Run lintfix on changed files
         # NOTE: We want to use the PR base, not last good, since the lint is not part of "good" build
         # and causes unintended lint changes when using a different commit
-        run: yarn nx affected -t lint --base=origin/$GITHUB_BASE_REF --fix
+        run: yarn nx affected -t lint --base="origin/$GITHUB_BASE_REF" --fix
 
       - name: Commit changed files
         run: ./infra/scripts/ci/git-check-dirty.sh . lintfix dirtybot
