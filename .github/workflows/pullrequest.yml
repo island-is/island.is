@@ -262,15 +262,15 @@ jobs:
         env:
           NX_SKIP_NX_CACHE: true
         run: |
-          git checkout "$GITHUB_BASE_REF"
-          yarn nx run-many -t lint | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
+          git checkout "origin/$GITHUB_BASE_REF"
+          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
       - name: Lint head
         id: lint-head
         env:
           NX_SKIP_NX_CACHE: true
         run: |
           git checkout "$GITHUB_HEAD_REF"
-          yarn nx run-many -t lint | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
+          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
       - name: No new lint lines
         run: |
           if (( ${{steps.lint-head.output.lint-lines}} >= ${{steps.lint-base.output.lint-lines}} )); then
