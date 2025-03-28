@@ -7,7 +7,6 @@ import { sectionOverview } from './sections/sectionOverview'
 import { sectionPayment } from './sections/sectionPayment'
 import { sectionFakeData } from './sections/sectionFakeData'
 import { sectionReasonForApplication } from './sections/sectionReasonForApplication'
-import { sectionDigitalLicenseInfo } from './sections/sectionDigitalLicenseInfo'
 import { sectionSignatureAndPhoto } from './sections/sectionSignatureAndPhoto'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
@@ -27,7 +26,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
       sectionReasonForApplication,
       sectionInformation,
       sectionSignatureAndPhoto,
-      sectionDigitalLicenseInfo,
       sectionDelivery,
       sectionOverview,
       sectionPayment,

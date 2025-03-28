@@ -2,11 +2,11 @@ import { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import * as constants from '@island.is/judicial-system/consts'
+import { IndictmentSubtypeMap } from '@island.is/judicial-system/types'
 import {
+  Case,
   IndictmentSubtype,
-  IndictmentSubtypeMap,
-} from '@island.is/judicial-system/types'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { replaceTabs } from './formatters'
 import { UpdateCase } from './hooks'
