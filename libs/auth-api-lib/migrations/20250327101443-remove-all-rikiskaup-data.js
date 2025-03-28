@@ -7,7 +7,7 @@ module.exports = {
 
   async up(queryInterface, Sequelize) {
     await queryInterface.sequelize.transaction(async (transaction) => {
-      const v_domain_name = '@test.domain.is'
+      const v_domain_name = '@rikiskaup.is'
 
       console.log(`🚨 DELETION STARTED for domain: ${v_domain_name} 🚨`)
 
