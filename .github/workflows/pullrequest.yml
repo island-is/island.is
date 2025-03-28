@@ -258,6 +258,11 @@ jobs:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
       - name: load-deps
         uses: ./.github/actions/load-deps
+      - name: Verify lint doesn't fail
+        id: lint-head
+        env:
+          NX_SKIP_NX_CACHE: true
+        run: yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS"
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.base.ref }}
