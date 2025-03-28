@@ -254,11 +254,17 @@ jobs:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Run lintfix on changed files
+        id: lintfix
         # NOTE: We want to use the PR base, not last good, since the lint is not part of "good" build
         # and causes unintended lint changes when using a different commit
-        run: yarn nx affected -t lint --base="origin/$GITHUB_BASE_REF" --fix
+        run: |
+          yarn nx affected -t lint --base="origin/$GITHUB_BASE_REF" --fix
+          if ! git diff "origin/$GITHUB_BASE_REF" --exit-code; then
+            echo "FILES_CHANGED=true" | tee -a "$GITHUB_OUTPUT"
+          fi
 
       - name: Commit changed files
+        if: ${{ steps.lintfix.outputs.FILES_CHANGED == 'true' }}
         run: ./infra/scripts/ci/git-check-dirty.sh . lintfix dirtybot
 
   linting:
