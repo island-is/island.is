@@ -17,6 +17,7 @@ env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  NX_SKIP_NX_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nx-cache') }}
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
@@ -67,7 +68,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -101,7 +101,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -160,7 +159,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -181,7 +179,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -222,7 +219,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -258,7 +254,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -286,7 +281,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps

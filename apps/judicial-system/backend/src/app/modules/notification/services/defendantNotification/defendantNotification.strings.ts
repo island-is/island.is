@@ -14,6 +14,19 @@ export const strings = {
     description:
       'Body of the notification sent when the defendant defender choise in an indictment has changed',
   }),
+  defendantDelegatedDefenderChoiceSubject: defineMessage({
+    id: 'judicial.system.backend:defendant_notifications.defendant_delegated_defender_choice_subject',
+    defaultMessage: 'Afstaða til verjanda í máli {courtCaseNumber}',
+    description:
+      'Body of the notification sent when the defendant delegates the defendant choice to the judge in indictment cases',
+  }),
+  defendantDelegatedDefenderChoiceBody: defineMessage({
+    id: 'judicial.system.backend:defendant_notifications.defendant_delegated_defender_choice_body',
+    defaultMessage:
+      'Afstaða: Ég fel dómara málsins að tilnefna og skipa mér verjanda.<br /><br />Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+    description:
+      'Body of the notification sent when the defendant delegates the defendant choice to the judge in indictment cases',
+  }),
   defenderAssignedSubject: defineMessage({
     id: 'judicial.system.backend:defendant_notifications.indictment_defender_assigned_subject',
     defaultMessage: '{courtName} - aðgangur að máli',

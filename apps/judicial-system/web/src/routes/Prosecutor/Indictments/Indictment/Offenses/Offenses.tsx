@@ -3,16 +3,14 @@ import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, Input, Select, Tag } from '@island.is/island-ui/core'
-import {
-  IndictmentCountOffense,
-  SubstanceMap,
-} from '@island.is/judicial-system/types'
+import { SubstanceMap } from '@island.is/judicial-system/types'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  IndictmentCount,
+  IndictmentCountOffense,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   removeErrorMessageIfValid,
@@ -26,13 +24,15 @@ import { SpeedingOffenseFields } from './SpeedingOffenseFields'
 import { indictmentCount as strings } from '../IndictmentCount.strings'
 import { indictmentCountEnum as enumStrings } from '../IndictmentCountEnum.strings'
 
-// when migrating offenses to the new structure they will all have the same creation date, thus we fallback to compare 
+// when migrating offenses to the new structure they will all have the same creation date, thus we fallback to compare
 // and sort by the offense type
-const offensesCompare = (
-  o1: Offense, o2: Offense
-) => {
-  const offense1Index = Object.values(IndictmentCountOffense).indexOf(o1.offense)
-  const offense2Index = Object.values(IndictmentCountOffense).indexOf(o2.offense)
+const offensesCompare = (o1: Offense, o2: Offense) => {
+  const offense1Index = Object.values(IndictmentCountOffense).indexOf(
+    o1.offense,
+  )
+  const offense2Index = Object.values(IndictmentCountOffense).indexOf(
+    o2.offense,
+  )
 
   if (offense1Index < offense2Index) {
     return -1
@@ -87,7 +87,7 @@ export const Offenses = ({
 }: {
   workingCase: Case
   setWorkingCase: Dispatch<SetStateAction<Case>>
-  indictmentCount: TempIndictmentCount
+  indictmentCount: IndictmentCount
   handleIndictmentCountChanges: (
     update: UpdateIndictmentCount,
     updatedOffenses?: Offense[],
