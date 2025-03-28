@@ -295,16 +295,35 @@ export const en: TranslatedMessages = {
   'walletPass.expiredLicense': 'Expired',
   'walletPass.errorFetchingLicense': 'Could not update license',
 
-  // wallet passport
-  'walletPassport.screenTitle': 'Passport',
-  'walletPassport.infoTitle': 'Remember the passport!',
-  'walletPassport.infoDescription':
+  // license details
+  'licenseDetail.pcard.alert.title': 'Remember the parking card!',
+  'licenseDetail.pcard.alert.description':
+    'This summary is not valid as a parking card.',
+  'licenseDetail.ehic.alert.title': 'Remember the card!',
+  'licenseDetail.ehic.alert.description':
+    'This summary is not valid as a European Health Insurance card.',
+  'licenseDetail.passport.alert.title': 'Remember the passport!',
+  'licenseDetail.passport.alert.description':
     'This summary is not valid as a travel document.',
-  'walletPassport.warningTitle': 'Expires within 6 months',
-  'walletPassport.warningDescription':
+  'licenseDetail.identityDocument.alert.title':
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónuskilríki',
+  'licenseDetail.identityDocument.alert.description':
+    'Einungis skilríkið sjálft er fullgilt persónuskilríki.',
+  'licenseDetail.identityTravelDocument.alert.title':
+    'Remember the travel document!',
+  'licenseDetail.identityTravelDocument.alert.description':
+    'This summary is not valid as a travel document.',
+  'licenseDetail.warning.title': 'Expires within 6 months',
+  'licenseDetail.passport.warning.description':
     'Note that your passport will expire within the next 6 months.',
-  'walletPassport.noPassport': 'No valid passport',
-  'walletPassport.noPassportLink': 'Apply',
+  'licenseDetail.identityDocument.warning.description':
+    'Note that your identity document will expire within the next 6 months.',
+  'licenseDetail.passport.noPassport': 'No valid passport',
+  'licenseDetail.identityDocument.noIdentityDocument':
+    'No valid identity documents',
+  'licenseDetail.apply': 'Apply',
+  'licenseDetail.passport.title': 'Passport',
+  'licenseDetail.identityDocument.title': 'Nafnskírteini',
 
   // license scanner
   'licenseScanner.title': 'Scan barcode',
@@ -348,14 +367,6 @@ export const en: TranslatedMessages = {
   'licenseScannerResult.nationalId': 'National ID',
   'licenseScannerResult.birthDate': 'Birthdate',
   'licenseScannerResult.driverLicenseNumber': 'Driver license number',
-
-  // license details
-  'licenseDetail.pcard.alert.title': 'Remember the parking card!',
-  'licenseDetail.pcard.alert.description':
-    'This summary is not valid as a parking card.',
-  'licenseDetail.ehic.alert.title': 'Remember the card!',
-  'licenseDetail.ehic.alert.description':
-    'This summary is not valid as a European Health Insurance card.',
 
   // notifications
   'notifications.screenTitle': 'Notifications',
