@@ -217,6 +217,7 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
             errors={errors}
             editView
             isMunicipalityPage={isMunicipalityPage}
+            setValue={setValue}
           />
         )}
       </Box>
