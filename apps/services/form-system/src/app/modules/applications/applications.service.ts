@@ -14,17 +14,19 @@ import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
-import { ApplicationStatus } from '@island.is/form-system/enums'
+import {
+  ApplicationStatus,
+  ApplicationEvents,
+  FieldTypesEnum,
+  ApplicantTypesEnum,
+} from '@island.is/form-system/enums'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
 import { ApplicationEvent } from './models/applicationEvent.model'
-import { ApplicationEvents } from '@island.is/form-system/enums'
 import { ApplicationListDto } from './models/dto/applicationList.dto'
-import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { User } from '@island.is/auth-nest-tools'
 import { Applicant } from '../applicants/models/applicant.model'
-import { ApplicantTypesEnum } from '@island.is/form-system/enums'
 import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 

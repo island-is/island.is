@@ -118,8 +118,6 @@ export class OrganizationsService {
         })
       })
 
-    // console.log(JSON.stringify(organizationAdminDto, null, 2))
-
     return organizationAdminDto
   }
 

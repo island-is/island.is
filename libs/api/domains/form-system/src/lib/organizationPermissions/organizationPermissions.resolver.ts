@@ -20,7 +20,7 @@ export class OrganizationPermissionsResolver {
   ) {}
 
   @Mutation(() => OrganizationPermissionDto, {
-    name: 'formSystemCreateOrganizationPermission',
+    name: 'createFormSystemOrganizationPermission',
   })
   async createOrganizationPermission(
     @Args('input', { type: () => OrganizationPermissionUpdateInput })
@@ -34,7 +34,7 @@ export class OrganizationPermissionsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'formSystemDeleteOrganizationPermission',
+    name: 'deleteFormSystemOrganizationPermission',
     nullable: true,
   })
   async deleteOrganizationPermission(
