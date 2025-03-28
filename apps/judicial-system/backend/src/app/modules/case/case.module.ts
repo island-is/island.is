@@ -17,6 +17,7 @@ import {
   PoliceModule,
   SubpoenaModule,
   UserModule,
+  VictimModule,
 } from '../index'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
@@ -45,6 +46,7 @@ import { PdfService } from './pdf.service'
     forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),
     forwardRef(() => EventLogModule),
+    forwardRef(() => VictimModule),
     SequelizeModule.forFeature([Case, CaseArchive, DateLog, CaseString]),
   ],
   providers: [

@@ -15,3 +15,5 @@ export { CaseOriginalAncestorInterceptor } from './interceptors/caseOriginalAnce
 export { CaseService } from './case.service'
 export { PdfService } from './pdf.service'
 export { InternalCaseService } from './internalCase.service'
+export { MinimalCaseExistsGuard } from './guards/minimalCaseExists.guard'
+export { MinimalCurrentCase } from './guards/minimalCase.decorator'
