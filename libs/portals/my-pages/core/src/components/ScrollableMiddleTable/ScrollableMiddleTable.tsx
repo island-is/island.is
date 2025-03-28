@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import * as styles from './ScrollableMiddleTable.css'
+import ScrollableMiddleTableRow from './ScrollableMiddleTableRow'
 
 export interface Columns {
   first: string
@@ -177,55 +178,30 @@ export const ScrollableMiddleTable = ({
           </T.Row>
         </T.Head>
         <T.Body>
-          {rows?.map((r, rowIdx) => (
-            <T.Row key={`nested-table-row-${rowIdx}`}>
-              <T.Data
-                box={{
-                  className: cn(styles.row, styles.expandColumn, {
-                    [styles.sticky]: options?.firstColumn.sticky,
-                  }),
-                }}
+          {rows?.map((r, rowIdx) => {
+            const middle = r.scrollableMiddle.map((b) => ({
+              value: <Text variant="small">{b}</Text>,
+            }))
+
+            return (
+              <ScrollableMiddleTableRow
+                key={`nested-table-row-${rowIdx}`}
+                data={[
+                  {
+                    value: <Text variant="small">{r.first}</Text>,
+                    first: true,
+                  },
+                  ...middle,
+                  {
+                    value: <Text variant="small">{r.last}</Text>,
+                    last: true,
+                  },
+                ]}
               >
-                <Button
-                  circle
-                  colorScheme="light"
-                  icon={'add'}
-                  iconType="filled"
-                  onClick={() => console.log('expand')}
-                  preTextIconType="filled"
-                  size="small"
-                  type="button"
-                  variant="primary"
-                />
-              </T.Data>
-              <T.Data
-                box={{
-                  className: cn(styles.firstColumn, styles.row, {
-                    [styles.sticky]: options?.firstColumn.sticky,
-                  }),
-                }}
-              >
-                <Text variant="small">{r.first}</Text>
-              </T.Data>
-              {r.scrollableMiddle.map((val, idx) => (
-                <T.Data
-                  box={{ className: styles.row }}
-                  key={`nested-table-row-${rowIdx}-cell-${idx}`}
-                >
-                  {val}
-                </T.Data>
-              ))}
-              <T.Data
-                box={{
-                  className: cn(styles.lastColumn, styles.row, {
-                    [styles.lastColumnSticky]: options?.lastColumn.sticky,
-                  }),
-                }}
-              >
-                {r.last}
-              </T.Data>
-            </T.Row>
-          ))}
+                <p>blebleble</p>
+              </ScrollableMiddleTableRow>
+            )
+          })}
           {footer && (
             <T.Row>
               <T.Data

@@ -11,7 +11,6 @@ import {
 import { m } from '../../lib/messages'
 import { PaymentGroupTable } from '../../components'
 import { useGetPreviousPaymentsQuery } from './PaymentPlan.generated'
-import { PaymentGroupTableTwo } from '../../components/PaymentGroupTableTwo/PaymentGroupTableTwo'
 
 const PaymentPlan = () => {
   useNamespaces('sp.social-insurance-maintenance')
@@ -74,9 +73,6 @@ const PaymentPlan = () => {
               </Text>
 
               <PaymentGroupTable />
-              <Box marginTop={8}>
-                <PaymentGroupTableTwo />
-              </Box>
             </Box>
             <Box>
               <Text variant="small" marginTop={5} marginBottom={2}>
