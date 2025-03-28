@@ -276,12 +276,12 @@ jobs:
         run: yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT" || echo "There was an error while linting, ignoring"
       - name: No new lint lines
         run: |
-          if (( ${{steps.lint-head.outputs.lint-lines}} >= ${{steps.lint-base.outputs.lint-lines}} )); then
-            echo "Found additional lint lines"
-            exit 1
+          if (( ${{steps.lint-head.outputs.lint-lines}} <= ${{steps.lint-base.outputs.lint-lines}} )); then
+            echo "Lint count has not increased"
+            exit 0
           fi
-          echo "No new lint lines"
-          exit 0
+          echo "Found additional lint lines"
+          exit 1
 
   linting:
     needs:
