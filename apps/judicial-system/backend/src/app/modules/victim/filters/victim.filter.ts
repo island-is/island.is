@@ -22,7 +22,7 @@ export const canUserEditVictim = (
 }
 
 const canProsecutionUserEditVictim = (theCase: MinimalCase): boolean => {
-  if (theCase.state in [CaseState.NEW, CaseState.DRAFT]) {
+  if ([CaseState.NEW, CaseState.DRAFT].includes(theCase.state)) {
     return true
   }
 
@@ -30,7 +30,7 @@ const canProsecutionUserEditVictim = (theCase: MinimalCase): boolean => {
 }
 
 const canDistrictCourtUserEditVictim = (theCase: MinimalCase): boolean => {
-  if (theCase.state in [CaseState.SUBMITTED, CaseState.RECEIVED]) {
+  if ([CaseState.SUBMITTED, CaseState.RECEIVED].includes(theCase.state)) {
     return true
   }
 
