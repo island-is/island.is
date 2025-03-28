@@ -35,6 +35,10 @@ const SelectCourt: FC = () => {
         courtId,
       })
 
+      if (!updatedCase) {
+        return
+      }
+
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,
         court: updatedCase?.court,

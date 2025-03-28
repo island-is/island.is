@@ -62,7 +62,6 @@ const Processing: FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
     isCaseUpToDate,
-    refreshCase,
   } = useContext(FormContext)
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
@@ -84,13 +83,21 @@ const Processing: FC = () => {
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
-      await updateCase(workingCase.id, {
+      const updatedCase = await updateCase(workingCase.id, {
         courtId: user?.institution?.defaultCourtId,
       })
-      refreshCase()
+
+      if (!updatedCase) {
+        return
+      }
+
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        court: updatedCase?.court,
+      }))
     }
   }, [
-    refreshCase,
+    setWorkingCase,
     updateCase,
     user?.institution?.defaultCourtId,
     workingCase.court,
