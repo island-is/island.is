@@ -193,4 +193,5 @@ export const SeminarAnswersSchema = z.object({
   ),
   participantCsvError: z.string().optional(),
   participantValidityError: z.string().optional(),
+  participantFinishedValidation: z.string().refine((x) => x === 'true'),
 })

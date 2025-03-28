@@ -1,10 +1,10 @@
 export enum ApplicationTypes {
   EXAMPLE = 'ExampleForm',
-  EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
   EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
   EXAMPLE_INPUTS = 'ExampleInputs',
   EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
   EXAMPLE_PAYMENT = 'ExamplePayment',
+  EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
   PASSPORT = 'Passport',
   PASSPORT_ANNULMENT = 'PassportAnnulment',
   DRIVING_LEARNERS_PERMIT = 'DrivingLearnersPermit',
@@ -96,10 +96,6 @@ export const ApplicationConfigurations = {
     slug: 'example-common-actions',
     translation: 'eca.application',
   },
-  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
-    slug: 'example-state-transfers',
-    translation: 'ets.application',
-  },
   [ApplicationTypes.EXAMPLE_INPUTS]: {
     slug: 'example-inputs',
     translation: 'ef.application',
@@ -111,6 +107,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
     slug: 'example-payment',
     translation: 'ep.application',
+  },
+  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
+    slug: 'example-state-transfers',
+    translation: 'ets.application',
   },
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',

@@ -10,6 +10,10 @@ inputs:
     description: 'Branch to push to'
     default: 'main'
     required: false
+  commit-msg:
+    description: 'Commit message'
+    default: 'Updated helm charts'
+    required: false
   ssh-key:
     description: 'SSH key so the action can fetch and push to the helm-values repository'
     required: true
@@ -59,6 +63,6 @@ runs:
         git config --global user.name "CI Bot"
 
         git add .
-        git commit -m "Updated helm charts"
+        git commit -m "${{ inputs.commit-msg }}"
         echo "Showing changeset\n $(git show)"
         git push

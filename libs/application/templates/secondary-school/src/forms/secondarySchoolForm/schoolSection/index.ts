@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildFieldsRepeaterField,
   buildMultiField,
   buildSection,
@@ -43,6 +44,10 @@ export const schoolSection = buildSection({
       title: school.general.pageTitle,
       description: school.general.description,
       children: [
+        buildCustomField({
+          component: 'UpdateExternalDataSchools',
+          id: 'updateExternalDataSchools',
+        }),
         buildFieldsRepeaterField({
           id: 'selection',
           titleVariant: 'h5',
