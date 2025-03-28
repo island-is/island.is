@@ -384,24 +384,6 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
             </GridColumn>
           </GridRow>
 
-          <Hidden above="sm">
-            <Box marginBottom={3}>
-              <FilterInput
-                placeholder={n(
-                  'filterSearchPlaceholder',
-                  'Leita í Starfatorgi',
-                )}
-                name="filterInput"
-                value={searchTerm}
-                onChange={(value) => {
-                  setSelectedPage(1)
-                  setSearchTerm(value)
-                  searchTermHasBeenInitialized.current = true
-                }}
-              />
-            </Box>
-          </Hidden>
-
           <Filter
             resultCount={filteredVacancies?.length ?? 0}
             variant={isMobile ? 'dialog' : 'popover'}
@@ -410,7 +392,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
             labelOpen={n('openFilter', 'Sía niðurstöður')}
             labelClose={n('closeFilter', 'Loka síu')}
             labelResult={n('viewResults', 'Skoða niðurstöður')}
-            labelTitle={n('filterMenuTitle', 'Sía niðurstöður')}
+            labelTitle={n('filterMenuTitle', 'Opna síu')}
             onFilterClear={clearSearch}
             filterInput={
               <Box className={styles.filterInput}>
