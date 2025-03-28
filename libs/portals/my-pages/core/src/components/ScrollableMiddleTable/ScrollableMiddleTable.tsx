@@ -179,19 +179,22 @@ export const ScrollableMiddleTable = ({
         </T.Head>
         <T.Body>
           {rows?.map((r, rowIdx) => {
-            const middle = r.scrollableMiddle.map((b) => ({
-              value: <Text variant="small">{b}</Text>,
-            }))
+            const backgroundColor = rowIdx % 2 === 0 ? 'white' : undefined
+
+            console.log(backgroundColor)
 
             return (
               <ScrollableMiddleTableRow
                 key={`nested-table-row-${rowIdx}`}
+                backgroundColor={backgroundColor}
                 data={[
                   {
                     value: <Text variant="small">{r.first}</Text>,
                     first: true,
                   },
-                  ...middle,
+                  ...r.scrollableMiddle.map((b) => ({
+                    value: <Text variant="small">{b}</Text>,
+                  })),
                   {
                     value: <Text variant="small">{r.last}</Text>,
                     last: true,

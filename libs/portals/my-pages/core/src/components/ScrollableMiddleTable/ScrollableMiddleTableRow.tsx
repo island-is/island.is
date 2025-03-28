@@ -115,7 +115,6 @@ const ScrollableMiddleTableRow = ({
           )}
         </T.Data>
         {data.map((item, i) => {
-          console.log(item)
           return (
             <T.Data
               key={i}
