@@ -26,6 +26,7 @@ import {
 import {
   CaseOrigin,
   Defendant,
+  Gender,
   IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
   Institution,
@@ -60,13 +61,15 @@ export const getIndictmentIntroductionAutofill = (
   return defendants && defendants.length > 0
     ? [
         prosecutorsOffice?.name?.toUpperCase(),
-        `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
-        `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
+        `\n\n${formatMessage(
+          cStrings.indictmentIntroductionAutofillAnnounces,
+        )}`,
+        `\n\n${formatMessage(cStrings.indictmentIntroductionAutofillCourt, {
           court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
         })}`,
         `\n\n${defendants.map((defendant) => {
           return `\n          ${formatMessage(
-            strings.indictmentIntroductionAutofillDefendant,
+            cStrings.indictmentIntroductionAutofillDefendant,
             {
               defendantName: defendant.name
                 ? applyCase('þgf', defendant.name)
@@ -402,17 +405,17 @@ const Indictment = () => {
         title={formatMessage(titles.prosecutor.indictments.indictment)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle>{formatMessage(cStrings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <SectionHeading
-            title={formatMessage(strings.indictmentIntroductionTitle)}
+            title={formatMessage(cStrings.indictmentIntroductionTitle)}
           />
           <Input
             name="indictmentIntroduction"
-            label={formatMessage(strings.indictmentIntroductionLabel)}
+            label={formatMessage(cStrings.indictmentIntroductionLabel)}
             placeholder={formatMessage(
-              strings.indictmentIntroductionPlaceholder,
+              cStrings.indictmentIntroductionPlaceholder,
             )}
             value={workingCase.indictmentIntroduction || ''}
             errorMessage={indictmentIntroductionErrorMessage}
@@ -458,7 +461,7 @@ const Indictment = () => {
               }
             >
               <SectionHeading
-                title={formatMessage(strings.indictmentCountHeading, {
+                title={formatMessage(cStrings.indictmentCountHeading, {
                   count: index + 1,
                 })}
               />
@@ -482,16 +485,16 @@ const Indictment = () => {
             onClick={handleCreateIndictmentCount}
             disabled={false}
           >
-            {formatMessage(strings.addIndictmentCount)}
+            {formatMessage(cStrings.addIndictmentCount)}
           </Button>
         </Box>
         <Box component="section" marginBottom={6}>
-          <SectionHeading title={formatMessage(strings.demandsTitle)} />
+          <SectionHeading title={formatMessage(cStrings.demandsTitle)} />
           <BlueBox>
             <Box marginBottom={3}>
               <Checkbox
                 name="requestDriversLicenseSuspension"
-                label={formatMessage(strings.demandsRequestSuspension)}
+                label={formatMessage(cStrings.demandsRequestSuspension)}
                 checked={Boolean(workingCase.requestDriversLicenseSuspension)}
                 onChange={() => {
                   setAndSendCaseToServer(
@@ -516,8 +519,8 @@ const Indictment = () => {
             </Box>
             <Input
               name="demands"
-              label={formatMessage(strings.demandsLabel)}
-              placeholder={formatMessage(strings.demandsPlaceholder)}
+              label={formatMessage(cStrings.demandsLabel)}
+              placeholder={formatMessage(cStrings.demandsPlaceholder)}
               value={workingCase.demands ?? ''}
               errorMessage={demandsErrorMessage}
               hasError={demandsErrorMessage !== ''}
@@ -551,12 +554,12 @@ const Indictment = () => {
         </Box>
         {workingCase.hasCivilClaims && (
           <Box marginBottom={6}>
-            <SectionHeading title={formatMessage(strings.civilDemandsTitle)} />
+            <SectionHeading title={formatMessage(cStrings.civilDemandsTitle)} />
             <BlueBox>
               <Input
                 name="civilDemands"
-                label={formatMessage(strings.civilDemandsLabel)}
-                placeholder={formatMessage(strings.civilDemandsPlaceholder)}
+                label={formatMessage(cStrings.civilDemandsLabel)}
+                placeholder={formatMessage(cStrings.civilDemandsPlaceholder)}
                 value={workingCase.civilDemands ?? ''}
                 errorMessage={civilDemandsErrorMessage}
                 hasError={civilDemandsErrorMessage !== ''}
@@ -592,7 +595,7 @@ const Indictment = () => {
         <Box marginBottom={10}>
           <PdfButton
             caseId={workingCase.id}
-            title={formatMessage(strings.pdfButtonIndictment)}
+            title={formatMessage(cStrings.pdfButtonIndictment)}
             pdfType="indictment"
             elementId="Ákæra"
           />

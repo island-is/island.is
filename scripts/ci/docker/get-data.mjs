@@ -17,10 +17,13 @@ const typeOfDeployment = getTypeOfDeployment()
 const _KEY_HAS_OUTPUT = 'MQ_HAS_OUTPUT'
 const _KEY_CHANGED_FILES = 'MQ_CHANGED_FILES'
 const _KEY_JUDICIAL_DEV = 'MQ_JUDICIAL_DEV'
+const _KEY_COMMIT_MSG = 'MQ_COMMIT_MSG'
 const changedFiles = []
 const judicialDev = []
 const judicialProd = []
 const _KEY_JUDICIAL_PROD = 'MQ_JUDICIAL_PROD'
+
+core.setOutput(_KEY_COMMIT_MSG, getCommitMsg());
 
 
 if (!SHOULD_DEPLOY_JUDICIAL) {
@@ -160,4 +163,12 @@ function getTypeOfDeployment() {
     }
   }
   throw new Error(`Unsupported branch: ${branch}`)
+}
+
+function getCommitMsg() {
+  if (context.eventName === 'merge_group') {
+    const pr = github.context.ref.split('pr-')[1].split('-')[0];
+    return `Change from: island-is/island.is#${pr}`;
+  }
+  return `Change from: island-is/island.is@${context.sha}`;
 }

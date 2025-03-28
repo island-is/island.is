@@ -26,6 +26,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  Gender,
   IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
   IndictmentSubtype,
