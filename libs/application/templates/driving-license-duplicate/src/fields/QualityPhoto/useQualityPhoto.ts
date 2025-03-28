@@ -1,7 +1,15 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { QUALITY_PHOTO } from './queries.graphql'
 import { useQuery, ApolloError } from '@apollo/client'
+import { gql } from '@apollo/client'
+
+export const QUALITY_PHOTO = gql`
+  query HasQualityPhoto {
+    drivingLicenseQualityPhoto {
+      dataUri
+    }
+  }
+`
 
 export interface QualityPhotoType {
   qualityPhoto: string | null
