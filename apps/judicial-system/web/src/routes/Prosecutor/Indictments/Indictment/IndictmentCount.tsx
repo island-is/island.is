@@ -26,7 +26,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
-  Gender,
   IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
   IndictmentSubtype,
@@ -43,6 +42,7 @@ import {
   useLawTag,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffenses'
+import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { getIncidentDescription } from './lib/getIncidentDescription'
 import { Offenses } from './Offenses/Offenses'
@@ -78,6 +78,8 @@ const offenseLawsMap: Record<
   [number, number][]
 > = {
   [IndictmentCountOffense.DRIVING_WITHOUT_LICENCE]: [[58, 1]],
+  [IndictmentCountOffense.DRIVING_WITHOUT_VALID_LICENSE]: [[58, 1]],
+  [IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE]: [[58, 1]],
   [IndictmentCountOffense.DRUNK_DRIVING]: [[49, 1]],
   DRUNK_DRIVING_MINOR: [[49, 2]],
   DRUNK_DRIVING_MAJOR: [[49, 3]],
@@ -210,12 +212,7 @@ export const IndictmentCount: FC<Props> = ({
   const lawTag = useLawTag()
   const { deleteOffense } = useOffenses()
 
-  // Use the gender of the single defendant if there is only one,
-  // otherwise default to male
-  const gender =
-    workingCase.defendants && workingCase.defendants.length === 1
-      ? workingCase.defendants[0].gender ?? Gender.MALE
-      : Gender.MALE
+  const gender = getDefaultDefendantGender(workingCase.defendants)
 
   const [
     vehicleRegistrationNumberErrorMessage,
@@ -504,76 +501,79 @@ export const IndictmentCount: FC<Props> = ({
             handleIndictmentCountChanges={handleIndictmentCountChanges}
           />
           {showLegalArticleSelection && (
-            <Box marginBottom={2}>
-              <SectionHeading
-                heading="h4"
-                title={formatMessage(strings.lawsBrokenTitle)}
-                marginBottom={2}
-              />
-              <Select
-                name="lawsBroken"
-                options={lawsBrokenOptions}
-                label={formatMessage(strings.lawsBrokenLabel)}
-                placeholder={formatMessage(strings.lawsBrokenPlaceholder)}
-                value={null}
-                onChange={(selectedOption) => {
-                  const law = (selectedOption as LawsBrokenOption).law
-                  const lawsBroken = [
-                    ...(indictmentCount.lawsBroken ?? []),
-                    law,
-                  ].sort(lawsCompare)
+            <>
+              <Box marginBottom={2}>
+                <SectionHeading
+                  heading="h4"
+                  title={formatMessage(strings.lawsBrokenTitle)}
+                  marginBottom={2}
+                />
+                <Select
+                  name="lawsBroken"
+                  options={lawsBrokenOptions}
+                  label={formatMessage(strings.lawsBrokenLabel)}
+                  placeholder={formatMessage(strings.lawsBrokenPlaceholder)}
+                  value={null}
+                  onChange={(selectedOption) => {
+                    const law = (selectedOption as LawsBrokenOption).law
+                    const lawsBroken = [
+                      ...(indictmentCount.lawsBroken ?? []),
+                      law,
+                    ].sort(lawsCompare)
 
-                  onChange(indictmentCount.id, {
-                    lawsBroken: lawsBroken,
-                    legalArguments: getLegalArguments(
+                    onChange(indictmentCount.id, {
+                      lawsBroken: lawsBroken,
+                      legalArguments: getLegalArguments(
+                        lawsBroken,
+                        formatMessage,
+                      ),
+                    })
+
+                    handleIndictmentCountChanges({
                       lawsBroken,
-                      formatMessage,
-                    ),
-                  })
+                    })
+                  }}
+                  required
+                />
+              </Box>
+              {indictmentCount.lawsBroken &&
+                indictmentCount.lawsBroken.length > 0 && (
+                  <Box marginBottom={2}>
+                    {indictmentCount.lawsBroken.map((brokenLaw) => (
+                      <Box
+                        display="inlineBlock"
+                        key={`${indictmentCount.id}-${brokenLaw}`}
+                        component="span"
+                        marginBottom={1}
+                        marginRight={1}
+                      >
+                        <Tag
+                          variant="darkerBlue"
+                          onClick={() => {
+                            const lawsBroken = (
+                              indictmentCount.lawsBroken ?? []
+                            ).filter((b) => lawsCompare(b, brokenLaw) !== 0)
 
-                  handleIndictmentCountChanges({
-                    lawsBroken,
-                  })
-                }}
-                required
-              />
-            </Box>
-          )}
-          {indictmentCount.lawsBroken && indictmentCount.lawsBroken.length > 0 && (
-            <Box marginBottom={2}>
-              {indictmentCount.lawsBroken.map((brokenLaw) => (
-                <Box
-                  display="inlineBlock"
-                  key={`${indictmentCount.id}-${brokenLaw}`}
-                  component="span"
-                  marginBottom={1}
-                  marginRight={1}
-                >
-                  <Tag
-                    variant="darkerBlue"
-                    onClick={() => {
-                      const lawsBroken = (
-                        indictmentCount.lawsBroken ?? []
-                      ).filter((b) => lawsCompare(b, brokenLaw) !== 0)
-
-                      onChange(indictmentCount.id, {
-                        lawsBroken: lawsBroken,
-                        legalArguments: getLegalArguments(
-                          lawsBroken,
-                          formatMessage,
-                        ),
-                      })
-                    }}
-                    aria-label={lawTag(brokenLaw)}
-                  >
-                    <Box display="flex" alignItems="center">
-                      {lawTag(brokenLaw)}
-                      <Icon icon="close" size="small" />
-                    </Box>
-                  </Tag>
-                </Box>
-              ))}
-            </Box>
+                            onChange(indictmentCount.id, {
+                              lawsBroken: lawsBroken,
+                              legalArguments: getLegalArguments(
+                                lawsBroken,
+                                formatMessage,
+                              ),
+                            })
+                          }}
+                          aria-label={lawTag(brokenLaw)}
+                        >
+                          <Box display="flex" alignItems="center">
+                            {lawTag(brokenLaw)}
+                            <Icon icon="close" size="small" />
+                          </Box>
+                        </Tag>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+            </>
           )}
         </>
       )}

@@ -43,6 +43,10 @@ export const strings = {
   }),
   offenseText: {
     [IndictmentCountOffense.DRIVING_WITHOUT_LICENCE]: 'Sviptingarakstur',
+    [IndictmentCountOffense.DRIVING_WITHOUT_VALID_LICENSE]:
+      'Akstur án gildra ökuréttinda',
+    [IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE]:
+      'Akstur án þess að hafa öðlast ökuréttindi',
     [IndictmentCountOffense.DRUNK_DRIVING]: 'Ölvunarakstur',
     [IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING]: 'Fíkniefnaakstur',
     [IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING]: 'Lyfjaakstur',

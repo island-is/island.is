@@ -15,6 +15,9 @@ export const getIncidentDescriptionReason = (
   formatMessage: IntlShape['formatMessage'],
 ) => {
   const order = [
+    IndictmentCountOffense.DRIVING_WITHOUT_LICENCE,
+    IndictmentCountOffense.DRIVING_WITHOUT_VALID_LICENSE,
+    IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE,
     IndictmentCountOffense.DRUNK_DRIVING,
     IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
     IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
@@ -42,6 +45,13 @@ export const getIncidentDescriptionReason = (
         case IndictmentCountOffense.DRIVING_WITHOUT_LICENCE:
           acc +=
             strings.incidentDescriptionDrivingWithoutLicenceAutofill[gender]
+          break
+        case IndictmentCountOffense.DRIVING_WITHOUT_VALID_LICENSE:
+          acc += strings.incidentDescriptionDrivingWithoutValidLicenceAutofill
+          break
+        case IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE:
+          acc +=
+            strings.incidentDescriptionDrivingWithoutEverHavingLicenceAutofill
           break
         case IndictmentCountOffense.DRUNK_DRIVING:
           acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)

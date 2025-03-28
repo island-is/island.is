@@ -250,4 +250,8 @@ export const strings = {
     [Gender.FEMALE]: 'óhæf til að stjórna henni örugglega vegna áhrifa',
     [Gender.OTHER]: 'óhæft til að stjórna henni örugglega vegna áhrifa',
   },
+  incidentDescriptionDrivingWithoutValidLicenceAutofill:
+    'án gildra ökuréttinda',
+  incidentDescriptionDrivingWithoutEverHavingLicenceAutofill:
+    'án þess að hafa öðlast ökurétt',
 }
