@@ -26,7 +26,6 @@ import {
 import {
   CaseOrigin,
   Defendant,
-  Gender,
   IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
   Institution,
@@ -184,18 +183,22 @@ const Indictment = () => {
       newSuspensionOffenses: Set<IndictmentCountOffense>,
       prevRequestDriversLicenseSuspension?: boolean | null,
     ) => {
-      // If the user manually selected suspesion, then we have nothing to do
-      if (
-        prevSuspensionOffenses.size === 0 &&
-        prevRequestDriversLicenseSuspension
-      ) {
-        return
-      }
-
       // If the user manually deselected suspension, then we have nothing to do
       if (
         prevSuspensionOffenses.size > 0 &&
         !prevRequestDriversLicenseSuspension
+      ) {
+        return
+      }
+
+      // If the user manually selected suspesion and
+      // the "driving without ever having license" suspension offense is not being added,
+      // then we have nothing to do
+      // Note the if the "driving without ever having license" offense changes the demand text
+      if (
+        prevSuspensionOffenses.size === 0 &&
+        prevRequestDriversLicenseSuspension &&
+        newSuspensionOffenses.size === 0
       ) {
         return
       }
