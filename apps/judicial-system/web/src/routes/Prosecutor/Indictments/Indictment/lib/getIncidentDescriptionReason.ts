@@ -54,7 +54,7 @@ export const getIncidentDescriptionReason = (
             strings.incidentDescriptionDrivingWithoutEverHavingLicenceAutofill
           break
         case IndictmentCountOffense.DRUNK_DRIVING:
-          acc += formatMessage(cStrings.incidentDescriptionDrunkDrivingAutofill)
+          acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
           break
         case IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING:
           acc += `${
@@ -71,7 +71,7 @@ export const getIncidentDescriptionReason = (
               ? ''
               : `${strings.incidentDescriptionDrugsDrivingPrefixAutofill[gender]} `) +
             formatMessage(
-              cStrings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
+              strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
             )
           break
       }
@@ -84,7 +84,7 @@ export const getIncidentDescriptionReason = (
   reason += substances.reduce((acc, substance, index) => {
     if (index === 0) {
       acc += ` (${formatMessage(
-        cStrings.incidentDescriptionSubstancesPrefixAutofill,
+        strings.incidentDescriptionSubstancesPrefixAutofill,
       )} `
     } else if (index === substances.length - 1) {
       acc += ' og '
