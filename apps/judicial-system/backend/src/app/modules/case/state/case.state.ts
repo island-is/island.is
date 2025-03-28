@@ -78,6 +78,7 @@ const indictmentCaseStateMachine: Map<
       fromStates: [IndictmentCaseState.WAITING_FOR_CONFIRMATION],
       transition: (update: UpdateCase) => ({
         ...update,
+        state: CaseState.SUBMITTED,
         indictmentDeniedExplanation: null,
       }),
     },
