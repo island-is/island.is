@@ -233,6 +233,53 @@ jobs:
       #     ./scripts/ci/20_check-formatting.sh "write"
       #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
+  newlints:
+    needs:
+      - prepare
+    runs-on: arc-runners
+    timeout-minutes: 35
+    if: needs.prepare.outputs.LINT_CHUNKS
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NODE_OPTIONS: --max-old-space-size=4096
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          depth: 0
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+      - name: Lint base
+        id: lint-base
+        env:
+          NX_SKIP_NX_CACHE: true
+        run: |
+          git checkout "$GITHUB_BASE_REF"
+          yarn nx run-many -t lint | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
+      - name: Lint head
+        id: lint-head
+        env:
+          NX_SKIP_NX_CACHE: true
+        run: |
+          git checkout "$GITHUB_HEAD_REF"
+          yarn nx run-many -t lint | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
+      - name: No new lint lines
+        run: |
+          if (( ${{steps.lint-head.output.lint-lines}} >= ${{steps.lint-base.output.lint-lines}} )); then
+            echo "Found additional lint lines"
+            exit 1
+          fi
+          echo "No new lint lines"
+          exit 0
+
   linting:
     needs:
       - prepare
@@ -300,6 +347,7 @@ jobs:
       - formatting
       - e2e
       - build
+      - newlints
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
@@ -308,6 +356,8 @@ jobs:
         run: |
           echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> $GITHUB_STEP_SUMMARY
           exit 1
+      - name: Check newlints success
+        run: '[[ ${{ needs.newlints.result }} != "failure" ]] || exit 1'
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Check e2e success
