@@ -1,5 +1,7 @@
 import { defineMessages } from 'react-intl'
 
+import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
+
 export const indictment = defineMessages({
   heading: {
     id: 'judicial.system.core:indictments_indictment.heading',
@@ -76,19 +78,6 @@ export const indictment = defineMessages({
     description:
       'Notaður sem skýritexti á Refsikrafa textasvæði á ákæra skrefi í ákærum.',
   },
-  demandsAutofill: {
-    id: 'judicial.system.core:indictments_indictment.demands_autofill',
-    defaultMessage:
-      'Þess er krafist að ákærði verði dæmdur til refsingar og til greiðslu alls sakarkostnaðar.',
-    description: 'Notaður sem sjálfvirkur texti í Refsikrafa textasvæði.',
-  },
-  demandsAutofillWithSuspension: {
-    id: 'judicial.system.core:indictments_indictment.demands_autofill_with_suspension',
-    defaultMessage:
-      'Þess er krafist að ákærði verði dæmdur til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu ökuréttar skv. 99. gr. og 101. gr. laga nr. 77/2019.',
-    description:
-      'Notaður sem sjálfvirkur texti í Refsikrafa textasvæði þegar krafist er sviptingar ökuréttinda.',
-  },
   pdfButtonIndictment: {
     id: 'judicial.system.core:indictments_indictment.pdf_button_indictment',
     defaultMessage: 'Ákæra - PDF',
@@ -113,3 +102,22 @@ export const indictment = defineMessages({
       'Notaður sem skýritexti á Einkaréttarkrafa textasvæði á ákæra skrefi í ákærum.',
   },
 })
+
+export const strings = {
+  demandsAutofill: {
+    [Gender.MALE]:
+      'Þess er krafist að ákærði verði dæmdur til refsingar og til greiðslu alls sakarkostnaðar.',
+    [Gender.FEMALE]:
+      'Þess er krafist að ákærða verði dæmd til refsingar og til greiðslu alls sakarkostnaðar.',
+    [Gender.OTHER]:
+      'Þess er krafist að ákært verði dæmt til refsingar og til greiðslu alls sakarkostnaðar.',
+  },
+  demandsAutofillWithSuspension: {
+    [Gender.MALE]:
+      'Þess er krafist að ákærði verði dæmdur til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu ökuréttar skv. 99. gr. og 101. gr. laga nr. 77/2019.',
+    [Gender.FEMALE]:
+      'Þess er krafist að ákærða verði dæmd til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu ökuréttar skv. 99. gr. og 101. gr. laga nr. 77/2019.',
+    [Gender.OTHER]:
+      'Þess er krafist að ákært verði dæmt til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu ökuréttar skv. 99. gr. og 101. gr. laga nr. 77/2019.',
+  },
+}
