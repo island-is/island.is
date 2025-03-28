@@ -2,6 +2,7 @@ FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS runner
 
 # hadolint ignore=DL3018
 RUN apt-get update && apt-get install -y \
+  postgresql \
   python3 \
   make \
   g++ \
