@@ -1,6 +1,6 @@
 import { useIntl } from 'react-intl'
 
-import { strings } from './useLawTag.stirngs'
+import { strings } from './useLawTag.strings'
 
 const useLawTag = () => {
   const { formatMessage } = useIntl()
