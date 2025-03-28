@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import {
@@ -54,7 +54,6 @@ import { m } from './translations.strings'
 import * as styles from './VerdictsList.css'
 
 const ITEMS_PER_PAGE = 10
-const DEBOUNCE_TIME_IN_MS = 1000
 
 const ALL_COURTS_TAG = ''
 const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómur Reykjavíkur'
@@ -77,6 +76,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
   initialData,
   customPageData,
 }) => {
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
   const [data, setData] = useState(initialData)
   const [page, setPage] = useState(1)
   const { format } = useDateUtils()
@@ -88,7 +88,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
       .withOptions({
         clearOnDefault: true,
         shallow: false,
-        throttleMs: DEBOUNCE_TIME_IN_MS,
       })
       .withDefault(''),
   )
@@ -107,7 +106,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
     parseAsString
       .withOptions({
         clearOnDefault: true,
-        throttleMs: DEBOUNCE_TIME_IN_MS,
         shallow: false,
       })
       .withDefault(ALL_COURTS_TAG),
@@ -255,12 +253,17 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
               <Stack space={3}>
                 <Box className={styles.searchInput}>
                   <Input
+                    ref={searchInputRef}
                     name="verdict-search-input"
-                    onChange={(ev) => {
-                      setSearchTerm(ev.target.value)
-                      setPage(1)
+                    onKeyDown={(ev) => {
+                      if (ev.key === 'Enter') {
+                        setSearchTerm(searchInputRef.current?.value ?? '')
+                        setPage(1)
+
+                        // Remove focus from input field after pressing enter
+                        ;(ev.target as { blur?: () => void })?.blur?.()
+                      }
                     }}
-                    value={searchTerm}
                     placeholder={formatMessage(
                       m.listPage.searchInputPlaceholder,
                     )}

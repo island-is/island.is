@@ -2,9 +2,9 @@
  ***
  *** The state machine is for this template is as follows:
  ***
- ***                                                            /-> Approved
- *** Prerequisites -> Draft -> Waiting to assign -> In review --
- ***                    Λ             |                         \-> Rejected
+ ***                                                               /--> Approved
+ *** Prerequisites --> Draft --> Waiting to assign --> In review --
+ ***                    Λ             |                            \--> Rejected
  ***                    |_____________|
  ***
  */

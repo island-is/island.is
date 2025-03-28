@@ -1,8 +1,15 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { QUALITY_SIGNATURE } from './queries.graphql'
 import { useQuery, ApolloError } from '@apollo/client'
+import { gql } from '@apollo/client'
 
+export const QUALITY_SIGNATURE = gql`
+  query HasQualitySignature {
+    drivingLicenseQualitySignature {
+      dataUri
+    }
+  }
+`
 export interface QualitySignatureType {
   qualitySignature: string | null
   loading: boolean
