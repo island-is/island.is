@@ -3,7 +3,7 @@ import { bootstrap } from '@island.is/infra-next-server'
 // AFFECTME
 
 const f = (g: () => string) => g()
-const b = f(function foo() {
+const b = f(() => {
   return 'b'
 })
 
