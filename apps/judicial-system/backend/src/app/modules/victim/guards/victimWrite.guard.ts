@@ -24,6 +24,10 @@ export class VictimWriteGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case')
     }
 
+    // We can also add more logic based on a specific victim if needed
+    // but for now it should be enough to have certain access to the case
+    // at a specific time in its process
+
     return canUserEditVictim(theCase, user)
   }
 }
