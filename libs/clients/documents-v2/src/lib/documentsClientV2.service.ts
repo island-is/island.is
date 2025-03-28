@@ -38,6 +38,10 @@ export class DocumentsClientV2Service {
 
       for (const key in obj) {
         if (obj[key]) {
+          if (Array.isArray(obj[key]) && obj[key].length === 0) {
+            continue
+          }
+
           sanitizedObj[key] = obj[key]
         }
       }
@@ -71,7 +75,6 @@ export class DocumentsClientV2Service {
     })
 
     const documents = await this.api.customersListDocuments(inputObject)
-
     if (!documents.totalCount) {
       return null
     }
