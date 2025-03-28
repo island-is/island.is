@@ -70,7 +70,6 @@ export const AdvancedSettings = ({
         'supportTokenExchange',
         'accessTokenLifetime',
         'customClaims',
-        'sso',
       ])}
     >
       <Stack space={3}>
