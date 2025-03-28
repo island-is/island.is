@@ -3,14 +3,12 @@ import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, Input, Select, Tag } from '@island.is/island-ui/core'
-import {
-  IndictmentCountOffense,
-  SubstanceMap,
-} from '@island.is/judicial-system/types'
+import { SubstanceMap } from '@island.is/judicial-system/types'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
   IndictmentCount,
+  IndictmentCountOffense,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
