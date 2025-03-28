@@ -88,6 +88,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE',
       ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION:
         '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION',
+      ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE:
+        '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE',
       CLIENT_SECRET_ENCRYPTION_KEY:
         '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY',
       IDENTITY_SERVER_CLIENT_SECRET:
