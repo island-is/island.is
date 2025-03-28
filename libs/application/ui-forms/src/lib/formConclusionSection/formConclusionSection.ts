@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildDescriptionField,
   buildExpandableDescriptionField,
   buildLinkField,
   buildMessageWithLinkButtonField,
@@ -34,6 +35,8 @@ type Props = Partial<{
   bottomButtonLink: string
   bottomButtonLabel: StaticText
   bottomButtonMessage: FormText
+  descriptionFieldTitle: StaticText
+  descriptionFieldDescription: FormTextWithLocale
   condition?: Condition
 }>
 
@@ -56,6 +59,8 @@ type Props = Partial<{
  * @param  bottomButtonLink The link for the bottom button
  * @param  bottomButtonLabel The label for the bottom button
  * @param  bottomButtonMessage The message for the bottom button
+ * @param  descriptionFieldTitle The title for an optional description field
+ * @param  descriptionFieldDescription The description for an optional description field
  */
 export const buildFormConclusionSection = ({
   alertTitle = conclusion.alertMessageField.title,
@@ -73,6 +78,8 @@ export const buildFormConclusionSection = ({
   bottomButtonLink = '/minarsidur/umsoknir',
   bottomButtonLabel = coreMessages.openServicePortalButtonTitle,
   bottomButtonMessage = coreMessages.openServicePortalMessageText,
+  descriptionFieldTitle = undefined,
+  descriptionFieldDescription = undefined,
   condition,
 }: Props) => {
   const expandableDescriptionField = accordion
@@ -111,6 +118,17 @@ export const buildFormConclusionSection = ({
             alertType: alertType,
             message: alertMessage,
           }),
+          ...(descriptionFieldTitle || descriptionFieldDescription
+            ? [
+                buildDescriptionField({
+                  id: 'uiForms.conclusionDescription',
+                  title: descriptionFieldTitle,
+                  titleVariant: 'h3',
+                  description: descriptionFieldDescription,
+                  marginBottom: 4,
+                }),
+              ]
+            : []),
           ...expandableDescriptionField,
           buildMessageWithLinkButtonField({
             id: 'uiForms.conclusionBottomLink',
