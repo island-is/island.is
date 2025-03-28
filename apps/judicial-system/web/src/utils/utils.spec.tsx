@@ -308,7 +308,7 @@ describe('Utils', () => {
   })
 
   describe('getDefaultDefendantGender', () => {
-    test('should return FEMALE for a sole male defendant', () => {
+    test('should return FEMALE for a sole female defendant', () => {
       // Arrange
       const defendants = [{ gender: Gender.FEMALE } as Defendant]
 
@@ -321,7 +321,7 @@ describe('Utils', () => {
   })
 
   describe('getDefaultDefendantGender', () => {
-    test('should return OTHER for a sole male defendant', () => {
+    test('should return OTHER for a sole defendant with other gender', () => {
       // Arrange
       const defendants = [{ gender: Gender.OTHER } as Defendant]
 
