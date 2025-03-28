@@ -247,10 +247,11 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        if: ${{ github.event_name == 'pull_request' }}
         with:
-          depth: 0
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
