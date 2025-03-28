@@ -13,6 +13,11 @@ import { Icon } from '../IconRC/Icon'
 import { Icon as IconTypes } from '../IconRC/iconMap'
 
 export type UploadFileStatus = 'error' | 'done' | 'uploading'
+export enum FileUploadStatus {
+  'error',
+  'done',
+  'uploading',
+}
 
 export interface UploadFile {
   name: string
