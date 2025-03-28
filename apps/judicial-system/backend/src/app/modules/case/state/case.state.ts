@@ -75,17 +75,23 @@ const indictmentCaseStateMachine: Map<
   [
     IndictmentCaseTransition.SUBMIT,
     {
-      fromStates: [
-        IndictmentCaseState.WAITING_FOR_CONFIRMATION,
-        IndictmentCaseState.RECEIVED,
-      ],
+      fromStates: [IndictmentCaseState.WAITING_FOR_CONFIRMATION],
+      transition: (update: UpdateCase) => ({
+        ...update,
+        indictmentDeniedExplanation: null,
+      }),
+    },
+  ],
+  [
+    IndictmentCaseTransition.MOVE,
+    {
+      fromStates: [IndictmentCaseState.RECEIVED],
       transition: (update: UpdateCase) => ({
         ...update,
         courtCaseNumber: null,
         judgeId: null,
         registrarId: null,
         state: CaseState.SUBMITTED,
-        indictmentDeniedExplanation: null,
       }),
     },
   ],
@@ -252,6 +258,20 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
         transition: (update: UpdateCase) => ({
           ...update,
           state: CaseState.RECEIVED,
+        }),
+      },
+    ],
+    [
+      RequestCaseTransition.MOVE,
+      {
+        fromStates: [RequestCaseState.RECEIVED],
+        fromAppealStates: [undefined],
+        transition: (update: UpdateCase) => ({
+          ...update,
+          courtCaseNumber: null,
+          judgeId: null,
+          registrarId: null,
+          state: CaseState.SUBMITTED,
         }),
       },
     ],
