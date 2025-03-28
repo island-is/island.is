@@ -4,7 +4,6 @@ import { useIntl } from 'react-intl'
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { PunishmentType } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -22,6 +21,7 @@ import { useSentToPrisonAdminDate } from '@island.is/judicial-system-web/src/com
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  PunishmentType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {

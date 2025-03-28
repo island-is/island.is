@@ -480,6 +480,41 @@ export interface IBigBulletList extends Entry<IBigBulletListFields> {
   }
 }
 
+export interface IBloodDonationRestrictionFields {
+  /** Titill */
+  title?: string | undefined
+
+  /** Áhrif á blóðgjöf */
+  cardText?: Document | undefined
+
+  /** Lýsing á efni spjalds */
+  description?: string | undefined
+
+  /** Lykilorð */
+  keywords?: string | undefined
+
+  /** Nánar um áhrif á blóðgjöf */
+  detailedText?: Document | undefined
+}
+
+export interface IBloodDonationRestriction
+  extends Entry<IBloodDonationRestrictionFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'bloodDonationRestriction'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ICardFields {
   /** Title */
   title: string
@@ -774,6 +809,7 @@ export interface ICustomPageFields {
     | 'DirectorateOfLabourMyPages'
     | 'Verdicts'
     | 'OfficialJournalOfIcelandHelp'
+    | 'BloodDonationRestrictions'
     | undefined
 
   /** Alert Banner */
