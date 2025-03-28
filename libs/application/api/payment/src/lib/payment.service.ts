@@ -39,6 +39,7 @@ import {
 } from '@island.is/clients/payments'
 import { ProblemError } from '@island.is/nest/problem'
 import { ProblemType } from '@island.is/shared/problem'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 @Injectable()
 export class PaymentService {
   constructor(
@@ -51,6 +52,7 @@ export class PaymentService {
     private readonly applicationService: ApplicationService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly paymentsApi: PaymentsApi,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async findPaymentByApplicationId(
@@ -217,6 +219,39 @@ export class PaymentService {
     applicationId: string,
     extraData: ExtraData[] | undefined,
     locale?: string | undefined,
+  ) {
+    const isIslandisPaymentEnabled = await this.featureFlagService.getValue(
+      Features.useIslandisPaymentForApplicationSystem,
+      false,
+      user,
+    )
+    if (isIslandisPaymentEnabled) {
+      return this.islandisCreateCharge(
+        user,
+        performingOrganizationID,
+        chargeItems,
+        applicationId,
+        extraData,
+        locale,
+      )
+    } else {
+      return this.arkCreateCharge(
+        user,
+        performingOrganizationID,
+        chargeItems,
+        applicationId,
+        extraData,
+      )
+    }
+  }
+
+  async islandisCreateCharge(
+    user: User,
+    performingOrganizationID: string,
+    chargeItems: BasicChargeItem[],
+    applicationId: string,
+    extraData: ExtraData[] | undefined,
+    locale?: string | undefined,
   ): Promise<CreateChargeResult> {
     console.log('=========================================')
     console.log('chargeItems', JSON.stringify(chargeItems, null, 2))
@@ -320,7 +355,7 @@ export class PaymentService {
     }
   }
 
-  private async ark_createCharge(
+  private async arkCreateCharge(
     user: User,
     performingOrganizationID: string,
     chargeItems: BasicChargeItem[],
