@@ -9,10 +9,12 @@ import {
 } from '@island.is/clients/national-registry-v3-applications'
 import { ConfigModule } from '@nestjs/config'
 import { XRoadConfig } from '@island.is/nest/config'
+import { NotificationsModule } from '../notifications/notifications.module'
 
 @Module({
   imports: [
     LoggingModule,
+    NotificationsModule,
     QueueModule.register({
       client: environment.sqsConfig,
       queue: {

@@ -4,9 +4,12 @@ import type { Logger } from '@island.is/logging'
 import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateHnippNotificationDto } from '../notifications/dto/createHnippNotification.dto'
+import { NotificationsService } from '../notifications/notifications.service'
 
 @Injectable()
 export class UserNotificationBirthday18WorkerService {
+  // eslint-disable-next-line local-rules/disallow-kennitalas
+  private DIGITAL_ICELAND_ORG_ID = '5501692829'
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -14,6 +17,7 @@ export class UserNotificationBirthday18WorkerService {
     private nationalRegistryService: NationalRegistryV3ApplicationsClientService,
     @InjectQueue('notifications')
     private readonly queue: QueueService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   public async run() {
@@ -27,8 +31,8 @@ export class UserNotificationBirthday18WorkerService {
     )
     await Promise.all(
       birthdays.map(async (birthdaySsn) => {
-        const dto: CreateHnippNotificationDto = {
-          senderId: '5501692829',
+        const body: CreateHnippNotificationDto = {
+          senderId: this.DIGITAL_ICELAND_ORG_ID,
           recipient: birthdaySsn,
           templateId: 'HNIPP.DIGITALICELAND.BIRTHDAYMESSAGE',
           args: [
@@ -38,7 +42,19 @@ export class UserNotificationBirthday18WorkerService {
             },
           ],
         }
-        this.queue.add(dto)
+        await this.notificationsService.validate(body.templateId, body.args)
+        const id = await this.queue.add(body)
+        const flattenedArgs: Record<string, string> = {}
+        for (const arg of body.args) {
+          flattenedArgs[arg.key] = arg.value
+        }
+        this.logger.info('Message queued', {
+          messageId: id,
+          ...flattenedArgs,
+          ...body,
+          args: {}, // Remove args, since they're in a better format in `flattenedArgs`
+          queue: { url: this.queue.url, name: this.queue.queueName },
+        })
       }),
     ).catch((e) =>
       this.logger.warn(
