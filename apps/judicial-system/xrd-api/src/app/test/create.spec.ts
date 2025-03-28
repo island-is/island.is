@@ -6,8 +6,8 @@ import { BadGatewayException, BadRequestException } from '@nestjs/common'
 import { CaseType } from '@island.is/judicial-system/types'
 
 import appModuleConfig from '../app.config'
-import { CreateCaseDto } from '../app.dto'
-import { Case } from '../app.model'
+import { CreateCaseDto } from '../dto/createCase.dto'
+import { Case } from '../models/case.model'
 import { createTestingAppModule } from './createTestingAppModule'
 
 jest.mock('isomorphic-fetch')
@@ -43,6 +43,7 @@ describe('AppController - Greate', () => {
       policeCaseNumber: '007-2022-1',
       type: CaseType.CUSTODY,
       prosecutorNationalId: '1111111111',
+      prosecutorsOfficeNationalId: '2222222222',
       accusedNationalId: '00000000000',
     }
 
