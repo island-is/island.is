@@ -3,14 +3,16 @@ import { useIntl } from 'react-intl'
 
 import { Box, Option, Select, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Case,
+  CaseIndictmentRulingDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './Overview.strings'
 

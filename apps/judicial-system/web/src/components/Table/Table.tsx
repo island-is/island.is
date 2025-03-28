@@ -11,13 +11,12 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseType,
   isCompletedCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 
-import { CaseListEntry, CaseState } from '../../graphql/schema'
+import { CaseListEntry, CaseState, CaseType } from '../../graphql/schema'
 import MobileCase from '../../routes/Shared/Cases/MobileCase'
 import {
   directionType,
