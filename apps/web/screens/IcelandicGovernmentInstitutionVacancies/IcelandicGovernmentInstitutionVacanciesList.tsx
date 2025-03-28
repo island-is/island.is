@@ -389,7 +389,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
             variant={isMobile ? 'dialog' : 'popover'}
             labelClear={n('clearFilter', 'Hreinsa síu')}
             labelClearAll={n('clearAllFilters', 'Hreinsa allar síur')}
-            labelOpen={n('openFilter', 'Sía niðurstöður')}
+            labelOpen={n('openFilter', 'Opna síu')}
             labelClose={n('closeFilter', 'Loka síu')}
             labelResult={n('viewResults', 'Skoða niðurstöður')}
             labelTitle={n('filterMenuTitle', 'Opna síu')}
