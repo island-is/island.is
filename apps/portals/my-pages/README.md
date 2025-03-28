@@ -12,7 +12,6 @@ My pages is the user personal pages where it will be able to find all the inform
 - [Production](https://island.is/minarsidur)
 
 ## Getting started
-dummy
 
 Before running the service portal, you will need to setup the user-profile service. Follow [these steps](../services/user-profile/README.md#initial-setup) first.
 

@@ -14,8 +14,6 @@ To start the app:
 yarn dev web
 ```
 
-dummy
-
 These commands are just shorthands for the setup described below.
 
 ## About
