@@ -37,7 +37,6 @@ export const AdvicesScreen = () => {
     })
   }
 
-  const k = 8
   const { advices, total, getAdvicesLoading, filters, setFilters } =
     useAdviceFilters({ isAuthenticated: isAuthenticated })
 
