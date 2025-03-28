@@ -117,6 +117,42 @@ export class DefendantNotificationService extends BaseNotificationService {
     )
   }
 
+  private sendDefendantDelegatedDefenderChoiceNotification(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const formattedSubject = this.formatMessage(
+      strings.defendantDelegatedDefenderChoiceSubject,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
+    )
+
+    const formattedBody = this.formatMessage(
+      strings.defendantDelegatedDefenderChoiceBody,
+      {
+        linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      },
+    )
+
+    return this.sendEmails(
+      theCase,
+      DefendantNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE,
+      formattedSubject,
+      formattedBody,
+      [
+        {
+          name: theCase.judge?.name,
+          email: theCase.judge?.email,
+        },
+        {
+          name: theCase.registrar?.name,
+          email: theCase.registrar?.email,
+        },
+      ],
+    )
+  }
+
   private shouldSendDefenderAssignedNotification(
     theCase: Case,
     defendant: Defendant,
@@ -262,6 +298,8 @@ export class DefendantNotificationService extends BaseNotificationService {
     switch (notificationType) {
       case DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER:
         return this.sendDefendantSelectedDefenderNotification(theCase)
+      case DefendantNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE:
+        return this.sendDefendantDelegatedDefenderChoiceNotification(theCase)
       case DefendantNotificationType.DEFENDER_ASSIGNED:
         return this.sendDefenderAssignedNotification(theCase, defendant)
       case DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN:
