@@ -1,6 +1,5 @@
 // TODO: Add tests
 import {
-  IndictmentSubtype,
   isIndictmentCase,
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
@@ -16,6 +15,7 @@ import {
   IndictmentCount,
   IndictmentCountOffense,
   IndictmentDecision,
+  IndictmentSubtype,
   SessionArrangements,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
