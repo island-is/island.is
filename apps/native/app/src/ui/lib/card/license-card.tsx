@@ -160,6 +160,9 @@ export function LicenseCard({
   const backgroundImage = props.backgroundImage ?? preset?.backgroundImage
   const backgroundColor = props.backgroundColor ?? preset?.backgroundColor
   const textColor = theme.shades.light.foreground
+  const showExpireDate =
+    type === GenericLicenseType.Passport ||
+    type === GenericLicenseType.IdentityDocument
   const showBarcodeView =
     status === 'VALID' &&
     !!((barcode && barcode?.value) || (barcode?.loading && !barcode?.value))
@@ -234,11 +237,11 @@ export function LicenseCard({
           </ValidationWrap>
           {date && (
             <Typography variant="body3" color={textColor}>
-              {type === GenericLicenseType.Passport
+              {showExpireDate
                 ? intl.formatMessage({ id: 'walletPass.expirationDate' })
                 : intl.formatMessage({ id: 'walletPass.lastUpdate' })}
               {': '}
-              {type === GenericLicenseType.Passport ? (
+              {showExpireDate ? (
                 <FormattedDate value={date} {...{ dateStyle: 'short' }} />
               ) : (
                 <>
