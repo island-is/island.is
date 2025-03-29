@@ -15,9 +15,10 @@ import {
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
 const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
+const serviceBirthdayWorkerName = `${serviceName}-birthday-worker`
 const imageName = `services-${serviceName}`
-const MAIN_QUEUE_NAME = serviceName
-const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
+const MAIN_QUEUE_NAME = `${serviceName}-feat-birthday`
+const DEAD_LETTER_QUEUE_NAME = `${serviceName}-feat-birthday-failure`
 
 const getEnv = (services: {
   userProfileApi: ServiceBuilder<'service-portal-api'>
@@ -103,15 +104,6 @@ export const userNotificationServiceSetup = (services: {
           },
         },
       },
-      internal: {
-        host: {
-          dev: serviceName,
-          staging: serviceName,
-          prod: serviceName,
-        },
-        paths: ['/'],
-        public: false,
-      },
     })
     .resources({
       limits: {
@@ -191,6 +183,34 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
     .db({ name: 'user-notification' })
     .migrations()
+    .extraAttributes({
+      dev: { schedule: '@hourly' },
+      staging: { schedule: '@midnight' },
+      prod: { schedule: '@midnight' },
+    })
+
+export const userNotificationBirthdayWorkerSetup = (services: {
+  userProfileApi: ServiceBuilder<'service-portal-api'>
+}): ServiceBuilder<typeof serviceBirthdayWorkerName> =>
+  service(serviceBirthdayWorkerName)
+    .image(imageName)
+    .namespace(serviceName)
+    .serviceAccount(serviceBirthdayWorkerName)
+    .codeOwner(CodeOwners.Juni)
+    .db({ name: 'user-notification' })
+    .command('node')
+    .args('--no-experimental-fetch', 'main.js', '--job=birthday')
+    .redis()
+    .env({ ...getEnv(services) })
+    .secrets({
+      FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
+      CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
+      IDENTITY_SERVER_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
+      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+    })
+    .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .extraAttributes({
       dev: { schedule: '@hourly' },
       staging: { schedule: '@midnight' },
