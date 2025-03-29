@@ -147,9 +147,7 @@ export class WorkMachinesClientService {
     user: User,
     input: ApiMachinesGetRequest,
   ): Promise<MachinesFriendlyHateaosDto | null> => {
-    return await this.machinesApiWithAuth(user)
-      .apiMachinesGet(input)
-      .catch(handle404)
+    return this.machinesApiWithAuth(user).apiMachinesGet(input).catch(handle404)
   }
 
   getWorkMachineById = async (
@@ -160,6 +158,7 @@ export class WorkMachinesClientService {
       .getMachine(input)
       .catch(handle404)
   }
+
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
 
