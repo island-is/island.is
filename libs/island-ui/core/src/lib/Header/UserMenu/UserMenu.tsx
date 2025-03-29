@@ -1,4 +1,5 @@
 import React, { ReactNode, useState } from 'react'
+import { applyCase } from 'beygla/strict'
 
 import { Box } from '../../Box/Box'
 import { Button } from '../../Button/Button'
@@ -32,13 +33,28 @@ export const UserMenu = ({
     setDropdownState(dropdownState === 'open' ? 'closed' : 'open')
   }
 
+  const getAriaLabel = () => {
+    if (!username) {
+      return undefined
+    }
+
+    return language === 'is'
+      ? `Notendaupplýsingar fyrir ${applyCase('þgf', username)}`
+      : `User information for ${username}`
+  }
+
   if (!authenticated) {
     return null
   }
 
   return (
     <Box display="flex" alignItems="center" position="relative" height="full">
-      <Button variant="utility" onClick={handleClick} icon="chevronDown">
+      <Button
+        variant="utility"
+        onClick={handleClick}
+        icon="chevronDown"
+        aria-label={getAriaLabel()}
+      >
         <Hidden above="xs">
           <UserAvatar username={username} size="small" />
         </Hidden>
