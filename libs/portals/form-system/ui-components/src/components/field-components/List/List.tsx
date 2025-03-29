@@ -35,7 +35,7 @@ export const List = ({ item }: Props) => {
       required={item.isRequired ?? false}
       placeholder={
         listTypePlaceholder[
-        item.fieldSettings?.listType as keyof typeof listTypePlaceholder
+          item.fieldSettings?.listType as keyof typeof listTypePlaceholder
         ] ?? 'Select an option'
       }
     />

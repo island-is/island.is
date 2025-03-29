@@ -8,12 +8,11 @@ import {
 } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
 import { FormSystemFormApplicant } from '@island.is/api/schema'
-import { ApplicantTypesEnum, m } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { ApplicantTypesEnum } from '@island.is/form-system/enums'
 import { removeTypename } from '../../../../lib/utils/removeTypename'
 import { FormApplicantTypes } from './components/FormApplicantTypes'
 import { applicantTypeGroups } from '../../../../lib/utils/applicantTypeGroups'
-
-
 
 export const RelevantParties = () => {
   const [createApplicant] = useMutation(CREATE_APPLICANT)
@@ -75,7 +74,6 @@ export const RelevantParties = () => {
       }
     } catch (e) {
       console.error(e)
-
     }
   }
 

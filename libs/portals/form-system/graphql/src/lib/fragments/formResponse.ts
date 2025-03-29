@@ -33,6 +33,11 @@ export const FormResponseFragment = gql`
       type
       method
     }
+    organizations {
+      value
+      label
+      isSelected
+    }
   }
   ${FormApplicantFragment}
   ${FormFragment}

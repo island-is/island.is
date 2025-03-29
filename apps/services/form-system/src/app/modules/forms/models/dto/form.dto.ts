@@ -15,6 +15,18 @@ export class FormDto {
   @ApiProperty()
   organizationId!: string
 
+  @ApiProperty()
+  organizationNationalId!: string
+
+  @ApiPropertyOptional()
+  organizationTitle?: string
+
+  @ApiPropertyOptional()
+  organizationTitleEn?: string
+
+  @ApiPropertyOptional({ type: LanguageType })
+  organizationDisplayName?: LanguageType
+
   @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
@@ -29,6 +41,9 @@ export class FormDto {
 
   @ApiProperty({ type: Date })
   modified!: Date
+
+  @ApiProperty()
+  hasPayment!: boolean
 
   @ApiProperty()
   beenPublished!: boolean
