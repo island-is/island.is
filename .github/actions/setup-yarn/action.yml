@@ -4,15 +4,22 @@ inputs:
   RUNS_ON_S3_BUCKET_CACHE:
     description: ''
     required: true
+  working-directory:
+    description: 'Directory to run the action in'
+    required: false
+    default: '.'
+
 runs:
   using: 'composite'
   steps:
     - name: Corepack
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       run: |
         corepack enable
 
     - name: Check node version
+      working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
         set -euo pipefail
@@ -21,12 +28,14 @@ runs:
         ls -l "$(which node)"
 
     - name: Set cache key
+      working-directory: ${{ inputs.working-directory }}
       shell: bash
       id: set-cache-key
       run: |
         echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
     - name: Get Yarn Cache Directory Path
+      working-directory: ${{ inputs.working-directory }}
       shell: bash
       id: yarn-cache-dir-path
       run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
@@ -44,6 +53,7 @@ runs:
         CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
 
     - name: Yarn install
+      working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
         yarn install --immutable
