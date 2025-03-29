@@ -4,6 +4,8 @@ import { useRef } from 'react'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import * as styles from './ScrollableMiddleTable.css'
+import ScrollableMiddleTableRow from './ScrollableMiddleTableRow'
+
 export interface Columns {
   first: string
   scrollableMiddle: Array<string>
@@ -42,8 +44,8 @@ const getBreakpointWidth = (width: number) => {
 }
 
 //Magic numbers
-const FIRST_COLUMN_WIDTH = 130
-const LAST_COLUMN_WIDTH = 144
+const FIRST_COLUMN_WIDTH = 256
+const LAST_COLUMN_WIDTH = 120
 const ICON_WIDTH = theme.spacing[6]
 
 export const ScrollableMiddleTable = ({
@@ -131,7 +133,14 @@ export const ScrollableMiddleTable = ({
           <T.Row>
             <T.HeadData
               box={{
-                className: cn(styles.firstColumn, styles.row, {
+                className: cn(styles.row, styles.header, styles.expandColumn, {
+                  [styles.sticky]: options?.firstColumn.sticky,
+                }),
+              }}
+            />
+            <T.HeadData
+              box={{
+                className: cn(styles.firstColumn, styles.header, styles.row, {
                   [styles.sticky]: options?.firstColumn.sticky,
                 }),
               }}
@@ -141,7 +150,12 @@ export const ScrollableMiddleTable = ({
               </Text>
             </T.HeadData>
             {header.scrollableMiddle.map((val, index) => (
-              <T.HeadData key={`nested-table-header-col-${index}`}>
+              <T.HeadData
+                box={{
+                  className: styles.header,
+                }}
+                key={`nested-table-header-col-${index}`}
+              >
                 <Text variant="small" fontWeight="medium">
                   {val}
                 </Text>
@@ -152,7 +166,7 @@ export const ScrollableMiddleTable = ({
                 width: isMobile ? 'initial' : LAST_COLUMN_WIDTH,
               }}
               box={{
-                className: cn(styles.lastColumn, styles.row, {
+                className: cn(styles.lastColumn, styles.header, styles.row, {
                   [styles.lastColumnSticky]: options?.firstColumn.sticky,
                 }),
               }}
@@ -164,38 +178,42 @@ export const ScrollableMiddleTable = ({
           </T.Row>
         </T.Head>
         <T.Body>
-          {rows?.map((r, rowIdx) => (
-            <T.Row key={`nested-table-row-${rowIdx}`}>
+          {rows?.map((r, rowIdx) => {
+            const backgroundColor = rowIdx % 2 === 0 ? 'white' : undefined
+
+            console.log(backgroundColor)
+
+            return (
+              <ScrollableMiddleTableRow
+                key={`nested-table-row-${rowIdx}`}
+                backgroundColor={backgroundColor}
+                data={[
+                  {
+                    value: <Text variant="small">{r.first}</Text>,
+                    first: true,
+                  },
+                  ...r.scrollableMiddle.map((b) => ({
+                    value: <Text variant="small">{b}</Text>,
+                  })),
+                  {
+                    value: <Text variant="small">{r.last}</Text>,
+                    last: true,
+                  },
+                ]}
+              >
+                <p>blebleble</p>
+              </ScrollableMiddleTableRow>
+            )
+          })}
+          {footer && (
+            <T.Row>
               <T.Data
                 box={{
-                  className: cn(styles.firstColumn, styles.row, {
+                  className: cn(styles.row, styles.expandColumn, {
                     [styles.sticky]: options?.firstColumn.sticky,
                   }),
                 }}
-              >
-                <Text variant="small">{r.first}</Text>
-              </T.Data>
-              {r.scrollableMiddle.map((val, idx) => (
-                <T.Data
-                  box={{ className: styles.row }}
-                  key={`nested-table-row-${rowIdx}-cell-${idx}`}
-                >
-                  {val}
-                </T.Data>
-              ))}
-              <T.Data
-                box={{
-                  className: cn(styles.lastColumn, styles.row, {
-                    [styles.lastColumnSticky]: options?.lastColumn.sticky,
-                  }),
-                }}
-              >
-                {r.last}
-              </T.Data>
-            </T.Row>
-          ))}
-          {footer && (
-            <T.Row>
+              />
               <T.Data
                 box={{
                   className: cn(styles.firstColumn, styles.row, {

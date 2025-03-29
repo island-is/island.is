@@ -26,14 +26,23 @@ export const row = style({
   backgroundColor: theme.color.blue100,
 })
 
+export const header = style({
+  height: theme.spacing[7],
+})
+
+export const expandColumn = style({
+  left: 0,
+  overflow: 'hidden',
+  width: theme.spacing[7],
+})
+
 export const firstColumn = style({
   borderRight: `1px solid ${theme.border.color.blue200} `,
   boxShadow: `4px 0px 8px -2px ${theme.border.color.blue200}`,
-  left: 0,
+  left: theme.spacing[9],
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   width: '140px',
-
   ...themeUtils.responsiveStyle({
     md: {
       width: theme.spacing[23],
@@ -60,6 +69,6 @@ export const sticky = style({
   position: 'sticky',
 })
 
-globalStyle(`${table} tbody tr:nth-child(odd) > td`, {
+globalStyle(`${table} tbody tr:nth-child(odd):not(:last-child) > td`, {
   backgroundColor: theme.color.white,
 })

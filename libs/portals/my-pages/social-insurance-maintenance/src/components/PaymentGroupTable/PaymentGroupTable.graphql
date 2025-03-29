@@ -3,21 +3,29 @@ query getPaymentPlan {
     totalPayments
     totalPaymentsSubtraction
     totalPaymentsReceived
+    totalMonthlyPaymentHistory {
+      __typename
+      monthIndex
+      amount
+    }
     paymentGroups {
       __typename
       type
       name
       totalYearCumulativeAmount
       payments {
+        __typename
         name
         totalYearCumulativeAmount
         markWithAsterisk
         monthlyPaymentHistory {
+          __typename
           monthIndex
           amount
         }
       }
       monthlyPaymentHistory {
+        __typename
         monthIndex
         amount
       }
