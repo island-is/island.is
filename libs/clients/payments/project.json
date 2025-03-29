@@ -1,0 +1,26 @@
+{
+  "name": "clients-payments",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/payments/src",
+  "tags": ["scope:client", "lib:client"],
+  "implicitDependencies": ["services-payments"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/payments"],
+      "options": {
+        "jestConfig": "libs/clients/payments/jest.config.ts"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/payments/gen/fetch -i apps/services/payments/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}
