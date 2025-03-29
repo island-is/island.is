@@ -5,7 +5,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { APP_GUARD } from '@nestjs/core'
-import { AuditModule, AuditOptions } from '@island.is/nest/audit'
+import { AuditConfig, AuditModule, AuditOptions } from '@island.is/nest/audit'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
@@ -24,7 +24,7 @@ import { emailModuleConfig } from '@island.is/email-service'
 
 @Module({
   imports: [
-    AuditModule.forRoot(environment.audit as AuditOptions),
+    AuditModule,
     AuthModule.register(environment.auth as AuthConfig),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
@@ -39,6 +39,7 @@ import { emailModuleConfig } from '@island.is/email-service'
         IdsClientConfig,
         XRoadConfig,
         emailModuleConfig,
+        AuditConfig
       ],
     }),
   ],

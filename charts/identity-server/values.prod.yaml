@@ -217,6 +217,8 @@ namespaces:
 services-auth-admin-api:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/auth-admin-api'
+    AUDIT_SERVICE_NAME: 'services-auth-admin-api'
     CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
@@ -319,6 +321,8 @@ services-auth-admin-api:
 services-auth-delegation-api:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/auth/delegation-api'
+    AUDIT_SERVICE_NAME: 'services-auth-delegation-api'
     CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
@@ -417,6 +421,8 @@ services-auth-ids-api:
   enabled: true
   env:
     ALSO_USE_FAKE_USER_API: 'false'
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/auth-api'
+    AUDIT_SERVICE_NAME: 'services-auth-api'
     CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
@@ -616,6 +622,8 @@ services-auth-ids-api-cleanup:
 services-auth-personal-representative:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/personal-representative'
+    AUDIT_SERVICE_NAME: 'services-personal-representative'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-ids.internal'
@@ -706,6 +714,8 @@ services-auth-personal-representative:
 services-auth-personal-representative-public:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/personal-representative-public'
+    AUDIT_SERVICE_NAME: 'services-personal-representative-public'
     DB_HOST: 'postgres-ids.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
@@ -768,6 +778,8 @@ services-auth-personal-representative-public:
 services-auth-public-api:
   enabled: true
   env:
+    AUDIT_DEFAULT_NAMESPACE: '@island.is/auth-public-api'
+    AUDIT_SERVICE_NAME: 'services-auth-public-api'
     CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'

@@ -44,7 +44,7 @@ import { EndorsementInterceptor } from './interceptors/endorsement.interceptor'
 import { PaginatedEndorsementInterceptor } from './interceptors/paginatedEndorsement.interceptor'
 import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
 
-const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
+const auditNamespace = '@island.is/services-endorsements-api/endorsement'
 @Audit({
   namespace: auditNamespace,
 })

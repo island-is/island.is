@@ -28,6 +28,8 @@ export const serviceSetup = (services: {
       REGULATIONS_ADMIN_URL: ref(
         (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
       ),
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/download',
+      AUDIT_SERVICE_NAME: 'download-service',
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:

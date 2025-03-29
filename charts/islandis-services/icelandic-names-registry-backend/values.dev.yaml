@@ -19,6 +19,8 @@ global:
 name: 'icelandic-names-registry-backend'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/icelandic-names-registry'
+  AUDIT_SERVICE_NAME: 'icelandic-names-registry-backend'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'icelandic_names_registry_backend'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'

@@ -27,15 +27,14 @@ import { DraftRegulationModel } from './draft_regulation.model'
 import { DraftRegulationService } from './draft_regulation.service'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
-import { environment } from '../../../environments'
 import { ShippedSummary, TaskListType } from '@island.is/regulations/admin'
 import { RegQueryName } from '@island.is/regulations'
 import { DraftRegulationShippedModel } from './models/draftRegulationShipped.model'
 import { DraftRegulationTemplate } from './models/draftRegulation.model'
 import { TaskListModel } from './models/taskList.model'
 import { DraftImpactModel } from './models/draftImpacts.model'
-const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
+const namespace = '@island.is/services/regulations-admin-backend/draft_regulations'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.regulationAdmin)
 @Controller('api')

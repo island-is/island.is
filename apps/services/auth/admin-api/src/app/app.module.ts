@@ -13,7 +13,7 @@ import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-regi
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
@@ -37,7 +37,7 @@ import { IdentityConfirmationApiModule } from './v2/identity-confirmation/identi
 
 @Module({
   imports: [
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
@@ -71,6 +71,7 @@ import { IdentityConfirmationApiModule } from './v2/identity-confirmation/identi
         IdsClientConfig,
         SyslumennClientConfig,
         ZendeskServiceConfig,
+        AuditConfig
       ],
       envFilePath: ['.env', '.env.secret'],
     }),

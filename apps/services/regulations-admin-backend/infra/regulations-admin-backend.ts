@@ -21,6 +21,8 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
         prod: 'https://innskra.island.is',
       },
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api',
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/services/regulations-admin-backend',
+      AUDIT_SERVICE_NAME: 'regulations-admin-backend',
     })
     .db()
     .migrations()

@@ -32,8 +32,7 @@ import {
   HolarUniversityApplicationClientModule,
 } from '@island.is/clients/university-application/holar-university'
 import { UniversityGatewayWorkerService } from './worker.service'
-import { AuditModule } from '@island.is/nest/audit'
-import { environment } from '../../environments'
+import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 import { InternalProgramService } from '../modules/program/internalProgram.service'
 import { InternalApplicationService } from '../modules/application/internalApplication.service'
 import { University } from '../modules/university/model/university'
@@ -47,7 +46,7 @@ import { Application } from '../modules/application/model/application'
 
 @Module({
   imports: [
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     LoggingModule,
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
@@ -79,6 +78,7 @@ import { Application } from '../modules/application/model/application'
         IcelandUniversityOfTheArtsApplicationClientConfig,
         AgriculturalUniversityOfIcelandApplicationClientConfig,
         HolarUniversityApplicationClientConfig,
+        AuditConfig
       ],
     }),
   ],
