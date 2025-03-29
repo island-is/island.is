@@ -1,7 +1,7 @@
 import request from 'supertest'
 
 import { getRequestMethod, setupApp, TestApp } from '@island.is/testing/nest'
-import { User } from '@island.is/auth-nest-tools'
+import { User, ZendeskAuthGuard } from '@island.is/auth-nest-tools'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import {
   createCurrentUser,
@@ -12,6 +12,7 @@ import addDays from 'date-fns/addDays'
 import {
   CreatePaperDelegationDto,
   Delegation,
+  DELEGATION_REVOKE_TAG,
   DELEGATION_TAG,
   DelegationDelegationType,
   DelegationsIndexService,
@@ -39,6 +40,12 @@ describe('DelegationAdmin - With authentication', () => {
   let nationalRegistryApi: NationalRegistryV3ClientService
   let delegationIndexServiceApi: DelegationsIndexService
 
+  let delegationModel: typeof Delegation
+  let delegationDelegationTypeModel: typeof DelegationDelegationType
+
+  let zendeskServiceApiSpy: jest.SpyInstance
+  let nationalRegistryApiSpy: jest.SpyInstance
+
   beforeEach(async () => {
     app = await setupApp({
       AppModule,
@@ -49,6 +56,11 @@ describe('DelegationAdmin - With authentication', () => {
 
     server = request(app.getHttpServer())
     factory = new FixtureFactory(app)
+
+    delegationModel = await app.get(getModelToken(Delegation))
+    delegationDelegationTypeModel = await app.get(
+      getModelToken(DelegationDelegationType),
+    )
 
     zendeskService = app.get(ZendeskService)
     nationalRegistryApi = app.get(NationalRegistryV3ClientService)
@@ -65,23 +77,95 @@ describe('DelegationAdmin - With authentication', () => {
       .mockImplementation(async () => {
         return
       })
+
+    await factory.createDomain({
+      name: 'd1',
+      apiScopes: [
+        {
+          name: 's1',
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.GeneralMandate,
+          ],
+        },
+      ],
+    })
   })
 
   afterEach(async () => {
+    await delegationModel.destroy({
+      where: {},
+      truncate: true,
+      cascade: true,
+      force: true,
+    })
+
     await app.cleanUp()
   })
 
-  async function createDelegationAdmin(user?: User) {
-    const domain = await factory.createDomain({
-      name: 'd1',
-      apiScopes: [
-        { name: 's1', supportedDelegationTypes: [AuthDelegationType.Custom] },
-      ],
-    })
+  const mockZendeskService = ({
+    toNationalId,
+    fromNationalId,
+    createdByNationalId,
+    info,
+  }: {
+    toNationalId: string
+    fromNationalId: string
+    info?: {
+      tags?: string[]
+      status?: TicketStatus
+    }
+    createdByNationalId?: string
+  }) => {
+    const { tags, status } = {
+      tags: [DELEGATION_TAG, DELEGATION_REVOKE_TAG],
+      status: TicketStatus.Solved,
+      ...info,
+    }
 
+    zendeskServiceApiSpy = jest
+      .spyOn(zendeskService, 'getTicket')
+      .mockImplementation((ticketId: string) => {
+        return new Promise((resolve) =>
+          resolve({
+            id: ticketId,
+            tags: tags,
+            status: status,
+            custom_fields: [
+              {
+                id: ZENDESK_CUSTOM_FIELDS.DelegationToReferenceId,
+                value: toNationalId,
+              },
+              {
+                id: ZENDESK_CUSTOM_FIELDS.DelegationFromReferenceId,
+                value: fromNationalId,
+              },
+              {
+                id: ZENDESK_CUSTOM_FIELDS.DelegationCreatedById,
+                value: createdByNationalId ?? fromNationalId,
+              },
+            ],
+          }),
+        )
+      })
+  }
+
+  const mockNationalRegistryService = () => {
+    nationalRegistryApiSpy = jest
+      .spyOn(nationalRegistryApi, 'getAllDataIndividual')
+      .mockImplementation(async (id) => {
+        const user = createNationalRegistryUser({
+          nationalId: id,
+        }) as any
+
+        return user ?? null
+      })
+  }
+
+  async function createDelegationAdmin(user?: User) {
     return factory.createCustomDelegation({
       fromNationalId: user?.nationalId ?? '',
-      domainName: domain.name,
+      domainName: 'd1',
       scopes: [{ scopeName: 's1' }],
       referenceId: 'ref1',
     })
@@ -106,12 +190,11 @@ describe('DelegationAdmin - With authentication', () => {
   describe('DELETE /delegation-admin/:delegation', () => {
     it('DELETE /delegation-admin/:delegation should not delete delegation that has no reference id', async () => {
       // Arrange
-      const delegationModel = await app.get(getModelToken(Delegation))
       const delegation = await createDelegationAdmin(currentUser)
       // Remove the referenceId
       await delegationModel.update(
         {
-          referenceId: null,
+          referenceId: null ?? '',
         },
         {
           where: {
@@ -181,83 +264,10 @@ describe('DelegationAdmin - With authentication', () => {
     const toNationalId = '0101302399'
     const fromNationalId = '0101307789'
 
-    let zendeskServiceApiSpy: jest.SpyInstance
-    let nationalRegistryApiSpy: jest.SpyInstance
-
-    let delegationModel: typeof Delegation
-    let delegationDelegationTypeModel: typeof DelegationDelegationType
-
     beforeEach(async () => {
-      delegationModel = await app.get(getModelToken(Delegation))
-      delegationDelegationTypeModel = await app.get(
-        getModelToken(DelegationDelegationType),
-      )
-
-      await factory.createDomain({
-        name: 'd1',
-        apiScopes: [
-          {
-            name: 's1',
-            supportedDelegationTypes: [
-              AuthDelegationType.Custom,
-              AuthDelegationType.GeneralMandate,
-            ],
-          },
-        ],
-      })
-
-      mockZendeskService(toNationalId, fromNationalId)
+      mockZendeskService({ toNationalId, fromNationalId })
       mockNationalRegistryService()
     })
-
-    const mockNationalRegistryService = () => {
-      nationalRegistryApiSpy = jest
-        .spyOn(nationalRegistryApi, 'getAllDataIndividual')
-        .mockImplementation(async (id) => {
-          const user = createNationalRegistryUser({
-            nationalId: id,
-          })
-
-          return user ?? null
-        })
-    }
-
-    const mockZendeskService = (
-      toNationalId: string,
-      fromNationalId: string,
-      info?: {
-        tags?: string[]
-        status?: TicketStatus
-      },
-    ) => {
-      const { tags, status } = {
-        tags: [DELEGATION_TAG],
-        status: TicketStatus.Solved,
-        ...info,
-      }
-
-      zendeskServiceApiSpy = jest
-        .spyOn(zendeskService, 'getTicket')
-        .mockImplementation((ticketId: string) => {
-          return new Promise((resolve) =>
-            resolve({
-              id: ticketId,
-              tags: tags,
-              status: status,
-              custom_fields: [
-                {
-                  id: ZENDESK_CUSTOM_FIELDS.DelegationToReferenceId,
-                  value: toNationalId,
-                },
-                {
-                  id: ZENDESK_CUSTOM_FIELDS.DelegationFromReferenceId,
-                  value: fromNationalId,
-                },
-              ],
-            }),
-          )
-        })
-    }
 
     afterEach(() => {
       jest.restoreAllMocks()
@@ -347,7 +357,7 @@ describe('DelegationAdmin - With authentication', () => {
         fromNationalId: '0101307789',
       }
 
-      mockZendeskService(toNationalId, fromNationalId)
+      mockZendeskService({ toNationalId, fromNationalId })
 
       const existingDelegation = await factory.createCustomDelegation({
         fromNationalId,
@@ -386,8 +396,6 @@ describe('DelegationAdmin - With authentication', () => {
         fromNationalId: '0101307789',
       }
 
-      mockZendeskService(fromNationalId, toNationalId)
-
       const existingDelegation = await factory.createCustomDelegation({
         fromNationalId,
         toNationalId,
@@ -396,6 +404,11 @@ describe('DelegationAdmin - With authentication', () => {
         referenceId: 'ref1',
       })
 
+      // Mock zendesk to return opposite national ids
+      mockZendeskService({
+        toNationalId: fromNationalId,
+        fromNationalId: toNationalId,
+      })
       // Send in opposite national ids so they will not exist in db
       const delegation: CreatePaperDelegationDto = {
         toNationalId: existingDelegation.fromNationalId,
@@ -421,8 +434,13 @@ describe('DelegationAdmin - With authentication', () => {
 
     it('POST /delegation-admin should not create delegation with incorrect zendesk ticket status', async () => {
       // Arrange
-      mockZendeskService(toNationalId, fromNationalId, {
-        status: TicketStatus.Open,
+      mockZendeskService({
+        toNationalId,
+        fromNationalId,
+        createdByNationalId: fromNationalId,
+        info: {
+          status: TicketStatus.Open,
+        },
       })
 
       const delegation: CreatePaperDelegationDto = {
@@ -438,6 +456,81 @@ describe('DelegationAdmin - With authentication', () => {
       )('/delegation-admin').send(delegation)
 
       expect(res.status).toEqual(400)
+    })
+  })
+
+  describe('General mandate webhooks', () => {
+    const toNationalId = '0101302399'
+    const fromNationalId = '0101307789'
+
+    beforeAll(async () => {
+      // 👇 This will override the method for all instances
+      jest
+        .spyOn(ZendeskAuthGuard.prototype, 'canActivate')
+        .mockImplementation(() => true)
+    })
+
+    afterEach(async () => {
+      await delegationModel.destroy({
+        where: {},
+        truncate: true,
+        cascade: true,
+        force: true,
+      })
+    })
+
+    it('POST /delegation-admin/zendesk should create delegation', async () => {
+      mockZendeskService({ toNationalId, fromNationalId })
+      mockNationalRegistryService()
+      // Act
+      const res = await getRequestMethod(
+        server,
+        'POST',
+      )('/delegation-admin/zendesk').send({ id: 'ref1' })
+
+      // Assert
+      expect(res.status).toEqual(200)
+
+      // Assert db
+      const createdDelegation = await delegationModel.findOne({
+        where: {
+          referenceId: 'ref1',
+        },
+      })
+
+      expect(createdDelegation).not.toBeNull()
+    })
+
+    it('POST /delegation-admin/revert-zendesk should delete delegation', async () => {
+      mockZendeskService({ toNationalId, fromNationalId })
+      mockNationalRegistryService()
+
+      // Arrange
+      await factory.createCustomDelegation({
+        fromNationalId,
+        toNationalId,
+        domainName: null,
+        scopes: [{ scopeName: 's1' }],
+        referenceId: 'ref1',
+      })
+
+      //Act
+      const revokeRes = await getRequestMethod(
+        server,
+        'POST',
+      )('/delegation-admin/revert-zendesk').send({ id: 'ref1' })
+
+      // Assert
+      expect(revokeRes.status).toEqual(200)
+
+      // Assert db
+      const deletedDelegation = await delegationModel.findOne({
+        where: {
+          referenceId: 'ref1',
+        },
+      })
+
+      expect(deletedDelegation).toBeNull()
     })
   })
 })
