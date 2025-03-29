@@ -43,16 +43,6 @@ import {
   INFORMATION_BASE_TOP_SPACING,
 } from './wallet-pass.constants'
 
-const getImageFromRawData = (rawData: string) => {
-  try {
-    const parsedData: { photo?: { image?: string } } = JSON.parse(rawData)
-
-    return parsedData?.photo?.image
-  } catch (e) {
-    return undefined
-  }
-}
-
 const Information = styled.ScrollView<{ topSpacing?: number }>`
   flex: 1;
   background-color: ${dynamicColor(({ theme }) => ({
@@ -419,9 +409,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           loading={res.loading}
           error={res.error}
           logo={
-            isBarcodeEnabled &&
-            data?.license?.type === GenericLicenseType.DriversLicense
-              ? getImageFromRawData(data?.payload?.rawData)
+            isBarcodeEnabled
+              ? data?.payload?.metadata.photo ?? undefined
               : undefined
           }
           date={updated ? new Date(Number(updated)) : undefined}

@@ -10,7 +10,6 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { GenericLicenseType } from '../../../graphql/types/schema'
 import { isString } from '../../../utils/is-string'
-import { prefixBase64 } from '../../../utils/prefix-base-64'
 import BackgroundADR from '../../assets/card/adr-bg.png'
 import LogoCoatOfArms from '../../assets/card/agency-logo.png'
 import CoatOfArms from '../../assets/card/logo-coat-of-arms.png'
@@ -229,7 +228,7 @@ export function LicenseListCard({
           {logo && (
             <ImgWrap>
               {isString(logo) ? (
-                <Base64Image source={{ uri: prefixBase64(logo) }} />
+                <Base64Image source={{ uri: logo }} />
               ) : (
                 <Image source={logo} style={{ height: 42, width: 42 }} />
               )}
