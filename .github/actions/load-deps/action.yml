@@ -21,7 +21,7 @@ runs:
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+        /home/runner/.nvm/versions/node/v20.15.0/bin/node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
 
     - name: Extract generated files
       if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
