@@ -1,3 +1,8 @@
+const f = (g: () => string) => g()
+const x = f(() => {
+  return 'hello'
+})
+
 export default function Index() {
   return (
     <div>

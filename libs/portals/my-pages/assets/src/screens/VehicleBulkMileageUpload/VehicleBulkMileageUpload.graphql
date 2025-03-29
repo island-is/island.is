@@ -22,6 +22,7 @@ query vehiclesList($input: VehiclesListInputV3!) {
         lastMileageRegistration {
           ...mileageRegistration
         }
+
         canRegisterMileage
         requiresMileageRegistration
       }

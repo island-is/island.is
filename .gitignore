@@ -45,6 +45,7 @@ TODO
 *.code-workspace
 
 # misc
+/.*-cache
 /.sass-cache
 /connect.lock
 /coverage
