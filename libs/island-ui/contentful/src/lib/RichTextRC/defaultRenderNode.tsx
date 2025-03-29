@@ -268,16 +268,46 @@ export const defaultRenderNodeObject: RenderNode = {
           </Hyperlink>
         ) : null
       }
-      case 'organizationSubpage': {
-        const prefix = getOrganizationPageUrlPrefix(entry?.sys?.locale)
-        return entry?.fields?.slug &&
-          entry.fields.organizationPage?.fields?.slug ? (
+      case 'organizationParentSubpage': {
+        if (
+          !entry?.fields?.slug ||
+          !entry.fields.organizationPage?.fields?.slug
+        ) {
+          return null
+        }
+        const prefix = getOrganizationPageUrlPrefix(entry.sys?.locale)
+        return (
           <Hyperlink
             href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.slug}`}
           >
             {children}
           </Hyperlink>
-        ) : null
+        )
+      }
+      case 'organizationSubpage': {
+        if (
+          !entry?.fields?.slug ||
+          !entry.fields.organizationPage?.fields?.slug
+        ) {
+          return null
+        }
+        const prefix = getOrganizationPageUrlPrefix(entry.sys?.locale)
+        if (entry.fields.organizationParentSubpage?.fields?.slug) {
+          return (
+            <Hyperlink
+              href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.organizationParentSubpage.fields.slug}/${entry.fields.slug}`}
+            >
+              {children}
+            </Hyperlink>
+          )
+        }
+        return (
+          <Hyperlink
+            href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.slug}`}
+          >
+            {children}
+          </Hyperlink>
+        )
       }
       default:
         return null

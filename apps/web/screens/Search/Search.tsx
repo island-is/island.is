@@ -323,6 +323,10 @@ const Search: Screen<CategoryProps> = ({
       ])
     }
 
+    if (item.__typename === 'OrganizationSubpage' && item.url.length === 3) {
+      return linkResolver('organizationparentsubpagechild', item.url)
+    }
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore make web strict
     return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))

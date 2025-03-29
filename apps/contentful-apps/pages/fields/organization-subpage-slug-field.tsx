@@ -15,6 +15,9 @@ const OrganizationSubpageSlugField = () => {
   const [organizationPageId, setOrganizationPageId] = useState(
     sdk.entry.fields.organizationPage.getValue()?.sys?.id,
   )
+  const [parentSubpageId, setParentSubpageId] = useState(
+    sdk.entry.fields.organizationParentSubpage.getValue()?.sys?.id,
+  )
   const initialTitleChange = useRef(true)
   const [hasEntryBeenPublished, setHasEntryBeenPublished] = useState(
     Boolean(sdk.entry.getSys()?.firstPublishedAt),
@@ -56,6 +59,15 @@ const OrganizationSubpageSlugField = () => {
     })
   }, [sdk.entry.fields.organizationPage])
 
+  // Store in state what the above parent subpage id is
+  useEffect(() => {
+    return sdk.entry.fields.organizationParentSubpage.onValueChanged(
+      (newParentSubpage) => {
+        setParentSubpageId(newParentSubpage?.sys?.id)
+      },
+    )
+  }, [sdk.entry.fields.organizationParentSubpage])
+
   useEffect(() => {
     sdk.window.startAutoResizer()
   }, [sdk.window])
@@ -71,19 +83,23 @@ const OrganizationSubpageSlugField = () => {
       const entryId = sdk.entry.getSys().id
 
       const [
-        parentSubpageAboveResponse,
-        subpageResponse,
-        parentSubpageResponse,
+        siblingPagesUnderSameParentSubpageWithSameSlugResponse,
+        subpagesWithSameSlugAndDontBelongToParentSubpageResponse,
+        parentSubpagesWithSameSlugResponse,
       ] = await Promise.all([
-        cma.entry.getMany({
-          query: {
-            locale: sdk.field.locale,
-            content_type: 'organizationParentSubpage',
-            links_to_entry: entryId,
-            'sys.archivedVersion[exists]': false,
-            limit: 1000,
-          },
-        }),
+        parentSubpageId
+          ? cma.entry.getMany({
+              query: {
+                locale: sdk.field.locale,
+                content_type: 'organizationSubpage',
+                'fields.slug': value,
+                'sys.id[ne]': entryId,
+                'sys.archivedVersion[exists]': false,
+                limit: 1,
+                'fields.organizationParentSubpage.sys.id': parentSubpageId,
+              },
+            })
+          : { items: [] },
         cma.entry.getMany({
           query: {
             locale: sdk.field.locale,
@@ -91,8 +107,9 @@ const OrganizationSubpageSlugField = () => {
             'fields.slug': value,
             'sys.id[ne]': entryId,
             'sys.archivedVersion[exists]': false,
-            limit: 1000,
+            limit: 1,
             'fields.organizationPage.sys.id': organizationPageId,
+            'fields.organizationParentSubpage[exists]': false,
           },
         }),
         cma.entry.getMany({
@@ -103,66 +120,29 @@ const OrganizationSubpageSlugField = () => {
             'sys.archivedVersion[exists]': false,
             limit: 1,
             'fields.organizationPage.sys.id': organizationPageId,
+            'sys.id[ne]': parentSubpageId,
           },
         }),
       ])
 
-      const subpagesWithSameSlugThatBelongToSameOrganizationPage =
-        subpageResponse.items
-
-      // Belongs to a parent subpage
-      if (parentSubpageAboveResponse.items.length > 0) {
-        const siblingSubpageExistsWithSameSlug =
-          parentSubpageAboveResponse.items.some((parentSubpage) => {
-            const pages: { sys: { id: string } }[] =
-              parentSubpage.fields['pages']?.[sdk.locales.default] ?? []
-            return pages.some((page) =>
-              subpagesWithSameSlugThatBelongToSameOrganizationPage.some(
-                (s) => s.sys.id === page.sys.id,
-              ),
-            )
-          })
-        setIsValid(!siblingSubpageExistsWithSameSlug)
-        return
-      }
-
-      // Parent subpage with the same org page and slug
-      if (parentSubpageResponse.items.length > 0) {
+      if (
+        siblingPagesUnderSameParentSubpageWithSameSlugResponse.items.length > 0
+      ) {
         setIsValid(false)
         return
       }
 
-      // Is there another org subpage that does not belong to a parent subpage that has the same slug?
-      if (subpagesWithSameSlugThatBelongToSameOrganizationPage.length > 0) {
-        // Check to see if those org subpages with the same slug belong to a parent subpage
-        const subpageParents = await cma.entry.getMany({
-          query: {
-            locale: sdk.field.locale,
-            content_type: 'organizationParentSubpage',
-            'sys.archivedVersion[exists]': false,
-            limit: 1000,
-            'fields.organizationPage.sys.id': organizationPageId,
-            'fields.pages.sys.id[in]':
-              subpagesWithSameSlugThatBelongToSameOrganizationPage
-                .map((s) => s.sys.id)
-                .join(', '),
-          },
-        })
+      if (parentSubpagesWithSameSlugResponse.items.length > 0) {
+        setIsValid(false)
+        return
+      }
 
-        const subpagesThatDontBelongToParent =
-          subpagesWithSameSlugThatBelongToSameOrganizationPage.filter(
-            (subpage) =>
-              !subpageParents.items.some((parent) =>
-                parent.fields.pages[sdk.locales.default].some(
-                  (s) => s.sys.id === subpage.sys.id,
-                ),
-              ),
-          )
-
-        if (subpagesThatDontBelongToParent.length > 0) {
-          setIsValid(false)
-          return
-        }
+      if (
+        subpagesWithSameSlugAndDontBelongToParentSubpageResponse.items.length >
+        0
+      ) {
+        setIsValid(false)
+        return
       }
 
       setIsValid(true)
