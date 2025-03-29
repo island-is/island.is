@@ -2,7 +2,6 @@ import { Injectable, Inject } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
-import { handle4xx } from '../../utils/errorHandler'
 import {
   FieldsApi,
   FieldsControllerCreateRequest,
@@ -48,12 +47,12 @@ export class FieldsService {
   }
 
   async deleteField(auth: User, input: DeleteFieldInput): Promise<void> {
-    const response = await this.fieldsApiWithAuth(auth)
+    await this.fieldsApiWithAuth(auth)
       .fieldsControllerDelete(input as FieldsControllerDeleteRequest)
   }
 
   async updateField(auth: User, input: UpdateFieldInput): Promise<void> {
-    const response = await this.fieldsApiWithAuth(auth)
+    await this.fieldsApiWithAuth(auth)
       .fieldsControllerUpdate(input as unknown as FieldsControllerUpdateRequest)
   }
 
