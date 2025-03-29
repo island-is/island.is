@@ -1,11 +1,11 @@
 import {
-  Box,
+  Box, Checkbox,
   Input,
   Stack,
   Text,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import { ClientFormTypes } from '../EditClient.schema'
@@ -15,6 +15,10 @@ import { useReadableSeconds } from '../../../hooks/useReadableSeconds'
 import { FormCard } from '../../../components/FormCard/FormCard'
 import { useClient } from '../ClientContext'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
+import { AuthAdminClientEnvironment, AuthAdminClientSso, AuthAdminRefreshTokenExpiration } from '@island.is/api/schema'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 
 interface CompareArgs {
   currVal: FormData
@@ -31,30 +35,52 @@ interface CompareArgs {
 const compare = ({ currVal, orgVal, key }: CompareArgs) =>
   currVal.get(key) !== orgVal.get(key)
 
-interface LifetimeProps {
-  absoluteRefreshTokenLifetime: number
-  refreshTokenExpiration: boolean
-  slidingRefreshTokenLifetime: number
-}
+type LifetimeProps = Pick<
+  AuthAdminClientEnvironment,
+  | 'sso'
+  | 'absoluteRefreshTokenLifetime'
+  | 'refreshTokenExpiration'
+  | 'slidingRefreshTokenLifetime'
+>
 
 const Lifetime = ({
   absoluteRefreshTokenLifetime,
   slidingRefreshTokenLifetime,
   refreshTokenExpiration,
-}: LifetimeProps) => {
+  sso
+ }: LifetimeProps) => {
   const { formatMessage } = useLocale()
-  const [lifetime, setLifetime] = useEnvironmentState({
+  const [inputValues, setInputValues] = useEnvironmentState({
     absoluteRefreshTokenLifetime,
-    refreshTokenExpiration,
+    refreshTokenExpiration: refreshTokenExpiration ===
+      AuthAdminRefreshTokenExpiration.Sliding,
     slidingRefreshTokenLifetime,
+    sso: sso,
   })
   const { formatErrorMessage } = useErrorFormatMessage()
   const { actionData, client } = useClient()
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [isSsoSettingsEnabled, setSsoSettingsEnabled] = useState(false)
+  const { isSuperAdmin } = useSuperAdmin()
+  const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    const checkSsoSettingsEnabled = async () => {
+      const ssoSettingsEnabled = await featureFlagClient.getValue(
+        Features.isIDSAdminSsoSettingEnabled,
+        false,
+      )
+      setSsoSettingsEnabled(ssoSettingsEnabled)
+      setIsReady(true)
+    }
+
+    checkSsoSettingsEnabled()
+  }, [featureFlagClient])
 
   const setLifeTimeLength = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setLifetime((prev) => ({
+    setInputValues((prev) => ({
       ...prev,
       [event.target.name]: +event.target.value,
     }))
@@ -81,13 +107,13 @@ const Lifetime = ({
   )
 
   const readableAbsoluteLifetime = useReadableSeconds(
-    lifetime.absoluteRefreshTokenLifetime,
+    inputValues.absoluteRefreshTokenLifetime,
   )
   const readableInactivityLifetime = useReadableSeconds(
-    lifetime.slidingRefreshTokenLifetime,
+    inputValues.slidingRefreshTokenLifetime,
   )
 
-  return (
+  return isReady && (
     <FormCard
       title={formatMessage(m.lifetime)}
       description={formatMessage(m.lifeTimeDescription)}
@@ -100,12 +126,33 @@ const Lifetime = ({
       ])}
     >
       <Stack space={3}>
+        {isSsoSettingsEnabled && (
+          <Stack space={1}>
+            <Checkbox
+              label={formatMessage(m.allowSSO)}
+              backgroundColor="blue"
+              large
+              disabled={!isSuperAdmin}
+              defaultChecked={inputValues.sso === AuthAdminClientSso.enabled}
+              checked={inputValues.sso  === AuthAdminClientSso.enabled}
+              name="sso"
+              value="true"
+              onChange={(e) => {
+                setInputValues({
+                  ...inputValues,
+                  sso: e.target.checked ? AuthAdminClientSso.enabled : AuthAdminClientSso.disabled,
+                })
+              }}
+              subLabel={formatMessage(m.allowSSODescription)}
+            />
+          </Stack>
+        )}
         <Stack space={1}>
           <Input
             size="sm"
             type="number"
             name="absoluteRefreshTokenLifetime"
-            value={lifetime.absoluteRefreshTokenLifetime}
+            value={inputValues.absoluteRefreshTokenLifetime}
             backgroundColor="blue"
             onChange={setLifeTimeLength}
             label={formatMessage(m.absoluteLifetime)}
@@ -123,13 +170,13 @@ const Lifetime = ({
         <Stack space={1}>
           <ToggleSwitchCheckbox
             label={formatMessage(m.inactivityExpiration)}
-            checked={lifetime.refreshTokenExpiration}
+            checked={inputValues.refreshTokenExpiration}
             name="refreshTokenExpiration"
-            value={lifetime.refreshTokenExpiration.toString()}
+            value={inputValues.refreshTokenExpiration.toString()}
             onChange={() =>
-              setLifetime((prev) => ({
+              setInputValues((prev) => ({
                 ...prev,
-                refreshTokenExpiration: !lifetime.refreshTokenExpiration,
+                refreshTokenExpiration: !inputValues.refreshTokenExpiration,
               }))
             }
           />
@@ -137,13 +184,13 @@ const Lifetime = ({
             {formatMessage(m.inactivityExpirationDescription)}
           </Text>
         </Stack>
-        {lifetime.refreshTokenExpiration && (
+        {inputValues.refreshTokenExpiration && (
           <Stack space={1}>
             <Input
               size="sm"
               type="number"
               name="slidingRefreshTokenLifetime"
-              value={lifetime.slidingRefreshTokenLifetime}
+              value={inputValues.slidingRefreshTokenLifetime}
               backgroundColor="blue"
               onChange={setLifeTimeLength}
               label={formatMessage(m.inactivityLifetime)}
