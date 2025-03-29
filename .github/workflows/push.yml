@@ -74,6 +74,7 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+      IS_JUDICIAL_AFFECTED: ${{ steps.is-judicial-affected.outputs.AFFECTED }}
 
     steps:
       - uses: actions/checkout@v4
@@ -188,6 +189,13 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
+      # TODO: remove when judicial has been integrated to Argo
+      - name: Is judicial affected
+        id: is-judicial-affected
+        run: |
+          AFFECTED=$(node ./scripts/ci/is-affected.mjs judicial)
+          echo AFFECTED="$AFFECTED" >> $GITHUB_OUTPUT
+
       - name: test-everything
         uses: ./.github/actions/test-everything
 
@@ -254,7 +262,8 @@ jobs:
       - prepare
     runs-on: arc-docker
     timeout-minutes: 45
-    if: needs.prepare.outputs.BUILD_CHUNKS
+
+    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && (needs.pre-checks.outputs.PRE_CHECK != 'push' || needs.prepare.outputs.IS_JUDICIAL_AFFECTED == 'true') }}
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
@@ -382,7 +391,7 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
+    if: ${{ needs.prepare.outputs.IMAGES && (needs.pre-checks.outputs.PRE_CHECK != 'push' || needs.prepare.outputs.IS_JUDICIAL_AFFECTED == 'true') }}
     runs-on: arc-docker
     timeout-minutes: 30
     env:
