@@ -2,6 +2,7 @@
   "recommendations": [
     "esbenp.prettier-vscode",
     "firsttris.vscode-jest-runner",
-    "DavidAnson.vscode-markdownlint"
+    "DavidAnson.vscode-markdownlint",
+    "ms-playwright.playwright"
   ]
 }
