@@ -25,7 +25,6 @@ import {
   Case,
   CaseOrigin,
   Defendant as TDefendant,
-  Gender,
   IndictmentSubtype,
   PoliceCaseInfo as TPoliceCaseInfo,
   UpdateDefendantInput,
@@ -35,6 +34,7 @@ import {
   useDefendants,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { DefendantInfo, ProsecutorSection } from '../../components'
@@ -119,12 +119,7 @@ const Defendant = () => {
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
 
-  // Use the gender of the single defendant if there is only one,
-  // otherwise default to male
-  const gender =
-    workingCase.defendants && workingCase.defendants.length === 1
-      ? workingCase.defendants[0].gender ?? Gender.MALE
-      : Gender.MALE
+  const gender = getDefaultDefendantGender(workingCase.defendants)
 
   useEffect(() => {
     setPoliceCases(getPoliceCases(workingCase))

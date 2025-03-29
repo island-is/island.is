@@ -237,4 +237,38 @@ describe('getIncidentDescriptionReason', () => {
       'óhæfur til að stjórna henni örugglega vegna áhrifa ávana- og fíkniefna og slævandi lyfja',
     )
   })
+
+  test('should return a description for no valid license', () => {
+    const offenses = [
+      {
+        offense: IndictmentCountOffense.DRIVING_WITHOUT_VALID_LICENSE,
+        substances: {},
+      },
+    ] as Offense[]
+
+    const result = getIncidentDescriptionReason(
+      offenses,
+      Gender.MALE,
+      formatMessage,
+    )
+
+    expect(result).toBe('án gildra ökuréttinda')
+  })
+
+  test('should return a description for never having license', () => {
+    const offenses = [
+      {
+        offense: IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE,
+        substances: {},
+      },
+    ] as Offense[]
+
+    const result = getIncidentDescriptionReason(
+      offenses,
+      Gender.MALE,
+      formatMessage,
+    )
+
+    expect(result).toBe('án þess að hafa öðlast ökurétt')
+  })
 })

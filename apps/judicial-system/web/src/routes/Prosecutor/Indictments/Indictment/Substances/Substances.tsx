@@ -11,9 +11,9 @@ import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
-import { Substance } from '../Substance/Substance'
-import { substances as strings } from './Substances.strings'
-import { substanceEnum } from './SubstancesEnum.strings'
+import { Substance } from './Substance'
+import { strings as sStrings } from './Substance.strings'
+import { strings } from './Substances.strings'
 import * as styles from './Substances.css'
 
 interface Props {
@@ -29,10 +29,10 @@ export const Substances: FC<Props> = ({ offense, onChange }) => {
     () =>
       Object.values(offenseSubstances[offenseType]).map((sub) => ({
         value: sub,
-        label: formatMessage(substanceEnum[sub]),
+        label: sStrings[sub],
         disabled: substances ? substances[sub] !== undefined : false,
       })),
-    [formatMessage, substances, offenseType],
+    [substances, offenseType],
   )
 
   const handleUpdateSubstanceAmount = (

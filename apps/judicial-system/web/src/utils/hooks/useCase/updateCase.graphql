@@ -222,6 +222,5 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     mergeCase {
       id
     }
-    mergeCaseNumber
   }
 }

@@ -12,7 +12,7 @@ import {
 import { removeErrorMessageIfValid } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { indictmentCount as strings } from '../IndictmentCount.strings'
+import { strings } from './SpeedingOffenseFields.strings'
 
 export const SpeedingOffenseFields = ({
   setWorkingCase,

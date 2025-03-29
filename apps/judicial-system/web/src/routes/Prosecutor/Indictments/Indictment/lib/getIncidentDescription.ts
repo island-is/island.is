@@ -15,7 +15,7 @@ import {
 import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'
-import { indictmentCount as strings } from '../IndictmentCount.strings'
+import { strings } from './getIncidentDescription.strings'
 
 const getIncidentDescriptionProps = (
   offenses: Offense[] = [],
