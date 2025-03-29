@@ -84,6 +84,19 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
+    IndictmentCaseTransition.MOVE,
+    {
+      fromStates: [IndictmentCaseState.RECEIVED],
+      transition: (update: UpdateCase) => ({
+        ...update,
+        courtCaseNumber: null,
+        judgeId: null,
+        registrarId: null,
+        state: CaseState.SUBMITTED,
+      }),
+    },
+  ],
+  [
     IndictmentCaseTransition.ASK_FOR_CANCELLATION,
     {
       fromStates: [IndictmentCaseState.SUBMITTED, IndictmentCaseState.RECEIVED],
@@ -246,6 +259,20 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
         transition: (update: UpdateCase) => ({
           ...update,
           state: CaseState.RECEIVED,
+        }),
+      },
+    ],
+    [
+      RequestCaseTransition.MOVE,
+      {
+        fromStates: [RequestCaseState.RECEIVED],
+        fromAppealStates: [undefined],
+        transition: (update: UpdateCase) => ({
+          ...update,
+          courtCaseNumber: null,
+          judgeId: null,
+          registrarId: null,
+          state: CaseState.SUBMITTED,
         }),
       },
     ],
