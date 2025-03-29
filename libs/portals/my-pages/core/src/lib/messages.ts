@@ -1701,4 +1701,8 @@ export const m = defineMessages({
     id: 'service.portal:sort-by',
     defaultMessage: 'Raða eftir',
   },
+  sjukratryggingar: {
+    id: 'service.portal:sjukratryggingar',
+    defaultMessage: 'Sjúkratryggingar',
+  },
 })

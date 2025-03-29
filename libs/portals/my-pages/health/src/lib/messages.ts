@@ -142,6 +142,10 @@ export const messages = defineMessages({
     id: 'sp.health:payments',
     defaultMessage: 'Greiðslur',
   },
+  paymentsAndRights: {
+    id: 'sp.health:payments-and-rights',
+    defaultMessage: 'Greiðslur og réttindi',
+  },
   paymentsIntro: {
     id: 'sp.health:payments-intro',
     defaultMessage:
@@ -193,14 +197,26 @@ export const messages = defineMessages({
     defaultMessage:
       'Ekki tókst að sækja gögn frá Sjúkratryggingum. Vinsamlegast reyndu aftur síðar.',
   },
+  healthOverview: {
+    id: 'sp.health:health-overview',
+    defaultMessage: 'Heilsuyfirlit',
+  },
+  overviewTitle: {
+    id: 'sp.health:overview-title',
+    defaultMessage: 'Yfirlit',
+  },
   overviewIntro: {
     id: 'sp.health:overview-intro',
     defaultMessage:
-      'Hér fyrir neðan eru þín gögn sem hafa verið sótt frá þjóðskrá. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
+      'Hér getur þú séð yfirlit yfir grunnupplýsingar þínar í Heilsu, tímabókanir, skráningar, stöðu á listum og mælingar.',
   },
   hasHealthInsurance: {
     id: 'sp.health:has-health-insurance',
     defaultMessage: 'Sjúkratrygging',
+  },
+  hasHealthInsuranceIntro: {
+    id: 'sp.health:has-health-insurance-intro',
+    defaultMessage: 'Sjúkratrygging - LÝSING',
   },
   healthInsuranceStart: {
     id: 'sp.health:health-insurance-start',
@@ -337,6 +353,10 @@ export const messages = defineMessages({
     id: 'sp.health:dentist-transfer-success-info',
     defaultMessage: 'Þú hefur verið skráður á tannlækninn {name}.',
   },
+  healthCenter: {
+    id: 'sp.health:health-center',
+    defaultMessage: 'Heilsugæsla',
+  },
   healthCenterTitle: {
     id: 'sp.health:health-center-title',
     defaultMessage: 'Skráð heilsugæsla',
@@ -415,10 +435,6 @@ export const messages = defineMessages({
   physicalTherapy: {
     id: 'sp.health:physical-therapy',
     defaultMessage: 'Sjúkraþjálfun',
-  },
-  overviewTitle: {
-    id: 'sp.health:overview-title',
-    defaultMessage: 'Yfirlit',
   },
   speechTherapy: {
     id: 'sp.health:speech-therapy',
