@@ -71,8 +71,8 @@ export const UserProvider: FC<PropsWithChildren<Props>> = ({
     <UserContext.Provider
       value={{
         isAuthenticated,
-        user: user,
-        eligibleUsers: eligibleUsers,
+        user,
+        eligibleUsers,
         limitedAccess:
           user && // Needed for e2e tests as they do not have a logged in user
           !isProsecutionUser(user) &&
