@@ -81,14 +81,7 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
             >
               <Image
                 {...item?.image}
-                url={
-                  item?.image?.url
-                    ? item.image.url + '?w=1000&fm=webp&q=80'
-                    : ''
-                }
-                thumbnail={
-                  item?.image?.url ? item.image.url + '?w=50&fm=webp&q=80' : ''
-                }
+                url={item?.image?.url ? item.image.url : ''}
               />
             </Box>
           )}

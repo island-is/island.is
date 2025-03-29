@@ -34,14 +34,8 @@ const NewsItemImage = ({ newsItem }: NewsArticleProps) =>
     >
       <Image
         {...newsItem?.image}
-        url={
-          newsItem?.image?.url
-            ? newsItem.image?.url + '?w=1000&fm=webp&q=80'
-            : ''
-        }
-        thumbnail={
-          newsItem?.image?.url ? newsItem.image?.url + '?w=50&fm=webp&q=80' : ''
-        }
+        url={newsItem?.image?.url ? newsItem.image?.url : ''}
+        height={newsItem.image.height ?? ''}
       />
     </Box>
   )
@@ -129,11 +123,7 @@ export const NewsArticle: React.FC<
               Image: (slice: ImageProps) => {
                 return (
                   <Box className={styles.clearBoth}>
-                    <Image
-                      {...slice}
-                      thumbnail={slice.url + '?w=50'}
-                      url={slice.url + '?w=1000&fm=webp&q=80'}
-                    />
+                    <Image {...slice} url={slice.url} />
                   </Box>
                 )
               },
