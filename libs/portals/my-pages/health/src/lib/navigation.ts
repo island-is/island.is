@@ -158,6 +158,10 @@ export const healthNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: m.bloodtype,
+      path: HealthPaths.HealthBloodtype,
+    },
   ],
   description: m.healthDescription,
 }
