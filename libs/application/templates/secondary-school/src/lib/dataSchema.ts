@@ -13,7 +13,10 @@ const FileDocumentSchema = z.object({
 
 const CustodianSchema = z.object({
   person: z.object({
-    nationalId: z.string().min(1),
+    nationalId: z
+      .string()
+      .min(1)
+      .refine((nationalId) => kennitala.isValid(nationalId)),
     name: z.string().min(1),
     email: z.string().min(1),
     phone: z.string().min(1),
@@ -24,55 +27,6 @@ const CustodianSchema = z.object({
     city: z.string().optional(),
   }),
 })
-
-const MainOtherContactSchema = z
-  .object({
-    applicantNationalId: z.string(),
-    required: z.boolean(),
-    person: z
-      .object({
-        nationalId: z.string().optional(),
-        name: z.string().optional(),
-        email: z.string().optional(),
-        phone: z.string().optional(),
-      })
-      .optional(),
-  })
-  .refine(
-    ({ required, person }) => {
-      if (!required) return true
-      return !!person?.nationalId && kennitala.isValid(person.nationalId)
-    },
-    { path: ['person', 'nationalId'] },
-  )
-  .refine(
-    ({ required, person }) => {
-      if (!required) return true
-      return !!person?.name
-    },
-    { path: ['person', 'name'] },
-  )
-  .refine(
-    ({ required, person }) => {
-      if (!required) return true
-      return !!person?.email
-    },
-    { path: ['person', 'email'] },
-  )
-  .refine(
-    ({ required, person }) => {
-      if (!required) return true
-      return !!person?.phone
-    },
-    { path: ['person', 'phone'] },
-  )
-  .refine(
-    ({ person, applicantNationalId }) => {
-      if (person?.nationalId === applicantNationalId) return false
-      return true
-    },
-    { path: ['person', 'nationalId'], params: error.errorSameAsApplicant },
-  )
 
 const OtherContactSchema = z.object({
   person: z.object({
@@ -182,8 +136,7 @@ export const SecondarySchoolSchema = z.object({
       },
     ),
   custodians: z.array(CustodianSchema).max(2),
-  mainOtherContact: MainOtherContactSchema,
-  otherContacts: z.array(OtherContactSchema).max(1),
+  otherContacts: z.array(OtherContactSchema).max(2),
   selection: z
     .array(SelectionSchema)
     .refine(
