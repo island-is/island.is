@@ -15,6 +15,12 @@ export class GenericLicenseProvider {
 
   @Field({
     nullable: true,
+    description: 'Contentful entry id',
+  })
+  entryId?: string
+
+  @Field({
+    nullable: true,
     description: 'Contentful reference id',
   })
   referenceId?: string
