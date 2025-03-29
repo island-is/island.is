@@ -13,6 +13,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   CaseFileCategory,
   CaseFileState,
+  HashAlgorithm,
 } from '@island.is/judicial-system/types'
 
 // TODO Find a way to import from an index file
@@ -115,6 +116,14 @@ export class CaseFile extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   hash?: string
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(HashAlgorithm),
+  })
+  @ApiPropertyOptional({ enum: HashAlgorithm })
+  hashAlgorithm?: HashAlgorithm
 
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })

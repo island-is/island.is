@@ -1,5 +1,3 @@
-import CryptoJS from 'crypto-js'
-
 import {
   forwardRef,
   Inject,
@@ -27,6 +25,7 @@ import {
   createRulingSentToPrisonAdminPdf,
   createServiceCertificate,
   createSubpoena,
+  getCaseFileHash,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
   getRequestPdfAsBuffer,
@@ -245,13 +244,14 @@ export class PdfService {
     )
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state) && confirmation) {
-      const indictmentHash = CryptoJS.MD5(
-        generatedPdf.toString('binary'),
-      ).toString(CryptoJS.enc.Hex)
+      const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
       this.caseModel
-        .update({ indictmentHash }, { where: { id: theCase.id } })
+        .update(
+          { indictmentHash: hash, indictmentHashAlgorithm: hashAlgorithm },
+          { where: { id: theCase.id } },
+        )
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,
@@ -331,13 +331,11 @@ export class PdfService {
     )
 
     if (subpoena) {
-      const subpoenaHash = CryptoJS.MD5(
-        generatedPdf.toString('binary'),
-      ).toString(CryptoJS.enc.Hex)
+      const subpoenaHash = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
       this.subpoenaService
-        .setHash(subpoena.id, subpoenaHash)
+        .setHash(subpoena.id, subpoenaHash.hash, subpoenaHash.hashAlgorithm)
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,
