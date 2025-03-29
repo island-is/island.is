@@ -233,6 +233,61 @@ jobs:
       #     ./scripts/ci/20_check-formatting.sh "write"
       #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
+  newlints:
+    needs:
+      - prepare
+    runs-on: arc-runners
+    timeout-minutes: 35
+    if: ${{ needs.prepare.outputs.LINT_CHUNKS && !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NODE_OPTIONS: --max-old-space-size=4096
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
+    steps:
+      - uses: actions/checkout@v4
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+      - name: Verify lint doesn't fail
+        id: lint-head
+        env:
+          NX_SKIP_NX_CACHE: true
+        run: yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+      - name: Lint base
+        id: lint-base
+        env:
+          NX_SKIP_NX_CACHE: true
+        run: yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT" || echo "There was an error while linting, ignoring"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Lint head
+        id: lint-head
+        env:
+          NX_SKIP_NX_CACHE: true
+        run: yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT" || echo "There was an error while linting, ignoring"
+      - name: No new lint lines
+        run: |
+          if (( ${{steps.lint-head.outputs.lint-lines}} <= ${{steps.lint-base.outputs.lint-lines}} )); then
+            echo "Lint count has not increased"
+            exit 0
+          fi
+          echo "Found additional lint lines"
+          exit 1
+
   linting:
     needs:
       - prepare
@@ -300,6 +355,7 @@ jobs:
       - formatting
       - e2e
       - build
+      - newlints
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
@@ -308,6 +364,8 @@ jobs:
         run: |
           echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> $GITHUB_STEP_SUMMARY
           exit 1
+      - name: Check newlints success
+        run: '[[ ${{ needs.newlints.result }} != "failure" ]] || exit 1'
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Check e2e success
