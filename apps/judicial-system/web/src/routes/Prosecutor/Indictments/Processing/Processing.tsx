@@ -478,7 +478,7 @@ const Processing: FC = () => {
                         )
                       }
                     />
-                    {civilClaimant.nationalId?.length === 11 &&
+                    {civilClaimant.nationalId?.length === 10 &&
                       nationalIdNotFound && (
                         <Text color="red600" variant="eyebrow" marginTop={1}>
                           {formatMessage(
