@@ -1,30 +1,70 @@
+import { Transform } from 'class-transformer'
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  Length,
+  MaxLength,
+} from 'class-validator'
+
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
+import { RequestSharedWhen } from '@island.is/judicial-system/types'
+
+import { nationalIdTransformer } from '../../../transformers'
+
 export class UpdateVictimDto {
-  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
   name?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
   hasNationalId?: boolean
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @Length(10, 10)
+  @Transform(nationalIdTransformer)
+  @ApiPropertyOptional({ type: String })
   nationalId?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
   hasLawyer?: boolean
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @Length(10, 10)
+  @Transform(nationalIdTransformer)
+  @ApiPropertyOptional({ type: String })
   lawyerNationalId?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
   lawyerName?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
   lawyerEmail?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
   lawyerPhoneNumber?: string
 
-  @ApiPropertyOptional()
-  lawyerAccessToRequest?: string
+  @IsOptional()
+  @IsEnum(RequestSharedWhen)
+  @ApiPropertyOptional({ enum: RequestSharedWhen })
+  lawyerAccessToRequest?: RequestSharedWhen
 }

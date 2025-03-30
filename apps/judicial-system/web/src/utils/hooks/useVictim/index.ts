@@ -1,8 +1,6 @@
 import { Dispatch, SetStateAction, useCallback } from 'react'
-import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
-import { errors } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CreateVictimInput,
@@ -15,8 +13,6 @@ import { useDeleteVictimMutation } from './deleteVictim.generated'
 import { useUpdateVictimMutation } from './updateVictim.generated'
 
 const useVictims = () => {
-  const { formatMessage } = useIntl()
-
   const [createVictimMutation, { loading: isCreatingVictim }] =
     useCreateVictimMutation()
   const [deleteVictimMutation] = useDeleteVictimMutation()
