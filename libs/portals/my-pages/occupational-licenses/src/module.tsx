@@ -3,6 +3,7 @@ import { PortalModule } from '@island.is/portals/core'
 import { OccupationalLicensesPaths } from './lib/paths'
 import { ApiScope } from '@island.is/auth/scopes'
 import { m } from '@island.is/portals/my-pages/core'
+import { olMessage as om } from './lib/messages'
 
 const EducationalDetailScreen = lazy(() =>
   import('./screens/v1/EducationalDetail/EducationalDetail'),
@@ -32,21 +33,21 @@ export const occupationalLicensesModule: PortalModule = {
       element: <OccupationalLicensesOverviewScreen />,
     },
     {
-      name: m.singleLicense,
+      name: om.singleLicense,
       path: OccupationalLicensesPaths.OccupationalLicensesDetail,
       enabled: userInfo.scopes.includes(ApiScope.internal),
 
       element: <OccupationalLicensesDetailScreen />,
     },
     {
-      name: m.singleHealthLicense,
+      name: om.singleHealthLicense,
       path: OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
       enabled: userInfo.scopes.includes(ApiScope.internal),
 
       element: <HealthDirectorateDetailScreen />,
     },
     {
-      name: m.singleEducationLicense,
+      name: om.singleEducationLicense,
       path: OccupationalLicensesPaths.OccupationalLicensesEducationDetail,
       enabled: userInfo.scopes.includes(ApiScope.internal),
 

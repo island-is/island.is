@@ -294,6 +294,7 @@ export class CaseController {
       update.courtCaseNumber = null
       update.judgeId = null
       update.registrarId = null
+      update.state = CaseState.SUBMITTED
     }
 
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined

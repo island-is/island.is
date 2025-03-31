@@ -31,7 +31,7 @@ import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
-import { User } from '../../user'
+import { CaseRepresentative, User } from '../../user'
 import { Notification } from './notification.model'
 
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
@@ -477,4 +477,7 @@ export class Case {
 
   @Field(() => String, { nullable: true })
   readonly caseSentToCourtDate?: string
+
+  @Field(() => [CaseRepresentative], { nullable: true })
+  readonly caseRepresentatives?: CaseRepresentative[]
 }

@@ -120,7 +120,7 @@ export const TableRepeaterFormField: FC<Props> = ({
 
     if (isValid) {
       setActiveIndex(-1)
-      load()
+      await load()
     }
     setIsEditing(false)
   }
