@@ -249,9 +249,7 @@ export const Item = ({
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'hiddenInput') {
-    defaultVal =
-      getValueViaPath(application.answers, id) ??
-      getDefaultValue(item, application, activeValues)
+    defaultVal = getDefaultValue(item, application, activeValues)
   }
 
   let clearOnChangeVal: string[] | undefined
