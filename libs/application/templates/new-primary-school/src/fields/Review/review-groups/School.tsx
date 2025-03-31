@@ -11,7 +11,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useMemo } from 'react'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
-import { ApplicationType } from '../../../lib/constants'
+import { ApplicationType, SchoolType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
@@ -31,6 +31,9 @@ export const School = ({
     expectedStartDate,
     selectedSchool,
     applyForNeighbourhoodSchool,
+    selectedSchoolType,
+    temporaryStay,
+    expectedEndDate,
   } = getApplicationAnswers(application.answers)
 
   const { data, loading, error } = useQuery<FriggSchoolsByMunicipalityQuery>(
@@ -65,28 +68,43 @@ export const School = ({
         {loading ? (
           <SkeletonLoader height={40} width="100%" borderRadius="large" />
         ) : (
-          <GridRow rowGap={2}>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(label)}
-                value={schoolName || ''}
-                error={
-                  error
-                    ? formatMessage(coreErrorMessages.failedDataProvider)
-                    : undefined
-                }
-              />
-            </GridColumn>
-
-            {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
+          <>
+            <GridRow rowGap={2}>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
-                  label={formatMessage(newPrimarySchoolMessages.shared.date)}
-                  value={formatDate(expectedStartDate)}
+                  label={formatMessage(label)}
+                  value={schoolName || ''}
+                  error={
+                    error
+                      ? formatMessage(coreErrorMessages.failedDataProvider)
+                      : undefined
+                  }
                 />
               </GridColumn>
-            )}
-          </GridRow>
+              {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
+                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                  <DataValue
+                    label={formatMessage(newPrimarySchoolMessages.shared.date)}
+                    value={formatDate(expectedStartDate)}
+                  />
+                </GridColumn>
+              )}
+            </GridRow>
+            {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
+              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
+              temporaryStay === YES && (
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                    <DataValue
+                      label={formatMessage(
+                        newPrimarySchoolMessages.overview.expectedEndDate,
+                      )}
+                      value={formatDate(expectedEndDate)}
+                    />
+                  </GridColumn>
+                </GridRow>
+              )}
+          </>
         )}
       </Stack>
     </ReviewGroup>

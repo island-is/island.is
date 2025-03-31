@@ -84,11 +84,11 @@ export class FinancialStatementsInaoClientService {
   }
 
   async getUserClientType(nationalId: string): Promise<ClientType | null> {
-    const select = '$select=accountnumber,name,star_type'
-    const filter = `$filter=accountnumber eq '${encodeURIComponent(
+    const select = '$select=star_nationalid,star_name,star_type'
+    const filter = `$filter=star_nationalid eq '${encodeURIComponent(
       nationalId,
     )}'`
-    const url = `${this.basePath}/accounts?${select}&${filter}`
+    const url = `${this.basePath}/star_clients?${select}&${filter}`
     const data = await this.getData(url)
 
     if (!data || !data.value) return null
@@ -112,11 +112,11 @@ export class FinancialStatementsInaoClientService {
   }
 
   async getClientIdByNationalId(nationalId: string): Promise<string | null> {
-    const select = '$select=accountnumber,name,star_type'
-    const filter = `$filter=accountnumber eq '${encodeURIComponent(
+    const select = '$select=star_nationalid,star_name,star_type'
+    const filter = `$filter=star_nationalid eq '${encodeURIComponent(
       nationalId,
     )}'`
-    const url = `${this.basePath}/accounts?${select}&${filter}`
+    const url = `${this.basePath}/star_clients?${select}&${filter}`
     const data = await this.getData(url)
 
     if (!data || !data.value) return null
@@ -133,12 +133,14 @@ export class FinancialStatementsInaoClientService {
   }
 
   async createClient(client: Client, clientType: ClientTypes) {
-    const url = `${this.basePath}/accounts`
+    const url = `${this.basePath}/star_clients`
 
     const body = {
-      accountnumber: client.nationalId,
+      star_nationalid: client.nationalId,
       star_type: clientType,
-      name: client.name,
+      star_name: client.name,
+      star_phone: client.phone,
+      star_email: client.email,
     }
 
     await this.fetch(url, {

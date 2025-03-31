@@ -4,21 +4,7 @@ import { Sender } from './sender.model'
 import { PaginatedResponse } from '@island.is/nest/pagination'
 import { Category } from './category.model'
 import { Type } from './type.model'
-
-@ObjectType('DocumentV2Action')
-export class Action {
-  @Field({ nullable: true })
-  title?: string
-
-  @Field({ nullable: true })
-  type?: string
-
-  @Field({ nullable: true })
-  data?: string
-
-  @Field({ nullable: true })
-  icon?: string
-}
+import { Action } from './actions'
 
 @ObjectType('DocumentV2')
 export class Document {

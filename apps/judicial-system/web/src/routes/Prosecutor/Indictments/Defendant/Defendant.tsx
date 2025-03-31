@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 
@@ -9,13 +9,10 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeScene,
   CrimeSceneMap,
-  Feature,
-  IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -25,12 +22,14 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseOrigin,
   Defendant as TDefendant,
+  Gender,
+  IndictmentSubtype,
   PoliceCaseInfo as TPoliceCaseInfo,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDefendants,
@@ -119,6 +118,13 @@ const Defendant = () => {
   const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
+
+  // Use the gender of the single defendant if there is only one,
+  // otherwise default to male
+  const gender =
+    workingCase.defendants && workingCase.defendants.length === 1
+      ? workingCase.defendants[0].gender ?? Gender.MALE
+      : Gender.MALE
 
   useEffect(() => {
     setPoliceCases(getPoliceCases(workingCase))
@@ -295,22 +301,31 @@ const Defendant = () => {
             indictmentCount.policeCaseNumber === policeCaseNumber,
         )
         .forEach((indictmentCount) => {
+          const policeCaseNumberSubtypes = subtypes?.[policeCaseNumber] || []
+          const indictmentCountSubtypes =
+            indictmentCount.indictmentCountSubtypes || []
+
+          // handle changes based on police case subtype changes
+          const updatedIndictmentCountSubtypes = indictmentCountSubtypes.filter(
+            (subtype) => policeCaseNumberSubtypes.includes(subtype),
+          )
           const updatedIndictmentCount = {
             ...indictmentCount,
-            indictmentCountSubtypes: subtypes?.[policeCaseNumber],
+            indictmentCountSubtypes: updatedIndictmentCountSubtypes,
           }
-          const incidentDescription = getIncidentDescription({
-            indictmentCount: updatedIndictmentCount,
-            formatMessage,
+
+          const incidentDescription = getIncidentDescription(
+            updatedIndictmentCount,
+            gender,
             crimeScene,
-            subtypesRecord: subtypes,
-          })
+            formatMessage,
+            subtypes,
+          )
 
           updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
-            ...(subtypes && {
-              indictmentCountSubtypes: subtypes[policeCaseNumber],
-            }),
+            indictmentCountSubtypes: updatedIndictmentCountSubtypes,
+            policeCaseNumberSubtypes,
           })
         })
     }

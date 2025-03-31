@@ -1,7 +1,7 @@
 import { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase } from 'beygla/strict'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
 
 import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
@@ -10,11 +10,9 @@ import {
   applyDativeCaseToCourtName,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { Feature } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -28,13 +26,14 @@ import {
 import {
   CaseOrigin,
   Defendant,
+  Gender,
+  IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
   Institution,
   Maybe,
   Offense,
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -50,7 +49,7 @@ import { isIndictmentStepValid } from '@island.is/judicial-system-web/src/utils/
 
 import { usePoliceCaseInfoQuery } from '../Defendant/policeCaseInfo.generated'
 import { IndictmentCount } from './IndictmentCount'
-import { indictment as strings } from './Indictment.strings'
+import { indictment as cStrings, strings } from './Indictment.strings'
 
 export const getIndictmentIntroductionAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -61,13 +60,15 @@ export const getIndictmentIntroductionAutofill = (
   return defendants && defendants.length > 0
     ? [
         prosecutorsOffice?.name?.toUpperCase(),
-        `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
-        `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
+        `\n\n${formatMessage(
+          cStrings.indictmentIntroductionAutofillAnnounces,
+        )}`,
+        `\n\n${formatMessage(cStrings.indictmentIntroductionAutofillCourt, {
           court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
         })}`,
         `\n\n${defendants.map((defendant) => {
           return `\n          ${formatMessage(
-            strings.indictmentIntroductionAutofillDefendant,
+            cStrings.indictmentIntroductionAutofillDefendant,
             {
               defendantName: defendant.name
                 ? applyCase('þgf', defendant.name)
@@ -106,6 +107,13 @@ const Indictment = () => {
   ] = useState<string>('')
   const [demandsErrorMessage, setDemandsErrorMessage] = useState('')
   const [civilDemandsErrorMessage, setCivilDemandsErrorMessage] = useState('')
+
+  // Use the gender of the single defendant if there is only one,
+  // otherwise default to male
+  const gender =
+    workingCase.defendants && workingCase.defendants.length === 1
+      ? workingCase.defendants[0].gender ?? Gender.MALE
+      : Gender.MALE
 
   const { data: policeCaseData } = usePoliceCaseInfoQuery({
     variables: {
@@ -157,8 +165,8 @@ const Indictment = () => {
             {
               requestDriversLicenseSuspension,
               demands: requestDriversLicenseSuspension
-                ? formatMessage(strings.demandsAutofillWithSuspension)
-                : formatMessage(strings.demandsAutofill),
+                ? strings.demandsAutofillWithSuspension[gender]
+                : strings.demandsAutofill[gender],
               force: true,
             },
           ],
@@ -167,7 +175,7 @@ const Indictment = () => {
         )
       }
     },
-    [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase],
+    [gender, setAndSendCaseToServer, setWorkingCase, workingCase],
   )
 
   const handleCreateIndictmentCount = useCallback(async () => {
@@ -229,7 +237,10 @@ const Indictment = () => {
       setDriversLicenseSuspensionRequest(
         workingCase.indictmentCounts?.map((count) =>
           count.id === indictmentCountId
-            ? { ...returnedIndictmentCount, offenses: updatedOffenses }
+            ? {
+                ...returnedIndictmentCount,
+                offenses: updatedOffenses ?? count.offenses,
+              }
             : count,
         ),
       )
@@ -282,8 +293,12 @@ const Indictment = () => {
   )
 
   const initialize = useCallback(() => {
-    if (workingCase.indictmentCounts?.length === 0) {
+    const indictmentCounts = workingCase.indictmentCounts || []
+    if (indictmentCounts.length === 0) {
       handleCreateIndictmentCount()
+    } else {
+      // in case indictment subtypes have been modified in earlier step
+      setDriversLicenseSuspensionRequest(indictmentCounts)
     }
 
     setAndSendCaseToServer(
@@ -296,8 +311,8 @@ const Indictment = () => {
             workingCase.defendants,
           )?.join(''),
           demands: workingCase.requestDriversLicenseSuspension
-            ? formatMessage(strings.demandsAutofillWithSuspension)
-            : formatMessage(strings.demandsAutofill),
+            ? strings.demandsAutofillWithSuspension[gender]
+            : strings.demandsAutofill[gender],
         },
       ],
       workingCase,
@@ -307,8 +322,10 @@ const Indictment = () => {
     workingCase,
     setAndSendCaseToServer,
     formatMessage,
+    gender,
     setWorkingCase,
     handleCreateIndictmentCount,
+    setDriversLicenseSuspensionRequest,
   ])
 
   useOnceOn(isCaseUpToDate, initialize)
@@ -325,17 +342,17 @@ const Indictment = () => {
         title={formatMessage(titles.prosecutor.indictments.indictment)}
       />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle>{formatMessage(cStrings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <SectionHeading
-            title={formatMessage(strings.indictmentIntroductionTitle)}
+            title={formatMessage(cStrings.indictmentIntroductionTitle)}
           />
           <Input
             name="indictmentIntroduction"
-            label={formatMessage(strings.indictmentIntroductionLabel)}
+            label={formatMessage(cStrings.indictmentIntroductionLabel)}
             placeholder={formatMessage(
-              strings.indictmentIntroductionPlaceholder,
+              cStrings.indictmentIntroductionPlaceholder,
             )}
             value={workingCase.indictmentIntroduction || ''}
             errorMessage={indictmentIntroductionErrorMessage}
@@ -381,7 +398,7 @@ const Indictment = () => {
               }
             >
               <SectionHeading
-                title={formatMessage(strings.indictmentCountHeading, {
+                title={formatMessage(cStrings.indictmentCountHeading, {
                   count: index + 1,
                 })}
               />
@@ -405,16 +422,16 @@ const Indictment = () => {
             onClick={handleCreateIndictmentCount}
             disabled={false}
           >
-            {formatMessage(strings.addIndictmentCount)}
+            {formatMessage(cStrings.addIndictmentCount)}
           </Button>
         </Box>
         <Box component="section" marginBottom={6}>
-          <SectionHeading title={formatMessage(strings.demandsTitle)} />
+          <SectionHeading title={formatMessage(cStrings.demandsTitle)} />
           <BlueBox>
             <Box marginBottom={3}>
               <Checkbox
                 name="requestDriversLicenseSuspension"
-                label={formatMessage(strings.demandsRequestSuspension)}
+                label={formatMessage(cStrings.demandsRequestSuspension)}
                 checked={Boolean(workingCase.requestDriversLicenseSuspension)}
                 onChange={() => {
                   setAndSendCaseToServer(
@@ -423,8 +440,8 @@ const Indictment = () => {
                         requestDriversLicenseSuspension:
                           !workingCase.requestDriversLicenseSuspension,
                         demands: !workingCase.requestDriversLicenseSuspension
-                          ? formatMessage(strings.demandsAutofillWithSuspension)
-                          : formatMessage(strings.demandsAutofill),
+                          ? strings.demandsAutofillWithSuspension[gender]
+                          : strings.demandsAutofill[gender],
                         force: true,
                       },
                     ],
@@ -438,8 +455,8 @@ const Indictment = () => {
             </Box>
             <Input
               name="demands"
-              label={formatMessage(strings.demandsLabel)}
-              placeholder={formatMessage(strings.demandsPlaceholder)}
+              label={formatMessage(cStrings.demandsLabel)}
+              placeholder={formatMessage(cStrings.demandsPlaceholder)}
               value={workingCase.demands ?? ''}
               errorMessage={demandsErrorMessage}
               hasError={demandsErrorMessage !== ''}
@@ -473,12 +490,12 @@ const Indictment = () => {
         </Box>
         {workingCase.hasCivilClaims && (
           <Box marginBottom={6}>
-            <SectionHeading title={formatMessage(strings.civilDemandsTitle)} />
+            <SectionHeading title={formatMessage(cStrings.civilDemandsTitle)} />
             <BlueBox>
               <Input
                 name="civilDemands"
-                label={formatMessage(strings.civilDemandsLabel)}
-                placeholder={formatMessage(strings.civilDemandsPlaceholder)}
+                label={formatMessage(cStrings.civilDemandsLabel)}
+                placeholder={formatMessage(cStrings.civilDemandsPlaceholder)}
                 value={workingCase.civilDemands ?? ''}
                 errorMessage={civilDemandsErrorMessage}
                 hasError={civilDemandsErrorMessage !== ''}
@@ -514,7 +531,7 @@ const Indictment = () => {
         <Box marginBottom={10}>
           <PdfButton
             caseId={workingCase.id}
-            title={formatMessage(strings.pdfButtonIndictment)}
+            title={formatMessage(cStrings.pdfButtonIndictment)}
             pdfType="indictment"
             elementId="Ákæra"
           />

@@ -30,6 +30,7 @@ query Case($input: CaseQueryInput!) {
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline
+      verdictAppealDecision
       verdictAppealDate
       isVerdictAppealDeadlineExpired
       subpoenaType
@@ -195,6 +196,7 @@ query Case($input: CaseQueryInput!) {
       displayDate
       policeFileId
       submittedBy
+      fileRepresentative
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
@@ -221,8 +223,6 @@ query Case($input: CaseQueryInput!) {
         offense
         substances
       }
-      deprecatedOffenses
-      substances
       lawsBroken
       incidentDescription
       legalArguments
@@ -405,5 +405,10 @@ query Case($input: CaseQueryInput!) {
     hasCivilClaims
     isCompletedWithoutRuling
     caseSentToCourtDate
+    caseRepresentatives {
+      name
+      nationalId
+      caseFileCategory
+    }
   }
 }
