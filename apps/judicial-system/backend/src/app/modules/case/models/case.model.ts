@@ -17,6 +17,7 @@ import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
+import { HashAlgorithm } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
@@ -1028,11 +1029,22 @@ export class Case extends Model {
   indictmentDecision?: IndictmentDecision
 
   /**********
-   * The md5 hash of the confirmed generated indictment
+   * The hash of the confirmed generated indictment
    **********/
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   indictmentHash?: string
+
+  /**********
+   * The hash algorithm of the confirmed generated indictment
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(HashAlgorithm),
+  })
+  @ApiPropertyOptional({ enum: HashAlgorithm })
+  indictmentHashAlgorithm?: HashAlgorithm
 
   /**********
    * The court session type in indictment cases - example: MAIN_HEARING

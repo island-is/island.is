@@ -233,44 +233,6 @@ jobs:
       #     ./scripts/ci/20_check-formatting.sh "write"
       #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
-  lintfix-changed-files:
-    name: Lintfix Changed Files
-    runs-on: arc-runners
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          # Need full repo for Nx to find the commits at NX_* below
-          fetch-depth: 0
-          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
-          # Need ref to know where to push to
-          # https://github.com/actions/checkout#push-a-commit-to-a-pr-using-the-built-in-token
-          ref: ${{ github.event.pull_request.head.ref }}
-
-      - name: Get changed files
-        id: changed-files
-        run: |
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }} | tr '\n' ',' | sed 's/,$//')
-          echo "CHANGED_FILES=${CHANGED_FILES}" | tee -a "$GITHUB_ENV"
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-
-      - name: Run lintfix on changed files
-        if: ${{ env.CHANGED_FILES != '' }}
-        run: yarn nx affected -t lint --base=origin/$GITHUB_BASE_REF --fix --lintFilePatterns="${CHANGED_FILES}" --verbose
-
-      - name: Commit changed files
-        run: |
-          if git diff --exit-code; then exit 0; fi
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git commit -am "chore: Lintfix dirty files"
-          git push
-
   linting:
     needs:
       - prepare
