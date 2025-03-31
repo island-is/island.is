@@ -7,9 +7,7 @@ import { uuid } from 'uuidv4'
 import {
   Box,
   Button,
-  Checkbox,
   Input,
-  RadioButton,
   Select,
   Text,
   toast,
@@ -29,27 +27,21 @@ import {
 import {
   BlueBox,
   DefenderInfo,
-  DefenderNotFound,
   FormContentContainer,
   FormContext,
   FormFooter,
-  InputAdvocate,
-  InputName,
-  InputNationalId,
   PageHeader,
   PageLayout,
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
+import { VictimInfo } from '@island.is/judicial-system-web/src/components/VictimInfo/VictimInfo'
 import {
   Case,
   CaseOrigin,
   CaseType,
   Defendant as TDefendant,
-  RequestSharedWhen,
   UpdateDefendantInput,
-  UpdateVictimInput,
   Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
@@ -58,7 +50,6 @@ import {
   useDefendants,
   useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -68,30 +59,14 @@ import {
   usePoliceCaseNumbers,
 } from '../../components'
 
-interface UpdateVictim extends Omit<UpdateVictimInput, 'caseId'> {}
-
 const Defendant = () => {
   const router = useRouter()
   const { updateDefendant, createDefendant, deleteDefendant } = useDefendants()
-  const {
-    createVictim,
-    updateVictim,
-    deleteVictim,
-    updateVictimState,
-    setAndSendVictimToServer,
-  } = useVictim()
-
-  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
-  const [lawyerNotFound, setLawyerNotFound] = useState<boolean>(false)
-  const [victimNationalIdUpdate, setVictimNationalIdUpdate] = useState<{
-    nationalId: string | null
-    victimId: string
-  }>()
-  const { personData } = useNationalRegistry(victimNationalIdUpdate?.nationalId)
 
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
+  const { createVictimAndSetState, deleteVictimAndSetState } = useVictim()
   const { formatMessage } = useIntl()
   // This state is needed because type is initially set to OTHER on the
   // workingCase and we need to validate that the user selects an option
@@ -242,95 +217,6 @@ const Defendant = () => {
       ],
     }))
   }
-
-  const handleCreateVictim = async () => {
-    const victimId = await createVictim({ caseId: workingCase.id })
-
-    if (victimId) {
-      setWorkingCase((prevWorkingCase) => ({
-        ...prevWorkingCase,
-        victims: prevWorkingCase.victims && [
-          ...prevWorkingCase.victims,
-          { id: victimId },
-        ],
-      }))
-    }
-  }
-
-  const handleDeleteVictim = async (victim: Victim) => {
-    if (isNonEmptyArray(workingCase.victims)) {
-      const victimDeleted = await deleteVictim(workingCase.id, victim.id)
-
-      if (victimDeleted && workingCase.victims) {
-        setWorkingCase((prevWorkingCase) => ({
-          ...prevWorkingCase,
-          victims:
-            prevWorkingCase.victims &&
-            [...prevWorkingCase.victims].filter((d) => d.id !== victim.id),
-        }))
-      }
-    }
-  }
-
-  const handleUpdateVictimState = (update: UpdateVictim) => {
-    updateVictimState({ caseId: workingCase.id, ...update }, setWorkingCase)
-  }
-
-  const handleUpdateVictim = (update: UpdateVictim) => {
-    updateVictim({ caseId: workingCase.id, ...update })
-  }
-
-  const handleSetAndSendVictimToServer = (update: UpdateVictim) => {
-    setAndSendVictimToServer(
-      { caseId: workingCase.id, ...update },
-      setWorkingCase,
-    )
-  }
-
-  const handleVictimNationalIdBlur = (
-    victimId: string | null,
-    nationalId: string,
-    hasNationalId?: boolean | null,
-  ) => {
-    if (!victimId) {
-      return
-    }
-
-    if (hasNationalId === false) {
-      handleSetAndSendVictimToServer({
-        victimId,
-        hasNationalId: false,
-      })
-    } else {
-      const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
-      setVictimNationalIdUpdate({
-        nationalId: cleanNationalId || null,
-        victimId,
-      })
-    }
-  }
-
-  useEffect(() => {
-    if (!victimNationalIdUpdate) {
-      return
-    }
-
-    const items = personData?.items || []
-    const person = items[0]
-
-    setNationalIdNotFound(items.length === 0)
-
-    const update: UpdateVictim = {
-      victimId: victimNationalIdUpdate.victimId || '',
-      nationalId: victimNationalIdUpdate.nationalId,
-      ...(person?.name ? { name: person.name } : {}),
-    }
-
-    handleSetAndSendVictimToServer(update)
-
-    // We want this hook to run exclusively when personData changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personData])
 
   const stepIsValid = isDefendantStepValidIC(
     workingCase,
@@ -530,9 +416,11 @@ const Defendant = () => {
               justifyContent="flexEnd"
             >
               <Button
-                data-testid="addVictimButton"
+                data-testid="addFirstVictimButton"
                 icon="add"
-                onClick={handleCreateVictim}
+                onClick={() =>
+                  createVictimAndSetState(workingCase.id, setWorkingCase)
+                }
               >
                 Skrá brotaþola
               </Button>
@@ -541,238 +429,29 @@ const Defendant = () => {
             <Box component="section" marginBottom={5}>
               <SectionHeading title="Brotaþoli" />
               {workingCase.victims?.map((victim, index) => (
-                <Box
-                  marginBottom={
-                    index - 1 === workingCase.victims?.length ? 0 : 3
+                <VictimInfo
+                  key={victim.id}
+                  victim={victim}
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                  index={index}
+                  onDelete={() =>
+                    deleteVictimAndSetState(
+                      workingCase.id,
+                      victim,
+                      setWorkingCase,
+                    )
                   }
-                  key={index}
-                >
-                  <BlueBox>
-                    <Box>
-                      <Box
-                        marginBottom={2}
-                        display="flex"
-                        justifyContent="flexEnd"
-                      >
-                        <Button
-                          onClick={() => handleDeleteVictim(victim)}
-                          colorScheme="destructive"
-                          variant="text"
-                          size="small"
-                          data-testid="deleteVictimButton"
-                        >
-                          Eyða
-                        </Button>
-                      </Box>
-                      <Box marginBottom={2}>
-                        <Checkbox
-                          name={`noNationalId-${victim.id}`}
-                          label={'Brotaþoli er ekki með íslenska kennitölu'}
-                          checked={victim.hasNationalId === false}
-                          onChange={(event) => {
-                            setNationalIdNotFound(false)
-
-                            handleSetAndSendVictimToServer({
-                              victimId: victim.id,
-                              hasNationalId: !event.target.checked,
-                              nationalId: null,
-                            })
-                          }}
-                          filled
-                          large
-                        />
-                      </Box>
-                      <Box marginBottom={2}>
-                        <Box marginBottom={2}>
-                          <InputNationalId
-                            isDateOfBirth={victim.hasNationalId === false}
-                            value={victim.nationalId ?? ''}
-                            onBlur={(value) =>
-                              handleVictimNationalIdBlur(
-                                victim.id,
-                                value,
-                                victim.hasNationalId,
-                              )
-                            }
-                            onChange={(value) => {
-                              if (value.length < 11) {
-                                setNationalIdNotFound(false)
-                              } else if (value.length === 11)
-                                handleVictimNationalIdBlur(
-                                  victim.id,
-                                  value,
-                                  victim.hasNationalId,
-                                )
-                            }}
-                            required={victim.hasNationalId !== false}
-                          />
-                          {victim.nationalId?.length === 10 &&
-                            nationalIdNotFound && (
-                              <Text
-                                color="red600"
-                                variant="eyebrow"
-                                marginTop={1}
-                              >
-                                {formatMessage(
-                                  core.nationalIdNotFoundInNationalRegistry,
-                                )}
-                              </Text>
-                            )}
-                        </Box>
-                        <Box marginBottom={2}>
-                          <InputName
-                            value={victim.name ?? ''}
-                            onBlur={(value) =>
-                              handleSetAndSendVictimToServer({
-                                victimId: victim.id,
-                                name: value,
-                              })
-                            }
-                            onChange={(value) => {
-                              handleUpdateVictimState({
-                                victimId: victim.id,
-                                name: value,
-                              })
-                            }}
-                            required
-                          />
-                        </Box>
-                      </Box>
-                    </Box>
-                    <Box marginTop={4}>
-                      <Box marginBottom={2}>
-                        <Text as="h3" variant="h4">
-                          {'Réttargæslumaður'}
-                        </Text>
-                      </Box>
-                      {lawyerNotFound && <DefenderNotFound />}
-                      <InputAdvocate
-                        advocateType="legalRightsProtector"
-                        name={victim.lawyerName}
-                        email={victim.lawyerEmail}
-                        phoneNumber={victim.lawyerPhoneNumber}
-                        onAdvocateChange={(
-                          lawyerName: string | null,
-                          lawyerNationalId: string | null,
-                          lawyerEmail: string | null,
-                          lawyerPhoneNumber: string | null,
-                        ) =>
-                          handleSetAndSendVictimToServer({
-                            victimId: victim.id,
-                            lawyerName,
-                            lawyerNationalId,
-                            lawyerEmail,
-                            lawyerPhoneNumber,
-                          })
-                        }
-                        onAdvocateNotFound={setLawyerNotFound}
-                        onEmailChange={(lawyerEmail: string | null) =>
-                          handleUpdateVictimState({
-                            victimId: victim.id,
-                            lawyerEmail,
-                          })
-                        }
-                        onEmailSave={(lawyerEmail: string | null) =>
-                          handleUpdateVictim({
-                            victimId: victim.id,
-                            lawyerEmail,
-                          })
-                        }
-                        onPhoneNumberChange={(
-                          lawyerPhoneNumber: string | null,
-                        ) =>
-                          handleUpdateVictimState({
-                            victimId: victim.id,
-                            lawyerPhoneNumber,
-                          })
-                        }
-                        onPhoneNumberSave={(lawyerPhoneNumber: string | null) =>
-                          handleUpdateVictim({
-                            victimId: victim.id,
-                            lawyerPhoneNumber,
-                          })
-                        }
-                      />
-                      <>
-                        <Text variant="h4" marginTop={2} marginBottom={2}>
-                          Aðgangur réttargæslumanns að kröfu
-                          <RequiredStar />
-                        </Text>
-                        <Box>
-                          <RadioButton
-                            name="lawyer-access"
-                            id="lawyer-access-ready-for-court"
-                            label="Gefa réttargæslumanni aðgang að kröfu þegar krafa er send á dómstól"
-                            checked={
-                              victim.lawyerAccessToRequest ===
-                              RequestSharedWhen.READY_FOR_COURT
-                            }
-                            onChange={() => {
-                              handleSetAndSendVictimToServer({
-                                victimId: victim.id,
-                                lawyerAccessToRequest:
-                                  RequestSharedWhen.READY_FOR_COURT,
-                              })
-                            }}
-                            large
-                            backgroundColor="white"
-                            disabled={!victim.lawyerName}
-                          />
-                        </Box>
-                        <Box marginTop={2}>
-                          <RadioButton
-                            name="lawyer-access"
-                            id="lawyer-access-arraignment_date_assigned"
-                            label="Gefa réttargæslumanni aðgang að kröfu við úthlutun fyrirtökutíma"
-                            checked={
-                              victim.lawyerAccessToRequest ===
-                              RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED
-                            }
-                            onChange={() => {
-                              handleSetAndSendVictimToServer({
-                                victimId: victim.id,
-                                lawyerAccessToRequest:
-                                  RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED,
-                              })
-                            }}
-                            large
-                            backgroundColor="white"
-                            disabled={!victim.lawyerName}
-                          />
-                        </Box>
-                        <Box marginTop={2}>
-                          <RadioButton
-                            name="lawyer-access-when-obligated"
-                            id="lawyer-access-when-obligated"
-                            label="Ekki gefa réttargæslumanni aðgang að kröfu"
-                            checked={
-                              victim.lawyerAccessToRequest ===
-                              RequestSharedWhen.OBLIGATED
-                            }
-                            onChange={() => {
-                              handleSetAndSendVictimToServer({
-                                victimId: victim.id,
-                                lawyerAccessToRequest:
-                                  RequestSharedWhen.OBLIGATED,
-                              })
-                            }}
-                            large
-                            backgroundColor="white"
-                            disabled={!victim.lawyerName}
-                          />
-                        </Box>
-                      </>
-                    </Box>
-                  </BlueBox>
-                </Box>
+                />
               ))}
-
               <Box display="flex" justifyContent="flexEnd" marginTop={2}>
                 <Button
                   data-testid="addVictimButton"
                   variant="ghost"
                   icon="add"
-                  onClick={handleCreateVictim}
+                  onClick={() =>
+                    createVictimAndSetState(workingCase.id, setWorkingCase)
+                  }
                 >
                   Bæta við brotaþola
                 </Button>

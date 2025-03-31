@@ -105,7 +105,27 @@ const useVictims = () => {
     [],
   )
 
-  const setAndSendVictimToServer = useCallback(
+  const addVictimToState = (
+    victimId: string,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
+  ) => {
+    setWorkingCase((prev) => ({
+      ...prev,
+      victims: [...(prev.victims ?? []), { id: victimId }],
+    }))
+  }
+
+  const removeVictimFromState = (
+    victimId: string,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
+  ) => {
+    setWorkingCase((prev) => ({
+      ...prev,
+      victims: (prev.victims ?? []).filter((v) => v.id !== victimId),
+    }))
+  }
+
+  const updateVictimAndSetState = useCallback(
     (
       update: UpdateVictimInput,
       setWorkingCase: Dispatch<SetStateAction<Case>>,
@@ -116,12 +136,41 @@ const useVictims = () => {
     [updateVictim, updateVictimState],
   )
 
+  const createVictimAndSetState = async (
+    caseId: string,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
+  ) => {
+    const victimId = await createVictim({ caseId })
+
+    if (victimId) {
+      addVictimToState(victimId, setWorkingCase)
+    }
+
+    return victimId
+  }
+
+  const deleteVictimAndSetState = async (
+    caseId: string,
+    victim: Victim,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
+  ) => {
+    const victimDeleted = await deleteVictim(caseId, victim.id)
+
+    if (victimDeleted) {
+      removeVictimFromState(victim.id, setWorkingCase)
+    }
+
+    return victimDeleted
+  }
+
   return {
     createVictim,
     deleteVictim,
     updateVictim,
     updateVictimState,
-    setAndSendVictimToServer,
+    updateVictimAndSetState,
+    createVictimAndSetState,
+    deleteVictimAndSetState,
   }
 }
 
