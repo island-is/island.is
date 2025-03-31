@@ -42,6 +42,28 @@ export class PaymentCallbackController {
     }
   }
 
+  /**
+   * Handles payment callback notifications from the API client for successful payments.
+   *
+   * @async
+   * @param {ApiClientCallback} callback - The callback data from the payment system containing:
+   *   - type: Type of callback ('success' or other)
+   *   - details: Payment event details including charge information
+   *   - paymentFlowMetadata: Metadata containing paymentId and applicationId
+   *
+   * @throws {Error} If no receptionId is found in a success callback
+   *
+   * @remarks
+   * The function:
+   * 1. For successful payments:
+   *    - Extracts receptionId from callback
+   *    - Fulfills the payment using paymentService
+   * 2. Updates application pruning schedule:
+   *    - Extends pruneAt date to one month from now
+   *    - Default pruning is 24 hours, but paid applications are kept longer
+   *    to handle potential error states
+   *
+   */
   @Post('application-payment/api-client-payment-callback/')
   async apiClientPaymentCallback(
     @Body() callback: ApiClientCallback,

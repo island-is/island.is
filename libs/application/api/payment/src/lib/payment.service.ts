@@ -142,6 +142,20 @@ export class PaymentService {
     }
   }
 
+  /**
+   * Retrieves the payment status for an Íslandis payment by application ID.
+   *
+   * @async
+   * @param {User} user - The user requesting the payment status
+   * @param {string} applicationId - The ID of the application to check payment status for
+   *
+   * @returns {Promise<PaymentStatus>} Object containing:
+   *   - fulfilled: boolean indicating if payment is complete
+   *   - paymentUrl: URL for the payment
+   *   - paymentId: ID of the payment record
+   *
+   * @throws {NotFoundException} If no payment record exists for the given application ID
+   */
   async getStatusIslandis(
     user: User,
     applicationId: string,
@@ -164,14 +178,36 @@ export class PaymentService {
     ).paymentUrl
 
     return {
-      // TODO: maybe treat the case where no payment was found differently?
-      // not sure how/if that case would/could come up.
       fulfilled: foundPayment.fulfilled || false,
       paymentUrl,
       paymentId: foundPayment.id,
     }
   }
 
+  /**
+   * Retrieves the payment status for an Ark payment by application ID and generates payment URL.
+   *
+   * @async
+   * @param {User} user - The user requesting the payment status
+   * @param {string} applicationId - The ID of the application to check payment status for
+   *
+   * @returns {Promise<PaymentStatus>} Object containing:
+   *   - fulfilled: boolean indicating if payment is complete
+   *   - paymentUrl: Generated delegation payment URL with callback
+   *   - paymentId: ID of the payment record
+   *
+   * @throws {NotFoundException} If:
+   *   - No payment record exists for the given application ID
+   *   - Application type ID is not found
+   * @throws {InternalServerErrorException} If payment record exists but user4 field is not set
+   *
+   * @remarks
+   * The function:
+   * 1. Validates payment record exists and has required user4 field
+   * 2. Retrieves application details to get application type
+   * 3. Generates a callback URL using application slug
+   * 4. Creates a delegation payment URL with user information
+   */
   async getStatusArk(
     user: User,
     applicationId: string,
@@ -269,13 +305,6 @@ export class PaymentService {
     return await this.paymentModel.create(paymentModel)
   }
 
-  /**
-   * Builds a Charge object for the payment API endpoint and sends to FJS
-   * Saves the user4 from the response to the payment db entry
-   * @param payment
-   * @param user
-   * @returns Charge response result and a new payment callback Url
-   */
   async createCharge(
     user: User,
     performingOrganizationID: string,
@@ -315,6 +344,30 @@ export class PaymentService {
     }
   }
 
+  /**
+   * Creates a payment charge through the Íslandis payment system. If a payment already exists
+   * for the given application, returns the existing payment URL. Otherwise, creates a new
+   * payment entry and generates a payment URL.
+   *
+   * @async
+   * @param {User} user - The user initiating the payment
+   * @param {string} performingOrganizationID - The ID of the organization performing the service
+   * @param {BasicChargeItem[]} chargeItems - Array of items to be charged
+   * @param {string} applicationId - The ID of the application associated with this payment
+   * @param {ExtraData[] | undefined} extraData - Optional additional data for the payment
+   * @param {string | undefined} locale - Optional locale setting ('en' or 'is') for the payment URL
+   *
+   * @returns {Promise<CreateChargeResult>} Object containing payment URLs and related information
+   *
+   * @throws {Error} If there's an error retrieving catalog charge items or creating the payment
+   *
+   * @remarks
+   * The function performs the following steps:
+   * 1. Retrieves charge items from FJS using the performing organization ID
+   * 2. Checks for existing payment for the application
+   * 3. If payment exists, returns existing payment URL
+   * 4. If no payment exists, creates new payment entry and generates payment URL
+   */
   async islandisCreateCharge(
     user: User,
     performingOrganizationID: string,
