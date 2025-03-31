@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import sanitizeHtml from 'sanitize-html'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
+import { sortAlpha } from '@island.is/shared/utils'
 
 import { VerdictApi } from '../../gen/fetch/gopro'
 import { DefaultApi } from '../../gen/fetch/supreme-court'
@@ -32,6 +33,8 @@ export class VerdictsClientService {
     pageNumber: number
     searchTerm: string
     courtLevel?: string
+    keywords?: string[]
+    caseCategories?: string[]
   }) {
     const onlyFetchSupremeCourtVerdicts = input.courtLevel === 'Hæstiréttur'
 
@@ -44,16 +47,20 @@ export class VerdictsClientService {
               pageNumber: input.pageNumber,
               searchTerm: input.searchTerm,
               courtLevel: input.courtLevel,
+              keywords: input.keywords,
+              caseCategories: input.caseCategories,
             },
           })
         : { status: 'rejected', items: [], total: 0 },
-      !input.courtLevel || onlyFetchSupremeCourtVerdicts
+      !input.caseCategories?.length &&
+      (!input.courtLevel || onlyFetchSupremeCourtVerdicts)
         ? this.supremeCourtApi.apiV2VerdictGetVerdictsPost({
             verdictSearchRequest: {
               page: input.pageNumber,
               limit: ITEMS_PER_PAGE,
               orderBy: 'publishDate DESC',
               searchTerm: input.searchTerm,
+              keywords: input.keywords,
             },
           })
         : { status: 'rejected', items: [], total: 0 },
@@ -173,20 +180,83 @@ export class VerdictsClientService {
   }
 
   async getCaseTypes() {
+    const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
+      this.goproApi.getCaseTypes({}),
+      this.supremeCourtApi.apiV2VerdictGetCaseTypesGet(),
+    ])
+
+    const caseTypeSet = new Set<string>()
+
+    if (goproResponse.status === 'fulfilled') {
+      for (const caseType of goproResponse.value.items ?? []) {
+        if (caseType.label) caseTypeSet.add(caseType.label)
+      }
+    }
+    if (supremeCourtResponse.status === 'fulfilled') {
+      for (const caseType of supremeCourtResponse.value.items ?? []) {
+        if (caseType.label) caseTypeSet.add(caseType.label)
+      }
+    }
+
+    const caseTypes = Array.from(caseTypeSet).map((caseType) => ({
+      label: caseType,
+    }))
+    caseTypes.sort(sortAlpha('label'))
+
     return {
-      caseTypes: [],
+      caseTypes,
     }
   }
 
   async getCaseCategories() {
+    const [goproResponse] = await Promise.allSettled([
+      this.goproApi.getCaseCategories({}),
+    ])
+
+    const caseCategorySet = new Set<string>()
+
+    if (goproResponse.status === 'fulfilled') {
+      for (const caseCategory of goproResponse.value.items ?? []) {
+        if (caseCategory.label) caseCategorySet.add(caseCategory.label)
+      }
+    }
+
+    const caseCategories = Array.from(caseCategorySet).map((caseCategory) => ({
+      label: caseCategory,
+    }))
+    caseCategories.sort(sortAlpha('label'))
+
     return {
-      caseCategories: [],
+      caseCategories,
     }
   }
 
   async getKeywords() {
+    const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
+      this.goproApi.getKeywords({}),
+      this.supremeCourtApi.apiV2VerdictGetKeywordsGet(),
+    ])
+
+    const keywordSet = new Set<string>()
+
+    if (goproResponse.status === 'fulfilled') {
+      for (const keyword of goproResponse.value.items ?? []) {
+        if (keyword.label) keywordSet.add(keyword.label)
+      }
+    }
+    if (supremeCourtResponse.status === 'fulfilled') {
+      for (const keyword of supremeCourtResponse.value.items ?? []) {
+        if (keyword.label) keywordSet.add(keyword.label)
+      }
+    }
+
+    const keywords = Array.from(keywordSet).map((keyword) => ({
+      label: keyword,
+    }))
+    keywords.sort(sortAlpha('label'))
+
     return {
-      keywords: [],
+      keywords,
     }
   }
 }

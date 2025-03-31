@@ -22,7 +22,6 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
@@ -34,6 +33,8 @@ import {
   type GetVerdictKeywordsQueryVariables,
   type GetVerdictsQuery,
   type GetVerdictsQueryVariables,
+  type WebVerdictCaseCategory,
+  type WebVerdictKeyword,
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -60,6 +61,8 @@ const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómur Reykjavíkur'
 
 const SEARCH_TERM_QUERY_PARAM_KEY = 'q'
 const COURT_QUERY_PARAM_KEY = 'court'
+const KEYWORD_QUERY_PARAM_KEY = 'keyword'
+const CASE_CATEGORY_QUERY_PARAM_KEY = 'category'
 
 const extractCourtLevelFromState = (court: string | null | undefined) =>
   court || ALL_COURTS_TAG
@@ -70,11 +73,15 @@ interface VerdictsListProps {
     invisibleVerdicts: GetVerdictsQuery['webVerdicts']['items']
     total: number
   }
+  keywords: WebVerdictKeyword[]
+  caseCategories: WebVerdictCaseCategory[]
 }
 
 const VerdictsList: CustomScreen<VerdictsListProps> = ({
   initialData,
   customPageData,
+  keywords,
+  caseCategories,
 }) => {
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const [data, setData] = useState(initialData)
@@ -110,6 +117,18 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
       })
       .withDefault(ALL_COURTS_TAG),
   )
+  const [keywordFilter, setKeywordFilter] = useQueryState(
+    KEYWORD_QUERY_PARAM_KEY,
+    parseAsString
+      .withOptions({ clearOnDefault: true, shallow: false })
+      .withDefault(''),
+  )
+  const [caseCategoryFilter, setCaseCategoryFilter] = useQueryState(
+    CASE_CATEGORY_QUERY_PARAM_KEY,
+    parseAsString
+      .withOptions({ clearOnDefault: true, shallow: false })
+      .withDefault(''),
+  )
 
   useEffect(() => {
     if (page <= 1) {
@@ -122,6 +141,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
           page,
           searchTerm,
           courtLevel: extractCourtLevelFromState(courtFilter),
+          keywords: keywordFilter ? [keywordFilter] : undefined,
         },
       },
       onCompleted(response) {
@@ -157,10 +177,15 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
         })
       },
     })
-  }, [courtFilter, fetchVerdicts, initialData.total, page, searchTerm])
+  }, [
+    courtFilter,
+    fetchVerdicts,
+    initialData.total,
+    keywordFilter,
+    page,
+    searchTerm,
+  ])
 
-  const [isGridLayout, setIsGridLayout] = useState(false)
-  const overrideGridLayoutSetting = width < theme.breakpoints.lg
   const heading = formatMessage(m.listPage.heading)
 
   const courtTags = useMemo(() => {
@@ -219,6 +244,23 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
       },
     ]
   }, [])
+
+  const keywordOptions = useMemo(() => {
+    return [{ label: '', value: '' }].concat(
+      keywords.map((keyword) => ({
+        label: keyword.label,
+        value: keyword.label,
+      })),
+    )
+  }, [keywords])
+  const caseCategoryOptions = useMemo(() => {
+    return [{ label: '', value: '' }].concat(
+      caseCategories.map((category) => ({
+        label: category.label,
+        value: category.label,
+      })),
+    )
+  }, [caseCategories])
 
   const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
 
@@ -352,12 +394,72 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
 
         <Box background="blue100" paddingTop={[3, 3, 0]}>
           <SidebarLayout
-            fullWidthContent={true}
+            fullWidthContent={false}
             sidebarContent={
               <Stack space={3}>
                 <Text variant="h5">
                   {formatMessage(m.listPage.sidebarFilterHeading)}
                 </Text>
+                <Stack space={5}>
+                  <Stack space={1}>
+                    <Select
+                      label="Lykilorð"
+                      size="sm"
+                      options={keywordOptions}
+                      value={keywordOptions.find(
+                        (option) => option.value === keywordFilter,
+                      )}
+                      onChange={(option) => {
+                        if (option) {
+                          setKeywordFilter(option.value)
+                          setPage(1)
+                        }
+                      }}
+                    />
+                    <Box display="flex" justifyContent="flexEnd">
+                      <Button
+                        icon="reload"
+                        variant="text"
+                        size="small"
+                        onClick={() => {
+                          setKeywordFilter('')
+                          setPage(1)
+                        }}
+                      >
+                        Hreinsa val
+                      </Button>
+                    </Box>
+                  </Stack>
+                  <Stack space={1}>
+                    <Select
+                      label="Málaflokkar"
+                      size="sm"
+                      options={caseCategoryOptions}
+                      value={caseCategoryOptions.find(
+                        (option) => option.value === caseCategoryFilter,
+                      )}
+                      onChange={(option) => {
+                        if (option) {
+                          setCaseCategoryFilter(option.value)
+                          setPage(1)
+                        }
+                      }}
+                    />
+                    <Box display="flex" justifyContent="flexEnd">
+                      <Button
+                        icon="reload"
+                        variant="text"
+                        size="small"
+                        onClick={() => {
+                          setCaseCategoryFilter('')
+                          setPage(1)
+                        }}
+                      >
+                        Hreinsa val
+                      </Button>
+                    </Box>
+                  </Stack>
+                </Stack>
               </Stack>
             }
           >
@@ -373,30 +475,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                     ],
                   )}
                 </Text>
-                <Hidden below="lg">
-                  <Box>
-                    <Button
-                      variant="utility"
-                      icon={isGridLayout ? 'list' : 'grid'}
-                      iconType="outline"
-                      colorScheme="white"
-                      size="small"
-                      onClick={() => {
-                        setIsGridLayout((previousState) => !previousState)
-                      }}
-                    >
-                      {formatMessage(
-                        isGridLayout
-                          ? m.listPage.displayList
-                          : m.listPage.displayGrid,
-                      )}
-                    </Button>
-                  </Box>
-                </Hidden>
               </Inline>
               <InfoCardGrid
                 variant="detailed"
-                columns={overrideGridLayoutSetting ? 1 : isGridLayout ? 2 : 1}
+                columns={1}
                 cards={data.visibleVerdicts
                   .filter((verdict) => Boolean(verdict.id))
                   .map((verdict) => {
@@ -471,12 +553,15 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
   )
   const court = parseAsString.parseServerSide(query[COURT_QUERY_PARAM_KEY])
   const caseCategories = parseAsArrayOf(parseAsString).parseServerSide(
-    query.caseCategories,
+    query[CASE_CATEGORY_QUERY_PARAM_KEY],
   )
   const caseTypes = parseAsArrayOf(parseAsString).parseServerSide(
     query.caseTypes,
   )
-  const keywords = parseAsArrayOf(parseAsString).parseServerSide(query.keywords)
+  const keywords = parseAsArrayOf(parseAsString).parseServerSide(
+    query[KEYWORD_QUERY_PARAM_KEY],
+  )
+
   const [
     verdictListResponse,
     caseTypesResponse,
