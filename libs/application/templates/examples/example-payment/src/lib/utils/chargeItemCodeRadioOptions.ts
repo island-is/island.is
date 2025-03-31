@@ -1,6 +1,6 @@
 /* eslint-disable local-rules/disallow-kennitalas */
 import { Application } from '@island.is/application/types'
-import { PaymentCatalogItem } from '../../types/schema'
+import { PaymentCatalogItem } from '@island.is/application/types'
 
 const orgIdToName = (orgId: string): string => {
   switch (orgId) {
