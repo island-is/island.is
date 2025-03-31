@@ -47,11 +47,14 @@ export class VerdictsClientService {
             },
           })
         : { status: 'rejected', items: [], total: 0 },
-      !input.searchTerm && (!input.courtLevel || onlyFetchSupremeCourtVerdicts)
-        ? this.supremeCourtApi.apiV2VerdictGetVerdictsGet({
-            page: input.pageNumber,
-            limit: ITEMS_PER_PAGE,
-            orderBy: 'publishDate DESC',
+      !input.courtLevel || onlyFetchSupremeCourtVerdicts
+        ? this.supremeCourtApi.apiV2VerdictGetVerdictsPost({
+            verdictSearchRequest: {
+              page: input.pageNumber,
+              limit: ITEMS_PER_PAGE,
+              orderBy: 'publishDate DESC',
+              searchTerm: input.searchTerm,
+            },
           })
         : { status: 'rejected', items: [], total: 0 },
     ])

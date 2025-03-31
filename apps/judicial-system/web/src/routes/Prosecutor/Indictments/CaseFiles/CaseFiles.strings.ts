@@ -36,11 +36,6 @@ export const caseFiles = defineMessages({
     defaultMessage: 'Önnur gögn',
     description: 'Titill á önnur gögn hluta á dómskjalaskjá í ákærum.',
   },
-  civilClaimSection: {
-    id: 'judicial.system.core:indictments.case_files.civil_claim_section',
-    defaultMessage: 'Bótakröfur',
-    description: 'Titill á Bótakröfur hluta á dómskjalaskjá í ákærum.',
-  },
   criminalRecordUpdateSection: {
     id: 'judicial.system.core:indictments.case_files.criminal_record_update_section',
     defaultMessage: 'Tilkynning til sakaskrár',
