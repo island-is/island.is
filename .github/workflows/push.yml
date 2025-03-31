@@ -508,7 +508,6 @@ jobs:
     needs:
       - pre-checks
       - prepare
-      - docker-build
       - helm-docker-build
     env:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
@@ -561,7 +560,7 @@ jobs:
     if: ${{ !cancelled() }}
     needs:
       - pre-checks
-      - docker-build
+      - prepare
       - deploy
     steps:
       - name: Check deploy success
@@ -579,7 +578,6 @@ jobs:
     needs:
       - pre-checks
       - prepare
-      - docker-build
       - deploy
     steps:
       - name: Send Slack notification
