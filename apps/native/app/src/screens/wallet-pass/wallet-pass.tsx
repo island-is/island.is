@@ -140,7 +140,7 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
-const getAlertMessageIds = (
+const getInfoAlertMessageIds = (
   licenseType: GenericLicenseType,
   licenseNumber?: string,
 ) => {
@@ -206,8 +206,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     },
   })
 
-  console.log({ type, id })
-
   const data = res.data?.genericLicense ?? item
   const isExpired = data?.payload?.metadata?.expired
   const expireDate = item?.payload?.metadata?.expireDate
@@ -236,7 +234,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     licenseType && SHOW_INFO_ALERT_TYPES.includes(licenseType)
 
   const alertMessageIds = showInfoAlert
-    ? getAlertMessageIds(
+    ? getInfoAlertMessageIds(
         licenseType,
         data?.payload?.metadata?.licenseNumber ?? undefined,
       )
