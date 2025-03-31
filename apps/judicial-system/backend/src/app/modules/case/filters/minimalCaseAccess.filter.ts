@@ -98,6 +98,6 @@ export const canUserAccessMinimalCase = (
     return canDistrictCourtUserAccessCase(theCase, user)
   }
 
-  // Other users cannot access cases
+  // Other users can be added when needed
   return false
 }

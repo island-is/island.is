@@ -32,7 +32,7 @@ export class UpdateVictimInput {
   @Allow()
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
-  readonly haslawyer?: boolean
+  readonly hasLawyer?: boolean
 
   @Allow()
   @IsOptional()

@@ -32,7 +32,7 @@ import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { CaseRepresentative, User } from '../../user'
-import { Victim } from '../../victim/models/victim.model'
+import { Victim } from '../../victim'
 import { Notification } from './notification.model'
 
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
