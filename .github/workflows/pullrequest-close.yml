@@ -32,11 +32,11 @@ jobs:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Derive appropriate SHAs
-        uses: nrwl/nx-set-shas@v4
-
-      - run: |
-          echo "BASE: ${{ env.NX_BASE }}"
-          echo "HEAD: ${{ env.NX_HEAD }}"
+        uses: ./.github/actions/set-shas
+        with:
+            base_sha: ${{ github.event.pull_request.base.sha }}
+            head_sha: ${{ github.event.pull_request.head.sha }}
+      
       - name: Check unicorn affected
         id: unicorn_affected
         run: |
