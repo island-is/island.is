@@ -471,7 +471,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         <LicenseCard
           nativeID={`license-${licenseType}_destination`}
           type={licenseType}
-          title={data?.payload?.metadata?.name ?? undefined}
+          title={
+            data?.payload?.metadata?.title ??
+            data?.payload?.metadata?.name ??
+            undefined
+          }
           loading={res.loading}
           error={res.error}
           logo={
