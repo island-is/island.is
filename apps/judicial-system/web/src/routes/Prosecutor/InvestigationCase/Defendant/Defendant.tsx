@@ -521,27 +521,23 @@ const Defendant = () => {
             </motion.section>
           </AnimatePresence>
         </Box>
-        {workingCase.id && (
-          <>
-            {/* <Box component="section" marginBottom={5}>
-              <BlueBox>
-                <Box>
-                  <Checkbox
-                    name="register-victim"
-                    label={'Skrá brotaþola'}
-                    checked={isNonEmptyArray(workingCase.victims)}
-                    onChange={(evt) => {
-                      if (evt.target.checked) {
-                        handleCreateVictim()
-                      }
-                    }}
-                    disabled={isNonEmptyArray(workingCase.victims)}
-                    filled
-                    large
-                  />
-                </Box>
-              </BlueBox>
-            </Box> */}
+        {workingCase.id &&
+          (workingCase.victims && workingCase.victims?.length === 0 ? (
+            <Box
+              component="section"
+              marginBottom={5}
+              display="flex"
+              justifyContent="flexEnd"
+            >
+              <Button
+                data-testid="addVictimButton"
+                icon="add"
+                onClick={handleCreateVictim}
+              >
+                Skrá brotaþola
+              </Button>
+            </Box>
+          ) : (
             <Box component="section" marginBottom={5}>
               <SectionHeading title="Brotaþoli" />
               {workingCase.victims?.map((victim, index) => (
@@ -782,8 +778,7 @@ const Defendant = () => {
                 </Button>
               </Box>
             </Box>
-          </>
-        )}
+          ))}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
