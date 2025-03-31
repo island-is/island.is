@@ -6,6 +6,7 @@ import {
   capitalize,
   formatDate,
   getInitials,
+  getRoleTitleFromCaseFileCategory,
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
@@ -91,8 +92,12 @@ const CaseFileTable: FC<Props> = ({
                 </Text>
                 <Text variant="small">
                   {formatMessage(strings.submittedBy, {
-                    category: file.category,
-                    initials: getInitials(file.submittedBy),
+                    title: getRoleTitleFromCaseFileCategory(
+                      file.category ?? null,
+                    ),
+                    initials: getInitials(
+                      file.fileRepresentative ?? file.submittedBy,
+                    ),
                   })}
                 </Text>
               </Box>
