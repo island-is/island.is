@@ -248,73 +248,29 @@ jobs:
         run: |
           ./scripts/ci/10_prepare-docker-deps.sh
 
-  docker-build:
-    needs:
-      - pre-checks
-      - prepare
-    runs-on: arc-shared
-    timeout-minutes: 45
-    if: needs.prepare.outputs.BUILD_CHUNKS
-    env:
-      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
-      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION}}
-      PUBLISH: true
-      DISABLE_CHUNKS: true
-      MAX_JOBS: 3
-      NX_PARALLEL: 1
-    strategy:
-      fail-fast: false
-      matrix:
-        chunk: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    steps:
-      - name: Gather apps
-        id: gather
+      - name: Set up Docker Buildx with parallel capabilities
+        uses: docker/setup-buildx-action@v3
+        with:
+          config-inline: |
+            [worker.oci]
+            # Adjust this based on your runner capacity
+            max-parallelism = 10
+
+      - name: Check if cached buildx image exists
+        id: cache-check
+        run: |
+          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
+            docker pull docker.io/moby/buildkit:buildx-stable-1
+            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+          fi
+
+      - name: Parallel Docker builds with BuildKit
+        if: steps.build_map.outputs.BUILD_CHUNKS
         run: |
           set -euo pipefail
-          AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
-          DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
-          APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
-          APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
-          echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
-          echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
-          echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
-          echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
-        continue-on-error: true
 
-      - uses: actions/checkout@v4
-        if: steps.gather.outcome == 'success'
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
-
-      - name: Docker login to ECR repo
-        if: steps.gather.outcome == 'success'
-        run: ./scripts/ci/docker-login-ecr.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Prepare Docker build arguments
-        id: dockerargs
-        if: steps.gather.outcome == 'success'
-        env:
-          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
-          GIT_COMMIT_SHA: ${{ github.sha }}
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-        run: |
-          set -x
-          # Strip protocol prefix and .git postfix
+          # Prepare common Docker build arguments
           SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
           SERVER_URL="${SERVER_URL#*://}"
           SERVER_URL="${SERVER_URL%.git}"
@@ -328,56 +284,168 @@ jobs:
             --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
             --build-arg="NX_TASKS_RUNNER=ci"
           )
-          export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
-          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
+          EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
 
           # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
           echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
+          EXTRA_DOCKER_BUILD_ARGS="${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt"
 
-          # Add secret to EXTRA_DOCKER_BUILD_ARGS
-          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
+          # Parse BUILD_CHUNKS and launch builds using BuildKit
+          BUILD_CHUNKS='${{ steps.build_map.outputs.BUILD_CHUNKS }}'
 
-      - name: Check if cached buildx image exists
-        id: cache-check
-        run: |
-          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
-            docker pull docker.io/moby/buildkit:buildx-stable-1
-            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-          fi
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          # Prepare all builds commands
+          mkdir -p .buildkit-commands
+          chunk_index=0
 
-      - name: Building Docker images
-        continue-on-error: true
-        id: dockerbuild
-        if: steps.gather.outcome == 'success'
-        env:
-          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
-          GIT_COMMIT_SHA: ${{ github.sha }}
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-        run: |
-          set -x
-          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
-          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
-          export EXTRA_DOCKER_BUILD_ARGS
+          for chunk in $(echo "$BUILD_CHUNKS" | jq -c '.[]'); do
+            AFFECTED_PROJECTS="$(echo "$chunk" | jq -r '.projects')"
+            DOCKER_TYPE="$(echo "$chunk" | jq -r '.docker_type')"
+            APP_HOME="$(echo "$chunk" | jq -r '.home')"
+            APP_DIST_HOME="$(echo "$chunk" | jq -r '.dist')"
+
+            # Create a build script for this chunk
+            cat > .buildkit-commands/build-${chunk_index}.sh << EOF
+          #!/bin/bash
+          set -euo pipefail
+          export AFFECTED_PROJECTS="$AFFECTED_PROJECTS"
+          export DOCKER_TYPE="$DOCKER_TYPE"
+          export APP_HOME="$APP_HOME"
+          export APP_DIST_HOME="$APP_DIST_HOME"
+          export EXTRA_DOCKER_BUILD_ARGS="$EXTRA_DOCKER_BUILD_ARGS"
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+          EOF
 
-      - name: Building Docker images Retry
-        if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
-        env:
-          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
-          GIT_COMMIT_SHA: ${{ github.sha }}
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-        run: |
-          set -x
-          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
-          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
-          export EXTRA_DOCKER_BUILD_ARGS
-          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+            chmod +x .buildkit-commands/build-${chunk_index}.sh
+            ((chunk_index++))
+          done
 
+          # Execute all builds in parallel using GNU Parallel
+          # Adjust the -j flag based on your runner resources
+          find .buildkit-commands -name "build-*.sh" | parallel -j 8
+
+  # docker-build:
+  #   needs:
+  #     - pre-checks
+  #     - prepare
+  #   runs-on: arc-shared
+  #   timeout-minutes: 45
+  #   if: needs.prepare.outputs.BUILD_CHUNKS
+  #   env:
+  #     AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+  #     GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
+  #     DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+  #     NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION}}
+  #     PUBLISH: true
+  #     DISABLE_CHUNKS: true
+  #     MAX_JOBS: 3
+  #     NX_PARALLEL: 1
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       chunk: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
+  #   steps:
+  #     - name: Gather apps
+  #       id: gather
+  #       run: |
+  #         set -euo pipefail
+  #         AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
+  #         DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
+  #         APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
+  #         APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
+  #         echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
+  #         echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
+  #         echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
+  #         echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
+  #       continue-on-error: true
+  #
+  #     - uses: actions/checkout@v4
+  #       if: steps.gather.outcome == 'success'
+  #
+  #     - name: Restore generated files
+  #       uses: runs-on/cache/restore@v4
+  #       id: restore-generated-files-cache
+  #       with:
+  #         path: |
+  #           ${{ env.GENERATED_FILES }}
+  #         key: generated-files-${{ github.sha }}
+  #
+  #     - name: Extract generated files
+  #       run: |
+  #         tar -xzvf ${{ env.GENERATED_FILES }}
+  #
+  #     - name: Prepare Docker build arguments
+  #       id: dockerargs
+  #       if: steps.gather.outcome == 'success'
+  #       env:
+  #         NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
+  #         GIT_COMMIT_SHA: ${{ github.sha }}
+  #         DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+  #       run: |
+  #         set -x
+  #         # Strip protocol prefix and .git postfix
+  #         SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
+  #         SERVER_URL="${SERVER_URL#*://}"
+  #         SERVER_URL="${SERVER_URL%.git}"
+  #         build_args=(
+  #           --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+  #           --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
+  #           --build-arg="GIT_BRANCH=${GIT_BRANCH}"
+  #           --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
+  #           --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
+  #           --build-arg="NX_PARALLEL=${NX_PARALLEL}"
+  #           --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
+  #           --build-arg="NX_TASKS_RUNNER=ci"
+  #         )
+  #         export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
+  #         echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
+  #
+  #         # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
+  #         echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
+  #
+  #         # Add secret to EXTRA_DOCKER_BUILD_ARGS
+  #         echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
+  #
+  #     - name: Check if cached buildx image exists
+  #       id: cache-check
+  #       run: |
+  #         if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
+  #           docker pull docker.io/moby/buildkit:buildx-stable-1
+  #           docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+  #           docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+  #         fi
+  #     - name: Setup yarn
+  #       uses: ./.github/actions/setup-yarn
+  #       with:
+  #         RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  #
+  #     - name: Building Docker images
+  #       continue-on-error: true
+  #       id: dockerbuild
+  #       if: steps.gather.outcome == 'success'
+  #       env:
+  #         NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
+  #         GIT_COMMIT_SHA: ${{ github.sha }}
+  #         DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+  #       run: |
+  #         set -x
+  #         echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
+  #         echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+  #         export EXTRA_DOCKER_BUILD_ARGS
+  #         ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+  #
+  #     - name: Building Docker images Retry
+  #       if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
+  #       env:
+  #         NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
+  #         GIT_COMMIT_SHA: ${{ github.sha }}
+  #         DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+  #       run: |
+  #         set -x
+  #         echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
+  #         echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+  #         export EXTRA_DOCKER_BUILD_ARGS
+  #         ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+  #
   helm-docker-build:
     needs:
       - prepare
