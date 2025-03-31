@@ -1,11 +1,6 @@
 const devConfig = {
   production: false,
   port: 3366,
-  islykillConfig: {
-    cert: process.env.ISLYKILL_CERT ?? '',
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
-  },
   audit: {
     defaultNamespace: '@island.is/user-profile',
   },
@@ -20,11 +15,6 @@ const devConfig = {
 const prodConfig = {
   production: true,
   port: 3333,
-  islykillConfig: {
-    cert: process.env.ISLYKILL_CERT ?? '',
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
-  },
   audit: {
     defaultNamespace: '@island.is/user-profile',
     groupName: process.env.AUDIT_GROUP_NAME,

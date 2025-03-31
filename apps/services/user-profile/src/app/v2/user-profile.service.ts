@@ -7,7 +7,6 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined, isSearchTermValid } from '@island.is/shared/utils'
 import { AttemptFailed, NoContentException } from '@island.is/nest/problem'
-import type { User } from '@island.is/auth-nest-tools'
 import type { ConfigType } from '@island.is/nest/config'
 import {
   DelegationsApi,
@@ -19,7 +18,6 @@ import { UserProfile } from '../user-profile/userProfile.model'
 import { formatPhoneNumber } from '../utils/format-phone-number'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
-import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { NudgeType } from '../types/nudge-type'
 import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
@@ -45,7 +43,6 @@ export class UserProfileService {
     private readonly delegationPreference: typeof ActorProfile,
     @Inject(VerificationService)
     private readonly verificationService: VerificationService,
-    private readonly islykillService: IslykillService,
     private sequelize: Sequelize,
     @Inject(UserProfileConfig.KEY)
     private config: ConfigType<typeof UserProfileConfig>,
@@ -275,19 +272,6 @@ export class UserProfileService {
         },
         { transaction },
       )
-
-      if (
-        isEmailDefined ||
-        isMobilePhoneNumberDefined ||
-        isDefined(userProfile.emailNotifications)
-      ) {
-        await this.islykillService.upsertIslykillSettings({
-          nationalId,
-          phoneNumber: formattedPhoneNumber,
-          email: userProfile.email,
-          canNudge: userProfile.emailNotifications,
-        })
-      }
     })
 
     return this.findById(nationalId, true, ClientType.FIRST_PARTY)
