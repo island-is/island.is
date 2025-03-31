@@ -11,12 +11,15 @@ import {
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 
-import { CardPaymentService } from './cardPayment.service'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import { retry } from '@island.is/shared/utils/server'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { PaymentMethod } from '../../types'
 import { VerifyCardInput } from './dtos/verifyCard.input'
@@ -27,10 +30,8 @@ import { VerificationStatusResponse } from './dtos/verificationStatus.response.d
 import { VerifyCardResponse } from './dtos/verifyCard.response.dto'
 import { ChargeCardResponse } from './dtos/chargeCard.response.dto'
 import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
-import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
-import { retry } from '@island.is/shared/utils/server'
 import { VerificationCallbackResponse } from './dtos/verificationCallback.response.dto'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { CardPaymentService } from './cardPayment.service'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -181,13 +182,14 @@ export class CardPaymentController {
       const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
         chargeCardInput.paymentFlowId,
       )
-      const { catalogItems, totalPrice } =
-        await this.paymentFlowService.getPaymentFlowChargeDetails(
-          paymentFlow.organisationId,
-          paymentFlow.charges,
-        )
-      const { paymentStatus } =
-        await this.paymentFlowService.getPaymentFlowStatus(paymentFlow)
+      const [{ catalogItems, totalPrice }, { paymentStatus }] =
+        await Promise.all([
+          this.paymentFlowService.getPaymentFlowChargeDetails(
+            paymentFlow.organisationId,
+            paymentFlow.charges,
+          ),
+          this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
+        ])
 
       if (paymentStatus === 'paid') {
         throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
