@@ -265,7 +265,7 @@ jobs:
           node scripts/ci/docker/get-data.mjs
       - name: Update helm-values repository
         uses: ./.github/actions/update-helm-values
-        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' }} && ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' && needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
         with:
           files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
           ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
