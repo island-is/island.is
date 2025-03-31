@@ -1,5 +1,4 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -8,7 +7,6 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   DefenderNotFound,
@@ -40,8 +38,6 @@ export const VictimInfo: React.FC<Props> = ({
   index,
   onDelete,
 }) => {
-  const { formatMessage } = useIntl()
-
   const { updateVictimAndSetState, updateVictimState, updateVictim } =
     useVictim()
 
@@ -55,6 +51,7 @@ export const VictimInfo: React.FC<Props> = ({
 
   const handleNationalIdBlur = (nationalId: string) => {
     const cleanNationalId = nationalId?.replace('-', '') ?? ''
+    console.log(victimNationalIdUpdate)
     setVictimNationalIdUpdate(cleanNationalId || null)
   }
 
@@ -82,6 +79,7 @@ export const VictimInfo: React.FC<Props> = ({
 
   const showNationalIdError =
     victimNationalIdUpdate?.length === 10 &&
+    victim.hasNationalId !== false &&
     !personLoading &&
     (personError || !personData?.items?.length)
 
@@ -106,6 +104,7 @@ export const VictimInfo: React.FC<Props> = ({
               label={'Brotaþoli er ekki með íslenska kennitölu'}
               checked={victim.hasNationalId === false}
               onChange={(event) => {
+                setVictimNationalIdUpdate(null)
                 updateVictimAndSetState(
                   {
                     caseId: workingCase.id,
@@ -136,7 +135,7 @@ export const VictimInfo: React.FC<Props> = ({
               />
               {showNationalIdError && (
                 <Text color="red600" variant="eyebrow" marginTop={1}>
-                  {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
+                  Ekki tókst að fletta upp kennitölu
                 </Text>
               )}
             </Box>
