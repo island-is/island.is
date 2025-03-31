@@ -86,5 +86,5 @@ OJOIAbout.getProps = async ({ apolloClient, locale }) => {
 }
 
 export default withMainLayout(
-  withCustomSubpageWrapper(OJOI_BASE_CMS_ID, 'um-stjornartidindin', OJOIAbout),
+  withCustomSubpageWrapper(OJOI_BASE_CMS_ID, 'um-stjornartidindi', OJOIAbout),
 )
