@@ -7,8 +7,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  MaxLength,
-  MinLength,
+  Length,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -32,19 +31,29 @@ export class InternalCreateCaseDto {
 
   @IsNotEmpty()
   @IsString()
-  @MinLength(10)
-  @MaxLength(10)
+  @Length(10, 10)
   @Transform(nationalIdTransformer)
   @ApiProperty({ type: String })
   readonly prosecutorNationalId!: string
 
+  @IsOptional()
+  @IsString()
+  @Length(10, 10)
+  @Transform(nationalIdTransformer)
+  @ApiPropertyOptional({ type: String })
+  readonly prosecutorsOfficeNationalId?: string
+
   @IsNotEmpty()
   @IsString()
-  @MinLength(10)
-  @MaxLength(10)
+  @Length(10, 10)
   @Transform(nationalIdTransformer)
   @ApiProperty({ type: String })
   readonly accusedNationalId!: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly accusedDOB?: string
 
   @IsOptional()
   @IsString()
