@@ -110,3 +110,8 @@ export const mobilePopoverContainer = style({
 export const mobileInnerContainer = style({
   maxHeight: `calc(100vh - ${theme.headerHeight.large}px)`,
 })
+
+export const overflow = style({
+  overflowY: 'auto',
+  WebkitOverflowScrolling: 'touch',
+})

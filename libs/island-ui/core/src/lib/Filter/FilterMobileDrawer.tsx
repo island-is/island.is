@@ -48,10 +48,10 @@ export const FilterMobileDrawer = ({
   const { lang } = useLocale()
 
   const handlers = useSwipeable({
-    onSwiping: (swipe) => {
-      if (swipe.dir === 'Down') setIsClosed(true)
+    onSwipedDown: () => {
+      setIsClosed(true)
     },
-    preventScrollOnSwipe: true,
+    preventScrollOnSwipe: false,
   })
 
   return (
@@ -115,7 +115,7 @@ export const FilterMobileDrawer = ({
                       (lang === 'is' ? 'Hreinsa allt' : 'Clear all')}
                   </Button>
                 </Box>
-                <Box flexGrow={1} overflow="auto">
+                <Box flexGrow={1} overflow="auto" className={styles.overflow}>
                   {children}
                 </Box>
 

@@ -329,76 +329,68 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
 
   if (isMobile) {
     return (
-      <FilterContext.Provider value={{ variant: 'popover' }}>
-        <Box display="flex" alignItems="flexEnd">
-          {filterInputContent}
+      <Box display="flex" alignItems="flexEnd">
+        {filterInputContent}
 
-          <FilterMobileDrawer
-            baseId="filter"
-            initialVisibility={false}
-            ariaLabel={''}
-            labelShowResult={labelResult}
-            labelClearAll={labelClearAll}
-            onFilterClear={onFilterClear}
-            disclosure={
-              <Box
-                background="white"
-                marginTop={'auto'}
-                borderRadius="large"
-                tabIndex={-1}
-                marginLeft={2}
-                className={filterCount ? styles.filterCountButton : undefined}
-              >
-                {filterCount ? (
-                  <Button
+        <FilterMobileDrawer
+          baseId="filter"
+          initialVisibility={false}
+          ariaLabel={''}
+          labelShowResult={labelResult}
+          labelClearAll={labelClearAll}
+          onFilterClear={onFilterClear}
+          disclosure={
+            <Box
+              background="white"
+              marginTop={'auto'}
+              borderRadius="large"
+              tabIndex={-1}
+              marginLeft={2}
+              className={filterCount ? styles.filterCountButton : undefined}
+            >
+              {filterCount ? (
+                <Button
+                  as="span"
+                  variant="utility"
+                  icon={!filterCount ? 'filter' : undefined}
+                  fluid
+                  nowrap
+                >
+                  {labelOpen}
+
+                  <Box
                     as="span"
-                    variant="utility"
-                    icon={!filterCount ? 'filter' : undefined}
-                    fluid
-                    nowrap
+                    background="blue400"
+                    color="white"
+                    className={styles.filterCount}
                   >
-                    {labelOpen}
-
-                    <Box
-                      as="span"
-                      background="blue400"
+                    <Text
+                      variant="eyebrow"
+                      textAlign="center"
                       color="white"
-                      className={styles.filterCount}
+                      lineHeight={isMobile ? 'xl' : 'lg'}
                     >
-                      <Text
-                        variant="eyebrow"
-                        textAlign="center"
-                        color="white"
-                        lineHeight={isMobile ? 'xl' : 'lg'}
-                      >
-                        {filterCountNumber}
-                      </Text>
-                    </Box>
-                  </Button>
-                ) : (
-                  <Button
-                    as="span"
-                    variant="utility"
-                    icon="filter"
-                    fluid
-                    nowrap
-                  >
-                    {labelOpen}
-                  </Button>
-                )}
-              </Box>
-            }
-          >
-            <Box width="full" tabIndex={-1}>
-              <Box className={styles.mobilePopoverContainer} {...popover}>
-                <Stack space={4} dividers={false}>
-                  {children}
-                </Stack>
-              </Box>
+                      {filterCountNumber}
+                    </Text>
+                  </Box>
+                </Button>
+              ) : (
+                <Button as="span" variant="utility" icon="filter" fluid nowrap>
+                  {labelOpen}
+                </Button>
+              )}
             </Box>
-          </FilterMobileDrawer>
-        </Box>
-      </FilterContext.Provider>
+          }
+        >
+          <Box width="full" tabIndex={-1}>
+            <Box className={styles.mobilePopoverContainer}>
+              <Stack space={4} dividers={false}>
+                {children}
+              </Stack>
+            </Box>
+          </Box>
+        </FilterMobileDrawer>
+      </Box>
     )
   }
 

@@ -104,6 +104,7 @@ const DocumentsFilter = ({
         labelOpen={formatMessage(m.openFilter)}
         labelClose={formatMessage(m.closeFilter)}
         filterCount={filterCount}
+        onFilterClear={handleClearFilters}
         filterInput={
           <Input
             placeholder={formatMessage(m.searchPlaceholder)}
@@ -115,7 +116,6 @@ const DocumentsFilter = ({
             icon={{ name: 'search' }}
           />
         }
-        onFilterClear={handleClearFilters}
       >
         <Box
           display="flex"
