@@ -70,20 +70,26 @@ export const FilterMobileDrawer = ({
     >
       {({ closeModal }: { closeModal: () => void }) => {
         return (
-          <div {...handlers}>
+          <div>
             <Box
               background="white"
-              paddingTop={2}
               paddingX={0}
               height="full"
               className={styles.mobileDrawerContainer}
             >
               <Box
-                background="dark200"
-                className={styles.drawerLine}
-                margin={3}
+                width="full"
+                height="full"
+                padding={2}
+                {...handlers}
                 onClick={closeModal}
-              />
+              >
+                <Box
+                  background="dark200"
+                  className={styles.drawerLine}
+                  margin={3}
+                />
+              </Box>
               <Box
                 display="flex"
                 flexDirection="column"
