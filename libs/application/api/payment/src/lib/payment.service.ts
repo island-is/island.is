@@ -124,6 +124,28 @@ export class PaymentService {
   }
 
   async getStatus(user: User, applicationId: string): Promise<PaymentStatus> {
+    const isIslandisPaymentEnabled = await this.featureFlagService.getValue(
+      Features.useIslandisPaymentForApplicationSystem,
+      false,
+      user,
+    )
+    if (isIslandisPaymentEnabled) {
+      console.log('=========================================')
+      console.log('getStatusIslandis', applicationId)
+      console.log('=========================================')
+      return this.getStatusIslandis(user, applicationId)
+    } else {
+      console.log('=========================================')
+      console.log('getStatusArk', applicationId)
+      console.log('=========================================')
+      return this.getStatusArk(user, applicationId)
+    }
+  }
+
+  async getStatusIslandis(
+    user: User,
+    applicationId: string,
+  ): Promise<PaymentStatus> {
     const foundPayment = await this.findPaymentByApplicationId(applicationId)
     if (!foundPayment) {
       console.log('=========================================')
@@ -146,6 +168,48 @@ export class PaymentService {
       // not sure how/if that case would/could come up.
       fulfilled: foundPayment.fulfilled || false,
       paymentUrl,
+      paymentId: foundPayment.id,
+    }
+  }
+
+  async getStatusArk(
+    user: User,
+    applicationId: string,
+  ): Promise<PaymentStatus> {
+    const foundPayment = await this.findPaymentByApplicationId(applicationId)
+    if (!foundPayment) {
+      throw new NotFoundException(
+        `payment object was not found for application id ${applicationId}`,
+      )
+    }
+
+    if (!foundPayment.user4) {
+      throw new InternalServerErrorException(
+        `valid payment object was not found for application id ${applicationId} - user4 not set`,
+      )
+    }
+    const application = await this.applicationService.findOneById(applicationId)
+
+    let applicationSlug
+    if (application?.typeId) {
+      applicationSlug = getSlugFromType(application.typeId)
+    } else {
+      throw new NotFoundException(
+        `application type id was not found for application id ${applicationId}`,
+      )
+    }
+
+    const callbackUrl = `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`
+
+    return {
+      // TODO: maybe treat the case where no payment was found differently?
+      // not sure how/if that case would/could come up.
+      fulfilled: foundPayment.fulfilled || false,
+      paymentUrl: this.makeDelegationPaymentUrl(
+        foundPayment.user4,
+        user.sub ?? user.nationalId,
+        callbackUrl,
+      ),
       paymentId: foundPayment.id,
     }
   }
@@ -226,6 +290,9 @@ export class PaymentService {
       user,
     )
     if (isIslandisPaymentEnabled) {
+      console.log('=========================================')
+      console.log('islandisCreateCharge', applicationId)
+      console.log('=========================================')
       return this.islandisCreateCharge(
         user,
         performingOrganizationID,
@@ -235,6 +302,9 @@ export class PaymentService {
         locale,
       )
     } else {
+      console.log('=========================================')
+      console.log('arkCreateCharge', applicationId)
+      console.log('=========================================')
       return this.arkCreateCharge(
         user,
         performingOrganizationID,
