@@ -206,8 +206,7 @@ export const serviceSetup = (services: {
         staging: 'island-is-staging-fs-presign-bucket',
         prod: 'island-is-prod-fs-presign-bucket',
       },
-      [GRAPHQL_API_URL_ENV_VAR_NAME]:
-        'http://api.islandis.svc.cluster.local',
+      [GRAPHQL_API_URL_ENV_VAR_NAME]: 'http://api.islandis.svc.cluster.local',
       INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: {
         dev: 'gunnar.ingi@fjr.is',
         staging: 'gunnar.ingi@fjr.is',
@@ -425,17 +424,15 @@ export const serviceSetup = (services: {
           ],
         },
         paths: ['/application-payment', '/applications'],
-        // public: false,
+        public: false,
         extraAnnotations: {
           dev: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
           staging: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
           prod: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
