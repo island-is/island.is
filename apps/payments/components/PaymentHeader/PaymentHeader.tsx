@@ -1,5 +1,7 @@
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 
+import { formatCurrency } from '@island.is/shared/utils'
+
 import * as styles from './PaymentHeader.css'
 
 type PaymentHeaderProps = {
@@ -10,9 +12,6 @@ type PaymentHeaderProps = {
   subTitle?: string
   type: keyof typeof styles.header
 }
-
-const todoCallGlobalFormatUtilFunction = (value: number): string =>
-  `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')} kr.`
 
 const getIconType = (type: PaymentHeaderProps['type']) => {
   switch (type) {
@@ -55,9 +54,7 @@ const HeaderTextContent = ({
           </Text>
         </Box>
       )}
-      <Text variant="h2">
-        {amount && todoCallGlobalFormatUtilFunction(amount)}
-      </Text>
+      <Text variant="h2">{amount && formatCurrency(amount)}</Text>
       <Text variant="small" fontWeight="regular">
         {subTitle}
       </Text>
