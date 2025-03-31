@@ -7,6 +7,7 @@ import {
   buildDescriptionField,
   buildCheckboxField,
   getValueViaPath,
+  buildCustomField,
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import {
@@ -150,11 +151,10 @@ export const RentalPeriodOtherFees = buildSubSection({
           ],
           spacing: 0,
         }),
-        buildTextField({
-          id: 'otherFees.otherCostsDescription',
-          title: otherFees.otherCostsDescriptionLabel,
-          placeholder: otherFees.otherCostsDescriptionPlaceholder,
-          width: 'half',
+        buildCustomField({
+          id: 'registerProperty.searchresults',
+          title: '',
+          component: 'AdditionalFees',
           condition: (answers) => {
             const otherFeesOtherCosts = getValueViaPath(
               answers,
@@ -164,21 +164,35 @@ export const RentalPeriodOtherFees = buildSubSection({
             return otherFeesOtherCosts && otherFeesOtherCosts.includes('true')
           },
         }),
-        buildTextField({
-          id: 'otherFees.otherCostsAmount',
-          title: otherFees.otherCostsAmountLabel,
-          placeholder: otherFees.otherCostsAmountPlaceholder,
-          width: 'half',
-          variant: 'currency',
-          condition: (answers) => {
-            const otherFeesOtherCosts = getValueViaPath(
-              answers,
-              'otherFees.otherCosts',
-              [],
-            ) as string[]
-            return otherFeesOtherCosts && otherFeesOtherCosts.includes('true')
-          },
-        }),
+        // buildTextField({
+        //   id: 'otherFees.otherCostsDescription',
+        //   title: otherFees.otherCostsDescriptionLabel,
+        //   placeholder: otherFees.otherCostsDescriptionPlaceholder,
+        //   width: 'half',
+        //   condition: (answers) => {
+        //     const otherFeesOtherCosts = getValueViaPath(
+        //       answers,
+        //       'otherFees.otherCosts',
+        //       [],
+        //     ) as string[]
+        //     return otherFeesOtherCosts && otherFeesOtherCosts.includes('true')
+        //   },
+        // }),
+        // buildTextField({
+        //   id: 'otherFees.otherCostsAmount',
+        //   title: otherFees.otherCostsAmountLabel,
+        //   placeholder: otherFees.otherCostsAmountPlaceholder,
+        //   width: 'half',
+        //   variant: 'currency',
+        //   condition: (answers) => {
+        //     const otherFeesOtherCosts = getValueViaPath(
+        //       answers,
+        //       'otherFees.otherCosts',
+        //       [],
+        //     ) as string[]
+        //     return otherFeesOtherCosts && otherFeesOtherCosts.includes('true')
+        //   },
+        // }),
       ],
     }),
   ],
