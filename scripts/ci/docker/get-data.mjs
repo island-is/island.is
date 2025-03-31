@@ -170,5 +170,5 @@ function getCommitMsg() {
     const pr = github.context.ref.split('pr-')[1].split('-')[0];
     return `Change from: island-is/island.is#${pr}`;
   }
-  return `Change from: island-is/island.is@${context.sha}`;
+  return `Change from: https://github.com/island-is/island.is/commit/@${context.sha}`;
 }
