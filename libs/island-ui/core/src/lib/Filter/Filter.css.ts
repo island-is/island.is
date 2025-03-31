@@ -56,10 +56,6 @@ export const drawer = style({
   opacity: 0.9,
 })
 
-export const mobileDrawerContainer = style({
-  borderRadius: 16,
-})
-
 export const drawerLine = style({
   width: 40,
   height: 4,
@@ -104,14 +100,18 @@ export const topBar = style({
 export const mobilePopoverContainer = style({
   zIndex: 100,
   width: '100%',
-  overflowY: 'scroll',
+})
+
+export const mobileDrawerContainer = style({
+  borderRadius: 16,
 })
 
 export const mobileInnerContainer = style({
-  maxHeight: `calc(100vh - ${theme.headerHeight.large}px)`,
+  maxHeight: `calc(100vh - 96px)`,
 })
 
 export const overflow = style({
-  overflowY: 'auto',
-  WebkitOverflowScrolling: 'touch',
+  overflowY: 'scroll',
+  WebkitOverflowScrolling: 'auto',
+  maxHeight: `calc(100vh - 235px)`,
 })

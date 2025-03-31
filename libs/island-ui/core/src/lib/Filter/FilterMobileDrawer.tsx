@@ -74,16 +74,9 @@ export const FilterMobileDrawer = ({
             <Box
               background="white"
               paddingX={0}
-              height="full"
               className={styles.mobileDrawerContainer}
             >
-              <Box
-                width="full"
-                height="full"
-                padding={2}
-                {...handlers}
-                onClick={closeModal}
-              >
+              <Box width="full" padding={2} {...handlers} onClick={closeModal}>
                 <Box
                   background="dark200"
                   className={styles.drawerLine}
@@ -93,7 +86,6 @@ export const FilterMobileDrawer = ({
               <Box
                 display="flex"
                 flexDirection="column"
-                height="full"
                 position="relative"
                 className={styles.mobileInnerContainer}
               >
