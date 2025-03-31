@@ -301,7 +301,6 @@ export const Item = ({
   if (component === 'hiddenInput') {
     hiddenFieldProps = {
       id: id,
-      title: label,
       type: FieldTypes.HIDDEN_INPUT,
       component: FieldComponents.HIDDEN_INPUT,
       children: undefined,
