@@ -17,10 +17,19 @@ interface Props {
   onDelete: (file: TUploadFile) => void
   onRename: (fileId: string, newName: string, newDisplayDate: string) => void
   setEditCount: Dispatch<SetStateAction<number>>
+  isBottomComponent?: boolean
 }
 
 const UploadFiles: FC<Props> = (props) => {
-  const { files, onChange, onRetry, onDelete, onRename, setEditCount } = props
+  const {
+    files,
+    onChange,
+    onRetry,
+    onDelete,
+    onRename,
+    setEditCount,
+    isBottomComponent,
+  } = props
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
@@ -39,7 +48,12 @@ const UploadFiles: FC<Props> = (props) => {
   })
 
   return (
-    <div className={styles.container} {...getRootProps()}>
+    <div
+      className={`${styles.container} ${
+        !isBottomComponent ? styles.bottomContainer : ''
+      }`}
+      {...getRootProps()}
+    >
       <Box marginBottom={1}>
         <Text variant="h4" as="h4">
           {formatMessage(strings.heading)}
