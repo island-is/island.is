@@ -7,7 +7,7 @@ import { ActiveDocumentType2 } from '../../lib/types'
 import { downloadFile } from '../../utils/downloadDocument'
 import { messages } from '../../utils/messages'
 import * as styles from './DocumentRenderer.css'
-import { usePdfRendererLazyQuery } from './PdfRenderer.generated'
+import { usePdfRendererLazyQuery } from '../../queries/PdfRenderer.generated'
 
 type PdfDocumentProps = {
   document: ActiveDocumentType2
@@ -114,6 +114,11 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
                   success: false,
                   error: error.message,
                   isCourtCase: isCourtCase,
+                  actions: isCourtCase
+                    ? document.actions?.map(
+                        (action) => `${action.title}: ${action.data}`,
+                      ) ?? []
+                    : undefined,
                 },
               },
             })
@@ -125,6 +130,11 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
                   id: document.id,
                   success: true,
                   isCourtCase: isCourtCase,
+                  actions: isCourtCase
+                    ? document.actions?.map(
+                        (action) => `${action.title}: ${action.data}`,
+                      ) ?? []
+                    : undefined,
                 },
               },
             })
