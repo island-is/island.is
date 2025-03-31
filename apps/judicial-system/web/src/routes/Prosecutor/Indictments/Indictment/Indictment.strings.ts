@@ -122,10 +122,10 @@ export const strings = {
   },
   demandsAutofillWithFutureLicenseSuspension: {
     [Gender.MALE]:
-      'Þess er krafist að ákærði verði dæmdur til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu á réttinum til að öðlast ökuskírteini skv. 4. mgr. 58. gr. umferðarlaga nr. 77/2019.',
+      'Þess er krafist að ákærði verði dæmdur til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu á réttinum til að öðlast ökuskírteini skv. 4. mgr. 58. gr. laga nr. 77/2019.',
     [Gender.FEMALE]:
-      'Þess er krafist að ákærða verði dæmd til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu á réttinum til að öðlast ökuskírteini skv. 4. mgr. 58. gr. umferðarlaga nr. 77/2019.',
+      'Þess er krafist að ákærða verði dæmd til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu á réttinum til að öðlast ökuskírteini skv. 4. mgr. 58. gr. laga nr. 77/2019.',
     [Gender.OTHER]:
-      'Þess er krafist að ákært verði dæmt til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu á réttinum til að öðlast ökuskírteini skv. 4. mgr. 58. gr. umferðarlaga nr. 77/2019.',
+      'Þess er krafist að ákært verði dæmt til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu á réttinum til að öðlast ökuskírteini skv. 4. mgr. 58. gr. laga nr. 77/2019.',
   },
 }
