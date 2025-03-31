@@ -2,7 +2,7 @@
 export default {
   displayName: 'application-templates-example-payment',
   preset: './jest.preset.js',
-  rootDir: '../../../..',
+  rootDir: '../../../../..',
   roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': [
