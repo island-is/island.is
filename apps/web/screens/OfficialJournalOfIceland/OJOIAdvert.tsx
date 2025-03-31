@@ -43,6 +43,7 @@ import {
   ADVERT_SIMILAR_QUERY,
 } from '../queries/OfficialJournalOfIceland'
 import { m } from './messages'
+import { ORGANIZATION_SLUG } from './constants'
 
 const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
   advert,
@@ -304,8 +305,6 @@ OJOIAdvert.getProps = async ({
   query,
   customPageData,
 }) => {
-  const organizationSlug = 'stjornartidindi'
-
   const [
     {
       data: { officialJournalOfIcelandAdvert },
@@ -337,7 +336,7 @@ OJOIAdvert.getProps = async ({
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: organizationSlug,
+          slug: ORGANIZATION_SLUG,
           lang: locale as ContentLanguage,
         },
       },

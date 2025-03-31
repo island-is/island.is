@@ -19,12 +19,12 @@ import { GET_ORGANIZATION_QUERY } from '../queries'
 import { OJOI_BASE_CMS_ID, ORGANIZATION_SLUG } from './constants'
 import { m } from './messages'
 
-interface OJOIHelpProps {
+interface OJOIAboutProps {
   organization?: Query['getOrganization']
   locale: Locale
 }
 
-const OJOIHelp: CustomScreen<OJOIHelpProps> = ({
+const OJOIAbout: CustomScreen<OJOIAboutProps> = ({
   organization,
   customPageData,
   locale,
@@ -34,7 +34,7 @@ const OJOIHelp: CustomScreen<OJOIHelpProps> = ({
 
   return (
     <OJOIWrapper
-      pageTitle={formatMessage(m.help.title)}
+      pageTitle={formatMessage(m.about.title)}
       pageDescription={formatMessage(m.home.description)}
       organization={organization ?? undefined}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
@@ -48,8 +48,8 @@ const OJOIHelp: CustomScreen<OJOIHelpProps> = ({
           href: linkResolver('ojoihome', [], locale).href,
         },
         {
-          title: formatMessage(m.breadcrumb.help),
-          href: linkResolver('ojoihelp', [], locale).href,
+          title: formatMessage(m.breadcrumb.about),
+          href: linkResolver('ojoiabout', [], locale).href,
         },
       ]}
     >
@@ -58,7 +58,7 @@ const OJOIHelp: CustomScreen<OJOIHelpProps> = ({
   )
 }
 
-OJOIHelp.getProps = async ({ apolloClient, locale }) => {
+OJOIAbout.getProps = async ({ apolloClient, locale }) => {
   const {
     data: { getOrganization },
   } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
@@ -86,5 +86,5 @@ OJOIHelp.getProps = async ({ apolloClient, locale }) => {
 }
 
 export default withMainLayout(
-  withCustomSubpageWrapper(OJOI_BASE_CMS_ID, 'leidbeiningar', OJOIHelp),
+  withCustomSubpageWrapper(OJOI_BASE_CMS_ID, 'um-stjornartidindi', OJOIAbout),
 )
