@@ -286,7 +286,6 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     [],
   )
 
-  console.log({ caseFiles })
   useEffect(() => {
     setReorderableItems([
       ...sortedFilesInChapter(0, caseFiles),
