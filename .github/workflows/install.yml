@@ -168,6 +168,14 @@ jobs:
           echo "Current base SHA is ${{ env.NX_BASE }} and head SHA is ${{ env.NX_HEAD }}"
           echo "{\"base_sha\": \"${{ env.NX_BASE }}\", \"head_sha\":\"${{ env.NX_HEAD }}\"}" > event.json
 
+      # TODO: remove when judicial has been integrated to Argo
+      - name: DEBUG Is judicial affected
+        id: is-judicial-affected
+        run: |
+          AFFECTED="$(node ./scripts/ci/is-affected.mjs judicial)"
+          echo AFFECTED="$AFFECTED"
+          echo AFFECTED="$AFFECTED" >> "$GITHUB_OUTPUT"
+
       - name: Git bot config
         id: git-bot-config
         run: |
@@ -283,3 +291,10 @@ jobs:
         run: |
           is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
           echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
+
+      - name: DEBUG judicial affected output
+        if: steps.is-judicial-affected.outputs.AFFECTED == 'true'
+        id: judicial-debug
+        run: |
+          echo ${{ steps.is-judicial-affected.outputs.AFFECTED }}
+          echo "AFFECTED: ${{ steps.is-judicial-affected.outputs.AFFECTED }}"
