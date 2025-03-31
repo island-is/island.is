@@ -102,6 +102,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     provider: {
       id: GenericLicenseProviderId.RegistersIceland,
       referenceId: '10601',
+      entryId: 'i5go5A4ikV8muPfvr9o2v',
     },
     pkpass: false,
     pkpassVerify: false,
