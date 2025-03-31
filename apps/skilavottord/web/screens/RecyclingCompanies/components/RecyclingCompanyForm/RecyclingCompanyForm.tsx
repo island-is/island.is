@@ -125,7 +125,7 @@ const RecyclingCompanyForm: FC<
                 error={errors?.companyName?.message}
                 backgroundColor="blue"
                 onChange={(event) => {
-                  // User the the municipality should not be able to create his own companyId
+                  // User with the municipality role should not be able to create his own companyId
                   if (!editView && user?.role === Role.municipality) {
                     setValue(
                       'companyId',

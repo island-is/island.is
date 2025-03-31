@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client'
-import gql from 'graphql-tag'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, useContext } from 'react'
@@ -18,29 +17,11 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
+import {
+  CreateSkilavottordRecyclingPartnerMutation,
+  SkilavottordRecyclingPartnersQuery,
+} from '@island.is/skilavottord-web/graphql'
 import { RecyclingCompanyForm } from '../components'
-import { SkilavottordRecyclingPartnersQuery } from '@island.is/skilavottord-web/graphql'
-
-export const CreateSkilavottordRecyclingPartnerMutation = gql`
-  mutation createSkilavottordRecyclingPartnerMutation(
-    $input: CreateRecyclingPartnerInput!
-  ) {
-    createSkilavottordRecyclingPartner(input: $input) {
-      companyId
-      companyName
-      email
-      nationalId
-      address
-      postnumber
-      city
-      website
-      phone
-      active
-      isMunicipality
-      municipalityId
-    }
-  }
-`
 
 type FormData = {
   municipalityId?: string | { value?: string }

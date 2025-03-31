@@ -29,7 +29,7 @@ import {
   SkilavottordRecyclingPartnersQuery,
   SkilavottordRecyclingPartnerQuery,
   UpdateSkilavottordRecyclingPartnerMutation,
-} from '@island.is/skilavottord-web/graphql'
+} from '@island.is/skilavottord-web/graphql/queries'
 
 const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   const methods = useForm({
