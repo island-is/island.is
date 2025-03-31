@@ -74,17 +74,26 @@ const MainOtherContactSchema = z
     { path: ['person', 'nationalId'], params: error.errorSameAsApplicant },
   )
 
-const OtherContactSchema = z.object({
-  person: z.object({
-    nationalId: z
-      .string()
-      .min(1)
-      .refine((nationalId) => kennitala.isValid(nationalId)),
-    name: z.string().min(1),
-    email: z.string().min(1),
-    phone: z.string().min(1),
-  }),
-})
+const OtherContactSchema = z
+  .object({
+    person: z.object({
+      nationalId: z
+        .string()
+        .min(1)
+        .refine((nationalId) => kennitala.isValid(nationalId)),
+      name: z.string().min(1),
+      email: z.string().min(1),
+      phone: z.string().min(1),
+    }),
+    applicantNationalId: z.string().optional(),
+  })
+  .refine(
+    ({ person, applicantNationalId }) => {
+      if (person?.nationalId === applicantNationalId) return false
+      return true
+    },
+    { path: ['person', 'nationalId'], params: error.errorSameAsApplicant },
+  )
 
 const SelectionSchema = z
   .object({

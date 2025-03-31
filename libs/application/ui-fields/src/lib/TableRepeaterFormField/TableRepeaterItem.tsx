@@ -4,6 +4,7 @@ import {
   AsyncSelectField,
   FieldComponents,
   FieldTypes,
+  HiddenInputField,
   RepeaterItem,
   RepeaterOptionValue,
 } from '@island.is/application/types'
@@ -22,6 +23,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { NationalIdWithName } from '@island.is/application/ui-components'
 import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormField'
+import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
 
 interface ItemFieldProps {
   application: Application
@@ -91,6 +93,8 @@ export const Item = ({
   let Component: React.ComponentType<any>
   if (component === 'selectAsync') {
     Component = AsyncSelectFormField
+  } else if (component === 'hiddenInput') {
+    Component = HiddenInputFormField
   } else {
     Component = componentMapper[component]
   }
@@ -238,6 +242,11 @@ export const Item = ({
       (getValueViaPath(application.answers, id) as string) ??
       getDefaultValue(item, application, activeValues)
   }
+  if (component === 'hiddenInput') {
+    defaultVal =
+      getValueViaPath(application.answers, id) ??
+      getDefaultValue(item, application, activeValues)
+  }
 
   let clearOnChangeVal: string[] | undefined
   if (typeof clearOnChange === 'function') {
@@ -284,6 +293,18 @@ export const Item = ({
     }
   }
 
+  let hiddenFieldProps: HiddenInputField | undefined
+  if (component === 'hiddenInput') {
+    hiddenFieldProps = {
+      id: id,
+      title: label,
+      type: FieldTypes.HIDDEN_INPUT,
+      component: FieldComponents.HIDDEN_INPUT,
+      children: undefined,
+      defaultValue: defaultVal,
+    }
+  }
+
   if (
     typeof condition === 'function'
       ? condition && !condition(application, activeValues)
@@ -308,34 +329,44 @@ export const Item = ({
           }}
         />
       )}
-      {!(component === 'selectAsync' && selectAsyncProps) && (
-        <Component
-          id={id}
-          name={id}
-          label={formatText(label, application, formatMessage)}
-          options={translatedOptions}
-          placeholder={formatText(placeholder, application, formatMessage)}
-          split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
-          error={getFieldError(itemId)}
-          control={control}
-          readOnly={readonlyVal}
-          disabled={disabledVal}
-          required={requiredVal}
-          isClearable={isClearableVal}
-          defaultValue={defaultVal}
-          backgroundColor={backgroundColor}
-          onChange={() => {
-            if (error) {
-              clearErrors(id)
-            }
-          }}
+      {component === 'hiddenInput' && hiddenFieldProps && (
+        <HiddenInputFormField
           application={application}
-          large={true}
-          clearOnChange={clearOnChangeVal}
-          setOnChange={setOnChangeFunc}
-          {...props}
+          error={getFieldError(itemId)}
+          field={{
+            ...hiddenFieldProps,
+          }}
         />
       )}
+      {!(component === 'selectAsync' && selectAsyncProps) &&
+        !(component === 'hiddenInput' && hiddenFieldProps) && (
+          <Component
+            id={id}
+            name={id}
+            label={formatText(label, application, formatMessage)}
+            options={translatedOptions}
+            placeholder={formatText(placeholder, application, formatMessage)}
+            split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
+            error={getFieldError(itemId)}
+            control={control}
+            readOnly={readonlyVal}
+            disabled={disabledVal}
+            required={requiredVal}
+            isClearable={isClearableVal}
+            defaultValue={defaultVal}
+            backgroundColor={backgroundColor}
+            onChange={() => {
+              if (error) {
+                clearErrors(id)
+              }
+            }}
+            application={application}
+            large={true}
+            clearOnChange={clearOnChangeVal}
+            setOnChange={setOnChangeFunc}
+            {...props}
+          />
+        )}
     </GridColumn>
   )
 }

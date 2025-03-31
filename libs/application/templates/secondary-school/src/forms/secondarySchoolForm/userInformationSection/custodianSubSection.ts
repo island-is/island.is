@@ -125,6 +125,12 @@ export const custodianSubSection = buildSubSection({
               emailLabel: userInformation.otherContact.email,
               emailRequired: true,
             },
+            applicantNationalId: {
+              component: 'hiddenInput',
+              defaultValue: (application: Application) => {
+                return application.applicant
+              },
+            },
           },
         }),
       ],
