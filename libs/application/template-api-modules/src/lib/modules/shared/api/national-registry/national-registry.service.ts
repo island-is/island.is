@@ -14,6 +14,7 @@ import {
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
 import { AssetsXRoadService } from '@island.is/api/domains/assets'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
@@ -23,6 +24,7 @@ import { EES } from './EES'
 export class NationalRegistryService extends BaseTemplateApiService {
   constructor(
     private readonly nationalRegistryApi: NationalRegistryClientService,
+    private readonly nationalRegistryApiV3: NationalRegistryV3ApplicationsClientService,
     private readonly assetsXRoadService: AssetsXRoadService,
   ) {
     super('NationalRegistry')
@@ -413,6 +415,38 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }
 
   async getSpouse({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouse | null> {
+    const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
+      auth.nationalId,
+    )
+    const spouseBirthPlace = cohabitationInfo
+      ? await this.nationalRegistryApi.getBirthplace(
+          cohabitationInfo.spouseNationalId,
+        )
+      : undefined
+    const spouseIndividual = cohabitationInfo
+      ? await this.getIndividual(cohabitationInfo.spouseNationalId)
+      : undefined
+
+    return (
+      cohabitationInfo && {
+        nationalId: cohabitationInfo.spouseNationalId,
+        name: cohabitationInfo.spouseName,
+        maritalStatus: cohabitationInfo.cohabitationCode,
+        lastModified: cohabitationInfo.lastModified,
+        birthplace: spouseBirthPlace && {
+          dateOfBirth: spouseBirthPlace.birthdate,
+          location: spouseBirthPlace.locality,
+          municipalityCode: spouseBirthPlace.municipalityNumber,
+        },
+        citizenship: spouseIndividual?.citizenship,
+        address: spouseIndividual?.address,
+      }
+    )
+  }
+
+  async getSpouseV3({
     auth,
   }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouse | null> {
     const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(

@@ -1,0 +1,19 @@
+import { Module } from '@nestjs/common'
+
+import { SharedTemplateAPIModule } from '../../shared'
+
+import { UnemploymentBenefitsService } from './unemployment-benefits.service'
+import { ApplicationsNotificationsModule } from '../../../notification/notifications.module'
+import { WorkMachinesClientModule } from '@island.is/clients/work-machines'
+import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
+@Module({
+  imports: [
+    SharedTemplateAPIModule,
+    ApplicationsNotificationsModule,
+    WorkMachinesClientModule,
+    DrivingLicenseApiModule,
+  ],
+  providers: [UnemploymentBenefitsService],
+  exports: [UnemploymentBenefitsService],
+})
+export class UnemploymentBenefitsModule {}

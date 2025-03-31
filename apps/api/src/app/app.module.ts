@@ -452,6 +452,7 @@ const environment = getConfig
         emailModuleConfig,
         VerdictsClientConfig,
         SecondarySchoolClientConfig,
+        NationalRegistryV3ApplicationsClientConfig,
       ],
     }),
   ],

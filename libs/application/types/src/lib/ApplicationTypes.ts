@@ -85,6 +85,7 @@ export enum ApplicationTypes {
   EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
   EXAMPLE_INPUTS = 'ExampleInputs',
   EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
+  UNEMPLOYMENT_BENEFITS = 'UnemploymentBenefits',
 }
 
 export const ApplicationConfigurations = {
@@ -435,5 +436,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.SECONDARY_SCHOOL]: {
     slug: 'framhaldsskoli',
     translation: 'ss.application',
+  },
+  [ApplicationTypes.UNEMPLOYMENT_BENEFITS]: {
+    slug: 'atvinnuleysisbaetur',
+    translation: 'vmst.ub.application',
   },
 }

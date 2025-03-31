@@ -65,6 +65,8 @@ import { UserNotificationClientConfig } from '@island.is/clients/user-notificati
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
+import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
+import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 
 @Module({
   imports: [
@@ -129,6 +131,8 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         NationalRegistryV3ClientConfig,
         SeminarsClientConfig,
         SecondarySchoolClientConfig,
+        WorkMachinesClientConfig,
+        NationalRegistryV3ApplicationsClientConfig,
       ],
     }),
   ],
