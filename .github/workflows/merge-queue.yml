@@ -274,7 +274,7 @@ jobs:
           commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
       - name: Update judicial system
         id: judicial-system
-        if: ${{ github.event.merge_group.base_ref == 'refs/heads/main' }}
+        if: ${{ github.event.merge_group.base_ref == 'refs/heads/main' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]'  }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHOULD_DEPLOY_JUDICIAL: true
