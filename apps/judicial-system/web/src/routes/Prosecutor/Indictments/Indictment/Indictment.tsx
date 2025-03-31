@@ -191,10 +191,9 @@ const Indictment = () => {
         return
       }
 
-      // If the user manually selected suspesion and
-      // the "driving without ever having license" suspension offense is not being added,
+      // If the user manually selected suspesion and a suspension offense is not being added,
       // then we have nothing to do
-      // Note the if the "driving without ever having license" offense changes the demand text
+      // Note that adding the "driving without ever having license" offense changes the demand text
       if (
         prevSuspensionOffenses.size === 0 &&
         prevRequestDriversLicenseSuspension &&
