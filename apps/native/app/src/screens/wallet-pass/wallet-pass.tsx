@@ -42,6 +42,7 @@ import { useLocale } from '../../hooks/use-locale'
 import {
   BARCODE_MAX_WIDTH,
   INFORMATION_BASE_TOP_SPACING,
+  SHOW_INFO_ALERT_TYPES,
 } from './wallet-pass.constants'
 
 const getImageFromRawData = (rawData: string) => {
@@ -228,10 +229,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     expireDate
   )
   const showInfoAlert =
-    licenseType === GenericLicenseType.PCard ||
-    licenseType === GenericLicenseType.Ehic ||
-    licenseType === GenericLicenseType.Passport ||
-    licenseType === GenericLicenseType.IdentityDocument
+    licenseType && SHOW_INFO_ALERT_TYPES.includes(licenseType)
 
   const alertMessageIds = showInfoAlert
     ? getAlertMessageIds(
@@ -538,7 +536,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               />
             </View>
           )}
-          {/* Show expire warning if is Passport or IdentityDocument and license is about to expire */}
+          {/* Show expire warning if license is Passport or IdentityDocument and it is about to expire */}
           {expireWarning &&
           (licenseType === GenericLicenseType.Passport ||
             licenseType === GenericLicenseType.IdentityDocument) ? (
