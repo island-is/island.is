@@ -26,10 +26,6 @@ export const usePaymentStatus = (applicationId: string): UsePaymentStatus => {
     fetchPolicy: 'network-only',
   })
 
-  console.log('=========================================')
-  console.log('polling paymentStatus', JSON.stringify(data, null, 2))
-  console.log('=========================================')
-
   const paymentStatus: ApplicationPayment = useMemo(() => {
     return (
       data?.applicationPaymentStatus ?? {

@@ -343,23 +343,13 @@ export class PaymentFlowService {
         },
       }
 
-      const res = await fetch(paymentFlow.onUpdateUrl, {
+      await fetch(paymentFlow.onUpdateUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updateBody),
       })
-
-      //Trigger deployment
-
-      console.log('=========================================')
-      console.log('paymentflowupdate')
-      console.log('updateBody', JSON.stringify(updateBody, null, 2))
-      console.log('res.status', res.status)
-      console.log('res.statusText', res.statusText)
-      console.log('res.text', await res.text())
-      console.log('=========================================')
     } catch (e) {
       this.logger.error(
         `Failed to notify onUpdateUrl (${update.paymentFlowId})`,
