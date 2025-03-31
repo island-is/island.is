@@ -21,6 +21,7 @@ import {
   UserNotificationEagerClientModule,
 } from '@island.is/clients/user-notification'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { PaymentsApiClientConfig } from '@island.is/clients/payments'
         ApplicationFilesConfig,
         FileStorageConfig,
         PaymentsApiClientConfig,
+        FeatureFlagConfig,
       ],
     }),
   ],
