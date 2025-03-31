@@ -55,9 +55,7 @@ export const getRestrictionTagVariant = (
   }
 }
 
-export const fileSize = (bytes?: number) => {
-  if (!bytes) return ''
-
+export const fileSize = (bytes: number) => {
   const kb = Math.ceil(bytes / 1024)
   return kb >= 10000 ? `${kb.toString().substring(0, 2)}MB` : `${kb}KB`
 }
