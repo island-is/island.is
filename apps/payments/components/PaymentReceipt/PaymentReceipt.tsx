@@ -3,9 +3,9 @@ import format from 'date-fns/format'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { formatCurrency } from '@island.is/shared/utils'
 
 import { generic } from '../../messages'
-import { todoCallGlobalFormatUtilFunction } from '../../utils'
 
 interface PaymentReceiptProps {
   productTitle: string
@@ -37,7 +37,7 @@ export const PaymentReceipt = (props: PaymentReceiptProps) => {
           </Text>
           <Text variant="medium" textAlign="left">
             {key === 'amount'
-              ? todoCallGlobalFormatUtilFunction(props[key])
+              ? formatCurrency(props[key])
               : key === 'paidAt'
               ? format(new Date(props[key]), 'yyyy-MM-dd HH:MM')
               : props[key]}

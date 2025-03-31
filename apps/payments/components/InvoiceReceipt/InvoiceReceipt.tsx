@@ -1,11 +1,10 @@
 import type { MessageDescriptor } from 'react-intl'
-import format from 'date-fns/format'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { formatCurrency } from '@island.is/shared/utils'
 
 import { generic } from '../../messages'
-import { todoCallGlobalFormatUtilFunction } from '../../utils'
 
 interface InvoiceReceiptProps {
   productTitle: string
@@ -39,7 +38,7 @@ export const InvoiceReceipt = (props: InvoiceReceiptProps) => {
           </Text>
           <Text variant="medium" textAlign="left">
             {key === 'amount'
-              ? todoCallGlobalFormatUtilFunction(props[key])
+              ? formatCurrency(props[key])
               : key === 'payerNationalId'
               ? `${props[key].slice(0, 6)}-${props[key].slice(6, 10)}`
               : props[key]}
