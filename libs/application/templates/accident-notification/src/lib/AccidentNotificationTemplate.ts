@@ -395,10 +395,10 @@ export default AccidentNotificationTemplate
 
 const getNationalIdOfReviewer = (application: Application) => {
   try {
-    const accidentType = getValueViaPath(
+    const accidentType = getValueViaPath<AccidentTypeEnum>(
       application.answers,
       'accidentType',
-    ) as AccidentTypeEnum
+    )
     const whoIsTheNotificationFor = getValueViaPath(
       application.answers,
       'whoIsTheNotificationFor.answer',
