@@ -42,6 +42,7 @@ import {
   ADVERTS_QUERY,
   MAIN_CATEGORIES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
+import { ORGANIZATION_SLUG } from './constants'
 import { m } from './messages'
 
 const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
@@ -55,6 +56,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
 
   const baseUrl = linkResolver('ojoihome', [], locale).href
   const searchUrl = linkResolver('ojoisearch', [], locale).href
+  const readMoreUrl = linkResolver('ojoiabout', [], locale).href
   const categoriesUrl = linkResolver('ojoicategories', [], locale).href
 
   const breadcrumbItems = [
@@ -83,6 +85,8 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
           searchUrl={searchUrl}
           shortcutsTitle={formatMessage(m.home.shortcuts)}
           featuredImage={formatMessage(m.home.featuredImage)}
+          buttonUrl={readMoreUrl}
+          buttonTitle={formatMessage(m.home.readMore)}
           quickLinks={[
             {
               title: 'A deild',
@@ -230,8 +234,6 @@ const OJOIHome: CustomScreen<OJOIHomeProps> = ({
 }
 
 OJOIHome.getProps = async ({ apolloClient, locale }) => {
-  const organizationSlug = 'stjornartidindi'
-
   const [
     {
       data: { officialJournalOfIcelandAdverts },
@@ -263,7 +265,7 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: organizationSlug,
+          slug: ORGANIZATION_SLUG,
           lang: locale as ContentLanguage,
         },
       },

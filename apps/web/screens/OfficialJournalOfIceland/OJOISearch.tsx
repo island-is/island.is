@@ -59,6 +59,7 @@ import {
 } from '../queries/OfficialJournalOfIceland'
 import { useAdverts } from './hooks'
 import { m } from './messages'
+import { ORGANIZATION_SLUG } from './constants'
 
 type OJOISearchParams = {
   q: string
@@ -501,8 +502,6 @@ const OJOISearch: CustomScreen<OJOISearchProps> = ({
 }
 
 OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
-  const organizationSlug = 'stjornartidindi'
-
   const getStringFromQuery = (key?: string | string[]) => {
     if (typeof key === 'string') {
       return key
@@ -633,7 +632,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: organizationSlug,
+          slug: ORGANIZATION_SLUG,
           lang: locale as ContentLanguage,
         },
       },
