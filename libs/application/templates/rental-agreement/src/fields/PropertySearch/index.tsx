@@ -19,6 +19,8 @@ import {
 import { registerProperty } from '../../lib/messages'
 import {
   input,
+  roomsInput,
+  sizeInput,
   tableHeadingCell,
   tableCell,
   dropdownTableCell,
@@ -38,8 +40,14 @@ import {
   HmsSearchAddress,
   HmsPropertyInfo,
   HmsPropertyInfoInput,
-  Unit,
+  Unit as OriginalUnit,
 } from '@island.is/api/schema'
+
+interface Unit extends OriginalUnit {
+  checked?: boolean
+  changedSize?: number
+  changedRooms?: number
+}
 
 interface Props extends FieldBaseProps {
   field: CustomField
@@ -68,10 +76,10 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     storedValue?.checkedUnits || {},
   )
   const [unitSizeChangeValue, setUnitSizeChangeValue] = useState<
-    Record<string, string>
+    Record<string, number>
   >(storedValue?.changedValueOfUnitSize || {})
-  const [unitRoomsChangeValue, setUnitRoomsChangeValue] = useState<
-    Record<string, string>
+  const [changedRoomsValue, setChangedRoomsValue] = useState<
+    Record<string, number>
   >(storedValue?.changedValueOfUnitRooms || {})
 
   const [selectedAddress, setSelectedAddress] = useState<
@@ -106,6 +114,29 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       setSearchOptions([])
     }
   }, [searchTerm])
+
+  useEffect(() => {
+    // Restore tableExpanded based on checked units in storedValue.units
+    if (storedValue?.units) {
+      const expandedTables = storedValue.units.reduce(
+        (acc: Record<string, boolean>, unit: Unit) => {
+          if (unit.checked) {
+            if (unit.propertyCode) {
+              acc[unit.propertyCode] = true
+            }
+          }
+          return acc
+        },
+        {} as Record<string, boolean>,
+      )
+      setTableExpanded(expandedTables)
+    }
+  }, [storedValue])
+
+  // Clear inital errors on mount
+  useEffect(() => {
+    clearErrors()
+  }, [])
 
   const [hmsSearch, { loading: searchLoading }] = useLazyQuery<
     Query,
@@ -148,49 +179,63 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   }
 
   const handleCheckboxChange = (unit: Unit, checked: boolean) => {
-    const units = checked
-      ? storedValue.units?.concat({ ...unit, checked: true }) ?? [
-          { ...unit, checked: true },
-        ]
-      : storedValue.units?.filter((u: Unit) => u.unitCode !== unit.unitCode)
+    const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+
+    const chosenUnits = checked
+      ? [...(storedValue?.units || []), { ...unit, checked: true }]
+      : (storedValue?.units || []).filter((u: Unit) => {
+          const storedUnitKey = `${u.propertyCode}_${u.unitCode}`
+          return storedUnitKey !== unitKey
+        })
+
+    const updateCheckedUnits = {
+      ...checkedUnits,
+      [unitKey]: checked,
+    }
 
     setValue(id, {
       ...storedValue,
-      units,
-      checkedUnits: {
-        [unit.unitCode ?? '']: checked,
-      },
+      units: chosenUnits,
     })
 
-    setCheckedUnits((prev) => ({
-      ...prev,
-      [unit.unitCode ?? '']: checked,
-    }))
+    setCheckedUnits(updateCheckedUnits)
   }
 
-  const handleUnitSizeChange = (unitId: string, value: string) => {
+  const isUnitChecked = (unit: Unit): boolean => {
+    const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+    return (
+      storedValue?.units?.some(
+        (u: Unit) =>
+          `${u.propertyCode}_${u.unitCode}` === unitKey && u.checked === true,
+      ) || false
+    )
+  }
+
+  const handleUnitSizeChange = (unit: Unit, value: number) => {
+    const unitKey = `${unit.propertyCode}_${unit.unitCode}`
     setUnitSizeChangeValue((prev) => {
       const newValues = {
         ...prev,
-        [unitId]: value,
+        [unitKey]: value,
       }
       setValue(id, {
         ...getValues(id),
-        unitSizeChangedValue: newValues,
+        changedUnitSize: newValues,
       })
       return newValues
     })
   }
 
-  const handleUnitRoomsChange = (unitId: string, value: string) => {
-    setUnitRoomsChangeValue((prev) => {
+  const handleUnitRoomsChange = (unit: Unit, value: number) => {
+    setChangedRoomsValue((prev) => {
+      const unitKey = `${unit.propertyCode}_${unit.unitCode}`
       const newValues = {
         ...prev,
-        [unitId]: value,
+        [unitKey]: value,
       }
       setValue(id, {
         ...getValues(id),
-        unitRoomsChangedValue: newValues,
+        changedUnitRooms: newValues,
       })
       return newValues
     })
@@ -343,7 +388,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                               className: `${tableCell} ${tableCellSize}`,
                             }}
                           >
-                            {`${property.size} m²`}
+                            {`${property.size} ${property.sizeUnit}`}
                           </T.Data>
                           <T.Data
                             box={{
@@ -360,125 +405,131 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                                 return (
                                   <Fragment key={appraisalUnit.unitCode}>
                                     {appraisalUnit.units &&
-                                      appraisalUnit.units.map((unit) => (
-                                        <tr key={unit.unitCode}>
-                                          <T.Data
-                                            colSpan={5}
-                                            box={{
-                                              paddingLeft: 0,
-                                              paddingRight: 0,
-                                              paddingTop: 0,
-                                              paddingBottom: 0,
-                                              borderColor: 'transparent',
-                                            }}
-                                          >
-                                            <div
-                                              className={`${hiddenTableRow} ${
-                                                tableExpanded[
-                                                  unit.propertyCode ?? 0
-                                                ] && hiddenTableRowExpanded
-                                              }`}
+                                      appraisalUnit.units.map((unit) => {
+                                        const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+                                        return (
+                                          <tr key={unit.unitCode}>
+                                            <T.Data
+                                              colSpan={5}
+                                              box={{
+                                                paddingLeft: 0,
+                                                paddingRight: 0,
+                                                paddingTop: 0,
+                                                paddingBottom: 0,
+                                                borderColor: 'transparent',
+                                              }}
                                             >
-                                              <T.Data
-                                                box={{
-                                                  className: `${dropdownTableCell} ${tableCellExpand}`,
-                                                }}
-                                              ></T.Data>
-                                              <T.Data
-                                                box={{
-                                                  className: `${dropdownTableCell} ${tableCellFastNum}`,
-                                                }}
+                                              <div
+                                                className={`${hiddenTableRow} ${
+                                                  tableExpanded[
+                                                    unit.propertyCode ?? 0
+                                                  ] && hiddenTableRowExpanded
+                                                }`}
                                               >
-                                                <Checkbox
-                                                  id={unit.unitCode ?? ''}
-                                                  name={
-                                                    unit.propertyUsageDescription ??
-                                                    ''
-                                                  }
-                                                  label={
-                                                    unit.propertyUsageDescription ??
-                                                    ''
-                                                  }
-                                                  checked={
-                                                    checkedUnits[
-                                                      unit.unitCode ?? ''
-                                                    ]
-                                                  }
-                                                  onChange={(event) =>
-                                                    handleCheckboxChange(
+                                                <T.Data
+                                                  box={{
+                                                    className: `${dropdownTableCell} ${tableCellExpand}`,
+                                                  }}
+                                                ></T.Data>
+                                                <T.Data
+                                                  box={{
+                                                    className: `${dropdownTableCell} ${tableCellFastNum}`,
+                                                  }}
+                                                >
+                                                  <Checkbox
+                                                    id={unit.unitCode ?? ''}
+                                                    name={
+                                                      unit.propertyUsageDescription ??
+                                                      ''
+                                                    }
+                                                    label={
+                                                      unit.propertyUsageDescription ??
+                                                      ''
+                                                    }
+                                                    checked={isUnitChecked(
                                                       unit,
-                                                      event.currentTarget
-                                                        .checked,
-                                                    )
-                                                  }
-                                                />
-                                              </T.Data>
-                                              <T.Data
-                                                box={{
-                                                  className: `${dropdownTableCell} ${tableCellMerking}`,
-                                                }}
-                                              >
-                                                {unit.unitCode ?? ''}
-                                              </T.Data>
-                                              <T.Data
-                                                box={{
-                                                  className: `${dropdownTableCell} ${tableCellSize}`,
-                                                }}
-                                              >
-                                                <input
-                                                  className={input}
-                                                  type="text"
-                                                  name="propertySize"
-                                                  value={
-                                                    unitSizeChangeValue[
-                                                      unit.unitCode ?? ''
-                                                    ] ||
-                                                    `${unit.size} ${unit.sizeUnit}`
-                                                  }
-                                                  onChange={(e) =>
-                                                    handleUnitSizeChange(
-                                                      unit.unitCode ?? '',
-                                                      e.target.value,
-                                                    )
-                                                  }
-                                                  disabled={
-                                                    !checkedUnits[
-                                                      unit.unitCode ?? ''
-                                                    ]
-                                                  }
-                                                />
-                                              </T.Data>
-                                              <T.Data
-                                                box={{
-                                                  className: `${dropdownTableCell} ${tableCellNumOfRooms}`,
-                                                }}
-                                              >
-                                                <input
-                                                  className={input}
-                                                  type="text"
-                                                  name="numOfRooms"
-                                                  value={
-                                                    unitRoomsChangeValue[
-                                                      unit.unitCode ?? ''
-                                                    ] || ''
-                                                  }
-                                                  onChange={(e) =>
-                                                    handleUnitRoomsChange(
-                                                      unit.unitCode ?? '',
-                                                      e.target.value,
-                                                    )
-                                                  }
-                                                  disabled={
-                                                    !checkedUnits[
-                                                      unit.unitCode ?? ''
-                                                    ]
-                                                  }
-                                                />
-                                              </T.Data>
-                                            </div>
-                                          </T.Data>
-                                        </tr>
-                                      ))}
+                                                    )}
+                                                    onChange={(event) =>
+                                                      handleCheckboxChange(
+                                                        unit,
+                                                        event.currentTarget
+                                                          .checked,
+                                                      )
+                                                    }
+                                                  />
+                                                </T.Data>
+                                                <T.Data
+                                                  box={{
+                                                    className: `${dropdownTableCell} ${tableCellMerking}`,
+                                                  }}
+                                                >
+                                                  {unit.unitCode ?? ''}
+                                                </T.Data>
+                                                <T.Data
+                                                  box={{
+                                                    className: `${dropdownTableCell} ${tableCellSize}`,
+                                                  }}
+                                                >
+                                                  <div
+                                                    style={{
+                                                      display: 'flex',
+                                                      alignItems: 'center',
+                                                    }}
+                                                  >
+                                                    <input
+                                                      className={`${input} ${sizeInput}`}
+                                                      type="number"
+                                                      name="propertySize"
+                                                      value={
+                                                        unitSizeChangeValue[
+                                                          unitKey
+                                                        ] || `${unit.size}`
+                                                      }
+                                                      onChange={(e) =>
+                                                        handleUnitSizeChange(
+                                                          unit,
+                                                          Number(
+                                                            e.target.value,
+                                                          ),
+                                                        )
+                                                      }
+                                                      disabled={
+                                                        !checkedUnits[unitKey]
+                                                      }
+                                                    />
+                                                    <span>{unit.sizeUnit}</span>
+                                                  </div>
+                                                </T.Data>
+                                                <T.Data
+                                                  box={{
+                                                    className: `${dropdownTableCell} ${tableCellNumOfRooms}`,
+                                                  }}
+                                                >
+                                                  <input
+                                                    className={`${input} ${roomsInput}`}
+                                                    type="number"
+                                                    name="numOfRooms"
+                                                    value={
+                                                      changedRoomsValue[
+                                                        unitKey
+                                                      ] || ''
+                                                    }
+                                                    onChange={(e) =>
+                                                      handleUnitRoomsChange(
+                                                        unit,
+                                                        Number(e.target.value),
+                                                      )
+                                                    }
+                                                    disabled={
+                                                      !checkedUnits[unitKey]
+                                                    }
+                                                  />
+                                                </T.Data>
+                                              </div>
+                                            </T.Data>
+                                          </tr>
+                                        )
+                                      })}
                                   </Fragment>
                                 )
                               })}
