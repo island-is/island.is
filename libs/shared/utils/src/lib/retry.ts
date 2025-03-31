@@ -1,4 +1,10 @@
-import type { Logger } from '@island.is/logging'
+// Cannot import import type { Logger } from '@island.is/logging'
+// results in `A project tagged with "scope:js" can only depend on libs tagged with "lib:js"`
+interface Logger {
+  error: (message: string) => void
+  warn: (message: string) => void
+  info: (message: string) => void
+}
 
 interface RetryConfig {
   maxRetries?: number
