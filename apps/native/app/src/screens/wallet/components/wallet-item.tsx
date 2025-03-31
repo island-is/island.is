@@ -33,7 +33,7 @@ export const WalletItem = React.memo(
       type === GenericLicenseType.Passport ||
       type === GenericLicenseType.IdentityDocument
 
-    // We receive an "empty" passport item if the user has no passport or identity document
+    // We receive an "empty" license item if the user has no passport or identity document
     const noLicense =
       isPassportOrIdentityDocument &&
       !item?.payload?.metadata?.licenseNumber &&
