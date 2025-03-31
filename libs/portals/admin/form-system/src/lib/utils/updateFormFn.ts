@@ -7,7 +7,7 @@ import {
 } from '@apollo/client'
 import { FormSystemForm } from '@island.is/api/schema'
 import { ControlState } from '../../hooks/controlReducer'
-import { UpdateFormResponse } from '@island.is/form-system/dto'
+import { UpdateFormResponse } from '@island.is/form-system/shared'
 
 export const updateFormFn = async (
   control: ControlState,

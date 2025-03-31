@@ -21,7 +21,7 @@ import {
 import { FormsService } from './forms.service'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
-import { UpdateFormResponse } from '@island.is/form-system/dto'
+import { UpdateFormResponse } from '@island.is/form-system/shared'
 import {
   CurrentUser,
   IdsUserGuard,

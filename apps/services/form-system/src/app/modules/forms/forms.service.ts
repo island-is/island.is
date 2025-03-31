@@ -17,7 +17,10 @@ import { FormResponseDto } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
-import { UpdateFormResponse, UpdateFormError } from '@island.is/form-system/dto'
+import {
+  UpdateFormResponse,
+  UpdateFormError,
+} from '@island.is/form-system/shared'
 import {
   CertificationType,
   CertificationTypes,

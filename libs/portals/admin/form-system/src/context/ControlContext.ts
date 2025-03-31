@@ -13,7 +13,7 @@ import {
   ItemType,
   NavbarSelectStatus,
 } from '../lib/utils/interfaces'
-import { UpdateFormResponse } from '@island.is/form-system/dto'
+import { UpdateFormResponse } from '@island.is/form-system/shared'
 
 export interface IControlContext {
   control: ControlState

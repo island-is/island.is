@@ -24,7 +24,7 @@ import {
   GetFormsInput,
   UpdateFormInput,
 } from '../../dto/form.input'
-import { UpdateFormResponse } from '@island.is/form-system/dto'
+import { UpdateFormResponse } from '@island.is/form-system/shared'
 import { Form, FormResponse } from '../../models/form.model'
 import {
   type OrganizationTitleByNationalIdDataLoader,
