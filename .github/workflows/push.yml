@@ -251,9 +251,8 @@ jobs:
       - name: Set up Docker Buildx with parallel capabilities
         uses: docker/setup-buildx-action@v3
         with:
-          config-inline: |
+          buildkitd-config-inline: |
             [worker.oci]
-            # Adjust this based on your runner capacity
             max-parallelism = 10
 
       - name: Check if cached buildx image exists
@@ -271,6 +270,8 @@ jobs:
           GIT_COMMIT_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
+          BUILD_CHUNKS='${{ steps.build_map.outputs.CHUNKS }}'
+          echo "$BUILD_CHUNKS"
 
           # Prepare common Docker build arguments
           SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
@@ -293,7 +294,6 @@ jobs:
           EXTRA_DOCKER_BUILD_ARGS="${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt"
 
           # Parse BUILD_CHUNKS and launch builds using BuildKit
-          BUILD_CHUNKS='${{ steps.build_map.outputs.CHUNKS }}'
 
           # Prepare all builds commands
           mkdir -p .buildkit-commands
