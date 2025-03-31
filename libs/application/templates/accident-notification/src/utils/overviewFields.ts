@@ -62,7 +62,7 @@ export const overviewFields = (isAssignee?: boolean) => {
           externalData,
           'submitApplication.data.documentId',
         )
-        return documentId ? true : false
+        return Boolean(documentId)
       },
       id: 'overview.alertMessage',
       alertType: 'info',
@@ -137,9 +137,7 @@ export const overviewFields = (isAssignee?: boolean) => {
     buildOverviewField({
       condition: (answers) => {
         const workplaceData = getWorkplaceData(answers)
-        return workplaceData && !isReportingOnBehalfOfEmployee(answers)
-          ? true
-          : false
+        return Boolean(workplaceData && !isReportingOnBehalfOfEmployee(answers))
       },
       id: 'overview.submit.workplaceData',
       backId: isAssignee
@@ -158,11 +156,11 @@ export const overviewFields = (isAssignee?: boolean) => {
     buildOverviewField({
       condition: (answers) => {
         const workplaceData = getWorkplaceData(answers)
-        return workplaceData &&
-          !isReportingOnBehalfOfEmployee(answers) &&
-          isFishermanAccident(answers)
-          ? true
-          : false
+        return Boolean(
+          workplaceData &&
+            !isReportingOnBehalfOfEmployee(answers) &&
+            isFishermanAccident(answers),
+        )
       },
       id: 'overview.submit.fishingCompanyData',
       backId: isAssignee ? undefined : 'fishingShipInfo',
@@ -177,11 +175,11 @@ export const overviewFields = (isAssignee?: boolean) => {
           answers,
           'isRepresentativeOfCompanyOrInstitue',
         )?.toString()
-        return workplaceData &&
-          !isReportingOnBehalfOfEmployee(answers) &&
-          companyOrInstitude !== YES
-          ? true
-          : false
+        return Boolean(
+          workplaceData &&
+            !isReportingOnBehalfOfEmployee(answers) &&
+            companyOrInstitude !== YES,
+        )
       },
       id: 'overview.submit.fishingCompanyRepresentative',
       backId: isAssignee

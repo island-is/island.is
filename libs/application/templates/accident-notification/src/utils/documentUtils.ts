@@ -277,7 +277,7 @@ export const missingDocuments = (answers: FormValue) => {
   if (
     injuryCertificate?.answer === AttachmentsEnum.SENDCERTIFICATELATER &&
     !hasAttachment(
-      getValueViaPath(answers, 'attachments.injuryCertificateFile.file)'),
+      getValueViaPath(answers, 'attachments.injuryCertificateFile.file'),
     )
   ) {
     missingDocuments.push(attachments.documentNames.injuryCertificate)
