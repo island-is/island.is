@@ -170,17 +170,16 @@ image:
 ingress:
   primary-alb:
     annotations:
-      kubernetes.io/ingress.class: 'nginx-external-alb'
-      nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+      kubernetes.io/ingress.class: 'nginx-internal-alb'
       nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
       nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
-      - host: 'application-payment-callback-xrd.staging01.devland.is'
+      - host: 'application-payment-callback-xrd.internal.staging01.devland.is'
         paths:
           - '/application-payment'
           - '/applications'
-      - host: 'application-callback-xrd.staging01.devland.is'
+      - host: 'application-callback-xrd.internal.staging01.devland.is'
         paths:
           - '/application-payment'
           - '/applications'
