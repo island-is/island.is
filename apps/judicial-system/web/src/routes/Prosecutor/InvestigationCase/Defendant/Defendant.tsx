@@ -93,7 +93,7 @@ const Defendant = () => {
     useContext(FormContext)
   const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
-  // This state is needed because type is initially set to OHTER on the
+  // This state is needed because type is initially set to OTHER on the
   // workingCase and we need to validate that the user selects an option
   // from the case type list to allow the user to continue.
   const [caseType, setCaseType] = useState<CaseType | null>()
