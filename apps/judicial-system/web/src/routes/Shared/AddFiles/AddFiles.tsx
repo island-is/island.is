@@ -27,6 +27,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { isCaseDefendantDefender } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { strings } from './AddFiles.strings'
 
@@ -53,7 +54,9 @@ const AddFiles: FC = () => {
   const { handleUpload } = useS3Upload(workingCase.id)
   const { sendNotification } = useCase()
 
-  const caseFileCategory = isDefenceUser(user)
+  const caseFileCategory = isCaseDefendantDefender(user, workingCase)
+    ? CaseFileCategory.DEFENDANT_CASE_FILE
+    : isCaseDefendantDefender(user, workingCase)
     ? CaseFileCategory.DEFENDANT_CASE_FILE
     : CaseFileCategory.PROSECUTOR_CASE_FILE
 
@@ -91,6 +94,7 @@ const AddFiles: FC = () => {
       uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
+    console.log({ uploadFiles })
 
     if (uploadResult !== 'NONE_SUCCEEDED') {
       // Some files were added successfully so we send a notification

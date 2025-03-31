@@ -8,6 +8,8 @@ import {
   Case,
   CaseAppealState,
   CaseCustodyRestrictions,
+  CivilClaimant,
+  Defendant,
   DefendantPlea,
   Gender,
   Notification,
@@ -166,5 +168,29 @@ export const shouldDisplayGeneratedPdfFiles = (theCase: Case, user?: User) =>
           normalizeAndFormatNationalId(user?.nationalId).includes(
             civilClaimant.spokespersonNationalId,
           ),
+      ),
+  )
+
+export const isCaseDefendantDefender = (
+  user?: User,
+  workingCase?: { defendants?: Defendant[] | null },
+) =>
+  workingCase?.defendants?.some(
+    (defendant) =>
+      defendant?.defenderNationalId &&
+      normalizeAndFormatNationalId(user?.nationalId).includes(
+        defendant.defenderNationalId,
+      ),
+  )
+
+export const isCaseCivilClaimantSpokesperson = (
+  user?: User,
+  workingCase?: { civilClaimants?: CivilClaimant[] | null },
+) =>
+  workingCase?.civilClaimants?.some(
+    (civilClaimant) =>
+      civilClaimant?.spokespersonNationalId &&
+      normalizeAndFormatNationalId(user?.nationalId).includes(
+        civilClaimant.spokespersonNationalId,
       ),
   )

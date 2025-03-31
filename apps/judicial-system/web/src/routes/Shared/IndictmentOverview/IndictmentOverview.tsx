@@ -42,7 +42,10 @@ import {
   Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { shouldDisplayGeneratedPdfFiles } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  isCaseDefendantDefender,
+  shouldDisplayGeneratedPdfFiles,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import {
@@ -127,30 +130,33 @@ const IndictmentOverview: FC = () => {
     workingCase.indictmentReviewer?.id === user?.id &&
     Boolean(!workingCase.indictmentReviewDecision)
 
-  const isDefenderOfDefendant = () =>
-    workingCase.defendants?.some(
-      (defendant) =>
-        defendant?.defenderNationalId &&
-        normalizeAndFormatNationalId(user?.nationalId).includes(
-          defendant.defenderNationalId,
-        ),
-    )
+  // const isCaseDefendantDefender = () =>
+  //   workingCase.defendants?.some(
+  //     (defendant) =>
+  //       defendant?.defenderNationalId &&
+  //       normalizeAndFormatNationalId(user?.nationalId).includes(
+  //         defendant.defenderNationalId,
+  //       ),
+  //   )
 
-  const isSpokespersonOfCivilClaimant = () =>
-    workingCase.civilClaimants?.some(
-      (civilClaimant) =>
-        civilClaimant?.spokespersonNationalId &&
-        normalizeAndFormatNationalId(user?.nationalId).includes(
-          civilClaimant.spokespersonNationalId,
-        ),
-    )
+  // const isCaseCivilClaimantSpokesperson = () =>
+  //   workingCase.civilClaimants?.some(
+  //     (civilClaimant) =>
+  //       civilClaimant?.spokespersonNationalId &&
+  //       normalizeAndFormatNationalId(user?.nationalId).includes(
+  //         civilClaimant.spokespersonNationalId,
+  //       ),
+  //   )
 
   const canAddFiles =
     !isCompletedCase(workingCase.state) &&
     isDefenceUser(user) &&
-    (isDefenderOfDefendant() || isSpokespersonOfCivilClaimant()) &&
+    (isCaseDefendantDefender(user, workingCase) ||
+      isCaseCivilClaimantSpokesperson(user, workingCase)) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT
+
+  // TODO: Get defendant_id or civilclaiman_id for case files so we can apply appropriate filterings
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
