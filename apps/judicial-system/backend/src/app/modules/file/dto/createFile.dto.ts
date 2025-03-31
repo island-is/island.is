@@ -69,4 +69,10 @@ export class CreateFileDto {
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly userGeneratedFilename?: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly fileRepresentative?: string
 }

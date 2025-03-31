@@ -16,7 +16,6 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   hasTrafficViolationSubtype,
-  IndictmentSubtype,
   isTrafficViolationCase,
   SubstanceMap,
 } from '@island.is/judicial-system/types'
@@ -27,8 +26,10 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  Gender,
   IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
+  IndictmentSubtype,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
@@ -209,6 +210,13 @@ export const IndictmentCount: FC<Props> = ({
   const { lawTag } = useIndictmentCounts()
   const { deleteOffense } = useOffenses()
 
+  // Use the gender of the single defendant if there is only one,
+  // otherwise default to male
+  const gender =
+    workingCase.defendants && workingCase.defendants.length === 1
+      ? workingCase.defendants[0].gender ?? Gender.MALE
+      : Gender.MALE
+
   const [
     vehicleRegistrationNumberErrorMessage,
     setVehicleRegistrationNumberErrorMessage,
@@ -269,16 +277,17 @@ export const IndictmentCount: FC<Props> = ({
       ? workingCase.crimeScenes[policeCaseNumber]
       : undefined
 
-    const incidentDescription = getIncidentDescription({
-      indictmentCount: {
+    const incidentDescription = getIncidentDescription(
+      {
         ...indictmentCount,
         ...update,
         ...(updatedOffenses ? { offenses: updatedOffenses } : {}),
       },
-      formatMessage,
+      gender,
       crimeScene,
-      subtypesRecord: workingCase.indictmentSubtypes,
-    })
+      formatMessage,
+      workingCase.indictmentSubtypes,
+    )
 
     onChange(
       indictmentCount.id,
