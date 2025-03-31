@@ -1,9 +1,31 @@
 import { gql } from '@apollo/client'
 
 export const VALIDATE_INSTRUCTOR_QUERY = gql`
-  query GetTypeByRegistrationNumber($input: ) {
-    validateInstructor($input:) {
+  query ValidateInstructor($input: ValidateInstructorInput!) {
+    validateInstructor(input: $input) {
       name
+      nationalId
+      categoriesMayTeach
+    }
+  }
+`
+
+export const EXAMINEE_ELIGIBILITY_QUERY = gql`
+  query ExamineeEligibility($input: ExamineeEligibilityInput!) {
+    getExamineeEligibility(input: $input) {
+      nationalId
+      isEligable
+      errorMsg
+      errorMsgEn
+    }
+  }
+`
+
+export const IS_COMPANY_VALID_QUERY = gql`
+  query IsCompanyValid($nationalId: String!) {
+    practicalExamIsCompanyValid(nationalId: $nationalId) {
+      nationalId
+      mayPayReceiveInvoice
     }
   }
 `

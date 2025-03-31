@@ -6,7 +6,9 @@ import {
   IndividualOrCompany,
   PaymentOptions,
   SelfOrOthers,
+  TrueOrFalse,
 } from '../utils/enums'
+import { instructor as mInstructor } from '../lib/messages'
 
 const InformationSchema = z
   .object({
@@ -162,19 +164,26 @@ const ExamineeSchema = z
   .array(
     z.object({
       nationalId: z.object({
-        nationalId: z.string().refine((nationalId) => {
-          return (
-            nationalId &&
-            nationalId.length !== 0 &&
-            kennitala.isValid(nationalId)
-          )
-        }),
+        nationalId: z.string().refine(
+          (nationalId) => {
+            return (
+              nationalId &&
+              nationalId.length !== 0 &&
+              kennitala.isValid(nationalId)
+              // TOOO validate age above 17
+            )
+          },
+          {
+            path: [''],
+          },
+        ),
         name: z.string().min(1).max(256),
       }),
       email: z.string().refine((email) => isValidEmail(email)),
       phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
       licenseNumber: z.string().optional(), // TODO(balli) Need validation rules from VER
       countryIssuer: z.string().min(1).max(256),
+      disabled: z.enum([TrueOrFalse.true, TrueOrFalse.false]).optional(),
     }),
   )
   .min(1)
@@ -194,9 +203,44 @@ const InstructorSchema = z
       }),
       email: z.string().refine((email) => isValidEmail(email)),
       phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
+      disabled: z.enum([TrueOrFalse.true, TrueOrFalse.false]).optional(),
     }),
   )
   .min(1)
+  .superRefine((data, ctx) => {
+    const emails = new Set()
+    const phones = new Set()
+    const nationalIds = new Set()
+
+    data.forEach((instructor, index) => {
+      if (emails.has(instructor.email)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: mInstructor.tableRepeater.duplicateError,
+          path: [index, 'email'], // Pointing to the specific instructor
+        })
+      }
+      if (phones.has(instructor.phone)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: mInstructor.tableRepeater.duplicateError,
+          path: [index, 'phone'],
+        })
+      }
+      if (nationalIds.has(instructor.nationalId.nationalId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: mInstructor.tableRepeater.duplicateError,
+          path: [index, 'nationalId', 'nationalId'],
+        })
+      }
+
+      // Add to sets after checking to ensure the first occurrence is allowed
+      emails.add(instructor.email)
+      phones.add(instructor.phone)
+      nationalIds.add(instructor.nationalId.nationalId)
+    })
+  })
 
 const ExamCategorySchema = z.object({
   nationalId: z.string().refine((nationalId) => {
@@ -222,10 +266,18 @@ const ExamCategorySchema = z.object({
   ),
 })
 
+const ExamLocationSchema = z.object({
+  address: z.string().min(1).max(128),
+  phone: z.string().refine((v) => isValidPhoneNumber(v)),
+  email: z.string().email(),
+  postalCode: z.string().min(3).max(3),
+})
+
 export const PracticalExamAnswersSchema = z.object({
   information: InformationSchema,
   examinees: ExamineeSchema,
   instructors: InstructorSchema,
+  examLocation: ExamLocationSchema,
   paymentArrangement: PaymentArrangementSchema,
   examCategory: z.array(ExamCategorySchema),
 })
@@ -234,3 +286,4 @@ export type PracticalExamAnswers = z.TypeOf<typeof PracticalExamAnswersSchema>
 export type PaymentArrangementType = z.TypeOf<typeof PaymentArrangementSchema>
 export type ExamineeType = z.TypeOf<typeof ExamineeSchema>
 export type ExamCategoryType = z.TypeOf<typeof ExamCategorySchema>
+export type InstructorType = z.TypeOf<typeof InstructorSchema>

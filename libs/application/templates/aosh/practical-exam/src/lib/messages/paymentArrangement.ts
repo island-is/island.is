@@ -34,7 +34,7 @@ export const paymentArrangement = {
       id: 'aosh.pe.application:paymentArrangement.labels.aggreementCheckbox#markdown',
       defaultMessage:
         'Ég hef kynnt mér [greiðslu- og viðskiptaskilmála](https://island.is/s/vinnueftirlitid/gjaldskra#greidslu-og-vidskiptaskilmalar) Vinnueftirlitsins',
-      description: 'Aggreement checkbox label on conclusion screen',
+      description: 'Aggreement checkbox label on paymentArrangement screen',
     },
     email: {
       id: 'aosh.pe.application:paymentArrangement.labels.email',

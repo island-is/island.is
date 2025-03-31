@@ -1,19 +1,14 @@
-// import { gql } from '@apollo/client'
-// import { IS_COMPANY_VALID } from '../graphql/queries'
-// import { useLazyQuery } from './useLazyQuery'
-// import { CompanyDTO } from '@island.is/clients/seminars-ver'
+import { IS_COMPANY_VALID_QUERY } from '../graphql/queries'
+import { useLazyQuery } from './useLazyQuery'
+import { CompanyDto } from '@island.is/clients/practical-exams-ver'
 
-// export const useLazyIsCompanyValid = () => {
-//   return useLazyQuery<
-//     {
-//       isCompanyValid: CompanyDTO[]
-//     },
-//     {
-//       nationalId: string
-//     }
-//   >(
-//     gql`
-//       ${IS_COMPANY_VALID}
-//     `,
-//   )
-// }
+export const useLazyIsCompanyValid = () => {
+  return useLazyQuery<
+    {
+      practicalExamIsCompanyValid: CompanyDto
+    },
+    {
+      nationalId: string
+    }
+  >(IS_COMPANY_VALID_QUERY)
+}

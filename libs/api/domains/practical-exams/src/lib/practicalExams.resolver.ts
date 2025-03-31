@@ -7,11 +7,15 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Args, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { PracticalExamsService } from './practicalExams.service'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { ValidateInstrutorInput } from './dto/validaInstructorInput.input'
+import { PracticalExamInstructor } from './models/practicalExamInstructor'
+import { CompanyValidationItem } from './models/companyValidation'
+import { ExamineeEligiblity } from './models/examineeEligibility'
+import { ExamineeEligibilityInput } from './dto/examineeEligibilityInput.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -19,7 +23,29 @@ import { ValidateInstrutorInput } from './dto/validaInstructorInput.input'
 export class PracticalExamsResolver {
   constructor(private readonly practicalExamsService: PracticalExamsService) {}
 
+  @Query(() => CompanyValidationItem, { name: 'practicalExamIsCompanyValid' })
+  @Audit()
+  async isCompanyValid(
+    @CurrentUser() auth: User,
+    @Args('nationalId') nationalId: string,
+  ) {
+    return this.practicalExamsService.isCompanyValid(auth, nationalId)
+  }
+
+  @Query(() => [ExamineeEligiblity])
+  @Audit()
+  async getExamineeEligibility(
+    @CurrentUser() auth: User,
+    @Args('input', {
+      type: () => ExamineeEligibilityInput,
+    })
+    input: ExamineeEligibilityInput,
+  ) {
+    return this.practicalExamsService.getExamineeEligibility(auth, input)
+  }
+
   @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => PracticalExamInstructor)
   @Audit()
   async validateInstructor(
     @CurrentUser() auth: User,

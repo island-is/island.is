@@ -33,8 +33,7 @@ export const shared = {
     prerequisiteTabTitle: {
       id: 'aosh.pe.application:shared.application.prerequisiteTabTitle',
       defaultMessage: 'Gagnaöflun',
-      description:
-        'Browser tab title for prerequisite section',
+      description: 'Browser tab title for prerequisite section',
     },
   }),
   labels: defineMessages({
@@ -57,6 +56,16 @@ export const shared = {
       id: 'aosh.pe.application:shared.labels.phone',
       defaultMessage: 'Símanúmer',
       description: `Label for the applicant's mobile phone number`,
+    },
+    postalCode: {
+      id: 'aosh.pe.application:shared.labels.postalCode',
+      defaultMessage: 'Póstfang',
+      description: `Label for postcode input`,
+    },
+    address: {
+      id: 'aosh.pe.application:shared.labels.address',
+      defaultMessage: 'Prófstaður / Heimilisfang',
+      description: 'Label for address of exam',
     },
   }),
 }

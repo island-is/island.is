@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildMultiField,
   buildSection,
@@ -8,7 +9,9 @@ import {
 import { examinee, shared } from '../../../lib/messages'
 import { getAllCountryCodes } from '@island.is/shared/utils'
 import { FormValue } from '@island.is/application/types'
-import { SelfOrOthers } from '../../../utils/enums'
+import { SelfOrOthers, TrueOrFalse } from '../../../utils/enums'
+import { submitExaminees } from '../../../utils/submitExaminees'
+import { ExamineeType } from '../../../lib/dataSchema'
 
 export const examineeSection = buildSection({
   id: 'examineeSection',
@@ -73,9 +76,52 @@ export const examineeSection = buildSection({
               phone: (value) => `${value.slice(0, 3)}-${value.slice(3)}`,
             },
           },
-          //onSubmitLoad: async ({apolloClient, application, tableItems}) => {
+          onSubmitLoad: async ({ apolloClient, application, tableItems }) => {
+            const validationPaths = await submitExaminees(
+              apolloClient,
+              application,
+              tableItems,
+            )
 
-          //}
+            return { dictionaryOfItems: validationPaths }
+          },
+        }),
+        buildCustomField({
+          id: 'examineesCSV',
+          doesNotRequireAnswer: true,
+          component: 'ExamineesCSVUploader',
+        }),
+        buildAlertMessageField({
+          id: 'examineesValidityError',
+          alertType: 'warning',
+          condition: (formValue: FormValue, _) => {
+            const examinees = getValueViaPath<ExamineeType>(
+              formValue,
+              'examinees',
+            )
+            const hasDisabled = examinees?.some(
+              (examinee) => examinee.disabled === TrueOrFalse.true,
+            )
+
+            return hasDisabled || false
+          },
+          title: examinee.tableRepeater.examineeValidityErrorTitle,
+          message: examinee.tableRepeater.examineeValidityError,
+        }),
+        buildAlertMessageField({
+          id: 'examineesGraphQLError',
+          alertType: 'error',
+          condition: (formValue: FormValue, _) => {
+            const hasError = getValueViaPath<string>(
+              formValue,
+              'examineesGraphQLError',
+              'false',
+            )
+
+            return hasError === 'true'
+          },
+          title: examinee.tableRepeater.examineesGraphQLErrorTitle,
+          message: examinee.tableRepeater.examineesGraphQLError,
         }),
         buildCustomField({
           id: 'examinees.examineeValidation',

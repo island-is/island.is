@@ -6,9 +6,11 @@ import {
 } from '@island.is/nest/config'
 import {
   ExamCategoriesApi,
-  ExameeValidationApi,
   Configuration,
   InstructorApi,
+  CompanyApi,
+  ExamineeValidationApi,
+  ExamineeEligibilityApi,
 } from '../../gen/fetch'
 import { PracticalExamsClientConfig } from './practicalExams.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -47,13 +49,23 @@ export const exportedApis = [
     acceptHeader: 'application/json',
   },
   {
-    api: ExameeValidationApi,
-    provide: ExameeValidationApi,
+    api: ExamineeValidationApi,
+    provide: ExamineeValidationApi,
     acceptHeader: 'application/json',
   },
   {
     api: InstructorApi,
     provide: InstructorApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: CompanyApi,
+    provide: CompanyApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: ExamineeEligibilityApi,
+    provide: ExamineeEligibilityApi,
     acceptHeader: 'application/json',
   },
 ].map(({ api, provide, acceptHeader }) => ({

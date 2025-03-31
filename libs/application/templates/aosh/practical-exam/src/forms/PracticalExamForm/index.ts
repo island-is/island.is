@@ -17,6 +17,7 @@ import {
   examCategoriesSectionOthers,
   examCategoriesSectionSelf,
 } from './ExamCategories'
+import { examLocationSection } from './ExamLocation'
 
 export const PracticalExamForm: Form = buildForm({
   id: 'PracticalExamFormDraft',
@@ -31,6 +32,7 @@ export const PracticalExamForm: Form = buildForm({
     instructorSection,
     examCategoriesSectionSelf, // Conditional on registering only himself
     examCategoriesSectionOthers, // Conditional on registering multiple examinees
+    examLocationSection,
     paymentArrangementSection,
     overviewSection, // TODO(balli) Different depending on user choice of self/others in informationSection
     buildFormPaymentChargeOverviewSection({

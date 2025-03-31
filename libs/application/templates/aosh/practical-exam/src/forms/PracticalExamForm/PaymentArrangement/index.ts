@@ -1,15 +1,18 @@
 import {
   buildAlertMessageField,
+  buildCheckboxField,
   buildCompanySearchField,
   buildCustomField,
   buildDescriptionField,
   buildLinkField,
   buildMultiField,
+  buildNationalIdWithNameField,
   buildPhoneField,
   buildRadioField,
   buildSection,
   buildTextField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { paymentArrangement } from '../../../lib/messages'
 import { IndividualOrCompany, PaymentOptions } from '../../../utils/enums'
@@ -142,11 +145,10 @@ export const paymentArrangementSection = buildSection({
           required: true,
           format: '######-####',
           defaultValue: (application: Application) => {
-            const nationalId = getValueViaPath(
+            const nationalId = getValueViaPath<string>(
               application.externalData,
               'identity.data.nationalId',
-              undefined,
-            ) as string | undefined
+            )
 
             return nationalId
           },
@@ -160,21 +162,23 @@ export const paymentArrangementSection = buildSection({
           readOnly: true,
           required: true,
           defaultValue: (application: Application) => {
-            const name = getValueViaPath(
+            const name = getValueViaPath<string>(
               application.externalData,
               'identity.data.name',
-              undefined,
-            ) as string | undefined
+            )
 
             return name
           },
           condition: (answers: FormValue, externalData: ExternalData) =>
             isCompanyType(externalData),
         }),
-        buildCompanySearchField({
+        buildNationalIdWithNameField({
           id: 'paymentArrangement.companyInfo',
-          title: paymentArrangement.labels.companyTitle,
           required: true,
+          customNationalIdLabel: paymentArrangement.labels.companySSN,
+          customNameLabel: paymentArrangement.labels.companyName,
+          searchPersons: false,
+          searchCompanies: true,
           condition: (answers: FormValue, externalData: ExternalData) =>
             !isCompanyType(externalData) && isCompany(answers),
         }),
@@ -194,22 +198,6 @@ export const paymentArrangementSection = buildSection({
           condition: (answers: FormValue, externalData: ExternalData) =>
             isCompanyType(externalData) || isCompany(answers),
         }),
-        buildCustomField({
-          id: 'paymentArrangement.watchCompanyNationalId',
-          title: '',
-          component: 'WatchCompanyNationalId',
-        }),
-        // TODO: Only visibile if company is not blacklisted
-        buildAlertMessageField({
-          id: 'paymentArrangement.contactOrganizationAlert',
-          title: '',
-          message: paymentArrangement.labels.contactOrganizationAlert,
-          alertType: 'error',
-          marginTop: 5,
-          doesNotRequireAnswer: true,
-          condition: (answers: FormValue, externalData: ExternalData) =>
-            isCompanyType(externalData) || isCompany(answers),
-        }),
         buildDescriptionField({
           id: 'paymentArrangement.explanationWithPayment',
           title: paymentArrangement.labels.explanationWithPayment,
@@ -225,12 +213,25 @@ export const paymentArrangementSection = buildSection({
           condition: (answers: FormValue, externalData: ExternalData) =>
             isCompanyType(externalData) || isCompany(answers),
         }),
-        /* COMPANY ENDS */
-
         buildCustomField({
-          id: 'paymentArrangement.agreementCheckbox',
+          id: 'paymentArrangement.watchCompanyNationalId',
           title: '',
-          component: 'AgreementCheckbox',
+          component: 'WatchCompanyNationalId',
+          condition: (answers: FormValue, externalData: ExternalData) =>
+            isCompanyType(externalData) || isCompany(answers),
+        }),
+        /* COMPANY ENDS */
+        buildCheckboxField({
+          id: 'paymentArrangement.agreementCheckbox',
+          large: false,
+          backgroundColor: 'white',
+          marginTop: 3,
+          options: [
+            {
+              value: YES,
+              label: paymentArrangement.labels.aggreementCheckbox,
+            },
+          ],
         }),
       ],
     }),

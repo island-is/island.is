@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Námskeið",
-    "description": "Vefþjónusta til þess að fletta upp á og skrá í námskeið.",
+    "title": "Verkleg próf",
+    "description": "Vefþjónusta til þess að skrá í verkleg vinnuvélapróf.",
     "contact": {
       "name": "Ut teymi vinnueftirlits",
       "email": "ut@vinnueftirlit.is"
@@ -20,6 +20,42 @@
     }
   ],
   "paths": {
+    "/api/Company/{nationalId}": {
+      "get": {
+        "tags": ["Company"],
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/ExamCategories": {
       "get": {
         "tags": ["ExamCategories"],
@@ -51,9 +87,50 @@
         }
       }
     },
-    "/api/ExameeValidation": {
+    "/api/ExamineeEligibility": {
+      "get": {
+        "tags": ["ExamineeEligibility"],
+        "parameters": [
+          {
+            "name": "nationalIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExamineeEligibilityDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ExamineeValidation": {
       "post": {
-        "tags": ["ExameeValidation"],
+        "tags": ["ExamineeValidation"],
         "parameters": [
           {
             "name": "X-Correlation-ID",
@@ -69,7 +146,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkMachineExameeDto"
+                "$ref": "#/components/schemas/WorkMachineExamineeDto"
               }
             }
           }
@@ -80,7 +157,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkMachineExameeValidationDto"
+                  "$ref": "#/components/schemas/WorkMachineExamineeValidationDto"
                 }
               }
             }
@@ -91,6 +168,56 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ExamRegistration": {
+      "post": {
+        "tags": ["ExamRegistration"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkMachineExamRegistrationCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -157,6 +284,19 @@
   },
   "components": {
     "schemas": {
+      "CompanyDto": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "mayPayReceiveInvoice": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "ExamCategoryDto": {
         "type": "object",
         "properties": {
@@ -180,6 +320,45 @@
             "items": {
               "type": "string"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExamineeEligibilityDto": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isEligable": {
+            "type": "boolean"
+          },
+          "errorMsg": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorMsgEn": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FileCreateDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileType": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -249,7 +428,95 @@
         },
         "additionalProperties": false
       },
-      "WorkMachineExameeDto": {
+      "WorkMachineExamContactDto": {
+        "type": "object",
+        "properties": {
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkMachineExamLocation": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkMachineExamPaymentInfoCreateDto": {
+        "type": "object",
+        "properties": {
+          "payerNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "payerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "payerEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "directPaymentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "textToDisplayOnInvoice": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkMachineExamRegistrationCreateDto": {
+        "type": "object",
+        "properties": {
+          "examLocation": {
+            "$ref": "#/components/schemas/WorkMachineExamLocation"
+          },
+          "examees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkMachineExamineeRegistrationCreateDto"
+            },
+            "nullable": true
+          },
+          "instructors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkMachineInstructorCreateDto"
+            },
+            "nullable": true
+          },
+          "paymentInfo": {
+            "$ref": "#/components/schemas/WorkMachineExamPaymentInfoCreateDto"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/WorkMachineExamContactDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkMachineExamineeDto": {
         "type": "object",
         "properties": {
           "nationalId": {
@@ -264,6 +531,14 @@
             "type": "string",
             "nullable": true
           },
+          "drivingLicenseNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "drivingLicenseCountryOfOrigin": {
+            "type": "string",
+            "nullable": true
+          },
           "examCategories": {
             "type": "array",
             "items": {
@@ -274,7 +549,47 @@
         },
         "additionalProperties": false
       },
-      "WorkMachineExameeValidationDto": {
+      "WorkMachineExamineeRegistrationCreateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "drivingLicenseNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "drivingLicenseCountryOfOrigin": {
+            "type": "string",
+            "nullable": true
+          },
+          "medicalCertificate": {
+            "$ref": "#/components/schemas/FileCreateDto"
+          },
+          "examCategories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkMachineSelectedExamCreateDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkMachineExamineeValidationDto": {
         "type": "object",
         "properties": {
           "nationalId": {
@@ -288,6 +603,9 @@
             },
             "nullable": true
           },
+          "doesntHaveToPayLicenseFee": {
+            "type": "boolean"
+          },
           "isValid": {
             "type": "boolean"
           },
@@ -296,6 +614,24 @@
             "nullable": true
           },
           "errorMessageEn": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkMachineInstructorCreateDto": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
             "type": "string",
             "nullable": true
           }
@@ -318,6 +654,20 @@
             "items": {
               "type": "string"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkMachineSelectedExamCreateDto": {
+        "type": "object",
+        "properties": {
+          "examCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "instructorNationalId": {
+            "type": "string",
             "nullable": true
           }
         },
