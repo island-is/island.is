@@ -26,14 +26,14 @@ import {
 } from '../licenceService.type'
 import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 
-const isChildPassport = (
+const isChildDocument = (
   passport: IdentityDocument | IdentityDocumentChild,
 ): passport is IdentityDocumentChild => {
   return (passport as IdentityDocumentChild).childNationalId !== undefined
 }
 
 @Injectable()
-export class PassportMapper implements GenericLicenseMapper {
+export class IdentityDocumentMapper implements GenericLicenseMapper {
   constructor(private readonly intlService: IntlService) {}
   async parsePayload(
     payload: Array<unknown>,
@@ -44,26 +44,26 @@ export class PassportMapper implements GenericLicenseMapper {
       locale,
     )
 
-    const emptyPassport = {
-      licenseName: formatMessage(m.passport),
+    const emptyIdentityDocument = {
+      licenseName: formatMessage(m.identityDocument),
       type: 'user' as const,
       payload: {
         data: [],
         rawData: '',
         metadata: {
-          title: formatMessage(m.passport),
-          name: formatMessage(m.passport),
-          subtitle: formatMessage(m.noValidPassport),
+          title: formatMessage(m.identityDocument),
+          name: formatMessage(m.identityDocument),
+          subtitle: formatMessage(m.noValidIdentityDocument),
           ctaLink: {
             label: formatMessage(m.apply),
-            value: formatMessage(m.applyPassportUrl),
+            value: formatMessage(m.identityDocumentApplyUrl),
           },
         },
       },
     }
 
     if (!payload.length) {
-      return [emptyPassport]
+      return [emptyIdentityDocument]
     }
 
     const typedPayload = payload as Array<
@@ -73,20 +73,20 @@ export class PassportMapper implements GenericLicenseMapper {
     const mappedLicenses: Array<GenericLicenseMappedPayloadResponse> =
       typedPayload
         .map((t) => {
-          if (isChildPassport(t)) {
+          if (isChildDocument(t)) {
             return this.mapChildDocument(t, formatMessage).map((document) => ({
-              licenseName: formatMessage(m.passport),
+              licenseName: formatMessage(m.identityDocument),
               type: 'child' as const,
               payload: document,
             }))
           } else {
             return {
-              licenseName: formatMessage(m.passport),
+              licenseName: formatMessage(m.identityDocument),
               type: 'user' as const,
               payload: this.mapDocument(
                 t,
                 formatMessage,
-                formatMessage(m.passport),
+                formatMessage(m.identityDocument),
               ),
             }
           }
@@ -94,7 +94,7 @@ export class PassportMapper implements GenericLicenseMapper {
         .flat()
 
     if (mappedLicenses.findIndex((ml) => ml.type === 'user') < 0) {
-      mappedLicenses.push(emptyPassport)
+      mappedLicenses.push(emptyIdentityDocument)
     }
 
     return mappedLicenses
@@ -118,10 +118,10 @@ export class PassportMapper implements GenericLicenseMapper {
         metadata: {
           name: document.childName ?? '',
           title: document.childName ?? '',
-          subtitle: formatMessage(m.noValidPassport),
+          subtitle: formatMessage(m.noValidIdentityDocument),
           ctaLink: {
             label: formatMessage(m.apply),
-            value: formatMessage(m.applyPassportUrl),
+            value: formatMessage(m.identityDocumentApplyUrl),
           },
         },
       },
@@ -226,31 +226,26 @@ export class PassportMapper implements GenericLicenseMapper {
             title:
               isExpired || isLost
                 ? formatMessage(m.licenseInvalid, {
-                    arg: formatMessage(m.passport),
+                    arg: formatMessage(m.identityDocument),
                   })
                 : formatMessage(m.expiresWithin, {
                     arg: formatMessage(m.sixMonths),
                   }),
             message:
               isExpired || isLost
-                ? formatMessage(m.invalidPassportText)
-                : formatMessage(m.expiringPassportText),
+                ? formatMessage(m.invalidIdentityDocumentText)
+                : formatMessage(m.expiringIdentityDocumentText),
             type: AlertType.WARNING,
           }
         : undefined
 
     const links: Array<GenericUserLicenseMetaLinks> = [
-      {
-        label: formatMessage(m.notifyLostPassport),
-        value: formatMessage(m.lostPassportUrl),
-        type: GenericUserLicenseMetaLinksType.External,
-      },
       isExpired || isExpiring || isLost
         ? {
             label: formatMessage(m.renewLicense, {
-              arg: formatMessage(m.passport).toLowerCase(),
+              arg: formatMessage(m.identityDocument).toLowerCase(),
             }),
-            value: formatMessage(m.applyPassportUrl),
+            value: formatMessage(m.identityDocumentApplyUrl),
             type: GenericUserLicenseMetaLinksType.External,
           }
         : undefined,
@@ -275,14 +270,14 @@ export class PassportMapper implements GenericLicenseMapper {
         expireDate: document.expirationDate?.toISOString() ?? undefined,
         displayTag,
         name: licenseName ?? document.verboseType ?? undefined,
-        title: formatMessage(m.passport) ?? undefined,
-        subtitle: formatMessage(m.passportNumberDisplay, {
+        title: formatMessage(m.identityDocument) ?? undefined,
+        subtitle: formatMessage(m.identityDocumentNumberDisplay, {
           arg:
             document.subType && document.number
               ? `${document.subType}${document.number}`
               : formatMessage(m.unknown),
         }),
-        description: [{ text: formatMessage(m.passportDescription) }],
+        description: [{ text: formatMessage(m.identityDocumentDescription) }],
         alert,
       },
     }
