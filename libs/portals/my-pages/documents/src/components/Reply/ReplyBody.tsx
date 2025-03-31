@@ -1,5 +1,7 @@
 import { AlertMessage, Box, Stack, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import React from 'react'
+import { messages } from '../../utils/messages'
 
 interface Props {
   id: string
@@ -9,7 +11,8 @@ interface Props {
   date: Date
 }
 
-const ReplySent: React.FC<Props> = ({ id, email, reply, intro }) => {
+const ReplyBody: React.FC<Props> = ({ id, email, reply, intro }) => {
+  const { formatMessage } = useLocale()
   return (
     <Box marginTop={1}>
       {intro && <AlertMessage type="info" message={intro} />}
@@ -17,19 +20,19 @@ const ReplySent: React.FC<Props> = ({ id, email, reply, intro }) => {
       <Stack space={2}>
         <Box marginTop={2}>
           <Text variant="eyebrow" color="purple400">
-            Málsnúmer
+            {formatMessage(messages.caseNumber)}
           </Text>
           <Text>#{id}</Text>
         </Box>
         <Box>
           <Text variant="eyebrow" color="purple400">
-            Send á tölvupóstfang
+            {formatMessage(messages.sentToEmail)}
           </Text>
           <Text>{email}</Text>
         </Box>
         <Box>
           <Text variant="eyebrow" color="purple400">
-            Skilaboð
+            {formatMessage(messages.message)}
           </Text>
           <Text>{reply}</Text>
         </Box>
@@ -38,4 +41,4 @@ const ReplySent: React.FC<Props> = ({ id, email, reply, intro }) => {
   )
 }
 
-export default ReplySent
+export default ReplyBody

@@ -3,7 +3,7 @@ import { formatDate } from '@island.is/portals/my-pages/core'
 import { dateFormatWithTime } from '@island.is/shared/constants'
 import React, { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import ReplySent from './ReplySent'
+import ReplySent from './ReplyBody'
 
 interface Props {
   hasEmail: boolean
@@ -93,6 +93,7 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
             render={({ field: { value = reply, onChange } }) => (
               <Box>
                 <Input
+                  autoFocus
                   textarea
                   rows={6}
                   name="reply-message"

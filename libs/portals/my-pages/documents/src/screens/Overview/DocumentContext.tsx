@@ -17,6 +17,7 @@ type ActiveDocumentStateType = ActiveDocumentType2 | null
 export type DocumentsStateProps = {
   selectedLines: SelectedLineType
   activeDocument: ActiveDocumentStateType
+  hideDocument: boolean
   filterValue: FilterValuesType
   page: number
   totalPages: number
@@ -32,10 +33,13 @@ export type DocumentsStateProps = {
     email: string
     reply: string
     intro?: string
+    hide: boolean
   }[]
+  replyOpen: boolean
 
   setSelectedLines: Dispatch<SetStateAction<SelectedLineType>>
   setActiveDocument: Dispatch<SetStateAction<ActiveDocumentStateType>>
+  setHideDocument: Dispatch<SetStateAction<boolean>>
   setFilterValue: Dispatch<SetStateAction<FilterValuesType>>
   setPage: Dispatch<SetStateAction<number>>
   setTotalPages: Dispatch<SetStateAction<number>>
@@ -47,14 +51,23 @@ export type DocumentsStateProps = {
   setReplyable: Dispatch<SetStateAction<boolean>>
   setReplies: Dispatch<
     SetStateAction<
-      { id: string; date: Date; email: string; reply: string; intro?: string }[]
+      {
+        id: string
+        date: Date
+        email: string
+        reply: string
+        intro?: string
+        hide: boolean
+      }[]
     >
   >
+  setReplyOpen: Dispatch<SetStateAction<boolean>>
 }
 
 export const DocumentsContext = createContext<DocumentsStateProps>({
   selectedLines: [],
   activeDocument: null,
+  hideDocument: false,
   filterValue: defaultFilterValues,
   page: 1,
   totalPages: 0,
@@ -65,9 +78,11 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   localRead: [],
   replyable: false,
   replies: [],
+  replyOpen: false,
 
   setSelectedLines: () => undefined,
   setActiveDocument: () => undefined,
+  setHideDocument: () => undefined,
   setFilterValue: () => undefined,
   setPage: () => undefined,
   setTotalPages: () => undefined,
@@ -78,6 +93,7 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   setLocalRead: () => undefined,
   setReplyable: () => undefined,
   setReplies: () => undefined,
+  setReplyOpen: () => undefined,
 })
 
 export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
@@ -87,6 +103,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
   const [selectedLines, setSelectedLines] = useState<SelectedLineType>([])
   const [activeDocument, setActiveDocument] =
     useState<ActiveDocumentStateType>(null)
+  const [hideDocument, setHideDocument] = useState<boolean>(false)
   const [filterValue, setFilterValue] =
     useState<FilterValuesType>(defaultFilterValues)
   const [page, setPage] = useState(loaderNumber)
@@ -100,9 +117,17 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
   const [docLoading, setDocLoading] = useState(false)
   const [documentDisplayError, setDocumentDisplayError] = useState<string>()
   const [localRead, setLocalRead] = useState<string[]>([])
-  const [replyable, setReplyable] = useState<boolean>(true) // TODO: Set to false
+  const [replyable, setReplyable] = useState<boolean>(true) // TODO: Set to default false
+  const [replyOpen, setReplyOpen] = useState<boolean>(false)
   const [replies, setReplies] = useState<
-    { id: string; date: Date; email: string; reply: string; intro?: string }[]
+    {
+      id: string
+      date: Date
+      email: string
+      reply: string
+      intro?: string
+      hide: boolean
+    }[]
   >([
     {
       id: '123',
@@ -112,6 +137,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         'Þetta er svar 1 við þræðinum. Ég bara skrifa og skrifa og tala, síðan aðeins meira. ',
       intro:
         'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang.',
+      hide: true,
     },
     {
       id: '124',
@@ -119,6 +145,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
       email: 'lisa@skb.is',
       reply:
         'Þetta er svar 2 við þræðinum. Ég bara skrifa og skrifa og tala, síðan aðeins meira.  Ég bara skrifa og skrifa og tala, síðan aðeins meira. ',
+      hide: false,
     },
   ])
 
@@ -127,6 +154,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
       value={{
         selectedLines,
         activeDocument,
+        hideDocument,
         filterValue,
         page,
         totalPages,
@@ -137,9 +165,11 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         localRead,
         replyable,
         replies,
+        replyOpen,
 
         setSelectedLines,
         setActiveDocument,
+        setHideDocument,
         setFilterValue,
         setPage,
         setTotalPages,
@@ -150,6 +180,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         setLocalRead,
         setReplyable,
         setReplies,
+        setReplyOpen,
       }}
     >
       {children}

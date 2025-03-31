@@ -1,8 +1,10 @@
 import { Box, Button, Divider } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { getInitials } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import React, { useState } from 'react'
+import React from 'react'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import { messages } from '../../utils/messages'
 import ReplyForm from './ReplyForm'
 import ReplyHeader from './ReplyHeader'
 
@@ -12,10 +14,10 @@ interface Props {
 
 const ReplyContainer: React.FC<Props> = ({ sender }) => {
   const { profile } = useUserInfo()
-  const { replyable } = useDocumentContext()
+  const { formatMessage } = useLocale()
+  const { replyable, replyOpen, setReplyOpen } = useDocumentContext()
   const hasEmail = true //isDefined(userProfile?.email)
   const [sent, setSent] = React.useState({ sent: false, date: '' })
-  const [replyOpen, setReplyOpen] = useState(false)
 
   const successfulSubmit = (date: string) => {
     alert('success' + date)
@@ -46,14 +48,25 @@ const ReplyContainer: React.FC<Props> = ({ sender }) => {
         <Divider />
         <ReplyHeader
           initials={getInitials(profile.name)}
-          title={sent.sent ? profile.name : 'Titill'}
-          subTitle={sent.sent ? sent.date : `Til: ${sender}`}
+          title={sent.sent ? profile.name : formatMessage(messages.titleWord)}
+          subTitle={
+            sent.sent
+              ? sent.date
+              : formatMessage(messages.toWithArgs, {
+                  receiverName: sender,
+                })
+          }
           secondSubTitle={
-            !sent.sent && hasEmail ? `Frá: lisa@sks.is` : undefined
-          } // TODO: replace with real email
+            !sent.sent && hasEmail
+              ? formatMessage(messages.fromWithArgs, {
+                  senderName: profile.email,
+                })
+              : undefined
+          }
           hasEmail={hasEmail}
           displayCloseButton={!sent.sent}
           onClose={() => setReplyOpen(false)}
+          displayEmail
         />
         {/* Form  */}
         <ReplyForm hasEmail={hasEmail} successfulSubmit={successfulSubmit} />

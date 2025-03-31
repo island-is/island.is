@@ -1,7 +1,9 @@
 import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { InformationPaths } from '@island.is/portals/my-pages/information'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { messages } from '../../utils/messages'
 
 interface ReplyHeaderProps {
   initials: string
@@ -10,6 +12,7 @@ interface ReplyHeaderProps {
   secondSubTitle?: string
   hasEmail?: boolean
   displayCloseButton?: boolean
+  displayEmail?: boolean
   onClose?: () => void
 }
 
@@ -20,10 +23,11 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
   secondSubTitle,
   hasEmail,
   displayCloseButton,
+  displayEmail,
   onClose,
 }) => {
   const navigate = useNavigate()
-
+  const { formatMessage } = useLocale()
   return (
     <Box
       display="flex"
@@ -57,21 +61,22 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
           <Box display="flex" flexDirection="column">
             <Text variant="medium">{subTitle}</Text>
 
-            {hasEmail ? (
-              <Text variant="medium">{secondSubTitle}</Text>
-            ) : (
-              <Button
-                variant="text"
-                icon="pencil"
-                iconType="outline"
-                size="small"
-                onClick={() => {
-                  navigate(InformationPaths.Settings)
-                }}
-              >
-                Vinsamlegast skráðu netfang
-              </Button>
-            )}
+            {displayEmail &&
+              (hasEmail ? (
+                <Text variant="medium">{secondSubTitle}</Text>
+              ) : (
+                <Button
+                  variant="text"
+                  icon="pencil"
+                  iconType="outline"
+                  size="small"
+                  onClick={() => {
+                    navigate(InformationPaths.Settings)
+                  }}
+                >
+                  {formatMessage(messages.pleaseRegisterEmail)}
+                </Button>
+              ))}
           </Box>
         </Box>
       </Box>

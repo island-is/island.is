@@ -12,9 +12,9 @@ import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
 import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
 import NoPDF from '../NoPDF/NoPDF'
+import ReplySent from '../Reply/ReplyBody'
 import ReplyContainer from '../Reply/ReplyContainer'
 import ReplyHeader from '../Reply/ReplyHeader'
-import ReplySent from '../Reply/ReplySent'
 import * as styles from './OverviewDisplay.css'
 
 interface Props {
@@ -32,7 +32,15 @@ export const DesktopOverview: FC<Props> = ({
   const { formatMessage } = useLocale()
   const { profile } = useUserInfo()
 
-  const { activeDocument, replyable, replies } = useDocumentContext()
+  const {
+    activeDocument,
+    replyable,
+    replies,
+    setReplies,
+    setReplyOpen,
+    hideDocument,
+    setHideDocument,
+  } = useDocumentContext()
   const { activeArchive } = useDocumentList()
 
   if (loading) {
@@ -58,6 +66,17 @@ export const DesktopOverview: FC<Props> = ({
     return <NoPDF />
   }
 
+  const toggleReply = (id: string) => {
+    const updatedReplies = replies.map((reply) =>
+      reply.id === id ? { ...reply, hide: !reply.hide } : reply,
+    )
+    setReplies(updatedReplies)
+  }
+
+  const toggleDocument = () => {
+    setHideDocument(!hideDocument)
+  }
+
   return (
     <Box
       marginLeft={8}
@@ -78,13 +97,19 @@ export const DesktopOverview: FC<Props> = ({
         actionBar={{
           archived: activeArchive,
           bookmarked: activeBookmark,
+          isReplyable: replyable,
+          onReply: () => setReplyOpen(true),
         }}
         actions={activeDocument.actions}
       />
       <Box>
-        {<DocumentRenderer doc={activeDocument} />}
+        {!hideDocument && <DocumentRenderer doc={activeDocument} />}
         {replies?.map((reply) => (
-          <>
+          <Box
+            onClick={() => toggleReply(reply.id)}
+            key={reply.id}
+            cursor="pointer"
+          >
             <Box paddingY={3}>
               <Divider />
             </Box>
@@ -93,15 +118,18 @@ export const DesktopOverview: FC<Props> = ({
               title={profile.name}
               hasEmail={isDefined(profile.email)}
               subTitle={formatDate(reply?.date, dateFormatWithTime.is)}
+              displayEmail={false}
             />
-            <ReplySent
-              date={reply.date}
-              id={reply.id}
-              reply={reply.reply}
-              email={reply.email}
-              intro={reply.intro}
-            />
-          </>
+            {!reply.hide && (
+              <ReplySent
+                date={reply.date}
+                id={reply.id}
+                reply={reply.reply}
+                email={reply.email}
+                intro={reply.intro}
+              />
+            )}
+          </Box>
         ))}
         {/* {If document is marked replyable, we render the reply form} */}
         {replyable && <ReplyContainer sender={activeDocument.sender} />}

@@ -2,6 +2,7 @@ import {
   Box,
   BoxProps,
   Button,
+  DropdownMenu,
   Icon,
   LoadingDots,
 } from '@island.is/island-ui/core'
@@ -19,12 +20,16 @@ export type DocumentActionBarProps = {
   spacing?: BoxProps['columnGap']
   archived?: boolean
   bookmarked?: boolean
+  isReplyable?: boolean
+  onReply?: () => void
 }
 export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
   onGoBack,
   spacing = 1,
   bookmarked,
   archived,
+  isReplyable,
+  onReply,
 }) => {
   const {
     submitMailAction,
@@ -69,6 +74,18 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
       <Box className={styles.filterBtns} display="flex" columnGap={spacing}>
         {!loading && (
           <>
+            {isReplyable && (
+              <Tooltip text={formatMessage(m.reply)}>
+                <Button
+                  circle
+                  icon="undo"
+                  iconType="outline"
+                  onClick={() => onReply?.()}
+                  size="medium"
+                  colorScheme="light"
+                />
+              </Tooltip>
+            )}
             <Tooltip
               text={formatMessage(
                 isArchived ? m.removeFromStorage : m.addToStorage,
@@ -166,6 +183,36 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
             />
           </Tooltip>
         )}
+        <Tooltip text={formatMessage(m.print)}>
+          <DropdownMenu
+            items={[
+              {
+                title: formatMessage(m.print),
+                onClick: activeDocument
+                  ? () =>
+                      downloadFile({
+                        doc: activeDocument,
+                      })
+                  : undefined,
+                render: () => (
+                  <Button icon="print" variant="utility">
+                    {formatMessage(m.print)}
+                  </Button>
+                ),
+              },
+            ]}
+            disclosure={
+              <Button
+                circle
+                icon="ellipsisVertical"
+                iconType="filled"
+                onClick={() => console.log('open')}
+                size="medium"
+                colorScheme="light"
+              />
+            }
+          ></DropdownMenu>
+        </Tooltip>
       </Box>
     </>
   )
