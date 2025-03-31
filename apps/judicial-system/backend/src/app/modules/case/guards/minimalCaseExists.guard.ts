@@ -1,4 +1,3 @@
-// src/app/case/guards/caseExists.guard.ts
 import { isUuid } from 'uuidv4'
 
 import {

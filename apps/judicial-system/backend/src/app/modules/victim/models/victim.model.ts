@@ -41,10 +41,6 @@ export class Victim extends Model {
   @ApiProperty({ type: String })
   caseId!: string
 
-  // @BelongsTo(() => Case, 'caseId')
-  // @ApiPropertyOptional({ type: () => Case })
-  // case?: Case
-
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   name?: string

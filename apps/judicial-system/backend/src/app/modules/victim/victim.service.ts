@@ -39,10 +39,14 @@ export class VictimService {
     })
   }
 
-  async update(victimId: string, update: UpdateVictimDto): Promise<Victim> {
+  async update(
+    caseId: string,
+    victimId: string,
+    update: UpdateVictimDto,
+  ): Promise<Victim> {
     const [numberOfAffectedRows, updatedVictims] =
       await this.victimModel.update(update, {
-        where: { id: victimId },
+        where: { id: victimId, caseId },
         returning: true,
       })
 
@@ -61,9 +65,9 @@ export class VictimService {
     return updatedVictim
   }
 
-  async delete(victimId: string): Promise<boolean> {
+  async delete(caseId: string, victimId: string): Promise<boolean> {
     const numberOfAffectedRows = await this.victimModel.destroy({
-      where: { id: victimId },
+      where: { id: victimId, caseId },
     })
 
     if (numberOfAffectedRows > 1) {

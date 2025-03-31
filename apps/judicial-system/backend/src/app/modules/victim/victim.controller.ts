@@ -20,10 +20,12 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { districtCourtJudgeRule, prosecutorRule } from '../../guards'
-import { MinimalCaseExistsGuard } from '../case'
-import { MinimalCurrentCase } from '../case/guards/minimalCase.decorator'
-import { MinimalCaseAccessGuard } from '../case/guards/minimalCaseAccess.guard'
-import { MinimalCase } from '../case/models/case.types'
+import {
+  MinimalCase,
+  MinimalCaseAccessGuard,
+  MinimalCaseExistsGuard,
+  MinimalCurrentCase,
+} from '../case'
 import { CreateVictimDto } from './dto/createVictim.dto'
 import { UpdateVictimDto } from './dto/updateVictim.dto'
 import { ValidateVictimGuard } from './guards/validateVictim.guard'
@@ -76,10 +78,11 @@ export class VictimController {
     @Param('caseId') caseId: string,
     @Param('victimId') victimId: string,
     @CurrentVictim() victim: Victim,
+    @MinimalCurrentCase() theCase: MinimalCase,
     @Body() dto: UpdateVictimDto,
   ): Promise<Victim> {
     this.logger.debug(`Updating victim ${victimId} of case ${caseId}`)
-    return this.victimService.update(victim.id, dto)
+    return this.victimService.update(theCase.id, victim.id, dto)
   }
 
   @UseGuards(VictimWriteGuard)
@@ -87,16 +90,17 @@ export class VictimController {
   @Delete(':victimId')
   @ApiOkResponse({
     type: DeleteVictimResponse,
-    description: 'Deletes a single victim by ID for a given case',
+    description: 'Deletes a single victim for a given case',
   })
   async delete(
     @Param('caseId') caseId: string,
     @Param('victimId') victimId: string,
+    @MinimalCurrentCase() theCase: MinimalCase,
     @CurrentVictim() victim: Victim,
   ): Promise<DeleteVictimResponse> {
     this.logger.debug(`Deleting victim ${victimId} of case ${caseId}`)
 
-    const deleted = await this.victimService.delete(victim.id)
+    const deleted = await this.victimService.delete(theCase.id, victim.id)
 
     return { deleted }
   }

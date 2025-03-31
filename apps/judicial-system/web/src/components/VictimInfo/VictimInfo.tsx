@@ -51,7 +51,7 @@ export const VictimInfo: React.FC<Props> = ({
 
   const handleNationalIdBlur = (nationalId: string) => {
     const cleanNationalId = nationalId?.replace('-', '') ?? ''
-    console.log(victimNationalIdUpdate)
+
     setVictimNationalIdUpdate(cleanNationalId || null)
   }
 
