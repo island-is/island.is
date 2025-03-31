@@ -185,19 +185,54 @@ jobs:
             target: ${{ env.JSON_target }}
             imageName: ${{ env.JSON_imageName }}
             imageTag: ${{ env.JSON_imageTag }}
-  post-docker-build:
+  tests:
     needs:
-      - docker-build
+      - prepare
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    runs-on: arc-docker
+    timeout-minutes: 45
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Run unit tests
+        uses: ./.github/actions/unit-test
+        with:
+          dd-api-key: '${{ secrets.DD_API_KEY }}'
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+
+  success:
+    runs-on: arc-docker
+    if: ${{ !cancelled() }}
+    needs:
       - prepare
       - tests
-    if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
-    permissions:
-      id-token: write
-      contents: write
-    runs-on: arc-docker
+      - docker-build
     steps:
+      - name: Check prepare success
+        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check tests success
-        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
+        run: '[[ ${{ needs.tests.result }} != "failure" && ${{ needs.tests.result }} != "abandoned" && ${{ needs.tests.result }} != "cancelled" ]] || exit 1'
+      - name: Check build success
+        run: '[[ ${{ needs.docker-build.result }} != "failure" && ${{ needs.docker-build.result }} != "abandoned" && ${{ needs.docker-build.result }} != "cancelled" ]] || exit 1'
       - name: Get docker-build output
         uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read
@@ -270,62 +305,6 @@ jobs:
           if-no-files-found: error
           retention-days: 90
           overwrite: true
-
-  tests:
-    needs:
-      - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-docker
-    timeout-minutes: 45
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      - name: Run unit tests
-        uses: ./.github/actions/unit-test
-        with:
-          dd-api-key: '${{ secrets.DD_API_KEY }}'
-          codecov-token: ${{ secrets.CODECOV_TOKEN }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
-
-  success:
-    runs-on: arc-docker
-    if: ${{ !cancelled() }}
-    needs:
-      - prepare
-      - tests
-      - docker-build
-      - post-docker-build
-      # - e2e
-      # - build
-    steps:
-      - name: Check prepare success
-        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check tests success
-        run: '[[ ${{ needs.tests.result }} != "failure" && ${{ needs.tests.result }} != "abandoned" && ${{ needs.tests.result }} != "cancelled" ]] || exit 1'
-      # - name: Check e2e success
-      #   run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
-      - name: Check build success
-        run: '[[ ${{ needs.docker-build.result }} != "failure" && ${{ needs.docker-build.result }} != "abandoned" && ${{ needs.docker-build.result }} != "cancelled" ]] || exit 1'
-      - name: Check post-build success
-        run: '[[ ${{ needs.post-docker-build.result }} != "failure" && ${{ needs.post-docker-build.result }} != "abandoned" && ${{ needs.post-docker-build.result }} != "cancelled" ]] || exit 1'
 
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
