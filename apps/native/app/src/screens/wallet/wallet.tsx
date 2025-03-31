@@ -175,7 +175,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       return {
         title: item.payload?.metadata?.name ?? item.license.type,
         type: item.license.type,
-        uniqueIdentifier: `/wallet/${item.license.type}`,
+        uniqueIdentifier: `/wallet/${item.license.type}/${item.payload?.metadata?.licenseId}`,
         contentDescription: item.license.provider.id,
         domain: 'licences',
       }

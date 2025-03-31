@@ -95,13 +95,15 @@ export const WalletItem = React.memo(
         ) : (
           <Pressable
             onPress={() => {
-              navigateTo(`/wallet/${item?.license?.type}`, {
-                // check
-                item,
-                fromId: `license-${item?.license?.type}_source`,
-                toId: `license-${item?.license?.type}_destination`,
-                cardHeight,
-              })
+              navigateTo(
+                `/wallet/${item?.license.type}/${item.payload?.metadata?.licenseId}`,
+                {
+                  item,
+                  fromId: `license-${item?.license?.type}_source`,
+                  toId: `license-${item?.license?.type}_destination`,
+                  cardHeight,
+                },
+              )
             }}
           >
             <SafeAreaView>

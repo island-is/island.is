@@ -177,9 +177,10 @@ const getAlertMessageIds = (
 
 export const WalletPassScreen: NavigationFunctionComponent<{
   id: string
+  type: string
   item?: GenericUserLicense
   cardHeight?: number
-}> = ({ id, item, componentId, cardHeight = 140 }) => {
+}> = ({ id, item, type, componentId, cardHeight = 140 }) => {
   useNavigationOptions(componentId)
   useConnectivityIndicator({ componentId })
   const theme = useTheme()
@@ -198,11 +199,14 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     fetchPolicy: 'network-only',
     variables: {
       input: {
-        licenseType: item?.license.type ?? id,
+        licenseType: type,
+        licenseId: id,
       },
       locale: useLocale(),
     },
   })
+
+  console.log({ type, id })
 
   const data = res.data?.genericLicense ?? item
   const isExpired = data?.payload?.metadata?.expired
