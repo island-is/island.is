@@ -4,7 +4,6 @@ import type { Logger } from '@island.is/logging'
 import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateHnippNotificationDto } from '../notifications/dto/createHnippNotification.dto'
-import { NotificationsService } from '../notifications/notifications.service'
 
 @Injectable()
 export class UserNotificationBirthday18WorkerService {
@@ -16,8 +15,7 @@ export class UserNotificationBirthday18WorkerService {
     @Inject(NationalRegistryV3ApplicationsClientService)
     private nationalRegistryService: NationalRegistryV3ApplicationsClientService,
     @InjectQueue('notifications')
-    private readonly queue: QueueService,
-    private readonly notificationsService: NotificationsService,
+    private queue: QueueService,
   ) {}
 
   public async run() {
@@ -42,7 +40,6 @@ export class UserNotificationBirthday18WorkerService {
             },
           ],
         }
-        await this.notificationsService.validate(body.templateId, body.args)
         const id = await this.queue.add(body)
         const flattenedArgs: Record<string, string> = {}
         for (const arg of body.args) {
