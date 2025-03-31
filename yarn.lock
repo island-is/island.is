@@ -27276,10 +27276,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"beygla@npm:1.4.0":
-  version: 1.4.0
-  resolution: "beygla@npm:1.4.0"
-  checksum: 10/2f202020ad260702a3e15141b9434b76deb8e0bf1c8cdf58e71a91848801acf4598cea950545734cc55f1efd3a09a956bd231fc7c57b89bc6b2a02246d6e41c9
+"beygla@npm:1.5.2":
+  version: 1.5.2
+  resolution: "beygla@npm:1.5.2"
+  checksum: 10/24f0ac21d6ee4b0eeae9a3fd14a10a29ff4e1f1c51401f83e83f8fc5c9fee67e2f738c013f57326ccbb8efc748290526d2a50ddade5d4aa0b7bbae1aeec4d4c8
   languageName: node
   linkType: hard
 
@@ -39709,7 +39709,7 @@ __metadata:
     babel-loader: "npm:8.2.5"
     babel-plugin-transform-class-properties: "npm:6.24.1"
     babel-plugin-transform-imports: "npm:2.0.0"
-    beygla: "npm:1.4.0"
+    beygla: "npm:1.5.2"
     bottleneck: "npm:2.19.5"
     bull: "npm:4.10.4"
     cache-manager: "npm:5.2.3"
