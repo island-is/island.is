@@ -94,3 +94,45 @@ export const DeleteSkilavottordAccessControlMutation = gql`
     deleteSkilavottordAccessControl(input: $input)
   }
 `
+
+export const UpdateSkilavottordRecyclingPartnerMutation = gql`
+  mutation updateSkilavottordRecyclingPartnerMutation(
+    $input: UpdateRecyclingPartnerInput!
+  ) {
+    updateSkilavottordRecyclingPartner(input: $input) {
+      companyId
+      companyName
+      nationalId
+      email
+      address
+      postnumber
+      city
+      website
+      phone
+      active
+      municipalityId
+    }
+  }
+`
+
+export const SkilavottordRecyclingPartnersQuery = gql`
+  query 
+  (
+    $isMunicipalityPage: Boolean!
+    $municipalityId: String
+  ) {
+    skilavottordRecyclingPartners(
+      isMunicipalityPage: $isMunicipalityPage
+      municipalityId: $municipalityId
+    ) {
+      companyId
+      companyName
+      address
+      postnumber
+      email
+      active
+      municipalityId
+      isMunicipality
+    }
+  }
+`

@@ -1,7 +1,7 @@
 import * as kennitala from 'kennitala'
 import React, { BaseSyntheticEvent, FC, useContext } from 'react'
-import { Control, Controller, FieldError } from 'react-hook-form'
-import { FieldValues, UseFormSetValue } from 'react-hook-form/dist/types'
+import { Controller, FieldError, useFormContext } from 'react-hook-form'
+import { FieldValues } from 'react-hook-form/dist/types'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
 
 import { gql, useQuery } from '@apollo/client'
@@ -31,10 +31,8 @@ interface RecyclingCompanyForm {
   ) => Promise<void>
   onCancel: () => void
   errors: DeepMap<FieldValues, FieldError>
-  control: Control<FieldValues>
   editView?: boolean
   isMunicipalityPage?: boolean | undefined
-  setValue: UseFormSetValue<FieldValues>
 }
 
 export const SkilavottordAllMunicipalitiesQuery = gql`
@@ -51,13 +49,12 @@ const RecyclingCompanyForm: FC<
 > = ({
   onSubmit,
   onCancel,
-  control,
   errors,
   editView = false,
   isMunicipalityPage = false,
-  setValue,
 }) => {
   const { user } = useContext(UserContext)
+  const { setValue, control } = useFormContext()
 
   const {
     t: { recyclingCompanies: t },
@@ -162,7 +159,7 @@ const RecyclingCompanyForm: FC<
                     value: (value: number) => {
                       if (
                         value.toString().length === 10 &&
-                        !kennitala.isValid(value)
+                        !kennitala.isValid(value.toString())
                       ) {
                         return t.recyclingCompany.form.inputs.nationalId.rules
                           ?.validate

@@ -3,12 +3,12 @@ import gql from 'graphql-tag'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, useContext } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 
 import { Box, Breadcrumbs, Stack, toast } from '@island.is/island-ui/core'
 import {
-  hasPermission,
   hasMunicipalityRole,
+  hasPermission,
 } from '@island.is/skilavottord-web/auth/utils'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
@@ -19,7 +19,7 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 import { RecyclingCompanyForm } from '../components'
-import { SkilavottordRecyclingPartnersQuery } from '../RecyclingCompanies'
+import { SkilavottordRecyclingPartnersQuery } from '@island.is/skilavottord-web/graphql'
 
 export const CreateSkilavottordRecyclingPartnerMutation = gql`
   mutation createSkilavottordRecyclingPartnerMutation(
@@ -42,6 +42,12 @@ export const CreateSkilavottordRecyclingPartnerMutation = gql`
   }
 `
 
+type FormData = {
+  municipalityId?: string | { value?: string }
+  isMunicipality?: boolean
+  active?: boolean
+}
+
 const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const router = useRouter()
@@ -58,9 +64,9 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   const isMunicipalityPage = router.route === routes.municipalities.add
 
   // Show only recycling companies for the municipality
-  let partnerId = null
+  let partnerId = ''
   if (hasMunicipalityRole(user?.role)) {
-    partnerId = user?.partnerId
+    partnerId = user?.partnerId || ''
   }
 
   // If coming from municipality page
@@ -72,17 +78,21 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
     route = routes.municipalities.baseRoute
   }
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm({
+  const methods = useForm<FormData>({
     mode: 'onChange',
     defaultValues: isMunicipalityPage
-      ? { isMunicipality: isMunicipalityPage }
-      : { isMunicipality: isMunicipalityPage, municipalityId: partnerId },
+      ? { isMunicipality: isMunicipalityPage, active: false }
+      : {
+          isMunicipality: isMunicipalityPage,
+          municipalityId: partnerId,
+          active: false,
+        },
   })
+
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = methods
 
   const [createSkilavottordRecyclingPartner] = useMutation(
     CreateSkilavottordRecyclingPartnerMutation,
@@ -105,7 +115,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
     return <NotFound />
   }
 
-  const handleCreateRecyclingPartner = handleSubmit(async (input) => {
+  const handleCreateRecyclingPartner = handleSubmit(async (input: FormData) => {
     if (typeof input.municipalityId !== 'string') {
       input.municipalityId = input.municipalityId?.value || ''
     }
@@ -168,14 +178,14 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
         <PageHeader title={title} info={info} />
       </Stack>
       <Box marginTop={7}>
-        <RecyclingCompanyForm
-          onSubmit={handleCreateRecyclingPartner}
-          onCancel={handleCancel}
-          control={control}
-          errors={errors}
-          isMunicipalityPage={isMunicipalityPage}
-          setValue={setValue}
-        />
+        <FormProvider {...methods}>
+          <RecyclingCompanyForm
+            onSubmit={handleCreateRecyclingPartner}
+            onCancel={handleCancel}
+            errors={errors}
+            isMunicipalityPage={isMunicipalityPage}
+          />
+        </FormProvider>
       </Box>
     </PartnerPageLayout>
   )

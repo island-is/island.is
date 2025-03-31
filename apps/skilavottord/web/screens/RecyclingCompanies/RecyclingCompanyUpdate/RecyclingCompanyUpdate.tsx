@@ -1,9 +1,8 @@
 import { useMutation, useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, useContext, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 
 import {
   Box,
@@ -13,8 +12,8 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import {
-  hasPermission,
   hasMunicipalityRole,
+  hasPermission,
 } from '@island.is/skilavottord-web/auth/utils'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
@@ -24,57 +23,26 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
+
 import { RecyclingCompanyForm } from '../components'
-import { SkilavottordRecyclingPartnersQuery } from '../RecyclingCompanies'
-
-const SkilavottordRecyclingPartnerQuery = gql`
-  query SkilavottordRecyclingPartnerQuery($input: RecyclingPartnerInput!) {
-    skilavottordRecyclingPartner(input: $input) {
-      companyId
-      companyName
-      nationalId
-      email
-      address
-      postnumber
-      city
-      website
-      phone
-      active
-      municipalityId
-    }
-  }
-`
-
-const UpdateSkilavottordRecyclingPartnerMutation = gql`
-  mutation updateSkilavottordRecyclingPartnerMutation(
-    $input: UpdateRecyclingPartnerInput!
-  ) {
-    updateSkilavottordRecyclingPartner(input: $input) {
-      companyId
-      companyName
-      nationalId
-      email
-      address
-      postnumber
-      city
-      website
-      phone
-      active
-      municipalityId
-    }
-  }
-`
+import {
+  SkilavottordRecyclingPartnersQuery,
+  SkilavottordRecyclingPartnerQuery,
+  UpdateSkilavottordRecyclingPartnerMutation,
+} from '@island.is/skilavottord-web/graphql'
 
 const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    control,
-    reset,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm({
+  const methods = useForm({
     mode: 'onChange',
   })
+
+  const {
+    setValue,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = methods
+
   const {
     t: { recyclingCompanies: t, municipalities: mt, routes },
   } = useI18n()
@@ -210,15 +178,15 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
         {loading ? (
           <SkeletonLoader width="100%" space={3} repeat={5} height={78} />
         ) : (
-          <RecyclingCompanyForm
-            onSubmit={handleUpdateRecyclingPartner}
-            onCancel={handleCancel}
-            control={control}
-            errors={errors}
-            editView
-            isMunicipalityPage={isMunicipalityPage}
-            setValue={setValue}
-          />
+          <FormProvider {...methods}>
+            <RecyclingCompanyForm
+              onSubmit={handleUpdateRecyclingPartner}
+              onCancel={handleCancel}
+              errors={errors}
+              editView
+              isMunicipalityPage={isMunicipalityPage}
+            />
+          </FormProvider>
         )}
       </Box>
     </PartnerPageLayout>
