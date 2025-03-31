@@ -267,6 +267,8 @@ jobs:
 
       - name: Parallel Docker builds with BuildKit
         if: steps.build_map.outputs.BUILD_CHUNKS
+        env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
 
