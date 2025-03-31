@@ -933,7 +933,6 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
-      "@island.is/form-system": ["libs/portals/admin/form-system/src/index.ts"],
       "@island.is/form-system/dto": ["libs/form-system/src/dto/index.ts"],
       "@island.is/form-system/enums": ["libs/form-system/src/enums/index.ts"],
       "@island.is/form-system/graphql": [
@@ -1008,6 +1007,9 @@
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
+      "@island.is/portals-admin/form-system": [
+        "libs/portals/admin/form-system/src/index.ts"
+      ],
       "@island.is/portals/admin/air-discount-scheme": [
         "libs/portals/admin/air-discount-scheme/src/index.ts"
       ],
