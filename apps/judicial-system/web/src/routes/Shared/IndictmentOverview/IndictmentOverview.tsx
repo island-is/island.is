@@ -127,16 +127,28 @@ const IndictmentOverview: FC = () => {
     workingCase.indictmentReviewer?.id === user?.id &&
     Boolean(!workingCase.indictmentReviewDecision)
 
-  const canAddFiles =
-    !isCompletedCase(workingCase.state) &&
-    isDefenceUser(user) &&
+  const isDefenderOfDefendant = () =>
     workingCase.defendants?.some(
       (defendant) =>
         defendant?.defenderNationalId &&
         normalizeAndFormatNationalId(user?.nationalId).includes(
           defendant.defenderNationalId,
         ),
-    ) &&
+    )
+
+  const isSpokespersonOfCivilClaimant = () =>
+    workingCase.civilClaimants?.some(
+      (civilClaimant) =>
+        civilClaimant?.spokespersonNationalId &&
+        normalizeAndFormatNationalId(user?.nationalId).includes(
+          civilClaimant.spokespersonNationalId,
+        ),
+    )
+
+  const canAddFiles =
+    !isCompletedCase(workingCase.state) &&
+    isDefenceUser(user) &&
+    (isDefenderOfDefendant() || isSpokespersonOfCivilClaimant()) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT
 

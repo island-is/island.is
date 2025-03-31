@@ -346,7 +346,6 @@ const canDefenceUserAccessRequestCase = (
 const canDefenceUserAccessIndictmentCase = (
   theCase: Case,
   user: User,
-  forUpdate: boolean,
 ): boolean => {
   // Check case state access
   if (
@@ -383,8 +382,7 @@ const canDefenceUserAccessIndictmentCase = (
     CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
       user.nationalId,
       theCase.civilClaimants,
-    ) &&
-    !forUpdate
+    )
   ) {
     return true
   }
@@ -392,17 +390,13 @@ const canDefenceUserAccessIndictmentCase = (
   return false
 }
 
-const canDefenceUserAccessCase = (
-  theCase: Case,
-  user: User,
-  forUpdate: boolean,
-): boolean => {
+const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
   if (isRequestCase(theCase.type)) {
     return canDefenceUserAccessRequestCase(theCase, user)
   }
 
   if (isIndictmentCase(theCase.type)) {
-    return canDefenceUserAccessIndictmentCase(theCase, user, forUpdate)
+    return canDefenceUserAccessIndictmentCase(theCase, user)
   }
 
   // Other cases are not accessible to defence users
@@ -435,7 +429,7 @@ export const canUserAccessCase = (
   }
 
   if (isDefenceUser(user)) {
-    return canDefenceUserAccessCase(theCase, user, forUpdate)
+    return canDefenceUserAccessCase(theCase, user)
   }
 
   if (isPublicProsecutorUser(user)) {
