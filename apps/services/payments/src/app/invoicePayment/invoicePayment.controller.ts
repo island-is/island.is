@@ -41,13 +41,16 @@ export class InvoicePaymentController {
     @Body() createInvoiceInput: CreateInvoiceInput,
   ): Promise<CreateInvoiceResponse> {
     try {
-      const {
-        paymentFlow,
-        paymentDetails: { catalogItems, totalPrice },
-        paymentStatus,
-      } = await this.paymentFlowService.getPaymentFlowWithPaymentDetails(
+      const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
         createInvoiceInput.paymentFlowId,
       )
+      const { catalogItems, totalPrice } =
+        await this.paymentFlowService.getPaymentFlowChargeDetails(
+          paymentFlow.organisationId,
+          paymentFlow.charges,
+        )
+      const { paymentStatus } =
+        await this.paymentFlowService.getPaymentFlowStatus(paymentFlow)
 
       if (paymentStatus === 'paid') {
         throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
