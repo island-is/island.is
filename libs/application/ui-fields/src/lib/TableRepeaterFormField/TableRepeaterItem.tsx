@@ -229,17 +229,17 @@ export const Item = ({
   }
   if (component === 'radio') {
     defaultVal =
-      (getValueViaPath(application.answers, id) as string[]) ??
+      getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'checkbox') {
     defaultVal =
-      (getValueViaPath(application.answers, id) as string[]) ??
+      getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'date') {
     defaultVal =
-      (getValueViaPath(application.answers, id) as string) ??
+      getValueViaPath<string>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'hiddenInput') {
