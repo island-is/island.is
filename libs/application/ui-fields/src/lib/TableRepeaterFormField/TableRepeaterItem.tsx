@@ -241,13 +241,6 @@ export const Item = ({
       getDefaultValue(item, application, activeValues)
   }
 
-  let clearOnChangeVal: string[] | undefined
-  if (typeof clearOnChange === 'function') {
-    clearOnChangeVal = clearOnChange(activeIndex)
-  } else {
-    clearOnChangeVal = clearOnChange
-  }
-
   let maxDateVal: Date | undefined
   if (component === 'date') {
     if (typeof item.maxDate === 'function')
@@ -260,6 +253,13 @@ export const Item = ({
     if (typeof item.minDate === 'function')
       minDateVal = item.minDate(application, activeValues)
     else minDateVal = item.minDate
+  }
+
+  let clearOnChangeVal: string[] | undefined
+  if (typeof clearOnChange === 'function') {
+    clearOnChangeVal = clearOnChange(activeIndex)
+  } else {
+    clearOnChangeVal = clearOnChange
   }
 
   const setOnChangeFunc =
