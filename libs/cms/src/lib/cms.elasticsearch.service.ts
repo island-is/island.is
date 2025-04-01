@@ -421,6 +421,7 @@ export class CmsElasticsearchService {
     input: GetCustomSubpageInput,
   ): Promise<CustomPage | null> {
     const index = getElasticsearchIndex(input.lang)
+
     const must = [
       {
         term: {
@@ -435,16 +436,21 @@ export class CmsElasticsearchService {
           query: {
             bool: {
               must: [
-                {
-                  term: {
-                    'tags.key': input.parentPageId,
-                  },
-                },
-                {
-                  term: {
-                    'tags.type': 'referencedBy',
-                  },
-                },
+                { match: { 'tags.key': input.parentPageId } },
+                { term: { 'tags.type': 'referencedBy' } },
+              ],
+            },
+          },
+        },
+      },
+      {
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                { match: { 'tags.key': input.slug } },
+                { term: { 'tags.type': 'slug' } },
               ],
             },
           },
