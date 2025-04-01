@@ -10,6 +10,7 @@ import {
   FieldTypes,
   AsyncSelectField,
   RepeaterOptionValue,
+  HiddenInputField,
 } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -27,6 +28,7 @@ import {
 import { NationalIdWithName } from '@island.is/application/ui-components'
 import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormField'
 import { useApolloClient } from '@apollo/client'
+import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
 
 interface ItemFieldProps {
   application: Application
@@ -98,6 +100,8 @@ export const Item = ({
 
   if (component === 'selectAsync') {
     Component = AsyncSelectFormField
+  } else if (component === 'hiddenInput') {
+    Component = HiddenInputFormField
   } else {
     Component = componentMapper[component]
   }
@@ -246,6 +250,9 @@ export const Item = ({
       getValueViaPath<string>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
+  if (component === 'hiddenInput') {
+    defaultVal = getDefaultValue(item, application, activeValues)
+  }
 
   let maxDateVal: Date | undefined
   if (component === 'date') {
@@ -312,6 +319,17 @@ export const Item = ({
     }
   }
 
+  let hiddenInputProps: HiddenInputField | undefined
+  if (component === 'hiddenInput') {
+    hiddenInputProps = {
+      id: id,
+      type: FieldTypes.HIDDEN_INPUT,
+      component: FieldComponents.HIDDEN_INPUT,
+      children: undefined,
+      defaultValue: defaultVal,
+    }
+  }
+
   if (
     typeof condition === 'function'
       ? condition && !condition(application, activeValues)
@@ -336,39 +354,48 @@ export const Item = ({
           }}
         />
       )}
-      {!(component === 'selectAsync' && selectAsyncProps) && (
-        <Component
-          id={id}
-          name={id}
-          label={formatMessage(label, {
-            index: index + 1,
-          })}
-          options={translatedOptions}
-          split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
-          error={getFieldError(itemId)}
-          control={control}
-          readOnly={readonlyVal}
-          disabled={disabledVal}
-          required={requiredVal}
-          isClearable={isClearableVal}
-          defaultValue={defaultVal}
-          backgroundColor={backgroundColor}
-          onChange={() => {
-            if (error) {
-              clearErrors(id)
-            }
-          }}
+      {component === 'hiddenInput' && hiddenInputProps && (
+        <HiddenInputFormField
           application={application}
-          large={true}
-          placeholder={formatText(placeholder, application, formatMessage)}
-          clearOnChange={clearOnChangeVal}
-          setOnChange={setOnChangeFunc}
-          {...props}
-          {...(component === 'date'
-            ? { maxDate: maxDateVal, minDate: minDateVal }
-            : {})}
+          field={{
+            ...hiddenInputProps,
+          }}
         />
       )}
+      {!(component === 'selectAsync' && selectAsyncProps) &&
+        !(component === 'hiddenInput' && hiddenInputProps) && (
+          <Component
+            id={id}
+            name={id}
+            label={formatMessage(label, {
+              index: index + 1,
+            })}
+            options={translatedOptions}
+            split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
+            error={getFieldError(itemId)}
+            control={control}
+            readOnly={readonlyVal}
+            disabled={disabledVal}
+            required={requiredVal}
+            isClearable={isClearableVal}
+            defaultValue={defaultVal}
+            backgroundColor={backgroundColor}
+            onChange={() => {
+              if (error) {
+                clearErrors(id)
+              }
+            }}
+            application={application}
+            large={true}
+            placeholder={formatText(placeholder, application, formatMessage)}
+            clearOnChange={clearOnChangeVal}
+            setOnChange={setOnChangeFunc}
+            {...props}
+            {...(component === 'date'
+              ? { maxDate: maxDateVal, minDate: minDateVal }
+              : {})}
+          />
+        )}
     </GridColumn>
   )
 }
