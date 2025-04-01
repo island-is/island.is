@@ -134,6 +134,72 @@ export class SocialInsuranceAdministrationClientService {
                 },
               ],
             },
+            {
+              name: 'TEST &',
+              total: 50153159,
+              markWithAsterisk: true,
+              months: [
+                {
+                  month: 1,
+                  amount: 10,
+                },
+                {
+                  month: 2,
+                  amount: 20,
+                },
+                {
+                  month: 3,
+                  amount: 30,
+                },
+                {
+                  month: 4,
+                  amount: 40,
+                },
+                {
+                  month: 5,
+                  amount: 50,
+                },
+                {
+                  month: 6,
+                  amount: 60,
+                },
+                {
+                  month: 7,
+                  amount: 70,
+                },
+                {
+                  month: 8,
+                  amount: 80,
+                },
+                {
+                  month: 9,
+                  amount: 90,
+                },
+                {
+                  month: 10,
+                  amount: 100,
+                },
+                {
+                  month: 11,
+                  amount: 110,
+                },
+                {
+                  month: 12,
+                  amount: 120,
+                },
+              ],
+            },
+            {
+              name: 'TEST )))',
+              total: 500009,
+              markWithAsterisk: true,
+              months: [
+                {
+                  month: 8,
+                  amount: 513215,
+                },
+              ],
+            },
           ],
         },
         {

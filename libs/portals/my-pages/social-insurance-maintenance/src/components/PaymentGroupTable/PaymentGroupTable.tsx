@@ -8,35 +8,15 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import { useGetPaymentPlanQuery } from '../PaymentGroupTable/PaymentGroupTable.generated'
-import {
-  Box,
-  Button,
-  LoadingDots,
-  Table as T,
-  Text,
-} from '@island.is/island-ui/core'
-import { useCallback, useRef, useState } from 'react'
-import { Height } from 'react-animate-height'
+import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import { useRef } from 'react'
 import * as styles from './PaymentGroupTable.css'
+import { PaymentGroupTableRow } from './PaymentGroupTableRow'
 
 export const PaymentGroupTable = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
-  const [expanded, toggleExpand] = useState<boolean>(false)
-  const [closed, setClosed] = useState<boolean>(true)
   const tableRef = useRef<HTMLDivElement>(null)
-
-  const handleAnimationEnd = useCallback((height: Height) => {
-    if (height === 0) {
-      setClosed(true)
-    } else {
-      setClosed(false)
-    }
-  }, [])
-
-  const onExpandButton = () => {
-    toggleExpand(!expanded)
-  }
 
   const { data, loading, error } = useGetPaymentPlanQuery()
 
@@ -104,68 +84,10 @@ export const PaymentGroupTable = () => {
         <T.Body>
           {paymentGroups?.map((paymentGroup, rowIdx) => {
             return (
-              <T.Row key={`row-${rowIdx}`}>
-                <T.Data
-                  box={{
-                    className: styles.labelColumn,
-                    background: 'white',
-                  }}
-                >
-                  <Box display="flex">
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="flexStart"
-                      onClick={onExpandButton}
-                      cursor="pointer"
-                      paddingRight={4}
-                    >
-                      <Button
-                        circle
-                        colorScheme="light"
-                        icon={expanded ? 'remove' : 'add'}
-                        iconType="filled"
-                        onClick={onExpandButton}
-                        preTextIconType="filled"
-                        size="small"
-                        title={'Sundurliðun'}
-                        type="button"
-                        variant="primary"
-                      />
-                    </Box>
-                    <Text variant="medium">{paymentGroup.name}</Text>
-                  </Box>
-                </T.Data>
-                {MONTHS.map((month, i) => {
-                  const amount = paymentGroup?.monthlyPaymentHistory?.find(
-                    (mph) => mph.monthIndex === MONTHS.indexOf(month),
-                  )?.amount
-
-                  return (
-                    <T.Data
-                      key={i}
-                      box={{
-                        background: 'white',
-                      }}
-                      align="right"
-                    >
-                      <Text variant="medium">
-                        {amount ? amountFormat(amount) : '-'}
-                      </Text>
-                    </T.Data>
-                  )
-                })}
-                <T.Data
-                  box={{
-                    className: styles.sumColumn,
-                    background: 'white',
-                  }}
-                >
-                  <Text variant="medium">{`${amountFormat(
-                    paymentGroup.totalYearCumulativeAmount,
-                  )}`}</Text>
-                </T.Data>
-              </T.Row>
+              <PaymentGroupTableRow
+                paymentGroup={paymentGroup}
+                key={`row-${rowIdx}`}
+              />
             )
           })}
           <T.Row>
@@ -195,7 +117,12 @@ export const PaymentGroupTable = () => {
                 </T.Data>
               )
             })}
-            <T.Data>
+            <T.Data
+              box={{
+                className: styles.sumColumn,
+                background: 'white',
+              }}
+            >
               <Text variant="medium" fontWeight="medium">
                 {paymentPlan?.totalPaymentsReceived
                   ? amountFormat(paymentPlan?.totalPaymentsReceived)
