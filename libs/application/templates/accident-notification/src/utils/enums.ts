@@ -1,21 +1,9 @@
-import { YesOrNo } from '@island.is/application/core'
-import { companyInfo, representativeInfo } from '../lib/messages'
-
-export type CompanyInfo = {
-  nationalRegistrationId: string
-  name: string
-  type: AccidentTypeEnum | WorkAccidentTypeEnum
-  onPayRoll?: {
-    answer: YesOrNo
-  }
-}
-
-export type Applicant = {
-  name: string
-  nationalId: string
-  email: string
-  phoneNumber: string
-  jobTitle?: string
+export enum States {
+  PREREQUISITES = 'prerequisites',
+  DRAFT = 'draft',
+  REVIEW = 'review',
+  REVIEW_ADD_ATTACHMENT = 'reviewAddAttachment',
+  IN_FINAL_REVIEW = 'inFinalReview',
 }
 
 export enum Status {
@@ -23,35 +11,15 @@ export enum Status {
   FAILURE = 'failure',
 }
 
-export type AccidentNotifTypes =
-  | 'InjuryCertificate'
-  | 'ProxyDocument'
-  | 'PoliceReport'
-  | 'Unknown'
-
-export type AccidentNotificationAttachmentStatus = {
-  InjuryCertificate?: boolean | null
-  ProxyDocument?: boolean | null
-  PoliceReport?: boolean | null
-  Unknown?: boolean | null
-}
-
-export type RepresentativeInfo = {
-  name: string
-  nationalId: string
-  email: string
-  phoneNumber?: string
-}
-
-export type FileType = {
-  url?: string | undefined
-  name: string
-  key: string
-}
-
 export enum OnBehalf {
   MYSELF = 'myself',
   OTHERS = 'others',
+}
+
+export enum Roles {
+  PROCURER = 'procurer',
+  APPLICANT = 'applicant',
+  ASSIGNEE = 'assignee',
 }
 
 export enum WhoIsTheNotificationForEnum {
@@ -150,86 +118,4 @@ export enum ReviewSectionState {
   pending = 'Pending',
   approved = 'Approved',
   objected = 'Objected',
-}
-
-export interface SubmittedApplicationData {
-  data?: {
-    documentId: number
-    sentDocuments: string[]
-  }
-}
-
-export interface ReviewAddAttachmentData {
-  data?: {
-    sentDocuments: string[]
-  }
-}
-
-// Types for new accident notification API
-
-export type ApplicantV2 = {
-  address?: string | null
-  city?: string | null
-  email?: string | null
-  name?: string | null
-  nationalId?: string | null
-  phoneNumber?: string | null
-  postalCode?: string | null
-}
-
-export type InjuredPersonInformationV2 = {
-  email?: string | null
-  jobTitle?: string | null
-  name?: string | null
-  nationalId?: string | null
-  phoneNumber?: string | null
-}
-
-export type AccidentDetailsV2 = {
-  accidentSymptoms?: string | null
-  dateOfAccident?: string | null
-  dateOfDoctorVisit?: string | null
-  descriptionOfAccident?: string | null
-  timeOfAccident?: string | null
-  timeOfDoctorVisit?: string | null
-}
-
-export type HomeAccidentV2 = {
-  address?: string | null
-  community?: string | null
-  moreDetails?: string | null
-  postalCode?: string | null
-}
-
-export type WorkMachineV2 = {
-  descriptionOfMachine?: string | null
-}
-
-export type FishingShipInfoV2 = {
-  homePort?: string | null
-  shipCharacters?: string | null
-  shipName?: string | null
-  shipRegisterNumber?: string | null
-}
-
-export type CompanyInfoV2 = {
-  name?: string | null
-  nationalRegistrationId?: string | null
-}
-
-export type RepresentativeInfoV2 = {
-  email?: string | null
-  name?: string | null
-  nationalId?: string | null
-  phoneNumber?: string | null
-}
-
-export type WorkplaceData = {
-  companyInfo: CompanyInfo
-  representitive: RepresentativeInfo
-  companyInfoMsg: typeof companyInfo
-  representitiveMsg: typeof representativeInfo
-  type: WorkAccidentTypeEnum | AccidentTypeEnum
-  onPayRoll?: YesOrNo
-  screenId: string
 }

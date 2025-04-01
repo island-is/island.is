@@ -1,6 +1,6 @@
 import * as kennitala from 'kennitala'
 import React, { BaseSyntheticEvent, FC, useContext } from 'react'
-import { Control, Controller, FieldError } from 'react-hook-form'
+import { Controller, FieldError, useFormContext } from 'react-hook-form'
 import { FieldValues } from 'react-hook-form/dist/types'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
 
@@ -21,8 +21,9 @@ import {
   hasMunicipalityRole,
 } from '@island.is/skilavottord-web/auth/utils'
 import UserContext from '@island.is/skilavottord-web/context/UserContext'
-import { Query } from '@island.is/skilavottord-web/graphql/schema'
+import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { encode } from '@island.is/skilavottord-web/utils/encodeUtils'
 
 interface RecyclingCompanyForm {
   onSubmit: (
@@ -30,7 +31,6 @@ interface RecyclingCompanyForm {
   ) => Promise<void>
   onCancel: () => void
   errors: DeepMap<FieldValues, FieldError>
-  control: Control<FieldValues>
   editView?: boolean
   isMunicipalityPage?: boolean | undefined
 }
@@ -49,12 +49,12 @@ const RecyclingCompanyForm: FC<
 > = ({
   onSubmit,
   onCancel,
-  control,
   errors,
   editView = false,
   isMunicipalityPage = false,
 }) => {
   const { user } = useContext(UserContext)
+  const { setValue, control } = useFormContext()
 
   const {
     t: { recyclingCompanies: t },
@@ -101,7 +101,7 @@ const RecyclingCompanyForm: FC<
                   },
                 }}
                 error={errors?.companyId?.message}
-                disabled={editView}
+                disabled={editView || user?.role === Role.municipality}
                 backgroundColor="blue"
               />
             </GridColumn>
@@ -124,6 +124,15 @@ const RecyclingCompanyForm: FC<
                 }}
                 error={errors?.companyName?.message}
                 backgroundColor="blue"
+                onChange={(event) => {
+                  // User with the municipality role should not be able to create his own companyId
+                  if (!editView && user?.role === Role.municipality) {
+                    setValue(
+                      'companyId',
+                      user?.partnerId + '-' + encode(event.target.value),
+                    )
+                  }
+                }}
               />
             </GridColumn>
           </GridRow>
@@ -150,7 +159,7 @@ const RecyclingCompanyForm: FC<
                     value: (value: number) => {
                       if (
                         value.toString().length === 10 &&
-                        !kennitala.isValid(value)
+                        !kennitala.isValid(value.toString())
                       ) {
                         return t.recyclingCompany.form.inputs.nationalId.rules
                           ?.validate
