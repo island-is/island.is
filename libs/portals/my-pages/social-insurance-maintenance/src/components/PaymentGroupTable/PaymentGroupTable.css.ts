@@ -16,6 +16,11 @@ export const hidden = style({
   visibility: 'hidden',
   margin: 0,
   padding: 0,
+  border: 'none',
+})
+
+export const column = style({
+  borderWidth: 0,
 })
 
 export const subLabelColumn = style({
@@ -25,12 +30,20 @@ export const subLabelColumn = style({
   overflow: 'hidden',
   position: 'sticky',
   zIndex: theme.zIndex.above,
-  paddingLeft: theme.spacing[2],
-  paddingRight: 0,
+})
+
+export const subCell = style({
+  display: 'flex',
+  alignItems: 'center',
+  height: '48px',
 })
 
 export const labelCell = style({
   width: '246px',
+})
+
+export const lastCell = style({
+  width: '104px',
 })
 
 export const sumColumn = style({

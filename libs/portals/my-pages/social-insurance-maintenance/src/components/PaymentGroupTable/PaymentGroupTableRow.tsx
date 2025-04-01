@@ -33,7 +33,7 @@ export const PaymentGroupTableRow = ({ key, paymentGroup }: Props) => {
       <T.Row>
         <T.Data
           box={{
-            className: styles.labelColumn,
+            className: cn(styles.labelColumn, { [styles.column]: expanded }),
             background: expanded ? 'blue100' : 'white',
           }}
         >
@@ -71,6 +71,7 @@ export const PaymentGroupTableRow = ({ key, paymentGroup }: Props) => {
             <T.Data
               key={i}
               box={{
+                className: cn({ [styles.column]: expanded }),
                 background: expanded ? 'blue100' : 'white',
               }}
               align="right"
@@ -83,7 +84,7 @@ export const PaymentGroupTableRow = ({ key, paymentGroup }: Props) => {
         })}
         <T.Data
           box={{
-            className: styles.sumColumn,
+            className: cn(styles.sumColumn, { [styles.column]: expanded }),
             background: expanded ? 'blue100' : 'white',
           }}
         >
@@ -92,88 +93,125 @@ export const PaymentGroupTableRow = ({ key, paymentGroup }: Props) => {
           )}`}</Text>
         </T.Data>
       </T.Row>
-      {paymentGroup?.payments.map((pg, idx) => (
-        <T.Row>
-          <T.Data
-            box={{
-              className: cn(styles.subLabelColumn, {
-                [styles.hidden]: !expanded,
-              }),
-              paddingY: 0,
-              paddingX: 0,
-              background: 'blue100',
-            }}
-          >
-            <AnimateHeight
-              onHeightAnimationEnd={(newHeight) =>
-                handleAnimationEnd(newHeight)
-              }
-              duration={300}
-              height={expanded ? 'auto' : 0}
-            >
-              <Box
-                paddingLeft={3}
-                paddingY={2}
-                background={idx % 2 === 0 ? 'white' : 'blue100'}
-              >
-                <Text variant="small">{pg.name}</Text>
-              </Box>
-            </AnimateHeight>
-          </T.Data>
-          {MONTHS.map((month) => {
-            const amount = pg?.monthlyPaymentHistory?.find(
-              (mph) => mph.monthIndex === MONTHS.indexOf(month),
-            )?.amount
+      {paymentGroup?.payments.map((pg, idx) => {
+        const last = idx === paymentGroup.payments.length - 1
 
-            return (
-              <T.Data
-                key={`nested-table-footer-col-${month}`}
-                box={{
-                  className: cn({
-                    [styles.hidden]: !expanded,
-                  }),
-                  background: idx % 2 === 0 ? 'white' : 'blue100',
-                }}
-              >
-                <AnimateHeight
-                  onHeightAnimationEnd={(newHeight) =>
-                    handleAnimationEnd(newHeight)
-                  }
-                  duration={300}
-                  height={expanded ? 'auto' : 0}
-                >
-                  <Text variant="small" textAlign="right">
-                    {amount ? amountFormat(amount) : '-'}
-                  </Text>
-                </AnimateHeight>
-              </T.Data>
-            )
-          })}
-          <T.Data
-            box={{
-              className: cn(styles.sumColumn, {
-                [styles.hidden]: !expanded,
-              }),
-            }}
-          >
-            <AnimateHeight
-              onHeightAnimationEnd={(newHeight) =>
-                handleAnimationEnd(newHeight)
-              }
-              duration={300}
-              height={expanded ? 'auto' : 0}
+        return (
+          <T.Row>
+            <T.Data
+              box={{
+                className: cn(styles.subLabelColumn, styles.column, {
+                  [styles.hidden]: !expanded,
+                }),
+                background: 'blue100',
+                paddingRight: 0,
+                paddingLeft: 0,
+                paddingTop: 0,
+                paddingBottom: 0,
+                marginTop: 3,
+              }}
             >
-              <Box background={idx % 2 === 0 ? 'white' : 'blue100'}>
-                <Text variant="small">
-                  {`${amountFormat(pg.totalYearCumulativeAmount)}${
-                    pg.markWithAsterisk ? ' *' : ''
-                  }`}
-                </Text>
-              </Box>
-            </AnimateHeight>
-          </T.Data>
-        </T.Row>
-      ))}
+              <AnimateHeight
+                onHeightAnimationEnd={(newHeight) =>
+                  handleAnimationEnd(newHeight)
+                }
+                duration={300}
+                height={expanded ? 'auto' : 0}
+              >
+                <Box
+                  className={styles.subCell}
+                  background={idx % 2 === 0 ? 'white' : 'blue100'}
+                  marginLeft={3}
+                  paddingLeft={2}
+                  paddingY={2}
+                  marginBottom={last ? 3 : 0}
+                >
+                  <Text marginTop="auto" variant="small">
+                    {pg.name}
+                  </Text>
+                </Box>
+              </AnimateHeight>
+            </T.Data>
+            {MONTHS.map((month) => {
+              const amount = pg?.monthlyPaymentHistory?.find(
+                (mph) => mph.monthIndex === MONTHS.indexOf(month),
+              )?.amount
+
+              return (
+                <T.Data
+                  key={`nested-table-footer-col-${month}`}
+                  box={{
+                    className: cn(styles.column, {
+                      [styles.hidden]: !expanded,
+                    }),
+                    background: 'blue100',
+                    paddingRight: 0,
+                    paddingLeft: 0,
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                  }}
+                >
+                  <AnimateHeight
+                    onHeightAnimationEnd={(newHeight) =>
+                      handleAnimationEnd(newHeight)
+                    }
+                    duration={300}
+                    height={expanded ? 'auto' : 0}
+                  >
+                    <Box
+                      className={styles.subCell}
+                      background={idx % 2 === 0 ? 'white' : 'blue100'}
+                      paddingY={2}
+                      paddingX={3}
+                      justifyContent="flexEnd"
+                      marginBottom={last ? 3 : 0}
+                    >
+                      <Text variant="small" textAlign="right">
+                        {amount ? amountFormat(amount) : '-'}
+                      </Text>
+                    </Box>
+                  </AnimateHeight>
+                </T.Data>
+              )
+            })}
+            <T.Data
+              box={{
+                className: cn(styles.sumColumn, styles.column, {
+                  [styles.hidden]: !expanded,
+                }),
+                background: 'blue100',
+                paddingRight: 0,
+                paddingLeft: 0,
+                paddingTop: 0,
+                paddingBottom: 0,
+              }}
+            >
+              <AnimateHeight
+                onHeightAnimationEnd={(newHeight) =>
+                  handleAnimationEnd(newHeight)
+                }
+                duration={300}
+                height={expanded ? 'auto' : 0}
+              >
+                <Box
+                  className={styles.subCell}
+                  background={idx % 2 === 0 ? 'white' : 'blue100'}
+                  paddingX={2}
+                  marginRight={3}
+                  justifyContent={'flexEnd'}
+                  marginBottom={last ? 3 : 0}
+                >
+                  <Text variant="small">
+                    {`${amountFormat(pg.totalYearCumulativeAmount)}${
+                      pg.markWithAsterisk ? ' *' : ''
+                    }`}
+                  </Text>
+                </Box>
+              </AnimateHeight>
+            </T.Data>
+          </T.Row>
+        )
+      })}
     </>
   )
 }

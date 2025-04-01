@@ -123,11 +123,13 @@ export const PaymentGroupTable = () => {
                 background: 'white',
               }}
             >
-              <Text variant="medium" fontWeight="medium">
-                {paymentPlan?.totalPaymentsReceived
-                  ? amountFormat(paymentPlan?.totalPaymentsReceived)
-                  : '-'}
-              </Text>
+              <Box className={styles.lastCell}>
+                <Text variant="medium" fontWeight="medium">
+                  {paymentPlan?.totalPaymentsReceived
+                    ? amountFormat(paymentPlan?.totalPaymentsReceived)
+                    : '-'}
+                </Text>
+              </Box>
             </T.Data>
           </T.Row>
         </T.Body>
