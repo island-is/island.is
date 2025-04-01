@@ -241,6 +241,20 @@ export const Item = ({
       getDefaultValue(item, application, activeValues)
   }
 
+  let maxDateVal: Date | undefined
+  if (component === 'date') {
+    if (typeof item.maxDate === 'function')
+      maxDateVal = item.maxDate(application, activeValues)
+    else maxDateVal = item.maxDate
+  }
+
+  let minDateVal: Date | undefined
+  if (component === 'date') {
+    if (typeof item.minDate === 'function')
+      minDateVal = item.minDate(application, activeValues)
+    else minDateVal = item.minDate
+  }
+
   let clearOnChangeVal: string[] | undefined
   if (typeof clearOnChange === 'function') {
     clearOnChangeVal = clearOnChange(activeIndex)
@@ -343,6 +357,9 @@ export const Item = ({
           clearOnChange={clearOnChangeVal}
           setOnChange={setOnChangeFunc}
           {...props}
+          {...(component === 'date'
+            ? { maxDate: maxDateVal, minDate: minDateVal }
+            : {})}
         />
       )}
     </GridColumn>

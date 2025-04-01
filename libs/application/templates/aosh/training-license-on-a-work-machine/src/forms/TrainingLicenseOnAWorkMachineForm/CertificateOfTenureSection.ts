@@ -225,36 +225,33 @@ export const certificateOfTenureSection = buildSection({
               label: certificateOfTenure.labels.dateFrom,
               width: 'half',
               placeholder: certificateOfTenure.labels.datePlaceholder,
-              // maxDate: (application) => {
-              //   const dateTo = getValueViaPath<string>(
-              //     application.answers,
-              //     'certificateOfTenure.dateTo',
-              //   )
-              //   return dateTo
-              //     ? new Date(
-              //         new Date(dateTo).setDate(new Date(dateTo).getDate() - 1),
-              //       )
-              //     : new Date()
-              // },
+              maxDate: (_, activeField) => {
+                const dateTo =
+                  activeField && getValueViaPath<string>(activeField, 'dateTo')
+                return dateTo
+                  ? new Date(
+                      new Date(dateTo).setDate(new Date(dateTo).getDate() - 1),
+                    )
+                  : new Date()
+              },
             },
             dateTo: {
               component: 'date',
               label: certificateOfTenure.labels.dateTo,
               width: 'half',
               placeholder: certificateOfTenure.labels.datePlaceholder,
-              // minDate: (application) => {
-              //   const dateFrom = getValueViaPath<string>(
-              //     application.answers,
-              //     'certificateOfTenure.dateFrom',
-              //   )
-              //   return dateFrom
-              //     ? new Date(
-              //         new Date(dateFrom).setDate(
-              //           new Date(dateFrom).getDate() + 1,
-              //         ),
-              //       )
-              //     : new Date('1900-01-01')
-              // },
+              minDate: (_, activeField) => {
+                const dateFrom =
+                  activeField &&
+                  getValueViaPath<string>(activeField, 'dateFrom')
+                return dateFrom
+                  ? new Date(
+                      new Date(dateFrom).setDate(
+                        new Date(dateFrom).getDate() + 1,
+                      ),
+                    )
+                  : new Date('1900-01-01')
+              },
               maxDate: new Date(),
             },
             tenureInHours: {
