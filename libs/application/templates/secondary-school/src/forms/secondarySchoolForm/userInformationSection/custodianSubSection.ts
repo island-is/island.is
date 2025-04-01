@@ -24,7 +24,7 @@ export const custodianSubSection = buildSubSection({
           ? ''
           : userInformation.otherContact.description,
       children: [
-        // If applicant is under 18 years old
+        // If applicant has any custodians
         // Custodians
         buildFieldsRepeaterField({
           id: 'custodians',
@@ -95,7 +95,7 @@ export const custodianSubSection = buildSubSection({
           },
         }),
 
-        // If applicant is over 18 years old
+        // If applicant does not have any custodians
         // Contacts
         buildFieldsRepeaterField({
           id: 'otherContacts',
