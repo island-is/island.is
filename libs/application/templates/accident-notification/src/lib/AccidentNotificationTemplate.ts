@@ -1,6 +1,5 @@
 import {
   coreHistoryMessages,
-  corePendingActionMessages,
   DefaultStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -14,75 +13,32 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
-  PendingAction,
   FormModes,
 } from '@island.is/application/types'
 import set from 'lodash/set'
 import { assign } from 'xstate'
-import { AccidentTypeEnum, ReviewApprovalEnum } from '..'
-import { States } from '../utils/constants'
 import { ApiActions } from '../shared'
-import { WhoIsTheNotificationForEnum } from '../types'
 import { AccidentNotificationSchema } from './dataSchema'
-import { anPendingActionMessages, application } from './messages'
+import { application } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { IdentityApi, NationalRegistryUserApi } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
+import {
+  AccidentTypeEnum,
+  ReviewApprovalEnum,
+  Roles,
+  States,
+  WhoIsTheNotificationForEnum,
+} from '../utils/enums'
+import { AccidentNotificationEvent } from '../utils/types'
+import {
+  assignStatePendingAction,
+  reviewStatePendingAction,
+} from '../utils/actionCardPendingAction'
 
 // The applicant is the applicant of the application, can be someone in power of attorney or the representative for the company
 // The assignee is the person who is assigned to review the application can be the injured person or the representative for the company
 // The assignee should see all data related to the application being submitted to sjukra but not data only relevant to applicant
-enum Roles {
-  PROCURER = 'procurer',
-  APPLICANT = 'applicant',
-  ASSIGNEE = 'assignee',
-}
-
-type AccidentNotificationEvent =
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ASSIGN }
-
-const assignStatePendingAction = (
-  application: Application,
-  role: string,
-): PendingAction => {
-  if (role === Roles.ASSIGNEE) {
-    return {
-      title: corePendingActionMessages.waitingForAssigneeTitle,
-      content: corePendingActionMessages.waitingForAssigneeDescription,
-      displayStatus: 'warning',
-    }
-  } else {
-    return {
-      title: corePendingActionMessages.waitingForAssigneeTitle,
-      content:
-        anPendingActionMessages.waitForReivewerAndAddAttachmentDescription,
-      displayStatus: 'info',
-    }
-  }
-}
-
-const reviewStatePendingAction = (
-  _application: Application,
-  role: string,
-): PendingAction => {
-  if (role === Roles.ASSIGNEE) {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.waitingForAssigneeDescription,
-      displayStatus: 'warning',
-    }
-  } else {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.youNeedToReviewDescription,
-      displayStatus: 'info',
-    }
-  }
-}
-
 const AccidentNotificationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<AccidentNotificationEvent>,
@@ -439,10 +395,10 @@ export default AccidentNotificationTemplate
 
 const getNationalIdOfReviewer = (application: Application) => {
   try {
-    const accidentType = getValueViaPath(
+    const accidentType = getValueViaPath<AccidentTypeEnum>(
       application.answers,
       'accidentType',
-    ) as AccidentTypeEnum
+    )
     const whoIsTheNotificationFor = getValueViaPath(
       application.answers,
       'whoIsTheNotificationFor.answer',
