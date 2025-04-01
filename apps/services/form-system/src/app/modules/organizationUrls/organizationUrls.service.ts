@@ -7,7 +7,7 @@ import { OrganizationUrl } from './models/organizationUrl.model'
 import { CreateOrganizationUrlDto } from './models/dto/createOrganizationUrl.dto'
 import { OrganizationUrlDto } from './models/dto/organizationUrl.dto'
 import { UpdateOrganizationUrlDto } from './models/dto/updateOrganizationUrl.dto'
-import { UrlMethods, UrlTypes } from '@island.is/form-system/enums'
+import { UrlMethods, UrlTypes } from '@island.is/form-system/shared'
 
 @Injectable()
 export class OrganizationUrlsService {
