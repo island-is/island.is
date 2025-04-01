@@ -62,6 +62,7 @@ import {
 import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { GenericLicenseType } from '../../graphql/types/schema'
+import { useLocale } from '../../hooks/use-locale'
 
 interface ListItem {
   id: string
@@ -182,6 +183,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
             : []),
         ],
       },
+      locale: useLocale(),
     },
     fetchPolicy: 'cache-first',
     skip: !licensesWidgetEnabled,
