@@ -4,10 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  formatDate,
-  normalizeAndFormatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDefenceUser,
@@ -43,6 +40,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  isCaseCivilClaimantSpokesperson,
   isCaseDefendantDefender,
   shouldDisplayGeneratedPdfFiles,
 } from '@island.is/judicial-system-web/src/utils/utils'
@@ -130,24 +128,6 @@ const IndictmentOverview: FC = () => {
     workingCase.indictmentReviewer?.id === user?.id &&
     Boolean(!workingCase.indictmentReviewDecision)
 
-  // const isCaseDefendantDefender = () =>
-  //   workingCase.defendants?.some(
-  //     (defendant) =>
-  //       defendant?.defenderNationalId &&
-  //       normalizeAndFormatNationalId(user?.nationalId).includes(
-  //         defendant.defenderNationalId,
-  //       ),
-  //   )
-
-  // const isCaseCivilClaimantSpokesperson = () =>
-  //   workingCase.civilClaimants?.some(
-  //     (civilClaimant) =>
-  //       civilClaimant?.spokespersonNationalId &&
-  //       normalizeAndFormatNationalId(user?.nationalId).includes(
-  //         civilClaimant.spokespersonNationalId,
-  //       ),
-  //   )
-
   const canAddFiles =
     !isCompletedCase(workingCase.state) &&
     isDefenceUser(user) &&
@@ -155,8 +135,6 @@ const IndictmentOverview: FC = () => {
       isCaseCivilClaimantSpokesperson(user, workingCase)) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT
-
-  // TODO: Get defendant_id or civilclaiman_id for case files so we can apply appropriate filterings
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),

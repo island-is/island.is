@@ -194,3 +194,16 @@ export const isCaseCivilClaimantSpokesperson = (
         civilClaimant.spokespersonNationalId,
       ),
   )
+
+export const isCaseCivilClaimantLegalSpokesperson = (
+  user?: User,
+  workingCase?: { civilClaimants?: CivilClaimant[] | null },
+) =>
+  workingCase?.civilClaimants?.some(
+    (civilClaimant) =>
+      civilClaimant?.spokespersonNationalId &&
+      normalizeAndFormatNationalId(user?.nationalId).includes(
+        civilClaimant.spokespersonNationalId,
+      ) &&
+      civilClaimant.spokespersonIsLawyer,
+  )
