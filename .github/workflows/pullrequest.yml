@@ -248,28 +248,24 @@ jobs:
           # https://github.com/actions/checkout#push-a-commit-to-a-pr-using-the-built-in-token
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Get changed files
-        id: changed-files
-        run: |
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }} | tr '\n' ',' | sed 's/,$//')
-          echo "CHANGED_FILES=${CHANGED_FILES}" | tee -a "$GITHUB_ENV"
-
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
-      - name: Run lintfix on changed files
-        if: ${{ env.CHANGED_FILES != '' }}
-        run: yarn nx affected -t lint --base=origin/$GITHUB_BASE_REF --fix --lintFilePatterns="${CHANGED_FILES}" --verbose
+      - name: Run lintfix
+        id: lintfix
+        # NOTE: We want to use the PR base, not last good, since the lint is not part of "good" build
+        # and causes unintended lint changes when using a different commit
+        run: |
+          yarn nx affected -t lint --base="origin/$GITHUB_BASE_REF" --fix
+          if ! git diff "$GITHUB_BASE_REF" --exit-code; then
+            echo "FILES_CHANGED=true" | tee -a "$GITHUB_OUTPUT"
+          fi
 
       - name: Commit changed files
-        run: |
-          if git diff --exit-code; then exit 0; fi
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git commit -am "chore: Lintfix dirty files"
-          git push
+        if: ${{ steps.lintfix.outputs.FILES_CHANGED == 'true' }}
+        run: ./infra/scripts/ci/git-check-dirty.sh . lintfix dirtybot
 
   linting:
     needs:
@@ -338,6 +334,7 @@ jobs:
       - formatting
       - e2e
       - build
+      - unicorn-tests
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
@@ -358,5 +355,7 @@ jobs:
         run: '[[ ${{ needs.formatting.result }} != "failure" ]] || exit 1'
       - name: Check build success
         run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
+      - name: Check Unicorn test success
+        run: '[[ ${{ needs.unicorn-tests.result }} != "failure" ]] || exit 1'
       - name: Announce success
         run: echo "Build is successful"
