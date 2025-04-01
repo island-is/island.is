@@ -10,5 +10,3 @@ bootstrap({
   openApi,
   port: environment.port,
 })
-
-// DEPLOYME

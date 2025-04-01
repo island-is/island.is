@@ -19,8 +19,6 @@ type FormState = {
   touched: boolean
 }
 
-// DEPLOYME
-
 // This component should be generalized a bit more and moved into @web/components
 
 export const RenderForm: React.FC<
