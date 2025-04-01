@@ -23,15 +23,18 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
           ({
             category,
             submittedBy,
+            fileRepresentative,
           }: {
             category: CaseFileCategory
             submittedBy: string
+            fileRepresentative: string
           }) =>
             canLimitedAccessUserViewCaseFile({
               user,
               caseType: theCase.type,
               caseState: theCase.state,
               submittedBy,
+              fileRepresentative,
               caseFileCategory: category,
               defendants: theCase.defendants,
               civilClaimants: theCase.civilClaimants,

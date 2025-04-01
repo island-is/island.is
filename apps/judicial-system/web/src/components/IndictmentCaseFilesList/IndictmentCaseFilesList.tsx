@@ -192,6 +192,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
   const isCompletedWithRuling =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+  const hasNoFiles = !showFiles && !displayGeneratedPDFs
 
   return (
     <>
@@ -285,7 +286,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           )}
         </>
       )}
-      {showFiles ? (
+      {showFiles && (
         <>
           <FileSection
             title={formatMessage(caseFiles.criminalRecordSection)}
@@ -374,7 +375,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
           </AnimatePresence>
         </>
-      ) : (
+      )}
+      {hasNoFiles && (
         <Box marginTop={3}>
           <AlertMessage type="info" message="Engin skjöl til að sýna" />
         </Box>

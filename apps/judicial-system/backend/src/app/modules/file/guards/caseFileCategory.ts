@@ -115,6 +115,7 @@ const canDefenceUserViewCaseFile = ({
   caseType,
   caseState,
   submittedBy,
+  fileRepresentative,
   caseFileCategory,
   defendants,
   civilClaimants,
@@ -124,6 +125,7 @@ const canDefenceUserViewCaseFile = ({
   caseType: CaseType
   caseState: CaseState
   submittedBy?: string
+  fileRepresentative?: string
   caseFileCategory: CaseFileCategory
   defendants?: Defendant[]
   civilClaimants?: CivilClaimant[]
@@ -136,7 +138,8 @@ const canDefenceUserViewCaseFile = ({
     // TODO: This is not optimal as we can have multiple users that have identical names.
     // It is unlikely that a defenders with identical user names have been assigned to the same case but we should remove that possibility for sure.
     // Since defenders aren't registered in the system we should rather rely on the user's national id when submitting a file
-    const hasUserSubmittedCaseFile = userName === submittedBy
+    const hasUserSubmittedCaseFile =
+      userName === submittedBy || userName === fileRepresentative
     return (
       canDefenceUserViewCaseFileOfIndictmentCase(
         nationalId,
@@ -176,6 +179,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   caseState,
   caseFileCategory,
   submittedBy,
+  fileRepresentative,
   defendants,
   civilClaimants,
 }: {
@@ -184,6 +188,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   caseState: CaseState
   caseFileCategory?: CaseFileCategory
   submittedBy?: string
+  fileRepresentative?: string
   defendants?: Defendant[]
   civilClaimants?: CivilClaimant[]
 }) => {
@@ -198,6 +203,7 @@ export const canLimitedAccessUserViewCaseFile = ({
       caseType,
       caseState,
       submittedBy,
+      fileRepresentative,
       caseFileCategory,
       defendants,
       civilClaimants,

@@ -44,6 +44,8 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
         user,
         caseType: accessControlCase.type,
         caseState: accessControlCase.state,
+        submittedBy: caseFile.submittedBy,
+        fileRepresentative: caseFile.fileRepresentative,
         caseFileCategory: caseFile.category,
         defendants: accessControlCase.defendants,
         civilClaimants: accessControlCase.civilClaimants,
