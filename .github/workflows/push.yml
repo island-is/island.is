@@ -222,10 +222,9 @@ jobs:
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
-          echo "CHUNKS: '$CHUNKS'"
-          echo "CHUNKS_NO_QUOTE: $CHUNKS"
+          echo "CHUNKS: $CHUNKS"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo "BUILD_CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
+            echo "BUILD_CHUNKS=$CHUNKS" >> "$GITHUB_OUTPUT"
           fi
 
       # NOTE: only on PRs
@@ -235,12 +234,15 @@ jobs:
         run: |
           set -euo pipefail
           BUILD_CHUNKS=${{ steps.build_map.outputs.BUILD_CHUNKS }}
-          echo "BUILD_CHUNKS: $BUILD_CHUNKS"
-          if [[ "$BUILD_CHUNKS" != "[]" ]]; then
+          # Remove surrounding quotes if present
+          CHUNKS="${BUILD_CHUNKS#\'}"
+          CHUNKS="${CHUNKS%\'}"
+          echo "BUILD_CHUNKS: $CHUNKS"
+          if [[ "$CHUNKS" != "[]" ]]; then
             # NOTE: validate the jq command to trigger failure
-            echo "$BUILD_CHUNKS" | jq -r 'map(.projects) | join(",")'
-            IMAGES=$(echo "$BUILD_CHUNKS" | jq -r 'map(.projects) | join(",")')
-            echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
+            echo "$CHUNKS" | jq -r 'map(.projects) | join(",")'
+            IMAGES=$(echo "$CHUNKS" | jq -r 'map(.projects) | join(",")')
+            echo "IMAGES=$IMAGES" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare docker deps
@@ -271,7 +273,10 @@ jobs:
           BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
         run: |
           set -euo pipefail
-          echo "$BUILD_CHUNKS"
+          # Remove surrounding single quotes if present before parsing JSON
+          CHUNKS="${BUILD_CHUNKS#\'}"
+          CHUNKS="${CHUNKS%\'}"
+          echo "$CHUNKS"
 
           # Prepare common Docker build arguments
           SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
@@ -298,8 +303,12 @@ jobs:
           # Prepare all builds commands
           mkdir -p .buildkit-commands
           chunk_index=0
+          
+          # Remove surrounding single quotes if present before parsing JSON
+          CHUNKS="${BUILD_CHUNKS#\'}"
+          CHUNKS="${CHUNKS%\'}"
 
-          for chunk in $(echo "$BUILD_CHUNKS" | jq -c '.[]'); do
+          for chunk in $(echo "$CHUNKS" | jq -c '.[]'); do
             AFFECTED_PROJECTS="$(echo "$chunk" | jq -r '.projects')"
             DOCKER_TYPE="$(echo "$chunk" | jq -r '.docker_type')"
             APP_HOME="$(echo "$chunk" | jq -r '.home')"
