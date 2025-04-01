@@ -26,6 +26,9 @@ export const SetAnswersForCertificateOfTenure: FC<
   const watchMachineNumber = watch(
     'certificateOfTenure.machineNumber',
   ) as string
+  const watchCertificatOfTenure = watch('certificateOfTenure') as {
+    machineNumber: string
+  }[]
   const licenseCategories = getValueViaPath<MachineLicenseCategoryDto[]>(
     application.externalData,
     'licenses.data.licenseCategories',
@@ -57,6 +60,7 @@ export const SetAnswersForCertificateOfTenure: FC<
   )
 
   useEffect(() => {
+    console.log(watchCertificatOfTenure)
     setValue('certificateOfTenure.unknownPracticalRight', false)
     setValue('certificateOfTenure.wrongPracticalRight', false)
     setValue('certificateOfTenure.wrongPracticalRightWithInfo', false)
@@ -152,11 +156,16 @@ export const SetAnswersForCertificateOfTenure: FC<
     ) {
       setValue('certificateOfTenure.wrongPracticalRight', true)
     }
-  }, [watchMachineNumber, licenseCategories, subCategories])
+  }, [
+    watchMachineNumber,
+    licenseCategories,
+    subCategories,
+    watchCertificatOfTenure,
+  ])
 
   return (
     <Box paddingTop={2}>
-      <InputController
+      {/*<InputController
         id={field.id}
         label={formatMessage(certificateOfTenure.labels.machineType)}
         backgroundColor="blue"
@@ -164,7 +173,7 @@ export const SetAnswersForCertificateOfTenure: FC<
         readOnly
         loading={loading}
         error={errors && getErrorViaPath(errors, field.id)}
-      />
+      />*/}
     </Box>
   )
 }

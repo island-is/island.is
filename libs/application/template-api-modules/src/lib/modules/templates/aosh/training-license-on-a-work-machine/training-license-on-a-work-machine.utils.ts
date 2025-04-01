@@ -55,6 +55,7 @@ export const getCleanApplicantInformation = (
     email: applicantInformation?.email ?? '',
     postalCode: parseInt(applicantInformation?.postCode ?? '0', 10),
     isSelfEmployed: isContractor?.includes('yes') ?? false,
+    // TODO: Missing drivers license in service
   }
 }
 
@@ -90,18 +91,27 @@ export const getCleanCertificateOfTenure = (
     TrainingLicenseOnAWorkMachine['certificateOfTenure']
   >(application.answers, 'certificateOfTenure')
   return {
-    machineRegistrationNumber: certificateOfTenure?.machineNumber ?? '',
-    licenseCategoryPrefix: certificateOfTenure?.licenseCategoryPrefix ?? '',
-    machineType: certificateOfTenure?.machineType ?? '',
-    dateWorkedOnMachineFrom: certificateOfTenure?.dateFrom
-      ? new Date(certificateOfTenure.dateFrom)
+    machineRegistrationNumber: certificateOfTenure
+      ? certificateOfTenure[0]?.machineNumber ?? ''
+      : '',
+    licenseCategoryPrefix: certificateOfTenure
+      ? certificateOfTenure[0]?.licenseCategoryPrefix ?? ''
+      : '',
+    machineType: certificateOfTenure
+      ? certificateOfTenure[0]?.machineType ?? ''
+      : '',
+    dateWorkedOnMachineFrom: certificateOfTenure
+      ? certificateOfTenure[0]?.dateFrom
+        ? new Date(certificateOfTenure[0].dateFrom)
+        : new Date()
       : new Date(),
-    dateWorkedOnMachineTo: certificateOfTenure?.dateTo
-      ? new Date(certificateOfTenure.dateTo)
+    dateWorkedOnMachineTo: certificateOfTenure
+      ? certificateOfTenure[0]?.dateTo
+        ? new Date(certificateOfTenure[0].dateTo)
+        : new Date()
       : new Date(),
-    hoursWorkedOnMachine: parseInt(
-      certificateOfTenure?.tenureInHours ?? '0',
-      10,
-    ),
+    hoursWorkedOnMachine: certificateOfTenure
+      ? parseInt(certificateOfTenure[0]?.tenureInHours ?? '0', 10)
+      : 0,
   }
 }

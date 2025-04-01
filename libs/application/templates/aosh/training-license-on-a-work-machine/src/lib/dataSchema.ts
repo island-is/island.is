@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { isValidEmail, isValidPhoneNumber } from '../utils'
-import { certificateOfTenure } from './messages'
 import { YES } from '@island.is/application/core'
 
 const InformationSchema = z.object({
@@ -13,6 +12,7 @@ const InformationSchema = z.object({
   postCode: z.string().min(1),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
+  driversLicenseNumber: z.string().min(1),
 })
 
 export const CertificateOfTenureSchema = z.object({
@@ -21,15 +21,7 @@ export const CertificateOfTenureSchema = z.object({
   machineType: z.string().min(1),
   dateFrom: z.string().min(1),
   dateTo: z.string().min(1),
-  tenureInHours: z.string().refine(
-    (v) => {
-      const val = typeof v === 'string' ? parseInt(v, 10) ?? 0 : v
-      return val >= 1000
-    },
-    {
-      params: certificateOfTenure.labels.tenureInHoursError,
-    },
-  ),
+  tenureInHours: z.string().min(1),
   licenseCategoryPrefix: z.string().optional(),
   unknownMachineType: z.boolean().optional(),
   unknownPracticalRight: z.boolean().optional(),
@@ -110,7 +102,7 @@ const AssigneeInformationSchema = z
 
 export const TrainingLicenseOnAWorkMachineAnswersSchema = z.object({
   information: InformationSchema,
-  certificateOfTenure: CertificateOfTenureSchema,
+  certificateOfTenure: z.array(CertificateOfTenureSchema),
   assigneeInformation: AssigneeInformationSchema,
   rejected: z.boolean().optional(),
 })

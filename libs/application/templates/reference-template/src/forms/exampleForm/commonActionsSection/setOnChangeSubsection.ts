@@ -39,7 +39,7 @@ export const setOnChangeSubsection = buildSubSection({
           id: 'asyncSelectField',
           title: 'Async Select',
           loadingError: 'Loading error',
-          setOnChange: (optionValue) => [
+          setOnChange: async (optionValue) => [
             {
               key: 'settableTextField',
               value: 'This is the value that was selected: ' + optionValue,
@@ -64,7 +64,7 @@ export const setOnChangeSubsection = buildSubSection({
           id: 'selectField',
           title: 'Select',
           isClearable: true,
-          setOnChange: (optionValue) => [
+          setOnChange: async (optionValue) => [
             {
               key: 'settableTextField',
               value: 'This is the value that was selected: ' + optionValue,

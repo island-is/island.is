@@ -22,6 +22,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { NationalIdWithName } from '@island.is/application/ui-components'
 import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormField'
+import { useApolloClient } from '@apollo/client'
 
 interface ItemFieldProps {
   application: Application
@@ -53,6 +54,7 @@ export const Item = ({
   const { formatMessage, lang } = useLocale()
   const { setValue, getValues, control, clearErrors } = useFormContext()
   const prevWatchedValuesRef = useRef<string | (string | undefined)[]>()
+  const apolloClient = useApolloClient()
 
   const getSpan = (component: string, width: string) => {
     if (component !== 'radio' && component !== 'checkbox') {
@@ -248,9 +250,16 @@ export const Item = ({
 
   const setOnChangeFunc =
     setOnChange &&
-    ((optionValue: RepeaterOptionValue) => {
+    (async (optionValue: RepeaterOptionValue) => {
       if (typeof setOnChange === 'function') {
-        return setOnChange(optionValue, application, activeIndex, activeValues)
+        return await setOnChange(
+          optionValue,
+          application,
+          activeIndex,
+          activeValues,
+          apolloClient,
+          lang,
+        )
       } else {
         return setOnChange || []
       }

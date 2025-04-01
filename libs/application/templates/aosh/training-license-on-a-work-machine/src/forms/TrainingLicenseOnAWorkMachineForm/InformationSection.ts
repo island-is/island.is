@@ -4,9 +4,11 @@ import {
   buildSection,
   buildPhoneField,
   getValueViaPath,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { information } from '../../lib/messages'
 import { Application } from '@island.is/api/schema'
+import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 
 export const informationSection = buildSection({
   id: 'informationSection',
@@ -95,6 +97,27 @@ export const informationSection = buildSection({
               'userProfile.data.mobilePhoneNumber',
               '',
             ),
+        }),
+        buildTextField({
+          id: 'information.driversLicenseNumber',
+          title: information.labels.driversLicenseNumber,
+          backgroundColor: 'blue',
+          width: 'half',
+          required: true,
+        }),
+        buildAlertMessageField({
+          id: 'applicationInfoEmailPhoneAlertMessage',
+          title: '',
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+          message: information.labels.alertMessage,
+          links: [
+            {
+              title: information.labels.alertMessageLinkTitle,
+              url: information.labels.alertMessageLink,
+              isExternal: false,
+            },
+          ],
         }),
       ],
     }),

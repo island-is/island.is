@@ -155,7 +155,9 @@ export type RepeaterItem = {
         application: Application,
         index: number,
         activeField?: Record<string, string>,
-      ) => { key: string; value: any }[])
+        apolloClient?: ApolloClient<object>,
+        lang?: Locale,
+      ) => Promise<{ key: string; value: any }[]>)
 } & (
   | {
       component: 'input'
@@ -177,8 +179,8 @@ export type RepeaterItem = {
       component: 'date'
       label: StaticText
       locale?: Locale
-      maxDate?: DatePickerProps['maxDate']
-      minDate?: DatePickerProps['minDate']
+      maxDate?: MaybeWithApplicationAndField<Date>
+      minDate?: MaybeWithApplicationAndField<Date>
       minYear?: number
       maxYear?: number
       excludeDates?: DatePickerProps['excludeDates']
@@ -263,7 +265,9 @@ export interface BaseField extends FormItem {
   clearOnChange?: string[]
   setOnChange?:
     | { key: string; value: any }[]
-    | ((optionValue: RepeaterOptionValue) => { key: string; value: any }[])
+    | ((
+        optionValue: RepeaterOptionValue,
+      ) => Promise<{ key: string; value: any }[]>)
 
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
