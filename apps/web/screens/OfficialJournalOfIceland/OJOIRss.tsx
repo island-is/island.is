@@ -26,6 +26,7 @@ import {
   withCustomPageWrapper,
 } from '../CustomPage/CustomPageWrapper'
 import { GET_ORGANIZATION_QUERY } from '../queries'
+import { ORGANIZATION_SLUG } from './constants'
 import { m } from './messages'
 
 const OJOIRssPage: CustomScreen<OJOIRssProps> = ({ organization }) => {
@@ -115,7 +116,6 @@ const OJOIHome: CustomScreen<OJOIRssProps> = ({
 }
 
 OJOIHome.getProps = async ({ apolloClient, locale }) => {
-  const organizationSlug = 'stjornartidindi'
   const [
     {
       data: { getOrganization },
@@ -125,7 +125,7 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: organizationSlug,
+          slug: ORGANIZATION_SLUG,
           lang: locale as ContentLanguage,
         },
       },
