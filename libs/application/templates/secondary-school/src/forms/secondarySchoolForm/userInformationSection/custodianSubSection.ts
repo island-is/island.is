@@ -128,6 +128,12 @@ export const custodianSubSection = buildSubSection({
               emailRequired: true,
               clearOnChange: (index) => [`otherContacts[${index}].person.name`],
             },
+            applicantNationalId: {
+              component: 'hiddenInput',
+              defaultValue: (application: Application) => {
+                return application.applicant
+              },
+            },
           },
         }),
       ],
