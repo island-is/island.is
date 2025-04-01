@@ -75,35 +75,32 @@ const useVictims = () => {
     [updateVictimMutation],
   )
 
-  const updateVictimState = useCallback(
-    (
-      update: UpdateVictimInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
-    ) => {
-      setWorkingCase((prevWorkingCase: Case) => {
-        if (!prevWorkingCase.victims) {
-          return prevWorkingCase
-        }
-        const indexOfVictimToUpdate = prevWorkingCase.victims.findIndex(
-          (victim) => victim.id === update.victimId,
-        )
+  const updateVictimState = (
+    update: UpdateVictimInput,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
+  ) => {
+    setWorkingCase((prevWorkingCase: Case) => {
+      if (!prevWorkingCase.victims) {
+        return prevWorkingCase
+      }
+      const indexOfVictimToUpdate = prevWorkingCase.victims.findIndex(
+        (victim) => victim.id === update.victimId,
+      )
 
-        if (indexOfVictimToUpdate === -1) {
-          return prevWorkingCase
-        } else {
-          const newVictims = [...prevWorkingCase.victims]
+      if (indexOfVictimToUpdate === -1) {
+        return prevWorkingCase
+      } else {
+        const newVictims = [...prevWorkingCase.victims]
 
-          newVictims[indexOfVictimToUpdate] = {
-            ...newVictims[indexOfVictimToUpdate],
-            ...update,
-          } as Victim
+        newVictims[indexOfVictimToUpdate] = {
+          ...newVictims[indexOfVictimToUpdate],
+          ...update,
+        } as Victim
 
-          return { ...prevWorkingCase, victims: newVictims }
-        }
-      })
-    },
-    [],
-  )
+        return { ...prevWorkingCase, victims: newVictims }
+      }
+    })
+  }
 
   const addVictimToState = (
     victimId: string,
