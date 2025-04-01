@@ -248,6 +248,20 @@ export const Item = ({
     clearOnChangeVal = clearOnChange
   }
 
+  let maxDateVal: Date | undefined
+  if (component === 'date') {
+    if (typeof item.maxDate === 'function')
+      maxDateVal = item.maxDate(application, activeValues)
+    else maxDateVal = item.maxDate
+  }
+
+  let minDateVal: Date | undefined
+  if (component === 'date') {
+    if (typeof item.minDate === 'function')
+      minDateVal = item.minDate(application, activeValues)
+    else minDateVal = item.minDate
+  }
+
   const setOnChangeFunc =
     setOnChange &&
     (async (optionValue: RepeaterOptionValue) => {
@@ -343,6 +357,9 @@ export const Item = ({
           clearOnChange={clearOnChangeVal}
           setOnChange={setOnChangeFunc}
           {...props}
+          {...(component === 'date'
+            ? { maxDate: maxDateVal, minDate: minDateVal }
+            : {})}
         />
       )}
     </GridColumn>

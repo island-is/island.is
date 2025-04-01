@@ -179,8 +179,8 @@ export type RepeaterItem = {
       component: 'date'
       label: StaticText
       locale?: Locale
-      maxDate?: MaybeWithApplicationAndField<Date>
-      minDate?: MaybeWithApplicationAndField<Date>
+      maxDate?: MaybeWithApplicationAndActiveField<Date>
+      minDate?: MaybeWithApplicationAndActiveField<Date>
       minYear?: number
       maxYear?: number
       excludeDates?: DatePickerProps['excludeDates']
