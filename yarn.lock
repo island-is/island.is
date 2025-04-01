@@ -38259,24 +38259,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:6.10.0":
+"nodemailer@npm:6.10.0, nodemailer@npm:^6.4.16":
   version: 6.10.0
   resolution: "nodemailer@npm:6.10.0"
   checksum: 10/2e28961c264501e2621860d912e1ab59788825c5aea5ce71041c5b5b52c7470b63e7ab290003d755f647f25048552c6eec256f468292f454d4d6a68c93dd0659
   languageName: node
   linkType: hard
 
-"nodemailer@npm:6.7.3, nodemailer@npm:^6.4.16":
+"nodemailer@npm:6.7.3":
   version: 6.7.3
   resolution: "nodemailer@npm:6.7.3"
   checksum: 10/74bb8bef61a858b369029a7a6f3e964d6840b3202654673a84e9d236db4d52f8584beb0871cd7b60a35836b9c4af6ba7387d4111a2e5248b27a754ad7fdd5b7f
-  languageName: node
-  linkType: hard
-
-"nodemailer@npm:^6.4.16":
-  version: 6.7.2
-  resolution: "nodemailer@npm:6.7.2"
-  checksum: 10/64e6851de7d2c479c209e407b00587e0005174be8abb3992f548d0b982e41b78317bb19c444179ec076fa90b1deff78e33cde6a13a7fa977e4ccb06089e6d71e
   languageName: node
   linkType: hard
 
