@@ -31,7 +31,7 @@ import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
-import { CaseRepresentative, User } from '../../user'
+import { User } from '../../user'
 import { Victim } from '../../victim'
 import { Notification } from './notification.model'
 
@@ -481,7 +481,4 @@ export class Case {
 
   @Field(() => [Victim], { nullable: true })
   readonly victims?: Victim[]
-
-  @Field(() => [CaseRepresentative], { nullable: true })
-  readonly caseRepresentatives?: CaseRepresentative[]
 }

@@ -259,6 +259,10 @@ export const routesTemplate = {
     is: '/stjornartidindi',
     en: '',
   },
+  ojoiabout: {
+    is: '/stjornartidindi/um',
+    en: '',
+  },
   ojoihelp: {
     is: '/stjornartidindi/leidbeiningar',
     en: '',
