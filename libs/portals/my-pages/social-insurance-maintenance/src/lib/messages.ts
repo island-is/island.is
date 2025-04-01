@@ -160,4 +160,8 @@ export const m = defineMessages({
     defaultMessage:
       'Bráðabirgðagreiðsluáætlun 2025 verður tilbúin seinni part desember',
   },
+  breakdown: {
+    id: 'sp.social-insurance-maintenance:payment-plan-breakdown',
+    defaultMessage: 'Sundurliðun',
+  },
 })

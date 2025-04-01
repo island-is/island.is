@@ -1,18 +1,20 @@
 import { Table as T, Box, Button, Text } from '@island.is/island-ui/core'
 
 import * as styles from './PaymentGroupTable.css'
+import { m } from '../../lib/messages'
 import { useCallback, useState } from 'react'
 import AnimateHeight, { Height } from 'react-animate-height'
 import { MONTHS, amountFormat } from '@island.is/portals/my-pages/core'
 import { SocialInsurancePaymentGroup } from '@island.is/api/schema'
 import cn from 'classnames'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
-  key: string
   paymentGroup: SocialInsurancePaymentGroup
 }
 
-export const PaymentGroupTableRow = ({ key, paymentGroup }: Props) => {
+export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
+  const { formatMessage } = useLocale()
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
 
@@ -54,7 +56,7 @@ export const PaymentGroupTableRow = ({ key, paymentGroup }: Props) => {
                 onClick={onExpandButton}
                 preTextIconType="filled"
                 size="small"
-                title={'Sundurliðun'}
+                title={formatMessage(m.breakdown)}
                 type="button"
                 variant="primary"
               />
