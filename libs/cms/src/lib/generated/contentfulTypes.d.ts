@@ -3521,6 +3521,7 @@ export interface IOrganizationSubpageFields {
         | ISectionHeading
         | ILatestEventsSlice
         | IGenericList
+        | IOrganizationParentSubpageList
       )[]
     | undefined
 
@@ -3543,7 +3544,10 @@ export interface IOrganizationSubpageFields {
   signLanguageVideo?: IEmbeddedVideo | undefined
 
   /** Bottom Slices */
-  bottomSlices?: (ITimeline | ILogoListSlice)[] | undefined
+  bottomSlices?: (ITimeline | ILogoListSlice | ILatestNewsSlice)[] | undefined
+
+  /** Organization Parent Subpage */
+  organizationParentSubpage?: IOrganizationParentSubpage | undefined
 }
 
 export interface IOrganizationSubpage

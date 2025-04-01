@@ -341,6 +341,22 @@ export class CmsContentfulService {
     return this.getOrganizationBy('kennitala', nationalId, lang, true)
   }
 
+  async getOrganizationByEntryId(
+    entryId: string,
+  ): Promise<Organization | null> {
+    const params = {
+      ['content_type']: 'organization',
+      include: 5,
+      limit: 1,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntry<types.IOrganizationFields>(entryId, null, params)
+      .catch(errorHandler('getOrganizationByEntryId'))
+
+    return result ? mapOrganization(result as types.IOrganization) : null
+  }
+
   async getOrganizationPage(
     slug: string,
     lang: string,
@@ -373,6 +389,7 @@ export class CmsContentfulService {
       'fields.slug': slug,
       'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
       'fields.organizationPage.fields.slug': organizationSlug,
+      'fields.organizationParentSubpage[exists]': false,
       limit: 1,
     }
     const result = await this.contentfulRepository
