@@ -108,7 +108,7 @@ export const PaymentGroupTable = () => {
                 <T.Data
                   box={{
                     className: styles.labelColumn,
-                    background: rowIdx % 2 === 0 ? 'white' : 'blue100',
+                    background: 'white',
                   }}
                 >
                   <Box display="flex">
@@ -145,7 +145,7 @@ export const PaymentGroupTable = () => {
                     <T.Data
                       key={i}
                       box={{
-                        background: rowIdx % 2 === 0 ? 'white' : 'blue100',
+                        background: 'white',
                       }}
                       align="right"
                     >
@@ -158,7 +158,7 @@ export const PaymentGroupTable = () => {
                 <T.Data
                   box={{
                     className: styles.sumColumn,
-                    background: rowIdx % 2 === 0 ? 'white' : 'blue100',
+                    background: 'white',
                   }}
                 >
                   <Text variant="medium">{`${amountFormat(
@@ -189,7 +189,7 @@ export const PaymentGroupTable = () => {
               )?.amount
               return (
                 <T.Data key={`nested-table-footer-col-${month}`}>
-                  <Text variant="medium" fontWeight="medium">
+                  <Text variant="medium" fontWeight="medium" textAlign="right">
                     {amount ? amountFormat(amount) : '-'}
                   </Text>
                 </T.Data>
