@@ -125,16 +125,16 @@ const useVictims = () => {
     }))
   }
 
-  const updateVictimAndSetState = useCallback(
-    (
-      update: UpdateVictimInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
-    ) => {
+  const updateVictimAndSetState = async (
+    update: UpdateVictimInput,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
+  ) => {
+    const victimId = await updateVictim(update)
+
+    if (victimId) {
       updateVictimState(update, setWorkingCase)
-      updateVictim(update)
-    },
-    [updateVictim, updateVictimState],
-  )
+    }
+  }
 
   const createVictimAndSetState = async (
     caseId: string,
