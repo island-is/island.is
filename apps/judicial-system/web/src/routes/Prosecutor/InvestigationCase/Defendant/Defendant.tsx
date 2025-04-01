@@ -428,13 +428,12 @@ const Defendant = () => {
           ) : (
             <Box component="section" marginBottom={5}>
               <SectionHeading title="Brotaþoli" />
-              {workingCase.victims?.map((victim, index) => (
+              {workingCase.victims?.map((victim) => (
                 <VictimInfo
                   key={victim.id}
                   victim={victim}
                   workingCase={workingCase}
                   setWorkingCase={setWorkingCase}
-                  index={index}
                   onDelete={() =>
                     deleteVictimAndSetState(
                       workingCase.id,

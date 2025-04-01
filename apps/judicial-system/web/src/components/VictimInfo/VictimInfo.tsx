@@ -27,7 +27,6 @@ interface Props {
   victim: Victim
   workingCase: Case
   setWorkingCase: Dispatch<SetStateAction<Case>>
-  index: number
   onDelete: (victim: Victim) => void
 }
 
@@ -35,7 +34,6 @@ export const VictimInfo: React.FC<Props> = ({
   victim,
   workingCase,
   setWorkingCase,
-  index,
   onDelete,
 }) => {
   const { updateVictimAndSetState, updateVictimState, updateVictim } =
