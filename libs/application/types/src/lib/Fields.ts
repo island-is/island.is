@@ -44,6 +44,7 @@ export type TextFieldVariant =
   | 'tel'
   | 'textarea'
   | 'currency'
+type AlertType = 'default' | 'warning' | 'error' | 'info' | 'success'
 
 export type Context = {
   application: Application
@@ -81,6 +82,7 @@ export type RepeaterFields =
   | 'nationalIdWithName'
   | 'phone'
   | 'selectAsync'
+  | 'alertMessage'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -218,6 +220,14 @@ export type RepeaterItem = {
         setValueAtIndex?: (key: string, value: any) => void,
       ): Promise<Option[]>
       updateOnSelect?: MaybeWithIndex<string[]>
+    }
+  | {
+      component: 'alertMessage'
+      title?: MaybeWithApplicationAndActiveField<StaticText>
+      message?: MaybeWithApplicationAndActiveField<StaticText>
+      alertType?: AlertType
+      marginBottom?: BoxProps['marginBottom']
+      marginTop?: BoxProps['marginTop']
     }
 )
 
@@ -586,7 +596,7 @@ export interface ExpandableDescriptionField extends BaseField {
 export interface AlertMessageField extends BaseField {
   readonly type: FieldTypes.ALERT_MESSAGE
   component: FieldComponents.ALERT_MESSAGE
-  alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
+  alertType?: AlertType
   message?: FormTextWithLocale
   links?: AlertMessageLink[]
 }

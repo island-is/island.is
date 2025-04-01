@@ -239,6 +239,30 @@ export const certificateOfTenureSection = buildSection({
               label: certificateOfTenure.labels.machineType,
               readonly: true,
             },
+            alertTest: {
+              component: 'alertMessage',
+              alertType: 'warning',
+              condition: (_, activeField) => {
+                const machineNumber =
+                  activeField &&
+                  getValueViaPath<string>(activeField, 'machineNumber')
+                return !!machineNumber
+              },
+              title: (_, activeField) => {
+                const machineNumber =
+                  activeField &&
+                  getValueViaPath<string>(activeField, 'machineNumber')
+                return `Alert title about ${machineNumber}`
+              },
+              message: (_, activeField) => {
+                const machineNumber =
+                  activeField &&
+                  getValueViaPath<string>(activeField, 'machineNumber')
+                return `Alert message about ${machineNumber}`
+              },
+              marginTop: 0,
+              marginBottom: 0,
+            },
             dateFrom: {
               component: 'date',
               label: certificateOfTenure.labels.dateFrom,
