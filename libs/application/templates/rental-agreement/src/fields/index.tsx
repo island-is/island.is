@@ -1,4 +1,4 @@
-export { AdditionalFees } from './AdditionalFees'
+export { OtherCostItems } from './OtherCostItems'
 export { CopyApplicationLink } from './CopyApplicationLink'
 export { PropertySearch } from './PropertySearch'
 export { SummaryEdit } from './Summary/SummaryEdit'

@@ -619,6 +619,11 @@ const securityDeposit = z
     }
   })
 
+const otherCostItemsSchema = z.object({
+  description: z.string().optional(),
+  amount: z.number().optional(),
+})
+
 const otherFees = z
   .object({
     housingFund: z.string().optional(),
@@ -632,6 +637,7 @@ const otherFees = z
     heatingCostMeterStatus: z.string().optional(),
     heatingCostMeterStatusDate: z.string().optional(),
     otherCosts: z.array(z.string()).optional(),
+    otherCostItems: z.array(otherCostItemsSchema),
     otherCostsDescription: z.string().optional(),
     otherCostsAmount: z.string().optional(),
   })

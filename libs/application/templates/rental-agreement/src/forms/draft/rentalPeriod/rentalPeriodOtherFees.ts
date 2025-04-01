@@ -152,9 +152,9 @@ export const RentalPeriodOtherFees = buildSubSection({
           spacing: 0,
         }),
         buildCustomField({
-          id: 'registerProperty.searchresults',
+          id: 'otherFees.otherCostItems',
           title: '',
-          component: 'AdditionalFees',
+          component: 'OtherCostItems',
           condition: (answers) => {
             const otherFeesOtherCosts = getValueViaPath(
               answers,

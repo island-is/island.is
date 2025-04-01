@@ -157,6 +157,11 @@ export const otherFees = defineMessages({
     defaultMessage: 'Upphæð í tölustöfum',
     description: 'Other costs amount placeholder',
   },
+  otherCostsAddLine: {
+    id: 'ra.application:otherFees.otherCostsAddLine',
+    defaultMessage: 'Bæta við kostnaðarlið',
+    description: 'Other costs button text',
+  },
 
   // Error messages
   errorHousingFundEmpty: {
