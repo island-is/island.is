@@ -45,7 +45,8 @@ export const VictimInfo: React.FC<Props> = ({
   const [victimNationalIdUpdate, setVictimNationalIdUpdate] = useState<
     string | null
   >(null)
-  const { personData, personLoading, personError } = useNationalRegistry(
+  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
+  const { personData, personLoading } = useNationalRegistry(
     victimNationalIdUpdate,
   )
 
@@ -61,6 +62,7 @@ export const VictimInfo: React.FC<Props> = ({
 
       const items = personData?.items || []
       const person = items[0]
+      setNationalIdNotFound(!personLoading && items.length === 0)
 
       updateVictimAndSetState(
         {
@@ -72,16 +74,9 @@ export const VictimInfo: React.FC<Props> = ({
         setWorkingCase,
       )
     },
-    // We want this hook to run exclusively when personData changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [personData],
+    [personData, personLoading],
   )
-
-  const showNationalIdError =
-    victimNationalIdUpdate?.length === 10 &&
-    victim.hasNationalId !== false &&
-    !personLoading &&
-    (personError || !personData?.items?.length)
 
   return (
     <Box marginBottom={index - 1 === index ? 0 : 3}>
@@ -105,6 +100,7 @@ export const VictimInfo: React.FC<Props> = ({
               checked={victim.hasNationalId === false}
               onChange={(event) => {
                 setVictimNationalIdUpdate(null)
+                setNationalIdNotFound(false)
                 updateVictimAndSetState(
                   {
                     caseId: workingCase.id,
@@ -127,17 +123,21 @@ export const VictimInfo: React.FC<Props> = ({
                 value={victim.nationalId ?? ''}
                 onBlur={(value) => handleNationalIdBlur(value)}
                 onChange={(value) => {
-                  if (value.length === 11) {
+                  if (value.length < 11) {
+                    setNationalIdNotFound(false)
+                  } else if (value.length === 11) {
                     handleNationalIdBlur(value)
                   }
                 }}
                 required={victim.hasNationalId !== false}
               />
-              {showNationalIdError && (
-                <Text color="red600" variant="eyebrow" marginTop={1}>
-                  Ekki tókst að fletta upp kennitölu
-                </Text>
-              )}
+              {victim.nationalId?.length === 10 &&
+                nationalIdNotFound &&
+                !personLoading && (
+                  <Text color="red600" variant="eyebrow" marginTop={1}>
+                    Ekki tókst að fletta upp kennitölu
+                  </Text>
+                )}
             </Box>
 
             <Box marginBottom={2}>
