@@ -70,74 +70,76 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
   const isEditable = checkIsEditable(application.state)
 
   return (
-    <ReviewGroup
-      handleClick={() => onClick(Routes.CUSTODIAN)}
-      editMessage={formatMessage(overview.general.editMessage)}
-      title={formatMessage(
-        checkHasAnyCustodians(application.externalData)
-          ? overview.custodian.subtitle
-          : overview.otherContact.subtitle,
-      )}
-      isEditable={isEditable}
-    >
-      <Box>
-        {!!custodiansExternalData.length && (
-          <GridRow>
-            {custodiansExternalData.map((custodian, index) => (
-              <GridColumn
-                key={custodian.person?.nationalId}
-                span={custodiansExternalData.length > 1 ? '1/2' : '1/1'}
-              >
-                {totalCount > 1 && (
-                  <Text variant="h5">
-                    {`${formatMessage(overview.custodian.label)} ${
-                      custodiansExternalData.length > 1 ? index + 1 : ''
-                    }`}
-                  </Text>
-                )}
-                <Text>{custodian.person?.name}</Text>
-                <Text>{formatKennitala(custodian.person?.nationalId)}</Text>
-                <Text>{custodian.legalDomicile?.streetAddress}</Text>
-                <Text>
-                  {custodian.legalDomicile?.postalCode}{' '}
-                  {custodian.legalDomicile?.city}
-                </Text>
-                <Text>
-                  {formatMessage(overview.custodian.phoneLabel)}:{' '}
-                  {formatPhoneNumber(custodiansAnswers[index]?.person?.phone)}
-                </Text>
-                <Text>{custodiansAnswers[index]?.person?.email}</Text>
-              </GridColumn>
-            ))}
-          </GridRow>
+    totalCount > 0 && (
+      <ReviewGroup
+        handleClick={() => onClick(Routes.CUSTODIAN)}
+        editMessage={formatMessage(overview.general.editMessage)}
+        title={formatMessage(
+          checkHasAnyCustodians(application.externalData)
+            ? overview.custodian.subtitle
+            : overview.otherContact.subtitle,
         )}
+        isEditable={isEditable}
+      >
+        <Box>
+          {!!custodiansExternalData.length && (
+            <GridRow>
+              {custodiansExternalData.map((custodian, index) => (
+                <GridColumn
+                  key={custodian.person?.nationalId}
+                  span={custodiansExternalData.length > 1 ? '1/2' : '1/1'}
+                >
+                  {totalCount > 1 && (
+                    <Text variant="h5">
+                      {`${formatMessage(overview.custodian.label)} ${
+                        custodiansExternalData.length > 1 ? index + 1 : ''
+                      }`}
+                    </Text>
+                  )}
+                  <Text>{custodian.person?.name}</Text>
+                  <Text>{formatKennitala(custodian.person?.nationalId)}</Text>
+                  <Text>{custodian.legalDomicile?.streetAddress}</Text>
+                  <Text>
+                    {custodian.legalDomicile?.postalCode}{' '}
+                    {custodian.legalDomicile?.city}
+                  </Text>
+                  <Text>
+                    {formatMessage(overview.custodian.phoneLabel)}:{' '}
+                    {formatPhoneNumber(custodiansAnswers[index]?.person?.phone)}
+                  </Text>
+                  <Text>{custodiansAnswers[index]?.person?.email}</Text>
+                </GridColumn>
+              ))}
+            </GridRow>
+          )}
 
-        {!!contacts.length && (
-          <GridRow marginTop={3}>
-            {contacts.map((contact, index) => (
-              <GridColumn
-                key={contact.person?.nationalId}
-                span={contacts.length > 1 ? '1/2' : '1/1'}
-              >
-                {totalCount > 1 && (
-                  <Text variant="h5">
-                    {`${formatMessage(overview.otherContact.label)} ${
-                      contacts.length > 1 ? index + 1 : ''
-                    }`}
+          {!!contacts.length && (
+            <GridRow marginTop={3}>
+              {contacts.map((contact, index) => (
+                <GridColumn
+                  key={contact.person?.nationalId}
+                  span={contacts.length > 1 ? '1/2' : '1/1'}
+                >
+                  {totalCount > 1 && (
+                    <Text variant="h5">
+                      {`${formatMessage(overview.otherContact.label)} ${
+                        contacts.length > 1 ? index + 1 : ''
+                      }`}
+                    </Text>
+                  )}
+                  <Text>{contact?.person?.name}</Text>
+                  <Text>{formatKennitala(contact?.person?.nationalId)}</Text>
+                  <Text>
+                    {formatMessage(overview.otherContact.phoneLabel)}:{' '}
+                    {formatPhoneNumber(contact?.person?.phone)}
                   </Text>
-                )}
-                <Text>{contact?.person?.name}</Text>
-                <Text>{formatKennitala(contact?.person?.nationalId)}</Text>
-                <Text>
-                  {formatMessage(overview.otherContact.phoneLabel)}:{' '}
-                  {formatPhoneNumber(contact?.person?.phone)}
-                </Text>
-                <Text>{contact?.person?.email}</Text>
-              </GridColumn>
-            ))}
-          </GridRow>
-        )}
-      </Box>
-    </ReviewGroup>
+                  <Text>{contact?.person?.email}</Text>
+                </GridColumn>
+              ))}
+            </GridRow>
+          )}
+        </Box>
+      </ReviewGroup>
+    )
   )
 }
