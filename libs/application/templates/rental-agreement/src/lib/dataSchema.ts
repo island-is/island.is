@@ -637,7 +637,7 @@ const otherFees = z
     heatingCostMeterStatus: z.string().optional(),
     heatingCostMeterStatusDate: z.string().optional(),
     otherCosts: z.array(z.string()).optional(),
-    otherCostItems: z.array(otherCostItemsSchema),
+    otherCostItems: z.union([z.string(), z.array(otherCostItemsSchema)]), // String so that it clears on OtherCosts change (clearOnChange)
     otherCostsDescription: z.string().optional(),
     otherCostsAmount: z.string().optional(),
   })

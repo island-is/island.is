@@ -1,3 +1,4 @@
+import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
@@ -8,14 +9,12 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useState } from 'react'
 import { otherFees as tOtherFees } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
-import { InputController } from '@island.is/shared/form-fields'
 import { parseCurrency } from '../../lib/utils'
+import NumberFormat from 'react-number-format'
 
 const MAX_COST_ITEMS = 3
-const SPACING = 3
 
 type CostField = {
   description: string
@@ -71,10 +70,10 @@ export const OtherCostItems: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }
 
   return (
-    <Box marginTop={SPACING}>
-      <Stack space={SPACING}>
+    <Box marginTop={3}>
+      <Stack space={3}>
         {costItems.map((costItem, index) => (
-          <GridRow rowGap={SPACING} key={index}>
+          <GridRow rowGap={3} key={index}>
             <GridColumn span={['12/12', '6/12', '6/12']}>
               <Input
                 name={`otherFees.otherCostItems[${index}].description`}
@@ -90,22 +89,24 @@ export const OtherCostItems: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12', '6/12']}>
-              <InputController
+              <NumberFormat
                 id={`otherFees.otherCostItems[${index}].amount-id`}
                 name={`otherFees.otherCostItems[${index}].amount`}
                 label={formatMessage(tOtherFees.otherCostsAmountLabel)}
                 placeholder={formatMessage(
                   tOtherFees.otherCostsAmountPlaceholder,
                 )}
-                currency
-                type="number"
+                value={costItem.amount}
+                onValueChange={({ value }) => {
+                  handleInputChange(index, 'amount', value)
+                }}
+                customInput={Input}
                 backgroundColor="blue"
                 suffix=" kr."
+                type="text"
                 inputMode="numeric"
-                defaultValue={costItem.amount?.toString()}
-                onChange={(e) => {
-                  handleInputChange(index, 'amount', e.target.value)
-                }}
+                thousandSeparator="."
+                decimalSeparator=","
               />
             </GridColumn>
           </GridRow>

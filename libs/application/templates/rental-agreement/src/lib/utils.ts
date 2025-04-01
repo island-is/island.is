@@ -51,7 +51,7 @@ export const formatBankInfo = (bankInfo: string) => {
 }
 
 export const formatCurrency = (answer: string) =>
-  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ISK'
+  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
 export const parseCurrency = (value: string): number | undefined => {
   const numeric = value.replace(/[^\d]/g, '')

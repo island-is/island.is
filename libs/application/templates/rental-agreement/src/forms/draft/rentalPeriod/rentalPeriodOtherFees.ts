@@ -150,6 +150,7 @@ export const RentalPeriodOtherFees = buildSubSection({
             },
           ],
           spacing: 0,
+          clearOnChange: ['otherFees.otherCostItems'],
         }),
         buildCustomField({
           id: 'otherFees.otherCostItems',
@@ -164,35 +165,6 @@ export const RentalPeriodOtherFees = buildSubSection({
             return otherFeesOtherCosts && otherFeesOtherCosts.includes('true')
           },
         }),
-        // buildTextField({
-        //   id: 'otherFees.otherCostsDescription',
-        //   title: otherFees.otherCostsDescriptionLabel,
-        //   placeholder: otherFees.otherCostsDescriptionPlaceholder,
-        //   width: 'half',
-        //   condition: (answers) => {
-        //     const otherFeesOtherCosts = getValueViaPath(
-        //       answers,
-        //       'otherFees.otherCosts',
-        //       [],
-        //     ) as string[]
-        //     return otherFeesOtherCosts && otherFeesOtherCosts.includes('true')
-        //   },
-        // }),
-        // buildTextField({
-        //   id: 'otherFees.otherCostsAmount',
-        //   title: otherFees.otherCostsAmountLabel,
-        //   placeholder: otherFees.otherCostsAmountPlaceholder,
-        //   width: 'half',
-        //   variant: 'currency',
-        //   condition: (answers) => {
-        //     const otherFeesOtherCosts = getValueViaPath(
-        //       answers,
-        //       'otherFees.otherCosts',
-        //       [],
-        //     ) as string[]
-        //     return otherFeesOtherCosts && otherFeesOtherCosts.includes('true')
-        //   },
-        // }),
       ],
     }),
   ],

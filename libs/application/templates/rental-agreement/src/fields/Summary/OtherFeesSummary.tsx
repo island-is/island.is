@@ -45,6 +45,9 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
   const tenantPaysHeating =
     answers.otherFees.heatingCost === OtherFeesPayeeOptions.TENANT
   const tenantPaysOtherFees = answers.otherFees.otherCosts?.includes('true')
+  const otherCostItems = Array.isArray(answers.otherFees.otherCostItems)
+    ? answers.otherFees.otherCostItems
+    : []
 
   return (
     <SummaryCard cardLabel={formatMessage(summary.otherCostsHeader)}>
@@ -170,32 +173,30 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
           </GridColumn>
         </SummaryCardRow>
       )}
-
-      {tenantPaysOtherFees && (
-        <SummaryCardRow
-          editAction={goToScreen}
-          route={route}
-          hasChangeButton={hasChangeButton}
-          isLast={true}
-        >
-          <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
-            <KeyValue
-              label={summary.otherCostsLabel}
-              value={answers.otherFees.otherCostsDescription || ''}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
-            <KeyValue
-              label={summary.otherCostsAmountLabel}
-              value={
-                (answers.otherFees.otherCostsAmount &&
-                  formatCurrency(answers.otherFees.otherCostsAmount)) ||
-                '-'
-              }
-            />
-          </GridColumn>
-        </SummaryCardRow>
-      )}
+      {tenantPaysOtherFees &&
+        otherCostItems.map((item, index) => (
+          <SummaryCardRow
+            editAction={goToScreen}
+            route={route}
+            hasChangeButton={hasChangeButton}
+            isLast={otherCostItems.length - 1 === index}
+          >
+            <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
+              <KeyValue
+                label={summary.otherCostsLabel}
+                value={item.description || ''}
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
+              <KeyValue
+                label={summary.otherCostsAmountLabel}
+                value={
+                  (item.amount && formatCurrency(item.amount.toString())) || '-'
+                }
+              />
+            </GridColumn>
+          </SummaryCardRow>
+        ))}
     </SummaryCard>
   )
 }
