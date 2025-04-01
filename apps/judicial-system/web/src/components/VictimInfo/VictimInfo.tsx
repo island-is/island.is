@@ -79,7 +79,7 @@ export const VictimInfo: React.FC<Props> = ({
   )
 
   return (
-    <Box marginBottom={index - 1 === index ? 0 : 3}>
+    <Box marginBottom={3}>
       <BlueBox>
         <Box>
           <Box marginBottom={2} display="flex" justifyContent="flexEnd">
