@@ -228,15 +228,15 @@ const urlMapping: { [key: string]: string } = {
   '/minarsidur/postholf': '/inbox',
   '/minarsidur/min-gogn/stillingar': '/settings',
   '/minarsidur/skirteini': '/wallet',
-  '/minarsidur/skirteini/tjodskra/vegabref/:id': `/wallet/${GenericLicenseType.Passport}/:id`,
+  '/minarsidur/skirteini/:provider/vegabref/:id': `/wallet/${GenericLicenseType.Passport}/:id`,
   '/minarsidur/skirteini/:provider/ehic/:id': `/wallet/${GenericLicenseType.Ehic}/:id`,
-  '/minarsidur/skirteini/:provider/veidikort/:id': `/wallet/${GenericLicenseType.HuntingLicense}/:id`,
-  '/minarsidur/skirteini/:provider/pkort/:id': `/wallet/${GenericLicenseType.PCard}/:id`,
-  '/minarsidur/skirteini/:provider/okurettindi/:id': `/wallet/${GenericLicenseType.DriversLicense}/:id`,
-  '/minarsidur/skirteini/:provider/adrrettindi/:id': `/wallet/${GenericLicenseType.AdrLicense}/:id`,
-  '/minarsidur/skirteini/:provider/vinnuvelarettindi/:id': `/wallet/${GenericLicenseType.MachineLicense}/:id`,
-  '/minarsidur/skirteini/:provider/skotvopnaleyfi/:id': `/wallet/${GenericLicenseType.FirearmLicense}/:id`,
-  '/minarsidur/skirteini/:provider/ororkuskirteini/:id': `/wallet/${GenericLicenseType.DisabilityLicense}/:id`,
+  '/minarsidur/skirteini/:provider/veidikort/:id': `/wallet/${GenericLicenseType.HuntingLicense}/default`,
+  '/minarsidur/skirteini/:provider/pkort/:id': `/wallet/${GenericLicenseType.PCard}/default`,
+  '/minarsidur/skirteini/:provider/okurettindi/:id': `/wallet/${GenericLicenseType.DriversLicense}/default`,
+  '/minarsidur/skirteini/:provider/adrrettindi/:id': `/wallet/${GenericLicenseType.AdrLicense}/default`,
+  '/minarsidur/skirteini/:provider/vinnuvelarettindi/:id': `/wallet/${GenericLicenseType.MachineLicense}/default`,
+  '/minarsidur/skirteini/:provider/skotvopnaleyfi/:id': `/wallet/${GenericLicenseType.FirearmLicense}/default`,
+  '/minarsidur/skirteini/:provider/ororkuskirteini/:id': `/wallet/${GenericLicenseType.DisabilityLicense}/default`,
   '/minarsidur/skirteini/:provider/nafnskirteini/:id': `/wallet/${GenericLicenseType.IdentityDocument}/:id`,
   '/minarsidur/eignir/fasteignir': '/assets',
   '/minarsidur/eignir/fasteignir/:id': '/asset/:id',
@@ -254,12 +254,17 @@ const findRoute = (url: string) => {
   // Remove domain
   const path = cleanLink.replace(/https?:\/\/[^/]+/, '')
 
+  console.log({ url, cleanLink, path })
+
   for (const [pattern, routeTemplate] of Object.entries(urlMapping)) {
     const matcher = match(pattern, { decode: decodeURIComponent })
     const matchResult = matcher(path)
 
+    console.log(matchResult)
+
     if (matchResult) {
       const compiler = compile(routeTemplate)
+      console.log('returning', compiler(matchResult.params))
       return compiler(matchResult.params)
     }
   }
