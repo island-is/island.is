@@ -254,17 +254,12 @@ const findRoute = (url: string) => {
   // Remove domain
   const path = cleanLink.replace(/https?:\/\/[^/]+/, '')
 
-  console.log({ url, cleanLink, path })
-
   for (const [pattern, routeTemplate] of Object.entries(urlMapping)) {
     const matcher = match(pattern, { decode: decodeURIComponent })
     const matchResult = matcher(path)
 
-    console.log(matchResult)
-
     if (matchResult) {
       const compiler = compile(routeTemplate)
-      console.log('returning', compiler(matchResult.params))
       return compiler(matchResult.params)
     }
   }

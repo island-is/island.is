@@ -180,7 +180,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   type: string
   item?: GenericUserLicense
   cardHeight?: number
-}> = ({ id, item, type, componentId, cardHeight = 140 }) => {
+}> = ({ id, item, type, componentId, cardHeight = 96 }) => {
   useNavigationOptions(componentId)
   useConnectivityIndicator({ componentId })
   const theme = useTheme()
