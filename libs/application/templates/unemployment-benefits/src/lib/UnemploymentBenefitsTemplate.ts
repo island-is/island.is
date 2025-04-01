@@ -9,6 +9,9 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
+  NationalRegistrySpouseApi,
+  NationalRegistryUserApi,
+  ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -28,7 +31,7 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.UNEMPLOYMENT_BENEFITS,
   name: applicationMessages.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: applicationMessages.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.UnemploymentBenefits.translation,
@@ -55,7 +58,14 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, WorkMachineLicensesApi, DrivingLicenseApi],
+              api: [
+                UserProfileApi,
+                WorkMachineLicensesApi,
+                DrivingLicenseApi,
+                NationalRegistrySpouseApi,
+                NationalRegistryUserApi,
+                ChildrenCustodyInformationApi,
+              ],
               delete: true,
             },
           ],

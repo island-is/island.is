@@ -1,23 +1,21 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Mi�lun ums�knir Rest API",
-    "description": "",
-    "version": "v1"
+    "title": "MidlunUmsoknirRestApi",
+    "version": "1.0"
   },
   "paths": {
     "/Einstaklingar/{kennitala}": {
       "get": {
         "tags": ["Einstaklingar"],
-        "summary": "GET fyrir einstaklinga.",
-        "description": "Skilar grunnupplýsingum um raunskráningu einstaklings í þjóðskrá út frá kennitölu.<para />\r\nUndir lögheimili - Ættu alltaf að birtast einhverjar upplýsingar, ef einstaklingur er ekki með skráð lögheimili á Íslandi þá birtist í flestum tilfellum það land sem viðkomandi hefur upplýst Þjóðskrá Íslands um að flutt hafi verið til.<para />\r\nUndir aðsetur - Ef einstaklingur er með skráð aðsetur í þjóðskrá þá birtast upplýsingar undir aðsetur, annars birtast engar upplýsingar.",
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
-            "description": "Kennitala einstaklings sem verið er að leita eftir.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -25,7 +23,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/EinstaklingurDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/EinstaklingurDTO"
+                }
               }
             }
           },
@@ -33,7 +33,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -41,7 +43,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -49,7 +53,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -59,15 +65,14 @@
     "/Einstaklingar/{kennitala}/faedingarstadur": {
       "get": {
         "tags": ["Einstaklingar"],
-        "summary": "GET fyrir fæðingarstað.",
-        "description": "Skilar upplýsingum um sveitarfélag/land sem einstaklingur fæðist í ásamt upplýsingum um fæðingardag einstaklings.<para />\r\nFæðingarstaður einstaklings segir í mörgum tilfellum ekkert um upprunaland einstaklings.<para />\r\nEinstaklingar geta fæðst í landi sem þeir eru ekki búsettir í og hafa aldrei búið í, hafa enga aðra tengingu við landið en að hafa fæðst þar af einhverjum ástæðum.",
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
-            "description": "Kennitala þess sem þarf fæðingarstað fyrir.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -75,7 +80,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/FaedingarstadurDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/FaedingarstadurDTO"
+                }
               }
             }
           },
@@ -83,7 +90,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -91,7 +100,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -99,7 +110,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -109,23 +122,37 @@
     "/Einstaklingar/{kennitala}/forsjaUndir": {
       "get": {
         "tags": ["Einstaklingar"],
-        "summary": "Sækir upplýsingar um börn sem einstaklingur hefur forsjá yfir.",
-        "description": "Endapunkturinn er læstur á notendur + börn.<para />\r\n Tekur inn kennitölu forsjáraðila og skilar upplýsingum um barn/börn sem forsjáraðili fer með forsjá yfir.",
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
-            "description": "Kennitala forsjáraðila.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
           "404": {
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -133,7 +160,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -141,7 +170,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -151,15 +182,14 @@
     "/Einstaklingar/{kennitala}/forsjaYfir": {
       "get": {
         "tags": ["Einstaklingar"],
-        "summary": "Sækir upplýsingar um einstakling/a hefur/hafa forsjá yfir barni.",
-        "description": "Endapunkturinn er læstur á notendur + börn.<para />\r\nTekur inn kennitölu barns og skilar upplýsingum um skráða forsjáraðila barnsins.",
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
-            "description": "Kennitala forsjáraðila.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -167,7 +197,12 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "type": "array", "items": { "type": "string" } }
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
               }
             }
           },
@@ -175,7 +210,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -183,7 +220,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -191,7 +230,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -201,15 +242,14 @@
     "/Einstaklingar/{kennitala}/rikisfang": {
       "get": {
         "tags": ["Einstaklingar"],
-        "summary": "Sækir upplýsingar um ríkisfang fyrir innsenda kennitölu.",
-        "description": "Skilar upplýsingum um skráð ríkisfang einstaklings í þjóðskrá.<para />\r\n Einungi eitt ríkisfang er skráð í þjóðskrá þó svo að einstaklingur geti verið með tvöfalt ríkisfang.",
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
-            "description": "Kennitala.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -217,7 +257,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/RikisfangDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/RikisfangDTO"
+                }
               }
             }
           },
@@ -225,7 +267,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -233,7 +277,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -241,7 +287,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -251,15 +299,14 @@
     "/Einstaklingar/{kennitala}/adsetur": {
       "get": {
         "tags": ["Einstaklingar"],
-        "summary": "Sækir upplýsingar um aðsetur fyrir innsenda kennitölu.",
-        "description": "Skilar upplýsingum um raunskráningu aðseturs einstaklings í þjóðskrá út frá kennitölu ef viðkomandi er með skráð aðsetur í þjóðskrá, skilar annars tómu.",
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
-            "description": "Kennitala.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -267,7 +314,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/AdseturDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/AdseturDTO"
+                }
               }
             }
           },
@@ -275,7 +324,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -283,7 +334,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -291,7 +344,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -301,15 +356,14 @@
     "/Einstaklingar/{kennitala}/hjuskapur": {
       "get": {
         "tags": ["Einstaklingar"],
-        "summary": "Sækir upplýsingar um hjúskap fyrir innsenda kennitölu.",
-        "description": "Skilar upplýsingum um skráða hjúskaparstöðu einstaklings í þjóðskrá, allir einstaklingar í þjóðskrá eru með skráða hjúskaparstöðu. <para />\r\n Undir sambud – Ef einstaklingur er í skráðri sambúð birtast upplýsingar um skráðan sambúðaraðilia, kennitala, nafn og dagsetning skráðrar sambúðar, skilar annars tómu.",
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
-            "description": "Kennitala.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -317,7 +371,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HjuskapurDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/HjuskapurDTO"
+                }
               }
             }
           },
@@ -325,7 +381,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -333,7 +391,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -341,7 +401,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -351,15 +413,14 @@
     "/Einstaklingar/{kennitala}/logheimili": {
       "get": {
         "tags": ["Einstaklingar"],
-        "summary": "Skilar lögheimilisupplýsingum fyrir innsenda kennitölu.",
-        "description": "Skilar upplýsingum um raunskráningu á lögheimili einstaklings í þjóðskrá út frá kennitölu.<para />\r\n Svæðið „breytt“ er dagsetninginn þegar einstaklingurinn flutti lögheimili sitt á á skráð lögheimili.<para />\r\n Ef engar upplýsingar koma í „breytt“ þá hefur einstaklingurinn að öllum líkindum verið með sama lögheimili frá því áður en rafræn skráning hófst 1986.",
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
-            "description": "Kennitala þess sem á að skila lögheimili fyrir.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -367,7 +428,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/LogheimiliDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/LogheimiliDTO"
+                }
               }
             }
           },
@@ -375,7 +438,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -383,7 +448,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -391,7 +458,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -401,15 +470,14 @@
     "/Einstaklingar/{kennitala}/logheimilistengsl": {
       "get": {
         "tags": ["Einstaklingar"],
-        "summary": "Skilar lögheimilistengslum fyrir innsenda kennitölu.",
-        "description": "Skilar upplýsingum um raunskráningu einstaklinga í þjóðskrá sem eru skráðir með sömu lögheimilistengsl þeirrar kennitölu sem kallað er í.<para />\r\n Ef innsend kennitala er ekki skráða lögheimilistengsla kennitalan þá eru samt sem áður lögheimilistengslin fundin og öllum aðilum með sömu lögheimilistengsl skilað í kallinu.",
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
-            "description": "Kennitala þess sem á að skila lögheimilistengslum fyrir.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -427,7 +495,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -435,7 +505,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -443,7 +515,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -453,15 +527,14 @@
     "/Einstaklingar/{kennitala}/logheimilistengslItar": {
       "get": {
         "tags": ["Einstaklingar"],
-        "summary": "Skilar ítarlegum upplýsingum um fjölskyldumeðlimi með lögheimilistengsl fyrir innsenda kennitölu.",
-        "description": "Skilar grunnupplýsingum um raunskráningu einstaklinga sem eru með sömu lögheimilistengsl þeirrar kennitölu sem kallað er í.<para />\r\n Ef innsend kennitala er ekki lögheimilistengsla kennitalan þá eru lögheimilistengslin samt sem áður fundin og öllum aðilum með sömu lögheimilistengs skilað í kallinu.<para />\r\n Undir lögheimili - Ættu alltaf að birtast einhverjar upplýsingar, ef einstaklingur er ekki með skráð lögheimili á Íslandi þá birtist í flestum tilfellum það land sem viðkomandi er búsettur í.<para />\r\n Undir aðsetur - Ef einstaklingur er með skráð aðsetur í þjóðskrá þá birtast upplýsingar undir aðsetur, annars birtast engar upplýsingar.",
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
-            "description": "Kennitala þess sem á að skila upplýsingum um fjölskyldumeðlimi.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -479,7 +552,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -487,7 +562,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -495,7 +572,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -505,115 +584,14 @@
     "/Einstaklingar/{kennitala}/logheimilisforeldri": {
       "get": {
         "tags": ["Einstaklingar"],
-        "summary": "Sækir kennitölur lögheimilis foreldra fyrir innsenda kennitölu.",
-        "description": "Endapunkturinn tekur inn kennitölu barns og skilar kennitölu forsjáraðila ef forsjáraðili er skráður lögheimilisforeldri. <para />Ef skráður forsjáraðili barnsins er með annarskonar forsjár skilgreiningu skilar kallið engum upplýsingum.",
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
-            "description": "Kennitala.",
             "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": { "type": "array", "items": { "type": "string" } }
-              }
+            "schema": {
+              "type": "string"
             }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Einstaklingar/{kennitala}/busetuforeldri": {
-      "get": {
-        "tags": ["Einstaklingar"],
-        "summary": "Sækir kennitölur búsetu foreldra fyrir innsenda kennitölu.",
-        "description": "Endapunkturinn tekur inn kennitölu barns og skilar kennitölu forsjáraðila ef forsjáraðili er skráður búsetuforeldri.<para /> Ef skráður forsjáraðili barnsins er með annarskonar forsjárskráningu skilar kallið engum upplýsingum.",
-        "parameters": [
-          {
-            "name": "kennitala",
-            "in": "path",
-            "description": "Kennitala.",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": { "type": "array", "items": { "type": "string" } }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Einstaklingar/{kennitala}/busetusaga": {
-      "get": {
-        "tags": ["Einstaklingar"],
-        "summary": "Skilar búsetusögu, þ.e. lista af heimilisföngum/lögheimilum sem viðkomandi hefur verið skráður á.",
-        "description": "Endapunkturinn skilar lögheimilissögu einstaklings út frá kennitölu.\r\n Svæðið „breytt“ er dagsetninginn þegar einstaklingurinn flutti lögheimili sitt á tiltekið lögheimili. \\n\r\n Skráning einstaklinga niður á íbúðir hefst ekki fyrr en um 2015/2016, \\n\r\n Rafræn skráning nær ekki lengra aftur en til 1986 ef flutningur einstaklings átti sér stað fyrir þann tíma þá kemur það ekki fram hér.Hægt er að sjá núverandi skráð lögheimili einstakling með endapunktinum:/ api/v1/einstaklingar/{ kennitala}/ logheimili",
-        "parameters": [
-          {
-            "name": "kennitala",
-            "in": "path",
-            "description": "Kennitala þess sem á að skila búsetu fyrir.",
-            "required": true,
-            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -623,7 +601,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/BusetaDTO" }
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -632,7 +612,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -640,7 +622,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -648,7 +632,129 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/busetuforeldri": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Einstaklingar/{kennitala}/busetusaga": {
+      "get": {
+        "tags": ["Einstaklingar"],
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BusetaDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -658,13 +764,17 @@
     "/Einstaklingar/18IDag": {
       "get": {
         "tags": ["Einstaklingar"],
-        "summary": "Skilar lista af kennitölum þeirra sem eiga 18 ára afmæli í dag",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "type": "array", "items": { "type": "string" } }
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
@@ -679,7 +789,9 @@
             "name": "Kennitala",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -687,7 +799,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/EinstaklingurUtlDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/EinstaklingurUtlDTO"
+                }
               }
             }
           }
@@ -700,13 +814,38 @@
       "AdseturDTO": {
         "type": "object",
         "properties": {
-          "ibudanumer": { "type": "string", "nullable": true },
-          "postnumer": { "type": "string", "nullable": true },
-          "stadur": { "type": "string", "nullable": true },
-          "sveitarfelagsnumer": { "type": "string", "nullable": true },
-          "huskodi": { "type": "string", "nullable": true },
-          "heimilisfang": { "type": "string", "nullable": true },
-          "landakodi": { "type": "string", "nullable": true },
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "ibudanumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "huskodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "heimilisfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "landakodi": {
+            "type": "string",
+            "nullable": true
+          },
           "breytt": {
             "type": "string",
             "format": "date-time",
@@ -718,18 +857,43 @@
       "BusetaDTO": {
         "type": "object",
         "properties": {
-          "ibudanumer": { "type": "string", "nullable": true },
-          "postnumer": { "type": "string", "nullable": true },
-          "stadur": { "type": "string", "nullable": true },
-          "sveitarfelagsnumer": { "type": "string", "nullable": true },
-          "huskodi": { "type": "string", "nullable": true },
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "ibudanumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "huskodi": {
+            "type": "string",
+            "nullable": true
+          },
           "fasteignanumer": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "heimilisfang": { "type": "string", "nullable": true },
-          "landakodi": { "type": "string", "nullable": true },
+          "heimilisfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "landakodi": {
+            "type": "string",
+            "nullable": true
+          },
           "breytt": {
             "type": "string",
             "format": "date-time",
@@ -742,28 +906,59 @@
         "required": ["kennitala"],
         "type": "object",
         "properties": {
-          "kennitala": { "type": "string", "nullable": true },
-          "nafn": { "type": "string", "nullable": true },
-          "kynKodi": { "type": "string", "nullable": true },
-          "kynTexti": { "type": "string", "nullable": true },
-          "bannmerking": { "type": "boolean", "nullable": true },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "kynKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "kynTexti": {
+            "type": "string",
+            "nullable": true
+          },
+          "bannmerking": {
+            "type": "boolean",
+            "nullable": true
+          },
           "faedingardagur": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "logheimili": { "$ref": "#/components/schemas/HeimilisfangBaseDTO" },
-          "adsetur": { "$ref": "#/components/schemas/HeimilisfangBaseDTO" }
+          "logheimili": {
+            "$ref": "#/components/schemas/HeimilisfangBaseDTO"
+          },
+          "adsetur": {
+            "$ref": "#/components/schemas/HeimilisfangBaseDTO"
+          }
         },
         "additionalProperties": false
       },
       "EinstaklingurUtlBaseDTO": {
         "type": "object",
         "properties": {
-          "kennitala": { "type": "string", "nullable": true },
-          "nafn": { "type": "string", "nullable": true },
-          "rikisfangKodi": { "type": "string", "nullable": true },
-          "rikisfangLand": { "type": "string", "nullable": true },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangLand": {
+            "type": "string",
+            "nullable": true
+          },
           "rikisfangBrDagur": {
             "type": "string",
             "format": "date-time",
@@ -775,16 +970,30 @@
       "EinstaklingurUtlDTO": {
         "type": "object",
         "properties": {
-          "kennitala": { "type": "string", "nullable": true },
-          "nafn": { "type": "string", "nullable": true },
-          "rikisfangKodi": { "type": "string", "nullable": true },
-          "rikisfangLand": { "type": "string", "nullable": true },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangLand": {
+            "type": "string",
+            "nullable": true
+          },
           "rikisfangBrDagur": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "maki": { "$ref": "#/components/schemas/EinstaklingurUtlBaseDTO" },
+          "maki": {
+            "$ref": "#/components/schemas/EinstaklingurUtlBaseDTO"
+          },
           "hjuSambudBrDagur": {
             "type": "string",
             "format": "date-time",
@@ -798,12 +1007,21 @@
         },
         "additionalProperties": false
       },
-      "Error": { "type": "object", "additionalProperties": false },
+      "Error": {
+        "type": "object",
+        "additionalProperties": false
+      },
       "FaedingarstadurDTO": {
         "type": "object",
         "properties": {
-          "sveitarfelagsnumer": { "type": "string", "nullable": true },
-          "stadur": { "type": "string", "nullable": true },
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
           "faedingardagur": {
             "type": "string",
             "format": "date-time",
@@ -815,24 +1033,24 @@
       "HeimilisfangBaseDTO": {
         "type": "object",
         "properties": {
-          "heimilisfang": { "type": "string", "nullable": true },
-          "ibudanumer": { "type": "string", "nullable": true },
-          "postnumer": { "type": "string", "nullable": true },
-          "stadur": { "type": "string", "nullable": true },
-          "sveitarfelagsnumer": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "HjuDTO": {
-        "type": "object",
-        "properties": {
-          "kennitalaMaka": { "type": "string", "nullable": true },
-          "nafnMaka": { "type": "string", "nullable": true },
-          "hjuskaparKodi": { "type": "string", "nullable": true },
-          "hjuskaparTexti": { "type": "string", "nullable": true },
-          "dagsetningBreytt": {
+          "heiti": {
             "type": "string",
-            "format": "date-time",
+            "nullable": true
+          },
+          "ibudanumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelagsnumer": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -841,21 +1059,65 @@
       "HjuskapurDTO": {
         "type": "object",
         "properties": {
-          "hjuskapur": { "$ref": "#/components/schemas/HjuDTO" },
-          "sambud": { "$ref": "#/components/schemas/SamDTO" }
+          "kennitalaMaka": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafnMaka": {
+            "type": "string",
+            "nullable": true
+          },
+          "hjuskaparKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "hjuskaparTexti": {
+            "type": "string",
+            "nullable": true
+          },
+          "dagsetningBreytt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "LogheimiliDTO": {
         "type": "object",
         "properties": {
-          "ibudanumer": { "type": "string", "nullable": true },
-          "postnumer": { "type": "string", "nullable": true },
-          "stadur": { "type": "string", "nullable": true },
-          "sveitarfelagsnumer": { "type": "string", "nullable": true },
-          "huskodi": { "type": "string", "nullable": true },
-          "heimilisfang": { "type": "string", "nullable": true },
-          "landakodi": { "type": "string", "nullable": true },
+          "heiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "ibudanumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "huskodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "heimilisfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "landakodi": {
+            "type": "string",
+            "nullable": true
+          },
           "breytt": {
             "type": "string",
             "format": "date-time",
@@ -873,20 +1135,37 @@
         "required": ["kennitala"],
         "type": "object",
         "properties": {
-          "nafn": { "type": "string", "nullable": true },
-          "kennitala": { "type": "string", "nullable": true },
-          "kynkodi": { "type": "string", "nullable": true },
-          "kyntexti": { "type": "string", "nullable": true }
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "kynkodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "kyntexti": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "LogheimilistengslDTO": {
         "type": "object",
         "properties": {
-          "logheimilisTengsl": { "type": "string", "nullable": true },
+          "logheimilisTengsl": {
+            "type": "string",
+            "nullable": true
+          },
           "logheimilistengslmedlimir": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/LogheimilismedlimurDTO" },
+            "items": {
+              "$ref": "#/components/schemas/LogheimilismedlimurDTO"
+            },
             "nullable": true
           }
         },
@@ -895,10 +1174,15 @@
       "LogheimilistengslItarDTO": {
         "type": "object",
         "properties": {
-          "logheimilisTengsl": { "type": "string", "nullable": true },
+          "logheimilisTengsl": {
+            "type": "string",
+            "nullable": true
+          },
           "logheimiliseinstaklingar": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/EinstaklingurDTO" },
+            "items": {
+              "$ref": "#/components/schemas/EinstaklingurDTO"
+            },
             "nullable": true
           }
         },
@@ -907,32 +1191,39 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "nullable": true },
-          "title": { "type": "string", "nullable": true },
-          "status": { "type": "integer", "format": "int32", "nullable": true },
-          "detail": { "type": "string", "nullable": true },
-          "instance": { "type": "string", "nullable": true }
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "RikisfangDTO": {
         "type": "object",
         "properties": {
-          "kodi": { "type": "string", "nullable": true },
-          "land": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "SamDTO": {
-        "type": "object",
-        "properties": {
-          "kennitalaMaka": { "type": "string", "nullable": true },
-          "nafnMaka": { "type": "string", "nullable": true },
-          "sambud": { "type": "boolean" },
-          "sambudTexti": { "type": "string", "nullable": true },
-          "dagsetningBreytt": {
+          "kodi": {
             "type": "string",
-            "format": "date-time",
+            "nullable": true
+          },
+          "land": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -940,8 +1231,16 @@
       }
     },
     "securitySchemes": {
-      "Bearer": { "type": "http", "scheme": "Bearer", "bearerFormat": "Bearer" }
+      "Bearer": {
+        "type": "http",
+        "scheme": "Bearer",
+        "bearerFormat": "Bearer"
+      }
     }
   },
-  "security": [{ "Bearer": [] }]
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }

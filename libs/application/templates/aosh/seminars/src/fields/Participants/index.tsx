@@ -269,7 +269,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return
   }
 
-  const csvFile = `data:text/csv;charset=utf-8,nafn;kennitala;netfang;simi\nNafn hér;123456-7890;netfang@netfang.com;123-4567`
+  const csvFile = `data:text/csv;charset=utf-8,nafn;kennitala;netfang;simi\n'Nafn hér;'123456-7890;'netfang@netfang.com;'123-4567`
 
   const onCsvButtonClick = () => {
     const encodeUri = encodeURI(csvFile)

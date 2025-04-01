@@ -3,10 +3,10 @@ import {
   buildSection,
   buildImageField,
 } from '@island.is/application/core'
-import { firstSectionImage } from '../../assets/firstSectionImage'
+import { firstSectionImage } from '../../../assets/firstSectionImage'
 
-import { application as applicationMessages } from '../../lib/messages'
-export const firstSection = buildSection({
+import { application as applicationMessages } from '../../../lib/messages'
+export const firstSectionInformation = buildSection({
   id: 'firstSection',
   title: 'First section',
   children: [

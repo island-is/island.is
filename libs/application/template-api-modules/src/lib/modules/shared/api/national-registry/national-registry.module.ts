@@ -4,12 +4,12 @@ import { NationalRegistryService } from './national-registry.service'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { ConfigModule } from '@nestjs/config'
 import { AssetsClientConfig } from '@island.is/clients/assets'
-import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+import { NationalRegistryV3ApplicationsClientModule } from '@island.is/clients/national-registry-v3-applications'
 
 @Module({
   imports: [
     NationalRegistryClientModule,
-    NationalRegistryV3ClientModule,
+    NationalRegistryV3ApplicationsClientModule,
     AssetsModule,
     ConfigModule.forRoot({
       isGlobal: true,

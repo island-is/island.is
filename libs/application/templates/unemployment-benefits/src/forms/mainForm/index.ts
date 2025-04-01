@@ -1,12 +1,18 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
-import { firstSection } from '../mainForm/firstSection'
 import { secondSection } from '../mainForm/secondSection'
 import { overviewSection } from './overview'
+import { firstSectionInformation } from './firstSectionInformation'
+import { applicantSection } from './applicantSubSection'
 
 export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  children: [firstSection, secondSection, overviewSection],
+  children: [
+    firstSectionInformation,
+    applicantSection,
+    secondSection,
+    overviewSection,
+  ],
 })
