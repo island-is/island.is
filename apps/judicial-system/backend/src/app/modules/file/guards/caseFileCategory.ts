@@ -40,6 +40,11 @@ const defenderCaseFileCategoriesForIndictmentCases =
     CaseFileCategory.CIVIL_CLAIM,
   )
 
+const civilClaimantCaseFileCategoriesIndictmentCases = [
+  CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+  CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+]
+
 const prisonAdminCaseFileCategories = [
   CaseFileCategory.APPEAL_RULING,
   CaseFileCategory.RULING,
@@ -80,7 +85,10 @@ const getDefenceUserIndictmentCaseFileCategories = (
       civilClaimants,
     )
   ) {
-    return defenderCaseFileCategoriesForIndictmentCases
+    return [
+      ...defenderCaseFileCategoriesForIndictmentCases,
+      ...civilClaimantCaseFileCategoriesIndictmentCases,
+    ]
   }
 
   return defenderDefaultCaseFileCategoriesForIndictmentCases
@@ -101,24 +109,41 @@ const canDefenceUserViewCaseFileOfIndictmentCase = (
   return allowedCaseFileCategories.includes(caseFileCategory)
 }
 
-const canDefenceUserViewCaseFile = (
-  nationalId: string,
-  caseType: CaseType,
-  caseState: CaseState,
-  caseFileCategory: CaseFileCategory,
-  defendants?: Defendant[],
-  civilClaimants?: CivilClaimant[],
-) => {
+const canDefenceUserViewCaseFile = ({
+  nationalId,
+  userName,
+  caseType,
+  caseState,
+  submittedBy,
+  caseFileCategory,
+  defendants,
+  civilClaimants,
+}: {
+  nationalId: string
+  userName: string
+  caseType: CaseType
+  caseState: CaseState
+  submittedBy?: string
+  caseFileCategory: CaseFileCategory
+  defendants?: Defendant[]
+  civilClaimants?: CivilClaimant[]
+}) => {
   if (isRequestCase(caseType)) {
     return canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
   }
 
   if (isIndictmentCase(caseType)) {
-    return canDefenceUserViewCaseFileOfIndictmentCase(
-      nationalId,
-      caseFileCategory,
-      defendants,
-      civilClaimants,
+    // TODO: This is not optimal as we can have multiple users that have identical names.
+    // It is unlikely that a defenders with identical user names have been assigned to the same case but we should remove that possibility for sure.
+    // Since defenders aren't registered in the system we should rather rely on the user's national id when submitting a file
+    const hasUserSubmittedCaseFile = userName === submittedBy
+    return (
+      canDefenceUserViewCaseFileOfIndictmentCase(
+        nationalId,
+        caseFileCategory,
+        defendants,
+        civilClaimants,
+      ) || hasUserSubmittedCaseFile
     )
   }
 
@@ -145,27 +170,38 @@ const canPrisonAdminUserViewCaseFile = (
   )
 }
 
-export const canLimitedAccessUserViewCaseFile = (
-  user: User,
-  caseType: CaseType,
-  caseState: CaseState,
-  caseFileCategory?: CaseFileCategory,
-  defendants?: Defendant[],
-  civilClaimants?: CivilClaimant[],
-) => {
+export const canLimitedAccessUserViewCaseFile = ({
+  user,
+  caseType,
+  caseState,
+  caseFileCategory,
+  submittedBy,
+  defendants,
+  civilClaimants,
+}: {
+  user: User
+  caseType: CaseType
+  caseState: CaseState
+  caseFileCategory?: CaseFileCategory
+  submittedBy?: string
+  defendants?: Defendant[]
+  civilClaimants?: CivilClaimant[]
+}) => {
   if (!caseFileCategory) {
     return false
   }
 
   if (isDefenceUser(user)) {
-    return canDefenceUserViewCaseFile(
-      user.nationalId,
+    return canDefenceUserViewCaseFile({
+      nationalId: user.nationalId,
+      userName: user.name,
       caseType,
       caseState,
+      submittedBy,
       caseFileCategory,
       defendants,
       civilClaimants,
-    )
+    })
   }
 
   if (isPrisonStaffUser(user)) {

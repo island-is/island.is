@@ -2,7 +2,7 @@ import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
@@ -285,7 +285,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           )}
         </>
       )}
-      {showFiles && (
+      {showFiles ? (
         <>
           <FileSection
             title={formatMessage(caseFiles.criminalRecordSection)}
@@ -374,6 +374,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
           </AnimatePresence>
         </>
+      ) : (
+        <Box marginTop={3}>
+          <AlertMessage type="info" message="Engin skjöl til að sýna" />
+        </Box>
       )}
     </>
   )
