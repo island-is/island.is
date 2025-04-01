@@ -19,6 +19,11 @@ export const assigneeInformation = {
     },
   }),
   labels: defineMessages({
+    company: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.company',
+      defaultMessage: 'Fyrirtæki',
+      description: `Assignee information company label`,
+    },
     companyName: {
       id: 'aosh.tlwm.application:assigneeInformation.labels.companyName',
       defaultMessage: 'Nafn fyrirtækis',
@@ -28,6 +33,11 @@ export const assigneeInformation = {
       id: 'aosh.tlwm.application:assigneeInformation.labels.companyNationalId',
       defaultMessage: 'Kennitala fyrirtækis',
       description: `Assignee information nationalId label`,
+    },
+    assignee: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.assignee',
+      defaultMessage: 'Staðfestingaraðili',
+      description: `Assignee information assignee label`,
     },
     assigneeName: {
       id: 'aosh.tlwm.application:assigneeInformation.labels.assigneeName',
@@ -48,6 +58,11 @@ export const assigneeInformation = {
       id: 'aosh.tlwm.application:assigneeInformation.labels.assigneeEmail',
       defaultMessage: 'Netfang staðfestingaraðila',
       description: `Assignee information email label`,
+    },
+    workMachine: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.workMachine',
+      defaultMessage: 'Vinnuvél',
+      description: `Assignee information work machine label`,
     },
     isContractor: {
       id: 'aosh.tlwm.application:assigneeInformation.labels.isContractor',

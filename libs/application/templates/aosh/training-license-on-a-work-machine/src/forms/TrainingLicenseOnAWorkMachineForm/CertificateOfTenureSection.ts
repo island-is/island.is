@@ -1,8 +1,6 @@
 import {
   buildMultiField,
-  buildTextField,
   buildSection,
-  buildDateField,
   buildCustomField,
   buildAlertMessageField,
   getValueViaPath,
@@ -22,8 +20,6 @@ import {
   MachineSubCategoryDto,
 } from '@island.is/clients/work-machines'
 import { MACHINE_TYPE_BY_REGISTRATION_NUMBER_QUERY } from '../../graphql/queries'
-import { Application, RepeaterOptionValue } from '@island.is/application/types'
-import { ApolloClient } from '@apollo/client'
 
 export const certificateOfTenureSection = buildSection({
   id: 'certificateOfTenureSection',
@@ -37,6 +33,7 @@ export const certificateOfTenureSection = buildSection({
         buildTableRepeaterField({
           id: 'certificateOfTenure',
           addItemButtonText: 'Skrá vinnuvélar',
+          marginTop: 0,
           table: {
             header: [
               certificateOfTenure.labels.machineNumber,
@@ -64,12 +61,6 @@ export const certificateOfTenureSection = buildSection({
                 apolloClient,
                 lang,
               ) => {
-                console.log(
-                  value,
-                  application,
-                  activeField,
-                  activeField?.dateTo,
-                )
                 const licenseCategories = getValueViaPath<
                   MachineLicenseCategoryDto[]
                 >(
@@ -113,14 +104,6 @@ export const certificateOfTenureSection = buildSection({
                             value.slice(0, 2).toUpperCase(),
                       )
                     : undefined
-                console.log(
-                  licenseCategories,
-                  subCategories,
-                  selectedCategory,
-                  onlyFirstLetterInSubCategoryCorrect,
-                  bothLettersInSubCategoryCorrect,
-                )
-                console.log(apolloClient)
                 if (
                   value &&
                   value.length > 5 &&
@@ -129,7 +112,6 @@ export const certificateOfTenureSection = buildSection({
                   bothLettersInSubCategoryCorrect &&
                   !selectedCategory.hasInstructorLicense
                 ) {
-                  console.log('here')
                   const { data } = await apolloClient.query<{
                     getTypeByRegistrationNumber: { name: string }
                   }>({
@@ -139,7 +121,6 @@ export const certificateOfTenureSection = buildSection({
                       applicationId: application.id,
                     },
                   })
-                  console.log(data)
                   // run query
                   return data
                     ? [
@@ -305,28 +286,13 @@ export const certificateOfTenureSection = buildSection({
             },
           },
         }),
-        // buildTextField({
-        //   id: 'certificateOfTenure.machineNumber',
-        //   title: certificateOfTenure.labels.machineNumber,
-        //   width: 'half',
-        //   required: true,
-        //   clearOnChange: [
-        //     'certificateOfTenure.machineType',
-        //     'certificateOfTenure.practicalRight',
-        //   ],
-        // }),
+
         buildCustomField({
           id: 'certificateOfTenure.machineType2',
           title: '',
           width: 'half',
           component: 'SetAnswersForCertificateOfTenure',
         }),
-        // buildTextField({
-        //   id: 'certificateOfTenure.practicalRight',
-        //   title: certificateOfTenure.labels.practicalRight,
-        //   readOnly: true,
-        //   required: true,
-        // }),
         buildAlertMessageField({
           id: 'certificateOfTenure.unknownPracticalRight',
           title: '',
@@ -387,50 +353,6 @@ export const certificateOfTenureSection = buildSection({
           doesNotRequireAnswer: true,
           condition: (answers) => alreadyHaveTrainingLicense(answers),
         }),
-        // buildDateField({
-        //   id: 'certificateOfTenure.dateFrom',
-        //   title: certificateOfTenure.labels.dateFrom,
-        //   width: 'half',
-        //   required: true,
-        //   placeholder: certificateOfTenure.labels.datePlaceholder,
-        //   maxDate: (application) => {
-        //     const dateTo = getValueViaPath<string>(
-        //       application.answers,
-        //       'certificateOfTenure.dateTo',
-        //     )
-        //     return dateTo
-        //       ? new Date(
-        //           new Date(dateTo).setDate(new Date(dateTo).getDate() - 1),
-        //         )
-        //       : new Date()
-        //   },
-        // }),
-        // buildDateField({
-        //   id: 'certificateOfTenure.dateTo',
-        //   title: certificateOfTenure.labels.dateTo,
-        //   width: 'half',
-        //   required: true,
-        //   placeholder: certificateOfTenure.labels.datePlaceholder,
-        //   minDate: (application) => {
-        //     const dateFrom = getValueViaPath<string>(
-        //       application.answers,
-        //       'certificateOfTenure.dateFrom',
-        //     )
-        //     return dateFrom
-        //       ? new Date(
-        //           new Date(dateFrom).setDate(new Date(dateFrom).getDate() + 1),
-        //         )
-        //       : new Date('1900-01-01')
-        //   },
-        //   maxDate: new Date(),
-        // }),
-        // buildTextField({
-        //   id: 'certificateOfTenure.tenureInHours',
-        //   title: certificateOfTenure.labels.tenureInHours,
-        //   width: 'half',
-        //   required: true,
-        //   variant: 'number',
-        // }),
         buildHiddenInput({
           id: 'certificateOfTenure.licenseCategoryPrefix',
         }),

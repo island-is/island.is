@@ -5,6 +5,7 @@ import {
   AsyncSelectField,
   FieldComponents,
   FieldTypes,
+  HiddenInputField,
   RepeaterItem,
   RepeaterOptionValue,
   StaticText,
@@ -25,6 +26,7 @@ import {
 import { NationalIdWithName } from '@island.is/application/ui-components'
 import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormField'
 import { useApolloClient } from '@apollo/client'
+import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
 import { AlertMessageFormField } from '../AlertMessageFormField/AlertMessageFormField'
 
 interface ItemFieldProps {
@@ -96,6 +98,8 @@ export const Item = ({
   let Component: React.ComponentType<any>
   if (component === 'selectAsync') {
     Component = AsyncSelectFormField
+  } else if (component === 'hiddenInput') {
+    Component = HiddenInputFormField
   } else if (component === 'alertMessage') {
     Component = AlertMessageFormField
   } else {
@@ -232,18 +236,21 @@ export const Item = ({
   }
   if (component === 'radio') {
     defaultVal =
-      (getValueViaPath(application.answers, id) as string[]) ??
+      getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'checkbox') {
     defaultVal =
-      (getValueViaPath(application.answers, id) as string[]) ??
+      getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'date') {
     defaultVal =
-      (getValueViaPath(application.answers, id) as string) ??
+      getValueViaPath<string>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
+  }
+  if (component === 'hiddenInput') {
+    defaultVal = getDefaultValue(item, application, activeValues)
   }
 
   let maxDateVal: Date | undefined
@@ -312,6 +319,17 @@ export const Item = ({
     }
   }
 
+  let hiddenInputProps: HiddenInputField | undefined
+  if (component === 'hiddenInput') {
+    hiddenInputProps = {
+      id: id,
+      type: FieldTypes.HIDDEN_INPUT,
+      component: FieldComponents.HIDDEN_INPUT,
+      children: undefined,
+      defaultValue: defaultVal,
+    }
+  }
+
   let alertMessageProps: AlertMessageField | undefined
   if (component === 'alertMessage') {
     let titleVal: StaticText | undefined
@@ -365,6 +383,14 @@ export const Item = ({
           }}
         />
       )}
+      {component === 'hiddenInput' && hiddenInputProps && (
+        <HiddenInputFormField
+          application={application}
+          field={{
+            ...hiddenInputProps,
+          }}
+        />
+      )}
       {component === 'alertMessage' && alertMessageProps && (
         <AlertMessageFormField
           application={application}
@@ -374,6 +400,7 @@ export const Item = ({
         />
       )}
       {!(component === 'selectAsync' && selectAsyncProps) &&
+        !(component === 'hiddenInput' && hiddenInputProps) &&
         !(component === 'alertMessage' && alertMessageProps) && (
           <Component
             id={id}

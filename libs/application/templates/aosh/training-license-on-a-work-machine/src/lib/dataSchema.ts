@@ -33,72 +33,96 @@ export const CertificateOfTenureSchema = z.object({
 
 const AssigneeInformationSchema = z
   .object({
-    company: z.object({
-      nationalId: z.string().optional(),
-      name: z.string().optional(),
-    }),
-    assignee: z.object({
-      nationalId: z.string().optional(),
-      name: z.string().optional(),
-      email: z.string().optional(),
-      phone: z.string().optional(),
-    }),
+    companyAndAssignee: z
+      .array(
+        z.object({
+          company: z.object({
+            nationalId: z
+              .string()
+              .refine(
+                (nationalId) => nationalId && kennitala.isCompany(nationalId),
+              ),
+            name: z.string().optional(),
+          }),
+          assignee: z.object({
+            nationalId: z
+              .string()
+              .refine(
+                (nationalId) => nationalId && kennitala.isPerson(nationalId),
+              ),
+            name: z.string().optional(),
+            email: z.string().optional(),
+            phone: z.string().optional(),
+          }),
+        }),
+      )
+      .optional(),
+    // company: z.object({
+    //   nationalId: z.string().optional(),
+    //   name: z.string().optional(),
+    // }),
+    // assignee: z.object({
+    //   nationalId: z.string().optional(),
+    //   name: z.string().optional(),
+    //   email: z.string().optional(),
+    //   phone: z.string().optional(),
+    // }),
     isContractor: z.array(z.string().optional()),
   })
   .refine(
-    ({ company, isContractor }) => {
+    ({ companyAndAssignee, isContractor }) => {
       if (isContractor.includes(YES)) return true
-      return company.nationalId && kennitala.isCompany(company.nationalId)
+      return companyAndAssignee && companyAndAssignee.length > 0
     },
     {
-      path: ['company', 'nationalId'],
+      path: ['companyAndAssignee', 'nationalId'],
     },
   )
-  .refine(
-    ({ company, isContractor }) => {
-      if (isContractor.includes(YES)) return true
-      return company.name && company.name.length > 0
-    },
-    {
-      path: ['company', 'name'],
-    },
-  )
-  .refine(
-    ({ assignee, isContractor }) => {
-      if (isContractor.includes(YES)) return true
-      return assignee.nationalId && kennitala.isPerson(assignee.nationalId)
-    },
-    {
-      path: ['assignee', 'nationalId'],
-    },
-  )
-  .refine(
-    ({ assignee, isContractor }) => {
-      if (isContractor.includes(YES)) return true
-      return assignee.name && assignee.name.length > 0
-    },
-    {
-      path: ['assignee', 'name'],
-    },
-  )
-  .refine(
-    ({ assignee, isContractor }) => {
-      if (isContractor.includes(YES)) return true
-      return assignee.email && isValidEmail(assignee.email)
-    },
-    {
-      path: ['assignee', 'email'],
-    },
-  )
-  .refine(
-    ({ assignee, isContractor }) => {
-      if (isContractor.includes(YES)) return true
-      return assignee.phone && isValidPhoneNumber(assignee.phone)
-    },
-    {
-      path: ['assignee', 'phone'],
-    },
-  )
+// .refine(
+//   ({ company, isContractor }) => {
+//     if (isContractor.includes(YES)) return true
+//     return company.name && company.name.length > 0
+//   },
+//   {
+//     path: ['company', 'name'],
+//   },
+// )
+// .refine(
+//   ({ assignee, isContractor }) => {
+//     if (isContractor.includes(YES)) return true
+//     return assignee.nationalId && kennitala.isPerson(assignee.nationalId)
+//   },
+//   {
+//     path: ['assignee', 'nationalId'],
+//   },
+// )
+// .refine(
+//   ({ assignee, isContractor }) => {
+//     if (isContractor.includes(YES)) return true
+//     return assignee.name && assignee.name.length > 0
+//   },
+//   {
+//     path: ['assignee', 'name'],
+//   },
+// )
+// .refine(
+//   ({ assignee, isContractor }) => {
+//     if (isContractor.includes(YES)) return true
+//     return assignee.email && isValidEmail(assignee.email)
+//   },
+//   {
+//     path: ['assignee', 'email'],
+//   },
+// )
+// .refine(
+//   ({ assignee, isContractor }) => {
+//     if (isContractor.includes(YES)) return true
+//     return assignee.phone && isValidPhoneNumber(assignee.phone)
+//   },
+//   {
+//     path: ['assignee', 'phone'],
+//   },
+// )
 
 export const TrainingLicenseOnAWorkMachineAnswersSchema = z.object({
   information: InformationSchema,

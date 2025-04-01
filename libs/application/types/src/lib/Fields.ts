@@ -82,6 +82,7 @@ export type RepeaterFields =
   | 'nationalIdWithName'
   | 'phone'
   | 'selectAsync'
+  | 'hiddenInput'
   | 'alertMessage'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
@@ -115,6 +116,8 @@ export type RepeaterItem = {
   label?: StaticText
   phoneLabel?: StaticText
   emailLabel?: StaticText
+  customNameLabel?: StaticText
+  customNationalIdLabel?: StaticText
   placeholder?: StaticText
   options?: TableRepeaterOptions
   filterOptions?: (
@@ -221,6 +224,7 @@ export type RepeaterItem = {
       ): Promise<Option[]>
       updateOnSelect?: MaybeWithIndex<string[]>
     }
+  | { component: 'hiddenInput' }
   | {
       component: 'alertMessage'
       title?: MaybeWithApplicationAndActiveField<StaticText>

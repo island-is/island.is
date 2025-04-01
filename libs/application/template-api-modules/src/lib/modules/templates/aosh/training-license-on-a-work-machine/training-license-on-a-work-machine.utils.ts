@@ -61,27 +61,33 @@ export const getCleanApplicantInformation = (
 
 export const getCleanCompanyInformation = (
   application: Application,
-): Company => {
+): Company[] => {
   const companyInformation = getValueViaPath<
     TrainingLicenseOnAWorkMachine['assigneeInformation']
   >(application.answers, 'assigneeInformation')
   const isContractor =
     companyInformation?.isContractor?.includes('yes') ?? false
+  const companyAndAssignee = companyInformation?.companyAndAssignee ?? []
 
-  return {
-    companyName: isContractor ? '' : companyInformation?.company.name ?? '',
-    companyNationalId: isContractor
-      ? ''
-      : companyInformation?.company.nationalId ?? '',
-    contactNationalId: isContractor
-      ? ''
-      : companyInformation?.assignee.nationalId ?? '',
-    contactName: isContractor ? '' : companyInformation?.assignee.name ?? '',
-    contactPhoneNumber: isContractor
-      ? ''
-      : companyInformation?.assignee.phone ?? '',
-    contactEmail: isContractor ? '' : companyInformation?.assignee.email ?? '',
-  }
+  return isContractor
+    ? [
+        {
+          companyName: '',
+          companyNationalId: '',
+          contactNationalId: '',
+          contactName: '',
+          contactPhoneNumber: '',
+          contactEmail: '',
+        },
+      ]
+    : companyAndAssignee.map((info) => ({
+        companyName: info?.company.name ?? '',
+        companyNationalId: info?.company.nationalId ?? '',
+        contactNationalId: info?.assignee.nationalId ?? '',
+        contactName: info?.assignee.name ?? '',
+        contactPhoneNumber: info?.assignee.phone ?? '',
+        contactEmail: info?.assignee.email ?? '',
+      }))
 }
 
 export const getCleanCertificateOfTenure = (

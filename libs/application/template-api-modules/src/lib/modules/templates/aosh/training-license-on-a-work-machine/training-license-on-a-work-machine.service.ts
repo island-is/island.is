@@ -88,35 +88,35 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
   }: TemplateApiModuleActionProps): Promise<void> {
     // Send email and sms
     const company = getCleanCompanyInformation(application)
-    const recipient = getRecipient(company)
-    if (company.contactEmail) {
-      await this.sharedTemplateAPIService
-        .sendEmail(
-          (props) => generateRequestReviewEmail(props, recipient),
-          application,
-        )
-        .catch((e) => {
-          this.logger.error(
-            `Error sending email about initReview in application: ID: ${application.id}`,
-            e,
-          )
-        })
-    }
-    if (company.contactPhoneNumber) {
-      await this.sharedTemplateAPIService
-        .sendSms(
-          (_, options) =>
-            generateRequestReviewSms(application, options, recipient),
-          application,
-        )
-        .catch((e) => {
-          this.logger.error(
-            `Error sending sms about initReview to 
-                    a phonenumber in application: ID: ${application.id}`,
-            e,
-          )
-        })
-    }
+    // const recipient = getRecipient(company)
+    // if (company.contactEmail) {
+    //   await this.sharedTemplateAPIService
+    //     .sendEmail(
+    //       (props) => generateRequestReviewEmail(props, recipient),
+    //       application,
+    //     )
+    //     .catch((e) => {
+    //       this.logger.error(
+    //         `Error sending email about initReview in application: ID: ${application.id}`,
+    //         e,
+    //       )
+    //     })
+    // }
+    // if (company.contactPhoneNumber) {
+    //   await this.sharedTemplateAPIService
+    //     .sendSms(
+    //       (_, options) =>
+    //         generateRequestReviewSms(application, options, recipient),
+    //       application,
+    //     )
+    //     .catch((e) => {
+    //       this.logger.error(
+    //         `Error sending sms about initReview to
+    //                 a phonenumber in application: ID: ${application.id}`,
+    //         e,
+    //       )
+    //     })
+    // }
   }
 
   async deleteApplication({
@@ -124,31 +124,31 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
   }: TemplateApiModuleActionProps): Promise<void> {
     // Send email and sms
     const company = getCleanCompanyInformation(application)
-    const recipient = getRecipient(company)
-    if (company.contactEmail) {
-      await this.sharedTemplateAPIService
-        .sendEmail(
-          (props) => generateApplicationDeleteEmail(props, recipient),
-          application,
-        )
-        .catch((e) => {
-          this.logger.error(
-            `Error sending email about deleteApplication in application: ID: ${application.id}`,
-            e,
-          )
-        })
-    }
-    if (company.contactPhoneNumber) {
-      await this.sharedTemplateAPIService
-        .sendSms((_) => generateApplicationDeleteSms(recipient), application)
-        .catch((e) => {
-          this.logger.error(
-            `Error sending sms about deleteApplication to 
-                    a phonenumber in application: ID: ${application.id}`,
-            e,
-          )
-        })
-    }
+    // const recipient = getRecipient(company)
+    // if (company.contactEmail) {
+    //   await this.sharedTemplateAPIService
+    //     .sendEmail(
+    //       (props) => generateApplicationDeleteEmail(props, recipient),
+    //       application,
+    //     )
+    //     .catch((e) => {
+    //       this.logger.error(
+    //         `Error sending email about deleteApplication in application: ID: ${application.id}`,
+    //         e,
+    //       )
+    //     })
+    // }
+    // if (company.contactPhoneNumber) {
+    //   await this.sharedTemplateAPIService
+    //     .sendSms((_) => generateApplicationDeleteSms(recipient), application)
+    //     .catch((e) => {
+    //       this.logger.error(
+    //         `Error sending sms about deleteApplication to
+    //                 a phonenumber in application: ID: ${application.id}`,
+    //         e,
+    //       )
+    //     })
+    // }
   }
 
   async rejectApplication({
@@ -183,7 +183,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
         xCorrelationID: application.id,
         machineLicenseTeachingApplicationCreateDto: {
           applicant,
-          company,
+          company: company[0], // TODO: Change when new service is ready
           machineRegistrationNumber:
             certificateOfTenure.machineRegistrationNumber,
           licenseCategoryPrefix: certificateOfTenure.licenseCategoryPrefix,
