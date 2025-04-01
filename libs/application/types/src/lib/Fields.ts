@@ -927,7 +927,7 @@ export interface OverviewField extends BaseField {
   title: FormText
   titleVariant?: TitleVariants
   description?: FormText
-  backId?: string
+  backId?: string | ((answers: FormValue) => string | undefined)
   bottomLine?: boolean
   items?: (
     answers: FormValue,
