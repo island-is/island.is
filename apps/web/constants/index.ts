@@ -1,7 +1,8 @@
 import type { ResponsiveSpace } from '@island.is/island-ui/core'
 
 export const STICKY_NAV_HEIGHT = 64
-export const STICKY_NAV_MAX_WIDTH = 318
+export const STICKY_NAV_MAX_WIDTH_DEFAULT = 230
+export const STICKY_NAV_MAX_WIDTH_LG = 318
 export const SLICE_SPACING: ResponsiveSpace = 7
 export const PROJECT_STORIES_TAG_ID = '9yqOTwQYzgyej5kItFTtd'
 export const FRONTPAGE_NEWS_TAG_SLUG = 'forsidufrettir'
