@@ -2,7 +2,6 @@ import { TagVariant } from '@island.is/island-ui/core'
 import {
   isDistrictCourtUser,
   isPublicProsecutorUser,
-  PunishmentType,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -10,6 +9,7 @@ import {
   CaseListEntry,
   CaseState,
   IndictmentDecision,
+  PunishmentType,
   User,
 } from '../../graphql/schema'
 import { strings } from './CaseTag.strings'

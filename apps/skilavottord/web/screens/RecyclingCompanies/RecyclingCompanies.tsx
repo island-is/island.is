@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, useContext } from 'react'
@@ -29,27 +28,7 @@ import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
-
-export const SkilavottordRecyclingPartnersQuery = gql`
-  query skilavottordRecyclingPartnersQuery(
-    $isMunicipalityPage: Boolean!
-    $municipalityId: String
-  ) {
-    skilavottordRecyclingPartners(
-      isMunicipalityPage: $isMunicipalityPage
-      municipalityId: $municipalityId
-    ) {
-      companyId
-      companyName
-      address
-      postnumber
-      email
-      active
-      municipalityId
-      isMunicipality
-    }
-  }
-`
+import { SkilavottordRecyclingPartnersQuery } from '@island.is/skilavottord-web/graphql/queries'
 
 const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
@@ -90,6 +69,7 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
         isMunicipalityPage: isMunicipalityPage,
         municipalityId: partnerId,
       },
+      fetchPolicy: 'cache-and-network',
     },
   )
 
