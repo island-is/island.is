@@ -1,7 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
-import { parseAsArrayOf, parseAsString } from 'next-usequerystate'
+import {
+  parseAsArrayOf,
+  parseAsString,
+  useQueryState,
+} from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
 import {
@@ -12,7 +16,10 @@ import {
   Hidden,
   InfoCardGrid,
   Inline,
+  Input,
+  Select,
   Stack,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -44,8 +51,18 @@ import {
   GET_VERDICTS_QUERY,
 } from '../queries/Verdicts'
 import { m } from './translations.strings'
+import * as styles from './VerdictsList.css'
 
 const ITEMS_PER_PAGE = 10
+
+const ALL_COURTS_TAG = ''
+const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómur Reykjavíkur'
+
+const SEARCH_TERM_QUERY_PARAM_KEY = 'q'
+const COURT_QUERY_PARAM_KEY = 'court'
+
+const extractCourtLevelFromState = (court: string | null | undefined) =>
+  court || ALL_COURTS_TAG
 
 interface VerdictsListProps {
   initialData: {
@@ -59,16 +76,40 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
   initialData,
   customPageData,
 }) => {
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
   const [data, setData] = useState(initialData)
   const [page, setPage] = useState(1)
   const { format } = useDateUtils()
   const { formatMessage } = useIntl()
   const { width } = useWindowSize()
+  const [searchTerm, setSearchTerm] = useQueryState(
+    SEARCH_TERM_QUERY_PARAM_KEY,
+    parseAsString
+      .withOptions({
+        clearOnDefault: true,
+        shallow: false,
+      })
+      .withDefault(''),
+  )
+
+  useEffect(() => {
+    setData(initialData)
+  }, [initialData])
 
   const [fetchVerdicts, { loading, error }] = useLazyQuery<
     GetVerdictsQuery,
     GetVerdictsQueryVariables
   >(GET_VERDICTS_QUERY)
+
+  const [courtFilter, setCourtFilter] = useQueryState(
+    COURT_QUERY_PARAM_KEY,
+    parseAsString
+      .withOptions({
+        clearOnDefault: true,
+        shallow: false,
+      })
+      .withDefault(ALL_COURTS_TAG),
+  )
 
   useEffect(() => {
     if (page <= 1) {
@@ -79,6 +120,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
       variables: {
         input: {
           page,
+          searchTerm,
+          courtLevel: extractCourtLevelFromState(courtFilter),
         },
       },
       onCompleted(response) {
@@ -114,11 +157,70 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
         })
       },
     })
-  }, [fetchVerdicts, initialData.total, page])
+  }, [courtFilter, fetchVerdicts, initialData.total, page, searchTerm])
 
   const [isGridLayout, setIsGridLayout] = useState(false)
   const overrideGridLayoutSetting = width < theme.breakpoints.lg
   const heading = formatMessage(m.listPage.heading)
+
+  const courtTags = useMemo(() => {
+    return [
+      {
+        label: formatMessage(m.listPage.showAllCourts),
+        value: ALL_COURTS_TAG,
+      },
+      {
+        label: formatMessage(m.listPage.showDistrictCourts),
+        value: DEFAULT_DISTRICT_COURT_TAG,
+      },
+      {
+        label: formatMessage(m.listPage.showCourtOfAppeal),
+        value: 'Landsréttur',
+      },
+      {
+        label: formatMessage(m.listPage.showSupremeCourt),
+        value: 'Hæstiréttur',
+      },
+    ]
+  }, [formatMessage])
+  const districtCourtTags = useMemo(() => {
+    return [
+      {
+        label: 'Reykjavík',
+        value: DEFAULT_DISTRICT_COURT_TAG,
+      },
+      {
+        label: 'Vesturland',
+        value: 'Héraðsdómur Vesturlands',
+      },
+      {
+        label: 'Vestfirðir',
+        value: 'Héraðsdómur Vestfjarða',
+      },
+      {
+        label: 'Norðurland vestra',
+        value: 'Héraðsdómur Norðurlands vestra',
+      },
+      {
+        label: 'Norðurland eystra',
+        value: 'Héraðsdómur Norðurlands eystra',
+      },
+      {
+        label: 'Austurland',
+        value: 'Héraðsdómur Austurlands',
+      },
+      {
+        label: 'Suðurland',
+        value: 'Héraðsdómur Suðurlands',
+      },
+      {
+        label: 'Reykjanes',
+        value: 'Héraðsdómur Reykjaness',
+      },
+    ]
+  }, [])
+
+  const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
 
   return (
     <Box className="rs_read">
@@ -128,20 +230,127 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
         )}
       </HeadWithSocialSharing>
       <Stack space={3}>
-        <GridContainer>
-          <Stack space={3}>
-            <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
-            <Stack space={2}>
-              <Text variant="h1" as="h1">
-                {heading}
-              </Text>
-              <Webreader readClass="rs_read" marginBottom={0} marginTop={0} />
-              <Text variant="intro">
-                {formatMessage(m.listPage.description)}
-              </Text>
+        <Box paddingBottom={2}>
+          <GridContainer>
+            <Stack space={5}>
+              <Stack space={3}>
+                <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
+                <Stack space={2}>
+                  <Text variant="h1" as="h1">
+                    {heading}
+                  </Text>
+                  <Webreader
+                    readClass="rs_read"
+                    marginBottom={0}
+                    marginTop={0}
+                  />
+                  <Text variant="intro">
+                    {formatMessage(m.listPage.description)}
+                  </Text>
+                </Stack>
+              </Stack>
+
+              <Stack space={3}>
+                <Box className={styles.searchInput}>
+                  <Input
+                    ref={searchInputRef}
+                    name="verdict-search-input"
+                    onKeyDown={(ev) => {
+                      if (ev.key === 'Enter') {
+                        setSearchTerm(searchInputRef.current?.value ?? '')
+                        setPage(1)
+
+                        // Remove focus from input field after pressing enter
+                        ;(ev.target as { blur?: () => void })?.blur?.()
+                      }
+                    }}
+                    defaultValue={searchTerm}
+                    placeholder={formatMessage(
+                      m.listPage.searchInputPlaceholder,
+                    )}
+                    icon={{ name: 'search', type: 'outline' }}
+                    backgroundColor="blue"
+                  />
+                </Box>
+                <Hidden above="xs">
+                  <Select
+                    options={courtTags}
+                    value={courtTags.find((tag) => tag.value === courtFilter)}
+                    label={formatMessage(m.listPage.courtSelectLabel)}
+                    onChange={(option) => {
+                      if (option) setCourtFilter(option.value)
+                    }}
+                    size="sm"
+                    backgroundColor="blue"
+                  />
+                </Hidden>
+                <Hidden below="sm">
+                  <Inline alignY="center" space={2}>
+                    {courtTags.map((tag) => {
+                      let isActive = courtFilter === tag.value
+                      if (
+                        !isActive &&
+                        tag.value === DEFAULT_DISTRICT_COURT_TAG &&
+                        districtCourtTagValues.includes(courtFilter)
+                      ) {
+                        isActive = true
+                      }
+                      return (
+                        <Tag
+                          key={tag.value}
+                          active={isActive}
+                          onClick={() => {
+                            setPage(1)
+                            setCourtFilter(tag.value)
+                          }}
+                        >
+                          {tag.label}
+                        </Tag>
+                      )
+                    })}
+                  </Inline>
+                </Hidden>
+                {districtCourtTagValues.includes(courtFilter) && (
+                  <>
+                    <Hidden below="sm">
+                      <Inline alignY="center" space={2}>
+                        {districtCourtTags.map((tag) => (
+                          <Tag
+                            key={tag.value}
+                            active={courtFilter === tag.value}
+                            onClick={() => {
+                              setPage(1)
+                              setCourtFilter(tag.value)
+                            }}
+                          >
+                            {tag.label}
+                          </Tag>
+                        ))}
+                      </Inline>
+                    </Hidden>
+                    <Hidden above="xs">
+                      <Select
+                        options={districtCourtTags}
+                        value={districtCourtTags.find(
+                          (tag) => tag.value === courtFilter,
+                        )}
+                        label={formatMessage(
+                          m.listPage.districtCourtSelectLabel,
+                        )}
+                        onChange={(option) => {
+                          if (option) setCourtFilter(option.value)
+                        }}
+                        size="sm"
+                        backgroundColor="blue"
+                      />
+                    </Hidden>
+                  </>
+                )}
+              </Stack>
             </Stack>
-          </Stack>
-        </GridContainer>
+          </GridContainer>
+        </Box>
+
         <Box background="blue100" paddingTop={[3, 3, 0]}>
           <SidebarLayout
             fullWidthContent={true}
@@ -157,7 +366,13 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
               <Inline justifyContent="spaceBetween" alignY="center" space={2}>
                 <Text>
                   <strong>{data.total}</strong>{' '}
-                  {formatMessage(m.listPage.verdictsFound)}
+                  {formatMessage(
+                    m.listPage[
+                      data.total === 1
+                        ? 'verdictsFoundSingular'
+                        : 'verdictsFoundPlural'
+                    ],
+                  )}
                 </Text>
                 <Hidden below="lg">
                   <Box>
@@ -252,7 +467,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
 }
 
 VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
-  const searchTerm = parseAsString.withDefault('').parseServerSide(query.q)
+  const searchTerm = parseAsString.parseServerSide(
+    query[SEARCH_TERM_QUERY_PARAM_KEY],
+  )
+  const court = parseAsString.parseServerSide(query[COURT_QUERY_PARAM_KEY])
   const caseCategories = parseAsArrayOf(parseAsString).parseServerSide(
     query.caseCategories,
   )
@@ -275,6 +493,7 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
           caseTypes,
           keywords,
           page: 1,
+          courtLevel: extractCourtLevelFromState(court),
         },
       },
     }),

@@ -1,5 +1,7 @@
 import { defineMessages } from 'react-intl'
 
+import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
+
 export const indictmentCount = defineMessages({
   delete: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.delete',
@@ -154,12 +156,6 @@ export const indictmentCount = defineMessages({
     description:
       'Notaður sem skýritexti á "atvikalýsing" svæði á ákæruliða skrefi í umferðalagabrots ákærum.',
   },
-  incidentDescriptionDrivingWithoutLicenceAutofill: {
-    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_driving_without_licence_auto_fill',
-    defaultMessage: 'sviptur ökurétti',
-    description:
-      'Notaður sem ástæða í atvikalýsingu fyrir "sviptingarakstur" brot.',
-  },
   incidentDescriptionDrunkDrivingAutofill: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_drunk_driving_auto_fill',
     defaultMessage: 'undir áhrifum áfengis',
@@ -175,11 +171,6 @@ export const indictmentCount = defineMessages({
   incidentDescriptionPrescriptionDrugsDrivingAutofill: {
     id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_prescription_drugs_driving_auto_fill',
     defaultMessage: 'slævandi lyfja',
-    description: 'Notaður sem ástæða í atvikalýsingu fyrir "lyfjaakstur" brot.',
-  },
-  incidentDescriptionDrugsDrivingPrefixAutofill: {
-    id: 'judicial.system.core:indictments_indictment.indictment_count.incident_description_drugs_driving_prefix_auto_fill',
-    defaultMessage: 'óhæfur til að stjórna henni örugglega vegna áhrifa',
     description: 'Notaður sem ástæða í atvikalýsingu fyrir "lyfjaakstur" brot.',
   },
   incidentDescriptionSubstancesPrefixAutofill: {
@@ -223,3 +214,16 @@ export const indictmentCount = defineMessages({
     description: 'Notaður sem titill fyrir "Veldu sakarefni" svæði.',
   },
 })
+
+export const strings = {
+  incidentDescriptionDrivingWithoutLicenceAutofill: {
+    [Gender.MALE]: 'sviptur ökurétti',
+    [Gender.FEMALE]: 'svipt ökurétti',
+    [Gender.OTHER]: 'svipt ökurétti',
+  },
+  incidentDescriptionDrugsDrivingPrefixAutofill: {
+    [Gender.MALE]: 'óhæfur til að stjórna henni örugglega vegna áhrifa',
+    [Gender.FEMALE]: 'óhæf til að stjórna henni örugglega vegna áhrifa',
+    [Gender.OTHER]: 'óhæft til að stjórna henni örugglega vegna áhrifa',
+  },
+}

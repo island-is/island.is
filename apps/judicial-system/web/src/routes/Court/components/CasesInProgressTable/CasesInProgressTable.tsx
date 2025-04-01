@@ -31,12 +31,12 @@ import Table, {
 } from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import {
+  Case,
   CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import CourtCaseNumberInput from '../CourtCaseNumber/CourtCaseNumberInput'
