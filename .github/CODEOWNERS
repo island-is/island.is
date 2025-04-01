@@ -225,7 +225,6 @@ codemagic.yaml                                                                  
 /libs/application/templates/accident-notification/                                                        @island-is/norda
 /libs/application/templates/complaints-to-althingi-ombudsman/                                             @island-is/norda
 /libs/application/templates/data-protection-complaint/                                                    @island-is/norda
-/libs/application/templates/example-payment/                                                              @island-is/norda
 /libs/application/templates/family-matters/children-residence-change-v2                                   @island-is/norda
 /libs/application/templates/financial-aid/                                                                @island-is/norda
 /libs/application/templates/financial-statements-inao/                                                    @island-is/norda
@@ -369,6 +368,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/aosh/seminars/                                                                @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/aosh/seminars/                           @island-is/origo
 /libs/api/domains/seminars-ver/                                                                           @island-is/origo  
+/libs/clients/seminars-ver/                                                                               @island-is/origo  
 
 /libs/application/templates/id-card/                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/id-card/                                 @island-is/origo
