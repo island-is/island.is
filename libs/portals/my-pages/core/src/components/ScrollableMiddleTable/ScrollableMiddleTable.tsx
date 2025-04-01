@@ -6,13 +6,17 @@ import cn from 'classnames'
 import * as styles from './ScrollableMiddleTable.css'
 import ScrollableMiddleTableRow from './ScrollableMiddleTableRow'
 
-export interface Columns {
+interface Columns {
   first: string
   scrollableMiddle: Array<string>
   last: string
 }
 
-export interface ColumnOptions {
+interface ExpandableColumns extends Columns {
+  nested: Array<Columns>
+}
+
+interface ColumnOptions {
   sticky?: boolean
   width?: number
   shadow?: boolean
@@ -20,7 +24,7 @@ export interface ColumnOptions {
 
 export interface ScrollableMiddleTableProps {
   header: Columns
-  rows?: Array<Columns>
+  rows?: Array<ExpandableColumns>
   footer?: Columns
   nested?: boolean
   options?: {
@@ -181,8 +185,6 @@ export const ScrollableMiddleTable = ({
           {rows?.map((r, rowIdx) => {
             const backgroundColor = rowIdx % 2 === 0 ? 'white' : undefined
 
-            console.log(backgroundColor)
-
             return (
               <ScrollableMiddleTableRow
                 key={`nested-table-row-${rowIdx}`}
@@ -200,23 +202,37 @@ export const ScrollableMiddleTable = ({
                     last: true,
                   },
                 ]}
-              >
-                <p>blebleble</p>
-              </ScrollableMiddleTableRow>
+                dataToExpand={r.nested.map((n) => {
+                  console.log(n)
+                  return [
+                    {
+                      value: <Text variant="small">{'FIRST'}</Text>,
+                      first: true,
+                    },
+                    ...n.scrollableMiddle.map((b) => ({
+                      value: <Text variant="small">{b}</Text>,
+                    })),
+                    {
+                      value: <Text variant="small">{'LAST'}</Text>,
+                      last: true,
+                    },
+                  ]
+                })}
+              />
             )
           })}
           {footer && (
             <T.Row>
               <T.Data
                 box={{
-                  className: cn(styles.row, styles.expandColumn, {
+                  className: cn(styles.expandColumn, {
                     [styles.sticky]: options?.firstColumn.sticky,
                   }),
                 }}
               />
               <T.Data
                 box={{
-                  className: cn(styles.firstColumn, styles.row, {
+                  className: cn(styles.firstColumn, {
                     [styles.sticky]: options?.firstColumn.sticky,
                   }),
                 }}
@@ -234,7 +250,7 @@ export const ScrollableMiddleTable = ({
               ))}
               <T.Data
                 box={{
-                  className: cn(styles.lastColumn, styles.row, {
+                  className: cn(styles.lastColumn, {
                     [styles.lastColumnSticky]: options?.lastColumn.sticky,
                   }),
                 }}

@@ -19,19 +19,10 @@ interface Props {
     first?: boolean
     last?: boolean
   }>
-  children: React.ReactNode
-  last?: boolean
   loading?: boolean
-  backgroundColor?: 'white' | 'default'
 }
 
-const ScrollableMiddleTableRow = ({
-  data,
-  backgroundColor = 'default',
-  children,
-  last,
-  loading,
-}: Props) => {
+const ScrollableMiddleTableRow = ({ data, loading }: Props) => {
   const { formatMessage } = useLocale()
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
@@ -48,40 +39,11 @@ const ScrollableMiddleTableRow = ({
     toggleExpand(!expanded)
   }
 
-  const shouldExpand = children && expanded
-
-  const fullClose = closed && !expanded
-  const color =
-    fullClose || loading
-      ? 'transparent'
-      : backgroundColor === 'default'
-      ? 'blue100'
-      : 'transparent'
-
-  const borderColor =
-    fullClose || loading
-      ? 'blue200'
-      : backgroundColor === 'default'
-      ? 'blue100'
-      : 'transparent'
-
   return (
     <>
       <T.Row>
-        <T.Data
-          box={{
-            alignItems: 'flexEnd',
-            background: color,
-            borderColor: borderColor,
-            padding: 2,
-            left: 0,
-            overflow: 'hidden',
-            position: 'sticky',
-            zIndex: 10,
-          }}
-        >
-          {!fullClose && !loading ? <div className={styles.line} /> : null}
-          {!last && !loading && (
+        <T.Data>
+          {!loading && (
             <Box
               display="flex"
               alignItems="center"
@@ -116,52 +78,35 @@ const ScrollableMiddleTableRow = ({
         </T.Data>
         {data.map((item, i) => {
           return (
-            <T.Data
-              key={i}
-              box={{
-                background: color,
-                borderColor: borderColor,
-                position: item.first ? 'sticky' : 'relative',
-                padding: 2,
-                className: item.first
-                  ? styles.firstColumn
-                  : item.last
-                  ? styles.lastColumn
-                  : undefined,
-              }}
-            >
-              <Text variant={last ? 'eyebrow' : 'medium'} as="span">
-                {item.value}
-              </Text>
+            <T.Data key={i}>
+              <Text>{item.value}</Text>
             </T.Data>
           )
         })}
       </T.Row>
       <T.Row>
-        <T.Data
-          style={{
-            padding: 0,
-            width: '100%',
-            paddingTop: expanded && !loading ? theme.spacing[4] : 0,
-            paddingBottom: expanded && !loading ? theme.spacing[4] : 0,
-          }}
-          box={{ position: 'sticky', left: 0 }}
-          borderColor={
-            closed && !expanded
-              ? 'blue100'
-              : backgroundColor === 'white'
-              ? 'transparent'
-              : 'blue200'
-          }
-          colSpan={data.length + 1}
-        >
+        <T.Data>
           <AnimateHeight
             onHeightAnimationEnd={(newHeight) => handleAnimationEnd(newHeight)}
             duration={300}
-            height={shouldExpand ? 'auto' : 0}
+            height={'auto'}
           >
             <Box className={styles.line} />
-            {children}
+            <T.Table
+              box={{
+                marginLeft: 3,
+              }}
+            >
+              {[[1], [2], [3]].map((d) => (
+                <T.Row>
+                  {d.map((dd, i) => (
+                    <T.Data key={i}>
+                      <Text>{dd}</Text>
+                    </T.Data>
+                  ))}
+                </T.Row>
+              ))}
+            </T.Table>
           </AnimateHeight>
         </T.Data>
       </T.Row>
