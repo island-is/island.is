@@ -322,6 +322,6 @@ jobs:
       - name: Check build success
         run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
       - name: Check Unicorn test success
-        run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
+        run: '[[ ${{ needs.unicorn-tests.result }} != "failure" ]] || exit 1'
       - name: Announce success
         run: echo "Build is successful"
