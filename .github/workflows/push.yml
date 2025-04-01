@@ -233,16 +233,20 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
           set -euo pipefail
-          BUILD_CHUNKS=${{ steps.build_map.outputs.BUILD_CHUNKS }}
-          # Remove surrounding quotes if present
-          CHUNKS="${BUILD_CHUNKS#\'}"
-          CHUNKS="${CHUNKS%\'}"
-          echo "BUILD_CHUNKS: $CHUNKS"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            # NOTE: validate the jq command to trigger failure
-            echo "$CHUNKS" | jq -r 'map(.projects) | join(",")'
-            IMAGES=$(echo "$CHUNKS" | jq -r 'map(.projects) | join(",")')
-            echo "IMAGES=$IMAGES" >> "$GITHUB_OUTPUT"
+          # Output raw value for debugging
+          echo "Raw BUILD_CHUNKS: '${{ steps.build_map.outputs.BUILD_CHUNKS }}'"
+          
+          # Properly handle the JSON by writing it to a temporary file
+          echo '${{ steps.build_map.outputs.BUILD_CHUNKS }}' > chunks.json
+          # Remove surrounding quotes and other potential problematic characters
+          sed -i.bak 's/^'"'"'\(.*\)'"'"'$/\1/' chunks.json
+          cat chunks.json
+          
+          if [[ -s chunks.json && "$(cat chunks.json)" != "[]" ]]; then
+            # NOTE: validate the jq command to trigger failure using the file
+            PROJECTS=$(jq -r 'map(.projects) | join(",")' chunks.json)
+            echo "Extracted projects: $PROJECTS"
+            echo "IMAGES=$PROJECTS" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare docker deps
@@ -498,9 +502,17 @@ jobs:
           echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
           echo Image tag is: ${{env.NODE_IMAGE_VERSION}}
           ./scripts/build-docker-container.sh "$DOCKER_TAG"
+          
+          # Properly handle IMAGES output without quotes
+          IMAGES="${{needs.prepare.outputs.IMAGES}}"
+          # Remove any surrounding quotes if present
+          IMAGES="${IMAGES#\'}"
+          IMAGES="${IMAGES%\'}"
+          
+          echo "Clean IMAGES: $IMAGES"
           echo "COMMENT<<EOF" >> "$GITHUB_ENV"
-          echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> "$GITHUB_ENV"
-          docker run --rm "${DOCKER_REGISTRY}/helm-config:$DOCKER_TAG" ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME" >> "$GITHUB_ENV"
+          echo "Affected services are: $IMAGES" >> "$GITHUB_ENV"
+          docker run --rm "${DOCKER_REGISTRY}/helm-config:$DOCKER_TAG" ingress-comment --images=$IMAGES --chart=islandis --feature="$FEATURE_NAME" >> "$GITHUB_ENV"
           echo 'EOF' >> "$GITHUB_ENV"
         env:
           PUBLISH: 'true'
@@ -535,6 +547,13 @@ jobs:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
           echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
+          
+          # Properly handle IMAGES without quotes
+          CLEAN_IMAGES="${IMAGES#\'}"
+          CLEAN_IMAGES="${CLEAN_IMAGES%\'}"
+          echo "Original IMAGES: $IMAGES"
+          echo "Clean IMAGES: $CLEAN_IMAGES"
+          
           curl "$SPINNAKER_URL/webhooks/webhook/islandis" -H "content-type: application/json" --data-binary @- <<BODY
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
@@ -542,7 +561,7 @@ jobs:
             "parameters": {
               "docker_tag": "$DOCKER_TAG",
               "feature_name": "$FEATURE_NAME",
-              "images": "$IMAGES",
+              "images": "$CLEAN_IMAGES",
               "pull_request_number": "$(echo "$GITHUB_REF" | cut -d'/' -f3)"
             }
           }
