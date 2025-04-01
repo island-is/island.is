@@ -72,18 +72,6 @@ export const getCleanContacts = (
     })
   })
 
-  // Main other contact
-  const mainOtherContact = getValueViaPath<
-    SecondarySchoolAnswers['mainOtherContact']
-  >(application.answers, 'mainOtherContact')
-  if (mainOtherContact?.person?.nationalId)
-    result.push({
-      nationalId: mainOtherContact.person?.nationalId,
-      name: mainOtherContact.person?.name || '',
-      phone: mainOtherContact.person?.phone || '',
-      email: mainOtherContact.person?.email || '',
-    })
-
   // Other contacts
   const otherContacts = (
     getValueViaPath<SecondarySchoolAnswers['otherContacts']>(

@@ -1,13 +1,9 @@
 import {
   buildFieldsRepeaterField,
-  buildHiddenInput,
   buildMultiField,
-  buildNationalIdWithNameField,
   buildSubSection,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { userInformation } from '../../../lib/messages'
-import { Application } from '@island.is/application/types'
 import { checkHasAnyCustodians, Routes } from '../../../utils'
 
 export const custodianSubSection = buildSubSection({
@@ -28,6 +24,7 @@ export const custodianSubSection = buildSubSection({
           ? ''
           : userInformation.otherContact.description,
       children: [
+        // If applicant has any custodians
         // Custodians
         buildFieldsRepeaterField({
           id: 'custodians',
@@ -73,47 +70,42 @@ export const custodianSubSection = buildSubSection({
             },
           },
         }),
-
-        // Main other contact
-        buildHiddenInput({
-          id: 'mainOtherContact.applicantNationalId',
-          defaultValue: (application: Application) => {
-            return application.applicant
-          },
-        }),
-        buildHiddenInput({
-          id: 'mainOtherContact.required',
-          defaultValue: (application: Application) => {
-            return !checkHasAnyCustodians(application.externalData)
-          },
-        }),
-        buildNationalIdWithNameField({
-          id: 'mainOtherContact.person',
-          required: true,
-          showPhoneField: true,
-          showEmailField: true,
-          phoneRequired: true,
-          emailRequired: true,
-          phoneLabel: userInformation.otherContact.phone,
-          emailLabel: userInformation.otherContact.email,
-          condition: (answers) => {
-            return (
-              getValueViaPath<boolean>(answers, 'mainOtherContact.required') ||
-              false
-            )
-          },
-        }),
-
         // Other contacts
         buildFieldsRepeaterField({
           id: 'otherContacts',
           title: userInformation.otherContact.subtitle,
           titleVariant: 'h5',
+          condition: (_, externalData) => checkHasAnyCustodians(externalData),
           formTitleNumbering: 'none',
           addItemButtonText: userInformation.otherContact.addButtonLabel,
           removeItemButtonText: userInformation.otherContact.removeButtonLabel,
           minRows: 0,
           maxRows: 1,
+          fields: {
+            person: {
+              component: 'nationalIdWithName',
+              required: true,
+              showPhoneField: true,
+              phoneLabel: userInformation.otherContact.phone,
+              phoneRequired: true,
+              showEmailField: true,
+              emailLabel: userInformation.otherContact.email,
+              emailRequired: true,
+            },
+          },
+        }),
+
+        // If applicant does not have any custodians
+        // Contacts
+        buildFieldsRepeaterField({
+          id: 'otherContacts',
+          condition: (_, externalData) => !checkHasAnyCustodians(externalData),
+          formTitleNumbering: 'none',
+          addItemButtonText: userInformation.otherContact.addButtonLabel,
+          removeItemButtonText: userInformation.otherContact.removeButtonLabel,
+          marginTop: 0,
+          minRows: 0,
+          maxRows: 2,
           fields: {
             person: {
               component: 'nationalIdWithName',
