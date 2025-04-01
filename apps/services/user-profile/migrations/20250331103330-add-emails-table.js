@@ -30,7 +30,7 @@ module.exports = {
       },
       email: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       created: {
         type: 'TIMESTAMP WITH TIME ZONE',
@@ -95,7 +95,7 @@ module.exports = {
     await queryInterface.removeIndex('emails', 'emails_national_id_index')
 
     // Remove column from actor_profile
-    await queryInterface.removeColumn('actor_profile', 'emails')
+    await queryInterface.removeColumn('actor_profile', 'emails_id')
 
     // Drop table
     await queryInterface.dropTable('emails')
