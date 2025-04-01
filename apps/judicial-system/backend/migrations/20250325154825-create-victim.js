@@ -36,7 +36,8 @@ module.exports = {
           },
           has_national_id: {
             type: Sequelize.BOOLEAN,
-            allowNull: true,
+            allowNull: false,
+            defaultValue: true,
           },
           national_id: {
             type: Sequelize.STRING,
