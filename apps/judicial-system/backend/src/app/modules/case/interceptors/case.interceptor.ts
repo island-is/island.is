@@ -44,16 +44,11 @@ const transformCaseRepresentatives = (theCase: Case) => {
         }
       : undefined
 
-  const getDefenderRepresentativeProps = (theCase: Case) => {
-    const { defenderName, defenderNationalId } = theCase
-    if (!(defenderName && defenderNationalId)) return undefined
-
-    return {
-      name: defenderName,
-      nationalId: defenderNationalId,
-      caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
-    }
-  }
+  const defenders = theCase.defendants?.map((defendant) => ({
+    name: defendant.defenderName,
+    nationalId: defendant.defenderNationalId,
+    caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
+  }))
 
   const civilClaimantSpokespersons = civilClaimants?.map((civilClaimant) => {
     const { spokespersonName, spokespersonNationalId, spokespersonIsLawyer } =
@@ -76,7 +71,7 @@ const transformCaseRepresentatives = (theCase: Case) => {
   }))
   return [
     prosecutorRepresentativeProps,
-    getDefenderRepresentativeProps(theCase),
+    ...(defenders ? defenders : []),
     ...(civilClaimantSpokespersons ? civilClaimantSpokespersons : []),
     ...(defendants ? defendants : []),
   ].filter((representative) => !!representative)
