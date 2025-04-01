@@ -1,17 +1,21 @@
 import { IntlShape } from 'react-intl'
 
+import { Substance, SubstanceMap } from '@island.is/judicial-system/types'
 import {
+  Gender,
   IndictmentCountOffense,
-  Substance,
-  SubstanceMap,
-} from '@island.is/judicial-system/types'
-import { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
+  Offense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { indictmentCount as strings } from '../IndictmentCount.strings'
+import {
+  indictmentCount as cStrings,
+  strings,
+} from '../IndictmentCount.strings'
 import { indictmentCountSubstanceEnum as substanceStrings } from '../IndictmentCountSubstanceEnum.strings'
 
 export const getIncidentDescriptionReason = (
   offenses: Offense[],
+  gender: Gender,
   formatMessage: IntlShape['formatMessage'],
 ) => {
   const order = [
@@ -40,18 +44,17 @@ export const getIncidentDescriptionReason = (
       }
       switch (o.offense) {
         case IndictmentCountOffense.DRIVING_WITHOUT_LICENCE:
-          acc += formatMessage(
-            strings.incidentDescriptionDrivingWithoutLicenceAutofill,
-          )
+          acc +=
+            strings.incidentDescriptionDrivingWithoutLicenceAutofill[gender]
           break
         case IndictmentCountOffense.DRUNK_DRIVING:
-          acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
+          acc += formatMessage(cStrings.incidentDescriptionDrunkDrivingAutofill)
           break
         case IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING:
-          acc += `${formatMessage(
-            strings.incidentDescriptionDrugsDrivingPrefixAutofill,
-          )} ${formatMessage(
-            strings.incidentDescriptionIllegalDrugsDrivingAutofill,
+          acc += `${
+            strings.incidentDescriptionDrugsDrivingPrefixAutofill[gender]
+          } ${formatMessage(
+            cStrings.incidentDescriptionIllegalDrugsDrivingAutofill,
           )}`
           break
         case IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING:
@@ -60,11 +63,9 @@ export const getIncidentDescriptionReason = (
               (o) => o.offense === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
             )
               ? ''
-              : `${formatMessage(
-                  strings.incidentDescriptionDrugsDrivingPrefixAutofill,
-                )} `) +
+              : `${strings.incidentDescriptionDrugsDrivingPrefixAutofill[gender]} `) +
             formatMessage(
-              strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
+              cStrings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
             )
           break
       }
@@ -77,7 +78,7 @@ export const getIncidentDescriptionReason = (
   reason += substances.reduce((acc, substance, index) => {
     if (index === 0) {
       acc += ` (${formatMessage(
-        strings.incidentDescriptionSubstancesPrefixAutofill,
+        cStrings.incidentDescriptionSubstancesPrefixAutofill,
       )} `
     } else if (index === substances.length - 1) {
       acc += ' og '

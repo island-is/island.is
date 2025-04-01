@@ -35,7 +35,7 @@ export {
 export { DateType, dateTypes } from './lib/dateLog'
 export { StringType, stringTypes } from './lib/caseString'
 
-export { CaseFileState, CaseFileCategory } from './lib/file'
+export { CaseFileState, CaseFileCategory, HashAlgorithm } from './lib/file'
 
 export {
   UserRole,

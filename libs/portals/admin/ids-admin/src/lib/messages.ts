@@ -354,7 +354,7 @@ export const m = defineMessages({
   },
   lifetime: {
     id: 'ap.ids-admin:life-time',
-    defaultMessage: 'Refresh token lifecycle',
+    defaultMessage: 'Session lifecycle',
   },
   lifeTimeDescription: {
     id: 'ap.ids-admin:life-time-description',

@@ -42,7 +42,13 @@ export const OverviewFormField = ({
     >
       <ReviewGroup
         isLast={!field.bottomLine}
-        editAction={() => changeScreens(field.backId ?? '')}
+        editAction={() =>
+          changeScreens(
+            typeof field.backId === 'function'
+              ? field.backId(application.answers) ?? ''
+              : field.backId ?? '',
+          )
+        }
         isEditable={field.backId !== undefined}
       >
         <Box marginRight={12}>

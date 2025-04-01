@@ -5,7 +5,6 @@ import { AnimatePresence } from 'motion/react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseIndictmentRulingDecision,
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
@@ -22,11 +21,12 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseFile,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { CaseFileTable } from '../Table'
