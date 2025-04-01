@@ -61,6 +61,7 @@ export const drawerLine = style({
   height: 4,
   borderRadius: 2,
   margin: '0 auto',
+  backgroundColor: theme.color.dark200,
 })
 
 export const closeButton = style({
@@ -103,7 +104,7 @@ export const mobilePopoverContainer = style({
 })
 
 export const mobileDrawerContainer = style({
-  borderRadius: 16,
+  maxHeight: `calc(100vh - 145px)`,
 })
 
 export const mobileInnerContainer = style({
@@ -112,6 +113,9 @@ export const mobileInnerContainer = style({
 
 export const overflow = style({
   overflowY: 'scroll',
-  WebkitOverflowScrolling: 'auto',
-  maxHeight: `calc(100vh - 235px)`,
+  width: '100vw',
+  WebkitOverflowScrolling: 'touch',
+  scrollBehavior: 'smooth', // Force smooth scrolling
+  maxHeight: `calc(100vh - 96px)`,
+  zIndex: theme.zIndex.modal,
 })

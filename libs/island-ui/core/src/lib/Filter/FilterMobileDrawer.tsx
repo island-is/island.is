@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useState } from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { ModalBase } from '../ModalBase/ModalBase'
 import * as styles from './Filter.css'
 import { Box } from '../Box/Box'
@@ -51,8 +51,21 @@ export const FilterMobileDrawer = ({
     onSwipedDown: () => {
       setIsClosed(true)
     },
-    preventScrollOnSwipe: false,
   })
+
+  useEffect(() => {
+    // Prevent body scroll when the modal is open
+    if (!isClosed) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+
+    // Clean up when the component is unmounted
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isClosed])
 
   return (
     <ModalBase
@@ -70,18 +83,10 @@ export const FilterMobileDrawer = ({
     >
       {({ closeModal }: { closeModal: () => void }) => {
         return (
-          <div>
-            <Box
-              background="white"
-              paddingX={0}
-              className={styles.mobileDrawerContainer}
-            >
-              <Box width="full" padding={2} {...handlers} onClick={closeModal}>
-                <Box
-                  background="dark200"
-                  className={styles.drawerLine}
-                  margin={3}
-                />
+          <div className={styles.mobileDrawerContainer}>
+            <Box background="white" paddingX={0} borderRadius="lg">
+              <Box width="full" padding={2} onClick={closeModal} {...handlers}>
+                <Box className={styles.drawerLine} margin={3} />
               </Box>
               <Box
                 display="flex"
@@ -113,15 +118,19 @@ export const FilterMobileDrawer = ({
                       (lang === 'is' ? 'Hreinsa allt' : 'Clear all')}
                   </Button>
                 </Box>
-                <Box flexGrow={1} overflow="auto" className={styles.overflow}>
+                <Box flexGrow={1} className={styles.overflow}>
                   {children}
                 </Box>
 
                 <Box
+                  marginTop={8}
                   paddingY={2}
                   paddingX={3}
                   width="full"
                   flexShrink={0}
+                  position="sticky"
+                  bottom={0}
+                  background="white"
                   className={styles.showResultsButton}
                 >
                   <Button fluid onClick={closeModal}>
