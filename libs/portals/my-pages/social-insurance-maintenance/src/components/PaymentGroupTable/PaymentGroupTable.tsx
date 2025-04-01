@@ -1,20 +1,42 @@
-import {
-  ScrollableMiddleTable,
-  m as coreMessages,
-} from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   EmptyTable,
   MONTHS,
   amountFormat,
+  m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import { useGetPaymentPlanQuery } from '../PaymentGroupTable/PaymentGroupTable.generated'
+import {
+  Box,
+  Button,
+  LoadingDots,
+  Table as T,
+  Text,
+} from '@island.is/island-ui/core'
+import { useCallback, useRef, useState } from 'react'
+import { Height } from 'react-animate-height'
+import * as styles from './PaymentGroupTable.css'
 
 export const PaymentGroupTable = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
+  const [expanded, toggleExpand] = useState<boolean>(false)
+  const [closed, setClosed] = useState<boolean>(true)
+  const tableRef = useRef<HTMLDivElement>(null)
+
+  const handleAnimationEnd = useCallback((height: Height) => {
+    if (height === 0) {
+      setClosed(true)
+    } else {
+      setClosed(false)
+    }
+  }, [])
+
+  const onExpandButton = () => {
+    toggleExpand(!expanded)
+  }
 
   const { data, loading, error } = useGetPaymentPlanQuery()
 
@@ -33,251 +55,156 @@ export const PaymentGroupTable = () => {
     )
   }
 
-  /*
+  const paymentGroups = paymentPlan?.paymentGroups ?? []
+
   return (
-    <Box overflow="auto" width="full" ref={tableRef}>
-      {!isMobile && (
-        <>
-          <Box
-            position="absolute"
-            style={{
-              left: `${FIRST_COLUMN_WIDTH - ICON_WIDTH / 2}px`,
-              top: '45%',
-              zIndex: '20',
-              opacity: 0.8,
-            }}
-          >
-            <Button
-              circle
-              colorScheme="light"
-              icon={'arrowBack'}
-              iconType="filled"
-              onClick={() => handleScroll('backward')}
-              size="medium"
-              type="button"
-              variant="primary"
-            />
-          </Box>
-          <Box
-            position="absolute"
-            style={{
-              right: `${LAST_COLUMN_WIDTH - ICON_WIDTH / 2}px`,
-              top: '45%',
-              zIndex: '20',
-              opacity: 0.8,
-            }}
-          >
-            <Button
-              circle
-              colorScheme="light"
-              icon={'arrowForward'}
-              iconType="filled"
-              onClick={() => handleScroll('forward')}
-              size="medium"
-              type="button"
-              variant="primary"
-            />
-          </Box>
-        </>
-      )}
-      <T.Table
-        box={{
-          className: styles.table,
-          overflow: 'initial',
-        }}
-        style={{
-          tableLayout: nested ? 'fixed' : 'auto',
-          width: nested ? breakpointWidth : 'initial',
-        }}
-      >
+    <Box ref={tableRef}>
+      <T.Table>
         <T.Head>
           <T.Row>
             <T.HeadData
               box={{
-                className: cn(styles.row, styles.header, styles.expandColumn, {
-                  [styles.sticky]: options?.firstColumn.sticky,
-                }),
-              }}
-            />
-            <T.HeadData
-              box={{
-                className: cn(styles.firstColumn, styles.header, styles.row, {
-                  [styles.sticky]: options?.firstColumn.sticky,
-                }),
+                className: styles.labelColumn,
+                background: 'blue100',
               }}
             >
-              <Text variant="small" fontWeight="medium">
-                {header.first}
-              </Text>
+              <Box className={styles.labelCell} paddingLeft={7}>
+                <Text variant="medium" fontWeight="medium">
+                  {formatMessage(m.type)}
+                </Text>
+              </Box>
             </T.HeadData>
-            {header.scrollableMiddle.map((val, index) => (
+            {MONTHS.map((month) => (
               <T.HeadData
+                key={`table-header-col-${month}`}
                 box={{
-                  className: styles.header,
+                  background: 'blue100',
                 }}
-                key={`nested-table-header-col-${index}`}
+                align="right"
               >
-                <Text variant="small" fontWeight="medium">
-                  {val}
+                <Text variant="medium" fontWeight="medium">
+                  {formatMessage(
+                    coreMessages[month as keyof typeof coreMessages],
+                  )}
                 </Text>
               </T.HeadData>
             ))}
             <T.HeadData
-              style={{
-                width: isMobile ? 'initial' : LAST_COLUMN_WIDTH,
-              }}
               box={{
-                className: cn(styles.lastColumn, styles.header, styles.row, {
-                  [styles.lastColumnSticky]: options?.firstColumn.sticky,
-                }),
+                className: styles.sumColumn,
+                background: 'blue100',
               }}
             >
-              <Text textAlign="right" variant="small" fontWeight="medium">
-                {header.last}
+              <Text textAlign="right" variant="medium" fontWeight="medium">
+                {formatMessage(m.year)}
               </Text>
             </T.HeadData>
           </T.Row>
         </T.Head>
         <T.Body>
-          {rows?.map((r, rowIdx) => {
-            const backgroundColor = rowIdx % 2 === 0 ? 'white' : undefined
-
+          {paymentGroups?.map((paymentGroup, rowIdx) => {
             return (
-              <ScrollableMiddleTableRow
-                key={`nested-table-row-${rowIdx}`}
-                backgroundColor={backgroundColor}
-                data={[
-                  {
-                    value: <Text variant="small">{r.first}</Text>,
-                    first: true,
-                  },
-                  ...r.scrollableMiddle.map((b) => ({
-                    value: <Text variant="small">{b}</Text>,
-                  })),
-                  {
-                    value: <Text variant="small">{r.last}</Text>,
-                    last: true,
-                  },
-                ]}
-                dataToExpand={r.nested.map((n) => {
-                  console.log(n)
-                  return [
-                    {
-                      value: <Text variant="small">{'FIRST'}</Text>,
-                      first: true,
-                    },
-                    ...n.scrollableMiddle.map((b) => ({
-                      value: <Text variant="small">{b}</Text>,
-                    })),
-                    {
-                      value: <Text variant="small">{'LAST'}</Text>,
-                      last: true,
-                    },
-                  ]
+              <T.Row key={`row-${rowIdx}`}>
+                <T.Data
+                  box={{
+                    className: styles.labelColumn,
+                    background: rowIdx % 2 === 0 ? 'white' : 'blue100',
+                  }}
+                >
+                  <Box display="flex">
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="flexStart"
+                      onClick={onExpandButton}
+                      cursor="pointer"
+                      paddingRight={4}
+                    >
+                      <Button
+                        circle
+                        colorScheme="light"
+                        icon={expanded ? 'remove' : 'add'}
+                        iconType="filled"
+                        onClick={onExpandButton}
+                        preTextIconType="filled"
+                        size="small"
+                        title={'Sundurliðun'}
+                        type="button"
+                        variant="primary"
+                      />
+                    </Box>
+                    <Text variant="medium">{paymentGroup.name}</Text>
+                  </Box>
+                </T.Data>
+                {MONTHS.map((month, i) => {
+                  const amount = paymentGroup?.monthlyPaymentHistory?.find(
+                    (mph) => mph.monthIndex === MONTHS.indexOf(month),
+                  )?.amount
+
+                  return (
+                    <T.Data
+                      key={i}
+                      box={{
+                        background: rowIdx % 2 === 0 ? 'white' : 'blue100',
+                      }}
+                      align="right"
+                    >
+                      <Text variant="medium">
+                        {amount ? amountFormat(amount) : '-'}
+                      </Text>
+                    </T.Data>
+                  )
                 })}
-              />
+                <T.Data
+                  box={{
+                    className: styles.sumColumn,
+                    background: rowIdx % 2 === 0 ? 'white' : 'blue100',
+                  }}
+                >
+                  <Text variant="medium">{`${amountFormat(
+                    paymentGroup.totalYearCumulativeAmount,
+                  )}`}</Text>
+                </T.Data>
+              </T.Row>
             )
           })}
-          {footer && (
-            <T.Row>
-              <T.Data
-                box={{
-                  className: cn(styles.expandColumn, {
-                    [styles.sticky]: options?.firstColumn.sticky,
-                  }),
-                }}
-              />
-              <T.Data
-                box={{
-                  className: cn(styles.firstColumn, {
-                    [styles.sticky]: options?.firstColumn.sticky,
-                  }),
-                }}
-              >
-                <Text variant="small" fontWeight="medium">
-                  {footer.first}
+          <T.Row>
+            <T.Data
+              box={{
+                className: styles.labelColumn,
+                paddingY: 1,
+                paddingX: 2,
+                background: 'white',
+              }}
+            >
+              <Box paddingLeft={7}>
+                <Text variant="medium" fontWeight="medium">
+                  {formatMessage(m.totalPaymentsReceived)}
                 </Text>
-              </T.Data>
-              {footer.scrollableMiddle.map((val, index) => (
-                <T.Data key={`nested-table-footer-col-${index}`}>
-                  <Text variant="small" fontWeight="medium">
-                    {val}
+              </Box>
+            </T.Data>
+            {MONTHS.map((month) => {
+              const amount = paymentPlan?.totalMonthlyPaymentHistory?.find(
+                (mph) => mph.monthIndex === MONTHS.indexOf(month),
+              )?.amount
+              return (
+                <T.Data key={`nested-table-footer-col-${month}`}>
+                  <Text variant="medium" fontWeight="medium">
+                    {amount ? amountFormat(amount) : '-'}
                   </Text>
                 </T.Data>
-              ))}
-              <T.Data
-                box={{
-                  className: cn(styles.lastColumn, {
-                    [styles.lastColumnSticky]: options?.lastColumn.sticky,
-                  }),
-                }}
-              >
-                <Text variant="small" fontWeight="medium">
-                  {footer.last}
-                </Text>
-              </T.Data>
-            </T.Row>
-          )}
+              )
+            })}
+            <T.Data>
+              <Text variant="medium" fontWeight="medium">
+                {paymentPlan?.totalPaymentsReceived
+                  ? amountFormat(paymentPlan?.totalPaymentsReceived)
+                  : '-'}
+              </Text>
+            </T.Data>
+          </T.Row>
         </T.Body>
       </T.Table>
     </Box>
-  )
-  */
-
-  return (
-    <ScrollableMiddleTable
-      options={{
-        firstColumn: {
-          shadow: true,
-          sticky: true,
-        },
-        lastColumn: {
-          shadow: true,
-          sticky: true,
-        },
-      }}
-      header={{
-        first: formatMessage(m.type),
-        scrollableMiddle: MONTHS.map((month) =>
-          formatMessage(coreMessages[month as keyof typeof coreMessages]),
-        ),
-        last: formatMessage(m.year),
-      }}
-      rows={paymentPlan?.paymentGroups?.map((p) => {
-        return {
-          first: p.name,
-          scrollableMiddle: MONTHS.map((month) => {
-            const monthlyAmount = p.monthlyPaymentHistory.find(
-              (mph) => mph.monthIndex === MONTHS.indexOf(month) + 1,
-            )?.amount
-            return monthlyAmount ? amountFormat(monthlyAmount) : '-'
-          }),
-          last: `${amountFormat(p.totalYearCumulativeAmount)}`,
-          nested: p.payments.map((pp) => ({
-            first: pp.name,
-            scrollableMiddle: MONTHS.map((month) => {
-              const monthlyAmount = pp.monthlyPaymentHistory.find(
-                (mph) => mph.monthIndex === MONTHS.indexOf(month) + 1,
-              )?.amount
-              return monthlyAmount ? amountFormat(monthlyAmount) : '-'
-            }),
-            last: `${amountFormat(pp.totalYearCumulativeAmount)}`,
-          })),
-        }
-      })}
-      footer={{
-        first: formatMessage(m.totalPaymentsReceived),
-        scrollableMiddle: MONTHS.map((month) => {
-          const monthlyAmount = paymentPlan?.totalMonthlyPaymentHistory?.find(
-            (mph) => mph.monthIndex === MONTHS.indexOf(month),
-          )?.amount
-
-          return monthlyAmount ? amountFormat(monthlyAmount) : '-'
-        }),
-        last: paymentPlan?.totalPaymentsReceived
-          ? amountFormat(paymentPlan?.totalPaymentsReceived)
-          : '-',
-      }}
-    />
   )
 }
