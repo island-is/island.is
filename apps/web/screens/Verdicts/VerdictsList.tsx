@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useWindowSize } from 'react-use'
 import {
   parseAsArrayOf,
   parseAsString,
@@ -88,7 +87,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
   const [page, setPage] = useState(1)
   const { format } = useDateUtils()
   const { formatMessage } = useIntl()
-  const { width } = useWindowSize()
   const [searchTerm, setSearchTerm] = useQueryState(
     SEARCH_TERM_QUERY_PARAM_KEY,
     parseAsString
@@ -477,7 +475,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                 </Text>
               </Inline>
               <InfoCardGrid
-                variant="detailed"
+                variant="detailed-reveal"
                 columns={1}
                 cards={data.visibleVerdicts
                   .filter((verdict) => Boolean(verdict.id))
@@ -489,6 +487,14 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                       link: { href: `/domar/${verdict.id}`, label: '' },
                       title: verdict.caseNumber,
                       borderColor: 'blue200',
+                      subDescription: verdict.keywords.join(', '),
+                      revealMoreButtonProps: {
+                        revealLabel: formatMessage(
+                          m.listPage.revealPresentings,
+                        ),
+                        hideLabel: formatMessage(m.listPage.hidePresentings),
+                        revealedText: verdict.presentings,
+                      },
                       detailLines: [
                         {
                           icon: 'calendar',

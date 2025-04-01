@@ -1,6 +1,6 @@
 import { useWindowSize } from 'react-use'
 
-import { Box, BoxProps, Text } from '../..'
+import { Box, BoxProps } from '../..'
 import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './InfoCard.css'
@@ -13,7 +13,7 @@ export type InfoCardItemProps = Omit<
 
 interface Props {
   cards: Array<InfoCardItemProps>
-  variant?: 'detailed' | 'simple'
+  variant?: 'detailed' | 'simple' | 'detailed-reveal'
   columns?: 1 | 2 | 3
   cardsBackground?: BoxProps['background']
   cardsBorder?: BoxProps['borderColor']

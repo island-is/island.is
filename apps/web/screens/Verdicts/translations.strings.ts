@@ -42,6 +42,16 @@ export const m = {
       defaultMessage: 'Reifun',
       description: 'Reifun',
     },
+    revealPresentings: {
+      id: 'web.verdicts:listPage.revealPresentings',
+      defaultMessage: 'Sjá reifun',
+      description: 'Sjá reifun',
+    },
+    hidePresentings: {
+      id: 'web.verdicts:listPage.hidePresentings',
+      defaultMessage: 'Fela reifun',
+      description: 'Fela reifun',
+    },
     courtSelectLabel: {
       id: 'web.verdicts:listPage.courtSelectLabel',
       defaultMessage: 'Veldu dómstól',
