@@ -59,7 +59,7 @@ export class VictimResolver {
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.UDPATE_VICTIM,
+      AuditedAction.UPDATE_VICTIM,
       backendService.updateVictim(caseId, victimId, updateVictim),
       (victim) => victim.id,
     )
