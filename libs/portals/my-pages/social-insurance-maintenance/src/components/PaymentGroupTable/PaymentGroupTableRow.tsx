@@ -116,9 +116,7 @@ export const PaymentGroupTableRow = ({ key, paymentGroup }: Props) => {
                 paddingY={2}
                 background={idx % 2 === 0 ? 'white' : 'blue100'}
               >
-                <Text variant="small" fontWeight="medium">
-                  {pg.name}
-                </Text>
+                <Text variant="small">{pg.name}</Text>
               </Box>
             </AnimateHeight>
           </T.Data>
@@ -144,7 +142,7 @@ export const PaymentGroupTableRow = ({ key, paymentGroup }: Props) => {
                   duration={300}
                   height={expanded ? 'auto' : 0}
                 >
-                  <Text variant="medium" fontWeight="medium" textAlign="right">
+                  <Text variant="small" textAlign="right">
                     {amount ? amountFormat(amount) : '-'}
                   </Text>
                 </AnimateHeight>
@@ -166,7 +164,7 @@ export const PaymentGroupTableRow = ({ key, paymentGroup }: Props) => {
               height={expanded ? 'auto' : 0}
             >
               <Box background={idx % 2 === 0 ? 'white' : 'blue100'}>
-                <Text variant="medium" fontWeight="medium">
+                <Text variant="small">
                   {`${amountFormat(pg.totalYearCumulativeAmount)}${
                     pg.markWithAsterisk ? ' *' : ''
                   }`}
