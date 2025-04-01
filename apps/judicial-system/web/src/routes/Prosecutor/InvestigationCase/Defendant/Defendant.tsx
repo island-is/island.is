@@ -36,8 +36,8 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
+  VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { VictimInfo } from '@island.is/judicial-system-web/src/components/VictimInfo/VictimInfo'
 import {
   Case,
   CaseOrigin,
