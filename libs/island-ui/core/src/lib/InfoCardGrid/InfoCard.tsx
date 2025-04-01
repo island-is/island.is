@@ -28,7 +28,7 @@ export type InfoCardProps =
     })
   | (DetailedProps & {
       variant: 'detailed-reveal'
-      revealMoreButtonProps: {
+      revealMoreButtonProps?: {
         revealLabel: string
         hideLabel: string
         revealedText: string
