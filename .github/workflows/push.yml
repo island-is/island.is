@@ -235,13 +235,13 @@ jobs:
           set -euo pipefail
           # Output raw value for debugging
           echo "Raw BUILD_CHUNKS: '${{ steps.build_map.outputs.BUILD_CHUNKS }}'"
-          
+
           # Properly handle the JSON by writing it to a temporary file
           echo '${{ steps.build_map.outputs.BUILD_CHUNKS }}' > chunks.json
           # Remove surrounding quotes and other potential problematic characters
           sed -i.bak 's/^'"'"'\(.*\)'"'"'$/\1/' chunks.json
           cat chunks.json
-          
+
           if [[ -s chunks.json && "$(cat chunks.json)" != "[]" ]]; then
             # NOTE: validate the jq command to trigger failure using the file
             PROJECTS=$(jq -r 'map(.projects) | join(",")' chunks.json)
@@ -280,6 +280,7 @@ jobs:
           # Remove surrounding single quotes if present before parsing JSON
           CHUNKS="${BUILD_CHUNKS#\'}"
           CHUNKS="${CHUNKS%\'}"
+          echo "CHUNKS debug:\n"
           echo "$CHUNKS"
 
           # Prepare common Docker build arguments
@@ -307,11 +308,8 @@ jobs:
           # Prepare all builds commands
           mkdir -p .buildkit-commands
           chunk_index=0
-          
-          # Remove surrounding single quotes if present before parsing JSON
-          CHUNKS="${BUILD_CHUNKS#\'}"
-          CHUNKS="${CHUNKS%\'}"
 
+          echo "Starting chunk loop:\n"
           for chunk in $(echo "$CHUNKS" | jq -c '.[]'); do
             AFFECTED_PROJECTS="$(echo "$chunk" | jq -r '.projects')"
             DOCKER_TYPE="$(echo "$chunk" | jq -r '.docker_type')"
@@ -322,6 +320,7 @@ jobs:
               exit 1
             fi
 
+          echo "Generating script:\n"
             # Create a build script for this chunk
             cat > .buildkit-commands/build-${chunk_index}.sh << EOF
           #!/bin/bash
@@ -502,13 +501,13 @@ jobs:
           echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
           echo Image tag is: ${{env.NODE_IMAGE_VERSION}}
           ./scripts/build-docker-container.sh "$DOCKER_TAG"
-          
+
           # Properly handle IMAGES output without quotes
           IMAGES="${{needs.prepare.outputs.IMAGES}}"
           # Remove any surrounding quotes if present
           IMAGES="${IMAGES#\'}"
           IMAGES="${IMAGES%\'}"
-          
+
           echo "Clean IMAGES: $IMAGES"
           echo "COMMENT<<EOF" >> "$GITHUB_ENV"
           echo "Affected services are: $IMAGES" >> "$GITHUB_ENV"
@@ -547,13 +546,13 @@ jobs:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
           echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
-          
+
           # Properly handle IMAGES without quotes
           CLEAN_IMAGES="${IMAGES#\'}"
           CLEAN_IMAGES="${CLEAN_IMAGES%\'}"
           echo "Original IMAGES: $IMAGES"
           echo "Clean IMAGES: $CLEAN_IMAGES"
-          
+
           curl "$SPINNAKER_URL/webhooks/webhook/islandis" -H "content-type: application/json" --data-binary @- <<BODY
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
