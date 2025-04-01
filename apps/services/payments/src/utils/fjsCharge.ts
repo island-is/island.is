@@ -8,7 +8,11 @@ type PayInfo = Charge['payInfo']
 export interface GenerateChargeFJSPayloadInput {
   paymentFlow: Pick<
     PaymentFlowAttributes,
-    'payerNationalId' | 'organisationId' | 'id' | 'extraData'
+    | 'payerNationalId'
+    | 'organisationId'
+    | 'id'
+    | 'extraData'
+    | 'chargeItemSubjectId'
   >
   charges: Pick<
     CatalogItemWithQuantity,
@@ -27,9 +31,13 @@ export const generateChargeFJSPayload = ({
   payInfo,
   returnUrl = '',
 }: GenerateChargeFJSPayloadInput): Charge => {
+  const chargeItemSubjectId = paymentFlow.chargeItemSubjectId
+    ? paymentFlow.chargeItemSubjectId
+    : paymentFlow.id
+
   return {
     // Unique id for the charge, no longer than 22 characters
-    chargeItemSubject: paymentFlow.id.substring(0, 22),
+    chargeItemSubject: chargeItemSubjectId.substring(0, 22),
     chargeType: charges[0].chargeType,
     charges: charges.map((charge) => ({
       amount: charge.priceAmount,

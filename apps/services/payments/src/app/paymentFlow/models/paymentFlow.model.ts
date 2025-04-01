@@ -194,6 +194,14 @@ export class PaymentFlow extends Model<
   })
   extraData?: { name: string; value: string }[]
 
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'charge_item_subject_id',
+  })
+  chargeItemSubjectId?: string
+
   @CreatedAt
   @Column({
     type: DataType.DATE,

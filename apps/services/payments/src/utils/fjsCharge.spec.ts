@@ -108,4 +108,20 @@ describe('generateChargeFJSPayload', () => {
 
     expect(result.chargeType).toBe(charges[0].chargeType)
   })
+
+  it('should use chargeItemSubjectId if it exists', () => {
+    const chargeItemSubjectId = 'test test test'
+
+    const input = {
+      ...sampleInput,
+      paymentFlow: {
+        ...sampleInput.paymentFlow,
+        chargeItemSubjectId,
+      },
+    }
+
+    const result = generateChargeFJSPayload(input)
+    expect(result.chargeItemSubject).toBe(chargeItemSubjectId)
+    expect(result.chargeItemSubject).not.toBe(input.paymentFlow.id)
+  })
 })
