@@ -39,7 +39,7 @@ export const PaymentReceipt = (props: PaymentReceiptProps) => {
             {key === 'amount'
               ? formatCurrency(props[key])
               : key === 'paidAt'
-              ? format(new Date(props[key]), 'yyyy-MM-dd HH:MM')
+              ? format(new Date(props[key]), 'yyyy-MM-dd HH:mm')
               : props[key]}
           </Text>
         </Box>
