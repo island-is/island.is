@@ -44,6 +44,7 @@ export const certificateOfTenureSection = buildSection({
               'Starfstími í klst',
             ],
           },
+          initActiveFieldIfEmpty: true,
           fields: {
             machineNumber: {
               component: 'input',
@@ -251,12 +252,12 @@ export const certificateOfTenureSection = buildSection({
               placeholder: certificateOfTenure.labels.datePlaceholder,
               maxDate: (_, activeField) => {
                 const dateTo =
-                  activeField && getValueViaPath<string>(activeField, 'dateTo')
-                return dateTo
-                  ? new Date(
-                      new Date(dateTo).setDate(new Date(dateTo).getDate() - 1),
-                    )
-                  : new Date()
+                  (activeField &&
+                    getValueViaPath<string>(activeField, 'dateTo')) ||
+                  new Date()
+                return new Date(
+                  new Date(dateTo).setDate(new Date(dateTo).getDate() - 1),
+                )
               },
             },
             dateTo: {
@@ -286,7 +287,7 @@ export const certificateOfTenureSection = buildSection({
             },
           },
         }),
-
+        /*
         buildCustomField({
           id: 'certificateOfTenure.machineType2',
           title: '',
@@ -356,6 +357,7 @@ export const certificateOfTenureSection = buildSection({
         buildHiddenInput({
           id: 'certificateOfTenure.licenseCategoryPrefix',
         }),
+        */
       ],
     }),
   ],

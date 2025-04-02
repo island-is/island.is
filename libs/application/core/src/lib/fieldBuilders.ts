@@ -897,6 +897,7 @@ export const buildTableRepeaterField = (
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
+    initActiveFieldIfEmpty,
   } = data
 
   return {
@@ -917,6 +918,7 @@ export const buildTableRepeaterField = (
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
+    initActiveFieldIfEmpty,
   }
 }
 

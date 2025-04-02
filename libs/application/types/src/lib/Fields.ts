@@ -742,6 +742,7 @@ export type TableRepeaterField = BaseField & {
     rows?: string[]
     format?: Record<string, (value: string) => string | StaticText>
   }
+  initActiveFieldIfEmpty?: boolean
 }
 
 export type FieldsRepeaterField = BaseField & {
