@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common'
 import { FieldDto } from '../../fields/models/dto/field.dto'
-import { FieldValidation } from '../../../dataTypes/validationResponse.model'
+import { FieldValidation } from '@island.is/form-system/shared'
 
 export class TextboxValidation {
   static validate(field: FieldDto): FieldValidation {

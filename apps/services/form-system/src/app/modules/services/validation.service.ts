@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import {
   FieldValidation,
   ScreenValidationResponse,
-} from '../../dataTypes/validationResponse.model'
+} from '@island.is/form-system/shared'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { FieldTypesEnum } from '@island.is/form-system/shared'
 import { TextboxValidation } from './validation/textbox.validation'

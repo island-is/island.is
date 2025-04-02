@@ -6,7 +6,7 @@ import { ZendeskService } from './zendesk.service'
 import { NudgeService } from './nudge.service'
 import { UrlMethods, UrlTypes } from '@island.is/form-system/shared'
 import { ApplicationDto } from '../applications/models/dto/application.dto'
-import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
+import { ScreenValidationResponse } from '@island.is/form-system/shared'
 import { ValidationService } from './validation.service'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 

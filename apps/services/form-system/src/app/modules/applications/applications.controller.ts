@@ -23,7 +23,7 @@ import { ApplicationDto } from './models/dto/application.dto'
 import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationListDto } from './models/dto/applicationList.dto'
-import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
+import { ScreenValidationResponse } from '@island.is/form-system/shared'
 import {
   CurrentUser,
   IdsUserGuard,
