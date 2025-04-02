@@ -184,6 +184,15 @@ export class CreatePaymentFlowInput {
   @ValidateNested({ each: true })
   @Type(() => ExtraDataItem)
   extraData?: ExtraDataItem[]
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    description:
+      'Id that becomes the subject of the FJS charge item, used to reference where it originated from',
+    type: String,
+  })
+  chargeItemSubjectId?: string
 }
 
 function ReturnUrlRequired(validationOptions?: ValidationOptions) {

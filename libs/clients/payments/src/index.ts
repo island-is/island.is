@@ -2,8 +2,8 @@ export * from './lib/clients-payments.module'
 export * from './lib/payments-client.config'
 export {
   PaymentsApi,
-  GetPaymentFlowDTO, // TODO change naming to either response or dto
-  VerificationStatusResponse, // TODO above
+  GetPaymentFlowDTO,
+  VerificationStatusResponse,
   VerificationCallbackInput,
   CreatePaymentFlowInputAvailablePaymentMethodsEnum,
   ChargeCardInput,

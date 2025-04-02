@@ -10,6 +10,7 @@ import { ListType } from './listItem.model'
 import { LanguageType } from './languageType.model'
 import { Screen as ScreenModel } from './screen.model'
 import { FieldType } from './fieldType.model'
+import { Option } from './option.model'
 
 @ObjectType('FormSystemDependency')
 export class Dependency {
@@ -55,14 +56,35 @@ export class Form {
   @Field(() => String, { nullable: true })
   organizationId?: string
 
-  @Field(() => LanguageType)
-  name!: LanguageType
+  @Field(() => String, { nullable: true })
+  organizationNationalId?: string
 
-  @Field(() => String)
-  slug!: string
+  @Field(() => String, { nullable: true })
+  organizationTitle?: string
+
+  @Field(() => String, { nullable: true })
+  organizationTitleEn?: string
+
+  @Field(() => LanguageType, { nullable: true })
+  organizationDisplayName?: LanguageType
 
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date
+
+  @Field(() => Boolean, { nullable: true })
+  hasPayment?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  beenPublished?: boolean
+
+  @Field(() => Int, { nullable: true })
+  derivedFrom?: number
+
+  @Field(() => LanguageType)
+  name!: LanguageType
+
+  @Field(() => String, { nullable: true })
+  slug?: string
 
   @Field(() => Date)
   created!: Date
@@ -75,9 +97,6 @@ export class Form {
 
   @Field(() => Int)
   applicationDaysToRemove!: number
-
-  @Field(() => Int, { nullable: true })
-  derivedFrom?: number
 
   @Field(() => Boolean)
   stopProgressOnValidatingScreen!: boolean
@@ -104,7 +123,7 @@ export class Form {
   dependencies?: Dependency[]
 
   @Field(() => String)
-  status?: string
+  status!: string
 
   @Field(() => [FormUrl], { nullable: 'itemsAndList' })
   urls?: FormUrl[]
@@ -153,4 +172,7 @@ export class FormResponse {
 
   @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
   urls?: OrganizationUrl[]
+
+  @Field(() => [Option], { nullable: 'itemsAndList' })
+  organizations?: Option[]
 }

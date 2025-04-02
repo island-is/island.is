@@ -20,7 +20,3 @@ export const container = style({
     },
   },
 })
-
-export const bottomContainer = style({
-  marginBottom: `${theme.spacing[4]}px`,
-})

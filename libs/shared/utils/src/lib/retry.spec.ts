@@ -1,17 +1,11 @@
-import type { Logger } from '@nestjs/common'
-
 import { retry } from './retry'
 
-jest.useFakeTimers()
-
 describe('retry function', () => {
-  const mockLogger: Logger = {
+  const mockLogger = {
     error: jest.fn(),
     warn: jest.fn(),
-    log: jest.fn(),
-    verbose: jest.fn(),
-    debug: jest.fn(),
-  } as unknown as Logger
+    info: jest.fn(),
+  }
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -38,14 +32,13 @@ describe('retry function', () => {
   it('resolves immediately if successful', async () => {
     const mockFn = createMockFn<string>(['success'])
 
-    const resultPromise = retry(mockFn, {
+    const result = retry(mockFn, {
       maxRetries: 3,
-      retryDelayMs: 1000,
+      retryDelayMs: 0,
       logger: mockLogger,
     })
-    jest.runAllTimers()
 
-    await expect(resultPromise).resolves.toBe('success')
+    await expect(result).resolves.toBe('success')
     expect(mockFn).toHaveBeenCalledTimes(1)
     expect(mockLogger.warn).not.toHaveBeenCalled()
   })
@@ -56,16 +49,13 @@ describe('retry function', () => {
       'success',
     ])
 
-    const resultPromise = retry(mockFn, {
+    const result = retry(mockFn, {
       maxRetries: 3,
-      retryDelayMs: 1000,
+      retryDelayMs: 0,
       logger: mockLogger,
     })
 
-    jest.advanceTimersByTime(1000)
-    await Promise.resolve()
-
-    await expect(resultPromise).resolves.toBe('success')
+    await expect(result).resolves.toBe('success')
     expect(mockFn).toHaveBeenCalledTimes(2)
     expect(mockLogger.warn).toHaveBeenCalledTimes(1)
   })
@@ -77,15 +67,13 @@ describe('retry function', () => {
       new Error('Final Error'),
     ])
 
-    const resultPromise = retry(mockFn, {
+    const result = retry(mockFn, {
       maxRetries: 3,
-      retryDelayMs: 1000,
+      retryDelayMs: 0,
       logger: mockLogger,
     })
 
-    jest.runAllTimers()
-
-    await expect(resultPromise).rejects.toThrow('Final Error')
+    await expect(result).rejects.toThrow('Final Error')
     expect(mockFn).toHaveBeenCalledTimes(3)
     expect(mockLogger.warn).toHaveBeenCalledTimes(2)
     expect(mockLogger.error).toHaveBeenCalledTimes(1)
@@ -94,22 +82,22 @@ describe('retry function', () => {
   it('does not retry if shouldRetryOnError returns false', async () => {
     const mockFn = createMockFn<string>([new Error('400 Bad Request')])
 
-    const resultPromise = retry(mockFn, {
+    const result = retry(mockFn, {
       maxRetries: 3,
-      retryDelayMs: 1000,
+      retryDelayMs: 0,
       shouldRetryOnError: (error: Error) => !error.message.includes('400'),
       logger: mockLogger,
     })
 
-    jest.runAllTimers()
-
-    await expect(resultPromise).rejects.toThrow('400 Bad Request')
+    await expect(result).rejects.toThrow('400 Bad Request')
     expect(mockFn).toHaveBeenCalledTimes(1)
     expect(mockLogger.warn).not.toHaveBeenCalled()
     expect(mockLogger.error).toHaveBeenCalledTimes(1)
   })
 
   it('properly waits between retries and respects retry delay', async () => {
+    jest.useFakeTimers()
+
     const mockFn = createMockFn<string>([
       new Error('Error 1'),
       new Error('Error 2'),
@@ -124,15 +112,15 @@ describe('retry function', () => {
 
     expect(mockFn).toHaveBeenCalledTimes(1)
 
-    jest.advanceTimersByTime(1000)
-    await Promise.resolve()
+    await jest.runOnlyPendingTimersAsync()
     expect(mockFn).toHaveBeenCalledTimes(2)
 
-    jest.advanceTimersByTime(1000)
-    await Promise.resolve()
+    await jest.runOnlyPendingTimersAsync()
     expect(mockFn).toHaveBeenCalledTimes(3)
 
     await expect(resultPromise).resolves.toBe('success')
     expect(mockLogger.warn).toHaveBeenCalledTimes(2)
+
+    jest.useRealTimers()
   })
 })

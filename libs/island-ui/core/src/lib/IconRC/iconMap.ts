@@ -111,13 +111,13 @@ export default {
     arrowDown: 'ArrowDown',
     arrowUp: 'ArrowUp',
     attach: 'Attach',
-    bank: 'BankOutline', // TODO add filled
+    bank: 'Bank',
     business: 'Business',
     calculator: 'Calculator',
     calendar: 'Calendar',
     call: 'Call',
     car: 'Car',
-    card: 'CardOutline', // TODO add filled
+    card: 'Card',
     cardWithCheckmark: 'CardWithCheckmark',
     caretDown: 'CaretDown',
     caretUp: 'CaretUp',

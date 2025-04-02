@@ -206,7 +206,7 @@ export class CardPaymentService {
     }
   }
 
-  private async getFullVerificationStatus(paymentFlowId: string) {
+  async getFullVerificationStatus(paymentFlowId: string) {
     return this.cacheManager.get(paymentFlowId) as
       | CachePaymentFlowStatus
       | undefined

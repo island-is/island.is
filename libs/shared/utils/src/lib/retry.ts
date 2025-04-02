@@ -28,47 +28,39 @@ export const retry = async <T>(
 
   let attempt = 0
 
-  try {
-    while (attempt < maxRetries) {
-      try {
-        return await fn()
-      } catch (e) {
-        const shouldRetry = config.shouldRetryOnError
-          ? config.shouldRetryOnError(e)
-          : true
+  while (attempt < maxRetries) {
+    try {
+      return await fn()
+    } catch (e) {
+      const shouldRetry = config.shouldRetryOnError
+        ? config.shouldRetryOnError(e)
+        : true
 
-        if (attempt === maxRetries - 1 || !shouldRetry) {
-          config.logger?.error(
-            `${
-              config.logPrefix ?? 'Retry failed'
-            } after ${maxRetries} attempts: ${e.message}`,
-          )
-          throw e
-        }
-
-        config.logger?.warn(
-          `${config.logPrefix ?? 'Retry failed'} with error: ${
-            e.message
-          }. Retrying in ${retryDelayMs}ms
-            `,
+      if (attempt === maxRetries - 1 || !shouldRetry) {
+        config.logger?.error(
+          `${
+            config.logPrefix ?? 'Retry failed'
+          } after ${maxRetries} attempts: ${e.message}`,
         )
-
-        attempt++
-        await new Promise((resolve) => setTimeout(resolve, retryDelayMs))
+        throw e
       }
-    }
 
-    // Should never reach this point
-    throw new Error(
-      `Retry function ${
-        config.logPrefix ? `(for ${config.logPrefix})` : ''
-      } failed after ${maxRetries} attempts`,
-    )
-  } catch (e) {
-    throw new Error(
-      `Retry function ${
-        config.logPrefix ? `(for ${config.logPrefix})` : ''
-      } failed unexpectedly: ${e.message}`,
-    )
+      config.logger?.warn(
+        `${config.logPrefix ?? 'Retry failed'} with error: ${
+          e.message
+        }. Retrying in ${retryDelayMs}ms
+            `,
+      )
+
+      attempt++
+      await new Promise((resolve) => setTimeout(resolve, retryDelayMs))
+    }
   }
+
+  // Should never reach this point
+  throw new Error(
+    `Retry function ${
+      config.logPrefix ? `(for ${config.logPrefix})` : ''
+    } failed after ${maxRetries} attempts`,
+  )
 }

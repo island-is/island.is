@@ -16,7 +16,11 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
-import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import {
+  CardErrorCode,
+  FjsErrorCode,
+  PaymentServiceCode,
+} from '@island.is/shared/constants'
 import { retry } from '@island.is/shared/utils/server'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -210,6 +214,18 @@ export class CardPaymentController {
           totalPrice,
         })
         persistedPaymentConfirmation = true
+
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId: chargeCardInput.paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'payment_completed',
+          message: 'Card payment completed',
+          metadata: {
+            payment: paymentResult,
+          },
+        })
       } catch (e) {
         // Here we successfully accepted a payment but failed to persist the payment confirmation
         // We should probably refund the payment?
@@ -279,23 +295,20 @@ export class CardPaymentController {
             maxRetries: 3,
             retryDelayMs: 1000,
             logger: this.logger,
-            logPrefix: 'Failed to create FJS charge information',
+            logPrefix: 'Failed to createPaymentCharge',
+            shouldRetryOnError: (error) => {
+              return error.message !== FjsErrorCode.AlreadyCreatedCharge
+            },
           },
         )
       } catch (e) {
-        // TODO:
-        // If the error indicates that this is already paid
-        // Error code = 400 and message = "Búið að taka á móti álagningu XXX ..."
-        // (there is a limit on buying certain items)
-
-        // if (error has 400 status and message is "Búið að taka á móti álagningu XXX ...")
-        // { then we should refund() the payment }
-
         this.logger.error(
           `Failed to create FJS charge information: ${e.message}`,
         )
 
-        if (!persistedPaymentConfirmation) {
+        const isAlreadyPaid = e.message === FjsErrorCode.AlreadyCreatedCharge
+
+        if (!persistedPaymentConfirmation || isAlreadyPaid) {
           // We didn't manage to persist the payment confirmation
           // So we have no way of knowing later if the payment was successful
           // We have to refund the payment
