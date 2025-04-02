@@ -1,5 +1,5 @@
-export { OtherCostItems } from './OtherCostItems'
 export { CopyApplicationLink } from './CopyApplicationLink'
+export { OtherCostItems } from './OtherCostItems'
 export { PropertySearch } from './PropertySearch'
 export { SummaryEdit } from './Summary/SummaryEdit'
 export { SummaryNoEdit } from './Summary/SummaryNoEdit'
