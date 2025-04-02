@@ -54,6 +54,7 @@ const AssigneeInformationSchema = z
             email: z.string().optional(),
             phone: z.string().optional(),
           }),
+          workMachine: z.array(z.string()).min(1),
         }),
       )
       .optional(),
@@ -134,3 +135,4 @@ export const TrainingLicenseOnAWorkMachineAnswersSchema = z.object({
 export type TrainingLicenseOnAWorkMachineAnswers = z.TypeOf<
   typeof TrainingLicenseOnAWorkMachineAnswersSchema
 >
+export type CertificateOfTenure = z.TypeOf<typeof CertificateOfTenureSchema>

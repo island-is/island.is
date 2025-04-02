@@ -156,6 +156,8 @@ export const TableRepeaterFormField: FC<Props> = ({
     const formatted = formatFn ? formatFn(item[key]) : item[key]
     return typeof formatted === 'string'
       ? formatted
+      : Array.isArray(formatted)
+      ? formatText(formatted, application, formatMessage).join(', ')
       : formatText(formatted, application, formatMessage)
   }
 

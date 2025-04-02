@@ -7,9 +7,14 @@ import {
   buildAlertMessageField,
   buildCustomField,
   buildTableRepeaterField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { assigneeInformation } from '../../lib/messages'
 import { isContractor, isSameAsApplicant } from '../../utils'
+import {
+  CertificateOfTenure,
+  TrainingLicenseOnAWorkMachineAnswers,
+} from '../../lib/dataSchema'
 
 export const assigneeInformationSection = buildSection({
   id: 'assigneeInformationSection',
@@ -37,8 +42,7 @@ export const assigneeInformationSection = buildSection({
           table: {
             format: {
               company: (value) => {
-                console.log(value)
-                return `${value} - bla`
+                return typeof value === 'string' ? value ?? '' : value['name']
               },
             },
             header: [
@@ -46,7 +50,7 @@ export const assigneeInformationSection = buildSection({
               assigneeInformation.labels.assignee,
               assigneeInformation.labels.workMachine,
             ],
-            // rows: ['company', 'assignee', 'workMachine'],
+            rows: ['company', 'name', 'workMachine'],
           },
           fields: {
             company: {
@@ -60,10 +64,6 @@ export const assigneeInformationSection = buildSection({
               clearOnChange: (index) => [
                 `assigneeInformation.companyAndAssignee[${index}].company.name`,
               ],
-              setOnChange: async (index, value) => {
-                console.log(value)
-                return []
-              },
             },
             assignee: {
               component: 'nationalIdWithName',
@@ -84,38 +84,50 @@ export const assigneeInformationSection = buildSection({
               ],
             },
             workMachine: {
-              component: 'input',
+              component: 'select',
               label: assigneeInformation.labels.workMachine,
+              isMulti: true,
+              options: (application, activeField) => {
+                console.log(activeField?.workMachine, application)
+                const certificateOfTenure = getValueViaPath<
+                  CertificateOfTenure[]
+                >(application.answers, 'certificateOfTenure')
+                return (
+                  certificateOfTenure?.map((item) => ({
+                    value: item.machineNumber,
+                    label: item.machineNumber,
+                  })) ?? []
+                )
+              },
+              filterOptions: (options, answers, index) => {
+                console.log(answers)
+                const validWorkMachines: string[] = []
+                const assigneeInformation = getValueViaPath<
+                  TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
+                >(answers, 'assigneeInformation')
+                assigneeInformation?.companyAndAssignee?.forEach((item, i) => {
+                  if (
+                    i !== index &&
+                    item.workMachine?.some((machine) =>
+                      options.some((option) => option.value === machine),
+                    )
+                  ) {
+                    validWorkMachines.push(
+                      ...item.workMachine.filter((machine) =>
+                        options.some((option) => option.value === machine),
+                      ),
+                    )
+                  }
+                })
+                console.log(validWorkMachines)
+                return options.filter(
+                  (x) => !validWorkMachines.includes(x.value),
+                )
+              },
             },
           },
           condition: (answers) => !isContractor(answers),
         }),
-        // buildNationalIdWithNameField({
-        //   id: 'assigneeInformation.company',
-        //   title: '',
-        //   customNationalIdLabel: assigneeInformation.labels.companyNationalId,
-        //   customNameLabel: assigneeInformation.labels.companyName,
-        //   searchCompanies: true,
-        //   searchPersons: false,
-        //   required: true,
-        //   condition: (answers) => !isContractor(answers),
-        // }),
-        // buildNationalIdWithNameField({
-        //   id: 'assigneeInformation.assignee',
-        //   title: '',
-        //   customNationalIdLabel: assigneeInformation.labels.assigneeNationalId,
-        //   customNameLabel: assigneeInformation.labels.assigneeName,
-        //   emailLabel: assigneeInformation.labels.assigneeEmail,
-        //   phoneLabel: assigneeInformation.labels.assigneePhone,
-        //   showEmailField: true,
-        //   showPhoneField: true,
-        //   emailRequired: true,
-        //   phoneRequired: true,
-        //   searchCompanies: false,
-        //   searchPersons: true,
-        //   required: true,
-        //   condition: (answers) => !isContractor(answers),
-        // }),
         // buildAlertMessageField({
         //   id: 'assigneeInformation.isSameAsApplicantAlert',
         //   title: '',
