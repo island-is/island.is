@@ -346,7 +346,7 @@ export class PaymentService {
     extraData: ExtraData[] | undefined,
     locale?: string | undefined,
   ): Promise<CreateChargeResult> {
-    //1. Retrieve charge items from FJS
+    // Retrieve charge items from FJS
     const catalogChargeItems = await this.findCatalogChargeItems(
       performingOrganizationID,
       chargeItems,
@@ -356,56 +356,40 @@ export class PaymentService {
     let paymentModel = await this.findPaymentByApplicationId(applicationId)
     let paymentUrl = ''
 
-    if (paymentModel) {
-      //payment Model already exists something has previously gone wrong.
-      paymentUrl = JSON.parse(paymentModel.dataValues.definition).paymentUrl
-    } else {
-      //3. Create new payment entry
+    if (!paymentModel) {
+      // payment Model does not exist so we need to create a new one
       paymentModel = await this.createPaymentModel(
         catalogChargeItems,
         applicationId,
         performingOrganizationID,
       )
-
-      const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
-      onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
-
-      const paymentResult =
-        await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
-          createPaymentFlowInput: {
-            availablePaymentMethods: [
-              CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
-            ],
-            charges: catalogChargeItems.map((chargeItem) => ({
-              chargeType: chargeItem.chargeType,
-              chargeItemCode: chargeItem.chargeItemCode,
-              quantity: chargeItem.quantity ?? 1,
-              price: chargeItem.priceAmount,
-            })),
-            payerNationalId: user.nationalId,
-            organisationId: performingOrganizationID,
-            onUpdateUrl: onUpdateUrl.toString(),
-            metadata: {
-              applicationId,
-              paymentId: paymentModel.id,
-            },
-            returnUrl: await this.getReturnUrl(applicationId),
-            redirectToReturnUrlOnSuccess: true,
-            extraData,
-            chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
-          },
-        })
-
-      paymentUrl =
-        locale && locale === 'en'
-          ? paymentResult.urls.en
-          : paymentResult.urls.is
-
-      await this.addPaymentUrl(applicationId, paymentModel.id, paymentUrl)
-      await paymentModel.reload()
+    } else {
+      paymentUrl = JSON.parse(paymentModel.dataValues.definition).paymentUrl
+      if (paymentUrl) {
+        // payment url is set, meaning a flow was created so we can use that
+        return {
+          id: paymentModel.id,
+          paymentUrl,
+        }
+      } else {
+        // payment url is not set, meaning no flow was created so we need to create a new one
+        const paymentFlow = await this.createPaymentFlow(
+          catalogChargeItems,
+          user,
+          performingOrganizationID,
+          applicationId,
+          paymentModel.id,
+          extraData,
+        )
+        paymentUrl =
+          locale && locale === 'en' ? paymentFlow.urls.en : paymentFlow.urls.is
+      }
     }
 
-    //5. Update payment with a fixed user4 since services-payments does not need it
+    await this.addPaymentUrl(applicationId, paymentModel.id, paymentUrl)
+    await paymentModel.reload()
+
+    // Update payment with a fixed user4 since services-payments does not need it
     await this.setUser4(applicationId, paymentModel.id, 'user4')
     this.auditPaymentCreation(user, applicationId, paymentModel.id)
 
@@ -413,6 +397,43 @@ export class PaymentService {
       id: paymentModel.id,
       paymentUrl,
     }
+  }
+
+  private async createPaymentFlow(
+    catalogChargeItems: CatalogItem[],
+    user: User,
+    performingOrganizationID: string,
+    applicationId: string,
+    paymentId: string,
+    extraData: ExtraData[] | undefined,
+  ) {
+    const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
+    onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
+
+    return await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
+      createPaymentFlowInput: {
+        availablePaymentMethods: [
+          CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
+        ],
+        charges: catalogChargeItems.map((chargeItem) => ({
+          chargeType: chargeItem.chargeType,
+          chargeItemCode: chargeItem.chargeItemCode,
+          quantity: chargeItem.quantity ?? 1,
+          price: chargeItem.priceAmount,
+        })),
+        payerNationalId: user.nationalId,
+        organisationId: performingOrganizationID,
+        onUpdateUrl: onUpdateUrl.toString(),
+        metadata: {
+          applicationId,
+          paymentId,
+        },
+        returnUrl: await this.getReturnUrl(applicationId),
+        redirectToReturnUrlOnSuccess: true,
+        extraData,
+        chargeItemSubjectId: paymentId.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
+      },
+    })
   }
 
   private async arkCreateCharge(
