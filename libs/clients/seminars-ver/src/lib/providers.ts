@@ -17,22 +17,12 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 const ConfigFactory = (
   xroadConfig: ConfigType<typeof XRoadConfig>,
   config: ConfigType<typeof SeminarsClientConfig>,
-  idsClientConfig: ConfigType<typeof IdsClientConfig>,
   acceptHeader: string,
 ) => ({
   fetchApi: createEnhancedFetch({
     name: 'clients-seminars-ver',
     organizationSlug: 'vinnueftirlitid',
     logErrorResponseBody: true,
-    autoAuth: idsClientConfig.isConfigured
-      ? {
-          mode: 'tokenExchange',
-          issuer: idsClientConfig.issuer,
-          clientId: idsClientConfig.clientId,
-          clientSecret: idsClientConfig.clientSecret,
-          scope: config.fetch.scope,
-        }
-      : undefined,
   }),
   basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
   headers: {
@@ -68,12 +58,9 @@ export const exportedApis = [
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof SeminarsClientConfig>,
-    idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) => {
     return new api(
-      new Configuration(
-        ConfigFactory(xRoadConfig, config, idsClientConfig, acceptHeader),
-      ),
+      new Configuration(ConfigFactory(xRoadConfig, config, acceptHeader)),
     )
   },
   inject: [XRoadConfig.KEY, SeminarsClientConfig.KEY, IdsClientConfig.KEY],

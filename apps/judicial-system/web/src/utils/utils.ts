@@ -5,15 +5,16 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { isProsecutionUser } from '@island.is/judicial-system/types'
 import {
+  Case,
   CaseAppealState,
   CaseCustodyRestrictions,
+  Defendant,
   DefendantPlea,
   Gender,
   Notification,
   NotificationType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export const getShortGender = (gender?: Gender): string => {
   switch (gender) {
@@ -168,3 +169,10 @@ export const shouldDisplayGeneratedPdfFiles = (theCase: Case, user?: User) =>
           ),
       ),
   )
+
+// Use the gender of the single defendant if there is only one,
+// otherwise default to male
+export const getDefaultDefendantGender = (defendants?: Defendant[] | null) =>
+  defendants && defendants.length === 1
+    ? defendants[0].gender ?? Gender.MALE
+    : Gender.MALE
