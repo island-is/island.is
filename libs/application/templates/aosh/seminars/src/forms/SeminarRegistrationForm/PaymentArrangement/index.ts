@@ -65,46 +65,6 @@ export const paymentArrangementSection = buildSection({
             isPersonType(externalData),
         }),
 
-        /* INDIVIDUAL */
-        buildTextField({
-          id: 'paymentArrangement.individualInfo.email',
-          title: paymentArrangement.labels.email,
-          width: 'half',
-          required: true,
-          backgroundColor: 'white',
-          readOnly: true,
-          defaultValue: (application: Application) =>
-            getValueViaPath<string>(
-              application.externalData,
-              'userProfile.data.email',
-            ),
-          condition: isIndividual,
-        }),
-        buildPhoneField({
-          id: 'paymentArrangement.individualInfo.phone',
-          title: paymentArrangement.labels.phonenumber,
-          width: 'half',
-          required: true,
-          backgroundColor: 'white',
-          readOnly: true,
-          defaultValue: (application: Application) =>
-            getValueViaPath<string>(
-              application.externalData,
-              'userProfile.data.mobilePhoneNumber',
-            ),
-          condition: isIndividual,
-        }),
-        buildLinkField({
-          id: 'paymentArrangement.individualInfo.changeInfo',
-          title: paymentArrangement.labels.changeInfo,
-          link: '/minarsidur/min-gogn/stillingar/',
-          variant: 'text',
-          iconProps: { icon: 'arrowForward' },
-          justifyContent: 'flexEnd',
-          condition: isIndividual,
-        }),
-        /* INDIVIDUAL ENDS */
-
         /* COMPANY */
         buildDescriptionField({
           id: 'paymentArrangement.paymentOptionsDescription',
@@ -207,22 +167,19 @@ export const paymentArrangementSection = buildSection({
           title: paymentArrangement.labels.explanation,
           placeholder: paymentArrangement.labels.explanationPlaceholder,
           maxLength: 40,
-          condition: companyCondition,
+          condition: (answers: FormValue, externalData: ExternalData) => {
+            const paymentArrangement = getValueViaPath<PaymentOptions>(
+              answers,
+              'paymentArrangement.paymentOptions',
+            )
+
+            return (
+              companyCondition(answers, externalData) &&
+              paymentArrangement === PaymentOptions.putIntoAccount
+            )
+          },
         }),
         /* COMPANY ENDS */
-
-        buildCheckboxField({
-          id: 'paymentArrangement.agreementCheckbox',
-          large: false,
-          backgroundColor: 'white',
-          marginTop: 3,
-          options: [
-            {
-              value: YES,
-              label: paymentArrangement.labels.agreementCheckbox,
-            },
-          ],
-        }),
       ],
     }),
   ],
