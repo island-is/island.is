@@ -89,6 +89,7 @@ export type Icon =
   | 'signLanguage'
   | 'listView'
   | 'gridView'
+  | 'swapHorizontal'
   | 'swapVertical'
   | 'thumbsUp'
   | 'thumbsDown'
@@ -188,6 +189,7 @@ export default {
     signLanguage: 'SignLanguage',
     listView: 'ListView',
     gridView: 'GridView',
+    swapHorizontal: 'SwapHorizontal',
     swapVertical: 'SwapVertical',
     thumbsUp: 'ThumbsUp',
     thumbsDown: 'ThumbsDown',
@@ -286,6 +288,7 @@ export default {
     signLanguage: 'SignLanguage',
     listView: 'ListView',
     gridView: 'GridView',
+    swapHorizontal: 'SwapHorizontal',
     swapVertical: 'SwapVertical',
     thumbsUp: 'ThumbsUpOutline',
     thumbsDown: 'ThumbsDownOutline',

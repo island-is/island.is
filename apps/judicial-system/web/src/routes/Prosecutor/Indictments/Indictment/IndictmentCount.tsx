@@ -67,6 +67,11 @@ interface Props {
   ) => void
 }
 
+type Law = [number, number]
+
+const driversLicenceLaws: Law[] = [[58, 1]]
+const generalLaws: Law[] = [[95, 1]]
+
 /**
  * Indicates what laws are broken for each offense. The first number is
  * the paragraph and the second is the article, i.e. [49, 2] means paragraph
@@ -75,11 +80,12 @@ interface Props {
  */
 const offenseLawsMap: Record<
   IndictmentCountOffense | 'DRUNK_DRIVING_MINOR' | 'DRUNK_DRIVING_MAJOR',
-  [number, number][]
+  Law[]
 > = {
-  [IndictmentCountOffense.DRIVING_WITHOUT_LICENCE]: [[58, 1]],
-  [IndictmentCountOffense.DRIVING_WITHOUT_VALID_LICENSE]: [[58, 1]],
-  [IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE]: [[58, 1]],
+  [IndictmentCountOffense.DRIVING_WITHOUT_LICENCE]: driversLicenceLaws,
+  [IndictmentCountOffense.DRIVING_WITHOUT_VALID_LICENSE]: driversLicenceLaws,
+  [IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE]:
+    driversLicenceLaws,
   [IndictmentCountOffense.DRUNK_DRIVING]: [[49, 1]],
   DRUNK_DRIVING_MINOR: [[49, 2]],
   DRUNK_DRIVING_MAJOR: [[49, 3]],
@@ -95,9 +101,7 @@ const offenseLawsMap: Record<
   [IndictmentCountOffense.OTHER]: [],
 }
 
-const generalLaws: [number, number][] = [[95, 1]]
-
-const lawsCompare = (law1: number[], law2: number[]) => {
+const lawsCompare = (law1: Law, law2: Law) => {
   if (law1[0] < law2[0]) {
     return -1
   }
@@ -113,10 +117,15 @@ const lawsCompare = (law1: number[], law2: number[]) => {
   return 0
 }
 
-const laws = Object.values(offenseLawsMap)
-  .flat()
-  .concat(generalLaws)
-  .sort(lawsCompare)
+// Law tuple values are reference types,
+// so we need to be careful when constructing the lists passed to getUniqueSortedLaws
+const getUniqueSortedLaws = (laws: Law[]) => {
+  return [...new Set(laws)].sort(lawsCompare)
+}
+
+const laws = getUniqueSortedLaws(
+  Object.values(offenseLawsMap).flat().concat(generalLaws),
+)
 
 const getLawsBroken = (
   offenses?: IndictmentCountOffense[] | null,
@@ -130,27 +139,29 @@ const getLawsBroken = (
     return []
   }
 
-  let lawsBroken: [number, number][] = []
+  const lawsBroken: Law[] = []
 
   offenses.forEach((offense) => {
-    lawsBroken = lawsBroken.concat(offenseLawsMap[offense])
+    lawsBroken.push(...offenseLawsMap[offense])
 
     if (offense === IndictmentCountOffense.DRUNK_DRIVING) {
-      lawsBroken = lawsBroken.concat(
-        ((substances && substances.ALCOHOL) || '') >= '1,20'
+      lawsBroken.push(
+        ...(((substances && substances.ALCOHOL) || '') >= '1,20'
           ? offenseLawsMap.DRUNK_DRIVING_MAJOR
-          : offenseLawsMap.DRUNK_DRIVING_MINOR,
+          : offenseLawsMap.DRUNK_DRIVING_MINOR),
       )
     }
   })
 
-  return lawsBroken.concat(generalLaws).sort(lawsCompare)
+  lawsBroken.push(...generalLaws)
+
+  return getUniqueSortedLaws(lawsBroken)
 }
 
 interface LawsBrokenOption {
   label: string
   value: string
-  law: [number, number]
+  law: Law
   disabled: boolean
 }
 
@@ -163,7 +174,7 @@ export const getLegalArguments = (
   }
 
   const relevantLaws =
-    lawsCompare(lawsBroken[lawsBroken.length - 1], generalLaws[0]) === 0
+    lawsCompare(lawsBroken[lawsBroken.length - 1] as Law, generalLaws[0]) === 0
       ? lawsBroken.slice(0, -1)
       : lawsBroken
   let andIndex = -1
@@ -516,10 +527,10 @@ export const IndictmentCount: FC<Props> = ({
                   value={null}
                   onChange={(selectedOption) => {
                     const law = (selectedOption as LawsBrokenOption).law
-                    const lawsBroken = [
-                      ...(indictmentCount.lawsBroken ?? []),
+                    const lawsBroken = getUniqueSortedLaws([
+                      ...((indictmentCount.lawsBroken ?? []) as Law[]),
                       law,
-                    ].sort(lawsCompare)
+                    ])
 
                     onChange(indictmentCount.id, {
                       lawsBroken: lawsBroken,
@@ -552,7 +563,10 @@ export const IndictmentCount: FC<Props> = ({
                           onClick={() => {
                             const lawsBroken = (
                               indictmentCount.lawsBroken ?? []
-                            ).filter((b) => lawsCompare(b, brokenLaw) !== 0)
+                            ).filter(
+                              (b) =>
+                                lawsCompare(b as Law, brokenLaw as Law) !== 0,
+                            )
 
                             onChange(indictmentCount.id, {
                               lawsBroken: lawsBroken,

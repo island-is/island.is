@@ -4,7 +4,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { accidentType } from '../../../lib/messages'
-import { StudiesAccidentTypeEnum } from '../../../types'
+import { StudiesAccidentTypeEnum } from '../../../utils/enums'
 import { isStudiesAccident } from '../../../utils/accidentUtils'
 
 export const studiesAccidentSubSection = buildSubSection({
