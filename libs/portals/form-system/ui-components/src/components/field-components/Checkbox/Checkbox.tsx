@@ -7,9 +7,11 @@ import { getValue } from '../../../lib/getValue'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
+  hasError?: boolean
+  lang?: 'is' | 'en'
 }
 
-export const Checkbox = ({ item, dispatch }: Props) => {
+export const Checkbox = ({ item, dispatch, hasError, lang = 'is' }: Props) => {
   const value = getValue(item, 'checkboxValue')
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!dispatch) return
@@ -21,9 +23,10 @@ export const Checkbox = ({ item, dispatch }: Props) => {
   return (
     <CheckboxField
       name="checkbox"
-      label={item?.name?.is ?? ''}
+      label={item?.name?.[lang] ?? ''}
       checked={value}
       onChange={handleChange}
+      hasError={!!hasError}
     />
   )
 }

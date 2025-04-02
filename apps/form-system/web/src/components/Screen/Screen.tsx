@@ -9,14 +9,18 @@ import { SectionTypes } from '@island.is/form-system/ui'
 import { ExternalData } from './components/ExternalData/ExternalData'
 import { Field } from './components/Field/Field'
 import { useState } from 'react'
+import { useLocale } from '../../../../../../libs/localization/src'
+import { Applicants } from './components/Applicants/Applicants'
+import { FormSystemApplicant } from '@island.is/api/schema'
 
 export const Screen = () => {
   const { state } = useApplicationContext()
+  const { lang } = useLocale()
   const { currentSection, currentScreen } = state
   const screenTitle = currentScreen
-    ? state.screens?.[currentScreen.index]?.name?.is
-    : state.sections?.[currentSection.index]?.name?.is
-
+    ? state.screens?.[currentScreen.index]?.name?.[lang]
+    : state.sections?.[currentSection.index]?.name?.[lang]
+  const currentSectionType = state.sections?.[currentSection.index]?.sectionType
   const [externalDataAgreement, setExternalDataAgreement] = useState(state.sections?.[0].isCompleted ?? false)
 
   return (
@@ -36,19 +40,22 @@ export const Screen = () => {
           as="h2"
           marginBottom={1}
         >
-          {state.sections?.[currentSection.index]?.sectionType !== SectionTypes.PREMISES && screenTitle}
+          {currentSectionType !== SectionTypes.PREMISES && screenTitle}
         </Text>
-        {state.sections?.[currentSection.index]?.sectionType === SectionTypes.PREMISES && (
+        {currentSectionType === SectionTypes.PREMISES && (
           <ExternalData
             setExternalDataAgreement={setExternalDataAgreement}
           />
         )}
+        {currentSectionType === SectionTypes.PARTIES && (
+          <Applicants applicantTypes={(state.application.applicantTypes?.filter((item) => item !== null) as FormSystemApplicant[]) ?? []} />
+        )}
         {
           currentScreen && currentScreen?.data?.fields
-            ?.filter((field) => field != null)
+            ?.filter((field): field is NonNullable<typeof field> => field != null)
             .map((field, index) => {
               return (
-                <Field field={field!} key={index} />
+                <Field field={field!} key={index} hasError={state.errors?.includes(field.id) ?? false} />
               )
             })
         }

@@ -1,7 +1,10 @@
 import { useNavigate, useParams } from "react-router-dom"
 import { CREATE_APPLICATION, GET_APPLICATIONS } from "@island.is/form-system/graphql"
 import { useMutation, useQuery, useLazyQuery } from "@apollo/client"
-import { Button } from "@island.is/island-ui/core"
+import { Box, Button, Inline, Stack } from "@island.is/island-ui/core"
+import { useEffect, useState } from "react"
+import { FormSystemApplication } from "@island.is/api/schema"
+import { ApplicationCard } from "@island.is/application/ui-components"
 
 interface Params {
   slug: string
@@ -10,6 +13,7 @@ interface Params {
 export const Applications = () => {
   const { slug } = useParams() as unknown as Params
   const navigate = useNavigate()
+  const [applications, setApplications] = useState<FormSystemApplication[]>([])
   //const { formatMessage } = useLocale()
   const [createApplicationMutation, { error: createError }] = useMutation(
     CREATE_APPLICATION, {
@@ -20,13 +24,13 @@ export const Applications = () => {
     }
   })
 
-  const [getApplications] = useLazyQuery(GET_APPLICATIONS, {
-    onCompleted({ getApplications }) {
-      if (slug) {
-        console.log(getApplications)
-      }
-    }
-  })
+  // const [getApplications] = useLazyQuery(GET_APPLICATIONS, {
+  //   onCompleted({ getApplications }) {
+  //     if (slug) {
+  //       console.log(getApplications)
+  //     }
+  //   }
+  // })
 
   const createApplication = async () => {
     const app = await createApplicationMutation({
@@ -45,31 +49,44 @@ export const Applications = () => {
     return app
   }
 
-  const fetchApplications = async () => {
-    const apps = await getApplications({
+  const getApplications = async () => {
+    const app = await createApplicationMutation({
       variables: {
         input: {
-          formId: 'dd81c73f-504e-4cee-b3f5-3161be4f20e9',
-          page: 1,
-          limit: 100,
-          isTest: false,
+          slug: slug,
+          createApplicationDto: {
+            isTest: false
+          }
         }
       }
     })
-    console.log(apps)
+    setApplications([app.data.createFormSystemApplication, app.data.createFormSystemApplication, app.data.createFormSystemApplication])
+
   }
 
   console.log('slug', slug)
   // Check whether the user has opened this form before and if so, show all the applications 
-  const applications = []
+  // const applications = []
   // Assuming the user has not opened this form before, create a new application
-  if (applications.length === 0) {
-  }
+
+  useEffect(() => {
+    console.log(applications)
+  }, [applications])
 
   return (
     <>
-      <Button onClick={createApplication}>Create</Button>
-      <Button onClick={fetchApplications}>Get</Button>
+      <Inline space={2}>
+        <Button onClick={createApplication}>Create</Button>
+        <Button onClick={getApplications}>Get</Button>
+      </Inline>
+      <Box marginTop={4}>
+        {/* {applications.length > 0 && 
+        <Stack space={2}>
+          {applications.map((application) => (
+            <ApplicationCard
+          ))}
+        </Stack>} */}
+      </Box>
     </>
   )
 }

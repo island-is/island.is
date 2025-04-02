@@ -482,6 +482,7 @@ export const m = defineMessages({
   nationalId: {
     id: 'portals-admin.form-system:national-id',
     defaultMessage: 'Kennitala',
+    description: 'National ID'
   },
 })
 
@@ -531,5 +532,15 @@ export const webMessages = defineMessages({
     id: 'form-system:back',
     defaultMessage: 'Til baka',
     description: 'Back',
+  },
+  postalCode: {
+    id: 'form-system:postal-code',
+    defaultMessage: 'Póstnúmer',
+    description: 'Postal code'
+  },
+  fullName: {
+    id: 'form-system:full-name',
+    defaultMessage: 'Fullt nafn',
+    description: 'Full name'
   }
 })

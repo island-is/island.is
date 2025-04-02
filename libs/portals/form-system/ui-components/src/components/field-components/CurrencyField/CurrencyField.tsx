@@ -11,9 +11,10 @@ import { getValue } from '../../../lib/getValue'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
+  hasError?: boolean
 }
 
-export const CurrencyField = ({ item, dispatch }: Props) => {
+export const CurrencyField = ({ item, dispatch, hasError }: Props) => {
   const [currency, setCurrency] = useState(getValue(item, 'iskNumber'))
   const label = item?.name?.is
 
@@ -45,6 +46,7 @@ export const CurrencyField = ({ item, dispatch }: Props) => {
           onChange={handleCurrencyChange}
           required={item?.isRequired ?? false}
           backgroundColor='blue'
+          hasError={!!hasError}
         />
       </Column>
     </Row>

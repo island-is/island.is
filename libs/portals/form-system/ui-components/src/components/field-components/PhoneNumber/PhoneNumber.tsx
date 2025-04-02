@@ -14,9 +14,11 @@ import { Locale } from '@island.is/shared/types'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
+  lang?: 'is' | 'en'
+  hasError?: boolean
 }
 
-export const PhoneNumber = ({ item, dispatch }: Props) => {
+export const PhoneNumber = ({ item, dispatch, hasError, lang = 'is' }: Props) => {
   const { locale, formatMessage } = useIntl()
   const [phoneNumber, setPhoneNumber] = useState<string>(getValue(item, 'phoneNumber'))
 
@@ -37,7 +39,7 @@ export const PhoneNumber = ({ item, dispatch }: Props) => {
     <Row>
       <Column>
         <PhoneInput
-          label={formatMessage(m.phoneNumber)}
+          label={item.name?.[lang] ?? ''}
           placeholder="Símanúmer"
           name={item.id ?? ''}
           locale={locale as Locale}
@@ -45,6 +47,7 @@ export const PhoneNumber = ({ item, dispatch }: Props) => {
           backgroundColor='blue'
           value={phoneNumber}
           onChange={handleChange}
+          hasError={!!hasError}
         />
       </Column>
     </Row>

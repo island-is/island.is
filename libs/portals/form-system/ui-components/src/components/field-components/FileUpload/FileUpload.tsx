@@ -12,10 +12,12 @@ import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
+  hasError?: boolean
+  lang?: 'is' | 'en'
 }
 
-export const FileUpload = ({ item }: Props) => {
-  const [error, setError] = useState<string | undefined>(undefined)
+export const FileUpload = ({ item, hasError, lang = 'is' }: Props) => {
+  const [error, setError] = useState<string | undefined>(hasError ? 'error' : undefined)
   const [fileList, setFileList] = useState<Array<UploadFile>>([])
   const { formatMessage } = useIntl()
   const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
@@ -45,23 +47,25 @@ export const FileUpload = ({ item }: Props) => {
   }
 
   return (
-    <InputFileUpload
-      name="fileUpload"
-      fileList={fileList}
-      header={item?.name?.is ?? ''}
-      description={`${formatMessage(m.previewAllowedFileTypes)}: ${types?.map(
-        (f: string) => `${f} `,
-      )}`}
-      buttonLabel={formatMessage(m.fileUploadButton)}
-      onChange={onChange}
-      onRemove={onRemove}
-      errorMessage={fileList.length > 0 ? error : undefined}
-      accept={
-        types?.map((t: string) => fileTypes[t as keyof typeof fileTypes]) ?? []
-      }
-      showFileSize
-      maxSize={item?.fieldSettings?.fileMaxSize ?? 1}
-      multiple={(item?.fieldSettings?.maxFiles ?? 0) > 1}
-    />
+    <>
+      <InputFileUpload
+        name="fileUpload"
+        fileList={fileList}
+        header={item?.name?.[lang] ?? ''}
+        description={`${formatMessage(m.previewAllowedFileTypes)}: ${types?.map(
+          (f: string) => `${f} `,
+        )}`}
+        buttonLabel={formatMessage(m.fileUploadButton)}
+        onChange={onChange}
+        onRemove={onRemove}
+        errorMessage="error"
+        accept={
+          types?.map((t: string) => fileTypes[t as keyof typeof fileTypes]) ?? []
+        }
+        showFileSize
+        maxSize={item?.fieldSettings?.fileMaxSize ?? 1}
+        multiple={(item?.fieldSettings?.maxFiles ?? 0) > 1}
+      />
+    </>
   )
 }

@@ -10,8 +10,10 @@ import { getValue } from '../../../lib/getValue'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
+  lang: 'is' | 'en'
+  hasError?: boolean
 }
-export const DatePicker = ({ item, dispatch }: Props) => {
+export const DatePicker = ({ item, dispatch, lang, hasError }: Props) => {
   const [value, setValue] = useState<Date | null>(getValue(item, 'date') ?? null)
   const { formatMessage } = useIntl()
   const handleChange = (date: Date) => {
@@ -27,11 +29,13 @@ export const DatePicker = ({ item, dispatch }: Props) => {
   }
   return (
     <DatePickerCore
-      label={formatMessage(m.datePicker)}
+      label={item.name[lang] ?? ''}
       placeholderText={formatMessage(m.chooseDate)}
       backgroundColor='blue'
       handleChange={handleChange}
       selected={value}
+      required={item.isRequired}
+      hasError={!!hasError}
     />
   )
 }

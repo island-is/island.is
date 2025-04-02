@@ -6,6 +6,8 @@ import { Action } from '../../../lib/reducerTypes'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
+  lang?: 'is' | 'en'
+  hasError?: boolean
 }
 
 type ListItem = {
@@ -20,11 +22,11 @@ const listTypePlaceholder = {
   idngreinarMeistara: 'Veldu iðngrein',
 }
 
-export const List = ({ item, dispatch }: Props) => {
+export const List = ({ item, dispatch, lang = 'is', hasError }: Props) => {
   const mapToListItems = (items: any[]): ListItem[] =>
     items?.map((item) => ({
-      label: item?.label?.is ?? '',
-      value: item?.label?.is ?? '',
+      label: item?.label?.[lang] ?? '',
+      value: item?.label?.[lang] ?? '',
     })) ?? []
 
   const value = () => {
@@ -42,7 +44,7 @@ export const List = ({ item, dispatch }: Props) => {
   return (
     <Select
       name="list"
-      label={item.name?.is ?? ''}
+      label={item.name?.[lang] ?? ''}
       options={mapToListItems(item?.list ?? [])}
       required={item.isRequired ?? false}
       placeholder={
@@ -59,6 +61,7 @@ export const List = ({ item, dispatch }: Props) => {
         })
       }}
       value={value()}
+      hasError={!!hasError}
     />
   )
 }

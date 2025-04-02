@@ -9,11 +9,13 @@ import { getValue } from '../../../lib/getValue'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
+  hasError?: boolean
+  lang?: 'is' | 'en'
 }
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
-export const Email = ({ item, dispatch }: Props) => {
+export const Email = ({ item, dispatch, lang = 'is', hasError: otherError }: Props) => {
   const initialEmail = getValue(item, 'email')
   const [email, setEmail] = useState(initialEmail)
   const [hasError, setHasError] = useState(false)
@@ -52,13 +54,13 @@ export const Email = ({ item, dispatch }: Props) => {
       <Input
         type="email"
         name="email"
-        label={formatMessage(m.email)}
+        label={item.name?.[lang] ?? ''}
         value={email}
         onChange={handleChange}
         onBlur={handleBlur}
         onFocus={handleFocus}
         errorMessage={formatMessage(m.invalidEmail)}
-        hasError={hasError}
+        hasError={hasError || otherError}
         required={item?.isRequired ?? false}
         backgroundColor="blue"
       />

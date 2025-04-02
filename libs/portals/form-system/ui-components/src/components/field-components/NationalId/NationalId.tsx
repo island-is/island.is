@@ -9,14 +9,30 @@ import { getValue } from '../../../lib/getValue'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
+  hasError?: boolean
 }
 
-export const NationalId = ({ item, dispatch }: Props) => {
+export const NationalId = ({ item, dispatch, hasError }: Props) => {
   const { formatMessage } = useIntl()
   const [nationalId, setNationalId] = useState<string>(getValue(item, 'nationalId'))
   const [name, setName] = useState<string>(getValue(item, 'name'))
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setNationalId(e.target.value)
+    let raw = e.target.value
+    let digits = raw.replace(/\D/g, '')
+
+    // Last character must be a digit, hyphen or backspace
+    if (raw.length > 0 && !/\d$/.test(raw) && !raw.endsWith('-')) return
+
+    if (digits.length > 10) {
+      digits = digits.slice(0, 10)
+    }
+
+    let value = digits.length > 6
+      ? digits.slice(0, 6) + '-' + digits.slice(6)
+      : digits
+
+    setNationalId(value)
     if (!dispatch) return
     dispatch({
       type: 'SET_NATIONAL_ID',
@@ -26,6 +42,7 @@ export const NationalId = ({ item, dispatch }: Props) => {
       },
     })
   }
+
   return (
 
     <Stack space={2}>
@@ -34,11 +51,11 @@ export const NationalId = ({ item, dispatch }: Props) => {
           <Input
             label={formatMessage(m.nationalId)}
             name="kennitala"
-            type="number"
             required={item?.isRequired ?? false}
             backgroundColor='blue'
             value={nationalId}
             onChange={handleChange}
+            hasError={!!hasError}
           />
         </Column>
       </Row>

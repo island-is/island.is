@@ -1,6 +1,5 @@
 import { ApplicationState, FieldTypesEnum } from "@island.is/form-system/ui"
-import { FormSystemField } from "@island.is/api/schema"
-
+import { FormSystemField, FormSystemValue } from "@island.is/api/schema"
 
 export const validateScreen = (
   state: ApplicationState
@@ -8,19 +7,18 @@ export const validateScreen = (
 
   const { currentScreen } = state
   if (!currentScreen) return []
-  const { data, index } = currentScreen
+  const { data } = currentScreen
   const requiredFields = data?.fields?.filter((field) => field?.isRequired)
+  const errors = requiredFields?.filter((field): field is FormSystemField => field !== null && hasError(field)).map((field) => field.id) ?? []
 
-
-
-  return []
+  return errors
 }
 
 const hasError = (
   field: FormSystemField
 ): boolean => {
   const { fieldType } = field
-  const value = field?.values?.[0]?.json
+  const value = field?.values?.[0]?.json as FormSystemValue
   if (!value) return true
   switch (fieldType) {
     case FieldTypesEnum.CHECKBOX: {
@@ -30,7 +28,7 @@ const hasError = (
       return !validateBanknumber(value?.bankAccount ?? '')
     }
     case FieldTypesEnum.TEXTBOX: {
-      if (value.text === '' || !value.text) return true
+      return (value.text === '' || !value.text)
     }
     case FieldTypesEnum.EMAIL: {
       return !validateEmail(value?.email ?? '')
@@ -40,6 +38,29 @@ const hasError = (
     }
     case FieldTypesEnum.NATIONAL_ID: {
       return !validateNationalId(value?.nationalId ?? '', value?.name ?? '')
+    }
+    case FieldTypesEnum.ISK_NUMBERBOX: {
+      return !value?.iskNumber || value?.iskNumber.length === 0
+    }
+    case FieldTypesEnum.PROPERTY_NUMBER: {
+      //return !validatePropertyNumber(value)
+      return false
+    }
+    case FieldTypesEnum.RADIO_BUTTONS: {
+      console.log(value.listValue)
+      return !value?.listValue
+    }
+    case FieldTypesEnum.DROPDOWN_LIST: {
+      return !value?.listValue
+    }
+    case FieldTypesEnum.DATE_PICKER: {
+      return !value?.date
+    }
+    case FieldTypesEnum.TIME_INPUT: {
+      return !value?.time
+    }
+    case FieldTypesEnum.FILE: {
+      return !value?.s3Key || !value?.s3Url
     }
     default: {
       return false
@@ -69,10 +90,18 @@ const validatePhoneNumber = (value?: string) => {
   return phoneNumberRegex.test(value)
 }
 
+// TODO: Currently only validates nationalId, needs implementation once connection has been made to the national registry
 const validateNationalId = (nationalId?: string, name?: string) => {
-  if (!nationalId || !name) return false
+  // if (!nationalId || !name) return false
+  if (!nationalId) return false
   const nationalIdRegex = /^\d{6}-\d{4}$/
+
   if (!nationalIdRegex.test(nationalId)) return false
-  if (name.length < 2) return false
+  // if (name.length < 2) return false
   return true
+}
+
+const validatePropertyNumber = (value: FormSystemValue) => {
+  const { propertyNumber, address, postalCode, municipality } = value
+  return (!propertyNumber || !address || !municipality || propertyNumber === '' || address === '' || municipality === '')
 }

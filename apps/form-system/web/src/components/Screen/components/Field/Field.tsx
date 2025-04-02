@@ -2,17 +2,21 @@ import { Banknumber, Checkbox, CurrencyField, DatePicker, Email, FieldTypesEnum,
 import { FormSystemField } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
+import { useLocale } from '@island.is/localization'
 
 
 interface Props {
   field: FormSystemField
+  hasError: boolean
 }
-export const Field = ({ field }: Props) => {
-
+export const Field = ({ field, hasError }: Props) => {
+  const { lang } = useLocale()
   const { dispatch } = useApplicationContext()
   const fieldItems = {
     item: field,
-    dispatch
+    hasError,
+    dispatch,
+    lang
   }
 
   return (

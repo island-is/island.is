@@ -8,6 +8,7 @@ export const initialState = {
   screens: [],
   currentSection: { data: {} as FormSystemSection, index: 0 },
   currentScreen: undefined,
+  errors: []
 }
 
 export const initialReducer = (

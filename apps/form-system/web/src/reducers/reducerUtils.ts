@@ -1,5 +1,6 @@
 import { FormSystemScreen, FormSystemSection } from "@island.is/api/schema"
 import { ApplicationState } from '@island.is/form-system/ui'
+import { validateScreen } from "../utils/validation"
 
 export const hasScreens = (section: FormSystemSection): boolean => {
   return Boolean(section.screens && section.screens.length > 0)
@@ -38,9 +39,20 @@ export const incrementWithScreens = (
   const screens = currentSectionData.screens ?? []
   const maxScreenIndex = screens.length - 1
 
+  const errors = validateScreen(state)
+  if (errors.length > 0) {
+    return {
+      ...state,
+      errors
+    }
+  }
+
   if (currentScreenIndex === maxScreenIndex) {
     if (state.currentSection.index === maxSectionIndex) {
-      return state
+      return {
+        ...state,
+        errors: []
+      }
     }
     const nextSection = state.sections[state.currentSection.index + 1]
     return {
@@ -55,6 +67,7 @@ export const incrementWithScreens = (
           data: nextSection.screens ? nextSection.screens[0] as FormSystemScreen : undefined,
         }
         : undefined,
+      errors: []
     }
   } else {
     return {
@@ -63,6 +76,7 @@ export const incrementWithScreens = (
         data: screens[currentScreenIndex + 1] as FormSystemScreen,
         index: currentScreenIndex + 1,
       },
+      errors: []
     }
   }
 }
@@ -101,6 +115,7 @@ export const decrementWithScreens = (
         data: screens[currentScreenIndex - 1] as FormSystemScreen,
         index: currentScreenIndex - 1,
       },
+      errors: []
     }
   } else {
     if (currentSectionIndex === 0) {
@@ -119,6 +134,7 @@ export const decrementWithScreens = (
           index: prevSection.screens ? prevSection.screens.length - 1 : 0,
         }
         : undefined,
+      errors: []
     }
   }
 }
@@ -143,6 +159,7 @@ export const decrementWithoutScreens = (
         index: prevSection.screens ? prevSection.screens.length - 1 : 0,
       }
       : undefined,
+    errors: []
   }
 }
 
@@ -152,7 +169,7 @@ export const setFieldValue = (
   fieldProperty: string,
   fieldId: string,
   value: any): ApplicationState => {
-  const { currentSection, currentScreen } = state
+  const { currentScreen } = state
   if (!currentScreen || !currentScreen.data) {
     return state
   }
@@ -181,6 +198,14 @@ export const setFieldValue = (
     ...screen,
     fields: updatedFields
   }
+  const updatedState = {
+    ...state,
+    currentScreen: {
+      ...currentScreen,
+      data: updatedScreen,
+    },
+  }
+
 
   const updatedSections: FormSystemSection[] = state.sections.map((section) => {
     if (section.screens) {
@@ -206,6 +231,7 @@ export const setFieldValue = (
     currentScreen: {
       ...currentScreen,
       data: updatedScreen
-    }
+    },
+    errors: state.errors && state.errors.length > 0 ? validateScreen(updatedState) : []
   }
 }

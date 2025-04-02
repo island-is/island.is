@@ -24,7 +24,6 @@ const reducers = (state: ApplicationState, action: Action) => {
 
 export const ApplicationProvider: React.FC<{ application: FormSystemApplication }> = ({ application }) => {
   const app = useMemo(() => application, [application])
-  console.log('app', app)
   const [state, dispatch] = useReducer(reducers, {
     ...initialState,
     application: app,
