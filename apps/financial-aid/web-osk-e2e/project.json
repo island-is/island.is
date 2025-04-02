@@ -14,16 +14,14 @@
         "baseUrl": "http://localhost:4200"
       },
       "configurations": {
+        "ci": {
+          "devServerTarget": "",
+          "baseUrl": "http://localhost:4200",
+          "command": "cross-env NODE_ENV=production yarn nx run financial-aid-web-osk:build:production && node scripts/dockerfile-assets/bash/extract-environment.js dist/apps/financial-aid/web-osk && node dist/apps/financial-aid/web-osk/main.js & yarn nx run financial-aid-web-osk-e2e:e2e:production --headless --production"
+        },
         "production": {
           "devServerTarget": ""
         }
-      }
-    },
-    "e2e-ci": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cypressConfig": "apps/financial-aid/web-osk-e2e/cypress.config.ts",
-        "command": "yarn e2e-ci -n financial-aid-web-osk-e2e -c -d dist/apps/financial-aid/web-osk"
       }
     },
     "lint": {
