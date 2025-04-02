@@ -57,9 +57,9 @@ import {
   INSTITUTIONS_QUERY,
   TYPES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
+import { ORGANIZATION_SLUG } from './constants'
 import { useAdverts } from './hooks'
 import { m } from './messages'
-import { ORGANIZATION_SLUG } from './constants'
 
 type OJOISearchParams = {
   q: string
