@@ -89,21 +89,18 @@ const suspensionOffenses = [
   IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
 ]
 
-const getSuspensionOffences = (
+const getSuspensionOffenses = (
   indictmentCounts?: TIndictmentCount[] | null,
 ) => {
   const offenses =
-    indictmentCounts?.map(
+    indictmentCounts?.flatMap(
       (indictmentCount) =>
-        indictmentCount.offenses?.reduce<IndictmentCountOffense[]>(
-          (acc, offense: Offense) =>
-            suspensionOffenses.includes(offense.offense)
-              ? [...acc, offense.offense]
-              : acc,
-          [],
-        ) ?? [],
+        indictmentCount.offenses
+          ?.filter((offense) => suspensionOffenses.includes(offense.offense))
+          .map((offense) => offense.offense) ?? [],
     ) ?? []
-  return new Set(offenses.flat())
+
+  return new Set(offenses)
 }
 
 const Indictment = () => {
@@ -204,7 +201,7 @@ const Indictment = () => {
         return
       }
 
-      // If the user manually selected suspesion and a suspension offense is not being added,
+      // If the user manually selected suspension and a suspension offense is not being added,
       // then we have nothing to do
       // Note that adding a suspension offense changes the demand text
       if (
@@ -292,10 +289,10 @@ const Indictment = () => {
         return
       }
 
-      const prevSuspensionOffences = getSuspensionOffences(
+      const prevSuspensionOffenses = getSuspensionOffenses(
         workingCase.indictmentCounts,
       )
-      const newSuspensionOffeenses = getSuspensionOffences(
+      const newSuspensionOffeenses = getSuspensionOffenses(
         workingCase.indictmentCounts?.map((count) =>
           count.id === indictmentCountId
             ? {
@@ -307,7 +304,7 @@ const Indictment = () => {
       )
 
       setSuspensionRequest(
-        prevSuspensionOffences,
+        prevSuspensionOffenses,
         newSuspensionOffeenses,
         workingCase.requestDriversLicenseSuspension,
       )
@@ -343,10 +340,10 @@ const Indictment = () => {
           (count) => count.id !== indictmentCountId,
         )
 
-        const prevSuspensionOffenses = getSuspensionOffences(
+        const prevSuspensionOffenses = getSuspensionOffenses(
           workingCase.indictmentCounts,
         )
-        const newSuspensionOffenses = getSuspensionOffences(indictmentCounts)
+        const newSuspensionOffenses = getSuspensionOffenses(indictmentCounts)
 
         setSuspensionRequest(
           prevSuspensionOffenses,
@@ -387,7 +384,7 @@ const Indictment = () => {
             workingCase.defendants,
           )?.join(''),
           demands: getDemands(
-            getSuspensionOffences(indictmentCounts),
+            getSuspensionOffenses(indictmentCounts),
             workingCase.requestDriversLicenseSuspension,
           ),
         },
@@ -516,7 +513,7 @@ const Indictment = () => {
                         requestDriversLicenseSuspension:
                           !workingCase.requestDriversLicenseSuspension,
                         demands: getDemands(
-                          getSuspensionOffences(workingCase.indictmentCounts),
+                          getSuspensionOffenses(workingCase.indictmentCounts),
                           !workingCase.requestDriversLicenseSuspension,
                         ),
                         force: true,

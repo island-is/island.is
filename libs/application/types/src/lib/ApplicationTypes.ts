@@ -105,7 +105,7 @@ export const ApplicationConfigurations = {
     translation: 'eni.application',
   },
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
-    slug: 'greida',
+    slug: 'example-payment',
     translation: 'ep.application',
   },
   [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {

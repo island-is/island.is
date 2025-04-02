@@ -7,4 +7,4 @@ import { ApiConfiguration } from './apiConfiguration'
   providers: [ApiConfiguration, ...exportedApis],
   exports: [ApiConfiguration, ...exportedApis],
 })
-export class FormSystemClientModule { }
+export class FormSystemClientModule {}

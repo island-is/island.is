@@ -225,7 +225,6 @@ codemagic.yaml                                                                  
 /libs/application/templates/accident-notification/                                                        @island-is/norda
 /libs/application/templates/complaints-to-althingi-ombudsman/                                             @island-is/norda
 /libs/application/templates/data-protection-complaint/                                                    @island-is/norda
-/libs/application/templates/example-payment/                                                              @island-is/norda
 /libs/application/templates/family-matters/children-residence-change-v2                                   @island-is/norda
 /libs/application/templates/financial-aid/                                                                @island-is/norda
 /libs/application/templates/financial-statements-inao/                                                    @island-is/norda
@@ -321,6 +320,9 @@ codemagic.yaml                                                                  
 /libs/api/domains/consultation-portal/                                                                    @island-is/advania
 /libs/api/domains/form-system                                                                             @island-is/advania
 /libs/portals/admin/form-system                                                                           @island-is/advania
+/libs/clients/form-system/                                                                                @island-is/advania
+/libs/form-system                                                                                         @island-is/advania
+/libs/portals/form-system                                                                                 @island-is/advania
 
 /apps/skilavottord/                                                                                       @island-is/deloitte
 /libs/skilavottord/                                                                                       @island-is/deloitte
