@@ -80,31 +80,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
-  e2e-new:
-    needs:
-      - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-runners
-    timeout-minutes: 45
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-      - name: Run unit tests
-        run: |
-          yarn nx run-many --target=e2e --projects="$AFFECTED_PROJECTS"
-
   unicorn-tests:
     name: All projects have some tests
     needs:
@@ -173,6 +148,7 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=4096
       E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
@@ -188,8 +164,8 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      - name: Running e2e tests
-        run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
+      - name: Run e2e tests
+        run: yarn nx run-many --target=e2e --projects="$AFFECTED_PROJECTS"
 
   linting-workspace:
     needs:
