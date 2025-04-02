@@ -642,8 +642,8 @@ export const m = defineMessages({
     id: 'service.portal:educationLicense',
     defaultMessage: 'Starfsleyfi',
   },
-  myEducationLicense: {
-    id: 'service.portal:my-education-license',
+  myOccupationalLicenses: {
+    id: 'service.portal:my-occupational-licenses',
     defaultMessage: 'Mín starfsleyfi',
   },
   educationLicenseDescription: {
@@ -902,10 +902,6 @@ export const m = defineMessages({
   delegation: {
     id: 'service.portal:delegation',
     defaultMessage: 'Mín réttindi',
-  },
-  occupationaLicenses: {
-    id: 'service.portal:occupational-license',
-    defaultMessage: 'Starfsleyfi',
   },
   parentalLeave: {
     id: 'service.portal:parentalLeave',

@@ -10,7 +10,7 @@ import {
 import { CreationOptional } from 'sequelize'
 import { Application } from './application.model'
 import { Value } from './value.model'
-import { ApplicationEvents } from '../../../enums/applicationEvents'
+import { ApplicationEvents } from '@island.is/form-system/shared'
 
 @Table({ tableName: 'application_event' })
 export class ApplicationEvent extends Model<ApplicationEvent> {

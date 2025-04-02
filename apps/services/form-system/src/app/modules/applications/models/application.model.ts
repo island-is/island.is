@@ -14,7 +14,7 @@ import { Dependency } from '../../../dataTypes/dependency.model'
 import { ApplicationEvent } from './applicationEvent.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { Value } from './value.model'
-import { ApplicationStatus } from '../../../enums/applicationStatus'
+import { ApplicationStatus } from '@island.is/form-system/shared'
 
 @Table({ tableName: 'application' })
 export class Application extends Model<Application> {
