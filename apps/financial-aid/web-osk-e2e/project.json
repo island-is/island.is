@@ -10,14 +10,14 @@
       "executor": "@nx/cypress:cypress",
       "options": {
         "cypressConfig": "apps/financial-aid/web-osk-e2e/cypress.config.ts",
-        "devServerTarget": "",
+        "devServerTarget": "financial-aid-web-osk:serve",
         "baseUrl": "http://localhost:4200"
       },
       "configurations": {
         "ci": {
           "devServerTarget": "",
           "baseUrl": "http://localhost:4200",
-          "command": "cross-env NODE_ENV=production yarn nx run financial-aid-web-osk:build:production && node scripts/dockerfile-assets/bash/extract-environment.js dist/apps/financial-aid/web-osk && node dist/apps/financial-aid/web-osk/main.js & yarn nx run financial-aid-web-osk-e2e:e2e:production --headless --production"
+          "command": "cross-env NODE_ENV=production yarn nx run financial-aid-web-osk:build:production && node scripts/dockerfile-assets/bash/extract-environment.js dist/apps/financial-aid/web-osk && node dist/apps/financial-aid/web-osk/main.js & yarn nx run financial-aid-web-osk-e2e:e2e:production --headless --production --record --ciBuildId=${E2E_BUILD_ID:-$(date +%s)}"
         },
         "production": {
           "devServerTarget": ""
