@@ -20,7 +20,7 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
   const [expanded, toggleExpand] = useState<boolean>(false)
 
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const isTablet = width < theme.breakpoints.lg
 
   const onExpandButton = () => {
     toggleExpand(!expanded)
@@ -44,7 +44,7 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
               justifyContent="flexStart"
               onClick={onExpandButton}
               cursor="pointer"
-              paddingRight={isMobile ? 2 : 4}
+              paddingRight={isTablet ? 2 : 4}
             >
               <Button
                 circle
@@ -59,7 +59,7 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
                 variant="primary"
               />
             </Box>
-            <Box paddingRight={isMobile ? 2 : undefined}>
+            <Box paddingRight={isTablet ? 2 : undefined}>
               <Text variant="medium">{paymentGroup.name}</Text>
             </Box>
           </Box>
