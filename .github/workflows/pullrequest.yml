@@ -269,7 +269,10 @@ jobs:
         id: lint-head
         env:
           NX_SKIP_NX_CACHE: true
-        run: set -x; yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT" || echo "There was an error while linting, ignoring"
+        run: |
+          lints=$(yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS") || echo "There was an error while linting, ignoring"
+          echo "$lints" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
+          echo "lints=$lints" | tee -a "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.base.ref }}
@@ -277,7 +280,10 @@ jobs:
         id: lint-base
         env:
           NX_SKIP_NX_CACHE: true
-        run: set -x; yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT" || echo "There was an error while linting, ignoring"
+        run: |
+          lints=$(yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS") || echo "There was an error while linting, ignoring"
+          echo "$lints" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
+          echo "lints=$lints" | tee -a "$GITHUB_OUTPUT"
       - name: No new lint lines
         env:
           HEAD_LINTS: ${{steps.lint-head.outputs.lint-lines || 0}}
@@ -288,6 +294,9 @@ jobs:
             exit 0
           fi
           echo "::error title=Found $((BASE_LINTS - HEAD_LINTS)) additional lint lines::Please fix your lints 🙏"
+          echo "::group::lintdiff"
+          diff <(echo "$BASE_LINTS") <(echo "$HEAD_LINTS")
+          echo "::endgroup::"
           exit 1
 
   lintfix-changed-files:
