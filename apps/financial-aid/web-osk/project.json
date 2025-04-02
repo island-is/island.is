@@ -102,9 +102,16 @@
       "executor": "@nx/eslint:lint"
     },
     "e2e": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/cypress:cypress",
       "options": {
-        "command": "yarn nx e2e-ci {projectName}-e2e"
+        "cypressConfig": "apps/financial-aid/web-osk-e2e/cypress.config.ts",
+        "devServerTarget": "financial-aid-web-osk:serve",
+        "baseUrl": "http://localhost:4200"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": ""
+        }
       }
     },
     "test": {
