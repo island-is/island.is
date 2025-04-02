@@ -62,6 +62,16 @@ export const m = {
       defaultMessage: 'Veldu dómstól',
       description: 'Label á dómstól select einingu',
     },
+    keywordSelectLabel: {
+      id: 'web.verdicts:listPage.keywordSelectLabel',
+      defaultMessage: 'Lykilorð',
+      description: 'Label á lykilorð select einingu',
+    },
+    caseCategorySelectLabel: {
+      id: 'web.verdicts:listPage.caseCategorySelectLabel',
+      defaultMessage: 'Málaflokkar',
+      description: 'Label á "Málaflokkar" select einingu',
+    },
     districtCourtSelectLabel: {
       id: 'web.verdicts:listPage.districtCourtSelectLabel',
       defaultMessage: 'Veldu héraðsdómstól',

@@ -32,6 +32,7 @@ export class VerdictsClientService {
   async getVerdicts(input: {
     pageNumber: number
     searchTerm: string
+    caseNumber?: string
     courtLevel?: string
     keywords?: string[]
     caseCategories?: string[]
@@ -49,6 +50,7 @@ export class VerdictsClientService {
               courtLevel: input.courtLevel,
               keywords: input.keywords,
               caseCategories: input.caseCategories,
+              caseNumber: input.caseNumber,
             },
           })
         : { status: 'rejected', items: [], total: 0 },
@@ -61,6 +63,7 @@ export class VerdictsClientService {
               orderBy: 'publishDate DESC',
               searchTerm: input.searchTerm,
               keywords: input.keywords,
+              caseNumber: input.caseNumber,
             },
           })
         : { status: 'rejected', items: [], total: 0 },

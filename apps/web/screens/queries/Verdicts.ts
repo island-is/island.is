@@ -22,6 +22,9 @@ export const GET_VERDICTS_QUERY = gql`
         page
         courtLevel
         keywords
+        caseNumber
+        caseCategories
+        caseTypes
       }
     }
   }

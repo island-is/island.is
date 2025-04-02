@@ -35,6 +35,7 @@ import {
   type GetVerdictsQueryVariables,
   type WebVerdictCaseCategory,
   type WebVerdictKeyword,
+  type WebVerdictsInput,
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -101,6 +102,9 @@ const useVerdictListState = (props: VerdictsListProps) => {
       [QueryParam.CASE_CATEGORY]: parseAsString
         .withOptions({ clearOnDefault: true })
         .withDefault(''),
+      [QueryParam.CASE_NUMBER]: parseAsString
+        .withOptions({ clearOnDefault: true })
+        .withDefault(''),
     },
     {
       throttleMs: DEBOUNCE_TIME_IN_MS,
@@ -131,14 +135,17 @@ const useVerdictListState = (props: VerdictsListProps) => {
   )
 
   const convertQueryParamsToInput = useCallback(
-    (queryParams: typeof queryState, page: number) => {
+    (queryParams: typeof queryState, page: number): WebVerdictsInput => {
+      const keyword = queryParams[QueryParam.KEYWORD]
+      const category = queryParams[QueryParam.CASE_CATEGORY]
       return {
         page,
         searchTerm: queryParams[QueryParam.SEARCH_TERM],
         courtLevel: extractCourtLevelFromState(queryParams[QueryParam.COURT]),
-        keywords: queryParams[QueryParam.KEYWORD]
-          ? [queryParams[QueryParam.KEYWORD]]
-          : null,
+        caseNumber: queryParams[QueryParam.CASE_NUMBER],
+        keywords: keyword ? [keyword] : null,
+        caseCategories: category ? [category] : null,
+        caseTypes: null,
       }
     },
     [],
@@ -164,12 +171,22 @@ const useVerdictListState = (props: VerdictsListProps) => {
         {
           const input = { ...response.webVerdicts.input }
           delete input['__typename']
+
+          console.log({
+            input,
+            state: convertQueryParamsToInput(
+              queryStateRef.current,
+              pageRef.current,
+            ),
+            response,
+          })
           if (
             !isEqual(
               input,
               convertQueryParamsToInput(queryStateRef.current, pageRef.current),
             )
           ) {
+            console.log({ ignoring: true })
             return
           }
         }
@@ -327,6 +344,13 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 
   const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
 
+  const handleInputKeyDown = (ev: { key: string; target: unknown }) => {
+    if (ev.key === 'Enter') {
+      // Remove focus from input field after pressing enter
+      ;(ev.target as { blur?: () => void })?.blur?.()
+    }
+  }
+
   return (
     <Box className="rs_read">
       <HeadWithSocialSharing title={customPageData?.ogTitle ?? heading}>
@@ -363,12 +387,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     onChange={(ev) => {
                       updateQueryState(QueryParam.SEARCH_TERM, ev.target.value)
                     }}
-                    onKeyDown={(ev) => {
-                      if (ev.key === 'Enter') {
-                        // Remove focus from input field after pressing enter
-                        ;(ev.target as { blur?: () => void })?.blur?.()
-                      }
-                    }}
+                    onKeyDown={handleInputKeyDown}
                     placeholder={formatMessage(
                       m.listPage.searchInputPlaceholder,
                     )}
@@ -475,10 +494,14 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     size="sm"
                     label={formatMessage(m.listPage.caseNumberInputLabel)}
                     name="casenumber-input"
+                    onChange={(ev) => {
+                      updateQueryState(QueryParam.CASE_NUMBER, ev.target.value)
+                    }}
+                    onKeyDown={handleInputKeyDown}
                   />
                   <Stack space={1}>
                     <Select
-                      label="Lykilorð"
+                      label={formatMessage(m.listPage.keywordSelectLabel)}
                       size="sm"
                       options={keywordOptions}
                       value={keywordOptions.find(
@@ -490,22 +513,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                           updateQueryState(QueryParam.KEYWORD, option.value)
                       }}
                     />
-                    <Box display="flex" justifyContent="flexEnd">
-                      <Button
-                        icon="reload"
-                        variant="text"
-                        size="small"
-                        onClick={() => {
-                          updateQueryState(QueryParam.KEYWORD, '')
-                        }}
-                      >
-                        Hreinsa val
-                      </Button>
-                    </Box>
                   </Stack>
                   <Stack space={1}>
                     <Select
-                      label="Málaflokkar"
+                      label={formatMessage(m.listPage.caseCategorySelectLabel)}
                       size="sm"
                       options={caseCategoryOptions}
                       value={caseCategoryOptions.find(
@@ -521,18 +532,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                         }
                       }}
                     />
-                    <Box display="flex" justifyContent="flexEnd">
-                      <Button
-                        icon="reload"
-                        variant="text"
-                        size="small"
-                        onClick={() => {
-                          updateQueryState(QueryParam.CASE_CATEGORY, '')
-                        }}
-                      >
-                        Hreinsa val
-                      </Button>
-                    </Box>
                   </Stack>
                 </Stack>
               </Stack>
