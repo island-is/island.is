@@ -10,7 +10,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { SectionTypes } from '../../../enums/sectionTypes'
+import { SectionTypes } from '@island.is/form-system/shared'
 import { Form } from '../../forms/models/form.model'
 import { Screen } from '../../screens/models/screen.model'
 
