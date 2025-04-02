@@ -89,4 +89,14 @@ export const genericError = defineMessages({
     defaultMessage: 'Reyna aftur',
     description: 'Try again',
   },
+  alreadyPaidTitle: {
+    id: 'payments.generic:alreadyPaidTitle',
+    defaultMessage: 'Greiðsla þegar framkvæmd',
+    description: 'Payment already made',
+  },
+  alreadyPaid: {
+    id: 'payments.generic:alreadyPaid',
+    defaultMessage: 'Það er nú þegar búið að greiða fyrir þessa vöru',
+    description: 'Payment already made',
+  },
 })

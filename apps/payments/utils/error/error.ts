@@ -1,6 +1,6 @@
 import { MessageDescriptor } from 'react-intl'
 
-import { CardErrorCode } from '@island.is/shared/constants'
+import { CardErrorCode, FjsErrorCode } from '@island.is/shared/constants'
 
 import { cardError, genericError } from '../../messages'
 
@@ -14,7 +14,7 @@ export const paymentErrorToTitleAndMessage = (
 ): { title: MessageDescriptor; message: MessageDescriptor } => {
   const { code, meta } = error
 
-  switch (code as CardErrorCode) {
+  switch (code as CardErrorCode | FjsErrorCode) {
     case CardErrorCode.InsufficientFunds:
       return {
         title: cardError.insufficientFundsTitle,
@@ -139,6 +139,11 @@ export const paymentErrorToTitleAndMessage = (
       return {
         title: cardError.verificationDeadlineExceededTitle,
         message: cardError.verificationDeadlineExceeded,
+      }
+    case FjsErrorCode.AlreadyCreatedCharge:
+      return {
+        title: genericError.alreadyPaidTitle,
+        message: genericError.alreadyPaid,
       }
     default:
       return {

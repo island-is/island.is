@@ -35,6 +35,7 @@ import { CatalogItemWithQuantity } from '../../types/charges'
 import {
   fjsErrorMessageToCode,
   generateChargeFJSPayload,
+  mapFjsErrorToCode,
 } from '../../utils/fjsCharge'
 import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfirmation.model'
 import { ChargeResponse } from '../cardPayment/cardPayment.types'
@@ -77,6 +78,8 @@ export class PaymentFlowService {
             id: paymentFlowId,
             organisationId: paymentInfo.organisationId,
             payerNationalId: paymentInfo.payerNationalId,
+            extraData: paymentInfo.extraData,
+            chargeItemSubjectId: paymentInfo.chargeItemSubjectId,
           },
           charges: chargeDetails.catalogItems,
           totalPrice: chargeDetails.totalPrice,
@@ -105,8 +108,15 @@ export class PaymentFlowService {
         },
       }
     } catch (e) {
-      // TODO: Map error codes to PaymentServiceCode
       this.logger.error('Failed to create payment url', e)
+
+      const fjsCode = mapFjsErrorToCode(e, true)
+
+      if (fjsCode !== null) {
+        throw new BadRequestException(fjsCode)
+      }
+
+      // TODO: Map error codes to PaymentServiceCode
       throw new BadRequestException(
         PaymentServiceCode.CouldNotCreatePaymentFlow,
       )
@@ -428,10 +438,7 @@ export class PaymentFlowService {
     } catch (e) {
       this.logger.error(`Failed to create payment charge (${paymentFlowId})`, e)
 
-      const message = e?.body?.error?.message ?? e.message ?? 'Unknown error'
-      const mappedCode = fjsErrorMessageToCode(message)
-
-      throw new BadRequestException(mappedCode)
+      throw new BadRequestException(mapFjsErrorToCode(e))
     }
   }
 

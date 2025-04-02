@@ -6,12 +6,15 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 
 import { VerifyCardInput } from './dtos/verifyCard.input'
-import { PaymentServiceCode } from '@island.is/shared/constants'
+import { FjsErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 import { CreatePaymentFlowInput } from '../paymentFlow/dtos/createPaymentFlow.input'
 import { PaymentMethod, PaymentStatus } from '../../types'
 import { AppModule } from '../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
-import { SavedVerificationPendingData } from './cardPayment.types'
+import {
+  ChargeResponse,
+  SavedVerificationPendingData,
+} from './cardPayment.types'
 import { generateMd } from './cardPayment.utils'
 import { VerificationCallbackInput } from './dtos/verificationCallback.input'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
@@ -20,6 +23,7 @@ import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
 import { getModelToken } from '@nestjs/sequelize'
 import { BadRequestException } from '@nestjs/common'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import { CardPaymentService } from './cardPayment.service'
 
 const charges = [
   {
@@ -30,11 +34,13 @@ const charges = [
   },
 ]
 
+const ON_UPDATE_URL = '/onUpdate'
+
 const getCreatePaymentFlowPayload = (): CreatePaymentFlowInput => ({
   charges,
   payerNationalId: '1234567890',
   availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
-  onUpdateUrl: '/onUpdate',
+  onUpdateUrl: ON_UPDATE_URL,
   organisationId: '5534567890',
 })
 
@@ -460,13 +466,149 @@ describe('CardPaymentController', () => {
       getPaymentFlowStatusSpy.mockRestore()
     })
   })
+
+  it('should refund the payment when fjs charge fails on being already paid', async () => {
+    const cacheCorrelationId = uuid()
+
+    const fetchSpy = jest
+      .spyOn(global, 'fetch')
+      .mockImplementation(async (url, options) => {
+        if (typeof url === 'string') {
+          if (url.includes(ON_UPDATE_URL)) {
+            return {
+              json: async () => ({ isSuccess: true }),
+              status: 200,
+              ok: true,
+            } as Response
+          } else if (url.includes('/Payment/CardPayment')) {
+            return {
+              json: async () =>
+                ({
+                  acquirerReferenceNumber: 'string',
+                  transactionID: 'string',
+                  authorizationCode: 'string',
+                  transactionLifecycleId: 'string',
+                  maskedCardNumber: 'string',
+                  isSuccess: true,
+                  cardInformation: {
+                    cardScheme: 'string',
+                    issuingCountry: 'string',
+                    cardUsage: 'string',
+                    cardCategory: 'string',
+                    outOfScaScope: 'string',
+                    cardProductCategory: 'string',
+                  },
+                  authorizationIdentifier: 'string',
+                  responseCode: 'string',
+                  responseDescription: 'string',
+                  responseTime: 'string',
+                  correlationId: 'string',
+                } as ChargeResponse),
+              status: 200,
+              ok: true,
+            } as Response
+          } else if (url.includes('http://localhost:8081')) {
+            return {
+              json: async () => ({
+                errorCode: 'FjsErrorCode.PaymentAlreadyPaid',
+                errorDescription: 'Payment already paid',
+              }),
+              status: 400,
+              ok: false,
+            } as Response
+          }
+        }
+
+        return {
+          json: async () => ({ error: 'Missing handler' }),
+          status: 500,
+          ok: false,
+        } as Response
+      })
+
+    const cacheSpy = jest
+      .spyOn(cacheManager, 'get')
+      .mockImplementation((key) => {
+        if (key === cacheCorrelationId) {
+          return Promise.resolve({
+            mdStatus: 'mdStatus',
+            cavv: 'cavv',
+            xid: 'xid',
+            dsTransId: 'dsTransId',
+          })
+        }
+        return Promise.resolve({})
+      })
+
+    const chargeInput: ChargeCardInput = {
+      paymentFlowId,
+      amount: 1000,
+      cardNumber: 4242424242424242,
+      expiryMonth: 12,
+      expiryYear: new Date().getFullYear() - 2000,
+      cvc: 123,
+    }
+
+    const getVerificationStatusSpy = jest
+      .spyOn(CardPaymentService.prototype, 'getFullVerificationStatus')
+      .mockResolvedValue({
+        isVerified: true,
+        correlationId: cacheCorrelationId,
+      })
+    const refundPaymentSpy = jest.spyOn(CardPaymentService.prototype, 'refund')
+
+    const getPaymentFlowDetailsSpy = jest
+      .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+      .mockResolvedValue({
+        id: 'test',
+        chargeSubjectItemId: 'itemid',
+      } as any)
+    const getPaymentFlowChargeDetailsSpy = jest
+      .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
+      .mockResolvedValue({
+        catalogItems: charges.map((charge) => ({
+          ...charge,
+          priceAmount: charge.price,
+          performingOrgID: 'TODO',
+          chargeItemName: 'TODO',
+        })),
+        totalPrice: 1000,
+        firstProductTitle: 'TODO',
+      })
+    const getPaymentFlowStatusSpy = jest
+      .spyOn(PaymentFlowService.prototype, 'getPaymentFlowStatus')
+      .mockResolvedValue({
+        paymentStatus: PaymentStatus.UNPAID,
+        updatedAt: new Date(Date.now() - 30 * 1000),
+      })
+    const createPaymentChargeSpy = jest
+      .spyOn(PaymentFlowService.prototype, 'createPaymentCharge')
+      .mockRejectedValue({
+        message: FjsErrorCode.AlreadyCreatedCharge,
+      } as any)
+
+    const response = await server
+      .post('/v1/payments/card/charge')
+      .send(chargeInput)
+
+    expect(refundPaymentSpy).toHaveBeenCalled()
+    expect(response.status).toBe(400)
+
+    const errorCode = response.body.detail
+    expect(errorCode).toBe(FjsErrorCode.AlreadyCreatedCharge)
+
+    getVerificationStatusSpy.mockRestore()
+    refundPaymentSpy.mockRestore()
+    getPaymentFlowDetailsSpy.mockRestore()
+    getPaymentFlowChargeDetailsSpy.mockRestore()
+    getPaymentFlowStatusSpy.mockRestore()
+    createPaymentChargeSpy.mockRestore()
+    fetchSpy.mockRestore()
+    cacheSpy.mockRestore()
+  })
 })
 
-// TODO
 // describe('edge cases', () => {
-//   it('should handle when payment is successful but fjs charge fails')
-//   // Never want to leave a hanging successful payment without refunding
-//   // if there's a reason to (like already paid)
 //   it('should handle when payment is successful but .... ')
 //   it('should not be possible pay with card if it is not one of available payment methods')
 // })

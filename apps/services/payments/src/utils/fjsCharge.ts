@@ -59,9 +59,34 @@ export const generateChargeFJSPayload = ({
   }
 }
 
-export const fjsErrorMessageToCode = (message: string): FjsErrorCode => {
+interface FjsError {
+  message?: string
+  body?: {
+    error?: {
+      code?: number
+      message?: string
+    }
+  }
+}
+
+export const mapFjsErrorToCode = (
+  e: FjsError,
+  onlyKnownCode = false,
+): FjsErrorCode | null => {
+  const message = e?.body?.error?.message ?? e.message ?? 'Unknown error'
+  return fjsErrorMessageToCode(message, onlyKnownCode)
+}
+
+export const fjsErrorMessageToCode = (
+  message: string,
+  onlyKnownCode = false,
+): FjsErrorCode | null => {
   if (message.startsWith('Búið að taka á móti álagningu')) {
     return FjsErrorCode.AlreadyCreatedCharge
+  }
+
+  if (onlyKnownCode) {
+    return null
   }
 
   return FjsErrorCode.FailedToCreateCharge
