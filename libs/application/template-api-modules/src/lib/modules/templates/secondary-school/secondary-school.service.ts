@@ -158,7 +158,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
           title: error.errorValidateCanCreateTitle,
           summary: error.errorValidateCanCreateDescription,
         },
-        500,
+        400,
       )
     }
 
