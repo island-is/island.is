@@ -42,8 +42,8 @@ import {
   ADVERT_QUERY,
   ADVERT_SIMILAR_QUERY,
 } from '../queries/OfficialJournalOfIceland'
-import { m } from './messages'
 import { ORGANIZATION_SLUG } from './constants'
+import { m } from './messages'
 
 const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
   advert,
@@ -156,7 +156,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                   background="purple100"
                   padding={[2, 2, 3]}
                   borderRadius="large"
-                  key={correction.id ?? correction.title}
+                  key={correction.id}
                 >
                   <Stack space={[1, 1, 2]}>
                     <Text variant="h4">

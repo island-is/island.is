@@ -10,6 +10,7 @@ import {
   DatePicker,
   Divider,
   Input,
+  Pagination,
   Select,
   SkeletonLoader,
   Stack,
@@ -57,9 +58,9 @@ import {
   INSTITUTIONS_QUERY,
   TYPES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
+import { ORGANIZATION_SLUG } from './constants'
 import { useAdverts } from './hooks'
 import { m } from './messages'
-import { ORGANIZATION_SLUG } from './constants'
 
 type OJOISearchParams = {
   q: string
@@ -100,7 +101,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     defaultSearchParams.q,
   )
 
-  const { adverts, loading, error, refetch } = useAdverts({
+  const { adverts, paging, loading, error, refetch } = useAdverts({
     vars: {
       department: [defaultSearchParams.deild],
       category: [defaultSearchParams.malaflokkur],
@@ -124,7 +125,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     stofnun: defaultSearchParams.stofnun,
     dagsFra: defaultSearchParams.dagsFra,
     dagsTil: defaultSearchParams.dagsTil,
-    sida: defaultSearchParams.sida,
+    sida: defaultSearchParams.sida ?? 1,
     staerd: defaultSearchParams.staerd,
   })
 
@@ -144,11 +145,13 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
 
       setSearchState((prev) => ({
         ...prev,
+        sida: 1,
         [key]: parsed,
       }))
 
       const searchValues = {
         ...searchState,
+        sida: 1,
         [key]: parsed,
       }
 
@@ -451,6 +454,29 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           ) : (
             <OJOISearchGridView adverts={adverts} locale={locale} />
           )}
+          {searchState.sida && (
+            <Pagination
+              page={searchState.sida}
+              itemsPerPage={searchState.staerd}
+              totalItems={paging?.totalItems}
+              totalPages={paging?.totalPages}
+              renderLink={(page, className, children) => (
+                <button
+                  className={className}
+                  onClick={() => {
+                    try {
+                      window.scrollTo({ top: 0, behavior: 'smooth' })
+                    } catch {
+                      // noop
+                    }
+                    updateSearchStateHandler('sida', page ?? 1)
+                  }}
+                >
+                  {children}
+                </button>
+              )}
+            />
+          )}
         </Stack>
       ) : (
         <Box padding={[2, 3, 4]} border={'standard'} borderRadius="large">
@@ -558,7 +584,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
     stofnun: getStringFromQuery(query.stofnun),
     tegund: getStringFromQuery(query.tegund),
     timabil: getStringFromQuery(query.timabil),
-    sida: page,
+    sida: page ?? 1,
     pageSize,
   }
 
