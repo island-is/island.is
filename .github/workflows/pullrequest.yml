@@ -287,7 +287,8 @@ jobs:
             echo "Lint count has not increased"
             exit 0
           fi
-          echo "Found additional lint lines"
+          echo "Found $((BASE_LINTS - HEAD_LINTS)) additional lint lines" >&2
+          echo "Please fix your lints 🙏" >&2
           exit 1
 
   lintfix-changed-files:
