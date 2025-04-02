@@ -187,3 +187,14 @@ export const getCapitalNumbersOverviewNumbers = (answers: FormValue) => {
     totalCapital,
   }
 }
+
+export const showInfoAllertInOverview = (answers: FormValue) => {
+  const { totalIncome, fixedAssetsTotal, longTerm, incomeLimit } =
+    getOverviewNumbers(answers)
+
+  return (
+    Number(totalIncome) < Number(incomeLimit) &&
+    fixedAssetsTotal === '0' &&
+    longTerm === '0'
+  )
+}

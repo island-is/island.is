@@ -16,13 +16,17 @@ import {
   attachmentsOverviewItems,
   boardMembersOverviewItems,
   capitalNumbersOverviewItems,
+  cemeteryEquitiesAndLiabilitiesOverviewItems,
   debtsOverviewItems,
   equityOverviewItems,
   expensesOverviewItems,
   incomeOverviewItems,
 } from '../../../utils/overviewItems'
 import { formatCurrency } from '../../../utils/currency'
-import { getOverviewNumbers } from '../../../utils/overviewUtils'
+import {
+  getOverviewNumbers,
+  showInfoAllertInOverview,
+} from '../../../utils/overviewUtils'
 import { isCemetryUnderFinancialLimit } from '../../../utils/helpers'
 
 export const overviewSection = buildSection({
@@ -77,19 +81,7 @@ export const overviewSection = buildSection({
         buildOverviewField({
           id: 'debtsAndEquityOverviewCemetryField',
           title: m.debtsAndCash,
-          items: (answers) => {
-            return [
-              {
-                width: 'half',
-                valueText: formatCurrency(
-                  getValueViaPath<string>(
-                    answers,
-                    'equityAndLiabilitiesTotals.equityAndLiabilitiesTotal',
-                  ),
-                ),
-              },
-            ]
-          },
+          items: cemeteryEquitiesAndLiabilitiesOverviewItems,
           backId: 'cemetryEquitiesAndLiabilities',
         }),
         buildOverviewField({
@@ -106,16 +98,7 @@ export const overviewSection = buildSection({
           backId: 'attachments.file',
         }),
         buildAlertMessageField({
-          condition: (answers) => {
-            const { totalIncome, fixedAssetsTotal, longTerm, incomeLimit } =
-              getOverviewNumbers(answers)
-
-            return (
-              Number(totalIncome) < Number(incomeLimit) &&
-              fixedAssetsTotal === '0' &&
-              longTerm === '0'
-            )
-          },
+          condition: showInfoAllertInOverview,
           alertType: 'info',
           id: 'overviewCemetryField',
           title: m.SignatureMessage,

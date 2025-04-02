@@ -331,6 +331,23 @@ export const boardMembersOverviewItems = (
   return parsedCaretakers?.flat() as Array<KeyValueItem>
 }
 
+export const cemeteryEquitiesAndLiabilitiesOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  return [
+    {
+      width: 'half',
+      valueText: formatCurrency(
+        getValueViaPath<string>(
+          answers,
+          'equityAndLiabilitiesTotals.equityAndLiabilitiesTotal',
+        ) ?? '',
+      ),
+    },
+  ]
+}
+
 export const attachmentsOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
