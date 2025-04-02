@@ -82,9 +82,12 @@ export const PaymentGroupTable = () => {
           </T.Row>
         </T.Head>
         <T.Body>
-          {paymentGroups?.map((paymentGroup) => {
-            return <PaymentGroupTableRow paymentGroup={paymentGroup} />
-          })}
+          {paymentGroups?.map((paymentGroup, idx) => (
+            <PaymentGroupTableRow
+              key={`payment-group-table-row-${paymentGroup.name}-${idx}`}
+              paymentGroup={paymentGroup}
+            />
+          ))}
           <T.Row>
             <T.Data
               box={{

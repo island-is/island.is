@@ -71,7 +71,7 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
 
           return (
             <T.Data
-              key={i}
+              key={`payment-group-table-row-value-cell-${i}`}
               box={{
                 className: cn(styles.noWrap, {
                   [styles.expandedColumnCell]: expanded,
@@ -103,7 +103,7 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
         const last = idx === paymentGroup.payments.length - 1
 
         return (
-          <T.Row>
+          <T.Row key={`payment-group-table-nested-row-${idx}`}>
             <T.Data
               box={{
                 className: cn(
@@ -140,7 +140,7 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
 
               return (
                 <T.Data
-                  key={`nested-table-footer-col-${month}`}
+                  key={`payment-group-table-nested-row-cell-${month}`}
                   box={{
                     className: cn(
                       styles.expandedColumnCell,
