@@ -1,5 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
+import { CostField } from './types'
 import {
   RentalAmountIndexTypes,
   RentalHousingCategoryClass,
@@ -48,6 +49,14 @@ export const formatBankInfo = (bankInfo: string) => {
     return formattedBankInfo
   }
   return bankInfo
+}
+
+export const filterEmptyCostItems = (items: CostField[]) => {
+  return (
+    items.filter(
+      (item) => item.description.trim() !== '' || item.amount !== undefined,
+    ) ?? []
+  )
 }
 
 export const formatCurrency = (answer: string) =>

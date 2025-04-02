@@ -9,3 +9,8 @@ export interface ExternalData {
 }
 
 export type StatusProvider = 'failure' | 'success'
+
+export type CostField = {
+  description: string
+  amount?: number
+}

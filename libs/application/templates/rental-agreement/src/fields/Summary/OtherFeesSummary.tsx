@@ -1,9 +1,12 @@
+import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { OtherFeesPayeeOptions, Routes } from '../../lib/constants'
+import { CostField } from '../../lib/types'
 import {
+  filterEmptyCostItems,
   formatCurrency,
   formatDate,
   getOtherFeesHousingFundPayeeOptions,
@@ -13,7 +16,6 @@ import { KeyValue } from './components/KeyValue'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { SummaryCard } from './components/SummaryCard'
 import { summary } from '../../lib/messages'
-import { FC } from 'react'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -174,29 +176,32 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
         </SummaryCardRow>
       )}
       {tenantPaysOtherFees &&
-        otherCostItems.map((item, index) => (
-          <SummaryCardRow
-            editAction={goToScreen}
-            route={route}
-            hasChangeButton={hasChangeButton}
-            isLast={otherCostItems.length - 1 === index}
-          >
-            <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
-              <KeyValue
-                label={summary.otherCostsLabel}
-                value={item.description || ''}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
-              <KeyValue
-                label={summary.otherCostsAmountLabel}
-                value={
-                  (item.amount && formatCurrency(item.amount.toString())) || '-'
-                }
-              />
-            </GridColumn>
-          </SummaryCardRow>
-        ))}
+        filterEmptyCostItems(otherCostItems as CostField[]).map(
+          (item, index) => (
+            <SummaryCardRow
+              editAction={goToScreen}
+              route={route}
+              hasChangeButton={hasChangeButton}
+              isLast={otherCostItems.length - 1 === index}
+            >
+              <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
+                <KeyValue
+                  label={summary.otherCostsLabel}
+                  value={item.description || ''}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
+                <KeyValue
+                  label={summary.otherCostsAmountLabel}
+                  value={
+                    (item.amount && formatCurrency(item.amount.toString())) ||
+                    '-'
+                  }
+                />
+              </GridColumn>
+            </SummaryCardRow>
+          ),
+        )}
     </SummaryCard>
   )
 }

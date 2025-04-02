@@ -134,7 +134,7 @@ export const otherFees = defineMessages({
   },
   otherCostsLabel: {
     id: 'ra.application:otherFees.otherCostsLabel',
-    defaultMessage: 'Skrá annan kostnað sem leigjandi greiðir',
+    defaultMessage: 'Skrá annan kostnað sem leigjandi greiðir (að hámarki 3)',
     description: 'Other costs label',
   },
   otherCostsDescriptionLabel: {

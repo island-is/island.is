@@ -11,15 +11,11 @@ import {
 import { useLocale } from '@island.is/localization'
 import { otherFees as tOtherFees } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
-import { parseCurrency } from '../../lib/utils'
+import { filterEmptyCostItems, parseCurrency } from '../../lib/utils'
 import NumberFormat from 'react-number-format'
+import { CostField } from '../../lib/types'
 
 const MAX_COST_ITEMS = 3
-
-type CostField = {
-  description: string
-  amount?: number
-}
 
 const initialCostItems = [
   {
@@ -41,6 +37,10 @@ export const OtherCostItems: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { id } = field
   const storedValue = getValues(id)
 
+  // TODO: Ákveða:
+  // Ef ég vil hafa það þannig að ég hreinsa upp fyrir notandann ónotaðar línur:
+  // const filteredStoredValue = filterEmptyCostItems(storedValue ?? []);
+  // Skipta storedValue út fyrir filteredStoredValue hér að neðan
   const [costItems, setCostItems] = useState<CostField[]>(
     storedValue?.length ? storedValue : initialCostItems,
   )
@@ -86,6 +86,7 @@ export const OtherCostItems: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 onChange={(e) =>
                   handleInputChange(index, 'description', e.target.value)
                 }
+                required={!!costItem.amount}
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12', '6/12']}>
@@ -107,20 +108,22 @@ export const OtherCostItems: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 inputMode="numeric"
                 thousandSeparator="."
                 decimalSeparator=","
+                required={!!costItem.description}
               />
             </GridColumn>
           </GridRow>
         ))}
-        <Button
-          icon="add"
-          variant="ghost"
-          type="button"
-          size="small"
-          disabled={costItems.length >= MAX_COST_ITEMS}
-          onClick={addCostItem}
-        >
-          {formatMessage(tOtherFees.otherCostsAddLine)}
-        </Button>
+        {costItems.length < MAX_COST_ITEMS && (
+          <Button
+            icon="add"
+            variant="ghost"
+            type="button"
+            size="small"
+            onClick={addCostItem}
+          >
+            {formatMessage(tOtherFees.otherCostsAddLine)}
+          </Button>
+        )}
       </Stack>
     </Box>
   )
