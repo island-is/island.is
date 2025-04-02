@@ -1,6 +1,9 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { ConfigType, XRoadConfig } from '@island.is/nest/config'
-
+import {
+  ConfigType,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
 import { Configuration } from '../../gen/fetch'
 import { NationalRegistryV3ApplicationsClientConfig } from './nationalRegistryV3Applications.config'
 
@@ -9,18 +12,27 @@ export const ApiConfig = {
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof NationalRegistryV3ApplicationsClientConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
     new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-national-registry-v3-applications',
+        organizationSlug: 'thjodskra',
         timeout: config.fetchTimeout,
+        // autoAuth: {
+        //   mode: 'token',
+        //   clientId: config.clientId,
+        //   clientSecret: config.clientSecret,
+        //   scope: [config.scope],
+        //   issuer: '',
+        //   tokenEndpoint: config.endpoint,
+        // },
         autoAuth: {
-          mode: 'token',
-          clientId: config.clientId,
-          clientSecret: config.clientSecret,
-          scope: [config.scope],
-          issuer: '',
-          tokenEndpoint: config.endpoint,
+          mode: 'tokenExchange',
+          issuer: idsClientConfig.issuer,
+          clientId: idsClientConfig.clientId,
+          clientSecret: idsClientConfig.clientSecret,
+          scope: [],
         },
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
@@ -29,5 +41,9 @@ export const ApiConfig = {
         Accept: 'application/json',
       },
     }),
-  inject: [XRoadConfig.KEY, NationalRegistryV3ApplicationsClientConfig.KEY],
+  inject: [
+    XRoadConfig.KEY,
+    NationalRegistryV3ApplicationsClientConfig.KEY,
+    IdsClientConfig.KEY,
+  ],
 }

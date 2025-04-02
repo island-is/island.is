@@ -15,10 +15,14 @@ export class NationalRegistryV3ApplicationsClientService {
   }
 
   async getMyCustodians(auth: User): Promise<string[]> {
-    return this.individualApiWithAuth(auth).einstaklingarKennitalaForsjaYfirGet(
-      {
-        kennitala: auth.nationalId,
-      },
+    const res = await this.individualApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaForsjaYfirGet({
+      kennitala: auth.nationalId,
+    })
+    // TODOx swagger needs to be fixed
+    return ((res as any).forsjaAdilarList as { forsjaKt: string }[]).map(
+      (x) => x.forsjaKt,
     )
   }
 }
