@@ -19,6 +19,7 @@ import {
 import { ComponentRegistry } from '../utils/component-registry'
 import { getRightButtons } from '../utils/get-main-root'
 import { setBadgeCountAsync } from 'expo-notifications'
+import { preferencesStore } from './preferences-store'
 
 export interface Notification {
   id: string
@@ -128,6 +129,7 @@ export const notificationsStore = create<NotificationsStore>(
       },
       async checkUnseen() {
         const client = await getApolloClientAsync()
+        const locale = preferencesStore.getState().locale
 
         try {
           const res = await client.query<
@@ -140,6 +142,7 @@ export const notificationsStore = create<NotificationsStore>(
               input: {
                 limit: 1,
               },
+              locale: locale === 'is-IS' ? 'is' : 'en',
             },
           })
 
