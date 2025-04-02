@@ -297,7 +297,7 @@ jobs:
             echo "Lint count has not increased"
             exit 0
           fi
-          echo "::error title=Found $((BASE_LINTS - HEAD_LINTS)) additional lint lines::Please fix your lints 🙏"
+          echo "::error title=Found $((HEAD_LINTS - BASE_LINTS)) additional lint lines::Please fix your lints 🙏"
           echo "::group::lintdiff"
           diff <(echo "$BASE_LINTS") <(echo "$HEAD_LINTS")
           echo "::endgroup::"
