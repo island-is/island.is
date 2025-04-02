@@ -408,7 +408,7 @@ export const Education = new XroadConf({
 export const NationalRegistry = new XroadConf({
   env: {
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
-      dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
+      dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
       staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
       prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
     },
@@ -898,7 +898,7 @@ export const OfficialJournalOfIceland = new XroadConf({
     XROAD_OFFICIAL_JOURNAL_PATH: {
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
       staging: 'IS-TEST/GOV/10014/DMR-Protected/official-journal',
-      prod: 'IS/GOV/10014/DMR-Protected/official-journal',
+      prod: 'IS/GOV/5804170510/DMR-Protected/official-journal',
     },
   },
 })

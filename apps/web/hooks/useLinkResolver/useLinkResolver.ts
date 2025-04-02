@@ -163,6 +163,18 @@ export const routesTemplate = {
     is: '/s/[slug]',
     en: '/en/o/[slug]',
   },
+  blooddonationrestrictionlist: {
+    is: '/s/blodbankinn/ahrif-a-blodgjof',
+    en: '/en/o/icelandic-blood-bank/affecting-factors',
+  },
+  blooddonationrestrictiondetails: {
+    is: '/s/blodbankinn/ahrif-a-blodgjof/[id]',
+    en: '/en/o/icelandic-blood-bank/affecting-factors/[id]',
+  },
+  organizationparentsubpagechild: {
+    is: '/s/[slug]/[subSlug]/[childSlug]',
+    en: '/en/o/[slug]/[subSlug]/[childSlug]',
+  },
   grantsplaza: {
     is: '/styrkjatorg',
     en: '/en/grants-plaza',
@@ -245,6 +257,10 @@ export const routesTemplate = {
   },
   ojoihome: {
     is: '/stjornartidindi',
+    en: '',
+  },
+  ojoiabout: {
+    is: '/stjornartidindi/um',
     en: '',
   },
   ojoihelp: {
