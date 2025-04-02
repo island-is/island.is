@@ -1,7 +1,8 @@
 import {
   AsyncSearch,
   AsyncSearchOption,
-  Breadcrumbs,
+  Box,
+  ColorSchemeContext,
   Text,
 } from '@island.is/island-ui/core'
 import { useMemo, useRef, useState } from 'react'
@@ -13,11 +14,10 @@ import { useNavigate } from 'react-router-dom'
 import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
 
 interface Props {
-  white?: boolean
   colored?: boolean
 }
 
-export const SearchInput = ({ white, colored }: Props) => {
+export const SearchInput = ({ colored }: Props) => {
   const [query, setQuery] = useState<string>()
   const search = usePortalModulesSearch()
 
@@ -46,11 +46,31 @@ export const SearchInput = ({ white, colored }: Props) => {
                 [styles.active]: active,
               })}
             >
-              <Breadcrumbs
-                items={result.item.breadcrumbs.slice(1).map((b) => ({
-                  title: b,
-                }))}
-              />
+              <Box
+                display="inlineFlex"
+                alignItems="center"
+                flexWrap="wrap"
+                position="relative"
+              >
+                {result.item.breadcrumbs.slice(1).map((crumb, idx) => (
+                  <>
+                    <Box className={styles.breadcrumb}>
+                      <Text variant="eyebrow" color="blue400">
+                        {crumb}
+                      </Text>
+                    </Box>
+                    {idx < result.item.breadcrumbs.length - 2 && (
+                      <Box
+                        borderRadius="full"
+                        background="blue400"
+                        display={'inlineBlock'}
+                        marginY={0}
+                        className={styles.bullet}
+                      />
+                    )}
+                  </>
+                ))}
+              </Box>
               <Text marginTop={1}>{result.item.description}</Text>
             </LinkResolver>
           )
@@ -66,8 +86,6 @@ export const SearchInput = ({ white, colored }: Props) => {
       ref={ref}
       id="my-pages-async-search"
       placeholder="Leita"
-      colored={colored}
-      white={white}
       options={searchResults ?? []}
       inputValue={query}
       openMenuOnFocus

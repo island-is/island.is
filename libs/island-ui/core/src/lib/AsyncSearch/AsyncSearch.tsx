@@ -142,24 +142,22 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
           const filteredOptions = options.filter(filterFunc)
           const shouldShowItems = filteredOptions.length > 0 && isOpen
 
-          const menuContent =
-            shouldShowItems &&
-            filteredOptions.map((item, index) => (
-              <Item
-                index={index}
-                highlightedIndex={highlightedIndex}
-                isActive={highlightedIndex === index}
-                colored={colored}
-                size={size}
-                item={item}
-                {...getItemProps({
-                  key: item.value,
-                  index,
-                  item,
-                  isSelected: options.includes(item),
-                })}
-              />
-            ))
+          const menuContent = filteredOptions.map((item, index) => (
+            <Item
+              index={index}
+              highlightedIndex={highlightedIndex}
+              isActive={highlightedIndex === index}
+              colored={colored}
+              size={size}
+              item={item}
+              {...getItemProps({
+                key: item.value,
+                index,
+                item,
+                isSelected: options.includes(item),
+              })}
+            />
+          ))
 
           const onKeyDown = (event: {
             key: string
@@ -184,6 +182,8 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             inputColor = 'blueberry'
           } else if (colorScheme === 'dark') {
             inputColor = 'dark'
+          } else if (colorScheme === 'blue') {
+            inputColor = 'blue'
           }
 
           return (
@@ -336,6 +336,8 @@ export const AsyncSearchInput = forwardRef<
 
     const darkColorScheme = skipContext ? false : colorSchemeContext === 'dark'
 
+    const blueColorScheme = skipContext ? false : colorSchemeContext === 'blue'
+
     const iconColor = getIconColor(
       whiteColorScheme,
       blueberryColorScheme,
@@ -365,6 +367,7 @@ export const AsyncSearchInput = forwardRef<
         >
           <Input
             {...inputProps}
+            colored={inputProps.colored || blueColorScheme}
             data-testid={dataTestId}
             color={inputColor}
             isOpen={isOpen}
@@ -375,7 +378,10 @@ export const AsyncSearchInput = forwardRef<
             <button
               className={cn(styles.icon, styles.iconSizes[size], {
                 [styles.transparentBackground]:
-                  whiteColorScheme || blueberryColorScheme || darkColorScheme,
+                  whiteColorScheme ||
+                  blueberryColorScheme ||
+                  darkColorScheme ||
+                  blueColorScheme,
                 [styles.focusable]: value,
               })}
               tabIndex={value ? 0 : -1}
