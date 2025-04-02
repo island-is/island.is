@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
+import isEqual from 'lodash/isEqual'
 import {
   parseAsArrayOf,
   parseAsString,
-  useQueryState,
+  useQueryStates,
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
@@ -54,17 +55,18 @@ import { m } from './translations.strings'
 import * as styles from './VerdictsList.css'
 
 const ITEMS_PER_PAGE = 10
+const DEBOUNCE_TIME_IN_MS = 1000
 
 const ALL_COURTS_TAG = ''
 const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómur Reykjavíkur'
 
-const SEARCH_TERM_QUERY_PARAM_KEY = 'q'
-const COURT_QUERY_PARAM_KEY = 'court'
-const KEYWORD_QUERY_PARAM_KEY = 'keyword'
-const CASE_CATEGORY_QUERY_PARAM_KEY = 'category'
-
-const extractCourtLevelFromState = (court: string | null | undefined) =>
-  court || ALL_COURTS_TAG
+enum QueryParam {
+  SEARCH_TERM = 'q',
+  COURT = 'court',
+  KEYWORD = 'keyword',
+  CASE_CATEGORY = 'category',
+  CASE_NUMBER = 'number',
+}
 
 interface VerdictsListProps {
   initialData: {
@@ -76,84 +78,124 @@ interface VerdictsListProps {
   caseCategories: WebVerdictCaseCategory[]
 }
 
-const VerdictsList: CustomScreen<VerdictsListProps> = ({
-  initialData,
-  customPageData,
-  keywords,
-  caseCategories,
-}) => {
-  const searchInputRef = useRef<HTMLInputElement | null>(null)
-  const [data, setData] = useState(initialData)
+const extractCourtLevelFromState = (court: string | null | undefined) =>
+  court || ALL_COURTS_TAG
+
+const useVerdictListState = (props: VerdictsListProps) => {
+  const initialRender = useRef(true)
+  const [queryState, setQueryState] = useQueryStates(
+    {
+      [QueryParam.SEARCH_TERM]: parseAsString
+        .withOptions({
+          clearOnDefault: true,
+        })
+        .withDefault(''),
+      [QueryParam.COURT]: parseAsString
+        .withOptions({
+          clearOnDefault: true,
+        })
+        .withDefault(ALL_COURTS_TAG),
+      [QueryParam.KEYWORD]: parseAsString
+        .withOptions({ clearOnDefault: true })
+        .withDefault(''),
+      [QueryParam.CASE_CATEGORY]: parseAsString
+        .withOptions({ clearOnDefault: true })
+        .withDefault(''),
+    },
+    {
+      throttleMs: DEBOUNCE_TIME_IN_MS,
+      shallow: true,
+    },
+  )
   const [page, setPage] = useState(1)
-  const { format } = useDateUtils()
-  const { formatMessage } = useIntl()
-  const [searchTerm, setSearchTerm] = useQueryState(
-    SEARCH_TERM_QUERY_PARAM_KEY,
-    parseAsString
-      .withOptions({
-        clearOnDefault: true,
-        shallow: false,
+  const [data, setData] = useState(props.initialData)
+  const [total, setTotal] = useState(props.initialData.total)
+  const queryStateRef = useRef<typeof queryState>(queryState)
+  const pageRef = useRef(page)
+
+  const updatePage = useCallback((newPage: number) => {
+    setPage(newPage)
+    pageRef.current = newPage
+  }, [])
+
+  const updateQueryState = useCallback(
+    (key: keyof typeof queryState, value: typeof queryState[typeof key]) => {
+      updatePage(1)
+      setQueryState((previousState) => {
+        const updatedState = { ...previousState, [key]: value }
+        queryStateRef.current = updatedState
+        return updatedState
       })
-      .withDefault(''),
+    },
+    [setQueryState, updatePage],
   )
 
-  useEffect(() => {
-    setData(initialData)
-  }, [initialData])
+  const convertQueryParamsToInput = useCallback(
+    (queryParams: typeof queryState, page: number) => {
+      return {
+        page,
+        searchTerm: queryParams[QueryParam.SEARCH_TERM],
+        courtLevel: extractCourtLevelFromState(queryParams[QueryParam.COURT]),
+        keywords: queryParams[QueryParam.KEYWORD]
+          ? [queryParams[QueryParam.KEYWORD]]
+          : null,
+      }
+    },
+    [],
+  )
 
   const [fetchVerdicts, { loading, error }] = useLazyQuery<
     GetVerdictsQuery,
     GetVerdictsQueryVariables
   >(GET_VERDICTS_QUERY)
 
-  const [courtFilter, setCourtFilter] = useQueryState(
-    COURT_QUERY_PARAM_KEY,
-    parseAsString
-      .withOptions({
-        clearOnDefault: true,
-        shallow: false,
-      })
-      .withDefault(ALL_COURTS_TAG),
-  )
-  const [keywordFilter, setKeywordFilter] = useQueryState(
-    KEYWORD_QUERY_PARAM_KEY,
-    parseAsString
-      .withOptions({ clearOnDefault: true, shallow: false })
-      .withDefault(''),
-  )
-  const [caseCategoryFilter, setCaseCategoryFilter] = useQueryState(
-    CASE_CATEGORY_QUERY_PARAM_KEY,
-    parseAsString
-      .withOptions({ clearOnDefault: true, shallow: false })
-      .withDefault(''),
-  )
-
   useEffect(() => {
-    if (page <= 1) {
+    if (initialRender.current) {
+      initialRender.current = false
       return
     }
 
     fetchVerdicts({
       variables: {
-        input: {
-          page,
-          searchTerm,
-          courtLevel: extractCourtLevelFromState(courtFilter),
-          keywords: keywordFilter ? [keywordFilter] : undefined,
-        },
+        input: convertQueryParamsToInput(queryState, page),
       },
       onCompleted(response) {
-        setData((prevData) => {
-          const verdicts = response.webVerdicts.items
-            .concat(prevData.invisibleVerdicts)
-            // Remove all duplicate verdicts in case there were new verdicts published since last page load
-            .filter(
-              (verdict) =>
-                !verdict.id ||
-                !prevData.visibleVerdicts
-                  .map(({ id }) => id)
-                  .includes(verdict.id),
+        // We skip processing the response if we've changed query params since the request
+        {
+          const input = { ...response.webVerdicts.input }
+          delete input['__typename']
+          if (
+            !isEqual(
+              input,
+              convertQueryParamsToInput(queryStateRef.current, pageRef.current),
             )
+          ) {
+            return
+          }
+        }
+
+        let totalAccordingToFirstPage = total
+        const isFirstPage = response.webVerdicts.input.page === 1
+        if (isFirstPage) {
+          totalAccordingToFirstPage = response.webVerdicts.total
+          setTotal(totalAccordingToFirstPage)
+        }
+
+        setData((prevData) => {
+          let verdicts = [...response.webVerdicts.items]
+
+          if (!isFirstPage) {
+            verdicts = verdicts
+              .concat(prevData.invisibleVerdicts)
+              // Remove all duplicate verdicts in case there were new verdicts published since last page load
+              .filter(
+                (verdict) =>
+                  !verdict.id ||
+                  !prevData.visibleVerdicts
+                    .map(({ id }) => id)
+                    .includes(verdict.id),
+              )
+          }
 
           verdicts.sort((a, b) => {
             if (!a.verdictDate && !b.verdictDate) return 0
@@ -166,23 +208,46 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
           })
 
           return {
-            visibleVerdicts: prevData.visibleVerdicts.concat(
-              verdicts.slice(0, ITEMS_PER_PAGE),
-            ),
+            visibleVerdicts: (isFirstPage
+              ? []
+              : prevData.visibleVerdicts
+            ).concat(verdicts.slice(0, ITEMS_PER_PAGE)),
             invisibleVerdicts: verdicts.slice(ITEMS_PER_PAGE),
-            total: initialData.total,
+            total: totalAccordingToFirstPage,
           }
         })
       },
     })
-  }, [
-    courtFilter,
-    fetchVerdicts,
-    initialData.total,
-    keywordFilter,
+  }, [convertQueryParamsToInput, fetchVerdicts, page, queryState, total])
+
+  return {
+    queryState,
+    updateQueryState,
+    loading,
+    error,
+    data,
     page,
-    searchTerm,
-  ])
+    updatePage,
+    total,
+  }
+}
+
+const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
+  const {
+    queryState,
+    updateQueryState,
+    loading,
+    error,
+    data,
+    page,
+    updatePage,
+    total,
+  } = useVerdictListState(props)
+  const { customPageData, keywords, caseCategories } = props
+
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
+  const { format } = useDateUtils()
+  const { formatMessage } = useIntl()
 
   const heading = formatMessage(m.listPage.heading)
 
@@ -295,11 +360,11 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                   <Input
                     ref={searchInputRef}
                     name="verdict-search-input"
+                    onChange={(ev) => {
+                      updateQueryState(QueryParam.SEARCH_TERM, ev.target.value)
+                    }}
                     onKeyDown={(ev) => {
                       if (ev.key === 'Enter') {
-                        setSearchTerm(searchInputRef.current?.value ?? '')
-                        setPage(1)
-
                         // Remove focus from input field after pressing enter
                         ;(ev.target as { blur?: () => void })?.blur?.()
                       }
@@ -309,15 +374,19 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                     )}
                     icon={{ name: 'search', type: 'outline' }}
                     backgroundColor="blue"
+                    loading={loading}
                   />
                 </Box>
                 <Hidden above="xs">
                   <Select
                     options={courtTags}
-                    value={courtTags.find((tag) => tag.value === courtFilter)}
+                    value={courtTags.find(
+                      (tag) => tag.value === queryState[QueryParam.COURT],
+                    )}
                     label={formatMessage(m.listPage.courtSelectLabel)}
                     onChange={(option) => {
-                      if (option) setCourtFilter(option.value)
+                      if (option)
+                        updateQueryState(QueryParam.COURT, option.value)
                     }}
                     size="sm"
                     backgroundColor="blue"
@@ -326,11 +395,13 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                 <Hidden below="sm">
                   <Inline alignY="center" space={2}>
                     {courtTags.map((tag) => {
-                      let isActive = courtFilter === tag.value
+                      let isActive = queryState[QueryParam.COURT] === tag.value
                       if (
                         !isActive &&
                         tag.value === DEFAULT_DISTRICT_COURT_TAG &&
-                        districtCourtTagValues.includes(courtFilter)
+                        districtCourtTagValues.includes(
+                          queryState[QueryParam.COURT],
+                        )
                       ) {
                         isActive = true
                       }
@@ -339,8 +410,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                           key={tag.value}
                           active={isActive}
                           onClick={() => {
-                            setPage(1)
-                            setCourtFilter(tag.value)
+                            updateQueryState(QueryParam.COURT, tag.value)
                           }}
                         >
                           {tag.label}
@@ -349,17 +419,18 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                     })}
                   </Inline>
                 </Hidden>
-                {districtCourtTagValues.includes(courtFilter) && (
+                {districtCourtTagValues.includes(
+                  queryState[QueryParam.COURT],
+                ) && (
                   <>
                     <Hidden below="sm">
                       <Inline alignY="center" space={2}>
                         {districtCourtTags.map((tag) => (
                           <Tag
                             key={tag.value}
-                            active={courtFilter === tag.value}
+                            active={queryState[QueryParam.COURT] === tag.value}
                             onClick={() => {
-                              setPage(1)
-                              setCourtFilter(tag.value)
+                              updateQueryState(QueryParam.COURT, tag.value)
                             }}
                           >
                             {tag.label}
@@ -371,13 +442,14 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                       <Select
                         options={districtCourtTags}
                         value={districtCourtTags.find(
-                          (tag) => tag.value === courtFilter,
+                          (tag) => tag.value === queryState[QueryParam.COURT],
                         )}
                         label={formatMessage(
                           m.listPage.districtCourtSelectLabel,
                         )}
                         onChange={(option) => {
-                          if (option) setCourtFilter(option.value)
+                          if (option)
+                            updateQueryState(QueryParam.COURT, option.value)
                         }}
                         size="sm"
                         backgroundColor="blue"
@@ -399,19 +471,23 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                   {formatMessage(m.listPage.sidebarFilterHeading)}
                 </Text>
                 <Stack space={5}>
+                  <Input
+                    size="sm"
+                    label={formatMessage(m.listPage.caseNumberInputLabel)}
+                    name="casenumber-input"
+                  />
                   <Stack space={1}>
                     <Select
                       label="Lykilorð"
                       size="sm"
                       options={keywordOptions}
                       value={keywordOptions.find(
-                        (option) => option.value === keywordFilter,
+                        (option) =>
+                          option.value === queryState[QueryParam.KEYWORD],
                       )}
                       onChange={(option) => {
-                        if (option) {
-                          setKeywordFilter(option.value)
-                          setPage(1)
-                        }
+                        if (option)
+                          updateQueryState(QueryParam.KEYWORD, option.value)
                       }}
                     />
                     <Box display="flex" justifyContent="flexEnd">
@@ -420,8 +496,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                         variant="text"
                         size="small"
                         onClick={() => {
-                          setKeywordFilter('')
-                          setPage(1)
+                          updateQueryState(QueryParam.KEYWORD, '')
                         }}
                       >
                         Hreinsa val
@@ -434,12 +509,15 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                       size="sm"
                       options={caseCategoryOptions}
                       value={caseCategoryOptions.find(
-                        (option) => option.value === caseCategoryFilter,
+                        (option) =>
+                          option.value === queryState[QueryParam.CASE_CATEGORY],
                       )}
                       onChange={(option) => {
                         if (option) {
-                          setCaseCategoryFilter(option.value)
-                          setPage(1)
+                          updateQueryState(
+                            QueryParam.CASE_CATEGORY,
+                            option.value,
+                          )
                         }
                       }}
                     />
@@ -449,8 +527,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                         variant="text"
                         size="small"
                         onClick={() => {
-                          setCaseCategoryFilter('')
-                          setPage(1)
+                          updateQueryState(QueryParam.CASE_CATEGORY, '')
                         }}
                       >
                         Hreinsa val
@@ -516,7 +593,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                     }
                   })}
               />
-              {initialData.total > data.visibleVerdicts.length && (
+              {total > data.visibleVerdicts.length && (
                 <Box
                   key={page}
                   paddingTop={4}
@@ -535,12 +612,12 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                   <Button
                     loading={loading}
                     onClick={() => {
-                      setPage((p) => p + 1)
+                      updatePage(page + 1)
                     }}
                   >
                     {formatMessage(m.listPage.seeMoreVerdicts, {
                       remainingVerdictCount:
-                        initialData.total - data.visibleVerdicts.length,
+                        total - data.visibleVerdicts.length,
                     })}
                   </Button>
                 </Box>
@@ -555,17 +632,17 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
 
 VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
   const searchTerm = parseAsString.parseServerSide(
-    query[SEARCH_TERM_QUERY_PARAM_KEY],
+    query[QueryParam.SEARCH_TERM],
   )
-  const court = parseAsString.parseServerSide(query[COURT_QUERY_PARAM_KEY])
+  const court = parseAsString.parseServerSide(query[QueryParam.COURT])
   const caseCategories = parseAsArrayOf(parseAsString).parseServerSide(
-    query[CASE_CATEGORY_QUERY_PARAM_KEY],
+    query[QueryParam.CASE_CATEGORY],
   )
   const caseTypes = parseAsArrayOf(parseAsString).parseServerSide(
     query.caseTypes,
   )
   const keywords = parseAsArrayOf(parseAsString).parseServerSide(
-    query[KEYWORD_QUERY_PARAM_KEY],
+    query[QueryParam.KEYWORD],
   )
 
   const [

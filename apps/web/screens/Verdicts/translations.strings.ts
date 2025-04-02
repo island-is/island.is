@@ -22,6 +22,11 @@ export const m = {
       defaultMessage: 'Héraðsdómstólar',
       description: 'Héraðsdómstólar',
     },
+    caseNumberInputLabel: {
+      id: 'web.verdicts:listPage.caseNumberInputLabel',
+      defaultMessage: 'Málsnúmer',
+      description: 'Málsnúmer (label á málsnúmer input)',
+    },
     showCourtOfAppeal: {
       id: 'web.verdicts:listPage.showCourtOfAppeal',
       defaultMessage: 'Landsréttur',

@@ -19,6 +19,9 @@ export const GET_VERDICTS_QUERY = gql`
       }
       input {
         searchTerm
+        page
+        courtLevel
+        keywords
       }
     }
   }
