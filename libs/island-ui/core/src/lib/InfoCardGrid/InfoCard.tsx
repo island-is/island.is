@@ -65,8 +65,8 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
 
   const hasRevealProps =
     Boolean(restOfProps.revealMoreButtonProps?.revealLabel) &&
-    Boolean(restOfProps.revealMoreButtonProps.hideLabel) &&
-    Boolean(restOfProps.revealMoreButtonProps.revealedText)
+    Boolean(restOfProps.revealMoreButtonProps?.hideLabel) &&
+    Boolean(restOfProps.revealMoreButtonProps?.revealedText)
 
   return (
     <FocusableBox
@@ -100,12 +100,12 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
               }}
             >
               {isAccordionOpen
-                ? restOfProps.revealMoreButtonProps.hideLabel
-                : restOfProps.revealMoreButtonProps.revealLabel}
+                ? restOfProps.revealMoreButtonProps?.hideLabel
+                : restOfProps.revealMoreButtonProps?.revealLabel}
             </Button>
             <AnimateHeight duration={300} height={isAccordionOpen ? 'auto' : 0}>
               <Text variant="small">
-                {restOfProps.revealMoreButtonProps.revealedText}
+                {restOfProps.revealMoreButtonProps?.revealedText}
               </Text>
             </AnimateHeight>
           </Stack>
