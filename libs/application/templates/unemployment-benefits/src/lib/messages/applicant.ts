@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const applicant = {
   general: defineMessages({
     sectionTitle: {
-      id: 'vmst.ub.application:personal.general.sectionTitle',
+      id: 'vmst.ub.application:applicant.general.sectionTitle',
       defaultMessage: 'Umsækjandi',
       description: 'applicant section page title',
     },
