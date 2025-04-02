@@ -101,6 +101,12 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     },
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn nx e2e-ci {projectName}-e2e"
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {

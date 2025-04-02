@@ -23,7 +23,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cypressConfig": "apps/financial-aid/web-osk-e2e/cypress.config.ts",
-        "command": "yarn e2e-ci -n financial-aid-web-osk-e2e -c -d dist/apps/financial-aid/web-osk"
+        "command": "cross-env NODE_ENV=production node ./scripts/e2e-ci.js -n financial-aid-web-osk-e2e -c -d dist/apps/financial-aid/web-osk"
       }
     },
     "lint": {
