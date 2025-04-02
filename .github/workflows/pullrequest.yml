@@ -290,14 +290,16 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
       - name: No new lint lines
         env:
-          HEAD_LINTS: ${{steps.lint-head.outputs.lint-lines || 0}}
-          BASE_LINTS: ${{steps.lint-base.outputs.lint-lines || 0}}
+          HEAD_LINTS: ${{steps.lint-head.outputs.lint-lines}}
+          BASE_LINTS: ${{steps.lint-base.outputs.lint-lines}}
+          HEAD_LINT_COUNT: ${{steps.lint-head.outputs.lint-lines || 0}}
+          BASE_LINT_COUNT: ${{steps.lint-base.outputs.lint-lines || 0}}
         run: |
-          if (( HEAD_LINTS <= BASE_LINTS )); then
+          if (( HEAD_LINT_COUNT <= BASE_LINT_COUNT )); then
             echo "Lint count has not increased"
             exit 0
           fi
-          echo "::error title=Found $((HEAD_LINTS - BASE_LINTS)) additional lint lines::Please fix your lints 🙏"
+          echo "::error title=Found $((HEAD_LINT_COUNT - BASE_LINT_COUNT)) additional lint lines::Please fix your lints 🙏"
           echo "::group::lintdiff"
           diff <(echo "$BASE_LINTS") <(echo "$HEAD_LINTS")
           echo "::endgroup::"
