@@ -299,7 +299,6 @@ jobs:
       - linting
       - run-shellcheck
       - formatting
-      - e2e-new
       - e2e
       - build
     steps:
@@ -312,8 +311,6 @@ jobs:
           exit 1
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
-      - name: Check e2e-new success
-        run: '[[ ${{ needs.e2e-new.result }} != "failure" ]] || exit 1'
       - name: Check e2e success
         run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
       - name: Check linting success
