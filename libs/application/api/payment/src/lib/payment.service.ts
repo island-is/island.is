@@ -70,9 +70,6 @@ export class PaymentService {
     receptionID: string,
     applicationId: string,
   ): Promise<void> {
-    console.log('=========================================')
-    console.log('fulfillPayment', paymentId, receptionID, applicationId)
-    console.log('=========================================')
     try {
       await this.paymentModel.update(
         {
@@ -86,9 +83,6 @@ export class PaymentService {
           },
         },
       )
-      console.log('=========================================')
-      console.log('payment fulfilled', paymentId, receptionID, applicationId)
-      console.log('=========================================')
     } catch (e) {
       this.logger.error('Error fulfilling payment', e)
       throw e
@@ -100,9 +94,6 @@ export class PaymentService {
     paymentId: string,
     paymentUrl: string,
   ): Promise<void> {
-    console.log('=========================================')
-    console.log('addPaymentUrl', applicationId, paymentId, paymentUrl)
-    console.log('=========================================')
     const payment = await this.findPaymentByApplicationId(applicationId)
     const definition = JSON.parse(
       (payment?.definition as unknown as string) ?? '{}', // definition is a JSONB field so it is returned as a string
@@ -130,14 +121,8 @@ export class PaymentService {
       user,
     )
     if (isIslandisPaymentEnabled) {
-      console.log('=========================================')
-      console.log('getStatusIslandis', applicationId)
-      console.log('=========================================')
       return this.getStatusIslandis(user, applicationId)
     } else {
-      console.log('=========================================')
-      console.log('getStatusArk', applicationId)
-      console.log('=========================================')
       return this.getStatusArk(user, applicationId)
     }
   }
@@ -162,16 +147,10 @@ export class PaymentService {
   ): Promise<PaymentStatus> {
     const foundPayment = await this.findPaymentByApplicationId(applicationId)
     if (!foundPayment) {
-      console.log('=========================================')
-      console.log('getStatus', applicationId)
-      console.log('=========================================')
       throw new NotFoundException(
         `payment object was not found for application id ${applicationId}`,
       )
     }
-    console.log('=========================================')
-    console.log('foundPayment', JSON.stringify(foundPayment, null, 2))
-    console.log('=========================================')
 
     const paymentUrl: string = JSON.parse(
       foundPayment.dataValues.definition,
@@ -277,9 +256,6 @@ export class PaymentService {
     applicationId: string,
     performingOrganizationID: string,
   ): Promise<Payment> {
-    console.log('=========================================')
-    console.log('createPaymentModel', applicationId, performingOrganizationID)
-    console.log('=========================================')
     const paymentModel: Pick<
       BasePayment,
       'application_id' | 'fulfilled' | 'amount' | 'definition' | 'expires_at'
@@ -319,9 +295,6 @@ export class PaymentService {
       user,
     )
     if (isIslandisPaymentEnabled) {
-      console.log('=========================================')
-      console.log('islandisCreateCharge', applicationId)
-      console.log('=========================================')
       return this.islandisCreateCharge(
         user,
         performingOrganizationID,
@@ -331,9 +304,6 @@ export class PaymentService {
         locale,
       )
     } else {
-      console.log('=========================================')
-      console.log('arkCreateCharge', applicationId)
-      console.log('=========================================')
       return this.arkCreateCharge(
         user,
         performingOrganizationID,
@@ -376,26 +346,11 @@ export class PaymentService {
     extraData: ExtraData[] | undefined,
     locale?: string | undefined,
   ): Promise<CreateChargeResult> {
-    console.log('=========================================')
-    console.log('chargeItems', JSON.stringify(chargeItems, null, 2))
-    // console.dir(chargeItems, { depth: null })
-    console.log('=========================================')
-    console.log('extraData', JSON.stringify(extraData, null, 2))
-    // console.dir(extraData, { depth: null })
-    console.log('=========================================')
-
     //1. Retrieve charge items from FJS
     const catalogChargeItems = await this.findCatalogChargeItems(
       performingOrganizationID,
       chargeItems,
     )
-    console.log('=========================================')
-    console.log(
-      'catalogChargeItems',
-      JSON.stringify(catalogChargeItems, null, 2),
-    )
-    // console.dir(catalogChargeItems, { depth: null })
-    console.log('=========================================')
 
     //2. Fetch existing payment if any
     let paymentModel = await this.findPaymentByApplicationId(applicationId)
@@ -403,12 +358,6 @@ export class PaymentService {
 
     if (paymentModel) {
       //payment Model already exists something has previously gone wrong.
-
-      console.log('=========================================')
-      console.log('paymentModel EXISTS', JSON.stringify(paymentModel, null, 2))
-      // console.dir(paymentModel, { depth: null })
-      console.log('=========================================')
-
       paymentUrl = JSON.parse(paymentModel.dataValues.definition).paymentUrl
     } else {
       //3. Create new payment entry
@@ -417,10 +366,6 @@ export class PaymentService {
         applicationId,
         performingOrganizationID,
       )
-
-      console.log('=========================================')
-      console.log('returnUrl', await this.getReturnUrl(applicationId))
-      console.log('=========================================')
 
       const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
       onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
@@ -450,10 +395,6 @@ export class PaymentService {
           },
         })
 
-      console.log('=========================================')
-      console.log('paymentResult', JSON.stringify(paymentResult, null, 2))
-      console.log('=========================================')
-
       paymentUrl =
         locale && locale === 'en'
           ? paymentResult.urls.en
@@ -464,13 +405,8 @@ export class PaymentService {
     }
 
     //5. Update payment with user4 from charge result
-
     await this.setUser4(applicationId, paymentModel.id, 'user4')
     this.auditPaymentCreation(user, applicationId, paymentModel.id)
-
-    console.log('=========================================')
-    console.log('paymentModel', JSON.stringify(paymentModel, null, 2))
-    console.log('=========================================')
 
     return {
       id: paymentModel.id,
@@ -714,14 +650,6 @@ export class PaymentService {
     const returnUrl = new URL(this.config.clientLocationOrigin)
     returnUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
     returnUrl.search = 'done'
-
-    console.log('=========================================')
-    console.log(
-      'returnUrl',
-      `${this.config.clientLocationOrigin}/${applicationSlug}/${applicationId}?done`,
-    )
-    console.log('returnUrl parsed', returnUrl.toString())
-    console.log('=========================================')
 
     return returnUrl.toString()
   }

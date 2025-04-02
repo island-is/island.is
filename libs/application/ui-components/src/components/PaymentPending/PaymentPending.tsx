@@ -71,9 +71,6 @@ export const PaymentPending: FC<
       }
       return
     }
-    console.log('=========================================')
-    console.log('payment fulfilled', paymentStatus)
-    console.log('=========================================')
     stopPolling()
     submitApplication()
     hasSubmitted.current = true
