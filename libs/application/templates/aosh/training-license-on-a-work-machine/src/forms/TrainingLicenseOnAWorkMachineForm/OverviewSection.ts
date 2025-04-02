@@ -32,7 +32,7 @@ export const overviewSection = buildSection({
         }),
         buildOverviewField({
           id: 'overviewMachineTenure',
-          title: '',
+          title: overview.labels.machineTenure,
           backId: 'certificateOfTenureMultiField',
           bottomLine: false,
           items: getMachineTenureOverviewInformation,

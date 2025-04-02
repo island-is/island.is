@@ -14,11 +14,11 @@ export interface Company {
   contactName: string
   contactPhoneNumber: string
   contactEmail: string
+  machineRegistrationNumbers: string[]
 }
 
 export interface CertificateOfTenure {
   machineRegistrationNumber: string
-  licenseCategoryPrefix: string
   machineType: string
   dateWorkedOnMachineFrom: Date
   dateWorkedOnMachineTo: Date

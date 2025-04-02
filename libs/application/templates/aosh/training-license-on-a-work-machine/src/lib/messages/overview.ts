@@ -64,7 +64,7 @@ export const overview = {
     },
     assignee: {
       id: 'aosh.tlwm.application:overview.labels.assignee',
-      defaultMessage: 'Staðfestingaraðili',
+      defaultMessage: 'Staðfestingaraðili {value}',
       description: 'Assignee label on overview page',
     },
   }),
@@ -130,6 +130,11 @@ export const overview = {
       id: 'aosh.tlwm.application:overview.assignee.assigneeEmail',
       defaultMessage: 'Netfang tengiliðs: {value}',
       description: `Overview assignee information email label`,
+    },
+    workMachines: {
+      id: 'aosh.tlwm.application:overview.assignee.workMachines',
+      defaultMessage: 'Vinnuvél/ar: {value}',
+      description: `Overview assignee information work machines label`,
     },
   }),
   certificateOfTenure: defineMessages({

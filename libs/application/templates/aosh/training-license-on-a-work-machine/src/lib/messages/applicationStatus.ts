@@ -21,13 +21,13 @@ export const applicationStatus = {
   labels: defineMessages({
     actionCardTitle: {
       id: 'aosh.tlwm.application:applicationStatus.labels.actionCardTitle',
-      defaultMessage: 'Samþykki vinnuveitanda',
+      defaultMessage: 'Samþykki fyrir starfstíma á vinnuvélar: {value}',
       description: `pplication status action card title`,
     },
     actionCardMessage: {
       id: 'aosh.tlwm.application:applicationStatus.labels.actionCardMessage',
       defaultMessage:
-        'Beðið er eftir að vinnuveitandi gefi út vottorð um starfstíma',
+        'Beðið er eftir að samþykktaraðili staðfesti starfstíma á vinnuvélar',
       description: `Application status action card message`,
     },
     actionCardTag: {

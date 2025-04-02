@@ -125,11 +125,11 @@ export const certificateOfTenureSection = buildSection({
                   return data
                     ? [
                         {
-                          key: `certificateOfTenure[${index}].practicalRight`,
+                          key: `certificateOfTenure[${index}].machineType`,
                           value: data.getTypeByRegistrationNumber.name,
                         },
                         {
-                          key: `certificateOfTenure[${index}].machineType`,
+                          key: `certificateOfTenure[${index}].practicalRight`,
                           value: `${selectedCategory.categoryPrefix} - ${
                             lang === 'is'
                               ? selectedCategory.categoryName
@@ -209,15 +209,15 @@ export const certificateOfTenureSection = buildSection({
                 return []
               },
             },
-            practicalRight: {
-              component: 'input',
-              label: certificateOfTenure.labels.practicalRight,
-              width: 'half',
-              readonly: true,
-            },
             machineType: {
               component: 'input',
               label: certificateOfTenure.labels.machineType,
+              width: 'half',
+              readonly: true,
+            },
+            practicalRight: {
+              component: 'input',
+              label: certificateOfTenure.labels.practicalRight,
               readonly: true,
             },
             alertTest: {

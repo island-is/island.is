@@ -24,6 +24,7 @@ import { NotificationsService } from '../../../../notification/notifications.ser
 import { NotificationType } from '../../../../notification/notificationsTemplates'
 import { generateApplicationDeleteEmail } from './emailGenerators/applicationDeleteEmail'
 import { generateApplicationDeleteSms } from './smsGenerators/applicationDeleteSms'
+import { TrainingLicenseOnAWorkMachine } from '@island.is/application/templates/aosh/training-license-on-a-work-machine'
 @Injectable()
 export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateApiService {
   constructor(
@@ -185,21 +186,21 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
   }: TemplateApiModuleActionProps): Promise<void> {
     // Submit application to AOSH
     const applicant = getCleanApplicantInformation(application)
-    const companyList = getCleanCompanyInformationList(application)
-    const certificateOfTenure = getCleanCertificateOfTenure(application)
+    const companiesWorkedFor = getCleanCompanyInformationList(application)
+    const teachingLicenseMachineWorkedOnDtos =
+      getCleanCertificateOfTenure(application)
+    const certificateOfTenure = getValueViaPath<
+      TrainingLicenseOnAWorkMachine['certificateOfTenure']
+    >(application.answers, 'certificateOfTenure')
     await this.workMachineClientService
       .machineLicenseTeachingApplication(auth, {
         xCorrelationID: application.id,
         machineLicenseTeachingApplicationCreateDto: {
           applicant,
-          company: companyList[0], // TODO: Change when new service is ready
-          machineRegistrationNumber:
-            certificateOfTenure.machineRegistrationNumber,
-          licenseCategoryPrefix: certificateOfTenure.licenseCategoryPrefix,
-          machineType: certificateOfTenure.machineType,
-          dateWorkedOnMachineFrom: certificateOfTenure.dateWorkedOnMachineFrom,
-          dateWorkedOnMachineTo: certificateOfTenure.dateWorkedOnMachineTo,
-          hoursWorkedOnMachine: certificateOfTenure.hoursWorkedOnMachine,
+          companiesWorkedFor,
+          licenseCategoryPrefix:
+            certificateOfTenure?.[0].licenseCategoryPrefix ?? '',
+          teachingLicenseMachineWorkedOnDtos,
         },
       })
       .catch((error) => {

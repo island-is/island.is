@@ -78,6 +78,7 @@ export const getCleanCompanyInformationList = (
           contactName: '',
           contactPhoneNumber: '',
           contactEmail: '',
+          machineRegistrationNumbers: [],
         },
       ]
     : companyAndAssignee.map((info) => ({
@@ -87,37 +88,25 @@ export const getCleanCompanyInformationList = (
         contactName: info?.assignee.name ?? '',
         contactPhoneNumber: info?.assignee.phone ?? '',
         contactEmail: info?.assignee.email ?? '',
+        machineRegistrationNumbers: info?.workMachine ?? [],
       }))
 }
 
 export const getCleanCertificateOfTenure = (
   application: Application,
-): CertificateOfTenure => {
+): CertificateOfTenure[] => {
   const certificateOfTenure = getValueViaPath<
     TrainingLicenseOnAWorkMachine['certificateOfTenure']
   >(application.answers, 'certificateOfTenure')
-  return {
-    machineRegistrationNumber: certificateOfTenure
-      ? certificateOfTenure[0]?.machineNumber ?? ''
-      : '',
-    licenseCategoryPrefix: certificateOfTenure
-      ? certificateOfTenure[0]?.licenseCategoryPrefix ?? ''
-      : '',
-    machineType: certificateOfTenure
-      ? certificateOfTenure[0]?.machineType ?? ''
-      : '',
-    dateWorkedOnMachineFrom: certificateOfTenure
-      ? certificateOfTenure[0]?.dateFrom
-        ? new Date(certificateOfTenure[0].dateFrom)
-        : new Date()
-      : new Date(),
-    dateWorkedOnMachineTo: certificateOfTenure
-      ? certificateOfTenure[0]?.dateTo
-        ? new Date(certificateOfTenure[0].dateTo)
-        : new Date()
-      : new Date(),
-    hoursWorkedOnMachine: certificateOfTenure
-      ? parseInt(certificateOfTenure[0]?.tenureInHours ?? '0', 10)
-      : 0,
-  }
+  return (
+    certificateOfTenure?.map(
+      ({ machineNumber, machineType, dateFrom, dateTo, tenureInHours }) => ({
+        machineRegistrationNumber: machineNumber,
+        machineType: machineType,
+        dateWorkedOnMachineFrom: new Date(dateFrom),
+        dateWorkedOnMachineTo: new Date(dateTo),
+        hoursWorkedOnMachine: parseInt(tenureInHours, 10),
+      }),
+    ) ?? []
+  )
 }
