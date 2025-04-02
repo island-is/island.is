@@ -392,6 +392,7 @@ export class PaymentService {
             returnUrl: await this.getReturnUrl(applicationId),
             redirectToReturnUrlOnSuccess: true,
             extraData,
+            chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
           },
         })
 
@@ -404,7 +405,7 @@ export class PaymentService {
       await paymentModel.reload()
     }
 
-    //5. Update payment with user4 from charge result
+    //5. Update payment with a fixed user4 since services-payments does not need it
     await this.setUser4(applicationId, paymentModel.id, 'user4')
     this.auditPaymentCreation(user, applicationId, paymentModel.id)
 
