@@ -23,6 +23,7 @@ import {
 } from '../../../utils/overviewItems'
 import { formatCurrency } from '../../../utils/currency'
 import { getOverviewNumbers } from '../../../utils/overviewUtils'
+import { isCemetryUnderFinancialLimit } from '../../../utils/helpers'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -39,29 +40,34 @@ export const overviewSection = buildSection({
           items: aboutOverviewItems,
         }),
         buildOverviewField({
-          id: 'expensesOverviewCemetryField',
+          id: 'incomeOverviewCemetryField',
           title: m.income,
           items: incomeOverviewItems,
+          backId: 'cemetryIncomeAndExpense',
         }),
         buildOverviewField({
           id: 'expensesOverviewCemetryField',
           title: m.expenses,
           items: expensesOverviewItems,
+          backId: 'cemetryIncomeAndExpense',
         }),
         buildOverviewField({
           id: 'capitalNumbersOverviewCemetryField',
           title: m.capitalNumbers,
           items: capitalNumbersOverviewItems,
+          backId: 'capitalNumber',
         }),
         buildOverviewField({
           id: 'assetsOverviewCemetryField',
           title: m.properties,
           items: assetsOverviewItems,
+          backId: 'cemetryEquitiesAndLiabilities',
         }),
         buildOverviewField({
           id: 'liabilitiesOverviewCemetryField',
           title: m.debts,
           items: debtsOverviewItems,
+          backId: 'cemetryEquitiesAndLiabilities',
         }),
         buildOverviewField({
           id: 'equityOverviewCemetryField',
@@ -84,16 +90,20 @@ export const overviewSection = buildSection({
               },
             ]
           },
+          backId: 'cemetryEquitiesAndLiabilities',
         }),
         buildOverviewField({
+          condition: isCemetryUnderFinancialLimit,
           id: 'cemeteryBoardmembersOverviewCemetryField',
           title: m.cemeteryBoardmembers,
           items: boardMembersOverviewItems,
+          backId: 'caretakers',
         }),
         buildOverviewField({
           id: 'fileOverviewCemetryField',
           title: m.files,
           attachments: attachmentsOverviewItems,
+          backId: 'attachments.file',
         }),
         buildAlertMessageField({
           condition: (answers) => {
