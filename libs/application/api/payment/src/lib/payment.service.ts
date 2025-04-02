@@ -354,17 +354,29 @@ export class PaymentService {
 
     //2. Fetch existing payment if any
     let paymentModel = await this.findPaymentByApplicationId(applicationId)
+    console.log('===============================================')
+    console.log('paymentModel', JSON.stringify(paymentModel, null, 2))
+    console.log('===============================================')
     let paymentUrl = ''
 
     if (!paymentModel) {
       // payment Model does not exist so we need to create a new one
+      console.log('===============================================')
+      console.log('creating new payment model')
+      console.log('===============================================')
       paymentModel = await this.createPaymentModel(
         catalogChargeItems,
         applicationId,
         performingOrganizationID,
       )
     } else {
+      console.log('===============================================')
+      console.log('payment model already exists')
+      console.log('===============================================')
       paymentUrl = JSON.parse(paymentModel.dataValues.definition).paymentUrl
+      console.log('===============================================')
+      console.log('paymentUrl', paymentUrl)
+      console.log('===============================================')
       if (paymentUrl) {
         // payment url is set, meaning a flow was created so we can use that
         return {
@@ -372,6 +384,9 @@ export class PaymentService {
           paymentUrl,
         }
       } else {
+        console.log('===============================================')
+        console.log('creating new payment flow')
+        console.log('===============================================')
         // payment url is not set, meaning no flow was created so we need to create a new one
         const paymentFlow = await this.createPaymentFlow(
           catalogChargeItems,
@@ -383,6 +398,9 @@ export class PaymentService {
         )
         paymentUrl =
           locale && locale === 'en' ? paymentFlow.urls.en : paymentFlow.urls.is
+        console.log('===============================================')
+        console.log('paymentUrl', JSON.stringify(paymentUrl, null, 2))
+        console.log('===============================================')
       }
     }
 
