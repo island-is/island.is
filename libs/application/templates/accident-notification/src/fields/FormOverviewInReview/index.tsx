@@ -5,9 +5,8 @@ import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { inReview, overview, thirdPartyComment } from '../../lib/messages'
-import { ReviewApprovalEnum } from '../../types'
-import { FormOverview } from '../FormOverview'
 import { ConfirmationModal } from './ConfirmationModal'
+import { ReviewApprovalEnum } from '../../utils/enums'
 
 type Props = {
   field: {
@@ -59,14 +58,6 @@ export const FormOverviewInReview = ({
   }
   return (
     <>
-      <Text variant="h1" marginBottom={2}>
-        {formatMessage(overview.general.sectionTitle)}
-      </Text>
-      <FormOverview
-        field={field}
-        application={application}
-        goToScreen={() => null}
-      />
       <Box display="flex" justifyContent="flexEnd" marginBottom={6}>
         <Button icon="attach" variant="utility" onClick={goToAttachmentScreen}>
           {formatMessage(overview.labels.missingDocumentsButton)}

@@ -9,13 +9,19 @@ import {
 } from '@island.is/auth-nest-tools'
 import { FormApplicantTypesService } from './formApplicantTypes.service'
 import { FormApplicantType } from '../../models/formApplicantTypes.model'
-import { FormApplicantTypeCreateInput, FormApplicantTypeDeleteInput, FormApplicantTypeUpdateInput } from '../../dto/formApplicantType.input'
+import {
+  FormApplicantTypeCreateInput,
+  FormApplicantTypeDeleteInput,
+  FormApplicantTypeUpdateInput,
+} from '../../dto/formApplicantType.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class FormApplicantTypesResolver {
-  constructor(private readonly formApplicantTypesService: FormApplicantTypesService) { }
+  constructor(
+    private readonly formApplicantTypesService: FormApplicantTypesService,
+  ) {}
 
   @Mutation(() => FormApplicantType, {
     name: 'createFormSystemApplicantType',
@@ -34,18 +40,18 @@ export class FormApplicantTypesResolver {
   async deleteFormApplicantType(
     @Args('input', { type: () => FormApplicantTypeDeleteInput })
     input: FormApplicantTypeDeleteInput,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<void> {
     return this.formApplicantTypesService.deleteFormApplicantType(user, input)
   }
 
   @Mutation(() => Boolean, {
-    name: 'updateFormSystemApplicantType'
+    name: 'updateFormSystemApplicantType',
   })
   async updateFormApplicantType(
     @Args('input', { type: () => FormApplicantTypeUpdateInput })
     input: FormApplicantTypeUpdateInput,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ): Promise<void> {
     return this.formApplicantTypesService.updateFormApplicantType(user, input)
   }
