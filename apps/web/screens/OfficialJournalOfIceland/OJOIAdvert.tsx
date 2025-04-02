@@ -42,8 +42,8 @@ import {
   ADVERT_QUERY,
   ADVERT_SIMILAR_QUERY,
 } from '../queries/OfficialJournalOfIceland'
-import { m } from './messages'
 import { ORGANIZATION_SLUG } from './constants'
+import { m } from './messages'
 
 const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
   advert,
