@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { CostField } from './types'
 import {
   OtherFeesPayeeOptions,
   RentalAmountIndexTypes,
@@ -24,6 +25,9 @@ const isValidMeterStatus = (value: string) => {
   const meterStatusRegex = /^[0-9]{1,10}(,[0-9])?$/
   return meterStatusRegex.test(value)
 }
+
+const hasInvalidCostItems = (items: CostField[]) =>
+  items.some((i) => i.hasError)
 
 const checkIfNegative = (inputNumber: string) => {
   if (Number(inputNumber) < 0) {
@@ -622,6 +626,7 @@ const securityDeposit = z
 const otherCostItemsSchema = z.object({
   description: z.string().optional(),
   amount: z.number().optional(),
+  hasError: z.boolean().optional(),
 })
 
 const otherFees = z
@@ -756,6 +761,18 @@ const otherFees = z
           path: ['heatingCostMeterStatusDate'],
         })
       }
+    }
+
+    if (
+      data.otherCostItems &&
+      hasInvalidCostItems(data.otherCostItems as CostField[])
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.otherFees.errorOtherCost,
+        path: ['otherCostItems'],
+      })
     }
     return true
   })

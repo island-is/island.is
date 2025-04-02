@@ -11,7 +11,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { otherFees as tOtherFees } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
-import { filterEmptyCostItems, parseCurrency } from '../../lib/utils'
+import { isCostItemValid, parseCurrency } from '../../lib/utils'
 import NumberFormat from 'react-number-format'
 import { CostField } from '../../lib/types'
 
@@ -30,17 +30,14 @@ const getAmountValue = (value: string) => {
 
 export const OtherCostItems: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
+  error,
 }) => {
   const { formatMessage } = useLocale()
 
-  const { setValue, getValues } = useFormContext()
+  const { clearErrors, setValue, getValues } = useFormContext()
   const { id } = field
   const storedValue = getValues(id)
 
-  // TODO: Ákveða:
-  // Ef ég vil hafa það þannig að ég hreinsa upp fyrir notandann ónotaðar línur:
-  // const filteredStoredValue = filterEmptyCostItems(storedValue ?? []);
-  // Skipta storedValue út fyrir filteredStoredValue hér að neðan
   const [costItems, setCostItems] = useState<CostField[]>(
     storedValue?.length ? storedValue : initialCostItems,
   )
@@ -60,7 +57,9 @@ export const OtherCostItems: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       ...updatedItems[index],
       [field]: field === 'amount' ? getAmountValue(value) : value,
     }
+    updatedItems[index].hasError = !isCostItemValid(updatedItems[index])
     handleUpdateValues(updatedItems)
+    clearErrors(id)
   }
 
   const addCostItem = () => {
@@ -87,6 +86,11 @@ export const OtherCostItems: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   handleInputChange(index, 'description', e.target.value)
                 }
                 required={!!costItem.amount}
+                errorMessage={
+                  error && costItem.hasError && !costItem.description
+                    ? formatMessage(tOtherFees.errorOtherCostDescription)
+                    : ''
+                }
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12', '6/12']}>
@@ -109,6 +113,11 @@ export const OtherCostItems: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 thousandSeparator="."
                 decimalSeparator=","
                 required={!!costItem.description}
+                errorMessage={
+                  error && costItem.hasError && !costItem.amount
+                    ? formatMessage(tOtherFees.errorOtherCostAmount)
+                    : ''
+                }
               />
             </GridColumn>
           </GridRow>

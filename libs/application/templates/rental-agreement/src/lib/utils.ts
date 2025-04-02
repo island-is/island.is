@@ -51,13 +51,15 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const filterEmptyCostItems = (items: CostField[]) => {
-  return (
-    items.filter(
-      (item) => item.description.trim() !== '' || item.amount !== undefined,
-    ) ?? []
-  )
-}
+export const isCostItemValid = (item: CostField) =>
+  (item.description.trim() !== '' && item.amount !== undefined) ||
+  (item.description.trim() === '' && item.amount === undefined)
+
+export const isEmptyCostItem = (item: CostField) =>
+  item.description.trim() === '' && item.amount === undefined
+
+export const filterEmptyCostItems = (items: CostField[]) =>
+  items.filter((item) => !isEmptyCostItem(item)) ?? []
 
 export const formatCurrency = (answer: string) =>
   answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'

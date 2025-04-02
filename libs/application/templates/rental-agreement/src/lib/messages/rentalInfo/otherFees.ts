@@ -194,4 +194,19 @@ export const otherFees = defineMessages({
     defaultMessage: 'Sláðu inn stöðu í tölustöfum með mest einum aukastaf',
     description: 'Error message when meter status is not valid',
   },
+  errorOtherCost: {
+    id: 'ra.application:dataSchema.errorOtherCost',
+    defaultMessage: 'Hver kostnaðarliður þarf að hafa bæði lýsingu og upphæð',
+    description: 'Error when cost item is invalid',
+  },
+  errorOtherCostDescription: {
+    id: 'ra.application:dataSchema.errorOtherCostDescription',
+    defaultMessage: 'Kostnaðarlið vantar',
+    description: 'Error message when description is missing',
+  },
+  errorOtherCostAmount: {
+    id: 'ra.application:dataSchema.errorOtherCostAmount',
+    defaultMessage: 'Upphæð vantar',
+    description: 'Error message when amount is missing',
+  },
 })
