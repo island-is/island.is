@@ -40,32 +40,33 @@ export class FieldsService {
   }
 
   async createField(auth: User, input: CreateFieldInput): Promise<Field> {
-    const response = await this.fieldsApiWithAuth(auth)
-      .fieldsControllerCreate(input as FieldsControllerCreateRequest)
-
+    const response = await this.fieldsApiWithAuth(auth).fieldsControllerCreate(
+      input as FieldsControllerCreateRequest,
+    )
     return response
   }
 
   async deleteField(auth: User, input: DeleteFieldInput): Promise<void> {
-    await this.fieldsApiWithAuth(auth)
-      .fieldsControllerDelete(input as FieldsControllerDeleteRequest)
+    await this.fieldsApiWithAuth(auth).fieldsControllerDelete(
+      input as FieldsControllerDeleteRequest,
+    )
   }
 
   async updateField(auth: User, input: UpdateFieldInput): Promise<void> {
-    await this.fieldsApiWithAuth(auth)
-      .fieldsControllerUpdate(input as unknown as FieldsControllerUpdateRequest)
+    await this.fieldsApiWithAuth(auth).fieldsControllerUpdate(
+      input as unknown as FieldsControllerUpdateRequest,
+    )
   }
 
   async updateFieldsDisplayOrder(
     auth: User,
     input: UpdateFieldsDisplayOrderInput,
   ): Promise<void> {
-    await this.fieldsApiWithAuth(auth)
-      .fieldsControllerUpdateDisplayOrder({
-        updateFieldsDisplayOrderDto: {
-          fieldsDisplayOrderDto:
-            input.updateFieldsDisplayOrderDto as FieldDisplayOrderDto[],
-        },
-      })
+    await this.fieldsApiWithAuth(auth).fieldsControllerUpdateDisplayOrder({
+      updateFieldsDisplayOrderDto: {
+        fieldsDisplayOrderDto:
+          input.updateFieldsDisplayOrderDto as FieldDisplayOrderDto[],
+      },
+    })
   }
 }

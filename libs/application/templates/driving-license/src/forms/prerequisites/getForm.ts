@@ -7,7 +7,6 @@ import { sectionExternalData } from './sectionExternalData'
 import { sectionApplicationFor } from './sectionApplicationFor'
 import { sectionRequirements } from './sectionRequirements'
 import { sectionExistingApplication } from './sectionExistingApplication'
-import { sectionDigitalLicenseInfo } from './sectionDigitalLicenseInfo'
 import { sectionAdvancedLicenseSelection } from './sectionAdvancedLicenseSelection'
 
 interface DrivingLicenseFormConfig {
@@ -49,7 +48,6 @@ export const getForm = ({
               ]
             : []),
           ...(allowAdvanced ? [sectionAdvancedLicenseSelection] : []),
-          sectionDigitalLicenseInfo,
           sectionRequirements,
         ],
       }),

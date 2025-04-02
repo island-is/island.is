@@ -21,7 +21,7 @@ export class ApplicantsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private formApplicantTypesApi: FormApplicantTypesApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -42,11 +42,11 @@ export class ApplicantsService {
     auth: User,
     input: CreateApplicantInput,
   ): Promise<Applicant> {
-    const response = await this.applicantsApiWithAuth(auth)
-      .formApplicantTypesControllerCreate(
-        input as FormApplicantTypesControllerCreateRequest,
-      )
-
+    const response = await this.applicantsApiWithAuth(
+      auth,
+    ).formApplicantTypesControllerCreate(
+      input as FormApplicantTypesControllerCreateRequest,
+    )
     return response as Applicant
   }
 
@@ -54,20 +54,17 @@ export class ApplicantsService {
     auth: User,
     input: DeleteApplicantInput,
   ): Promise<void> {
-    await this.applicantsApiWithAuth(auth)
-      .formApplicantTypesControllerDelete(
-        input as FormApplicantTypesControllerDeleteRequest,
-      )
+    await this.applicantsApiWithAuth(auth).formApplicantTypesControllerDelete(
+      input as FormApplicantTypesControllerDeleteRequest,
+    )
   }
 
   async updateApplicant(
     auth: User,
     input: UpdateApplicantInput,
   ): Promise<void> {
-    await this.applicantsApiWithAuth(auth)
-      .formApplicantTypesControllerUpdate(
-        input as FormApplicantTypesControllerUpdateRequest,
-      )
-
+    await this.applicantsApiWithAuth(auth).formApplicantTypesControllerUpdate(
+      input as FormApplicantTypesControllerUpdateRequest,
+    )
   }
 }

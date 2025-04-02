@@ -20,7 +20,7 @@ import { Screen } from '../../models/screen.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ScreensResolver {
-  constructor(private readonly screensService: ScreensService) { }
+  constructor(private readonly screensService: ScreensService) {}
 
   @Mutation(() => Screen, {
     name: 'createFormSystemScreen',
@@ -45,7 +45,7 @@ export class ScreensResolver {
 
   @Mutation(() => Screen, {
     name: 'updateFormSystemScreen',
-    nullable: true
+    nullable: true,
   })
   async updateScreen(
     @Args('input') input: UpdateScreenInput,
