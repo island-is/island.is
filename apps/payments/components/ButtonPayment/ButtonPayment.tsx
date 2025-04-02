@@ -36,7 +36,7 @@ export const ButtonPayment = (props: ButtonPaymentProps) => {
       onClick={props.onClick}
       type="button"
     >
-      <Icon icon={getIconType(props.type)} type="outline" color="blue600" />
+      <Icon icon={getIconType(props.type)} type="outline" color="blue400" />
       {props.children}
     </button>
   )
