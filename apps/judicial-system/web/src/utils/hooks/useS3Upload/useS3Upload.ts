@@ -55,7 +55,7 @@ import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generate
 import { strings } from './useS3Upload.strings'
 
 // - rewrite upload from police
-// - more granular retry
+// - more granual retry
 export interface TUploadFile extends UploadFile {
   category?: CaseFileCategory | null
   policeCaseNumber?: string | null
@@ -64,7 +64,6 @@ export interface TUploadFile extends UploadFile {
   displayDate?: string | null
   policeFileId?: string | null
   userGeneratedFilename?: string | null
-  fileRepresentative?: string | null
 }
 
 export interface UploadFileState {
@@ -87,7 +86,6 @@ const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   displayDate: file.displayDate,
   policeFileId: file.policeFileId,
   userGeneratedFilename: file.userGeneratedFilename,
-  fileRepresentative: file.fileRepresentative,
 })
 
 export const useUploadFiles = (files?: CaseFile[] | null) => {
@@ -344,7 +342,6 @@ const useS3Upload = (
         displayDate: file.displayDate,
         policeFileId: file.policeFileId,
         userGeneratedFilename: file.userGeneratedFilename,
-        fileRepresentative: file.fileRepresentative,
       }
 
       if (defendantId) {
