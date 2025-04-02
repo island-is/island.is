@@ -17,22 +17,46 @@ import {
 import { m } from '../../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import { getPathFromType } from '../../../utils/mapPaths'
+import { useEffect, useState } from 'react'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+
+const BASE_INCLUDED_TYPES = [
+  GenericLicenseType.AdrLicense,
+  GenericLicenseType.DisabilityLicense,
+  GenericLicenseType.DriversLicense,
+  GenericLicenseType.Ehic,
+  GenericLicenseType.FirearmLicense,
+  GenericLicenseType.HuntingLicense,
+  GenericLicenseType.MachineLicense,
+  GenericLicenseType.PCard,
+  GenericLicenseType.Passport,
+]
 
 export const LicensesOverviewV2 = () => {
   useNamespaces('sp.license')
   const { formatMessage, lang } = useLocale()
 
-  const includedTypes = [
-    GenericLicenseType.AdrLicense,
-    GenericLicenseType.DisabilityLicense,
-    GenericLicenseType.DriversLicense,
-    GenericLicenseType.Ehic,
-    GenericLicenseType.FirearmLicense,
-    GenericLicenseType.HuntingLicense,
-    GenericLicenseType.MachineLicense,
-    GenericLicenseType.PCard,
-    GenericLicenseType.Passport,
-  ]
+  const [includedTypes, setIncludedTypes] = useState<Array<GenericLicenseType>>(
+    [],
+  )
+
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.isIdentityDocumentEnabled,
+        false,
+      )
+      if (ffEnabled) {
+        setIncludedTypes([
+          ...BASE_INCLUDED_TYPES,
+          GenericLicenseType.IdentityDocument,
+        ])
+      } else setIncludedTypes(BASE_INCLUDED_TYPES)
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const { data, loading, error } = useGenericLicenseCollectionQuery({
     variables: {
