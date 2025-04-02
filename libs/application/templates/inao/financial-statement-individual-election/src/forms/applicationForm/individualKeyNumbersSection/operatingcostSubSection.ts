@@ -3,8 +3,8 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { m } from '../../../lib/utils/messages'
-import { INDIVIDUALOPERATIONIDS } from '../../../lib/utils/constants'
+import { m } from '../../../lib/messages'
+import { INDIVIDUALOPERATIONIDS } from '../../../utils/constants'
 
 export const operatingCostSubSection = buildSubSection({
   id: 'operatingCost',
