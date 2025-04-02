@@ -287,8 +287,7 @@ jobs:
             echo "Lint count has not increased"
             exit 0
           fi
-          echo "Found $((BASE_LINTS - HEAD_LINTS)) additional lint lines" >&2
-          echo "Please fix your lints 🙏" >&2
+          echo "::error title=New Lints::Found $((BASE_LINTS - HEAD_LINTS)) additional lint lines. Please fix your lints 🙏"
           exit 1
 
   lintfix-changed-files:
