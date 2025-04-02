@@ -7,6 +7,7 @@ import { electionInfoSection } from './electionInfoSection'
 import { individualKeyNumbersSection } from './individualKeyNumbersSection'
 import { documentsSection } from './documentsSection'
 import { overviewSection } from './overviewSection'
+import { overviewUnderLimitSection } from './overviewUnderLimitSection'
 
 export const FinancialStatementIndividualElectionForm: Form = buildForm({
   id: 'FinancialStatementIndividualelectionForm',
@@ -21,5 +22,6 @@ export const FinancialStatementIndividualElectionForm: Form = buildForm({
     individualKeyNumbersSection,
     documentsSection,
     overviewSection,
+    overviewUnderLimitSection,
   ],
 })

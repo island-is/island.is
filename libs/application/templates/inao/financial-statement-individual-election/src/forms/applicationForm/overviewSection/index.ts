@@ -1,7 +1,5 @@
 import {
-  buildAlertMessageField,
   buildCheckboxField,
-  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildOverviewField,
@@ -20,16 +18,13 @@ import {
   fileOverviewItems,
   incomeOverviewItems,
 } from '../../../utils/overviewItems'
-import { ABOUTIDS, ELECTIONLIMIT, LESS } from '../../../utils/constants'
+import { LESS } from '../../../utils/constants'
 import { m } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
-import { isLessThanIncomeLimit } from '../../../utils/conditions'
 import { isGreaterThanIncomeLimit } from '../../../utils/conditions'
-import { format as formatNationalId } from 'kennitala'
-import { formatCurrency } from '@island.is/application/ui-components'
-import { application } from 'express'
 
 export const overviewSection = buildSection({
+  condition: isGreaterThanIncomeLimit,
   id: 'overviewSection',
   title: (application) => {
     return getValueViaPath(application.answers, 'election.incomeLimit') === LESS
@@ -47,127 +42,55 @@ export const overviewSection = buildSection({
       },
       children: [
         buildDescriptionField({
-          condition: isGreaterThanIncomeLimit,
           id: 'overviewDescription',
           description: m.overviewDescription,
         }),
         buildOverviewField({
-          condition: isGreaterThanIncomeLimit,
           id: 'aboutOverviewField',
           title: m.aboutOverviewTitle,
           items: aboutOverviewItems,
         }),
         buildOverviewField({
-          condition: isGreaterThanIncomeLimit,
           id: 'incomeOverviewField',
           title: m.income,
           items: incomeOverviewItems,
+          backId: 'operatinCostfields',
         }),
         buildOverviewField({
-          condition: isGreaterThanIncomeLimit,
           id: 'expensesOverviewField',
           title: m.expenses,
           items: expensesOverviewItems,
+          backId: 'operatinCostfields',
         }),
         buildOverviewField({
-          condition: isGreaterThanIncomeLimit,
           id: 'capitalNumbersOverviewField',
           title: m.capitalNumbers,
           items: capitalNumbersOverviewItems,
+          backId: 'capitalNumber',
         }),
         buildOverviewField({
-          condition: isGreaterThanIncomeLimit,
           id: 'assetsOverviewField',
           title: m.properties,
           items: assetsOverviewItems,
+          backId: 'operations.equitiesAndLiabilities',
         }),
         buildOverviewField({
-          condition: isGreaterThanIncomeLimit,
           id: 'debtsOverviewField',
           title: m.debts,
           items: debtsOverviewItems,
+          backId: 'operations.equitiesAndLiabilities',
         }),
         buildOverviewField({
-          condition: isGreaterThanIncomeLimit,
           id: 'debtsAndCashsOverviewField',
           title: m.debtsAndCash,
           items: debtsAndCashOverviewItems,
+          backId: 'operations.equitiesAndLiabilities',
         }),
         buildOverviewField({
-          condition: isGreaterThanIncomeLimit,
           id: 'fileOverviewField',
           title: m.attachments,
           attachments: fileOverviewItems,
-        }),
-        buildDescriptionField({
-          id: 'overviewStatementField',
-          description: (application) => {
-            const election = getValueViaPath<string>(
-              application.answers,
-              ABOUTIDS.genitiveName,
-            )
-
-            return {
-              ...m.electionStatementDescription,
-              values: { election },
-            }
-          },
-          condition: isLessThanIncomeLimit,
-        }),
-        buildDescriptionField({
-          condition: isLessThanIncomeLimit,
-          id: 'overviewStatementDescription',
-          description: (application) => {
-            const { answers } = application
-            return {
-              ...m.participatedIn,
-              values: {
-                fullName: getValueViaPath<string>(answers, 'about.fullName'),
-                nationalId: formatNationalId(
-                  getValueViaPath<string>(answers, 'about.nationalId') ?? '',
-                ),
-                election: getValueViaPath<string>(
-                  answers,
-                  'election.genitiveName',
-                ),
-              },
-            }
-          },
-        }),
-        buildDescriptionField({
-          condition: isLessThanIncomeLimit,
-          id: 'overviewStatementDescription',
-          description: (_application) => {
-            // TODO: add the income limit to answers when it is fetched
-
-            return {
-              ...m.electionDeclare,
-              values: { incomeLimit: formatCurrency(ELECTIONLIMIT.toString()) },
-            }
-          },
-        }),
-        buildDescriptionField({
-          condition: isLessThanIncomeLimit,
-          id: 'overviewStatementDescription',
-          description: m.electionStatementLaw,
-        }),
-        buildAlertMessageField({
-          condition: isLessThanIncomeLimit,
-          id: 'overviewStatementField',
-          title: m.signatureTitle,
-          message: (application) => {
-            return {
-              ...m.signatureMessage,
-              values: {
-                email: getValueViaPath<string>(
-                  application.answers,
-                  'about.email',
-                ),
-              },
-            }
-          },
-          alertType: 'info',
-          marginBottom: 4,
+          backId: 'attachments.file',
         }),
         buildCheckboxField({
           id: 'approveOverview',
