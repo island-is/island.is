@@ -8,7 +8,6 @@ import {
   Offense,
   UpdateIndictmentCountInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { indictmentCount } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Indictment/IndictmentCount.strings'
 
 import { useCreateIndictmentCountMutation } from './createIndictmentCount.generated'
 import { useDeleteIndictmentCountMutation } from './deleteIndictmentCount.generated'
@@ -126,31 +125,11 @@ const useIndictmentCounts = () => {
     [],
   )
 
-  const lawTag = useCallback(
-    (law: number[]) => {
-      const article = law[0]
-      const paragraph = law[1]
-
-      if (paragraph === 0) {
-        return formatMessage(indictmentCount.lawsBrokenTagArticleOnly, {
-          article,
-        })
-      } else {
-        return formatMessage(indictmentCount.lawsBrokenTag, {
-          article,
-          paragraph,
-        })
-      }
-    },
-    [formatMessage],
-  )
-
   return {
     updateIndictmentCount,
     createIndictmentCount,
     deleteIndictmentCount,
     updateIndictmentCountState,
-    lawTag,
   }
 }
 

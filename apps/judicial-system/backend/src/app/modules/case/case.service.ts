@@ -1940,8 +1940,9 @@ export class CaseService {
     user: TUser,
     returnUpdatedCase = true,
   ): Promise<Case | undefined> {
-    const receivingCase =
+    const isReceivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
+
     const completingIndictmentCaseWithoutRuling =
       isIndictmentCase(theCase.type) &&
       update.state === CaseState.COMPLETED &&
@@ -1952,14 +1953,24 @@ export class CaseService {
         CaseIndictmentRulingDecision.MERGE,
         CaseIndictmentRulingDecision.WITHDRAWAL,
       ].includes(theCase.indictmentRulingDecision)
+
+    const requiresCourtTransition =
+      theCase.courtId &&
+      update.courtId &&
+      theCase.courtId !== update.courtId &&
+      theCase.state === CaseState.RECEIVED
+
     const updatedArraignmentDate = update.arraignmentDate
     const schedulingNewArraignmentDateForIndictmentCase =
       isIndictmentCase(theCase.type) && Boolean(updatedArraignmentDate)
 
     return this.sequelize
       .transaction(async (transaction) => {
-        if (receivingCase) {
+        if (isReceivingCase) {
           update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
+        }
+        if (requiresCourtTransition) {
+          update = transitionCase(CaseTransition.MOVE, theCase, user, update)
         }
 
         await this.handleDateUpdates(theCase, update, transaction)
@@ -2036,8 +2047,20 @@ export class CaseService {
 
         await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
-        if (receivingCase) {
+        if (isReceivingCase) {
           this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
+        }
+
+        if (requiresCourtTransition) {
+          this.eventService.postEvent(
+            CaseTransition.MOVE,
+            updatedCase ?? theCase,
+            false,
+            {
+              from: theCase.court?.name,
+              to: updatedCase?.court?.name,
+            },
+          )
         }
 
         if (returnUpdatedCase) {
