@@ -280,8 +280,8 @@ jobs:
         run: set -x; yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT" || echo "There was an error while linting, ignoring"
       - name: No new lint lines
         env:
-          HEAD_LINTS: ${{steps.lint-head.outputs.lint-lines}}
-          BASE_LINTS: ${{steps.lint-base.outputs.lint-lines}}
+          HEAD_LINTS: ${{steps.lint-head.outputs.lint-lines || 0}}
+          BASE_LINTS: ${{steps.lint-base.outputs.lint-lines || 0}}
         run: |
           if (( HEAD_LINTS <= BASE_LINTS )); then
             echo "Lint count has not increased"
