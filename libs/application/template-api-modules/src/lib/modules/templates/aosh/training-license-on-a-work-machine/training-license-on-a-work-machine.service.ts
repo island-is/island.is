@@ -15,7 +15,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import {
   getCleanApplicantInformation,
   getCleanCertificateOfTenure,
-  getCleanCompanyInformation,
+  getCleanCompanyInformationList,
   getRecipient,
 } from './training-license-on-a-work-machine.utils'
 import { generateRequestReviewEmail } from './emailGenerators/requestReviewEmail'
@@ -86,69 +86,78 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
   async initReview({
     application,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // Send email and sms
-    const company = getCleanCompanyInformation(application)
-    // const recipient = getRecipient(company)
-    // if (company.contactEmail) {
-    //   await this.sharedTemplateAPIService
-    //     .sendEmail(
-    //       (props) => generateRequestReviewEmail(props, recipient),
-    //       application,
-    //     )
-    //     .catch((e) => {
-    //       this.logger.error(
-    //         `Error sending email about initReview in application: ID: ${application.id}`,
-    //         e,
-    //       )
-    //     })
-    // }
-    // if (company.contactPhoneNumber) {
-    //   await this.sharedTemplateAPIService
-    //     .sendSms(
-    //       (_, options) =>
-    //         generateRequestReviewSms(application, options, recipient),
-    //       application,
-    //     )
-    //     .catch((e) => {
-    //       this.logger.error(
-    //         `Error sending sms about initReview to
-    //                 a phonenumber in application: ID: ${application.id}`,
-    //         e,
-    //       )
-    //     })
-    // }
+    const companyList = getCleanCompanyInformationList(application)
+
+    for (const company of companyList) {
+      const recipient = getRecipient(company)
+
+      if (company.contactEmail) {
+        try {
+          await this.sharedTemplateAPIService.sendEmail(
+            (props) => generateRequestReviewEmail(props, recipient),
+            application,
+          )
+        } catch (e) {
+          this.logger.error(
+            `Error sending email about initReview in application: ID: ${application.id}`,
+            e,
+          )
+        }
+      }
+
+      if (company.contactPhoneNumber) {
+        try {
+          await this.sharedTemplateAPIService.sendSms(
+            (_, options) =>
+              generateRequestReviewSms(application, options, recipient),
+            application,
+          )
+        } catch (e) {
+          this.logger.error(
+            `Error sending SMS about initReview to a phone number in application: ID: ${application.id}`,
+            e,
+          )
+        }
+      }
+    }
   }
 
   async deleteApplication({
     application,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // Send email and sms
-    const company = getCleanCompanyInformation(application)
-    // const recipient = getRecipient(company)
-    // if (company.contactEmail) {
-    //   await this.sharedTemplateAPIService
-    //     .sendEmail(
-    //       (props) => generateApplicationDeleteEmail(props, recipient),
-    //       application,
-    //     )
-    //     .catch((e) => {
-    //       this.logger.error(
-    //         `Error sending email about deleteApplication in application: ID: ${application.id}`,
-    //         e,
-    //       )
-    //     })
-    // }
-    // if (company.contactPhoneNumber) {
-    //   await this.sharedTemplateAPIService
-    //     .sendSms((_) => generateApplicationDeleteSms(recipient), application)
-    //     .catch((e) => {
-    //       this.logger.error(
-    //         `Error sending sms about deleteApplication to
-    //                 a phonenumber in application: ID: ${application.id}`,
-    //         e,
-    //       )
-    //     })
-    // }
+    const companyList = getCleanCompanyInformationList(application)
+
+    for (const company of companyList) {
+      const recipient = getRecipient(company)
+
+      if (company.contactEmail) {
+        try {
+          await this.sharedTemplateAPIService.sendEmail(
+            (props) => generateApplicationDeleteEmail(props, recipient),
+            application,
+          )
+        } catch (e) {
+          this.logger.error(
+            `Error sending email about deleteApplication in application: ID: ${application.id}`,
+            e,
+          )
+        }
+      }
+
+      if (company.contactPhoneNumber) {
+        try {
+          await this.sharedTemplateAPIService.sendSms(
+            (_) => generateApplicationDeleteSms(recipient),
+            application,
+          )
+        } catch (e) {
+          this.logger.error(
+            `Error sending SMS about deleteApplication to a phone number in application: ID: ${application.id}`,
+            e,
+          )
+        }
+      }
+    }
   }
 
   async rejectApplication({
@@ -176,14 +185,14 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
   }: TemplateApiModuleActionProps): Promise<void> {
     // Submit application to AOSH
     const applicant = getCleanApplicantInformation(application)
-    const company = getCleanCompanyInformation(application)
+    const companyList = getCleanCompanyInformationList(application)
     const certificateOfTenure = getCleanCertificateOfTenure(application)
     await this.workMachineClientService
       .machineLicenseTeachingApplication(auth, {
         xCorrelationID: application.id,
         machineLicenseTeachingApplicationCreateDto: {
           applicant,
-          company: company[0], // TODO: Change when new service is ready
+          company: companyList[0], // TODO: Change when new service is ready
           machineRegistrationNumber:
             certificateOfTenure.machineRegistrationNumber,
           licenseCategoryPrefix: certificateOfTenure.licenseCategoryPrefix,

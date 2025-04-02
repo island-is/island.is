@@ -4,13 +4,15 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import {
-  FieldComponents,
+  AlertMessageField,
   Application,
-  RepeaterItem,
-  FieldTypes,
   AsyncSelectField,
-  RepeaterOptionValue,
+  FieldComponents,
+  FieldTypes,
   HiddenInputField,
+  RepeaterItem,
+  RepeaterOptionValue,
+  StaticText,
 } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -29,6 +31,7 @@ import { NationalIdWithName } from '@island.is/application/ui-components'
 import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormField'
 import { useApolloClient } from '@apollo/client'
 import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
+import { AlertMessageFormField } from '../AlertMessageFormField/AlertMessageFormField'
 
 interface ItemFieldProps {
   application: Application
@@ -102,6 +105,8 @@ export const Item = ({
     Component = AsyncSelectFormField
   } else if (component === 'hiddenInput') {
     Component = HiddenInputFormField
+  } else if (component === 'alertMessage') {
+    Component = AlertMessageFormField
   } else {
     Component = componentMapper[component]
   }
@@ -330,6 +335,35 @@ export const Item = ({
     }
   }
 
+  let alertMessageProps: AlertMessageField | undefined
+  if (component === 'alertMessage') {
+    let titleVal: StaticText | undefined
+    if (typeof item.title === 'function') {
+      titleVal = item.title(application, activeValues)
+    } else {
+      titleVal = item.title
+    }
+
+    let messageVal: StaticText | undefined
+    if (typeof item.message === 'function') {
+      messageVal = item.message(application, activeValues)
+    } else {
+      messageVal = item.message
+    }
+
+    alertMessageProps = {
+      id: id,
+      type: FieldTypes.ALERT_MESSAGE,
+      component: FieldComponents.ALERT_MESSAGE,
+      children: undefined,
+      alertType: item.alertType,
+      title: titleVal,
+      message: messageVal,
+      marginTop: item.marginTop,
+      marginBottom: item.marginBottom,
+    }
+  }
+
   if (
     typeof condition === 'function'
       ? condition && !condition(application, activeValues)
@@ -362,8 +396,17 @@ export const Item = ({
           }}
         />
       )}
+      {component === 'alertMessage' && alertMessageProps && (
+        <AlertMessageFormField
+          application={application}
+          field={{
+            ...alertMessageProps,
+          }}
+        />
+      )}
       {!(component === 'selectAsync' && selectAsyncProps) &&
-        !(component === 'hiddenInput' && hiddenInputProps) && (
+        !(component === 'hiddenInput' && hiddenInputProps) &&
+        !(component === 'alertMessage' && alertMessageProps) && (
           <Component
             id={id}
             name={id}

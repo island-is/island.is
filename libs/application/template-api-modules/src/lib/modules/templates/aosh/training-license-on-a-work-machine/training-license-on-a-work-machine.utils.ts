@@ -59,7 +59,7 @@ export const getCleanApplicantInformation = (
   }
 }
 
-export const getCleanCompanyInformation = (
+export const getCleanCompanyInformationList = (
   application: Application,
 ): Company[] => {
   const companyInformation = getValueViaPath<

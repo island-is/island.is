@@ -44,6 +44,7 @@ export type TextFieldVariant =
   | 'tel'
   | 'textarea'
   | 'currency'
+type AlertType = 'default' | 'warning' | 'error' | 'info' | 'success'
 
 export type Context = {
   application: Application
@@ -82,6 +83,7 @@ export type RepeaterFields =
   | 'phone'
   | 'selectAsync'
   | 'hiddenInput'
+  | 'alertMessage'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -223,6 +225,14 @@ export type RepeaterItem = {
       updateOnSelect?: MaybeWithIndex<string[]>
     }
   | { component: 'hiddenInput' }
+  | {
+      component: 'alertMessage'
+      title?: MaybeWithApplicationAndActiveField<StaticText>
+      message?: MaybeWithApplicationAndActiveField<StaticText>
+      alertType?: AlertType
+      marginBottom?: BoxProps['marginBottom']
+      marginTop?: BoxProps['marginTop']
+    }
 )
 
 export type AlertMessageLink = {
@@ -590,7 +600,7 @@ export interface ExpandableDescriptionField extends BaseField {
 export interface AlertMessageField extends BaseField {
   readonly type: FieldTypes.ALERT_MESSAGE
   component: FieldComponents.ALERT_MESSAGE
-  alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
+  alertType?: AlertType
   message?: FormTextWithLocale
   links?: AlertMessageLink[]
 }
