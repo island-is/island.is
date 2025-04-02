@@ -3,18 +3,14 @@ import {
   buildSection,
   buildCheckboxField,
   YES,
-  buildNationalIdWithNameField,
   buildAlertMessageField,
-  buildCustomField,
   buildTableRepeaterField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { assigneeInformation } from '../../lib/messages'
 import { isContractor, isSameAsApplicant } from '../../utils'
-import {
-  CertificateOfTenure,
-  TrainingLicenseOnAWorkMachineAnswers,
-} from '../../lib/dataSchema'
+import { TrainingLicenseOnAWorkMachineAnswers } from '../../lib/dataSchema'
+import { filterWorkMachineOptions } from '../../utils/filterWorkMachineOptions'
 
 export const assigneeInformationSection = buildSection({
   id: 'assigneeInformationSection',
@@ -37,7 +33,7 @@ export const assigneeInformationSection = buildSection({
         }),
         buildTableRepeaterField({
           id: 'assigneeInformation.companyAndAssignee',
-          addItemButtonText: 'Skrá staðfestingaraðila',
+          addItemButtonText: assigneeInformation.labels.tableButtonText,
           marginTop: 0,
           table: {
             format: {
@@ -82,15 +78,27 @@ export const assigneeInformationSection = buildSection({
               clearOnChange: (index) => [
                 `assigneeInformation.companyAndAssignee[${index}].assignee.name`,
               ],
+              setOnChange: async (value, application, index) => {
+                return [
+                  {
+                    key: `assigneeInformation.companyAndAssignee[${index}].isSameAsApplicant`,
+                    value: isSameAsApplicant(
+                      application.answers,
+                      typeof value === 'string' ? value : '',
+                    )
+                      ? ''
+                      : 'true',
+                  },
+                ]
+              },
             },
             workMachine: {
               component: 'select',
               label: assigneeInformation.labels.workMachine,
               isMulti: true,
-              options: (application, activeField) => {
-                console.log(activeField?.workMachine, application)
+              options: (application) => {
                 const certificateOfTenure = getValueViaPath<
-                  CertificateOfTenure[]
+                  TrainingLicenseOnAWorkMachineAnswers['certificateOfTenure']
                 >(application.answers, 'certificateOfTenure')
                 return (
                   certificateOfTenure?.map((item) => ({
@@ -99,44 +107,29 @@ export const assigneeInformationSection = buildSection({
                   })) ?? []
                 )
               },
-              filterOptions: (options, answers, index) => {
-                console.log(answers)
-                const validWorkMachines: string[] = []
-                const assigneeInformation = getValueViaPath<
-                  TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
-                >(answers, 'assigneeInformation')
-                assigneeInformation?.companyAndAssignee?.forEach((item, i) => {
-                  if (
-                    i !== index &&
-                    item.workMachine?.some((machine) =>
-                      options.some((option) => option.value === machine),
-                    )
-                  ) {
-                    validWorkMachines.push(
-                      ...item.workMachine.filter((machine) =>
-                        options.some((option) => option.value === machine),
-                      ),
-                    )
-                  }
-                })
-                console.log(validWorkMachines)
-                return options.filter(
-                  (x) => !validWorkMachines.includes(x.value),
+              filterOptions: (options, answers, index) =>
+                filterWorkMachineOptions(options, answers, index),
+            },
+            alertMessage: {
+              component: 'alertMessage',
+              alertType: 'warning',
+              message: assigneeInformation.labels.isSameAsApplicantAlert,
+              marginBottom: 0,
+              marginTop: 0,
+              condition: (application, activeField) => {
+                return (
+                  isSameAsApplicant(
+                    application.answers,
+                    typeof activeField?.assignee === 'string'
+                      ? ''
+                      : activeField?.assignee?.['nationalId'] ?? '',
+                  ) && !isContractor(application.answers)
                 )
               },
             },
           },
           condition: (answers) => !isContractor(answers),
         }),
-        // buildAlertMessageField({
-        //   id: 'assigneeInformation.isSameAsApplicantAlert',
-        //   title: '',
-        //   message: assigneeInformation.labels.isSameAsApplicantAlert,
-        //   doesNotRequireAnswer: true,
-        //   alertType: 'warning',
-        //   condition: (answers) =>
-        //     isSameAsApplicant(answers) && !isContractor(answers),
-        // }),
         buildAlertMessageField({
           id: 'assigneeInformation.isContractorAlert',
           title: '',
@@ -145,11 +138,6 @@ export const assigneeInformationSection = buildSection({
           alertType: 'info',
           condition: isContractor,
         }),
-        // buildCustomField({
-        //   id: 'assigneeInformation.isSameAsApplicant',
-        //   title: '',
-        //   component: 'SameAsApplicantCheck',
-        // }),
       ],
     }),
   ],

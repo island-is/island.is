@@ -42,7 +42,7 @@ const AssigneeInformationSchema = z
               .refine(
                 (nationalId) => nationalId && kennitala.isCompany(nationalId),
               ),
-            name: z.string().optional(),
+            name: z.string().min(1),
           }),
           assignee: z.object({
             nationalId: z
@@ -50,24 +50,15 @@ const AssigneeInformationSchema = z
               .refine(
                 (nationalId) => nationalId && kennitala.isPerson(nationalId),
               ),
-            name: z.string().optional(),
-            email: z.string().optional(),
-            phone: z.string().optional(),
+            name: z.string().min(1),
+            email: z.string().refine((email) => isValidEmail(email)),
+            phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
           }),
           workMachine: z.array(z.string()).min(1),
+          isSameAsApplicant: z.string().min(1),
         }),
       )
       .optional(),
-    // company: z.object({
-    //   nationalId: z.string().optional(),
-    //   name: z.string().optional(),
-    // }),
-    // assignee: z.object({
-    //   nationalId: z.string().optional(),
-    //   name: z.string().optional(),
-    //   email: z.string().optional(),
-    //   phone: z.string().optional(),
-    // }),
     isContractor: z.array(z.string().optional()),
   })
   .refine(
@@ -79,51 +70,6 @@ const AssigneeInformationSchema = z
       path: ['companyAndAssignee', 'nationalId'],
     },
   )
-// .refine(
-//   ({ company, isContractor }) => {
-//     if (isContractor.includes(YES)) return true
-//     return company.name && company.name.length > 0
-//   },
-//   {
-//     path: ['company', 'name'],
-//   },
-// )
-// .refine(
-//   ({ assignee, isContractor }) => {
-//     if (isContractor.includes(YES)) return true
-//     return assignee.nationalId && kennitala.isPerson(assignee.nationalId)
-//   },
-//   {
-//     path: ['assignee', 'nationalId'],
-//   },
-// )
-// .refine(
-//   ({ assignee, isContractor }) => {
-//     if (isContractor.includes(YES)) return true
-//     return assignee.name && assignee.name.length > 0
-//   },
-//   {
-//     path: ['assignee', 'name'],
-//   },
-// )
-// .refine(
-//   ({ assignee, isContractor }) => {
-//     if (isContractor.includes(YES)) return true
-//     return assignee.email && isValidEmail(assignee.email)
-//   },
-//   {
-//     path: ['assignee', 'email'],
-//   },
-// )
-// .refine(
-//   ({ assignee, isContractor }) => {
-//     if (isContractor.includes(YES)) return true
-//     return assignee.phone && isValidPhoneNumber(assignee.phone)
-//   },
-//   {
-//     path: ['assignee', 'phone'],
-//   },
-// )
 
 export const TrainingLicenseOnAWorkMachineAnswersSchema = z.object({
   information: InformationSchema,
@@ -135,4 +81,3 @@ export const TrainingLicenseOnAWorkMachineAnswersSchema = z.object({
 export type TrainingLicenseOnAWorkMachineAnswers = z.TypeOf<
   typeof TrainingLicenseOnAWorkMachineAnswersSchema
 >
-export type CertificateOfTenure = z.TypeOf<typeof CertificateOfTenureSchema>

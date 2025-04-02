@@ -19,6 +19,11 @@ export const assigneeInformation = {
     },
   }),
   labels: defineMessages({
+    tableButtonText: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.tableButtonText',
+      defaultMessage: 'Skrá staðfestingaraðila',
+      description: `Assignee information table button text`,
+    },
     company: {
       id: 'aosh.tlwm.application:assigneeInformation.labels.company',
       defaultMessage: 'Fyrirtæki',
