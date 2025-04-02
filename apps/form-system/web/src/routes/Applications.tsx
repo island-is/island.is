@@ -39,9 +39,7 @@ export const Applications = () => {
 
   }
   return (
-    <>
-      <Button onClick={createApplication}>Create</Button>
-    </>
+    <Button onClick={createApplication}>Create</Button>
 
   )
 }
