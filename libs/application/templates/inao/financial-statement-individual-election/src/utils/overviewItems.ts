@@ -164,7 +164,7 @@ export const assetsOverviewItems = (
     {
       width: 'full',
       keyText: m.totalAssets,
-      valueText: format(answers, 'assets.total'),
+      valueText: format(answers, 'asset.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
