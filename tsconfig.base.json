@@ -933,10 +933,11 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
-      "@island.is/form-system": ["libs/portals/admin/form-system/src/index.ts"],
+      "@island.is/form-system/enums": ["libs/form-system/src/enums/index.ts"],
       "@island.is/form-system/graphql": [
         "libs/portals/form-system/graphql/src/index.ts"
       ],
+      "@island.is/form-system/shared": ["libs/form-system/src/index.ts"],
       "@island.is/form-system/ui": [
         "libs/portals/form-system/ui-components/src/index.ts"
       ],
@@ -1015,6 +1016,9 @@
       "@island.is/portals/admin/core": ["libs/portals/admin/core/src/index.ts"],
       "@island.is/portals/admin/document-provider": [
         "libs/portals/admin/document-provider/src/index.ts"
+      ],
+      "@island.is/portals/admin/form-system": [
+        "libs/portals/admin/form-system/src/index.ts"
       ],
       "@island.is/portals/admin/icelandic-names-registry": [
         "libs/portals/admin/icelandic-names-registry/src/index.ts"
