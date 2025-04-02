@@ -12,7 +12,7 @@ import {
   formatPhoneNumber,
 } from '@island.is/application/ui-components'
 
-const getAndFormatCurrency = (answers: FormValue, path: string) => {
+const format = (answers: FormValue, path: string) => {
   return formatCurrency(getValueViaPath<string>(answers, path) ?? '')
 }
 
@@ -52,32 +52,34 @@ export const incomeOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const format = (path: string) => getAndFormatCurrency(answers, path)
   return [
     {
       width: 'half',
       keyText: m.contributionsFromLegalEntities,
-      valueText: format('individualIncome.contributionsByLegalEntities'),
+      valueText: format(
+        answers,
+        'individualIncome.contributionsByLegalEntities',
+      ),
     },
     {
       width: 'half',
       keyText: m.contributionsFromIndividuals,
-      valueText: format('individualIncome.individualContributions'),
+      valueText: format(answers, 'individualIncome.individualContributions'),
     },
     {
       width: 'half',
       keyText: m.candidatesOwnContributions,
-      valueText: format('individualIncome.candidatesOwnContributions'),
+      valueText: format(answers, 'individualIncome.candidatesOwnContributions'),
     },
     {
       width: 'half',
       keyText: m.otherIncome,
-      valueText: format('individualIncome.otherIncome'),
+      valueText: format(answers, 'individualIncome.otherIncome'),
     },
     {
       width: 'full',
       keyText: m.totalIncome,
-      valueText: format('individualIncome.total'),
+      valueText: format(answers, 'individualIncome.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -88,32 +90,31 @@ export const expensesOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const format = (path: string) => getAndFormatCurrency(answers, path)
   return [
     {
       width: 'half',
       keyText: m.electionOffice,
-      valueText: format('individualExpense.electionOffice'),
+      valueText: format(answers, 'individualExpense.electionOffice'),
     },
     {
       width: 'half',
       keyText: m.advertisements,
-      valueText: format('individualExpense.advertisements'),
+      valueText: format(answers, 'individualExpense.advertisements'),
     },
     {
       width: 'half',
       keyText: m.travelCost,
-      valueText: format('individualExpense.travelCost'),
+      valueText: format(answers, 'individualExpense.travelCost'),
     },
     {
       width: 'half',
       keyText: m.otherCost,
-      valueText: format('individualExpense.otherCost'),
+      valueText: format(answers, 'individualExpense.otherCost'),
     },
     {
       width: 'full',
       keyText: m.totalExpenses,
-      valueText: format('individualExpense.total'),
+      valueText: format(answers, 'individualExpense.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -124,22 +125,21 @@ export const capitalNumbersOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const format = (path: string) => getAndFormatCurrency(answers, path)
   return [
     {
       width: 'half',
       keyText: m.capitalIncome,
-      valueText: format('capitalNumbers.capitalIncome'),
+      valueText: format(answers, 'capitalNumbers.capitalIncome'),
     },
     {
       width: 'half',
       keyText: m.capitalCost,
-      valueText: format('capitalNumbers.capitalCost'),
+      valueText: format(answers, 'capitalNumbers.capitalCost'),
     },
     {
       width: 'full',
       keyText: m.totalCapital,
-      valueText: format('capitalNumbers.total'),
+      valueText: format(answers, 'capitalNumbers.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -150,22 +150,21 @@ export const assetsOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const format = (path: string) => getAndFormatCurrency(answers, path)
   return [
     {
       width: 'half',
       keyText: m.fixedAssetsTotal,
-      valueText: format('asset.fixedAssetsTotal'),
+      valueText: format(answers, 'asset.fixedAssetsTotal'),
     },
     {
       width: 'half',
       keyText: m.currentAssets,
-      valueText: format('asset.currentAssets'),
+      valueText: format(answers, 'asset.currentAssets'),
     },
     {
       width: 'full',
       keyText: m.totalAssets,
-      valueText: format('assets.total'),
+      valueText: format(answers, 'assets.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -176,22 +175,21 @@ export const debtsOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const format = (path: string) => getAndFormatCurrency(answers, path)
   return [
     {
       width: 'half',
       keyText: m.longTerm,
-      valueText: format('liability.longTerm'),
+      valueText: format(answers, 'liability.longTerm'),
     },
     {
       width: 'half',
       keyText: m.shortTerm,
-      valueText: format('liability.shortTerm'),
+      valueText: format(answers, 'liability.shortTerm'),
     },
     {
       width: 'full',
       keyText: m.totalLiabilities,
-      valueText: format('liability.total'),
+      valueText: format(answers, 'liability.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -202,11 +200,10 @@ export const debtsAndCashOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const format = (path: string) => getAndFormatCurrency(answers, path)
   return [
     {
       width: 'full',
-      valueText: format('equityAndLiabilities.total'),
+      valueText: format(answers, 'equityAndLiabilities.total'),
     },
   ]
 }

@@ -12,7 +12,7 @@ import {
   formatPhoneNumber,
 } from '@island.is/application/ui-components'
 
-const getFormattedCurrencyAnswer = (answers: FormValue, path: string) => {
+const format = (answers: FormValue, path: string) => {
   return formatCurrency(getValueViaPath<string>(answers, path) ?? '')
 }
 
@@ -65,47 +65,46 @@ export const incomeOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const format = (path: string) => getFormattedCurrencyAnswer(answers, path)
   return [
     {
       width: 'half',
       keyText: m.contributionsFromTheTreasury,
-      valueText: format('partyIncome.contributionsFromTheTreasury'),
+      valueText: format(answers, 'partyIncome.contributionsFromTheTreasury'),
     },
     {
       width: 'half',
       keyText: m.parliamentaryPartySupport,
-      valueText: format('partyIncome.parliamentaryPartySupport'),
+      valueText: format(answers, 'partyIncome.parliamentaryPartySupport'),
     },
     {
       width: 'half',
       keyText: m.municipalContributions,
-      valueText: format('partyIncome.municipalContributions'),
+      valueText: format(answers, 'partyIncome.municipalContributions'),
     },
     {
       width: 'half',
       keyText: m.contributionsFromLegalEntities,
-      valueText: format('partyIncome.contributionsFromLegalEntities'),
+      valueText: format(answers, 'partyIncome.contributionsFromLegalEntities'),
     },
     {
       width: 'half',
       keyText: m.contributionsFromIndividuals,
-      valueText: format('partyIncome.contributionsFromIndividuals'),
+      valueText: format(answers, 'partyIncome.contributionsFromIndividuals'),
     },
     {
       width: 'half',
       keyText: m.generalMembershipFees,
-      valueText: format('partyIncome.generalMembershipFees'),
+      valueText: format(answers, 'partyIncome.generalMembershipFees'),
     },
     {
       width: 'half',
       keyText: m.otherIncome,
-      valueText: format('partyIncome.otherIncome'),
+      valueText: format(answers, 'partyIncome.otherIncome'),
     },
     {
       width: 'full',
       keyText: m.totalIncome,
-      valueText: format('partyIncome.total'),
+      valueText: format(answers, 'partyIncome.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -116,22 +115,21 @@ export const expensesOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const format = (path: string) => getFormattedCurrencyAnswer(answers, path)
   return [
     {
       width: 'half',
       keyText: m.electionOffice,
-      valueText: format('partyExpense.electionOffice'),
+      valueText: format(answers, 'partyExpense.electionOffice'),
     },
     {
       width: 'half',
       keyText: m.otherCost,
-      valueText: format('partyExpense.otherCost'),
+      valueText: format(answers, 'partyExpense.otherCost'),
     },
     {
       width: 'full',
       keyText: m.totalExpenses,
-      valueText: format('partyExpense.total'),
+      valueText: format(answers, 'partyExpense.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -142,22 +140,21 @@ export const capitalOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const format = (path: string) => getFormattedCurrencyAnswer(answers, path)
   return [
     {
       width: 'half',
       keyText: m.capitalIncome,
-      valueText: format('capitalNumbers.capitalIncome'),
+      valueText: format(answers, 'capitalNumbers.capitalIncome'),
     },
     {
       width: 'half',
       keyText: m.capitalCost,
-      valueText: format('capitalNumbers.capitalCost'),
+      valueText: format(answers, 'capitalNumbers.capitalCost'),
     },
     {
       width: 'full',
       keyText: m.totalCapital,
-      valueText: format('capitalNumbers.total'),
+      valueText: format(answers, 'capitalNumbers.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -168,22 +165,21 @@ export const propertiesOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const format = (path: string) => getFormattedCurrencyAnswer(answers, path)
   return [
     {
       width: 'half',
       keyText: m.fixedAssetsTotal,
-      valueText: format('asset.fixedAssetsTotal'),
+      valueText: format(answers, 'asset.fixedAssetsTotal'),
     },
     {
       width: 'half',
       keyText: m.currentAssets,
-      valueText: format('asset.currentAssets'),
+      valueText: format(answers, 'asset.currentAssets'),
     },
     {
       width: 'full',
       keyText: m.totalAssets,
-      valueText: format('equityAndLiabilitiesTotals.assetsTotal'),
+      valueText: format(answers, 'equityAndLiabilitiesTotals.assetsTotal'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -194,22 +190,21 @@ export const debtOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const format = (path: string) => getFormattedCurrencyAnswer(answers, path)
   return [
     {
       width: 'half',
       keyText: m.longTerm,
-      valueText: format('liability.longTerm'),
+      valueText: format(answers, 'liability.longTerm'),
     },
     {
       width: 'half',
       keyText: m.shortTerm,
-      valueText: format('liability.shortTerm'),
+      valueText: format(answers, 'liability.shortTerm'),
     },
     {
       width: 'full',
       keyText: m.totalLiabilities,
-      valueText: format('equityAndLiabilitiesTotals.liabilitiesTotal'),
+      valueText: format(answers, 'equityAndLiabilitiesTotals.liabilitiesTotal'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -220,11 +215,13 @@ export const debtsAndCashOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const format = (path: string) => getFormattedCurrencyAnswer(answers, path)
   return [
     {
       width: 'half',
-      valueText: format('equityAndLiabilitiesTotals.equityAndLiabilitiesTotal'),
+      valueText: format(
+        answers,
+        'equityAndLiabilitiesTotals.equityAndLiabilitiesTotal',
+      ),
     },
   ]
 }
