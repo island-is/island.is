@@ -12,6 +12,10 @@ import {
   formatPhoneNumber,
 } from '@island.is/application/ui-components'
 
+const getAndFormatCurrency = (answers: FormValue, path: string) => {
+  return formatCurrency(getValueViaPath<string>(answers, path) ?? '')
+}
+
 export const aboutOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
@@ -48,50 +52,32 @@ export const incomeOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const format = (path: string) => getAndFormatCurrency(answers, path)
   return [
     {
       width: 'half',
       keyText: m.contributionsFromLegalEntities,
-      valueText: formatCurrency(
-        getValueViaPath<string>(
-          answers,
-          'individualIncome.contributionsByLegalEntities',
-        ) ?? '',
-      ),
+      valueText: format('individualIncome.contributionsByLegalEntities'),
     },
     {
       width: 'half',
       keyText: m.contributionsFromIndividuals,
-      valueText: formatCurrency(
-        getValueViaPath<string>(
-          answers,
-          'individualIncome.individualContributions',
-        ) ?? '',
-      ),
+      valueText: format('individualIncome.individualContributions'),
     },
     {
       width: 'half',
       keyText: m.candidatesOwnContributions,
-      valueText: formatCurrency(
-        getValueViaPath<string>(
-          answers,
-          'individualIncome.candidatesOwnContributions',
-        ) ?? '',
-      ),
+      valueText: format('individualIncome.candidatesOwnContributions'),
     },
     {
       width: 'half',
       keyText: m.otherIncome,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'individualIncome.otherIncome') ?? '',
-      ),
+      valueText: format('individualIncome.otherIncome'),
     },
     {
       width: 'full',
       keyText: m.totalIncome,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'individualIncome.total') ?? '',
-      ),
+      valueText: format('individualIncome.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -102,43 +88,32 @@ export const expensesOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const format = (path: string) => getAndFormatCurrency(answers, path)
   return [
     {
       width: 'half',
       keyText: m.electionOffice,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'individualExpense.electionOffice') ??
-          '',
-      ),
+      valueText: format('individualExpense.electionOffice'),
     },
     {
       width: 'half',
       keyText: m.advertisements,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'individualExpense.advertisements') ??
-          '',
-      ),
+      valueText: format('individualExpense.advertisements'),
     },
     {
       width: 'half',
       keyText: m.travelCost,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'individualExpense.travelCost') ?? '',
-      ),
+      valueText: format('individualExpense.travelCost'),
     },
     {
       width: 'half',
       keyText: m.otherCost,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'individualExpense.otherCost') ?? '',
-      ),
+      valueText: format('individualExpense.otherCost'),
     },
     {
       width: 'full',
       keyText: m.totalExpenses,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'individualExpense.total') ?? '',
-      ),
+      valueText: format('individualExpense.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -149,27 +124,22 @@ export const capitalNumbersOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const format = (path: string) => getAndFormatCurrency(answers, path)
   return [
     {
       width: 'half',
       keyText: m.capitalIncome,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'capitalNumbers.capitalIncome') ?? '',
-      ),
+      valueText: format('capitalNumbers.capitalIncome'),
     },
     {
       width: 'half',
       keyText: m.capitalCost,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'capitalNumbers.capitalCost') ?? '',
-      ),
+      valueText: format('capitalNumbers.capitalCost'),
     },
     {
       width: 'full',
       keyText: m.totalCapital,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'capitalNumbers.total') ?? '',
-      ),
+      valueText: format('capitalNumbers.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -180,27 +150,22 @@ export const assetsOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const format = (path: string) => getAndFormatCurrency(answers, path)
   return [
     {
       width: 'half',
       keyText: m.fixedAssetsTotal,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'asset.fixedAssetsTotal') ?? '',
-      ),
+      valueText: format('asset.fixedAssetsTotal'),
     },
     {
       width: 'half',
       keyText: m.currentAssets,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'asset.currentAssets') ?? '',
-      ),
+      valueText: format('asset.currentAssets'),
     },
     {
       width: 'full',
       keyText: m.totalAssets,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'assets.total') ?? '',
-      ),
+      valueText: format('assets.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -211,27 +176,22 @@ export const debtsOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const format = (path: string) => getAndFormatCurrency(answers, path)
   return [
     {
       width: 'half',
       keyText: m.longTerm,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'liability.longTerm') ?? '',
-      ),
+      valueText: format('liability.longTerm'),
     },
     {
       width: 'half',
       keyText: m.shortTerm,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'liability.shortTerm') ?? '',
-      ),
+      valueText: format('liability.shortTerm'),
     },
     {
       width: 'full',
       keyText: m.totalLiabilities,
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'liability.total') ?? '',
-      ),
+      valueText: format('liability.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -242,12 +202,11 @@ export const debtsAndCashOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const format = (path: string) => getAndFormatCurrency(answers, path)
   return [
     {
       width: 'full',
-      valueText: formatCurrency(
-        getValueViaPath<string>(answers, 'equityAndLiabilities.total') ?? '',
-      ),
+      valueText: format('equityAndLiabilities.total'),
     },
   ]
 }

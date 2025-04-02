@@ -11,11 +11,12 @@ import {
   formatCurrency,
   formatPhoneNumberWithIcelandicCountryCode,
 } from '@island.is/application/ui-components'
-import {
-  getCapitalNumbersOverviewNumbers,
-  getOverviewNumbers,
-} from './overviewUtils'
 import { BOARDMEMEBER } from './constants'
+import { CareTaker } from '../types/types'
+
+const format = (answers: FormValue, path: string) => {
+  return formatCurrency(getValueViaPath<string>(answers, path) ?? '')
+}
 
 export const aboutOverviewItems = (
   answers: FormValue,
@@ -65,39 +66,31 @@ export const incomeOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const {
-    careIncome,
-    burialRevenue,
-    grantFromTheCemeteryFund,
-    otherIncome,
-    totalIncome,
-  } = getOverviewNumbers(answers)
-
   return [
     {
       width: 'half',
       keyText: m.careIncome,
-      valueText: formatCurrency(careIncome ?? ''),
+      valueText: format(answers, 'cemeteryIncome.careIncome'),
     },
     {
       width: 'half',
       keyText: m.burialRevenue,
-      valueText: formatCurrency(burialRevenue ?? ''),
+      valueText: format(answers, 'cemeteryIncome.burialRevenue'),
     },
     {
       width: 'half',
       keyText: m.grantFromTheCemeteryFund,
-      valueText: formatCurrency(grantFromTheCemeteryFund ?? ''),
+      valueText: format(answers, 'cemeteryIncome.grantFromTheCemeteryFund'),
     },
     {
       width: 'half',
       keyText: m.otherIncome,
-      valueText: formatCurrency(otherIncome ?? ''),
+      valueText: format(answers, 'cemeteryIncome.otherIncome'),
     },
     {
       width: 'full',
       keyText: m.totalIncome,
-      valueText: formatCurrency(totalIncome ?? ''),
+      valueText: format(answers, 'cemeteryIncome.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -108,56 +101,46 @@ export const expensesOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const {
-    payroll,
-    funeralCost,
-    chapelExpense,
-    donationsToCemeteryFund,
-    donationsToOther,
-    otherOperationCost,
-    depreciation,
-    totalExpenses,
-  } = getOverviewNumbers(answers)
   return [
     {
       width: 'half',
       keyText: m.payroll,
-      valueText: formatCurrency(payroll ?? ''),
+      valueText: format(answers, 'cemeteryExpense.payroll'),
     },
     {
       width: 'half',
       keyText: m.funeralCost,
-      valueText: formatCurrency(funeralCost ?? ''),
+      valueText: format(answers, 'cemeteryExpense.funeralCost'),
     },
     {
       width: 'half',
       keyText: m.chapelExpense,
-      valueText: formatCurrency(chapelExpense ?? ''),
+      valueText: format(answers, 'cemeteryExpense.chapelExpense'),
     },
     {
       width: 'half',
       keyText: m.donationsToCemeteryFund,
-      valueText: formatCurrency(donationsToCemeteryFund ?? ''),
+      valueText: format(answers, 'cemeteryExpense.cemeteryFundExpense'),
     },
     {
       width: 'half',
       keyText: m.donationsToOther,
-      valueText: formatCurrency(donationsToOther ?? ''),
+      valueText: format(answers, 'cemeteryExpense.donationsToOther'),
     },
     {
       width: 'half',
       keyText: m.otherOperationCost,
-      valueText: formatCurrency(otherOperationCost ?? ''),
+      valueText: format(answers, 'cemeteryExpense.otherOperationCost'),
     },
     {
       width: 'half',
       keyText: m.depreciation,
-      valueText: formatCurrency(depreciation ?? ''),
+      valueText: format(answers, 'cemeteryExpense.depreciation'),
     },
     {
       width: 'full',
       keyText: m.totalExpenses,
-      valueText: formatCurrency(totalExpenses ?? ''),
+      valueText: format(answers, 'cemeteryExpense.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -168,24 +151,21 @@ export const capitalNumbersOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { capitalIncome, capitalCost, totalCapital } =
-    getCapitalNumbersOverviewNumbers(answers)
-
   return [
     {
       width: 'half',
       keyText: m.capitalIncome,
-      valueText: formatCurrency(capitalIncome ?? ''),
+      valueText: format(answers, 'capitalNumbers.capitalIncome'),
     },
     {
       width: 'half',
       keyText: m.capitalCost,
-      valueText: formatCurrency(capitalCost ?? ''),
+      valueText: format(answers, 'capitalNumbers.capitalCost'),
     },
     {
       width: 'full',
       keyText: m.totalCapital,
-      valueText: formatCurrency(totalCapital ?? ''),
+      valueText: format(answers, 'capitalNumbers.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -196,23 +176,21 @@ export const assetsOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { fixedAssetsTotal, currentAssets, totalAssets } =
-    getOverviewNumbers(answers)
   return [
     {
       width: 'half',
       keyText: m.fixedAssetsTotal,
-      valueText: formatCurrency(fixedAssetsTotal ?? ''),
+      valueText: format(answers, 'cemeteryAsset.fixedAssetsTotal'),
     },
     {
       width: 'half',
       keyText: m.currentAssets,
-      valueText: formatCurrency(currentAssets ?? ''),
+      valueText: format(answers, 'cemeteryAsset.currentAssets'),
     },
     {
       width: 'full',
       keyText: m.totalAssets,
-      valueText: formatCurrency(totalAssets ?? ''),
+      valueText: format(answers, 'assetsTotal'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -223,22 +201,21 @@ export const debtsOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { longTerm, shortTerm, totalLiabilities } = getOverviewNumbers(answers)
   return [
     {
       width: 'half',
       keyText: m.longTerm,
-      valueText: formatCurrency(longTerm ?? ''),
+      valueText: format(answers, 'cemeteryLiability.longTerm'),
     },
     {
       width: 'half',
       keyText: m.shortTerm,
-      valueText: formatCurrency(shortTerm ?? ''),
+      valueText: format(answers, 'cemeteryLiability.shortTerm'),
     },
     {
       width: 'full',
       keyText: m.totalLiabilities,
-      valueText: formatCurrency(totalLiabilities ?? ''),
+      valueText: format(answers, 'equityAndLiabilitiesTotals.liabilitiesTotal'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -249,39 +226,34 @@ export const equityOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const {
-    equityAtTheBeginningOfTheYear,
-    revaluationDueToPriceChanges,
-    reevaluateOther,
-    operationResult,
-    totalEquity,
-  } = getOverviewNumbers(answers)
-
   return [
     {
       width: 'half',
       keyText: m.equityAtTheBeginningOfTheYear,
-      valueText: formatCurrency(equityAtTheBeginningOfTheYear ?? ''),
+      valueText: format(
+        answers,
+        'cemeteryEquity.equityAtTheBeginningOfTheYear',
+      ),
     },
     {
       width: 'half',
       keyText: m.revaluationDueToPriceChanges,
-      valueText: formatCurrency(revaluationDueToPriceChanges ?? ''),
+      valueText: format(answers, 'cemeteryEquity.revaluationDueToPriceChanges'),
     },
     {
       width: 'half',
       keyText: m.reevaluateOther,
-      valueText: formatCurrency(reevaluateOther ?? ''),
+      valueText: format(answers, 'cemeteryEquity.reevaluateOther'),
     },
     {
       width: 'half',
       keyText: m.operationResult,
-      valueText: formatCurrency(operationResult ?? ''),
+      valueText: format(answers, 'cemeteryEquity.operationResult'),
     },
     {
       width: 'full',
       keyText: m.totalEquity,
-      valueText: formatCurrency(totalEquity ?? ''),
+      valueText: format(answers, 'cemeteryEquity.total'),
       lineAboveKeyText: true,
       boldValueText: true,
     },
@@ -292,7 +264,10 @@ export const boardMembersOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { cemeteryCaretakers } = getOverviewNumbers(answers)
+  const cemeteryCaretakers = getValueViaPath<Array<CareTaker>>(
+    answers,
+    'cemeteryCaretaker',
+  )
 
   const parsedCaretakers = cemeteryCaretakers?.map((careTaker, i) => {
     const divider =

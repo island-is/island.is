@@ -22,11 +22,7 @@ import {
   expensesOverviewItems,
   incomeOverviewItems,
 } from '../../../utils/overviewItems'
-import { formatCurrency } from '../../../utils/currency'
-import {
-  getOverviewNumbers,
-  showInfoAllertInOverview,
-} from '../../../utils/overviewUtils'
+import { showInfoAlertInOverview } from '../../../utils/overviewUtils'
 import { isCemetryUnderFinancialLimit } from '../../../utils/helpers'
 
 export const overviewSection = buildSection({
@@ -98,7 +94,7 @@ export const overviewSection = buildSection({
           backId: 'attachments.file',
         }),
         buildAlertMessageField({
-          condition: showInfoAllertInOverview,
+          condition: showInfoAlertInOverview,
           alertType: 'info',
           id: 'overviewCemetryField',
           title: m.SignatureMessage,
