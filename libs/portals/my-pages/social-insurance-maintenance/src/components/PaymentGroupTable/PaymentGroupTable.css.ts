@@ -1,7 +1,7 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
-export const labelColumn = style({
+export const rowLabelColumnCell = style({
   borderRight: `1px solid ${theme.border.color.blue200} `,
   boxShadow: `4px 0px 8px -2px ${theme.border.color.blue200}`,
   left: 0,
@@ -10,6 +10,22 @@ export const labelColumn = style({
   zIndex: theme.zIndex.above,
   paddingLeft: theme.spacing[2],
   paddingRight: 0,
+
+  ...themeUtils.responsiveStyle({
+    md: {
+      paddingRight: theme.spacing[0],
+      paddingLeft: theme.spacing[1],
+    },
+  }),
+})
+
+export const rowLabelColumnCellBox = style({
+  width: 'auto',
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: '246px',
+    },
+  }),
 })
 
 export const hidden = style({
@@ -19,11 +35,22 @@ export const hidden = style({
   border: 'none',
 })
 
-export const column = style({
+export const noWrap = style({
+  whiteSpace: 'nowrap',
+})
+
+export const expandedColumnCell = style({
   borderWidth: 0,
 })
 
-export const subLabelColumn = style({
+export const reset = style({
+  paddingRight: 0,
+  paddingLeft: 0,
+  paddingTop: 0,
+  paddingBottom: 0,
+})
+
+export const nestedLabelColumnCell = style({
   borderRight: `1px solid ${theme.border.color.blue200} `,
   boxShadow: `4px 0px 8px -2px ${theme.border.color.blue200}`,
   left: 0,
@@ -32,27 +59,29 @@ export const subLabelColumn = style({
   zIndex: theme.zIndex.above,
 })
 
-export const subCell = style({
+export const nestedCell = style({
   display: 'flex',
   alignItems: 'center',
   height: '48px',
 })
 
-export const labelCell = style({
-  width: '246px',
-})
-
-export const lastCell = style({
-  width: '104px',
-})
-
-export const sumColumn = style({
-  borderLeft: `1px solid ${theme.border.color.blue200} `,
-  boxShadow: `-4px 0px 8px -2px ${theme.border.color.blue200}`,
-  right: 0,
-  overflow: 'hidden',
-  position: 'sticky',
-  zIndex: theme.zIndex.above,
+export const lastColumnCell = style({
+  borderLeft: 'initial',
+  boxShadow: 'initial',
+  right: 'initial',
+  overflow: 'initial',
+  position: 'initial',
+  zIndex: 'initial',
+  ...themeUtils.responsiveStyle({
+    md: {
+      position: 'sticky',
+      borderLeft: `1px solid ${theme.border.color.blue200} `,
+      boxShadow: `-4px 0px 8px -2px ${theme.border.color.blue200}`,
+      right: 0,
+      overflow: 'hidden',
+      zIndex: theme.zIndex.above,
+    },
+  }),
 })
 
 export const line = style({

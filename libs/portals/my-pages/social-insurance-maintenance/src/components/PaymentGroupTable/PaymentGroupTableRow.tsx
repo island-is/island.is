@@ -2,12 +2,14 @@ import { Table as T, Box, Button, Text } from '@island.is/island-ui/core'
 
 import * as styles from './PaymentGroupTable.css'
 import { m } from '../../lib/messages'
-import { useCallback, useState } from 'react'
-import AnimateHeight, { Height } from 'react-animate-height'
+import { useState } from 'react'
+import AnimateHeight from 'react-animate-height'
 import { MONTHS, amountFormat } from '@island.is/portals/my-pages/core'
 import { SocialInsurancePaymentGroup } from '@island.is/api/schema'
 import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 interface Props {
   paymentGroup: SocialInsurancePaymentGroup
@@ -16,15 +18,9 @@ interface Props {
 export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
   const { formatMessage } = useLocale()
   const [expanded, toggleExpand] = useState<boolean>(false)
-  const [closed, setClosed] = useState<boolean>(true)
 
-  const handleAnimationEnd = useCallback((height: Height) => {
-    if (height === 0) {
-      setClosed(true)
-    } else {
-      setClosed(false)
-    }
-  }, [])
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   const onExpandButton = () => {
     toggleExpand(!expanded)
@@ -35,7 +31,9 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
       <T.Row>
         <T.Data
           box={{
-            className: cn(styles.labelColumn, { [styles.column]: expanded }),
+            className: cn(styles.rowLabelColumnCell, {
+              [styles.expandedColumnCell]: expanded,
+            }),
             background: expanded ? 'blue100' : 'white',
           }}
         >
@@ -46,7 +44,7 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
               justifyContent="flexStart"
               onClick={onExpandButton}
               cursor="pointer"
-              paddingRight={4}
+              paddingRight={isMobile ? 2 : 4}
             >
               <Button
                 circle
@@ -61,19 +59,23 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
                 variant="primary"
               />
             </Box>
-            <Text variant="medium">{paymentGroup.name}</Text>
+            <Box paddingRight={isMobile ? 2 : undefined}>
+              <Text variant="medium">{paymentGroup.name}</Text>
+            </Box>
           </Box>
         </T.Data>
         {MONTHS.map((month, i) => {
           const amount = paymentGroup?.monthlyPaymentHistory?.find(
-            (mph) => mph.monthIndex === MONTHS.indexOf(month),
+            (mph) => mph.monthIndex === MONTHS.indexOf(month) + 1,
           )?.amount
 
           return (
             <T.Data
               key={i}
               box={{
-                className: cn({ [styles.column]: expanded }),
+                className: cn(styles.noWrap, {
+                  [styles.expandedColumnCell]: expanded,
+                }),
                 background: expanded ? 'blue100' : 'white',
               }}
               align="right"
@@ -86,13 +88,15 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
         })}
         <T.Data
           box={{
-            className: cn(styles.sumColumn, { [styles.column]: expanded }),
+            className: cn(styles.lastColumnCell, styles.noWrap, {
+              [styles.expandedColumnCell]: expanded,
+            }),
             background: expanded ? 'blue100' : 'white',
           }}
         >
-          <Text variant="medium">{`${amountFormat(
-            paymentGroup.totalYearCumulativeAmount,
-          )}`}</Text>
+          <Text variant="medium" textAlign="right">
+            {`${amountFormat(paymentGroup.totalYearCumulativeAmount)}`}
+          </Text>
         </T.Data>
       </T.Row>
       {paymentGroup?.payments.map((pg, idx) => {
@@ -102,26 +106,21 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
           <T.Row>
             <T.Data
               box={{
-                className: cn(styles.subLabelColumn, styles.column, {
-                  [styles.hidden]: !expanded,
-                }),
+                className: cn(
+                  styles.reset,
+                  styles.nestedLabelColumnCell,
+                  styles.expandedColumnCell,
+                  {
+                    [styles.hidden]: !expanded,
+                  },
+                ),
                 background: 'blue100',
-                paddingRight: 0,
-                paddingLeft: 0,
-                paddingTop: 0,
-                paddingBottom: 0,
                 marginTop: 3,
               }}
             >
-              <AnimateHeight
-                onHeightAnimationEnd={(newHeight) =>
-                  handleAnimationEnd(newHeight)
-                }
-                duration={300}
-                height={expanded ? 'auto' : 0}
-              >
+              <AnimateHeight duration={300} height={expanded ? 'auto' : 0}>
                 <Box
-                  className={styles.subCell}
+                  className={styles.nestedCell}
                   background={idx % 2 === 0 ? 'white' : 'blue100'}
                   marginLeft={3}
                   paddingLeft={2}
@@ -136,32 +135,27 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
             </T.Data>
             {MONTHS.map((month) => {
               const amount = pg?.monthlyPaymentHistory?.find(
-                (mph) => mph.monthIndex === MONTHS.indexOf(month),
+                (mph) => mph.monthIndex === MONTHS.indexOf(month) + 1,
               )?.amount
 
               return (
                 <T.Data
                   key={`nested-table-footer-col-${month}`}
                   box={{
-                    className: cn(styles.column, {
-                      [styles.hidden]: !expanded,
-                    }),
+                    className: cn(
+                      styles.expandedColumnCell,
+                      styles.noWrap,
+                      styles.reset,
+                      {
+                        [styles.hidden]: !expanded,
+                      },
+                    ),
                     background: 'blue100',
-                    paddingRight: 0,
-                    paddingLeft: 0,
-                    paddingTop: 0,
-                    paddingBottom: 0,
                   }}
                 >
-                  <AnimateHeight
-                    onHeightAnimationEnd={(newHeight) =>
-                      handleAnimationEnd(newHeight)
-                    }
-                    duration={300}
-                    height={expanded ? 'auto' : 0}
-                  >
+                  <AnimateHeight duration={300} height={expanded ? 'auto' : 0}>
                     <Box
-                      className={styles.subCell}
+                      className={styles.nestedCell}
                       background={idx % 2 === 0 ? 'white' : 'blue100'}
                       paddingY={2}
                       paddingX={3}
@@ -178,25 +172,21 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
             })}
             <T.Data
               box={{
-                className: cn(styles.sumColumn, styles.column, {
-                  [styles.hidden]: !expanded,
-                }),
+                className: cn(
+                  styles.lastColumnCell,
+                  styles.expandedColumnCell,
+                  styles.reset,
+                  styles.noWrap,
+                  {
+                    [styles.hidden]: !expanded,
+                  },
+                ),
                 background: 'blue100',
-                paddingRight: 0,
-                paddingLeft: 0,
-                paddingTop: 0,
-                paddingBottom: 0,
               }}
             >
-              <AnimateHeight
-                onHeightAnimationEnd={(newHeight) =>
-                  handleAnimationEnd(newHeight)
-                }
-                duration={300}
-                height={expanded ? 'auto' : 0}
-              >
+              <AnimateHeight duration={300} height={expanded ? 'auto' : 0}>
                 <Box
-                  className={styles.subCell}
+                  className={styles.nestedCell}
                   background={idx % 2 === 0 ? 'white' : 'blue100'}
                   paddingX={2}
                   marginRight={3}

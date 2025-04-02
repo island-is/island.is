@@ -44,11 +44,11 @@ export const PaymentGroupTable = () => {
           <T.Row>
             <T.HeadData
               box={{
-                className: styles.labelColumn,
+                className: styles.rowLabelColumnCell,
                 background: 'blue100',
               }}
             >
-              <Box className={styles.labelCell} paddingLeft={7}>
+              <Box className={styles.rowLabelColumnCellBox} paddingLeft={7}>
                 <Text variant="medium" fontWeight="medium">
                   {formatMessage(m.type)}
                 </Text>
@@ -71,7 +71,7 @@ export const PaymentGroupTable = () => {
             ))}
             <T.HeadData
               box={{
-                className: styles.sumColumn,
+                className: styles.lastColumnCell,
                 background: 'blue100',
               }}
             >
@@ -88,9 +88,7 @@ export const PaymentGroupTable = () => {
           <T.Row>
             <T.Data
               box={{
-                className: styles.labelColumn,
-                paddingY: 1,
-                paddingX: 2,
+                className: styles.rowLabelColumnCell,
                 background: 'white',
               }}
             >
@@ -102,7 +100,7 @@ export const PaymentGroupTable = () => {
             </T.Data>
             {MONTHS.map((month) => {
               const amount = paymentPlan?.totalMonthlyPaymentHistory?.find(
-                (mph) => mph.monthIndex === MONTHS.indexOf(month),
+                (mph) => mph.monthIndex === MONTHS.indexOf(month) + 1,
               )?.amount
               return (
                 <T.Data key={`nested-table-footer-col-${month}`}>
@@ -114,17 +112,15 @@ export const PaymentGroupTable = () => {
             })}
             <T.Data
               box={{
-                className: styles.sumColumn,
+                className: styles.lastColumnCell,
                 background: 'white',
               }}
             >
-              <Box className={styles.lastCell}>
-                <Text variant="medium" fontWeight="medium">
-                  {paymentPlan?.totalPaymentsReceived
-                    ? amountFormat(paymentPlan?.totalPaymentsReceived)
-                    : '-'}
-                </Text>
-              </Box>
+              <Text variant="medium" fontWeight="medium" textAlign="right">
+                {paymentPlan?.totalPaymentsReceived
+                  ? amountFormat(paymentPlan?.totalPaymentsReceived)
+                  : '-'}
+              </Text>
             </T.Data>
           </T.Row>
         </T.Body>
