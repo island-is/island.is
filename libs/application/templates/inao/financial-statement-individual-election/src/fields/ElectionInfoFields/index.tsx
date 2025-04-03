@@ -1,20 +1,16 @@
 import { useCallback, useMemo, useReducer } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-
 import { useQuery } from '@apollo/client'
 import { getAvailableElections } from '../../graphql'
-import {
-  Application,
-  FinancialStatementsInaoElection,
-} from '@island.is/api/schema'
+import { FinancialStatementsInaoElection } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
-import { ABOUTIDS, UPDATE_ELECTION_ACTION } from '../../lib/utils/constants'
+import { ABOUTIDS, UPDATE_ELECTION_ACTION } from '../../utils/constants'
 import { electionInitialState, electionReducer } from './electionReducer'
 import { Options } from '../../types/types'
 import { ElectionSelect } from './ElectionSelect'
 import { IncomeLimitFields } from './IncomeLimitFields'
-import { m } from '../../lib/utils/messages'
+import { m } from '../../lib/messages'
 
 export const ElectionsInfoFields = () => {
   const [state, dispatch] = useReducer(electionReducer, electionInitialState)
