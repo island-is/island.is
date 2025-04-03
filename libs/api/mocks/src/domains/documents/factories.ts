@@ -27,19 +27,19 @@ export const categories = [
     name: 'Húsnæði og eignir',
   },
   {
-    id: '4',
+    id: '5',
     name: 'Atvinna',
   },
 ]
 
 export const document = factory<DocumentV2>({
-  id: faker.datatype.uuid(),
-  bookmarked: faker.datatype.boolean(),
-  categoryId: faker.random.arrayElement(categoryIds),
-  documentDate: faker.date.past().toISOString(),
-  isUrgent: faker.datatype.boolean(),
-  opened: faker.datatype.boolean(),
-  publicationDate: faker.date.past().toISOString(),
-  subject: faker.lorem.sentence(),
-  sender: faker.random.arrayElement(senders),
+  id: () => faker.datatype.uuid(),
+  bookmarked: () => faker.datatype.boolean(),
+  categoryId: () => faker.random.arrayElement(categoryIds),
+  documentDate: () => faker.date.past().toISOString(),
+  isUrgent: () => faker.datatype.boolean(),
+  opened: () => faker.datatype.boolean(),
+  publicationDate: () => faker.date.past().toISOString(),
+  subject: () => faker.lorem.sentence(),
+  sender: () => faker.random.arrayElement(senders),
 })

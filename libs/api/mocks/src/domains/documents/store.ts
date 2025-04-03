@@ -1,17 +1,19 @@
 import { createStore } from '@island.is/shared/mocking'
-import { document } from './factories'
+import { categories, document, senders } from './factories'
 
 export const store = createStore(() => {
-  const documentList = document.list(10)
+  const documentList = document.list(20)
 
   return {
-    documents: {
+    documentsV2: {
       data: documentList,
       pageInfo: { hasNextPage: false, hasPreviousPage: false },
-      categories: [],
-      senders: [],
+      categories: categories,
+      senders: senders,
       totalCount: documentList.length,
       types: [],
     },
+    categories: categories,
+    senders: senders,
   }
 })
