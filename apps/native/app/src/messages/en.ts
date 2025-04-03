@@ -306,24 +306,23 @@ export const en: TranslatedMessages = {
   'licenseDetail.passport.alert.description':
     'This summary is not valid as a travel document.',
   'licenseDetail.identityDocument.alert.title':
-    'Þetta er eingöngu yfirlit og gildir ekki sem persónuskilríki',
+    'This is for information only and is not valid for identification purposes',
   'licenseDetail.identityDocument.alert.description':
-    'Einungis skilríkið sjálft er fullgilt persónuskilríki.',
+    'Only the physical document is valid for identification.',
   'licenseDetail.identityTravelDocument.alert.title':
-    'Remember the travel document!',
+    'Please remember your travel document!',
   'licenseDetail.identityTravelDocument.alert.description':
-    'This summary is not valid as a travel document.',
+    'This is not valid as a travel document.',
   'licenseDetail.warning.title': 'Expires within 6 months',
   'licenseDetail.passport.warning.description':
     'Note that your passport will expire within the next 6 months.',
   'licenseDetail.identityDocument.warning.description':
     'Note that your identity document will expire within the next 6 months.',
   'licenseDetail.passport.noPassport': 'No valid passport',
-  'licenseDetail.identityDocument.noIdentityDocument':
-    'No valid identity documents',
+  'licenseDetail.identityDocument.noIdentityDocument': 'No valid Id-cards',
   'licenseDetail.apply': 'Apply',
   'licenseDetail.passport.title': 'Passport',
-  'licenseDetail.identityDocument.title': 'Nafnskírteini',
+  'licenseDetail.identityDocument.title': 'ID-card',
 
   // license scanner
   'licenseScanner.title': 'Scan barcode',
