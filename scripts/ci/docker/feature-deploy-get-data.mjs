@@ -48,7 +48,7 @@ async function main(testContext = null) {
 
   core.setOutput(_KEY_COMMIT_MSG, getCommitMsg(context))
 
-  const _MANIFEST_PATHS = ['charts/features']
+  const _MANIFEST_PATHS = ['charts/features/deployments']
 
   const changedFiles = new Set()
 
@@ -60,25 +60,23 @@ async function main(testContext = null) {
     const textContent = readFileSync(file, 'utf8')
     const yamlContent = await jsyaml.load(textContent)
 
-    for (const val of Object.values(yamlContent)) {
-      const content = findNestedObjectByKey(val, 'image')
+    const content = findNestedObjectByKey(yamlContent, 'image')
 
-      if (
-        typeof content === 'object' &&
-        typeof content.image === 'object' &&
-        content.image.repository &&
-        typeof content.image.repository === 'string'
-      ) {
-        content.image.tag = imageTag
-        fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
-        console.log(`Changed file ${file}`)
-        changedFiles.add(file)
-      } else if (file.includes('job-manifest') && !changedFiles.has(file)) {
-        console.log(`Adding job-manifest file ${file}`)
-        changedFiles.add(file)
-      } else if (!changedFiles.has(file)) {
-        console.log(`Skipping file ${file}`)
-      }
+    if (
+      typeof content === 'object' &&
+      typeof content.image === 'object' &&
+      content.image.repository &&
+      typeof content.image.repository === 'string'
+    ) {
+      content.image.tag = imageTag
+      fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
+      console.log(`Changed file ${file}`)
+      changedFiles.add(file)
+    } else if (file.includes('job-manifest') && !changedFiles.has(file)) {
+      console.log(`Adding job-manifest file ${file}`)
+      changedFiles.add(file)
+    } else if (!changedFiles.has(file)) {
+      console.log(`Skipping file ${file}`)
     }
   }
 
