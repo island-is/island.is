@@ -2,7 +2,6 @@ import {
   AsyncSearch,
   AsyncSearchOption,
   Box,
-  ColorSchemeContext,
   Text,
 } from '@island.is/island-ui/core'
 import { useMemo, useRef, useState } from 'react'
@@ -13,11 +12,7 @@ import * as styles from './SearchInput.css'
 import { useNavigate } from 'react-router-dom'
 import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
 
-interface Props {
-  colored?: boolean
-}
-
-export const SearchInput = ({ colored }: Props) => {
+export const SearchInput = () => {
   const [query, setQuery] = useState<string>()
   const search = usePortalModulesSearch()
 

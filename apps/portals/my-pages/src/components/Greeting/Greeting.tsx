@@ -50,7 +50,7 @@ const Greeting = () => {
                 {formatMessage(m.greetingIntro)}
               </Text>
               <Box marginTop={3}>
-                <SearchInput colored />
+                <SearchInput />
               </Box>
             </Box>
           </GridColumn>
