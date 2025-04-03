@@ -6,7 +6,8 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { canUserAccessMinimalCase } from '../filters/minimalCaseAccess.filter'
+import { canUserAccessMinimalCase } from '../filters/case.filter'
+
 @Injectable()
 export class MinimalCaseAccessGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
