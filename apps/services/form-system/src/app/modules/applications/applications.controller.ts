@@ -140,7 +140,15 @@ export class ApplicationsController {
   })
   @ApiParam({ name: 'formId', type: String })
   @Get('form/:formId')
-  async findAllByTypeAndUser(): Promise<ApplicationListDto> {
-    return await this.applicationsService.findAllByTypeAndUser()
-  }
+@ApiParam({ name: 'formId', type: String })
+@Get('form/:formId')
+async findAllByTypeAndUser(
+  @Param('formId') formId: string,
+  @Query('page') page: number = 1,
+  @Query('limit') limit: number = 10,
+  @Query('isTest') isTest: boolean = false
+): Promise<ApplicationListDto> {
+  // TODO: Implement proper filtering by form and pagination
+  return await this.applicationsService.findAllByTypeAndUser()
+}
 }
