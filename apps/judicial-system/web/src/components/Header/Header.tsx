@@ -133,14 +133,14 @@ const HeaderContainer = () => {
             marginRight="auto"
           >
             <Box marginLeft={[1, 1, 2, 4]}>
-              <Text variant="eyebrow">{'Dómsmálaráðuneytið'}</Text>
+              <Text variant="eyebrow">Dómsmálaráðuneytið</Text>
               <Hidden above="sm">
-                <Text fontWeight="light" variant={'eyebrow'}>
+                <Text fontWeight="light" variant="eyebrow">
                   Réttarvörslugátt
                 </Text>
               </Hidden>
               <Hidden below="md">
-                <Text fontWeight="light" variant={'default'}>
+                <Text fontWeight="light" variant="default">
                   Réttarvörslugátt
                 </Text>
               </Hidden>

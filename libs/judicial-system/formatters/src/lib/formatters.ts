@@ -7,7 +7,6 @@ import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
-  CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
   Gender,
@@ -135,25 +134,6 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
       return 'Sameinað'
     case CaseIndictmentRulingDecision.WITHDRAWAL:
       return 'Afturkallað'
-    default:
-      return 'Ekki skráð'
-  }
-}
-
-export const getRoleTitleFromCaseFileCategory = (
-  category?: CaseFileCategory | null,
-) => {
-  switch (category) {
-    case CaseFileCategory.PROSECUTOR_CASE_FILE:
-      return 'Sækjandi'
-    case CaseFileCategory.DEFENDANT_CASE_FILE:
-      return 'Verjandi'
-    case CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE:
-      return 'Ákærði'
-    case CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE:
-      return 'Réttargæslumaður'
-    case CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE:
-      return 'Lögmaður'
     default:
       return 'Ekki skráð'
   }
