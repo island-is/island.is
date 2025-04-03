@@ -12,9 +12,9 @@ import { isDefined } from '@island.is/shared/utils'
 import { useMemo } from 'react'
 import { useGetOccupationalLicensesQuery } from './OccupationalLicensesOverview.generated'
 import {
-  OccupationalLicenseV2,
-  OccupationalLicensesV2Error,
-  OccupationalLicenseV2LicenseType,
+  OccupationalLicense,
+  OccupationalLicenseLicenseType,
+  OccupationalLicensesError,
 } from '@island.is/api/schema'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { olMessage } from '../../lib/messages'
@@ -22,40 +22,40 @@ import { OccupationalLicensesPaths } from '../../lib/paths'
 import { getTagProps } from '../../lib/utils'
 
 const mapLicenseTypeToOrganization = (
-  type: OccupationalLicenseV2LicenseType,
+  type: OccupationalLicenseLicenseType,
 ): OrganizationSlugType | undefined => {
   switch (type) {
-    case OccupationalLicenseV2LicenseType.EDUCATION:
+    case OccupationalLicenseLicenseType.EDUCATION:
       return 'midstod-menntunar-og-skolathjonustu'
-    case OccupationalLicenseV2LicenseType.HEALTH_DIRECTORATE:
+    case OccupationalLicenseLicenseType.HEALTH_DIRECTORATE:
       return 'landlaeknir'
-    case OccupationalLicenseV2LicenseType.DISTRICT_COMMISSIONERS:
+    case OccupationalLicenseLicenseType.DISTRICT_COMMISSIONERS:
       return 'syslumenn'
     default:
       return undefined
   }
 }
 
-const OverviewV2 = () => {
+const Overview = () => {
   const { data, loading, error } = useGetOccupationalLicensesQuery()
   const { data: organizations } = useOrganizations()
   const { formatMessage, formatDateFns } = useLocale()
   useNamespaces('sp.occupational-licenses')
 
   const licenses =
-    data?.occupationalLicensesV2?.licenses
-      .filter((l) => l.__typename === 'OccupationalLicenseV2')
+    data?.occupationalLicenses?.licenses
+      .filter((l) => l.__typename === 'OccupationalLicense')
       .filter(isDefined)
-      .map((l) => l as OccupationalLicenseV2) ?? []
+      .map((l) => l as OccupationalLicense) ?? []
 
   const errors = useMemo(() => {
     return (
-      data?.occupationalLicensesV2?.licenses
-        .filter((l) => l.__typename === 'OccupationalLicensesV2Error')
+      data?.occupationalLicenses?.licenses
+        .filter((l) => l.__typename === 'OccupationalLicensesError')
         .filter(isDefined)
-        .map((l) => l as OccupationalLicensesV2Error) ?? []
+        .map((l) => l as OccupationalLicensesError) ?? []
     )
-  }, [data?.occupationalLicensesV2?.licenses])
+  }, [data?.occupationalLicenses?.licenses])
 
   const errorString = useMemo(() => {
     return errors
@@ -141,4 +141,4 @@ const OverviewV2 = () => {
   )
 }
 
-export default OverviewV2
+export default Overview

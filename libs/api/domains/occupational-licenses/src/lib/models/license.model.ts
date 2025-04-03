@@ -3,7 +3,7 @@ import { GenericField } from './genericField.model'
 import { Status } from './licenseStatus.model'
 import { LicenseType } from './licenseType.model'
 
-@ObjectType('OccupationalLicenseV2')
+@ObjectType('OccupationalLicense')
 export class License {
   @Field()
   licenseId!: string

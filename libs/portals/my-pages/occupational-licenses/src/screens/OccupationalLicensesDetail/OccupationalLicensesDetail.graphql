@@ -1,5 +1,5 @@
-query getOccupationalLicenseById($input: OccupationalLicensesV2LicenseInput!) {
-  occupationalLicenseV2(input: $input) {
+query getOccupationalLicenseById($input: OccupationalLicensesLicenseInput!) {
+  occupationalLicense(input: $input) {
     __typename
     license {
       __typename

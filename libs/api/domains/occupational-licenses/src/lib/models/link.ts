@@ -6,9 +6,9 @@ export enum LinkType {
   DOCUMENT = 'document',
 }
 
-registerEnumType(LinkType, { name: 'OccupationalLicensesV2LinkType' })
+registerEnumType(LinkType, { name: 'OccupationalLicensesLinkType' })
 
-@ObjectType('OccupationalLicensesV2Link')
+@ObjectType('OccupationalLicensesLink')
 export class Link {
   @Field(() => LinkType)
   type!: LinkType

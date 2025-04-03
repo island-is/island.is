@@ -1,45 +1,30 @@
-import {
-  CurrentUser,
-  IdsAuthGuard,
-  IdsUserGuard,
-  Scopes,
-} from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard, Scopes } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { Inject, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { OccupationalLicensesV2Service } from './occupationalLicensesV2.service'
 import { LicenseInput } from './dto/licenseInput.model'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { LicenseCollection } from './models/licenseCollection.model'
 import { getLicenseTypeByIdPrefix } from './utils'
 import { LicenseResponse } from './models/licenseResponse.model'
 import { LicenseResult } from './models/licenseResult.model'
 import { isDefined } from '@island.is/shared/utils'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
+import { OccupationalLicensesService } from './occupationalLicenses.service'
 
-@UseGuards(IdsUserGuard, FeatureFlagGuard)
-@Audit({ namespace: '@island.is/api/occupational-licenses-v2' })
+@UseGuards(IdsUserGuard)
+@Audit({ namespace: '@island.is/api/occupational-licenses' })
 @Scopes(ApiScope.internal)
-@FeatureFlag(Features.occupationalLicensesV2)
 @Resolver(() => LicenseCollection)
-export class OccupationalLicensesV2Resolver {
-  constructor(
-    private readonly service: OccupationalLicensesV2Service,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
+export class OccupationalLicensesResolver {
+  constructor(private readonly service: OccupationalLicensesService) {}
 
   @Query(() => LicenseCollection, {
-    name: 'occupationalLicensesV2',
+    name: 'occupationalLicenses',
     nullable: true,
   })
   @Audit()
-  async occupationalLicensesV2(
+  async occupationalLicenses(
     @CurrentUser() user: User,
   ): Promise<LicenseCollection | null> {
     const data = await Promise.all([
@@ -61,7 +46,7 @@ export class OccupationalLicensesV2Resolver {
   }
 
   @Query(() => LicenseResponse, {
-    name: 'occupationalLicenseV2',
+    name: 'occupationalLicense',
     nullable: true,
   })
   @Audit()

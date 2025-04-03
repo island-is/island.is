@@ -34,7 +34,7 @@ import { FetchError } from '@island.is/clients/middlewares'
 
 const namespaceId = 'service.portal'
 
-export class OccupationalLicensesV2Service {
+export class OccupationalLicensesService {
   constructor(
     private readonly dcService: DistrictCommissionersLicensesService,
     private readonly healthService: HealthDirectorateClientService,

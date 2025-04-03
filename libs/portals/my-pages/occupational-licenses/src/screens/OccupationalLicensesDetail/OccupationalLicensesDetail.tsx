@@ -8,7 +8,6 @@ import {
 } from '@island.is/island-ui/core'
 import {
   UserInfoLine,
-  StackWithBottomDivider,
   formSubmit,
   LinkButton,
   IntroWrapper,
@@ -22,8 +21,8 @@ import { Problem } from '@island.is/react-spa/shared'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { useOrganization } from '@island.is/portals/my-pages/graphql'
 import {
-  OccupationalLicenseV2LicenseType,
-  OccupationalLicensesV2LinkType,
+  OccupationalLicenseLicenseType,
+  OccupationalLicensesLinkType,
 } from '@island.is/api/schema'
 import { useGetOccupationalLicenseByIdQuery } from './OccupationalLicensesDetail.generated'
 
@@ -45,14 +44,14 @@ const OccupationalLicenseDetail = () => {
   })
 
   const { data: organization } = useOrganization(
-    data?.occupationalLicenseV2?.license.issuer ?? undefined,
+    data?.occupationalLicense?.license.issuer ?? undefined,
   )
 
-  const res = data?.occupationalLicenseV2
+  const res = data?.occupationalLicense
   const license = res?.license
 
   const isOldEducationLicense =
-    license?.type === OccupationalLicenseV2LicenseType.EDUCATION &&
+    license?.type === OccupationalLicenseLicenseType.EDUCATION &&
     license.validFrom &&
     new Date(license.validFrom) < EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF
 
@@ -68,7 +67,7 @@ const OccupationalLicenseDetail = () => {
               if (!a) {
                 return null
               }
-              if (a.type === OccupationalLicensesV2LinkType.FILE) {
+              if (a.type === OccupationalLicensesLinkType.FILE) {
                 return (
                   <Button
                     key={`button-file-${index}`}
@@ -91,7 +90,7 @@ const OccupationalLicenseDetail = () => {
                   key={`button-link-${index}`}
                   variant="utility"
                   to={
-                    a.type === OccupationalLicensesV2LinkType.DOCUMENT
+                    a.type === OccupationalLicensesLinkType.DOCUMENT
                       ? DocumentsPaths.ElectronicDocumentSingle.replace(
                           ':id',
                           a.url,
@@ -100,7 +99,7 @@ const OccupationalLicenseDetail = () => {
                   }
                   text={a.text}
                   icon={
-                    a.type === OccupationalLicensesV2LinkType.DOCUMENT
+                    a.type === OccupationalLicensesLinkType.DOCUMENT
                       ? 'mailOpen'
                       : 'open'
                   }
@@ -120,7 +119,7 @@ const OccupationalLicenseDetail = () => {
           )}
         />
       )}
-      {!error && (loading || data?.occupationalLicenseV2) && (
+      {!error && (loading || data?.occupationalLicense) && (
         <InfoLineStack space={2}>
           <InfoLine
             loading={loading}
@@ -220,7 +219,7 @@ const OccupationalLicenseDetail = () => {
           )}
           {license?.genericFields?.length &&
             license.genericFields.map((g, index) => (
-              <UserInfoLine
+              <InfoLine
                 key={index}
                 loading={loading}
                 label={g.title}

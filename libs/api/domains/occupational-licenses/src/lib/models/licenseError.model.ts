@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { LicenseType } from './licenseType.model'
 
-@ObjectType('OccupationalLicensesV2Error')
+@ObjectType('OccupationalLicensesError')
 export class LicenseError {
   @Field(() => LicenseType)
   type!: LicenseType

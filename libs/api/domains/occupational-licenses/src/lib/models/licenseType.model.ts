@@ -7,5 +7,5 @@ export enum LicenseType {
 }
 
 registerEnumType(LicenseType, {
-  name: 'occupationalLicenseV2LicenseType',
+  name: 'occupationalLicenseLicenseType',
 })

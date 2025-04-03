@@ -1,8 +1,8 @@
 query getOccupationalLicenses {
-  occupationalLicensesV2 {
+  occupationalLicenses {
     __typename
     licenses {
-      ... on OccupationalLicenseV2 {
+      ... on OccupationalLicense {
         __typename
         licenseId
         legalEntityId
@@ -16,7 +16,7 @@ query getOccupationalLicenses {
         title
         status
       }
-      ... on OccupationalLicensesV2Error {
+      ... on OccupationalLicensesError {
         __typename
         type
         error

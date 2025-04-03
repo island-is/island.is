@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'api-domains-occupational-licenses-v2',
+  displayName: 'api-domains-occupational-licenses',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
@@ -8,5 +8,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory:
-    '../../../../coverage/libs/api/domains/occupational-licenses-v2',
+    '../../../../coverage/libs/api/domains/occupational-licenses',
 }

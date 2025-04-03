@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { LicenseResult } from './licenseResult.model'
 
-@ObjectType('OccupationalLicensesV2Licenses')
+@ObjectType('OccupationalLicensesLicenses')
 export class LicenseCollection {
   @Field(() => [LicenseResult])
   licenses!: Array<typeof LicenseResult>

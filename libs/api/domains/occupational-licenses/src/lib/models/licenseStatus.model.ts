@@ -11,5 +11,5 @@ export enum Status {
 }
 
 registerEnumType(Status, {
-  name: 'OccupationalLicenseV2Status',
+  name: 'OccupationalLicenseStatus',
 })

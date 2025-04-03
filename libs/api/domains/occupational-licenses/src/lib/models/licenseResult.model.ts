@@ -3,7 +3,7 @@ import { LicenseError } from './licenseError.model'
 import { License } from './license.model'
 
 export const LicenseResult = createUnionType({
-  name: 'OccupationalLicensesV2LicenseResult',
+  name: 'OccupationalLicensesLicenseResult',
   types: () => [License, LicenseError] as const,
   resolveType(value) {
     if (value.licenseId) {

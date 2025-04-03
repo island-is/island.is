@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 import type { Locale } from '@island.is/shared/types'
 
-@InputType('OccupationalLicensesV2LicenseInput')
+@InputType('OccupationalLicensesLicenseInput')
 export class LicenseInput {
   @Field()
   id!: string

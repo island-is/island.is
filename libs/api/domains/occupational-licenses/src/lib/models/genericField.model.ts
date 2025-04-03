@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql'
 
-@ObjectType('OccupationalLicensesV2GenericField')
+@ObjectType('OccupationalLicensesGenericField')
 export class GenericField {
   @Field()
   title!: string
