@@ -13,14 +13,14 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
-import { getTotal } from '../../lib/utils/helpers'
+import { getTotal } from '../../utils/helpers'
 import { useTotals } from '../../hooks/useTotals'
 import {
   EQUITIESANDLIABILITIESIDS,
   INPUTCHANGEINTERVAL,
   VALIDATOR,
-} from '../../lib/utils/constants'
-import { m } from '../../lib/utils/messages'
+} from '../../utils/constants'
+import { m } from '../../lib/messages'
 import { Total } from '../IndividualElectionOperatingIncome/Total'
 
 export const ElectionEquities = ({
