@@ -156,13 +156,12 @@ export const canLimitedAccessUserViewCaseFile = (
   defendants?: Defendant[],
   civilClaimants?: CivilClaimant[],
 ) => {
-  console.log({ caseFileCategory })
   if (!caseFileCategory) {
     return false
   }
 
   if (isDefenceUser(user)) {
-    const test = canDefenceUserViewCaseFile(
+    return canDefenceUserViewCaseFile(
       user.nationalId,
       caseType,
       caseState,
@@ -170,12 +169,6 @@ export const canLimitedAccessUserViewCaseFile = (
       defendants,
       civilClaimants,
     )
-    console.log({ test })
-    return test
-  }
-
-  if (isPrisonStaffUser(user)) {
-    return canPrisonStaffUserViewCaseFile(caseState, caseFileCategory)
   }
 
   if (isPrisonAdminUser(user)) {

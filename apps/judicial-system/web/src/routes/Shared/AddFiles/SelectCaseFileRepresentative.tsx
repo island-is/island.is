@@ -82,7 +82,6 @@ export const SelectCaseFileRepresentative = ({
             onChange={(selectedDate) => {
               if (!selectedDate) return
 
-              console.log({ selectedDate })
               setSubmissionDate(selectedDate)
               handleCaseFileRepresentativeUpdate(
                 fileRepresentative,
