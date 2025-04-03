@@ -11,5 +11,11 @@ export const resolvers: Resolvers = {
     documentsV2: () => {
       return store.documentsV2
     },
+    getDocumentCategories: () => {
+      return store.categories
+    },
+    getDocumentSenders: () => {
+      return store.senders
+    },
   },
 }
