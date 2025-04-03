@@ -67,7 +67,7 @@ module.exports = {
 
     for (const flow of paymentFlows) {
       const charges = await queryInterface.sequelize.query(
-        `SELECT chargeItemCode FROM payment_flow_charge WHERE payment_flow_id = :id`,
+        `SELECT charge_item_code FROM payment_flow_charge WHERE payment_flow_id = :id`,
         { replacements: { id: flow.id }, type: Sequelize.QueryTypes.SELECT },
       )
       const productIds = charges.map((charge) => charge.chargeItemCode)

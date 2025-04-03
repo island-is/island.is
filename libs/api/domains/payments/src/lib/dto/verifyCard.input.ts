@@ -2,8 +2,8 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType('PaymentsVerifyCardInput')
 export class VerifyCardInput {
-  @Field((_) => Number)
-  cardNumber!: number
+  @Field((_) => String)
+  cardNumber!: string
 
   @Field((_) => Number)
   expiryMonth!: number

@@ -9,12 +9,12 @@ export class VerifyCardInput {
   })
   paymentFlowId!: string
 
-  @IsNumber()
+  @IsString()
   @ApiProperty({
     description: 'Card number',
-    type: Number,
+    type: String,
   })
-  cardNumber!: number
+  cardNumber!: string
 
   @IsNumber()
   @ApiProperty({

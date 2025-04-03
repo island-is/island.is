@@ -9,12 +9,12 @@ export class ChargeCardInput {
   })
   paymentFlowId!: string
 
-  @IsNumber()
+  @IsString()
   @ApiProperty({
     description: 'Card number',
-    type: Number,
+    type: String,
   })
-  cardNumber!: number
+  cardNumber!: string
 
   @IsNumber()
   @ApiProperty({
@@ -37,10 +37,10 @@ export class ChargeCardInput {
   })
   amount!: number
 
-  @IsNumber()
+  @IsString()
   @ApiProperty({
     description: 'Card cvc',
-    type: Number,
+    type: String,
   })
-  cvc!: number
+  cvc!: string
 }

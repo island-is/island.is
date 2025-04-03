@@ -141,7 +141,7 @@ describe('CardPaymentController', () => {
     it('should throw an error if trying to verify invalid payment flow', async () => {
       const verifyPayload: VerifyCardInput = {
         amount: 1000,
-        cardNumber: 4242424242424242,
+        cardNumber: '4242424242424242',
         expiryMonth: 12,
         expiryYear: new Date().getFullYear() - 2000,
         paymentFlowId: uuid(),
@@ -160,7 +160,7 @@ describe('CardPaymentController', () => {
     it('should throw an error if trying to verify a payment flow that has already been paid', async () => {
       const verifyPayload: VerifyCardInput = {
         amount: 1000,
-        cardNumber: 4242424242424242,
+        cardNumber: '4242424242424242',
         expiryMonth: 12,
         expiryYear: new Date().getFullYear() - 2000,
         paymentFlowId,
@@ -208,7 +208,7 @@ describe('CardPaymentController', () => {
 
       const verifyPayload: VerifyCardInput = {
         amount: 1000,
-        cardNumber: 4242424242424242,
+        cardNumber: '4242424242424242',
         expiryMonth: 12,
         expiryYear: new Date().getFullYear() - 2000,
         paymentFlowId,
@@ -401,10 +401,10 @@ describe('CardPaymentController', () => {
       const chargeInput: ChargeCardInput = {
         paymentFlowId,
         amount: 1000,
-        cardNumber: 4242424242424242,
+        cardNumber: '4242424242424242',
         expiryMonth: 12,
         expiryYear: new Date().getFullYear() - 2000,
-        cvc: 123,
+        cvc: '123',
       }
 
       const getPaymentFlowDetailsSpy = jest
@@ -429,10 +429,10 @@ describe('CardPaymentController', () => {
       const chargeInput: ChargeCardInput = {
         paymentFlowId,
         amount: 1000,
-        cardNumber: 4242424242424242,
+        cardNumber: '4242424242424242',
         expiryMonth: 12,
         expiryYear: new Date().getFullYear() - 2000,
-        cvc: 123,
+        cvc: '123',
       }
 
       const getPaymentFlowDetailsSpy = jest
@@ -543,10 +543,10 @@ describe('CardPaymentController', () => {
     const chargeInput: ChargeCardInput = {
       paymentFlowId,
       amount: 1000,
-      cardNumber: 4242424242424242,
+      cardNumber: '4242424242424242',
       expiryMonth: 12,
       expiryYear: new Date().getFullYear() - 2000,
-      cvc: 123,
+      cvc: '123',
     }
 
     const getVerificationStatusSpy = jest

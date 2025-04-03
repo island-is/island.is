@@ -297,7 +297,7 @@ export class CardPaymentService {
     return data
   }
 
-  async refund(cardNumber: number, charge: ChargeResponse, amount: number) {
+  async refund(cardNumber: string, charge: ChargeResponse, amount: number) {
     try {
       const requestOptions = generateRefundRequestOptions({
         amount,

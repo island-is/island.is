@@ -139,7 +139,7 @@ export const generateRefundRequestOptions = ({
   paymentApiConfig,
 }: {
   amount: number
-  cardNumber: number
+  cardNumber: string
   charge: ChargeResponse
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
 }) => {
@@ -160,7 +160,7 @@ export const generateRefundRequestOptions = ({
     body: JSON.stringify({
       operation: 'Refund',
       transactionType: 'ECommerce',
-      cardNumber: cardNumber.toString(),
+      cardNumber: cardNumber,
       currency: 'ISK',
       amount: iskToAur(amount),
       acquirerReferenceNumber: charge.acquirerReferenceNumber,
