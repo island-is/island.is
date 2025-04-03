@@ -44,12 +44,6 @@ const transformCaseRepresentatives = (theCase: Case) => {
         }
       : undefined
 
-  const defenders = theCase.defendants?.map((defendant) => ({
-    name: defendant.defenderName,
-    nationalId: defendant.defenderNationalId,
-    caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
-  }))
-
   const civilClaimantSpokespersons = civilClaimants?.map((civilClaimant) => {
     const { spokespersonName, spokespersonNationalId, spokespersonIsLawyer } =
       civilClaimant
@@ -64,16 +58,28 @@ const transformCaseRepresentatives = (theCase: Case) => {
     }
   })
 
-  const defendants = theCase.defendants?.map((defendant) => ({
-    name: defendant.name,
-    nationalId: defendant.nationalId,
-    caseFileCategory: CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
-  }))
+  const defendantsAndDefenders = theCase.defendants?.flatMap((defendant) => {
+    const defendantAndDefender = [
+      {
+        name: defendant.name,
+        nationalId: defendant.nationalId,
+        caseFileCategory: CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+      },
+    ]
+    if (defendant.defenderName && defendant.defenderNationalId) {
+      defendantAndDefender.push({
+        name: defendant.defenderName,
+        nationalId: defendant.defenderNationalId,
+        caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
+      })
+    }
+    return defendantAndDefender
+  })
+
   return [
     prosecutorRepresentativeProps,
-    ...(defenders ? defenders : []),
     ...(civilClaimantSpokespersons ? civilClaimantSpokespersons : []),
-    ...(defendants ? defendants : []),
+    ...(defendantsAndDefenders ? defendantsAndDefenders : []),
   ].filter((representative) => !!representative)
 }
 
