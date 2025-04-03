@@ -14,6 +14,7 @@ cd "$INFRA_ROOT"
 
 yarn feature-env \
   values \
+  --skipAppName true \
   --chart islandis \
   --feature "$FEATURE_NAME" \
   --images "$IMAGE" \
