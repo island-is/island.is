@@ -5,7 +5,7 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { m } from '../../lib/utils/messages'
+import { m } from '../../lib/messages'
 import {
   CurrentUserTypeProvider,
   IdentityApiProvider,
