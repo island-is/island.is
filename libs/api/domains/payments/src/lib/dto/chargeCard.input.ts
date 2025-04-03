@@ -3,6 +3,6 @@ import { VerifyCardInput } from './verifyCard.input'
 
 @InputType('PaymentsChargeCardInput')
 export class ChargeCardInput extends VerifyCardInput {
-  @Field((_) => Number)
-  cvc!: number
+  @Field((_) => String)
+  cvc!: string
 }

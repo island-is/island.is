@@ -325,7 +325,7 @@ export default function PaymentPage({
     }
   }
 
-  const payWithCard = async (data: Record<string, unknown>) => {
+  const payWithCard = async (data: Record<string, string>) => {
     const { card, cardExpiry, cardCVC } = data
 
     // TODO Verify fields or let API?
@@ -336,10 +336,10 @@ export default function PaymentPage({
     const [month, year] = cardExpiry.split('/')
 
     const cardInfo = {
-      number: Number(card),
+      number: card,
       expiryMonth: Number(month),
       expiryYear: Number(year),
-      cvc: Number(cardCVC),
+      cvc: cardCVC,
     }
 
     const verifyCardResponse = await verifyCard({
@@ -379,7 +379,7 @@ export default function PaymentPage({
     }
   }
 
-  const onSubmit: SubmitHandler<Record<string, unknown>> = async (data) => {
+  const onSubmit: SubmitHandler<Record<string, string>> = async (data) => {
     setIsSubmitting(true)
 
     try {
