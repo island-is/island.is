@@ -43,6 +43,7 @@ export const PaymentGroupTable = () => {
         <T.Head>
           <T.Row>
             <T.HeadData
+              scope="col"
               box={{
                 className: styles.rowLabelColumnCell,
                 background: 'blue100',
@@ -61,6 +62,7 @@ export const PaymentGroupTable = () => {
                   background: 'blue100',
                 }}
                 align="right"
+                scope="col"
               >
                 <Text variant="medium" fontWeight="medium">
                   {formatMessage(
@@ -74,6 +76,7 @@ export const PaymentGroupTable = () => {
                 className: styles.lastColumnCell,
                 background: 'blue100',
               }}
+              scope="col"
             >
               <Text textAlign="right" variant="medium" fontWeight="medium">
                 {formatMessage(m.year)}
@@ -89,18 +92,19 @@ export const PaymentGroupTable = () => {
             />
           ))}
           <T.Row>
-            <T.Data
+            <T.HeadData
               box={{
                 className: styles.rowLabelColumnCell,
                 background: 'white',
               }}
+              scope="row"
             >
               <Box paddingLeft={7}>
                 <Text variant="medium" fontWeight="medium">
                   {formatMessage(m.totalPaymentsReceived)}
                 </Text>
               </Box>
-            </T.Data>
+            </T.HeadData>
             {MONTHS.map((month) => {
               const amount = paymentPlan?.totalMonthlyPaymentHistory?.find(
                 (mph) => mph.monthIndex === MONTHS.indexOf(month) + 1,

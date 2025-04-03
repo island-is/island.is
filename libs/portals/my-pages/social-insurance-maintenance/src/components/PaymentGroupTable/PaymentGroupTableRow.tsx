@@ -29,13 +29,14 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
   return (
     <>
       <T.Row>
-        <T.Data
+        <T.HeadData
           box={{
             className: cn(styles.rowLabelColumnCell, {
               [styles.expandedColumnCell]: expanded,
             }),
             background: expanded ? 'blue100' : 'white',
           }}
+          scope="row"
         >
           <Box display="flex">
             <Box
@@ -63,7 +64,7 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
               <Text variant="medium">{paymentGroup.name}</Text>
             </Box>
           </Box>
-        </T.Data>
+        </T.HeadData>
         {MONTHS.map((month, i) => {
           const amount = paymentGroup?.monthlyPaymentHistory?.find(
             (mph) => mph.monthIndex === MONTHS.indexOf(month) + 1,
@@ -104,7 +105,7 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
 
         return (
           <T.Row key={`payment-group-table-nested-row-${idx}`}>
-            <T.Data
+            <T.HeadData
               box={{
                 className: cn(
                   styles.reset,
@@ -117,6 +118,7 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
                 background: 'blue100',
                 marginTop: 3,
               }}
+              scope="row"
             >
               <AnimateHeight duration={300} height={expanded ? 'auto' : 0}>
                 <Box
@@ -132,7 +134,7 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
                   </Text>
                 </Box>
               </AnimateHeight>
-            </T.Data>
+            </T.HeadData>
             {MONTHS.map((month) => {
               const amount = pg?.monthlyPaymentHistory?.find(
                 (mph) => mph.monthIndex === MONTHS.indexOf(month) + 1,
