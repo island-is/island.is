@@ -31,6 +31,35 @@ import {
 import CompanyList from './components/CompanyList'
 import * as styles from './Handover.css'
 
+const SkilavottordVehiclesQuery = gql`
+  query skilavottordVehiclesQuery {
+    skilavottordVehicles {
+      permno
+      status
+    }
+  }
+`
+
+const SkilavottordRecyclingRequestMutation = gql`
+  mutation skilavottordRecyclingRequestMutation(
+    $permno: String!
+    $requestType: RecyclingRequestTypes!
+  ) {
+    createSkilavottordRecyclingRequest(
+      permno: $permno
+      requestType: $requestType
+    ) {
+      ... on RequestErrors {
+        message
+        operation
+      }
+      ... on RequestStatus {
+        status
+      }
+    }
+  }
+`
+
 const Handover: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const [requestType, setRequestType] = useState<RecyclingRequestTypes>()
