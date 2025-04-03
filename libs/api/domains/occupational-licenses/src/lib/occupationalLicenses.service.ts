@@ -24,6 +24,7 @@ import { LicenseResponse } from './models/licenseResponse.model'
 import { LinkType } from './models/link'
 import {
   CmsTranslationsService,
+  IntlService,
   TranslationsDict,
 } from '@island.is/cms-translations'
 import { LicenseType } from './models/licenseType.model'
@@ -31,18 +32,18 @@ import { LicenseResponse as MMSLicenseResponse } from '@island.is/clients/mms'
 import { Status } from './models/licenseStatus.model'
 import { LicenseError } from './models/licenseError.model'
 import { FetchError } from '@island.is/clients/middlewares'
+import { m } from './messages'
 
-const namespaceId = 'service.portal'
+const NAMESPACE_ID = 'api.occupational-licenses'
 
 export class OccupationalLicensesService {
   constructor(
     private readonly dcService: DistrictCommissionersLicensesService,
     private readonly healthService: HealthDirectorateClientService,
     private readonly mmsApi: MMSApi,
+    private readonly intlService: IntlService,
     @Inject(DownloadServiceConfig.KEY)
     private readonly downloadService: ConfigType<typeof DownloadServiceConfig>,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private readonly cmsTranslationsService: CmsTranslationsService,
   ) {}
   async getDistrictCommissionerLicenses(
     user: User,
@@ -89,7 +90,7 @@ export class OccupationalLicensesService {
   async getDistrictCommissionerLicenseById(
     user: User,
     id: string,
-    locale?: Locale,
+    locale: Locale,
   ): Promise<LicenseResponse | null> {
     const license = await this.dcService.getLicense(user, id, locale)
 
@@ -206,6 +207,11 @@ export class OccupationalLicensesService {
     locale: Locale,
     id: string,
   ): Promise<LicenseResponse | null> {
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE_ID],
+      locale,
+    )
+
     const data = await this.mmsApi.getLicenses(user.nationalId)
 
     if (!data) {
@@ -218,15 +224,12 @@ export class OccupationalLicensesService {
       return null
     }
 
-    const namespace: TranslationsDict =
-      await this.cmsTranslationsService.getTranslations([namespaceId], locale)
-
     return {
       license: this.mapEducationLicense(license),
       actions: [
         {
           type: LinkType.FILE,
-          text: namespace?.['service.portal:fetch-license'],
+          text: formatMessage(m.fetchLicense),
           url: `${this.downloadService.baseUrl}/download/v1/occupational-licenses/education/${license.id}`,
         },
       ],
@@ -283,7 +286,6 @@ export class OccupationalLicensesService {
       issuer,
       issuerTitle: data.issuer,
       profession: capitalize(data.type),
-      permit: capitalize(data.type),
       licenseHolderName: data.fullName,
       licenseHolderNationalId: data.nationalId,
       dateOfBirth: info(data.nationalId).birthday,
