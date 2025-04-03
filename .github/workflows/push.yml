@@ -245,6 +245,11 @@ jobs:
             echo IMAGES='' >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Prepare docker deps
+        id: docker-deps
+        run: |
+          ./scripts/ci/10_prepare-docker-deps.sh
+
   docker-build:
     needs:
       - pre-checks
