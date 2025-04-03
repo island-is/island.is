@@ -47,7 +47,6 @@ export const SummaryNoEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         field={field}
         goToScreen={goToScreen}
         categoryRoute={Routes.PROPERTYCATEGORY}
-        propertyInfoRoute={Routes.PROPERTYINFORMATION}
         propertyDescriptionRoute={Routes.SPECIALPROVISIONS}
         specialProvisionsRoute={Routes.SPECIALPROVISIONS}
         propertyConditionRoute={Routes.CONDITION}

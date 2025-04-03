@@ -5,7 +5,6 @@ import {
   buildRadioField,
   buildSelectField,
   buildStaticTableField,
-  buildSubmitField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -23,21 +22,21 @@ import {
 } from '../../../lib/utils'
 import { registerProperty } from '../../../lib/messages'
 
+const messagesSearch = registerProperty.search
 const messagesInfo = registerProperty.info
-const messagesSummary = registerProperty.infoSummary
 const messagesCategory = registerProperty.category
 
 export const RentalHousingPropertyInfo: SubSection = buildSubSection({
   id: Routes.PROPERTYINFORMATION,
-  title: registerProperty.subsection.name,
+  title: messagesInfo.subsectionName,
   children: [
     buildMultiField({
-      id: Routes.PROPERTYINFORMATION_SEARCH,
-      title: messagesInfo.pageTitle,
-      description: messagesInfo.pageDescription,
+      id: Routes.PROPERTYSEARCH,
+      title: messagesSearch.pageTitle,
+      description: messagesSearch.pageDescription,
       children: [
         buildCustomField({
-          id: 'registerProperty.searchresults',
+          id: Routes.PROPERTYSEARCH,
           title: '',
           component: 'PropertySearch',
         }),
@@ -56,7 +55,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
               'registerProperty.searchresults.label',
             )
             return {
-              ...messagesSummary.propertyAddressAnswer,
+              ...messagesInfo.propertyAddressAnswer,
               values: { propertyAddress: value },
             }
           },
@@ -68,10 +67,10 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           condition: (answers) => Boolean(answers.registerProperty),
           marginBottom: 5,
           header: [
-            messagesSummary.tableHeaderUsablity,
-            messagesSummary.tableHeaderUnitId,
-            messagesSummary.tableHeaderSize,
-            messagesSummary.tableHeaderNumOfRooms,
+            messagesInfo.tableHeaderUsablity,
+            messagesInfo.tableHeaderUnitId,
+            messagesInfo.tableHeaderSize,
+            messagesInfo.tableHeaderNumberOfRooms,
           ],
           rows({ answers }) {
             const selectedPropertyUnits =
@@ -80,12 +79,13 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
                 'registerProperty.searchresults.units',
               ) || []
 
-            // Return an array of selectedPropertyUnits
             return selectedPropertyUnits?.map((unit) => [
               unit.propertyUsageDescription || '',
               unit.unitCode || '',
-              `${unit.size} ${unit.sizeUnit}` || '',
-              '', // TODO: Add number of rooms
+              unit.changedSize
+                ? `${unit.changedSize} ${unit.sizeUnit}`
+                : `${unit.size} ${unit.sizeUnit}`,
+              unit.numOfRooms?.toString() || '',
             ])
           },
         }),

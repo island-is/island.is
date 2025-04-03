@@ -24,11 +24,12 @@ import { SummaryCard } from './components/SummaryCard'
 import { fileLink, fileLinksList } from './summaryStyles.css'
 import { summary } from '../../lib/messages'
 import { FieldBaseProps } from '@island.is/application/types'
+import { sum } from 'lodash'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
   categoryRoute?: Routes
-  propertyInfoRoute?: Routes
+  propertySearchRoute?: Routes
   propertyDescriptionRoute?: Routes
   specialProvisionsRoute?: Routes
   propertyConditionRoute?: Routes
@@ -43,7 +44,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
     application,
     goToScreen,
     categoryRoute,
-    propertyInfoRoute,
+    propertySearchRoute,
     propertyDescriptionRoute,
     specialProvisionsRoute,
     propertyConditionRoute,
@@ -117,14 +118,36 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
 
       <SummaryCardRow
         editAction={goToScreen}
-        route={propertyInfoRoute}
+        route={propertySearchRoute}
         hasChangeButton={hasChangeButton}
       >
         <GridColumn span={['12/12', '4/12']}>
-          <KeyValue label={summary.PropertyNumOfRoomsLabel} value={'-'} />
+          <KeyValue
+            label={summary.PropertyNumOfRoomsLabel}
+            value={
+              answers.registerProperty.searchresults?.units
+                ? sum(
+                    answers.registerProperty.searchresults.units.map(
+                      (unit) => unit.numOfRooms || 0,
+                    ),
+                  ).toString()
+                : '-'
+            }
+          />
         </GridColumn>
         <GridColumn span={['12/12', '4/12']}>
-          <KeyValue label={summary.propertySizeLabel} value={'-'} />
+          <KeyValue
+            label={summary.propertySizeLabel}
+            value={
+              answers.registerProperty.searchresults?.units
+                ? sum(
+                    answers.registerProperty.searchresults.units.map((unit) =>
+                      unit.changedSize ? unit.changedSize : unit.size,
+                    ),
+                  ).toString()
+                : '-'
+            }
+          />
         </GridColumn>
       </SummaryCardRow>
 
