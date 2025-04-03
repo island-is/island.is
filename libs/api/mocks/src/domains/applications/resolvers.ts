@@ -10,12 +10,8 @@ export const resolvers: Resolvers = {
   },
 
   Query: {
-    applicationApplications: (parent, args) => {
-      return store.applications.filter(
-        (a) =>
-          (args.input?.typeId ?? []).some((t) => t === a.typeId) &&
-          a.applicant === '0000000000',
-      )
+    applicationApplications: () => {
+      return store.applications
     },
     applicationApplication: (parent, args) => {
       return store.applications.find((a) => a.id === args.input.id) || null
