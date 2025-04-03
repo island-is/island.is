@@ -9,5 +9,5 @@ export class Type implements Base {
   id!: string
 
   @Field({ nullable: true })
-  name?: string
+  name?: string | null
 }

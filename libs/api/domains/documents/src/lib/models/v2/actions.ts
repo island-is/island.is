@@ -3,14 +3,14 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType('DocumentV2Action')
 export class Action {
   @Field({ nullable: true })
-  title?: string
+  title?: string | null
 
   @Field({ nullable: true })
-  type?: string
+  type?: string | null
 
   @Field({ nullable: true })
-  data?: string
+  data?: string | null
 
   @Field({ nullable: true })
-  icon?: string
+  icon?: string | null
 }
