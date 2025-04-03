@@ -3,26 +3,18 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/form-system/src",
   "projectType": "library",
-  "implicitDependencies": [
-    "services-form-system-api"
-  ],
+  "implicitDependencies": ["services-form-system-api"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "libs/clients/form-system/**/*.ts"
-        ]
+        "lintFilePatterns": ["libs/clients/form-system/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/clients/form-system/jest.config.ts",
         "passWithNoTests": true
@@ -39,14 +31,9 @@
       "options": {
         "command": "yarn openapi-generator -o libs/clients/form-system/gen/fetch -i apps/services/form-system/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
       },
-      "outputs": [
-        "{projectRoot}/gen/fetch"
-      ]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "schema": "libs/client/form-system/gen/fetch/api.graphql",
-  "tags": [
-    "lib:client",
-    "scope:client"
-  ]
+  "tags": ["lib:client", "scope:client"]
 }
