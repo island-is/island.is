@@ -119,39 +119,6 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
               ))}
             </GridRow>
           )}
-        </Box>
-
-        <Box>
-          {!!custodiansExternalData.length && (
-            <GridRow>
-              {custodiansExternalData.map((custodian, index) => (
-                <GridColumn
-                  key={custodian.person?.nationalId}
-                  span={custodiansExternalData.length > 1 ? '1/2' : '1/1'}
-                >
-                  {totalCount > 1 && (
-                    <Text variant="h5">
-                      {`${formatMessage(overview.custodian.label)} ${
-                        custodiansExternalData.length > 1 ? index + 1 : ''
-                      }`}
-                    </Text>
-                  )}
-                  <Text>{custodian.person?.name}</Text>
-                  <Text>{formatKennitala(custodian.person?.nationalId)}</Text>
-                  <Text>{custodian.legalDomicile?.streetAddress}</Text>
-                  <Text>
-                    {custodian.legalDomicile?.postalCode}{' '}
-                    {custodian.legalDomicile?.city}
-                  </Text>
-                  <Text>
-                    {formatMessage(overview.custodian.phoneLabel)}:{' '}
-                    {formatPhoneNumber(custodiansAnswers[index]?.person?.phone)}
-                  </Text>
-                  <Text>{custodiansAnswers[index]?.person?.email}</Text>
-                </GridColumn>
-              ))}
-            </GridRow>
-          )}
 
           {!!contacts.length && (
             <GridRow marginTop={3}>
