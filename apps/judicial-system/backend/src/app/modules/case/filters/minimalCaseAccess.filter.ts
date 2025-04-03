@@ -86,18 +86,3 @@ const canDistrictCourtUserAccessCase = (
   return true
 }
 
-export const canUserAccessMinimalCase = (
-  theCase: MinimalCase,
-  user: User,
-): boolean => {
-  if (isProsecutionUser(user)) {
-    return canProsecutionUserAccessCase(theCase, user)
-  }
-
-  if (isDistrictCourtUser(user)) {
-    return canDistrictCourtUserAccessCase(theCase, user)
-  }
-
-  // Other users can be added when needed
-  return false
-}
