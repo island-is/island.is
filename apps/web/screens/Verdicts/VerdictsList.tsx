@@ -522,6 +522,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
         <Box background="blue100" paddingTop={[3, 3, 0]}>
           <SidebarLayout
             fullWidthContent={false}
+            hiddenOnTablet={true}
+            isSticky={false}
             sidebarContent={
               <Stack space={3}>
                 <Text variant="h5">
