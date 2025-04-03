@@ -9,7 +9,7 @@ export const resolvers: Resolvers = {
   },
   Query: {
     documentsV2: () => {
-      return store.documents
+      return store.documentsV2
     },
   },
 }
