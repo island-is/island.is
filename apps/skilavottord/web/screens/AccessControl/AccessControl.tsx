@@ -294,7 +294,7 @@ const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <AuthGuard permission="accessControl">
+    <AuthGuard permission="accessControl" loading={loading}>
       <PartnerPageLayout side={<NavigationLinks activeSection={3} />}>
         <Stack space={4}>
           <Box>
