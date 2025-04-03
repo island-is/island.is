@@ -11,25 +11,23 @@ import {
   Stack,
   toast,
 } from '@island.is/island-ui/core'
-import {
-  hasMunicipalityRole,
-  hasPermission,
-} from '@island.is/skilavottord-web/auth/utils'
+import { hasMunicipalityRole } from '@island.is/skilavottord-web/auth/utils'
 import { NotFound } from '@island.is/skilavottord-web/components'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
+import { Query } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 
-import { RecyclingCompanyForm } from '../components'
+import AuthGuard from '@island.is/skilavottord-web/components/AuthGuard/AuthGuard'
 import {
-  SkilavottordRecyclingPartnersQuery,
   SkilavottordRecyclingPartnerQuery,
+  SkilavottordRecyclingPartnersQuery,
   UpdateSkilavottordRecyclingPartnerMutation,
 } from '@island.is/skilavottord-web/graphql/queries'
+import { RecyclingCompanyForm } from '../components'
 
 const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   const methods = useForm({
@@ -107,12 +105,6 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
     route = routes.municipalities.baseRoute
   }
 
-  if (!user) {
-    return null
-  } else if (!hasPermission('recyclingCompanies', user?.role as Role)) {
-    return <NotFound />
-  }
-
   if (!loading && (!data || error)) {
     return <NotFound />
   }
@@ -149,47 +141,51 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <PartnerPageLayout side={<NavigationLinks activeSection={activeSection} />}>
-      <Stack space={4}>
-        <Breadcrumbs
-          items={[
-            { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
-            {
-              title: breadcrumbTitle,
-              href: route,
-            },
-            {
-              title: t.recyclingCompany.view.breadcrumb,
-            },
-          ]}
-          renderLink={(link, item) => {
-            return item?.href ? (
-              <NextLink href={item?.href} legacyBehavior>
-                {link}
-              </NextLink>
-            ) : (
-              link
-            )
-          }}
-        />
-        <PageHeader title={title} info={info} />
-      </Stack>
-      <Box marginTop={7}>
-        {loading ? (
-          <SkeletonLoader width="100%" space={3} repeat={5} height={78} />
-        ) : (
-          <FormProvider {...methods}>
-            <RecyclingCompanyForm
-              onSubmit={handleUpdateRecyclingPartner}
-              onCancel={handleCancel}
-              errors={errors}
-              editView
-              isMunicipalityPage={isMunicipalityPage}
-            />
-          </FormProvider>
-        )}
-      </Box>
-    </PartnerPageLayout>
+    <AuthGuard permission="recyclingCompanies" loading={loading}>
+      <PartnerPageLayout
+        side={<NavigationLinks activeSection={activeSection} />}
+      >
+        <Stack space={4}>
+          <Breadcrumbs
+            items={[
+              { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
+              {
+                title: breadcrumbTitle,
+                href: route,
+              },
+              {
+                title: t.recyclingCompany.view.breadcrumb,
+              },
+            ]}
+            renderLink={(link, item) => {
+              return item?.href ? (
+                <NextLink href={item?.href} legacyBehavior>
+                  {link}
+                </NextLink>
+              ) : (
+                link
+              )
+            }}
+          />
+          <PageHeader title={title} info={info} />
+        </Stack>
+        <Box marginTop={7}>
+          {loading ? (
+            <SkeletonLoader width="100%" space={3} repeat={5} height={78} />
+          ) : (
+            <FormProvider {...methods}>
+              <RecyclingCompanyForm
+                onSubmit={handleUpdateRecyclingPartner}
+                onCancel={handleCancel}
+                errors={errors}
+                editView
+                isMunicipalityPage={isMunicipalityPage}
+              />
+            </FormProvider>
+          )}
+        </Box>
+      </PartnerPageLayout>
+    </AuthGuard>
   )
 }
 

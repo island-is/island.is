@@ -1,14 +1,19 @@
-import React, { FC, ReactNode, useState } from 'react'
-import Head from 'next/head'
 import { useSession } from 'next-auth/client'
+import Head from 'next/head'
+import React, { FC, ReactNode, useState } from 'react'
 
+import { GridContainer, Page } from '@island.is/island-ui/core'
 import { AuthSession } from '@island.is/next-ids-auth'
-import { Page, GridContainer } from '@island.is/island-ui/core'
 
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { SkilavottordUser } from '@island.is/skilavottord-web/graphql/schema'
+import {
+  Query,
+  SkilavottordUser,
+} from '@island.is/skilavottord-web/graphql/schema'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 
+import { useQuery } from '@apollo/client'
+import { SkilavottordRecyclingPartnerActive } from '@island.is/skilavottord-web/graphql'
 import { Header } from '../../components'
 
 interface LayoutProps {
@@ -21,9 +26,21 @@ export const AppLayout: FC<React.PropsWithChildren<LayoutProps>> = ({
   const [user, setUser] = useState<SkilavottordUser>()
   const [session] = useSession() as [AuthSession, boolean]
 
+  const { data } = useQuery<Query>(SkilavottordRecyclingPartnerActive, {
+    variables: { input: { companyId: user?.partnerId } },
+    ssr: false,
+    skip: !user?.partnerId,
+  })
+
+  let isAuthenticated = Boolean(session?.user)
+
+  if (isAuthenticated && data) {
+    isAuthenticated = data?.skilavottordRecyclingPartnerActive
+  }
+
   return (
     <UserContext.Provider
-      value={{ isAuthenticated: Boolean(session?.user), user, setUser }}
+      value={{ isAuthenticated: isAuthenticated, user, setUser }}
     >
       <Page>
         <Head>
