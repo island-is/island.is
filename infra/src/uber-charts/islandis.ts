@@ -80,7 +80,7 @@ const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 
 const documentsService = serviceDocumentsSetup()
 const servicePortalApi = servicePortalApiSetup()
-
+const paymentsService = paymentsServiceSetup()
 const userNotificationService = userNotificationServiceSetup({
   userProfileApi: servicePortalApi,
 })
@@ -91,9 +91,11 @@ const appSystemApi = appSystemApiSetup({
   skilavottordWs,
   servicePortalApi,
   userNotificationService,
+  paymentsApi: paymentsService,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup({
   userNotificationService,
+  paymentsApi: paymentsService,
 })
 
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
@@ -111,8 +113,6 @@ const authAdminApi = authAdminApiSetup()
 
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
-
-const paymentsService = paymentsServiceSetup()
 
 const formSystemApi = formSystemApiSetup()
 

@@ -12,17 +12,20 @@ import {
   ChargeFjsV2ClientModule,
 } from '@island.is/clients/charge-fjs-v2'
 import { XRoadConfig } from '@island.is/nest/config'
-
+import { ClientsPaymentsModule } from '@island.is/clients/payments'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 @Module({
   imports: [
     SequelizeModule.forFeature([Payment]),
     ApplicationApiCoreModule,
     LoggingModule,
     ChargeFjsV2ClientModule,
+    FeatureFlagModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [XRoadConfig, ChargeFjsV2ClientConfig],
     }),
+    ClientsPaymentsModule,
   ],
   providers: [PaymentService],
   exports: [PaymentService],
