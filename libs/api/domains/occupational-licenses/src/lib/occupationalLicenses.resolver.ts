@@ -65,6 +65,7 @@ export class OccupationalLicensesResolver {
         return this.service.getDistrictCommissionerLicenseById(
           user,
           licenseType.licenseId,
+          input.locale,
         )
       case 'Education':
         return this.service.getEducationLicenseById(

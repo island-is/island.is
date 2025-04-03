@@ -89,8 +89,9 @@ export class OccupationalLicensesService {
   async getDistrictCommissionerLicenseById(
     user: User,
     id: string,
+    locale?: Locale,
   ): Promise<LicenseResponse | null> {
-    const license = await this.dcService.getLicense(user, id)
+    const license = await this.dcService.getLicense(user, id, locale)
 
     if (!license) {
       return null
