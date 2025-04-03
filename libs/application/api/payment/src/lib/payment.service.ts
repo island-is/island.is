@@ -360,7 +360,7 @@ export class PaymentService {
     let paymentUrl = ''
 
     if (!paymentModel) {
-      // payment Model does not exist so we need to create a new one
+      // payment Model does not exist so we need to create a new one and store it in the payment model variable
       console.log('===============================================')
       console.log('creating new payment model')
       console.log('===============================================')
@@ -370,6 +370,7 @@ export class PaymentService {
         performingOrganizationID,
       )
     } else {
+      // payment model already exists so we need to check if a flow was created
       console.log('===============================================')
       console.log('payment model already exists')
       console.log('===============================================')
@@ -383,46 +384,54 @@ export class PaymentService {
           id: paymentModel.id,
           paymentUrl,
         }
-      } else {
-        console.log('===============================================')
-        console.log('creating new payment flow')
-        console.log('===============================================')
-        // payment url is not set, meaning no flow was created so we need to create a new one
-        const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
-        onUpdateUrl.pathname =
-          '/application-payment/api-client-payment-callback'
-
-        const paymentFlow =
-          await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
-            createPaymentFlowInput: {
-              availablePaymentMethods: [
-                CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
-              ],
-              charges: catalogChargeItems.map((chargeItem) => ({
-                chargeType: chargeItem.chargeType,
-                chargeItemCode: chargeItem.chargeItemCode,
-                quantity: chargeItem.quantity ?? 1,
-                price: chargeItem.priceAmount,
-              })),
-              payerNationalId: user.nationalId,
-              organisationId: performingOrganizationID,
-              onUpdateUrl: onUpdateUrl.toString(),
-              metadata: {
-                applicationId,
-                paymentId: paymentModel.id,
-              },
-              returnUrl: await this.getReturnUrl(applicationId),
-              redirectToReturnUrlOnSuccess: true,
-              extraData,
-              chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
-            },
-          })
-        paymentUrl =
-          locale && locale === 'en' ? paymentFlow.urls.en : paymentFlow.urls.is
-        console.log('===============================================')
-        console.log('paymentUrl', JSON.stringify(paymentUrl, null, 2))
-        console.log('===============================================')
       }
+    }
+    console.log('===============================================')
+    console.log('creating new payment flow')
+    console.log('===============================================')
+    // no model existed orpayment url was not set, meaning no flow was created so we need to create a new one
+    const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
+    onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
+
+    try {
+      const paymentFlow =
+        await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
+          createPaymentFlowInput: {
+            availablePaymentMethods: [
+              CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
+            ],
+            charges: catalogChargeItems.map((chargeItem) => ({
+              chargeType: chargeItem.chargeType,
+              chargeItemCode: chargeItem.chargeItemCode,
+              quantity: chargeItem.quantity ?? 1,
+              price: chargeItem.priceAmount,
+            })),
+            payerNationalId: user.nationalId,
+            organisationId: performingOrganizationID,
+            onUpdateUrl: onUpdateUrl.toString(),
+            metadata: {
+              applicationId,
+              paymentId: paymentModel.id,
+            },
+            returnUrl: await this.getReturnUrl(applicationId),
+            redirectToReturnUrlOnSuccess: true,
+            extraData,
+            chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
+          },
+        })
+      console.log('===============================================')
+      console.log('paymentFlow', JSON.stringify(paymentFlow, null, 2))
+      console.log('===============================================')
+      paymentUrl =
+        locale && locale === 'en' ? paymentFlow.urls.en : paymentFlow.urls.is
+      console.log('===============================================')
+      console.log('paymentUrl', JSON.stringify(paymentUrl, null, 2))
+      console.log('===============================================')
+    } catch (error) {
+      console.log('===============================================')
+      console.log('error', JSON.stringify(error, null, 2))
+      console.log('===============================================')
+      throw error
     }
 
     await this.addPaymentUrl(applicationId, paymentModel.id, paymentUrl)
