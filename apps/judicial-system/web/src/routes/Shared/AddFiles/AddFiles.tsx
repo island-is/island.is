@@ -30,6 +30,7 @@ import {
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  formatDateForServer,
   useCase,
   useS3Upload,
   useUploadFiles,
@@ -90,7 +91,7 @@ const AddFiles: FC = () => {
   const [fileRepresentative, setFileRepresentative] = useState(
     {} as RepresentativeSelectOption,
   )
-  const [submittedDate, setSubmittedDate] = useState(new Date())
+  const [submissionDate, setSubmissionDate] = useState(new Date())
 
   const {
     uploadFiles,
@@ -110,11 +111,11 @@ const AddFiles: FC = () => {
       files,
       {
         status: 'done',
+        submissionDate: formatDateForServer(submissionDate),
         fileRepresentative: selectedCaseRepresentative?.name,
         category: !isEmpty(selectedCaseRepresentative)
           ? selectedCaseRepresentative.caseFileCategory
           : caseFileCategory,
-        displayDate: submittedDate.toISOString(),
       },
       true,
     )
@@ -122,18 +123,18 @@ const AddFiles: FC = () => {
 
   const handleCaseFileRepresentativeUpdate = (
     updatedFileRepresentative?: RepresentativeSelectOption,
-    updatedSubmittedDate?: Date,
+    updatedSubmissionDate?: Date,
   ) => {
     const currentRepresentativeSelection =
       updatedFileRepresentative || fileRepresentative
     const { selectedCaseRepresentative } = currentRepresentativeSelection
-    const date = updatedSubmittedDate || submittedDate
+    const date = updatedSubmissionDate || submissionDate
 
     uploadFiles.forEach((file) => {
       updateUploadFile({
         ...file,
         fileRepresentative: selectedCaseRepresentative?.name,
-        displayDate: date.toISOString(),
+        submissionDate: formatDateForServer(date),
         category: !isEmpty(selectedCaseRepresentative)
           ? selectedCaseRepresentative.caseFileCategory
           : caseFileCategory,
@@ -189,8 +190,7 @@ const AddFiles: FC = () => {
     if (!hasFileRepresentativeSelection) {
       return true
     }
-
-    return !isEmpty(fileRepresentative) && !!submittedDate
+    return !isEmpty(fileRepresentative) && !!submissionDate
   }
   return (
     <PageLayout
@@ -220,8 +220,8 @@ const AddFiles: FC = () => {
           <SelectCaseFileRepresentative
             fileRepresentative={fileRepresentative}
             setFileRepresentative={setFileRepresentative}
-            submittedDate={submittedDate}
-            setSubmittedDate={setSubmittedDate}
+            submissionDate={submissionDate}
+            setSubmissionDate={setSubmissionDate}
             handleCaseFileRepresentativeUpdate={
               handleCaseFileRepresentativeUpdate
             }

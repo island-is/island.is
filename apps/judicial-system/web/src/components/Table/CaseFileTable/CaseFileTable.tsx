@@ -63,7 +63,7 @@ const CaseFileTable: FC<Props> = ({
           <TableHeaderText title={formatMessage(tables.caseFileDate)} />
           <th className={tableStyles.th}>
             <SortButton
-              {...createSortProps(formatMessage(tables.sent), 'created')}
+              {...createSortProps(formatMessage(tables.received), 'created')}
             />
           </th>
         </>
@@ -88,7 +88,9 @@ const CaseFileTable: FC<Props> = ({
             <td>
               <Box className={styles.noWrapColumn}>
                 <Text>
-                  {formatDate(file.created, "dd.MM.yyyy 'kl.' HH:mm")}
+                  {file.submissionDate
+                    ? formatDate(file.submissionDate)
+                    : formatDate(file.created, "dd.MM.yyyy 'kl.' HH:mm")}
                 </Text>
                 <Text variant="small">
                   {formatMessage(strings.submittedBy, {
@@ -98,6 +100,7 @@ const CaseFileTable: FC<Props> = ({
                     initials: getInitials(
                       file.fileRepresentative ?? file.submittedBy,
                     ),
+                    fileRepresentative: file.fileRepresentative,
                   })}
                 </Text>
               </Box>
