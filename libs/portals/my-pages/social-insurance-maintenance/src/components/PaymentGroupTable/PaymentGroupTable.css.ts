@@ -1,23 +1,29 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
-export const rowLabelColumnCell = style({
+export const nestedLabelColumnCell = style({
   borderRight: `1px solid ${theme.border.color.blue200} `,
   boxShadow: `4px 0px 8px -2px ${theme.border.color.blue200}`,
   left: 0,
   overflow: 'hidden',
   position: 'sticky',
   zIndex: theme.zIndex.above,
-  paddingLeft: theme.spacing[2],
-  paddingRight: 0,
-
-  ...themeUtils.responsiveStyle({
-    lg: {
-      paddingRight: theme.spacing[0],
-      paddingLeft: theme.spacing[1],
-    },
-  }),
 })
+
+export const rowLabelColumnCell = style([
+  nestedLabelColumnCell,
+  {
+    paddingLeft: theme.spacing[2],
+    paddingRight: 0,
+
+    ...themeUtils.responsiveStyle({
+      lg: {
+        paddingRight: theme.spacing[0],
+        paddingLeft: theme.spacing[1],
+      },
+    }),
+  },
+])
 
 export const rowLabelColumnCellBox = style({
   width: 'auto',
@@ -48,15 +54,6 @@ export const reset = style({
   paddingLeft: 0,
   paddingTop: 0,
   paddingBottom: 0,
-})
-
-export const nestedLabelColumnCell = style({
-  borderRight: `1px solid ${theme.border.color.blue200} `,
-  boxShadow: `4px 0px 8px -2px ${theme.border.color.blue200}`,
-  left: 0,
-  overflow: 'hidden',
-  position: 'sticky',
-  zIndex: theme.zIndex.above,
 })
 
 export const nestedCell = style({
