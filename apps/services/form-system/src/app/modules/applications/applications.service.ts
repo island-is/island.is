@@ -283,8 +283,8 @@ export class ApplicationsService {
 
   // Hér þarf að sækja allar umsóknir eftir tegund og notanda
   // Ef notandi er í umboði lögaðila þá þarf að sækja allar þesskonar umsóknir þess lögaðila
-  // nota paging
-  async findAllByTypeAndUser() {
+  // NOTE: Currently returning empty results. Pagination implementation pending.
+  async findAllByTypeAndUser(): Promise<ApplicationListDto> {
     return new ApplicationListDto()
   }
 
