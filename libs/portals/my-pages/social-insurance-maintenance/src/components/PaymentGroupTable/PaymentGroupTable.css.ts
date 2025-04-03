@@ -12,7 +12,7 @@ export const rowLabelColumnCell = style({
   paddingRight: 0,
 
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       paddingRight: theme.spacing[0],
       paddingLeft: theme.spacing[1],
     },
@@ -22,7 +22,7 @@ export const rowLabelColumnCell = style({
 export const rowLabelColumnCellBox = style({
   width: 'auto',
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       width: '246px',
     },
   }),
@@ -66,14 +66,8 @@ export const nestedCell = style({
 })
 
 export const lastColumnCell = style({
-  borderLeft: 'initial',
-  boxShadow: 'initial',
-  right: 'initial',
-  overflow: 'initial',
-  position: 'initial',
-  zIndex: 'initial',
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       position: 'sticky',
       borderLeft: `1px solid ${theme.border.color.blue200} `,
       boxShadow: `-4px 0px 8px -2px ${theme.border.color.blue200}`,
