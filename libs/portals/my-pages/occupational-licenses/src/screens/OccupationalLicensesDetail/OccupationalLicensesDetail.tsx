@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Icon,
-  Inline,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -13,11 +12,12 @@ import {
   formSubmit,
   LinkButton,
   IntroWrapper,
+  InfoLineStack,
+  InfoLine,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { olMessage as om } from '../../../lib/messages'
-import { useGetOccupationalLicenseByIdQuery } from './OccupationalLicensesDetail.generated'
+import { olMessage as om } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { useOrganization } from '@island.is/portals/my-pages/graphql'
@@ -25,6 +25,7 @@ import {
   OccupationalLicenseV2LicenseType,
   OccupationalLicensesV2LinkType,
 } from '@island.is/api/schema'
+import { useGetOccupationalLicenseByIdQuery } from './OccupationalLicensesDetail.generated'
 
 type UseParams = {
   id: string
@@ -120,21 +121,21 @@ const OccupationalLicenseDetail = () => {
         />
       )}
       {!error && (loading || data?.occupationalLicenseV2) && (
-        <StackWithBottomDivider space={2} box={{ marginTop: [2, 3, 6] }}>
-          <UserInfoLine
+        <InfoLineStack space={2}>
+          <InfoLine
             loading={loading}
             label={formatMessage(om.nameOfIndividual)}
             content={license?.licenseHolderName ?? ''}
           />
           {license?.licenseNumber && (
-            <UserInfoLine
+            <InfoLine
               loading={loading}
               label={formatMessage(om.licenseNumber)}
               content={license?.licenseNumber ?? ''}
             />
           )}
           {license?.dateOfBirth && (
-            <UserInfoLine
+            <InfoLine
               loading={loading}
               label={formatMessage(om.dateOfBirth)}
               content={
@@ -145,28 +146,28 @@ const OccupationalLicenseDetail = () => {
             />
           )}
           {(license?.profession || loading) && (
-            <UserInfoLine
+            <InfoLine
               loading={loading}
               label={formatMessage(om.profession)}
               content={license?.profession ?? ''}
             />
           )}
           {(license?.permit || loading) && (
-            <UserInfoLine
+            <InfoLine
               loading={loading}
               label={formatMessage(om.typeofLicense)}
               content={license?.permit ?? ''}
             />
           )}
           {(license?.issuerTitle || organization?.title || loading) && (
-            <UserInfoLine
+            <InfoLine
               loading={loading}
               label={formatMessage(om.publisher)}
               content={license?.issuerTitle ?? organization?.title ?? ''}
             />
           )}
           {(license?.validFrom || loading) && (
-            <UserInfoLine
+            <InfoLine
               loading={loading}
               label={formatMessage(om.dateOfIssue)}
               content={
@@ -177,7 +178,7 @@ const OccupationalLicenseDetail = () => {
             />
           )}
           {(license?.status || loading) && !isOldEducationLicense && (
-            <UserInfoLine
+            <InfoLine
               loading={loading}
               label={formatMessage(om.licenseStatus)}
               content={
@@ -226,7 +227,7 @@ const OccupationalLicenseDetail = () => {
                 content={g.value}
               />
             ))}
-        </StackWithBottomDivider>
+        </InfoLineStack>
       )}
       {res?.footerText && (
         <Box paddingTop={4}>
