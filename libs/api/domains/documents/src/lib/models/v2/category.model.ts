@@ -8,6 +8,6 @@ export class Category implements Base {
   @Field()
   id!: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   name?: string | null
 }
