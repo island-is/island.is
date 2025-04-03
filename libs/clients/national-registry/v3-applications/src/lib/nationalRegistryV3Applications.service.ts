@@ -11,7 +11,8 @@ export class NationalRegistryV3ApplicationsClientService {
   }
 
   async get18YearOlds(): Promise<string[]> {
-    return await this.individualApi.einstaklingar18IDagGet()
+    // return await this.individualApi.einstaklingar18IDagGet()
+    return []
   }
 
   async getMyCustodians(auth: User): Promise<string[]> {
@@ -20,9 +21,10 @@ export class NationalRegistryV3ApplicationsClientService {
     ).einstaklingarKennitalaForsjaYfirGet({
       kennitala: auth.nationalId,
     })
-    // TODOx swagger needs to be fixed
-    return ((res as any).forsjaAdilarList as { forsjaKt: string }[]).map(
-      (x) => x.forsjaKt,
+
+    return (
+      res.forsjaAdilarList?.map((x) => x.forsjaKt || '')?.filter((x) => !!x) ||
+      []
     )
   }
 }
