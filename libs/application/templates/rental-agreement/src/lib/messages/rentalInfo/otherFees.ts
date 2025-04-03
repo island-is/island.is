@@ -134,7 +134,7 @@ export const otherFees = defineMessages({
   },
   otherCostsLabel: {
     id: 'ra.application:otherFees.otherCostsLabel',
-    defaultMessage: 'Skrá annan kostnað sem leigjandi greiðir',
+    defaultMessage: 'Skrá annan kostnað sem leigjandi greiðir (að hámarki 3)',
     description: 'Other costs label',
   },
   otherCostsDescriptionLabel: {
@@ -156,6 +156,11 @@ export const otherFees = defineMessages({
     id: 'ra.application:otherFees.otherCostsAmountPlaceholder',
     defaultMessage: 'Upphæð í tölustöfum',
     description: 'Other costs amount placeholder',
+  },
+  otherCostsAddLine: {
+    id: 'ra.application:otherFees.otherCostsAddLine',
+    defaultMessage: 'Bæta við kostnaðarlið',
+    description: 'Other costs button text',
   },
 
   // Error messages
@@ -188,5 +193,20 @@ export const otherFees = defineMessages({
     id: 'ra.application:dataSchema.errorMeterStatusRegex',
     defaultMessage: 'Sláðu inn stöðu í tölustöfum með mest einum aukastaf',
     description: 'Error message when meter status is not valid',
+  },
+  errorOtherCost: {
+    id: 'ra.application:dataSchema.errorOtherCost',
+    defaultMessage: 'Hver kostnaðarliður þarf að hafa bæði lýsingu og upphæð',
+    description: 'Error when cost item is invalid',
+  },
+  errorOtherCostDescription: {
+    id: 'ra.application:dataSchema.errorOtherCostDescription',
+    defaultMessage: 'Kostnaðarlið vantar',
+    description: 'Error message when description is missing',
+  },
+  errorOtherCostAmount: {
+    id: 'ra.application:dataSchema.errorOtherCostAmount',
+    defaultMessage: 'Upphæð vantar',
+    description: 'Error message when amount is missing',
   },
 })
