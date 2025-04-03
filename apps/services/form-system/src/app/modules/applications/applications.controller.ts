@@ -130,25 +130,4 @@ export class ApplicationsController {
       isTest,
     )
   }
-
-  @ApiOperation({
-    summary: 'Get all applications of the same type belonging to user',
-  })
-  @ApiOkResponse({
-    type: ApplicationListDto,
-    description: 'Get all applications of the same type belonging to user',
-  })
-  @ApiParam({ name: 'formId', type: String })
-  @Get('form/:formId')
-@ApiParam({ name: 'formId', type: String })
-@Get('form/:formId')
-async findAllByTypeAndUser(
-  @Param('formId') formId: string,
-  @Query('page') page = 1,
-  @Query('limit') limit = 10,
-  @Query('isTest') isTest = false
-): Promise<ApplicationListDto> {
-  // TODO: Implement proper filtering by form and pagination
-  return await this.applicationsService.findAllByTypeAndUser()
-}
 }
