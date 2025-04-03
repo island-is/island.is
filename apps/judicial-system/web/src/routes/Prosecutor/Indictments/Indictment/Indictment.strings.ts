@@ -112,13 +112,21 @@ export const strings = {
     [Gender.OTHER]:
       'Þess er krafist að ákært verði dæmt til refsingar og til greiðslu alls sakarkostnaðar.',
   },
-  demandsAutofillWithLicenseSuspension: {
+  demandsAutofillWithUnderTheInfluenceLicenseSuspension: {
     [Gender.MALE]:
       'Þess er krafist að ákærði verði dæmdur til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu ökuréttar skv. 99. gr. og 101. gr. laga nr. 77/2019.',
     [Gender.FEMALE]:
       'Þess er krafist að ákærða verði dæmd til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu ökuréttar skv. 99. gr. og 101. gr. laga nr. 77/2019.',
     [Gender.OTHER]:
       'Þess er krafist að ákært verði dæmt til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu ökuréttar skv. 99. gr. og 101. gr. laga nr. 77/2019.',
+  },
+  demandsAutofillWithSpeedingLicenseSuspension: {
+    [Gender.MALE]:
+      'Þess er krafist að ákærði verði dæmdur til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu ökuréttar skv. 99. gr. laga nr. 77/2019.',
+    [Gender.FEMALE]:
+      'Þess er krafist að ákærða verði dæmd til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu ökuréttar skv. 99. gr. laga nr. 77/2019.',
+    [Gender.OTHER]:
+      'Þess er krafist að ákært verði dæmt til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu ökuréttar skv. 99. gr. laga nr. 77/2019.',
   },
   demandsAutofillWithFutureLicenseSuspension: {
     [Gender.MALE]:
