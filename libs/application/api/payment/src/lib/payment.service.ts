@@ -394,7 +394,7 @@ export class PaymentService {
     onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
 
     try {
-      const paymentFlow =
+      const paymentFlowUrls =
         await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
           createPaymentFlowInput: {
             availablePaymentMethods: [
@@ -420,10 +420,12 @@ export class PaymentService {
           },
         })
       console.log('===============================================')
-      console.log('paymentFlow', JSON.stringify(paymentFlow, null, 2))
+      console.log('paymentFlow', JSON.stringify(paymentFlowUrls, null, 2))
       console.log('===============================================')
       paymentUrl =
-        locale && locale === 'en' ? paymentFlow.urls.en : paymentFlow.urls.is
+        locale && locale === 'en'
+          ? paymentFlowUrls.urls.en
+          : paymentFlowUrls.urls.is
       console.log('===============================================')
       console.log('paymentUrl', JSON.stringify(paymentUrl, null, 2))
       console.log('===============================================')

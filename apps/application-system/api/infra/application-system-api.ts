@@ -180,7 +180,6 @@ export const serviceSetup = (services: {
         prod: 'cdn.contentful.com',
       },
       CLIENT_LOCATION_ORIGIN: {
-        // dev: `https://beta.dev01.devland.is/umsoknir`,
         dev: ref(
           (ctx) =>
             `https://${
