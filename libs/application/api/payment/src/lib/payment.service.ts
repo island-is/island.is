@@ -388,14 +388,35 @@ export class PaymentService {
         console.log('creating new payment flow')
         console.log('===============================================')
         // payment url is not set, meaning no flow was created so we need to create a new one
-        const paymentFlow = await this.createPaymentFlow(
-          catalogChargeItems,
-          user,
-          performingOrganizationID,
-          applicationId,
-          paymentModel.id,
-          extraData,
-        )
+        const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
+        onUpdateUrl.pathname =
+          '/application-payment/api-client-payment-callback'
+
+        const paymentFlow =
+          await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
+            createPaymentFlowInput: {
+              availablePaymentMethods: [
+                CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
+              ],
+              charges: catalogChargeItems.map((chargeItem) => ({
+                chargeType: chargeItem.chargeType,
+                chargeItemCode: chargeItem.chargeItemCode,
+                quantity: chargeItem.quantity ?? 1,
+                price: chargeItem.priceAmount,
+              })),
+              payerNationalId: user.nationalId,
+              organisationId: performingOrganizationID,
+              onUpdateUrl: onUpdateUrl.toString(),
+              metadata: {
+                applicationId,
+                paymentId: paymentModel.id,
+              },
+              returnUrl: await this.getReturnUrl(applicationId),
+              redirectToReturnUrlOnSuccess: true,
+              extraData,
+              chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
+            },
+          })
         paymentUrl =
           locale && locale === 'en' ? paymentFlow.urls.en : paymentFlow.urls.is
         console.log('===============================================')
@@ -415,43 +436,6 @@ export class PaymentService {
       id: paymentModel.id,
       paymentUrl,
     }
-  }
-
-  private async createPaymentFlow(
-    catalogChargeItems: CatalogItem[],
-    user: User,
-    performingOrganizationID: string,
-    applicationId: string,
-    paymentId: string,
-    extraData: ExtraData[] | undefined,
-  ) {
-    const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
-    onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
-
-    return await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
-      createPaymentFlowInput: {
-        availablePaymentMethods: [
-          CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
-        ],
-        charges: catalogChargeItems.map((chargeItem) => ({
-          chargeType: chargeItem.chargeType,
-          chargeItemCode: chargeItem.chargeItemCode,
-          quantity: chargeItem.quantity ?? 1,
-          price: chargeItem.priceAmount,
-        })),
-        payerNationalId: user.nationalId,
-        organisationId: performingOrganizationID,
-        onUpdateUrl: onUpdateUrl.toString(),
-        metadata: {
-          applicationId,
-          paymentId,
-        },
-        returnUrl: await this.getReturnUrl(applicationId),
-        redirectToReturnUrlOnSuccess: true,
-        extraData,
-        chargeItemSubjectId: paymentId.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
-      },
-    })
   }
 
   private async arkCreateCharge(
