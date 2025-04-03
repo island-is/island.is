@@ -388,6 +388,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       updateQueryState(QueryParam.SEARCH_TERM, ev.target.value)
                     }}
                     onKeyDown={handleInputKeyDown}
+                    defaultValue={queryState[QueryParam.SEARCH_TERM]}
                     placeholder={formatMessage(
                       m.listPage.searchInputPlaceholder,
                     )}
@@ -498,6 +499,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       updateQueryState(QueryParam.CASE_NUMBER, ev.target.value)
                     }}
                     onKeyDown={handleInputKeyDown}
+                    defaultValue={queryState[QueryParam.CASE_NUMBER]}
                   />
                   <Stack space={1}>
                     <Select
