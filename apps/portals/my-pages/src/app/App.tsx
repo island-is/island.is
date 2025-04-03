@@ -22,8 +22,6 @@ const mockedInitialState = isMockMode
     })
   : undefined
 
-const DUMMY = 8
-
 export const App = () => (
   <div className={styles.page}>
     <ApolloProvider client={client}>

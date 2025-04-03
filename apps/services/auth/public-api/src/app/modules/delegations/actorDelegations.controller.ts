@@ -92,8 +92,6 @@ export class ActorDelegationsController {
     @Query('delegationTypes') delegationTypes?: Array<AuthDelegationType>,
     @Query('otherUser') otherUser?: string,
   ): Promise<MergedDelegationDTO[]> {
-    const DUMMY = 8
-
     if (direction !== DelegationDirection.INCOMING) {
       throw new BadRequestException(
         `'direction' can only be set to ${DelegationDirection.INCOMING} for the /actor alias`,
