@@ -283,12 +283,8 @@ export class ApplicationsService {
 
   // Hér þarf að sækja allar umsóknir eftir tegund og notanda
   // Ef notandi er í umboði lögaðila þá þarf að sækja allar þesskonar umsóknir þess lögaðila
-  async findAllByTypeAndUser(
-    formId: string,
-    page: number,
-    limit: number,
-    isTest: boolean,
-  ) {
+  // nota paging
+  async findAllByTypeAndUser() {
     return new ApplicationListDto()
   }
 
