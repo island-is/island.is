@@ -13,7 +13,10 @@ const FileDocumentSchema = z.object({
 
 const CustodianSchema = z.object({
   person: z.object({
-    nationalId: z.string().min(1),
+    nationalId: z
+      .string()
+      .min(1)
+      .refine((nationalId) => kennitala.isValid(nationalId)),
     name: z.string().min(1),
     email: z.string().min(1),
     phone: z.string().min(1),
@@ -31,7 +34,10 @@ const MainOtherContactSchema = z
     include: z.boolean(),
     person: z
       .object({
-        nationalId: z.string().optional(),
+        nationalId: z
+          .string()
+          .optional()
+          .refine((nationalId) => !nationalId || kennitala.isValid(nationalId)),
         name: z.string().optional(),
         email: z.string().optional(),
         phone: z.string().optional(),
@@ -178,7 +184,7 @@ export const SecondarySchoolSchema = z.object({
   applicant: applicantInformationSchema({
     phoneRequired: true,
     emailRequired: true,
-  }),
+  }).refine(({ nationalId }) => kennitala.isValid(nationalId)),
   applicationType: z
     .object({
       value: z.nativeEnum(ApplicationType),
