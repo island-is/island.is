@@ -36,7 +36,6 @@ import { FinanceModule } from '@island.is/api/domains/finance'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
-import { OccupationalLicensesModule } from '@island.is/api/domains/occupational-licenses'
 import { OccupationalLicensesV2Module } from '@island.is/api/domains/occupational-licenses-v2'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
@@ -289,7 +288,6 @@ const environment = getConfig
     NationalRegistryModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
-    OccupationalLicensesModule,
     OccupationalLicensesV2Module,
     SocialInsuranceModule,
     HealthDirectorateClientModule,
