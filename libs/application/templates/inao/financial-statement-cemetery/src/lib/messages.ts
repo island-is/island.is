@@ -524,6 +524,11 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit ársreiknings',
     description: 'Yearly overview',
   },
+  aboutOverviewTitle: {
+    id: 'fsc.application:aboutOverviewTitle',
+    defaultMessage: 'Um kirkjugarð',
+    description: 'About overview title',
+  },
   overviewDescription: {
     id: 'fsc.application:overview.general.description',
     defaultMessage: 'Farðu vel yfir efnið áður en þú sendir inn umsóknina.',
@@ -630,6 +635,13 @@ export const m = defineMessages({
     id: 'fsc.application:SignaturePossible',
     defaultMessage: 'svo hægt sé að undirrita hana með rafrænum skilríkjum.',
     description: 'Signature possible message',
+  },
+  overviewAlertMessage: {
+    id: 'fsc.application:overviewAlertMessage',
+    defaultMessage:
+      'Eftir að þú hefur sent inn umsókn mun rafræn undirritun verða send á netfangið {email}, svo hægt sé að undirrita hana með rafrænum skilríkjum.',
+    description:
+      'Message in the info allert at the bottom of the overview screen',
   },
   operatingYearMsgFirst: {
     id: 'fsc.application:operatingYearMsgFirst',

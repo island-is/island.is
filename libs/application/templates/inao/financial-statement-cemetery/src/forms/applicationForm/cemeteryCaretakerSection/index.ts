@@ -9,9 +9,7 @@ import { isCemetryUnderFinancialLimit } from '../../../utils/helpers'
 
 // This section should appear if the cemetries total income is under the income limit
 export const cemeteryCaretekerSection = buildSection({
-  condition: (answers) => {
-    return isCemetryUnderFinancialLimit(answers)
-  },
+  condition: isCemetryUnderFinancialLimit,
   id: 'cemeteryCaretekerSection',
   title: m.cemeteryCaretakers,
   children: [

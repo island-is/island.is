@@ -22,9 +22,9 @@ import {
   UserInfoApi,
 } from '../dataProviders'
 
-import { m } from './utils/messages'
+import { m } from './messages'
 import { ApiActions, Events, Roles, States } from '../types/types'
-import { dataSchema } from './utils/dataSchema'
+import { dataSchema } from './dataSchema'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 

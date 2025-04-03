@@ -1,4 +1,4 @@
-import { UPDATE_ELECTION_ACTION } from '../../lib/utils/constants'
+import { UPDATE_ELECTION_ACTION } from '../../utils/constants'
 
 type ElectionState = { name?: string; year?: string }
 
