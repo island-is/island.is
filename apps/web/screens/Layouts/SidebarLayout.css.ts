@@ -3,8 +3,8 @@ import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import {
   STICKY_NAV_HEIGHT,
-  STICKY_NAV_MAX_WIDTH_LG,
   STICKY_NAV_MAX_WIDTH_DEFAULT,
+  STICKY_NAV_MAX_WIDTH_LG,
 } from '@island.is/web/constants'
 
 const top = STICKY_NAV_HEIGHT + theme.spacing[1]

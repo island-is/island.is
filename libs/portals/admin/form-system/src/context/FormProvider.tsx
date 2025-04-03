@@ -23,7 +23,7 @@ import {
   UPDATE_SECTION_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
 import { updateFormFn } from '../lib/utils/updateFormFn'
-import { SectionTypes } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system/enums'
 
 export const FormProvider: React.FC<{
   children: React.ReactNode
@@ -46,11 +46,12 @@ export const FormProvider: React.FC<{
       data: inSettings
         ? baseSettingsStep
         : removeTypename(form?.sections)?.find(
-          (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
-        ) ?? defaultStep,
+            (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
+          ) ?? defaultStep,
     },
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,
+    organizationNationalId: form?.organizationNationalId ?? '',
   }
   const [control, controlDispatch] = useReducer(controlReducer, initialControl)
 
@@ -92,7 +93,7 @@ export const FormProvider: React.FC<{
 
   const formUpdate = useCallback(
     (updatedForm?: FormSystemForm) => {
-      updateFormFn(control, updateForm, updatedForm)
+      return updateFormFn(control, updateForm, updatedForm)
     },
     [control, updateForm],
   )
