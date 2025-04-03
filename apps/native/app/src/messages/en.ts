@@ -317,7 +317,7 @@ export const en: TranslatedMessages = {
   'licenseDetail.passport.warning.description':
     'Note that your passport will expire within the next 6 months.',
   'licenseDetail.identityDocument.warning.description':
-    'Note that your identity document will expire within the next 6 months.',
+    'Note that your Id-card will expire within the next 6 months.',
   'licenseDetail.passport.noPassport': 'No valid passport',
   'licenseDetail.identityDocument.noIdentityDocument': 'No valid Id-cards',
   'licenseDetail.apply': 'Apply',
