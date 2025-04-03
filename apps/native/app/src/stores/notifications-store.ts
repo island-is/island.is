@@ -21,18 +21,6 @@ import { getRightButtons } from '../utils/get-main-root'
 import { setBadgeCountAsync } from 'expo-notifications'
 import { preferencesStore } from './preferences-store'
 
-export interface Notification {
-  id: string
-  category?: string
-  title: string
-  subtitle?: string
-  body?: string
-  copy?: string
-  data: Record<string, any>
-  date: number
-  read: boolean
-}
-
 interface NotificationsState extends State {
   unseenCount: number
   pushToken?: string
@@ -70,7 +58,7 @@ export const notificationsStore = create<NotificationsStore>(
 
           try {
             // Register the new push token
-            const res = await client.mutate<
+            await client.mutate<
               AddUserProfileDeviceTokenMutation,
               AddUserProfileDeviceTokenMutationVariables
             >({

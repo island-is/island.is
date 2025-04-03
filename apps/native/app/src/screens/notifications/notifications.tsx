@@ -131,7 +131,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
     void markAllUserNotificationsAsSeen().then(() =>
       updateNavigationUnseenCount(0),
     )
-  }, [])
+  }, [markAllUserNotificationsAsSeen, updateNavigationUnseenCount])
 
   useEffect(() => {
     void dismissAllNotificationsAsync()
@@ -251,10 +251,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
     )
   }
 
-  const keyExtractor = useCallback(
-    (item: ListItem) => item.id.toString(),
-    [memoizedData],
-  )
+  const keyExtractor = useCallback((item: ListItem) => item.id.toString(), [])
 
   return (
     <>
