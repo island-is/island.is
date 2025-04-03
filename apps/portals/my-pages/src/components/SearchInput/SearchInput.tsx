@@ -2,6 +2,8 @@ import {
   AsyncSearch,
   AsyncSearchOption,
   Box,
+  BoxProps,
+  Button,
   Text,
 } from '@island.is/island-ui/core'
 import { useMemo, useRef, useState } from 'react'
@@ -12,7 +14,19 @@ import * as styles from './SearchInput.css'
 import { useNavigate } from 'react-router-dom'
 import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
 
-export const SearchInput = () => {
+interface Props {
+  box?: BoxProps
+  buttonAriaLabel?: string
+  hideInput?: boolean
+  whiteMenuBackground?: boolean
+}
+
+export const SearchInput = ({
+  box,
+  buttonAriaLabel,
+  hideInput,
+  whiteMenuBackground,
+}: Props) => {
   const [query, setQuery] = useState<string>()
   const search = usePortalModulesSearch()
 
@@ -39,6 +53,8 @@ export const SearchInput = () => {
               href={result.item.uri}
               className={cn(styles.item, {
                 [styles.active]: active,
+                [styles.blueBackground]: !whiteMenuBackground,
+                [styles.whiteBackground]: whiteMenuBackground,
               })}
             >
               <Box
@@ -74,29 +90,46 @@ export const SearchInput = () => {
     }
 
     return []
-  }, [search, query])
+  }, [query, search, whiteMenuBackground])
+
+  if (hideInput) {
+    return (
+      <Box className={styles.wrapper} {...box}>
+        <Button
+          aria-label={buttonAriaLabel}
+          icon="search"
+          variant="utility"
+          size="small"
+        />
+      </Box>
+    )
+  }
 
   return (
-    <AsyncSearch
-      ref={ref}
-      id="my-pages-async-search"
-      placeholder="Leita"
-      options={searchResults ?? []}
-      inputValue={query}
-      openMenuOnFocus
-      closeMenuOnSubmit
-      onSubmit={(_, option) => {
-        if (option?.value) {
-          navigate(option?.value)
-        } else if (query) {
-          navigate(`${SearchPaths.Search}?query=${query}`)
-        } else navigate(SearchPaths.Search)
-      }}
-      onInputValueChange={(value) => {
-        if (value && value !== query) {
-          setQuery(value)
-        }
-      }}
-    />
+    <Box className={styles.wrapper} {...box}>
+      <AsyncSearch
+        ref={ref}
+        id="my-pages-async-search"
+        placeholder="Leita"
+        colored={!whiteMenuBackground}
+        options={searchResults ?? []}
+        inputValue={query}
+        openMenuOnFocus
+        showDividerIfActive
+        closeMenuOnSubmit
+        onSubmit={(_, option) => {
+          if (option?.value) {
+            navigate(option?.value)
+          } else if (query) {
+            navigate(`${SearchPaths.Search}?query=${query}`)
+          } else navigate(SearchPaths.Search)
+        }}
+        onInputValueChange={(value) => {
+          if (value && value !== query) {
+            setQuery(value)
+          }
+        }}
+      />
+    </Box>
   )
 }

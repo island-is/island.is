@@ -123,92 +123,92 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
                       </Hidden>
                     </FocusableBox>
                   </Link>
-                  <Hidden print>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      flexWrap="nowrap"
-                      marginLeft={[1, 1, 2]}
-                    >
-                      {includeSearchInHeader && (
-                        <Box marginRight={[1, 1, 2]} position="relative">
-                          <SearchInput />
-                        </Box>
-                      )}
-                      <Hidden below="md">
-                        <Box marginRight={[1, 1, 2]} position="relative">
-                          <LinkResolver
-                            href={DocumentsPaths.ElectronicDocumentsRoot}
-                          >
-                            <Button
-                              icon="mail"
-                              iconType="outline"
-                              colorScheme="white"
-                              size="small"
-                              type="span"
-                              variant="utility"
-                              unfocusable
-                            />
-                            <span className={helperStyles.srOnly}>
-                              {formatMessage(m.openDocuments)}
-                            </span>
-                          </LinkResolver>
-                        </Box>
-                      </Hidden>
-
-                      <NotificationButton
-                        setMenuState={(val: MenuTypes) => setMenuOpen(val)}
-                        showMenu={menuOpen === 'notifications'}
-                        disabled={!hasNotificationsDelegationAccess}
-                      />
-
-                      {user && <UserLanguageSwitcher />}
-
-                      <Box className={styles.overview} marginRight={[1, 1, 2]}>
-                        <Button
-                          variant="utility"
-                          colorScheme="white"
-                          icon={
-                            menuOpen === 'side' && isMobile ? 'close' : 'dots'
-                          }
-                          onClick={() => {
-                            menuOpen === 'side' && isMobile
-                              ? setMenuOpen(undefined)
-                              : setMenuOpen('side')
-                          }}
-                          ref={ref}
-                        >
-                          <Hidden below="sm">
-                            {formatMessage(m.overview)}
-                          </Hidden>
-                        </Button>
+                  <Box
+                    width="full"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="flexEnd"
+                    flexWrap="nowrap"
+                    marginLeft={[1, 1, 2]}
+                    printHidden
+                  >
+                    {includeSearchInHeader && !isMobile && (
+                      <Box marginRight={[1, 1, 2]} flexGrow={1}>
+                        <SearchInput
+                          whiteMenuBackground
+                          box={{ marginLeft: 'auto' }}
+                        />
                       </Box>
+                    )}
+                    <Hidden below="md">
+                      <Box marginRight={[1, 1, 2]} position="relative">
+                        <LinkResolver
+                          href={DocumentsPaths.ElectronicDocumentsRoot}
+                        >
+                          <Button
+                            icon="mail"
+                            iconType="outline"
+                            colorScheme="white"
+                            size="small"
+                            type="span"
+                            variant="utility"
+                            unfocusable
+                          />
+                          <span className={helperStyles.srOnly}>
+                            {formatMessage(m.openDocuments)}
+                          </span>
+                        </LinkResolver>
+                      </Box>
+                    </Hidden>
 
-                      <Sidemenu
-                        setSideMenuOpen={(set: boolean) =>
-                          setMenuOpen(set ? 'side' : undefined)
-                        }
-                        sideMenuOpen={menuOpen === 'side'}
-                        rightPosition={
-                          ref.current?.getBoundingClientRect().right
-                        }
-                      />
+                    <NotificationButton
+                      setMenuState={(val: MenuTypes) => setMenuOpen(val)}
+                      showMenu={menuOpen === 'notifications'}
+                      disabled={!hasNotificationsDelegationAccess}
+                    />
 
-                      <UserMenu
-                        setUserMenuOpen={(set: boolean) =>
-                          setMenuOpen(
-                            set
-                              ? 'user'
-                              : menuOpen === 'user'
-                              ? undefined
-                              : menuOpen,
-                          )
+                    {user && <UserLanguageSwitcher />}
+
+                    <Box className={styles.overview} marginRight={[1, 1, 2]}>
+                      <Button
+                        variant="utility"
+                        colorScheme="white"
+                        icon={
+                          menuOpen === 'side' && isMobile ? 'close' : 'dots'
                         }
-                        showLanguageSwitcher={false}
-                        userMenuOpen={menuOpen === 'user'}
-                      />
+                        onClick={() => {
+                          menuOpen === 'side' && isMobile
+                            ? setMenuOpen(undefined)
+                            : setMenuOpen('side')
+                        }}
+                        ref={ref}
+                      >
+                        <Hidden below="sm">{formatMessage(m.overview)}</Hidden>
+                      </Button>
                     </Box>
-                  </Hidden>
+
+                    <Sidemenu
+                      setSideMenuOpen={(set: boolean) =>
+                        setMenuOpen(set ? 'side' : undefined)
+                      }
+                      sideMenuOpen={menuOpen === 'side'}
+                      rightPosition={ref.current?.getBoundingClientRect().right}
+                    />
+
+                    <UserMenu
+                      setUserMenuOpen={(set: boolean) =>
+                        setMenuOpen(
+                          set
+                            ? 'user'
+                            : menuOpen === 'user'
+                            ? undefined
+                            : menuOpen,
+                        )
+                      }
+                      showLanguageSwitcher={false}
+                      userMenuOpen={menuOpen === 'user'}
+                    />
+                  </Box>
                 </Box>
               </Box>
             </GridColumn>

@@ -2,11 +2,11 @@ import { style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const colored = style({
-  backgroundColor: theme.color.blue100,
+  backgroundColor: theme.color.red600,
 })
 
 export const plain = style({
-  backgroundColor: theme.color.white,
+  backgroundColor: theme.color.red600,
 })
 
 export const selectedColored = style({

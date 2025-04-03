@@ -47,6 +47,7 @@ export interface AsyncSearchProps {
   placeholder?: string
   options: AsyncSearchOption[]
   colored?: boolean
+  showDividerIfActive?: boolean
   filter?: boolean | ((x: AsyncSearchOption) => boolean)
   inputValue?: string
   initialInputValue?: string
@@ -88,6 +89,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
       onChange,
       onSubmit,
       onInputValueChange,
+      showDividerIfActive,
       ...props
     },
     ref,
@@ -147,6 +149,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               index={index}
               highlightedIndex={highlightedIndex}
               isActive={highlightedIndex === index}
+              showDividerIfActive={showDividerIfActive}
               colored={colored}
               size={size}
               item={item}
@@ -417,7 +420,10 @@ export const AsyncSearchInput = forwardRef<
               {inputProps.placeholder}
             </label>
           )}
-          <Menu {...{ isOpen, shouldShowItems: isOpen, ...menuProps }}>
+          <Menu
+            colorScheme={blueColorScheme ? 'blue' : undefined}
+            {...{ isOpen, shouldShowItems: isOpen, ...menuProps }}
+          >
             {children}
           </Menu>
         </div>

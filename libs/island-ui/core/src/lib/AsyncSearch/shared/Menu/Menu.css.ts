@@ -19,6 +19,14 @@ export const menu = style({
   borderBottomRightRadius: 6,
 })
 
+export const defaultBackgroundColor = style({
+  backgroundColor: theme.color.white,
+})
+
+export const blueBackgroundColor = style({
+  backgroundColor: theme.color.blue100,
+})
+
 export const open = style({
   zIndex: 10,
   opacity: 1,
