@@ -64,6 +64,7 @@ export interface TUploadFile extends UploadFile {
   displayDate?: string | null
   policeFileId?: string | null
   userGeneratedFilename?: string | null
+  submissionDate?: string | null
   fileRepresentative?: string | null
 }
 
@@ -87,6 +88,7 @@ const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   displayDate: file.displayDate,
   policeFileId: file.policeFileId,
   userGeneratedFilename: file.userGeneratedFilename,
+  submissionDate: file.submissionDate,
   fileRepresentative: file.fileRepresentative,
 })
 
@@ -113,6 +115,7 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
     overRides?: Partial<TUploadFile>,
     setUserGeneratedFilename = false,
   ) => {
+    console.log({ files })
     // We generate an id for each file so that we find the file again when
     // updating the file's progress and onRetry.
     // Also we cannot spread File since it contains read-only properties.
@@ -126,6 +129,7 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
       userGeneratedFilename: setUserGeneratedFilename ? file.name : undefined,
       ...overRides,
     }))
+    console.log({ uploadFiles })
 
     setUploadFiles((previous) => [...uploadFiles, ...previous])
 
@@ -344,6 +348,7 @@ const useS3Upload = (
         displayDate: file.displayDate,
         policeFileId: file.policeFileId,
         userGeneratedFilename: file.userGeneratedFilename,
+        submissionDate: file.submissionDate,
         fileRepresentative: file.fileRepresentative,
       }
 
