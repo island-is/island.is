@@ -7,6 +7,7 @@ import {
   PaymentOptions,
   RegisterNumber,
 } from '../shared/types'
+import { participants as participantMessages } from './messages'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -153,12 +154,11 @@ export const SeminarAnswersSchema = z.object({
         return hasDisabled.length === 0
       },
       {
-        message:
-          'Vinsamlegast fjarlægðu ógjaldgenga notendur áður en haldið er áfram',
+        params: participantMessages.labels.tableError,
       },
     )
     .refine((plist) => plist.length > 0, {
-      message: 'Vinsamlegast bættu a.m.k 1 þátttakanda við listann',
+      params: participantMessages.labels.emptyListError,
     }),
   participantCsvError: z.string().optional(),
   participantValidityError: z.string().optional(),
