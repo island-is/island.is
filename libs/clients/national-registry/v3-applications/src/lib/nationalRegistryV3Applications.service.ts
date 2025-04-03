@@ -11,6 +11,7 @@ export class NationalRegistryV3ApplicationsClientService {
   }
 
   async get18YearOlds(): Promise<string[]> {
+    // TODO
     // return await this.individualApi.einstaklingar18IDagGet()
     return []
   }

@@ -19,14 +19,6 @@ export const ApiConfig = {
         name: 'clients-national-registry-v3-applications',
         organizationSlug: 'thjodskra',
         timeout: config.fetchTimeout,
-        // autoAuth: {
-        //   mode: 'token',
-        //   clientId: config.clientId,
-        //   clientSecret: config.clientSecret,
-        //   scope: [config.scope],
-        //   issuer: '',
-        //   tokenEndpoint: config.endpoint,
-        // },
         autoAuth: {
           mode: 'tokenExchange',
           issuer: idsClientConfig.issuer,
