@@ -372,6 +372,17 @@ jobs:
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
+      - name: Pre-build cleanup
+        run: |
+          # Clear docker system
+          docker system prune -af --volumes || true
+          # Remove any dangling images
+          docker rmi $(docker images -f "dangling=true" -q) || true
+          # Limit the build context
+          echo ".*" > .dockerignore
+          echo "!src/" >> .dockerignore
+
+      # Add specific directories you need
   helm-docker-build:
     needs:
       - prepare
