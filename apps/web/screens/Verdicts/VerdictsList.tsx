@@ -111,12 +111,12 @@ const useVerdictListState = (props: VerdictsListProps) => {
         .withOptions({ clearOnDefault: true })
         .withDefault(''),
       [QueryParam.CASE_CATEGORIES]: parseAsArrayOf(
-        parseAsString.withOptions({ clearOnDefault: true }).withDefault(''),
+        parseAsString.withOptions({ clearOnDefault: true }),
       ).withOptions({
         clearOnDefault: true,
       }),
       [QueryParam.CASE_TYPES]: parseAsArrayOf(
-        parseAsString.withOptions({ clearOnDefault: true }).withDefault(''),
+        parseAsString.withOptions({ clearOnDefault: true }),
       ).withOptions({
         clearOnDefault: true,
       }),
@@ -150,10 +150,18 @@ const useVerdictListState = (props: VerdictsListProps) => {
   }, [])
 
   const updateQueryState = useCallback(
-    (key: keyof typeof queryState, value: typeof queryState[typeof key]) => {
+    (
+      key: keyof typeof queryState,
+      value:
+        | typeof queryState[typeof key]
+        | ((previousState: typeof queryState) => typeof queryState),
+    ) => {
       updatePage(1)
       setQueryState((previousState) => {
-        const updatedState = { ...previousState, [key]: value }
+        const updatedState =
+          typeof value === 'function'
+            ? value(previousState)
+            : { ...previousState, [key]: value }
         queryStateRef.current = updatedState
         return updatedState
       })
@@ -622,9 +630,38 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                             key={option.value}
                             name={option.value}
                             label={option.label}
-                            checked={queryState[
-                              QueryParam.CASE_CATEGORIES
-                            ]?.includes(option.value)}
+                            checked={Boolean(
+                              queryState[QueryParam.CASE_CATEGORIES]?.includes(
+                                option.value,
+                              ),
+                            )}
+                            onChange={(event) => {
+                              updateQueryState(
+                                QueryParam.CASE_CATEGORIES,
+                                (previousState) => {
+                                  let updatedCaseCategories = [
+                                    ...(previousState[
+                                      QueryParam.CASE_CATEGORIES
+                                    ] ?? []),
+                                  ]
+                                  if (event.target.checked) {
+                                    updatedCaseCategories.push(option.value)
+                                  } else {
+                                    updatedCaseCategories =
+                                      updatedCaseCategories.filter(
+                                        (value) => value !== option.value,
+                                      )
+                                  }
+                                  return {
+                                    ...previousState,
+                                    [QueryParam.CASE_CATEGORIES]:
+                                      updatedCaseCategories.length === 0
+                                        ? null
+                                        : updatedCaseCategories,
+                                  }
+                                },
+                              )
+                            }}
                           />
                         ))}
                       </Stack>
@@ -633,7 +670,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     <Divider />
 
                     <AccordionItem
-                      id="case-category-accordion"
+                      id="case-types-accordion"
                       label={formatMessage(m.listPage.caseTypeSelectLabel)}
                       startExpanded={true}
                       iconVariant="small"
@@ -651,9 +688,36 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                             key={option.value}
                             name={option.value}
                             label={option.label}
-                            checked={queryState[
-                              QueryParam.CASE_TYPES
-                            ]?.includes(option.value)}
+                            checked={Boolean(
+                              queryState[QueryParam.CASE_TYPES]?.includes(
+                                option.value,
+                              ),
+                            )}
+                            onChange={(event) => {
+                              updateQueryState(
+                                QueryParam.CASE_TYPES,
+                                (previousState) => {
+                                  let updatedCaseTypes = [
+                                    ...(previousState[QueryParam.CASE_TYPES] ??
+                                      []),
+                                  ]
+                                  if (event.target.checked) {
+                                    updatedCaseTypes.push(option.value)
+                                  } else {
+                                    updatedCaseTypes = updatedCaseTypes.filter(
+                                      (value) => value !== option.value,
+                                    )
+                                  }
+                                  return {
+                                    ...previousState,
+                                    [QueryParam.CASE_TYPES]:
+                                      updatedCaseTypes.length === 0
+                                        ? null
+                                        : updatedCaseTypes,
+                                  }
+                                },
+                              )
+                            }}
                           />
                         ))}
                       </Stack>
@@ -834,10 +898,8 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
   const laws = parseAsArrayOf(parseAsString).parseServerSide(
     query[QueryParam.LAWS],
   )
-  const dateFrom = parseAsIsoDateTime.parseServerSide(
-    query[QueryParam.DATE_FROM],
-  )
-  const dateTo = parseAsIsoDateTime.parseServerSide(query[QueryParam.DATE_TO])
+  const dateFrom = parseAsString.parseServerSide(query[QueryParam.DATE_FROM])
+  const dateTo = parseAsString.parseServerSide(query[QueryParam.DATE_TO])
 
   const [
     verdictListResponse,
