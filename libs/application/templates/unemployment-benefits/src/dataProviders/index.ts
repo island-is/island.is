@@ -5,7 +5,7 @@ export const WorkMachineLicensesApi = defineTemplateApi({
   externalDataId: 'workMachineLicenses',
 })
 
-export const DrivingLicenseApi = defineTemplateApi({
-  action: 'getDrivingLicense',
-  externalDataId: 'drivingLicense',
-})
+// export const DrivingLicenseApi = defineTemplateApi({
+//   action: 'getDrivingLicense',
+//   externalDataId: 'drivingLicense',
+// })

@@ -1,4 +1,8 @@
-import { buildMultiField, buildSubSection } from '@island.is/application/core'
+import {
+  buildDescriptionField,
+  buildMultiField,
+  buildSubSection,
+} from '@island.is/application/core'
 import { payout as payoutMessages } from '../../../lib/messages'
 
 export const unemploymentBenefitsPayoutAgreementSubSection = buildSubSection({
@@ -10,7 +14,11 @@ export const unemploymentBenefitsPayoutAgreementSubSection = buildSubSection({
       title: payoutMessages.unemploymentBenefitsPayoutAgreement.pageTitle,
       description:
         payoutMessages.unemploymentBenefitsPayoutAgreement.pageDescription,
-      children: [],
+      children: [
+        buildDescriptionField({
+          id: 'test',
+        }),
+      ],
     }),
   ],
 })

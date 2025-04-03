@@ -22,7 +22,7 @@ import {
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { application as applicationMessages } from './messages'
-import { DrivingLicenseApi, WorkMachineLicensesApi } from '../dataProviders'
+import { WorkMachineLicensesApi } from '../dataProviders'
 
 const UnemploymentBenefitsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -61,7 +61,7 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
               api: [
                 UserProfileApi,
                 WorkMachineLicensesApi,
-                DrivingLicenseApi,
+                // DrivingLicenseApi,
                 NationalRegistrySpouseApi,
                 NationalRegistryUserApi,
                 ChildrenCustodyInformationApi,

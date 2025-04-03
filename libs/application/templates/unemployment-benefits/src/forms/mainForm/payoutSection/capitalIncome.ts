@@ -1,4 +1,8 @@
-import { buildMultiField, buildSubSection } from '@island.is/application/core'
+import {
+  buildDescriptionField,
+  buildMultiField,
+  buildSubSection,
+} from '@island.is/application/core'
 import { payout as payoutMessages } from '../../../lib/messages'
 
 export const capitalIncomeSubSection = buildSubSection({
@@ -8,7 +12,11 @@ export const capitalIncomeSubSection = buildSubSection({
     buildMultiField({
       id: 'capitalIncomeSubSection',
       title: payoutMessages.capitalIncome.pageTitle,
-      children: [],
+      children: [
+        buildDescriptionField({
+          id: 'test',
+        }),
+      ],
     }),
   ],
 })

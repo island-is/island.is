@@ -1,4 +1,8 @@
-import { buildMultiField, buildSection } from '@island.is/application/core'
+import {
+  buildDescriptionField,
+  buildMultiField,
+  buildSection,
+} from '@island.is/application/core'
 import { education as educationMessages } from '../../../lib/messages'
 
 export const educationSection = buildSection({
@@ -8,7 +12,11 @@ export const educationSection = buildSection({
     buildMultiField({
       title: educationMessages.general.pageTitle,
       description: educationMessages.general.pageDescription,
-      children: [],
+      children: [
+        buildDescriptionField({
+          id: 'test',
+        }),
+      ],
     }),
   ],
 })

@@ -1,4 +1,8 @@
-import { buildMultiField, buildSubSection } from '@island.is/application/core'
+import {
+  buildDescriptionField,
+  buildMultiField,
+  buildSubSection,
+} from '@island.is/application/core'
 import { employment as employmentMessages } from '../../../lib/messages'
 
 export const workingAbilitySubSection = buildSubSection({
@@ -8,7 +12,11 @@ export const workingAbilitySubSection = buildSubSection({
     buildMultiField({
       id: 'workingAbilitySubSection',
       title: employmentMessages.workingAbility.pageTitle,
-      children: [],
+      children: [
+        buildDescriptionField({
+          id: 'test',
+        }),
+      ],
     }),
   ],
 })

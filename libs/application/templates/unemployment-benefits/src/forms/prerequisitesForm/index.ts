@@ -14,7 +14,7 @@ import {
   NationalRegistrySpouseApi,
   ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
-import { DrivingLicenseApi, WorkMachineLicensesApi } from '../../dataProviders'
+import { WorkMachineLicensesApi } from '../../dataProviders'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -54,11 +54,11 @@ export const Prerequisites = buildForm({
               title: 'WorkMachineLicensesApi',
               subTitle: 'WorkMachineLicensesApi',
             }),
-            buildDataProviderItem({
-              provider: DrivingLicenseApi,
-              title: 'DrivingLicenseApi',
-              subTitle: 'DrivingLicenseApi',
-            }),
+            // buildDataProviderItem({
+            //   provider: DrivingLicenseApi,
+            //   title: 'DrivingLicenseApi',
+            //   subTitle: 'DrivingLicenseApi',
+            // }),
           ],
           submitField: buildSubmitField({
             id: 'submit',
