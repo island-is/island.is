@@ -1,23 +1,23 @@
 import { districtCourtJudgeRule, prosecutorRule } from '../../../guards'
-import { testRolesRules } from '../../case/guards/test/testHelper'
+import { verifyRolesRules } from '../../case/guards/test/testHelper'
 import { VictimController } from '../victim.controller'
 
 describe('VictimController - Create Roles', () => {
-  testRolesRules(VictimController, 'create', [
+  verifyRolesRules(VictimController, 'create', [
     prosecutorRule,
     districtCourtJudgeRule,
   ])
 })
 
 describe('VictimController - Update Roles', () => {
-  testRolesRules(VictimController, 'update', [
+  verifyRolesRules(VictimController, 'update', [
     prosecutorRule,
     districtCourtJudgeRule,
   ])
 })
 
 describe('VictimController - Delete Roles', () => {
-  testRolesRules(VictimController, 'delete', [
+  verifyRolesRules(VictimController, 'delete', [
     prosecutorRule,
     districtCourtJudgeRule,
   ])

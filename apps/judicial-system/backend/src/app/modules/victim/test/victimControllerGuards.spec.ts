@@ -1,13 +1,13 @@
 import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
 import { MinimalCaseAccessGuard, MinimalCaseExistsGuard } from '../../case'
-import { testGuards } from '../../case/guards/test/testHelper'
+import { verifyGuards } from '../../case/guards/test/testHelper'
 import { ValidateVictimGuard } from '../guards/validateVictim.guard'
 import { VictimWriteGuard } from '../guards/victimWrite.guard'
 import { VictimController } from '../victim.controller'
 
 describe('VictimController - Top-level guards', () => {
-  testGuards(VictimController, undefined, [
+  verifyGuards(VictimController, undefined, [
     JwtAuthUserGuard,
     RolesGuard,
     MinimalCaseExistsGuard,
@@ -17,15 +17,15 @@ describe('VictimController - Top-level guards', () => {
 })
 
 describe('VictimController - Create', () => {
-  testGuards(VictimController, 'create', [VictimWriteGuard])
+  verifyGuards(VictimController, 'create', [VictimWriteGuard])
 })
 
 describe('VictimController - Update', () => {
-  testGuards(VictimController, 'update', [VictimWriteGuard])
+  verifyGuards(VictimController, 'update', [VictimWriteGuard])
 })
 
 describe('VictimController - Delete', () => {
-  testGuards(VictimController, 'delete', [
+  verifyGuards(VictimController, 'delete', [
     VictimWriteGuard,
     ValidateVictimGuard,
     MinimalCaseAccessGuard,
