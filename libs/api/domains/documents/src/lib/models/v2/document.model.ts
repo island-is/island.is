@@ -5,6 +5,7 @@ import { PaginatedResponse } from '@island.is/nest/pagination'
 import { Category } from './category.model'
 import { Type } from './type.model'
 import { Action } from './actions.model'
+import { Ticket } from './ticket.model'
 
 @ObjectType('DocumentV2')
 export class Document {
@@ -58,6 +59,12 @@ export class Document {
 
   @Field(() => Boolean, { nullable: true })
   isUrgent?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  replyable?: boolean | null
+
+  @Field(() => Ticket, { nullable: true })
+  ticket?: Ticket | null
 }
 
 @ObjectType('DocumentsV2')

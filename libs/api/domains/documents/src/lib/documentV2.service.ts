@@ -20,7 +20,7 @@ import {
   DocumentPageNumber,
   PaginatedDocuments,
 } from './models/v2/document.model'
-import { Action } from './models/v2/actions'
+import { Action } from './models/v2/actions.model'
 import { FileType } from './models/v2/documentContent.model'
 import { DocumentsInput } from './models/v2/documents.input'
 import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
@@ -90,6 +90,22 @@ export class DocumentServiceV2 {
       (action) => action.type !== 'alert' && action.type !== 'confirmation',
     )
 
+    const ticket = {
+      authorId: document.ticket?.authorId,
+      createdDate: document.ticket?.createdAt,
+      updatedDate: document.ticket?.updatedAt,
+      status: document.ticket?.status,
+      id: document.ticket?.id,
+      subject: document.ticket?.subject,
+      comments: document.ticket?.comments?.map((c) => ({
+        id: c.id,
+        body: c.body,
+        createdDate: c.createdAt,
+        authorId: c.authorId,
+        author: c.author,
+      })),
+    }
+
     return {
       ...document,
       publicationDate: document.date,
@@ -110,6 +126,8 @@ export class DocumentServiceV2 {
       actions: this.actionMapper(documentId, actions),
       confirmation: confirmation,
       alert: alert,
+      replyable: document.replyable,
+      ticket: ticket,
     }
   }
 
@@ -165,6 +183,7 @@ export class DocumentServiceV2 {
               id: d.senderNationalId,
             },
             isUrgent: d.urgent,
+            ticket: undefined,
           }
         })
         .filter(isDefined) ?? []

@@ -1,4 +1,4 @@
-import { MessageDTO, MessageAction } from '../..'
+import { MessageDTO, MessageAction, TicketDto } from '../..'
 import sanitizeHtml from 'sanitize-html'
 import { svgAttr, svgTags } from '../../utils/htmlConfig'
 
@@ -24,6 +24,8 @@ export type DocumentDto = {
   categoryId?: string | null
   urgent?: boolean | null
   actions?: Array<MessageAction> | null
+  replyable?: boolean | null
+  ticket?: TicketDto | null
 }
 
 export const mapToDocument = (
@@ -42,6 +44,8 @@ export const mapToDocument = (
     categoryId: document.categoryId?.toString(),
     urgent: document.urgent,
     actions: document.actions,
+    replyable: document.replyable,
+    ticket: document.ticket,
   }
   if (document.content) {
     fileType = 'pdf'
