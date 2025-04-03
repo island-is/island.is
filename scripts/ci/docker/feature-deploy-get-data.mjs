@@ -52,7 +52,7 @@ async function main(testContext = null) {
 
   const changedFiles = new Set()
 
-  const globPattern = `${_MANIFEST_PATHS.join(',')}/**/values.yaml`
+  const globPattern = `${_MANIFEST_PATHS.join(',')}/**/values*.yaml`
 
   const files = await glob(globPattern)
 
