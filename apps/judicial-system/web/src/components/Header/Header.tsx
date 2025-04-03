@@ -2,7 +2,7 @@ import { FC, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import getConfig from 'next/config'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import router from 'next/router'
 
 import {
   Box,
@@ -81,7 +81,6 @@ const HeaderContainer = () => {
 
   const { countryCode } = useGeoLocation()
   const { lawyers } = useContext(LawyerRegistryContext)
-  const router = useRouter()
 
   const isLawyerInLawyersRegistry = isDefenceUser(user) && lawyer
 
