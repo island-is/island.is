@@ -24,7 +24,7 @@ runs:
       shell: bash
       id: set-cache-key
       run: |
-        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-2" >> $GITHUB_OUTPUT
+        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
     - name: Get Yarn Cache Directory Path
       shell: bash
@@ -46,7 +46,7 @@ runs:
     - name: Yarn install
       shell: bash
       run: |
-        yarn install --no-immutable
+        yarn install --immutable
 
     - name: Cache Dependencies
       uses: runs-on/cache/save@v4
@@ -55,8 +55,6 @@ runs:
         path: |
           ${{ steps.yarn-cache-dir-path.outputs.dir }}
           ${{ env.CYPRESS_CACHE_FOLDER }}
-          **/node_modules
-          .yarn/install-state.gz
         key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
       env:
         RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE }}
