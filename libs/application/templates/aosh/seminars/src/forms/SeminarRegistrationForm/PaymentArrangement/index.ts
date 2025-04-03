@@ -167,6 +167,7 @@ export const paymentArrangementSection = buildSection({
           title: paymentArrangement.labels.explanation,
           placeholder: paymentArrangement.labels.explanationPlaceholder,
           maxLength: 40,
+          showMaxLength: true,
           condition: (answers: FormValue, externalData: ExternalData) => {
             const paymentArrangement = getValueViaPath<PaymentOptions>(
               answers,

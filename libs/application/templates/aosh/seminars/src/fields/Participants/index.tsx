@@ -116,6 +116,8 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       setValue('participantValidityError', '')
       setValue('participantFinishedValidation', 'true')
       setFoundNotValid(false)
+    } else if (unfinishedValues.length === 0) {
+      trigger('participantList')
     }
   }, [values])
 
