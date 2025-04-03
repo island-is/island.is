@@ -172,21 +172,12 @@ const useVerdictListState = (props: VerdictsListProps) => {
           const input = { ...response.webVerdicts.input }
           delete input['__typename']
 
-          console.log({
-            input,
-            state: convertQueryParamsToInput(
-              queryStateRef.current,
-              pageRef.current,
-            ),
-            response,
-          })
           if (
             !isEqual(
               input,
               convertQueryParamsToInput(queryStateRef.current, pageRef.current),
             )
           ) {
-            console.log({ ignoring: true })
             return
           }
         }
