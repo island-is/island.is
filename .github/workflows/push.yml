@@ -599,7 +599,6 @@ jobs:
           -H "Authorization: Bearer $HELM_VALUES_TOKEN" \
           "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
           -d "{\"event_type\":\"deploy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}"
-
   #  deploy:
   #    runs-on: arc-runners
   #    if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' && needs.docker-build.result == 'success' }}
@@ -661,10 +660,10 @@ jobs:
     needs:
       - pre-checks
       - docker-build
-      - deploy
+      - deploy-feature
     steps:
-      - name: Check deploy success
-        run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
+      # - name: Check deploy success
+      #   run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
       - name: Announce success
         if: needs.pre-checks.outputs.PRE_CHECK
         run: echo "Build is successful"
@@ -679,7 +678,7 @@ jobs:
       - pre-checks
       - prepare
       - docker-build
-      - deploy
+      - deploy-feature
     steps:
       - name: Send Slack notification
         uses: 8398a7/action-slack@v3
