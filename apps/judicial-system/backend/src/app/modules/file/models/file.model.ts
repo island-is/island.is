@@ -128,9 +128,4 @@ export class CaseFile extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   submittedBy?: string
-
-  // when users submit files on behalf of case representatives
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  fileRepresentative?: string
 }
