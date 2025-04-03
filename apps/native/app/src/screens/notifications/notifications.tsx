@@ -131,7 +131,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
     void markAllUserNotificationsAsSeen().then(() =>
       updateNavigationUnseenCount(0),
     )
-  }, [markAllUserNotificationsAsSeen, updateNavigationUnseenCount])
+  }, [])
 
   useEffect(() => {
     void dismissAllNotificationsAsync()
