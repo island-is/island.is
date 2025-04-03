@@ -1,5 +1,4 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { useState } from 'react'
 import { Select } from '@island.is/island-ui/core'
 
 interface Props {
@@ -19,7 +18,7 @@ const listTypePlaceholder = {
 }
 
 export const List = ({ item }: Props) => {
-  const [listItems] = useState<ListItem[]>([])
+  const listItems: ListItem[] = []
 
   return (
     <Select
