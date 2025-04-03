@@ -1,8 +1,6 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
-  buildLinkField,
   buildMultiField,
   buildNationalIdWithNameField,
   buildPhoneField,
@@ -10,7 +8,6 @@ import {
   buildSection,
   buildTextField,
   getValueViaPath,
-  YES,
 } from '@island.is/application/core'
 import { paymentArrangement } from '../../../lib/messages'
 import {
@@ -19,7 +16,6 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import {
-  isIndividual,
   isCompany,
   isCompanyType,
   isPersonType,

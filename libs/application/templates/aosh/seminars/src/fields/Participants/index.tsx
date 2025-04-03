@@ -95,7 +95,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       })
       return data
     },
-    [getAreIndividualsValid],
+    [getAreIndividualsValid, courseID, registererNationalId],
   )
 
   useEffect(() => {
@@ -119,7 +119,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     } else if (unfinishedValues.length === 0) {
       trigger('participantList')
     }
-  }, [values])
+  }, [values, participantList, setValue, trigger])
 
   const changeFile = (props: Array<UploadFile>) => {
     const reader = new FileReader()
