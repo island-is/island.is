@@ -95,7 +95,12 @@ const parseArguments = (argv: Arguments) => {
       .sort()
       .filter((x) => !affectedSet.has(x)),
   })
-  return { habitat, affectedServices, env }
+  return {
+    habitat,
+    affectedServices,
+    env,
+    skipAppName: argv.skipAppName as boolean,
+  }
 }
 
 const buildIngressComment = (data: HelmService[]): string =>
@@ -129,21 +134,31 @@ yargs(process.argv.slice(2))
   .command({
     command: 'values',
     describe: 'get helm values file',
-    builder: (yargs) =>
-      yargs.option('withMocks', {
-        type: 'string',
-        description: 'Include mocks in the values file',
-        default: 'false',
-      }),
+    builder: (yargs) => {
+      return yargs
+        .option('withMocks', {
+          type: 'string',
+          description: 'Include mocks in the values file',
+          default: 'false',
+        })
+        .option('skipAppName', {
+          type: 'boolean',
+          description: 'Skip app name in the values file',
+          default: false,
+        })
+    },
     handler: async (argv) => {
       const typedArgv = (argv as unknown) as Arguments
-      const { habitat, affectedServices, env } = parseArguments(typedArgv)
+      const { habitat, affectedServices, env, skipAppName } = parseArguments(
+        typedArgv,
+      )
       const { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
         env,
       )
+
       await writeToOutput(
         await renderHelmValueFileContent(
           env,
@@ -152,6 +167,7 @@ yargs(process.argv.slice(2))
           (typedArgv.withMocks ?? 'false') === 'true'
             ? 'with-mocks'
             : 'no-mocks',
+          skipAppName,
         ),
         typedArgv.output,
       )
