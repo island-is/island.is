@@ -7,7 +7,7 @@ IMAGE=$3
 
 GIT_ROOT="$(git rev-parse --show-toplevel)"
 INFRA_ROOT="${GIT_ROOT}/infra"
-FEATURE_DIR="${GIT_ROOT}/charts/features"
+FEATURE_DIR="${GIT_ROOT}/charts/features/deployments"
 mkdir -p "$FEATURE_DIR/$FEATURE_NAME/$IMAGE"
 
 cd "$INFRA_ROOT"
