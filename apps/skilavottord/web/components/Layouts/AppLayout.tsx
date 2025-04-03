@@ -8,6 +8,7 @@ import { AuthSession } from '@island.is/next-ids-auth'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import {
   Query,
+  Role,
   SkilavottordUser,
 } from '@island.is/skilavottord-web/graphql/schema'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
@@ -32,10 +33,13 @@ export const AppLayout: FC<React.PropsWithChildren<LayoutProps>> = ({
     skip: !user?.partnerId,
   })
 
-  let isAuthenticated = Boolean(session?.user)
+  // To prevent flickering on page loading the session and data is grouped together
+  let isAuthenticated = Boolean(
+    session?.user && data?.skilavottordRecyclingPartnerActive,
+  )
 
-  if (isAuthenticated && data) {
-    isAuthenticated = data?.skilavottordRecyclingPartnerActive
+  if (user?.role === Role.developer || user?.role === Role.recyclingFund) {
+    isAuthenticated = Boolean(session?.user)
   }
 
   return (
