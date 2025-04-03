@@ -75,6 +75,8 @@ export const ADVERT_QUERY = gql`
           advertId
           documentPdfUrl
           createdDate
+          legacyDate
+          isLegacy
         }
       }
     }
