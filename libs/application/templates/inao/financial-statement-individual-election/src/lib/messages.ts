@@ -593,16 +593,6 @@ export const m = defineMessages({
     defaultMessage: 'Uppgjör móttekið',
     description: 'election info received',
   },
-  received: {
-    id: 'fsie.application:received',
-    defaultMessage: 'Ársreikningur mótekinn',
-    description: 'financial statement received',
-  },
-  applicationAccept: {
-    id: 'fsie.application:applicationAccept',
-    defaultMessage: 'Umsókn móttekin',
-    description: 'application accept',
-  },
   individualReceivedMsgFirst: {
     id: 'fsie.application:individualReceivedMsgFirst',
     defaultMessage: 'Uppgjör fyrir persónukjör vegna',
@@ -612,16 +602,6 @@ export const m = defineMessages({
     id: 'fsie.application:individualReceivedMsgSecond',
     defaultMessage: 'hefur verið skilað þann',
     description: 'Second part of audit received message',
-  },
-  operatingYearMsgFirst: {
-    id: 'fsie.application:operatingYearMsgFirst',
-    defaultMessage: 'Ársreikningi fyrir rekstrarárið',
-    description: 'First part of audit received message',
-  },
-  returned: {
-    id: 'fsie.application:returned',
-    defaultMessage: 'Skilað',
-    description: 'Returned',
   },
   digitalSignatureTitle: {
     id: 'fsie.application:digitalSignatureTitle',
@@ -646,5 +626,30 @@ export const m = defineMessages({
     id: 'fsie.application:continue',
     defaultMessage: 'Áfram',
     description: 'continue',
+  },
+  conclusionAlertTitle: {
+    id: 'fsie.application:conclusionAlertTitle',
+    defaultMessage: 'Uppgjöri hefur verið skilað',
+    description: 'conclusion alert title',
+  },
+  conclusionAlertMessage: {
+    id: 'fsie.application:conclusionTitle',
+    defaultMessage: 'Uppgjör vegna {election} hefur verið skilað',
+    description: 'conclusion title',
+  },
+  conclusionDescription: {
+    id: 'fsie.application:conclusionDescription',
+    defaultMessage: 'Uppgjör fyrir persónukjör vegna',
+    description: 'conclusion description',
+  },
+  conclusionBulletList: {
+    id: 'fsie.application:conclusionBulletList',
+    defaultMessage: 'Uppgjör fyrir persónukjör vegna',
+    description: 'conclusion bullet list',
+  },
+  conclusionTabTitle: {
+    id: 'fsie.application:conclusionTabTitle',
+    defaultMessage: 'Uppgjör móttekið',
+    description: 'conclusion tab title',
   },
 })

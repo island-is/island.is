@@ -1,6 +1,3 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { ExternalData, FormValue } from '@island.is/application/types'
-import { FSIUSERTYPE } from '../types/types'
 import { TOTAL } from './constants'
 
 export const checkIfNegative = (inputNumber: string) => {
@@ -17,23 +14,6 @@ export const currencyStringToNumber = (str: string) => {
   }
   const cleanString = str.replace(/[,\s]+|[.\s]+/g, '')
   return parseInt(cleanString, 10)
-}
-
-export const getCurrentUserType = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => {
-  const fakeUserType: FSIUSERTYPE | undefined = getValueViaPath(
-    answers,
-    'fakeData.options',
-  )
-
-  const currentUserType: FSIUSERTYPE | undefined = getValueViaPath(
-    externalData,
-    'getUserType.data.value',
-  )
-
-  return fakeUserType ? fakeUserType : currentUserType
 }
 
 export const getTotal = (values: Record<string, string>, key: string) => {

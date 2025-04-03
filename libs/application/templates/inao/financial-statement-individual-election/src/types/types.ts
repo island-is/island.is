@@ -27,3 +27,15 @@ export type Options = {
   label: string
   value: string
 }[]
+
+export type Elections = {
+  electionId: string
+  name: string
+  electionDate: string
+  genitiveName: string
+  __typename?: string
+}
+
+export type ElectionsResponse = {
+  financialStatementsInaoElections: Array<Elections>
+}
