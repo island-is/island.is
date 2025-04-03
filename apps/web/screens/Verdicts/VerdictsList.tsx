@@ -17,6 +17,7 @@ import {
   Checkbox,
   DatePicker,
   Divider,
+  Filter,
   GridContainer,
   Hidden,
   InfoCardGrid,
@@ -88,6 +89,13 @@ interface VerdictsListProps {
   keywords: WebVerdictKeyword[]
   caseCategories: WebVerdictCaseCategory[]
   caseTypes: WebVerdictCaseType[]
+}
+
+const handleInputKeyDown = (ev: { key: string; target: unknown }) => {
+  if (ev.key === 'Enter') {
+    // Remove focus from input field after pressing enter
+    ;(ev.target as { blur?: () => void })?.blur?.()
+  }
 }
 
 const extractCourtLevelFromState = (court: string | null | undefined) =>
@@ -285,6 +293,250 @@ const useVerdictListState = (props: VerdictsListProps) => {
   }
 }
 
+interface FiltersProps {
+  startExpanded?: boolean
+  queryState: ReturnType<typeof useVerdictListState>['queryState']
+  updateQueryState: ReturnType<typeof useVerdictListState>['updateQueryState']
+  keywords: VerdictsListProps['keywords']
+  caseCategories: VerdictsListProps['caseCategories']
+  caseTypes: VerdictsListProps['caseTypes']
+}
+
+const Filters = ({
+  startExpanded = false,
+  queryState,
+  keywords,
+  caseCategories,
+  caseTypes,
+  updateQueryState,
+}: FiltersProps) => {
+  const { formatMessage } = useIntl()
+
+  const keywordOptions = useMemo(() => {
+    return keywords.map((keyword) => ({
+      label: keyword.label,
+      value: keyword.label,
+    }))
+  }, [keywords])
+  const caseCategoryOptions = useMemo(() => {
+    return caseCategories.map((category) => ({
+      label: category.label,
+      value: category.label,
+    }))
+  }, [caseCategories])
+  const caseTypeOptions = useMemo(() => {
+    return caseTypes.map((caseType) => ({
+      label: caseType.label,
+      value: caseType.label,
+    }))
+  }, [caseTypes])
+
+  return (
+    <Stack space={4}>
+      <AccordionItem
+        id="case-number-accordion"
+        label={formatMessage(m.listPage.caseNumberSelectLabel)}
+        startExpanded={startExpanded}
+        iconVariant="small"
+        labelVariant="h5"
+        labelColor={queryState[QueryParam.CASE_NUMBER] ? 'blue400' : undefined}
+      >
+        <Input
+          size="sm"
+          label={formatMessage(m.listPage.caseNumberInputLabel)}
+          name="casenumber-input"
+          onChange={(ev) => {
+            updateQueryState(QueryParam.CASE_NUMBER, ev.target.value)
+          }}
+          onKeyDown={handleInputKeyDown}
+          value={queryState[QueryParam.CASE_NUMBER]}
+        />
+      </AccordionItem>
+
+      <Divider />
+
+      <AccordionItem
+        id="laws-accordion"
+        label={formatMessage(m.listPage.lawsSelectLabel)}
+        startExpanded={startExpanded}
+        iconVariant="small"
+        labelVariant="h5"
+        labelColor={queryState[QueryParam.LAWS] ? 'blue400' : undefined}
+      >
+        <Input
+          size="sm"
+          label={formatMessage(m.listPage.lawsInputLabel)}
+          name="laws-input"
+          onChange={(ev) => {
+            updateQueryState(QueryParam.LAWS, ev.target.value)
+          }}
+          onKeyDown={handleInputKeyDown}
+          defaultValue={queryState[QueryParam.LAWS]}
+        />
+      </AccordionItem>
+
+      <Divider />
+
+      <AccordionItem
+        id="keywords-accordion"
+        label={formatMessage(m.listPage.keywordSelectLabel)}
+        startExpanded={startExpanded}
+        iconVariant="small"
+        labelVariant="h5"
+        labelColor={queryState[QueryParam.KEYWORD] ? 'blue400' : undefined}
+      >
+        <Select
+          size="sm"
+          options={keywordOptions}
+          value={keywordOptions.find(
+            (option) => option.value === queryState[QueryParam.KEYWORD],
+          )}
+          onChange={(option) => {
+            if (option) updateQueryState(QueryParam.KEYWORD, option.value)
+          }}
+          placeholder={formatMessage(m.listPage.keywordSelectPlaceholder)}
+        />
+      </AccordionItem>
+
+      <Divider />
+
+      <AccordionItem
+        id="case-category-accordion"
+        label={formatMessage(m.listPage.caseCategorySelectLabel)}
+        startExpanded={startExpanded}
+        iconVariant="small"
+        labelVariant="h5"
+        labelColor={
+          queryState[QueryParam.CASE_CATEGORIES] ? 'blue400' : undefined
+        }
+      >
+        <Stack space={2}>
+          {caseCategoryOptions.map((option) => (
+            <Checkbox
+              id={option.value}
+              key={option.value}
+              name={option.value}
+              label={option.label}
+              checked={Boolean(
+                queryState[QueryParam.CASE_CATEGORIES]?.includes(option.value),
+              )}
+              onChange={(event) => {
+                updateQueryState(
+                  QueryParam.CASE_CATEGORIES,
+                  (previousState) => {
+                    let updatedCaseCategories = [
+                      ...(previousState[QueryParam.CASE_CATEGORIES] ?? []),
+                    ]
+                    if (event.target.checked) {
+                      updatedCaseCategories.push(option.value)
+                    } else {
+                      updatedCaseCategories = updatedCaseCategories.filter(
+                        (value) => value !== option.value,
+                      )
+                    }
+                    return {
+                      ...previousState,
+                      [QueryParam.CASE_CATEGORIES]:
+                        updatedCaseCategories.length === 0
+                          ? null
+                          : updatedCaseCategories,
+                    }
+                  },
+                )
+              }}
+            />
+          ))}
+        </Stack>
+      </AccordionItem>
+
+      <Divider />
+
+      <AccordionItem
+        id="case-types-accordion"
+        label={formatMessage(m.listPage.caseTypeSelectLabel)}
+        startExpanded={startExpanded}
+        iconVariant="small"
+        labelVariant="h5"
+        labelColor={queryState[QueryParam.CASE_TYPES] ? 'blue400' : undefined}
+      >
+        <Stack space={2}>
+          {caseTypeOptions.map((option) => (
+            <Checkbox
+              id={option.value}
+              key={option.value}
+              name={option.value}
+              label={option.label}
+              checked={Boolean(
+                queryState[QueryParam.CASE_TYPES]?.includes(option.value),
+              )}
+              onChange={(event) => {
+                updateQueryState(QueryParam.CASE_TYPES, (previousState) => {
+                  let updatedCaseTypes = [
+                    ...(previousState[QueryParam.CASE_TYPES] ?? []),
+                  ]
+                  if (event.target.checked) {
+                    updatedCaseTypes.push(option.value)
+                  } else {
+                    updatedCaseTypes = updatedCaseTypes.filter(
+                      (value) => value !== option.value,
+                    )
+                  }
+                  return {
+                    ...previousState,
+                    [QueryParam.CASE_TYPES]:
+                      updatedCaseTypes.length === 0 ? null : updatedCaseTypes,
+                  }
+                })
+              }}
+            />
+          ))}
+        </Stack>
+      </AccordionItem>
+
+      <Divider />
+
+      <AccordionItem
+        id="date-accordion"
+        label={formatMessage(m.listPage.dateSelectLabel)}
+        startExpanded={startExpanded}
+        iconVariant="small"
+        labelVariant="h5"
+        labelColor={
+          Boolean(queryState[QueryParam.DATE_FROM]) ||
+          Boolean(queryState[QueryParam.DATE_TO])
+            ? 'blue400'
+            : undefined
+        }
+      >
+        <Stack space={2}>
+          <DatePicker
+            name="from"
+            label={formatMessage(m.listPage.dateFromLabel)}
+            placeholderText=""
+            size="sm"
+            handleChange={(date) => {
+              updateQueryState(QueryParam.DATE_FROM, date)
+            }}
+            selected={queryState[QueryParam.DATE_FROM]}
+            maxDate={queryState[QueryParam.DATE_TO]}
+          />
+          <DatePicker
+            name="from"
+            label={formatMessage(m.listPage.dateToLabel)}
+            placeholderText=""
+            size="sm"
+            handleChange={(date) => {
+              updateQueryState(QueryParam.DATE_TO, date)
+            }}
+            selected={queryState[QueryParam.DATE_TO]}
+            minDate={queryState[QueryParam.DATE_FROM]}
+          />
+        </Stack>
+      </AccordionItem>
+    </Stack>
+  )
+}
+
 const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
   const {
     queryState,
@@ -361,33 +613,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
     ]
   }, [])
 
-  const keywordOptions = useMemo(() => {
-    return keywords.map((keyword) => ({
-      label: keyword.label,
-      value: keyword.label,
-    }))
-  }, [keywords])
-  const caseCategoryOptions = useMemo(() => {
-    return caseCategories.map((category) => ({
-      label: category.label,
-      value: category.label,
-    }))
-  }, [caseCategories])
-  const caseTypeOptions = useMemo(() => {
-    return caseTypes.map((caseType) => ({
-      label: caseType.label,
-      value: caseType.label,
-    }))
-  }, [caseTypes])
-
   const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
-
-  const handleInputKeyDown = (ev: { key: string; target: unknown }) => {
-    if (ev.key === 'Enter') {
-      // Remove focus from input field after pressing enter
-      ;(ev.target as { blur?: () => void })?.blur?.()
-    }
-  }
 
   return (
     <Box className="rs_read">
@@ -519,7 +745,11 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
           </GridContainer>
         </Box>
 
-        <Box background="blue100" paddingTop={[3, 3, 0]}>
+        <Box
+          background="blue100"
+          paddingTop={[3, 3, 0]}
+          className={styles.mainContainer}
+        >
           <SidebarLayout
             fullWidthContent={false}
             hiddenOnTablet={true}
@@ -530,242 +760,14 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                   {formatMessage(m.listPage.sidebarFilterHeading)}
                 </Text>
                 <Box background="white" padding={3} borderRadius="large">
-                  <Stack space={4}>
-                    <AccordionItem
-                      id="case-number-accordion"
-                      label={formatMessage(m.listPage.caseNumberInputLabel)}
-                      startExpanded={true}
-                      iconVariant="small"
-                      labelVariant="h5"
-                      labelColor={
-                        queryState[QueryParam.CASE_NUMBER]
-                          ? 'blue400'
-                          : undefined
-                      }
-                    >
-                      <Input
-                        size="sm"
-                        label={formatMessage(m.listPage.caseNumberInputLabel)}
-                        name="casenumber-input"
-                        onChange={(ev) => {
-                          updateQueryState(
-                            QueryParam.CASE_NUMBER,
-                            ev.target.value,
-                          )
-                        }}
-                        onKeyDown={handleInputKeyDown}
-                        value={queryState[QueryParam.CASE_NUMBER]}
-                      />
-                    </AccordionItem>
-
-                    <Divider />
-
-                    <AccordionItem
-                      id="laws-accordion"
-                      label={formatMessage(m.listPage.lawsInputLabel)}
-                      startExpanded={true}
-                      iconVariant="small"
-                      labelVariant="h5"
-                      labelColor={
-                        queryState[QueryParam.LAWS] ? 'blue400' : undefined
-                      }
-                    >
-                      <Input
-                        size="sm"
-                        label={formatMessage(m.listPage.lawsInputLabel)}
-                        name="laws-input"
-                        onChange={(ev) => {
-                          updateQueryState(QueryParam.LAWS, ev.target.value)
-                        }}
-                        onKeyDown={handleInputKeyDown}
-                        defaultValue={queryState[QueryParam.LAWS]}
-                      />
-                    </AccordionItem>
-
-                    <Divider />
-
-                    <AccordionItem
-                      id="keywords-accordion"
-                      label={formatMessage(m.listPage.keywordSelectLabel)}
-                      startExpanded={true}
-                      iconVariant="small"
-                      labelVariant="h5"
-                      labelColor={
-                        queryState[QueryParam.KEYWORD] ? 'blue400' : undefined
-                      }
-                    >
-                      <Select
-                        size="sm"
-                        options={keywordOptions}
-                        value={keywordOptions.find(
-                          (option) =>
-                            option.value === queryState[QueryParam.KEYWORD],
-                        )}
-                        onChange={(option) => {
-                          if (option)
-                            updateQueryState(QueryParam.KEYWORD, option.value)
-                        }}
-                        placeholder={formatMessage(
-                          m.listPage.keywordSelectPlaceholder,
-                        )}
-                      />
-                    </AccordionItem>
-
-                    <Divider />
-
-                    <AccordionItem
-                      id="case-category-accordion"
-                      label={formatMessage(m.listPage.caseCategorySelectLabel)}
-                      startExpanded={true}
-                      iconVariant="small"
-                      labelVariant="h5"
-                      labelColor={
-                        queryState[QueryParam.CASE_CATEGORIES]
-                          ? 'blue400'
-                          : undefined
-                      }
-                    >
-                      <Stack space={2}>
-                        {caseCategoryOptions.map((option) => (
-                          <Checkbox
-                            id={option.value}
-                            key={option.value}
-                            name={option.value}
-                            label={option.label}
-                            checked={Boolean(
-                              queryState[QueryParam.CASE_CATEGORIES]?.includes(
-                                option.value,
-                              ),
-                            )}
-                            onChange={(event) => {
-                              updateQueryState(
-                                QueryParam.CASE_CATEGORIES,
-                                (previousState) => {
-                                  let updatedCaseCategories = [
-                                    ...(previousState[
-                                      QueryParam.CASE_CATEGORIES
-                                    ] ?? []),
-                                  ]
-                                  if (event.target.checked) {
-                                    updatedCaseCategories.push(option.value)
-                                  } else {
-                                    updatedCaseCategories =
-                                      updatedCaseCategories.filter(
-                                        (value) => value !== option.value,
-                                      )
-                                  }
-                                  return {
-                                    ...previousState,
-                                    [QueryParam.CASE_CATEGORIES]:
-                                      updatedCaseCategories.length === 0
-                                        ? null
-                                        : updatedCaseCategories,
-                                  }
-                                },
-                              )
-                            }}
-                          />
-                        ))}
-                      </Stack>
-                    </AccordionItem>
-
-                    <Divider />
-
-                    <AccordionItem
-                      id="case-types-accordion"
-                      label={formatMessage(m.listPage.caseTypeSelectLabel)}
-                      startExpanded={true}
-                      iconVariant="small"
-                      labelVariant="h5"
-                      labelColor={
-                        queryState[QueryParam.CASE_TYPES]
-                          ? 'blue400'
-                          : undefined
-                      }
-                    >
-                      <Stack space={2}>
-                        {caseTypeOptions.map((option) => (
-                          <Checkbox
-                            id={option.value}
-                            key={option.value}
-                            name={option.value}
-                            label={option.label}
-                            checked={Boolean(
-                              queryState[QueryParam.CASE_TYPES]?.includes(
-                                option.value,
-                              ),
-                            )}
-                            onChange={(event) => {
-                              updateQueryState(
-                                QueryParam.CASE_TYPES,
-                                (previousState) => {
-                                  let updatedCaseTypes = [
-                                    ...(previousState[QueryParam.CASE_TYPES] ??
-                                      []),
-                                  ]
-                                  if (event.target.checked) {
-                                    updatedCaseTypes.push(option.value)
-                                  } else {
-                                    updatedCaseTypes = updatedCaseTypes.filter(
-                                      (value) => value !== option.value,
-                                    )
-                                  }
-                                  return {
-                                    ...previousState,
-                                    [QueryParam.CASE_TYPES]:
-                                      updatedCaseTypes.length === 0
-                                        ? null
-                                        : updatedCaseTypes,
-                                  }
-                                },
-                              )
-                            }}
-                          />
-                        ))}
-                      </Stack>
-                    </AccordionItem>
-
-                    <Divider />
-
-                    <AccordionItem
-                      id="date-accordion"
-                      label={formatMessage(m.listPage.dateSelectLabel)}
-                      startExpanded={true}
-                      iconVariant="small"
-                      labelVariant="h5"
-                      labelColor={
-                        Boolean(queryState[QueryParam.DATE_FROM]) ||
-                        Boolean(queryState[QueryParam.DATE_TO])
-                          ? 'blue400'
-                          : undefined
-                      }
-                    >
-                      <Stack space={2}>
-                        <DatePicker
-                          name="from"
-                          label={formatMessage(m.listPage.dateFromLabel)}
-                          placeholderText=""
-                          size="sm"
-                          handleChange={(date) => {
-                            updateQueryState(QueryParam.DATE_FROM, date)
-                          }}
-                          selected={queryState[QueryParam.DATE_FROM]}
-                          maxDate={queryState[QueryParam.DATE_TO]}
-                        />
-                        <DatePicker
-                          name="from"
-                          label={formatMessage(m.listPage.dateToLabel)}
-                          placeholderText=""
-                          size="sm"
-                          handleChange={(date) => {
-                            updateQueryState(QueryParam.DATE_TO, date)
-                          }}
-                          selected={queryState[QueryParam.DATE_TO]}
-                          minDate={queryState[QueryParam.DATE_FROM]}
-                        />
-                      </Stack>
-                    </AccordionItem>
-                  </Stack>
+                  <Filters
+                    startExpanded={true}
+                    caseCategories={caseCategories}
+                    caseTypes={caseTypes}
+                    keywords={keywords}
+                    queryState={queryState}
+                    updateQueryState={updateQueryState}
+                  />
                 </Box>
                 <Box
                   background="blue100"
@@ -800,6 +802,32 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     ],
                   )}
                 </Text>
+                <Hidden above="md">
+                  <Filter
+                    resultCount={data.total}
+                    variant="dialog"
+                    labelClear={formatMessage(m.listPage.clearAllFiltersLabel)}
+                    labelClearAll={formatMessage(
+                      m.listPage.clearAllFiltersLabel,
+                    )}
+                    labelOpen={formatMessage(m.listPage.openFilter)}
+                    labelClose={formatMessage(m.listPage.closeFilter)}
+                    labelResult={formatMessage(m.listPage.viewResults)}
+                    labelTitle={formatMessage(m.listPage.sidebarFilterHeading)}
+                    onFilterClear={resetQueryState}
+                    usePopoverDiscloureButtonStyling
+                  >
+                    <Box paddingY={3}>
+                      <Filters
+                        caseCategories={caseCategories}
+                        caseTypes={caseTypes}
+                        keywords={keywords}
+                        queryState={queryState}
+                        updateQueryState={updateQueryState}
+                      />
+                    </Box>
+                  </Filter>
+                </Hidden>
               </Inline>
               <InfoCardGrid
                 variant="detailed-reveal"
