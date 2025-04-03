@@ -27,6 +27,11 @@ export const m = {
       defaultMessage: 'Málsnúmer',
       description: 'Málsnúmer (label á málsnúmer input)',
     },
+    lawsInputLabel: {
+      id: 'web.verdicts:listPage.lawsInputLabel',
+      defaultMessage: 'Lagagreinar',
+      description: 'Lagagreinar (label á "Lagagreinar" input)',
+    },
     showCourtOfAppeal: {
       id: 'web.verdicts:listPage.showCourtOfAppeal',
       defaultMessage: 'Landsréttur',
@@ -67,10 +72,40 @@ export const m = {
       defaultMessage: 'Lykilorð',
       description: 'Label á lykilorð select einingu',
     },
+    keywordSelectPlaceholder: {
+      id: 'web.verdicts:listPage.keywordSelectPlaceholder',
+      defaultMessage: 'Veldu lykilorð',
+      description: 'Placeholder á lykilorð select einingu',
+    },
+    caseTypeSelectLabel: {
+      id: 'web.verdicts:listPage.caseTypeSelectLabel',
+      defaultMessage: 'Málategundir',
+      description: 'Label á "Málategundir" select einingu',
+    },
     caseCategorySelectLabel: {
       id: 'web.verdicts:listPage.caseCategorySelectLabel',
-      defaultMessage: 'Málaflokkar',
-      description: 'Label á "Málaflokkar" select einingu',
+      defaultMessage: 'Málaflokkur',
+      description: 'Label á "Málaflokkur" select einingu',
+    },
+    dateFromLabel: {
+      id: 'web.verdicts:listPage.dateFromLabel',
+      defaultMessage: 'Frá',
+      description: 'Label á "Dagsetning frá" select einingu',
+    },
+    clearAllFiltersLabel: {
+      id: 'web.verdicts:listPage.clearAllFiltersLabel',
+      defaultMessage: 'Hreinsa allar síur',
+      description: 'Label á "Hreinsa allar síur" takka',
+    },
+    dateToLabel: {
+      id: 'web.verdicts:listPage.dateToLabel',
+      defaultMessage: 'Til',
+      description: 'Label á "Dagsetning til" select einingu',
+    },
+    dateSelectLabel: {
+      id: 'web.verdicts:listPage.dateSelectLabel',
+      defaultMessage: 'Dagsetning',
+      description: 'Label á "Dagsetning" select einingu',
     },
     districtCourtSelectLabel: {
       id: 'web.verdicts:listPage.districtCourtSelectLabel',

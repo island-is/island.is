@@ -25,6 +25,9 @@ export const GET_VERDICTS_QUERY = gql`
         caseNumber
         caseCategories
         caseTypes
+        laws
+        dateFrom
+        dateTo
       }
     }
   }

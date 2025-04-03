@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common'
 import sanitizeHtml from 'sanitize-html'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
-import { sortAlpha } from '@island.is/shared/utils'
+import { isValidDate, sortAlpha } from '@island.is/shared/utils'
 
 import { VerdictApi } from '../../gen/fetch/gopro'
 import { DefaultApi } from '../../gen/fetch/supreme-court'
+import { logger } from '@island.is/logging'
 
 const ITEMS_PER_PAGE = 10
 const GOPRO_ID_PREFIX = 'g-'
@@ -22,6 +23,23 @@ const convertHtmlToContentfulRichText = async (html: string, id: string) => {
   }
 }
 
+const safelyConvertStringToDate = (
+  dateString: string | undefined,
+  variableName: string,
+) => {
+  if (!dateString) return undefined
+  try {
+    const date = new Date(dateString)
+    if (isValidDate(date)) return date
+  } catch (error) {
+    logger.info(
+      `Invalid ${variableName} passed to "getVerdicts" endpoint`,
+      error,
+    )
+  }
+  return undefined
+}
+
 @Injectable()
 export class VerdictsClientService {
   constructor(
@@ -36,6 +54,10 @@ export class VerdictsClientService {
     courtLevel?: string
     keywords?: string[]
     caseCategories?: string[]
+    caseTypes?: string[]
+    laws?: string[]
+    dateFrom?: string
+    dateTo?: string
   }) {
     const onlyFetchSupremeCourtVerdicts = input.courtLevel === 'Hæstiréttur'
 
@@ -51,6 +73,10 @@ export class VerdictsClientService {
               keywords: input.keywords,
               caseCategories: input.caseCategories,
               caseNumber: input.caseNumber,
+              caseTypes: input.caseTypes,
+              laws: input.laws,
+              dateFrom: input.dateFrom ? input.dateFrom : undefined,
+              dateTo: input.dateTo ? input.dateTo : undefined,
             },
           })
         : { status: 'rejected', items: [], total: 0 },
@@ -64,6 +90,10 @@ export class VerdictsClientService {
               searchTerm: input.searchTerm,
               keywords: input.keywords,
               caseNumber: input.caseNumber,
+              caseTypes: input.caseTypes,
+              laws: input.laws,
+              dateFrom: safelyConvertStringToDate(input.dateFrom, 'dateFrom'),
+              dateTo: safelyConvertStringToDate(input.dateTo, 'dateTo'),
             },
           })
         : { status: 'rejected', items: [], total: 0 },

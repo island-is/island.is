@@ -15,7 +15,10 @@ export class VerdictsService {
       courtLevel: input.courtLevel,
       keywords: input.keywords,
       caseCategories: input.caseCategories,
+      caseTypes: input.caseTypes,
       caseNumber: input.caseNumber,
+      dateFrom: input.dateFrom,
+      dateTo: input.dateTo,
     })
     return {
       items: response.items,

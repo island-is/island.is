@@ -3,15 +3,20 @@ import { useIntl } from 'react-intl'
 import isEqual from 'lodash/isEqual'
 import {
   parseAsArrayOf,
+  parseAsIsoDateTime,
   parseAsString,
   useQueryStates,
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
 import {
+  AccordionItem,
   Box,
   Breadcrumbs,
   Button,
+  Checkbox,
+  DatePicker,
+  Divider,
   GridContainer,
   Hidden,
   InfoCardGrid,
@@ -34,6 +39,7 @@ import {
   type GetVerdictsQuery,
   type GetVerdictsQueryVariables,
   type WebVerdictCaseCategory,
+  type WebVerdictCaseType,
   type WebVerdictKeyword,
   type WebVerdictsInput,
 } from '@island.is/web/graphql/schema'
@@ -65,8 +71,12 @@ enum QueryParam {
   SEARCH_TERM = 'q',
   COURT = 'court',
   KEYWORD = 'keyword',
-  CASE_CATEGORY = 'category',
+  CASE_CATEGORIES = 'caseCategories',
+  CASE_TYPES = 'caseTypes',
   CASE_NUMBER = 'number',
+  LAWS = 'laws',
+  DATE_FROM = 'dateFrom',
+  DATE_TO = 'dateTo',
 }
 
 interface VerdictsListProps {
@@ -77,6 +87,7 @@ interface VerdictsListProps {
   }
   keywords: WebVerdictKeyword[]
   caseCategories: WebVerdictCaseCategory[]
+  caseTypes: WebVerdictCaseType[]
 }
 
 const extractCourtLevelFromState = (court: string | null | undefined) =>
@@ -99,12 +110,28 @@ const useVerdictListState = (props: VerdictsListProps) => {
       [QueryParam.KEYWORD]: parseAsString
         .withOptions({ clearOnDefault: true })
         .withDefault(''),
-      [QueryParam.CASE_CATEGORY]: parseAsString
-        .withOptions({ clearOnDefault: true })
-        .withDefault(''),
+      [QueryParam.CASE_CATEGORIES]: parseAsArrayOf(
+        parseAsString.withOptions({ clearOnDefault: true }).withDefault(''),
+      ).withOptions({
+        clearOnDefault: true,
+      }),
+      [QueryParam.CASE_TYPES]: parseAsArrayOf(
+        parseAsString.withOptions({ clearOnDefault: true }).withDefault(''),
+      ).withOptions({
+        clearOnDefault: true,
+      }),
       [QueryParam.CASE_NUMBER]: parseAsString
         .withOptions({ clearOnDefault: true })
         .withDefault(''),
+      [QueryParam.LAWS]: parseAsString
+        .withOptions({ clearOnDefault: true })
+        .withDefault(''),
+      [QueryParam.DATE_FROM]: parseAsIsoDateTime.withOptions({
+        clearOnDefault: true,
+      }),
+      [QueryParam.DATE_TO]: parseAsIsoDateTime.withOptions({
+        clearOnDefault: true,
+      }),
     },
     {
       throttleMs: DEBOUNCE_TIME_IN_MS,
@@ -114,7 +141,7 @@ const useVerdictListState = (props: VerdictsListProps) => {
   const [page, setPage] = useState(1)
   const [data, setData] = useState(props.initialData)
   const [total, setTotal] = useState(props.initialData.total)
-  const queryStateRef = useRef<typeof queryState>(queryState)
+  const queryStateRef = useRef<typeof queryState | null>(queryState)
   const pageRef = useRef(page)
 
   const updatePage = useCallback((newPage: number) => {
@@ -137,15 +164,18 @@ const useVerdictListState = (props: VerdictsListProps) => {
   const convertQueryParamsToInput = useCallback(
     (queryParams: typeof queryState, page: number): WebVerdictsInput => {
       const keyword = queryParams[QueryParam.KEYWORD]
-      const category = queryParams[QueryParam.CASE_CATEGORY]
+      const laws = queryParams[QueryParam.LAWS]
       return {
         page,
         searchTerm: queryParams[QueryParam.SEARCH_TERM],
         courtLevel: extractCourtLevelFromState(queryParams[QueryParam.COURT]),
         caseNumber: queryParams[QueryParam.CASE_NUMBER],
         keywords: keyword ? [keyword] : null,
-        caseCategories: category ? [category] : null,
-        caseTypes: null,
+        caseCategories: queryParams[QueryParam.CASE_CATEGORIES],
+        caseTypes: queryParams[QueryParam.CASE_TYPES],
+        laws: laws ? [laws] : null,
+        dateFrom: queryParams[QueryParam.DATE_FROM]?.toISOString() ?? null,
+        dateTo: queryParams[QueryParam.DATE_TO]?.toISOString() ?? null,
       }
     },
     [],
@@ -168,7 +198,7 @@ const useVerdictListState = (props: VerdictsListProps) => {
       },
       onCompleted(response) {
         // We skip processing the response if we've changed query params since the request
-        {
+        if (queryStateRef.current) {
           const input = { ...response.webVerdicts.input }
           delete input['__typename']
 
@@ -228,9 +258,16 @@ const useVerdictListState = (props: VerdictsListProps) => {
     })
   }, [convertQueryParamsToInput, fetchVerdicts, page, queryState, total])
 
+  const resetQueryState = useCallback(() => {
+    updatePage(1)
+    setQueryState(null)
+    queryStateRef.current = null
+  }, [setQueryState, updatePage])
+
   return {
     queryState,
     updateQueryState,
+    resetQueryState,
     loading,
     error,
     data,
@@ -244,6 +281,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
   const {
     queryState,
     updateQueryState,
+    resetQueryState,
     loading,
     error,
     data,
@@ -251,9 +289,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
     updatePage,
     total,
   } = useVerdictListState(props)
-  const { customPageData, keywords, caseCategories } = props
+  const { customPageData, keywords, caseCategories, caseTypes } = props
 
-  const searchInputRef = useRef<HTMLInputElement | null>(null)
   const { format } = useDateUtils()
   const { formatMessage } = useIntl()
 
@@ -317,21 +354,23 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
   }, [])
 
   const keywordOptions = useMemo(() => {
-    return [{ label: '', value: '' }].concat(
-      keywords.map((keyword) => ({
-        label: keyword.label,
-        value: keyword.label,
-      })),
-    )
+    return keywords.map((keyword) => ({
+      label: keyword.label,
+      value: keyword.label,
+    }))
   }, [keywords])
   const caseCategoryOptions = useMemo(() => {
-    return [{ label: '', value: '' }].concat(
-      caseCategories.map((category) => ({
-        label: category.label,
-        value: category.label,
-      })),
-    )
+    return caseCategories.map((category) => ({
+      label: category.label,
+      value: category.label,
+    }))
   }, [caseCategories])
+  const caseTypeOptions = useMemo(() => {
+    return caseTypes.map((caseType) => ({
+      label: caseType.label,
+      value: caseType.label,
+    }))
+  }, [caseTypes])
 
   const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
 
@@ -373,19 +412,18 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
               <Stack space={3}>
                 <Box className={styles.searchInput}>
                   <Input
-                    ref={searchInputRef}
                     name="verdict-search-input"
                     onChange={(ev) => {
                       updateQueryState(QueryParam.SEARCH_TERM, ev.target.value)
                     }}
                     onKeyDown={handleInputKeyDown}
-                    defaultValue={queryState[QueryParam.SEARCH_TERM]}
                     placeholder={formatMessage(
                       m.listPage.searchInputPlaceholder,
                     )}
                     icon={{ name: 'search', type: 'outline' }}
                     backgroundColor="blue"
                     loading={loading}
+                    value={queryState[QueryParam.SEARCH_TERM]}
                   />
                 </Box>
                 <Hidden above="xs">
@@ -481,52 +519,206 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 <Text variant="h5">
                   {formatMessage(m.listPage.sidebarFilterHeading)}
                 </Text>
-                <Stack space={5}>
-                  <Input
-                    size="sm"
-                    label={formatMessage(m.listPage.caseNumberInputLabel)}
-                    name="casenumber-input"
-                    onChange={(ev) => {
-                      updateQueryState(QueryParam.CASE_NUMBER, ev.target.value)
-                    }}
-                    onKeyDown={handleInputKeyDown}
-                    defaultValue={queryState[QueryParam.CASE_NUMBER]}
-                  />
-                  <Stack space={1}>
-                    <Select
-                      label={formatMessage(m.listPage.keywordSelectLabel)}
-                      size="sm"
-                      options={keywordOptions}
-                      value={keywordOptions.find(
-                        (option) =>
-                          option.value === queryState[QueryParam.KEYWORD],
-                      )}
-                      onChange={(option) => {
-                        if (option)
-                          updateQueryState(QueryParam.KEYWORD, option.value)
-                      }}
-                    />
-                  </Stack>
-                  <Stack space={1}>
-                    <Select
-                      label={formatMessage(m.listPage.caseCategorySelectLabel)}
-                      size="sm"
-                      options={caseCategoryOptions}
-                      value={caseCategoryOptions.find(
-                        (option) =>
-                          option.value === queryState[QueryParam.CASE_CATEGORY],
-                      )}
-                      onChange={(option) => {
-                        if (option) {
+                <Box background="white" padding={3} borderRadius="large">
+                  <Stack space={4}>
+                    <AccordionItem
+                      id="case-number-accordion"
+                      label={formatMessage(m.listPage.caseNumberInputLabel)}
+                      startExpanded={true}
+                      iconVariant="small"
+                      labelVariant="h5"
+                      labelColor={
+                        queryState[QueryParam.CASE_NUMBER]
+                          ? 'blue400'
+                          : undefined
+                      }
+                    >
+                      <Input
+                        size="sm"
+                        label={formatMessage(m.listPage.caseNumberInputLabel)}
+                        name="casenumber-input"
+                        onChange={(ev) => {
                           updateQueryState(
-                            QueryParam.CASE_CATEGORY,
-                            option.value,
+                            QueryParam.CASE_NUMBER,
+                            ev.target.value,
                           )
-                        }
-                      }}
-                    />
+                        }}
+                        onKeyDown={handleInputKeyDown}
+                        value={queryState[QueryParam.CASE_NUMBER]}
+                      />
+                    </AccordionItem>
+
+                    <Divider />
+
+                    <AccordionItem
+                      id="laws-accordion"
+                      label={formatMessage(m.listPage.lawsInputLabel)}
+                      startExpanded={true}
+                      iconVariant="small"
+                      labelVariant="h5"
+                      labelColor={
+                        queryState[QueryParam.LAWS] ? 'blue400' : undefined
+                      }
+                    >
+                      <Input
+                        size="sm"
+                        label={formatMessage(m.listPage.lawsInputLabel)}
+                        name="laws-input"
+                        onChange={(ev) => {
+                          updateQueryState(QueryParam.LAWS, ev.target.value)
+                        }}
+                        onKeyDown={handleInputKeyDown}
+                        defaultValue={queryState[QueryParam.LAWS]}
+                      />
+                    </AccordionItem>
+
+                    <Divider />
+
+                    <AccordionItem
+                      id="keywords-accordion"
+                      label={formatMessage(m.listPage.keywordSelectLabel)}
+                      startExpanded={true}
+                      iconVariant="small"
+                      labelVariant="h5"
+                      labelColor={
+                        queryState[QueryParam.KEYWORD] ? 'blue400' : undefined
+                      }
+                    >
+                      <Select
+                        size="sm"
+                        options={keywordOptions}
+                        value={keywordOptions.find(
+                          (option) =>
+                            option.value === queryState[QueryParam.KEYWORD],
+                        )}
+                        onChange={(option) => {
+                          if (option)
+                            updateQueryState(QueryParam.KEYWORD, option.value)
+                        }}
+                        placeholder={formatMessage(
+                          m.listPage.keywordSelectPlaceholder,
+                        )}
+                      />
+                    </AccordionItem>
+
+                    <Divider />
+
+                    <AccordionItem
+                      id="case-category-accordion"
+                      label={formatMessage(m.listPage.caseCategorySelectLabel)}
+                      startExpanded={true}
+                      iconVariant="small"
+                      labelVariant="h5"
+                      labelColor={
+                        queryState[QueryParam.CASE_CATEGORIES]
+                          ? 'blue400'
+                          : undefined
+                      }
+                    >
+                      <Stack space={2}>
+                        {caseCategoryOptions.map((option) => (
+                          <Checkbox
+                            id={option.value}
+                            key={option.value}
+                            name={option.value}
+                            label={option.label}
+                            checked={queryState[
+                              QueryParam.CASE_CATEGORIES
+                            ]?.includes(option.value)}
+                          />
+                        ))}
+                      </Stack>
+                    </AccordionItem>
+
+                    <Divider />
+
+                    <AccordionItem
+                      id="case-category-accordion"
+                      label={formatMessage(m.listPage.caseTypeSelectLabel)}
+                      startExpanded={true}
+                      iconVariant="small"
+                      labelVariant="h5"
+                      labelColor={
+                        queryState[QueryParam.CASE_TYPES]
+                          ? 'blue400'
+                          : undefined
+                      }
+                    >
+                      <Stack space={2}>
+                        {caseTypeOptions.map((option) => (
+                          <Checkbox
+                            id={option.value}
+                            key={option.value}
+                            name={option.value}
+                            label={option.label}
+                            checked={queryState[
+                              QueryParam.CASE_TYPES
+                            ]?.includes(option.value)}
+                          />
+                        ))}
+                      </Stack>
+                    </AccordionItem>
+
+                    <Divider />
+
+                    <AccordionItem
+                      id="date-accordion"
+                      label={formatMessage(m.listPage.dateSelectLabel)}
+                      startExpanded={true}
+                      iconVariant="small"
+                      labelVariant="h5"
+                      labelColor={
+                        Boolean(queryState[QueryParam.DATE_FROM]) ||
+                        Boolean(queryState[QueryParam.DATE_TO])
+                          ? 'blue400'
+                          : undefined
+                      }
+                    >
+                      <Stack space={2}>
+                        <DatePicker
+                          name="from"
+                          label={formatMessage(m.listPage.dateFromLabel)}
+                          placeholderText=""
+                          size="sm"
+                          handleChange={(date) => {
+                            updateQueryState(QueryParam.DATE_FROM, date)
+                          }}
+                          selected={queryState[QueryParam.DATE_FROM]}
+                          maxDate={queryState[QueryParam.DATE_TO]}
+                        />
+                        <DatePicker
+                          name="from"
+                          label={formatMessage(m.listPage.dateToLabel)}
+                          placeholderText=""
+                          size="sm"
+                          handleChange={(date) => {
+                            updateQueryState(QueryParam.DATE_TO, date)
+                          }}
+                          selected={queryState[QueryParam.DATE_TO]}
+                          minDate={queryState[QueryParam.DATE_FROM]}
+                        />
+                      </Stack>
+                    </AccordionItem>
                   </Stack>
-                </Stack>
+                </Box>
+                <Box
+                  background="blue100"
+                  width="full"
+                  display="flex"
+                  flexDirection="row"
+                  alignItems="center"
+                  justifyContent="center"
+                  style={{ height: 72 }}
+                >
+                  <Button
+                    variant="text"
+                    icon="reload"
+                    size="small"
+                    onClick={resetQueryState}
+                  >
+                    {formatMessage(m.listPage.clearAllFiltersLabel)}
+                  </Button>
+                </Box>
               </Stack>
             }
           >
@@ -626,9 +818,12 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
   const searchTerm = parseAsString.parseServerSide(
     query[QueryParam.SEARCH_TERM],
   )
+  const caseNumber = parseAsString.parseServerSide(
+    query[QueryParam.CASE_NUMBER],
+  )
   const court = parseAsString.parseServerSide(query[QueryParam.COURT])
   const caseCategories = parseAsArrayOf(parseAsString).parseServerSide(
-    query[QueryParam.CASE_CATEGORY],
+    query[QueryParam.CASE_CATEGORIES],
   )
   const caseTypes = parseAsArrayOf(parseAsString).parseServerSide(
     query.caseTypes,
@@ -636,6 +831,13 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
   const keywords = parseAsArrayOf(parseAsString).parseServerSide(
     query[QueryParam.KEYWORD],
   )
+  const laws = parseAsArrayOf(parseAsString).parseServerSide(
+    query[QueryParam.LAWS],
+  )
+  const dateFrom = parseAsIsoDateTime.parseServerSide(
+    query[QueryParam.DATE_FROM],
+  )
+  const dateTo = parseAsIsoDateTime.parseServerSide(query[QueryParam.DATE_TO])
 
   const [
     verdictListResponse,
@@ -653,6 +855,10 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
           keywords,
           page: 1,
           courtLevel: extractCourtLevelFromState(court),
+          laws,
+          caseNumber,
+          dateFrom,
+          dateTo,
         },
       },
     }),
