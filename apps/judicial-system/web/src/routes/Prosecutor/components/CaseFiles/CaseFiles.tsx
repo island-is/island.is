@@ -129,6 +129,9 @@ export const CaseFiles = () => {
   const uploadErrorMessage = useMemo(() => {
     if (uploadFiles.some((file) => file.status === 'error')) {
       return formatMessage(errors.general)
+    }
+    if (uploadFiles.some((file) => file.size === 0)) {
+      return 'Villa kom upp. Tómt skjal.'
     } else {
       return undefined
     }

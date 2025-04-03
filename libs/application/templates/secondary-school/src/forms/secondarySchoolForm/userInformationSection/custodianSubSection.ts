@@ -193,23 +193,24 @@ export const custodianSubSection = buildSubSection({
           },
         }),
         buildHiddenInput({
-          id: 'mainOtherContact.required',
+          id: 'mainOtherContact.include',
           defaultValue: (application: Application) => {
             return !checkHasAnyCustodians(application.externalData)
           },
         }),
         buildNationalIdWithNameField({
           id: 'mainOtherContact.person',
-          required: true,
+          required: false,
           showPhoneField: true,
           showEmailField: true,
-          phoneRequired: true,
-          emailRequired: true,
+          phoneRequired: false,
+          emailRequired: false,
           phoneLabel: userInformation.otherContact.phone,
           emailLabel: userInformation.otherContact.email,
+          clearOnChange: ['mainOtherContact.person.name'],
           condition: (answers) => {
             return (
-              getValueViaPath<boolean>(answers, 'mainOtherContact.required') ||
+              getValueViaPath<boolean>(answers, 'mainOtherContact.include') ||
               false
             )
           },
@@ -235,6 +236,13 @@ export const custodianSubSection = buildSubSection({
               showEmailField: true,
               emailLabel: userInformation.otherContact.email,
               emailRequired: true,
+              clearOnChange: (index) => [`otherContacts[${index}].person.name`],
+            },
+            applicantNationalId: {
+              component: 'hiddenInput',
+              defaultValue: (application: Application) => {
+                return application.applicant
+              },
             },
           },
         }),

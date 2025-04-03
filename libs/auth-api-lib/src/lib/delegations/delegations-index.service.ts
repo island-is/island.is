@@ -13,9 +13,7 @@ import {
   getPersonalRepresentativeDelegationType,
 } from '@island.is/shared/types'
 
-import {
-  PersonalRepresentativeScopePermissionService,
-} from '../personal-representative/services/personal-representative-scope-permission.service'
+import { PersonalRepresentativeScopePermissionService } from '../personal-representative/services/personal-representative-scope-permission.service'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { UserIdentitiesService } from '../user-identities/user-identities.service'
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
@@ -32,8 +30,14 @@ import { DelegationDTO } from './dto/delegation.dto'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
 import { DelegationIndex } from './models/delegation-index.model'
 import { DelegationDirection } from './types/delegationDirection'
-import { DelegationRecordType, PersonalRepresentativeDelegationType } from './types/delegationRecord'
-import { validateDelegationTypeAndProvider, validateToAndFromNationalId } from './utils/delegations'
+import {
+  DelegationRecordType,
+  PersonalRepresentativeDelegationType,
+} from './types/delegationRecord'
+import {
+  validateDelegationTypeAndProvider,
+  validateToAndFromNationalId,
+} from './utils/delegations'
 import { getXBirthday } from './utils/getXBirthday'
 import { isUnderXAge } from './utils/isUnderXAge'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
@@ -164,26 +168,28 @@ export class DelegationsIndexService {
     const featureFlaggedDelegationTypes = await this.featureFlagService
       .getValue(Features.delegationTypesWithNotificationsEnabled, '')
       .then((types): Set<string> | '*' | undefined => {
-        if (!types?.trim()) return undefined; // Empty value means no delegation types allowed
-        if (types?.trim() === '*') return '*'; // All delegation types allowed
-        return new Set(types?.split(',').map((type) => type.trim()));
-      });
+        if (!types?.trim()) return undefined // Empty value means no delegation types allowed
+        if (types?.trim() === '*') return '*' // All delegation types allowed
+        return new Set(types?.split(',').map((type) => type.trim()))
+      })
 
     // Case: No allowed delegation types
     if (!featureFlaggedDelegationTypes) {
-      return [];
+      return []
     }
 
     // Case: All delegation types are allowed
     if (featureFlaggedDelegationTypes === '*') {
-      return delegations;
+      return delegations
     }
 
     // Special case: Custom and GeneralMandate delegation types are stored with a ":person" or ":company" suffix,
     // indicating if the value is allowing for delegations of the type from a person or a company.
     return delegations.filter((delegation) => {
-
-      if (delegation.type === AuthDelegationType.Custom || delegation.type === AuthDelegationType.GeneralMandate) {
+      if (
+        delegation.type === AuthDelegationType.Custom ||
+        delegation.type === AuthDelegationType.GeneralMandate
+      ) {
         const isFromPerson =
           featureFlaggedDelegationTypes.has(`${delegation.type}:person`) &&
           kennitala.isPerson(delegation.fromNationalId)
@@ -192,11 +198,11 @@ export class DelegationsIndexService {
           featureFlaggedDelegationTypes.has(`${delegation.type}:company`) &&
           kennitala.isCompany(delegation.fromNationalId)
 
-        return isFromPerson || isFromCompany;
+        return isFromPerson || isFromCompany
       }
 
-      return featureFlaggedDelegationTypes.has(delegation.type);
-    });
+      return featureFlaggedDelegationTypes.has(delegation.type)
+    })
   }
 
   /* Lookup delegations in index for user for specific scope */
@@ -209,7 +215,6 @@ export class DelegationsIndexService {
     nationalId: string
     direction: DelegationDirection
   }): Promise<PaginatedDelegationRecordDTO> {
-
     const apiScope = await this.apiScopeModel.findOne({
       where: {
         name: scope,
@@ -219,23 +224,28 @@ export class DelegationsIndexService {
       throw new BadRequestException('Invalid scope')
     }
 
-    const delegationTypesSupportedByScope = await this.apiScopeDelegationTypeModel.findAll({
-      where: {
-        apiScopeName: apiScope.name,
-      },
-    }).then(x => x.map((d) => d.delegationType))
+    const delegationTypesSupportedByScope =
+      await this.apiScopeDelegationTypeModel
+        .findAll({
+          where: {
+            apiScopeName: apiScope.name,
+          },
+        })
+        .then((x) => x.map((d) => d.delegationType))
 
     if (!kennitala.isValid(nationalId)) {
       throw new BadRequestException('Invalid national id')
     }
 
-    const supportsCustom = delegationTypesSupportedByScope.includes(AuthDelegationType.Custom)
+    const supportsCustom = delegationTypesSupportedByScope.includes(
+      AuthDelegationType.Custom,
+    )
 
     const where = {
-        ...(direction === DelegationDirection.INCOMING
-          ? { toNationalId: nationalId }
-          : { fromNationalId: nationalId }),
-        validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
+      ...(direction === DelegationDirection.INCOMING
+        ? { toNationalId: nationalId }
+        : { fromNationalId: nationalId }),
+      validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
     }
 
     const delegations = await this.delegationIndexModel
@@ -250,15 +260,18 @@ export class DelegationsIndexService {
                 ),
               },
             },
-            supportsCustom ? {
-              ...where,
-              type: AuthDelegationType.Custom,
-              customDelegationScopes: { [Op.contains]: [apiScope.name] },
-            } : {},
+            supportsCustom
+              ? {
+                  ...where,
+                  type: AuthDelegationType.Custom,
+                  customDelegationScopes: { [Op.contains]: [apiScope.name] },
+                }
+              : {},
           ],
         },
       })
-      .then((d) => d.flat().map((d) => d.toDTO())).then((d) => this.filterByFeatureFlaggedDelegationTypes(d))
+      .then((d) => d.flat().map((d) => d.toDTO()))
+      .then((d) => this.filterByFeatureFlaggedDelegationTypes(d))
 
     // For now, we don't implement pagination but still return the paginated response
     return {
@@ -326,7 +339,7 @@ export class DelegationsIndexService {
   }
 
   /* Index incoming general mandate delegations */
-  async indexGeneralMandateDelegations(nationalId: string, auth: Auth) {
+  async indexGeneralMandateDelegations(nationalId: string, auth?: Auth) {
     const delegations = await this.getGeneralMandateDelegation(nationalId, true)
     await this.saveToIndex(nationalId, delegations, auth)
   }
@@ -449,7 +462,7 @@ export class DelegationsIndexService {
     delegations: DelegationIndexInfo[],
     // Some entrypoints to indexing do not have a user auth object or have a 3rd party user
     // so we take the auth separately from the subject nationalId
-    auth: Auth,
+    auth?: Auth,
   ) {
     const types = Array.from(new Set(delegations.map((d) => d.type)))
 
@@ -506,7 +519,7 @@ export class DelegationsIndexService {
     // saveToIndex is used by multiple entry points, when indexing so this
     // is the common place to audit updates in the index.
     this.auditService.audit({
-      auth,
+      ...(auth ? { auth } : { system: true }),
       action: 'save-to-index',
       namespace: '@island.is/auth/delegation-index',
       alsoLog: true,
@@ -700,5 +713,4 @@ export class DelegationsIndexService {
           .filter((d) => d.validTo !== null), // if child has already turned 18/16, we don't want to index the delegation
     )
   }
-
 }

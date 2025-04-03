@@ -92,6 +92,53 @@ components:
         label:
           type: string
 
+    VerdictSearchRequest:
+      type: object
+      properties:
+        searchTerm:
+          type: string
+          description: Text to search for in verdict content
+        orderBy:
+          type: string
+          description: Field to order results by, with optional direction (e.g., 'caseNumber DESC')
+        caseTypes:
+          type: array
+          items:
+            type: string
+          description: Filter by case types
+        keywords:
+          type: array
+          items:
+            type: string
+          description: Filter by keywords
+        laws:
+          type: array
+          items:
+            type: string
+          description: Filter by law citations
+        title:
+          type: string
+          description: Filter by title
+        caseNumber:
+          type: string
+          description: Filter by case number
+        dateFrom:
+          type: string
+          format: date
+          description: Filter for verdicts on or after this date (format YYYY-MM-DD)
+        dateTo:
+          type: string
+          format: date
+          description: Filter for verdicts on or before this date (format YYYY-MM-DD)
+        page:
+          type: integer
+          default: 1
+          description: Page number for pagination
+        limit:
+          type: integer
+          default: 100
+          description: Results per page
+
   responses:
     InputError:
       description: Input error
@@ -186,22 +233,15 @@ paths:
           $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getVerdicts:
-    get:
-      summary: Get all verdicts
-      parameters:
-        - name: orderBy
-          in: query
-          schema:
-            type: string
-          description: "Field and order (e.g., 'publishDate ASC')"
-        - name: page
-          in: query
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          schema:
-            type: integer
+    post:
+      summary: Search and retrieve verdicts with filters
+      description: Retrieve verdicts with optional filters including text search, dates, case types, and more
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerdictSearchRequest'
       responses:
         '200':
           description: Successful response
@@ -215,7 +255,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/DetailedVerdictData'
                   total:
-                    type: integer
+                    type: string
                   currentPage:
                     type: integer
                   itemsPerPage:
@@ -226,8 +266,6 @@ paths:
                     type: integer
                   message:
                     type: string
-        '500':
-          $ref: '#/components/responses/InternalError'
 
   /api/v2/Verdict/getAgenda/{id}:
     get:

@@ -851,9 +851,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
         // @ts-expect-error make web strict
         pushUp={isVisible && processEntry?.processLink && mounted}
       />
-      <OrganizationFooter
-        organizations={article?.organization as Organization[]}
-      />
+      <div>
+        <OrganizationFooter
+          organizations={article?.organization as Organization[]}
+        />
+      </div>
     </>
   )
 }
