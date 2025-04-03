@@ -1,5 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
+import { CostField } from './types'
 import {
   RentalAmountIndexTypes,
   RentalHousingCategoryClass,
@@ -50,8 +51,23 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
+export const isCostItemValid = (item: CostField) =>
+  (item.description.trim() !== '' && item.amount !== undefined) ||
+  (item.description.trim() === '' && item.amount === undefined)
+
+export const isEmptyCostItem = (item: CostField) =>
+  item.description.trim() === '' && item.amount === undefined
+
+export const filterEmptyCostItems = (items: CostField[]) =>
+  items.filter((item) => !isEmptyCostItem(item)) ?? []
+
 export const formatCurrency = (answer: string) =>
-  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ISK'
+  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+
+export const parseCurrency = (value: string): number | undefined => {
+  const numeric = value.replace(/[^\d]/g, '')
+  return numeric ? Number(numeric) : undefined
+}
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const propertyTypeOptions = getValueViaPath<RentalHousingCategoryTypes>(

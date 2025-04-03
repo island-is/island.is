@@ -4,6 +4,10 @@ import {
   buildTextField,
   buildRadioField,
   buildDateField,
+  buildDescriptionField,
+  buildCheckboxField,
+  getValueViaPath,
+  buildCustomField,
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import {
@@ -129,57 +133,38 @@ export const RentalPeriodOtherFees = buildSubSection({
           condition: heatingCostPayedByTenant,
         }),
 
-        // TODO: Add otherCosts fields when ready
         // Other fees
-        // buildDescriptionField({
-        //   id: 'otherFees.otherCostsTitle',
-        //   title: otherFees.otherCostsTitle,
-        //   titleVariant: 'h4',
-        //   space: 6,
-        // }),
-        // buildCheckboxField({
-        //   id: 'otherFees.otherCosts',
-        //   title: '',
-        //   options: [
-        //     {
-        //       value: TRUE,
-        //       label: otherFees.otherCostsLabel,
-        //     },
-        //   ],
-        //   spacing: 0,
-        // }),
-        // buildTextField({
-        //   id: 'otherFees.otherCostsDescription',
-        //   title: otherFees.otherCostsDescriptionLabel,
-        //   placeholder: otherFees.otherCostsDescriptionPlaceholder,
-        //   width: 'half',
-        //   condition: (answers) => {
-        //     const otherFeesOtherCosts = getValueViaPath(
-        //       answers,
-        //       'otherFees.otherCosts',
-        //       [],
-        //     ) as string[]
-        //     return (
-        //       otherFeesOtherCosts && otherFeesOtherCosts.includes(TRUE)
-        //     )
-        //   },
-        // }),
-        // buildTextField({
-        //   id: 'otherFees.otherCostsAmount',
-        //   title: otherFees.otherCostsAmountLabel,
-        //   placeholder: otherFees.otherCostsAmountPlaceholder,
-        //   width: 'half',
-        //   condition: (answers) => {
-        //     const otherFeesOtherCosts = getValueViaPath(
-        //       answers,
-        //       'otherFees.otherCosts',
-        //       [],
-        //     ) as string[]
-        //     return (
-        //       otherFeesOtherCosts && otherFeesOtherCosts.includes(TRUE)
-        //     )
-        //   },
-        // }),
+        buildDescriptionField({
+          id: 'otherFees.otherCostsTitle',
+          title: otherFees.otherCostsTitle,
+          titleVariant: 'h4',
+          space: 6,
+        }),
+        buildCheckboxField({
+          id: 'otherFees.otherCosts',
+          title: '',
+          options: [
+            {
+              value: 'true',
+              label: otherFees.otherCostsLabel,
+            },
+          ],
+          spacing: 0,
+          clearOnChange: ['otherFees.otherCostItems'],
+        }),
+        buildCustomField({
+          id: 'otherFees.otherCostItems',
+          title: '',
+          component: 'OtherCostItems',
+          condition: (answers) => {
+            const otherFeesOtherCosts = getValueViaPath(
+              answers,
+              'otherFees.otherCosts',
+              [],
+            ) as string[]
+            return otherFeesOtherCosts && otherFeesOtherCosts.includes('true')
+          },
+        }),
       ],
     }),
   ],

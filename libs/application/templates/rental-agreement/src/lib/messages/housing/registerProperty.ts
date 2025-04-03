@@ -95,7 +95,7 @@ export const registerProperty = {
     },
     tableHeaderNumOfRooms: {
       id: 'ra.application:registerProperty.infoSummary.tableHeaderNumOfRooms',
-      defaultMessage: 'herbergi',
+      defaultMessage: 'Herbergi',
       description: 'Summary table header for number of rooms',
     },
   }),
