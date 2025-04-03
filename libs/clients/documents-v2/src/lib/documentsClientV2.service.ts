@@ -1,4 +1,5 @@
 import {
+  AuthenticationType,
   CustomersApi,
   CustomersListDocumentsOrderEnum,
   CustomersListDocumentsSortByEnum,
@@ -41,7 +42,6 @@ export class DocumentsClientV2Service {
           if (Array.isArray(obj[key]) && obj[key].length === 0) {
             continue
           }
-
           sanitizedObj[key] = obj[key]
         }
       }
@@ -72,6 +72,7 @@ export class DocumentsClientV2Service {
       sortBy: input.sortBy
         ? CustomersListDocumentsSortByEnum[input.sortBy]
         : undefined,
+      opened: input.opened ? 'true' : 'false',
     })
 
     const documents = await this.api.customersListDocuments(inputObject)
@@ -98,8 +99,7 @@ export class DocumentsClientV2Service {
     const document = await this.api.customersDocument({
       kennitala: customerId,
       messageId: documentId,
-      authenticationType: 'HIGH',
-      locale: locale,
+      authenticationType: AuthenticationType['HIGH'] ?? 'HIGH',
       includeDocument: includeDocument,
     })
 
@@ -153,10 +153,7 @@ export class DocumentsClientV2Service {
   updatePaperMailPreference(nationalId: string, wantsPaper: boolean) {
     return this.api.customersUpdatePaperMailPreference({
       kennitala: nationalId,
-      paperMail: {
-        kennitala: nationalId,
-        wantsPaper: wantsPaper,
-      },
+      wantsPaper: wantsPaper,
     })
   }
   async markAllMailAsRead(nationalId: string) {
@@ -243,7 +240,7 @@ export class DocumentsClientV2Service {
   async batchReadMail(nationalId: string, documentIds: Array<string>) {
     await this.api.customersBatchReadDocuments({
       kennitala: nationalId,
-      request: { ids: documentIds },
+      setBatchMessagesRead: { ids: documentIds },
     })
     return {
       success: true,

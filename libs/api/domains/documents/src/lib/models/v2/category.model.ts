@@ -9,5 +9,5 @@ export class Category implements Base {
   id!: string
 
   @Field({ nullable: true })
-  name?: string
+  name?: string | null
 }
