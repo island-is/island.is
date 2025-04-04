@@ -1,4 +1,5 @@
 import { IntlShape } from 'react-intl'
+import { applyCase } from 'beygla/addresses'
 
 import {
   formatDate,
@@ -46,7 +47,12 @@ export const getIncidentDescription = (
     policeCaseNumber,
   } = indictmentCount
 
-  const incidentLocation = crimeScene?.place || '[Vettvangur]'
+  const incidentLocation = crimeScene?.place
+    ? crimeScene.place
+        .split(',')
+        .map((str, idx) => applyCase(idx > 0 ? 'þgf' : 'þf', str))
+        .join(', ')
+    : '[Vettvangur]'
   const incidentDate = crimeScene?.date
     ? formatDate(crimeScene.date, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
     : '[Dagsetning]'
