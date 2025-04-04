@@ -279,6 +279,7 @@ jobs:
           echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
           echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
           echo CACHE_IMAGE="${DOCKER_REGISTRY}/docker-cache:latest" >> "$GITHUB_ENV"
+          echo APP="${AFFECTED_PROJECTS}" >> "$GITHUB_ENV"
         continue-on-error: true
 
       - uses: actions/checkout@v4
