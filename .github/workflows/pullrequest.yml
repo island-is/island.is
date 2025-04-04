@@ -290,8 +290,8 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
       - name: No new lint lines
         env:
-          HEAD_LINTS: ${{steps.lint-head.outputs.lint-lines}}
-          BASE_LINTS: ${{steps.lint-base.outputs.lint-lines}}
+          HEAD_LINTS: ${{steps.lint-head.outputs.lints}}
+          BASE_LINTS: ${{steps.lint-base.outputs.lints}}
           HEAD_LINT_COUNT: ${{steps.lint-head.outputs.lint-lines || 0}}
           BASE_LINT_COUNT: ${{steps.lint-base.outputs.lint-lines || 0}}
         run: |
