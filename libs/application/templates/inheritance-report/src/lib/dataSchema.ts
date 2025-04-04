@@ -587,7 +587,7 @@ export const inheritanceReportSchema = z.object({
       })
       .refine(
         ({ enabled, heirsPercentage }) => {
-          const num = heirsPercentage ? parseInt(heirsPercentage, 10) : 0
+          const num = heirsPercentage ? parseFloat(heirsPercentage) : 0
           return enabled ? num > 0 && num < 101 : true
         },
         {
