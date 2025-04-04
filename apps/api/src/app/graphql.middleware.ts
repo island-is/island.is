@@ -7,9 +7,6 @@ export const maskOutFieldsMiddleware: FieldMiddleware = async (
   const { info } = ctx
   const { extensions } = info.parentType
 
-  //dummy
-  const k = 8
-
   if (extensions?.filterFields) {
     const { condition = () => true, fields = [] } =
       extensions.filterFields as any

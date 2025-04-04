@@ -18,9 +18,6 @@ if (!isRunningOnEnvironment('local')) {
 }
 
 const rootEl = document.getElementById('root')
-//DUMMY
-
-const k = 8
 
 if (!rootEl) {
   throw new Error('Root element not found')
