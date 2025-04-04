@@ -2624,6 +2624,7 @@ services-form-system-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -2665,19 +2666,6 @@ services-form-system-api:
         command:
           - 'npx'
         name: 'migrations'
-        resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '50m'
-            memory: '128Mi'
-      - args:
-          - 'sequelize-cli'
-          - 'db:seed:all'
-        command:
-          - 'npx'
-        name: 'seed'
         resources:
           limits:
             cpu: '200m'

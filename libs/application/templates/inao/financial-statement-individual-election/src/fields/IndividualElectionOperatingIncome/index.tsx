@@ -5,11 +5,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  INDIVIDUALOPERATIONIDS,
-  OPERATINGCOST,
-} from '../../lib/utils/constants'
-import { m } from '../../lib/utils/messages'
+import { INDIVIDUALOPERATIONIDS, OPERATINGCOST } from '../../utils/constants'
+import { m } from '../../lib/messages'
 import { Income } from './Income'
 import { Expenses } from './Expenses'
 import { Total } from './Total'
