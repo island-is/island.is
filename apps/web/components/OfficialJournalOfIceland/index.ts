@@ -6,3 +6,5 @@ export { OJOISearchListView } from './OJOISearchListView'
 export { OJOISearchGridView } from './OJOISearchGridView'
 export { OJOIAdvertCards } from './OJOIAdvertCards'
 export * from './OJOIUtils'
+
+const newLintWarning = 'AFFECTME'
