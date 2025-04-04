@@ -234,8 +234,7 @@ export const AdditionalEstateMember = ({
         )}
       </GridRow>
       {/* ADVOCATE */}
-      {selectedEstate !== EstateTypes.divisionOfEstateByHeirs &&
-        (currentEstateMember?.nationalId || hasForeignCitizenship) &&
+      {(currentEstateMember?.nationalId || hasForeignCitizenship) &&
         requiresAdvocate && (
           <Box
             marginTop={2}
@@ -294,55 +293,57 @@ export const AdditionalEstateMember = ({
           </Box>
         )}
       {/* ADVOCATE 2 */}
-      {(currentEstateMember?.nationalId || hasForeignCitizenship) && requiresAdvocate && (
-        <Box
-          marginTop={2}
-          marginBottom={2}
-          paddingY={5}
-          paddingX={7}
-          borderRadius="large"
-          border="standard"
-        >
-          <GridRow>
-            <GridColumn span={['1/1']} paddingBottom={2}>
-              <Text variant="h4">
-                {formatMessage(m.inheritanceAdvocateLabel)}
-              </Text>
-            </GridColumn>
-            <GridColumn span={['1/1']} paddingBottom={2}>
-              <LookupPerson
-                nested
-                field={{
-                  id: `${fieldIndex}.advocate2`,
-                  props: {
-                    requiredNationalId: false,
-                  },
-                }}
-                message={formatMessage(m.inheritanceUnder18ErrorAdvocate)}
-                error={error}
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <PhoneInputController
-                id={advocate2Phone}
-                name={advocate2Phone}
-                label={formatMessage(m.phone)}
-                backgroundColor="blue"
-                size="sm"
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <InputController
-                id={advocate2Email}
-                name={advocate2Email}
-                label={formatMessage(m.email)}
-                backgroundColor="blue"
-                size="sm"
-              />
-            </GridColumn>
-          </GridRow>
-        </Box>
-      )}
+      {selectedEstate === EstateTypes.divisionOfEstateByHeirs &&
+        (currentEstateMember?.nationalId || hasForeignCitizenship) &&
+        requiresAdvocate && (
+          <Box
+            marginTop={2}
+            marginBottom={2}
+            paddingY={5}
+            paddingX={7}
+            borderRadius="large"
+            border="standard"
+          >
+            <GridRow>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <Text variant="h4">
+                  {formatMessage(m.inheritanceAdvocateLabel)}
+                </Text>
+              </GridColumn>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <LookupPerson
+                  nested
+                  field={{
+                    id: `${fieldIndex}.advocate2`,
+                    props: {
+                      requiredNationalId: false,
+                    },
+                  }}
+                  message={formatMessage(m.inheritanceUnder18ErrorAdvocate)}
+                  error={error}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <PhoneInputController
+                  id={advocate2Phone}
+                  name={advocate2Phone}
+                  label={formatMessage(m.phone)}
+                  backgroundColor="blue"
+                  size="sm"
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={advocate2Email}
+                  name={advocate2Email}
+                  label={formatMessage(m.email)}
+                  backgroundColor="blue"
+                  size="sm"
+                />
+              </GridColumn>
+            </GridRow>
+          </Box>
+        )}
 
       <GridRow>
         <GridColumn
