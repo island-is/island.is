@@ -17,10 +17,10 @@ export const m = {
       defaultMessage: 'Hvenær má gefa blóð',
       description: 'Texti fyrir aðal heading á yfirlitssíðu',
     },
-    cardDescriptionPrefix: {
-      id: 'web.bloodbank.bloodDonationRestrictions:listPage.cardDescriptionPrefix',
-      defaultMessage: 'Lýsing: ',
-      description: 'Texti á undan lýsingu í spjaldi',
+    keywordsTextPrefix: {
+      id: 'web.bloodbank.bloodDonationRestrictions:listPage.keywordsTextPrefix',
+      defaultMessage: 'Lykilorð: ',
+      description: 'Texti á undan lykilorðum í spjaldi',
     },
   }),
   detailsPage: defineMessages({
