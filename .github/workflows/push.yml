@@ -75,8 +75,7 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
-      tag: ${{ steps.cache-tag.outputs.tag }}
-      cache_image: ${{ steps.set-cache-image.outputs.image }}
+      cache_image: ${{ steps.docker-cache.outputs.image }}
 
     steps:
       - uses: actions/checkout@v4
@@ -194,12 +193,6 @@ jobs:
       - name: test-everything
         uses: ./.github/actions/test-everything
 
-      # - name: Docker login to ECR repo
-      #   run: ./scripts/ci/docker-login-ecr.sh
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
       - name: Login to ECR
         uses: docker/login-action@v3
         id: login-ecr
@@ -256,38 +249,9 @@ jobs:
             echo IMAGES='' >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Calculate yarn.lock SHA
-        id: yarn-sha
-        run: echo "sha=$(sha256sum yarn.lock | cut -d ' ' -f 1 | head -c 12)" >> $GITHUB_OUTPUT
-
-      - name: Set cache image tag
-        id: cache-tag
-        run: echo "tag=deps-${{ steps.yarn-sha.outputs.sha }}" >> $GITHUB_OUTPUT
-
-      - name: Check if deps cache exists
-        id: check-deps-cache
-        run: |
-          if aws ecr describe-images --repository-name $DEPS_CACHE_REPO --image-ids imageTag=${{ steps.cache-tag.outputs.tag }} &>/dev/null; then
-            echo "cache_exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "cache_exists=false" >> $GITHUB_OUTPUT
-          fi
-        continue-on-error: true
-
-      - name: Build and push deps layer
-        if: steps.check-deps-cache.outputs.cache_exists != 'true'
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./scripts/ci/Dockerfile
-          push: true
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DEPS_CACHE_REPO }}:${{ steps.cache-tag.outputs.tag }}
-          target: deps
-          cache-to: type=inline
-
-      - name: Set cache image
-        id: set-cache-image
-        run: echo "image=${{ env.DOCKER_REGISTRY }}/${{ env.DEPS_CACHE_REPO }}:${{ steps.cache-tag.outputs.tag }}" >> $GITHUB_OUTPUT
+      - name: Prepare docker cache
+        id: docker-cache
+        uses: ./.github/actions/docker-deps
 
   docker-build:
     needs:
@@ -341,7 +305,6 @@ jobs:
           echo "DOCKER_TAG=${{ github.sha }}" >> $GITHUB_ENV
           echo "DOCKER_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
           echo "CACHE_IMAGE=${{ needs.prepare.outputs.cache_image }}" >> $GITHUB_ENV
-
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -358,13 +321,6 @@ jobs:
       - name: Extract generated files
         run: |
           tar -xzvf ${{ env.GENERATED_FILES }}
-
-      # - name: Docker login to ECR repo
-      #   if: steps.gather.outcome == 'success'
-      #   run: ./scripts/ci/docker-login-ecr.sh
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Prepare Docker build arguments
         id: dockerargs
@@ -397,19 +353,6 @@ jobs:
           )
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
-
-      # - name: Check if cached buildx image exists
-      #   id: cache-check
-      #   run: |
-      #     if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
-      #       docker pull docker.io/moby/buildkit:buildx-stable-1
-      #       docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-      #       docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-      #     fi
-      # - name: Setup yarn
-      #   uses: ./.github/actions/setup-yarn
-      #   with:
-      #     RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Building Docker images
         continue-on-error: true
