@@ -3,8 +3,8 @@ import {
   buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { m } from '../../../lib/utils/messages'
-import { LESS } from '../../../lib/utils/constants'
+import { m } from '../../../lib/messages'
+import { LESS } from '../../../utils/constants'
 
 export const documentsSection = buildSection({
   id: 'documents',
