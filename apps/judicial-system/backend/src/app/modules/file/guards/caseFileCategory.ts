@@ -171,6 +171,10 @@ export const canLimitedAccessUserViewCaseFile = (
     )
   }
 
+  if (isPrisonStaffUser(user)) {
+    return canPrisonStaffUserViewCaseFile(caseState, caseFileCategory)
+  }
+
   if (isPrisonAdminUser(user)) {
     return canPrisonAdminUserViewCaseFile(caseState, caseFileCategory)
   }
