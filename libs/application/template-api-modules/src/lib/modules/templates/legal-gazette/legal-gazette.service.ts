@@ -5,7 +5,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { SharedTemplateApiService } from '../../shared'
 
-const LOGGING_CONTEXT = 'LegalGazetteTemplateService'
+const LOGGING_CATEGORY = 'LegalGazetteTemplateService'
 
 type OptionType = {
   label: string
@@ -14,6 +14,43 @@ type OptionType = {
 
 @Injectable()
 export class LegalGazetteTemplateService extends BaseTemplateApiService {
+  private applicationTypes = [
+    { label: 'Áskorun', value: 'almenn-auglysing' },
+    { label: 'Dómsbirting', value: 'almenn-auglysing' },
+    { label: 'Embætti, sýslanir, leyfi o.fl.', value: 'almenn-auglysing' },
+    {
+      label: 'Fasteigna-, fyrirtækja- og skipasala',
+      value: 'almenn-auglysing',
+    },
+    { label: 'Félagsslit', value: 'almenn-auglysing' },
+    { label: 'Firmaskrá', value: 'firmaskra' },
+    { label: 'Fjármálastarfsemi', value: 'almenn-auglysing' },
+    { label: 'Framhald uppboðs', value: 'almenn-auglysing' },
+    { label: 'Fyrirkall', value: 'almenn-auglysing' },
+    { label: 'Greiðsluaðlögun', value: 'almenn-auglysing' },
+    { label: 'Greiðsluáskorun', value: 'almenn-auglysing' },
+    { label: 'Happdrætti', value: 'almenn-auglysing' },
+    { label: 'Hlutafélög', value: 'almenn-auglysing' },
+    { label: 'Húsbréf', value: 'almenn-auglysing' },
+    { label: 'Innköllun dánarbú', value: 'innkollun-danarbu' },
+    { label: 'Innköllun þrotabú', value: 'innkollun-throtabu' },
+    { label: 'Kaupmáli', value: 'almenn-auglysing' },
+    { label: 'Laus störf, stöður, embætti o.fl.', value: 'almenn-auglysing' },
+    { label: 'Mat á umhverfisáhrifum', value: 'almenn-auglysing' },
+    { label: 'Nauðasamningar', value: 'almenn-auglysing' },
+    { label: 'Nauðungarsala', value: 'naudungarsala' },
+    { label: 'Skiptafundur', value: 'skiptafundur' },
+    { label: 'Skiptalok', value: 'skiptalok' },
+    { label: 'Skipulagsauglýsing', value: 'almenn-auglysing' },
+    { label: 'Starfsleyfi', value: 'almenn-auglysing' },
+    { label: 'Stefna', value: 'almenn-auglysing' },
+    { label: 'Svipting fjárræðis', value: 'almenn-auglysing' },
+    { label: 'Umferðarauglýsinga', value: 'almenn-auglysing' },
+    { label: 'Vátryggingastarfsemi', value: 'almenn-auglysing' },
+    { label: 'Veðhafafundur', value: 'almenn-auglysing' },
+    { label: 'Ýmsar auglýsingar frá ráðuneytum', value: 'almenn-auglysing' },
+    { label: 'Ýmsar auglýsingar og tilkynningar', value: 'almenn-auglysing' },
+  ]
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
@@ -34,7 +71,7 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
       ]
     } catch (error) {
       this.logger.error('Failed to get user legal entities', {
-        context: LOGGING_CONTEXT,
+        category: LOGGING_CATEGORY,
         error,
       })
       throw error
@@ -43,36 +80,33 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
 
   async getAdvertTypes(): Promise<OptionType[]> {
     try {
-      return [
-        { label: 'Áskorun', value: 'a6e697d4-4ef7-4324-a218-e66df88798f2' },
-        { label: 'Dómsbirting', value: '9841fb5c-b263-41d9-bab6-3808726ba2b0' },
-        {
-          label: 'Innköllun dánarbú',
-          value: '7c217d2c-0a23-4151-819a-9477023dc5f1',
-        },
-        { label: 'Skiptalok', value: 'd65a44a2-cc11-4be1-8eff-2a1980068c0a' },
-        {
-          label: 'Embætti, sýslanir, leyfi o.fl.',
-          value: '8349cd5e-20df-49fa-be6e-a6d223d70ba7',
-        },
-        { label: 'Firmaskrá', value: 'a0d51e59-3d5d-410c-bfea-fe54afa58f23' },
-        {
-          label: 'Fjármálastarfsemi',
-          value: '06fb7925-190a-4096-90e4-0bd250b5bb03',
-        },
-        {
-          label: 'Framhald uppboðs',
-          value: '87e0421a-bb72-474a-b159-1b1beffafada',
-        },
-        { label: 'Fyrirkall', value: '5b1bab18-1d96-4a9d-96ca-fe4f77c066b6' },
-        {
-          label: 'Greiðsluaðlögun',
-          value: 'cfe5e96d-df5c-400e-bac6-cba5425408bc',
-        },
-      ]
+      return this.applicationTypes
     } catch (error) {
       this.logger.error('Failed to get advert types', {
-        context: LOGGING_CONTEXT,
+        category: LOGGING_CATEGORY,
+        error,
+      })
+      throw error
+    }
+  }
+
+  async getUserRecentlySelectedAdvertTypes(): Promise<OptionType[]> {
+    try {
+      const count = Math.random() * 5
+      const recents = []
+
+      for (let i = 0; i < count; i++) {
+        recents.push(
+          this.applicationTypes[
+            Math.floor(Math.random() * this.applicationTypes.length)
+          ],
+        )
+      }
+
+      return recents
+    } catch (error) {
+      this.logger.error('Failed to get user recently selected advert types', {
+        category: LOGGING_CATEGORY,
         error,
       })
       throw error

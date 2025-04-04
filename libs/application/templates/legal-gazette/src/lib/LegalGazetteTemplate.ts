@@ -68,6 +68,12 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               externalDataId: 'advertTypeOptions',
               throwOnError: true,
             }),
+            defineTemplateApi({
+              action: LegalGazetteAPIActions.getUserRecentlySelectedAdvertTypes,
+              shouldPersistToExternalData: true,
+              externalDataId: 'recentAdvertTypes',
+              throwOnError: true,
+            }),
           ],
           roles: [
             {
@@ -96,7 +102,10 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
           name: 'Uppsetning',
           progress: 0.5,
           status: 'draft',
-          lifecycle: pruneAfterDays(90),
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -113,7 +122,6 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
       },
     },
   },
-
   stateMachineOptions: {
     actions: {
       clearAssignees: assign((context) => ({

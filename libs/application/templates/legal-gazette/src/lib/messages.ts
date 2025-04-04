@@ -68,6 +68,11 @@ export const m = {
         defaultMessage: 'Lögaðilar',
         description: 'Heiti kafla Lögaðilar',
       },
+      selectPlaceholder: {
+        id: 'lg.application:requirements.legalEntity.select.placeholder',
+        defaultMessage: 'Veldu lögaðila',
+        description: 'Placeholder á dropdown á skjá Stofnun',
+      },
       formTitle: {
         id: 'lg.application:requirements.legalEntity.form.title',
         defaultMessage: 'Veldu lögaðila',
@@ -123,10 +128,32 @@ export const m = {
           'Þú verður að velja tegund auglýsingar til að halda áfram',
         description: 'Villa sem kemur upp ef notandi velur ekki tegund',
       },
-      lastSelected: {
-        id: 'lg.application:requirements.advertType.lastSelected',
+      recentlySelected: {
+        id: 'lg.application:requirements.advertType.recentlySelected',
         defaultMessage: 'Síðast valið',
         description: 'Titill á síðast valinni tegund á skjá Auglýsingar',
+      },
+    }),
+  },
+  draft: {
+    general: defineMessages({
+      sectionTitle: {
+        id: 'lg.application:draft.general.sectionTitle',
+        defaultMessage: 'Grunnupplýsingar',
+        description: 'Heiti kafla fyrir auglýsingu',
+      },
+    }),
+    common: defineMessages({
+      formTitle: {
+        id: 'lg.application:draft.common.formTitle',
+        defaultMessage: 'Ný auglýsing',
+        description: 'Titill á formi fyrir auglýsingu',
+      },
+      formIntro: {
+        id: 'lg.application:draft.common.formIntro',
+        defaultMessage:
+          'Veldu tegund auglýsingar sem þú vilt skrá. Fyrir sumar tegundir eru í boði innsláttarform til að auðvelda skráningu. Þú getur einnig sótt texta áður skráðrar auglýsingar af sömu tegund og notað sem grunn að nýrri.',
+        description: 'Inngangur á formi fyrir auglýsingu',
       },
     }),
   },

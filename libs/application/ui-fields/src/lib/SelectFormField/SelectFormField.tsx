@@ -43,6 +43,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     clearOnChange,
     setOnChange,
     isClearable,
+    size = 'md',
   } = field
   const { formatMessage, lang: locale } = useLocale()
   const { getValues } = useFormContext()
@@ -105,6 +106,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           clearOnChange={clearOnChange}
           setOnChange={setOnChange}
           isClearable={isClearable}
+          size={size}
         />
       </Box>
     </Box>

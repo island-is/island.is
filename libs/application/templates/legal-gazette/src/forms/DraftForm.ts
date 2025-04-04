@@ -1,10 +1,12 @@
 import {
+  buildCustomField,
+  buildDescriptionField,
   buildForm,
   buildSection,
-  buildDescriptionField,
+  buildSubmitField,
+  coreMessages,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messages'
 
 export const DraftForm: Form = buildForm({
   id: 'DraftDraft',
@@ -13,12 +15,27 @@ export const DraftForm: Form = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
+      title: 'Upplýsingar',
+      children: [],
+    }),
+    buildSection({
       id: 'draft_section',
-      title: m.requirements.legalEntity.sectionTitle,
       children: [
         buildDescriptionField({
-          id: 'draft_title',
-          title: m.requirements.legalEntity.formTitle,
+          id: 'draft_description',
+          title: 'Uppsetning',
+          description: 'Hér getur þú skoðað og breytt umsókninni þinni.',
+        }),
+        buildSubmitField({
+          id: 'submit',
+          title: coreMessages.buttonNext,
+          actions: [
+            {
+              event: { type: 'SUBMIT' },
+              name: 'Staðfesta',
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),

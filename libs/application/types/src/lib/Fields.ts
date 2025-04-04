@@ -393,6 +393,7 @@ export interface DescriptionField extends BaseField {
   titleTooltip?: FormText
   space?: BoxProps['paddingTop']
   titleVariant?: TitleVariants
+  showFieldName?: boolean
 }
 
 export interface RadioField extends InputField {
@@ -416,6 +417,7 @@ export interface SelectField extends InputField {
   backgroundColor?: InputBackgroundColor
   isMulti?: boolean
   isClearable?: boolean
+  size?: 'sm' | 'md' | 'xs' | undefined
 }
 
 export interface CompanySearchField extends InputField {

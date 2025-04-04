@@ -3,7 +3,7 @@ import { GraphQLError } from 'graphql'
 import { ZodObject } from 'zod'
 import { MessageDescriptor } from 'react-intl'
 
-import type { BoxProps } from '@island.is/island-ui/core/types'
+import type { BoxProps, ResponsiveProp } from '@island.is/island-ui/core/types'
 
 import { Field, RecordObject, SubmitField } from './Fields'
 import { Condition } from './Condition'
@@ -136,6 +136,7 @@ export interface MultiField extends FormItem {
   isPartOfRepeater?: boolean
   readonly description?: FormText
   space?: BoxProps['paddingTop']
+  descriptionSpacing?: BoxProps['paddingTop']
 }
 
 export interface ExternalDataProvider extends FormItem {

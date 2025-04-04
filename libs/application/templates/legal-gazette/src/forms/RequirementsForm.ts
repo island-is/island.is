@@ -9,6 +9,7 @@ import {
   YesOrNoEnum,
   buildSelectField,
   getValueViaPath,
+  buildCustomField,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -26,10 +27,12 @@ export const RequirementsForm: Form = buildForm({
   children: [
     buildSection({
       title: m.requirements.approval.sectionTitle,
+      tabTitle: 'Test',
       children: [
         buildMultiField({
           id: 'prerequisites_fields',
           title: m.requirements.approval.formTitle,
+          descriptionSpacing: 0,
           children: [
             buildDescriptionField({
               id: 'prerequisites_description_one',
@@ -64,22 +67,21 @@ export const RequirementsForm: Form = buildForm({
             }),
           ],
         }),
-      ],
-    }),
-    buildSection({
-      title: m.requirements.legalEntity.sectionTitle,
-      children: [
         buildMultiField({
           title: m.requirements.legalEntity.formTitle,
+          descriptionSpacing: 0,
           children: [
             buildDescriptionField({
               id: 'legalEntity_description',
               description: m.requirements.legalEntity.formIntro,
+              marginBottom: 3,
             }),
             buildSelectField({
               id: 'legalEntity.nationalId',
               title: m.requirements.legalEntity.selectTitle,
+              placeholder: m.requirements.legalEntity.selectPlaceholder,
               width: 'half',
+              size: 'sm',
               options(application) {
                 const legalEntities = getValueViaPath<Option[]>(
                   application.externalData,
@@ -91,22 +93,22 @@ export const RequirementsForm: Form = buildForm({
             }),
           ],
         }),
-      ],
-    }),
-    buildSection({
-      title: m.requirements.advertType.sectionTitle,
-      children: [
         buildMultiField({
           title: m.requirements.advertType.formTitle,
+          descriptionSpacing: 0,
           children: [
             buildDescriptionField({
               id: 'advertType_description',
               description: m.requirements.advertType.formIntro,
+              marginBottom: 3,
             }),
             buildSelectField({
               id: 'applicationType.id',
               title: m.requirements.advertType.selectTitle,
+              placeholder: m.requirements.advertType.selectPlaceholder,
               width: 'half',
+              size: 'sm',
+              marginBottom: 2,
               options(application) {
                 const advertTypeOptions = getValueViaPath<Option[]>(
                   application.externalData,
@@ -115,6 +117,10 @@ export const RequirementsForm: Form = buildForm({
 
                 return advertTypeOptions ?? []
               },
+            }),
+            buildCustomField({
+              id: 'advertType.recent',
+              component: 'RecentlySelected',
             }),
             buildSubmitField({
               id: 'toDraft',
@@ -130,6 +136,14 @@ export const RequirementsForm: Form = buildForm({
           ],
         }),
       ],
+    }),
+    buildSection({
+      title: m.requirements.legalEntity.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      title: m.requirements.advertType.sectionTitle,
+      children: [],
     }),
   ],
 })
