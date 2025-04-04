@@ -367,8 +367,7 @@ jobs:
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
-          ./scripts/ci/ "90_${DOCKER_TYPE}.sh"
-          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+          ./scripts/ci/"90_${DOCKER_TYPE}.sh"
 
       # Add specific directories you need
   helm-docker-build:
