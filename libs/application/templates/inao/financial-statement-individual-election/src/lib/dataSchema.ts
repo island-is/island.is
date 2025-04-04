@@ -1,14 +1,15 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { m } from './messages'
+import { m } from '../lib/messages'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { checkIfNegative } from './helpers'
+import { checkIfNegative } from '../utils/helpers'
 import {
   Override,
   NestedType,
 } from '@island.is/application/templates/family-matters-core/types'
 import { FieldBaseProps } from '@island.is/application/types'
+import { YES } from '@island.is/application/core'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -151,6 +152,7 @@ export const dataSchema = z.object({
   attachments: z.object({
     file: z.array(FileSchema).nonempty(),
   }),
+  approveOverview: z.array(z.literal(YES)).length(1),
 })
 
 export type FinancialStatementIndividualElection = z.TypeOf<typeof dataSchema>
