@@ -126,4 +126,14 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => PunishmentType, { nullable: true })
   readonly punishmentType?: PunishmentType
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isAlternativeService?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly alternativeServiceDescription?: string
 }

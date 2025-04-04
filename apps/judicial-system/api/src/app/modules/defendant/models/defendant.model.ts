@@ -120,4 +120,10 @@ export class Defendant {
 
   @Field(() => PunishmentType, { nullable: true })
   readonly punishmentType?: PunishmentType
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isAlternativeService?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly alternativeServiceDescription?: string
 }
