@@ -68,7 +68,9 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
 
   const [advertTemplateQuery] = useAdvertTemplateLazy((data) => {
     const currentAnswers = structuredClone(currentApplication.answers)
-    const html = data.officialJournalOfIcelandApplicationAdvertTemplate.html
+    const html = Buffer.from(
+      data.officialJournalOfIcelandApplicationAdvertTemplate.html,
+    ).toString('base64')
     const updatedAnswers = set(currentAnswers, InputFields.advert.html, html)
     setValue(InputFields.advert.html, html)
     updateApplication(updatedAnswers, () => setAdvertHtmlEditorKey(uuid()))
@@ -109,6 +111,8 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
       })) ?? [],
     [templateTypes],
   )
+
+  console.log(currentApplication.answers?.advert?.html)
 
   return (
     <Stack space={[2, 2, 3]}>
