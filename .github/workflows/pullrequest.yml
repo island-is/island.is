@@ -315,9 +315,6 @@ jobs:
           HEAD_LINT_COUNT: ${{steps.lint-head.outputs.lint-count}}
           BASE_LINT_COUNT: ${{steps.lint-base.outputs.lint-count}}
         run: |
-          # Divide by 2 because each problem summary occurs twice
-          HEAD_LINT_COUNT="$(( $(echo "$HEAD_LINTS" | grep -oP '(?<=✖ )(\d+)(?= problems)') / 2))"
-          BASE_LINT_COUNT="$(( $(echo "$BASE_LINTS" | grep -oP '(?<=✖ )(\d+)(?= problems)') / 2))"
           COUNT_DIFF=$(( HEAD_LINT_COUNT <= BASE_LINT_COUNT )) || :
           if [[ $COUNT_DIFF -eq 0 ]]; then
             echo "Lint count has not increased"
