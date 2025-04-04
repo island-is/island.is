@@ -245,11 +245,6 @@ jobs:
             echo IMAGES='' >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Prepare docker deps
-        id: docker-deps
-        run: |
-          ./scripts/ci/10_prepare-docker-deps.sh
-
   docker-build:
     needs:
       - pre-checks
@@ -283,6 +278,7 @@ jobs:
           echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
           echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
           echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
+          echo CACHE_IMAGE="${DOCKER_REGISTRY}/docker-cache:latest" >> "$GITHUB_ENV"
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -334,6 +330,7 @@ jobs:
             --build-arg="NX_PARALLEL=${NX_PARALLEL}"
             --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
             --build-arg="NX_TASKS_RUNNER=ci"
+            --build-arg="CACHE_IMAGE=${CACHE_IMAGE}"
           )
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
@@ -352,10 +349,10 @@ jobs:
             docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
             docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
           fi
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+      # - name: Setup yarn
+      #   uses: ./.github/actions/setup-yarn
+      #   with:
+      #     RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Building Docker images
         continue-on-error: true
@@ -370,17 +367,8 @@ jobs:
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
+          ./scripts/ci/ "90_${DOCKER_TYPE}.sh"
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
-
-      - name: Pre-build cleanup
-        run: |
-          # Clear docker system
-          docker system prune -af --volumes || true
-          # Remove any dangling images
-          docker rmi $(docker images -f "dangling=true" -q) || true
-          # Limit the build context
-          echo ".*" > .dockerignore
-          echo "!src/" >> .dockerignore
 
       # Add specific directories you need
   helm-docker-build:
