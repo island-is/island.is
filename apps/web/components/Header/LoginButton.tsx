@@ -173,6 +173,7 @@ const LoginButtonLink = (props: Props) => {
             colorScheme={props.colorScheme}
             variant="utility"
             icon="person"
+            as="span"
           >
             {t.login}
           </Button>
