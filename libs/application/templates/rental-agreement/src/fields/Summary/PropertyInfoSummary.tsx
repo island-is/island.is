@@ -24,7 +24,6 @@ import { SummaryCard } from './components/SummaryCard'
 import { fileLink, fileLinksList } from './summaryStyles.css'
 import { summary } from '../../lib/messages'
 import { FieldBaseProps } from '@island.is/application/types'
-import { sum } from 'lodash'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -124,29 +123,27 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.PropertyNumOfRoomsLabel}
-            value={
-              answers.registerProperty.searchresults?.units
-                ? sum(
-                    answers.registerProperty.searchresults.units.map(
-                      (unit) => unit.numOfRooms || 0,
-                    ),
-                  ).toString()
-                : '-'
-            }
+            value={(
+              answers.registerProperty.searchresults?.units?.reduce(
+                (total, unit) => total + (unit.numOfRooms || 0),
+                0,
+              ) || 0
+            ).toString()}
           />
         </GridColumn>
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.propertySizeLabel}
-            value={
-              answers.registerProperty.searchresults?.units
-                ? sum(
-                    answers.registerProperty.searchresults.units.map((unit) =>
-                      unit.changedSize ? unit.changedSize : unit.size,
-                    ),
-                  ).toString()
-                : '-'
-            }
+            value={(
+              answers.registerProperty.searchresults?.units?.reduce(
+                (total, unit) =>
+                  total +
+                  (unit.changedSize && unit.changedSize !== 0
+                    ? unit.changedSize
+                    : unit.size || 0),
+                0,
+              ) || 0
+            ).toString()}
           />
         </GridColumn>
       </SummaryCardRow>
