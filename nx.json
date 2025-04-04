@@ -177,6 +177,7 @@
     "CI": [
       "{workspaceRoot}/.github/actions/",
       "{workspaceRoot}/.github/workflows/",
+      "!{workspaceRoot}/.github/workflows/push.yml",
       "{workspaceRoot}/**/.dockerignore"
     ],
     "Dockerfiles": [

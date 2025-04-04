@@ -64,6 +64,7 @@ ENV CI=true \
 RUN --mount=type=secret,id=nx_cloud_access_token \
   NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
 
+# COPY ${APP_DIST_HOME} /build/
 # ------------------------------------------------
 # Minimal node base for outputs
 # ------------------------------------------------
