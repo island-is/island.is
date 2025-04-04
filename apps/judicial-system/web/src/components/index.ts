@@ -117,3 +117,5 @@ export {
 export { default as ZipButton } from './ZipButton/ZipButton'
 export { default as RequestAppealRulingNotToBePublishedCheckbox } from './RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 export { LawyerRegistryProvider } from './LawyerRegistryProvider/LawyerRegistryProvider'
+export { default as RequiredStar } from './RequiredStar/RequiredStar'
+export { VictimInfo } from './VictimInfo/VictimInfo'

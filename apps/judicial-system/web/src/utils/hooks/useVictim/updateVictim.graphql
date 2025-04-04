@@ -1,0 +1,5 @@
+mutation UpdateVictim($input: UpdateVictimInput!) {
+  updateVictim(input: $input) {
+    id
+  }
+}

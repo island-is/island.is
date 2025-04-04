@@ -36,6 +36,7 @@ import {
   PoliceModule,
   SubpoenaModule,
   UserModule,
+  VictimModule,
 } from './modules'
 
 const production = process.env.NODE_ENV === 'production'
@@ -77,6 +78,7 @@ const autoSchemaFile = production
     CmsTranslationsModule,
     PoliceModule,
     EventLogModule,
+    VictimModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
