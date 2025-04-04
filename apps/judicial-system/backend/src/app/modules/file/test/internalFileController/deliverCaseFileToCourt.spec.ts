@@ -137,20 +137,23 @@ describe('InternalFileController - Deliver case file to court', () => {
   })
 
   each`
-    caseFileCategory                                          | courtDocumentFolder
-    ${CaseFileCategory.COURT_RECORD}                          | ${CourtDocumentFolder.COURT_DOCUMENTS}
-    ${CaseFileCategory.RULING}                                | ${CourtDocumentFolder.COURT_DOCUMENTS}
-    ${CaseFileCategory.CASE_FILE}                             | ${CourtDocumentFolder.CASE_DOCUMENTS}
-    ${CaseFileCategory.PROSECUTOR_CASE_FILE}                  | ${CourtDocumentFolder.CASE_DOCUMENTS}
-    ${CaseFileCategory.DEFENDANT_CASE_FILE}                   | ${CourtDocumentFolder.CASE_DOCUMENTS}
-    ${CaseFileCategory.CRIMINAL_RECORD}                       | ${CourtDocumentFolder.CASE_DOCUMENTS}
-    ${CaseFileCategory.COST_BREAKDOWN}                        | ${CourtDocumentFolder.CASE_DOCUMENTS}
-    ${CaseFileCategory.CIVIL_CLAIM}                           | ${CourtDocumentFolder.CASE_DOCUMENTS}
-    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF}               | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE}     | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF}                | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE}      | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.APPEAL_RULING}                         | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    caseFileCategory                                                | courtDocumentFolder
+    ${CaseFileCategory.COURT_RECORD}                                | ${CourtDocumentFolder.COURT_DOCUMENTS}
+    ${CaseFileCategory.RULING}                                      | ${CourtDocumentFolder.COURT_DOCUMENTS}
+    ${CaseFileCategory.CASE_FILE}                                   | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.PROSECUTOR_CASE_FILE}                        | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.DEFENDANT_CASE_FILE}                         | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE}             | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE} | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE}       | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.CRIMINAL_RECORD}                             | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.COST_BREAKDOWN}                              | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.CIVIL_CLAIM}                                 | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF}                     | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE}           | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF}                      | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE}            | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.APPEAL_RULING}                               | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
     `.describe(
     'indictment $caseFileCategory file upload to court folder $courtDocumentFolder',
     ({ caseFileCategory, courtDocumentFolder }) => {

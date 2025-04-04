@@ -20,6 +20,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       userGeneratedFilename
       displayDate
       submittedBy
+      fileRepresentative
     }
     defendants {
       id

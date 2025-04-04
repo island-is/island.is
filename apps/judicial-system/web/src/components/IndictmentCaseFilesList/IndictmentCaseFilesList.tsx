@@ -116,8 +116,11 @@ const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
         CaseFileCategory.CRIMINAL_RECORD_UPDATE,
       ),
       uploadedCaseFiles: filterByCategories([
-        CaseFileCategory.PROSECUTOR_CASE_FILE,
-        CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_CASE_FILE, // sækjandi
+        CaseFileCategory.DEFENDANT_CASE_FILE, // verjandi
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE, // ákærði
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE, //réttargæslumaður
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE, // lögmaður
       ]),
       civilClaims: filterByCategories(CaseFileCategory.CIVIL_CLAIM),
       sentToPrisonAdminFiles: filterByCategories(
