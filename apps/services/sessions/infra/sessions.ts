@@ -24,6 +24,8 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
         prod: 'https://innskra.island.is',
       },
       REDIS_USE_SSL: 'true',
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/sessions',
+      AUDIT_SERVICE_NAME: 'services-sessions',
     })
     .readiness('/liveness')
     .liveness('/liveness')

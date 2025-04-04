@@ -19,6 +19,8 @@ global:
 name: 'services-sessions'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/sessions'
+  AUDIT_SERVICE_NAME: 'services-sessions'
   CODE_OWNER: 'aranja'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'services_sessions'

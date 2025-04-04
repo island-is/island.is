@@ -19,6 +19,8 @@ global:
 name: 'services-auth-admin-api'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/auth-admin-api'
+  AUDIT_SERVICE_NAME: 'services-auth-admin-api'
   CODE_OWNER: 'aranja'
   COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
   COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'

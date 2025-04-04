@@ -1,7 +1,7 @@
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 import { ConfigModule } from '@island.is/nest/config'
 import { emailModuleConfig } from '@island.is/email-service'
 
@@ -43,10 +43,13 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     AidModule,
     PersonalTaxReturnModule,
     ApiUserModule,
-    AuditModule.forRoot(environment.audit),
+    AuditModule.forRoot({
+      defaultNamespace: '@samband.is/financial-backend',
+      serviceName: 'financial-aid-backend'
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [emailModuleConfig],
+      load: [emailModuleConfig, AuditConfig],
     }),
   ],
 })

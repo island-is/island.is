@@ -7,14 +7,12 @@ import { CreateDraftAuthorDto } from './dto'
 import { DraftAuthorModel } from './draft_author.model'
 import { DraftAuthorService } from './draft_author.service'
 
-import { environment } from '../../../environments'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-const namespace = `${environment.audit.defaultNamespace}/draft_author`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller('api')
 @ApiTags('draft_author')
-@Audit({ namespace })
+@Audit({ namespace: '@island.is/services/regulations-admin-backend/draft_author' })
 export class DraftAuthorController {
   constructor(
     private readonly draftAuthorService: DraftAuthorService,

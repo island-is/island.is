@@ -1,11 +1,6 @@
 const isProduction = process.env.NODE_ENV === 'production'
 
 export default {
-  audit: {
-    defaultNamespace: '@island.is/sessions',
-    groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: isProduction ? 'services-sessions' : undefined,
-  },
   auth: {
     audience: '@island.is',
     issuer: isProduction

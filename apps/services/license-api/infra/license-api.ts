@@ -43,6 +43,8 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
         staging: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
         prod: 'd4ecf781-3764-4063-a4e1-9c3e17cebfba',
       },
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/license-api',
+      AUDIT_SERVICE_NAME: 'license-api',
     })
     .secrets({
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',

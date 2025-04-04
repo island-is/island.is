@@ -72,6 +72,8 @@ export const serviceSetup = (services: {
         staging: 'digitaliceland',
         dev: 'digitaliceland',
       },
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/auth/delegation-api',
+      AUDIT_SERVICE_NAME: 'services-auth-delegation-api',
     })
     .secrets({
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',

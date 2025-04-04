@@ -279,6 +279,8 @@ export const serviceSetup = (services: {
         staging: 'island-is-assistant-feedback',
         prod: 'island-is-assistant-feedback',
       },
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/api',
+      AUDIT_SERVICE_NAME: 'api',
       RANNIS_GRANTS_URL: {
         dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',

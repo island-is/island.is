@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 import { LoggingModule } from '@island.is/logging'
 
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
@@ -13,7 +13,7 @@ import { environment } from '../../environments'
 
 @Module({
   imports: [
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     LoggingModule,
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
@@ -21,7 +21,7 @@ import { environment } from '../../environments'
     SessionsModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [SessionsConfig],
+      load: [SessionsConfig, AuditConfig],
     }),
   ],
   providers: [SessionsProcessor],

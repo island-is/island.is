@@ -25,7 +25,7 @@ import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments/'
 
-const namespace = `${environment.audit.defaultNamespace}/client-grant-type`
+const namespace = `@island.is/auth-admin-api/client-grant-type`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()

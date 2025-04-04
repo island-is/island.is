@@ -57,6 +57,8 @@ export const serviceSetup =
           staging: 'digitaliceland',
           dev: 'digitaliceland',
         },
+        AUDIT_DEFAULT_NAMESPACE: '@island.is/personal-representative',
+        AUDIT_SERVICE_NAME: 'services-personal-representative',
       })
       .secrets({
         ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',

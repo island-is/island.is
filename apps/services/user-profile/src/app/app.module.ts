@@ -3,7 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { LoggingModule } from '@island.is/logging'
-import { AuditModule } from '@island.is/nest/audit'
+import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 import { ProblemModule } from '@island.is/nest/problem'
 import {
   ConfigModule,
@@ -36,9 +36,10 @@ import { UserProfileConfig } from '../config'
         UserProfileConfig,
         smsModuleConfig,
         emailModuleConfig,
+        AuditConfig
       ],
     }),
-    AuditModule.forRoot(environment.audit),
+    AuditModule,
     AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,

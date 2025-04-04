@@ -1,8 +1,5 @@
 const devConfig = {
   production: false,
-  audit: {
-    defaultNamespace: '@island.is/download',
-  },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH ?? '',
     clientId: process.env.POSTHOLF_CLIENTID ?? '',
@@ -37,11 +34,6 @@ if (process.env.NODE_ENV === 'production') {
 
 const prodConfig = {
   production: true,
-  audit: {
-    defaultNamespace: '@island.is/download',
-    groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: 'download-service',
-  },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH!,
     clientId: process.env.POSTHOLF_CLIENTID ?? '',
