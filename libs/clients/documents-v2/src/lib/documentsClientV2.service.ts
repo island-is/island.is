@@ -42,6 +42,7 @@ export class DocumentsClientV2Service {
           if (Array.isArray(obj[key]) && obj[key].length === 0) {
             continue
           }
+          sanitizedObj[key] = obj[key]
         }
       }
       return sanitizedObj
@@ -55,7 +56,6 @@ export class DocumentsClientV2Service {
         documents: [],
       }
     }
-
     const inputObject = sanitizeObject({
       ...input,
       kennitala: input.nationalId,
@@ -70,7 +70,12 @@ export class DocumentsClientV2Service {
       sortBy: input.sortBy
         ? CustomersListDocumentsSortByEnum[input.sortBy]
         : undefined,
-      opened: input.opened ? 'true' : 'false',
+      opened:
+        input.opened === true
+          ? 'true'
+          : input.opened === false
+          ? 'false'
+          : undefined,
     })
 
     const documents = await this.api.customersListDocuments(inputObject)
