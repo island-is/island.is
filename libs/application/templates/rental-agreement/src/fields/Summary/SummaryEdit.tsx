@@ -25,7 +25,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { application, field, goToScreen, setSubmitButtonDisabled } = props
   const { formatMessage } = useLocale()
 
-  const answers = application.answers as RentalAgreement
+  const answers = (application.answers as RentalAgreement) || {}
 
   const isFireProtectionsPresent =
     answers.fireProtections.smokeDetectors &&
@@ -95,7 +95,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         field={field}
         goToScreen={goToScreen}
         categoryRoute={Routes.PROPERTYCATEGORY}
-        propertyInfoRoute={Routes.PROPERTYINFORMATION}
+        propertySearchRoute={Routes.PROPERTYSEARCH}
         propertyDescriptionRoute={Routes.SPECIALPROVISIONS}
         specialProvisionsRoute={Routes.SPECIALPROVISIONS}
         propertyConditionRoute={Routes.CONDITION}
@@ -110,7 +110,6 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         route={Routes.OTHERFEES}
         hasChangeButton={true}
       />
-
       {!isFireProtectionsPresent ||
       !isConditionPresent ||
       !isOtherFeesPresent ? (

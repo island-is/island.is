@@ -23,7 +23,7 @@ export enum Routes {
   LANDLORDINFORMATION = 'landlordInfo',
   TENANTINFORMATION = 'tenantInfo',
   PROPERTYINFORMATION = 'registerProperty.info',
-  PROPERTYINFORMATION_SEARCH = 'registerProperty.search',
+  PROPERTYSEARCH = 'registerProperty.searchresults',
   PROPERTYCATEGORY = 'registerProperty.category',
   SPECIALPROVISIONS = 'specialProvisions',
   CONDITION = 'condition',

@@ -1,48 +1,45 @@
 import { defineMessages } from 'react-intl'
 
 export const registerProperty = {
-  subsection: defineMessages({
-    name: {
-      id: 'ra.application:registerProperty.subSection.name',
-      defaultMessage: 'Skrá húsnæði',
-      description: 'Register property subsection name',
+  search: defineMessages({
+    subsectionName: {
+      id: 'ra.application:registerProperty.search.subSectionName',
+      defaultMessage: 'Húsnæðið',
+      description: 'Register property sub section name',
     },
-  }),
-
-  info: defineMessages({
     pageTitle: {
-      id: 'ra.application:registerProperty.info.pageTitle',
+      id: 'ra.application:registerProperty.search.pageTitle',
       defaultMessage: 'Húsnæðið',
       description: 'Register property page title',
     },
     pageDescription: {
-      id: 'ra.application:registerProperty.info.pageDescription',
+      id: 'ra.application:registerProperty.search.pageDescription',
       defaultMessage:
-        'Finndu eignina með fasteignanúmeri eða heimilisfangi. Nánari upplýsingar er að finna í [fasteignaskrá HMS](https://leit.fasteignaskra.is/).',
+        'Finndu eignina með heimilisfangi. Nánari upplýsingar er að finna í [fasteignaskrá HMS](https://leit.fasteignaskra.is/).',
       description: 'Register property page description',
     },
     propertySearchPlaceholder: {
-      id: 'ra.application:registerProperty.info.propertySearchPlaceholder',
-      defaultMessage: 'Leitaðu eftir heimilisfangi',
+      id: 'ra.application:registerProperty.search.propertySearchPlaceholder',
+      defaultMessage: 'Leitaðu að fasteign eftir heimilisfangi',
       description: 'Placeholder for property search',
     },
     searchResultHeaderPropertyId: {
-      id: 'ra.application:registerProperty.info.searchResultHeaderPropertyId',
+      id: 'ra.application:registerProperty.search.searchResultHeaderPropertyId',
       defaultMessage: 'Fasteignanúmer',
       description: 'Search result header for property number',
     },
     searchResultHeaderMarking: {
-      id: 'ra.application:registerProperty.info.searchResultHeaderMarking',
+      id: 'ra.application:registerProperty.search.searchResultHeaderMarking',
       defaultMessage: 'Merking',
       description: 'Search result header for "merking"',
     },
     searchResultHeaderPropertySize: {
-      id: 'ra.application:registerProperty.info.searchResultHeaderPropertySize',
+      id: 'ra.application:registerProperty.search.searchResultHeaderPropertySize',
       defaultMessage: 'Stærð',
       description: 'Search result header for property size',
     },
     searchResultsHeaderNumOfRooms: {
-      id: 'ra.application:registerProperty.info.searchResultsHeaderNumOfRooms',
+      id: 'ra.application:registerProperty.search.searchResultsHeaderNumOfRooms',
       defaultMessage: 'Herbergi',
       description: 'Search result header for number of rooms',
     },
@@ -59,42 +56,53 @@ export const registerProperty = {
         'Skráning leiguhúsnæðis þarf að vera til staðar til að halda áfram',
       description: 'Error message when no search results',
     },
+    numOfRoomsMinimumError: {
+      id: 'ra.application:registerProperty.category.numOfRoomsMinimumError',
+      defaultMessage: 'Valdar einingar þurfa að vera samtals a.m.k. 1 herbergi',
+      description:
+        'Error message when number of rooms is less than one in search results',
+    },
   }),
 
-  infoSummary: defineMessages({
+  info: defineMessages({
+    subsectionName: {
+      id: 'ra.application:registerProperty.info.subSectionName',
+      defaultMessage: 'Skrá húsnæði',
+      description: 'Register property sub section name',
+    },
     pageTitle: {
-      id: 'ra.application:registerProperty.infoSummary.pageTitle',
+      id: 'ra.application:registerProperty.info.pageTitle',
       defaultMessage: 'Húsnæðið',
       description: 'Property info summary page title',
     },
     pageDescription: {
-      id: 'ra.application:registerProperty.infoSummary.pageDescription',
+      id: 'ra.application:registerProperty.info.pageDescription',
       defaultMessage:
         'Eftirtaldar upplýsingar eru samantekt af skráningu frá fyrra skrefi. Farðu vel yfir skráninguna til að vera viss um að allar upplýsingar séu réttar. Þú getur farið til baka til að breyta upplýsingum.',
       description: 'Property info summary page description',
     },
     propertyAddressAnswer: {
-      id: 'ra.application:registerProperty.infoSummary.propertyAddressAnswer',
+      id: 'ra.application:registerProperty.info.propertyAddressAnswer',
       defaultMessage: '{propertyAddress}',
       description: 'Property address from search result',
     },
     tableHeaderUsablity: {
-      id: 'ra.application:registerProperty.infoSummary.tableHeaderUsablity',
+      id: 'ra.application:registerProperty.info.tableHeaderUsablity',
       defaultMessage: 'Notkun',
       description: 'Summary table header for property number',
     },
     tableHeaderUnitId: {
-      id: 'ra.application:registerProperty.infoSummary.tableHeaderUnitId',
+      id: 'ra.application:registerProperty.info.tableHeaderUnitId',
       defaultMessage: 'Merking',
       description: 'Summary table header for property unit id',
     },
     tableHeaderSize: {
-      id: 'ra.application:registerProperty.infoSummary.tableHeaderSize',
+      id: 'ra.application:registerProperty.info.tableHeaderSize',
       defaultMessage: 'Stærð',
       description: 'Summary table header for size',
     },
-    tableHeaderNumOfRooms: {
-      id: 'ra.application:registerProperty.infoSummary.tableHeaderNumOfRooms',
+    tableHeaderNumberOfRooms: {
+      id: 'ra.application:registerProperty.info.tableHeaderNumberOfRooms',
       defaultMessage: 'Herbergi',
       description: 'Summary table header for number of rooms',
     },

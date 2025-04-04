@@ -169,40 +169,44 @@ const tenantInfo = z
     // }
   })
 
+const searchResults = z
+  .object({
+    label: z.string().optional(),
+    units: z
+      .array(
+        z.object({
+          size: z.number().optional(),
+          address: z.string().optional(),
+          checked: z.boolean().optional(),
+          sizeUnit: z.string().optional(),
+          unitCode: z.string().optional(),
+          addressCode: z.number().optional(),
+          propertyCode: z.number().optional(),
+          propertyValue: z.number().optional(),
+          appraisalUnitCode: z.number().optional(),
+          fireInsuranceValuation: z.number().optional(),
+          propertyUsageDescription: z.string().optional(),
+          numOfRooms: z.number().optional(),
+          changedSize: z.number().optional(),
+        }),
+      )
+      .optional(),
+    value: z.string().optional(),
+    address: z.string().optional(),
+    landCode: z.number().optional(),
+    postalCode: z.number().optional(),
+    streetName: z.string().optional(),
+    addressCode: z.number().optional(),
+    checkedUnits: z.object({}).optional(),
+    streetNumber: z.number().optional(),
+    municipalityCode: z.number().optional(),
+    municipalityName: z.string().optional(),
+  })
+  .optional()
+
 const registerProperty = z
   .object({
-    searchresults: z
-      .object({
-        label: z.string().optional(),
-        units: z
-          .array(
-            z.object({
-              size: z.number().optional(),
-              address: z.string().optional(),
-              checked: z.boolean().optional(),
-              sizeUnit: z.string().optional(),
-              unitCode: z.string().optional(),
-              addressCode: z.number().optional(),
-              propertyCode: z.number().optional(),
-              propertyValue: z.number().optional(),
-              appraisalUnitCode: z.number().optional(),
-              fireInsuranceValuation: z.number().optional(),
-              propertyUsageDescription: z.string().optional(),
-            }),
-          )
-          .optional(),
-        value: z.string().optional(),
-        address: z.string().optional(),
-        landCode: z.number().optional(),
-        postalCode: z.number().optional(),
-        streetName: z.string().optional(),
-        addressCode: z.number().optional(),
-        checkedUnits: z.object({}).optional(),
-        streetNumber: z.number().optional(),
-        municipalityCode: z.number().optional(),
-        municipalityName: z.string().optional(),
-      })
-      .optional(),
+    searchresults: searchResults,
     categoryType: z
       .enum([
         RentalHousingCategoryTypes.ENTIRE_HOME,
@@ -227,16 +231,20 @@ const registerProperty = z
       .optional(),
   })
   .superRefine((data, ctx) => {
-    if (
-      data.categoryClass === RentalHousingCategoryClass.SPECIAL_GROUPS &&
-      !data.categoryClassGroup
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.registerProperty.category.classGroupRequiredError,
-        path: ['categoryClassGroup'],
-      })
+    // TODO: Fix this! Not rendering error message on the page, only in console
+    if (data?.searchresults?.units && data.searchresults.units.length > 0) {
+      const totalRooms = data.searchresults.units.reduce(
+        (sum, unit) => sum + (unit.numOfRooms || 0),
+        0,
+      )
+      if (totalRooms < 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.registerProperty.search.numOfRoomsMinimumError,
+          path: ['registerProperty.searchResults'],
+        })
+      }
     }
   })
 
@@ -244,11 +252,21 @@ const specialProvisions = z
   .object({
     descriptionInput: z.string().optional(),
     rulesInput: z.string().optional(),
-    // This field is only available when descriptionInput is required
-    descriptionInputRequired: z.boolean().optional(),
+    // Watched field
+    propertySearchUnits: z
+      .array(
+        z.object({
+          size: z.number().optional(),
+          changedSize: z.number().optional(),
+        }),
+      )
+      .optional(),
   })
   .superRefine((data, ctx) => {
-    if (data?.descriptionInputRequired && !data.descriptionInput) {
+    const anyUnitSizeChanged = data.propertySearchUnits?.some((unit) => {
+      return (unit.changedSize && unit.changedSize !== unit.size) || false
+    })
+    if (anyUnitSizeChanged && !data.descriptionInput) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
