@@ -2,8 +2,8 @@ import { Box, ContentBlock, AlertMessage } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import format from 'date-fns/format'
-import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema'
-import { m } from '../../lib/utils/messages'
+import { FinancialStatementIndividualElection } from '../../lib/dataSchema'
+import { m } from '../../lib/messages'
 
 export const Success = ({ application }: FieldBaseProps) => {
   const applicationAnswers =
