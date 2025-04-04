@@ -10,7 +10,7 @@ export const actionCardSubsection = buildSubSection({
     buildActionCardListField({
       id: 'actionCardList',
       title: 'Action cards with buttons',
-      items: (application, lang) => {
+      items: (application, lang, userNationalId) => {
         return [
           {
             eyebrow: 'Card eyebrow',

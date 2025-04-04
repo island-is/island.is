@@ -24,7 +24,7 @@ import { FormatInputValueFunction } from 'react-number-format'
 import React, { CSSProperties } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
-import { Locale } from '@island.is/shared/types'
+import { BffUser, Locale } from '@island.is/shared/types'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((application: Application) => T)
@@ -688,6 +688,7 @@ export type ActionCardListField = BaseField & {
   items: (
     application: Application,
     lang: Locale,
+    userNationalId: string,
   ) => ApplicationActionCardProps[]
   space?: BoxProps['paddingTop']
 }
@@ -947,6 +948,7 @@ export interface OverviewField extends BaseField {
   items?: (
     answers: FormValue,
     externalData: ExternalData,
+    userNationalId: string,
   ) => Array<KeyValueItem>
   attachments?: (
     answers: FormValue,

@@ -17,31 +17,49 @@ import { getMachineTenureOverviewInformation } from '../../utils/getMachineTenur
 
 export const reviewOverviewSection = buildSection({
   id: 'reviewOverviewSection',
-  title: overview.general.sectionTitle,
+  title: '',
   children: [
     buildMultiField({
       id: 'reviewOverviewSection.multiField',
-      title: overview.general.pageTitle,
+      title: overview.general.pageTitleAssignee,
       description: overview.general.descriptionAssignee,
       children: [
         buildOverviewField({
           id: 'overviewApplicant',
           title: '',
           bottomLine: false,
-          items: (answers, externalData) =>
-            getApplicantOverviewInformation(answers, externalData, true),
+          items: (answers, externalData, userNationalId) =>
+            getApplicantOverviewInformation(
+              answers,
+              externalData,
+              userNationalId,
+              true,
+            ),
         }),
         buildOverviewField({
           id: 'overviewMachineTenure',
           title: '',
           bottomLine: false,
-          items: getMachineTenureOverviewInformation,
+          width: 'half',
+          items: (answers, externalData, userNationalId) =>
+            getMachineTenureOverviewInformation(
+              answers,
+              externalData,
+              userNationalId,
+              true,
+            ),
         }),
         buildOverviewField({
           id: 'overviewAssignee',
           title: '',
           bottomLine: false,
-          items: getAssigneeOverviewInformation,
+          items: (answers, externalData, userNationalId) =>
+            getAssigneeOverviewInformation(
+              answers,
+              externalData,
+              userNationalId,
+              true,
+            ),
           condition: (answers) => !isContractor(answers),
         }),
         buildHiddenInput({

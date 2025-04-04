@@ -8,23 +8,32 @@ import { overview } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { formatPhoneNumber } from './formatPhoneNumber'
 import { TrainingLicenseOnAWorkMachineAnswers } from '../lib/dataSchema'
+import { getUserInfo } from './getUserInfo'
 
 export const getAssigneeOverviewInformation = (
   answers: FormValue,
   _externalData: ExternalData,
+  userNationalId: string,
+  isAssignee?: boolean,
 ): Array<KeyValueItem> => {
   const assigneeInformation = getValueViaPath<
     TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
   >(answers, 'assigneeInformation')
+  const userInfo = getUserInfo(answers, userNationalId)
 
   return (
-    assigneeInformation?.companyAndAssignee?.map(
-      ({ company, assignee, workMachine }, index) => ({
+    assigneeInformation?.companyAndAssignee
+      ?.filter(({ assignee }) =>
+        isAssignee
+          ? assignee.nationalId === userInfo?.assignee.nationalId
+          : true,
+      )
+      .map(({ company, assignee, workMachine }, index) => ({
         width: 'full',
         keyText: {
           ...overview.labels.assignee,
           values: {
-            value: index + 1,
+            value: isAssignee ? '' : index + 1,
           },
         },
         valueText: [
@@ -71,7 +80,6 @@ export const getAssigneeOverviewInformation = (
             },
           },
         ],
-      }),
-    ) ?? []
+      })) ?? []
   )
 }

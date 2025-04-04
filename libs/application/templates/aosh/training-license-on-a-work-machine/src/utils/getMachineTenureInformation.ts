@@ -7,62 +7,70 @@ import {
 import { overview } from '../lib/messages'
 import { formatDate } from './formatDate'
 import { TrainingLicenseOnAWorkMachineAnswers } from '../lib/dataSchema'
+import { getUserInfo } from './getUserInfo'
 
 export const getMachineTenureOverviewInformation = (
   answers: FormValue,
   _externalData: ExternalData,
+  userNationalId: string,
+  isAssignee?: boolean,
 ): Array<KeyValueItem> => {
   const certificateOfTenure = getValueViaPath<
     TrainingLicenseOnAWorkMachineAnswers['certificateOfTenure']
   >(answers, 'certificateOfTenure')
+  const userInfo = getUserInfo(answers, userNationalId)
 
   return (
-    certificateOfTenure?.map(
-      ({
-        machineNumber,
-        machineType,
-        dateFrom,
-        dateTo,
-        tenureInHours,
-        practicalRight,
-      }) => ({
-        width: 'full',
-        keyText: machineType,
-        valueText: [
-          {
-            ...overview.certificateOfTenure.machineNumber,
-            values: {
-              value: machineNumber,
+    certificateOfTenure
+      ?.filter(({ machineNumber }) =>
+        isAssignee ? userInfo?.workMachine.includes(machineNumber) : true,
+      )
+      .map(
+        ({
+          machineNumber,
+          machineType,
+          dateFrom,
+          dateTo,
+          tenureInHours,
+          practicalRight,
+        }) => ({
+          width: 'full',
+          keyText: machineType,
+          valueText: [
+            {
+              ...overview.certificateOfTenure.machineNumber,
+              values: {
+                value: machineNumber,
+              },
             },
-          },
-          {
-            ...overview.certificateOfTenure.machineType,
-            values: {
-              value: machineType,
+            {
+              ...overview.certificateOfTenure.machineType,
+              values: {
+                value: machineType,
+              },
             },
-          },
-          {
-            ...overview.certificateOfTenure.practicalRight,
-            values: {
-              value: practicalRight,
+            {
+              ...overview.certificateOfTenure.practicalRight,
+              values: {
+                value: practicalRight,
+              },
             },
-          },
-          {
-            ...overview.certificateOfTenure.tenureInHours,
-            values: {
-              value: tenureInHours,
+            {
+              ...overview.certificateOfTenure.tenureInHours,
+              values: {
+                value: tenureInHours,
+              },
             },
-          },
-          {
-            ...overview.certificateOfTenure.period,
-            values: {
-              value: `${formatDate(dateFrom ?? '')}-${formatDate(
-                dateTo ?? '',
-              )}`,
+            {
+              ...overview.certificateOfTenure.period,
+              values: {
+                value: `${formatDate(dateFrom ?? '')}-${formatDate(
+                  dateTo ?? '',
+                )}`,
+              },
             },
-          },
-        ],
-      }),
-    ) ?? []
+          ],
+        }),
+      ) ?? []
   )
 }

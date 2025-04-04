@@ -24,6 +24,11 @@ export const overview = {
       defaultMessage: 'Yfirlit skráningar',
       description: 'Title of overview section',
     },
+    pageTitleAssignee: {
+      id: 'aosh.tlwm.application:overview.general.pageTitleAssignee',
+      defaultMessage: 'Upplýsingar um skráningu',
+      description: 'Title of overview section for assignee',
+    },
     agreementText: {
       id: 'aosh.tlwm.application:overview.general.agreementText',
       defaultMessage:
@@ -54,12 +59,12 @@ export const overview = {
     },
     applicant: {
       id: 'aosh.tlwm.application:overview.labels.applicant',
-      defaultMessage: 'Umsækjandi (skráningaraðili)',
+      defaultMessage: 'Umsækjandi',
       description: 'Applicant label on overview page',
     },
     machineTenure: {
       id: 'aosh.tlwm.application:overview.labels.machineTenure',
-      defaultMessage: 'Skráður starfstími á vinnuvél (Vottorð um starfstíma)',
+      defaultMessage: 'Starfstími á vinnuvél',
       description: 'Machine tenure label on overview page',
     },
     assignee: {

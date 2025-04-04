@@ -11,6 +11,7 @@ import { formatPhoneNumber } from './formatPhoneNumber'
 export const getApplicantOverviewInformation = (
   answers: FormValue,
   _externalData: ExternalData,
+  userNationalId: string,
   isAssignee?: boolean,
 ): Array<KeyValueItem> => {
   const applicantNationalId = getValueViaPath<string>(
