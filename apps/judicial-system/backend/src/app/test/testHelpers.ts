@@ -31,8 +31,7 @@ export const verifyGuards = (
           guard = new guards[index]()
         })
 
-        const testDescription = `should be guard at position ${index + 1}`
-        it(testDescription, () => {
+        it(`should be guard at position ${index + 1}`, () => {
           expect(guard).toBeInstanceOf(ExpectedGuard)
         })
       })

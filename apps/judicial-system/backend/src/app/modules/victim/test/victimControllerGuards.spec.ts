@@ -25,8 +25,5 @@ describe('VictimController - Update', () => {
 })
 
 describe('VictimController - Delete', () => {
-  verifyGuards(VictimController, 'delete', [
-    VictimWriteGuard,
-    ValidateVictimGuard,
-  ])
+  verifyGuards(VictimController, 'delete', [VictimWriteGuard])
 })
