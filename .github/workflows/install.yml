@@ -11,7 +11,7 @@ on:
         default: 'main'
         type: string
       run_merge_queue:
-        description: 'Should the merge que step run'
+        description: 'Should the merge queue step run'
         required: false
         type: boolean
         default: false

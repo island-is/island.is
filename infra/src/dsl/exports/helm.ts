@@ -19,10 +19,11 @@ export const renderHelmValueFileContent = async (
   habitat: ServiceBuilder<any>[],
   services: ServiceBuilder<any>[],
   withMocks: Mocks,
+  skipAppName: boolean = false,
 ) => {
   return dumpServiceHelm(
     env,
-    await renderHelmServiceFile(env, habitat, services, withMocks),
+    await renderHelmServiceFile(env, habitat, services, withMocks, skipAppName),
   )
 }
 
@@ -31,6 +32,7 @@ export const renderHelmServiceFile = async (
   habitat: ServiceBuilder<any>[],
   services: ServiceBuilder<any>[],
   withMocks: Mocks,
+  skipAppName: boolean = false,
 ) => {
   const { services: renderedServices, runtime } = await renderHelmServices(
     env,
@@ -38,7 +40,13 @@ export const renderHelmServiceFile = async (
     services,
     withMocks,
   )
-  return getHelmValueFile(runtime, renderedServices, withMocks, env)
+  return getHelmValueFile(
+    runtime,
+    renderedServices,
+    withMocks,
+    env,
+    skipAppName,
+  )
 }
 export const renderHelmServices = async (
   env: EnvironmentConfig,
