@@ -1,15 +1,14 @@
 import { DistrictCommissionersLicenseStatus } from '@island.is/clients/district-commissioners-licenses'
 import { Status } from './models/licenseStatus.model'
-
-export type LicenseType = 'Education' | 'Health' | 'DistrictCommissioners'
+import { LicenseType } from './models/licenseType.model'
 
 export const addLicenseTypePrefix = (id: string, type: LicenseType) => {
   switch (type) {
-    case 'DistrictCommissioners':
+    case LicenseType.DISTRICT_COMMISSIONERS:
       return 'D' + id
-    case 'Education':
+    case LicenseType.EDUCATION:
       return 'E' + id
-    case 'Health':
+    case LicenseType.HEALTH_DIRECTORATE:
       return 'H' + id
     default:
       throw new Error('Invalid license type')
@@ -22,13 +21,13 @@ export const getLicenseTypeByIdPrefix = (
   let type: LicenseType | undefined
 
   if (id.startsWith('D')) {
-    type = 'DistrictCommissioners'
+    type = LicenseType.DISTRICT_COMMISSIONERS
   }
   if (id.startsWith('E')) {
-    type = 'Education'
+    type = LicenseType.EDUCATION
   }
   if (id.startsWith('H')) {
-    type = 'Health'
+    type = LicenseType.HEALTH_DIRECTORATE
   }
 
   if (!type) {

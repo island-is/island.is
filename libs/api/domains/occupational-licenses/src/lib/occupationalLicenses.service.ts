@@ -64,7 +64,10 @@ export class OccupationalLicensesService {
               return
             }
             return {
-              licenseId: addLicenseTypePrefix(l.id, 'DistrictCommissioners'),
+              licenseId: addLicenseTypePrefix(
+                l.id,
+                LicenseType.DISTRICT_COMMISSIONERS,
+              ),
               type: LicenseType.DISTRICT_COMMISSIONERS,
               issuer: l.issuerId,
               issuerTitle: l.issuerTitle,
@@ -101,7 +104,7 @@ export class OccupationalLicensesService {
       license: {
         licenseId: addLicenseTypePrefix(
           license.licenseInfo.id,
-          'DistrictCommissioners',
+          LicenseType.DISTRICT_COMMISSIONERS,
         ),
         type: LicenseType.DISTRICT_COMMISSIONERS,
         licenseHolderName: license.holderName,
@@ -258,7 +261,10 @@ export class OccupationalLicensesService {
     const organization: OrganizationSlugType = 'landlaeknir'
 
     return {
-      licenseId: addLicenseTypePrefix(data.id.toString(), 'Health'),
+      licenseId: addLicenseTypePrefix(
+        data.id.toString(),
+        LicenseType.HEALTH_DIRECTORATE,
+      ),
       licenseNumber: data.licenseNumber,
       type: LicenseType.HEALTH_DIRECTORATE,
       legalEntityId: data.legalEntityId,
@@ -276,7 +282,7 @@ export class OccupationalLicensesService {
   mapEducationLicense = (data: MMSLicenseResponse) => {
     const issuer: OrganizationSlugType = 'haskoli-islands'
     return {
-      licenseId: addLicenseTypePrefix(data.id, 'Education'),
+      licenseId: addLicenseTypePrefix(data.id, LicenseType.EDUCATION),
       type: LicenseType.EDUCATION,
       issuer,
       issuerTitle: data.issuer,

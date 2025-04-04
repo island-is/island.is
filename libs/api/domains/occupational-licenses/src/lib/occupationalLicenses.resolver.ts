@@ -11,6 +11,7 @@ import { LicenseResponse } from './models/licenseResponse.model'
 import { LicenseResult } from './models/licenseResult.model'
 import { isDefined } from '@island.is/shared/utils'
 import { OccupationalLicensesService } from './occupationalLicenses.service'
+import { LicenseType } from './models/licenseType.model'
 
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/occupational-licenses' })
@@ -61,19 +62,19 @@ export class OccupationalLicensesResolver {
     }
 
     switch (licenseType.type) {
-      case 'DistrictCommissioners':
+      case LicenseType.DISTRICT_COMMISSIONERS:
         return this.service.getDistrictCommissionerLicenseById(
           user,
           licenseType.licenseId,
           input.locale,
         )
-      case 'Education':
+      case LicenseType.EDUCATION:
         return this.service.getEducationLicenseById(
           user,
           input.locale,
           licenseType.licenseId,
         )
-      case 'Health':
+      case LicenseType.HEALTH_DIRECTORATE:
         return this.service.getHealthDirectorateLicenseById(
           user,
           licenseType.licenseId,
