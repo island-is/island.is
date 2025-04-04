@@ -2,40 +2,45 @@
 # Shared arguments (for images that need them early)
 # ------------------------------------------------
 ARG PLAYWRIGHT_VERSION
-
+ARG CACHE_IMAGE=821090935708.dkr.ecr.eu-west-1.amazonaws.com/docker-cache:latest
 # ------------------------------------------------
 # Dependencies stage (no app-specific args)
 # ------------------------------------------------
 FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS base
 
+# Minimize image size by combining apt commands and cleaning up
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
   apt-get update && \
-  apt-get install -y \
+  apt-get install -y --no-install-recommends \
   git \
   python3 \
   build-essential \
   jq \
   gcc && \
-  ln -sf /usr/bin/python3 /usr/bin/python
-
+  ln -sf /usr/bin/python3 /usr/bin/python && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
 
 FROM base AS deps
 
 WORKDIR /build
 
+# Only copy what's needed for dependency installation
 COPY .yarnrc.yml package.json yarn.lock ./
 COPY .yarn/patches .yarn/patches
 COPY .yarn/releases .yarn/releases
 COPY apps/native/app/package.json ./apps/native/app/
 
+# Use pruned installations for yarn berry
 RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
-  yarn install --immutable
+  yarn install --immutable && \
+  yarn cache clean
 
 # ------------------------------------------------
 # Copy monorepo source
 # ------------------------------------------------
-FROM deps AS src
+FROM ${CACHE_IMAGE} AS src
 
 COPY . .
 

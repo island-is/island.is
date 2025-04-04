@@ -94,7 +94,7 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
-    runs-on: arc-runners
+    runs-on: arc-shared
     permissions:
       contents: 'read'
       actions: 'read'
