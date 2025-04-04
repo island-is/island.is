@@ -10,9 +10,9 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     .image(serviceName)
     .namespace(serviceName)
     .codeOwner(CodeOwners.Advania)
+    .redis()
     .db()
     .migrations()
-    .seed()
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',

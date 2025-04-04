@@ -8,12 +8,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   CardLoader,
-  IntroHeader,
   IntroWrapper,
   LinkButton,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
-import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { isDefined } from '@island.is/shared/utils'
 import { useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'

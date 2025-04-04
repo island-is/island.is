@@ -5,7 +5,6 @@ import { Box } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
   ContentLanguage,
-  CustomPageUniqueIdentifier,
   Query,
   QueryGetOrganizationArgs,
 } from '@island.is/web/graphql/schema'
@@ -15,11 +14,9 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import { OJOIWrapper } from '../../components/OfficialJournalOfIceland'
-import {
-  CustomScreen,
-  withCustomPageWrapper,
-} from '../CustomPage/CustomPageWrapper'
+import { CustomScreen, withCustomSubpageWrapper } from '../CustomPage'
 import { GET_ORGANIZATION_QUERY } from '../queries'
+import { OJOI_BASE_CMS_ID, ORGANIZATION_SLUG } from './constants'
 import { m } from './messages'
 
 interface OJOIHelpProps {
@@ -62,15 +59,13 @@ const OJOIHelp: CustomScreen<OJOIHelpProps> = ({
 }
 
 OJOIHelp.getProps = async ({ apolloClient, locale }) => {
-  const organizationSlug = 'stjornartidindi'
-
   const {
     data: { getOrganization },
   } = await apolloClient.query<Query, QueryGetOrganizationArgs>({
     query: GET_ORGANIZATION_QUERY,
     variables: {
       input: {
-        slug: organizationSlug,
+        slug: ORGANIZATION_SLUG,
         lang: locale as ContentLanguage,
       },
     },
@@ -91,8 +86,5 @@ OJOIHelp.getProps = async ({ apolloClient, locale }) => {
 }
 
 export default withMainLayout(
-  withCustomPageWrapper(
-    CustomPageUniqueIdentifier.OfficialJournalOfIcelandHelp,
-    OJOIHelp,
-  ),
+  withCustomSubpageWrapper(OJOI_BASE_CMS_ID, 'leidbeiningar', OJOIHelp),
 )

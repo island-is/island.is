@@ -52,6 +52,8 @@ export enum Features {
   healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
   isIDSAdminSsoSettingEnabled = 'isIDSAdminSsoSettingEnabled',
 
+  isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
+
   //Occupational License Health directorate fetch enabled
   occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
 
