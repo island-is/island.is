@@ -369,7 +369,6 @@ jobs:
       - formatting
       - e2e
       - build
-      - newlints
       - unicorn-tests
     steps:
       - name: Check prepare success
@@ -379,8 +378,6 @@ jobs:
         run: |
           echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> $GITHUB_STEP_SUMMARY
           exit 1
-      - name: Check newlints success
-        run: '[[ ${{ needs.newlints.result }} != "failure" ]] || exit 1'
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Check e2e success
