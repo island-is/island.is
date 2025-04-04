@@ -8,7 +8,12 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { assigneeInformation } from '../../lib/messages'
-import { isContractor, isSameAsApplicant } from '../../utils'
+import {
+  getInvalidWorkMachines,
+  getMissingWorkMachines,
+  isContractor,
+  isSameAsApplicant,
+} from '../../utils'
 import { TrainingLicenseOnAWorkMachineAnswers } from '../../lib/dataSchema'
 import { filterWorkMachineOptions } from '../../utils/filterWorkMachineOptions'
 
@@ -137,6 +142,46 @@ export const assigneeInformationSection = buildSection({
           doesNotRequireAnswer: true,
           alertType: 'info',
           condition: isContractor,
+        }),
+        buildAlertMessageField({
+          id: 'assigneeInformation.missingWorkMachineAlert',
+          message: (application) => {
+            return {
+              ...assigneeInformation.labels.missingWorkMachineAlert,
+              values: {
+                value: getMissingWorkMachines(application.answers).join(', '),
+              },
+            }
+          },
+          doesNotRequireAnswer: true,
+          alertType: 'error',
+          condition: (answers) => {
+            return (
+              !isContractor(answers) &&
+              getMissingWorkMachines(answers).length > 0
+            )
+          },
+          shouldBlockSubmitIfError: true,
+        }),
+        buildAlertMessageField({
+          id: 'assigneeInformation.invalidWorkMachineAlert',
+          message: (application) => {
+            return {
+              ...assigneeInformation.labels.invalidWorkMachineAlert,
+              values: {
+                value: getInvalidWorkMachines(application.answers).join(', '),
+              },
+            }
+          },
+          doesNotRequireAnswer: true,
+          alertType: 'error',
+          condition: (answers) => {
+            return (
+              !isContractor(answers) &&
+              getInvalidWorkMachines(answers).length > 0
+            )
+          },
+          shouldBlockSubmitIfError: true,
         }),
       ],
     }),

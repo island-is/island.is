@@ -86,5 +86,17 @@ export const assigneeInformation = {
         'Staðfestingaraðili má ekki vera sá sami og umsækjandi. Ef að þú ert verktaki/sjálfstætt starfandi þá biðjum við þig um að haka í reitin hér fyrir ofan.',
       description: `Assignee information same as applicant alert`,
     },
+    missingWorkMachineAlert: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.missingWorkMachineAlert',
+      defaultMessage:
+        'Það vantar að velja staðfestingaraðila fyrir eftirfarandi vinnuvélar: {value}',
+      description: `Assignee information missing work machine alert`,
+    },
+    invalidWorkMachineAlert: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.invalidWorkMachineAlert',
+      defaultMessage:
+        'Búið er að fjarlægja eftirfarandi vinnuvélar og þarf því að uppfæra upplýsingar: {value}',
+      description: `Assignee information invalid work machine alert`,
+    },
   }),
 }

@@ -603,6 +603,7 @@ export interface AlertMessageField extends BaseField {
   alertType?: AlertType
   message?: FormTextWithLocale
   links?: AlertMessageLink[]
+  shouldBlockSubmitIfError?: boolean
 }
 
 export interface LinkField extends BaseField {
