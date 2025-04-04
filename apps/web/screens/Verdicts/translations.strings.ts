@@ -12,15 +12,55 @@ export const m = {
       defaultMessage: 'Dómar frá öllum dómstigum á Íslandi',
       description: 'Lýsing',
     },
+    openFilter: {
+      id: 'web.verdicts:listPage.openFilter',
+      defaultMessage: 'Opna síu',
+      description: 'Opna síu',
+    },
+    closeFilter: {
+      id: 'web.verdicts:listPage.closeFilter',
+      defaultMessage: 'Loka síu',
+      description: 'Loka síu',
+    },
+    viewResults: {
+      id: 'web.verdicts:listPage.viewResults',
+      defaultMessage: 'Skoða niðurstöður',
+      description: 'Skoða niðurstöður',
+    },
     showAllCourts: {
       id: 'web.verdicts:listPage.showAllCourts',
       defaultMessage: 'Sýna allt',
       description: 'Sýna allt',
     },
+    clearFilter: {
+      id: 'web.verdicts:listPage.clearFilter',
+      defaultMessage: 'Hreinsa síu',
+      description: 'Hreinsa síu',
+    },
     showDistrictCourts: {
       id: 'web.verdicts:listPage.showDistrictCourts',
       defaultMessage: 'Héraðsdómstólar',
       description: 'Héraðsdómstólar',
+    },
+    caseNumberInputLabel: {
+      id: 'web.verdicts:listPage.caseNumberInputLabel',
+      defaultMessage: 'Sláðu inn málsnúmer',
+      description: 'Málsnúmer (label á málsnúmer input)',
+    },
+    caseNumberSelectLabel: {
+      id: 'web.verdicts:listPage.caseNumberSelectLabel',
+      defaultMessage: 'Málsnúmer',
+      description: 'Málsnúmer (label á málsnúmer select einingu)',
+    },
+    lawsSelectLabel: {
+      id: 'web.verdicts:listPage.lawsSelectLabel',
+      defaultMessage: 'Lagagreinar',
+      description: 'Label á "Lagagreinar" select einingu',
+    },
+    lawsInputLabel: {
+      id: 'web.verdicts:listPage.lawsInputLabel',
+      defaultMessage: 'Sláðu inn lagagrein',
+      description: 'Label á "Lagagreinar" input',
     },
     showCourtOfAppeal: {
       id: 'web.verdicts:listPage.showCourtOfAppeal',
@@ -42,10 +82,60 @@ export const m = {
       defaultMessage: 'Reifun',
       description: 'Reifun',
     },
+    revealPresentings: {
+      id: 'web.verdicts:listPage.revealPresentings',
+      defaultMessage: 'Sjá reifun',
+      description: 'Sjá reifun',
+    },
+    hidePresentings: {
+      id: 'web.verdicts:listPage.hidePresentings',
+      defaultMessage: 'Fela reifun',
+      description: 'Fela reifun',
+    },
     courtSelectLabel: {
       id: 'web.verdicts:listPage.courtSelectLabel',
       defaultMessage: 'Veldu dómstól',
       description: 'Label á dómstól select einingu',
+    },
+    keywordSelectLabel: {
+      id: 'web.verdicts:listPage.keywordSelectLabel',
+      defaultMessage: 'Lykilorð',
+      description: 'Label á lykilorð select einingu',
+    },
+    keywordSelectPlaceholder: {
+      id: 'web.verdicts:listPage.keywordSelectPlaceholder',
+      defaultMessage: 'Veldu lykilorð',
+      description: 'Placeholder á lykilorð select einingu',
+    },
+    caseTypeSelectLabel: {
+      id: 'web.verdicts:listPage.caseTypeSelectLabel',
+      defaultMessage: 'Málategundir',
+      description: 'Label á "Málategundir" select einingu',
+    },
+    caseCategorySelectLabel: {
+      id: 'web.verdicts:listPage.caseCategorySelectLabel',
+      defaultMessage: 'Málaflokkur',
+      description: 'Label á "Málaflokkur" select einingu',
+    },
+    dateFromLabel: {
+      id: 'web.verdicts:listPage.dateFromLabel',
+      defaultMessage: 'Frá',
+      description: 'Label á "Dagsetning frá" select einingu',
+    },
+    clearAllFiltersLabel: {
+      id: 'web.verdicts:listPage.clearAllFiltersLabel',
+      defaultMessage: 'Hreinsa allar síur',
+      description: 'Label á "Hreinsa allar síur" takka',
+    },
+    dateToLabel: {
+      id: 'web.verdicts:listPage.dateToLabel',
+      defaultMessage: 'Til',
+      description: 'Label á "Dagsetning til" select einingu',
+    },
+    dateSelectLabel: {
+      id: 'web.verdicts:listPage.dateSelectLabel',
+      defaultMessage: 'Dagsetning',
+      description: 'Label á "Dagsetning" select einingu',
     },
     districtCourtSelectLabel: {
       id: 'web.verdicts:listPage.districtCourtSelectLabel',
