@@ -7,8 +7,8 @@ import { getErrorViaPath } from '@island.is/application/core'
 import {
   INDIVIDUALOPERATIONIDS,
   INPUTCHANGEINTERVAL,
-} from '../../lib/utils/constants'
-import { m } from '../../lib/utils/messages'
+} from '../../utils/constants'
+import { m } from '../../lib/messages'
 
 type Props = {
   getSum: () => void
