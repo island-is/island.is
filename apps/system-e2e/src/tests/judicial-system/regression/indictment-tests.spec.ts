@@ -83,7 +83,7 @@ test.describe.serial('Indictment tests', () => {
     // Processing
     await Promise.all([
       expect(page).toHaveURL(`/akaera/malsmedferd/${caseId}`),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
     ])
 
     await Promise.all([
