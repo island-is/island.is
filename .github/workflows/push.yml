@@ -281,7 +281,7 @@ jobs:
           context: .
           file: ./scripts/ci/Dockerfile
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.DEPS_CACHE_REPO }}:${{ steps.cache-tag.outputs.tag }}
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DEPS_CACHE_REPO }}:${{ steps.cache-tag.outputs.tag }}
           target: deps
           cache-to: type=inline
           build-args: |
@@ -289,7 +289,7 @@ jobs:
 
       - name: Set cache image
         id: set-cache-image
-        run: echo "image=${{ steps.login-ecr.outputs.registry }}/${{ env.DEPS_CACHE_REPO }}:${{ steps.cache-tag.outputs.tag }}" >> $GITHUB_OUTPUT
+        run: echo "image=${{ env.DOCKER_REGISTRY }}/${{ env.DEPS_CACHE_REPO }}:${{ steps.cache-tag.outputs.tag }}" >> $GITHUB_OUTPUT
 
   docker-build:
     needs:
@@ -340,7 +340,6 @@ jobs:
 
       - name: Set environment variables for build
         run: |
-          echo "DOCKER_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
           echo "DOCKER_TAG=${{ github.sha }}" >> $GITHUB_ENV
           echo "DOCKER_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
           echo "CACHE_IMAGE=${{ needs.update-deps-cache.outputs.cache_image }}" >> $GITHUB_ENV
@@ -349,10 +348,6 @@ jobs:
 
       - uses: actions/checkout@v4
         if: steps.gather.outcome == 'success'
-
-      - name: Set branch tag
-        id: branch-tag
-        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')" >> $GITHUB_OUTPUT
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
