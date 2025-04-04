@@ -451,6 +451,11 @@ export const NationalRegistryB2C = new XroadConf({
       staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
       prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
     },
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: {
+      dev: 'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default',
+      staging: 'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default',
+      prod: 'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default'
+    },
     NATIONAL_REGISTRY_B2C_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
       staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
