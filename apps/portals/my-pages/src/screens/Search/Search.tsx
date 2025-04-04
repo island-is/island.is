@@ -19,6 +19,7 @@ import * as styles from './Search.css'
 import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
 import { useSearchParams } from 'react-router-dom'
 import { Problem } from '@island.is/react-spa/shared'
+import { SearchInput } from '../../components/SearchInput/SearchInput'
 
 const Search = () => {
   const { formatMessage } = useLocale()
@@ -65,12 +66,16 @@ const Search = () => {
   return (
     <GridContainer>
       <GridRow>
-        <GridColumn offset="2/12" span="5/12">
+        <GridColumn
+          offset={['0', '0', '2/12', '2/12', '2/12']}
+          span={['6/6', '6/6', '5/12', '5/12', '5/12']}
+        >
           <Breadcrumbs items={breadcrumbs}></Breadcrumbs>
 
           <Box marginTop={3}>
             <Input
               ref={ref}
+              size="xs"
               name="search-input"
               placeholder={formatMessage(m.searchLabel)}
               backgroundColor="blue"
@@ -108,8 +113,20 @@ const Search = () => {
           </Box>
         </GridColumn>
       </GridRow>
-      <GridRow marginTop={4}>
-        <GridColumn offset="2/12" span="8/12">
+      <GridRow marginTop={4} marginBottom={3}>
+        <GridColumn
+          offset={['0', '0', '2/12', '2/12', '2/12']}
+          span={['6/6', '6/6', '8/12', '8/12', '8/12']}
+        >
+          {!query && (
+            <Problem
+              type="no_data"
+              noBorder={false}
+              title={formatMessage(m.nothing)}
+              message={formatMessage(m.searchForResults)}
+              imgSrc="./assets/images/bench.svg"
+            />
+          )}
           {searchResults.length < 1 && query && (
             <Problem
               type="no_data"

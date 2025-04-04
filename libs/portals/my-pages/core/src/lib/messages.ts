@@ -188,6 +188,14 @@ export const m = defineMessages({
     id: 'service.portal:date-to-short',
     defaultMessage: 'Dags. til',
   },
+  nothing: {
+    id: 'service.portal:nothing',
+    defaultMessage: 'Hér er ekkert...',
+  },
+  searchForResults: {
+    id: 'service.portal:search-for-results',
+    defaultMessage: 'Sláðu inn leitarstreng til að fá niðurstöður.',
+  },
   selectForResults: {
     id: 'service.portal:select-for-results',
     defaultMessage: 'Veldu öll leitarskilyrði til að fá niðurstöður.',
@@ -860,15 +868,15 @@ export const m = defineMessages({
   },
   resultFound: {
     id: 'service.portal:search-result-found',
-    defaultMessage: '{arg} styrkur fannst',
+    defaultMessage: '{arg} niðurstaða fannst',
   },
   resultsFound: {
     id: 'service.portal:search-results-found',
-    defaultMessage: '{arg} styrkir fundust',
+    defaultMessage: '{arg} niðurstöður fundust',
   },
   noResultsFound: {
     id: 'service.portal:search-no-results-found',
-    defaultMessage: 'Engir styrkir fundust',
+    defaultMessage: 'Engar niðurstöður fundust',
   },
   actions: {
     id: 'service.portal:actions',
