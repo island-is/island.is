@@ -98,7 +98,7 @@ export const AdditionalEstateMember = ({
     clearErrors(relationField)
     clearErrors(dateOfBirthField)
     clearErrors(`${fieldIndex}.nationalId`)
-  }, [foreignCitizenship])
+  }, [foreignCitizenship, clearErrors, nameField, relationField, dateOfBirthField, fieldIndex])
 
   return (
     <Box position="relative" key={field.id} marginTop={7}>
