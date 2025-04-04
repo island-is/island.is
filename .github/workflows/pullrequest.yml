@@ -295,9 +295,9 @@ jobs:
       - name: Lint head
         id: lint-head
         run: |
-          lints=$(mktemp)
+          lints=$(mktemp -t lint-head.XXXXXX)
           yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" |
-            tee -a "/dev/stderr" | # Show output when running, but preserve pipe-chaining
+            tee -a "$lints" | # Show output when running, but preserve pipe-chaining
             grep -oP '(?<=✖ )(\d+)(?= problems)' | # Find number of problems
             awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d",SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
             tee -a "$GITHUB_OUTPUT" # Finally create output
@@ -311,9 +311,9 @@ jobs:
       - name: Lint base
         id: lint-base
         run: |
-          lints=$(mktemp)
+          lints=$(mktemp -t lint-base.XXXXXX)
           yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" |
-            tee -a "/dev/stderr" | # Show output when running, but preserve pipe-chaining
+            tee -a "$lints" | # Show output when running, but preserve pipe-chaining
             grep -oP '(?<=✖ )(\d+)(?= problems)' | # Find number of problems
             awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d",SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
             tee -a "$GITHUB_OUTPUT" # Finally create output
@@ -328,9 +328,10 @@ jobs:
             echo "Lint count has not increased"
             exit 0
           fi
-          echo "::error title=Found $COUNT_DIFF additional lint lines::Please fix your lints 🙏"
+          echo "::error title=NEW_LINTS::Please fix your lints 🙏 (found $COUNT_DIFF additional lints)"
+          lints_base=$(mktemp --dry -t lint-.XXX)
           echo "::group::lintdiff"
-          diff <(echo "$BASE_LINTS") <(echo "$HEAD_LINTS") || :
+          diff "${lints_base%-.*}"-*
           echo "::endgroup::"
           exit 1
 
