@@ -18,7 +18,6 @@ CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
 DOCKER_LOCAL_CACHE="${DOCKER_LOCAL_CACHE:-true}"
 UPLOAD_ARTIFACT_DOCKER="${UPLOAD_ARTIFACT_DOCKER:-false}"
 
-
 BUILD_ARGS=()
 
 mkargs() {
@@ -33,7 +32,6 @@ mkargs() {
     --build-arg="APP_DIST_HOME=${APP_DIST_HOME}"
     -t "${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}"
     --build-arg="PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}"
-    --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache"
   )
   for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do
     BUILD_ARGS+=("$extra_arg")
@@ -73,10 +71,9 @@ main() {
 _upload_artifact() {
   case $UPLOAD_ARTIFACT_DOCKER in
   true)
-    IMAGE_NAME="$APP" APP_NAME="$APP" TARGET="$TARGET"  node "$DIR/docker/write-build-data.mjs"
+    IMAGE_NAME="$APP" APP_NAME="$APP" TARGET="$TARGET" node "$DIR/docker/write-build-data.mjs"
     ;;
-  false)
-    ;;
+  false) ;;
   esac
 }
 

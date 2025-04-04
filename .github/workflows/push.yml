@@ -19,6 +19,7 @@ concurrency:
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  DEPS_CACHE_REPO: docker-cache
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
   COMPOSE_HTTP_TIMEOUT: 180
@@ -74,6 +75,8 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+      tag: ${{ steps.cache-tag.outputs.tag }}
+      cache_image: ${{ steps.set-cache-image.outputs.image }}
 
     steps:
       - uses: actions/checkout@v4
@@ -191,11 +194,19 @@ jobs:
       - name: test-everything
         uses: ./.github/actions/test-everything
 
-      - name: Docker login to ECR repo
-        run: ./scripts/ci/docker-login-ecr.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # - name: Docker login to ECR repo
+      #   run: ./scripts/ci/docker-login-ecr.sh
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Login to ECR
+        uses: docker/login-action@v3
+        id: login-ecr
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: set BRANCH env var
         id: set-branch-env
@@ -245,11 +256,49 @@ jobs:
             echo IMAGES='' >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Calculate yarn.lock SHA
+        id: yarn-sha
+        run: echo "sha=$(sha256sum yarn.lock | cut -d ' ' -f 1 | head -c 12)" >> $GITHUB_OUTPUT
+
+      - name: Set cache image tag
+        id: cache-tag
+        run: echo "tag=deps-${{ steps.yarn-sha.outputs.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Check if deps cache exists
+        id: check-deps-cache
+        run: |
+          if aws ecr describe-images --repository-name $DEPS_CACHE_REPO --image-ids imageTag=${{ steps.cache-tag.outputs.tag }} &>/dev/null; then
+            echo "cache_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "cache_exists=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+
+      - name: Build and push deps layer
+        if: steps.check-deps-cache.outputs.cache_exists != 'true'
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./scripts/ci/Dockerfile
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.DEPS_CACHE_REPO }}:${{ steps.cache-tag.outputs.tag }}
+          target: deps
+          cache-to: type=inline
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+
+      - name: Set cache image
+        id: set-cache-image
+        run: echo "image=${{ steps.login-ecr.outputs.registry }}/${{ env.DEPS_CACHE_REPO }}:${{ steps.cache-tag.outputs.tag }}" >> $GITHUB_OUTPUT
+
   docker-build:
     needs:
       - pre-checks
       - prepare
     runs-on: arc-shared
+    permissions:
+      contents: read
+      packages: write
     timeout-minutes: 45
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
@@ -280,15 +329,30 @@ jobs:
           echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
           echo CACHE_IMAGE="${DOCKER_REGISTRY}/docker-cache:latest" >> "$GITHUB_ENV"
           echo APP="${AFFECTED_PROJECTS}" >> "$GITHUB_ENV"
+
+      - name: Login to ECR
+        uses: docker/login-action@v3
+        id: login-ecr
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Set environment variables for build
+        run: |
+          echo "DOCKER_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
+          echo "DOCKER_TAG=${{ github.sha }}" >> $GITHUB_ENV
+          echo "DOCKER_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          echo "CACHE_IMAGE=${{ needs.update-deps-cache.outputs.cache_image }}" >> $GITHUB_ENV
+
         continue-on-error: true
 
       - uses: actions/checkout@v4
         if: steps.gather.outcome == 'success'
 
-      - name: Debug AWS Identity
-        run: |
-          aws sts get-caller-identity
-          env | grep AWS
+      - name: Set branch tag
+        id: branch-tag
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')" >> $GITHUB_OUTPUT
 
       - name: Restore generated files
         uses: runs-on/cache/restore@v4
@@ -302,12 +366,12 @@ jobs:
         run: |
           tar -xzvf ${{ env.GENERATED_FILES }}
 
-      - name: Docker login to ECR repo
-        if: steps.gather.outcome == 'success'
-        run: ./scripts/ci/docker-login-ecr.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # - name: Docker login to ECR repo
+      #   if: steps.gather.outcome == 'success'
+      #   run: ./scripts/ci/docker-login-ecr.sh
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Prepare Docker build arguments
         id: dockerargs
@@ -318,6 +382,9 @@ jobs:
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
+          # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
+          echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
+
           # Strip protocol prefix and .git postfix
           SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
           SERVER_URL="${SERVER_URL#*://}"
@@ -332,24 +399,22 @@ jobs:
             --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
             --build-arg="NX_TASKS_RUNNER=ci"
             --build-arg="CACHE_IMAGE=${CACHE_IMAGE}"
+            --build-arg=BUILDKIT_INLINE_CACHE=1
+            --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt
+            --cache-from=type=registry,ref=${{ needs.update-deps-cache.outputs.cache_image }}
+            --cache-to=type=inline
           )
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
 
-          # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
-          echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
-
-          # Add secret to EXTRA_DOCKER_BUILD_ARGS
-          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
-
-      - name: Check if cached buildx image exists
-        id: cache-check
-        run: |
-          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
-            docker pull docker.io/moby/buildkit:buildx-stable-1
-            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-          fi
+      # - name: Check if cached buildx image exists
+      #   id: cache-check
+      #   run: |
+      #     if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
+      #       docker pull docker.io/moby/buildkit:buildx-stable-1
+      #       docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+      #       docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+      #     fi
       # - name: Setup yarn
       #   uses: ./.github/actions/setup-yarn
       #   with:
