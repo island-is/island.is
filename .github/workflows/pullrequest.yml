@@ -296,7 +296,11 @@ jobs:
         id: lint-head
         run: |
           lints=$(mktemp)
-          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | tee -a "/dev/stderr" | grep -oP '(?<=✖ )(\d+)(?= problems)' | awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d",SUM }' | tee -a "$GITHUB_OUTPUT"
+          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" |
+            tee -a "/dev/stderr" | # Show output when running, but preserve pipe-chaining
+            grep -oP '(?<=✖ )(\d+)(?= problems)' | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d",SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee -a "$GITHUB_OUTPUT" # Finally create output
 
       # Checkout for linting base
       - uses: actions/checkout@v4
@@ -308,7 +312,11 @@ jobs:
         id: lint-base
         run: |
           lints=$(mktemp)
-          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | tee -a "/dev/stderr" | grep -oP '(?<=✖ )(\d+)(?= problems)' | awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d",SUM }' | tee -a "$GITHUB_OUTPUT"
+          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" |
+            tee -a "/dev/stderr" | # Show output when running, but preserve pipe-chaining
+            grep -oP '(?<=✖ )(\d+)(?= problems)' | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d",SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee -a "$GITHUB_OUTPUT" # Finally create output
 
       - name: No new lints
         env:
