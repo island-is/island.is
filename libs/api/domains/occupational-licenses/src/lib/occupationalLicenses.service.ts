@@ -19,14 +19,9 @@ import {
   addLicenseTypePrefix,
   mapDistrictCommissionersLicenseStatusToStatus,
 } from './utils'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { LicenseResponse } from './models/licenseResponse.model'
 import { LinkType } from './models/link'
-import {
-  CmsTranslationsService,
-  IntlService,
-  TranslationsDict,
-} from '@island.is/cms-translations'
+import { IntlService } from '@island.is/cms-translations'
 import { LicenseType } from './models/licenseType.model'
 import { LicenseResponse as MMSLicenseResponse } from '@island.is/clients/mms'
 import { Status } from './models/licenseStatus.model'
