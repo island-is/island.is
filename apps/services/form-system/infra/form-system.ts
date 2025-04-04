@@ -10,6 +10,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     .image(serviceName)
     .namespace(serviceName)
     .codeOwner(CodeOwners.Advania)
+    .redis()
     .db()
     .migrations()
     .env({
