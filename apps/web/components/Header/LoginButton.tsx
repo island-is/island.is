@@ -124,7 +124,7 @@ function LoginButtonDropdown(props: Props) {
           icon="person"
           title={isMobile ? t.login : undefined}
         >
-          {!isMobile && t.login}
+          {!isMobile ? t.login : ''}
         </Button>
       }
       openOnHover={!isMobile}
