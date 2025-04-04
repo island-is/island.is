@@ -109,6 +109,7 @@ const Overview = () => {
 
               return (
                 <ActionCard
+                  key={license.licenseId}
                   capitalizeHeading={true}
                   heading={license.title ?? ''}
                   text={`${formatMessage(
