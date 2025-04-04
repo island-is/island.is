@@ -1,5 +1,5 @@
 import { districtCourtJudgeRule, prosecutorRule } from '../../../guards'
-import { verifyRolesRules } from '../../case/guards/test/testHelper'
+import { verifyRolesRules } from '../../../test'
 import { VictimController } from '../victim.controller'
 
 describe('VictimController - Create Roles', () => {

@@ -31,7 +31,8 @@ export const verifyGuards = (
           guard = new guards[index]()
         })
 
-        it(`should be guard at position ${index + 1}`, () => {
+        const testDescription = `should be guard at position ${index + 1}`
+        it(testDescription, () => {
           expect(guard).toBeInstanceOf(ExpectedGuard)
         })
       })
@@ -46,8 +47,6 @@ export const verifyRolesRules = (
 ): void => {
   const controllerName = (controller as any).name ?? controller.constructor.name
   const description = `${controllerName}.${methodName}() roles-rules`
-
-  console.log('test', controller)
 
   const rules: RolesRule[] =
     Reflect.getMetadata(
