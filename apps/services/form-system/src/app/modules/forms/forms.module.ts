@@ -12,7 +12,6 @@ import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.mode
 import { Field } from '../fields/models/field.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { FormUrl } from '../formUrls/models/formUrl.model'
-import { CmsModule } from '@island.is/clients/cms'
 
 @Module({
   imports: [
@@ -28,7 +27,6 @@ import { CmsModule } from '@island.is/clients/cms'
       ListItem,
       OrganizationUrl,
     ]),
-    CmsModule,
   ],
   controllers: [FormsController],
   providers: [FormsService],
