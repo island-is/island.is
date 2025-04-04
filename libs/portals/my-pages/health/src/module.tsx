@@ -75,6 +75,10 @@ const Vaccinations = lazy(() =>
   import('./screens/Vaccinations/VaccinationsWrapper'),
 )
 
+const Insurance = lazy(() =>
+  import('./screens/HealthInsurance/HealthInsurance'),
+)
+
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 export const healthModule: PortalModule = {
@@ -254,6 +258,12 @@ export const healthModule: PortalModule = {
       key: 'HealthVaccinations',
       enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <Vaccinations />,
+    },
+    {
+      name: hm.hasHealthInsurance,
+      path: HealthPaths.HealthInsurance,
+      enabled: userInfo.scopes.includes(ApiScope.healthRightsStatus),
+      element: <Insurance />,
     },
   ],
 }
