@@ -230,7 +230,12 @@ export const renderSlice = (
     case 'FeaturedLinks':
       return <FeaturedLinksSlice slice={slice} />
     case 'OrganizationParentSubpageList':
-      return <OrganizationParentSubpageListSlice slice={slice} />
+      return (
+        <OrganizationParentSubpageListSlice
+          slice={slice}
+          isFrontpage={params?.isFrontpage}
+        />
+      )
     case 'IntroLinkImage':
       return <IntroLinkImageSlice slice={slice} />
     default:
