@@ -39,7 +39,6 @@ runs:
 
     - name: Build and push deps layer
       if: steps.check-deps-cache.outputs.cache_exists != 'true'
-      shell: bash
       uses: docker/build-push-action@v6
       with:
         context: .
