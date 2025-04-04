@@ -1,0 +1,32 @@
+query getOccupationalLicenseById($input: OccupationalLicensesLicenseInput!) {
+  occupationalLicense(input: $input) {
+    __typename
+    license {
+      __typename
+      type
+      licenseId
+      licenseNumber
+      profession
+      licenseHolderName
+      dateOfBirth
+      validFrom
+      issuer
+      issuerTitle
+      status
+      issuer
+      permit
+      title
+      genericFields {
+        title
+        value
+      }
+    }
+    headerText
+    footerText
+    actions {
+      text
+      type
+      url
+    }
+  }
+}
