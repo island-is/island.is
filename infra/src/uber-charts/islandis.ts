@@ -41,6 +41,7 @@ import {
   userNotificationCleanUpWorkerSetup,
   userNotificationServiceSetup,
   userNotificationWorkerSetup,
+  userNotificationBirthdayWorkerSetup,
 } from '../../../apps/services/user-notification/infra/user-notification'
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
@@ -153,6 +154,9 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
 const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
 
+const userNotificationBirthdayWorkerService =
+  userNotificationBirthdayWorkerSetup({ userProfileApi: servicePortalApi })
+
 const unicornApp = unicornAppSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
@@ -186,6 +190,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
     sessionsService,
@@ -225,6 +230,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
     sessionsService,
@@ -262,6 +268,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
@@ -285,9 +292,10 @@ export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 
 // Services that are included in some environment above but should be excluded from feature deployments
 export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
-  userNotificationService,
-  userNotificationWorkerService,
-  userNotificationCleanupWorkerService,
+  //userNotificationService,
+  //userNotificationWorkerService,
+  //userNotificationCleanupWorkerService,
+  //userNotificationBirthdayWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,

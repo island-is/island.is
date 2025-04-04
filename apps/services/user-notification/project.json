@@ -77,6 +77,13 @@
         "args": ["--job", "cleanup"]
       }
     },
+    "birthday": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-user-notification:build",
+        "args": ["--job", "birthday"]
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },
