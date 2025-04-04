@@ -66,7 +66,6 @@ env:
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.workspace }}/${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
-  AFFECTED_SMALL: ${{ github.event.pull_request.labels.*.name == 'affect small' }}
   SERVERSIDE_FEATURES_ON: ''
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
@@ -211,9 +210,6 @@ jobs:
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
-          if [[ "$AFFECTED_SMALL" == true ]]; then
-            echo CHUNKS='{"projects":["web","air-discount-scheme-web","unicorn-app","license-api"]}' >> "$GITHUB_OUTPUT"
-          fi
 
       - name: Prepare test targets
         id: test_projects
@@ -223,9 +219,6 @@ jobs:
           CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-          if [[ "$AFFECTED_SMALL" == true ]]; then
-            echo CHUNKS='{"projects":["web","air-discount-scheme-web","unicorn-app","license-api"]}' >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare e2e targets
@@ -239,9 +232,6 @@ jobs:
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
-          if [[ "$AFFECTED_SMALL" == true ]]; then
-            echo CHUNKS='{"projects":["license-api"]}' >> "$GITHUB_OUTPUT"
-          fi
           echo E2E_BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
 
       - name: Prepare build targets
@@ -252,9 +242,6 @@ jobs:
           CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-          if [[ "$AFFECTED_SMALL" == true ]]; then
-            echo CHUNKS='{"projects":["web","air-discount-scheme-web","unicorn-app","license-api"]}' >> "$GITHUB_OUTPUT"
           fi
       - name: Prepare docker build targets
         id: docker_projects
@@ -267,9 +254,7 @@ jobs:
             echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
-          if [[ "$AFFECTED_SMALL" == true ]]; then
-            echo CHUNKS='{"projects":["web","air-discount-scheme-web","unicorn-app","license-api"]}' >> "$GITHUB_OUTPUT"
-          fi
+
       - name: License audit Node modules
         run: ./scripts/ci/20_license-audit.sh
 
