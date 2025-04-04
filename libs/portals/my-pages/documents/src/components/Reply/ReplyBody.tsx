@@ -5,13 +5,13 @@ import { messages } from '../../utils/messages'
 
 interface Props {
   id: string
-  intro?: string
-  email: string
+  sentTo: string
   reply: string
   date: Date
+  intro?: string
 }
 
-const ReplyBody: React.FC<Props> = ({ id, email, reply, intro }) => {
+const ReplyBody: React.FC<Props> = ({ id, sentTo, reply, intro }) => {
   const { formatMessage } = useLocale()
   return (
     <Box marginTop={1}>
@@ -28,7 +28,7 @@ const ReplyBody: React.FC<Props> = ({ id, email, reply, intro }) => {
           <Text variant="eyebrow" color="purple400">
             {formatMessage(messages.sentToEmail)}
           </Text>
-          <Text>{email}</Text>
+          <Text>{sentTo}</Text>
         </Box>
         <Box>
           <Text variant="eyebrow" color="purple400">

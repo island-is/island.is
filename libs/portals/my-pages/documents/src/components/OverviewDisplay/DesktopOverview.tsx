@@ -8,7 +8,10 @@ import { dateFormatWithTime } from '@island.is/shared/constants'
 import { isDefined } from '@island.is/shared/utils'
 import { FC } from 'react'
 import { useDocumentList } from '../../hooks/useDocumentList'
-import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import {
+  Reply,
+  useDocumentContext,
+} from '../../screens/Overview/DocumentContext'
 import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
 import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
 import NoPDF from '../NoPDF/NoPDF'
@@ -66,10 +69,14 @@ export const DesktopOverview: FC<Props> = ({
     return <NoPDF />
   }
 
-  const toggleReply = (id: string) => {
-    const updatedReplies = replies.map((reply) =>
-      reply.id === id ? { ...reply, hide: !reply.hide } : reply,
-    )
+  const toggleReply = (id?: number | null) => {
+    const updatedReplies: Reply = {
+      ...replies,
+      comments:
+        replies?.comments?.map((reply) =>
+          reply.id === id ? { ...reply, hide: !reply.hide } : reply,
+        ) || [],
+    }
     setReplies(updatedReplies)
   }
 
@@ -104,7 +111,7 @@ export const DesktopOverview: FC<Props> = ({
       />
       <Box>
         {!hideDocument && <DocumentRenderer doc={activeDocument} />}
-        {replies?.map((reply) => (
+        {replies?.comments?.map((reply) => (
           <Box
             onClick={() => toggleReply(reply.id)}
             key={reply.id}
@@ -117,18 +124,18 @@ export const DesktopOverview: FC<Props> = ({
               initials={getInitials(profile.name)}
               title={profile.name}
               hasEmail={isDefined(profile.email)}
-              subTitle={formatDate(reply?.date, dateFormatWithTime.is)}
+              subTitle={formatDate(reply?.createdDate, dateFormatWithTime.is)}
               displayEmail={false}
             />
-            {!reply.hide && (
+            {/* {!reply.hide && (
               <ReplySent
-                date={reply.date}
-                id={reply.id}
-                reply={reply.reply}
-                email={reply.email}
-                intro={reply.intro}
+                date={reply.createdDate}
+                id={reply.id?.toString()}
+                reply={reply.body}
+                email={reply.author}
+                intro={reply.body}
               />
-            )}
+            )} */}
           </Box>
         ))}
         {/* {If document is marked replyable, we render the reply form} */}

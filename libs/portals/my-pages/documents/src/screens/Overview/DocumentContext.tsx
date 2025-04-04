@@ -1,4 +1,9 @@
-import { DocumentsV2Category, DocumentsV2Sender } from '@island.is/api/schema'
+import {
+  DocumentComment,
+  DocumentsV2Category,
+  DocumentsV2Sender,
+  DocumentTicket,
+} from '@island.is/api/schema'
 import {
   createContext,
   Dispatch,
@@ -14,6 +19,14 @@ import { defaultFilterValues, FilterValuesType } from '../../utils/types'
 type SelectedLineType = Array<string>
 type ActiveDocumentStateType = ActiveDocumentType2 | null
 
+export interface Comment extends DocumentComment {
+  hide: boolean
+}
+
+export interface Reply extends DocumentTicket {
+  comments?: Comment[]
+}
+
 export type DocumentsStateProps = {
   selectedLines: SelectedLineType
   activeDocument: ActiveDocumentStateType
@@ -27,14 +40,7 @@ export type DocumentsStateProps = {
   documentDisplayError?: string
   localRead: string[]
   replyable: boolean
-  replies: {
-    id: string
-    date: Date
-    email: string
-    reply: string
-    intro?: string
-    hide: boolean
-  }[]
+  replies?: Reply
   replyOpen: boolean
 
   setSelectedLines: Dispatch<SetStateAction<SelectedLineType>>
@@ -49,18 +55,7 @@ export type DocumentsStateProps = {
   setDocumentDisplayError: Dispatch<SetStateAction<string | undefined>>
   setLocalRead: Dispatch<SetStateAction<string[]>>
   setReplyable: Dispatch<SetStateAction<boolean>>
-  setReplies: Dispatch<
-    SetStateAction<
-      {
-        id: string
-        date: Date
-        email: string
-        reply: string
-        intro?: string
-        hide: boolean
-      }[]
-    >
-  >
+  setReplies: Dispatch<SetStateAction<Reply | undefined>>
   setReplyOpen: Dispatch<SetStateAction<boolean>>
 }
 
@@ -77,7 +72,7 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   documentDisplayError: undefined,
   localRead: [],
   replyable: false,
-  replies: [],
+  replies: undefined,
   replyOpen: false,
 
   setSelectedLines: () => undefined,
@@ -119,35 +114,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
   const [localRead, setLocalRead] = useState<string[]>([])
   const [replyable, setReplyable] = useState<boolean>(true) // TODO: Set to default false
   const [replyOpen, setReplyOpen] = useState<boolean>(false)
-  const [replies, setReplies] = useState<
-    {
-      id: string
-      date: Date
-      email: string
-      reply: string
-      intro?: string
-      hide: boolean
-    }[]
-  >([
-    {
-      id: '123',
-      date: new Date(),
-      email: 'lisa@skb.is',
-      reply:
-        'Þetta er svar 1 við þræðinum. Ég bara skrifa og skrifa og tala, síðan aðeins meira. ',
-      intro:
-        'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang.',
-      hide: true,
-    },
-    {
-      id: '124',
-      date: new Date(),
-      email: 'lisa@skb.is',
-      reply:
-        'Þetta er svar 2 við þræðinum. Ég bara skrifa og skrifa og tala, síðan aðeins meira.  Ég bara skrifa og skrifa og tala, síðan aðeins meira. ',
-      hide: false,
-    },
-  ])
+  const [replies, setReplies] = useState<Reply>()
 
   return (
     <DocumentsContext.Provider

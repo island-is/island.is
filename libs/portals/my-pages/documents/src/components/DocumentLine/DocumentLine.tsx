@@ -21,7 +21,10 @@ import { useDocumentList } from '../../hooks/useDocumentList'
 import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import { DocumentsPaths } from '../../lib/paths'
-import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import {
+  Reply,
+  useDocumentContext,
+} from '../../screens/Overview/DocumentContext'
 import {
   useDocumentConfirmActionsLazyQuery,
   useGetDocumentInboxLineV3LazyQuery,
@@ -82,6 +85,8 @@ export const DocumentLine: FC<Props> = ({
     setDocumentDisplayError,
     setDocLoading,
     setLocalRead,
+    setReplyable,
+    setReplies,
     categoriesAvailable,
     localRead,
   } = useDocumentContext()
@@ -174,6 +179,36 @@ export const DocumentLine: FC<Props> = ({
             displayPdf(docContent, actions, alert)
             setDocumentDisplayError(undefined)
             setLocalRead([...localRead, documentLine.id])
+            setReplyable(data?.documentV2?.replyable ?? false)
+            if (data?.documentV2?.ticket) {
+              const reply: Reply = {
+                id: data.documentV2?.ticket?.id,
+                createdDate: data.documentV2?.ticket?.createdDate,
+                updatedDate: data.documentV2?.ticket?.updatedDate,
+                subject: data.documentV2?.ticket?.subject,
+                authorId: data.documentV2?.ticket?.authorId,
+                status: data.documentV2?.ticket?.status,
+                comments: data.documentV2?.ticket?.comments?.map(
+                  (item, index) => {
+                    if (
+                      index ===
+                      (data.documentV2?.ticket?.comments?.length ?? 0) - 1
+                    ) {
+                      return {
+                        ...item,
+                        hide: false,
+                      }
+                    } else
+                      return {
+                        ...item,
+                        hide: true,
+                      }
+                  },
+                ),
+              }
+
+              setReplies(reply)
+            }
           } else {
             setDocumentDisplayError(formatMessage(messages.documentErrorLoad))
           }

@@ -77,7 +77,7 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
     <FormProvider {...methods}>
       {methods.formState.isSubmitSuccessful && tempAnswer ? (
         <ReplySent
-          email={tempAnswer.emailTo}
+          sentTo={tempAnswer.emailTo}
           id={tempAnswer.caseId}
           reply={tempAnswer.reply}
           date={tempAnswer.date}
