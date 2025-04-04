@@ -14,7 +14,7 @@ export enum ComplainedForTypes {
 }
 
 export enum GenderAnswerOptions {
-  MAlE = 'male',
+  MALE = 'male',
   FEMALE = 'female',
   NONBINARY = 'nonBinary',
   OTHER = 'other',
