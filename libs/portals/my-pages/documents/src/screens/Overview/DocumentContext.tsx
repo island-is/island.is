@@ -1,22 +1,36 @@
-import { DocumentsV2Category, DocumentsV2Sender } from '@island.is/api/schema'
+import {
+  DocumentComment,
+  DocumentsV2Category,
+  DocumentsV2Sender,
+  DocumentTicket,
+} from '@island.is/api/schema'
 import {
   createContext,
   Dispatch,
-  SetStateAction,
   FC,
-  useState,
+  SetStateAction,
   useContext,
+  useState,
 } from 'react'
-import { ActiveDocumentType2 } from '../../lib/types'
-import { FilterValuesType, defaultFilterValues } from '../../utils/types'
 import { useLoaderData } from 'react-router-dom'
+import { ActiveDocumentType2 } from '../../lib/types'
+import { defaultFilterValues, FilterValuesType } from '../../utils/types'
 
 type SelectedLineType = Array<string>
 type ActiveDocumentStateType = ActiveDocumentType2 | null
 
+export interface Comment extends DocumentComment {
+  hide: boolean
+}
+
+export interface Reply extends DocumentTicket {
+  comments?: Comment[]
+}
+
 export type DocumentsStateProps = {
   selectedLines: SelectedLineType
   activeDocument: ActiveDocumentStateType
+  hideDocument: boolean
   filterValue: FilterValuesType
   page: number
   totalPages: number
@@ -25,9 +39,13 @@ export type DocumentsStateProps = {
   docLoading: boolean
   documentDisplayError?: string
   localRead: string[]
+  replyable: boolean
+  replies?: Reply
+  replyOpen: boolean
 
   setSelectedLines: Dispatch<SetStateAction<SelectedLineType>>
   setActiveDocument: Dispatch<SetStateAction<ActiveDocumentStateType>>
+  setHideDocument: Dispatch<SetStateAction<boolean>>
   setFilterValue: Dispatch<SetStateAction<FilterValuesType>>
   setPage: Dispatch<SetStateAction<number>>
   setTotalPages: Dispatch<SetStateAction<number>>
@@ -36,11 +54,15 @@ export type DocumentsStateProps = {
   setDocLoading: Dispatch<SetStateAction<boolean>>
   setDocumentDisplayError: Dispatch<SetStateAction<string | undefined>>
   setLocalRead: Dispatch<SetStateAction<string[]>>
+  setReplyable: Dispatch<SetStateAction<boolean>>
+  setReplies: Dispatch<SetStateAction<Reply | undefined>>
+  setReplyOpen: Dispatch<SetStateAction<boolean>>
 }
 
 export const DocumentsContext = createContext<DocumentsStateProps>({
   selectedLines: [],
   activeDocument: null,
+  hideDocument: false,
   filterValue: defaultFilterValues,
   page: 1,
   totalPages: 0,
@@ -49,9 +71,13 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   docLoading: false,
   documentDisplayError: undefined,
   localRead: [],
+  replyable: false,
+  replies: undefined,
+  replyOpen: false,
 
   setSelectedLines: () => undefined,
   setActiveDocument: () => undefined,
+  setHideDocument: () => undefined,
   setFilterValue: () => undefined,
   setPage: () => undefined,
   setTotalPages: () => undefined,
@@ -60,6 +86,9 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   setDocLoading: () => undefined,
   setDocumentDisplayError: () => undefined,
   setLocalRead: () => undefined,
+  setReplyable: () => undefined,
+  setReplies: () => undefined,
+  setReplyOpen: () => undefined,
 })
 
 export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
@@ -69,6 +98,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
   const [selectedLines, setSelectedLines] = useState<SelectedLineType>([])
   const [activeDocument, setActiveDocument] =
     useState<ActiveDocumentStateType>(null)
+  const [hideDocument, setHideDocument] = useState<boolean>(false)
   const [filterValue, setFilterValue] =
     useState<FilterValuesType>(defaultFilterValues)
   const [page, setPage] = useState(loaderNumber)
@@ -82,12 +112,16 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
   const [docLoading, setDocLoading] = useState(false)
   const [documentDisplayError, setDocumentDisplayError] = useState<string>()
   const [localRead, setLocalRead] = useState<string[]>([])
+  const [replyable, setReplyable] = useState<boolean>(true) // TODO: Set to default false
+  const [replyOpen, setReplyOpen] = useState<boolean>(false)
+  const [replies, setReplies] = useState<Reply>()
 
   return (
     <DocumentsContext.Provider
       value={{
         selectedLines,
         activeDocument,
+        hideDocument,
         filterValue,
         page,
         totalPages,
@@ -96,9 +130,13 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         docLoading,
         documentDisplayError,
         localRead,
+        replyable,
+        replies,
+        replyOpen,
 
         setSelectedLines,
         setActiveDocument,
+        setHideDocument,
         setFilterValue,
         setPage,
         setTotalPages,
@@ -107,6 +145,9 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         setDocLoading,
         setDocumentDisplayError,
         setLocalRead,
+        setReplyable,
+        setReplies,
+        setReplyOpen,
       }}
     >
       {children}

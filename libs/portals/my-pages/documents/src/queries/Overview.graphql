@@ -58,6 +58,23 @@ query GetDocumentInboxLineV3($input: DocumentInput!, $locale: String) {
       title
       data
     }
+    replyable
+    ticket {
+      id
+      authorId
+      createdDate
+      updatedDate
+      subject
+      status
+      authorId
+      comments {
+        id
+        authorId
+        author
+        body
+        createdDate
+      }
+    }
   }
 }
 

@@ -75,6 +75,7 @@ export type Icon =
   | 'time'
   | 'timer'
   | 'trash'
+  | 'undo'
   | 'volumeHigh'
   | 'volumeMute'
   | 'wallet'
@@ -173,6 +174,7 @@ export default {
     search: 'Search',
     settings: 'Settings',
     trash: 'Trash',
+    undo: 'Undo',
     volumeHigh: 'VolumeHigh',
     volumeMute: 'VolumeMute',
     wallet: 'Wallet',
@@ -280,6 +282,7 @@ export default {
     remove: 'Remove',
     time: 'TimeOutline',
     timer: 'TimerOutline',
+    undo: 'UndoOutline',
     save: 'SaveOutline',
     bookmark: 'BookmarkOutline',
     share: 'ShareOutline',

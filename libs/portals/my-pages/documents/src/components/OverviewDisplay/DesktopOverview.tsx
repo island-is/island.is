@@ -1,15 +1,24 @@
-import { FC } from 'react'
-import { m } from '@island.is/portals/my-pages/core'
-import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
+import { Box, Divider, LoadingDots } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
-import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
-import NoPDF from '../NoPDF/NoPDF'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/portals/my-pages/constants'
-import { useDocumentContext } from '../../screens/Overview/DocumentContext'
-import * as styles from './OverviewDisplay.css'
+import { formatDate, getInitials, m } from '@island.is/portals/my-pages/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { dateFormatWithTime } from '@island.is/shared/constants'
+import { isDefined } from '@island.is/shared/utils'
+import { FC } from 'react'
 import { useDocumentList } from '../../hooks/useDocumentList'
+import {
+  Reply,
+  useDocumentContext,
+} from '../../screens/Overview/DocumentContext'
+import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
+import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
+import NoPDF from '../NoPDF/NoPDF'
+import ReplySent from '../Reply/ReplyBody'
+import ReplyContainer from '../Reply/ReplyContainer'
+import ReplyHeader from '../Reply/ReplyHeader'
+import * as styles from './OverviewDisplay.css'
 
 interface Props {
   activeBookmark: boolean
@@ -24,7 +33,17 @@ export const DesktopOverview: FC<Props> = ({
 }) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
-  const { activeDocument } = useDocumentContext()
+  const { profile } = useUserInfo()
+
+  const {
+    activeDocument,
+    replyable,
+    replies,
+    setReplies,
+    setReplyOpen,
+    hideDocument,
+    setHideDocument,
+  } = useDocumentContext()
   const { activeArchive } = useDocumentList()
 
   if (loading) {
@@ -50,6 +69,21 @@ export const DesktopOverview: FC<Props> = ({
     return <NoPDF />
   }
 
+  const toggleReply = (id?: number | null) => {
+    const updatedReplies: Reply = {
+      ...replies,
+      comments:
+        replies?.comments?.map((reply) =>
+          reply.id === id ? { ...reply, hide: !reply.hide } : reply,
+        ) || [],
+    }
+    setReplies(updatedReplies)
+  }
+
+  const toggleDocument = () => {
+    setHideDocument(!hideDocument)
+  }
+
   return (
     <Box
       marginLeft={8}
@@ -70,10 +104,43 @@ export const DesktopOverview: FC<Props> = ({
         actionBar={{
           archived: activeArchive,
           bookmarked: activeBookmark,
+          isReplyable: replyable,
+          onReply: () => setReplyOpen(true),
         }}
         actions={activeDocument.actions}
       />
-      <Box>{<DocumentRenderer doc={activeDocument} />}</Box>
+      <Box>
+        {!hideDocument && <DocumentRenderer doc={activeDocument} />}
+        {replies?.comments?.map((reply) => (
+          <Box
+            onClick={() => toggleReply(reply.id)}
+            key={reply.id}
+            cursor="pointer"
+          >
+            <Box paddingY={3}>
+              <Divider />
+            </Box>
+            <ReplyHeader
+              initials={getInitials(profile.name)}
+              title={profile.name}
+              hasEmail={isDefined(profile.email)}
+              subTitle={formatDate(reply?.createdDate, dateFormatWithTime.is)}
+              displayEmail={false}
+            />
+            {/* {!reply.hide && (
+              <ReplySent
+                date={reply.createdDate}
+                id={reply.id?.toString()}
+                reply={reply.body}
+                email={reply.author}
+                intro={reply.body}
+              />
+            )} */}
+          </Box>
+        ))}
+        {/* {If document is marked replyable, we render the reply form} */}
+        {replyable && <ReplyContainer sender={activeDocument.sender} />}
+      </Box>
       {activeDocument?.id && (
         <Box className={styles.reveal}>
           <button

@@ -116,4 +116,32 @@ export const messages = defineMessages({
     id: 'sp.documents:search-label',
     defaultMessage: 'Leita',
   },
+  caseNumber: {
+    id: 'sp.documents:case-number',
+    defaultMessage: 'Málsnúmer',
+  },
+  sentToEmail: {
+    id: 'sp.documents:sent-to-email',
+    defaultMessage: 'Sent á tölvupóstfang',
+  },
+  message: {
+    id: 'sp.documents:message',
+    defaultMessage: 'Skilaboð',
+  },
+  fromWithArgs: {
+    id: 'sp.documents:from-with-args',
+    defaultMessage: 'Frá {senderName}',
+  },
+  toWithArgs: {
+    id: 'sp.documents:to-with-args',
+    defaultMessage: 'Til {receiverName}',
+  },
+  titleWord: {
+    id: 'sp.documents:title-word',
+    defaultMessage: 'Titill',
+  },
+  pleaseRegisterEmail: {
+    id: 'sp.documents:please-register-email',
+    defaultMessage: 'Vinsamlegast skráðu tölvupóstfang',
+  },
 })
