@@ -284,8 +284,6 @@ jobs:
           tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DEPS_CACHE_REPO }}:${{ steps.cache-tag.outputs.tag }}
           target: deps
           cache-to: type=inline
-          build-args: |
-            BUILDKIT_INLINE_CACHE=1
 
       - name: Set cache image
         id: set-cache-image
