@@ -80,10 +80,7 @@ export const AssetsOverview = () => {
   return (
     <>
       <IntroHeader
-        title={{
-          id: 'sp.assets:title',
-          defaultMessage: 'Fasteignir',
-        }}
+        title={m.assets}
         intro={{
           id: 'sp.assets:intro',
           defaultMessage:
