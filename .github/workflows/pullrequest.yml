@@ -273,6 +273,8 @@ jobs:
     runs-on: arc-runners
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
+    outputs:
+      lints: ${{ steps.lint-head.outputs.lints }}
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
@@ -292,43 +294,83 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      # Don't need to check out the current PR branch
-      # - uses: actions/checkout@v4
-      #   with:
-      #     ref: ${{ github.event.pull_request.head.ref }}
       - name: Lint head
         id: lint-head
         run: |
-          echo "lints<<EOF" | tee -a "$GITHUB_OUTPUT"
+          echo "lints<<EOF" >> "$GITHUB_OUTPUT"
           yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" | tee -a "$GITHUB_OUTPUT"
-          echo "EOF" | tee -a "$GITHUB_OUTPUT"
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.base.ref }}
-      - name: Lint base
-        id: lint-base
-        run: |
-          echo "lints<<EOF" | tee -a "$GITHUB_OUTPUT"
-          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | tee -a "$GITHUB_OUTPUT"
-          echo "EOF" | tee -a "$GITHUB_OUTPUT"
-      - name: No new lints
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+  newlints:
+    needs:
+      # - prepare
+      - linting
+    runs-on: arc-runners
+    timeout-minutes: 35
+    if: needs.prepare.outputs.LINT_CHUNKS
+    env:
+      # AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NODE_OPTIONS: --max-old-space-size=4096
+    # strategy:
+    #   fail-fast: false
+    #   matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: DEBUG
         env:
-          HEAD_LINTS: ${{steps.lint-head.outputs.lints}}
-          BASE_LINTS: ${{steps.lint-base.outputs.lints}}
+          NEEDS: ${{ toJson(needs) }}
         run: |
-          # Divide by 2 because each problem summary occurs twice
-          HEAD_LINT_COUNT="$(( $(echo "$HEAD_LINTS" | grep -oP '(?<=✖ )(\d+)(?= problems)') / 2))"
-          BASE_LINT_COUNT="$(( $(echo "$BASE_LINTS" | grep -oP '(?<=✖ )(\d+)(?= problems)') / 2))"
-          COUNT_DIFF=$(( HEAD_LINT_COUNT <= BASE_LINT_COUNT )) || :
-          if [[ $COUNT_DIFF -eq 0 ]]; then
-            echo "Lint count has not increased"
-            exit 0
-          fi
-          echo "::error title=Found $COUNT_DIFF additional lint lines::Please fix your lints 🙏"
-          echo "::group::lintdiff"
-          diff <(echo "$BASE_LINTS") <(echo "$HEAD_LINTS") || :
-          echo "::endgroup::"
+          echo "needs: $NEEDS"
+
           exit 1
+
+      #
+      # - name: Setup yarn
+      #   uses: ./.github/actions/setup-yarn
+      #   with:
+      #     RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+      #
+      # - name: load-deps
+      #   uses: ./.github/actions/load-deps
+      #
+      # # Don't need to check out the current PR branch
+      # # - uses: actions/checkout@v4
+      # #   with:
+      # #     ref: ${{ github.event.pull_request.head.ref }}
+      # - name: Lint head
+      #   id: lint-head
+      #   run: |
+      #     echo "lints<<EOF" | tee -a "$GITHUB_OUTPUT"
+      #     yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" | tee -a "$GITHUB_OUTPUT"
+      #     echo "EOF" | tee -a "$GITHUB_OUTPUT"
+      # - uses: actions/checkout@v4
+      #   with:
+      #     ref: ${{ github.event.pull_request.base.ref }}
+      # - name: Lint base
+      #   id: lint-base
+      #   run: |
+      #     echo "lints<<EOF" | tee -a "$GITHUB_OUTPUT"
+      #     yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" | tee -a "$GITHUB_OUTPUT"
+      #     echo "EOF" | tee -a "$GITHUB_OUTPUT"
+      # - name: No new lints
+      #   env:
+      #     HEAD_LINTS: ${{steps.lint-head.outputs.lints}}
+      #     BASE_LINTS: ${{steps.lint-base.outputs.lints}}
+      #   run: |
+      #     # Divide by 2 because each problem summary occurs twice
+      #     HEAD_LINT_COUNT="$(( $(echo "$HEAD_LINTS" | grep -oP '(?<=✖ )(\d+)(?= problems)') / 2))"
+      #     BASE_LINT_COUNT="$(( $(echo "$BASE_LINTS" | grep -oP '(?<=✖ )(\d+)(?= problems)') / 2))"
+      #     COUNT_DIFF=$(( HEAD_LINT_COUNT <= BASE_LINT_COUNT )) || :
+      #     if [[ $COUNT_DIFF -eq 0 ]]; then
+      #       echo "Lint count has not increased"
+      #       exit 0
+      #     fi
+      #     echo "::error title=Found $COUNT_DIFF additional lint lines::Please fix your lints 🙏"
+      #     echo "::group::lintdiff"
+      #     diff <(echo "$BASE_LINTS") <(echo "$HEAD_LINTS") || :
+      #     echo "::endgroup::"
+      #     exit 1
 
   build:
     needs:
