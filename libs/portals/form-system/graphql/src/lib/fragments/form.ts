@@ -10,6 +10,12 @@ export const FormFragment = gql`
   fragment Form on FormSystemForm {
     id
     organizationId
+    organizationNationalId
+    organizationTitle
+    organizationTitleEn
+    organizationDisplayName {
+      ...LanguageFields
+    }
     name {
       ...LanguageFields
     }
@@ -18,6 +24,8 @@ export const FormFragment = gql`
     created
     modified
     isTranslated
+    hasPayment
+    beenPublished
     applicationDaysToRemove
     derivedFrom
     stopProgressOnValidatingScreen

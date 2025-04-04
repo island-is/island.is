@@ -6,9 +6,8 @@ import zipObject from 'lodash/zipObject'
 import { OrganizationUrl } from './models/organizationUrl.model'
 import { CreateOrganizationUrlDto } from './models/dto/createOrganizationUrl.dto'
 import { OrganizationUrlDto } from './models/dto/organizationUrl.dto'
-import { UrlTypes } from '../../enums/urlTypes'
 import { UpdateOrganizationUrlDto } from './models/dto/updateOrganizationUrl.dto'
-import { UrlMethods } from '../../enums/urlMethods'
+import { UrlMethods, UrlTypes } from '@island.is/form-system/shared'
 
 @Injectable()
 export class OrganizationUrlsService {

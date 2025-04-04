@@ -1,6 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { LanguageTypeInput } from './languageType.input'
-import { DependencyInput } from './form.input'
 
 @InputType('CreateFormSystemApplicantDtoInput')
 export class CreateApplicantDtoInput {

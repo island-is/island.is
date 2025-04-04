@@ -13,7 +13,7 @@ import { idsAdminNavigation } from '@island.is/portals/admin/ids-admin'
 import { signatureCollectionNavigation } from '@island.is/portals/admin/signature-collection'
 import { serviceDeskNavigation } from '@island.is/portals/admin/service-desk'
 import { petitionNavigation } from '@island.is/portals/admin/petition'
-import { formSystemNavigation } from '@island.is/form-system'
+import { formSystemNavigation } from '@island.is/portals/admin/form-system'
 import { delegationAdminNav } from 'delegation-admin'
 
 export const rootNavigationItem: PortalNavigationItem = {

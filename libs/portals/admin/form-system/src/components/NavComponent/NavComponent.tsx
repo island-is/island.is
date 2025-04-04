@@ -13,7 +13,7 @@ import cn from 'classnames'
 import { Box, Checkbox } from '@island.is/island-ui/core'
 import { truncateName } from '../../lib/utils/truncateText'
 import { NavButtons } from './components/NavButtons'
-import { SectionTypes } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system/enums'
 
 type Props = {
   type: ItemType
@@ -87,7 +87,6 @@ export const NavComponent = ({
       </div>
     )
   }
-
   return (
     <Box
       className={cn({

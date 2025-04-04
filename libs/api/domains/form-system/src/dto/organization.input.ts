@@ -14,6 +14,12 @@ export class GetOrganizationInput {
   id?: string
 }
 
+@InputType('FormSystemGetOrganizationAdminInput')
+export class GetOrganizationAdminInput {
+  @Field(() => String)
+  nationalId!: string
+}
+
 @InputType('FormSystemCreateOrganizationInput')
 export class CreateOrganizationInput {
   @Field(() => LanguageTypeInput, { nullable: true })
