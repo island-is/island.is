@@ -11,6 +11,11 @@ export const m = defineMessages({
     defaultMessage: 'Skil á ársreikningi fyrir einstaklingsframboð',
     description: 'Application for Individual elections',
   },
+  aboutOverviewTitle: {
+    id: 'fsie.application:aboutOverviewTitle',
+    defaultMessage: 'Um umsækjanda',
+    description: 'About applicant',
+  },
   institutionName: {
     id: 'fsie.application:institution',
     defaultMessage: 'Ríkisendurskoðun',
@@ -250,6 +255,12 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlýsing frambjóðanda vegna',
     description: 'statement',
   },
+  electionStatementDescription: {
+    id: 'fsie.application:electionStatementDescription',
+    defaultMessage: 'Yfirlýsing frambjóðanda vegna {election}',
+    description:
+      'Description at the top og the overview screen if income is less than limit',
+  },
   review: {
     id: 'fsie.application:review',
     defaultMessage:
@@ -415,6 +426,11 @@ export const m = defineMessages({
     defaultMessage: 'Eignir',
     description: 'List of applicants properties',
   },
+  debts: {
+    id: 'fsie.application:debts',
+    defaultMessage: 'Skuldir',
+    description: 'Applicants debts',
+  },
   fixedAssetsTotal: {
     id: 'fsie.application:keyNumbers.fixedAssetsTotal',
     defaultMessage: 'Fastafjármunir samtals',
@@ -495,6 +511,11 @@ export const m = defineMessages({
     defaultMessage: 'Skjöl',
     description: 'files',
   },
+  attachments: {
+    id: 'fsie.application:attachments',
+    defaultMessage: 'Fylgiskjöl',
+    description: 'attachments',
+  },
   errorApproval: {
     id: 'fsie.application:error.errorApproval',
     defaultMessage: 'Samþykkja þarf yfirlit',
@@ -528,10 +549,16 @@ export const m = defineMessages({
     defaultMessage: 'tók þátt í kjöri til',
     description: 'Participated in election',
   },
+  participatedIn: {
+    id: 'fsie.application:participatedIn',
+    defaultMessage:
+      '{fullName}, kennitala: {nationalId}, tók þátt í kjöri til {election}',
+    description: 'Participated in election',
+  },
   electionDeclare: {
     id: 'fsie.application:electionStatementDeclare',
     defaultMessage:
-      'Ég lýsi því hér með yfir að viðlögðum drengskap að hvorki heildartekjur né heildarkostnaður vegna framboðs míns í kjörinu voru hærri en kr.',
+      'Ég lýsi því hér með yfir að viðlögðum drengskap að hvorki heildartekjur né heildarkostnaður vegna framboðs míns í kjörinu voru hærri en {incomeLimit}',
     description: 'statement',
   },
   electionStatementLaw: {
@@ -548,7 +575,7 @@ export const m = defineMessages({
   signatureMessage: {
     id: 'fsie.application:SignatureMessage',
     defaultMessage:
-      'Eftir að þú hefur sent inn umsókn mun rafræn undirritun verða send á netfangið',
+      'Eftir að þú hefur sent inn umsókn mun rafræn undirritun verða send á netfangið {email} svo hægt sé að undirrita hana með rafrænum skilríkjum.',
     description: 'Signature message',
   },
   signaturePossible: {

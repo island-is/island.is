@@ -19,18 +19,7 @@ import {
 import { ComponentRegistry } from '../utils/component-registry'
 import { getRightButtons } from '../utils/get-main-root'
 import { setBadgeCountAsync } from 'expo-notifications'
-
-export interface Notification {
-  id: string
-  category?: string
-  title: string
-  subtitle?: string
-  body?: string
-  copy?: string
-  data: Record<string, any>
-  date: number
-  read: boolean
-}
+import { preferencesStore } from './preferences-store'
 
 interface NotificationsState extends State {
   unseenCount: number
@@ -69,7 +58,7 @@ export const notificationsStore = create<NotificationsStore>(
 
           try {
             // Register the new push token
-            const res = await client.mutate<
+            await client.mutate<
               AddUserProfileDeviceTokenMutation,
               AddUserProfileDeviceTokenMutationVariables
             >({
@@ -128,6 +117,7 @@ export const notificationsStore = create<NotificationsStore>(
       },
       async checkUnseen() {
         const client = await getApolloClientAsync()
+        const locale = preferencesStore.getState().locale
 
         try {
           const res = await client.query<
@@ -140,6 +130,7 @@ export const notificationsStore = create<NotificationsStore>(
               input: {
                 limit: 1,
               },
+              locale: locale === 'is-IS' ? 'is' : 'en',
             },
           })
 

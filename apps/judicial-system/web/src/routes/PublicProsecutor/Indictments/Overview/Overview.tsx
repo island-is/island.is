@@ -209,7 +209,6 @@ export const Overview = () => {
                     size="small"
                     disabled={
                       !workingCase.indictmentReviewDecision ||
-                      !defendant.verdictAppealDecision ||
                       (!isFine && !defendant.verdictViewDate && serviceRequired)
                     }
                   >

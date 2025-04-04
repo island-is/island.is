@@ -46,11 +46,6 @@ export const paymentArrangement = {
       defaultMessage: 'Símanúmer',
       description: 'Phonenumber label on conclusion screen',
     },
-    changeInfo: {
-      id: 'aosh.sem.application:paymentArrangement.labels.changeInfo',
-      defaultMessage: 'Breyta upplýsingum á mínum síðum',
-      description: 'Change information label on conclusion screen',
-    },
     paymentOptions: {
       id: 'aosh.sem.application:paymentArrangement.labels.paymentOptions',
       defaultMessage: 'Vinsamlegast veldu þann möguleika sem á við',
