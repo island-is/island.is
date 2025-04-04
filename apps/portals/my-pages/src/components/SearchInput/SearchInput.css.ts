@@ -43,10 +43,11 @@ globalStyle(`${breadcrumb}:last-of-type p::after`, {
   height: '1px',
   width: 0,
   bottom: -2,
-  transition: `width 0.3s`,
+  transition: `width 0.3s, height 0.3s`,
 })
 
 globalStyle(`${active} ${breadcrumb}:last-of-type p::after`, {
   width: '100%',
+  height: '1.2px',
   visibility: 'visible',
 })
