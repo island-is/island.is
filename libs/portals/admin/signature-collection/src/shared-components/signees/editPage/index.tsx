@@ -52,7 +52,7 @@ const EditPage = ({
   return (
     <Box>
       <Box marginLeft={1} onClick={() => setModalIsOpen(true)} cursor="pointer">
-        <Icon icon="pencil" type="outline" color="blue400" />
+        <Icon icon="pencil" color="blue400" />
       </Box>
       <Modal
         id="editPageModal"

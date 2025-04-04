@@ -6,6 +6,7 @@ import { Modal } from '@island.is/react/components'
 import { useRevalidator } from 'react-router-dom'
 import { useProcessCollectionMutation } from './finishCollectionProcess.generated'
 
+// Flæði fyrir "Úrvinnslu lokið"
 const ActionCompleteCollectionProcessing = ({
   collectionId,
   canProcess,
