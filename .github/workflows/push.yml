@@ -75,7 +75,7 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
-      cache_image: ${{ steps.docker-cache.outputs.image }}
+      cache_image: ${{ steps.docker-cache.outputs.cache_image }}
 
     steps:
       - uses: actions/checkout@v4
