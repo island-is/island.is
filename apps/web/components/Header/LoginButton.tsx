@@ -183,6 +183,6 @@ const LoginButtonLink = (props: Props) => {
 }
 
 export const LoginButton = (props: Props) => {
-  if (props.type !== 'link') return <LoginButtonLink {...props} />
+  if (props.type === 'link') return <LoginButtonLink {...props} />
   return <LoginButtonDropdown {...props} />
 }
