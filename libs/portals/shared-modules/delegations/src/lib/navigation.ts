@@ -5,7 +5,7 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
   {
     name: m.accessControlDelegations,
     path: DelegationPaths.Delegations,
-    navHide: true,
+    navHide: false,
     breadcrumbHide: true,
     children: [
       {
