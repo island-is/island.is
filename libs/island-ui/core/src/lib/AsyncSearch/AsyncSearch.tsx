@@ -25,7 +25,7 @@ import { TestSupport } from '@island.is/island-ui/utils'
 import cn from 'classnames'
 import { helperStyles } from '@island.is/island-ui/theme'
 
-export type AsyncSearchSizes = 'medium' | 'large'
+export type AsyncSearchSizes = 'medium' | 'large' | 'semi-large'
 
 export type ItemCmpProps = {
   active?: boolean
@@ -151,7 +151,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               isActive={highlightedIndex === index}
               showDividerIfActive={showDividerIfActive}
               colored={colored}
-              size={size}
+              size={size === 'semi-large' ? 'medium' : size}
               item={item}
               {...getItemProps({
                 key: item.value,
@@ -357,6 +357,7 @@ export const AsyncSearchInput = forwardRef<
       inputColor = 'dark'
     }
 
+    const normalizedSize = size === 'semi-large' ? 'medium' : size
     return (
       <>
         <div
@@ -379,7 +380,7 @@ export const AsyncSearchInput = forwardRef<
           />
           {!loading ? (
             <button
-              className={cn(styles.icon, styles.iconSizes[size], {
+              className={cn(styles.icon, styles.iconSizes[normalizedSize], {
                 [styles.transparentBackground]:
                   whiteColorScheme ||
                   blueberryColorScheme ||
@@ -390,11 +391,14 @@ export const AsyncSearchInput = forwardRef<
               tabIndex={value ? 0 : -1}
               {...buttonProps}
             >
-              <Icon size={size} icon="search" color={iconColor} />
+              <Icon size={normalizedSize} icon="search" color={iconColor} />
             </button>
           ) : (
             <span
-              className={cn(styles.loadingIcon, styles.loadingIconSizes[size])}
+              className={cn(
+                styles.loadingIcon,
+                styles.loadingIconSizes[normalizedSize],
+              )}
               aria-hidden="false"
               aria-label="Loading"
             >

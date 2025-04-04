@@ -132,10 +132,13 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
                     marginLeft={[1, 1, 2]}
                     printHidden
                   >
-                    {includeSearchInHeader && !isMobile && (
-                      <Box marginRight={[1, 1, 2]} flexGrow={1}>
+                    {includeSearchInHeader && (
+                      <Box marginRight={[1, 1, 2]} flexGrow={isMobile ? 0 : 1}>
                         <SearchInput
+                          placeholder={formatMessage(m.searchOnMyPages)}
+                          buttonAriaLabel={formatMessage(m.searchOnMyPages)}
                           whiteMenuBackground
+                          hideInput={isMobile}
                           box={{ marginLeft: 'auto' }}
                         />
                       </Box>
@@ -205,6 +208,7 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
                             : menuOpen,
                         )
                       }
+                      iconOnlyMobile
                       showLanguageSwitcher={false}
                       userMenuOpen={menuOpen === 'user'}
                     />

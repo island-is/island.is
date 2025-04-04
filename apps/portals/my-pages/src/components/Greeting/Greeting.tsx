@@ -49,8 +49,12 @@ const Greeting = () => {
               <Text paddingBottom={[2, 3, 4, 0]} marginBottom={2}>
                 {formatMessage(m.greetingIntro)}
               </Text>
-              <Box marginTop={3}>
-                <SearchInput />
+              <Box marginY={3}>
+                <SearchInput
+                  size="large"
+                  placeholder={formatMessage(m.searchOnMyPages)}
+                  buttonAriaLabel={formatMessage(m.searchOnMyPages)}
+                />
               </Box>
             </Box>
           </GridColumn>

@@ -68,6 +68,18 @@ export const sizes = styleVariants({
       },
     }),
   },
+  'semi-large': {
+    paddingRight: 40,
+    height: 56,
+    fontSize: 16,
+    ...themeUtils.responsiveStyle({
+      md: {
+        paddingRight: 56,
+        height: 64,
+        fontSize: 18,
+      },
+    }),
+  },
   large: {
     paddingRight: 72,
     height: 72,

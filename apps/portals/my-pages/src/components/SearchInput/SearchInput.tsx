@@ -16,6 +16,8 @@ import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
 
 interface Props {
   box?: BoxProps
+  size?: 'large' | 'default'
+  placeholder?: string
   buttonAriaLabel?: string
   hideInput?: boolean
   whiteMenuBackground?: boolean
@@ -23,6 +25,8 @@ interface Props {
 
 export const SearchInput = ({
   box,
+  size = 'default',
+  placeholder,
   buttonAriaLabel,
   hideInput,
   whiteMenuBackground,
@@ -95,12 +99,19 @@ export const SearchInput = ({
   if (hideInput) {
     return (
       <Box className={styles.wrapper} {...box}>
-        <Button
-          aria-label={buttonAriaLabel}
-          icon="search"
-          variant="utility"
-          size="small"
-        />
+        <LinkResolver href={SearchPaths.Search} className={styles.searchButton}>
+          <Button
+            aria-label={buttonAriaLabel}
+            icon="search"
+            iconType="outline"
+            colorScheme="white"
+            size="small"
+            type="span"
+            as="span"
+            variant="utility"
+            unfocusable
+          />
+        </LinkResolver>
       </Box>
     )
   }
@@ -110,7 +121,8 @@ export const SearchInput = ({
       <AsyncSearch
         ref={ref}
         id="my-pages-async-search"
-        placeholder="Leita"
+        placeholder={placeholder}
+        size={size === 'large' ? 'semi-large' : 'medium'}
         colored={!whiteMenuBackground}
         options={searchResults ?? []}
         inputValue={query}
