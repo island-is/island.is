@@ -392,10 +392,8 @@ jobs:
             --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
             --build-arg="NX_TASKS_RUNNER=ci"
             --build-arg="CACHE_IMAGE=${CACHE_IMAGE}"
-            --build-arg=BUILDKIT_INLINE_CACHE=1
             --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt
             --cache-from=type=registry,ref=${{ needs.prepare.outputs.cache_image }}
-            --cache-to=type=inline
           )
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
