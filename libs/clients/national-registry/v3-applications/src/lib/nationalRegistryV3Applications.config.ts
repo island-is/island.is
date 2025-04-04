@@ -23,7 +23,7 @@ export const NationalRegistryV3ApplicationsClientConfig = defineConfig<
     ),
     clientSecret: env.required('NATIONAL_REGISTRY_B2C_CLIENT_SECRET', ''),
     scope: env.required(
-      'NATIONAL_REGISTRY_B2C_SCOPE',
+      'NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE',
       'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default',
     ),
     endpoint: env.required(
