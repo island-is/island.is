@@ -11,21 +11,17 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  hasMunicipalityRole,
-  hasPermission,
-} from '@island.is/skilavottord-web/auth/utils'
-import { NotFound } from '@island.is/skilavottord-web/components'
+import { hasMunicipalityRole } from '@island.is/skilavottord-web/auth/utils'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import {
   Query,
   RecyclingPartner,
-  Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
 
+import AuthGuard from '@island.is/skilavottord-web/components/AuthGuard/AuthGuard'
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 import { SkilavottordRecyclingPartnersQuery } from '@island.is/skilavottord-web/graphql/queries'
@@ -73,12 +69,6 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
     },
   )
 
-  if (!user) {
-    return null
-  } else if (!hasPermission('recyclingCompanies', user?.role as Role)) {
-    return <NotFound />
-  }
-
   const partners = data?.skilavottordRecyclingPartners || []
   const recyclingPartners = filterInternalPartners(partners)
   recyclingPartners.sort((a, b) => a.companyName.localeCompare(b.companyName))
@@ -110,96 +100,99 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <PartnerPageLayout side={<NavigationLinks activeSection={activeSection} />}>
-      <Stack space={4}>
-        <Breadcrumbs
-          items={[
-            { title: 'Ísland.is', href: routes.home['recyclingFund'] },
-            {
-              title: title,
-            },
-          ]}
-          renderLink={(link, item) => {
-            return item?.href ? (
-              <NextLink href={item?.href} legacyBehavior>
-                {link}
-              </NextLink>
-            ) : (
-              link
-            )
-          }}
-        />
-        <PageHeader title={title} info={info} />
-        <Box display="flex" justifyContent="flexEnd">
-          <Button onClick={handleCreate}>{buttonText}</Button>
-        </Box>
-        {error || (loading && !data) ? (
-          <Text>{empty}</Text>
-        ) : (
-          <Stack space={3}>
-            <Table>
-              <Head>
-                <Row>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.name}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.id}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.address}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.postnumber}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.email}</Text>
-                  </HeadData>
-                  <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.status}</Text>
-                  </HeadData>
-                  <HeadData></HeadData>
-                </Row>
-              </Head>
-              <Body>
-                {recyclingPartners.map((partner: RecyclingPartner) => (
-                  <Row key={partner.companyId}>
-                    <Data>{partner.companyName}</Data>
-                    <Data>{partner.companyId}</Data>
-                    <Data>{partner.address}</Data>
-                    <Data>{partner.postnumber}</Data>
-                    <Data>{partner.email}</Data>
-                    <Data>
-                      {partner.active ? (
-                        <Text
-                          color="mint400"
-                          fontWeight="semiBold"
-                          variant="eyebrow"
+    <AuthGuard permission="recyclingCompanies" loading={loading}>
+      <PartnerPageLayout
+        side={<NavigationLinks activeSection={activeSection} />}
+      >
+        <Stack space={4}>
+          <Breadcrumbs
+            items={[
+              { title: 'Ísland.is', href: routes.home['recyclingFund'] },
+              {
+                title: title,
+              },
+            ]}
+            renderLink={(link, item) => {
+              return item?.href ? (
+                <NextLink href={item?.href} legacyBehavior>
+                  {link}
+                </NextLink>
+              ) : (
+                link
+              )
+            }}
+          />
+          <PageHeader title={title} info={info} />
+          <Box display="flex" justifyContent="flexEnd">
+            <Button onClick={handleCreate}>{buttonText}</Button>
+          </Box>
+          {error || (loading && !data) ? (
+            <Text>{empty}</Text>
+          ) : (
+            <Stack space={3}>
+              <Table>
+                <Head>
+                  <Row>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.name}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.id}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.address}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.postnumber}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.email}</Text>
+                    </HeadData>
+                    <HeadData>
+                      <Text variant="eyebrow">{t.tableHeaders.status}</Text>
+                    </HeadData>
+                    <HeadData></HeadData>
+                  </Row>
+                </Head>
+                <Body>
+                  {recyclingPartners.map((partner: RecyclingPartner) => (
+                    <Row key={partner.companyId}>
+                      <Data>{partner.companyName}</Data>
+                      <Data>{partner.companyId}</Data>
+                      <Data>{partner.address}</Data>
+                      <Data>{partner.postnumber}</Data>
+                      <Data>{partner.email}</Data>
+                      <Data>
+                        {partner.active ? (
+                          <Text
+                            color="mint400"
+                            fontWeight="semiBold"
+                            variant="eyebrow"
+                          >
+                            {t.status.active}
+                          </Text>
+                        ) : (
+                          <Text
+                            color="red600"
+                            fontWeight="semiBold"
+                            variant="eyebrow"
+                          >
+                            {t.status.inactive}
+                          </Text>
+                        )}
+                      </Data>
+                      <Data>
+                        <Button
+                          variant="text"
+                          icon="chevronForward"
+                          size="small"
+                          nowrap
+                          onClick={() => handleUpdate(partner.companyId)}
                         >
-                          {t.status.active}
-                        </Text>
-                      ) : (
-                        <Text
-                          color="red600"
-                          fontWeight="semiBold"
-                          variant="eyebrow"
-                        >
-                          {t.status.inactive}
-                        </Text>
-                      )}
-                    </Data>
-                    <Data>
-                      <Button
-                        variant="text"
-                        icon="chevronForward"
-                        size="small"
-                        nowrap
-                        onClick={() => handleUpdate(partner.companyId)}
-                      >
-                        {t.buttons.view}
-                      </Button>
+                          {t.buttons.view}
+                        </Button>
 
-                      {/* <DropdownMenu
+                        {/* <DropdownMenu
                         disclosure={
                           <Button
                             variant="text"
@@ -250,15 +243,16 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
                         ]}
                         menuLabel={t.buttons.actions}
                       /> */}
-                    </Data>
-                  </Row>
-                ))}
-              </Body>
-            </Table>
-          </Stack>
-        )}
-      </Stack>
-    </PartnerPageLayout>
+                      </Data>
+                    </Row>
+                  ))}
+                </Body>
+              </Table>
+            </Stack>
+          )}
+        </Stack>
+      </PartnerPageLayout>
+    </AuthGuard>
   )
 }
 
