@@ -15,6 +15,7 @@ export enum Roles {
 export enum ApiActions {
   getUserType = 'getUserType',
   submitApplication = 'submitApplication',
+  fetchElections = 'fetchElections',
 }
 
 export enum FSIUSERTYPE {
@@ -28,14 +29,15 @@ export type Options = {
   value: string
 }[]
 
-export type Elections = {
+export type Election = {
   electionId: string
   name: string
   electionDate: string
   genitiveName: string
+  limit?: number
   __typename?: string
 }
 
 export type ElectionsResponse = {
-  financialStatementsInaoElections: Array<Elections>
+  financialStatementsInaoElections: Array<Election>
 }

@@ -1,4 +1,7 @@
+import { Application } from '@island.is/application/types'
 import { TOTAL } from './constants'
+import { getValueViaPath } from '@island.is/application/core'
+import { Election } from '../types/types'
 
 export const checkIfNegative = (inputNumber: string) => {
   if (Number(inputNumber) < 0) {
@@ -32,3 +35,22 @@ export const formatCurrency = (answer: string) =>
   answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
 export const formatNumber = (num: number) => num.toLocaleString('de-DE')
+
+export const getFinancialLimit = (application: Application) => {
+  const { answers, externalData } = application
+
+  const selectedElectionId = getValueViaPath<string>(
+    answers,
+    'election.electionId',
+  )
+  const elections = getValueViaPath<Array<Election>>(
+    externalData,
+    'fetchElections.data',
+  )
+
+  const selectedElection = elections?.find(
+    (election) => election.electionId === selectedElectionId,
+  )
+
+  return selectedElection?.limit
+}

@@ -17,6 +17,10 @@ export const clientInfoSection = buildSection({
       description: m.reviewInfo,
       children: [
         buildTextField({
+          condition: (_answers, externalData) => {
+            console.log(externalData)
+            return true
+          },
           id: 'about.nationalId',
           title: m.candidateNationalId,
           width: 'half',
@@ -51,6 +55,7 @@ export const clientInfoSection = buildSection({
           title: m.phoneNumber,
           width: 'half',
           variant: 'tel',
+          format: '###-####',
           defaultValue: (application: Application) => {
             const userProfile = application.externalData?.userProfile
               ?.data as UserProfile

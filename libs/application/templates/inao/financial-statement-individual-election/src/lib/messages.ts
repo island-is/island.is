@@ -327,13 +327,13 @@ export const m = defineMessages({
   lessThanLimit: {
     id: 'fsie.application:lessThanLimit',
     defaultMessage:
-      'Heildartekjur og heildarkostnað við kosningabaráttuna var minni en',
+      'Heildartekjur og heildarkostnaður við kosningabaráttuna var minni en {limit}',
     description: 'Spending was less than a specific limit',
   },
   moreThanLimit: {
     id: 'fsie.application:moreThanLimit',
     defaultMessage:
-      'Heildartekjur og heildarkostnað við kosningabaráttuna var meira en',
+      'Heildartekjur og heildarkostnaður við kosningabaráttuna var meira en {limit}',
     description: 'Spending was more than a specific limit',
   },
   crowns: {
@@ -651,5 +651,10 @@ export const m = defineMessages({
     id: 'fsie.application:conclusionTabTitle',
     defaultMessage: 'Uppgjör móttekið',
     description: 'conclusion tab title',
+  },
+  financialLimit: {
+    id: 'fsie.application:financialLimit',
+    defaultMessage: 'Heildartekjur eða kostnaður vegna framboðsins',
+    description: 'financial limit',
   },
 })
