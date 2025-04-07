@@ -21,6 +21,8 @@ jobs:
                 sparse-checkout: |
                     .github/workflows/dagger.yml
                 sparse-checkout-cone-mode: true
+            - run :
+                    find 
             - name: Test
               uses: ./.github/workflows/dagger.yml
               with:
