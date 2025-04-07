@@ -264,6 +264,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = ({
                         ;(ev.target as { blur?: () => void })?.blur?.()
                       }
                     }}
+                    defaultValue={searchTerm}
                     placeholder={formatMessage(
                       m.listPage.searchInputPlaceholder,
                     )}

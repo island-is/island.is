@@ -10,15 +10,16 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     .image(serviceName)
     .namespace(serviceName)
     .codeOwner(CodeOwners.Advania)
+    .redis()
     .db()
     .migrations()
-    .seed()
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      REDIS_USE_SSL: 'true',
     })
     .ingress({
       primary: {

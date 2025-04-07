@@ -57,6 +57,7 @@ import {
   DEPARTMENTS_QUERY,
   MAIN_CATEGORIES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
+import { ORGANIZATION_SLUG } from './constants'
 import { m } from './messages'
 type MalaflokkarType = Array<{
   letter: string
@@ -438,8 +439,6 @@ const OJOICategories: CustomScreen<OJOICategoriesProps> = ({
 }
 
 OJOICategories.getProps = async ({ apolloClient, locale }) => {
-  const organizationSlug = 'stjornartidindi'
-
   const [
     {
       data: { officialJournalOfIcelandMainCategories },
@@ -482,7 +481,7 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: organizationSlug,
+          slug: ORGANIZATION_SLUG,
           lang: locale as ContentLanguage,
         },
       },
