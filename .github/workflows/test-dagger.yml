@@ -19,7 +19,7 @@ jobs:
                 fetch-depth: 1
                 clean: true
                 sparse-checkout: |
-                    .github
+                    .github/workflows/dagger.yml
                 sparse-checkout-cone-mode: true
             - name: Test
               uses: ./.github/workflows/dagger.yml

@@ -28,9 +28,9 @@ jobs:
               with:
                 fetch-depth: 1
                 clean: true
-                sparse-checkout: |
-                    ${{ inputs.module }}
-                sparse-checkout-cone-mode: true
+                filter: |
+                    ${{ inputs.module }}/**
+                
 
             - name: Call Dagger Function to build and publish to ghcr.io
               uses: dagger/dagger-for-github@8.0.0
