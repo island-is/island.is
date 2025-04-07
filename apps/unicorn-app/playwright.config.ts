@@ -1,5 +1,6 @@
-import { baseConfig } from '../../playwright.base'
 import { defineConfig, devices } from '@playwright/test'
+
+import { baseConfig } from '@island.is/testing/e2e'
 
 /**
  * See https://playwright.dev/docs/test-configuration.
