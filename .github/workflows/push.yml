@@ -359,6 +359,16 @@ jobs:
           export OUTPUT_TYPE=${DOCKER_TYPE/docker/output} >> "${GITHUB_ENV}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
 
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container
+          driver-opts: |
+            image=${DOCKER_REGISTRY}/moby/buildkit:buildx-stable-1
+          install: true
+          use: true
+
       - name: Building docker images
         uses: docker/build-push-action@v6
         with:
