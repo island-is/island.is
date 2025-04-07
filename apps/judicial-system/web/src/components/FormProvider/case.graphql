@@ -196,6 +196,8 @@ query Case($input: CaseQueryInput!) {
       displayDate
       policeFileId
       submittedBy
+      submissionDate
+      fileRepresentative
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
@@ -416,5 +418,10 @@ query Case($input: CaseQueryInput!) {
     hasCivilClaims
     isCompletedWithoutRuling
     caseSentToCourtDate
+    caseRepresentatives {
+      name
+      nationalId
+      caseFileCategory
+    }
   }
 }

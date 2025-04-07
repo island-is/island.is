@@ -7,6 +7,7 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   BlueBox,
   DefenderNotFound,
@@ -49,9 +50,9 @@ export const VictimInfo: React.FC<Props> = ({
   )
 
   const handleNationalIdBlur = (nationalId: string) => {
-    const cleanNationalId = nationalId?.replace('-', '') ?? ''
+    const normalizedNationalId = normalizeAndFormatNationalId(nationalId)[0]
 
-    setVictimNationalIdUpdate(cleanNationalId || null)
+    setVictimNationalIdUpdate(normalizedNationalId || null)
   }
 
   useEffect(

@@ -100,6 +100,9 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
   const errorMessage = useMemo(() => {
     if (uploadFiles.some((file) => file.status === 'error')) {
       return formatMessage(errorMessages.general)
+    }
+    if (uploadFiles.some((file) => file.size === 0)) {
+      return 'Villa kom upp. Tómt skjal.'
     } else {
       return undefined
     }
