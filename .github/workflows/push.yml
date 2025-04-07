@@ -273,7 +273,7 @@ jobs:
       MAX_JOBS: 3
       NX_PARALLEL: 1
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         chunk: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
     steps:
