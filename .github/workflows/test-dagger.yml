@@ -11,21 +11,9 @@ concurrency:
 
 jobs:
     test:
-        runs-on: arc-shared
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 1
-                clean: true
-                sparse-checkout: |
-                    .github/workflows/dagger.yml
-                sparse-checkout-cone-mode: true
-            - run :
-                    find 
-            - name: Test
-              uses: ./.github/workflows/dagger.yml
-              with:
-                  function: test
+        uses: ./.github/workflows/dagger.yml
+        secrets: inherit
+        with:
+            function: test
                   
 
