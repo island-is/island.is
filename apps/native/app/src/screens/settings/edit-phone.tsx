@@ -12,9 +12,9 @@ import {
   CreateSmsVerificationDocument,
   CreateSmsVerificationMutation,
   CreateSmsVerificationMutationVariables,
-  DeleteIslykillValueDocument,
-  DeleteIslykillValueMutation,
-  DeleteIslykillValueMutationVariables,
+  DeleteEmailOrPhoneDocument,
+  DeleteEmailOrPhoneMutation,
+  DeleteEmailOrPhoneMutationVariables,
   GetProfileDocument,
   useGetProfileQuery,
 } from '../../graphql/types/schema'
@@ -102,10 +102,10 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
               try {
                 if (isEmpty) {
                   const res = await client.mutate<
-                    DeleteIslykillValueMutation,
-                    DeleteIslykillValueMutationVariables
+                    DeleteEmailOrPhoneMutation,
+                    DeleteEmailOrPhoneMutationVariables
                   >({
-                    mutation: DeleteIslykillValueDocument,
+                    mutation: DeleteEmailOrPhoneDocument,
                     variables: {
                       input: {
                         mobilePhoneNumber: true,

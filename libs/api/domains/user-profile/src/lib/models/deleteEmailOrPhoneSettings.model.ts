@@ -5,7 +5,6 @@ export class DeleteEmailOrPhoneSettings {
   @Field(() => String)
   nationalId!: string
 
-  @Field(() => String)
+  @Field(() => Boolean)
   valid!: boolean
-
 }

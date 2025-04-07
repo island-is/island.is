@@ -7,7 +7,7 @@ import {
 import { useUserProfile } from './useUserProfile'
 import { DELETE_EMAIL_OR_PHONE_MUTATION } from '../../lib/mutations/updateEmailOrPhone'
 
-export type DeleteIslykillValue = {
+export type DeleteEmailOrPhone = {
   email?: boolean
   mobilePhoneNumber?: boolean
 }
@@ -19,7 +19,7 @@ export const useDeleteEmailOrPhoneValue = () => {
     MutationDeleteEmailOrPhoneArgs
   >(DELETE_EMAIL_OR_PHONE_MUTATION)
 
-  const deleteEmailOrPhoneValue = (data: DeleteIslykillValue) => {
+  const deleteEmailOrPhoneValue = (data: DeleteEmailOrPhone) => {
     if (!userProfile)
       throw new Error(
         'User profile does not exist, one must be created before it can be updated',
