@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/form-system/src",
   "projectType": "library",
+  "implicitDependencies": ["services-form-system-api"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
@@ -28,7 +29,7 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/form-system/gen/fetch -i libs/clients/form-system/src/clientConfig.json"
+        "command": "yarn openapi-generator -o libs/clients/form-system/gen/fetch -i apps/services/form-system/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }

@@ -20,6 +20,7 @@ import {
   PunishmentType,
   ServiceRequirement,
   SubpoenaType,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
@@ -94,6 +95,11 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: String })
   nationalId?: string
 
+  // ATTENTION: This will contain the DOB from **LOKE** but we can migrate later internal DOB currently stored as nationalId in the same schema
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  dateOfBirth?: string
+
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   name?: string
@@ -157,6 +163,14 @@ export class Defendant extends Model {
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
   verdictViewDate?: Date
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(VerdictAppealDecision),
+  })
+  @ApiPropertyOptional({ enum: VerdictAppealDecision })
+  verdictAppealDecision?: VerdictAppealDecision
 
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })

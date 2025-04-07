@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../languageType.model'
-import { ApplicantTypesEnum } from './applicantTypes.enum'
+import { ApplicantTypesEnum } from '@island.is/form-system/shared'
 import { ApplicantTypeNames } from './applicantTypeName.model'
 
 export class ApplicantType {

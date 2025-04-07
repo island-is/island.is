@@ -13,13 +13,14 @@ import {
   ItemType,
   NavbarSelectStatus,
 } from '../lib/utils/interfaces'
+import { UpdateFormResponse } from '@island.is/form-system/shared'
 
 export interface IControlContext {
   control: ControlState
   controlDispatch: Dispatch<ControlAction>
   certificationTypes:
-    | Maybe<Maybe<FormSystemFormCertificationType>[]>
-    | undefined
+  | Maybe<Maybe<FormSystemFormCertificationType>[]>
+  | undefined
   fieldTypes: Maybe<Maybe<FormSystemFieldType>[]> | undefined
   listTypes: Maybe<Maybe<FormSystemListType>[]> | undefined
   setInSettings: Dispatch<boolean>
@@ -32,7 +33,7 @@ export interface IControlContext {
   setSelectStatus: Dispatch<NavbarSelectStatus>
   setInListBuilder: Dispatch<SetStateAction<boolean>>
   inListBuilder: boolean
-  formUpdate: (updatedForm?: FormSystemForm) => void
+  formUpdate: (updatedForm?: FormSystemForm) => Promise<UpdateFormResponse>
   applicantTypes: Maybe<Maybe<FormSystemFormApplicant>[]> | undefined
 }
 
@@ -66,7 +67,7 @@ export const ControlContext = createContext<IControlContext>({
     throw new Error('Function not implemented.')
   },
   inListBuilder: false,
-  formUpdate: function (): void {
+  formUpdate: function (): Promise<UpdateFormResponse> {
     throw new Error('Function not implemented.')
   },
   applicantTypes: [] as Maybe<Maybe<FormSystemFormApplicant>[]>,

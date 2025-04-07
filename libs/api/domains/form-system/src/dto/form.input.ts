@@ -29,10 +29,22 @@ export class DeleteFormInput {
   id?: string
 }
 
+@InputType('FormSystemCreateFormInput')
+export class CreateFormInput {
+  @Field(() => String, { nullable: true })
+  organizationNationalId?: string
+}
+
 @InputType('FormSystemGetFormInput')
 export class GetFormInput {
   @Field(() => String, { nullable: true })
   id?: string
+}
+
+@InputType('FormSystemGetFormsInput')
+export class GetFormsInput {
+  @Field(() => String, { nullable: true })
+  nationalId?: string
 }
 
 @InputType('FormSystemFormUrlInput')
@@ -91,8 +103,14 @@ export class UpdateFormDtoInput {
   @Field(() => String, { nullable: true })
   slug?: string
 
+  @Field(() => LanguageTypeInput, { nullable: true })
+  organizationDisplayName?: LanguageTypeInput
+
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date
+
+  @Field(() => Boolean, { nullable: true })
+  hasPayment?: boolean
 
   @Field(() => Boolean, { nullable: true })
   isTranslated?: boolean
@@ -150,6 +168,9 @@ export class FormInput {
 
   @Field(() => Boolean, { nullable: true })
   isTranslated?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  hasPayment?: boolean
 
   @Field(() => Boolean, { nullable: true })
   beenPublished?: boolean

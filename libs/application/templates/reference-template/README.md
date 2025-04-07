@@ -1,25 +1,24 @@
 # Reference Template
 
-This library is a reference how all application template libraries can be.
+This library serves as a reference for how all application template libraries should be structured.
 
-## Requirements
+## Making a new application
 
 There are multiple requirements needed for a new template to be usable by the application system:
 
-1. Run `yarn generate @nrwl/react:library application/templates/NAME_OF_APPLICATION` to generate a new library.
-2. The default export of this library has to be an object that extends the `ApplicationTemplate` interface
-3. Add a unique application type to `application/types/src/lib/ApplicationTypes.ts`
-4. Add to `application/template-loader/src/lib/templateLoaders.ts` so that library knows how to import this new application template.
-5. If the template includes custom fields only used by this application, export a submodule `getFields` (see `application/templates/parental-leave`):
-6. Add to `application/types/src/lib/institutionMapper.ts`
+1. Run `yarn generate-application-template <name-of-application>` to generate a new template
+2. Run `yarn generate-application-template-api-module <name-of-application>` to generate a new template api module
+3. Add an application type to `libs/application/types/src/lib/ApplicationTypes.ts`
+4. Make sure the new application type matches in the constructor of the service in `libs/application/template-api-modules/src/lib/modules/templates/<new-application>/<new-application>.service.ts` and in `libs/application/templates/<new-application>/src/lib/template.ts`
+5. Add to `libs/application/types/src/lib/institutionMapper.ts`
+6. Add the application type to `libs/application/template-loader/src/lib/templateLoaders.ts` so that library knows how to import this new application template.
+7. Run `yarn codegen`
+8. View your new application at `/umsoknir/<slug-from-application-types>`
 
-```ts
-import ParentalLeaveTemplate from './lib/ParentalLeaveTemplate'
+Note: It also works to create nested applications by running:
 
-export const getFields = () => import('./fields/')
-
-export default ParentalLeaveTemplate
-```
+1. `yarn generate-application-template <folder-name>/<name-of-application>`
+2. `yarn generate-application-template-api-module <folder-name>/<name-of-application>`
 
 ## Capabilities
 

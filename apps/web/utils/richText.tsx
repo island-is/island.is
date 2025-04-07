@@ -34,6 +34,7 @@ import {
   EmailSignup,
   Form,
   GenericListWrapper,
+  IntroLinkImageSlice,
   KilometerFee,
   MasterList,
   MultipleStatistics,
@@ -70,6 +71,7 @@ import {
   GenericList as GenericListSchema,
   GetTeamMembersInputOrderBy,
   GrantCardsList as GrantCardsListSchema,
+  IntroLinkImage,
   MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
   OrganizationParentSubpageList,
@@ -312,15 +314,17 @@ const defaultRenderComponent = {
     />
   ),
   Image: (slice: ImageProps) => {
-    const thumbnailUrl = slice?.url ? slice.url + '?w=50' : ''
-    const url = slice?.url ? slice.url + '?w=1000' : ''
-    return <Image {...slice} thumbnail={thumbnailUrl} url={url} />
+    const url = slice?.url ? slice.url : ''
+    return <Image {...slice} url={url} />
   },
   GrantCardsList: (slice: GrantCardsListSchema) => (
     <GrantCardsList slice={slice} />
   ),
   OrganizationParentSubpageList: (slice: OrganizationParentSubpageList) => (
     <OrganizationParentSubpageListSlice slice={slice} />
+  ),
+  IntroLinkImage: (slice: IntroLinkImage) => (
+    <IntroLinkImageSlice slice={slice} />
   ),
 }
 

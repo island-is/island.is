@@ -7,8 +7,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/examples/example-state-transfers'),
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: () =>
     import('@island.is/application/templates/examples/example-common-actions'),
-  [ApplicationTypes.EXAMPLE_FIELDS]: () =>
-    import('@island.is/application/templates/examples/example-fields'),
+  [ApplicationTypes.EXAMPLE_INPUTS]: () =>
+    import('@island.is/application/templates/examples/example-inputs'),
+  [ApplicationTypes.EXAMPLE_NO_INPUTS]: () =>
+    import('@island.is/application/templates/examples/example-no-inputs'),
   [ApplicationTypes.ESTATE]: () =>
     import('@island.is/application/templates/estate'),
   [ApplicationTypes.PARENTAL_LEAVE]: () =>
@@ -60,7 +62,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]: () =>
     import('@island.is/application/templates/driving-instructor-registrations'),
   [ApplicationTypes.EXAMPLE_PAYMENT]: () =>
-    import('@island.is/application/templates/example-payment'),
+    import('@island.is/application/templates/examples/example-payment'),
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: () =>
     import('@island.is/application/templates/driving-school-confirmation'),
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: () =>
@@ -155,6 +157,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/signature-collection/municipal-list-creation'
     ),
+  [ApplicationTypes.MUNICIPAL_LIST_SIGNING]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/municipal-list-signing'
+    ),
   [ApplicationTypes.CITIZENSHIP]: () =>
     import(
       '@island.is/application/templates/directorate-of-immigration/citizenship'
@@ -211,6 +217,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/new-primary-school'),
   [ApplicationTypes.MACHINE_REGISTRATION]: () =>
     import('@island.is/application/templates/aosh/register-new-machine'),
+  [ApplicationTypes.SEMINAR_REGISTRATION]: () =>
+    import('@island.is/application/templates/aosh/seminars'),
   [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: () =>
     import(
       '@island.is/application/templates/aosh/training-license-on-a-work-machine'

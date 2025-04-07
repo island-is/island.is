@@ -89,10 +89,14 @@ export type Icon =
   | 'signLanguage'
   | 'listView'
   | 'gridView'
+  | 'swapHorizontal'
   | 'swapVertical'
   | 'thumbsUp'
   | 'thumbsDown'
   | 'leaf'
+  | 'grid'
+  | 'list'
+  | 'hammer'
 
 export default {
   filled: {
@@ -185,10 +189,14 @@ export default {
     signLanguage: 'SignLanguage',
     listView: 'ListView',
     gridView: 'GridView',
+    swapHorizontal: 'SwapHorizontal',
     swapVertical: 'SwapVertical',
     thumbsUp: 'ThumbsUp',
     thumbsDown: 'ThumbsDown',
     leaf: 'Leaf',
+    grid: 'Grid',
+    list: 'List',
+    hammer: 'HammerOutline',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -280,9 +288,13 @@ export default {
     signLanguage: 'SignLanguage',
     listView: 'ListView',
     gridView: 'GridView',
+    swapHorizontal: 'SwapHorizontal',
     swapVertical: 'SwapVertical',
     thumbsUp: 'ThumbsUpOutline',
     thumbsDown: 'ThumbsDownOutline',
     leaf: 'LeafOutline',
+    grid: 'GridOutline',
+    list: 'ListOutline',
+    hammer: 'HammerOutline',
   },
 }

@@ -42,6 +42,7 @@ import {
   Properties,
   RskCompanyInfo,
   RskProcuring,
+  SeminarsVer,
   ShipRegistry,
   SignatureCollection,
   SocialInsuranceAdministration,
@@ -108,7 +109,6 @@ export const serviceSetup = (services: {
           'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/',
         prod: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/',
       },
-
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',
@@ -167,7 +167,7 @@ export const serviceSetup = (services: {
       AUTH_DELEGATION_API_URL: {
         dev: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
         staging:
-          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+          'http://services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         prod: 'https://auth-delegation-api.internal.innskra.island.is',
       },
       IDENTITY_SERVER_ISSUER_URL: {
@@ -176,9 +176,9 @@ export const serviceSetup = (services: {
         prod: 'https://innskra.island.is',
       },
       MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
-        dev: 'http://web-financial-aid-backend',
-        staging: 'http://web-financial-aid-backend',
-        prod: 'http://web-financial-aid-backend',
+        dev: 'http://financial-aid-backend',
+        staging: 'http://financial-aid-backend',
+        prod: 'http://financial-aid-backend',
       },
       FINANCIAL_STATEMENTS_INAO_BASE_PATH: {
         dev: 'https://dev-re.crm4.dynamics.com/api/data/v9.1',
@@ -194,7 +194,9 @@ export const serviceSetup = (services: {
       },
       FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
         'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
-      FORM_SYSTEM_API_BASE_PATH: ref((h) => `http://${h.svc(services.formSystemService)}`),
+      FORM_SYSTEM_API_BASE_PATH: ref(
+        (h) => `http://${h.svc(services.formSystemService)}`,
+      ),
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
         staging: 'https://samradapi-test.devland.is',
@@ -277,8 +279,12 @@ export const serviceSetup = (services: {
         staging: 'island-is-assistant-feedback',
         prod: 'island-is-assistant-feedback',
       },
+      RANNIS_GRANTS_URL: {
+        dev: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+        staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+        prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
+      },
     })
-
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
       DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH',
@@ -388,6 +394,8 @@ export const serviceSetup = (services: {
         '/k8s/api/UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL',
       VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY:
         '/k8s/api/VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY',
+      VERDICTS_GOPRO_USERNAME: '/k8s/api/VERDICTS_GOPRO_USERNAME',
+      VERDICTS_GOPRO_PASSWORD: '/k8s/api/VERDICTS_GOPRO_PASSWORD',
     })
     .xroad(
       AdrAndMachine,
@@ -442,6 +450,7 @@ export const serviceSetup = (services: {
       HealthDirectorateVaccination,
       HealthDirectorateHealthService,
       WorkAccidents,
+      SeminarsVer,
       SecondarySchool,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })

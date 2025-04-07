@@ -13,6 +13,7 @@ import {
   FeatureProvider,
   FormProvider,
   Header as HeaderContainer,
+  LawyerRegistryProvider,
   ServiceInterruptionBanner,
   UserProvider,
   ViewportProvider,
@@ -77,6 +78,7 @@ class JudicialSystemApplication extends App<Props> {
       translations,
     }
   }
+
   render() {
     const { Component, pageProps, translations } = this.props
 
@@ -98,7 +100,7 @@ class JudicialSystemApplication extends App<Props> {
             <FeatureProvider>
               <UserProvider>
                 <LocaleProvider locale="is" messages={translations || {}}>
-                  <>
+                  <LawyerRegistryProvider>
                     <ServiceInterruptionBanner />
                     <HeaderContainer />
                     <FormProvider>
@@ -166,7 +168,7 @@ class JudicialSystemApplication extends App<Props> {
                             format('woff');
                       }
                     `}</style>
-                  </>
+                  </LawyerRegistryProvider>
                 </LocaleProvider>
               </UserProvider>
             </FeatureProvider>

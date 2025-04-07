@@ -11,9 +11,9 @@ import { UniqueIdentifier } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { removeTypename } from '../lib/utils/removeTypename'
 import { ActiveItem } from '../lib/utils/interfaces'
-import { SectionTypes } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system/enums'
 
-// TODO 
+// TODO
 // This is a very long reducer that is handling many responsibilities making it difficult to read and maintain. You can simplify it by splitting it into smaller more focused reducers.
 // For example create sepeare reducers for
 // ActiveItem
@@ -92,6 +92,18 @@ type ChangeActions =
   | {
     type: 'CHANGE_FORM_NAME'
     payload: { lang: 'en' | 'is'; newValue: string }
+  }
+  | {
+    type: 'CHANGE_ORGANIZATION_DISPLAY_NAME'
+    payload: { lang: 'en' | 'is'; newValue: string }
+  }
+  | {
+    type: 'CHANGE_ORGANIZATION_NATIONAL_ID'
+    payload: { newValue: string }
+  }
+  | {
+    type: 'CHANGE_SLUG'
+    payload: { newValue: string }
   }
   | { type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
@@ -194,6 +206,7 @@ export interface ControlState {
   activeItem: ActiveItem
   activeListItem: FormSystemListItem | null
   form: FormSystemForm
+  organizationNationalId: string | null
 }
 
 export const controlReducer = (
@@ -393,7 +406,7 @@ export const controlReducer = (
         newData = {
           ...(activeItem.data as FormSystemSection),
           name: {
-            ...((activeItem.data as FormSystemSection).name),
+            ...(activeItem.data as FormSystemSection).name,
             [lang]: newValue,
           },
         }
@@ -401,7 +414,7 @@ export const controlReducer = (
         newData = {
           ...(activeItem.data as FormSystemScreen),
           name: {
-            ...((activeItem.data as FormSystemScreen).name),
+            ...(activeItem.data as FormSystemScreen).name,
             [lang]: newValue,
           },
         }
@@ -409,7 +422,7 @@ export const controlReducer = (
         newData = {
           ...(activeItem.data as FormSystemField),
           name: {
-            ...((activeItem.data as FormSystemField).name),
+            ...(activeItem.data as FormSystemField).name,
             [lang]: newValue,
           },
         }
@@ -424,15 +437,15 @@ export const controlReducer = (
       let updatedList
       if (type === 'Section') {
         updatedList = sections?.map((s) =>
-          s?.id === newData?.id ? newActive.data : s,
+          s?.id === activeItem.data?.id ? newActive.data : s,
         )
       } else if (type === 'Screen') {
         updatedList = screens?.map((g) =>
-          g?.id === newData?.id ? newActive.data : g,
+          g?.id === activeItem.data?.id ? newActive.data : g,
         )
       } else if (type === 'Field') {
         updatedList = fields?.map((i) =>
-          i?.id === newData?.id ? newActive.data : i,
+          i?.id === activeItem.data?.id ? newActive.data : i,
         )
       }
       return {
@@ -463,6 +476,34 @@ export const controlReducer = (
             ...form.name,
             [lang]: newValue,
           },
+        },
+      }
+    }
+    case 'CHANGE_ORGANIZATION_DISPLAY_NAME': {
+      const { lang, newValue } = action.payload
+      return {
+        ...state,
+        form: {
+          ...form,
+          organizationDisplayName: {
+            ...form.organizationDisplayName,
+            [lang]: newValue,
+          },
+        },
+      }
+    }
+    case 'CHANGE_ORGANIZATION_NATIONAL_ID': {
+      return {
+        ...state,
+        organizationNationalId: action.payload.newValue,
+      }
+    }
+    case 'CHANGE_SLUG': {
+      return {
+        ...state,
+        form: {
+          ...form,
+          slug: action.payload.newValue,
         },
       }
     }

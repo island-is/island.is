@@ -11,7 +11,8 @@ import {
 } from '@island.is/island-ui/core'
 import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
-import { FieldTypesEnum, m } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 
 const predeterminedLists = [
   {
@@ -82,7 +83,7 @@ export const ListSettings = () => {
                 <RadioButton
                   label={formatMessage(m.customList)}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
-                  onChange={() => {}}
+                  onChange={() => { }}
                   checked={radio[0]}
                 />
               </Box>
@@ -94,7 +95,7 @@ export const ListSettings = () => {
                 <RadioButton
                   label={formatMessage(m.predeterminedLists)}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
-                  onChange={() => {}}
+                  onChange={() => { }}
                   checked={radio[1]}
                 />
               </Box>

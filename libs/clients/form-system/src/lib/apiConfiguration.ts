@@ -1,15 +1,12 @@
-import { createEnhancedFetch } from "../../../middlewares/src"
-import { Configuration } from "../../gen/fetch"
-import { FormSystemClientConfig } from "./FormSystemClient.config"
-import {
-  ConfigType,
-} from '@island.is/nest/config'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { Configuration } from '../../gen/fetch'
+import { FormSystemClientConfig } from './FormSystemClient.config'
+import { ConfigType } from '@island.is/nest/config'
 
 export const ApiConfiguration = {
   provide: 'FormSystemClientApiConfiguration',
-  useFactory: async (
-    config: ConfigType<typeof FormSystemClientConfig>,
-  ) => {
+  // eslint-disable-next-line local-rules/no-async-module-init
+  useFactory: async (config: ConfigType<typeof FormSystemClientConfig>) => {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'form-system',
@@ -19,10 +16,8 @@ export const ApiConfiguration = {
       basePath: config.basePath,
       headers: {
         Accept: 'application/json',
-      }
+      },
     })
   },
-  inject: [
-    FormSystemClientConfig.KEY,
-  ]
+  inject: [FormSystemClientConfig.KEY],
 }

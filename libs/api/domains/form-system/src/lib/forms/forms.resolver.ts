@@ -3,19 +3,36 @@ import {
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
+import { Loader } from '@island.is/nest/dataloader'
+import { CacheControl } from '@island.is/nest/graphql'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { FormsService } from './forms.service'
 import {
   DeleteFormInput,
   GetFormInput,
   UpdateFormInput,
 } from '../../dto/form.input'
-import { FormResponse } from '../../models/form.model'
+import { UpdateFormResponse } from '@island.is/form-system/shared'
+import { Form, FormResponse } from '../../models/form.model'
+import {
+  type OrganizationTitleByNationalIdDataLoader,
+  OrganizationTitleByNationalIdLoader,
+  type OrganizationTitleEnByNationalIdDataLoader,
+  OrganizationTitleEnByNationalIdLoader,
+  ShortTitle,
+} from '@island.is/cms'
 
-@Resolver()
+@Resolver(() => Form)
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class FormsResolver {
@@ -27,7 +44,7 @@ export class FormsResolver {
   async createForm(
     @CurrentUser() user: User,
   ): Promise<FormResponse> {
-    return this.formsService.createForm(user)
+    return this.formsService.createForm(user, input)
   }
 
   @Mutation(() => Boolean, {
@@ -55,9 +72,10 @@ export class FormsResolver {
     name: 'formSystemForms',
   })
   async getAllForms(
+    @Args('input', { type: () => GetFormsInput }) input: GetFormsInput,
     @CurrentUser() user: User,
   ): Promise<FormResponse> {
-    return this.formsService.getAllForms(user)
+    return this.formsService.getAllForms(user, input)
   }
 
   @Mutation(() => Boolean, {
@@ -67,7 +85,33 @@ export class FormsResolver {
   async updateForm(
     @Args('input', { type: () => UpdateFormInput }) input: UpdateFormInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
+  ): Promise<UpdateFormResponse> {
     return this.formsService.updateForm(user, input)
+  }
+
+  @CacheControl({ maxAge: 600, scope: 'PUBLIC' })
+  @ResolveField('organizationTitle', () => String, { nullable: true })
+  async resolveContentfulTitle(
+    @Loader(OrganizationTitleByNationalIdLoader)
+    organizationTitleLoader: OrganizationTitleByNationalIdDataLoader,
+    @Parent() form: Form,
+  ): Promise<ShortTitle> {
+    if (!form.organizationNationalId) {
+      throw new Error('organizationNationalId is undefined')
+    }
+    return organizationTitleLoader.load(form.organizationNationalId)
+  }
+
+  @CacheControl({ maxAge: 600, scope: 'PUBLIC' })
+  @ResolveField('organizationTitleEn', () => String, { nullable: true })
+  async resolveContentfulTitleEn(
+    @Loader(OrganizationTitleEnByNationalIdLoader)
+    organizationTitleLoader: OrganizationTitleEnByNationalIdDataLoader,
+    @Parent() form: Form,
+  ): Promise<ShortTitle> {
+    if (!form.organizationNationalId) {
+      throw new Error('organizationNationalId is undefined')
+    }
+    return organizationTitleLoader.load(form.organizationNationalId)
   }
 }

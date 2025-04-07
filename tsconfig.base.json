@@ -62,9 +62,6 @@
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
-      "@island.is/api/domains/criminal-record": [
-        "libs/api/domains/criminal-record/src/index.ts"
-      ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],
@@ -209,6 +206,9 @@
       "@island.is/api/domains/secondary-school": [
         "libs/api/domains/secondary-school/src/index.ts"
       ],
+      "@island.is/api/domains/seminars-ver": [
+        "libs/api/domains/seminars-ver/src/index.ts"
+      ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
       ],
@@ -247,6 +247,9 @@
       ],
       "@island.is/api/domains/vehicles": [
         "libs/api/domains/vehicles/src/index.ts"
+      ],
+      "@island.is/api/domains/verdicts": [
+        "libs/api/domains/verdicts/src/index.ts"
       ],
       "@island.is/api/domains/watson-assistant-chat": [
         "libs/api/domains/watson-assistant-chat/src/index.ts"
@@ -316,6 +319,9 @@
       ],
       "@island.is/application/templates/aosh/request-for-inspection": [
         "libs/application/templates/aosh/request-for-inspection/src/index.ts"
+      ],
+      "@island.is/application/templates/aosh/seminars": [
+        "libs/application/templates/aosh/seminars/src/index.ts"
       ],
       "@island.is/application/templates/aosh/street-registration": [
         "libs/application/templates/aosh/street-registration/src/index.ts"
@@ -392,14 +398,17 @@
       "@island.is/application/templates/european-health-insurance-card": [
         "libs/application/templates/european-health-insurance-card/src/index.ts"
       ],
-      "@island.is/application/templates/example-payment": [
-        "libs/application/templates/example-payment/src/index.ts"
-      ],
       "@island.is/application/templates/examples/example-common-actions": [
         "libs/application/templates/examples/example-common-actions/src/index.ts"
       ],
-      "@island.is/application/templates/examples/example-fields": [
-        "libs/application/templates/examples/example-fields/src/index.ts"
+      "@island.is/application/templates/examples/example-inputs": [
+        "libs/application/templates/examples/example-inputs/src/index.ts"
+      ],
+      "@island.is/application/templates/examples/example-no-inputs": [
+        "libs/application/templates/examples/example-no-inputs/src/index.ts"
+      ],
+      "@island.is/application/templates/examples/example-payment": [
+        "libs/application/templates/examples/example-payment/src/index.ts"
       ],
       "@island.is/application/templates/examples/example-state-transfers": [
         "libs/application/templates/examples/example-state-transfers/src/index.ts"
@@ -521,8 +530,14 @@
       "@island.is/application/templates/secondary-school": [
         "libs/application/templates/secondary-school/src/index.ts"
       ],
+      "@island.is/application/templates/signature-collection/assets/*": [
+        "libs/application/templates/signature-collection/assets/*"
+      ],
       "@island.is/application/templates/signature-collection/municipal-list-creation": [
         "libs/application/templates/signature-collection/municipal-list-creation/src/index.ts"
+      ],
+      "@island.is/application/templates/signature-collection/municipal-list-signing": [
+        "libs/application/templates/signature-collection/municipal-list-signing/src/index.ts"
       ],
       "@island.is/application/templates/signature-collection/parliamentary-list-creation": [
         "libs/application/templates/signature-collection/parliamentary-list-creation/src/index.ts"
@@ -656,9 +671,6 @@
       "@island.is/clients/consultation-portal": [
         "libs/clients/consultation-portal/src/index.ts"
       ],
-      "@island.is/clients/criminal-record": [
-        "libs/clients/criminal-record/src/index.ts"
-      ],
       "@island.is/clients/data-protection-complaint": [
         "libs/clients/data-protection-complaint/src/index.ts"
       ],
@@ -719,6 +731,7 @@
       "@island.is/clients/form-system": [
         "libs/clients/form-system/src/index.ts"
       ],
+      "@island.is/clients/grants": ["libs/clients/grants/src/index.ts"],
       "@island.is/clients/health-directorate": [
         "libs/clients/health-directorate/src/index.ts"
       ],
@@ -821,6 +834,9 @@
       "@island.is/clients/secondary-school": [
         "libs/clients/secondary-school/src/index.ts"
       ],
+      "@island.is/clients/seminars-ver": [
+        "libs/clients/seminars-ver/src/index.ts"
+      ],
       "@island.is/clients/sessions": ["libs/clients/sessions/src/index.ts"],
       "@island.is/clients/ship-registry": [
         "libs/clients/ship-registry/src/index.ts"
@@ -915,6 +931,7 @@
       "@island.is/clients/vehicles-mileage": [
         "libs/clients/vehicles-mileage/src/index.ts"
       ],
+      "@island.is/clients/verdicts": ["libs/clients/verdicts/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/work-accident-ver": [
         "libs/clients/work-accident-ver/src/index.ts"
@@ -982,12 +999,11 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
-      "@island.is/form-system": [
-        "libs/portals/admin/form-system/src/index.ts"
-      ],
+      "@island.is/form-system/enums": ["libs/form-system/src/enums/index.ts"],
       "@island.is/form-system/graphql": [
         "libs/portals/form-system/graphql/src/index.ts"
       ],
+      "@island.is/form-system/shared": ["libs/form-system/src/index.ts"],
       "@island.is/form-system/ui": [
         "libs/portals/form-system/ui-components/src/index.ts"
       ],
@@ -1050,57 +1066,23 @@
       "@island.is/libs/portals/form-system": [
         "libs/portals/form-system/src/index.ts"
       ],
-      "@island.is/localization": [
-        "libs/localization/src/index.ts"
-      ],
-      "@island.is/logging": [
-        "libs/logging/src/index.ts"
-      ],
-      "@island.is/message-queue": [
-        "libs/message-queue/src/index.ts"
-      ],
-      "@island.is/nest/audit": [
-        "libs/nest/audit/src/index.ts"
-      ],
-      "@island.is/nest/aws": [
-        "libs/nest/aws/src/index.ts"
-      ],
-      "@island.is/nest/config": [
-        "libs/nest/config/src/index.ts"
-      ],
-      "@island.is/nest/core": [
-        "libs/nest/core/src/index.ts"
-      ],
-      "@island.is/nest/dataloader": [
-        "libs/nest/dataloader/src/index.ts"
-      ],
-      "@island.is/nest/feature-flags": [
-        "libs/nest/feature-flags/src/index.ts"
-      ],
-      "@island.is/nest/graphql": [
-        "libs/nest/graphql/src/index.ts"
-      ],
-      "@island.is/nest/pagination": [
-        "libs/nest/pagination/src/index.ts"
-      ],
-      "@island.is/nest/problem": [
-        "libs/nest/problem/src/index.ts"
-      ],
-      "@island.is/nest/sequelize": [
-        "libs/nest/sequelize/src/index.ts"
-      ],
-      "@island.is/nest/swagger": [
-        "libs/nest/swagger/src/index.ts"
-      ],
-      "@island.is/next-ids-auth": [
-        "libs/next-ids-auth/src/index.ts"
-      ],
-      "@island.is/nova-sms": [
-        "libs/nova-sms/src/index.ts"
-      ],
-      "@island.is/plausible": [
-        "libs/plausible/src/index.ts"
-      ],
+      "@island.is/localization": ["libs/localization/src/index.ts"],
+      "@island.is/logging": ["libs/logging/src/index.ts"],
+      "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
+      "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
+      "@island.is/nest/aws": ["libs/nest/aws/src/index.ts"],
+      "@island.is/nest/config": ["libs/nest/config/src/index.ts"],
+      "@island.is/nest/core": ["libs/nest/core/src/index.ts"],
+      "@island.is/nest/dataloader": ["libs/nest/dataloader/src/index.ts"],
+      "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
+      "@island.is/nest/graphql": ["libs/nest/graphql/src/index.ts"],
+      "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
+      "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
+      "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],
+      "@island.is/nest/swagger": ["libs/nest/swagger/src/index.ts"],
+      "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
+      "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
+      "@island.is/plausible": ["libs/plausible/src/index.ts"],
       "@island.is/portals/admin/air-discount-scheme": [
         "libs/portals/admin/air-discount-scheme/src/index.ts"
       ],
@@ -1112,6 +1094,9 @@
       ],
       "@island.is/portals/admin/document-provider": [
         "libs/portals/admin/document-provider/src/index.ts"
+      ],
+      "@island.is/portals/admin/form-system": [
+        "libs/portals/admin/form-system/src/index.ts"
       ],
       "@island.is/portals/admin/icelandic-names-registry": [
         "libs/portals/admin/icelandic-names-registry/src/index.ts"
@@ -1310,12 +1295,16 @@
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
       ],
+      "application/templates/examples/example-no-inputs": [
+        "libs/application/templates/examples/example-no-inputs/src/index.ts"
+      ],
       "application/templates/inao/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
       ],
-      "delegation-admin": [
-        "libs/portals/admin/delegation-admin/src/index.ts"
-      ]
+      "application/templates/name-of-application": [
+        "libs/application/templates/name-of-application/src/index.ts"
+      ],
+      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
     }
   }
 }

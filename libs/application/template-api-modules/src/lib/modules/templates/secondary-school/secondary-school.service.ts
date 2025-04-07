@@ -4,6 +4,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 import {
   ApplicationType as SecondarySchoolApplicationType,
@@ -140,57 +141,94 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<string> {
-    // Get values from answers
-    const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
-      application.answers,
-      'applicant',
+    // Get external id
+    const externalId = await this.secondarySchoolClient.getExternalId(
+      auth,
+      application.id,
     )
-    const applicationType = getValueViaPath<SecondarySchoolApplicationType>(
-      application.answers,
-      'applicationType.value',
-    )
-    const contacts = getCleanContacts(application)
-    const schoolSelection = getCleanSchoolSelection(application)
-    const extraInformation = getValueViaPath<
-      SecondarySchoolAnswers['extraInformation']
-    >(application.answers, 'extraInformation')
 
-    // Submit the application
-    let applicationId: string | undefined
+    // Validate if user can submit application (has another active application)
+    const studentInfo = await this.secondarySchoolClient.getStudentInfo(auth)
+    if (
+      studentInfo.hasActiveApplication &&
+      (!externalId || !studentInfo.externalIds.includes(externalId))
+    ) {
+      throw new TemplateApiError(
+        {
+          title: error.errorValidateCanCreateTitle,
+          summary: error.errorValidateCanCreateDescription,
+        },
+        400,
+      )
+    }
+
     try {
-      applicationId = await this.secondarySchoolClient.create(auth, {
-        id: application.id,
-        nationalId: auth.nationalId,
-        name: applicant?.name || '',
-        phone: applicant?.phoneNumber || '',
-        email: applicant?.email || '',
-        address: applicant?.address || '',
-        postalCode: applicant?.postalCode || '',
-        city: applicant?.city || '',
-        isFreshman: applicationType === SecondarySchoolApplicationType.FRESHMAN,
-        contacts: contacts,
-        schools: schoolSelection,
-        nativeLanguageCode: extraInformation?.nativeLanguageCode || undefined,
-        otherDescription: extraInformation?.otherDescription,
-        attachments: await Promise.all(
-          (extraInformation?.supportingDocuments || []).map(
-            async (attachment) => {
-              const fileContent = await this.getAttachmentAsBase64(
-                application,
-                attachment,
-              )
-              const contentType = this.getMimeType(
-                attachment.name.split('.').pop(),
-              )
-              return {
-                fileName: attachment.name,
-                fileContent,
-                contentType,
-              }
-            },
+      // Get values from externalData
+      const nationalRegistryData = getValueViaPath<NationalRegistryIndividual>(
+        application.externalData,
+        'nationalRegistry.data',
+      )
+
+      // Get values from answers
+      const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
+        application.answers,
+        'applicant',
+      )
+      const applicationType = getValueViaPath<SecondarySchoolApplicationType>(
+        application.answers,
+        'applicationType.value',
+      )
+      const contacts = getCleanContacts(application)
+      const schoolSelection = getCleanSchoolSelection(application)
+      const extraInformation = getValueViaPath<
+        SecondarySchoolAnswers['extraInformation']
+      >(application.answers, 'extraInformation')
+
+      // Submit the application
+      const applicationId = await this.secondarySchoolClient.createOrUpdate(
+        auth,
+        {
+          externalId,
+          id: application.id,
+          nationalId: auth.nationalId,
+          name: applicant?.name || '',
+          genderCode: nationalRegistryData?.genderCode,
+          phone: applicant?.phoneNumber || '',
+          email: applicant?.email || '',
+          address: applicant?.address || '',
+          postalCode: applicant?.postalCode || '',
+          city: applicant?.city || '',
+          isFreshman:
+            applicationType === SecondarySchoolApplicationType.FRESHMAN,
+          contacts: contacts,
+          schools: schoolSelection,
+          nativeLanguageCode: extraInformation?.nativeLanguageCode || undefined,
+          otherDescription: extraInformation?.otherDescription,
+          attachments: await Promise.all(
+            (extraInformation?.supportingDocuments || []).map(
+              async (attachment) => {
+                const fileContent = await this.getAttachmentAsBase64(
+                  application,
+                  attachment,
+                )
+                const contentType = this.getMimeType(
+                  attachment.name.split('.').pop(),
+                )
+                return {
+                  fileName: attachment.name,
+                  fileContent,
+                  contentType,
+                }
+              },
+            ),
           ),
-        ),
-      })
+        },
+      )
+
+      // Send email to applicant and all contacts
+      await this.sendEmailAboutSubmitApplication(application)
+
+      return applicationId
     } catch (e) {
       throw new TemplateApiError(
         {
@@ -200,11 +238,6 @@ export class SecondarySchoolService extends BaseTemplateApiService {
         500,
       )
     }
-
-    // Send email to applicant and all contacts
-    await this.sendEmailAboutSubmitApplication(application)
-
-    return applicationId
   }
 
   private async sendEmailAboutSubmitApplication(

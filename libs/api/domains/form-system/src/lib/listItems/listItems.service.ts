@@ -2,7 +2,6 @@ import { Injectable, Inject } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
-import { handle4xx } from '../../utils/errorHandler'
 import {
   ListItemsControllerCreateRequest,
   ListItemsApi,
@@ -45,29 +44,31 @@ export class ListItemsService {
     auth: User,
     input: CreateListItemInput,
   ): Promise<ListItem> {
-    const response = await this.listItemsApiWithAuth(auth)
-      .listItemsControllerCreate(input as ListItemsControllerCreateRequest)
+    const response = await this.listItemsApiWithAuth(
+      auth,
+    ).listItemsControllerCreate(input as ListItemsControllerCreateRequest)
 
     return response as ListItem
   }
 
   async deleteListItem(auth: User, input: DeleteListItemInput): Promise<void> {
-    await this.listItemsApiWithAuth(auth)
-      .listItemsControllerDelete(input as ListItemsControllerDeleteRequest)
+    await this.listItemsApiWithAuth(auth).listItemsControllerDelete(
+      input as ListItemsControllerDeleteRequest,
+    )
   }
 
   async updateListItem(auth: User, input: UpdateListItemInput): Promise<void> {
-    await this.listItemsApiWithAuth(auth)
-      .listItemsControllerUpdate(input as ListItemsControllerUpdateRequest)
+    await this.listItemsApiWithAuth(auth).listItemsControllerUpdate(
+      input as ListItemsControllerUpdateRequest,
+    )
   }
 
   async updateListItemsDisplayOrder(
     auth: User,
     input: UpdateListItemDisplayOrderInput,
   ): Promise<void> {
-    const response = await this.listItemsApiWithAuth(auth)
-      .listItemsControllerUpdateDisplayOrder(
-        input as ListItemsControllerUpdateDisplayOrderRequest,
-      )
+    await this.listItemsApiWithAuth(auth).listItemsControllerUpdateDisplayOrder(
+      input as ListItemsControllerUpdateDisplayOrderRequest,
+    )
   }
 }

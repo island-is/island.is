@@ -3,10 +3,12 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
-import { handle4xx } from '../../utils/errorHandler'
+
 import {
   FormsApi,
+  FormsControllerCreateRequest,
   FormsControllerDeleteRequest,
+  FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
   FormsControllerUpdateFormRequest,
 } from '@island.is/clients/form-system'
@@ -15,6 +17,7 @@ import {
   GetFormInput,
   UpdateFormInput,
 } from '../../dto/form.input'
+import { UpdateFormResponse } from '@island.is/form-system/shared'
 import { FormResponse } from '../../models/form.model'
 
 @Injectable()
@@ -39,38 +42,44 @@ export class FormsService {
     return this.formsService.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createForm(auth: User): Promise<FormResponse> {
-    const response = await this.formsApiWithAuth(auth)
-      .formsControllerCreate()
+  async createForm(auth: User, input: CreateFormInput): Promise<FormResponse> {
+    const response = await this.formsApiWithAuth(auth).formsControllerCreate(
+      input as FormsControllerCreateRequest,
+    )
 
     return response as FormResponse
   }
 
   async deleteForm(auth: User, input: DeleteFormInput): Promise<void> {
-    await this.formsApiWithAuth(auth)
-      .formsControllerDelete(input as FormsControllerDeleteRequest)
+    await this.formsApiWithAuth(auth).formsControllerDelete(
+      input as FormsControllerDeleteRequest,
+    )
   }
 
   async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
-    const response = await this.formsApiWithAuth(auth)
-      .formsControllerFindOne(input as FormsControllerFindOneRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to get form'))
+    const response = await this.formsApiWithAuth(auth).formsControllerFindOne(
+      input as FormsControllerFindOneRequest,
+    )
 
     return response as FormResponse
   }
 
-  async getAllForms(
-    auth: User
-  ): Promise<FormResponse> {
-    const response = await this.formsApiWithAuth(auth)
-      .formsControllerFindAll()
-      .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
+  async getAllForms(auth: User, input: GetFormsInput): Promise<FormResponse> {
+    const response = await this.formsApiWithAuth(auth).formsControllerFindAll(
+      input as FormsControllerFindAllRequest,
+    )
 
     return response as FormResponse
   }
 
-  async updateForm(auth: User, input: UpdateFormInput): Promise<void> {
-    await this.formsApiWithAuth(auth)
-      .formsControllerUpdateForm(input as FormsControllerUpdateFormRequest)
+  async updateForm(
+    auth: User,
+    input: UpdateFormInput,
+  ): Promise<UpdateFormResponse> {
+    const response = await this.formsApiWithAuth(
+      auth,
+    ).formsControllerUpdateForm(input as FormsControllerUpdateFormRequest)
+
+    return response as UpdateFormResponse
   }
 }
