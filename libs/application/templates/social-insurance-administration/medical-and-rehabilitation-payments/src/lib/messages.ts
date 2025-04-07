@@ -8,6 +8,21 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Sjúkra- og endurhæfingargreiðslur',
       description: 'Medical and Rehabilitation Payments',
     },
+    date: {
+      id: 'marp.application:date',
+      defaultMessage: 'Dagsetning',
+      description: 'Date',
+    },
+    datePlaceholder: {
+      id: 'marp.application:date.placeholder',
+      defaultMessage: 'Veldu dagsetningu',
+      description: 'Select date',
+    },
+    notApplicable: {
+      id: 'marp.application:not.applicable',
+      defaultMessage: 'Á ekki við',
+      description: 'Not applicable',
+    },
   }),
 
   pre: defineMessages({
@@ -55,6 +70,16 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'Have you used your sick pay entitlement at your current employer?',
     },
+    sickPayDoesEndDateTitle: {
+      id: 'marp.application:general.information.sick.pay.does.end.date.title',
+      defaultMessage: 'Hvenær líkur rétti þínum til veikindalauna?',
+      description: 'When does your sick pay entitlement end?',
+    },
+    sickPayDidEndDateTitle: {
+      id: 'marp.application:general.information.sick.pay.did.end.date.title',
+      defaultMessage: 'Hvenær lauk rétti þínum til veikindalauna?',
+      description: 'When did your sick pay entitlement end?',
+    },
 
     // Union sick pay
     unionSickPaySubSectionTitle: {
@@ -84,7 +109,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
   }),
 
-  overview: defineMessages({}),
+  overview: defineMessages({
+    sickPayEndDate: {
+      id: 'marp.application:overiew.sick.pay.end.date',
+      defaultMessage: 'Réttinum lauk/lýkur',
+      description: 'Your entitlement ended/ends',
+    },
+  }),
 
   conclusion: defineMessages({}),
 }

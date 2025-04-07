@@ -1,6 +1,10 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application } from '@island.is/application/types'
+import { NOT_APPLICABLE, NotApplicable } from '../utils/constants'
+import { medicalAndRehabilitationPaymentsFormMessage } from './messages'
+import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber = getValueViaPath(
@@ -8,11 +12,28 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'applicantInfo.phonenumber',
   ) as string
 
+  const sickPayOption = getValueViaPath(answers, 'sickPay.option') as
+    | YesOrNo
+    | NotApplicable
+
+  const sickPayDoesEndDate = getValueViaPath(
+    answers,
+    'sickPay.doesEndDate',
+  ) as string
+
+  const sickPayDidEndDate = getValueViaPath(
+    answers,
+    'sickPay.didEndDate',
+  ) as string
+
   const comment = getValueViaPath(answers, 'comment') as string
 
   return {
     applicantPhonenumber,
     comment,
+    sickPayOption,
+    sickPayDidEndDate,
+    sickPayDoesEndDate,
   }
 }
 
@@ -96,4 +117,24 @@ export const getApplicationExternalData = (
     maritalStatus,
     hasSpouse,
   }
+}
+
+export const getYesNoNotApplicableOptions = () => {
+  return [
+    ...getYesNoOptions(),
+    {
+      value: NOT_APPLICABLE,
+      dataTestId: 'sickPay-option-not-applicable',
+      label: medicalAndRehabilitationPaymentsFormMessage.shared.notApplicable,
+    },
+  ]
+}
+
+export const getYesNoNotApplicableTranslation = (value: string) => {
+  if (value === NOT_APPLICABLE) {
+    return medicalAndRehabilitationPaymentsFormMessage.shared.notApplicable
+  } else if (value === YES) {
+    return socialInsuranceAdministrationMessage.shared.yes
+  }
+  return socialInsuranceAdministrationMessage.shared.no
 }
