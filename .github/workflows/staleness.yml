@@ -5,10 +5,12 @@ on:
   workflow_dispatch: # Allow manual run
 
 jobs:
-  stale:
+  deploy-feature:
+    name: Stale `deploy-feature`
     runs-on: arc-runners
     steps:
-      - uses: actions/stale@v9
+      - name: Clean up `deploy-feature` label usage
+        uses: actions/stale@v9
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           days-before-stale: 7
