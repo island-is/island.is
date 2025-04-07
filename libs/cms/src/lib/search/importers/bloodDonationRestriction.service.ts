@@ -23,7 +23,7 @@ export class BloodDonationRestrictionSyncService
         count: entries.length,
       })
     }
-    return entries
+    const restrictionEntries = entries
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapBloodDonationRestrictionListItem(entry)
@@ -38,14 +38,19 @@ export class BloodDonationRestrictionSyncService
           }
 
           const tags = mapped.keywordsText
-            ? mapped.keywordsText.split(',').map((keyword) => ({
-                key: keyword.trim(),
-                type: 'keyword',
-              }))
+            ? mapped.keywordsText.split(',').map((keyword) => {
+                const trimmedKeyword = keyword.trim()
+                return {
+                  value: trimmedKeyword,
+                  key: trimmedKeyword,
+                  type: 'keyword',
+                }
+              })
             : []
 
           for (const tag of entry.fields.filterTags ?? []) {
             tags.push({
+              value: tag.fields.title,
               key: tag.fields.slug,
               type: 'genericTag',
             })
@@ -55,6 +60,7 @@ export class BloodDonationRestrictionSyncService
           const childEntryIds = extractChildEntryIds(entry)
           for (const id of childEntryIds) {
             tags.push({
+              value: id,
               key: id,
               type: 'hasChildEntryWithId',
             })
@@ -79,5 +85,7 @@ export class BloodDonationRestrictionSyncService
         }
       })
       .filter((value): value is MappedData => Boolean(value))
+
+    return restrictionEntries
   }
 }

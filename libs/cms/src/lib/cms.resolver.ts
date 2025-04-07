@@ -144,10 +144,12 @@ import { GetTeamMembersInputOrderBy } from './dto/getTeamMembers.input'
 import { IntroLinkImage } from './models/introLinkImage.model'
 import {
   GetBloodDonationRestrictionDetailsInput,
+  GetBloodDonationRestrictionGenericTagsInput,
   GetBloodDonationRestrictionsInput,
 } from './dto/getBloodDonationRestrictions.input'
 import {
   BloodDonationRestrictionDetails,
+  BloodDonationRestrictionGenericTagList,
   BloodDonationRestrictionList,
 } from './models/bloodDonationRestriction.model'
 
@@ -735,6 +737,16 @@ export class CmsResolver {
   ): Promise<OrganizationPageStandaloneSitemapLevel2 | null> {
     return this.cmsContentfulService.getOrganizationPageStandaloneSitemapLevel2(
       input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => BloodDonationRestrictionGenericTagList)
+  getBloodDonationRestrictionGenericTags(
+    @Args('input') input: GetBloodDonationRestrictionGenericTagsInput,
+  ): Promise<BloodDonationRestrictionGenericTagList> {
+    return this.cmsElasticsearchService.getBloodDonationRestrictionGenericTags(
+      getElasticsearchIndex(input.lang),
     )
   }
 

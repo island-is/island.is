@@ -59,6 +59,8 @@ import {
 } from './dto/getGrants.input'
 import { Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
+import { BloodDonationRestrictionGenericTagList } from './models/bloodDonationRestriction.model'
+import { sortAlpha } from '@island.is/shared/utils'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -1229,6 +1231,90 @@ export class CmsElasticsearchService {
     return supportqnasResponse.hits.hits
       .map((response) => JSON.parse(response._source.response ?? '[]'))
       .filter((qna) => qna?.title && qna?.slug)
+  }
+
+  async getBloodDonationRestrictionGenericTags(
+    index: string,
+  ): Promise<BloodDonationRestrictionGenericTagList> {
+    const response = await this.elasticService.findByQuery(index, {
+      size: 0,
+      aggs: {
+        onlyBloodDonationRestrictions: {
+          filter: {
+            term: {
+              type: 'webBloodDonationRestriction',
+            },
+          },
+          aggs: {
+            uniqueTags: {
+              nested: {
+                path: 'tags',
+              },
+              aggs: {
+                uniqueGenericTags: {
+                  filter: {
+                    term: {
+                      'tags.type': 'genericTag',
+                    },
+                  },
+                  aggs: {
+                    tagKeys: {
+                      terms: {
+                        field: 'tags.key',
+                        size: 1000,
+                      },
+                      aggs: {
+                        tagValues: {
+                          terms: {
+                            field: 'tags.value.keyword',
+                            size: 1,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const body = response.body as {
+      aggregations: {
+        onlyBloodDonationRestrictions: {
+          uniqueTags: {
+            uniqueGenericTags: {
+              tagKeys: {
+                buckets: Array<{
+                  key: string
+                  tagValues: { buckets: Array<{ key: string }> }
+                }>
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const tags =
+      body.aggregations.onlyBloodDonationRestrictions.uniqueTags.uniqueGenericTags.tagKeys.buckets.map(
+        (tagResult) => ({
+          key: tagResult.key,
+          value: tagResult.tagValues.buckets[0].key,
+        }),
+      )
+
+    tags.sort(sortAlpha('value'))
+
+    return {
+      total: tags.length,
+      items: tags.map((tag) => ({
+        key: tag.key,
+        label: tag.value,
+      })),
+    }
   }
 }
 

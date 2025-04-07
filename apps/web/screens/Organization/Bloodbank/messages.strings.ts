@@ -22,6 +22,11 @@ export const m = {
       defaultMessage: 'Lykilorð: ',
       description: 'Texti á undan lykilorðum í spjaldi',
     },
+    searchInputPlaceholder: {
+      id: 'web.bloodbank.bloodDonationRestrictions:listPage.searchInputPlaceholder',
+      defaultMessage: 'Sía eftir leitarorði',
+      description: 'Placeholder texti í leitarreit',
+    },
   }),
   detailsPage: defineMessages({
     detailTextHeading: {

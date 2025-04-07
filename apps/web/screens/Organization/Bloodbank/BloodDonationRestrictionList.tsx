@@ -7,8 +7,11 @@ import {
   Button,
   FocusableBox,
   GridContainer,
+  Inline,
+  Input,
   Pagination,
   Stack,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { OrganizationWrapper, Webreader } from '@island.is/web/components'
@@ -16,6 +19,7 @@ import {
   CustomPageUniqueIdentifier,
   OrganizationPage,
   Query,
+  QueryGetBloodDonationRestrictionGenericTagsArgs,
   QueryGetBloodDonationRestrictionsArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
@@ -31,7 +35,10 @@ import {
   withCustomPageWrapper,
 } from '../../CustomPage/CustomPageWrapper'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
-import { GET_BLOOD_DONATION_RESTRICTIONS_QUERY } from '../../queries/BloodDonationRestrictions'
+import {
+  GET_BLOOD_DONATION_RESTRICTION_GENERIC_TAGS_QUERY,
+  GET_BLOOD_DONATION_RESTRICTIONS_QUERY,
+} from '../../queries/BloodDonationRestrictions'
 import { getSubpageNavList } from '../SubPage'
 import { m } from './messages.strings'
 
@@ -43,11 +50,12 @@ interface BloodDonationRestrictionListProps {
   items: Query['getBloodDonationRestrictions']['items']
   organizationPage: OrganizationPage
   namespace: Record<string, string>
+  tags: { key: string; label: string }[]
 }
 
 const BloodDonationRestrictionList: CustomScreen<
   BloodDonationRestrictionListProps
-> = ({ currentPage, totalItems, items, organizationPage, namespace }) => {
+> = ({ currentPage, totalItems, items, organizationPage, namespace, tags }) => {
   const { formatMessage } = useIntl()
   const [_, setSelectedPage] = useQueryState(
     'page',
@@ -94,6 +102,26 @@ const BloodDonationRestrictionList: CustomScreen<
               </Text>
               <Webreader marginTop={0} marginBottom={0} readClass="rs_read" />
             </Stack>
+
+            <Stack space={3}>
+              <Input
+                name="restriction-search-input"
+                icon={{
+                  name: 'search',
+                }}
+                size="sm"
+                placeholder={formatMessage(m.listPage.searchInputPlaceholder)}
+              />
+
+              {tags.length > 0 && (
+                <Inline space={1} alignY="center">
+                  {tags.map((tag) => (
+                    <Tag key={tag.key}>{tag.label}</Tag>
+                  ))}
+                </Inline>
+              )}
+            </Stack>
+
             <Stack space={4}>
               {items.map((item) => (
                 <FocusableBox
@@ -199,6 +227,7 @@ BloodDonationRestrictionList.getProps = async ({
 
   const [
     bloodDonationRestrictionResponse,
+    bloodDonationRestrictionGenericTagsResponse,
     organizationPageResponse,
     namespace,
   ] = await Promise.all([
@@ -207,6 +236,14 @@ BloodDonationRestrictionList.getProps = async ({
       variables: {
         input: {
           page,
+          lang: locale,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetBloodDonationRestrictionGenericTagsArgs>({
+      query: GET_BLOOD_DONATION_RESTRICTION_GENERIC_TAGS_QUERY,
+      variables: {
+        input: {
           lang: locale,
         },
       },
@@ -252,6 +289,8 @@ BloodDonationRestrictionList.getProps = async ({
       bloodDonationRestrictionResponse.data.getBloodDonationRestrictions.items,
     organizationPage: organizationPageResponse.data.getOrganizationPage,
     namespace,
+    tags: bloodDonationRestrictionGenericTagsResponse.data
+      .getBloodDonationRestrictionGenericTags.items as any,
   }
 }
 
