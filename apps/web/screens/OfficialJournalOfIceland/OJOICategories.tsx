@@ -57,8 +57,8 @@ import {
   DEPARTMENTS_QUERY,
   MAIN_CATEGORIES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
-import { m } from './messages'
 import { ORGANIZATION_SLUG } from './constants'
+import { m } from './messages'
 type MalaflokkarType = Array<{
   letter: string
   categories: EntityOption[]

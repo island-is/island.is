@@ -42,8 +42,8 @@ import {
   ADVERT_QUERY,
   ADVERT_SIMILAR_QUERY,
 } from '../queries/OfficialJournalOfIceland'
-import { m } from './messages'
 import { ORGANIZATION_SLUG } from './constants'
+import { m } from './messages'
 
 const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
   advert,
@@ -156,21 +156,38 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                   background="purple100"
                   padding={[2, 2, 3]}
                   borderRadius="large"
-                  key={correction.id ?? correction.title}
+                  key={correction.id}
                 >
                   <Stack space={[1, 1, 2]}>
                     <Text variant="h4">
                       {formatMessage(m.advert.sidebarCorrectionTitle)}
                     </Text>
 
-                    <Box>
-                      <Text variant="h5">
-                        {formatMessage(m.advert.correctedDate)}
-                      </Text>
-                      <Text variant="small">
-                        {formatDate(correction.createdDate, 'dd. MMMM yyyy')}
-                      </Text>
-                    </Box>
+                    {correction.legacyDate ||
+                    (correction.createdDate && !correction.isLegacy) ? (
+                      <Box>
+                        <Text variant="h5">
+                          {formatMessage(m.advert.correctedDate)}
+                        </Text>
+                        {correction.isLegacy ? (
+                          <Text variant="small">
+                            {correction.legacyDate
+                              ? formatDate(
+                                  correction.legacyDate,
+                                  'dd. MMMM yyyy',
+                                )
+                              : ''}
+                          </Text>
+                        ) : (
+                          <Text variant="small">
+                            {formatDate(
+                              correction.createdDate,
+                              'dd. MMMM yyyy',
+                            )}
+                          </Text>
+                        )}
+                      </Box>
+                    ) : undefined}
 
                     <Box>
                       <Text variant="h5">
