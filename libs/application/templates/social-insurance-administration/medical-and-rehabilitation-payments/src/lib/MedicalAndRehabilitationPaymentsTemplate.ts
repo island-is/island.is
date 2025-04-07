@@ -1,35 +1,44 @@
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
-  ApplicationContext,
-  ApplicationRole,
-  ApplicationStateSchema,
-  Application,
-  DefaultEvents,
-  FormModes,
-  UserProfileApi,
-  ApplicationConfigurations,
-} from '@island.is/application/types'
-import { CodeOwners } from '@island.is/shared/constants'
-import { dataSchema } from './dataSchema'
-import {
   coreHistoryMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
-import {
-  socialInsuranceAdministrationMessage,
-  statesMessages as coreSIAStatesMessages,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   Events,
   Roles,
   States,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { medicalAndRehabilitationPaymentsFormMessage, statesMessages } from './messages'
+import {
+  statesMessages as coreSIAStatesMessages,
+  socialInsuranceAdministrationMessage,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  Application,
+  ApplicationConfigurations,
+  ApplicationContext,
+  ApplicationRole,
+  ApplicationStateSchema,
+  ApplicationTemplate,
+  ApplicationTypes,
+  DefaultEvents,
+  FormModes,
+  NationalRegistrySpouseApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
+import { CodeOwners } from '@island.is/shared/constants'
+import { assign } from 'xstate'
+import {
+  SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
+} from '../dataProviders'
+import { dataSchema } from './dataSchema'
+import {
+  medicalAndRehabilitationPaymentsFormMessage,
+  statesMessages,
+} from './messages'
 
-const template: ApplicationTemplate<
+const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
@@ -38,8 +47,10 @@ const template: ApplicationTemplate<
   name: medicalAndRehabilitationPaymentsFormMessage.shared.applicationTitle,
   codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  translationNamespaces: ApplicationConfigurations.MedicalAndRehabilitationPayments.translation,
+  translationNamespaces:
+    ApplicationConfigurations.MedicalAndRehabilitationPayments.translation,
   dataSchema,
+  // allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -52,18 +63,29 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Prerequisites').then((module) =>
-                  Promise.resolve(module.PrerequisitesForm),
+                import('../forms/Prerequisites/index').then((module) =>
+                  Promise.resolve(module.Prerequisites),
                 ),
               actions: [
-                { event: DefaultEvents.SUBMIT, 
-                  name: 'Submit', 
-                  type: 'primary' 
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
                 },
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi],
+              api: [
+                NationalRegistryUserApi,
+                NationalRegistrySpouseApi,
+                UserProfileApi.configure({
+                  params: {
+                    validateEmail: true,
+                  },
+                }),
+                SocialInsuranceAdministrationApplicantApi,
+                SocialInsuranceAdministrationIsApplicantEligibleApi,
+              ],
               delete: true,
             },
           ],
@@ -90,13 +112,16 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/MedicalAndRehabilitationPaymentsForm').then((module) =>
+                import(
+                  '../forms/MedicalAndRehabilitationPaymentsForm/index'
+                ).then((module) =>
                   Promise.resolve(module.MedicalAndRehabilitationPaymentsForm),
                 ),
               actions: [
-                { event: DefaultEvents.SUBMIT, 
-                  name: 'Submit', 
-                  type: 'primary' 
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
                 },
               ],
               write: 'all',
@@ -107,7 +132,7 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.TRYGGINGASTOFNUN_SUBMITTED,
+            target: States.APPROVED,
           },
         },
       },
@@ -156,4 +181,4 @@ const template: ApplicationTemplate<
   },
 }
 
-export default template
+export default MedicalAndRehabilitationPaymentsTemplate

@@ -1,5 +1,5 @@
 {
-  "name": "medical-and-rehabilitation-payments",
+  "name": "application-templates-social-insurance-administration-medical-and-rehabilitation-payments",
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments/src",
   "projectType": "library",
@@ -10,7 +10,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments"
+      ],
       "options": {
         "jestConfig": "libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments/jest.config.ts"
       }
