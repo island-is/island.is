@@ -15,5 +15,6 @@ jobs:
         secrets: inherit
         with:
             function: test
+            sha: ${{ github.sha }}
                   
 

@@ -1,31 +1,64 @@
-import { dag, Container, Directory, object, func } from "@dagger.io/dagger"
+import { dag, Container, Directory, object, func, DirectoryFilterOpts } from "@dagger.io/dagger"
+import { GITHUB_URL, RUNNER_IMAGE, WORKDIR } from "./const";
+import {AWSProps, getEcrContainer} from "./ecr";
+import {FILE_ACTION_GITHUB_BRANCH, FILE_ACTION_GITHUB_SHA, FILE_ACTION_LOCAL} from "./interface";
+
+const MONO_REPO_FILTERS = {
+    include: [
+    "package.json",
+    "**/package.json",
+    "yarn.lock",
+    '.yarn/patches/*',
+    '.yarn/releases/*',
+    '.yarnrc.yml'
+    ],
+};
+export async function getMonorepoBase(props: MonorepoBase) {
+    const container = await getEcrContainer({
+        ...props,
+        image: RUNNER_IMAGE,
+    })
+    const files = getMonorepoInstallFiles(props);
+    return container.withDirectory(WORKDIR, files).withWorkdir(WORKDIR).withExec(['yarn', 'install', '--frozen-lockfile']).sync();
+}
+
+export type MonorepoBase = MonorepoContainer & AWSProps;
 
 
-interface MonorepoContainerGithub {
-    action: 'sha';
+interface MonorepoContainerGithubSha {
+    action: FILE_ACTION_GITHUB_SHA;
     sha: string;
 }
 
 interface MonorepoContainerGithubBranch {
-    action: 'branch';
+    action: FILE_ACTION_GITHUB_BRANCH;
     branch: string;
 }
 
 
 interface MonorepoContainerLocal {
-    action: 'local';
+    action: FILE_ACTION_LOCAL;
+    files: Directory;
 }
 
-type MonorepoContainer = MonorepoContainerGithub | MonorepoContainerLocal | MonorepoContainerGithubBranch;
+type MonorepoContainer = MonorepoContainerGithubSha | MonorepoContainerLocal | MonorepoContainerGithubBranch;
 
-export function monorepoContainer(props: MonorepoContainer) {
-    const files = (( ) => {
+
+
+
+function getMonorepoInstallFiles(props: MonorepoContainer) {
+    const tree = (( ) => {
         if (props.action ===  'sha') {
-            //dag.git()
+            dag.git(GITHUB_URL).commit(props.sha).tree();
+        }
+        if (props.action === 'branch') {
+            return dag.git(GITHUB_URL).branch(props.branch).tree();
         }
         if (props.action === 'local') {
-            throw new Error('Not implemented');
+            return props.files;
         }
-        throw new Error('Invalid action');
-    })();
+        
+    })().filter(MONO_REPO_FILTERS);
+    return tree;
 }
+

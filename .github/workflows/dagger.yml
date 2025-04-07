@@ -2,6 +2,12 @@ name: 'Dagger action'
 on: 
     workflow_call:
         inputs:
+            branch:
+                required: false
+                type: string
+            sha: 
+                required: false
+                type: string
             version:
                 required: false
                 type: string
@@ -19,24 +25,35 @@ on:
                 default: ""
 env:
     _EXPERIMENTAL_DAGGER_RUNNER_HOST: ${{ secrets._EXPERIMENTAL_DAGGER_RUNNER_HOST }}
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 jobs:
     run_action:
         runs-on: arc-shared
         steps:
-            - name: Checkout code
+            - name: Evaluate options
+              id: options
+              run: |
+                if [ -n "${{ inputs.branch }}" ]; then
+                    echo "options=--action=branch --branch=${{ inputs.branch }}" >> $GITHUB_OUTPUT
+                elif [ -n "${{ inputs.sha }}" ]; then
+                    echo "options=--action=sha --sha=${{ inputs.sha }}" >> $GITHUB_OUTPUT
+                else
+                    echo "Neither 'branch' nor 'sha' is set. Exiting with status 1."
+                    exit 1
+                fi
+            - name: Checkout dagger code
               uses: actions/checkout@v4
               with:
                 fetch-depth: 1
                 clean: true
                 sparse-checkout: |
-                    ${{ inputs.module }}/
-                
-            - run:
-                find 
+                    ${{ inputs.module }}/                    
             - name: Call Dagger Function
               uses: dagger/dagger-for-github@8.0.0
               with:
                 version: ${{ inputs.version }}
                 module: ${{ inputs.module }}
-                args: ${{ inputs.function }} ${{ inputs.args }}
+                args: ${{ inputs.function }} ${{ inputs.args }} ${{ steps.options.outputs.options }} --AWS_ACCESS_KEY_ID=env://AWS_ACCESS_KEY_ID --AWS_SECRET_ACCESS_KEY=env://AWS_SECRET_ACCESS_KEY
                 verb: call
+
