@@ -6,10 +6,12 @@ import {
   getValueViaPath,
   buildHiddenInput,
   buildTableRepeaterField,
+  YES,
 } from '@island.is/application/core'
-import { certificateOfTenure } from '../../lib/messages'
+import { assigneeInformation, certificateOfTenure } from '../../lib/messages'
 import {
   alreadyHaveTrainingLicense,
+  isContractor,
   isUnknownMachineType,
   isUnknownPracticalRight,
   isWrongPracticalRight,
@@ -284,6 +286,26 @@ export const certificateOfTenureSection = buildSection({
               type: 'number',
               label: certificateOfTenure.labels.tenureInHours,
               width: 'half',
+            },
+            isContractor: {
+              component: 'checkbox',
+              large: false,
+              backgroundColor: 'white',
+              options: [
+                {
+                  value: YES,
+                  label: assigneeInformation.labels.isContractor,
+                },
+              ],
+            },
+            isContractorAlert: {
+              component: 'alertMessage',
+              alertType: 'info',
+              marginTop: 0,
+              condition: (_, activeField) => {
+                return activeField?.isContractor?.includes('yes') ?? false
+              },
+              message: assigneeInformation.labels.isContractorAlert,
             },
           },
         }),

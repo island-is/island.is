@@ -26,16 +26,6 @@ export const assigneeInformationSection = buildSection({
       title: assigneeInformation.general.title,
       description: assigneeInformation.general.description,
       children: [
-        buildCheckboxField({
-          id: 'assigneeInformation.isContractor',
-          title: '',
-          options: [
-            {
-              value: YES,
-              label: assigneeInformation.labels.isContractor,
-            },
-          ],
-        }),
         buildTableRepeaterField({
           id: 'assigneeInformation.companyAndAssignee',
           addItemButtonText: assigneeInformation.labels.tableButtonText,

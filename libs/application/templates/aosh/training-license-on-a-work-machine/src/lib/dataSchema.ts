@@ -22,6 +22,7 @@ export const CertificateOfTenureSchema = z.object({
   dateFrom: z.string().min(1),
   dateTo: z.string().min(1),
   tenureInHours: z.string().min(1),
+  isContractor: z.array(z.string().optional()),
   licenseCategoryPrefix: z.string().optional(),
   unknownMachineType: z.boolean().optional(),
   unknownPracticalRight: z.boolean().optional(),
@@ -58,7 +59,6 @@ const AssigneeInformationSchema = z.object({
       }),
     )
     .optional(),
-  isContractor: z.array(z.string().optional()),
 })
 
 export const TrainingLicenseOnAWorkMachineAnswersSchema = z.object({
@@ -66,6 +66,7 @@ export const TrainingLicenseOnAWorkMachineAnswersSchema = z.object({
   certificateOfTenure: z.array(CertificateOfTenureSchema),
   assigneeInformation: AssigneeInformationSchema,
   rejected: z.boolean().optional(),
+  approved: z.array(z.string()).optional(),
 })
 
 export type TrainingLicenseOnAWorkMachineAnswers = z.TypeOf<

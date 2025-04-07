@@ -71,7 +71,7 @@ export const assigneeInformation = {
     },
     isContractor: {
       id: 'aosh.tlwm.application:assigneeInformation.labels.isContractor',
-      defaultMessage: 'Ég er verktaki/sjálfstætt starfandi',
+      defaultMessage: 'Ég starfaði sjálfstætt á þessa vél',
       description: `Assignee information contractor label`,
     },
     isContractorAlert: {

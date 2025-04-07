@@ -5,6 +5,7 @@ import {
   buildOverviewField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { overview } from '../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
@@ -83,6 +84,16 @@ export const reviewOverviewSection = buildSection({
             },
             {
               event: DefaultEvents.SUBMIT,
+              name: overview.general.agreeButton,
+              type: 'primary',
+              condition: (answers) => {
+                const approved = getValueViaPath<string[]>(answers, 'approved')
+                // Change...
+                return approved?.includes('true') ?? true
+              },
+            },
+            {
+              event: DefaultEvents.APPROVE,
               name: overview.general.agreeButton,
               type: 'primary',
             },
