@@ -147,8 +147,6 @@ export const AppLockScreen: NavigationFunctionComponent<{
           .getState()
           .logout()
           .then(() => {
-            preferencesStore.setState({ hasOnboardedPinCode: false })
-            preferencesStore.setState({ pinTries: 0 })
             // you are now logged out and navigated to root screen
             resetLockScreen()
             Navigation.dismissAllOverlays()
