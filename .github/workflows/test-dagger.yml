@@ -14,7 +14,7 @@ jobs:
         runs-on: arc-shared
         steps:
             - name: Test
-              uses: ./github/workflow/dagger.yml
+              uses: ./github/workflows/dagger.yml
               with:
                   function: test
                   
