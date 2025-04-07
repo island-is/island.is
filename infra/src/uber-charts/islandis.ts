@@ -114,6 +114,8 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
+const paymentsService = paymentsServiceSetup()
+
 const formSystemApi = formSystemApiSetup()
 
 const api = apiSetup({
