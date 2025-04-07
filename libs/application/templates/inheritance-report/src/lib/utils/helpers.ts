@@ -185,9 +185,6 @@ export const getDeceasedWasInCohabitation = (
   application?.answers &&
   getValueViaPath(application.answers, 'customShare.deceasedWasMarried') === YES
 
-export const hasYes = (arr?: string[]) =>
-  Array.isArray(arr) && arr.includes(YES)
-
 export const shouldShowDeceasedShareField = (answers: FormValue) =>
   getValueViaPath(answers, 'customShare.deceasedHadAssets') === YES &&
   getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES

@@ -4,15 +4,12 @@ import {
   formatCurrency,
 } from '@island.is/application/ui-components'
 import { m } from '../../../lib/messages'
-import {
-  roundedValueToNumber,
-  valueToNumber,
-  hasYes,
-} from '../../../lib/utils/helpers'
+import { roundedValueToNumber, valueToNumber } from '../../../lib/utils/helpers'
 import { EstateAssets } from '../../../types'
 import { RowType, RowItemsType } from './types'
 import { format as formatNationalId } from 'kennitala'
 import { PREPAID_INHERITANCE } from '../../../lib/constants'
+import { hasYes } from '@island.is/application/core'
 
 export const getRealEstateDataRow = (answers: FormValue): RowType[] => {
   const values = (
