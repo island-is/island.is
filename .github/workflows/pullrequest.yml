@@ -296,6 +296,7 @@ jobs:
         id: lint-head
         run: |
           lints=$(mktemp -t lint-head.XXXXXX)
+          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
           yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" |
             tee -a "$lints" | # Show output when running, but preserve pipe-chaining
             grep -oP '(?<=✖ )(\d+)(?= problems)' | # Find number of problems
@@ -312,6 +313,7 @@ jobs:
         id: lint-base
         run: |
           lints=$(mktemp -t lint-base.XXXXXX)
+          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
           yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" |
             tee -a "$lints" | # Show output when running, but preserve pipe-chaining
             grep -oP '(?<=✖ )(\d+)(?= problems)' | # Find number of problems
@@ -322,6 +324,8 @@ jobs:
         env:
           HEAD_LINT_COUNT: ${{steps.lint-head.outputs.lint-count}}
           BASE_LINT_COUNT: ${{steps.lint-base.outputs.lint-count}}
+          HEAD_LINT_FILE: ${{steps.lint-head.outputs.lints-file}}
+          BASE_LINT_FILE: ${{steps.lint-base.outputs.lints-file}}
         run: |
           COUNT_DIFF=$(( HEAD_LINT_COUNT - BASE_LINT_COUNT )) || :
           if [[ $COUNT_DIFF -eq 0 ]]; then
@@ -331,7 +335,7 @@ jobs:
           echo "::error title=NEW_LINTS::Please fix your lints 🙏 (found $COUNT_DIFF additional lints)"
           lints_base=$(mktemp --dry -t lint-.XXX)
           echo "::group::lintdiff"
-          diff "${lints_base%-.*}"-*
+          diff "${BASE_LINT_FILE}" "${HEAD_LINT_FILE}" || : # Ignore diff exit code
           echo "::endgroup::"
           exit 1
 
