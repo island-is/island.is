@@ -1,8 +1,5 @@
 import { uuid } from 'uuidv4'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
-import { Gender, User } from '@island.is/judicial-system/types'
-
 import { createTestingVictimModule } from './createTestingVictimModule'
 
 import { Case } from '../../case/models/case.model'
@@ -13,7 +10,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (courtCaseNumber?: string) => Promise<Then>
+type GivenWhenThen = () => Promise<Then>
 
 describe('VictimController - Create', () => {
   const caseId = uuid()
