@@ -7,6 +7,10 @@ const failedStates: JobState[] = ['failure', 'abandoned', 'cancelled']
 
 @object()
 export class Dagger {
+  @func()
+  test() {
+    console.log("Hello from Dagger!");
+  }
   /**
    * Returns a container that echoes whatever string argument is provided
    */

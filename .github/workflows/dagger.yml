@@ -1,0 +1,41 @@
+name: 'Dagger action'
+on: 
+    workflow_call:
+        inputs:
+            version:
+                required: false
+                type: string
+                default: "latest"
+            module:
+                required: false
+                default: "./scripts/ci/dagger"
+                type: string
+            function: 
+                required: true
+                type: string
+            args:
+                required: false
+                type: string
+                default: ""
+env:
+    _EXPERIMENTAL_DAGGER_RUNNER_HOST: ${{ secrets._EXPERIMENTAL_DAGGER_RUNNER_HOST }}
+jobs:
+    run_action:
+        runs-on: arc-shared
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
+                clean: true
+                sparse-checkout: |
+                    ${{ inputs.module }}
+                sparse-checkout-cone-mode: true
+
+            - name: Call Dagger Function to build and publish to ghcr.io
+              uses: dagger/dagger-for-github@8.0.0
+              with:
+                version: ${{ inputs.version }}
+                module: ${{ inputs.module }}
+                args: ${{ inputs.function }} ${{ inputs.args }}
+                verb: call
