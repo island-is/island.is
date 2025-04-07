@@ -323,7 +323,7 @@ jobs:
           HEAD_LINT_COUNT: ${{steps.lint-head.outputs.lint-count}}
           BASE_LINT_COUNT: ${{steps.lint-base.outputs.lint-count}}
         run: |
-          COUNT_DIFF=$(( HEAD_LINT_COUNT <= BASE_LINT_COUNT )) || :
+          COUNT_DIFF=$(( HEAD_LINT_COUNT - BASE_LINT_COUNT )) || :
           if [[ $COUNT_DIFF -eq 0 ]]; then
             echo "Lint count has not increased"
             exit 0
