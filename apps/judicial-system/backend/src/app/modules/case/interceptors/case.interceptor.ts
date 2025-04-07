@@ -47,7 +47,7 @@ const transformCaseRepresentatives = (theCase: Case) => {
   const civilClaimantSpokespersons = civilClaimants?.map((civilClaimant) => {
     const { spokespersonName, spokespersonNationalId, spokespersonIsLawyer } =
       civilClaimant
-    if (!(spokespersonName && spokespersonNationalId)) return undefined
+    if (!spokespersonName) return undefined
 
     return {
       name: spokespersonName,
@@ -66,7 +66,7 @@ const transformCaseRepresentatives = (theCase: Case) => {
         caseFileCategory: CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
       },
     ]
-    if (defendant.defenderName && defendant.defenderNationalId) {
+    if (defendant.defenderName) {
       defendantAndDefender.push({
         name: defendant.defenderName,
         nationalId: defendant.defenderNationalId,
