@@ -90,7 +90,8 @@ export const participants = {
     },
     tableError: {
       id: 'aosh.sem.application:participants.labels.tableError',
-      defaultMessage: 'Vinsamlegast fjarlægðu ógjaldgenga þátttakendur',
+      defaultMessage:
+        'Vinsamlegast fjarlægðu ógjaldgenga þátttakendur áður en haldið er áfram',
       description: 'participants table error message',
     },
     seeLess: {
@@ -133,6 +134,11 @@ export const participants = {
       defaultMessage:
         'netfang sem er nú þegar skráð. Ekki er hægt að skrá tvo með sama netfangi. Þú getur eytt þátttakanda út og skráð aftur með öðru netfangi. ',
       description: 'csv upload duplicate email error label',
+    },
+    emptyListError: {
+      id: 'aosh.sem.application:participants.labels.emptyListError',
+      defaultMessage: ' Vinsamlegast bættu a.m.k 1 þátttakanda við listann',
+      description: 'empty participant list error label',
     },
   }),
 }

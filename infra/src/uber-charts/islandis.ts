@@ -151,7 +151,8 @@ const downloadService = downloadServiceSetup({
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
-const userNotificationCleanupWorkerService = userNotificationCleanUpWorkerSetup()
+const userNotificationCleanupWorkerService =
+  userNotificationCleanUpWorkerSetup()
 
 const userNotificationBirthdayWorkerService =
   userNotificationBirthdayWorkerSetup({ userProfileApi: servicePortalApi })
@@ -282,7 +283,7 @@ export const Services: EnvironmentServices = {
     bffAdminPortalService,
     bffServicePortalService,
     unicornApp,
-    formSystemApi
+    formSystemApi,
   ],
 }
 
