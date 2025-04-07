@@ -30,11 +30,14 @@ runs:
       shell: bash
       id: check-deps-cache
       run: |
+        aws ecr describe-images --repository-name ${{ inputs.cache_repo }} --image-ids imageTag=${{ steps.cache-tag.outputs.tag }}
         if aws ecr describe-images --repository-name ${{ inputs.cache_repo }} --image-ids imageTag=${{ steps.cache-tag.outputs.tag }} &>/dev/null; then
-          echo "cache_exists=true" >> $GITHUB_OUTPUT
+          exists=true
         else
-          echo "cache_exists=false" >> $GITHUB_OUTPUT
+          exists=false
         fi
+        echo "cache exists: $exists"
+        echo "cache_exists=$exists" >> $GITHUB_OUTPUT
       continue-on-error: true
 
     - name: Build and push deps layer
