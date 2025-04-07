@@ -34,7 +34,7 @@ COPY apps/native/app/package.json ./apps/native/app/
 
 # Use pruned installations for yarn berry
 RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
-  yarn install --immutable && \
+  yarn workspaces foreach --all --exclude "apps/native/*" install && \
   yarn cache clean
 
 # ------------------------------------------------

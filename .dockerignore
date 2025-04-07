@@ -3,7 +3,8 @@
 # Known ignores
 /.github/
 /.git/
-/scripts/ci/
+/scripts/ci/*
+!/scripts/ci/docker/
 /.env.*
 /.envrc*
 /.nx/
