@@ -74,12 +74,13 @@ function useBiometricType() {
 export const AppLockScreen: NavigationFunctionComponent<{
   lockScreenActivatedAt?: number
   status: string
-}> = ({ componentId, lockScreenActivatedAt, status }) => {
+}> = ({ componentId, status }) => {
   const av = useRef(new Animated.Value(1)).current
   const isPromptRef = useRef(false)
   const [code, setCode] = useState('')
   const [invalidCode, setInvalidCode] = useState(false)
-  const [attempts, setAttempts] = useState(0)
+  const pinTries = preferencesStore.getState().pinTries
+  const [attempts, setAttempts] = useState(pinTries)
   const { useBiometrics } = usePreferencesStore()
   const biometricType = useBiometricType()
   const intl = useIntl()
@@ -162,6 +163,9 @@ export const AppLockScreen: NavigationFunctionComponent<{
             } else {
               // increment attemps, reset code and display warning
               setAttempts((previousAttempts) => previousAttempts + 1)
+              preferencesStore.setState({
+                pinTries: attempts + 1,
+              })
               setInvalidCode(true)
               setTimeout(() => {
                 setCode('')

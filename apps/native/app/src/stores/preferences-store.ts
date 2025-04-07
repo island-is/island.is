@@ -42,6 +42,7 @@ export interface PreferencesStore extends State {
   locale: Locale
   appearanceMode: AppearanceMode
   appLockTimeout: number
+  pinTries: number
   setLocale(locale: Locale): void
   getAndSetLocale(): void
   setAppearanceMode(appearanceMode: AppearanceMode): void
@@ -79,6 +80,7 @@ const defaultPreferences = {
   notificationsApplicationStatusUpdates: true,
   dismissed: [] as string[],
   appLockTimeout: 5000,
+  pinTries: 0,
 }
 
 export const preferencesStore = create<PreferencesStore>(
