@@ -614,7 +614,7 @@ export const translationStrings = defineMessages({
     description: 'Lýsing fyrir ofan fæðingarmánuð og ár reiti',
   },
   startMonthAndYearDescription: {
-    id: 'web.pensionCalculator:startMonthAndYearDescription#markdown',
+    id: 'web.pensionCalculator:startMonthAndYearDescription',
     defaultMessage:
       'Þú getur byrjað töku ellilífeyris frá {month} {year}. Þú getur flýtt um 2 ár eða frestað töku ellilífeyris.',
     description:
