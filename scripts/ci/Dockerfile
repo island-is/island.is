@@ -9,8 +9,7 @@ ARG CACHE_IMAGE=821090935708.dkr.ecr.eu-west-1.amazonaws.com/docker-cache:latest
 FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS base
 
 # Minimize image size by combining apt commands and cleaning up
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-  --mount=type=cache,target=/var/lib/apt,sharing=locked \
+RUN \
   apt-get update && \
   apt-get install -y --no-install-recommends \
   git \
@@ -33,7 +32,7 @@ COPY .yarn/releases .yarn/releases
 COPY apps/native/app/package.json ./apps/native/app/
 
 # Use pruned installations for yarn berry
-RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
+RUN \
   yarn workspaces foreach --all --exclude "apps/native/*" install && \
   yarn cache clean
 

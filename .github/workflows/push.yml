@@ -252,6 +252,8 @@ jobs:
       - name: Prepare docker cache
         id: docker-cache
         uses: ./.github/actions/docker-deps
+        with:
+          s3_cache_bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
   docker-build:
     needs:
@@ -354,21 +356,47 @@ jobs:
             # --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache,mode=max" \
           )
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
+          export OUTPUT_TYPE=${DOCKER_TYPE/docker/output} >> "${GITHUB_ENV}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
 
-      - name: Building Docker images
-        id: dockerbuild
-        if: steps.gather.outcome == 'success'
-        env:
-          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
-          GIT_COMMIT_SHA: ${{ github.sha }}
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-        run: |
-          set -x
-          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
-          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
-          export EXTRA_DOCKER_BUILD_ARGS
-          ./scripts/ci/"90_${DOCKER_TYPE}.sh"
+      - name: Building docker images
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./scripts/ci/Dockerfile
+          push: true
+          target: ${OUTPUT_TYPE}
+          cache-from: type=s3,blobs_prefix=cache/${{ github.repository }}/,manifests_prefix=cache/${{ github.repository }}/,region=${AWS_REGION},bucket=${S3_DOCKER_CACHE_BUCKET}
+          build-args: |
+            DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}
+            NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}
+            GIT_BRANCH=${GIT_BRANCH}
+            GIT_COMMIT_SHA=${GIT_COMMIT_SHA}
+            GIT_REPOSITORY_URL=${SERVER_URL}
+            NX_PARALLEL=${NX_PARALLEL}
+            NX_MAX_PARALLEL=${NX_MAX_PARALLEL}
+            NX_TASKS_RUNNER=ci
+            PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}
+            APP=${APP}
+            APP_HOME=${APP_HOME}
+            APP_DIST_HOME=${APP_DIST_HOME}
+          secrets: |
+            nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+          tags: ${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}
+
+      # - name: Building Docker images
+      #   id: dockerbuild
+      #   if: steps.gather.outcome == 'success'
+      #   env:
+      #     NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
+      #     GIT_COMMIT_SHA: ${{ github.sha }}
+      #     DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+      #   run: |
+      #     set -x
+      #     echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
+      #     echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+      #     export EXTRA_DOCKER_BUILD_ARGS
+      #     ./scripts/ci/"90_${DOCKER_TYPE}.sh"
 
       # Add specific directories you need
   helm-docker-build:

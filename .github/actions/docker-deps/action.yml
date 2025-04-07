@@ -9,6 +9,14 @@ inputs:
     description: ''
     required: false
     default: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  aws_region:
+    description: ''
+    required: false
+    default: eu-west-1
+  s3_cache_bucket:
+    description: ''
+    required: true
+
 outputs:
   cache_image:
     description: ''
@@ -19,7 +27,7 @@ runs:
     - name: Calculate yarn.lock SHA
       shell: bash
       id: yarn-sha
-      run: echo "sha=$(sha256sum yarn.lock | cut -d ' ' -f 1 | head -c 16)" >> $GITHUB_OUTPUT
+      run: echo "sha=$(sha256sum yarn.lock | cut -d ' ' -f 1 | head -c 11)" >> $GITHUB_OUTPUT
 
     - name: Set cache image tag
       shell: bash
@@ -45,10 +53,9 @@ runs:
       with:
         context: .
         file: ./scripts/ci/Dockerfile
-        push: true
         tags: ${{ inputs.docker_registry }}/${{ inputs.cache_repo }}:${{ steps.cache-tag.outputs.tag }}
-        target: deps
-        cache-to: type=inline
+        cache-from: type=s3,blobs_prefix=cache/${{ github.repository }}/,manifests_prefix=cache/${{ github.repository }}/,region=${{ inputs.aws_region }},bucket=${{ inputs.s3_cache_bucket }}
+        cache-to: type=s3,blobs_prefix=cache/${{ github.repository }}/,manifests_prefix=cache/${{ github.repository }}/,region=${{ inputs.aws_region }},bucket=${{ inputs.s3_cache_bucket }},mode=max
 
     - name: Set cache image
       shell: bash
