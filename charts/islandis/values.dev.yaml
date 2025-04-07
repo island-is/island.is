@@ -2810,6 +2810,7 @@ services-payments:
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
+    - 'application-system'
     - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
