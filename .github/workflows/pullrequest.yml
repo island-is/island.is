@@ -328,7 +328,7 @@ jobs:
           BASE_LINT_FILE: ${{steps.lint-base.outputs.lints-file}}
         run: |
           COUNT_DIFF=$(( HEAD_LINT_COUNT - BASE_LINT_COUNT )) || :
-          if [[ $COUNT_DIFF -eq 0 ]]; then
+          if (( COUNT_DIFF <= 0 )); then
             echo "Lint count has not increased"
             exit 0
           fi
