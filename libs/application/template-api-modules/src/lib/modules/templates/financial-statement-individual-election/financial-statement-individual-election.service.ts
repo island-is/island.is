@@ -125,6 +125,7 @@ export class FinancialStatementIndividualElectionService extends BaseTemplateApi
       return electionsWithLimits
     } catch (error) {
       console.error('Error fetching elections', error)
+      throw new Error(`Failed to fetch elections: ${error.message}`)
     }
   }
 
