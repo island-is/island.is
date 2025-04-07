@@ -1,6 +1,11 @@
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { parseAsInteger, useQueryState } from 'next-usequerystate'
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+  useQueryState,
+} from 'next-usequerystate'
 
 import {
   Box,
@@ -215,6 +220,9 @@ BloodDonationRestrictionList.getProps = async ({
     page = 1
   }
 
+  const queryString = parseAsString.parseServerSide(query.q)
+  const tagKeys = parseAsArrayOf(parseAsString).parseServerSide(query.tags)
+
   if (!customPageData?.configJson?.showListPage) {
     throw new CustomNextError(
       404,
@@ -237,6 +245,8 @@ BloodDonationRestrictionList.getProps = async ({
         input: {
           page,
           lang: locale,
+          queryString,
+          tagKeys,
         },
       },
     }),
@@ -290,7 +300,7 @@ BloodDonationRestrictionList.getProps = async ({
     organizationPage: organizationPageResponse.data.getOrganizationPage,
     namespace,
     tags: bloodDonationRestrictionGenericTagsResponse.data
-      .getBloodDonationRestrictionGenericTags.items as any,
+      .getBloodDonationRestrictionGenericTags.items,
   }
 }
 

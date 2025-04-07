@@ -61,6 +61,7 @@ import { Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
 import { BloodDonationRestrictionGenericTagList } from './models/bloodDonationRestriction.model'
 import { sortAlpha } from '@island.is/shared/utils'
+import { GetBloodDonationRestrictionsInput } from './dto/getBloodDonationRestrictions.input'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -1314,6 +1315,68 @@ export class CmsElasticsearchService {
         key: tag.key,
         label: tag.value,
       })),
+    }
+  }
+
+  async getBloodDonationRestrictionList(
+    index: string,
+    input: GetBloodDonationRestrictionsInput,
+  ) {
+    const must: Record<string, unknown>[] = [
+      {
+        term: {
+          type: {
+            value: 'webBloodDonationRestriction',
+          },
+        },
+      },
+      {
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              should:
+                input.tagKeys?.map((key) => ({
+                  term: { 'tags.key': key, 'tags.type': 'genericTag' },
+                })) ?? [],
+            },
+          },
+        },
+      },
+    ]
+
+    const queryString = input.queryString
+      ? input.queryString.replace('´', '').trim().toLowerCase()
+      : ''
+
+    must.push({
+      simple_query_string: {
+        query: queryString + '*',
+        fields: ['title^100', 'content'],
+        analyze_wildcard: true,
+        default_operator: 'and',
+      },
+    })
+
+    const size = 10
+
+    const response: ApiResponse<SearchResponse<MappedData>> =
+      await this.elasticService.findByQuery(index, {
+        query: {
+          bool: {
+            must,
+          },
+        },
+        size,
+        from: ((input.page ?? 1) - 1) * size,
+      })
+
+    return {
+      items: response.body.hits.hits
+        .map((item) => JSON.parse(item._source.response ?? 'null'))
+        .filter(Boolean),
+      total: response.body.hits.total.value,
+      input,
     }
   }
 }

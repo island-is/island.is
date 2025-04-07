@@ -755,7 +755,10 @@ export class CmsResolver {
   getBloodDonationRestrictions(
     @Args('input') input: GetBloodDonationRestrictionsInput,
   ): Promise<BloodDonationRestrictionList> {
-    return this.cmsContentfulService.getBloodDonationRestrictions(input)
+    return this.cmsElasticsearchService.getBloodDonationRestrictionList(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
   }
 
   @CacheControl(defaultCache)

@@ -37,16 +37,7 @@ export class BloodDonationRestrictionSyncService
             return false
           }
 
-          const tags = mapped.keywordsText
-            ? mapped.keywordsText.split(',').map((keyword) => {
-                const trimmedKeyword = keyword.trim()
-                return {
-                  value: trimmedKeyword,
-                  key: trimmedKeyword,
-                  type: 'keyword',
-                }
-              })
-            : []
+          const tags = []
 
           for (const tag of entry.fields.filterTags ?? []) {
             tags.push({
@@ -66,10 +57,22 @@ export class BloodDonationRestrictionSyncService
             })
           }
 
+          const contentSections = []
+
+          if (mapped.description) {
+            contentSections.push(mapped.description)
+          }
+          if (mapped.keywordsText) {
+            contentSections.push(mapped.keywordsText)
+          }
+
+          const content = contentSections.join(' ')
+
           return {
             _id: mapped.id,
             title: entry.fields.title || '',
-            content: mapped.description,
+            content,
+            contentWordCount: content.split(' ').length,
             type: 'webBloodDonationRestriction',
             response: JSON.stringify(mapped),
             tags,

@@ -7,8 +7,14 @@ export class GetBloodDonationRestrictionsInput {
   @Field(() => Int, { nullable: true })
   page?: number
 
+  @Field(() => String, { nullable: true })
+  queryString?: string
+
+  @Field(() => [String], { nullable: true })
+  tagKeys?: string[]
+
   @Field(() => String)
-  lang = 'is-IS'
+  lang: ElasticsearchIndexLocale = 'is'
 }
 
 @InputType()
