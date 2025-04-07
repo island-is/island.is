@@ -148,6 +148,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
           .logout()
           .then(() => {
             preferencesStore.setState({ hasOnboardedPinCode: false })
+            preferencesStore.setState({ pinTries: 0 })
             // you are now logged out and navigated to root screen
             resetLockScreen()
             Navigation.dismissAllOverlays()
@@ -159,6 +160,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
         Keychain.getGenericPassword({ service: 'PIN_CODE' })
           .then((res) => {
             if (res && res.password === code) {
+              preferencesStore.setState({ pinTries: 0 })
               unlockApp()
             } else {
               // increment attemps, reset code and display warning
