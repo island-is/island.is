@@ -165,9 +165,9 @@ export const AppLockScreen: NavigationFunctionComponent<{
             } else {
               // increment attemps, reset code and display warning
               setAttempts((previousAttempts) => previousAttempts + 1)
-              preferencesStore.setState({
-                pinTries: attempts + 1,
-              })
+              preferencesStore.setState((state) => ({
+                pinTries: state.pinTries + 1,
+              }))
               setInvalidCode(true)
               setTimeout(() => {
                 setCode('')
