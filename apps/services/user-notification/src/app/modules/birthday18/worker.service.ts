@@ -4,11 +4,11 @@ import type { Logger } from '@island.is/logging'
 import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateHnippNotificationDto } from '../notifications/dto/createHnippNotification.dto'
+import { InstitutionNationalIds } from '@island.is/application/types'
 
 @Injectable()
 export class UserNotificationBirthday18WorkerService {
   // eslint-disable-next-line local-rules/disallow-kennitalas
-  private DIGITAL_ICELAND_ORG_ID = '5501692829'
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -30,9 +30,11 @@ export class UserNotificationBirthday18WorkerService {
     await Promise.all(
       birthdays.map(async (birthdaySsn) => {
         const body: CreateHnippNotificationDto = {
-          senderId: this.DIGITAL_ICELAND_ORG_ID,
+          senderId: InstitutionNationalIds.STAFRAENT_ISLAND,
           recipient: birthdaySsn,
           templateId: 'HNIPP.DIGITALICELAND.BIRTHDAYMESSAGE',
+          // This PR will not be merged until the national registry v3 applications client
+          // will be updated
           args: [
             {
               key: 'name',
