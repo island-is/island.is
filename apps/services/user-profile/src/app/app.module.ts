@@ -13,7 +13,7 @@ import {
 
 import environment from '../environments/environment'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import { UserProfileModule } from './user-profile/V2/user-profile.module'
+import { UserProfileModule } from './user-profile/user-profile.module'
 
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'

@@ -6,9 +6,9 @@ import {
   createNationalId,
 } from '@island.is/testing/fixtures'
 
-import { SequelizeConfigService } from '../../../sequelizeConfig.service'
-import { AppModule } from '../../../app.module'
-import { FixtureFactory } from '../../../../../test/fixture-factory'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
+import { AppModule } from '../../app.module'
+import { FixtureFactory } from '../../../../test/fixture-factory'
 import { UserProfileScope } from '@island.is/auth/scopes'
 
 const fakeToken =

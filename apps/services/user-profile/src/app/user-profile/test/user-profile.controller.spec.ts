@@ -13,11 +13,11 @@ import { AdminPortalScope, UserProfileScope } from '@island.is/auth/scopes'
 import { setupApp, setupAppWithoutAuth } from '@island.is/testing/nest'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 
-import { AppModule } from '../../../app.module'
-import { SequelizeConfigService } from '../../../sequelizeConfig.service'
-import { FixtureFactory } from '../../../../../test/fixture-factory'
+import { AppModule } from '../../app.module'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
+import { FixtureFactory } from '../../../../test/fixture-factory'
 import { UserProfile } from '../models/userProfile.model'
-import { ClientType } from '../../../types/ClientType'
+import { ClientType } from '../../types/ClientType'
 import { ActorProfile } from '../models/actor-profile.model'
 
 const testUserProfile = {

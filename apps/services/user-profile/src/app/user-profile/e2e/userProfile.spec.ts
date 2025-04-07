@@ -1,4 +1,4 @@
-import { setup } from '../../../../../test/setup'
+import { setup } from '../../../../test/setup'
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'

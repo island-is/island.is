@@ -19,10 +19,10 @@ import { formatPhoneNumber } from './utils/format-phone-number'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { DataStatus } from './types/dataStatusTypes'
-import { NudgeType } from '../../types/nudge-type'
+import { NudgeType } from '../types/nudge-type'
 import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
-import { ClientType } from '../../types/ClientType'
-import { UserProfileConfig } from '../../../config'
+import { ClientType } from '../types/ClientType'
+import { UserProfileConfig } from '../../config'
 import { ActorProfile } from './models/actor-profile.model'
 import {
   ActorProfileDto,

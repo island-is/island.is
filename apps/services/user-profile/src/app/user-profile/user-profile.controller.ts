@@ -19,7 +19,7 @@ import { CurrentActor, IdsAuthGuard, Scopes, ScopesGuard, type User } from '@isl
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
 import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
-import { ClientType } from '../../types/ClientType'
+import { ClientType } from '../types/ClientType'
 import { ActorProfileDto, ActorLocale } from './dto/actor-profile.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { Locale } from './types/localeTypes'

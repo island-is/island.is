@@ -17,7 +17,7 @@ import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { EmailVerification } from './models/emailVerification.model'
 import { SmsVerification } from './models/smsVerification.model'
-import { UserProfileConfig } from '../../../config'
+import { UserProfileConfig } from '../../config'
 import type { ConfigType } from '@island.is/nest/config'
 
 /** Category to attach each log message to */

@@ -8,7 +8,7 @@ import {
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Readiness } from './dto/readinessDto'
 import dns from 'dns'
-import { SequelizeConfigService } from '../../sequelizeConfig.service'
+import { SequelizeConfigService } from '../sequelizeConfig.service'
 
 @Controller()
 export class UserProfileInfraController extends InfraController {

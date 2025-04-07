@@ -9,9 +9,9 @@ import {
 } from '@island.is/testing/nest'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
-import { FixtureFactory } from '../../../../../test/fixture-factory'
-import { AppModule } from '../../../app.module'
-import { SequelizeConfigService } from '../../../sequelizeConfig.service'
+import { FixtureFactory } from '../../../../test/fixture-factory'
+import { AppModule } from '../../app.module'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
 
 const user = createCurrentUser()
 

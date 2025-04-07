@@ -26,7 +26,7 @@ import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
 import { PostNudgeDto } from './dto/post-nudge.dto'
-import { ClientType } from '../../types/ClientType'
+import { ClientType } from '../types/ClientType'
 import {
   MeActorProfileDto,
   PaginatedActorProfileDto,
