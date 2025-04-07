@@ -75,7 +75,6 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
-      cache_image: ${{ steps.docker-cache.outputs.cache_image }}
 
     steps:
       - uses: actions/checkout@v4
@@ -291,7 +290,6 @@ jobs:
           echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
           echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
           echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
-          echo CACHE_IMAGE="${DOCKER_REGISTRY}/docker-cache:latest" >> "$GITHUB_ENV"
           echo APP="${AFFECTED_PROJECTS}" >> "$GITHUB_ENV"
 
       - name: Login to ECR
@@ -306,7 +304,6 @@ jobs:
         run: |
           echo "DOCKER_TAG=${{ github.sha }}" >> $GITHUB_ENV
           echo "DOCKER_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-          echo "CACHE_IMAGE=${{ needs.prepare.outputs.cache_image }}" >> $GITHUB_ENV
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -349,7 +346,6 @@ jobs:
             --build-arg="NX_PARALLEL=${NX_PARALLEL}"
             --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
             --build-arg="NX_TASKS_RUNNER=ci"
-            --build-arg="CACHE_IMAGE=${CACHE_IMAGE}"
             --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt
             # --cache-from=type=registry,ref="${{ needs.prepare.outputs.cache_image }}"
             --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache"
