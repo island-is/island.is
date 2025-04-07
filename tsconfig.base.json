@@ -56,9 +56,6 @@
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
-      "@island.is/api/domains/criminal-record": [
-        "libs/api/domains/criminal-record/src/index.ts"
-      ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],
@@ -187,6 +184,9 @@
       ],
       "@island.is/api/domains/payment-schedule": [
         "libs/api/domains/payment-schedule/src/index.ts"
+      ],
+      "@island.is/api/domains/payments": [
+        "libs/api/domains/payments/src/index.ts"
       ],
       "@island.is/api/domains/powerbi": [
         "libs/api/domains/powerbi/src/index.ts"
@@ -654,9 +654,6 @@
       "@island.is/clients/consultation-portal": [
         "libs/clients/consultation-portal/src/index.ts"
       ],
-      "@island.is/clients/criminal-record": [
-        "libs/clients/criminal-record/src/index.ts"
-      ],
       "@island.is/clients/data-protection-complaint": [
         "libs/clients/data-protection-complaint/src/index.ts"
       ],
@@ -777,6 +774,7 @@
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
       ],
+      "@island.is/clients/payments": ["libs/clients/payments/src/index.ts"],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
