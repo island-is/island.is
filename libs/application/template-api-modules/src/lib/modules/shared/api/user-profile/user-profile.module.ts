@@ -2,17 +2,14 @@ import { DynamicModule } from '@nestjs/common'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { UserProfileService } from './user-profile.service'
 import { Configuration, V2MeApi } from '@island.is/clients/user-profile'
-import { IslykillApiModule } from '@island.is/clients/islykill'
+import { BankinfoClientModule } from '@island.is/clients/fjs/bankinfo'
+
 export class UserProfileModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: UserProfileModule,
       imports: [
-        IslykillApiModule.register({
-          cert: config.islykill.cert,
-          passphrase: config.islykill.passphrase,
-          basePath: config.islykill.basePath,
-        }),
+        BankinfoClientModule,
       ],
       providers: [
         UserProfileService,

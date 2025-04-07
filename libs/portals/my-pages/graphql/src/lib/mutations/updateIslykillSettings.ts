@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
-export const UPDATE_ISLYKILL_DELETE_INPUT = gql`
-  mutation deleteIslykillValue($input: DeleteIslykillValueInput!) {
-    deleteIslykillValue(input: $input) {
+export const DELETE_EMAIL_OR_PHONE_MUTATION = gql`
+  mutation deleteEmailOrPhone($input: DeleteEmailOrPhoneInput!) {
+    deleteEmailOrPhone(input: $input) {
       nationalId
     }
   }

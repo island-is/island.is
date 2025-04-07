@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -11,21 +11,24 @@ import {
 import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
-import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
+import { DeleteEmailOrPhoneInput } from './dto/deleteEmailOrPhoneInput'
 import { DeleteTokenResponse } from './dto/deleteTokenResponse'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
-import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
+import { DeleteEmailOrPhoneSettings } from './models/deleteEmailOrPhoneSettings.model'
 import { UserProfileLocale } from './models/userProfileLocale.model'
 import { Response } from './response.model'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserProfile } from './userProfile.model'
-import { UserProfileService } from './userProfile.service'
+import { UserProfileServiceV2 } from './userProfile.service'
+import { ApolloError } from 'apollo-server-express'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Resolver()
+@Resolver(() => UserProfile)
 export class UserProfileResolver {
-  constructor(private readonly userProfileService: UserProfileService) {}
+  constructor(
+    private readonly userProfileService: UserProfileServiceV2
+  ) {}
 
   @Query(() => UserProfile, { nullable: true })
   getUserProfile(
@@ -58,11 +61,26 @@ export class UserProfileResolver {
   }
 
   @Mutation(() => UserProfile, { nullable: true })
-  async deleteIslykillValue(
-    @Args('input') input: DeleteIslykillValueInput,
+  async deleteEmailOrPhone(
+    @Args('input') input: DeleteEmailOrPhoneInput,
     @CurrentUser() user: User,
-  ): Promise<DeleteIslykillSettings> {
-    return this.userProfileService.deleteIslykillValue(input, user)
+  ): Promise<DeleteEmailOrPhoneSettings> {
+    const { nationalId } = await this.userProfileService.updateMeUserProfile(
+      {
+        ...(input.email && { email: '' }),
+        ...(input.mobilePhoneNumber && { mobilePhoneNumber: '' }),
+      },
+      user,
+    )
+
+    if (!nationalId) {
+      throw new ApolloError('Failed to update user profile')
+    }
+
+    return {
+      nationalId,
+      valid: true,
+    }
   }
 
   @Mutation(() => Response, { nullable: true })
@@ -92,16 +110,25 @@ export class UserProfileResolver {
   }
 
   @Mutation(() => DeleteTokenResponse)
-  deleteUserProfileDeviceToken(
+  async deleteUserProfileDeviceToken(
     @Args('input') input: UserDeviceTokenInput,
     @CurrentUser() user: User,
   ): Promise<DeleteTokenResponse> {
-    return this.userProfileService.deleteDeviceToken(input, user)
+    await this.userProfileService.deleteDeviceToken(input, user)
+
+    return {
+      success: true,
+    }
   }
 
   @Mutation(() => Boolean, { name: 'userProfileConfirmNudge' })
   async confirmNudge(@CurrentUser() user: User): Promise<boolean> {
     await this.userProfileService.confirmNudge(user)
     return true
+  }
+
+  @ResolveField('bankInfo')
+  async bankInfo(@CurrentUser() user: User): Promise<string | null> {
+    return await this.userProfileService.getUserBankInfo(user) ?? null
   }
 }

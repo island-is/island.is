@@ -65,6 +65,7 @@ import { UserNotificationClientConfig } from '@island.is/clients/user-notificati
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
+import { BankInfoClientConfig } from '@island.is/clients/fjs/bankinfo'
 
 @Module({
   imports: [
@@ -129,6 +130,7 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         NationalRegistryV3ClientConfig,
         SeminarsClientConfig,
         SecondarySchoolClientConfig,
+        BankInfoClientConfig,
       ],
     }),
   ],
