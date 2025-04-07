@@ -8,7 +8,6 @@ import { InstitutionNationalIds } from '@island.is/application/types'
 
 @Injectable()
 export class UserNotificationBirthday18WorkerService {
-  // eslint-disable-next-line local-rules/disallow-kennitalas
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
