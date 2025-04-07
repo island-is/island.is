@@ -13,6 +13,14 @@ jobs:
     test:
         runs-on: arc-shared
         steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
+                clean: true
+                sparse-checkout: |
+                    .github
+                sparse-checkout-cone-mode: true
             - name: Test
               uses: ./.github/workflows/dagger.yml
               with:
