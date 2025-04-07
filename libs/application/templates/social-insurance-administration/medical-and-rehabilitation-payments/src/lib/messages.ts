@@ -8,6 +8,16 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Sjúkra- og endurhæfingargreiðslur',
       description: 'Medical and Rehabilitation Payments',
     },
+    date: {
+      id: 'marp.application:date',
+      defaultMessage: 'Dagsetning',
+      description: 'Date',
+    },
+    datePlaceholder: {
+      id: 'marp.application:date.placeholder',
+      defaultMessage: 'Veldu dagsetningu',
+      description: 'Select date',
+    },
   }),
 
   pre: defineMessages({
@@ -40,6 +50,38 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:general.information.questions.sub.section.title',
       defaultMessage: 'Spurningar',
       description: 'Questions',
+    },
+    questionsIsSelfEmployed: {
+      id: 'marp.application:general.information.questions.is.self.employed',
+      defaultMessage: 'Ertu sjálfstætt starfandi?',
+      description: 'Are you self-employed?',
+    },
+    questionsIsSelfEmployedDescription: {
+      id: 'marp.application:general.information.questions.is.self.employed.description',
+      defaultMessage:
+        'Sjálfstætt starfandi einstaklingar þurfa að setja inn dagsetningu lækkunar á reiknuðu endurgjaldi.',
+      description:
+        'Self-employed individuals must enter the date of reduction in calculated remuneration',
+    },
+    questionsIsSelfEmployedDate: {
+      id: 'marp.application:general.information.questions.is.self.employed.date',
+      defaultMessage: 'Hvenær var lækkun á reiknuðu endurgjaldi?',
+      description: 'When was the reduction in calculated remuneration?',
+    },
+    questionsIsWorkingPartTime: {
+      id: 'marp.application:general.information.questions.is.working.part.time',
+      defaultMessage: 'Ertu í hlutastarfi?',
+      description: 'Are you working part-time?',
+    },
+    questionsIsStudying: {
+      id: 'marp.application:general.information.questions.is.studying',
+      defaultMessage: 'Ertu í námi?',
+      description: 'Are you studying?',
+    },
+    questionsIsStudyingFileUpload: {
+      id: 'marp.application:general.information.questions.is.studying.file.upload',
+      defaultMessage: 'Hlaða inn staðfestingarskjali',
+      description: 'Upload confirmation document',
     },
 
     // Sick pay
@@ -84,10 +126,24 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
   }),
 
-  overview: defineMessages({}),
+  overview: defineMessages({
+    studyConfirmation: {
+      id: 'marp.application:overview.study.confirmation',
+      defaultMessage: 'Staðfesting á námi',
+      description: 'Confirmation of study',
+    },
+  }),
 
   conclusion: defineMessages({}),
 }
+
+export const errorMessages = defineMessages({
+  dateRequired: {
+    id: 'marp.application:error.date.required',
+    defaultMessage: 'Það þarf að velja dagsetningu',
+    description: 'You must select a date',
+  },
+})
 
 export const statesMessages = defineMessages({
   applicationApprovedDescription: {
