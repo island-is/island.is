@@ -172,14 +172,14 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
             ),
           }
         : null,
-      document.numberWithType
+      document.number && document.type && document.subType
         ? {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.number),
-            value: document.numberWithType,
+            value: `${document.type}${document.subType}${document.numberWithType}`,
             link: {
               label: formatMessage(m.copy),
-              value: document.numberWithType,
+              value: `${document.type}${document.subType}${document.numberWithType}`,
               type: GenericUserLicenseMetaLinksType.Copy,
             },
           }
@@ -204,18 +204,6 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.passportNameComputer),
             value: `${document.mrzLastName} ${document.mrzFirstName}`,
-          }
-        : null,
-      document.sex
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: formatMessage(m.sex),
-            value:
-              document.sex === 'M'
-                ? formatMessage(m.male)
-                : document.sex === 'F'
-                ? formatMessage(m.female)
-                : formatMessage(m.otherGender),
           }
         : null,
     ].filter(isDefined)
