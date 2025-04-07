@@ -5,6 +5,7 @@ import { Box } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
   ContentLanguage,
+  CustomPage,
   CustomPageUniqueIdentifier,
   Query,
   QueryGetCustomSubpageArgs,
@@ -25,26 +26,27 @@ import { m } from './messages'
 interface OJOISubpageProps {
   organization?: Query['getOrganization']
   locale: Locale
+  customSubpage?: CustomPage
 }
 
 const OJOISubpage: CustomScreen<OJOISubpageProps> = ({
   organization,
   locale,
-  customPageData,
+  customSubpage,
 }) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
-  if (!customPageData) {
+  if (!customSubpage) {
     throw new CustomNextError(404, 'Custom subpage not found')
   }
 
   return (
     <OJOIWrapper
-      pageTitle={customPageData.ogTitle ?? ''}
-      pageDescription={customPageData.ogDescription ?? ''}
+      pageTitle={customSubpage.ogTitle ?? ''}
+      pageDescription={customSubpage.ogDescription ?? ''}
       organization={organization ?? undefined}
-      pageFeaturedImage={customPageData.ogImage?.url}
+      pageFeaturedImage={customSubpage.ogImage?.url}
       breadcrumbItems={[
         {
           title: formatMessage(m.breadcrumb.frontpage),
@@ -55,11 +57,11 @@ const OJOISubpage: CustomScreen<OJOISubpageProps> = ({
           href: linkResolver('ojoihome', [], locale).href,
         },
         {
-          title: customPageData.ogTitle ?? '',
+          title: customSubpage.ogTitle ?? '',
         },
       ]}
     >
-      <Box>{webRichText((customPageData?.content ?? []) as SliceType[])}</Box>
+      <Box>{webRichText((customSubpage?.content ?? []) as SliceType[])}</Box>
     </OJOIWrapper>
   )
 }
@@ -70,7 +72,14 @@ OJOISubpage.getProps = async ({
   query,
   customPageData,
 }) => {
-  const [organization, subpage] = await Promise.all([
+  const [
+    {
+      data: { getOrganization },
+    },
+    {
+      data: { getCustomSubpage },
+    },
+  ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationArgs>({
       query: GET_ORGANIZATION_QUERY,
       variables: {
@@ -92,18 +101,18 @@ OJOISubpage.getProps = async ({
     }),
   ])
 
-  if (!organization?.data?.getOrganization?.hasALandingPage) {
+  if (!getOrganization?.hasALandingPage) {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
   return {
-    organization: organization.data.getOrganization,
+    organization: getOrganization,
     locale: locale as Locale,
     showSearchInHeader: false,
     themeConfig: {
       footerVersion: 'organization',
     },
-    customSubpage: subpage.data.getCustomSubpage,
+    customSubpage: getCustomSubpage ?? undefined,
   }
 }
 
