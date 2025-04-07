@@ -6,10 +6,6 @@ on:
                 required: false
                 type: string
                 default: "latest"
-            filter:
-                required: false
-                type: string
-                default: "scripts/ci/dagger/**"
             module:
                 required: false
                 default: "./scripts/ci/dagger"
@@ -33,7 +29,7 @@ jobs:
                 fetch-depth: 1
                 clean: true
                 sparse-checkout: |
-                    ${{ inputs.filter }}
+                    ${{ inputs.module }}/
                 
             - run:
                 find 
