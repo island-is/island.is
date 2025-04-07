@@ -112,8 +112,6 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
     [templateTypes],
   )
 
-  console.log(currentApplication.answers?.advert?.html)
-
   return (
     <Stack space={[2, 2, 3]}>
       <FormGroup>
