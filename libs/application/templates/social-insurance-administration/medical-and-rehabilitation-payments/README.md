@@ -12,4 +12,4 @@ Write documentation here.
 
 ## Running unit tests
 
-Run `nx test medical-and-rehabilitation-payments` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test application-templates-social-insurance-administration-medical-and-rehabilitation-payments` to execute the unit tests via [Jest](https://jestjs.io).
