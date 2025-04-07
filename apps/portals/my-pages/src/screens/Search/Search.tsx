@@ -19,7 +19,6 @@ import * as styles from './Search.css'
 import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
 import { useSearchParams } from 'react-router-dom'
 import { Problem } from '@island.is/react-spa/shared'
-import { SearchInput } from '../../components/SearchInput/SearchInput'
 
 const Search = () => {
   const { formatMessage } = useLocale()
@@ -145,6 +144,7 @@ const Search = () => {
                 {searchResults?.map((s) => {
                   return (
                     <CategoryCard
+                      key={s.item.uri}
                       autoStack
                       hyphenate
                       truncateHeading

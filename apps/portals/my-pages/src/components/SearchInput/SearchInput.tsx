@@ -68,7 +68,7 @@ export const SearchInput = ({
                 position="relative"
               >
                 {result.item.breadcrumbs.slice(1).map((crumb, idx) => (
-                  <>
+                  <Box key={`${crumb}-${idx}`}>
                     <Box className={styles.breadcrumb}>
                       <Text variant="eyebrow" color="blue400">
                         {crumb}
@@ -83,7 +83,7 @@ export const SearchInput = ({
                         className={styles.bullet}
                       />
                     )}
-                  </>
+                  </Box>
                 ))}
               </Box>
               <Text marginTop={1}>{result.item.description}</Text>
