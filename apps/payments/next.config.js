@@ -12,7 +12,7 @@ const {
   API_EXTERNAL_BASEPATH = 'http://localhost:4444',
   CONFIGCAT_SDK_KEY,
   BASEPATH = '/greida',
-  PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET = '',
+  PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET,
 } = process.env
 
 const apiPath = '/api'

@@ -53,7 +53,6 @@ import {
   UniversityOfIcelandCareerClientConfig,
 } from '@island.is/clients/university-careers'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
-import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
@@ -117,7 +116,6 @@ import { PaymentsApiClientConfig } from '@island.is/clients/payments'
         HolarUniversityCareerClientConfig,
         IcelandUniversityOfTheArtsCareerClientConfig,
         DataProtectionComplaintClientConfig,
-        CriminalRecordClientConfig,
         HealthInsuranceV2ClientConfig,
         VmstClientConfig,
         RightsPortalClientConfig,
