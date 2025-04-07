@@ -255,9 +255,7 @@ export const authStore = create<AuthStore>((set, get) => ({
       }),
       true,
     )
-    // Reset home screen widgets
-    preferencesStore.getState().resetHomeScreenWidgets()
-    // Reset all other preferences
+    // Reset all preferences
     preferencesStore.getState().reset()
 
     return true
