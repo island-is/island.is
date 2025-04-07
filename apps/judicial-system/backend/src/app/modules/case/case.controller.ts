@@ -35,7 +35,7 @@ import {
 import {
   capitalize,
   formatDate,
-lowercase,
+  lowercase,
 } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
