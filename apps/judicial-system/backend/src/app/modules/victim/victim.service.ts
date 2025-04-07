@@ -60,9 +60,8 @@ export class VictimService {
       )
     }
 
-    const updatedVictim = updatedVictims[0]
+    return updatedVictims[0]
 
-    return updatedVictim
   }
 
   async delete(caseId: string, victimId: string): Promise<boolean> {
