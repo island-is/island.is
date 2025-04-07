@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDisplayField,
   buildMultiField,
   buildSubSection,
