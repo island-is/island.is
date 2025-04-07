@@ -43,8 +43,8 @@ mutation CreateSmsVerification($input: CreateSmsVerificationInput!) {
   }
 }
 
-mutation DeleteIslykillValue($input: DeleteIslykillValueInput!) {
-  deleteIslykillValue(input: $input) {
+mutation DeleteEmailOrPhone($input: DeleteEmailOrPhoneInput!) {
+  deleteEmailOrPhone(input: $input) {
     nationalId
   }
 }

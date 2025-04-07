@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { IslyklarApi } from '@island.is/clients/islykill'
 import { V2MeApi } from '@island.is/clients/user-profile'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import {
@@ -19,17 +18,17 @@ import { Inject } from '@nestjs/common'
 import { ConfigService, ConfigType } from '@nestjs/config'
 import { getConfigValue } from '../../shared.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { FetchError } from '@island.is/clients/middlewares'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
+import { BankinfoClientService, formatBankInfo } from '@island.is/clients/fjs/bankinfo'
 
 @Injectable()
 @CodeOwner(CodeOwners.NordaApplications)
 export class UserProfileService extends BaseTemplateApiService {
   constructor(
     private readonly userProfileApi: V2MeApi,
-    private readonly islyklarApi: IslyklarApi,
+    private bankinfoClientService: BankinfoClientService,
     @Inject(IdsClientConfig.KEY)
     private idsClientConfig: ConfigType<typeof IdsClientConfig>,
     @Inject(ConfigService)
@@ -59,20 +58,22 @@ export class UserProfileService extends BaseTemplateApiService {
         throw error
       })
 
-    /// Temporary dependency on íslykill for bank info retrieval via FJS API.
-    /// A refactor is planned to integrate bank info directly from FJS API to eliminate íslykill dependency.
-    const bankInfo = await this.getBankInfoFromIslykill(auth)
+    const bankInfoRes = await this.bankinfoClientService.getBankAccountsForNationalId(auth.nationalId)
 
-    if (params?.validateBankInformation && !bankInfo) {
-      // If individual does not have a valid bank account, then we fail this check
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.noBankAccountError,
-          summary: coreErrorMessages.noBankAccountError,
-        },
-        400,
-      )
+    if (bankInfoRes && params?.validateBankInformation) {
+      if (!bankInfoRes?.bankAccountInfo || bankInfoRes.error) {
+        // If individual does not have a valid bank account, then we fail this check
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.noBankAccountError,
+            summary: coreErrorMessages.noBankAccountError,
+          },
+          400,
+        )
+      }
     }
+
+    const bankInfo = bankInfoRes ? formatBankInfo(bankInfoRes.bankAccountInfo) : undefined
 
     const isActor = !!auth.actor?.nationalId
     const emailIsInvalid =
@@ -125,7 +126,7 @@ export class UserProfileService extends BaseTemplateApiService {
     return {
       mobilePhoneNumber: mobilePhoneNumber ?? undefined,
       email: email ?? undefined,
-      bankInfo,
+      bankInfo: bankInfo ?? undefined,
     }
   }
 
@@ -134,23 +135,6 @@ export class UserProfileService extends BaseTemplateApiService {
     return phone && phone.isValid()
   }
 
-  private async getBankInfoFromIslykill(
-    auth: User,
-  ): Promise<string | undefined> {
-    return this.islyklarApi
-      .islyklarGet({ ssn: auth.nationalId })
-      .then((results) => {
-        return results?.bankInfo
-      })
-      .catch((error) => {
-        if (isRunningOnEnvironment('local')) {
-          return '0000-11-222222'
-        } else if (error instanceof FetchError && error.status === 404) {
-          return undefined
-        }
-        throw error
-      })
-  }
 
   private getIDSLink(
     application: ApplicationWithAttachments,

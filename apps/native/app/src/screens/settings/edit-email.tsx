@@ -11,16 +11,16 @@ import { Button, NavigationBarSheet, TextField, Typography } from '../../ui'
 import {
   CreateEmailVerificationDocument,
   CreateEmailVerificationMutation,
-  CreateEmailVerificationMutationVariables,
-  DeleteIslykillValueDocument,
-  DeleteIslykillValueMutation,
-  DeleteIslykillValueMutationVariables,
+  CreateEmailVerificationMutationVariables, DeleteEmailOrPhoneMutationVariables,
+  DeleteEmailOrPhoneDocument,
+  DeleteEmailOrPhoneMutation,
   GetProfileDocument,
   useGetProfileQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { navigateTo } from '../../lib/deep-linking'
 import { testIDs } from '../../utils/test-ids'
+
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
@@ -88,10 +88,10 @@ export const EditEmailScreen: NavigationFunctionComponent<{
               try {
                 if (isEmpty) {
                   const res = await client.mutate<
-                    DeleteIslykillValueMutation,
-                    DeleteIslykillValueMutationVariables
+                    DeleteEmailOrPhoneMutation,
+                    DeleteEmailOrPhoneMutationVariables
                   >({
-                    mutation: DeleteIslykillValueDocument,
+                    mutation: DeleteEmailOrPhoneDocument,
                     variables: {
                       input: {
                         email: true,
