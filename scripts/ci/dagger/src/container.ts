@@ -23,7 +23,7 @@ export function monorepoContainer(props: MonorepoContainer) {
         if (props.action ===  'sha') {
             //dag.git()
         }
-        if (props.action === 'local' {
+        if (props.action === 'local') {
             throw new Error('Not implemented');
         }
         throw new Error('Invalid action');
