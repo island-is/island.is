@@ -140,6 +140,11 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
       ? document.status.toLowerCase() === 'invalid'
       : undefined
 
+    const licenseNumber =
+      document.number && document.type && document.subType
+        ? `${document.type}${document.subType}${document.number}`
+        : undefined
+
     const displayTag: GenericUserLicenseMetaTag | undefined = {
       text: isInvalid
         ? formatMessage(m.invalid)
@@ -172,14 +177,14 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
             ),
           }
         : null,
-      document.number && document.type && document.subType
+      licenseNumber
         ? {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.number),
-            value: `${document.type}${document.subType}${document.numberWithType}`,
+            value: licenseNumber,
             link: {
               label: formatMessage(m.copy),
-              value: `${document.type}${document.subType}${document.numberWithType}`,
+              value: licenseNumber,
               type: GenericUserLicenseMetaLinksType.Copy,
             },
           }
@@ -199,7 +204,7 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
             tag: displayTag,
           }
         : null,
-      document.mrzFirstName && document.mrzLastName
+      document.mrzFirstName && document.mrzLastName && document.subType === 'D'
         ? {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.passportNameComputer),
@@ -244,7 +249,7 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
       rawData: JSON.stringify(document),
       metadata: {
         links,
-        licenseNumber: document.numberWithType?.toString() ?? '',
+        licenseNumber: licenseNumber ?? '',
         licenseId: document.number?.toString(),
         expiryStatus:
           document.expiryStatus === 'EXPIRED'
@@ -260,10 +265,7 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
         name: licenseName ?? document.verboseType ?? undefined,
         title: formatMessage(m.identityDocument) ?? undefined,
         subtitle: formatMessage(m.identityDocumentNumberDisplay, {
-          arg:
-            document.subType && document.number
-              ? `${document.subType}${document.number}`
-              : formatMessage(m.unknown),
+          arg: licenseNumber ?? formatMessage(m.unknown),
         }),
         description: [{ text: formatMessage(m.identityDocumentDescription) }],
         alert,
