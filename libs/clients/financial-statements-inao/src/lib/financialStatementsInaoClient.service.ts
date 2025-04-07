@@ -271,7 +271,6 @@ export class FinancialStatementsInaoClientService {
         this.logger.error('Failed to get financial types')
         return false
       }
-      console.log('-------------------hér 3-------------------')
       const list: KeyValue[] = []
       list.push({ key: 100, value: input.values.contributionsByLegalEntities })
       list.push({ key: 101, value: input.values.individualContributions })
@@ -288,8 +287,6 @@ export class FinancialStatementsInaoClientService {
       list.push({ key: 170, value: input.values.longTermLiabilitiesTotal })
       list.push({ key: 180, value: input.values.shortTermLiabilitiesTotal })
       list.push({ key: 190, value: input.values.equityTotal })
-
-      console.dir(list, { depth: null })
 
       list.forEach((x) => {
         financialValues.push(lookup(x.key, x.value, financialTypes))
