@@ -60,7 +60,7 @@ export class VictimService {
       )
     }
 
-    const updatedVictim = updatedVictims[0]
+    return updatedVictims[0]
 
     return updatedVictim
   }
