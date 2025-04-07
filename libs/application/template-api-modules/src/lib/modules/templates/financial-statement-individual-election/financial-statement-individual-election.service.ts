@@ -130,10 +130,6 @@ export class FinancialStatementIndividualElectionService extends BaseTemplateApi
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { nationalId } = auth
-
-    console.log('-------------------hér í submitApplication-------------------')
-    console.dir(nationalId, { depth: null })
-
     const { answers } = application
     const shouldGetFileName = getShouldGetFileName(answers)
     const fileName = shouldGetFileName

@@ -17,10 +17,6 @@ export const clientInfoSection = buildSection({
       description: m.reviewInfo,
       children: [
         buildTextField({
-          condition: (_answers, externalData) => {
-            console.log(externalData)
-            return true
-          },
           id: 'about.nationalId',
           title: m.candidateNationalId,
           width: 'half',

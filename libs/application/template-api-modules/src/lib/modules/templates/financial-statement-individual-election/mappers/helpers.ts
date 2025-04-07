@@ -15,11 +15,11 @@ export enum FinancialElectionIncomeLimit {
 }
 
 export const getIndividualElectionValues = (answers: FormValue) => {
-  const incomeLimit = getValueViaPath(answers, 'incomeLimit.limit') as string
-  const electionId = getValueViaPath(answers, 'election.electionId') as string
-  const clientName = getValueViaPath(answers, 'about.fullName') as string
-  const clientPhone = getValueViaPath(answers, 'about.phoneNumber') as string
-  const clientEmail = getValueViaPath(answers, 'about.email') as string
+  const incomeLimit = getValueViaPath<string>(answers, 'incomeLimit.limit')
+  const electionId = getValueViaPath<string>(answers, 'election.electionId')
+  const clientName = getValueViaPath<string>(answers, 'about.fullName')
+  const clientPhone = getValueViaPath<string>(answers, 'about.phoneNumber')
+  const clientEmail = getValueViaPath<string>(answers, 'about.email')
   const noValueStatement = incomeLimit === FinancialElectionIncomeLimit.LESS
 
   return {
@@ -33,10 +33,10 @@ export const getIndividualElectionValues = (answers: FormValue) => {
 }
 
 export const getShouldGetFileName = (answers: FormValue) => {
-  const incomeLimit = getValueViaPath(
+  const incomeLimit = getValueViaPath<FinancialElectionIncomeLimit>(
     answers,
     'incomeLimit.limit',
-  ) as FinancialElectionIncomeLimit
+  )
   return incomeLimit === FinancialElectionIncomeLimit.GREATER
 }
 
@@ -74,8 +74,8 @@ export const getInput = (
     email: clientEmail,
   }
   const digitalSignee: DigitalSignee = {
-    email: clientEmail,
-    phone: clientPhone,
+    email: clientEmail ?? '',
+    phone: clientPhone ?? '',
   }
   const values: PersonalElectionFinancialStatementValues | undefined =
     noValueStatement ? undefined : mapValuesToIndividualtype(answers)
@@ -83,7 +83,7 @@ export const getInput = (
     client,
     actor: undefined,
     digitalSignee,
-    electionId,
+    electionId: electionId ?? '',
     noValueStatement,
     values,
     file: fileName,
