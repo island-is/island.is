@@ -359,9 +359,8 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@v3
         with:
-          driver: docker-container
           driver-opts: |
-            "image=${DOCKER_REGISTRY}/moby/buildkit:buildx-stable-1"
+            image=${{ env.DOCKER_REGISTRY }}/moby/buildkit:buildx-stable-1
           use: true
 
       - name: Building docker images
