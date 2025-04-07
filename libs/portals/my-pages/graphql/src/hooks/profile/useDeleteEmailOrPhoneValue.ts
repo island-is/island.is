@@ -5,7 +5,7 @@ import {
   DeleteEmailOrPhoneInput
 } from '@island.is/api/schema'
 import { useUserProfile } from './useUserProfile'
-import { DELETE_EMAIL_OR_PHONE_MUTATION } from '../../lib/mutations/updateIslykillSettings'
+import { DELETE_EMAIL_OR_PHONE_MUTATION } from '../../lib/mutations/updateEmailOrPhone'
 
 export type DeleteIslykillValue = {
   email?: boolean
