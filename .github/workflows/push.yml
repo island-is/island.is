@@ -361,8 +361,7 @@ jobs:
         with:
           driver: docker-container
           driver-opts: |
-            image=${DOCKER_REGISTRY}/moby/buildkit:buildx-stable-1
-          install: true
+            "image=${DOCKER_REGISTRY}/moby/buildkit:buildx-stable-1"
           use: true
 
       - name: Building docker images
@@ -374,21 +373,21 @@ jobs:
           target: ${OUTPUT_TYPE}
           cache-from: type=s3,blobs_prefix=cache/${{ github.repository }}/,manifests_prefix=cache/${{ github.repository }}/,region=${AWS_REGION},bucket=${S3_DOCKER_CACHE_BUCKET}
           build-args: |
-            DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}
-            NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}
-            GIT_BRANCH=${GIT_BRANCH}
-            GIT_COMMIT_SHA=${GIT_COMMIT_SHA}
-            GIT_REPOSITORY_URL=${SERVER_URL}
-            NX_PARALLEL=${NX_PARALLEL}
-            NX_MAX_PARALLEL=${NX_MAX_PARALLEL}
-            NX_TASKS_RUNNER=ci
-            PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}
-            APP=${APP}
-            APP_HOME=${APP_HOME}
-            APP_DIST_HOME=${APP_DIST_HOME}
+            "DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+            "NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
+            "GIT_BRANCH=${GIT_BRANCH}"
+            "GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
+            "GIT_REPOSITORY_URL=${SERVER_URL}"
+            "NX_PARALLEL=${NX_PARALLEL}"
+            "NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
+            "NX_TASKS_RUNNER=ci"
+            "PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}"
+            "APP=${APP}"
+            "APP_HOME=${APP_HOME}"
+            "APP_DIST_HOME=${APP_DIST_HOME}"
           secrets: |
-            nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-          tags: ${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}
+            "nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}"
+          tags: '${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}'
 
       # - name: Building Docker images
       #   id: dockerbuild
