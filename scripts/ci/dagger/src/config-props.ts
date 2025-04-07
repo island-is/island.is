@@ -7,6 +7,17 @@ interface Props {
 }
 export function getProps (props: Props) {
     const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, action, branch, sha, files } = props;
+    {
+      Object.entries(props).forEach(([key, value]) => {
+        if (value instanceof Secret || value instanceof Directory) {
+          return;
+        }
+        if (value == null || value === undefined) {
+          return;
+        }
+        console.log(`Property: ${key}: ${value}`);
+      });
+    }
     if (action === FILE_ACTION_GITHUB_SHA) {
         if (!sha) {
           throw new Error('sha is required when action is sha');

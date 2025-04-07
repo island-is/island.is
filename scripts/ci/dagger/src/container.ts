@@ -49,12 +49,15 @@ type MonorepoContainer = MonorepoContainerGithubSha | MonorepoContainerLocal | M
 function getMonorepoInstallFiles(props: MonorepoContainer) {
     const tree = (( ) => {
         if (props.action ===  'sha') {
+            console.log(`Fetching files from sha: ${props.sha}`);
             dag.git(GITHUB_URL).commit(props.sha).tree();
         }
         if (props.action === 'branch') {
+            console.log(`Fetching files from branch: ${props.branch}`);
             return dag.git(GITHUB_URL).branch(props.branch).tree();
         }
         if (props.action === 'local') {
+            console.log(`Fetching files from local`);
             return props.files;
         }
         
