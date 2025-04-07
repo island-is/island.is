@@ -19,7 +19,7 @@ runs:
     - name: Calculate yarn.lock SHA
       shell: bash
       id: yarn-sha
-      run: echo "sha=$(sha256sum yarn.lock | cut -d ' ' -f 1 | head -c 12)" >> $GITHUB_OUTPUT
+      run: echo "sha=$(sha256sum yarn.lock | cut -d ' ' -f 1 | head -c 16)" >> $GITHUB_OUTPUT
 
     - name: Set cache image tag
       shell: bash
@@ -30,7 +30,6 @@ runs:
       shell: bash
       id: check-deps-cache
       run: |
-        aws ecr describe-images --repository-name ${{ inputs.cache_repo }} --image-ids imageTag=${{ steps.cache-tag.outputs.tag }}
         if aws ecr describe-images --repository-name ${{ inputs.cache_repo }} --image-ids imageTag=${{ steps.cache-tag.outputs.tag }} &>/dev/null; then
           exists=true
         else
