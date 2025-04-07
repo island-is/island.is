@@ -15,7 +15,6 @@ import { Skeleton } from '../skeleton/skeleton'
 import { ExpirationProgressBar } from '../../../components/progress-bar/expiration-progress-bar'
 import { GenericLicenseType } from '../../../graphql/types/schema'
 import { isString } from '../../../utils/is-string'
-import { prefixBase64 } from '../../../utils/prefix-base-64'
 import IconStatusNonVerified from '../../assets/card/danger.png'
 import IconStatusVerified from '../../assets/card/is-verified.png'
 import { LicenseCardPresets } from './license-list-card'
@@ -160,6 +159,9 @@ export function LicenseCard({
   const backgroundImage = props.backgroundImage ?? preset?.backgroundImage
   const backgroundColor = props.backgroundColor ?? preset?.backgroundColor
   const textColor = theme.shades.light.foreground
+  const showExpireDate =
+    type === GenericLicenseType.Passport ||
+    type === GenericLicenseType.IdentityDocument
   const showBarcodeView =
     status === 'VALID' &&
     !!((barcode && barcode?.value) || (barcode?.loading && !barcode?.value))
@@ -234,11 +236,11 @@ export function LicenseCard({
           </ValidationWrap>
           {date && (
             <Typography variant="body3" color={textColor}>
-              {type === GenericLicenseType.Passport
+              {showExpireDate
                 ? intl.formatMessage({ id: 'walletPass.expirationDate' })
                 : intl.formatMessage({ id: 'walletPass.lastUpdate' })}
               {': '}
-              {type === GenericLicenseType.Passport ? (
+              {showExpireDate ? (
                 <FormattedDate value={date} {...{ dateStyle: 'short' }} />
               ) : (
                 <>
@@ -253,7 +255,7 @@ export function LicenseCard({
         {logo && (
           <ImgWrap>
             {isString(logo) ? (
-              <Base64Image source={{ uri: prefixBase64(logo) }} />
+              <Base64Image source={{ uri: logo }} />
             ) : (
               <Image source={logo} style={{ height: 72, width: 72 }} />
             )}

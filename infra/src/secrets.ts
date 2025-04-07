@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk'
-import yargs from 'yargs'
+import yargs, { ArgumentsCamelCase } from 'yargs'
 import { OpsEnv } from './dsl/types/input-types'
 import { Envs } from './environments'
 import {
@@ -12,15 +12,16 @@ import { renderHelmServices } from './dsl/exports/helm'
 import { logger } from './common'
 import { hideBin } from 'yargs/helpers'
 
-interface GetArguments {
+interface GetArguments extends ArgumentsCamelCase {
   key: string
 }
 
-interface StoreArguments extends GetArguments {
+interface StoreArguments extends ArgumentsCamelCase {
+  key: string
   secret: string
 }
 
-interface DeleteArguments {
+interface DeleteArguments extends ArgumentsCamelCase {
   prefix: string
 }
 
@@ -63,11 +64,12 @@ yargs(hideBin(process.argv))
       logger.debug([...new Set(secrets)].join('\n'))
     },
   )
-  .command(
-    'get <key>',
-    'get secret',
-    () => {},
-    async ({ key }: GetArguments) => {
+  .command({
+    command: 'get <key>',
+    describe: 'get secret',
+    builder: (yargs) => yargs,
+    handler: async (argv) => {
+      const { key } = argv as GetArguments
       const parameterInput = {
         Name: key,
         WithDecryption: true,
@@ -84,12 +86,13 @@ yargs(hideBin(process.argv))
         }
       }
     },
-  )
-  .command(
-    'store <key> <secret>',
-    'store secret',
-    () => {},
-    async ({ key, secret }: StoreArguments) => {
+  })
+  .command({
+    command: 'store <key> <secret>',
+    describe: 'store secret',
+    builder: (yargs) => yargs,
+    handler: async (argv) => {
+      const { key, secret } = argv as StoreArguments
       await ssm
         .putParameter({
           Name: key,
@@ -99,13 +102,14 @@ yargs(hideBin(process.argv))
         .promise()
       logger.debug('Done!')
     },
-  )
+  })
 
-  .command(
-    'delete <prefix>',
-    'delete secrets by prefix',
-    () => {},
-    async ({ prefix }: DeleteArguments) => {
+  .command({
+    command: 'delete <prefix>',
+    describe: 'delete secrets by prefix',
+    builder: (yargs) => yargs,
+    handler: async (argv) => {
+      const { prefix } = argv as DeleteArguments
       const { Parameters } = await ssm
         .describeParameters({
           ParameterFilters: [
@@ -126,5 +130,5 @@ yargs(hideBin(process.argv))
         )
       }
     },
-  )
+  })
   .demandCommand().argv

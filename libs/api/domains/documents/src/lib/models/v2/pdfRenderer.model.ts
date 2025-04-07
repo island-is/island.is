@@ -15,6 +15,9 @@ export class DocumentPdfRendererInput {
 
   @Field(() => Boolean, { nullable: true })
   isCourtCase?: boolean
+
+  @Field(() => [String], { nullable: true })
+  actions?: string[]
 }
 
 @ObjectType('DocumentPdfRenderer')
