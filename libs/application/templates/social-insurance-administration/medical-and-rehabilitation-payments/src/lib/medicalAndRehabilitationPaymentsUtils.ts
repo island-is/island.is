@@ -1,5 +1,6 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { YesOrNo, getValueViaPath } from '@island.is/application/core'
+import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { BankInfo, PaymentInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application } from '@island.is/application/types'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -10,9 +11,30 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const comment = getValueViaPath(answers, 'comment') as string
 
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+
+  const personalAllowance = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowance',
+  ) as YesOrNo
+
+  const personalAllowanceUsage = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowanceUsage',
+  ) as string
+
+  const taxLevel = getValueViaPath(
+    answers,
+    'paymentInfo.taxLevel',
+  ) as TaxLevelOptions
+  
   return {
     applicantPhonenumber,
     comment,
+    bank,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
   }
 }
 

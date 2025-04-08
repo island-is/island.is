@@ -1,13 +1,16 @@
 import {
+  YES,
   buildAlertMessageField,
   buildMultiField,
+  buildRadioField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { getBankIsk } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { getBankIsk, getTaxOptions, getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { Application } from '@island.is/application/types'
-import { getApplicationExternalData } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+import { getApplicationAnswers, getApplicationExternalData } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const paymentInfoSubSection = buildSubSection({
   id: 'paymentInfoSubSection',
@@ -35,6 +38,43 @@ export const paymentInfoSubSection = buildSubSection({
             )
             return getBankIsk(bankInfo)
           },
+        }),
+        buildRadioField({
+          id: 'paymentInfo.personalAllowance',
+          title:
+            socialInsuranceAdministrationMessage.payment
+              .personalAllowance,
+          options: getYesNoOptions(),
+          width: 'half',
+          largeButtons: true,
+          required: true,
+          space: 'containerGutter',
+        }),
+        buildTextField({
+          id: 'paymentInfo.personalAllowanceUsage',
+          title:
+            socialInsuranceAdministrationMessage.payment
+              .personalAllowancePercentage,
+          suffix: '%',
+          dataTestId: 'personal-allowance-usage',
+          condition: (answers) => {
+            const { personalAllowance } = getApplicationAnswers(answers)
+            return personalAllowance === YES
+          },
+          placeholder: '1%',
+          defaultValue: '100',
+          variant: 'number',
+          width: 'half',
+          maxLength: 4,
+        }),
+        buildRadioField({
+          id: 'paymentInfo.taxLevel',
+          title: socialInsuranceAdministrationMessage.payment.taxLevel,
+          options: getTaxOptions(),
+          width: 'full',
+          largeButtons: true,
+          space: 'containerGutter',
+          defaultValue: TaxLevelOptions.INCOME,
         }),
       ],
     }),
