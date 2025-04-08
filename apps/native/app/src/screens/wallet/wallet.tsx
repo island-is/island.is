@@ -124,7 +124,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         includedTypes: [
           ...INCLUDED_LICENSE_TYPES,
           ...(isIdentityDocumentEnabled
-            ? GenericLicenseType.IdentityDocument
+            ? [GenericLicenseType.IdentityDocument]
             : []),
         ],
       },
