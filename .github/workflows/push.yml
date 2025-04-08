@@ -20,7 +20,6 @@ concurrency:
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
   DEPS_CACHE_REPO: docker-cache
-  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
   COMPOSE_HTTP_TIMEOUT: 180
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
@@ -326,7 +325,6 @@ jobs:
         env:
           NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
           # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
@@ -337,7 +335,6 @@ jobs:
           SERVER_URL="${SERVER_URL#*://}"
           SERVER_URL="${SERVER_URL%.git}"
           build_args=(
-            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
             --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
             --build-arg="GIT_BRANCH=${GIT_BRANCH}"
             --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
@@ -372,7 +369,6 @@ jobs:
           target: ${{ env.OUTPUT_TYPE }}
           cache-from: type=s3,blobs_prefix=${{ needs.prepare.outputs.cache-prefix }}/,manifests_prefix=${{ needs.prepare.outputs.cache-prefix }}/,region=${AWS_REGION},bucket=${S3_DOCKER_CACHE_BUCKET}
           build-args: |
-            DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
             NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}
             GIT_BRANCH=${{ env.GIT_BRANCH }}
             GIT_COMMIT_SHA=${{ env.GIT_COMMIT_SHA }}
@@ -394,7 +390,6 @@ jobs:
       #   env:
       #     NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
       #     GIT_COMMIT_SHA: ${{ github.sha }}
-      #     DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
       #   run: |
       #     set -x
       #     echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
@@ -439,7 +434,6 @@ jobs:
       - name: Docker build image
         working-directory: infra
         run: |
-          echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
           echo Image tag is: ${{env.NODE_IMAGE_VERSION}}
           ./scripts/build-docker-container.sh "$DOCKER_TAG"
           echo "COMMENT<<EOF" >> "$GITHUB_ENV"

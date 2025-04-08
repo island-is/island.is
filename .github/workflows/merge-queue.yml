@@ -15,7 +15,6 @@ concurrency:
 env:
   ACTIONS_STEP_DEBUG: 'true'
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
-  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
   COMPOSE_HTTP_TIMEOUT: 180
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
@@ -115,8 +114,6 @@ jobs:
       - name: Prepare Docker build arguments
         id: dockerargs
         if: steps.gather.outcome == 'success'
-        env:
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
           # Strip protocol prefix and .git postfix
@@ -124,7 +121,6 @@ jobs:
           SERVER_URL="${SERVER_URL#*://}"
           SERVER_URL="${SERVER_URL%.git}"
           build_args=(
-            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
             --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
             --build-arg="GIT_BRANCH=${GIT_BRANCH}"
             --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
@@ -155,8 +151,6 @@ jobs:
         continue-on-error: true
         id: dockerbuild
         if: steps.gather.outcome == 'success'
-        env:
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
@@ -166,8 +160,6 @@ jobs:
 
       - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
-        env:
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
