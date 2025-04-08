@@ -49,7 +49,7 @@ function getMonorepoInstallFiles(props: MonorepoContainer) {
     const tree = (( ) => {
         if (props.action ===  'sha') {
             console.log(`Fetching files from sha: ${props.sha}`);
-            dag.git(GITHUB_URL).commit(props.sha).tree();
+            return dag.git(GITHUB_URL).commit(props.sha).tree();
         }
         if (props.action === 'branch') {
             console.log(`Fetching files from branch: ${props.branch}`);
