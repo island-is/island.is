@@ -80,7 +80,7 @@ Each module implements its own routes (see above). Routes should only be returne
 
 ### Configuring route search behaviour
 
-Each module is automatically added to the search index. Each route can opt out of being indexed by setting the `searchHide` property to `true`.
+Each module is automatically added to the search index, except for modules hidden from navigation or are inaccessible for the user. The currently active route is also filtered out. Each route can opt out of being indexed by setting the `searchHide` property to `true`. 
 
 For optimal results, the `description` property should be set to the same message as is displayed in the dashboard and in the page header. If the dashboard message and the page header message are different, set the `intro` property as the header message id. 
 
