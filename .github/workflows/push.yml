@@ -74,6 +74,7 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+      S3_CACHE_PREFIX: ${{ steps.docker-cache.cache-prefix }}
 
     steps:
       - uses: actions/checkout@v4
@@ -348,7 +349,7 @@ jobs:
             # --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache,mode=max" \
           )
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
-          export OUTPUT_TYPE=${DOCKER_TYPE/docker/output} >> "${GITHUB_ENV}"
+          export OUTPUT_TYPE="${DOCKER_TYPE/docker/output}" >> "${GITHUB_ENV}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
           echo "push tag: ${{ env.DOCKER_REGISTRY }}/${{ env.APP }}:${{ env.DOCKER_TAG }}"
 
@@ -367,7 +368,7 @@ jobs:
           file: ./scripts/ci/Dockerfile
           push: true
           target: ${{ env.OUTPUT_TYPE }}
-          cache-from: type=s3,blobs_prefix=${{ needs.prepare.outputs.cache-prefix }}/,manifests_prefix=${{ needs.prepare.outputs.cache-prefix }}/,region=${AWS_REGION},bucket=${S3_DOCKER_CACHE_BUCKET}
+          cache-from: type=s3,blobs_prefix=${{ needs.prepare.outputs.S3_CACHE_PREFIX }}/,manifests_prefix=${{ needs.prepare.outputs.S3_CACHE_PREFIX }}/,region=${AWS_REGION},bucket=${S3_DOCKER_CACHE_BUCKET}
           build-args: |
             NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}
             GIT_BRANCH=${{ env.GIT_BRANCH }}
