@@ -66,10 +66,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     isWorkingPartTime,
     isStudying,
     isStudyingFileUpload,
-    comment,
     sickPayOption,
-    sickPayDidEndDate,
     sickPayDoesEndDate,
+    sickPayDidEndDate,
+    comment,
   }
 }
 

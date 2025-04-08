@@ -2,14 +2,13 @@ import { formatText, YES, YesOrNoEnum } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { NOT_APPLICABLE } from '../../../lib/constants'
 import {
   getApplicationAnswers,
   getYesNoNotApplicableTranslation,
 } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
-import { ReviewGroupProps } from './props'
-
-import { NOT_APPLICABLE } from '../../../lib/constants'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
+import { ReviewGroupProps } from './props'
 
 export const SickPay = ({
   application,
@@ -27,8 +26,8 @@ export const SickPay = ({
       isEditable={editable}
       editAction={() => goToScreen?.('sickPay')}
     >
-      <Stack space={2}>
-        <GridRow rowGap={2}>
+      <Stack space={3}>
+        <GridRow>
           <GridColumn span={['9/12', '9/12', '9/12', '12/12']}>
             <DataValue
               label={formatMessage(
@@ -44,8 +43,8 @@ export const SickPay = ({
           </GridColumn>
         </GridRow>
         {sickPayOption !== NOT_APPLICABLE && (
-          <GridRow rowGap={2}>
-            <GridColumn span={'12/12'}>
+          <GridRow>
+            <GridColumn span="12/12">
               <DataValue
                 label={
                   sickPayOption === YES

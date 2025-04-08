@@ -33,9 +33,9 @@ export const BaseInformation = ({
       isEditable={editable}
       editAction={() => goToScreen?.('applicantInfo')}
     >
-      <Stack space={2}>
+      <Stack space={3}>
         {applicantName !== '' && (
-          <GridRow rowGap={2}>
+          <GridRow rowGap={3}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={formatMessage(
@@ -54,7 +54,7 @@ export const BaseInformation = ({
             </GridColumn>
           </GridRow>
         )}
-        <GridRow rowGap={2}>
+        <GridRow rowGap={3}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(
@@ -72,7 +72,7 @@ export const BaseInformation = ({
             />
           </GridColumn>
         </GridRow>
-        <GridRow rowGap={2}>
+        <GridRow rowGap={3}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(
@@ -91,7 +91,7 @@ export const BaseInformation = ({
           </GridColumn>
         </GridRow>
         {spouseName && (
-          <GridRow rowGap={2}>
+          <GridRow rowGap={3}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={formatMessage(

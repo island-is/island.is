@@ -25,8 +25,8 @@ export const Questions = ({
       isEditable={editable}
       editAction={() => goToScreen?.('questions')}
     >
-      <Stack space={2}>
-        <GridRow rowGap={2}>
+      <Stack space={3}>
+        <GridRow rowGap={3}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <RadioValue
               label={formatMessage(
