@@ -19,6 +19,7 @@ export const BloodApiProvider: Provider<BloodApi> = {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
+          'X-Api-Key': config.apiKey,
         },
       }),
     ),

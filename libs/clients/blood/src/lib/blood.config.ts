@@ -3,6 +3,7 @@ import * as z from 'zod'
 
 const schema = z.object({
   baseUrl: z.string().url(),
+  apiKey: z.string(),
 })
 
 export const BloodClientConfig = defineConfig<z.infer<typeof schema>>({
@@ -14,6 +15,7 @@ export const BloodClientConfig = defineConfig<z.infer<typeof schema>>({
         'LSH_BLOOD_URL',
         'https://externalpatientdev.landspitali.is/swagger/index.html',
       ),
+      apiKey: env.required('LSH_BLOOD_API_KEY', ''),
     }
   },
 })

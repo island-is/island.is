@@ -405,6 +405,7 @@ export const serviceSetup = (services: {
         '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET',
       VERDICTS_GOPRO_USERNAME: '/k8s/api/VERDICTS_GOPRO_USERNAME',
       VERDICTS_GOPRO_PASSWORD: '/k8s/api/VERDICTS_GOPRO_PASSWORD',
+      LSH_BLOOD_API_KEY: '/k8s/api/LSH_BLOOD_API_KEY',
     })
     .xroad(
       AdrAndMachine,
