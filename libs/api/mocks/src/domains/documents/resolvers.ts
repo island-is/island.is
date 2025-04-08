@@ -8,7 +8,17 @@ export const resolvers: Resolvers = {
     },
   },
   Query: {
-    documentsV2: () => {
+    documentsV2: (_, { input }) => {
+      const page = input.page || 1
+      const pageSize = input.pageSize || 10
+      if (pageSize) {
+        const start = (page - 1) * pageSize
+        const end = start + pageSize
+        return {
+          ...store.documentsV2,
+          data: store.documentsV2.data.slice(start, end),
+        }
+      }
       return store.documentsV2
     },
     getDocumentCategories: () => {
