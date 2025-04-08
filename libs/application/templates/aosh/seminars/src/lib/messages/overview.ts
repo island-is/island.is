@@ -111,5 +111,10 @@ export const overview = {
       defaultMessage: 'Símanúmer: {value}',
       description: 'Overview paymentArrangement phonenumber label',
     },
+    nationalId: {
+      id: 'aosh.sem.application:overview.paymentArrangement.nationalId',
+      defaultMessage: 'Kennitala: {value}',
+      description: 'Overview paymentArrangement nationalId label',
+    },
   }),
 }

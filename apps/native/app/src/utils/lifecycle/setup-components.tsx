@@ -42,7 +42,6 @@ import { VehicleMileageScreen } from '../../screens/vehicles/vehicle-mileage.scr
 import { VehiclesScreen } from '../../screens/vehicles/vehicles'
 import { VehicleDetailScreen } from '../../screens/vehicles/vehicles-detail'
 import { WalletPassScreen } from '../../screens/wallet-pass/wallet-pass'
-import { WalletPassportScreen } from '../../screens/wallet-passport/wallet-passport'
 import { WalletScreen } from '../../screens/wallet/wallet'
 import { WebViewScreen } from '../../screens/webview/webview'
 import {
@@ -81,7 +80,6 @@ export function registerAllComponents() {
 
   registerComponent(CR.AppLockScreen, AppLockScreen)
   registerComponent(CR.WalletPassScreen, WalletPassScreen)
-  registerComponent(CR.WalletPassportScreen, WalletPassportScreen)
   registerComponent(CR.DocumentDetailScreen, DocumentDetailScreen)
   registerComponent(CR.NotificationsScreen, NotificationsScreen)
   registerComponent(CR.WebViewScreen, WebViewScreen)
