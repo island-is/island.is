@@ -30,9 +30,7 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PatientBlood"
-                }
+                "schema": { "$ref": "#/components/schemas/PatientBlood" }
               }
             }
           },
@@ -40,9 +38,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -50,15 +46,11 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         }
       }
     }
@@ -102,9 +94,7 @@
             "format": "date-time",
             "nullable": true
           },
-          "BloodInfo": {
-            "$ref": "#/components/schemas/DataInfo"
-          }
+          "BloodInfo": { "$ref": "#/components/schemas/DataInfo" }
         },
         "additionalProperties": false,
         "description": "Information about a person blood type"
@@ -112,29 +102,13 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       }
     },
     "securitySchemes": {
@@ -146,9 +120,5 @@
       }
     }
   },
-  "security": [
-    {
-      "ApiKey": []
-    }
-  ]
+  "security": [{ "ApiKey": [] }]
 }

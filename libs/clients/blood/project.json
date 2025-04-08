@@ -20,6 +20,7 @@
       "options": {
         "commands": [
           "curl https://externalpatientdev.landspitali.is/swagger/v1/swagger.json > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,

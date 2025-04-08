@@ -1,4 +1,4 @@
-import { PatientBlood } from 'libs/clients/blood/gen/fetch'
+import { PatientBlood } from '../../../gen/fetch'
 
 export interface BloodTypeDto {
   nationalId: string
