@@ -5,15 +5,17 @@ import { BloodTypeDto, mapBloodTypeDto } from './dtos/bloodTypes.dto'
 
 @Injectable()
 export class BloodClientService {
-  constructor(private readonly api: BloodApi) {
+  constructor(private readonly api: BloodApi) {}
 
-    const getBloodType = async (user: User): Promise<BloodTypeDto | null> => {
-      const bloodType = await this.api.apiNationalIdBloodGet({ nationalId: user.nationalId })
+  getBloodType = async (user: User): Promise<BloodTypeDto | null> => {
+    const bloodType = await this.api.apiNationalIdBloodGet({
+      nationalId: user.nationalId,
+    })
 
-      if (!bloodType) {
-        return null
-      }
-
-      return mapBloodTypeDto(bloodType)
+    if (!bloodType) {
+      return null
     }
+
+    return mapBloodTypeDto(bloodType)
   }
+}
