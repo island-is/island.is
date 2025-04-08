@@ -89,26 +89,26 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description: 'Upload confirmation document',
     },
 
-    // Sick pay
-    sickPaySubSectionTitle: {
-      id: 'marp.application:general.information.sick.pay.sub.section.title',
+    // Employee sick pay
+    employeeSickPaySubSectionTitle: {
+      id: 'marp.application:general.information.employee.sick.pay.sub.section.title',
       defaultMessage: 'Veikindalaun',
       description: 'Sick pay',
     },
-    sickPayTitle: {
-      id: 'marp.application:general.information.sick.pay.title',
+    employeeSickPayTitle: {
+      id: 'marp.application:general.information.employee.sick.pay.title',
       defaultMessage:
         'Hefur þú nýtt rétt þinn til veikindalauna hjá atvinnurekanda?',
       description:
         'Have you used your sick pay entitlement at your current employer?',
     },
-    sickPayDoesEndDateTitle: {
-      id: 'marp.application:general.information.sick.pay.does.end.date.title',
+    employeeSickPayDoesEndDateTitle: {
+      id: 'marp.application:general.information.employee.sick.pay.does.end.date.title',
       defaultMessage: 'Hvenær líkur rétti þínum til veikindalauna?',
       description: 'When does your sick pay entitlement end?',
     },
-    sickPayDidEndDateTitle: {
-      id: 'marp.application:general.information.sick.pay.did.end.date.title',
+    employeeSickPayDidEndDateTitle: {
+      id: 'marp.application:general.information.employee.sick.pay.did.end.date.title',
       defaultMessage: 'Hvenær lauk rétti þínum til veikindalauna?',
       description: 'When did your sick pay entitlement end?',
     },

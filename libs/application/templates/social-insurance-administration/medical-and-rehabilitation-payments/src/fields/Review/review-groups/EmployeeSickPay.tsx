@@ -10,21 +10,24 @@ import {
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 
-export const SickPay = ({
+export const EmployeeSickPay = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage, formatDate } = useLocale()
 
-  const { sickPayOption, sickPayDoesEndDate, sickPayDidEndDate } =
-    getApplicationAnswers(application.answers)
+  const {
+    employeeSickPayOption,
+    employeeSickPayDoesEndDate,
+    employeeSickPayDidEndDate,
+  } = getApplicationAnswers(application.answers)
 
   return (
     <ReviewGroup
       isLast
       isEditable={editable}
-      editAction={() => goToScreen?.('sickPay')}
+      editAction={() => goToScreen?.('employeeSickPay')}
     >
       <Stack space={3}>
         <GridRow>
@@ -32,22 +35,22 @@ export const SickPay = ({
             <DataValue
               label={formatMessage(
                 medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                  .sickPayTitle,
+                  .employeeSickPayTitle,
               )}
               value={formatText(
-                getYesNoNotApplicableTranslation(sickPayOption),
+                getYesNoNotApplicableTranslation(employeeSickPayOption),
                 application,
                 formatMessage,
               )}
             />
           </GridColumn>
         </GridRow>
-        {sickPayOption !== NOT_APPLICABLE && (
+        {employeeSickPayOption !== NOT_APPLICABLE && (
           <GridRow>
             <GridColumn span="12/12">
               <DataValue
                 label={
-                  sickPayOption === YES
+                  employeeSickPayOption === YES
                     ? formatMessage(
                         medicalAndRehabilitationPaymentsFormMessage.overview
                           .sickPayDidEndDate,
@@ -58,9 +61,9 @@ export const SickPay = ({
                       )
                 }
                 value={
-                  sickPayOption === YesOrNoEnum.YES
-                    ? formatDate(sickPayDidEndDate)
-                    : formatDate(sickPayDoesEndDate)
+                  employeeSickPayOption === YesOrNoEnum.YES
+                    ? formatDate(employeeSickPayDidEndDate)
+                    : formatDate(employeeSickPayDoesEndDate)
                 }
               />
             </GridColumn>

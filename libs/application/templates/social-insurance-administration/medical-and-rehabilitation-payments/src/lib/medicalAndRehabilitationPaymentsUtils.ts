@@ -43,18 +43,19 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'questions.isStudyingFileUpload',
   ) as FileType[]
 
-  const sickPayOption = getValueViaPath(answers, 'sickPay.option') as
-    | YesOrNo
-    | NotApplicable
-
-  const sickPayDoesEndDate = getValueViaPath(
+  const employeeSickPayOption = getValueViaPath(
     answers,
-    'sickPay.doesEndDate',
+    'employeeSickPay.option',
+  ) as YesOrNo | NotApplicable
+
+  const employeeSickPayDoesEndDate = getValueViaPath(
+    answers,
+    'employeeSickPay.doesEndDate',
   ) as string
 
-  const sickPayDidEndDate = getValueViaPath(
+  const employeeSickPayDidEndDate = getValueViaPath(
     answers,
-    'sickPay.didEndDate',
+    'employeeSickPay.didEndDate',
   ) as string
 
   const comment = getValueViaPath(answers, 'comment') as string
@@ -66,9 +67,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     isWorkingPartTime,
     isStudying,
     isStudyingFileUpload,
-    sickPayOption,
-    sickPayDoesEndDate,
-    sickPayDidEndDate,
+    employeeSickPayOption,
+    employeeSickPayDoesEndDate,
+    employeeSickPayDidEndDate,
     comment,
   }
 }

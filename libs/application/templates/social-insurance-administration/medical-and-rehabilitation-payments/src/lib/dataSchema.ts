@@ -33,7 +33,7 @@ export const dataSchema = z.object({
         params: errorMessages.dateRequired,
       },
     ),
-  sickPay: z
+  employeeSickPay: z
     .object({
       option: z.enum([YES, NO, NOT_APPLICABLE]),
       doesEndDate: z.string().optional(),
