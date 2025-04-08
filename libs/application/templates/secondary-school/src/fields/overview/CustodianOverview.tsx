@@ -1,7 +1,4 @@
-import {
-  FieldBaseProps,
-  NationalRegistryCustodian,
-} from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { SecondarySchoolAnswers } from '../..'
@@ -33,11 +30,9 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
       copyPrefix + 'custodians',
     ) || []
 
-  const custodiansExternalData =
-    getValueViaPath<NationalRegistryCustodian[]>(
-      application.externalData,
-      'nationalRegistryCustodians.data',
-    ) || []
+  const custodiansExternalData = custodiansAnswers.filter(
+    (x) => !!x.person?.nationalId,
+  )
 
   const mainOtherContact = getValueViaPath<
     SecondarySchoolAnswers['mainOtherContact']
@@ -91,7 +86,7 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
             <GridRow>
               {custodiansExternalData.map((custodian, index) => (
                 <GridColumn
-                  key={custodian.nationalId}
+                  key={custodian.person?.nationalId}
                   span={custodiansExternalData.length > 1 ? '1/2' : '1/1'}
                 >
                   {totalCount > 1 && (
@@ -101,14 +96,12 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
                       }`}
                     </Text>
                   )}
-                  <Text>
-                    {custodian.givenName} {custodian.familyName}
-                  </Text>
-                  <Text>{formatKennitala(custodian.nationalId)}</Text>
+                  <Text>{custodian.person?.name}</Text>
+                  <Text>{formatKennitala(custodian.person?.nationalId)}</Text>
                   <Text>{custodian.legalDomicile?.streetAddress}</Text>
                   <Text>
                     {custodian.legalDomicile?.postalCode}{' '}
-                    {custodian.legalDomicile?.locality}
+                    {custodian.legalDomicile?.city}
                   </Text>
                   <Text>
                     {formatMessage(overview.custodian.phoneLabel)}:{' '}

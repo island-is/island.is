@@ -117,7 +117,9 @@ export class SecondarySchoolService extends BaseTemplateApiService {
   private async sendEmailAboutDeleteApplication(
     application: ApplicationWithAttachments,
   ) {
-    const recipientList = getRecipients(application).filter((x) => !!x.email)
+    const recipientList = getRecipients(application.answers).filter(
+      (x) => !!x.email,
+    )
     await Promise.all(
       recipientList.map((recipient) =>
         this.sharedTemplateAPIService
@@ -242,7 +244,7 @@ export class SecondarySchoolService extends BaseTemplateApiService {
     application: ApplicationWithAttachments,
   ) {
     // Send email to applicant and all contacts
-    const recipientList = getRecipients(application)
+    const recipientList = getRecipients(application.answers)
     await Promise.all(
       recipientList.map((recipient) =>
         this.sharedTemplateAPIService
