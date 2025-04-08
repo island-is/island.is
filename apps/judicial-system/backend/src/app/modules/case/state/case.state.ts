@@ -5,6 +5,7 @@ import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseTransition,
   IndictmentCaseState,
@@ -83,6 +84,19 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
+    IndictmentCaseTransition.MOVE,
+    {
+      fromStates: [IndictmentCaseState.RECEIVED],
+      transition: (update: UpdateCase) => ({
+        ...update,
+        courtCaseNumber: null,
+        judgeId: null,
+        registrarId: null,
+        state: CaseState.SUBMITTED,
+      }),
+    },
+  ],
+  [
     IndictmentCaseTransition.ASK_FOR_CANCELLATION,
     {
       fromStates: [IndictmentCaseState.SUBMITTED, IndictmentCaseState.RECEIVED],
@@ -146,6 +160,28 @@ const indictmentCaseStateMachine: Map<
         ...update,
         state: CaseState.DELETED,
       }),
+    },
+  ],
+  [
+    IndictmentCaseTransition.REOPEN,
+    {
+      fromStates: [IndictmentCaseState.COMPLETED],
+      transition: (update: UpdateCase, theCase: Case) => {
+        if (
+          theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.WITHDRAWAL
+        ) {
+          throw new ForbiddenException(
+            'Cannot reopen a case that has been withdrawn',
+          )
+        }
+
+        return {
+          ...update,
+          state: CaseState.RECEIVED,
+          rulingDate: null,
+        }
+      },
     },
   ],
 ])
@@ -223,6 +259,20 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
         transition: (update: UpdateCase) => ({
           ...update,
           state: CaseState.RECEIVED,
+        }),
+      },
+    ],
+    [
+      RequestCaseTransition.MOVE,
+      {
+        fromStates: [RequestCaseState.RECEIVED],
+        fromAppealStates: [undefined],
+        transition: (update: UpdateCase) => ({
+          ...update,
+          courtCaseNumber: null,
+          judgeId: null,
+          registrarId: null,
+          state: CaseState.SUBMITTED,
         }),
       },
     ],

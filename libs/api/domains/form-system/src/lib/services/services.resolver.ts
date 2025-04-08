@@ -15,7 +15,7 @@ import { GetTranslationInput } from '../../dto/service.input'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ServicesResolver {
-  constructor(private readonly formSystemServices: ServicesService) { }
+  constructor(private readonly formSystemServices: ServicesService) {}
 
   @Mutation(() => Translation, {
     name: 'formSystemTranslation',

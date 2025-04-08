@@ -113,6 +113,9 @@ libs/clients/rsk/relationships/                                                 
 /libs/portals/my-pages/consent                                                                            @island-is/aranja
 /libs/portals/my-pages/restrictions                                                                       @island-is/aranja
 /libs/portals/my-pages/sessions                                                                           @island-is/aranja
+/apps/payments                                                                                            @island-is/aranja
+/apps/services/payments                                                                                   @island-is/aranja
+/libs/clients/payments                                                                                    @island-is/aranja
 /apps/native/app/                                                                                         @island-is/aranja-app
 codemagic.yaml                                                                                            @island-is/aranja-app
 /apps/web/public/.well-known/                                                                             @island-is/aranja-app
@@ -225,7 +228,6 @@ codemagic.yaml                                                                  
 /libs/application/templates/accident-notification/                                                        @island-is/norda
 /libs/application/templates/complaints-to-althingi-ombudsman/                                             @island-is/norda
 /libs/application/templates/data-protection-complaint/                                                    @island-is/norda
-/libs/application/templates/example-payment/                                                              @island-is/norda
 /libs/application/templates/family-matters/children-residence-change-v2                                   @island-is/norda
 /libs/application/templates/financial-aid/                                                                @island-is/norda
 /libs/application/templates/financial-statements-inao/                                                    @island-is/norda
@@ -321,6 +323,9 @@ codemagic.yaml                                                                  
 /libs/api/domains/consultation-portal/                                                                    @island-is/advania
 /libs/api/domains/form-system                                                                             @island-is/advania
 /libs/portals/admin/form-system                                                                           @island-is/advania
+/libs/clients/form-system/                                                                                @island-is/advania
+/libs/form-system                                                                                         @island-is/advania
+/libs/portals/form-system                                                                                 @island-is/advania
 
 /apps/skilavottord/                                                                                       @island-is/deloitte
 /libs/skilavottord/                                                                                       @island-is/deloitte
@@ -356,8 +361,6 @@ codemagic.yaml                                                                  
 
 /libs/application/templates/criminal-record/                                                              @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission/              @island-is/origo
-/libs/api/domains/criminal-record/                                                                        @island-is/origo
-/libs/clients/criminal-record/                                                                            @island-is/origo
 
 /libs/application/templates/mortgage-certificate/                                                         @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/mortgage-certificate-submission/         @island-is/origo
@@ -365,6 +368,11 @@ codemagic.yaml                                                                  
 
 /libs/application/templates/no-debt-certificate/                                                          @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/no-debt-certificate/                     @island-is/origo
+
+/libs/application/templates/aosh/seminars/                                                                @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/aosh/seminars/                           @island-is/origo
+/libs/api/domains/seminars-ver/                                                                           @island-is/origo  
+/libs/clients/seminars-ver/                                                                               @island-is/origo  
 
 /libs/application/templates/id-card/                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/id-card/                                 @island-is/origo

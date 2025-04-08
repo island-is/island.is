@@ -115,7 +115,7 @@ identity-server:
     LOG_LEVEL: 'info'
     MeUserProfileApiSettings__BaseAddress: 'https://service-portal-api.internal.island.is'
     NODE_OPTIONS: '--max-old-space-size=1843 --enable-source-maps -r dd-trace/init'
-    PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
+    PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'true'
     RedisSettings__Address: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com'
     RedisSettings__Port: '6379'
@@ -311,6 +311,7 @@ services-auth-admin-api:
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
     ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
     ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
+    ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE'
     ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE'
     ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION'
   securityContext:

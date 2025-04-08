@@ -134,10 +134,11 @@ export const tables = defineMessages({
     defaultMessage: 'Dagsetning skjals',
     description: 'Notaður sem titill fyrir dagsetningu í lista yfir mál.',
   },
-  sent: {
-    id: 'judicial.system.core:tables.sent',
-    defaultMessage: 'Sent',
-    description: 'Notaður sem titill fyrir sent dálk í lista yfir mál.',
+  received: {
+    id: 'judicial.system.core:tables.received',
+    defaultMessage: 'Móttekið',
+    description:
+      'Notaður sem titill fyrir móttökudagsetningu dálk í lista yfir mál.',
   },
   fineTag: {
     id: 'judicial.system.core:tables.fine_tag',

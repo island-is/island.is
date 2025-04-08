@@ -1,6 +1,5 @@
 import {
   buildCheckboxField,
-  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -130,14 +129,11 @@ export const overview = buildSection({
         EstateTypes.officialDivision,
       children: [
         ...deceasedInfoFields,
-        buildDescriptionField({
-          id: 'space',
-          space: 'containerGutter',
-        }),
         buildCheckboxField({
           id: 'confirmAction',
           large: true,
           backgroundColor: 'blue',
+          marginTop: 'containerGutter',
           defaultValue: [],
           options: [
             {

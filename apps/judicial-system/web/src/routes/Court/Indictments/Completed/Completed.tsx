@@ -60,7 +60,7 @@ const Completed: FC = () => {
   const [modalVisible, setModalVisible] =
     useState<'SENT_TO_PUBLIC_PROSECUTOR'>()
 
-  const sentToPublicProsecutor = workingCase.eventLogs?.some(
+  const isSentToPublicProsecutor = workingCase.eventLogs?.some(
     (log) => log.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
   )
 
@@ -103,12 +103,26 @@ const Completed: FC = () => {
 
   const handleCriminalRecordUpdateUpload = useCallback(
     (files: File[]) => {
-      addUploadFiles(files, {
-        category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-        status: 'done',
-      })
+      // If the case has been sent to the public prosecutor
+      // we want to complete these uploads straight away
+      if (isSentToPublicProsecutor) {
+        handleUpload(
+          addUploadFiles(files, {
+            category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+          }),
+          updateUploadFile,
+        )
+      }
+      // Otherwise we don't complete uploads until
+      // we handle the next button click
+      else {
+        addUploadFiles(files, {
+          category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+          status: 'done',
+        })
+      }
     },
-    [addUploadFiles],
+    [addUploadFiles, handleUpload, isSentToPublicProsecutor, updateUploadFile],
   )
 
   const handleNavigationTo = useCallback(
@@ -179,7 +193,7 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        {!sentToPublicProsecutor && isRulingOrFine && (
+        {isRulingOrFine && (
           <Box marginBottom={isRuling ? 5 : 10} component="section">
             <SectionHeading
               title={formatMessage(strings.criminalRecordUpdateTitle)}
@@ -231,7 +245,6 @@ const Completed: FC = () => {
                         defendant.serviceRequirement ===
                         ServiceRequirement.NOT_APPLICABLE
                       }
-                      disabled={sentToPublicProsecutor}
                       onChange={() => {
                         setAndSendDefendantToServer(
                           {
@@ -258,7 +271,6 @@ const Completed: FC = () => {
                         defendant.serviceRequirement ===
                         ServiceRequirement.REQUIRED
                       }
-                      disabled={sentToPublicProsecutor}
                       onChange={() => {
                         setAndSendDefendantToServer(
                           {
@@ -282,7 +294,6 @@ const Completed: FC = () => {
                       defendant.serviceRequirement ===
                       ServiceRequirement.NOT_REQUIRED
                     }
-                    disabled={sentToPublicProsecutor}
                     onChange={() => {
                       setAndSendDefendantToServer(
                         {
@@ -345,7 +356,7 @@ const Completed: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
-          hideNextButton={!isRulingOrFine || sentToPublicProsecutor}
+          hideNextButton={!isRulingOrFine || isSentToPublicProsecutor}
           nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
           nextIsDisabled={!stepIsValid()}
           onNextButtonClick={handleNextButtonClick}

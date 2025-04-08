@@ -41,6 +41,7 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseOrigin,
   CaseState,
+  CaseTransition,
   CaseType,
   indictmentCases,
   investigationCases,
