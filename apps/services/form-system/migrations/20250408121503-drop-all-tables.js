@@ -25,6 +25,6 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     console.warn('WARNING: Rollback for the table-drop migration is not supported. ' +
-      +     'Tables cannot be automatically restored. Use database backups if restoration is needed.')
+      'Tables cannot be automatically restored. Use database backups if restoration is needed.')
   }
 };
