@@ -11,3 +11,6 @@ export const AttachmentLabel: {
 export enum AttachmentTypes {
   STUDY_CONFIRMATION = 'studyConfirmation',
 }
+
+export type NotApplicable = typeof NOT_APPLICABLE
+export const NOT_APPLICABLE = 'notApplicable'

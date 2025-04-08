@@ -19,6 +19,7 @@ import { Attachments } from './review-groups/Attachments'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { Comment } from './review-groups/Comment'
 import { Questions } from './review-groups/Questions'
+import { SickPay } from './review-groups/SickPay'
 
 interface ReviewScreenProps {
   application: Application
@@ -161,6 +162,7 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <BaseInformation {...childProps} />
       <Questions {...childProps} />
+      <SickPay {...childProps} />
       <Comment {...childProps} />
       <Attachments {...childProps} />
     </>

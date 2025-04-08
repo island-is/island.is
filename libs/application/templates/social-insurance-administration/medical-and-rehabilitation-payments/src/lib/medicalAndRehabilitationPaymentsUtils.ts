@@ -1,11 +1,19 @@
 import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   Attachments,
   BankInfo,
   FileType,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application } from '@island.is/application/types'
-import { AttachmentLabel, AttachmentTypes } from './constants'
+import {
+  AttachmentLabel,
+  AttachmentTypes,
+  NOT_APPLICABLE,
+  NotApplicable,
+} from './constants'
+import { medicalAndRehabilitationPaymentsFormMessage } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber = getValueViaPath(
@@ -35,6 +43,20 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'questions.isStudyingFileUpload',
   ) as FileType[]
 
+  const sickPayOption = getValueViaPath(answers, 'sickPay.option') as
+    | YesOrNo
+    | NotApplicable
+
+  const sickPayDoesEndDate = getValueViaPath(
+    answers,
+    'sickPay.doesEndDate',
+  ) as string
+
+  const sickPayDidEndDate = getValueViaPath(
+    answers,
+    'sickPay.didEndDate',
+  ) as string
+
   const comment = getValueViaPath(answers, 'comment') as string
 
   return {
@@ -45,6 +67,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     isStudying,
     isStudyingFileUpload,
     comment,
+    sickPayOption,
+    sickPayDidEndDate,
+    sickPayDoesEndDate,
   }
 }
 
@@ -155,4 +180,24 @@ export const getAttachments = (application: Application) => {
   }
 
   return attachments
+}
+
+export const getYesNoNotApplicableOptions = () => {
+  return [
+    ...getYesNoOptions(),
+    {
+      value: NOT_APPLICABLE,
+      dataTestId: 'sickPay-option-not-applicable',
+      label: medicalAndRehabilitationPaymentsFormMessage.shared.notApplicable,
+    },
+  ]
+}
+
+export const getYesNoNotApplicableTranslation = (value: string) => {
+  if (value === NOT_APPLICABLE) {
+    return medicalAndRehabilitationPaymentsFormMessage.shared.notApplicable
+  } else if (value === YES) {
+    return socialInsuranceAdministrationMessage.shared.yes
+  }
+  return socialInsuranceAdministrationMessage.shared.no
 }
