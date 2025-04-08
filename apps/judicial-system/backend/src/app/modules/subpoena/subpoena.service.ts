@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  HashAlgorithm,
   isFailedServiceStatus,
   isSuccessfulServiceStatus,
   ServiceStatus,
@@ -127,9 +128,13 @@ export class SubpoenaService {
     )
   }
 
-  async setHash(id: string, hash: string): Promise<void> {
+  async setHash(
+    id: string,
+    hash: string,
+    hashAlgorithm: HashAlgorithm,
+  ): Promise<void> {
     const [numberOfAffectedRows] = await this.subpoenaModel.update(
-      { hash },
+      { hash, hashAlgorithm },
       { where: { id } },
     )
 
@@ -510,7 +515,7 @@ export class SubpoenaService {
       return subpoena
     }
 
-    if (subpoena.serviceStatus) {
+    if (isSuccessfulServiceStatus(subpoena.serviceStatus)) {
       // The subpoena has already been served to the defendant
       return subpoena
     }

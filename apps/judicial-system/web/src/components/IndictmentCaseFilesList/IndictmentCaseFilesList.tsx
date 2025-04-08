@@ -1,6 +1,6 @@
 import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -21,11 +21,12 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseFile,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { CaseFileTable } from '../Table'
@@ -44,7 +45,7 @@ interface RenderFilesProps {
   onOpenFile: (fileId: string) => void
 }
 
-interface FileSection {
+interface FileSectionProps {
   title: string
   onOpenFile: (fileId: string) => void
   files?: CaseFile[]
@@ -71,10 +72,10 @@ export const RenderFiles: FC<RenderFilesProps> = ({
   )
 }
 
-const FileSection: FC<FileSection> = (props: FileSection) => {
-  const { title, files, onOpenFile, shouldRender = true } = props
+const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
+  const { title, files, onOpenFile, shouldRender = true, children } = props
 
-  if (!files?.length || !shouldRender) {
+  if ((!files?.length && !children) || !shouldRender) {
     return null
   }
 
@@ -83,7 +84,8 @@ const FileSection: FC<FileSection> = (props: FileSection) => {
       <Text variant="h4" as="h4" marginBottom={1}>
         {title}
       </Text>
-      <RenderFiles caseFiles={files} onOpenFile={onOpenFile} />
+      {files && <RenderFiles caseFiles={files} onOpenFile={onOpenFile} />}
+      {children}
     </Box>
   )
 }
@@ -114,8 +116,11 @@ const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
         CaseFileCategory.CRIMINAL_RECORD_UPDATE,
       ),
       uploadedCaseFiles: filterByCategories([
-        CaseFileCategory.PROSECUTOR_CASE_FILE,
-        CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_CASE_FILE, // sækjandi
+        CaseFileCategory.DEFENDANT_CASE_FILE, // verjandi
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE, // ákærði
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE, //réttargæslumaður
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE, // lögmaður
       ]),
       civilClaims: filterByCategories(CaseFileCategory.CIVIL_CLAIM),
       sentToPrisonAdminFiles: filterByCategories(
@@ -146,6 +151,21 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
   )
 }
 
+export const useSentToPrisonAdminDate = (workingCase: Case) => {
+  return useMemo(() => {
+    // For now we return the newest date on any defendant that has been sent to prison admin
+    // but we may need to change this in the future depending on how we want to handle
+    // multiple defendants.
+    const sentToPrisonAdminDate = workingCase.defendants
+      ?.filter((defendant) => defendant.isSentToPrisonAdmin)
+      .map((defendant) => defendant.sentToPrisonAdminDate)
+      .filter((date): date is string => Boolean(date))
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0]
+
+    return sentToPrisonAdminDate ? new Date(sentToPrisonAdminDate) : undefined
+  }, [workingCase.defendants])
+}
+
 const IndictmentCaseFilesList: FC<Props> = ({
   workingCase,
   displayGeneratedPDFs = true,
@@ -168,6 +188,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const filteredFiles = useFilteredCaseFiles(workingCase.caseFiles)
   const permissions = useFilePermissions(workingCase, user)
   const showFiles = Object.values(filteredFiles).some((f) => f.length > 0)
+
+  const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+  const isCompletedWithRuling =
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
 
   return (
     <>
@@ -319,7 +343,19 @@ const IndictmentCaseFilesList: FC<Props> = ({
             files={filteredFiles.sentToPrisonAdminFiles}
             onOpenFile={onOpen}
             shouldRender={permissions.canViewSentToPrisonAdminFiles}
-          />
+          >
+            {isCompletedWithRuling && sentToPrisonAdminDate && (
+              <PdfButton
+                caseId={workingCase.id}
+                title={`Dómur til fullnustu ${formatDate(
+                  sentToPrisonAdminDate,
+                )}.pdf`}
+                pdfType="rulingSentToPrisonAdmin"
+                elementId={'Dómur til fullnustu'}
+                renderAs="row"
+              />
+            )}
+          </FileSection>
           {filteredFiles.uploadedCaseFiles &&
             filteredFiles.uploadedCaseFiles.length > 0 && (
               <Box marginBottom={5}>

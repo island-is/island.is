@@ -33,6 +33,7 @@ export class SecondarySchoolClient {
     return {
       hasActiveApplication: studentInfo?.hasActiveApplication || false,
       isFreshman: studentInfo?.isFreshman || false,
+      externalIds: studentInfo?.applications || [],
     }
   }
 
@@ -111,29 +112,16 @@ export class SecondarySchoolClient {
       }
     }
 
-    return externalId
+    // clean externalId and remove double quotes that is added by the openapi generator (bug in generator)
+    return externalId?.replace(/['"]+/g, '')
   }
 
-  async create(auth: User, application: Application): Promise<string> {
-    // Check if an application already exists
-    let externalId: string | undefined
-    try {
-      externalId = await this.applicationsApiWithAuth(
-        auth,
-      ).v1ApplicationsIslandIsApplicationIdIdGet({
-        islandIsApplicationId: application.id,
-      })
-    } catch (e) {
-      if (e.response?.status !== 404) {
-        // Rethrow if the error isn't due to the application not existing
-        throw e
-      }
-    }
-
+  async createOrUpdate(auth: User, application: Application): Promise<string> {
     const applicationBaseDto = {
       islandIsApplicationId: application.id,
       applicantNationalId: application.nationalId,
       applicantName: application.name,
+      applicantGender: application.genderCode,
       isFreshman: application.isFreshman,
       phoneNumber: application.phone,
       email: application.email,
@@ -164,7 +152,7 @@ export class SecondarySchoolClient {
       attachments: application.attachments,
     }
 
-    if (externalId) {
+    if (application.externalId) {
       try {
         await this.applicationsApiWithAuth(
           auth,
@@ -173,7 +161,7 @@ export class SecondarySchoolClient {
           applicationBaseDto,
         })
 
-        return externalId
+        return application.externalId
       } catch (error) {
         throw new Error(`Failed to update application: ${error.message}`)
       }

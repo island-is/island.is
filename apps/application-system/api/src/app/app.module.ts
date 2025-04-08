@@ -53,7 +53,6 @@ import {
   UniversityOfIcelandCareerClientConfig,
 } from '@island.is/clients/university-careers'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
-import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
@@ -63,6 +62,7 @@ import { emailModuleConfig } from '@island.is/email-service'
 import { sharedModuleConfig } from '@island.is/application/template-api-modules'
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
+import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 
 @Module({
@@ -116,7 +116,6 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         HolarUniversityCareerClientConfig,
         IcelandUniversityOfTheArtsCareerClientConfig,
         DataProtectionComplaintClientConfig,
-        CriminalRecordClientConfig,
         HealthInsuranceV2ClientConfig,
         VmstClientConfig,
         RightsPortalClientConfig,
@@ -126,6 +125,7 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         sharedModuleConfig,
         UserNotificationClientConfig,
         NationalRegistryV3ClientConfig,
+        SeminarsClientConfig,
         SecondarySchoolClientConfig,
       ],
     }),

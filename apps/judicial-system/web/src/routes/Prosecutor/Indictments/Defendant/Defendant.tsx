@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 
@@ -9,7 +9,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeScene,
   CrimeSceneMap,
-  IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
@@ -23,18 +22,19 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseOrigin,
   Defendant as TDefendant,
+  IndictmentSubtype,
   PoliceCaseInfo as TPoliceCaseInfo,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { isEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useCase,
   useDefendants,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { DefendantInfo, ProsecutorSection } from '../../components'
@@ -44,7 +44,6 @@ import { LokeNumberList } from './LokeNumberList/LokeNumberList'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { usePoliceCaseInfoQuery } from './policeCaseInfo.generated'
 import { defendant } from './Defendant.strings'
-
 
 export interface PoliceCase {
   number: string
@@ -119,6 +118,8 @@ const Defendant = () => {
   const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
+
+  const gender = getDefaultDefendantGender(workingCase.defendants)
 
   useEffect(() => {
     setPoliceCases(getPoliceCases(workingCase))
@@ -296,21 +297,25 @@ const Defendant = () => {
         )
         .forEach((indictmentCount) => {
           const policeCaseNumberSubtypes = subtypes?.[policeCaseNumber] || []
-          const indictmentCountSubtypes = indictmentCount.indictmentCountSubtypes || []
+          const indictmentCountSubtypes =
+            indictmentCount.indictmentCountSubtypes || []
 
           // handle changes based on police case subtype changes
-          const updatedIndictmentCountSubtypes = indictmentCountSubtypes.filter((subtype) => policeCaseNumberSubtypes.includes(subtype))
+          const updatedIndictmentCountSubtypes = indictmentCountSubtypes.filter(
+            (subtype) => policeCaseNumberSubtypes.includes(subtype),
+          )
           const updatedIndictmentCount = {
-            ...indictmentCount, 
+            ...indictmentCount,
             indictmentCountSubtypes: updatedIndictmentCountSubtypes,
           }
- 
-          const incidentDescription = getIncidentDescription({
-            indictmentCount: updatedIndictmentCount,
-            formatMessage,
+
+          const incidentDescription = getIncidentDescription(
+            updatedIndictmentCount,
+            gender,
             crimeScene,
-            subtypesRecord: subtypes,
-          })
+            formatMessage,
+            subtypes,
+          )
 
           updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,

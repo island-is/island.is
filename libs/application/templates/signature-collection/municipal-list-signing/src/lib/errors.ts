@@ -16,12 +16,12 @@ export const errorMessages = {
   citizenship: defineMessages({
     title: {
       id: 'mls.application:error.citizenship.title',
-      defaultMessage: 'Ekki með íslenkst ríkisfang',
+      defaultMessage: 'Ekki með íslenskt ríkisfang',
       description: '',
     },
     summary: {
       id: 'mls.application:error.citizenship.summary',
-      defaultMessage: 'Þú þarft að vera með íslenkst ríkisfang',
+      defaultMessage: 'Þú þarft að vera með íslenskt ríkisfang',
       description: '',
     },
   }),

@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useDebounce } from 'react-use'
 
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import useCase from '../useCase'
 

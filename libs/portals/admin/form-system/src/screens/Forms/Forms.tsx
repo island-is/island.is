@@ -1,82 +1,82 @@
-import { Box, Button, Text, Inline } from '@island.is/island-ui/core'
-import { useNavigate } from 'react-router-dom'
-import { FormSystemPaths } from '../../lib/paths'
+import { Box } from '@island.is/island-ui/core'
+import { useLoaderData } from 'react-router-dom'
 import { TableRow } from '../../components/TableRow/TableRow'
-import { useFormSystemGetFormsQuery } from './Forms.generated'
-import { useFormSystemCreateFormMutation } from './CreateForm.generated'
+import { FormsLoaderResponse, GET_FORMS } from '@island.is/form-system/graphql'
+import { useLazyQuery } from '@apollo/client'
+import { useEffect, useState } from 'react'
+import { FormSystemForm } from '@island.is/api/schema'
+import { FormsHeader } from './FormsHeader'
+import { TableRowHeader } from '../../components/TableRow/TableRowHeader'
+import { useContext } from 'react'
+import { ControlContext } from '../../context/ControlContext'
 
 export const Forms = () => {
-  const navigate = useNavigate()
+  const { control } = useContext(ControlContext)
+  const { forms, organizations, isAdmin, organizationNationalId } =
+    useLoaderData() as FormsLoaderResponse
+  const [getFormsQuery] = useLazyQuery(GET_FORMS, { fetchPolicy: 'no-cache' })
 
-  const { data, loading, error } = useFormSystemGetFormsQuery({
-    variables: {
-      input: {
-        organizationId: 1,
+  const [formsState, setFormsState] = useState<FormSystemForm[]>(forms)
+  const [organizationsState, setOrganizationsState] = useState(organizations)
+
+  const handleOrganizationChange = async (selected: {
+    value: string | undefined
+  }) => {
+    const updatedOrganizations = organizationsState.map((org) => ({
+      ...org,
+      isSelected: org.value === selected.value,
+    }))
+    setOrganizationsState(updatedOrganizations)
+
+    const { data } = await getFormsQuery({
+      variables: {
+        input: {
+          nationalId: selected.value,
+        },
       },
-    },
-  })
+    })
+    if (data?.formSystemForms?.forms) {
+      setFormsState(data.formSystemForms.forms)
+    }
+  }
 
-  const [formSystemCreateFormMutation] = useFormSystemCreateFormMutation({
-    variables: {
-      input: {
-        organizationId: 1,
-      },
-    },
-  })
+  useEffect(() => {
+    if (isAdmin && control.organizationNationalId) {
+      handleOrganizationChange({ value: control.organizationNationalId })
+    }
+  }, [])
 
-  const forms = data?.formSystemGetForms.forms
-  if (!loading && !error) {
+  if (forms) {
     return (
-      <div>
-        {/* Title and buttons  */}
-        <div>
-          <Text variant="h2">Forskriftir</Text>
-        </div>
-        <Box marginTop={5}>
-          <Inline space={2}>
-            <Button
-              variant="ghost"
-              size="medium"
-              onClick={async () => {
-                const { data } = await formSystemCreateFormMutation({
-                  variables: { input: { organizationId: 1 } },
-                })
-                navigate(
-                  FormSystemPaths.Form.replace(
-                    ':formId',
-                    String(data?.formSystemCreateForm?.form?.id),
-                  ),
-                )
-              }}
-            >
-              Ný forskrift
-            </Button>
-            <Button variant="ghost" size="medium">
-              Hlaða inn forskrift
-            </Button>
-          </Inline>
-        </Box>
+      <>
+        <FormsHeader
+          setFormsState={setFormsState}
+          organizations={organizationsState}
+          onOrganizationChange={handleOrganizationChange}
+          isAdmin={isAdmin}
+          organizationNationalId={organizationNationalId}
+        />
 
         <Box marginTop={5}></Box>
 
-        <Box marginTop={5}>
-          <Box width="half"></Box>
-        </Box>
-        <TableRow isHeader={true} />
+        <TableRowHeader />
         {forms &&
-          forms?.map((f) => {
+          formsState?.map((f) => {
             return (
               <TableRow
                 key={f?.id}
                 id={f?.id}
                 name={f?.name?.is ?? ''}
-                org={f?.organization?.id}
+                org={f?.organizationId}
                 isHeader={false}
                 translated={f?.isTranslated ?? false}
+                slug={f?.slug ?? ''}
+                beenPublished={f?.beenPublished ?? false}
+                setFormsState={setFormsState}
               />
             )
           })}
-      </div>
+      </>
     )
   }
   return <></>

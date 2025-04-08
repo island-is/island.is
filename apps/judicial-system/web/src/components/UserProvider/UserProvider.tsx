@@ -27,6 +27,9 @@ interface UserProvider {
 
 export const UserContext = createContext<UserProvider>({})
 
+// Used for accessing the current user outside of React components
+export const userRef: { current?: User; authBypass?: boolean } = {}
+
 // Setting authenticated to true forces current user query in unit tests
 interface Props {
   authenticated?: boolean
@@ -43,28 +46,33 @@ export const UserProvider: FC<PropsWithChildren<Props>> = ({
     authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME))
 
   const { data } = useCurrentUserQuery({
-    skip: !isAuthenticated || Boolean(user),
+    skip: !isAuthenticated,
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const currentUser = data?.currentUser
-
   useEffect(() => {
-    if (currentUser?.user && !user) {
-      setUser(currentUser?.user ?? undefined)
+    if (!data?.currentUser) {
+      return
     }
-    if (currentUser?.eligibleUsers && !eligibleUsers) {
-      setEligibleUsers(currentUser?.eligibleUsers)
+
+    const currentUser = data.currentUser
+
+    if (currentUser.user) {
+      setUser(currentUser.user)
+      userRef.current = currentUser.user
     }
-  }, [setUser, currentUser, user, eligibleUsers])
+
+    setEligibleUsers(currentUser.eligibleUsers)
+    userRef.authBypass = Boolean(Cookies.get(CSRF_COOKIE_NAME))
+  }, [data?.currentUser])
 
   return (
     <UserContext.Provider
       value={{
         isAuthenticated,
-        user: user,
-        eligibleUsers: eligibleUsers,
+        user,
+        eligibleUsers,
         limitedAccess:
           user && // Needed for e2e tests as they do not have a logged in user
           !isProsecutionUser(user) &&

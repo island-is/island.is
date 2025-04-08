@@ -17,6 +17,7 @@ env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  NX_SKIP_NX_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nx-cache') }}
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
@@ -37,11 +38,8 @@ env:
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
   DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-  YARN_CACHE_FOLDER: /home/runner/dependencies/.yarn/cache
-  CYPRESS_CACHE_FOLDER: /home/runner/dependencies/.cache
-  COREPACK_HOME: /home/runner/dependencies/corepack
-  NODE_PATH: /home/runner/dependencies/node_modules
-  COREPACK_ENABLE_STRICT: '0'
+  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
+  YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
   prepare:
@@ -68,6 +66,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -99,6 +99,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -155,6 +157,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -173,6 +177,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -211,6 +217,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -224,6 +232,40 @@ jobs:
       #   run: |
       #     ./scripts/ci/20_check-formatting.sh "write"
       #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
+
+  lintfix-changed-files:
+    name: Lintfix Changed Files
+    runs-on: arc-runners
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_* below
+          fetch-depth: 0
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          # Need ref to know where to push to
+          # https://github.com/actions/checkout#push-a-commit-to-a-pr-using-the-built-in-token
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
+      - name: Run lintfix
+        id: lintfix
+        # NOTE: We want to use the PR base, not last good, since the lint is not part of "good" build
+        # and causes unintended lint changes when using a different commit
+        run: |
+          yarn nx affected -t lint --base="origin/$GITHUB_BASE_REF" --fix
+          if ! git diff "$GITHUB_BASE_REF" --exit-code; then
+            echo "FILES_CHANGED=true" | tee -a "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit changed files
+        if: ${{ steps.lintfix.outputs.FILES_CHANGED == 'true' }}
+        run: ./infra/scripts/ci/git-check-dirty.sh . lintfix dirtybot
 
   linting:
     needs:
@@ -244,12 +286,58 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      - name: Linting
-        run: ./scripts/ci/run-in-parallel-native.sh lint
+      - name: Lint head
+        id: lint-head
+        run: |
+          lints=$(mktemp -t lint-head.XXXXXX)
+          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
+          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" |
+            tee -a "$lints" | # Show output when running, but preserve pipe-chaining
+            grep -oP '(?<=✖ )(\d+)(?= problems)' | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d",SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee -a "$GITHUB_OUTPUT" # Finally create output
+
+      # Checkout for linting base
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          clean: false
+
+      - name: Lint base
+        id: lint-base
+        run: |
+          lints=$(mktemp -t lint-base.XXXXXX)
+          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
+          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" |
+            tee -a "$lints" | # Show output when running, but preserve pipe-chaining
+            grep -oP '(?<=✖ )(\d+)(?= problems)' | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d",SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee -a "$GITHUB_OUTPUT" # Finally create output
+
+      - name: No new lints
+        env:
+          HEAD_LINT_COUNT: ${{steps.lint-head.outputs.lint-count}}
+          BASE_LINT_COUNT: ${{steps.lint-base.outputs.lint-count}}
+          HEAD_LINT_FILE: ${{steps.lint-head.outputs.lints-file}}
+          BASE_LINT_FILE: ${{steps.lint-base.outputs.lints-file}}
+        run: |
+          COUNT_DIFF=$(( HEAD_LINT_COUNT - BASE_LINT_COUNT )) || :
+          if (( COUNT_DIFF <= 0 )); then
+            echo "Lint count has not increased"
+            exit 0
+          fi
+          echo "::error title=NEW_LINTS::Please fix your lints 🙏 (found $COUNT_DIFF additional lints)"
+          lints_base=$(mktemp --dry -t lint-.XXX)
+          echo "::group::lintdiff"
+          diff "${BASE_LINT_FILE}" "${HEAD_LINT_FILE}" || : # Ignore diff exit code
+          echo "::endgroup::"
+          exit 1
 
   build:
     needs:
@@ -269,6 +357,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -288,6 +378,7 @@ jobs:
       - formatting
       - e2e
       - build
+      - unicorn-tests
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
@@ -308,5 +399,7 @@ jobs:
         run: '[[ ${{ needs.formatting.result }} != "failure" ]] || exit 1'
       - name: Check build success
         run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
+      - name: Check Unicorn test success
+        run: '[[ ${{ needs.unicorn-tests.result }} != "failure" ]] || exit 1'
       - name: Announce success
         run: echo "Build is successful"

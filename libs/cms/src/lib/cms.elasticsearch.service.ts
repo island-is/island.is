@@ -421,6 +421,7 @@ export class CmsElasticsearchService {
     input: GetCustomSubpageInput,
   ): Promise<CustomPage | null> {
     const index = getElasticsearchIndex(input.lang)
+
     const must = [
       {
         term: {
@@ -435,16 +436,21 @@ export class CmsElasticsearchService {
           query: {
             bool: {
               must: [
-                {
-                  term: {
-                    'tags.key': input.parentPageId,
-                  },
-                },
-                {
-                  term: {
-                    'tags.type': 'referencedBy',
-                  },
-                },
+                { match: { 'tags.key': input.parentPageId } },
+                { term: { 'tags.type': 'referencedBy' } },
+              ],
+            },
+          },
+        },
+      },
+      {
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                { match: { 'tags.key': input.slug } },
+                { term: { 'tags.type': 'slug' } },
               ],
             },
           },
@@ -477,9 +483,7 @@ export class CmsElasticsearchService {
     })
   }
 
-  private async getListItems<
-    ListItemType extends 'webGenericListItem' | 'webTeamMember',
-  >(input: {
+  private async getListItems<ListItemType extends 'webGenericListItem'>(input: {
     listId: string
     lang: ElasticsearchIndexLocale
     page?: number
@@ -488,12 +492,8 @@ export class CmsElasticsearchService {
     tags?: string[]
     tagGroups?: Record<string, string[]>
     type: ListItemType
-    orderBy?: GetGenericListItemsInputOrderBy | GetTeamMembersInputOrderBy
-  }): Promise<
-    ListItemType extends 'webGenericListItem'
-      ? Omit<GenericListItemResponse, 'input'>
-      : Omit<TeamMemberResponse, 'input'>
-  > {
+    orderBy?: GetGenericListItemsInputOrderBy
+  }): Promise<Omit<GenericListItemResponse, 'input'>> {
     let must: Record<string, unknown>[] = [
       {
         term: {
@@ -611,17 +611,159 @@ export class CmsElasticsearchService {
     }
   }
 
+  private async getTeamListItems(input: {
+    listId: string
+    lang: ElasticsearchIndexLocale
+    page?: number
+    size?: number
+    queryString?: string
+    tags?: string[]
+    tagGroups?: Record<string, string[]>
+    orderBy?: GetTeamMembersInputOrderBy
+  }): Promise<Omit<TeamMemberResponse, 'input'>> {
+    let must: Record<string, unknown>[] = [
+      {
+        term: {
+          type: {
+            value: 'webTeamMember',
+          },
+        },
+      },
+      {
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    'tags.key': input.listId,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'referencedBy',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    ]
+
+    const queryString = input.queryString
+      ? input.queryString.replace('´', '').trim().toLowerCase()
+      : ''
+
+    must.push({
+      simple_query_string: {
+        query: queryString + '*',
+        fields: ['title^100'],
+        analyze_wildcard: true,
+        default_operator: 'and',
+      },
+    })
+
+    const size = input.size ?? 10
+
+    let sort: sortRule[] = []
+
+    if (!input.orderBy) {
+      sort = [
+        { _score: { order: SortDirection.DESC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+        { 'title.sort': { order: SortDirection.ASC } },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    }
+
+    if (input.orderBy === GetTeamMembersInputOrderBy.Name) {
+      sort = [
+        { _score: { order: SortDirection.DESC } },
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    }
+
+    if (input.orderBy === GetTeamMembersInputOrderBy.Manual) {
+      sort = [
+        { _score: { order: SortDirection.DESC } },
+        { dateCreated: { order: SortDirection.DESC } },
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+      ]
+    }
+
+    if (input.tags && input.tags.length > 0 && input.tagGroups) {
+      must = must.concat(
+        generateGenericTagGroupQueries(input.tags, input.tagGroups),
+      )
+    }
+
+    const response: ApiResponse<SearchResponse<MappedData>> =
+      await this.elasticService.findByQuery(getElasticsearchIndex(input.lang), {
+        query: {
+          bool: {
+            must,
+            should: [
+              {
+                prefix: {
+                  'title.keyword': {
+                    value: queryString,
+                    boost: 100,
+                  },
+                },
+              },
+              {
+                match_phrase: {
+                  title: {
+                    query: queryString,
+                    boost: 5,
+                  },
+                },
+              },
+            ],
+            minimum_should_match: 0,
+          },
+        },
+        sort,
+        track_scores: true,
+        size,
+        from: ((input.page ?? 1) - 1) * size,
+      })
+
+    return {
+      items: response.body.hits.hits
+        .map((item) => JSON.parse(item._source.response ?? 'null'))
+        .filter(Boolean),
+      total: response.body.hits.total.value,
+    }
+  }
+
   async getTeamMembers(
     input: GetTeamMembersInput,
   ): Promise<TeamMemberResponse> {
-    const response = await this.getListItems({
+    const response = await this.getTeamListItems({
       ...input,
-      type: 'webTeamMember',
       listId: input.teamListId,
       orderBy:
         input.orderBy === GetTeamMembersInputOrderBy.Manual
-          ? GetGenericListItemsInputOrderBy.DATE
-          : GetGenericListItemsInputOrderBy.TITLE,
+          ? GetTeamMembersInputOrderBy.Manual
+          : GetTeamMembersInputOrderBy.Name,
     })
 
     return {

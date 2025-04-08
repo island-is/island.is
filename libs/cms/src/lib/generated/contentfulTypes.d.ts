@@ -480,6 +480,41 @@ export interface IBigBulletList extends Entry<IBigBulletListFields> {
   }
 }
 
+export interface IBloodDonationRestrictionFields {
+  /** Titill */
+  title?: string | undefined
+
+  /** Áhrif á blóðgjöf */
+  cardText?: Document | undefined
+
+  /** Lýsing á efni spjalds */
+  description?: string | undefined
+
+  /** Lykilorð */
+  keywords?: string | undefined
+
+  /** Nánar um áhrif á blóðgjöf */
+  detailedText?: Document | undefined
+}
+
+export interface IBloodDonationRestriction
+  extends Entry<IBloodDonationRestrictionFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'bloodDonationRestriction'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ICardFields {
   /** Title */
   title: string
@@ -773,6 +808,8 @@ export interface ICustomPageFields {
     | 'Grants'
     | 'DirectorateOfLabourMyPages'
     | 'Verdicts'
+    | 'OfficialJournalOfIcelandHelp'
+    | 'BloodDonationRestrictions'
     | undefined
 
   /** Alert Banner */
@@ -3484,6 +3521,7 @@ export interface IOrganizationSubpageFields {
         | ISectionHeading
         | ILatestEventsSlice
         | IGenericList
+        | IOrganizationParentSubpageList
       )[]
     | undefined
 
@@ -3506,7 +3544,10 @@ export interface IOrganizationSubpageFields {
   signLanguageVideo?: IEmbeddedVideo | undefined
 
   /** Bottom Slices */
-  bottomSlices?: (ITimeline | ILogoListSlice)[] | undefined
+  bottomSlices?: (ITimeline | ILogoListSlice | ILatestNewsSlice)[] | undefined
+
+  /** Organization Parent Subpage */
+  organizationParentSubpage?: IOrganizationParentSubpage | undefined
 }
 
 export interface IOrganizationSubpage

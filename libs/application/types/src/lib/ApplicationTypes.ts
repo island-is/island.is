@@ -1,5 +1,10 @@
 export enum ApplicationTypes {
   EXAMPLE = 'ExampleForm',
+  EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
+  EXAMPLE_INPUTS = 'ExampleInputs',
+  EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
+  EXAMPLE_PAYMENT = 'ExamplePayment',
+  EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
   PASSPORT = 'Passport',
   PASSPORT_ANNULMENT = 'PassportAnnulment',
   DRIVING_LEARNERS_PERMIT = 'DrivingLearnersPermit',
@@ -24,7 +29,6 @@ export enum ApplicationTypes {
   CRIMINAL_RECORD = 'CriminalRecord',
   FINANCIAL_AID = 'FinancialAid',
   DRIVING_INSTRUCTOR_REGISTRATIONS = 'DrivingInstructorRegistrations',
-  EXAMPLE_PAYMENT = 'ExamplePayment',
   DRIVING_SCHOOL_CONFIRMATION = 'DrivingSchoolConfirmation',
   MORTGAGE_CERTIFICATE = 'MortgageCertificate',
   MARRIAGE_CONDITIONS = 'MarriageConditions',
@@ -78,11 +82,9 @@ export enum ApplicationTypes {
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
   WORK_ACCIDENT_NOTIFICATION = 'WorkAccidentNotification',
   MACHINE_REGISTRATION = 'MachineRegistration',
+  SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
-  EXAMPLE_STATE_TRANSFERS = 'ExampleStateTransfers',
-  EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
-  EXAMPLE_INPUTS = 'ExampleInputs',
 }
 
 export const ApplicationConfigurations = {
@@ -94,13 +96,21 @@ export const ApplicationConfigurations = {
     slug: 'example-common-actions',
     translation: 'eca.application',
   },
-  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
-    slug: 'example-state-transfers',
-    translation: 'ets.application',
-  },
   [ApplicationTypes.EXAMPLE_INPUTS]: {
     slug: 'example-inputs',
     translation: 'ef.application',
+  },
+  [ApplicationTypes.EXAMPLE_NO_INPUTS]: {
+    slug: 'example-no-inputs',
+    translation: 'eni.application',
+  },
+  [ApplicationTypes.EXAMPLE_PAYMENT]: {
+    slug: 'example-payment',
+    translation: 'ep.application',
+  },
+  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
+    slug: 'example-state-transfers',
+    translation: 'ets.application',
   },
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
@@ -197,10 +207,6 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]: {
     slug: 'okutimar',
     translation: 'dir.application',
-  },
-  [ApplicationTypes.EXAMPLE_PAYMENT]: {
-    slug: 'greida',
-    translation: 'ep.application',
   },
   [ApplicationTypes.ESTATE]: {
     slug: 'danarbu',
@@ -417,6 +423,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.MACHINE_REGISTRATION]: {
     slug: 'nyskraning-taekis',
     translation: ['aosh.rnm.application'],
+  },
+  [ApplicationTypes.SEMINAR_REGISTRATION]: {
+    slug: 'vinnueftirlitid-namskeid',
+    translation: ['aosh.sem.application'],
   },
   [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: {
     slug: 'kennslurettindi-a-vinnuvel',

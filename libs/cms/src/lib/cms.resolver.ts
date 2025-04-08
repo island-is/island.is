@@ -1,6 +1,13 @@
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
-import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql'
+import {
+  Args,
+  Query,
+  Resolver,
+  ResolveField,
+  Parent,
+  ID,
+} from '@nestjs/graphql'
 import { Article } from './models/article.model'
 import { ContentSlug } from './models/contentSlug.model'
 import { Organization } from './models/organization.model'
@@ -45,7 +52,10 @@ import { SubpageHeader } from './models/subpageHeader.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { ErrorPage } from './models/errorPage.model'
 import { OrganizationSubpage } from './models/organizationSubpage.model'
-import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
+import {
+  GetOrganizationSubpageByIdInput,
+  GetOrganizationSubpageInput,
+} from './dto/getOrganizationSubpage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { OrganizationPage } from './models/organizationPage.model'
 import { GetOrganizationPageInput } from './dto/getOrganizationPage.input'
@@ -128,9 +138,19 @@ import {
   GetOrganizationPageStandaloneSitemapLevel1Input,
   GetOrganizationPageStandaloneSitemapLevel2Input,
 } from './dto/getOrganizationPageStandaloneSitemap.input'
+import { GetOrganizationByNationalIdInput } from './dto/getOrganizationByNationalId.input'
 import { GrantCardsList } from './models/grantCardsList.model'
 import { sortAlpha } from '@island.is/shared/utils'
 import { GetTeamMembersInputOrderBy } from './dto/getTeamMembers.input'
+import { IntroLinkImage } from './models/introLinkImage.model'
+import {
+  GetBloodDonationRestrictionDetailsInput,
+  GetBloodDonationRestrictionsInput,
+} from './dto/getBloodDonationRestrictions.input'
+import {
+  BloodDonationRestrictionDetails,
+  BloodDonationRestrictionList,
+} from './models/bloodDonationRestriction.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -241,6 +261,17 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
+  @Query(() => Organization, { nullable: true })
+  getOrganizationByNationalId(
+    @Args('input') input: GetOrganizationByNationalIdInput,
+  ): Promise<Organization | null> {
+    return this.cmsContentfulService.getOrganizationByNationalId(
+      input?.nationalId ?? '',
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @CacheControl(defaultCache)
   @Query(() => OrganizationPage, { nullable: true })
   async getOrganizationPage(
     @Args('input') input: GetOrganizationPageInput,
@@ -256,6 +287,17 @@ export class CmsResolver {
     return this.cmsContentfulService.getOrganizationSubpage(
       input.organizationSlug,
       input.slug,
+      input.lang,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => OrganizationSubpage, { nullable: true })
+  async getOrganizationSubpageById(
+    @Args('input') input: GetOrganizationSubpageByIdInput,
+  ): Promise<OrganizationSubpage | null> {
+    return this.cmsContentfulService.getOrganizationSubpageById(
+      input.id,
       input.lang,
     )
   }
@@ -707,6 +749,22 @@ export class CmsResolver {
       input,
     )
   }
+
+  @CacheControl(defaultCache)
+  @Query(() => BloodDonationRestrictionList)
+  getBloodDonationRestrictions(
+    @Args('input') input: GetBloodDonationRestrictionsInput,
+  ): Promise<BloodDonationRestrictionList> {
+    return this.cmsContentfulService.getBloodDonationRestrictions(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => BloodDonationRestrictionDetails, { nullable: true })
+  getBloodDonationRestrictionDetails(
+    @Args('input') input: GetBloodDonationRestrictionDetailsInput,
+  ): Promise<BloodDonationRestrictionDetails | null> {
+    return this.cmsContentfulService.getBloodDonationRestrictionDetails(input)
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
@@ -922,5 +980,17 @@ export class LatestGenericListItemsResolver {
       return null
     }
     return this.cmsElasticsearchService.getGenericListItems(input)
+  }
+}
+
+// Just in case the id field is missing from elasticsearch instances we return an empty string to prevent a graphql error since id field is non-nullable
+@Resolver(() => IntroLinkImage)
+export class IntroLinkImageResolver {
+  @ResolveField(() => ID)
+  async id(@Parent() { id }: IntroLinkImage) {
+    if (!id) {
+      return ''
+    }
+    return id
   }
 }
