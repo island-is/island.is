@@ -303,7 +303,7 @@ const BloodDonationRestrictionList: CustomScreen<
                   columnGap={2}
                 >
                   <Text variant="h4" color="blue400">
-                    {highlightMatch(item.title, trimmedQueryString)}
+                    {item.title}
                   </Text>
                   {item.hasCardText && (
                     <Box
