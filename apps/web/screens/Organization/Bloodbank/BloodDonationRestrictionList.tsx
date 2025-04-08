@@ -58,6 +58,7 @@ import { getSubpageNavList } from '../SubPage'
 import { m } from './messages.strings'
 
 const ITEMS_PER_PAGE = 10
+const DEBOUNCE_TIME_IN_MS = 300
 
 // Utility function to wrap matches in <mark>
 const highlightMatch = (text: string, query: string): ReactNode => {
@@ -158,7 +159,7 @@ const BloodDonationRestrictionList: CustomScreen<
         },
       })
     },
-    300,
+    DEBOUNCE_TIME_IN_MS,
     [queryString, tagKeys, currentPage],
   )
 
