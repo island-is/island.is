@@ -25,6 +25,7 @@ on:
                 default: ""
 env:
     _EXPERIMENTAL_DAGGER_RUNNER_HOST: ${{ secrets._EXPERIMENTAL_DAGGER_RUNNER_HOST }}
+    NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 jobs:
     run_action:
         runs-on: arc-shared
@@ -40,7 +41,12 @@ jobs:
                     echo "Neither 'branch' nor 'sha' is set. Exiting with status 1."
                     exit 1
                 fi
-            
+            - name: Get ECR password
+              id: ecr-login
+              run: |
+                ECR_PASSWORD=þettaerleimtilraun
+                echo "::add-mask::$ECR_PASSWORD"
+                echo "password=$ECR_PASSWORD" >> $GITHUB_OUTPUT
             - name: Checkout dagger code
               uses: actions/checkout@v4
               with:
@@ -48,8 +54,11 @@ jobs:
                 clean: true
                 sparse-checkout: |
                     ${{ inputs.module }}/                    
+        
             - name: Call Dagger Function
               uses: dagger/dagger-for-github@8.0.0
+              env:
+                AWS_ECR_PASSWORD: ${{ steps.ecr-login.outputs.password }}
               with:
                 version: ${{ inputs.version }}
                 module: ${{ inputs.module }}

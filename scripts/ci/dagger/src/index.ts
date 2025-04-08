@@ -19,27 +19,22 @@ export class Dagger {
   @func()
   async test(
     action: string,
-    AWS_ACCESS_KEY_ID: Secret,
-    AWS_SECRET_ACCESS_KEY: Secret,
-    AWS_SESSION_TOKEN?: Secret,
+    AWS_ECR_PASSWORD: Secret,
     branch?: string,
     sha?: string,
     files?: Directory,
+    NX_CLOUD_ACCESS_TOKEN?: Secret,
   ) {
     const props = getProps({
-      AWS_ACCESS_KEY_ID,
-      AWS_SECRET_ACCESS_KEY,
-      AWS_SESSION_TOKEN,
       action: action as FILE_ACTION,
       branch,
       sha,
       files,
     })
-    const container = await getMonorepoBase({
-      AWS_ACCESS_KEY_ID,
-      AWS_SECRET_ACCESS_KEY,
-      AWS_SESSION_TOKEN,
+    const container = (await getMonorepoBase({
+      AWS_ECR_PASSWORD,
+      NX_CLOUD_ACCESS_TOKEN,
       ...props,
-    })
+    }));
   }
 }
