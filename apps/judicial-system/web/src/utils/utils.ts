@@ -57,9 +57,7 @@ export const getRestrictionTagVariant = (
   }
 }
 
-export const fileSize = (bytes?: number) => {
-  if (!bytes) return ''
-
+export const fileSize = (bytes: number) => {
   const kb = Math.ceil(bytes / 1024)
   return kb >= 10000 ? `${kb.toString().substring(0, 2)}MB` : `${kb}KB`
 }
@@ -207,3 +205,9 @@ export const isCaseCivilClaimantLegalSpokesperson = (
       ) &&
       civilClaimant.spokespersonIsLawyer,
   )
+// Use the gender of the single defendant if there is only one,
+// otherwise default to male
+export const getDefaultDefendantGender = (defendants?: Defendant[] | null) =>
+  defendants && defendants.length === 1
+    ? defendants[0].gender ?? Gender.MALE
+    : Gender.MALE

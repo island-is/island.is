@@ -196,6 +196,7 @@ query Case($input: CaseQueryInput!) {
       displayDate
       policeFileId
       submittedBy
+      submissionDate
       fileRepresentative
     }
     isAppealDeadlineExpired

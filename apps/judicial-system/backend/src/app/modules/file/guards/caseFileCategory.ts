@@ -36,6 +36,9 @@ const defenderCaseFileCategoriesForIndictmentCases =
     CaseFileCategory.COST_BREAKDOWN,
     CaseFileCategory.CASE_FILE,
     CaseFileCategory.PROSECUTOR_CASE_FILE,
+    CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+    CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+    CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
     CaseFileCategory.DEFENDANT_CASE_FILE,
     CaseFileCategory.CIVIL_CLAIM,
   )

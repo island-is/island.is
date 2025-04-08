@@ -13,7 +13,10 @@ const FileDocumentSchema = z.object({
 
 const CustodianSchema = z.object({
   person: z.object({
-    nationalId: z.string().min(1),
+    nationalId: z
+      .string()
+      .min(1)
+      .refine((nationalId) => kennitala.isValid(nationalId)),
     name: z.string().min(1),
     email: z.string().min(1),
     phone: z.string().min(1),
@@ -28,10 +31,13 @@ const CustodianSchema = z.object({
 const MainOtherContactSchema = z
   .object({
     applicantNationalId: z.string(),
-    required: z.boolean(),
+    include: z.boolean(),
     person: z
       .object({
-        nationalId: z.string().optional(),
+        nationalId: z
+          .string()
+          .optional()
+          .refine((nationalId) => !nationalId || kennitala.isValid(nationalId)),
         name: z.string().optional(),
         email: z.string().optional(),
         phone: z.string().optional(),
@@ -39,29 +45,33 @@ const MainOtherContactSchema = z
       .optional(),
   })
   .refine(
-    ({ required, person }) => {
-      if (!required) return true
-      return !!person?.nationalId && kennitala.isValid(person.nationalId)
+    ({ include, person }) => {
+      if (!include) return true
+      if (!person?.nationalId && !person?.email && !person?.phone) return true
+      return !!person.nationalId && kennitala.isValid(person.nationalId)
     },
     { path: ['person', 'nationalId'] },
   )
   .refine(
-    ({ required, person }) => {
-      if (!required) return true
+    ({ include, person }) => {
+      if (!include) return true
+      if (!person?.nationalId && !person?.email && !person?.phone) return true
       return !!person?.name
     },
     { path: ['person', 'name'] },
   )
   .refine(
-    ({ required, person }) => {
-      if (!required) return true
+    ({ include, person }) => {
+      if (!include) return true
+      if (!person?.nationalId && !person?.email && !person?.phone) return true
       return !!person?.email
     },
     { path: ['person', 'email'] },
   )
   .refine(
-    ({ required, person }) => {
-      if (!required) return true
+    ({ include, person }) => {
+      if (!include) return true
+      if (!person?.nationalId && !person?.email && !person?.phone) return true
       return !!person?.phone
     },
     { path: ['person', 'phone'] },
@@ -74,17 +84,26 @@ const MainOtherContactSchema = z
     { path: ['person', 'nationalId'], params: error.errorSameAsApplicant },
   )
 
-const OtherContactSchema = z.object({
-  person: z.object({
-    nationalId: z
-      .string()
-      .min(1)
-      .refine((nationalId) => kennitala.isValid(nationalId)),
-    name: z.string().min(1),
-    email: z.string().min(1),
-    phone: z.string().min(1),
-  }),
-})
+const OtherContactSchema = z
+  .object({
+    person: z.object({
+      nationalId: z
+        .string()
+        .min(1)
+        .refine((nationalId) => kennitala.isValid(nationalId)),
+      name: z.string().min(1),
+      email: z.string().min(1),
+      phone: z.string().min(1),
+    }),
+    applicantNationalId: z.string().optional(),
+  })
+  .refine(
+    ({ person, applicantNationalId }) => {
+      if (person?.nationalId === applicantNationalId) return false
+      return true
+    },
+    { path: ['person', 'nationalId'], params: error.errorSameAsApplicant },
+  )
 
 const SelectionSchema = z
   .object({
@@ -165,7 +184,7 @@ export const SecondarySchoolSchema = z.object({
   applicant: applicantInformationSchema({
     phoneRequired: true,
     emailRequired: true,
-  }),
+  }).refine(({ nationalId }) => kennitala.isValid(nationalId)),
   applicationType: z
     .object({
       value: z.nativeEnum(ApplicationType),

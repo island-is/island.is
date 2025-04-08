@@ -61,6 +61,12 @@ export class AdvertCorrections {
   @Field(() => String, { nullable: true })
   documentPdfUrl?: string
 
+  @Field(() => Boolean, { nullable: true })
+  isLegacy?: boolean | null
+
+  @Field(() => String, { nullable: true })
+  legacyDate?: string | null
+
   @Field(() => String)
   createdDate!: string
 
