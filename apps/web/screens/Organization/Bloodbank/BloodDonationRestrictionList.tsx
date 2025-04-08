@@ -229,14 +229,18 @@ const BloodDonationRestrictionList: CustomScreen<
                             active={true}
                             onClick={() => {
                               setPage(null)
+                              queryVariablesRef.current.page = 1
                               setTagKeys((prev) => {
-                                const next = prev?.filter(
-                                  (tag) => tag !== value,
-                                )
-                                if (!next?.length) {
-                                  return null
+                                let updatedTagKeys:
+                                  | string[]
+                                  | undefined
+                                  | null = prev?.filter((tag) => tag !== value)
+                                if (!updatedTagKeys?.length) {
+                                  updatedTagKeys = null
                                 }
-                                return next
+                                queryVariablesRef.current.tagKeys =
+                                  updatedTagKeys
+                                return updatedTagKeys
                               })
                             }}
                           >
