@@ -101,6 +101,7 @@ export class PaymentService extends BaseTemplateApiService {
     application,
     auth,
     params,
+    currentUserLocale,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
     const { organizationId, chargeItems, extraData } = params ?? {}
     const { shouldUseMockPayment } = application.answers
@@ -170,6 +171,7 @@ export class PaymentService extends BaseTemplateApiService {
       items,
       application.id,
       extraDataItems,
+      currentUserLocale,
     )
 
     if (!response?.paymentUrl) {
