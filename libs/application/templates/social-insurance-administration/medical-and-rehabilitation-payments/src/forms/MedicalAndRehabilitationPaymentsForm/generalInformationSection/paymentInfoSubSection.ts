@@ -7,9 +7,16 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { getBankIsk, getTaxOptions, getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import {
+  getBankIsk,
+  getTaxOptions,
+  getYesNoOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { Application } from '@island.is/application/types'
-import { getApplicationAnswers, getApplicationExternalData } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '../../../lib/medicalAndRehabilitationPaymentsUtils'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const paymentInfoSubSection = buildSubSection({
@@ -41,9 +48,7 @@ export const paymentInfoSubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'paymentInfo.personalAllowance',
-          title:
-            socialInsuranceAdministrationMessage.payment
-              .personalAllowance,
+          title: socialInsuranceAdministrationMessage.payment.personalAllowance,
           options: getYesNoOptions(),
           width: 'half',
           largeButtons: true,

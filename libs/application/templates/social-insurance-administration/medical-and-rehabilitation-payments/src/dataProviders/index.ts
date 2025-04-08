@@ -1,4 +1,4 @@
-import { defineTemplateApi } from "@island.is/application/types"
+import { defineTemplateApi } from '@island.is/application/types'
 
 export {
   NationalRegistryUserApi,

@@ -19,42 +19,42 @@ export const dataSchema = z.object({
     }),
   }),
   paymentInfo: z
-  .object({
-    bank: z.string(),
-    personalAllowance: z.enum([YES, NO]),
-    personalAllowanceUsage: z.string().optional(),
-    taxLevel: z.enum([
-      TaxLevelOptions.INCOME,
-      TaxLevelOptions.FIRST_LEVEL,
-      TaxLevelOptions.SECOND_LEVEL,
-    ]),
-  })
-  .partial()
-  .refine(
-    ({ bank }) => {
-      const bankAccount = formatBankInfo(bank ?? '')
-      return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
-    },
-    { params: errorMessages.bank, path: ['bank'] },
-  )
-  .refine(
-    ({ personalAllowance, personalAllowanceUsage }) =>
-      personalAllowance === YES
-        ? !(
-            Number(personalAllowanceUsage) < 1 ||
-            Number(personalAllowanceUsage) > 100
-          )
-        : true,
-    {
-      path: ['personalAllowanceUsage'],
-      params: errorMessages.personalAllowance,
-    },
-  )
-  .refine(
-    ({ personalAllowance, personalAllowanceUsage }) =>
-      personalAllowance === YES ? !!personalAllowanceUsage : true,
-    { path: ['personalAllowanceUsage'] },
-  ),
+    .object({
+      bank: z.string(),
+      personalAllowance: z.enum([YES, NO]),
+      personalAllowanceUsage: z.string().optional(),
+      taxLevel: z.enum([
+        TaxLevelOptions.INCOME,
+        TaxLevelOptions.FIRST_LEVEL,
+        TaxLevelOptions.SECOND_LEVEL,
+      ]),
+    })
+    .partial()
+    .refine(
+      ({ bank }) => {
+        const bankAccount = formatBankInfo(bank ?? '')
+        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+      },
+      { params: errorMessages.bank, path: ['bank'] },
+    )
+    .refine(
+      ({ personalAllowance, personalAllowanceUsage }) =>
+        personalAllowance === YES
+          ? !(
+              Number(personalAllowanceUsage) < 1 ||
+              Number(personalAllowanceUsage) > 100
+            )
+          : true,
+      {
+        path: ['personalAllowanceUsage'],
+        params: errorMessages.personalAllowance,
+      },
+    )
+    .refine(
+      ({ personalAllowance, personalAllowanceUsage }) =>
+        personalAllowance === YES ? !!personalAllowanceUsage : true,
+      { path: ['personalAllowanceUsage'] },
+    ),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

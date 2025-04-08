@@ -1,6 +1,6 @@
 import { YesOrNo, getValueViaPath } from '@island.is/application/core'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { BankInfo, PaymentInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application } from '@island.is/application/types'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -27,7 +27,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'paymentInfo.taxLevel',
   ) as TaxLevelOptions
-  
+
   return {
     applicantPhonenumber,
     comment,
