@@ -8,8 +8,8 @@ import {
 } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
 import { ReviewGroupProps } from './props'
 
-import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import { NOT_APPLICABLE } from '../../../lib/constants'
+import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 
 export const SickPay = ({
   application,
