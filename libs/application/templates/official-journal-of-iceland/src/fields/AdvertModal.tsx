@@ -94,7 +94,7 @@ export const AdvertModal = ({
         type,
         categories,
         title: advert.title,
-        html: advert.document.html,
+        html: Buffer.from(advert.document.html).toString('base64'),
       },
     })
 
