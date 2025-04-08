@@ -138,6 +138,7 @@ export class CmsRepository {
       //Invalid state, log and skip
       logger.warn(`Entry has unpublished changes, please publish!`, {
         id: entry.sys.id,
+        referenceId: grantReferenceId,
       })
       return Promise.reject(`Entry has unpublished changes`)
     }
@@ -187,11 +188,14 @@ export class CmsRepository {
 
       //If not currently published, stop.
       if (!hasEntryBeenPublishedBefore) {
+        logger.info('returning updated entry, no publication', {
+          id: updatedEntry.sys.id,
+          referenceId: grantReferenceId,
+        })
         return updatedEntry
       } else {
-        const publishedEntry = await entry.publish()
-
-        logger.info('Entry published', {
+        const publishedEntry = await updatedEntry.publish()
+        logger.info('Entry published, returning published entry', {
           id: publishedEntry.sys.id,
           referenceId: grantReferenceId,
         })
