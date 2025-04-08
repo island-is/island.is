@@ -339,30 +339,6 @@ function DebugInfo({ componentId }: { componentId: string }) {
     if (loading) {
       return
     }
-    if (!isCognitoAuth) {
-      return Alert.alert(
-        'Cognito Required',
-        'You can use production without cognito login, but you need it for other environments.',
-        [
-          environment.id !== 'prod' && {
-            text: 'Switch to Production',
-            onPress: () => {
-              actions.setEnvironment(environments.prod)
-            },
-          },
-          {
-            text: 'Login with cognito',
-            onPress: () => {
-              onCognitoLoginPress()
-            },
-          },
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-        ].filter(Boolean) as AlertButton[],
-      )
-    }
     environmentStore
       .getState()
       .actions.loadEnvironments()
@@ -375,6 +351,30 @@ function DebugInfo({ componentId }: { componentId: string }) {
           cancel: true,
         })
           .then(({ selectedItem }: any) => {
+            if (!isCognitoAuth && selectedItem.id !== 'mock') {
+              return Alert.alert(
+                'Cognito Required',
+                'You can use production without cognito login, but you need it for other environments.',
+                [
+                  environment.id !== 'prod' && {
+                    text: 'Switch to Production',
+                    onPress: () => {
+                      actions.setEnvironment(environments.prod)
+                    },
+                  },
+                  {
+                    text: 'Login with cognito',
+                    onPress: () => {
+                      onCognitoLoginPress()
+                    },
+                  },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel',
+                  },
+                ].filter(Boolean) as AlertButton[],
+              )
+            }
             environmentStore.getState().actions.setEnvironment(selectedItem)
           })
           .catch((err) => {
