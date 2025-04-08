@@ -15,7 +15,6 @@ import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
-import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
@@ -59,6 +58,10 @@ import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-reg
 import { NotificationsModule } from '@island.is/api/domains/notifications'
 import { PassportModule } from '@island.is/api/domains/passport'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
+import {
+  ApiDomainsPaymentsModule,
+  PaymentsApiModuleConfig,
+} from '@island.is/api/domains/payments'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
@@ -76,6 +79,7 @@ import {
   WatsonAssistantChatModule,
 } from '@island.is/api/domains/watson-assistant-chat'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
+import { SeminarsModule } from '@island.is/api/domains/seminars-ver'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
@@ -134,13 +138,15 @@ import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
+import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { ShipRegistryClientConfig } from '@island.is/clients/ship-registry'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { HuntingLicenseClientConfig } from '@island.is/clients/hunting-license'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
-import { CmsModule, PowerBiConfig } from '@island.is/cms'
+import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
+import { CmsModule, Form, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
@@ -194,7 +200,6 @@ import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 import { LawAndOrderModule } from '@island.is/api/domains/law-and-order'
 import { UltravioletRadiationClientConfig } from '@island.is/clients/ultraviolet-radiation'
 import { JudicialSystemSPClientConfig } from '@island.is/clients/judicial-system-sp'
-import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
@@ -326,15 +331,16 @@ const environment = getConfig
     NationalRegistryXRoadModule,
     NotificationsModule,
     ApiDomainsPaymentModule,
+    ApiDomainsPaymentsModule,
     PaymentScheduleModule,
     ProblemModule,
-    CriminalRecordModule,
     MunicipalitiesFinancialAidModule,
     FishingLicenseModule,
     MortgageCertificateModule,
     TransportAuthorityApiModule,
     EnergyFundsServiceModule,
     WorkMachinesModule,
+    SeminarsModule,
     AdministrationOfOccupationalSafetyAndHealthModule,
     UniversityGatewayApiModule,
     SessionsModule,
@@ -351,6 +357,7 @@ const environment = getConfig
       load: [
         FormSystemClientConfig,
         WorkMachinesClientConfig,
+        SeminarsClientConfig,
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
@@ -414,6 +421,7 @@ const environment = getConfig
         OfficialJournalOfIcelandApplicationClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
+        PaymentsApiClientConfig,
         AuthAdminApiClientConfig,
         WatsonAssistantChatConfig,
         PowerBiConfig,
@@ -440,7 +448,6 @@ const environment = getConfig
         FriggClientConfig,
         GradeClientConfig,
         VmstClientConfig,
-        CriminalRecordClientConfig,
         HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
         WorkAccidentClientConfig,
@@ -448,6 +455,7 @@ const environment = getConfig
         emailModuleConfig,
         VerdictsClientConfig,
         SecondarySchoolClientConfig,
+        PaymentsApiModuleConfig,
       ],
     }),
   ],

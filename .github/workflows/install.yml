@@ -2,6 +2,11 @@ name: 'Prep Dependencies'
 on:
   workflow_call:
     inputs:
+      force_all_to_be_affected:
+        description: 'Should all be affected'
+        required: false
+        type: boolean
+        default: false
       main_branch:
         default: 'main'
         type: string
@@ -46,7 +51,7 @@ on:
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
-  NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  NX_AFFECTED_ALL: ${{ inputs.force_all_to_be_affected || contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
@@ -125,6 +130,8 @@ jobs:
       - name: Set base/head sha output
         id: export-sha
         shell: bash
+        env:
+          MAIN_BRANCH: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
         run: |
           if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
             # In merge que we always want to use the last
@@ -148,7 +155,16 @@ jobs:
           # NOTE: we reference BASE and HEAD elsewhere
           echo HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_ENV"
           echo BASE="${{ env.NX_BASE }}" >> "$GITHUB_ENV"
-
+          if [[ "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == release/* ]]; then
+          echo SKIP_JUDICIAL="true" >> "$GITHUB_OUTPUT"
+          echo SKIP_JUDICIAL="true" >> "$GITHUB_ENV"
+          export SKIP_JUDICIAL="true"
+          else
+          echo SKIP_JUDICIAL="false" >> "$GITHUB_OUTPUT"
+          echo SKIP_JUDICIAL="false" >> "$GITHUB_ENV"
+          export SKIP_JUDICIAL="false"
+          fi
+          echo Skipping judicial: $SKIP_JUDICIAL
           echo "Current base SHA is ${{ env.NX_BASE }} and head SHA is ${{ env.NX_HEAD }}"
           echo "{\"base_sha\": \"${{ env.NX_BASE }}\", \"head_sha\":\"${{ env.NX_HEAD }}\"}" > event.json
 

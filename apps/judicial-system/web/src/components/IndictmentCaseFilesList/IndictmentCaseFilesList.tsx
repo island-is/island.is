@@ -5,7 +5,6 @@ import { AnimatePresence } from 'motion/react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseIndictmentRulingDecision,
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
@@ -22,11 +21,12 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseFile,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { CaseFileTable } from '../Table'
@@ -116,8 +116,11 @@ const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
         CaseFileCategory.CRIMINAL_RECORD_UPDATE,
       ),
       uploadedCaseFiles: filterByCategories([
-        CaseFileCategory.PROSECUTOR_CASE_FILE,
-        CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_CASE_FILE, // sækjandi
+        CaseFileCategory.DEFENDANT_CASE_FILE, // verjandi
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE, // ákærði
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE, //réttargæslumaður
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE, // lögmaður
       ]),
       civilClaims: filterByCategories(CaseFileCategory.CIVIL_CLAIM),
       sentToPrisonAdminFiles: filterByCategories(

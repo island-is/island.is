@@ -7,7 +7,6 @@ import { environment } from '../environments'
 import { FormsModule } from './modules/forms/forms.module'
 import { ScreensModule } from './modules/screens/screens.module'
 import { FieldsModule } from './modules/fields/fields.module'
-import { OrganizationListTypesModule } from './modules/organizationListTypes/organizationListTypes.module'
 import { OrganizationsModule } from './modules/organizations/organizations.module'
 import { SectionsModule } from './modules/sections/sections.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -15,11 +14,10 @@ import { ListItemsModule } from './modules/listItems/listItems.module'
 import { ApplicationsModule } from './modules/applications/applications.module'
 import { FormApplicantTypesModule } from './modules/formApplicantTypes/formApplicantTypes.module'
 import { FormCertificationTypesModule } from './modules/formCertificationTypes/formCertificationTypes.module'
-import { OrganizationCertificationTypesModule } from './modules/organizationCertificationTypes/organizationCertificationTypes.module'
-import { OrganizationFieldTypesModule } from './modules/organizationFieldTypes/organizationFieldTypes.module'
 import { OrganizationUrlsModule } from './modules/organizationUrls/organizationUrls.module'
 import { FormUrlsModule } from './modules/formUrls/formUrls.module'
 import { ServicesModule } from './modules/services/services.module'
+import { OrganizationPermissionsModule } from './modules/organizationPermissions/organizationPermissions.module'
 
 @Module({
   imports: [
@@ -39,9 +37,7 @@ import { ServicesModule } from './modules/services/services.module'
     FormApplicantTypesModule,
     FormCertificationTypesModule,
     FormUrlsModule,
-    OrganizationCertificationTypesModule,
-    OrganizationFieldTypesModule,
-    OrganizationListTypesModule,
+    OrganizationPermissionsModule,
     OrganizationUrlsModule,
     ServicesModule,
   ],

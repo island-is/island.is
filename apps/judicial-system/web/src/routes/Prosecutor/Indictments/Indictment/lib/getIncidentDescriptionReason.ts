@@ -1,20 +1,23 @@
 import { IntlShape } from 'react-intl'
 
+import { Substance, SubstanceMap } from '@island.is/judicial-system/types'
 import {
+  Gender,
   IndictmentCountOffense,
-  Substance,
-  SubstanceMap,
-} from '@island.is/judicial-system/types'
-import { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
+  Offense,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { indictmentCount as strings } from '../IndictmentCount.strings'
-import { indictmentCountSubstanceEnum as substanceStrings } from '../IndictmentCountSubstanceEnum.strings'
+import { strings } from './getIncidentDescriptionReason.strings'
 
 export const getIncidentDescriptionReason = (
   offenses: Offense[],
+  gender: Gender,
   formatMessage: IntlShape['formatMessage'],
 ) => {
   const order = [
+    IndictmentCountOffense.DRIVING_WITHOUT_LICENCE,
+    IndictmentCountOffense.DRIVING_WITHOUT_VALID_LICENSE,
+    IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE,
     IndictmentCountOffense.DRUNK_DRIVING,
     IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
     IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
@@ -40,17 +43,23 @@ export const getIncidentDescriptionReason = (
       }
       switch (o.offense) {
         case IndictmentCountOffense.DRIVING_WITHOUT_LICENCE:
-          acc += formatMessage(
-            strings.incidentDescriptionDrivingWithoutLicenceAutofill,
-          )
+          acc +=
+            strings.incidentDescriptionDrivingWithoutLicenceAutofill[gender]
+          break
+        case IndictmentCountOffense.DRIVING_WITHOUT_VALID_LICENSE:
+          acc += strings.incidentDescriptionDrivingWithoutValidLicenceAutofill
+          break
+        case IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE:
+          acc +=
+            strings.incidentDescriptionDrivingWithoutEverHavingLicenceAutofill
           break
         case IndictmentCountOffense.DRUNK_DRIVING:
           acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
           break
         case IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING:
-          acc += `${formatMessage(
-            strings.incidentDescriptionDrugsDrivingPrefixAutofill,
-          )} ${formatMessage(
+          acc += `${
+            strings.incidentDescriptionDrugsDrivingPrefixAutofill[gender]
+          } ${formatMessage(
             strings.incidentDescriptionIllegalDrugsDrivingAutofill,
           )}`
           break
@@ -60,9 +69,7 @@ export const getIncidentDescriptionReason = (
               (o) => o.offense === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
             )
               ? ''
-              : `${formatMessage(
-                  strings.incidentDescriptionDrugsDrivingPrefixAutofill,
-                )} `) +
+              : `${strings.incidentDescriptionDrugsDrivingPrefixAutofill[gender]} `) +
             formatMessage(
               strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
             )
@@ -84,7 +91,7 @@ export const getIncidentDescriptionReason = (
     } else {
       acc += ', '
     }
-    acc += formatMessage(substanceStrings[substance[0] as Substance], {
+    acc += formatMessage(strings[substance[0] as Substance], {
       amount: substance[1],
     })
     if (index === substances.length - 1) {

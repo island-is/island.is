@@ -390,6 +390,13 @@ export const coreErrorMessages = defineMessages({
     description:
       'Text that appears when district comissioner has validation fails in pre-data',
   },
+  errorDataProviderEstateValidationNothingFoundSummary: {
+    id: 'application.system:core.error.dataProviderEstateValidationNothingFoundSummary',
+    defaultMessage:
+      'Engin dánarbú fundust. Vinsamlegast hafðu samband við Sýslumenn ef þú telur að um villu sé að ræða.',
+    description:
+      'Text that appears when district comissioner has no estate data in pre-data',
+  },
   fileUpload: {
     id: 'application.system:core.error.file.upload',
     defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',

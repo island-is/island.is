@@ -20,6 +20,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       userGeneratedFilename
       displayDate
       submittedBy
+      fileRepresentative
     }
     defendants {
       id
@@ -211,8 +212,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         offense
         substances
       }
-      deprecatedOffenses
-      substances
       lawsBroken
       incidentDescription
       legalArguments
