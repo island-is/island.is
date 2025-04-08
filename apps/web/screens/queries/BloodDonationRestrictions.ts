@@ -17,6 +17,7 @@ export const GET_BLOOD_DONATION_RESTRICTIONS_QUERY = gql`
         }
         description
         hasDetailedText
+        keywordsText
       }
     }
   }
@@ -39,6 +40,7 @@ export const GET_BLOOD_DONATION_RESTRICTION_DETAILS_QUERY = gql`
       detailedText {
         ...HtmlFields
       }
+      keywordsText
     }
   }
   ${htmlFields}
