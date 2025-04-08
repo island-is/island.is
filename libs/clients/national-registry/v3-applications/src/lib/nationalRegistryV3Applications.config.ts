@@ -3,6 +3,10 @@ import { z } from 'zod'
 
 const schema = z.object({
   fetchTimeout: z.number().int(),
+  clientId: z.string(),
+  clientSecret: z.string(),
+  scope: z.string(),
+  endpoint: z.string(),
   xRoadServicePath: z.string(),
 })
 
