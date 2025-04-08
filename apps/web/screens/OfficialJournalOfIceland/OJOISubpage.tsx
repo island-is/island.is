@@ -25,13 +25,11 @@ import { m } from './messages'
 
 interface OJOISubpageProps {
   organization?: Query['getOrganization']
-  locale: Locale
   customSubpage?: CustomPage
 }
 
 const OJOISubpage: CustomScreen<OJOISubpageProps> = ({
   organization,
-  locale,
   customSubpage,
 }) => {
   const { formatMessage } = useIntl()
@@ -46,11 +44,11 @@ const OJOISubpage: CustomScreen<OJOISubpageProps> = ({
       breadcrumbItems={[
         {
           title: formatMessage(m.breadcrumb.frontpage),
-          href: linkResolver('homepage', [], locale).href,
+          href: linkResolver('homepage', []).href,
         },
         {
           title: formatMessage(m.home.title),
-          href: linkResolver('ojoihome', [], locale).href,
+          href: linkResolver('ojoihome', []).href,
         },
         {
           title: customSubpage?.ogTitle ?? '',
@@ -103,7 +101,6 @@ OJOISubpage.getProps = async ({
 
   return {
     organization: getOrganization,
-    locale: locale as Locale,
     showSearchInHeader: false,
     themeConfig: {
       footerVersion: 'organization',
