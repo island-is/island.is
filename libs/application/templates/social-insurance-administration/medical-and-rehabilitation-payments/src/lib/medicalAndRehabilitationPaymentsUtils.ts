@@ -1,13 +1,41 @@
-import { YesOrNo, getValueViaPath } from '@island.is/application/core'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
+import {
+  Attachments,
+  BankInfo,
+  FileType,
+} from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application } from '@island.is/application/types'
+import { AttachmentLabel, AttachmentTypes } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber = getValueViaPath(
     answers,
     'applicantInfo.phonenumber',
   ) as string
+
+  const isSelfEmployed = getValueViaPath(
+    answers,
+    'questions.isSelfEmployed',
+  ) as YesOrNo
+
+  const isSelfEmployedDate = getValueViaPath(
+    answers,
+    'questions.isSelfEmployedDate',
+  ) as string
+
+  const isWorkingPartTime = getValueViaPath(
+    answers,
+    'questions.isWorkingPartTime',
+  ) as YesOrNo
+
+  const isStudying = getValueViaPath(answers, 'questions.isStudying') as YesOrNo
+
+  const isStudyingFileUpload = getValueViaPath(
+    answers,
+    'questions.isStudyingFileUpload',
+  ) as FileType[]
 
   const comment = getValueViaPath(answers, 'comment') as string
 
@@ -30,6 +58,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   return {
     applicantPhonenumber,
+    isSelfEmployed,
+    isSelfEmployedDate,
+    isWorkingPartTime,
+    isStudying,
+    isStudyingFileUpload,
     comment,
     bank,
     personalAllowance,
@@ -118,4 +151,31 @@ export const getApplicationExternalData = (
     maritalStatus,
     hasSpouse,
   }
+}
+
+export const getAttachments = (application: Application) => {
+  const getAttachmentDetails = (
+    attachmentsArr: FileType[] | undefined,
+    attachmentType: AttachmentTypes,
+  ) => {
+    if (attachmentsArr && attachmentsArr.length > 0) {
+      attachments.push({
+        attachments: attachmentsArr,
+        label: AttachmentLabel[attachmentType],
+      })
+    }
+  }
+
+  const { answers } = application
+  const { isStudying, isStudyingFileUpload } = getApplicationAnswers(answers)
+  const attachments: Attachments[] = []
+
+  if (isStudying === YES) {
+    getAttachmentDetails(
+      isStudyingFileUpload,
+      AttachmentTypes.STUDY_CONFIRMATION,
+    )
+  }
+
+  return attachments
 }

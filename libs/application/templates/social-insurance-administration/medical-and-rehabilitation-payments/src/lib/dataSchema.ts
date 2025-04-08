@@ -1,9 +1,10 @@
 import { NO, YES } from '@island.is/application/core'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { formatBankInfo } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
+import { errorMessages } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -15,7 +16,7 @@ export const dataSchema = z.object({
   applicantInfo: z.object({
     email: z.string().email().min(1),
     phonenumber: z.string().refine((v) => isValidPhoneNumber(v), {
-      params: errorMessages.phoneNumber,
+      params: coreSIAErrorMessages.phoneNumber,
     }),
   }),
   paymentInfo: z
@@ -35,7 +36,7 @@ export const dataSchema = z.object({
         const bankAccount = formatBankInfo(bank ?? '')
         return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
       },
-      { params: errorMessages.bank, path: ['bank'] },
+      { params: coreSIAErrorMessages.bank, path: ['bank'] },
     )
     .refine(
       ({ personalAllowance, personalAllowanceUsage }) =>
@@ -47,13 +48,27 @@ export const dataSchema = z.object({
           : true,
       {
         path: ['personalAllowanceUsage'],
-        params: errorMessages.personalAllowance,
+        params: coreSIAErrorMessages.personalAllowance,
       },
     )
     .refine(
       ({ personalAllowance, personalAllowanceUsage }) =>
         personalAllowance === YES ? !!personalAllowanceUsage : true,
       { path: ['personalAllowanceUsage'] },
+  questions: z
+    .object({
+      isSelfEmployed: z.enum([YES, NO]),
+      isWorkingPartTime: z.enum([YES, NO]),
+      isStudying: z.enum([YES, NO]),
+      isSelfEmployedDate: z.string().optional(),
+    })
+    .refine(
+      ({ isSelfEmployed, isSelfEmployedDate }) =>
+        isSelfEmployed === YES ? !!isSelfEmployedDate : true,
+      {
+        path: ['isSelfEmployedDate'],
+        params: errorMessages.dateRequired,
+      },
     ),
 })
 

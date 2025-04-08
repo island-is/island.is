@@ -15,9 +15,11 @@ import get from 'lodash/get'
 import has from 'lodash/has'
 import { FC } from 'react'
 
+import { Attachments } from './review-groups/Attachments'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { Comment } from './review-groups/Comment'
 import { Payment } from './review-groups/Payment'
+import { Questions } from './review-groups/Questions'
 
 interface ReviewScreenProps {
   application: Application
@@ -160,7 +162,9 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <BaseInformation {...childProps} />
       <Payment {...childProps} />
+      <Questions {...childProps} />
       <Comment {...childProps} />
+      <Attachments {...childProps} />
     </>
   )
 }
