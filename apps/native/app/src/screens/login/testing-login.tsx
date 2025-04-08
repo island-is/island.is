@@ -165,11 +165,6 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
           ],
         )
         return
-
-        // if environments.mock ->
-        //   update auth store as needed
-        //   setup mocking
-        //   send user to onboarding/home screen
       }
     }
 
