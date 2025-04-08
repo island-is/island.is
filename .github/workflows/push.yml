@@ -369,21 +369,21 @@ jobs:
           context: .
           file: ./scripts/ci/Dockerfile
           push: true
-          target: ${OUTPUT_TYPE}
+          target: ${{ env.OUTPUT_TYPE }}
           cache-from: type=s3,blobs_prefix=${{ needs.prepare.outputs.cache-prefix }}/,manifests_prefix=${{ needs.prepare.outputs.cache-prefix }}/,region=${AWS_REGION},bucket=${S3_DOCKER_CACHE_BUCKET}
           build-args: |
-            DOCKER_IMAGE_REGISTRY='${DOCKER_BASE_IMAGE_REGISTRY}'
-            NODE_IMAGE_VERSION='${NODE_IMAGE_VERSION}'
-            GIT_BRANCH='${GIT_BRANCH}'
-            GIT_COMMIT_SHA='${GIT_COMMIT_SHA}'
-            GIT_REPOSITORY_URL='${SERVER_URL}'
-            NX_PARALLEL='${NX_PARALLEL}'
-            NX_MAX_PARALLEL='${NX_MAX_PARALLEL}'
+            DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+            NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}
+            GIT_BRANCH=${{ env.GIT_BRANCH }}
+            GIT_COMMIT_SHA=${{ env.GIT_COMMIT_SHA }}
+            GIT_REPOSITORY_URL=${{ env.SERVER_URL }}
+            NX_PARALLEL=${{ env.NX_PARALLEL }}
+            NX_MAX_PARALLEL=${{ env.NX_MAX_PARALLEL }}
             NX_TASKS_RUNNER=ci
-            PLAYWRIGHT_VERSION='${PLAYWRIGHT_VERSION}'
-            APP='${APP}'
-            APP_HOME='${APP_HOME}'
-            APP_DIST_HOME='${APP_DIST_HOME}'
+            PLAYWRIGHT_VERSION=${{ env.PLAYWRIGHT_VERSION }}
+            APP=${{ env.APP }}
+            APP_HOME=${{ env.APP_HOME }}
+            APP_DIST_HOME=${{ env.APP_DIST_HOME }}
           secrets: |
             "nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}"
           tags: ${{ env.DOCKER_REGISTRY }}/${{ env.APP }}:${{ env.DOCKER_TAG }}

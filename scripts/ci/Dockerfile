@@ -2,7 +2,6 @@
 # Shared arguments (for images that need them early)
 # ------------------------------------------------
 ARG PLAYWRIGHT_VERSION
-ARG CACHE_IMAGE=821090935708.dkr.ecr.eu-west-1.amazonaws.com/docker-cache:latest
 # ------------------------------------------------
 # Dependencies stage (no app-specific args)
 # ------------------------------------------------
@@ -39,7 +38,7 @@ RUN \
 # ------------------------------------------------
 # Copy monorepo source
 # ------------------------------------------------
-FROM ${CACHE_IMAGE} AS src
+FROM base AS src
 
 COPY . .
 
