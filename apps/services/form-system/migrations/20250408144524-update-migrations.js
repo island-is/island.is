@@ -45,6 +45,12 @@ module.exports = {
     await queryInterface.removeColumn('form', 'organization_national_id');
     await queryInterface.removeColumn('form', 'organization_display_name');
     await queryInterface.removeColumn('form', 'has_payment');
-    await queryInterface.removeColumn('form', 'slug');
+
+    // Revert slug to its original state
+    await queryInterface.changeColumn('form', 'slug', {
+      type: Sequelize.STRING,
+      allowNull: false,
+      unique: false,
+    });
   }
 };
