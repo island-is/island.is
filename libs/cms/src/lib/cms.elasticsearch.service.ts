@@ -1300,12 +1300,16 @@ export class CmsElasticsearchService {
     }
 
     const tags =
-      body.aggregations.onlyBloodDonationRestrictions.uniqueTags.uniqueGenericTags.tagKeys.buckets.map(
-        (tagResult) => ({
+      body.aggregations.onlyBloodDonationRestrictions.uniqueTags.uniqueGenericTags.tagKeys.buckets
+        .filter(
+          (tagResult) =>
+            Boolean(tagResult?.key) &&
+            Boolean(tagResult.tagValues?.buckets?.[0]?.key),
+        )
+        .map((tagResult) => ({
           key: tagResult.key,
           value: tagResult.tagValues.buckets[0].key,
-        }),
-      )
+        }))
 
     tags.sort(sortAlpha('value'))
 
@@ -1330,20 +1334,35 @@ export class CmsElasticsearchService {
           },
         },
       },
-      {
+    ]
+
+    if (!!input.tagKeys && input.tagKeys.length > 0) {
+      must.push({
         nested: {
           path: 'tags',
           query: {
             bool: {
-              should:
-                input.tagKeys?.map((key) => ({
-                  term: { 'tags.key': key, 'tags.type': 'genericTag' },
-                })) ?? [],
+              should: input.tagKeys.map((key) => ({
+                bool: {
+                  must: [
+                    {
+                      term: {
+                        'tags.key': key,
+                      },
+                    },
+                    {
+                      term: {
+                        'tags.type': 'genericTag',
+                      },
+                    },
+                  ],
+                },
+              })),
             },
           },
         },
-      },
-    ]
+      })
+    }
 
     const queryString = input.queryString
       ? input.queryString.replace('´', '').trim().toLowerCase()
@@ -1367,6 +1386,7 @@ export class CmsElasticsearchService {
             must,
           },
         },
+        sort: [{ _score: { order: SortDirection.DESC } }],
         size,
         from: ((input.page ?? 1) - 1) * size,
       })

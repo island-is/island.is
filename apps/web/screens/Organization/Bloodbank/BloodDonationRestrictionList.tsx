@@ -19,7 +19,11 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { OrganizationWrapper, Webreader } from '@island.is/web/components'
+import {
+  FilterTag,
+  OrganizationWrapper,
+  Webreader,
+} from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   OrganizationPage,
@@ -31,6 +35,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -60,7 +65,7 @@ interface BloodDonationRestrictionListProps {
 
 const BloodDonationRestrictionList: CustomScreen<
   BloodDonationRestrictionListProps
-> = ({ currentPage, totalItems, items, organizationPage, namespace, tags }) => {
+> = ({ totalItems, items, organizationPage, namespace, tags }) => {
   const { formatMessage } = useIntl()
   const [_, setSelectedPage] = useQueryState(
     'page',
@@ -74,6 +79,26 @@ const BloodDonationRestrictionList: CustomScreen<
   const router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+  const [queryString, setQueryString] = useQueryState(
+    'q',
+    parseAsString
+      .withOptions({ shallow: false, clearOnDefault: true })
+      .withDefault(''),
+  )
+  const [tagKeys, setTagKeys] = useQueryState(
+    'tags',
+    parseAsArrayOf(parseAsString).withOptions({
+      shallow: false,
+      clearOnDefault: true,
+    }),
+  )
+  const [currentPage, setPage] = useQueryState(
+    'page',
+    parseAsInteger
+      .withOptions({ shallow: false, clearOnDefault: true })
+      .withDefault(1),
+  )
+  const { activeLocale } = useI18n()
 
   useLocalLinkTypeResolver()
 
@@ -116,14 +141,66 @@ const BloodDonationRestrictionList: CustomScreen<
                 }}
                 size="sm"
                 placeholder={formatMessage(m.listPage.searchInputPlaceholder)}
+                value={queryString}
+                onChange={(ev) => {
+                  setQueryString(ev.target.value)
+                  setPage(null)
+                }}
               />
 
               {tags.length > 0 && (
-                <Inline space={1} alignY="center">
-                  {tags.map((tag) => (
-                    <Tag key={tag.key}>{tag.label}</Tag>
-                  ))}
-                </Inline>
+                <>
+                  <Box>
+                    <Inline space={1} alignY="top">
+                      {!!tagKeys && tagKeys.length > 0 && (
+                        <Text>
+                          {activeLocale === 'is'
+                            ? 'Síað eftir:'
+                            : 'Filtered by:'}
+                        </Text>
+                      )}
+                      <Inline space={1}>
+                        {tagKeys?.map((value) => (
+                          <FilterTag
+                            key={value}
+                            active={true}
+                            onClick={() => {
+                              setPage(null)
+                              setTagKeys((prev) => {
+                                const next = prev?.filter(
+                                  (tag) => tag !== value,
+                                )
+                                if (!next?.length) {
+                                  return null
+                                }
+                                return next
+                              })
+                            }}
+                          >
+                            {tags.find((tag) => tag.key === value)?.label}
+                          </FilterTag>
+                        ))}
+                      </Inline>
+                    </Inline>
+                  </Box>
+                  <Inline space={1} alignY="center">
+                    {tags
+                      .filter((tag) => !tagKeys?.includes(tag.key))
+                      .map((tag) => (
+                        <Tag
+                          key={tag.key}
+                          active={false}
+                          onClick={() => {
+                            setTagKeys((prev) => {
+                              return [...(prev || []), tag.key]
+                            })
+                          }}
+                        >
+                          {tag.label}
+                        </Tag>
+                      ))}
+                  </Inline>
+                </>
               )}
             </Stack>
 
