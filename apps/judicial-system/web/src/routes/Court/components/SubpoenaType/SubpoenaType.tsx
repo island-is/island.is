@@ -25,6 +25,7 @@ import * as styles from '../../Indictments/Subpoena/Subpoena.css'
 interface SubpoenaTypeProps {
   subpoenaItems: {
     defendant: Defendant
+    alternativeServiceDescriptionDisabled?: boolean
     subpoenaDisabled?: boolean
     children?: ReactNode
     toggleNewAlternativeService?: () => void
@@ -119,6 +120,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
                             setWorkingCase,
                           )
                         }}
+                        disabled={item.alternativeServiceDescriptionDisabled}
                         required
                       />
                     </Box>

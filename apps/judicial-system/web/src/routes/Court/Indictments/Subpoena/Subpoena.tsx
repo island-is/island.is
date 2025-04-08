@@ -63,6 +63,10 @@ const Subpoena: FC = () => {
     isIssuingSubpoenaForDefendant(defendant),
   )
 
+  const isRegisteringAlternativeServiceForDefendant = (defendant: Defendant) =>
+    defendant.isAlternativeService &&
+    (!isArraignmentScheduled || newAlternativeServices.includes(defendant.id))
+
   const toggleNewAlternativeService = (defendant: Defendant) => {
     return isArraignmentScheduled
       ? () => {
@@ -172,6 +176,8 @@ const Subpoena: FC = () => {
               <SubpoenaType
                 subpoenaItems={workingCase.defendants.map((defendant) => ({
                   defendant,
+                  alternativeServiceDescriptionDisabled:
+                    !isRegisteringAlternativeServiceForDefendant(defendant),
                   subpoenaDisabled: !isIssuingSubpoenaForDefendant(defendant),
                   toggleNewAlternativeService:
                     toggleNewAlternativeService(defendant),
