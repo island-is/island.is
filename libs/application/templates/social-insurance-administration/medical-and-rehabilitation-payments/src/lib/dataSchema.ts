@@ -55,6 +55,7 @@ export const dataSchema = z.object({
       ({ personalAllowance, personalAllowanceUsage }) =>
         personalAllowance === YES ? !!personalAllowanceUsage : true,
       { path: ['personalAllowanceUsage'] },
+    ),  
   questions: z
     .object({
       isSelfEmployed: z.enum([YES, NO]),

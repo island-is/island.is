@@ -1,5 +1,4 @@
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import {
   Attachments,
