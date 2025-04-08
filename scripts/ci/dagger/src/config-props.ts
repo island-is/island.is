@@ -7,6 +7,10 @@ import {
 } from './interface'
 
 interface Props {
+  AWS_ACCESS_KEY_ID: Secret
+  AWS_SECRET_ACCESS_KEY: Secret
+
+  AWS_SESSION_TOKEN?: Secret | undefined
   action: FILE_ACTION
   branch?: string | null | undefined
   sha?: string | null | undefined

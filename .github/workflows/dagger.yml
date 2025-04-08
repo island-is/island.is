@@ -40,6 +40,7 @@ jobs:
                     echo "Neither 'branch' nor 'sha' is set. Exiting with status 1."
                     exit 1
                 fi
+            
             - name: Checkout dagger code
               uses: actions/checkout@v4
               with:
@@ -52,6 +53,6 @@ jobs:
               with:
                 version: ${{ inputs.version }}
                 module: ${{ inputs.module }}
-                args: ${{ inputs.function }} ${{ inputs.args }} ${{ steps.options.outputs.options }}
+                args: ${{ inputs.function }} ${{ inputs.args }} ${{ steps.options.outputs.options }} --AWS_ACCESS_KEY_ID=env://AWS_ACCESS_KEY_ID --AWS_SECRET_ACCESS_KEY=env://AWS_SECRET_ACCESS_KEY
                 verb: call
 
