@@ -1,4 +1,4 @@
-import { formatText, YesOrNoEnum } from '@island.is/application/core'
+import { formatText, YES, YesOrNoEnum } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -29,7 +29,7 @@ export const SickPay = ({
     >
       <Stack space={2}>
         <GridRow rowGap={2}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GridColumn span={['9/12', '9/12', '9/12', '12/12']}>
             <DataValue
               label={formatMessage(
                 medicalAndRehabilitationPaymentsFormMessage.generalInformation
@@ -42,14 +42,22 @@ export const SickPay = ({
               )}
             />
           </GridColumn>
-
-          {sickPayOption !== NOT_APPLICABLE && (
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        </GridRow>
+        {sickPayOption !== NOT_APPLICABLE && (
+          <GridRow rowGap={2}>
+            <GridColumn span={'12/12'}>
               <DataValue
-                label={formatMessage(
-                  medicalAndRehabilitationPaymentsFormMessage.overview
-                    .sickPayEndDate,
-                )}
+                label={
+                  sickPayOption === YES
+                    ? formatMessage(
+                        medicalAndRehabilitationPaymentsFormMessage.overview
+                          .sickPayDidEndDate,
+                      )
+                    : formatMessage(
+                        medicalAndRehabilitationPaymentsFormMessage.overview
+                          .sickPayDoesEndDate,
+                      )
+                }
                 value={
                   sickPayOption === YesOrNoEnum.YES
                     ? formatDate(sickPayDidEndDate)
@@ -57,8 +65,8 @@ export const SickPay = ({
                 }
               />
             </GridColumn>
-          )}
-        </GridRow>
+          </GridRow>
+        )}
       </Stack>
     </ReviewGroup>
   )

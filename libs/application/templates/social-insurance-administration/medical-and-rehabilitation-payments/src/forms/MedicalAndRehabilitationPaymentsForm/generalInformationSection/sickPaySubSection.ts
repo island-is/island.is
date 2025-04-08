@@ -27,13 +27,6 @@ export const sickPaySubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'sickPay.option',
-
-          title:
-            medicalAndRehabilitationPaymentsFormMessage.pre
-              .applicationTypeTitle,
-          description:
-            medicalAndRehabilitationPaymentsFormMessage.pre
-              .applicationTypeDescription,
           options: getYesNoNotApplicableOptions(),
           required: true,
         }),
@@ -51,12 +44,11 @@ export const sickPaySubSection = buildSubSection({
           },
         }),
         buildDateField({
-          id: 'sickPay.doesEndDate', // Hvenær líkur rétti þínum til veikindalauna
-          defaultValue: '',
+          id: 'sickPay.doesEndDate', // When does your sick pay entitlement end?
           title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
-          required: true,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
+          required: true,
           condition: (answers) => {
             const { sickPayOption } = getApplicationAnswers(answers)
 
@@ -77,12 +69,11 @@ export const sickPaySubSection = buildSubSection({
           },
         }),
         buildDateField({
-          id: 'sickPay.didEndDate', // Hvenær lauk rétti þínum til veikindalauna
-          defaultValue: '',
+          id: 'sickPay.didEndDate', // When did your sick pay entitlement end?
           title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
-          required: true,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
+          required: true,
           condition: (answers) => {
             const { sickPayOption } = getApplicationAnswers(answers)
 

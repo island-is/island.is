@@ -147,10 +147,15 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Staðfesting á námi',
       description: 'Confirmation of study',
     },
-    sickPayEndDate: {
-      id: 'marp.application:overiew.sick.pay.end.date',
-      defaultMessage: 'Réttinum lauk/lýkur',
-      description: 'Your entitlement ended/ends',
+    sickPayDidEndDate: {
+      id: 'marp.application:overiew.sick.pay.did.end.date',
+      defaultMessage: 'Réttinum lauk',
+      description: 'Your entitlement ended',
+    },
+    sickPayDoesEndDate: {
+      id: 'marp.application:overiew.sick.pay.does.end.date',
+      defaultMessage: 'Réttinum lýkur',
+      description: 'Your entitlement ends',
     },
   }),
 

@@ -162,9 +162,9 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <BaseInformation {...childProps} />
       <Questions {...childProps} />
+      <SickPay {...childProps} />
       <Comment {...childProps} />
       <Attachments {...childProps} />
-      <SickPay {...childProps} />
     </>
   )
 }

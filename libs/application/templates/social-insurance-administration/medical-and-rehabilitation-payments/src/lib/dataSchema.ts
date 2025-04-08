@@ -2,7 +2,6 @@ import { NO, YES } from '@island.is/application/core'
 import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-
 import { NOT_APPLICABLE } from './constants'
 import { errorMessages } from './messages'
 
@@ -41,24 +40,14 @@ export const dataSchema = z.object({
       didEndDate: z.string().optional(),
     })
     .refine(
-      (data) => {
-        if (data.option === YES) {
-          return data.didEndDate && !isNaN(Date.parse(data.didEndDate))
-        }
-        return true
-      },
+      ({ option, didEndDate }) => (option === YES ? !!didEndDate : true),
       {
         path: ['didEndDate'],
         params: errorMessages.dateRequired,
       },
     )
     .refine(
-      (data) => {
-        if (data.option === NO) {
-          return data.doesEndDate && !isNaN(Date.parse(data.doesEndDate))
-        }
-        return true
-      },
+      ({ option, doesEndDate }) => (option === NO ? !!doesEndDate : true),
       {
         path: ['doesEndDate'],
         params: errorMessages.dateRequired,
