@@ -286,6 +286,11 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      LSH_BLOOD_URL: {
+        dev: 'https://externalpatientdev.landspitali.is/swagger/index.html',
+        staging: 'https://externalpatientdev.landspitali.is/swagger/index.html',
+        prod: 'TODO',
+      },
     })
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
