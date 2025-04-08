@@ -12,6 +12,7 @@ import {
 import { useLazyQuery } from '@apollo/client'
 
 import {
+  AlertMessage,
   Box,
   Button,
   FocusableBox,
@@ -122,8 +123,8 @@ const BloodDonationRestrictionList: CustomScreen<
     totalItems,
     items,
   })
-  // TODO: Show error state
-  const [fetchRestrictions, { loading }] = useLazyQuery<
+
+  const [fetchRestrictions, { loading, error }] = useLazyQuery<
     Query,
     QueryGetBloodDonationRestrictionsArgs
   >(GET_BLOOD_DONATION_RESTRICTIONS_QUERY, {
@@ -274,6 +275,14 @@ const BloodDonationRestrictionList: CustomScreen<
                 </>
               )}
             </Stack>
+
+            {!!error && (
+              <AlertMessage
+                type="error"
+                title={formatMessage(m.listPage.errorTitle)}
+                message={formatMessage(m.listPage.errorDescription)}
+              />
+            )}
 
             <Stack space={4}>
               {data.items.map((item) => (

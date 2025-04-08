@@ -12,6 +12,18 @@ export const m = {
       defaultMessage: 'Áhrif á blóðgjöf',
       description: 'Texti undirtitil í spjaldi',
     },
+    errorTitle: {
+      id: 'web.bloodbank.bloodDonationRestrictions:listPage.errorTitle',
+      defaultMessage: 'Ekki tókst að sækja niðurstöður',
+      description:
+        'Titill á fyrir villueiningu ef ekki tekst að sækja niðurstöður',
+    },
+    errorDescription: {
+      id: 'web.bloodbank.bloodDonationRestrictions:listPage.errorDescription',
+      defaultMessage: 'Villa kom upp við að sækja niðurstöður',
+      description:
+        'Lýsing á fyrir villueiningu ef ekki tekst að sækja niðurstöður',
+    },
     mainHeading: {
       id: 'web.bloodbank.bloodDonationRestrictions:listPage.mainHeading',
       defaultMessage: 'Hvenær má gefa blóð',
