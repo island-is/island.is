@@ -9,10 +9,15 @@ const SignatureListsParliamentary = lazy(() =>
   import('./screens/Parliamentary/'),
 )
 const SignatureListsPresidential = lazy(() => import('./screens/Presidential'))
+const SignatureListsMunicipal = lazy(() => import ('./screens/Municipal'))
+
 const ViewListPresidential = lazy(() =>
   import('./screens/Presidential/OwnerView/ViewList'),
 )
 const ViewListParliamentary = lazy(() =>
+  import('./screens/Parliamentary/OwnerView/ViewList'),
+)
+const ViewListMunicipal = lazy(() =>
   import('./screens/Parliamentary/OwnerView/ViewList'),
 )
 
@@ -57,6 +62,21 @@ export const signatureCollectionModule: PortalModule = {
         key: 'PresidentialLists',
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         element: <ViewListPresidential />,
+      },
+       // Municipal
+       {
+        name: 'Sveitó',
+        enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        path: SignatureCollectionPaths.SignatureCollectionMunicipalLists,
+        key: 'PresidentialLists',
+        element: <SignatureListsMunicipal />,
+      },
+      {
+        name: 'Sveitó',
+        path: SignatureCollectionPaths.ViewMunicipalList,
+        key: 'PresidentialLists',
+        enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        element: <ViewListMunicipal />,
       },
     ]
 

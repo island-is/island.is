@@ -55,6 +55,18 @@ export const informationNavigation: PortalNavigationItem = {
       name: m.lists,
       path: InformationPaths.Lists,
       children: [
+        // Municipal
+        {
+          name: 'Sveitó',
+          path: SignatureCollectionPaths.SignatureCollectionMunicipalLists,
+          children: [
+            {
+              name: m.viewSignatureList,
+              navHide: true,
+              path: SignatureCollectionPaths.ViewMunicipalList,
+            },
+          ],
+        },
         // Parliamentary
         {
           name: m.signatureCollectionParliamentaryLists,

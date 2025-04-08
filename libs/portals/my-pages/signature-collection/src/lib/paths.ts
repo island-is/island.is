@@ -13,4 +13,8 @@ export enum SignatureCollectionPaths {
   // Presidential
   SignatureCollectionLists = '/min-gogn/listar/medmaelasofnun',
   ViewList = '/min-gogn/listar/medmaelasofnun/:id',
+
+  // Municipal
+  SignatureCollectionMunicipalLists = '/min-gogn/listar/sveitarstjornar-medmaelasofnun',
+  ViewMunicipalList = 'min-gogn/listar/sveitarstjornar-medmaelasofnun/:id'
 }
