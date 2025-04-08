@@ -8,6 +8,14 @@ module.exports = {
 
     await queryInterface.addColumn('form', 'organization_national_id', {
       type: Sequelize.STRING,
+      allowNull: true, // Initially allow NULL
+    });
+    await queryInterface.sequelize.query(
+      `UPDATE form SET organization_national_id = 'default_value' WHERE organization_national_id IS NULL`
+    );
+    // Finally, modify the column to make it NOT NULL
+    await queryInterface.changeColumn('form', 'organization_national_id', {
+      type: Sequelize.STRING,
       allowNull: false,
     });
   },
