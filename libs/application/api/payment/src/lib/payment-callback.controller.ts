@@ -75,26 +75,26 @@ export class PaymentCallbackController {
           callback.details?.eventMetadata?.charge?.receptionId ?? '',
           callback.paymentFlowMetadata.applicationId,
         )
-      } else {
-        throw new Error('No receptionId found in success callback')
+
+        const application = await this.applicationService.findOneById(
+          callback.paymentFlowMetadata.applicationId,
+        )
+        if (application) {
+          const oneMonthFromNow = addMonths(new Date(), 1)
+          //Applications payment states are default to be pruned in 24 hours.
+          //If the application is paid, we want to hold on to it for longer in case we get locked in an error state.
+
+          await this.applicationService.update(
+            callback.paymentFlowMetadata.applicationId,
+            {
+              ...application,
+              pruneAt: oneMonthFromNow,
+            },
+          )
+        }
       }
-    }
-
-    const application = await this.applicationService.findOneById(
-      callback.paymentFlowMetadata.applicationId,
-    )
-    if (application) {
-      const oneMonthFromNow = addMonths(new Date(), 1)
-      //Applications payment states are default to be pruned in 24 hours.
-      //If the application is paid, we want to hold on to it for longer in case we get locked in an error state.
-
-      await this.applicationService.update(
-        callback.paymentFlowMetadata.applicationId,
-        {
-          ...application,
-          pruneAt: oneMonthFromNow,
-        },
-      )
+    } else {
+      throw new Error('No receptionId found in success callback')
     }
   }
 }
