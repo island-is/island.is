@@ -5,10 +5,12 @@ import {
   buildTextField,
   buildAlertMessageField,
   getValueViaPath,
-  buildHiddenInput,
+  buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import { specialProvisions } from '../../../lib/messages'
+import { Unit } from '../../../fields/PropertySearch'
+import { Application } from '@island.is/application/types'
 
 export const RentalHousingSpecialProvisions = buildSubSection({
   id: Routes.SPECIALPROVISIONS,
@@ -19,31 +21,25 @@ export const RentalHousingSpecialProvisions = buildSubSection({
       title: specialProvisions.subsection.pageTitle,
       description: specialProvisions.subsection.pageDescription,
       children: [
-        buildHiddenInput({
-          id: 'specialProvisions.descriptionInputRequired',
-          defaultValue: true,
-          // TODO: change condition to check if m2 have been altered
-          condition: (answers) => {
-            return (
-              getValueViaPath<string>(
-                answers,
-                'registerProperty.categoryClassGroup',
-              ) === 'studentHousing'
-            )
-          },
+        buildHiddenInputWithWatchedValue({
+          id: 'specialProvisions.propertySearchUnits',
+          watchValue: 'registerProperty.searchresults.units',
         }),
         buildAlertMessageField({
           id: 'specialProvisions.descriptionInputAlert',
           alertType: 'warning',
           message: specialProvisions.housingInfo.warningBanner,
-          // TODO: change condition to check if m2 have been altered
           condition: (answers) => {
-            return (
-              getValueViaPath<string>(
-                answers,
-                'registerProperty.categoryClassGroup',
-              ) === 'studentHousing'
+            const units = getValueViaPath<Unit[]>(
+              answers,
+              'registerProperty.searchresults.units',
+              [],
             )
+            const hasChangedSize =
+              units?.some(
+                (unit) => unit.changedSize && unit.changedSize !== unit.size,
+              ) ?? false
+            return hasChangedSize
           },
         }),
         buildDescriptionField({
@@ -59,14 +55,18 @@ export const RentalHousingSpecialProvisions = buildSubSection({
           placeholder: specialProvisions.housingInfo.inputPlaceholder,
           variant: 'textarea',
           rows: 8,
-          // TODO: change condition to check if m2 have been altered
-          required: (application) => {
-            return (
-              getValueViaPath<string>(
-                application.answers,
-                'registerProperty.categoryClassGroup',
-              ) === 'studentHousing'
+          required: (application: Application) => {
+            const answers = application.answers
+            const units = getValueViaPath<Unit[]>(
+              answers,
+              'registerProperty.searchresults.units',
+              [],
             )
+            const hasChangedSize =
+              units?.some(
+                (unit) => unit.changedSize && unit.changedSize !== unit.size,
+              ) ?? false
+            return hasChangedSize
           },
         }),
         buildDescriptionField({

@@ -28,7 +28,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
   categoryRoute?: Routes
-  propertyInfoRoute?: Routes
+  propertySearchRoute?: Routes
   propertyDescriptionRoute?: Routes
   specialProvisionsRoute?: Routes
   propertyConditionRoute?: Routes
@@ -43,7 +43,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
     application,
     goToScreen,
     categoryRoute,
-    propertyInfoRoute,
+    propertySearchRoute,
     propertyDescriptionRoute,
     specialProvisionsRoute,
     propertyConditionRoute,
@@ -117,14 +117,34 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
 
       <SummaryCardRow
         editAction={goToScreen}
-        route={propertyInfoRoute}
+        route={propertySearchRoute}
         hasChangeButton={hasChangeButton}
       >
         <GridColumn span={['12/12', '4/12']}>
-          <KeyValue label={summary.PropertyNumOfRoomsLabel} value={'-'} />
+          <KeyValue
+            label={summary.PropertyNumOfRoomsLabel}
+            value={(
+              answers.registerProperty.searchresults?.units?.reduce(
+                (total, unit) => total + (unit.numOfRooms || 0),
+                0,
+              ) || 0
+            ).toString()}
+          />
         </GridColumn>
         <GridColumn span={['12/12', '4/12']}>
-          <KeyValue label={summary.propertySizeLabel} value={'-'} />
+          <KeyValue
+            label={summary.propertySizeLabel}
+            value={(
+              answers.registerProperty.searchresults?.units?.reduce(
+                (total, unit) =>
+                  total +
+                  (unit.changedSize && unit.changedSize !== 0
+                    ? unit.changedSize
+                    : unit.size || 0),
+                0,
+              ) || 0
+            ).toString()}
+          />
         </GridColumn>
       </SummaryCardRow>
 

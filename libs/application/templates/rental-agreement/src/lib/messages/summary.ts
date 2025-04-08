@@ -32,7 +32,7 @@ export const summary = defineMessages({
   // Property address
   rentalPropertyIdPrefix: {
     id: 'ra.application:summary.rentalPropertyIdPrefix',
-    defaultMessage: 'Fasteignanúmer: F',
+    defaultMessage: 'Fasteignanúmer: ',
     description: 'Property id prefix',
   },
 

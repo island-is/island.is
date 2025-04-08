@@ -82,11 +82,13 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
             <KeyValue
               label={`${answers.registerProperty.searchresults.label}`}
               value={
-                `${formatMessage(
-                  summary.rentalPropertyIdPrefix,
-                )}${answers.registerProperty.searchresults.units
-                  ?.map((unit) => unit.propertyCode)
-                  .join(', ')}` || '-'
+                `${formatMessage(summary.rentalPropertyIdPrefix)}${[
+                  ...new Set(
+                    answers.registerProperty.searchresults.units?.map(
+                      (unit) => 'F' + unit.propertyCode,
+                    ),
+                  ),
+                ].join(', ')}` || '-'
               }
               labelVariant="h4"
               labelAs="h4"
