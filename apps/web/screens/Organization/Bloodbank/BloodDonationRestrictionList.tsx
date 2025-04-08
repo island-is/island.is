@@ -1,4 +1,7 @@
+import { type ReactNode, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useDebounce } from 'react-use'
+import isEqual from 'lodash/isEqual'
 import { useRouter } from 'next/router'
 import {
   parseAsArrayOf,
@@ -6,6 +9,7 @@ import {
   parseAsString,
   useQueryState,
 } from 'next-usequerystate'
+import { useLazyQuery } from '@apollo/client'
 
 import {
   Box,
@@ -54,6 +58,18 @@ import { m } from './messages.strings'
 
 const ITEMS_PER_PAGE = 10
 
+// Utility function to wrap matches in <mark>
+const highlightMatch = (text: string, query: string): ReactNode => {
+  if (!query) return text
+
+  const regex = new RegExp(`(${query})`, 'gi')
+  const parts = text.split(regex)
+
+  return parts.map((part, i) =>
+    regex.test(part) ? <mark key={i}>{part}</mark> : part,
+  )
+}
+
 interface BloodDonationRestrictionListProps {
   totalItems: number
   currentPage: number
@@ -67,40 +83,84 @@ const BloodDonationRestrictionList: CustomScreen<
   BloodDonationRestrictionListProps
 > = ({ totalItems, items, organizationPage, namespace, tags }) => {
   const { formatMessage } = useIntl()
-  const [_, setSelectedPage] = useQueryState(
-    'page',
-    parseAsInteger
-      .withOptions({
-        clearOnDefault: true,
-        shallow: false,
-      })
-      .withDefault(1),
-  )
   const router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const [queryString, setQueryString] = useQueryState(
     'q',
     parseAsString
-      .withOptions({ shallow: false, clearOnDefault: true })
+      .withOptions({ shallow: true, clearOnDefault: true })
       .withDefault(''),
   )
   const [tagKeys, setTagKeys] = useQueryState(
     'tags',
     parseAsArrayOf(parseAsString).withOptions({
-      shallow: false,
+      shallow: true,
       clearOnDefault: true,
     }),
   )
   const [currentPage, setPage] = useQueryState(
     'page',
     parseAsInteger
-      .withOptions({ shallow: false, clearOnDefault: true })
+      .withOptions({ shallow: true, clearOnDefault: true })
       .withDefault(1),
   )
   const { activeLocale } = useI18n()
+  const initialRender = useRef(true)
+  const queryVariablesRef = useRef({
+    queryString,
+    tagKeys,
+    page: currentPage,
+    lang: activeLocale,
+  })
 
   useLocalLinkTypeResolver()
+
+  const trimmedQueryString = queryString.trim()
+
+  const [data, setData] = useState({
+    totalItems,
+    items,
+  })
+  // TODO: Show error state
+  const [fetchRestrictions, { loading }] = useLazyQuery<
+    Query,
+    QueryGetBloodDonationRestrictionsArgs
+  >(GET_BLOOD_DONATION_RESTRICTIONS_QUERY, {
+    onCompleted(data) {
+      const input = { ...data.getBloodDonationRestrictions.input }
+      delete input['__typename']
+      console.log({ input, query: queryVariablesRef.current })
+      if (!isEqual(input, queryVariablesRef.current)) {
+        return
+      }
+      setData({
+        totalItems: data.getBloodDonationRestrictions.total,
+        items: data.getBloodDonationRestrictions.items,
+      })
+    },
+  })
+
+  useDebounce(
+    () => {
+      if (initialRender.current) {
+        initialRender.current = false
+        return
+      }
+      fetchRestrictions({
+        variables: {
+          input: {
+            lang: activeLocale,
+            page: currentPage,
+            queryString,
+            tagKeys,
+          },
+        },
+      })
+    },
+    300,
+    [queryString, tagKeys, currentPage],
+  )
 
   return (
     <OrganizationWrapper
@@ -145,7 +205,10 @@ const BloodDonationRestrictionList: CustomScreen<
                 onChange={(ev) => {
                   setQueryString(ev.target.value)
                   setPage(null)
+                  queryVariablesRef.current.queryString = ev.target.value
+                  queryVariablesRef.current.page = 1
                 }}
+                loading={loading}
               />
 
               {tags.length > 0 && (
@@ -191,8 +254,12 @@ const BloodDonationRestrictionList: CustomScreen<
                           key={tag.key}
                           active={false}
                           onClick={() => {
+                            setPage(null)
+                            queryVariablesRef.current.page = 1
                             setTagKeys((prev) => {
-                              return [...(prev || []), tag.key]
+                              const updatedTagKeys = [...(prev || []), tag.key]
+                              queryVariablesRef.current.tagKeys = updatedTagKeys
+                              return updatedTagKeys
                             })
                           }}
                         >
@@ -205,7 +272,7 @@ const BloodDonationRestrictionList: CustomScreen<
             </Stack>
 
             <Stack space={4}>
-              {items.map((item) => (
+              {data.items.map((item) => (
                 <FocusableBox
                   key={item.id}
                   href={`${
@@ -223,7 +290,7 @@ const BloodDonationRestrictionList: CustomScreen<
                   columnGap={2}
                 >
                   <Text variant="h4" color="blue400">
-                    {item.title}
+                    {highlightMatch(item.title, trimmedQueryString)}
                   </Text>
                   {item.hasCardText && (
                     <Box
@@ -251,27 +318,30 @@ const BloodDonationRestrictionList: CustomScreen<
                     </Box>
                   )}
                   {Boolean(item.description) && (
-                    <Text variant="medium">{item.description}</Text>
+                    <Text variant="medium">
+                      {highlightMatch(item.description, trimmedQueryString)}
+                    </Text>
                   )}
                   {Boolean(item.keywordsText) && (
                     <Text variant="small">
                       {formatMessage(m.listPage.keywordsTextPrefix)}
-                      {item.keywordsText}
+                      {highlightMatch(item.keywordsText, trimmedQueryString)}
                     </Text>
                   )}
                 </FocusableBox>
               ))}
             </Stack>
-            {totalItems > ITEMS_PER_PAGE && (
+            {data.totalItems > ITEMS_PER_PAGE && (
               <Pagination
                 variant="blue"
                 page={currentPage}
-                totalItems={totalItems}
+                totalItems={data.totalItems}
                 itemsPerPage={ITEMS_PER_PAGE}
                 renderLink={(page, className, children) => (
                   <button
                     onClick={() => {
-                      setSelectedPage(page)
+                      queryVariablesRef.current.page = page
+                      setPage(page)
                     }}
                   >
                     <span className={className}>{children}</span>

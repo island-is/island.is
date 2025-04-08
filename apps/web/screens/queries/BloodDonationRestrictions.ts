@@ -21,6 +21,12 @@ export const GET_BLOOD_DONATION_RESTRICTIONS_QUERY = gql`
   ) {
     getBloodDonationRestrictions(input: $input) {
       total
+      input {
+        page
+        queryString
+        tagKeys
+        lang
+      }
       items {
         id
         title
