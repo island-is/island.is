@@ -117,6 +117,12 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
     // Skip all login functionality if we are in mock environment
     if (environment.id === 'mock') {
       await setupNativeMocking()
+      // Skip onboarding steps when mocking
+      preferencesStore.setState({
+        hasOnboardedBiometrics: true,
+        hasOnboardedPinCode: true,
+        hasOnboardedNotifications: true,
+      })
       await nextOnboardingStep()
       return
     }
