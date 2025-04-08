@@ -56,6 +56,38 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Spurningar',
       description: 'Questions',
     },
+    questionsIsSelfEmployed: {
+      id: 'marp.application:general.information.questions.is.self.employed',
+      defaultMessage: 'Ertu sjálfstætt starfandi?',
+      description: 'Are you self-employed?',
+    },
+    questionsIsSelfEmployedDescription: {
+      id: 'marp.application:general.information.questions.is.self.employed.description',
+      defaultMessage:
+        'Sjálfstætt starfandi einstaklingar þurfa að setja inn dagsetningu lækkunar á reiknuðu endurgjaldi.',
+      description:
+        'Self-employed individuals must enter the date of reduction in calculated remuneration',
+    },
+    questionsIsSelfEmployedDate: {
+      id: 'marp.application:general.information.questions.is.self.employed.date',
+      defaultMessage: 'Hvenær var lækkun á reiknuðu endurgjaldi?',
+      description: 'When was the reduction in calculated remuneration?',
+    },
+    questionsIsWorkingPartTime: {
+      id: 'marp.application:general.information.questions.is.working.part.time',
+      defaultMessage: 'Ertu í hlutastarfi?',
+      description: 'Are you working part-time?',
+    },
+    questionsIsStudying: {
+      id: 'marp.application:general.information.questions.is.studying',
+      defaultMessage: 'Ertu í námi?',
+      description: 'Are you studying?',
+    },
+    questionsIsStudyingFileUpload: {
+      id: 'marp.application:general.information.questions.is.studying.file.upload',
+      defaultMessage: 'Hlaða inn staðfestingarskjali',
+      description: 'Upload confirmation document',
+    },
 
     // Sick pay
     sickPaySubSectionTitle: {
@@ -110,6 +142,11 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
   }),
 
   overview: defineMessages({
+    studyConfirmation: {
+      id: 'marp.application:overview.study.confirmation',
+      defaultMessage: 'Staðfesting á námi',
+      description: 'Confirmation of study',
+    },
     sickPayEndDate: {
       id: 'marp.application:overiew.sick.pay.end.date',
       defaultMessage: 'Réttinum lauk/lýkur',
@@ -119,6 +156,14 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
 
   conclusion: defineMessages({}),
 }
+
+export const errorMessages = defineMessages({
+  dateRequired: {
+    id: 'marp.application:error.date.required',
+    defaultMessage: 'Það þarf að velja dagsetningu',
+    description: 'You must select a date',
+  },
+})
 
 export const statesMessages = defineMessages({
   applicationApprovedDescription: {

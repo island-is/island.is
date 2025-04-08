@@ -1,8 +1,10 @@
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { NO, YES } from '@island.is/application/core'
+import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { NOT_APPLICABLE } from '../utils/constants'
-import { NO, YES } from '@island.is/application/core'
+
+import { NOT_APPLICABLE } from './constants'
+import { errorMessages } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -14,9 +16,24 @@ export const dataSchema = z.object({
   applicantInfo: z.object({
     email: z.string().email().min(1),
     phonenumber: z.string().refine((v) => isValidPhoneNumber(v), {
-      params: errorMessages.phoneNumber,
+      params: coreSIAErrorMessages.phoneNumber,
     }),
   }),
+  questions: z
+    .object({
+      isSelfEmployed: z.enum([YES, NO]),
+      isWorkingPartTime: z.enum([YES, NO]),
+      isStudying: z.enum([YES, NO]),
+      isSelfEmployedDate: z.string().optional(),
+    })
+    .refine(
+      ({ isSelfEmployed, isSelfEmployedDate }) =>
+        isSelfEmployed === YES ? !!isSelfEmployedDate : true,
+      {
+        path: ['isSelfEmployedDate'],
+        params: errorMessages.dateRequired,
+      },
+    ),
   sickPay: z
     .object({
       option: z.enum([YES, NO, NOT_APPLICABLE]),
@@ -32,7 +49,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['didEndDate'],
-        // params: errorMessages.dateRequired,
+        params: errorMessages.dateRequired,
       },
     )
     .refine(
@@ -44,7 +61,7 @@ export const dataSchema = z.object({
       },
       {
         path: ['doesEndDate'],
-        // params: errorMessages.dateRequired,
+        params: errorMessages.dateRequired,
       },
     ),
 })

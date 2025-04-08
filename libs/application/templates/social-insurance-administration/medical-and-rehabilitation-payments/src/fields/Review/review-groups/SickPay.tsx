@@ -1,4 +1,4 @@
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { formatText, YesOrNoEnum } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -7,9 +7,9 @@ import {
   getYesNoNotApplicableTranslation,
 } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
 import { ReviewGroupProps } from './props'
-import { formatText, YesOrNoEnum } from '@island.is/application/core'
-import { NOT_APPLICABLE } from '../../../utils/constants'
+
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
+import { NOT_APPLICABLE } from '../../../lib/constants'
 
 export const SickPay = ({
   application,
