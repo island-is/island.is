@@ -287,8 +287,8 @@ export const serviceSetup = (services: {
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
       LSH_BLOOD_URL: {
-        dev: 'https://externalpatientdev.landspitali.is/swagger/index.html',
-        staging: 'https://externalpatientdev.landspitali.is/swagger/index.html',
+        dev: 'https://externalpatientdev.landspitali.is',
+        staging: 'https://externalpatientdev.landspitali.is',
         prod: 'TODO',
       },
     })

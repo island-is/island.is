@@ -13,7 +13,7 @@ export const BloodClientConfig = defineConfig<z.infer<typeof schema>>({
     return {
       baseUrl: env.required(
         'LSH_BLOOD_URL',
-        'https://externalpatientdev.landspitali.is/swagger/index.html',
+        'https://externalpatientdev.landspitali.is',
       ),
       apiKey: env.required('LSH_BLOOD_API_KEY', ''),
     }

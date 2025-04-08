@@ -1,17 +1,17 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  formatDate,
-  HEALTH_DIRECTORATE_SLUG,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
   LANDLAEKNIR_SLUG,
   LinkButton,
+  formatDate,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
+import { useBloodTypeQuery } from './Bloodtype.generated'
 
 type UseParams = {
   id: string
@@ -19,19 +19,11 @@ type UseParams = {
 
 const ReferencesDetail: React.FC = () => {
   useNamespaces('sp.health')
-  const { formatMessage, lang } = useLocale()
-  const { id } = useParams() as UseParams
-  const data = {}
-  const error = false
-  const loading = false
+  const { formatMessage } = useLocale()
 
-  //   const { data, loading, error } = useGetReferralsDetailQuery({
-  //     variables: { locale: lang },
-  //   })
+  const { data, loading, error } = useBloodTypeQuery()
 
-  //   const referral = data?.healthDirectorateReferrals.referrals.find(
-  //     (item) => item.id === id,
-  //   )
+  const bloodType = data?.rightsPortalBloodType
 
   return (
     <IntroWrapper
@@ -56,12 +48,14 @@ const ReferencesDetail: React.FC = () => {
         <InfoLineStack space={1}>
           <InfoLine
             label={formatMessage(messages.bloodtype)}
-            content={'A+'}
+            content={bloodType?.type}
             loading={loading}
           />
           <InfoLine
             label={formatMessage(messages.registered)}
-            content={'12.12.2021'}
+            content={
+              bloodType?.registered ? formatDate(bloodType.registered) : ''
+            }
             loading={loading}
           />
           <InfoLine
