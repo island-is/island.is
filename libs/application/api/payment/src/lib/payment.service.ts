@@ -355,16 +355,10 @@ export class PaymentService {
 
     //2. Fetch existing payment if any
     let paymentModel = await this.findPaymentByApplicationId(applicationId)
-    console.log('===============================================')
-    console.log('paymentModel', JSON.stringify(paymentModel, null, 2))
-    console.log('===============================================')
     let paymentUrl = ''
 
     if (!paymentModel) {
       // payment Model does not exist so we need to create a new one and store it in the payment model variable
-      console.log('===============================================')
-      console.log('creating new payment model')
-      console.log('===============================================')
       paymentModel = await this.createPaymentModel(
         catalogChargeItems,
         applicationId,
@@ -372,13 +366,7 @@ export class PaymentService {
       )
     } else {
       // payment model already exists so we need to check if a flow was created
-      console.log('===============================================')
-      console.log('payment model already exists')
-      console.log('===============================================')
       paymentUrl = JSON.parse(paymentModel.dataValues.definition).paymentUrl
-      console.log('===============================================')
-      console.log('paymentUrl', paymentUrl)
-      console.log('===============================================')
       if (paymentUrl) {
         // payment url is set, meaning a flow was created so we can use that
         return {
@@ -387,55 +375,39 @@ export class PaymentService {
         }
       }
     }
-    console.log('===============================================')
-    console.log('creating new payment flow')
-    console.log('===============================================')
     // no model existed orpayment url was not set, meaning no flow was created so we need to create a new one
     const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
     onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
 
-    try {
-      const paymentFlowUrls =
-        await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
-          createPaymentFlowInput: {
-            availablePaymentMethods: [
-              CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
-            ],
-            charges: catalogChargeItems.map((chargeItem) => ({
-              chargeType: chargeItem.chargeType,
-              chargeItemCode: chargeItem.chargeItemCode,
-              quantity: chargeItem.quantity ?? 1,
-              price: chargeItem.priceAmount,
-            })),
-            payerNationalId: user.nationalId,
-            organisationId: performingOrganizationID,
-            onUpdateUrl: onUpdateUrl.toString(),
-            metadata: {
-              applicationId,
-              paymentId: paymentModel.id,
-            },
-            returnUrl: await this.getReturnUrl(applicationId),
-            redirectToReturnUrlOnSuccess: true,
-            extraData,
-            chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
+    const paymentFlowUrls =
+      await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
+        createPaymentFlowInput: {
+          availablePaymentMethods: [
+            CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
+          ],
+          charges: catalogChargeItems.map((chargeItem) => ({
+            chargeType: chargeItem.chargeType,
+            chargeItemCode: chargeItem.chargeItemCode,
+            quantity: chargeItem.quantity ?? 1,
+            price: chargeItem.priceAmount,
+          })),
+          payerNationalId: user.nationalId,
+          organisationId: performingOrganizationID,
+          onUpdateUrl: onUpdateUrl.toString(),
+          metadata: {
+            applicationId,
+            paymentId: paymentModel.id,
           },
-        })
-      console.log('===============================================')
-      console.log('paymentFlow', JSON.stringify(paymentFlowUrls, null, 2))
-      console.log('===============================================')
-      paymentUrl =
-        locale && locale === 'en'
-          ? paymentFlowUrls.urls.en
-          : paymentFlowUrls.urls.is
-      console.log('===============================================')
-      console.log('paymentUrl', JSON.stringify(paymentUrl, null, 2))
-      console.log('===============================================')
-    } catch (error) {
-      console.log('===============================================')
-      console.log('error', JSON.stringify(error, null, 2))
-      console.log('===============================================')
-      throw error
-    }
+          returnUrl: await this.getReturnUrl(applicationId),
+          redirectToReturnUrlOnSuccess: true,
+          extraData,
+          chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
+        },
+      })
+    paymentUrl =
+      locale && locale === 'en'
+        ? paymentFlowUrls.urls.en
+        : paymentFlowUrls.urls.is
 
     await this.addPaymentUrl(applicationId, paymentModel.id, paymentUrl)
     await paymentModel.reload()
