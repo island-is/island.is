@@ -2,9 +2,9 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.dropTable('20240614092719-create-organization-field-type.js');
-    await queryInterface.dropTable('20240614142442-create-organization-certification-type.js');
-    await queryInterface.dropTable('20240614142442-create-organization-list-type.js');
+    await queryInterface.dropTable('organization_field_type');
+    await queryInterface.dropTable('organization_certification_type');
+    await queryInterface.dropTable('organization_list_type');
 
     await queryInterface.addColumn('form', 'organization_national_id', {
       type: Sequelize.STRING,
