@@ -353,6 +353,7 @@ jobs:
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
           export OUTPUT_TYPE=${DOCKER_TYPE/docker/output} >> "${GITHUB_ENV}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
+          echo "push tag: ${{ env.DOCKER_REGISTRY }}/${APP}:${{ env.DOCKER_TAG }}"
 
       - name: Set up Docker Buildx
         id: buildx
@@ -385,7 +386,7 @@ jobs:
             "APP_DIST_HOME=${APP_DIST_HOME}"
           secrets: |
             "nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}"
-          tags: ${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}
+          tags: ${{ env.DOCKER_REGISTRY }}/${APP}:${{ env.DOCKER_TAG }}
 
       # - name: Building Docker images
       #   id: dockerbuild

@@ -4,6 +4,7 @@
 /coverage
 .github/actions/dist*
 .github/workflows/stale-prs.yml
+.github/workflows/push.yml
 /libs/api/domains/application/gen
 /tmp
 /cache
