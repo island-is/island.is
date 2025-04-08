@@ -128,7 +128,7 @@ export class CmsRepository {
     return !!contentFields.find((ctf) => ctf.id === inputField.key)
   }
 
-  private updateContentfulEntry = (
+  private updateContentfulEntry = async (
     grantReferenceId: string,
     entry: Entry,
     contentFields: Array<ContentFields<KeyValueMap>>,
@@ -168,7 +168,19 @@ export class CmsRepository {
         id: entry.sys.id,
         referenceId: grantReferenceId,
       })
-      return entry.update()
+      const updatedEntry = await entry.update()
+
+      logger.info('Entry updated', {
+        id: updatedEntry.sys.id,
+        referenceId: grantReferenceId,
+      })
+
+      const publishedEntry = await entry.publish()
+      logger.info('Entry published', {
+        id: publishedEntry.sys.id,
+        referenceId: grantReferenceId,
+      })
+      return publishedEntry
     }
     logger.info('Values unchanged, aborting update', {
       id: entry.sys.id,
