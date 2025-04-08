@@ -21,15 +21,15 @@ export const dataSchema = z.object({
   questions: z
     .object({
       isSelfEmployed: z.enum([YES, NO]),
-      isWorkingPartTime: z.enum([YES, NO]),
+      isPartTimeEmployed: z.enum([YES, NO]),
       isStudying: z.enum([YES, NO]),
-      isSelfEmployedDate: z.string().optional(),
+      calculatedRemunerationDate: z.string().optional(),
     })
     .refine(
-      ({ isSelfEmployed, isSelfEmployedDate }) =>
-        isSelfEmployed === YES ? !!isSelfEmployedDate : true,
+      ({ isSelfEmployed, calculatedRemunerationDate }) =>
+        isSelfEmployed === YES ? !!calculatedRemunerationDate : true,
       {
-        path: ['isSelfEmployedDate'],
+        path: ['calculatedRemunerationDate'],
         params: errorMessages.dateRequired,
       },
     ),

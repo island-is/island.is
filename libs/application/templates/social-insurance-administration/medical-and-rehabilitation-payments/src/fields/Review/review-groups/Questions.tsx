@@ -16,8 +16,12 @@ export const Questions = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage, formatDate } = useLocale()
-  const { isSelfEmployed, isSelfEmployedDate, isWorkingPartTime, isStudying } =
-    getApplicationAnswers(application.answers)
+  const {
+    isSelfEmployed,
+    calculatedRemunerationDate,
+    isPartTimeEmployed,
+    isStudying,
+  } = getApplicationAnswers(application.answers)
 
   return (
     <ReviewGroup
@@ -41,9 +45,9 @@ export const Questions = ({
               <DataValue
                 label={formatMessage(
                   medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                    .questionsIsSelfEmployedDate,
+                    .questionsCalculatedRemunerationDate,
                 )}
-                value={formatDate(isSelfEmployedDate)}
+                value={formatDate(calculatedRemunerationDate)}
               />
             </GridColumn>
           )}
@@ -51,9 +55,9 @@ export const Questions = ({
             <RadioValue
               label={formatMessage(
                 medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                  .questionsIsWorkingPartTime,
+                  .questionsIsPartTimeEmployed,
               )}
-              value={isWorkingPartTime}
+              value={isPartTimeEmployed}
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>

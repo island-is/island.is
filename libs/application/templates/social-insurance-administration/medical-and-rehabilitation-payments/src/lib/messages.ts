@@ -68,13 +68,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'Self-employed individuals must enter the date of reduction in calculated remuneration',
     },
-    questionsIsSelfEmployedDate: {
-      id: 'marp.application:general.information.questions.is.self.employed.date',
+    questionsCalculatedRemunerationDate: {
+      id: 'marp.application:general.information.questions.calculated.remuneration.date',
       defaultMessage: 'Hvenær var lækkun á reiknuðu endurgjaldi?',
       description: 'When was the reduction in calculated remuneration?',
     },
-    questionsIsWorkingPartTime: {
-      id: 'marp.application:general.information.questions.is.working.part.time',
+    questionsIsPartTimeEmployed: {
+      id: 'marp.application:general.information.questions.is.part.time.employed',
       defaultMessage: 'Ertu í hlutastarfi?',
       description: 'Are you working part-time?',
     },

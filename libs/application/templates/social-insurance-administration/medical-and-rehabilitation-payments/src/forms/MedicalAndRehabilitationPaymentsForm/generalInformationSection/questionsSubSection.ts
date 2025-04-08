@@ -37,10 +37,10 @@ export const questionsSubSection = buildSubSection({
           required: true,
         }),
         buildDescriptionField({
-          id: 'questions.isSelfEmployedDate.description',
+          id: 'questions.calculatedRemunerationDate.description',
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
-              .questionsIsSelfEmployedDate,
+              .questionsCalculatedRemunerationDate,
           titleVariant: 'h4',
           space: 4,
           condition: (answers) => {
@@ -49,7 +49,7 @@ export const questionsSubSection = buildSubSection({
           },
         }),
         buildDateField({
-          id: 'questions.isSelfEmployedDate',
+          id: 'questions.calculatedRemunerationDate',
           title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
@@ -60,10 +60,10 @@ export const questionsSubSection = buildSubSection({
           },
         }),
         buildRadioField({
-          id: 'questions.isWorkingPartTime',
+          id: 'questions.isPartTimeEmployed',
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
-              .questionsIsWorkingPartTime,
+              .questionsIsPartTimeEmployed,
           space: 4,
           options: getYesNoOptions(),
           width: 'half',
@@ -84,8 +84,8 @@ export const questionsSubSection = buildSubSection({
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .questionsIsStudyingFileUpload,
-          space: 4,
           titleVariant: 'h4',
+          space: 4,
           condition: (answers) => {
             const { isStudying } = getApplicationAnswers(answers)
             return isStudying === YES

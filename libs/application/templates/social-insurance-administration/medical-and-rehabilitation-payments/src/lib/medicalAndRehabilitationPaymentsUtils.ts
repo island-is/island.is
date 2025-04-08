@@ -26,14 +26,14 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'questions.isSelfEmployed',
   ) as YesOrNo
 
-  const isSelfEmployedDate = getValueViaPath(
+  const calculatedRemunerationDate = getValueViaPath(
     answers,
-    'questions.isSelfEmployedDate',
+    'questions.calculatedRemunerationDate',
   ) as string
 
-  const isWorkingPartTime = getValueViaPath(
+  const isPartTimeEmployed = getValueViaPath(
     answers,
-    'questions.isWorkingPartTime',
+    'questions.isPartTimeEmployed',
   ) as YesOrNo
 
   const isStudying = getValueViaPath(answers, 'questions.isStudying') as YesOrNo
@@ -63,8 +63,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   return {
     applicantPhonenumber,
     isSelfEmployed,
-    isSelfEmployedDate,
-    isWorkingPartTime,
+    calculatedRemunerationDate,
+    isPartTimeEmployed,
     isStudying,
     isStudyingFileUpload,
     employeeSickPayOption,
