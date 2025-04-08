@@ -5,9 +5,11 @@ import {
   Table,
   CreatedAt,
   UpdatedAt,
+  ForeignKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { MeActorProfileDto } from '../dto/actor-profile.dto'
+import { Emails } from './emails.model'
 
 @Table({
   tableName: 'actor_profile',
@@ -65,6 +67,15 @@ export class ActorProfile extends Model {
   @UpdatedAt
   @ApiProperty()
   modified!: Date
+
+  @ForeignKey(() => Emails)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+    defaultValue: DataType.UUIDV4,
+  })
+  @ApiProperty()
+  emailsId?: string | null
 
   toDto(): MeActorProfileDto {
     return {

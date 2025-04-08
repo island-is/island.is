@@ -29,14 +29,19 @@ import { PostNudgeDto } from '../dto/post-nudge.dto'
 import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
 import { ActorProfile } from '../models/actor-profile.model'
 import { ClientType } from '../../types/ClientType'
+import { Emails } from '../models/emails.model'
 
 type StatusFieldType = 'emailStatus' | 'mobileStatus'
 
 const MIGRATION_DATE = new Date('2024-05-10')
 
+const testUserProfileEmail = {
+  email: faker.internet.email(),
+  primary: true,
+}
 const testUserProfile = {
   nationalId: createNationalId(),
-  email: faker.internet.email(),
+  emails: [testUserProfileEmail],
   mobilePhoneNumber: formatPhoneNumber(createPhoneNumber()),
 }
 
@@ -51,7 +56,7 @@ const audkenniSimNumber = createPhoneNumber()
 
 const testEmailVerification = {
   nationalId: testUserProfile.nationalId,
-  email: testUserProfile.email,
+  email: testUserProfileEmail.email,
   hash: emailVerificationCode,
 }
 
@@ -63,10 +68,10 @@ const testSMSVerification = {
 
 describe('MeUserProfileController', () => {
   describe('GET /v2/me', () => {
-    let app: TestApp = null
-    let server: SuperTest<Test> = null
-    let fixtureFactory: FixtureFactory = null
-    let userProfileModel: typeof UserProfile = null
+    let app: TestApp
+    let server: SuperTest<Test>
+    let fixtureFactory: FixtureFactory
+    let userProfileModel: typeof UserProfile
 
     beforeAll(async () => {
       app = await setupApp({
@@ -116,8 +121,13 @@ describe('MeUserProfileController', () => {
       // Arrange
       await fixtureFactory.createUserProfile({
         nationalId: testUserProfile.nationalId,
-        email: testUserProfile.email,
-        emailVerified: true,
+        emails: [
+          {
+            email: testUserProfileEmail.email,
+            primary: true,
+            emailStatus: DataStatus.VERIFIED,
+          },
+        ],
         mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
         mobilePhoneNumberVerified: true,
         lastNudge: addMonths(MIGRATION_DATE, 1),
@@ -130,7 +140,7 @@ describe('MeUserProfileController', () => {
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         nationalId: testUserProfile.nationalId,
-        email: testUserProfile.email,
+        email: testUserProfileEmail.email,
         emailVerified: true,
         mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
         mobilePhoneNumberVerified: true,
@@ -145,8 +155,13 @@ describe('MeUserProfileController', () => {
       // Arrange
       await fixtureFactory.createUserProfile({
         nationalId: testUserProfile.nationalId,
-        email: testUserProfile.email,
-        emailVerified: true,
+        emails: [
+          {
+            email: testUserProfileEmail.email,
+            primary: true,
+            emailStatus: DataStatus.VERIFIED,
+          },
+        ],
         mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
         mobilePhoneNumberVerified: true,
         lastNudge: subMonths(MIGRATION_DATE, 1),
@@ -159,7 +174,7 @@ describe('MeUserProfileController', () => {
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         nationalId: testUserProfile.nationalId,
-        email: testUserProfile.email,
+        email: testUserProfileEmail.email,
         emailVerified: true,
         mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
         mobilePhoneNumberVerified: true,
@@ -217,21 +232,40 @@ describe('MeUserProfileController', () => {
         needsNudgeExpected: boolean | null
       }) => {
         // Arrange
-        const expectedTestValues = verifiedField
-          ? verifiedField.reduce((acc, field) => {
-              return {
-                ...acc,
-                [field]: testUserProfile[field],
-                [`${field}Verified`]: isVerified,
-              }
-            }, {})
-          : {}
-        await fixtureFactory.createUserProfile({
-          nationalId: testUserProfile.nationalId,
-          ...expectedTestValues,
-          lastNudge,
-          nextNudge: lastNudge ? addMonths(lastNudge, nextNudgeLength) : null,
-        })
+        const expectedTestValues: Record<string, any> = {}
+        if (verifiedField) {
+          if (verifiedField.includes('email')) {
+            expectedTestValues.email = testUserProfileEmail.email
+            expectedTestValues.emailVerified = isVerified
+          }
+          if (verifiedField.includes('mobilePhoneNumber')) {
+            expectedTestValues.mobilePhoneNumber =
+              testUserProfile.mobilePhoneNumber
+            expectedTestValues.mobilePhoneNumberVerified = isVerified
+          }
+        }
+
+        await fixtureFactory
+          .createUserProfile({
+            nationalId: testUserProfile.nationalId,
+            ...expectedTestValues,
+            emails: [
+              {
+                email: verifiedField?.includes('email')
+                  ? testUserProfileEmail.email
+                  : '',
+                primary: true,
+                emailStatus: isVerified
+                  ? DataStatus.VERIFIED
+                  : DataStatus.NOT_VERIFIED,
+              },
+            ],
+            lastNudge,
+            nextNudge: lastNudge ? addMonths(lastNudge, nextNudgeLength) : null,
+          })
+          .catch((err) => {
+            throw new Error(`Failed to create user profile: ${err}`)
+          })
 
         // Act
         const res = await server.get(
@@ -240,6 +274,7 @@ describe('MeUserProfileController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
+
         expect(res.body).toMatchObject({
           nationalId: testUserProfile.nationalId,
           documentNotifications: true,
@@ -252,9 +287,9 @@ describe('MeUserProfileController', () => {
   })
 
   describe('PATCH user-profile - nudge dates', () => {
-    let app = null
-    let server = null
-    let fixtureFactory = null
+    let app: TestApp
+    let server: SuperTest<Test>
+    let fixtureFactory: FixtureFactory
     let islyklarApi = null
 
     beforeEach(async () => {
@@ -293,13 +328,12 @@ describe('MeUserProfileController', () => {
         })
       islyklarApi.islyklarGet = jest.fn().mockResolvedValue({
         ssn: testUserProfile.nationalId,
-        email: testUserProfile.email,
+        email: testUserProfileEmail.email,
         mobile: testUserProfile.mobilePhoneNumber,
       })
     })
 
     afterEach(async () => {
-      fixtureFactory = null
       await app.cleanUp()
     })
 
@@ -320,9 +354,17 @@ describe('MeUserProfileController', () => {
       const userProfileModel = app.get(getModelToken(UserProfile))
       const userProfile = await userProfileModel.findOne({
         where: { nationalId: testUserProfile.nationalId },
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: false,
+          where: {
+            primary: true,
+          },
+        },
       })
 
-      expect(userProfile.email).toBe(newEmail)
+      expect(userProfile.emails?.[0]?.email).toBe(newEmail)
       expect(userProfile.mobilePhoneNumber).toBe(formattedNewPhoneNumber)
       expect(userProfile.nextNudge.toString()).toBe(
         addMonths(userProfile.lastNudge, NUDGE_INTERVAL).toString(),
@@ -347,9 +389,17 @@ describe('MeUserProfileController', () => {
       const userProfileModel = app.get(getModelToken(UserProfile))
       const userProfile = await userProfileModel.findOne({
         where: { nationalId: testUserProfile.nationalId },
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: false,
+          where: {
+            primary: true,
+          },
+        },
       })
 
-      expect(userProfile.email).toBe(newEmail)
+      expect(userProfile.emails?.[0]?.email).toBe(newEmail)
       expect(userProfile.nextNudge.toString()).toBe(
         addMonths(userProfile.lastNudge, SKIP_INTERVAL).toString(),
       )
@@ -358,7 +408,13 @@ describe('MeUserProfileController', () => {
     it('PATCH /v2/me should update phone and push nextNudge by 1 months ', async () => {
       await fixtureFactory.createUserProfile({
         ...testUserProfile,
-        emailVerified: false,
+        emails: [
+          {
+            email: testUserProfileEmail.email,
+            emailStatus: DataStatus.NOT_VERIFIED,
+            primary: true,
+          },
+        ],
       })
 
       const res = await server.patch('/v2/me').send({
@@ -373,6 +429,14 @@ describe('MeUserProfileController', () => {
       const userProfileModel = app.get(getModelToken(UserProfile))
       const userProfile = await userProfileModel.findOne({
         where: { nationalId: testUserProfile.nationalId },
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: false,
+          where: {
+            primary: true,
+          },
+        },
       })
 
       expect(userProfile.mobilePhoneNumber).toBe(formattedNewPhoneNumber)
@@ -399,9 +463,17 @@ describe('MeUserProfileController', () => {
       const userProfileModel = app.get(getModelToken(UserProfile))
       const userProfile = await userProfileModel.findOne({
         where: { nationalId: testUserProfile.nationalId },
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: false,
+          where: {
+            primary: true,
+          },
+        },
       })
 
-      expect(userProfile.email).toBe(null)
+      expect(userProfile.emails?.[0]?.email).toBe(null)
       expect(userProfile.mobilePhoneNumber).toBe(
         testUserProfile.mobilePhoneNumber,
       )
@@ -413,8 +485,12 @@ describe('MeUserProfileController', () => {
     it('PATCH /v2/me should empty phoneNumber and push nextNudge by 6 month ', async () => {
       await fixtureFactory.createUserProfile({
         ...testUserProfile,
-        emailVerified: true,
-        emailStatus: DataStatus.VERIFIED,
+        emails: [
+          {
+            ...testUserProfileEmail,
+            emailStatus: DataStatus.VERIFIED,
+          },
+        ],
       })
 
       const res = await server.patch('/v2/me').send({
@@ -427,9 +503,17 @@ describe('MeUserProfileController', () => {
       const userProfileModel = app.get(getModelToken(UserProfile))
       const userProfile = await userProfileModel.findOne({
         where: { nationalId: testUserProfile.nationalId },
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: false,
+          where: {
+            primary: true,
+          },
+        },
       })
 
-      expect(userProfile.email).toBe(testUserProfile.email)
+      expect(userProfile.emails?.[0]?.email).toBe(testUserProfileEmail.email)
       expect(userProfile.mobilePhoneNumber).toBe(null)
       expect(userProfile.nextNudge.toString()).toBe(
         addMonths(userProfile.lastNudge, NUDGE_INTERVAL).toString(),
@@ -438,10 +522,10 @@ describe('MeUserProfileController', () => {
   })
 
   describe('PATCH user-profile', () => {
-    let app = null
-    let server = null
-    let islyklarApi = null
-    let confirmSmsSpy = null
+    let app: TestApp
+    let server: SuperTest<Test>
+    let islyklarApi: IslyklarApi
+    let confirmSmsSpy: jest.SpyInstance
 
     beforeEach(async () => {
       app = await setupApp({
@@ -486,7 +570,7 @@ describe('MeUserProfileController', () => {
         })
       islyklarApi.islyklarGet = jest.fn().mockResolvedValue({
         ssn: testUserProfile.nationalId,
-        email: testUserProfile.email,
+        email: testUserProfileEmail.email,
         mobile: testUserProfile.mobilePhoneNumber,
       })
     })
@@ -516,14 +600,21 @@ describe('MeUserProfileController', () => {
       // Assert Db records
       const userProfileModel = app.get(getModelToken(UserProfile))
       const userProfile = await userProfileModel.findOne({
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: false,
+          where: {
+            primary: true,
+          },
+        },
         where: { nationalId: testUserProfile.nationalId },
       })
 
-      expect(userProfile.email).toBe(newEmail)
+      expect(userProfile?.emails?.[0].email).toBe(newEmail)
       expect(userProfile.mobilePhoneNumber).toBe(formattedNewPhoneNumber)
-      expect(userProfile.emailVerified).toBe(true)
       expect(userProfile.mobilePhoneNumberVerified).toBe(true)
-      expect(userProfile.emailStatus).toBe(DataStatus.VERIFIED)
+      expect(userProfile?.emails?.[0].emailStatus).toBe(DataStatus.VERIFIED)
       expect(userProfile.mobileStatus).toBe(DataStatus.VERIFIED)
     })
 
@@ -604,12 +695,19 @@ describe('MeUserProfileController', () => {
       // Assert Db records
       const userProfileModel = app.get(getModelToken(UserProfile))
       const userProfile = await userProfileModel.findOne({
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: false,
+          where: {
+            primary: true,
+          },
+        },
         where: { nationalId: testUserProfile.nationalId },
       })
 
-      expect(userProfile.email).toBe(newEmail)
-      expect(userProfile.emailVerified).toBe(true)
-      expect(userProfile.emailStatus).toBe(DataStatus.VERIFIED)
+      expect(userProfile?.emails?.[0].email).toBe(newEmail)
+      expect(userProfile?.emails?.[0].emailStatus).toBe(DataStatus.VERIFIED)
     })
 
     it('PATCH /v2/me should return 400 when email verification code is not sent', async () => {
@@ -632,10 +730,18 @@ describe('MeUserProfileController', () => {
       // Assert Db records
       const userProfileModel = app.get(getModelToken(UserProfile))
       const userProfile = await userProfileModel.findOne({
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: false,
+          where: {
+            primary: true,
+          },
+        },
         where: { nationalId: testUserProfile.nationalId },
       })
 
-      expect(userProfile.email).toBe(testUserProfile.email)
+      expect(userProfile?.emails?.[0].email).toBe(testUserProfileEmail.email)
 
       const verificationModel = app.get(getModelToken(EmailVerification))
       const verification = await verificationModel.findOne({
@@ -785,14 +891,21 @@ describe('MeUserProfileController', () => {
       // Assert Db records
       const userProfileModel = await app.get(getModelToken(UserProfile))
       const userProfile = await userProfileModel.findOne({
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: false,
+          where: {
+            primary: true,
+          },
+        },
         where: { nationalId: testUserProfile.nationalId },
       })
 
-      expect(userProfile.email).toBe(null)
+      expect(userProfile?.emails?.[0].email).toBe(null)
       expect(userProfile.mobilePhoneNumber).toBe(null)
-      expect(userProfile.emailVerified).toBe(false)
       expect(userProfile.mobilePhoneNumberVerified).toBe(false)
-      expect(userProfile.emailStatus).toBe(DataStatus.EMPTY)
+      expect(userProfile?.emails?.[0].emailStatus).toBe(DataStatus.EMPTY)
       expect(userProfile.mobileStatus).toBe(DataStatus.EMPTY)
       expect(userProfile.nextNudge.toString()).toBe(
         addMonths(userProfile.lastNudge, NUDGE_INTERVAL).toString(),
@@ -891,7 +1004,7 @@ describe('MeUserProfileController', () => {
       expect(islyklarApi.islyklarPut).toBeCalledWith({
         user: {
           ssn: testUserProfile.nationalId,
-          email: testUserProfile.email,
+          email: testUserProfileEmail.email,
           mobile: formattedNewPhoneNumber,
         },
       })
@@ -922,7 +1035,7 @@ describe('MeUserProfileController', () => {
       expect(islyklarApi.islyklarPut).toBeCalledWith({
         user: {
           ssn: testUserProfile.nationalId,
-          email: testUserProfile.email,
+          email: testUserProfileEmail.email,
           mobile: testUserProfile.mobilePhoneNumber,
           canNudge: false,
         },
@@ -949,12 +1062,20 @@ describe('MeUserProfileController', () => {
       // Assert Db records
       const userProfileModel = app.get(getModelToken(UserProfile))
       const userProfile = await userProfileModel.findOne({
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: false,
+          where: {
+            primary: true,
+          },
+        },
         where: { nationalId: testUserProfile.nationalId },
       })
 
       expect(userProfile.emailNotifications).toBe(false)
-      expect(userProfile.email).toBe(newEmail)
-      expect(userProfile.emailVerified).toBe(true)
+      expect(userProfile?.emails?.[0].email).toBe(newEmail)
+      expect(userProfile?.emails?.[0].emailStatus).toBe(DataStatus.VERIFIED)
 
       // Assert that islyklar api is called
       expect(islyklarApi.islyklarPut).toBeCalledWith({
@@ -969,8 +1090,8 @@ describe('MeUserProfileController', () => {
   })
 
   describe('Nudge confirmation', () => {
-    let app = null
-    let server = null
+    let app: TestApp
+    let server: SuperTest<Test>
 
     beforeEach(async () => {
       app = await setupApp({
@@ -1121,7 +1242,14 @@ describe('MeUserProfileController', () => {
         const fixtureFactory = new FixtureFactory(app)
         await fixtureFactory.createUserProfile({
           ...testUserProfile,
-          [field]: DataStatus.NOT_DEFINED,
+          emails: [
+            {
+              email: testUserProfileEmail.email,
+              primary: true,
+              emailStatus: DataStatus.NOT_DEFINED,
+            },
+          ],
+          mobileStatus: DataStatus.NOT_DEFINED,
         })
 
         // Act
@@ -1135,9 +1263,23 @@ describe('MeUserProfileController', () => {
         // Assert that $field status is updated
         const userProfileModel = app.get(getModelToken(UserProfile))
         const userProfile = await userProfileModel.findOne({
+          include: [
+            {
+              model: Emails,
+              as: 'emails',
+              required: false,
+              where: {
+                primary: true,
+              },
+            },
+          ],
           where: { nationalId: testUserProfile.nationalId },
         })
-        expect(userProfile[field]).toBe(DataStatus.EMPTY)
+        if (field === 'mobileStatus') {
+          expect(userProfile.mobileStatus).toBe(DataStatus.EMPTY)
+        } else {
+          expect(userProfile.emails?.[0].emailStatus).toBe(DataStatus.EMPTY)
+        }
       },
     )
 
@@ -1166,7 +1308,14 @@ describe('MeUserProfileController', () => {
         const fixtureFactory = new FixtureFactory(app)
         await fixtureFactory.createUserProfile({
           ...testUserProfile,
-          [field]: dbStatus,
+          emails: [
+            {
+              ...testUserProfileEmail,
+              emailStatus:
+                field === 'emailStatus' ? dbStatus : DataStatus.NOT_DEFINED,
+            },
+          ],
+          ...(field === 'mobileStatus' ? { mobileStatus: dbStatus } : {}),
         })
 
         // Act
@@ -1180,20 +1329,34 @@ describe('MeUserProfileController', () => {
         // Assert that $field status is not updated
         const userProfileModel = app.get(getModelToken(UserProfile))
         const userProfile = await userProfileModel.findOne({
+          include: [
+            {
+              model: Emails,
+              as: 'emails',
+              required: false,
+              where: {
+                primary: true,
+              },
+            },
+          ],
           where: { nationalId: testUserProfile.nationalId },
         })
-        expect(userProfile[field]).toBe(dbStatus)
+        if (field === 'mobileStatus') {
+          expect(userProfile.mobileStatus).toBe(dbStatus)
+        } else if (field === 'emailStatus') {
+          expect(userProfile.emails?.[0].emailStatus).toBe(dbStatus)
+        }
       },
     )
   })
 
   describe('GET v2/me/actor-profiles', () => {
-    let app: TestApp = null
-    let server: SuperTest<Test> = null
-    let fixtureFactory: FixtureFactory = null
-    let userProfileModel: typeof UserProfile = null
-    let actorProfileModel: typeof ActorProfile = null
-    let delegationsApi: DelegationsApi = null
+    let app: TestApp
+    let server: SuperTest<Test>
+    let fixtureFactory: FixtureFactory
+    let userProfileModel: typeof UserProfile
+    let actorProfileModel: typeof ActorProfile
+    let delegationsApi: DelegationsApi
 
     beforeAll(async () => {
       app = await setupApp({
@@ -1237,11 +1400,13 @@ describe('MeUserProfileController', () => {
               toNationalId: testUserProfile.nationalId,
               fromNationalId: testNationalId1,
               subjectId: null,
+              type: 'delegation',
             },
             {
               toNationalId: testUserProfile.nationalId,
               fromNationalId: testNationalId2,
               subjectId: null,
+              type: 'delegation',
             },
           ],
           pageInfo: {
@@ -1286,12 +1451,12 @@ describe('MeUserProfileController', () => {
   })
 
   describe('PATCH v2/me/actor-profiles/.from-national-id', () => {
-    let app: TestApp = null
-    let server: SuperTest<Test> = null
-    let fixtureFactory: FixtureFactory = null
-    let userProfileModel: typeof UserProfile = null
-    let delegationPreferenceModel: typeof ActorProfile = null
-    let delegationsApi: DelegationsApi = null
+    let app: TestApp
+    let server: SuperTest<Test>
+    let fixtureFactory: FixtureFactory
+    let userProfileModel: typeof UserProfile
+    let delegationPreferenceModel: typeof ActorProfile
+    let delegationsApi: DelegationsApi
     const testNationalId1 = createNationalId('person')
 
     beforeAll(async () => {
@@ -1327,6 +1492,7 @@ describe('MeUserProfileController', () => {
               toNationalId: testUserProfile.nationalId,
               fromNationalId: testNationalId1,
               subjectId: null,
+              type: 'delegation',
             },
           ],
           pageInfo: {

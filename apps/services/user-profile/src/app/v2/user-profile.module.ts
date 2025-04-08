@@ -19,6 +19,7 @@ import { UserTokenService } from './userToken.service'
 import { UserDeviceTokens } from '../user-profile/userDeviceTokens.model'
 import { ActorProfile } from './models/actor-profile.model'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
+import { Emails } from './models/emails.model'
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegatio
       SmsVerification,
       UserDeviceTokens,
       ActorProfile,
+      Emails,
     ]),
     EmailModule,
     SmsModule,

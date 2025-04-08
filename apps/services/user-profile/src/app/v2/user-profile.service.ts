@@ -7,7 +7,6 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined, isSearchTermValid } from '@island.is/shared/utils'
 import { AttemptFailed, NoContentException } from '@island.is/nest/problem'
-import type { User } from '@island.is/auth-nest-tools'
 import type { ConfigType } from '@island.is/nest/config'
 import {
   DelegationsApi,
@@ -32,6 +31,8 @@ import {
   PaginatedActorProfileDto,
 } from './dto/actor-profile.dto'
 import { DocumentsScope } from '@island.is/auth/scopes'
+import { Emails } from './models/emails.model'
+import { uuid } from 'uuidv4'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
@@ -50,6 +51,8 @@ export class UserProfileService {
     @Inject(UserProfileConfig.KEY)
     private config: ConfigType<typeof UserProfileConfig>,
     private readonly delegationsApi: DelegationsApi,
+    @InjectModel(Emails)
+    private readonly emailModel: typeof Emails,
   ) {}
 
   async findAllBySearchTerm(search: string): Promise<PaginatedUserProfileDto> {
@@ -59,22 +62,36 @@ export class UserProfileService {
     }
 
     const userProfiles = await this.userProfileModel.findAll({
+      include: [
+        {
+          model: Emails,
+          as: 'emails',
+          required: false, // still include even if the match is in nationalId or phone
+          where: {
+            primary: true,
+          },
+        },
+      ],
       where: {
         [Op.or]: [
           { nationalId: search },
-          { email: search },
           { mobilePhoneNumber: search },
+          {
+            // This will make Sequelize join on emails, and allow filtering based on it
+            '$emails.email$': search,
+          },
         ],
       },
     })
-
     const userProfileDtos = userProfiles.map((userProfile) => ({
       nationalId: userProfile.nationalId,
-      email: userProfile.email,
+      email: userProfile.emails?.[0]?.email ?? '',
       mobilePhoneNumber: userProfile.mobilePhoneNumber,
       locale: userProfile.locale,
       mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified ?? false,
-      emailVerified: userProfile.emailVerified ?? false,
+      emailVerified:
+        userProfile.emails?.[0]?.emailStatus === DataStatus.VERIFIED ||
+        userProfile.emails?.[0]?.emailStatus === DataStatus.EMPTY,
       documentNotifications: userProfile.documentNotifications,
       emailNotifications: userProfile.emailNotifications,
       lastNudge: userProfile.lastNudge,
@@ -96,6 +113,16 @@ export class UserProfileService {
     clientType: ClientType = ClientType.THIRD_PARTY,
   ): Promise<UserProfileDto> {
     const userProfile = await this.userProfileModel.findOne({
+      include: [
+        {
+          model: Emails,
+          as: 'emails',
+          required: true,
+          where: {
+            primary: true,
+          },
+        },
+      ],
       where: { nationalId },
       useMaster,
     })
@@ -210,6 +237,14 @@ export class UserProfileService {
         : undefined
 
       const currentUserProfile = await this.userProfileModel.findOne({
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: true,
+          where: {
+            primary: true,
+          },
+        },
         where: { nationalId },
         transaction,
         useMaster: true,
@@ -217,15 +252,6 @@ export class UserProfileService {
 
       const update = {
         nationalId,
-        ...(isEmailDefined && {
-          email: userProfile.email || null,
-          emailVerified: userProfile.email !== '',
-          emailStatus: userProfile.email
-            ? DataStatus.VERIFIED
-            : currentUserProfile?.emailStatus === DataStatus.NOT_VERIFIED
-            ? DataStatus.NOT_DEFINED
-            : DataStatus.EMPTY,
-        }),
         ...(isMobilePhoneNumberDefined && {
           mobilePhoneNumber: formattedPhoneNumber || null,
           mobilePhoneNumberVerified: formattedPhoneNumber !== '',
@@ -246,6 +272,20 @@ export class UserProfileService {
         }),
       }
 
+      const updateEmailVerified = isEmailDefined
+        ? userProfile.email !== ''
+        : undefined
+
+      // Calculate the email status based on the current user profile and the input
+      const calculatedEmailStatus = isEmailDefined
+        ? userProfile.email
+          ? DataStatus.VERIFIED
+          : currentUserProfile?.emails?.[0].emailStatus ===
+            DataStatus.NOT_VERIFIED
+          ? DataStatus.NOT_DEFINED
+          : DataStatus.EMPTY
+        : (currentUserProfile?.emails?.[0].emailStatus as DataStatus)
+
       await this.userProfileModel.upsert(
         {
           ...update,
@@ -253,18 +293,20 @@ export class UserProfileService {
           nextNudge: addMonths(
             new Date(),
             this.hasUnverifiedOrNotDefinedData({
-              email: isEmailDefined ? update.email : currentUserProfile?.email,
+              email: isEmailDefined
+                ? userProfile.email
+                : currentUserProfile?.emails?.[0]?.email,
               mobilePhoneNumber: isMobilePhoneNumberDefined
                 ? update.mobilePhoneNumber
                 : currentUserProfile?.mobilePhoneNumber,
-              emailStatus:
-                update.emailStatus ??
-                (currentUserProfile?.emailStatus as DataStatus),
+              emailStatus: calculatedEmailStatus,
+              emailVerified:
+                updateEmailVerified ??
+                currentUserProfile?.emails?.[0].emailStatus ===
+                  DataStatus.VERIFIED,
               mobileStatus:
                 update.mobileStatus ??
                 (currentUserProfile?.mobileStatus as DataStatus),
-              emailVerified:
-                update.emailVerified ?? currentUserProfile?.emailVerified,
               mobilePhoneNumberVerified:
                 update.mobilePhoneNumberVerified ??
                 currentUserProfile?.mobilePhoneNumberVerified,
@@ -276,6 +318,39 @@ export class UserProfileService {
         { transaction },
       )
 
+      // Find primary email, if it doesn't exist, create it, if it does, update it
+      const primaryEmail = await this.emailModel.findOne({
+        where: {
+          nationalId,
+          primary: true,
+        },
+        transaction,
+        useMaster: true,
+      })
+
+      if (primaryEmail) {
+        // Only update if it has incoming changes
+        if (isEmailDefined) {
+          await primaryEmail.update({
+            email: userProfile.email || null,
+            emailStatus: calculatedEmailStatus,
+          })
+        }
+      } else {
+        console.log('Creating primary email')
+        await this.emailModel.create({
+          id: uuid(),
+          email: userProfile.email || null,
+          primary: true,
+          nationalId,
+          emailStatus:
+            isEmailDefined && userProfile.email
+              ? DataStatus.VERIFIED
+              : DataStatus.NOT_DEFINED,
+        })
+      }
+
+      // Update islykill settings
       if (
         isEmailDefined ||
         isMobilePhoneNumberDefined ||
@@ -335,26 +410,81 @@ export class UserProfileService {
     const date = new Date()
 
     const currentProfile = await this.userProfileModel.findOne({
-      where: {
-        nationalId,
-      },
+      where: { nationalId },
     })
 
-    await this.userProfileModel.upsert({
+    const upsertPayload = {
       nationalId,
       lastNudge: date,
       nextNudge: addMonths(
         date,
         nudgeType === NudgeType.NUDGE ? NUDGE_INTERVAL : SKIP_INTERVAL,
       ),
-      ...(currentProfile?.emailStatus === DataStatus.NOT_DEFINED &&
-        nudgeType === NudgeType.NUDGE && {
-          emailStatus: DataStatus.EMPTY,
-        }),
       ...(currentProfile?.mobileStatus === DataStatus.NOT_DEFINED &&
         nudgeType === NudgeType.NUDGE && {
           mobileStatus: DataStatus.EMPTY,
         }),
+    }
+
+    await this.sequelize.transaction(async (t) => {
+      if (!currentProfile) {
+        // Creating a new user profile and linking the default email
+        await this.userProfileModel.create(
+          {
+            ...upsertPayload,
+            emails: [
+              {
+                id: uuid(),
+                nationalId,
+                email: '',
+                primary: true,
+                emailStatus: DataStatus.EMPTY,
+              },
+            ],
+          },
+          {
+            transaction: t,
+            useMaster: true,
+            include: [{ model: Emails, as: 'emails' }],
+          },
+        )
+      } else {
+        // Updating existing user profile
+        await this.userProfileModel.update(upsertPayload, {
+          where: { nationalId },
+          transaction: t,
+        })
+
+        // Check for existing primary email
+        const primaryEmail = await this.emailModel.findOne({
+          where: { nationalId, primary: true },
+          transaction: t,
+          useMaster: true,
+        })
+
+        if (!primaryEmail) {
+          // Create a default email if one doesn't exist
+          await this.emailModel.create(
+            {
+              id: uuid(),
+              nationalId,
+              email: '',
+              primary: true,
+              emailStatus: DataStatus.EMPTY,
+            },
+            { transaction: t, useMaster: true },
+          )
+        } else if (
+          primaryEmail.emailStatus === DataStatus.NOT_DEFINED &&
+          nudgeType === NudgeType.NUDGE
+        ) {
+          // Update email status if applicable
+          await primaryEmail.update(
+            { emailStatus: DataStatus.EMPTY },
+            { transaction: t },
+          )
+        }
+      }
     })
   }
 
@@ -474,26 +604,28 @@ export class UserProfileService {
   }
 
   private checkNeedsNudge(userProfile: UserProfile): boolean | null {
+    const isEmailVerified =
+      userProfile.emails?.[0]?.emailStatus === DataStatus.VERIFIED
+
     if (userProfile.nextNudge) {
-      if (!userProfile.email && !userProfile.mobilePhoneNumber) {
+      if (!userProfile.emails?.[0]?.email && !userProfile.mobilePhoneNumber) {
         return userProfile.nextNudge < new Date()
       }
 
       if (
-        (userProfile.email && userProfile.emailVerified) ||
+        (userProfile.emails?.[0]?.email && isEmailVerified) ||
         (userProfile.mobilePhoneNumber && userProfile.mobilePhoneNumberVerified)
       ) {
         return userProfile.nextNudge < new Date()
       }
     } else {
       if (
-        (userProfile.email && userProfile.emailVerified) ||
+        (userProfile.emails?.[0]?.email && isEmailVerified) ||
         (userProfile.mobilePhoneNumber && userProfile.mobilePhoneNumberVerified)
       ) {
         return true
       }
     }
-
     return null
   }
 
@@ -552,13 +684,15 @@ export class UserProfileService {
     userProfile: UserProfile,
   ): UserProfileDto {
     const isFirstParty = clientType === ClientType.FIRST_PARTY
+
     let filteredUserProfile: UserProfileDto = {
       nationalId: userProfile.nationalId,
-      email: userProfile.email,
+      email: userProfile.emails?.[0].email ?? null,
       mobilePhoneNumber: userProfile.mobilePhoneNumber,
       locale: userProfile.locale,
       mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified ?? false,
-      emailVerified: userProfile.emailVerified ?? false,
+      emailVerified:
+        userProfile.emails?.[0].emailStatus === DataStatus.VERIFIED,
       documentNotifications: userProfile.documentNotifications,
       needsNudge: this.checkNeedsNudge(userProfile),
       emailNotifications: userProfile.emailNotifications,
@@ -571,14 +705,14 @@ export class UserProfileService {
       !userProfile.lastNudge ||
       (this.config.migrationDate ?? new Date()) > userProfile.lastNudge
     ) {
+      const isEmailVerified =
+        userProfile.emails?.[0].emailStatus === DataStatus.VERIFIED
+
       filteredUserProfile = {
         ...filteredUserProfile,
-        email: isFirstParty ? userProfile.email : null,
+        email: isFirstParty ? filteredUserProfile.email : null,
         mobilePhoneNumber: isFirstParty ? userProfile.mobilePhoneNumber : null,
-        emailVerified:
-          isFirstParty && userProfile.emailVerified
-            ? userProfile.emailVerified
-            : false,
+        emailVerified: isFirstParty && isEmailVerified,
         mobilePhoneNumberVerified:
           isFirstParty && userProfile.mobilePhoneNumberVerified
             ? userProfile.mobilePhoneNumberVerified

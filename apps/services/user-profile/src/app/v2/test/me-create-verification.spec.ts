@@ -3,7 +3,7 @@ import request from 'supertest'
 
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
-import { setupApp } from '@island.is/testing/nest'
+import { setupApp, TestApp } from '@island.is/testing/nest'
 
 import { FixtureFactory } from '../../../../test/fixture-factory'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
@@ -12,10 +12,17 @@ import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { VerificationService } from '../../user-profile/verification.service'
 import { SmsVerification } from '../../user-profile/smsVerification.model'
+import { DataStatus } from '../../user-profile/types/dataStatusTypes'
+import { Emails } from '../models/emails.model'
 
+const testUserProfileEmail = {
+  email: 'test@test.is',
+  primary: true,
+  emailStatus: DataStatus.NOT_DEFINED,
+}
 const testUserProfile = {
   nationalId: '1234567890',
-  email: 'test@test.is',
+  emails: [testUserProfileEmail],
   mobilePhoneNumber: '1234567',
 }
 
@@ -24,14 +31,14 @@ const newPhoneNumber = '9876543'
 
 const testEmailVerification = {
   nationalId: testUserProfile.nationalId,
-  email: testUserProfile.email,
+  email: testUserProfileEmail.email,
   hash: '123',
 }
 
 describe('Email confirmation', () => {
   describe('Test with existing email verification', () => {
-    let app = null
-    let server = null
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
     beforeEach(async () => {
       app = await setupApp({
         AppModule,
@@ -51,7 +58,6 @@ describe('Email confirmation', () => {
       const fixtureFactory = new FixtureFactory(app)
       await fixtureFactory.createUserProfile({
         ...testUserProfile,
-        email: testEmailVerification.email,
         nationalId: testEmailVerification.nationalId,
       })
 
@@ -84,9 +90,17 @@ describe('Email confirmation', () => {
       const userProfileModel = app.get(getModelToken(UserProfile))
       const userProfile = await userProfileModel.findOne({
         where: { nationalId: testUserProfile.nationalId },
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: false,
+          where: {
+            primary: true,
+          },
+        },
       })
 
-      expect(userProfile.email).toBe(testUserProfile.email)
+      expect(userProfile.emails?.[0].email).toBe(testUserProfileEmail.email)
     })
 
     it('POST /v2/me/create-verification should return 200, sms verification should be created and user profile phone number unchanged', async () => {
