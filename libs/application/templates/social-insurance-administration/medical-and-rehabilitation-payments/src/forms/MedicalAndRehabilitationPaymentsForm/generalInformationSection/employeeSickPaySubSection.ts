@@ -32,11 +32,11 @@ export const employeeSickPaySubSection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'employeeSickPay.doesEndDate.description',
-          titleVariant: 'h4',
-          space: 4,
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .employeeSickPayDoesEndDateTitle,
+          titleVariant: 'h4',
+          space: 4,
           condition: (answers) => {
             const { employeeSickPayOption } = getApplicationAnswers(answers)
             return employeeSickPayOption === NO
@@ -55,11 +55,11 @@ export const employeeSickPaySubSection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'employeeSickPay.didEndDate.description',
-          titleVariant: 'h4',
-          space: 4,
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .employeeSickPayDidEndDateTitle,
+          titleVariant: 'h4',
+          space: 4,
           condition: (answers) => {
             const { employeeSickPayOption } = getApplicationAnswers(answers)
             return employeeSickPayOption === YES

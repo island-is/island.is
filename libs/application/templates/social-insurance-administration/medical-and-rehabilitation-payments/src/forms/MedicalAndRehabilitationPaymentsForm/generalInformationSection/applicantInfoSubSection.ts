@@ -104,10 +104,10 @@ export const applicantInfoSubSection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'applicantInfo.descriptionField',
-          space: 'containerGutter',
           titleVariant: 'h5',
           title:
             socialInsuranceAdministrationMessage.info.applicantMaritalTitle,
+          space: 'containerGutter',
           condition: (_, externalData) => {
             const { hasSpouse } = getApplicationExternalData(externalData)
             return !!hasSpouse
