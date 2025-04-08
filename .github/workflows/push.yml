@@ -386,7 +386,8 @@ jobs:
             "APP_DIST_HOME=${APP_DIST_HOME}"
           secrets: |
             "nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}"
-          tags: '${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}'
+          tags: |
+            "${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}"
 
       # - name: Building Docker images
       #   id: dockerbuild
