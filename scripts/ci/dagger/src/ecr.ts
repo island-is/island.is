@@ -24,6 +24,9 @@ export async function getEcrContainer(props: EcrContainer) {
 
 
 const SECRET_ECR_PASSWORD = 'ECR_PASSWORD';
+const SECRET_SESSION_TOKEN = 'SESSION_TOKEN';
+
+const tmpFile = '/tmp/file';
 
 async function getEcrPassword(props: AWSProps){
     const container = withCacheBust(dag.container()
@@ -31,13 +34,20 @@ async function getEcrPassword(props: AWSProps){
     .withEnvVariable('AWS_REGION', AWS_REGION)
     .withSecretVariable('AWS_ACCESS_KEY_ID', props.AWS_ACCESS_KEY_ID)
     .withSecretVariable('AWS_SECRET_ACCESS_KEY', props.AWS_SECRET_ACCESS_KEY));
-   
-    const sessionJSON = JSON.parse(await container.withExec(['aws', 'sts', 'get-session-token', '--duration-seconds', AWS_SESSION_TIMEOUT_SEC.toString()]).stdout());
-    const sessionToken = sessionJSON.Credentials.SessionToken;
+    
+    const sessionContainer = await container.withExec(['aws', 'sts', 'get-session-token', '--duration-seconds', AWS_SESSION_TIMEOUT_SEC.toString()], {redirectStdout: tmpFile}).sync();
+    const sessionFile = await sessionContainer.file(tmpFile).contents();
+    const sessionJSON = JSON.parse(sessionFile);
+    const sessionToken = dag.setSecret(SECRET_SESSION_TOKEN, sessionJSON.Credentials.SessionToken);
 
-    const ecrLogin = await container
+ 
+
+    const ecrContainer = await container
     .withSecretVariable('AWS_SESSION_TOKEN', sessionToken)
-    .withExec(['aws', 'ecr', 'get-login-password']).stdout();
+    .withExec(['aws', 'ecr', 'get-login-password'], {redirectStdout: tmpFile})
+    .sync();
+
+    const ecrLogin = await ecrContainer.file(tmpFile).contents();
 
     return dag.setSecret(SECRET_ECR_PASSWORD, ecrLogin);
 }

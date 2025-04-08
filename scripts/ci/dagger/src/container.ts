@@ -1,5 +1,5 @@
 import { dag, Container, Directory, object, func, DirectoryFilterOpts } from "@dagger.io/dagger"
-import { GITHUB_URL, RUNNER_IMAGE, WORKDIR } from "./const";
+import { DEFAULT_PLATFORM, GITHUB_URL, RUNNER_IMAGE, WORKDIR } from "./const";
 import {AWSProps, getEcrContainer} from "./ecr";
 import {FILE_ACTION_GITHUB_BRANCH, FILE_ACTION_GITHUB_SHA, FILE_ACTION_LOCAL} from "./interface";
 
@@ -14,10 +14,9 @@ const MONO_REPO_FILTERS = {
     ],
 };
 export async function getMonorepoBase(props: MonorepoBase) {
-    const container = await getEcrContainer({
-        ...props,
-        image: RUNNER_IMAGE,
-    })
+    const container = dag
+    .container({platform: DEFAULT_PLATFORM})
+    .from(RUNNER_IMAGE);
     const files = getMonorepoInstallFiles(props);
     return container.withDirectory(WORKDIR, files).withWorkdir(WORKDIR).withExec(['yarn', 'install', '--frozen-lockfile']).sync();
 }
