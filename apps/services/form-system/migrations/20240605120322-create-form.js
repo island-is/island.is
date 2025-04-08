@@ -20,12 +20,7 @@ module.exports = {
           },
           slug: {
             type: Sequelize.STRING,
-            allowNull: true,
-            unique: true,
-          },
-          organization_display_name: {
-            type: Sequelize.JSON,
-            allowNull: true,
+            allowNull: false,
           },
           created: {
             type: 'TIMESTAMP WITH TIME ZONE',
@@ -41,11 +36,6 @@ module.exports = {
             type: Sequelize.DATE,
             allowNull: true,
             defaultValue: null,
-          },
-          has_payment: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
           },
           been_published: {
             type: Sequelize.BOOLEAN,
