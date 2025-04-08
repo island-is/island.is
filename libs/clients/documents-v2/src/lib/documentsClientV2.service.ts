@@ -1,4 +1,5 @@
 import {
+  AddCommentCommand,
   AuthenticationType,
   CustomersApi,
   CustomersListDocumentsOrderEnum,
@@ -250,5 +251,19 @@ export class DocumentsClientV2Service {
       success: true,
       ids: documentIds,
     }
+  }
+
+  async postTicket(
+    nationalID: string,
+    documentId: string,
+    input: AddCommentCommand,
+  ) {
+    return await this.api.apiMailV1CustomersKennitalaMessagesMessageIdCommentsPost(
+      {
+        addCommentCommand: input,
+        kennitala: nationalID,
+        messageId: documentId,
+      },
+    )
   }
 }

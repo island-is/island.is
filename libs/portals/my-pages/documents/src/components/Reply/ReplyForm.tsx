@@ -1,90 +1,76 @@
-import { Box, Button, Input } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/portals/my-pages/core'
-import { dateFormatWithTime } from '@island.is/shared/constants'
-import React, { useEffect, useState } from 'react'
+import { Box, Button, Input, Text, toast } from '@island.is/island-ui/core'
+import { useUserProfile } from '@island.is/portals/my-pages/graphql'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import React, { useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import ReplySent from './ReplyBody'
+import { useReplyMutation } from '../../queries/Reply.generated'
+import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 
 interface Props {
   hasEmail: boolean
-  successfulSubmit: (date: string) => void
+  successfulSubmit: () => void
 }
 
 interface FormData {
   reply: string
 }
 
-interface TempAnswer {
-  caseId: string
-  emailTo: string
-  reply: string
-  date: Date
-}
-
 const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
-  const [reply, setReply] = useState('')
-  const [tempAnswer, setTempAnswer] = useState<TempAnswer>()
+  const [reply, setReply] = useState<string | undefined>('')
   const methods = useForm<FormData>()
+  const { activeDocument } = useDocumentContext()
+  const { data: userProfile } = useUserProfile()
+  const { profile } = useUserInfo()
 
-  //const [postAction, { loading: postActionLoading }] =
-  //   usePostDefenseChoiceMutation({
-  //     onError: () => {
-  //       toast.error(formatMessage(messages.registrationError))
-  //       methods.setError(CHOICE, {
-  //         message: formatMessage(messages.registrationError),
-  //       })
-  //     },
-  //     onCompleted: () => {
-  //       popUp && popUp.setPopUp(false)
-  //       toast.success(formatMessage(messages.registrationCompleted))
-  //       refetch && refetch()
-  //     },
-  //   })
+  const [postReply, { loading: postReplyLoading }] = useReplyMutation({
+    onError: () => {
+      toast.error('Skilaboð tókst ekki að senda')
+      methods.setError('reply', {
+        message: 'Skilaboð tókst ekki að senda',
+      })
+    },
+    onCompleted: (response) => {
+      toast.success('Skilaboð send')
+      alert(response.documentsV2Reply?.id)
+      setReply(undefined)
+      methods.resetField('reply')
+      successfulSubmit()
+    },
+  })
 
   const handleSubmitForm = (data: FormData) => {
     console.log('post action', data)
     if (data.reply === '') {
       methods.setError('reply', { message: 'Skilaboð mega ekki vera tóm' })
     } else {
-      setTempAnswer({
-        caseId: '123',
-        emailTo: 'lisa@skb.is',
-        reply: data.reply,
-        date: new Date(),
+      postReply({
+        variables: {
+          input: {
+            // TODO make sure data is not missing
+            documentId: activeDocument?.id ?? '123',
+            body: data.reply,
+            reguesterEmail: profile.email ?? userProfile?.email ?? '',
+            subject: activeDocument?.subject,
+            reguesterName: profile.name,
+          },
+        },
       })
-      methods.resetField('reply')
     }
-    //   postAction({
-    //     variables: {
-    //       input: {
-    //         caseId: id,
-    //         choice: data.choice ?? LawAndOrderDefenseChoiceEnum.DELAY,
-    //         lawyersNationalId: data.lawyersNationalId,
-    //       },
-    //       locale: lang,
-    //     },
-    //   })
-    setReply('')
   }
-
-  useEffect(() => {
-    if (methods.formState.isSubmitSuccessful) {
-      successfulSubmit(formatDate(tempAnswer?.date, dateFormatWithTime.is))
-    }
-  }, [methods.formState.isSubmitSuccessful]) // TODO: Add check for successful submit from service
 
   return (
     <FormProvider {...methods}>
-      {methods.formState.isSubmitSuccessful && tempAnswer ? (
-        <ReplySent
-          sentTo={tempAnswer.emailTo}
-          id={tempAnswer.caseId}
-          reply={tempAnswer.reply}
-          date={tempAnswer.date}
-          intro={
-            'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang. '
-          }
-        />
+      {methods.formState.isSubmitSuccessful ? (
+        // <ReplySent
+        //   sentTo={tempAnswer.emailTo}
+        //   id={tempAnswer.caseId}
+        //   reply={tempAnswer.reply}
+        //   date={tempAnswer.date}
+        //   intro={
+        //     'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang. '
+        //   }
+        // />
+        <Text>"Skilaboð send" </Text>
       ) : (
         <form onSubmit={methods.handleSubmit(handleSubmitForm)}>
           <Controller

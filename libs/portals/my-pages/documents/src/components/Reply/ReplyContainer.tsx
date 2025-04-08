@@ -17,11 +17,10 @@ const ReplyContainer: React.FC<Props> = ({ sender }) => {
   const { formatMessage } = useLocale()
   const { replyable, replyOpen, setReplyOpen } = useDocumentContext()
   const hasEmail = true //isDefined(userProfile?.email)
-  const [sent, setSent] = React.useState({ sent: false, date: '' })
+  const [sent, setSent] = React.useState({ sent: false })
 
-  const successfulSubmit = (date: string) => {
-    alert('success' + date)
-    setSent({ sent: true, date: date })
+  const successfulSubmit = () => {
+    setSent({ sent: true })
   }
 
   const button = (
@@ -49,13 +48,9 @@ const ReplyContainer: React.FC<Props> = ({ sender }) => {
         <ReplyHeader
           initials={getInitials(profile.name)}
           title={sent.sent ? profile.name : formatMessage(messages.titleWord)}
-          subTitle={
-            sent.sent
-              ? sent.date
-              : formatMessage(messages.toWithArgs, {
-                  receiverName: sender,
-                })
-          }
+          subTitle={formatMessage(messages.toWithArgs, {
+            receiverName: sender,
+          })}
           secondSubTitle={
             !sent.sent && hasEmail
               ? formatMessage(messages.fromWithArgs, {
