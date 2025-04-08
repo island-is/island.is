@@ -1,11 +1,19 @@
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import React, { Dispatch, SetStateAction, useContext, useState } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
+  isDistrictCourtUser,
+} from '@island.is/judicial-system/types'
+import {
   DefenderNotFound,
   InputAdvocate,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { Case, Victim } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Case,
+  RequestSharedWhen,
+  Victim,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useVictim } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const LegalRightsProtectorInputFields = ({
@@ -21,6 +29,8 @@ export const LegalRightsProtectorInputFields = ({
 }) => {
   const { updateVictimAndSetState, updateVictimState, updateVictim } =
     useVictim()
+  const { user } = useContext(UserContext)
+
   const [lawyerNotFound, setLawyerNotFound] = useState(false)
 
   return (
@@ -50,6 +60,12 @@ export const LegalRightsProtectorInputFields = ({
               lawyerNationalId,
               lawyerEmail,
               lawyerPhoneNumber,
+              // if court makes any lawyer changes we default to not sharing the request
+              ...(isDistrictCourtUser(user)
+                ? {
+                    lawyerAccessToRequest: RequestSharedWhen.OBLIGATED,
+                  }
+                : {}),
             },
             setWorkingCase,
           )
