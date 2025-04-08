@@ -292,8 +292,52 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      - name: Linting
-        run: ./scripts/ci/run-in-parallel-native.sh lint
+      - name: Lint head
+        id: lint-head
+        run: |
+          lints=$(mktemp -t lint-head.XXXXXX)
+          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
+          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" |
+            tee -a "$lints" | # Show output when running, but preserve pipe-chaining
+            grep -oP '(?<=✖ )(\d+)(?= problems)' | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d",SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee -a "$GITHUB_OUTPUT" # Finally create output
+
+      # Checkout for linting base
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          clean: false
+
+      - name: Lint base
+        id: lint-base
+        run: |
+          lints=$(mktemp -t lint-base.XXXXXX)
+          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
+          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" |
+            tee -a "$lints" | # Show output when running, but preserve pipe-chaining
+            grep -oP '(?<=✖ )(\d+)(?= problems)' | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d",SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee -a "$GITHUB_OUTPUT" # Finally create output
+
+      - name: No new lints
+        env:
+          HEAD_LINT_COUNT: ${{steps.lint-head.outputs.lint-count}}
+          BASE_LINT_COUNT: ${{steps.lint-base.outputs.lint-count}}
+          HEAD_LINT_FILE: ${{steps.lint-head.outputs.lints-file}}
+          BASE_LINT_FILE: ${{steps.lint-base.outputs.lints-file}}
+        run: |
+          COUNT_DIFF=$(( HEAD_LINT_COUNT - BASE_LINT_COUNT )) || :
+          if (( COUNT_DIFF <= 0 )); then
+            echo "Lint count has not increased"
+            exit 0
+          fi
+          echo "::error title=NEW_LINTS::Please fix your lints 🙏 (found $COUNT_DIFF additional lints)"
+          lints_base=$(mktemp --dry -t lint-.XXX)
+          echo "::group::lintdiff"
+          diff "${BASE_LINT_FILE}" "${HEAD_LINT_FILE}" || : # Ignore diff exit code
+          echo "::endgroup::"
+          exit 1
 
   build:
     needs:

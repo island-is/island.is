@@ -581,4 +581,9 @@ export const m = defineMessages({
       'Ársreikning fyrir rekstrarárið {value1} hefur verið skilað',
     description: 'Conclusion alert message',
   },
+  aboutOverview: {
+    id: 'fspp.application:aboutOverview',
+    defaultMessage: 'Um stjórnmálasamtökin',
+    description: 'About party overview',
+  },
 })
