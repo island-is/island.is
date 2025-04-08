@@ -141,9 +141,12 @@ const BloodDonationRestrictionList: CustomScreen<
                     </Box>
                   )}
                   {Boolean(item.description) && (
-                    <Text variant="medium">
-                      {formatMessage(m.listPage.cardDescriptionPrefix)}
-                      {item.description}
+                    <Text variant="medium">{item.description}</Text>
+                  )}
+                  {Boolean(item.keywordsText) && (
+                    <Text variant="small">
+                      {formatMessage(m.listPage.keywordsTextPrefix)}
+                      {item.keywordsText}
                     </Text>
                   )}
                 </FocusableBox>
