@@ -663,9 +663,9 @@
         }
       }
     },
-    "/Einstaklingar/18IDag": {
+    "/IslandIs/18IDag": {
       "get": {
-        "tags": ["Einstaklingar"],
+        "tags": ["IslandIs"],
         "summary": "Skilar lista af kennitölum þeirra sem eiga 18 ára afmæli í dag",
         "responses": {
           "200": {
@@ -675,6 +675,22 @@
                 "schema": {
                   "$ref": "#/components/schemas/Einstaklingur18IDagDTO"
                 }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
