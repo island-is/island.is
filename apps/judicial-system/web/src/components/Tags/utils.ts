@@ -141,6 +141,8 @@ export const getPunishmentTypeTag = (
         return strings.punishmentTypeIndictmentRulingDecisionFine
       case PunishmentType.SIGNED_FINE_INVITATION:
         return strings.punishmentTypeSignedFineInvitation
+      case PunishmentType.OTHER:
+        return strings.punishmentTypeOther
       default:
         return strings.unknown
     }
