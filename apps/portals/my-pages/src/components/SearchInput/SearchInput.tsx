@@ -68,14 +68,15 @@ export const SearchInput = ({
                 position="relative"
               >
                 {result.item.breadcrumbs.slice(1).map((crumb, idx) => (
-                  <Box key={`${crumb}-${idx}`}>
-                    <Box className={styles.breadcrumb}>
+                  <>
+                    <Box key={`${crumb}-${idx}`} className={styles.breadcrumb}>
                       <Text variant="eyebrow" color="blue400">
                         {crumb}
                       </Text>
                     </Box>
                     {idx < result.item.breadcrumbs.length - 2 && (
                       <Box
+                        key={`crumb-bullet-${idx}`}
                         borderRadius="full"
                         background="blue400"
                         display={'inlineBlock'}
@@ -83,7 +84,7 @@ export const SearchInput = ({
                         className={styles.bullet}
                       />
                     )}
-                  </Box>
+                  </>
                 ))}
               </Box>
               <Text marginTop={1}>{result.item.description}</Text>
