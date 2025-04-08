@@ -44,7 +44,7 @@ jobs:
             - name: Get ECR password
               id: ecr-login
               run: |
-                ECR_PASSWORD=þettaerleimtilraun
+                ECR_PASSWORD=$(cat package.json)
                 echo "::add-mask::$ECR_PASSWORD"
                 echo "password=$ECR_PASSWORD" >> $GITHUB_OUTPUT
             - name: Checkout dagger code
