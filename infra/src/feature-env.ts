@@ -158,19 +158,25 @@ yargs(process.argv.slice(2))
         ExcludedFeatureDeploymentServices,
         env,
       )
-
-      await writeToOutput(
-        await renderHelmValueFileContent(
+      
+      const svcs = await Promise.all(featureYaml.map((svc) => {
+          return renderHelmValueFileContent(
           env,
           habitat,
-          featureYaml,
+          [svc],
           (typedArgv.withMocks ?? 'false') === 'true'
             ? 'with-mocks'
             : 'no-mocks',
           skipAppName,
-        ),
-        typedArgv.output,
-      )
+        )
+      }))
+
+      await Promise.all(svcs.map((svc) => {
+        writeToOutput(
+          svc,
+          typedArgv.output,
+        )
+      }))
     },
   })
   .command({
