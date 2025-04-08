@@ -830,7 +830,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 </Hidden>
               </Inline>
               <InfoCardGrid
-                variant="detailed-reveal"
+                variant="detailed"
                 columns={1}
                 cards={data.visibleVerdicts
                   .filter((verdict) => Boolean(verdict.id))
@@ -842,14 +842,6 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       link: { href: `/domar/${verdict.id}`, label: '' },
                       title: verdict.caseNumber,
                       borderColor: 'blue200',
-                      subDescription: verdict.keywords.join(', '),
-                      revealMoreButtonProps: {
-                        revealLabel: formatMessage(
-                          m.listPage.revealPresentings,
-                        ),
-                        hideLabel: formatMessage(m.listPage.hidePresentings),
-                        revealedText: verdict.presentings,
-                      },
                       detailLines: [
                         {
                           icon: 'calendar',

@@ -27,13 +27,11 @@ export type DetailedProps = BaseProps & {
     text: string
   }>
   tags?: Array<ActionCardProps['tag']>
-  subDescription?: string
 }
 
 export const DetailedInfoCard = ({
   title,
   description,
-  subDescription,
   size = 'medium',
   eyebrow,
   subEyebrow,
@@ -148,13 +146,6 @@ export const DetailedInfoCard = ({
               <Box flexGrow={1} marginTop={1}>
                 <Text variant="medium" fontWeight="light">
                   {description}
-                </Text>
-              </Box>
-            )}
-            {subDescription && (
-              <Box flexGrow={1} marginTop={2}>
-                <Text variant="small" fontWeight="light">
-                  {subDescription}
                 </Text>
               </Box>
             )}
