@@ -52,6 +52,15 @@ runs:
         echo "cache_exists=$exists" >> $GITHUB_OUTPUT
       continue-on-error: true
 
+    - name: Set up Docker Buildx
+      id: buildx
+      if: steps.check-deps-cache.outputs.cache_exists != 'true'
+      uses: docker/setup-buildx-action@v3
+      with:
+        driver-opts: |
+          image=${{ inputs.docker_registry }}/moby/buildkit:buildx-stable-1
+        use: true
+
     - name: Build and push deps layer
       uses: docker/build-push-action@v6
       if: steps.check-deps-cache.outputs.cache_exists != 'true'
@@ -59,8 +68,6 @@ runs:
         context: .
         platforms: linux/amd64
         file: ./scripts/ci/Dockerfile
-        target: deps
-        tags: ${{ inputs.docker_registry }}/${{ inputs.cache_repo }}:deps-${{ steps.yarn-sha.outputs.sha }}
         cache-from: type=s3,blobs_prefix=${{ steps.cache-prefix.outputs.prefix }}/,manifests_prefix=${{ steps.cache-prefix.outputs.prefix }}/,region=${{ inputs.aws_region }},bucket=${{ inputs.s3_cache_bucket }}
         cache-to: type=s3,blobs_prefix=${{ steps.cache-prefix.outputs.prefix }}/,manifests_prefix=${{ steps.cache-prefix.outputs.prefix }}/,region=${{ inputs.aws_region }},bucket=${{ inputs.s3_cache_bucket }},mode=max
 
