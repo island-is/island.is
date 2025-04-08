@@ -214,7 +214,9 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             key={advertHtmlEditorKey}
             // we have use setValue from useFormContext to update the value
             // because this is not a controlled component
-            onChange={(value) => setValue(InputFields.advert.html, value)}
+            onChange={(value) => {
+              setValue(InputFields.advert.html, value)
+            }}
           />
         </Stack>
       </FormGroup>
