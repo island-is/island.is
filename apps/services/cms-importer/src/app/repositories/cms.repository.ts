@@ -136,7 +136,7 @@ export class CmsRepository {
   ): Promise<Entry | undefined> => {
     if (entry.isUpdated()) {
       //Invalid state, log and skip
-      logger.info(`Entry has unpublished changes, please publish!`, {
+      logger.warn(`Entry has unpublished changes, please publish!`, {
         id: entry.sys.id,
       })
       return Promise.reject(`Entry has unpublished changes`)
