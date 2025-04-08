@@ -302,7 +302,6 @@ jobs:
 
       - name: Set environment variables for build
         run: |
-          echo "DOCKER_TAG=${{ github.sha }}" >> $GITHUB_ENV
           echo "DOCKER_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
         continue-on-error: true
 
@@ -386,8 +385,7 @@ jobs:
             "APP_DIST_HOME=${APP_DIST_HOME}"
           secrets: |
             "nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}"
-          tags: |
-            "${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}"
+          tags: ${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}
 
       # - name: Building Docker images
       #   id: dockerbuild
