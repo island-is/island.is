@@ -1109,4 +1109,13 @@ export class Case extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   isCompletedWithoutRuling?: boolean
+
+  /**********
+   * NOTE: This is a temporary field to indicate whether a public prosecutors
+   * user has marked a case as registered in the police system. This will be
+   * removed in the future.
+   **********/
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  publicProsecutorIsRegisteredInPoliceSystem?: boolean
 }

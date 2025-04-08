@@ -28,6 +28,7 @@ import {
 import {
   Case,
   CaseAppealState,
+  CaseListEntry,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { findFirstInvalidStep } from '../../formHelper'
@@ -40,9 +41,10 @@ const useCaseList = () => {
     [id: string | null, showLoading: boolean]
   >([null, false])
   const { user, limitedAccess } = useContext(UserContext)
-  const { getCase } = useContext(FormContext)
+  const { getCase, workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { isTransitioningCase, isSendingNotification } = useCase()
+  const { isTransitioningCase, isSendingNotification, setAndSendCaseToServer } =
+    useCase()
   const router = useRouter()
 
   const openCase = useCallback(
@@ -181,6 +183,24 @@ const useCaseList = () => {
     ],
   )
 
+  const handleMarkAsRegisteredInPoliceSystemClick = useCallback(
+    (theCase: CaseListEntry) => {
+      console.log(theCase.publicProsecutorIsRegisteredInPoliceSystem)
+      setAndSendCaseToServer(
+        [
+          {
+            publicProsecutorIsRegisteredInPoliceSystem:
+              !theCase.publicProsecutorIsRegisteredInPoliceSystem,
+            force: true,
+          },
+        ],
+        theCase as Case,
+        setWorkingCase,
+      )
+    },
+    [],
+  )
+
   const LoadingIndicator = () => {
     return (
       <motion.div
@@ -199,6 +219,7 @@ const useCaseList = () => {
     showLoading: clickedCase[1],
     handleOpenCase,
     LoadingIndicator,
+    handleMarkAsRegisteredInPoliceSystemClick,
   }
 }
 

@@ -37,7 +37,8 @@ interface Props {
 
 const CasesReviewed: FC<Props> = ({ loading, cases }) => {
   const { formatMessage } = useIntl()
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTabMenuItem, markAsRegisteredInPoliceSystemMenuItem } =
+    useContextMenu()
 
   const indictmentReviewDecisionMapping = (
     reviewDecision: IndictmentCaseReviewDecision,
@@ -120,6 +121,7 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
               data={cases}
               generateContextMenuItems={(row) => [
                 openCaseInNewTabMenuItem(row.id),
+                markAsRegisteredInPoliceSystemMenuItem(row),
               ]}
               columns={[
                 {
@@ -135,6 +137,9 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                         }${row.courtCaseNumber ?? ''}`}
                         policeCaseNumbers={row.policeCaseNumbers ?? []}
                         appealCaseNumber={row.appealCaseNumber ?? ''}
+                        publicProsecutorIsRegisteredInPoliceSystem={
+                          row.publicProsecutorIsRegisteredInPoliceSystem
+                        }
                       />
                     )
                   },
