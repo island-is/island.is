@@ -3,7 +3,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { ContentFields, Entry, KeyValueMap } from 'contentful-management'
 import { ManagementClientService } from '../modules/managementClient/managementClient.service'
 import { CmsGrant, CmsGrantInput } from '../app.types'
-import { CONTENT_TYPE, LOCALE } from '../modules/managementClient/constants'
+import { CONTENT_TYPE, LOCALE } from '../constants'
 import { logger } from '@island.is/logging'
 
 @Injectable()
@@ -134,6 +134,14 @@ export class CmsRepository {
     contentFields: Array<ContentFields<KeyValueMap>>,
     inputFields: Array<{ key: string; value: unknown }>,
   ): Promise<Entry | undefined> => {
+    if (entry.isUpdated()) {
+      //Invalid state, log and skip
+      logger.info(`Entry has unpublished changes, please publish!`, {
+        id: entry.sys.id,
+      })
+      return Promise.reject(`Entry has unpublished changes`)
+    }
+
     let hasChanges = false
     for (const inputField of inputFields) {
       if (!this.inputFieldExistsInContent(contentFields, inputField)) {
@@ -163,6 +171,8 @@ export class CmsRepository {
       }
     }
 
+    const hasEntryBeenPublishedBefore = entry.isPublished()
+
     if (hasChanges) {
       logger.info('updating values', {
         id: entry.sys.id,
@@ -175,12 +185,18 @@ export class CmsRepository {
         referenceId: grantReferenceId,
       })
 
-      const publishedEntry = await entry.publish()
-      logger.info('Entry published', {
-        id: publishedEntry.sys.id,
-        referenceId: grantReferenceId,
-      })
-      return publishedEntry
+      //If not currently published, stop.
+      if (!hasEntryBeenPublishedBefore) {
+        return updatedEntry
+      } else {
+        const publishedEntry = await entry.publish()
+
+        logger.info('Entry published', {
+          id: publishedEntry.sys.id,
+          referenceId: grantReferenceId,
+        })
+        return publishedEntry
+      }
     }
     logger.info('Values unchanged, aborting update', {
       id: entry.sys.id,
