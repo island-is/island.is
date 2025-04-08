@@ -131,7 +131,6 @@ const BloodDonationRestrictionList: CustomScreen<
     onCompleted(data) {
       const input = { ...data.getBloodDonationRestrictions.input }
       delete input['__typename']
-      console.log({ input, query: queryVariablesRef.current })
       if (!isEqual(input, queryVariablesRef.current)) {
         return
       }
