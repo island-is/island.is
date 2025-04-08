@@ -349,7 +349,7 @@ jobs:
             # --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache,mode=max" \
           )
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
-          export OUTPUT_TYPE="${DOCKER_TYPE/docker/output}" >> "${GITHUB_ENV}"
+          echo OUTPUT_TYPE="${DOCKER_TYPE/docker/output}" >> "${GITHUB_ENV}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
           echo "push tag: ${{ env.DOCKER_REGISTRY }}/${{ env.APP }}:${{ env.DOCKER_TAG }}"
 
