@@ -44,7 +44,7 @@ jobs:
             - name: Get ECR password
               id: ecr-login
               run: |
-                ECR_PASSWORD=$(id)
+                ECR_PASSWORD=$(aws ecr get-login-password)
                 echo "::add-mask::$ECR_PASSWORD"
                 echo "password=$ECR_PASSWORD" >> $GITHUB_OUTPUT
             - name: Checkout dagger code
