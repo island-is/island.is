@@ -331,8 +331,7 @@ const HearingArrangements = () => {
           )}
           {workingCase.sessionArrangements ===
             SessionArrangements.ALL_PRESENT &&
-            isNonEmptyArray(workingCase.victims) &&
-            workingCase.victims.map((victim) => (
+            isNonEmptyArray(workingCase.victims) && (
               <>
                 <SectionHeading
                   title={
@@ -349,16 +348,18 @@ const HearingArrangements = () => {
                     ) : null
                   }
                 />
-                <BlueBox>
-                  <LegalRightsProtectorInputFields
-                    victim={victim}
-                    workingCase={workingCase}
-                    setWorkingCase={setWorkingCase}
-                    useVictimNameAsTitle
-                  />
-                </BlueBox>
+                {workingCase.victims.map((victim) => (
+                  <BlueBox>
+                    <LegalRightsProtectorInputFields
+                      victim={victim}
+                      workingCase={workingCase}
+                      setWorkingCase={setWorkingCase}
+                      useVictimNameAsTitle
+                    />
+                  </BlueBox>
+                ))}
               </>
-            ))}
+            )}
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
