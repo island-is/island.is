@@ -23,10 +23,6 @@ module.exports = {
             allowNull: true,
             unique: true,
           },
-          organization_national_id: {
-            type: Sequelize.STRING,
-            allowNull: false,
-          },
           organization_display_name: {
             type: Sequelize.JSON,
             allowNull: true,
