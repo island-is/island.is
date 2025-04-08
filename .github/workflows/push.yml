@@ -370,7 +370,7 @@ jobs:
           file: ./scripts/ci/Dockerfile
           push: true
           target: ${OUTPUT_TYPE}
-          cache-from: type=s3,blobs_prefix=cache/${{ github.repository }}/,manifests_prefix=cache/${{ github.repository }}/,region=${AWS_REGION},bucket=${S3_DOCKER_CACHE_BUCKET}
+          cache-from: type=s3,blobs_prefix=${{ needs.prepare.outputs.cache-prefix }}/,manifests_prefix=${{ needs.prepare.outputs.cache-prefix }}/,region=${AWS_REGION},bucket=${S3_DOCKER_CACHE_BUCKET}
           build-args: |
             "DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
             "NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"

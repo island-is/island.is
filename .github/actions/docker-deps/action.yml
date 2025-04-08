@@ -17,10 +17,10 @@ inputs:
     description: ''
     required: true
 
-# outputs:
-#   cache_image:
-#     description: ''
-#     value: ${{ steps.set-cache-image.outputs.image }}
+outputs:
+  cache-prefix:
+    description: ''
+    value: ${{ steps.cache-prefix.outputs.prefix }}
 runs:
   using: 'composite'
   steps:
@@ -34,35 +34,35 @@ runs:
       id: cache-tag
       run: echo "tag=deps-${{ steps.yarn-sha.outputs.sha }}" >> $GITHUB_OUTPUT
 
-    # - name: Check if deps cache exists
-    #   shell: bash
-    #   id: check-deps-cache
-    #   run: |
-    #     if aws ecr describe-images --repository-name ${{ inputs.cache_repo }} --image-ids imageTag=${{ steps.cache-tag.outputs.tag }} &>/dev/null; then
-    #       exists=true
-    #     else
-    #       exists=false
-    #     fi
-    #     echo "cache exists: $exists"
-    #     echo "cache_exists=$exists" >> $GITHUB_OUTPUT
-    #   continue-on-error: true
+    - name: Set cache prefix
+      shell: bash
+      id: cache-prefix
+      run: echo "prefix=cache/${{ github.repository }}/yarn-${{ steps.yarn-sha.outputs.sha }}" >> $GITHUB_OUTPUT
 
-    - name: Set up Docker Buildx
-      id: buildx
-      uses: docker/setup-buildx-action@v3
-      with:
-        driver-opts: |
-          image=${{ inputs.docker_registry }}/moby/buildkit:buildx-stable-1
-        use: true
+    - name: Check if deps cache exists
+      shell: bash
+      id: check-deps-cache
+      run: |
+        # Use AWS CLI to check if the prefix object exists in the bucket
+        exists="false"
+        if aws s3 ls s3://${{ inputs.s3_cache_bucket }}/${{ steps.cache-prefix.outputs.prefix }}/ | grep -q "manifest.json"; then
+          exists="true"
+        fi
+        echo "cache exists: $exists"
+        echo "cache_exists=$exists" >> $GITHUB_OUTPUT
+      continue-on-error: true
 
     - name: Build and push deps layer
       uses: docker/build-push-action@v6
+      if: steps.check-deps-cache.outputs.cache_exists != 'true'
       with:
         context: .
         platforms: linux/amd64
         file: ./scripts/ci/Dockerfile
-        cache-from: type=s3,blobs_prefix=cache/${{ github.repository }}/,manifests_prefix=cache/${{ github.repository }}/,region=${{ inputs.aws_region }},bucket=${{ inputs.s3_cache_bucket }}
-        cache-to: type=s3,blobs_prefix=cache/${{ github.repository }}/,manifests_prefix=cache/${{ github.repository }}/,region=${{ inputs.aws_region }},bucket=${{ inputs.s3_cache_bucket }},mode=max
+        target: deps
+        tags: ${{ inputs.docker_registry }}/${{ inputs.cache_repo }}:deps-${{ steps.yarn-sha.outputs.sha }}
+        cache-from: type=s3,blobs_prefix=${{ steps.cache-prefix.outputs.prefix }}/,manifests_prefix=${{ steps.cache-prefix.outputs.prefix }}/,region=${{ inputs.aws_region }},bucket=${{ inputs.s3_cache_bucket }}
+        cache-to: type=s3,blobs_prefix=${{ steps.cache-prefix.outputs.prefix }}/,manifests_prefix=${{ steps.cache-prefix.outputs.prefix }}/,region=${{ inputs.aws_region }},bucket=${{ inputs.s3_cache_bucket }},mode=max
 
     # - name: Set cache image
     #   shell: bash
