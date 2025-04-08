@@ -37,16 +37,12 @@ const OJOISubpage: CustomScreen<OJOISubpageProps> = ({
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
-  if (!customSubpage) {
-    throw new CustomNextError(404, 'Custom subpage not found')
-  }
-
   return (
     <OJOIWrapper
-      pageTitle={customSubpage.ogTitle ?? ''}
-      pageDescription={customSubpage.ogDescription ?? ''}
+      pageTitle={customSubpage?.ogTitle ?? ''}
+      pageDescription={customSubpage?.ogDescription ?? ''}
       organization={organization ?? undefined}
-      pageFeaturedImage={customSubpage.ogImage?.url}
+      pageFeaturedImage={customSubpage?.ogImage?.url}
       breadcrumbItems={[
         {
           title: formatMessage(m.breadcrumb.frontpage),
@@ -57,7 +53,7 @@ const OJOISubpage: CustomScreen<OJOISubpageProps> = ({
           href: linkResolver('ojoihome', [], locale).href,
         },
         {
-          title: customSubpage.ogTitle ?? '',
+          title: customSubpage?.ogTitle ?? '',
         },
       ]}
     >
@@ -101,8 +97,8 @@ OJOISubpage.getProps = async ({
     }),
   ])
 
-  if (!getOrganization?.hasALandingPage) {
-    throw new CustomNextError(404, 'Organization page not found')
+  if (!getCustomSubpage) {
+    throw new CustomNextError(404, 'Custom subpage not found')
   }
 
   return {
