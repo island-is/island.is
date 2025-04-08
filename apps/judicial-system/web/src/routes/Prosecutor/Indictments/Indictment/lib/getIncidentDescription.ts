@@ -4,46 +4,41 @@ import {
   formatDate,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { CrimeScene, IndictmentSubtype } from '@island.is/judicial-system/types'
+import { CrimeScene } from '@island.is/judicial-system/types'
 import {
+  Gender,
   IndictmentCount,
   IndictmentCountOffense,
-  Maybe,
+  IndictmentSubtype,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'
-import { indictmentCount as strings } from '../IndictmentCount.strings'
+import { strings } from './getIncidentDescription.strings'
 
-const getIncidentDescriptionProps = ({
-  offenses,
-  formatMessage,
-}: {
-  offenses?: Maybe<Offense[]>
-  formatMessage: IntlShape['formatMessage']
-}) => {
-  if (!offenses || offenses.length === 0) {
+const getIncidentDescriptionProps = (
+  offenses: Offense[] = [],
+  gender: Gender,
+  formatMessage: IntlShape['formatMessage'],
+) => {
+  if (offenses.length === 0) {
     return undefined
   }
-  const reason = getIncidentDescriptionReason(offenses || [], formatMessage)
-  const isSpeeding = offenses?.some(
+  const reason = getIncidentDescriptionReason(offenses, gender, formatMessage)
+  const isSpeeding = offenses.some(
     (o) => o.offense === IndictmentCountOffense.SPEEDING,
   )
   return { reason, isSpeeding }
 }
 
-export const getIncidentDescription = ({
-  indictmentCount,
-  formatMessage,
-  crimeScene,
-  subtypesRecord,
-}: {
-  indictmentCount: IndictmentCount
-  formatMessage: IntlShape['formatMessage']
-  crimeScene?: CrimeScene
-  subtypesRecord?: Record<string, IndictmentSubtype[]>
-}) => {
+export const getIncidentDescription = (
+  indictmentCount: IndictmentCount,
+  gender: Gender,
+  crimeScene: CrimeScene,
+  formatMessage: IntlShape['formatMessage'],
+  subtypesRecord?: Record<string, IndictmentSubtype[]>,
+) => {
   const {
     offenses,
     vehicleRegistrationNumber,
@@ -53,7 +48,7 @@ export const getIncidentDescription = ({
 
   const incidentLocation = crimeScene?.place || '[Vettvangur]'
   const incidentDate = crimeScene?.date
-    ? formatDate(crimeScene.date, 'PPPP')?.replace('dagur,', 'daginn') || ''
+    ? formatDate(crimeScene.date, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
     : '[Dagsetning]'
 
   const vehicleRegistration =
@@ -86,10 +81,11 @@ export const getIncidentDescription = ({
       })
     }
 
-    const incidentDescriptionProps = getIncidentDescriptionProps({
-      offenses,
+    const incidentDescriptionProps = getIncidentDescriptionProps(
+      offenses ?? undefined,
+      gender,
       formatMessage,
-    })
+    )
     if (!incidentDescriptionProps) {
       return ''
     }

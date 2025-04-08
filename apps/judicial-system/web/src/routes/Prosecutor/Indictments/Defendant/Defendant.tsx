@@ -9,7 +9,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeScene,
   CrimeSceneMap,
-  IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
@@ -26,6 +25,7 @@ import {
   Case,
   CaseOrigin,
   Defendant as TDefendant,
+  IndictmentSubtype,
   PoliceCaseInfo as TPoliceCaseInfo,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -34,6 +34,7 @@ import {
   useDefendants,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { DefendantInfo, ProsecutorSection } from '../../components'
@@ -117,6 +118,8 @@ const Defendant = () => {
   const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
+
+  const gender = getDefaultDefendantGender(workingCase.defendants)
 
   useEffect(() => {
     setPoliceCases(getPoliceCases(workingCase))
@@ -306,12 +309,13 @@ const Defendant = () => {
             indictmentCountSubtypes: updatedIndictmentCountSubtypes,
           }
 
-          const incidentDescription = getIncidentDescription({
-            indictmentCount: updatedIndictmentCount,
+          const incidentDescription = getIncidentDescription(
+            updatedIndictmentCount,
+            gender,
             crimeScene,
             formatMessage,
-            subtypesRecord: subtypes,
-          })
+            subtypes,
+          )
 
           updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,

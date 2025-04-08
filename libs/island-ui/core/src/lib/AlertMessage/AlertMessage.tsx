@@ -62,7 +62,7 @@ export interface AlertMessageProps {
 
 type TitleAndOrMessage =
   | {
-      title: string
+      title: string | ReactNode
       message: string | ReactNode
     }
   | {
@@ -109,11 +109,14 @@ export const AlertMessage: FC<AlertMessageProps & TitleAndOrMessage> = ({
           flexDirection="column"
           alignSelf="center"
         >
-          {title && (
-            <Text as="h5" variant="h5" marginBottom={message ? 1 : 0}>
-              {title}
-            </Text>
-          )}
+          {title &&
+            (typeof title === 'string' ? (
+              <Text as="h5" variant="h5" marginBottom={message ? 1 : 0}>
+                {title}
+              </Text>
+            ) : (
+              title
+            ))}
           {message && (
             <Box display="flex" alignItems="center">
               {isValidElement(message) ? (

@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 import { Box, Icon } from '@island.is/island-ui/core'
 import { FormSystemScreen, FormSystemField } from '@island.is/api/schema'
 import { ControlContext } from '../../../../../context/ControlContext'
-import { Preview } from '../../Preview/Preveiw'
+import { Preview } from '../../Preview/Preview'
 
 interface Props {
   screen: FormSystemScreen

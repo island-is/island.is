@@ -95,7 +95,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       })
       return data
     },
-    [getAreIndividualsValid],
+    [getAreIndividualsValid, courseID, registererNationalId],
   )
 
   useEffect(() => {
@@ -114,8 +114,12 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     ) {
       trigger('participantList')
       setValue('participantValidityError', '')
+      setValue('participantFinishedValidation', 'true')
+      setFoundNotValid(false)
+    } else if (unfinishedValues.length === 0) {
+      trigger('participantList')
     }
-  }, [values])
+  }, [values, participantList, setValue, trigger])
 
   const changeFile = (props: Array<UploadFile>) => {
     const reader = new FileReader()
@@ -255,7 +259,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         }
       })
     }
-    reader.readAsText(props[0] as unknown as Blob)
+    reader.readAsText(props[0] as unknown as Blob, 'UTF-8')
 
     return
   }
@@ -269,17 +273,19 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return
   }
 
-  const csvFile = `data:text/csv;charset=utf-8,nafn;kennitala;netfang;simi\nNafn hér;123456-7890;netfang@netfang.com;123-4567`
-
   const onCsvButtonClick = () => {
-    const encodeUri = encodeURI(csvFile)
-    const a = document.createElement('a')
-    a.setAttribute('href', encodeUri)
-    a.setAttribute('target', '_blank')
-    a.setAttribute('download', 'csv_template.csv')
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
+    const csvContent = `\uFEFFnafn;kennitala;netfang;sími\nNafn hér;123456-7890;netfang@netfang.com;123-4567`
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+
+    link.setAttribute('href', url)
+    link.setAttribute('download', 'csv_template_ver.csv')
+    document.body.appendChild(link)
+    link.click()
+
+    document.body.removeChild(link)
   }
 
   const removeInvalidParticipants = async () => {

@@ -19,6 +19,11 @@ export const personal = {
     },
   }),
   labels: defineMessages({
+    changeInfo: {
+      id: 'aosh.sem.application:personal.labels.changeInfo',
+      defaultMessage: 'Breyta upplýsingum á mínum síðum',
+      description: 'Change information label on personal screen',
+    },
     userName: {
       id: 'aosh.sem.application:personal.labels.userName',
       defaultMessage: 'Nafn',

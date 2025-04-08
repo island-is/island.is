@@ -1,9 +1,11 @@
 import {
+  buildCheckboxField,
   buildMultiField,
   buildOverviewField,
   buildSection,
+  YES,
 } from '@island.is/application/core'
-import { overview } from '../../../lib/messages'
+import { overview, paymentArrangement } from '../../../lib/messages'
 import {
   getOverviewTable,
   getPaymentArrangementForOverviewMultiple,
@@ -42,6 +44,14 @@ export const overviewSection = buildSection({
           condition: isSinglePaymentArrangement,
         }),
         buildOverviewField({
+          id: 'overviewTable',
+          title: overview.labels.participants,
+          backId: 'participantsMultiField',
+          bottomLine: true,
+          tableData: getOverviewTable,
+          condition: isApplyingForMultiple,
+        }),
+        buildOverviewField({
           id: 'overviewPaymentArrangementMultiple',
           title: overview.labels.paymentArrangement,
           backId: 'paymentArrangementMultiField',
@@ -49,13 +59,17 @@ export const overviewSection = buildSection({
           items: getPaymentArrangementForOverviewMultiple,
           condition: (answers) => !isSinglePaymentArrangement(answers),
         }),
-        buildOverviewField({
-          id: 'overviewTable',
-          title: overview.labels.participants,
-          backId: 'participantsMultiField',
-          bottomLine: true,
-          tableData: getOverviewTable,
-          condition: isApplyingForMultiple,
+        buildCheckboxField({
+          id: 'paymentAgreementCheckbox',
+          large: false,
+          backgroundColor: 'white',
+          marginTop: 3,
+          options: [
+            {
+              value: YES,
+              label: paymentArrangement.labels.agreementCheckbox,
+            },
+          ],
         }),
       ],
     }),

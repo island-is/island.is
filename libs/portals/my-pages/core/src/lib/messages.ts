@@ -666,18 +666,6 @@ export const m = defineMessages({
     id: 'service.portal:licenses-description',
     defaultMessage: 'Upplýsingar um skírteini og réttindi sem þeim fylgja',
   },
-  singleLicense: {
-    id: 'sp.occupational-licenses:single-license',
-    defaultMessage: 'Stakt starfsleyfi',
-  },
-  singleHealthLicense: {
-    id: 'sp.occupational-licenses:single-health-license',
-    defaultMessage: 'Stakt starfsleyfi heilbrigðisstarfsmanns',
-  },
-  singleEducationLicense: {
-    id: 'sp.occupational-licenses:single-education-license',
-    defaultMessage: 'Stakt leyfisbréf kennara',
-  },
   occupationalLicensesDescription: {
     id: 'service.portal:occupational-licenses-description',
     defaultMessage:
