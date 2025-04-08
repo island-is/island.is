@@ -81,6 +81,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         },
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAddress])
 
   useEffect(() => {
@@ -95,6 +96,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     } else {
       setSearchOptions([])
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm])
 
   useEffect(() => {
@@ -153,6 +155,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
 
   useEffect(() => {
     clearErrors(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   /**
