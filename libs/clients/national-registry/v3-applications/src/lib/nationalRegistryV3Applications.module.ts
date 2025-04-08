@@ -5,10 +5,8 @@ import {
   ApiConfigWithIdsAuth,
   exportedApis,
 } from './apiConfig'
-import { IdsClientConfig } from '@island.is/nest/config'
 
 @Module({
-  imports: [IdsClientConfig.registerOptional()],
   providers: [
     NationalRegistryV3ApplicationsClientService,
     ApiConfigWithIdsAuth,
