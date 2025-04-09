@@ -349,7 +349,7 @@ const HearingArrangements = () => {
                   }
                 />
                 {workingCase.victims.map((victim) => (
-                  <Box component="section" marginBottom={4}>
+                  <Box key={victim.id} component="section" marginBottom={4}>
                     <BlueBox>
                       <LegalRightsProtectorInputFields
                         victim={victim}
