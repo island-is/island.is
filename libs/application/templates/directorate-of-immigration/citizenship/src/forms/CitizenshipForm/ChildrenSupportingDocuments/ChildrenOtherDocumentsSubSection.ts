@@ -9,7 +9,6 @@ import {
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
-import { Citizenship } from '../../../lib/dataSchema'
 import {
   getSelectedCustodyChild,
   getSelectedIndividualAge,
@@ -17,6 +16,7 @@ import {
 } from '../../../utils'
 import { Routes } from '../../../lib/constants'
 import { FILE_TYPES_ALLOWED, MIN_AGE_WRITTEN_CONSENT } from '../../../shared'
+import { SelectedChild } from '../../../types/types'
 
 const FILE_SIZE_LIMIT = 10000000
 
@@ -112,10 +112,14 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
           buildHiddenInput({
             id: `${Routes.CHILDSUPPORTINGDOCUMENTS}[${index}].writtenConsentFromOtherParentRequired`,
             defaultValue: (application: Application) => {
-              const hasFullCustody = getValueViaPath(
-                application.answers,
-                `selectedChildrenExtraData[${index}].hasFullCustody`,
-              )
+              const selectedChildrenExtraData =
+                getValueViaPath<Array<SelectedChild>>(
+                  application.answers,
+                  'selectedChildrenExtraData',
+                ) ?? []
+
+              const hasFullCustody =
+                selectedChildrenExtraData[index].hasFullCustody
 
               return hasFullCustody === NO
             },
@@ -136,12 +140,14 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
             uploadButtonLabel:
               supportingDocuments.labels.otherDocuments.buttonText,
             condition: (formValue: FormValue) => {
-              const answers = formValue as Citizenship
-              const hasFullCustody = getValueViaPath(
-                answers,
-                `selectedChildrenExtraData[${index}].hasFullCustody`,
-                '',
-              ) as string
+              const answers = formValue
+              const selectedChildrenExtraData =
+                getValueViaPath<Array<SelectedChild>>(
+                  answers,
+                  'selectedChildrenExtraData',
+                ) ?? []
+              const hasFullCustody =
+                selectedChildrenExtraData[index].hasFullCustody
 
               return hasFullCustody === NO
             },
@@ -149,10 +155,14 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
           buildHiddenInput({
             id: `${Routes.CHILDSUPPORTINGDOCUMENTS}[${index}].custodyDocumentsRequired`,
             defaultValue: (application: Application) => {
-              const hasFullCustody = getValueViaPath(
-                application.answers,
-                `selectedChildrenExtraData[${index}].hasFullCustody`,
-              )
+              const selectedChildrenExtraData =
+                getValueViaPath<Array<SelectedChild>>(
+                  application.answers,
+                  'selectedChildrenExtraData',
+                ) ?? []
+
+              const hasFullCustody =
+                selectedChildrenExtraData[index].hasFullCustody
 
               return hasFullCustody === NO
             },
