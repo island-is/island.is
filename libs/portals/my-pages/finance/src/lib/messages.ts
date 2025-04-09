@@ -36,7 +36,14 @@ export const m = defineMessages({
     id: 'sp.finance:charge-type',
     defaultMessage: 'Gjaldflokkur',
   },
-
+  mileageFeeLink: {
+    id: 'sp.finance:mileage-fee-link',
+    defaultMessage: 'https://island.is/kilometragjald',
+  },
+  mileageFeeLinkLabel: {
+    id: 'sp.finance:mileage-fee-link-label',
+    defaultMessage: 'Sjá meira',
+  },
   feeBase: {
     id: 'sp.finance:fee-base',
     defaultMessage: 'Gjaldgrunnur',
