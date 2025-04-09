@@ -1,15 +1,14 @@
 import React, { MouseEvent } from 'react'
-import { useWindowSize } from 'react-use'
 import { useRouter } from 'next/router'
 
 import {
   Button,
   ButtonTypes,
   DropdownMenu,
+  Hidden,
   Inline,
   Logo,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { webLoginButtonSelect } from '@island.is/plausible'
 import { ProjectBasePath } from '@island.is/shared/constants'
 import { useI18n } from '@island.is/web/i18n'
@@ -27,7 +26,6 @@ interface Props {
 function LoginButtonDropdown(props: Props) {
   const { t } = useI18n()
   const router = useRouter()
-  const { width } = useWindowSize()
 
   function trackAndNavigate(
     buttonType: 'Dropdown - Individuals' | 'Dropdown - Companies' | string,
@@ -112,46 +110,76 @@ function LoginButtonDropdown(props: Props) {
     })
   }
 
-  const isMobile = width < theme.breakpoints.md
-
   return (
-    <DropdownMenu
-      fixed
-      disclosure={
-        <Button
-          colorScheme={props.colorScheme}
-          variant="utility"
-          icon="person"
-          title={isMobile ? t.login : undefined}
-        >
-          {!isMobile && t.login}
-        </Button>
-      }
-      openOnHover={!isMobile}
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      items={items}
-    />
+    <>
+      <Hidden above="sm">
+        <DropdownMenu
+          fixed
+          disclosure={
+            <Button
+              colorScheme={props.colorScheme}
+              variant="utility"
+              icon="person"
+              title={t.login}
+            />
+          }
+          openOnHover={false}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          items={items}
+        />
+      </Hidden>
+      <Hidden below="md">
+        <DropdownMenu
+          fixed
+          disclosure={
+            <Button
+              colorScheme={props.colorScheme}
+              variant="utility"
+              icon="person"
+            >
+              {t.login}
+            </Button>
+          }
+          openOnHover={true}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          items={items}
+        />
+      </Hidden>
+    </>
   )
 }
 
 const LoginButtonLink = (props: Props) => {
   const { t } = useI18n()
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
 
   return (
-    <a href={ProjectBasePath.ServicePortal} tabIndex={-1}>
-      <Button
-        colorScheme={props.colorScheme}
-        variant="utility"
-        icon="person"
-        title={isMobile ? t.login : undefined}
-        as="span"
-      >
-        {!isMobile && t.login}
-      </Button>
-    </a>
+    <>
+      <Hidden above="sm">
+        <a href={ProjectBasePath.ServicePortal} tabIndex={-1}>
+          <Button
+            colorScheme={props.colorScheme}
+            variant="utility"
+            icon="person"
+            title={t.login}
+            as="span"
+          />
+        </a>
+      </Hidden>
+      <Hidden below="md">
+        <a href={ProjectBasePath.ServicePortal} tabIndex={-1}>
+          <Button
+            colorScheme={props.colorScheme}
+            variant="utility"
+            icon="person"
+            as="span"
+          >
+            {t.login}
+          </Button>
+        </a>
+      </Hidden>
+    </>
   )
 }
 

@@ -25,6 +25,7 @@ import { GenericListItemSyncService } from './importers/genericListItem.service'
 import { TeamListSyncService } from './importers/teamList.service'
 import type { CmsSyncProvider, processSyncDataInput } from './cmsSync.service'
 import { GrantsSyncService } from './importers/grants.service'
+import { BloodDonationRestrictionSyncService } from './importers/bloodDonationRestriction.service'
 
 @Injectable()
 export class MappingService {
@@ -55,6 +56,7 @@ export class MappingService {
     private readonly grantSyncService: GrantsSyncService,
     private readonly genericListItemSyncService: GenericListItemSyncService,
     private readonly teamListSyncService: TeamListSyncService,
+    private readonly bloodDonationRestrictionSyncService: BloodDonationRestrictionSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -81,6 +83,7 @@ export class MappingService {
       this.customPageSyncService,
       this.genericListItemSyncService,
       this.teamListSyncService,
+      this.bloodDonationRestrictionSyncService,
     ]
   }
 
