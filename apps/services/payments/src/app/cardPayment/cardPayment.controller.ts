@@ -37,6 +37,7 @@ import { ChargeCardResponse } from './dtos/chargeCard.response.dto'
 import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
 import { VerificationCallbackResponse } from './dtos/verificationCallback.response.dto'
 import { CardPaymentService } from './cardPayment.service'
+import { PaymentTrackingData } from '../../types/cardPayment'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -206,6 +207,11 @@ export class CardPaymentController {
       // Create a unique guid for the payment confirmation
       const paymentConfirmationId = uuid()
 
+      const paymentTrackingData: PaymentTrackingData = {
+        merchantReferenceData,
+        correlationId: paymentConfirmationId,
+      }
+
       this.logger.info(
         `Starting card payment for payment flow ${chargeCardInput.paymentFlowId} with correlation id ${paymentConfirmationId}`,
       )
@@ -213,10 +219,7 @@ export class CardPaymentController {
       // Payment confirmation
       const paymentResult = await this.cardPaymentService.charge(
         chargeCardInput,
-        {
-          merchantReferenceData,
-          correlationId: paymentConfirmationId,
-        },
+        paymentTrackingData,
       )
 
       let persistedPaymentConfirmation = false
@@ -227,10 +230,7 @@ export class CardPaymentController {
           paymentResult,
           paymentFlowId: chargeCardInput.paymentFlowId,
           totalPrice,
-          paymentTrackingData: {
-            merchantReferenceData,
-            correlationId: paymentConfirmationId,
-          },
+          paymentTrackingData,
         })
         persistedPaymentConfirmation = true
 
@@ -287,6 +287,7 @@ export class CardPaymentController {
               'Accepted payment but failed to persist payment confirmation and failed to refund',
             metadata: {
               payment: paymentResult,
+              paymentTrackingData,
             },
           })
         }
@@ -368,6 +369,7 @@ export class CardPaymentController {
                 'Accepted payment but failed to persist payment confirmation, to create FJS charge and failed to refund',
               metadata: {
                 payment: paymentResult,
+                paymentTrackingData,
               },
             })
           }
