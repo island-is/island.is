@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client'
 import {
   Mutation,
-   MutationDeleteEmailOrPhoneArgs,
+  MutationDeleteEmailOrPhoneArgs,
   DeleteEmailOrPhoneInput
 } from '@island.is/api/schema'
 import { useUserProfile } from './useUserProfile'

@@ -33,6 +33,6 @@
       "command": "yarn openapi-generator -o libs/clients/fjs/bankinfo/gen/fetch -i libs/clients/fjs/bankinfo/src/clientConfig.json"
     },
     "outputs": ["{projectRoot}/gen/fetch"]
+    }
   }
-  },
 }

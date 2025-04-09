@@ -727,7 +727,7 @@ export const coreErrorMessages = defineMessages({
     description: 'No bank account error',
   },
   invalidBankAccountError: {
-    id: 'application.system:core.fetch.data.noBankAccountError',
+    id: 'application.system:core.fetch.data.invalidBankAccountError',
     defaultMessage: 'Ógildur bankareikningur skráður',
     description: 'Invalid bank account registered',
   },
