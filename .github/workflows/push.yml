@@ -260,6 +260,7 @@ jobs:
       - prepare
     uses: ./.github/workflows/docker.yml
     with:
+      docker_registry: ${{ env.DOCKER_REGISTRY }}
       build_chunks: ${{ needs.prepare.outputs.BUILD_CHUNKS }}
       git_branch: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
       docker_tag: ${{ needs.prepare.outputs.DOCKER_TAG }}

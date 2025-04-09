@@ -3,10 +3,21 @@ name: Docker Build
 on:
   workflow_call:
     inputs:
+      docker_registry:
+        type: string
+        required: true
       aws_region:
         required: false
         type: string
         default: eu-west-1
+      s3_cache_bucket:
+        required: true
+        type: string
+        description: 'S3 bucket for caching'
+      generated_files:
+        required: true
+        type: string
+        description: 'Path to generated files archive'
       build_chunks:
         required: true
         type: string
@@ -94,6 +105,9 @@ jobs:
       GIT_COMMIT_SHA: ${{ inputs.git_commit_sha }}
       SERVER_URL: ${{ inputs.server_url }}
       PLAYWRIGHT_VERSION: ${{ inputs.playwright_version }}
+      DOCKER_REGISTRY: ${{ inputs.docker_registry }}
+      AWS_REGION: ${{ inputs.aws_region }}
+      GENERATED_FILES: ${{ inputs.generated_files }}
     strategy:
       fail-fast: true
       matrix:
@@ -159,7 +173,7 @@ jobs:
           file: ./scripts/ci/Dockerfile
           push: true
           target: ${{ env.OUTPUT_TYPE }}
-          cache-from: type=s3,blobs_prefix=${{ inputs.s3_cache_prefix }}/,manifests_prefix=${{ inputs.s3_cache_prefix }}/,region=${{ inputs.aws_region }},bucket=${{ inputs.s3_cache_bucket }}
+          cache-from: type=s3,blobs_prefix=${{ inputs.s3_cache_prefix }}/,manifests_prefix=${{ inputs.s3_cache_prefix }}/,region=${{ env.AWS_REGION }},bucket=${{ inputs.s3_cache_bucket }}
           build-args: |
             NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}
             GIT_BRANCH=${{ env.GIT_BRANCH }}
