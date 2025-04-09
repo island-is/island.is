@@ -55,6 +55,9 @@ export class PasskeysController {
   })
   @Audit()
   async deletePasskey(@CurrentActor() actor: User): Promise<void> {
+    // DUMMY
+    const k = 8
+
     await this.passkeysCoreService.deletePasskeyByUser(actor)
   }
 
