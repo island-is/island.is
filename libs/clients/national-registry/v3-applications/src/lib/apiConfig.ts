@@ -68,11 +68,7 @@ export const ApiConfigWithB2CAuth = {
         Accept: 'application/json',
       },
     }),
-  inject: [
-    XRoadConfig.KEY,
-    NationalRegistryV3ApplicationsClientConfig.KEY,
-    IdsClientConfig.KEY,
-  ],
+  inject: [XRoadConfig.KEY, NationalRegistryV3ApplicationsClientConfig.KEY],
 }
 
 export const exportedApis = [
