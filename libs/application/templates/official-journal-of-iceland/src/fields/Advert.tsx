@@ -68,7 +68,9 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
 
   const [advertTemplateQuery] = useAdvertTemplateLazy((data) => {
     const currentAnswers = structuredClone(currentApplication.answers)
-    const html = data.officialJournalOfIcelandApplicationAdvertTemplate.html
+    const html = Buffer.from(
+      data.officialJournalOfIcelandApplicationAdvertTemplate.html,
+    ).toString('base64')
     const updatedAnswers = set(currentAnswers, InputFields.advert.html, html)
     setValue(InputFields.advert.html, html)
     updateApplication(updatedAnswers, () => setAdvertHtmlEditorKey(uuid()))
@@ -212,7 +214,9 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             key={advertHtmlEditorKey}
             // we have use setValue from useFormContext to update the value
             // because this is not a controlled component
-            onChange={(value) => setValue(InputFields.advert.html, value)}
+            onChange={(value) => {
+              setValue(InputFields.advert.html, value)
+            }}
           />
         </Stack>
       </FormGroup>

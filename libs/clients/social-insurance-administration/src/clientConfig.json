@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": { "title": "TR Portal API", "version": "v1.0" },
   "paths": {
     "/api/protected/v1/Applicant/{applicationType}/eligible": {
@@ -1294,7 +1294,7 @@
     "/api/protected/v1/IncomePlan/WithholdingTax": {
       "get": {
         "tags": ["IncomePlan"],
-        "summary": "Returns withholding tax (staðgreiðsluskrá) for the logged-in user.\r\nUsed for new TR customers that have no previous income plan as reference to prepopulate with.",
+        "summary": "Returns withholding tax (staðgreiðsluskrá) for the logged-in user.\nUsed for new TR customers that have no previous income plan as reference to prepopulate with.",
         "parameters": [
           {
             "name": "year",
@@ -1645,7 +1645,7 @@
     "/api/protected/v1/IncomePlan/IncomePlanConditions": {
       "get": {
         "tags": ["IncomePlan"],
-        "summary": "Returns information about various income plan conditions, such as for which year income plans\r\nare currently being accepted, whether or not to show temporary calculations etc.",
+        "summary": "Returns information about various income plan conditions, such as for which year income plans\nare currently being accepted, whether or not to show temporary calculations etc.",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -2321,7 +2321,7 @@
     "/api/protected/v1/Test": {
       "get": {
         "tags": ["Test"],
-        "summary": "This is an unauthorized ping endpoint. It is only used for organization to organization\r\ntesting of communications.",
+        "summary": "This is an unauthorized ping endpoint. It is only used for organization to organization\ntesting of communications.",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -2563,7 +2563,8 @@
               "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomeTypeDto"
             },
             "nullable": true
-          }
+          },
+          "distributeIncomeByMonth": { "type": "boolean", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -2943,7 +2944,7 @@
           },
           "countryCode": {
             "type": "string",
-            "description": "if tegund is \"landalisti\" then the countryCode is included.\r\nThis is a two letter countryCode, i.e. \"DK\" for Denmark",
+            "description": "if tegund is \"landalisti\" then the countryCode is included.\nThis is a two letter countryCode, i.e. \"DK\" for Denmark",
             "nullable": true
           },
           "nafn": {
@@ -3401,13 +3402,13 @@
         "properties": {
           "typeOfBasePension": {
             "type": "integer",
-            "description": "Ellilífeyrir 1\r\nEllilífeyrir sjómanna 2\r\nÖrorkulífeyrir 3\r\nEndurhæfingarlífeyrir 4\r\nHálfur ellilífeyrir 5",
+            "description": "Ellilífeyrir 1\nEllilífeyrir sjómanna 2\nÖrorkulífeyrir 3\nEndurhæfingarlífeyrir 4\nHálfur ellilífeyrir 5",
             "format": "int32"
           },
           "hasSpouse": { "type": "boolean", "description": "Hjúskaparstaða" },
           "livingCondition": {
             "type": "integer",
-            "description": "Heimilisaðstæður, býr ein(n) ?\r\nBýr ein(n) = 1\r\nBýr ekki ein(n) = 2",
+            "description": "Heimilisaðstæður, býr ein(n) ?\nBýr ein(n) = 1\nBýr ekki ein(n) = 2",
             "format": "int32"
           },
           "mobilityImpairment": {
@@ -3416,22 +3417,22 @@
           },
           "start": {
             "type": "integer",
-            "description": "Byrjar á ellilífeyri frá TR:\r\n 2017 eða fyrr = 1 \r\n 2018 eða seinna = 2",
+            "description": "Byrjar á ellilífeyri frá TR:\n 2017 eða fyrr = 1 \n 2018 eða seinna = 2",
             "format": "int32"
           },
           "yearOfBirth": {
             "type": "integer",
-            "description": "Fæðingarár\r\n1 -> 1951 eða fyrr \r\n2 -> 1952 eða seinna",
+            "description": "Fæðingarár\n1 -> 1951 eða fyrr \n2 -> 1952 eða seinna",
             "format": "int32"
           },
           "startPension": {
             "type": "integer",
-            "description": "Byrjar á ellilífeyri frá TR:\r\n 2017 eða fyrr = 1\r\n 2018 eða seinna = 2\r\n Sjálfvalið gildi er 2018 eða seinna",
+            "description": "Byrjar á ellilífeyri frá TR:\n 2017 eða fyrr = 1\n 2018 eða seinna = 2\n Sjálfvalið gildi er 2018 eða seinna",
             "format": "int32"
           },
           "childCount": {
             "type": "integer",
-            "description": "Barnafjöldi,\r\nBörn yngri en 18ára",
+            "description": "Barnafjöldi,\nBörn yngri en 18ára",
             "format": "int32"
           },
           "childSupportCount": {
@@ -3451,7 +3452,7 @@
           },
           "ageOfFirst75DisabilityAssessment": {
             "type": "integer",
-            "description": "Aldur fyrsta 75% örorkumats\r\nSjálfvalið 20",
+            "description": "Aldur fyrsta 75% örorkumats\nSjálfvalið 20",
             "format": "int32"
           },
           "livingConditionRatio": {
@@ -3476,7 +3477,7 @@
           },
           "typeOfPeriodIncome": {
             "type": "integer",
-            "description": "Mánaðar- eða árstekjur\r\nSjálfgefið er mánaðrtekjur\r\nMánaðartekjur = 2",
+            "description": "Mánaðar- eða árstekjur\nSjálfgefið er mánaðrtekjur\nMánaðartekjur = 2",
             "format": "int32"
           },
           "income": {

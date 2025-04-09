@@ -495,6 +495,9 @@ export interface IBloodDonationRestrictionFields {
 
   /** Nánar um áhrif á blóðgjöf */
   detailedText?: Document | undefined
+
+  /** Flokkur */
+  filterTags?: IGenericTag[] | undefined
 }
 
 export interface IBloodDonationRestriction
