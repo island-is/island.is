@@ -304,8 +304,6 @@ OJOIAdvert.getProps = async ({
   query,
   customPageData,
 }) => {
-  console.log('starting')
-
   const organizationSlug = 'stjornartidindi'
 
   const [
