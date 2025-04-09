@@ -60,6 +60,9 @@ import {
   GET_VERDICT_KEYWORDS_QUERY,
   GET_VERDICTS_QUERY,
 } from '../queries/Verdicts'
+import { DebouncedCheckbox } from './components/DebouncedCheckbox'
+import { DebouncedDatePicker } from './components/DebouncedDatePicker'
+import { DebouncedInput } from './components/DebouncedInput'
 import { m } from './translations.strings'
 import * as styles from './VerdictsList.css'
 
@@ -297,78 +300,6 @@ const useVerdictListState = (props: VerdictsListProps) => {
   }
 }
 
-interface CaseNumberInputProps {
-  value: string
-  onChange: (newState: string) => void
-}
-
-const CaseNumberInput = ({ value, onChange }: CaseNumberInputProps) => {
-  const { formatMessage } = useIntl()
-  const [state, setState] = useState(value)
-  const initialRender = useRef(true)
-
-  useDebounce(
-    () => {
-      if (initialRender.current) {
-        initialRender.current = false
-        return
-      }
-      onChange(state)
-    },
-    DEBOUNCE_TIME_IN_MS,
-    [state],
-  )
-
-  return (
-    <Input
-      size="sm"
-      label={formatMessage(m.listPage.caseNumberInputLabel)}
-      name="casenumber-input"
-      onChange={(ev) => {
-        setState(ev.target.value)
-      }}
-      onKeyDown={handleInputKeyDown}
-      value={state}
-    />
-  )
-}
-
-interface LawsInputProps {
-  value: string
-  onChange: (newState: string) => void
-}
-
-const LawsInput = ({ value, onChange }: LawsInputProps) => {
-  const { formatMessage } = useIntl()
-  const [state, setState] = useState(value)
-  const initialRender = useRef(true)
-
-  useDebounce(
-    () => {
-      if (initialRender.current) {
-        initialRender.current = false
-        return
-      }
-      onChange(state)
-    },
-    DEBOUNCE_TIME_IN_MS,
-    [state],
-  )
-
-  return (
-    <Input
-      size="sm"
-      label={formatMessage(m.listPage.lawsInputLabel)}
-      name="laws-input"
-      onChange={(ev) => {
-        setState(ev.target.value)
-      }}
-      onKeyDown={handleInputKeyDown}
-      value={state}
-    />
-  )
-}
-
 interface KeywordSelectProps {
   keywordOptions: {
     label: string
@@ -407,95 +338,6 @@ const KeywordSelect = ({
         if (option) setState(option)
       }}
       placeholder={formatMessage(m.listPage.keywordSelectPlaceholder)}
-    />
-  )
-}
-
-interface DebouncedCheckboxProps {
-  label: string
-  value: string
-  checked: boolean
-  onChange: (state: boolean) => void
-}
-
-const DebouncedCheckbox = ({
-  label,
-  value,
-  checked,
-  onChange,
-}: DebouncedCheckboxProps) => {
-  const [state, setState] = useState(checked)
-  const initialRender = useRef(true)
-
-  useDebounce(
-    () => {
-      if (initialRender.current) {
-        initialRender.current = false
-        return
-      }
-      onChange(state)
-    },
-    DEBOUNCE_TIME_IN_MS,
-    [state],
-  )
-
-  return (
-    <Checkbox
-      id={value}
-      key={value}
-      name={value}
-      label={label}
-      checked={state}
-      onChange={(event) => {
-        setState(Boolean(event.target.checked))
-      }}
-    />
-  )
-}
-
-interface DebouncedDatePickerProps {
-  label: string
-  name: string
-  value: Date | null
-  minDate?: Date | null
-  maxDate?: Date | null
-  handleChange: (_: Date | null) => void
-}
-
-const DebouncedDatePicker = ({
-  label,
-  name,
-  maxDate,
-  minDate,
-  value,
-  handleChange,
-}: DebouncedDatePickerProps) => {
-  const [state, setState] = useState(value)
-  const initialRender = useRef(true)
-  useDebounce(
-    () => {
-      if (initialRender.current) {
-        initialRender.current = false
-        return
-      }
-      handleChange(state)
-    },
-    DEBOUNCE_TIME_IN_MS,
-    [state],
-  )
-
-  return (
-    <DatePicker
-      name={name}
-      label={label}
-      placeholderText=""
-      size="sm"
-      handleChange={(date) => {
-        setState(date)
-      }}
-      selected={state}
-      maxDate={maxDate}
-      minDate={minDate}
     />
   )
 }
@@ -552,12 +394,14 @@ const Filters = ({
         labelVariant="h5"
         labelColor={queryState[QueryParam.CASE_NUMBER] ? 'blue400' : undefined}
       >
-        <CaseNumberInput
+        <DebouncedInput
           key={renderKey}
           value={queryState[QueryParam.CASE_NUMBER]}
           onChange={(value) => {
             updateQueryState(QueryParam.CASE_NUMBER, value)
           }}
+          label={formatMessage(m.listPage.caseNumberInputLabel)}
+          name="casenumber-input"
         />
       </AccordionItem>
 
@@ -571,12 +415,14 @@ const Filters = ({
         labelVariant="h5"
         labelColor={queryState[QueryParam.LAWS] ? 'blue400' : undefined}
       >
-        <LawsInput
+        <DebouncedInput
           key={renderKey}
-          value={queryState[QueryParam.LAWS]}
+          label={formatMessage(m.listPage.lawsInputLabel)}
+          name="laws-input"
           onChange={(value) => {
             updateQueryState(QueryParam.LAWS, value)
           }}
+          value={queryState[QueryParam.LAWS]}
         />
       </AccordionItem>
 
@@ -591,6 +437,7 @@ const Filters = ({
         labelColor={queryState[QueryParam.KEYWORD] ? 'blue400' : undefined}
       >
         <KeywordSelect
+          key={renderKey}
           keywordOptions={keywordOptions}
           value={keywordOptions.find(
             (option) => option.value === queryState[QueryParam.KEYWORD],
@@ -732,45 +579,6 @@ const Filters = ({
   )
 }
 
-interface SearchInputProps {
-  value: string
-  onChange: (newState: string) => void
-  loading: boolean
-}
-
-const SearchInput = ({ value, onChange, loading }: SearchInputProps) => {
-  const { formatMessage } = useIntl()
-  const [state, setState] = useState(value)
-  const initialRender = useRef(true)
-
-  useDebounce(
-    () => {
-      if (initialRender.current) {
-        initialRender.current = false
-        return
-      }
-      onChange(state)
-    },
-    DEBOUNCE_TIME_IN_MS,
-    [state],
-  )
-
-  return (
-    <Input
-      name="verdict-search-input"
-      onChange={(ev) => {
-        setState(ev.target.value)
-      }}
-      onKeyDown={handleInputKeyDown}
-      placeholder={formatMessage(m.listPage.searchInputPlaceholder)}
-      icon={{ name: 'search', type: 'outline' }}
-      backgroundColor="blue"
-      loading={loading}
-      value={state}
-    />
-  )
-}
-
 const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
   const {
     queryState,
@@ -880,13 +688,20 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 
               <Stack space={3}>
                 <Box className={styles.searchInput}>
-                  <SearchInput
+                  <DebouncedInput
                     key={renderKey}
                     value={queryState[QueryParam.SEARCH_TERM]}
                     loading={loading}
                     onChange={(value) => {
                       updateQueryState(QueryParam.SEARCH_TERM, value)
                     }}
+                    name="verdict-search-input"
+                    icon={{ name: 'search', type: 'outline' }}
+                    backgroundColor="blue"
+                    placeholder={formatMessage(
+                      m.listPage.searchInputPlaceholder,
+                    )}
+                    size="md"
                   />
                 </Box>
                 <Hidden above="xs">
