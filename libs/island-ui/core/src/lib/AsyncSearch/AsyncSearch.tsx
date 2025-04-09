@@ -144,23 +144,25 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
           const filteredOptions = options.filter(filterFunc)
           const shouldShowItems = filteredOptions.length > 0 && isOpen
 
-          const menuContent = filteredOptions.map((item, index) => (
-            <Item
-              index={index}
-              highlightedIndex={highlightedIndex}
-              isActive={highlightedIndex === index}
-              showDividerIfActive={showDividerIfActive}
-              colored={colored}
-              size={size === 'semi-large' ? 'medium' : size}
-              item={item}
-              {...getItemProps({
-                key: item.value,
-                index,
-                item,
-                isSelected: options.includes(item),
-              })}
-            />
-          ))
+          const menuContent =
+            shouldShowItems &&
+            filteredOptions.map((item, index) => (
+              <Item
+                index={index}
+                highlightedIndex={highlightedIndex}
+                isActive={highlightedIndex === index}
+                showDividerIfActive={showDividerIfActive}
+                colored={colored}
+                size={size === 'semi-large' ? 'medium' : size}
+                item={item}
+                {...getItemProps({
+                  key: item.value,
+                  index,
+                  item,
+                  isSelected: options.includes(item),
+                })}
+              />
+            ))
 
           const onKeyDown = (event: {
             key: string
