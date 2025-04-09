@@ -207,8 +207,8 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Réttinum lýkur',
       description: 'Your entitlement ends',
     },
-    unionSickPay: {
-      id: 'marp.application:overview.union.sick.pay',
+    unionSickPayConfirmation: {
+      id: 'marp.application:overview.union.sick.pay.confirmation',
       defaultMessage: 'Fylgiskjal - Sjúkradagpeningar frá stéttarfélagi',
       description: 'Attachment - Sick pay from union',
     },

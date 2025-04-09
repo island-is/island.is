@@ -21,6 +21,8 @@ export const UnionSickPay = ({
     application.answers,
   )
 
+  //TODO: Get the name of the union from the API
+
   return (
     <ReviewGroup
       isLast

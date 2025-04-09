@@ -227,7 +227,10 @@ export const getAttachments = (application: Application) => {
   }
 
   if (unionSickPayOption === YES) {
-    getAttachmentDetails(unionSickPayFileUpload, AttachmentTypes.UNION_SICK_PAY)
+    getAttachmentDetails(
+      unionSickPayFileUpload,
+      AttachmentTypes.UNION_SICK_PAY_CONFIRMATION,
+    )
   }
 
   return attachments
