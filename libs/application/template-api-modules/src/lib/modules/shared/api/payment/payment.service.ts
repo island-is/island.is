@@ -34,7 +34,6 @@ export class PaymentService extends BaseTemplateApiService {
 
   async paymentCatalog({
     params,
-    application,
   }: TemplateApiModuleActionProps<PaymentCatalogParameters>): Promise<
     PaymentCatalogItem[]
   > {
@@ -183,7 +182,6 @@ export class PaymentService extends BaseTemplateApiService {
   async verifyPayment({
     application,
     auth,
-    params,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
     const paymentStatus = await this.paymentModelService.getStatus(
       auth,
@@ -205,7 +203,6 @@ export class PaymentService extends BaseTemplateApiService {
   async deletePayment({
     application,
     auth,
-    params,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
     const payment = await this.paymentModelService.findPaymentByApplicationId(
       application.id,
