@@ -75,6 +75,7 @@ jobs:
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
       S3_CACHE_PREFIX: ${{ steps.docker-cache.outputs.cache-prefix }}
+      DOCKER_REGISTRY: ${{ env.DOCKER_REGISTRY }}
 
     steps:
       - uses: actions/checkout@v4
@@ -260,7 +261,7 @@ jobs:
       - prepare
     uses: ./.github/workflows/docker.yml
     with:
-      docker_registry: ${{ env.DOCKER_REGISTRY }}
+      docker_registry: ${{ needs.prepare.outputs.DOCKER_REGISTRY }}
       build_chunks: ${{ needs.prepare.outputs.BUILD_CHUNKS }}
       git_branch: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
       docker_tag: ${{ needs.prepare.outputs.DOCKER_TAG }}
