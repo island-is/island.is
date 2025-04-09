@@ -60,7 +60,7 @@ export const theDeceased: Field[] = [
         new Date(
           getValueViaPath<string>(
             externalData,
-            'syslumennOnEntry.data.estate.dateOfDeceased',
+            'syslumennOnEntry.data.estate.dateOfDeath',
           ) || '',
         ),
         'dd.MM.yy',
