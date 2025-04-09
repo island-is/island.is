@@ -15,6 +15,11 @@ export interface Charge {
   extraData?: Array<ExtraData>
 }
 
+export type ChargeToValidate = Omit<
+  Charge,
+  'immediateProcess' | 'returnUrl' | 'payInfo'
+>
+
 export interface ChargeResponse {
   user4: string
   receptionID: string

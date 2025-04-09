@@ -95,7 +95,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       })
       return data
     },
-    [getAreIndividualsValid],
+    [getAreIndividualsValid, courseID, registererNationalId],
   )
 
   useEffect(() => {
@@ -107,17 +107,19 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     )
 
     if (
-      finishedValues?.filter((x: Participant) => x.disabled === 'true')
+      (finishedValues ?? []).filter((x: Participant) => x.disabled === 'true')
         .length === 0 &&
       finishedValues !== participantList &&
-      unfinishedValues.length === 0
+      unfinishedValues?.length === 0
     ) {
       trigger('participantList')
       setValue('participantValidityError', '')
       setValue('participantFinishedValidation', 'true')
       setFoundNotValid(false)
+    } else if (unfinishedValues?.length === 0) {
+      trigger('participantList')
     }
-  }, [values])
+  }, [values, participantList, setValue, trigger])
 
   const changeFile = (props: Array<UploadFile>) => {
     const reader = new FileReader()
