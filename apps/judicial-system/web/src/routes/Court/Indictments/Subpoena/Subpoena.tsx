@@ -20,7 +20,10 @@ import {
   SectionHeading,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import { CourtSessionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CourtSessionType,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/components'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -33,6 +36,9 @@ const Subpoena: FC = () => {
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
+  const [newAlternativeServices, setNewAlternativeServices] = useState<
+    string[]
+  >([])
   const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
@@ -45,20 +51,42 @@ const Subpoena: FC = () => {
 
   const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
   const isSchedulingArraignmentDate =
-    !isArraignmentScheduled || newSubpoenas.length > 0
-
-  const isSchedulingArraignmentDateForDefendant = (defendantId: string) =>
     !isArraignmentScheduled ||
-    (isArraignmentScheduled && newSubpoenas.includes(defendantId))
+    newSubpoenas.length > 0 ||
+    newAlternativeServices.length > 0
+
+  const isIssuingSubpoenaForDefendant = (defendant: Defendant) =>
+    !defendant.isAlternativeService &&
+    (!isArraignmentScheduled || newSubpoenas.includes(defendant.id))
+
+  const isIssuingSubpoenas = workingCase.defendants?.some((defendant) =>
+    isIssuingSubpoenaForDefendant(defendant),
+  )
+
+  const isRegisteringAlternativeServiceForDefendant = (defendant: Defendant) =>
+    defendant.isAlternativeService &&
+    (!isArraignmentScheduled || newAlternativeServices.includes(defendant.id))
+
+  const toggleNewAlternativeService = (defendant: Defendant) => {
+    return isArraignmentScheduled
+      ? () => {
+          setNewAlternativeServices((previous) =>
+            defendant.isAlternativeService
+              ? previous.filter((id) => id !== defendant.id)
+              : [...previous, defendant.id],
+          )
+        }
+      : undefined
+  }
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      setIsCreatingSubpoena(true)
-
       if (!isSchedulingArraignmentDate) {
         router.push(`${destination}/${workingCase.id}`)
         return
       }
+
+      setIsCreatingSubpoena(true)
 
       const promises: Promise<boolean>[] = []
 
@@ -68,7 +96,13 @@ const Subpoena: FC = () => {
             updateDefendant({
               caseId: workingCase.id,
               defendantId: defendant.id,
-              subpoenaType: defendant.subpoenaType,
+              ...(defendant.isAlternativeService
+                ? {
+                    isAlternativeService: defendant.isAlternativeService,
+                    alternativeServiceDescription:
+                      defendant.alternativeServiceDescription,
+                  }
+                : { subpoenaType: defendant.subpoenaType }),
             }),
           )
         })
@@ -103,8 +137,9 @@ const Subpoena: FC = () => {
 
       const courtDateUpdated = await sendCourtDateToServer(additionalUpdates)
 
+      setIsCreatingSubpoena(false)
+
       if (!courtDateUpdated) {
-        setIsCreatingSubpoena(false)
         return
       }
 
@@ -141,20 +176,22 @@ const Subpoena: FC = () => {
               <SubpoenaType
                 subpoenaItems={workingCase.defendants.map((defendant) => ({
                   defendant,
-                  disabled:
-                    isArraignmentScheduled &&
-                    !newSubpoenas.includes(defendant.id),
+                  alternativeServiceDescriptionDisabled:
+                    !isRegisteringAlternativeServiceForDefendant(defendant),
+                  subpoenaDisabled: !isIssuingSubpoenaForDefendant(defendant),
+                  toggleNewAlternativeService:
+                    toggleNewAlternativeService(defendant),
                   children: isArraignmentScheduled && (
                     <Button
                       variant="text"
                       icon="reload"
                       disabled={newSubpoenas.includes(defendant.id)}
-                      onClick={() =>
+                      onClick={() => {
                         setNewSubpoenas((previous) => [
                           ...previous,
                           defendant.id,
                         ])
-                      }
+                      }}
                     >
                       {formatMessage(strings.newSubpoenaButtonText)}
                     </Button>
@@ -163,6 +200,7 @@ const Subpoena: FC = () => {
                 workingCase={workingCase}
                 setWorkingCase={setWorkingCase}
                 updateDefendantState={updateDefendantState}
+                showAlternativeServiceOption
               />
             }
           </Box>
@@ -183,7 +221,7 @@ const Subpoena: FC = () => {
         <Box component="section" marginBottom={10}>
           {workingCase.defendants?.map((defendant, dIndex) => (
             <>
-              {isSchedulingArraignmentDateForDefendant(defendant.id) && (
+              {isIssuingSubpoenaForDefendant(defendant) && (
                 <Box
                   key={`subpoena-${defendant.id}`}
                   marginBottom={
@@ -260,15 +298,27 @@ const Subpoena: FC = () => {
       </FormContentContainer>
       {navigateTo !== undefined && (
         <Modal
-          title={formatMessage(strings.modalTitle)}
-          text={formatMessage(strings.modalText)}
+          title={
+            isIssuingSubpoenas
+              ? formatMessage(strings.modalTitle)
+              : strings.modalAlternativeServiceTitle
+          }
+          text={
+            isIssuingSubpoenas
+              ? formatMessage(strings.modalText)
+              : strings.modalAlternativeServiceText
+          }
           onPrimaryButtonClick={() => {
             handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
           }}
           onSecondaryButtonClick={() => {
             setNavigateTo(undefined)
           }}
-          primaryButtonText={formatMessage(strings.modalPrimaryButtonText)}
+          primaryButtonText={
+            isIssuingSubpoenas
+              ? formatMessage(strings.modalPrimaryButtonText)
+              : strings.modalAlternativeServicePrimaryButtonText
+          }
           secondaryButtonText={formatMessage(strings.modalSecondaryButtonText)}
           isPrimaryButtonLoading={isCreatingSubpoena}
         />

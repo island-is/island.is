@@ -76,7 +76,7 @@ import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User } from '../user'
-import { Victim } from '../victim/models/victim.model'
+import { Victim } from '../victim'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { Case } from './models/case.model'
@@ -2033,15 +2033,17 @@ export class CaseService {
           theCase.defendants
         ) {
           await Promise.all(
-            theCase.defendants.map((defendant) =>
-              this.subpoenaService.createSubpoena(
-                defendant.id,
-                theCase.id,
-                transaction,
-                updatedArraignmentDate?.date,
-                updatedArraignmentDate?.location,
+            theCase.defendants
+              .filter((defendant) => !defendant.isAlternativeService)
+              .map((defendant) =>
+                this.subpoenaService.createSubpoena(
+                  defendant.id,
+                  theCase.id,
+                  transaction,
+                  updatedArraignmentDate?.date,
+                  updatedArraignmentDate?.location,
+                ),
               ),
-            ),
           )
         }
       })
