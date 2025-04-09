@@ -26,6 +26,7 @@ import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
 import refreshIcon from '../../assets/icons/refresh.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
+  GenericLicenseType,
   GenericUserLicense,
   useListLicensesQuery,
 } from '../../graphql/types/schema'
@@ -110,13 +111,22 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const { dismiss, dismissed } = usePreferencesStore()
   const [hiddenContent, setHiddenContent] = useState(isIos)
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
+  const isIdentityDocumentEnabled = useFeatureFlag(
+    'isIdentityDocumentEnabled',
+    false,
+  )
   const [selectedTab, setSelectedTab] = useState(0)
 
   // Query list of licenses
   const res = useListLicensesQuery({
     variables: {
       input: {
-        includedTypes: INCLUDED_LICENSE_TYPES,
+        includedTypes: [
+          ...INCLUDED_LICENSE_TYPES,
+          ...(isIdentityDocumentEnabled
+            ? [GenericLicenseType.IdentityDocument]
+            : []),
+        ],
       },
       locale: useLocale(),
     },
@@ -165,7 +175,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       return {
         title: item.payload?.metadata?.name ?? item.license.type,
         type: item.license.type,
-        uniqueIdentifier: `/wallet/${item.license.type}`,
+        uniqueIdentifier: `/wallet/${item.license.type}/${item.payload?.metadata?.licenseId}`,
         contentDescription: item.license.provider.id,
         domain: 'licences',
       }

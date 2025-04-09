@@ -2,12 +2,31 @@ import gql from 'graphql-tag'
 
 import { htmlFields } from './fragments'
 
+export const GET_BLOOD_DONATION_RESTRICTION_GENERIC_TAGS_QUERY = gql`
+  query GetBloodDonationRestrictionGenericTags(
+    $input: GetBloodDonationRestrictionGenericTagsInput!
+  ) {
+    getBloodDonationRestrictionGenericTags(input: $input) {
+      total
+      items {
+        key
+        label
+      }
+    }
+  }
+`
 export const GET_BLOOD_DONATION_RESTRICTIONS_QUERY = gql`
   query GetBloodDonationRestrictions(
     $input: GetBloodDonationRestrictionsInput!
   ) {
     getBloodDonationRestrictions(input: $input) {
       total
+      input {
+        page
+        queryString
+        tagKeys
+        lang
+      }
       items {
         id
         title
@@ -17,6 +36,7 @@ export const GET_BLOOD_DONATION_RESTRICTIONS_QUERY = gql`
         }
         description
         hasDetailedText
+        keywordsText
       }
     }
   }
@@ -39,6 +59,7 @@ export const GET_BLOOD_DONATION_RESTRICTION_DETAILS_QUERY = gql`
       detailedText {
         ...HtmlFields
       }
+      keywordsText
     }
   }
   ${htmlFields}

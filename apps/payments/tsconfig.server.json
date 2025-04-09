@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "noEmit": false,
+    "incremental": true,
+    "tsBuildInfoFile": "../../../tmp/buildcache/apps/payments/server",
+    "types": ["node"]
+  },
+  "include": ["server.ts"]
+}

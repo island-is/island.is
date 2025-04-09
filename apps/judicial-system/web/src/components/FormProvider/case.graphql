@@ -38,6 +38,8 @@ query Case($input: CaseQueryInput!) {
       sentToPrisonAdminDate
       openedByPrisonAdminDate
       punishmentType
+      isAlternativeService
+      alternativeServiceDescription
       subpoenas {
         id
         created
@@ -196,6 +198,8 @@ query Case($input: CaseQueryInput!) {
       displayDate
       policeFileId
       submittedBy
+      submissionDate
+      fileRepresentative
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
@@ -399,10 +403,27 @@ query Case($input: CaseQueryInput!) {
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
     }
+    victims {
+      id
+      name
+      hasNationalId
+      nationalId
+      hasLawyer
+      lawyerNationalId
+      lawyerName
+      lawyerEmail
+      lawyerPhoneNumber
+      lawyerAccessToRequest
+    }
     mergeCaseNumber
     civilDemands
     hasCivilClaims
     isCompletedWithoutRuling
     caseSentToCourtDate
+    caseRepresentatives {
+      name
+      nationalId
+      caseFileCategory
+    }
   }
 }
