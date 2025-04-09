@@ -18,6 +18,7 @@ import { FC } from 'react'
 import { Attachments } from './review-groups/Attachments'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { Comment } from './review-groups/Comment'
+import { Payment } from './review-groups/Payment'
 import { Questions } from './review-groups/Questions'
 import { SickPay } from './review-groups/SickPay'
 
@@ -161,6 +162,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <BaseInformation {...childProps} />
+      <Payment {...childProps} />
       <Questions {...childProps} />
       <SickPay {...childProps} />
       <Comment {...childProps} />

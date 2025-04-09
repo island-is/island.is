@@ -1,3 +1,4 @@
+import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
@@ -59,6 +60,23 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const comment = getValueViaPath(answers, 'comment') as string
 
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+
+  const personalAllowance = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowance',
+  ) as YesOrNo
+
+  const personalAllowanceUsage = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowanceUsage',
+  ) as string
+
+  const taxLevel = getValueViaPath(
+    answers,
+    'paymentInfo.taxLevel',
+  ) as TaxLevelOptions
+
   return {
     applicantPhonenumber,
     isSelfEmployed,
@@ -67,6 +85,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     isStudying,
     isStudyingFileUpload,
     comment,
+    bank,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
     sickPayOption,
     sickPayDidEndDate,
     sickPayDoesEndDate,

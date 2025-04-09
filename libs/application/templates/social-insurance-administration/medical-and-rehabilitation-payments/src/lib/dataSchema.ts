@@ -1,4 +1,6 @@
 import { NO, YES } from '@island.is/application/core'
+import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { formatBankInfo } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
@@ -18,6 +20,43 @@ export const dataSchema = z.object({
       params: coreSIAErrorMessages.phoneNumber,
     }),
   }),
+  paymentInfo: z
+    .object({
+      bank: z.string(),
+      personalAllowance: z.enum([YES, NO]),
+      personalAllowanceUsage: z.string().optional(),
+      taxLevel: z.enum([
+        TaxLevelOptions.INCOME,
+        TaxLevelOptions.FIRST_LEVEL,
+        TaxLevelOptions.SECOND_LEVEL,
+      ]),
+    })
+    .partial()
+    .refine(
+      ({ bank }) => {
+        const bankAccount = formatBankInfo(bank ?? '')
+        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+      },
+      { params: coreSIAErrorMessages.bank, path: ['bank'] },
+    )
+    .refine(
+      ({ personalAllowance, personalAllowanceUsage }) =>
+        personalAllowance === YES
+          ? !(
+              Number(personalAllowanceUsage) < 1 ||
+              Number(personalAllowanceUsage) > 100
+            )
+          : true,
+      {
+        path: ['personalAllowanceUsage'],
+        params: coreSIAErrorMessages.personalAllowance,
+      },
+    )
+    .refine(
+      ({ personalAllowance, personalAllowanceUsage }) =>
+        personalAllowance === YES ? !!personalAllowanceUsage : true,
+      { path: ['personalAllowanceUsage'] },
+    ),  
   questions: z
     .object({
       isSelfEmployed: z.enum([YES, NO]),
