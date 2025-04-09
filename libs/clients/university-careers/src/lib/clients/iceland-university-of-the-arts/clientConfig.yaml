@@ -148,6 +148,7 @@ components:
           example: 'Lagadeild'
         studyProgram:
           type: 'string'
+          nullable: true
           description: 'Námsleið sem nemandinn er skráð á ferilinn'
           example: 'Lögfræði'
         programId:
@@ -156,6 +157,7 @@ components:
           example: '123456'
         degree:
           type: 'string'
+          nullable: true
           description: 'Námsgráða'
           example: 'BA'
     studentFile:
