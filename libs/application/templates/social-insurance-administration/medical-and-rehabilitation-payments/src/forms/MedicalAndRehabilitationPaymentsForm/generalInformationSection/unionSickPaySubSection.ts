@@ -43,7 +43,6 @@ export const unionSickPaySubSection = buildSubSection({
           disabled: true,
           width: 'half',
         }),
-
         buildDateField({
           id: 'unionSickPay.date',
           title: () => {
