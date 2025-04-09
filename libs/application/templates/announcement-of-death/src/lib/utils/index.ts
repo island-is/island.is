@@ -1,6 +1,10 @@
-import { RelationEnum, Answers } from '../../types'
-import { Application, StaticText } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
+import { RelationEnum, EstateMember } from '../../types'
+import {
+  Application,
+  FormValue,
+  StaticText,
+} from '@island.is/application/types'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { m } from '../messages'
 
 export const getRelationOptions = (): Record<
@@ -16,15 +20,19 @@ export const getRelationOptions = (): Record<
 }
 
 export const getFileRecipientName = (
-  answers: Answers,
+  answers: FormValue,
   recipient?: string,
 ): string => {
   if (!recipient) {
     return ''
   }
-  const { estateMembers } = answers
-  const estateMember = estateMembers?.members.find(
-    (estateMember) => estateMember.nationalId === recipient,
+  const estateMembers = getValueViaPath<Array<EstateMember>>(
+    answers,
+    'estateMembers.members',
+  )
+
+  const estateMember = estateMembers?.find(
+    (member) => member.nationalId === recipient,
   )
   return estateMember?.name || answers.applicantName.toString()
 }
@@ -38,4 +46,20 @@ export const determineMessageFromApplicationAnswers = (
     '',
   ) as string
   return `${m.applicationTitle.defaultMessage} ${name}`
+}
+
+export const showInDone = (answers: FormValue) => {
+  const viewOverview = getValueViaPath<boolean>(answers, 'viewOverview')
+  return viewOverview === true || viewOverview === undefined
+}
+
+export const estateMemberandShowInDone = (answers: FormValue) => {
+  const members =
+    getValueViaPath<Array<EstateMember>>(answers, 'estateMembers.members') ?? []
+  return members?.length > 0 && showInDone(answers)
+}
+
+export const showInDoneAndHadFirearms = (answers: FormValue) => {
+  const hadFirearms = getValueViaPath<string>(answers, 'hadFirearms')
+  return showInDone(answers) && hadFirearms === YES
 }

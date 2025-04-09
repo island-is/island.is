@@ -1,3 +1,11 @@
+export type TEu = {
+  name: string
+  topLevelDomain: Array<string>
+  alpha2Code: string
+  alpha3Code: string
+  callingCodes: Array<string>
+}
+
 export const EU = [
   {
     name: 'Åland Islands',

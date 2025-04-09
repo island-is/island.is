@@ -8,11 +8,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import {
-  APPLICATION_TYPES,
-  Operation,
-  OpeningHours,
-} from '../../lib/constants'
+import { ApplicationTypes, Operation, OpeningHours } from '../../lib/constants'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { displayOpeningHours, get24HFormatTime } from '../../lib/utils'
 import { Application } from '@island.is/application/types'
@@ -35,7 +31,7 @@ export const sectionOverview = buildMultiField({
       width: 'half',
       value: (application: Application) =>
         (application.answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL
+        ApplicationTypes.HOTEL
           ? m.operationHotel
           : m.operationResturant,
     }),
@@ -58,13 +54,13 @@ export const sectionOverview = buildMultiField({
     buildKeyValueField({
       label: ({ answers }: Application) =>
         (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL
+        ApplicationTypes.HOTEL
           ? m.typeHotel
           : m.typeResturant,
       width: 'half',
       value: ({ answers }: Application) =>
         (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL
+        ApplicationTypes.HOTEL
           ? (answers.applicationInfo as Operation)?.typeHotel?.substring(2)
           : (answers.applicationInfo as Operation)?.typeResturant?.map((type) =>
               type.substring(2),

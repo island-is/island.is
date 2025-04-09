@@ -1,5 +1,10 @@
 import { useState } from 'react'
-import { formatText, getValueViaPath, NO, YES } from '@island.is/application/core'
+import {
+  formatText,
+  getValueViaPath,
+  NO,
+  YES,
+} from '@island.is/application/core'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -13,10 +18,7 @@ import { TextWithTooltip } from '../TextWithTooltip/TextWithTooltip'
 
 import { m } from '../../lib/messages/messages'
 import { FileUploadController } from '@island.is/application/ui-components'
-import {
-  FILE_SIZE_LIMIT,
-  EmploymentStatus,
-} from '../../utils/constants'
+import { FILE_SIZE_LIMIT, EmploymentStatus } from '../../utils/constants'
 
 export const StatusAndChildren = ({
   application,
@@ -149,7 +151,7 @@ export const StatusAndChildren = ({
               defaultValue={
                 getValueViaPath(application.answers, 'children') as string[]
               }
-              onSelect={(value) => setChildren(value as string)}
+              onSelect={(value) => setChildren(value)}
               largeButtons={true}
               split={'1/2'}
               options={[
@@ -172,7 +174,7 @@ export const StatusAndChildren = ({
               ]}
             />
           </Stack>
-          {/* 
+          {/*
           TODO: Refactor the whole review section when build accordion field merges and add this back in
           {children === YES && (
             <Box marginBottom={[2, 2, 4]}>

@@ -5,9 +5,9 @@ import {
   YES,
 } from '@island.is/application/core'
 import {
-  APPLICATION_TYPES,
+  ApplicationTypes,
   Operation,
-  OPERATION_CATEGORY,
+  OperationCategory,
 } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
@@ -26,7 +26,7 @@ export const subSectionPropertyRepeater = buildSubSection({
           component: 'PropertyRepeater',
           condition: (answers) =>
             (answers.applicationInfo as Operation)?.operation ===
-            APPLICATION_TYPES.HOTEL,
+            ApplicationTypes.HOTEL,
         }),
         buildCustomField({
           id: 'properties.dining',
@@ -35,11 +35,11 @@ export const subSectionPropertyRepeater = buildSubSection({
           condition: (answers) => {
             return (
               (answers.applicationInfo as Operation)?.operation ===
-                APPLICATION_TYPES.RESTURANT ||
+                ApplicationTypes.RESTURANT ||
               ((answers.applicationInfo as Operation)?.operation ===
-                APPLICATION_TYPES.HOTEL &&
+                ApplicationTypes.HOTEL &&
                 (answers.applicationInfo as Operation)?.category !==
-                  OPERATION_CATEGORY.TWO)
+                  OperationCategory.TWO)
             )
           },
         }),

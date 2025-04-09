@@ -21,7 +21,6 @@ import {
   PendingAction,
   StaticText,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import {
   DeliveryAddressApi,
