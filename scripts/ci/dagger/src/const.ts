@@ -15,3 +15,16 @@ export const OWNER = `${OWNER_USERNAME}:${OWNER_GROUP}`;
 export const FILE_SETTINGS = {
     owner: OWNER,
 }
+
+export const isMainBranch = (branch: string) => branch === 'main';
+export const isReleaseBranch = (branch: string) => branch.startsWith('release/');
+export const isPrereleaseBranch = (branch: string) => branch.startsWith('prerelease/');
+export const DEFAULT_BRANCH = 'main';
+
+export const getTargetBranch = (ref: string) => {
+    const branch = ref.replace('refs/heads/', '');
+    if (isMainBranch(branch) || isReleaseBranch(branch) || isPrereleaseBranch(branch)) {
+        return branch;
+    }
+    return DEFAULT_BRANCH;
+}
