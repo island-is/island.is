@@ -10,6 +10,7 @@ import {
   CREATE_SCREEN,
   DELETE_FIELD,
   DELETE_SCREEN,
+  DELETE_SECTION,
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import { FieldTypesEnum } from '@island.is/form-system/enums'
@@ -41,6 +42,7 @@ export const NavButtons = () => {
   const createField = useMutation(CREATE_FIELD)
   const deleteScreen = useMutation(DELETE_SCREEN)
   const deleteField = useMutation(DELETE_FIELD)
+  const deleteSection = useMutation(DELETE_SECTION)
 
   const addItem = async () => {
     if (activeItem.type === 'Section') {
@@ -92,7 +94,7 @@ export const NavButtons = () => {
   const remove = async () => {
     const id = activeItem?.data?.id as string
     if (activeItem.type === 'Section') {
-      await deleteScreen[0]({
+      await deleteSection[0]({
         variables: {
           input: {
             id: id,
