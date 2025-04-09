@@ -4,6 +4,7 @@ import {
   Box,
   BoxProps,
   Button,
+  ColorSchemeContext,
   Text,
 } from '@island.is/island-ui/core'
 import { useMemo, useRef, useState } from 'react'
@@ -15,6 +16,7 @@ import { useNavigate } from 'react-router-dom'
 import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
 
 interface Props {
+  colorScheme?: 'blue' | 'default'
   box?: BoxProps
   size?: 'large' | 'default'
   placeholder?: string
@@ -25,6 +27,7 @@ interface Props {
 
 export const SearchInput = ({
   box,
+  colorScheme = 'default',
   size = 'default',
   placeholder,
   buttonAriaLabel,
@@ -118,31 +121,37 @@ export const SearchInput = ({
   }
 
   return (
-    <Box className={styles.wrapper} {...box}>
-      <AsyncSearch
-        ref={ref}
-        id="my-pages-async-search"
-        placeholder={placeholder}
-        size={size === 'large' ? 'semi-large' : 'medium'}
-        colored={!whiteMenuBackground}
-        options={searchResults ?? []}
-        inputValue={query}
-        openMenuOnFocus
-        showDividerIfActive
-        closeMenuOnSubmit
-        onSubmit={(_, option) => {
-          if (option?.value) {
-            navigate(option?.value)
-          } else if (query) {
-            navigate(`${SearchPaths.Search}?query=${query}`)
-          } else navigate(SearchPaths.Search)
-        }}
-        onInputValueChange={(value) => {
-          if (value && value !== query) {
-            setQuery(value)
-          }
-        }}
-      />
-    </Box>
+    <ColorSchemeContext.Provider
+      value={{
+        colorScheme: colorScheme === 'blue' ? 'blue' : null,
+      }}
+    >
+      <Box className={styles.wrapper} {...box}>
+        <AsyncSearch
+          ref={ref}
+          id="my-pages-async-search"
+          placeholder={placeholder}
+          size={size === 'large' ? 'semi-large' : 'medium'}
+          colored={!whiteMenuBackground}
+          options={searchResults ?? []}
+          inputValue={query}
+          openMenuOnFocus
+          showDividerIfActive
+          closeMenuOnSubmit
+          onSubmit={(_, option) => {
+            if (option?.value) {
+              navigate(option?.value)
+            } else if (query) {
+              navigate(`${SearchPaths.Search}?query=${query}`)
+            } else navigate(SearchPaths.Search)
+          }}
+          onInputValueChange={(value) => {
+            if (value && value !== query) {
+              setQuery(value)
+            }
+          }}
+        />
+      </Box>
+    </ColorSchemeContext.Provider>
   )
 }
