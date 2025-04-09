@@ -37,7 +37,10 @@ export const sectionOverview = buildSection({
           width: 'half',
           value: ({ externalData }) => {
             const fullName =
-              getValueViaPath<string>(externalData, 'data.fullName') ?? ''
+              getValueViaPath<string>(
+                externalData,
+                'nationalRegistry.data.fullName',
+              ) ?? ''
             return fullName
           },
         }),

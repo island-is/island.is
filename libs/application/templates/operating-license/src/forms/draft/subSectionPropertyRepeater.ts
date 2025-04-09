@@ -3,6 +3,7 @@ import {
   buildSubSection,
   buildCustomField,
   YES,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   ApplicationTypes,
@@ -25,7 +26,7 @@ export const subSectionPropertyRepeater = buildSubSection({
           title: m.stayTitle,
           component: 'PropertyRepeater',
           condition: (answers) =>
-            (answers.applicationInfo as Operation)?.operation ===
+            getValueViaPath(answers, 'applicationInfo.operation') ===
             ApplicationTypes.HOTEL,
         }),
         buildCustomField({
@@ -33,13 +34,11 @@ export const subSectionPropertyRepeater = buildSubSection({
           title: m.diningTitle,
           component: 'PropertyRepeater',
           condition: (answers) => {
+            const info = getValueViaPath<Operation>(answers, 'applicationInfo')
             return (
-              (answers.applicationInfo as Operation)?.operation ===
-                ApplicationTypes.RESTURANT ||
-              ((answers.applicationInfo as Operation)?.operation ===
-                ApplicationTypes.HOTEL &&
-                (answers.applicationInfo as Operation)?.category !==
-                  OperationCategory.TWO)
+              info?.operation === ApplicationTypes.RESTURANT ||
+              (info?.operation === ApplicationTypes.HOTEL &&
+                info?.category !== OperationCategory.TWO)
             )
           },
         }),
@@ -49,9 +48,10 @@ export const subSectionPropertyRepeater = buildSubSection({
           component: 'PropertyRepeater',
           condition: (answers) => {
             return (
-              (answers.applicationInfo as Operation)?.willServe?.includes(
-                YES,
-              ) || false
+              getValueViaPath<string>(
+                answers,
+                'applicationInfo.willServe',
+              )?.includes(YES) || false
             )
           },
         }),
