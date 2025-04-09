@@ -26,8 +26,7 @@ export const PdfReport = ({ listId }: { listId: string }) => {
       <Button
         icon="download"
         iconType="outline"
-        variant="utility"
-        size="small"
+        variant="ghost"
         onClick={() => window.open(document?.url?.toString(), '_blank')}
       >
         {formatMessage(m.downloadPdf)}

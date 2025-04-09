@@ -13,7 +13,7 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import { sortAlpha } from '@island.is/shared/utils'
 import { m } from '../../../lib/messages'
 import SignedList from '../SignedList'
-import { SignatureCollection } from '../../../types/schema'
+import { SignatureCollection } from '@island.is/api/schema'
 
 const SigneeView = ({
   currentCollection,

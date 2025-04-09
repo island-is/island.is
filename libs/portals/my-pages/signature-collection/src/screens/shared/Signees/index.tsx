@@ -74,7 +74,6 @@ const Signees = () => {
             backgroundColor="white"
           />
         </Box>
-        <PdfReport listId={id} />
       </Box>
       {!loadingSignees ? (
         signees.length > 0 ? (

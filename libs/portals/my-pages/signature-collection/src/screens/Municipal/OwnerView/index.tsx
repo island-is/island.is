@@ -4,8 +4,13 @@ import { useGetListsForOwner } from '../../../hooks'
 import ShareLink from '../../shared/ShareLink'
 import { m } from '../../../lib/messages'
 import Managers from '../../shared/Managers'
+import { SignatureCollection } from '@island.is/api/schema'
 
-const OwnerView = () => {
+const OwnerView = ({
+  currentCollection,
+}: {
+  currentCollection: SignatureCollection
+}) => {
   const { formatMessage } = useLocale()
   const { listsForOwner } = useGetListsForOwner('')
 

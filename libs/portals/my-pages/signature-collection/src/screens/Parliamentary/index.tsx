@@ -10,7 +10,7 @@ import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'
 import { useGetCurrentCollection, useIsOwner } from '../../hooks'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { AuthDelegationType } from '../../types/schema'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const SignatureListsParliamentary = () => {
   useNamespaces('sp.signatureCollection')

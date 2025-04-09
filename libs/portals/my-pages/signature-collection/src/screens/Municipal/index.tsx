@@ -1,12 +1,15 @@
 import { Box } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { IntroWrapper, THJODSKRA_SLUG } from '@island.is/portals/my-pages/core'
-import { useIsOwner } from '../../hooks'
+import { useGetCurrentCollection, useIsOwner } from '../../hooks'
 import OwnerView from './OwnerView'
+import SigneeView from '../shared/SigneeView'
 
 const SignatureListsMunicipal = () => {
   useNamespaces('sp.signatureCollection')
   const { isOwner } = useIsOwner()
+  const { currentCollection, loadingCurrentCollection } =
+    useGetCurrentCollection()
 
   return (
     <Box>
@@ -17,7 +20,11 @@ const SignatureListsMunicipal = () => {
         }
         serviceProviderSlug={THJODSKRA_SLUG}
       />
-      {isOwner.success && <OwnerView />}
+      {!loadingCurrentCollection && isOwner.success ? (
+        <OwnerView currentCollection={currentCollection} />
+      ) : (
+        <SigneeView currentCollection={currentCollection} />
+      )}
     </Box>
   )
 }
