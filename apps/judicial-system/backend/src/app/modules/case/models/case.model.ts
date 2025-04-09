@@ -45,6 +45,7 @@ import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { Notification } from '../../notification'
 import { User } from '../../user'
+import { Victim } from '../../victim'
 import { CaseString } from './caseString.model'
 import { DateLog } from './dateLog.model'
 
@@ -1118,4 +1119,11 @@ export class Case extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   publicProsecutorIsRegisteredInPoliceSystem?: boolean
+
+  // /**********
+  //  * The case's victims
+  //  **********/
+  @HasMany(() => Victim, 'caseId')
+  @ApiPropertyOptional({ type: () => Victim, isArray: true })
+  victims?: Victim[]
 }
