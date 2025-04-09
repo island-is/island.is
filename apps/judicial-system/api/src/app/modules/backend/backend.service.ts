@@ -47,6 +47,8 @@ import {
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { Subpoena } from '../subpoena'
+import { Victim } from '../victim'
+import { DeleteVictimResponse } from '../victim/models/deleteVictim.response'
 import { backendModuleConfig } from './backend.config'
 
 @Injectable()
@@ -409,6 +411,25 @@ export class BackendService extends DataSource<{ req: Request }> {
     civilClaimantId: string,
   ): Promise<DeleteCivilClaimantResponse> {
     return this.delete(`case/${caseId}/civilClaimant/${civilClaimantId}`)
+  }
+
+  createVictim(caseId: string, createVictim: unknown): Promise<Victim> {
+    return this.post(`case/${caseId}/victim`, createVictim)
+  }
+
+  updateVictim(
+    caseId: string,
+    victimId: string,
+    updateVictim: unknown,
+  ): Promise<Victim> {
+    return this.patch(`case/${caseId}/victim/${victimId}`, updateVictim)
+  }
+
+  deleteVictim(
+    caseId: string,
+    victimId: string,
+  ): Promise<DeleteVictimResponse> {
+    return this.delete(`case/${caseId}/victim/${victimId}`)
   }
 
   createIndictmentCount(
