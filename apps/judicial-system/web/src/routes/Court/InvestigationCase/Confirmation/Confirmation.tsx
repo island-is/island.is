@@ -6,7 +6,6 @@ import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isAcceptingCaseDecision,
-  isCaseWithoutRuling,
   isCompletedCase,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -69,13 +68,9 @@ const Confirmation: FC = () => {
   )
   const isAssignedJudge = user && workingCase.judge?.id === user.id
   const isAssignedRegistrar = user && workingCase.registrar?.id === user.id
-  const isCaseTypeWithoutRuling = isCaseWithoutRuling(
-    workingCase.isCompletedWithoutRuling,
-    workingCase.type,
-  )
 
   const hideNextButton = () => {
-    if (isCorrectingRuling || isCaseTypeWithoutRuling) {
+    if (isCorrectingRuling || workingCase.isCompletedWithoutRuling) {
       return !isAssignedJudge && !isAssignedRegistrar
     }
 

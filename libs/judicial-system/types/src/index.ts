@@ -103,7 +103,6 @@ export {
   isRequestCaseTransition,
   CourtSessionType,
   courtSessionTypeNames,
-  isCaseWithoutRuling,
 } from './lib/case'
 
 export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
