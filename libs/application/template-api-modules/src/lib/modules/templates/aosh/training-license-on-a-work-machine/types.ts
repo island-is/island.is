@@ -4,7 +4,7 @@ export interface Applicant {
   phoneNumber: string
   email: string
   postalCode: number
-  isSelfEmployed: boolean
+  drivingLicenseNumber: string
 }
 
 export interface Company {

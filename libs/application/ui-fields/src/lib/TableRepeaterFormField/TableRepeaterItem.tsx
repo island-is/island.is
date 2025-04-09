@@ -10,7 +10,7 @@ import {
   RepeaterOptionValue,
   StaticText,
 } from '@island.is/application/types'
-import { GridColumn, Text } from '@island.is/island-ui/core'
+import { Box, GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -28,6 +28,7 @@ import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormFie
 import { useApolloClient } from '@apollo/client'
 import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
 import { AlertMessageFormField } from '../AlertMessageFormField/AlertMessageFormField'
+import * as styles from './TableRepeaterItem.css'
 
 interface ItemFieldProps {
   application: Application
@@ -172,7 +173,7 @@ export const Item = ({
     }
 
     return typeof defaultValue === 'function'
-      ? defaultValue(application, activeField)
+      ? defaultValue(application, activeField, activeIndex)
       : defaultValue
   }
 
@@ -280,7 +281,10 @@ export const Item = ({
       if (typeof setOnChange === 'function') {
         return await setOnChange(
           optionValue,
-          application,
+          {
+            ...application,
+            answers: getValues(),
+          },
           activeIndex,
           activeValues,
           apolloClient,
@@ -368,7 +372,13 @@ export const Item = ({
   }
 
   return (
-    <GridColumn span={['1/1', '1/1', '1/1', span]}>
+    <GridColumn
+      span={['1/1', '1/1', '1/1', span]}
+      position={component === 'hiddenInput' ? 'absolute' : 'relative'}
+      className={
+        component === 'nationalIdWithName' ? styles.removePaddingTop : undefined
+      }
+    >
       {component === 'radio' && label && (
         <Text variant="h4" as="h4" id={id + 'title'} marginBottom={3}>
           {formatText(label, application, formatMessage)}

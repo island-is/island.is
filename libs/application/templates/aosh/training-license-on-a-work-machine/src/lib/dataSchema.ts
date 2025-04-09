@@ -29,7 +29,7 @@ export const CertificateOfTenureSchema = z.object({
   alreadyHaveTrainingLicense: z.boolean().optional(),
   wrongPracticalRight: z.boolean().optional(),
   wrongPracticalRightWithInfo: z.boolean().optional(),
-  listOfPossiblePracticalRights: z.array(z.string()).optional(),
+  machineTypeDoesNotMatch: z.boolean().optional(),
 })
 
 const AssigneeInformationSchema = z.object({
@@ -64,6 +64,7 @@ const AssigneeInformationSchema = z.object({
 export const TrainingLicenseOnAWorkMachineAnswersSchema = z.object({
   information: InformationSchema,
   certificateOfTenure: z.array(CertificateOfTenureSchema),
+  validCertificateOfTenure: z.boolean().optional(),
   assigneeInformation: AssigneeInformationSchema,
   rejected: z.boolean().optional(),
   approved: z.array(z.string()).optional(),

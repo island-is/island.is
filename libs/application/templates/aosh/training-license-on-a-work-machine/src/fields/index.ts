@@ -1,2 +1,2 @@
 export { HandleReject } from './HandleReject'
-export { SetAnswersForCertificateOfTenure } from './SetAnswersForCertificateOfTenure'
+export { CheckBeforeSubmitCertificateOfTenure } from './CheckBeforeSubmitCertificateOfTenure'

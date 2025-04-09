@@ -2729,12 +2729,13 @@
           },
           "postalCode": {
             "type": "integer",
-            "description": "The postal caode of the applicant.",
+            "description": "The postal code of the applicant.",
             "format": "int32"
           },
-          "isSelfEmployed": {
-            "type": "boolean",
-            "description": "Whether or not the applicant is self employed.\r\nIf they are not then filling out the Company information is required."
+          "drivingLicenseNumber": {
+            "type": "string",
+            "description": "The",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2809,6 +2810,9 @@
             "type": "integer",
             "description": "The number of hours the applicant has worked on the machine.",
             "format": "int32"
+          },
+          "wasSelfEmployed": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
