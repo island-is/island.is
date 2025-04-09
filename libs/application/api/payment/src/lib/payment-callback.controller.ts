@@ -92,9 +92,9 @@ export class PaymentCallbackController {
             },
           )
         }
+      } else {
+        throw new Error('No receptionId found in success callback')
       }
-    } else {
-      throw new Error('No receptionId found in success callback')
     }
   }
 }

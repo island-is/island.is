@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsObject,
   IsString,
+  ValidateNested,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -172,11 +173,11 @@ export class ApiClientPayment {
 }
 
 export class ApiClientEventMetadata {
-  @IsObject()
+  @ValidateNested()
   @ApiProperty()
   readonly payment!: ApiClientPayment
 
-  @IsObject()
+  @ValidateNested()
   @ApiProperty()
   readonly charge!: ApiClientCharge
 }
@@ -193,7 +194,7 @@ export class ApiClientPaymentDetails {
   @ApiProperty()
   readonly message!: string
 
-  @IsObject()
+  @ValidateNested()
   @ApiProperty()
   readonly eventMetadata!: ApiClientEventMetadata
 }
@@ -207,7 +208,7 @@ export class ApiClientCallback {
   @ApiProperty()
   readonly paymentFlowId!: string
 
-  @IsObject()
+  @ValidateNested()
   @ApiProperty()
   readonly paymentFlowMetadata!: ApiClientCallbackMetadata
 
@@ -216,7 +217,7 @@ export class ApiClientCallback {
   @ApiProperty()
   readonly occurredAt!: string
 
-  @IsObject()
+  @ValidateNested()
   @ApiProperty()
   readonly details!: ApiClientPaymentDetails
 }
