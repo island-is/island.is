@@ -180,7 +180,10 @@ export const form: Form = buildForm({
             buildKeyValueField({
               label: m.name,
               value: ({ externalData }) =>
-                getValueViaPath<string>(externalData, 'data.fullName'),
+                getValueViaPath<string>(
+                  externalData,
+                  'nationalRegistry.data.fullName',
+                ),
             }),
             buildKeyValueField({
               label: m.phone,
