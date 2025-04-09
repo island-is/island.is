@@ -1,8 +1,6 @@
 import {
   buildMultiField,
   buildSection,
-  buildCheckboxField,
-  YES,
   buildAlertMessageField,
   buildTableRepeaterField,
   getValueViaPath,
@@ -11,7 +9,6 @@ import { assigneeInformation } from '../../lib/messages'
 import {
   getInvalidWorkMachines,
   getMissingWorkMachines,
-  isContractor,
   isSameAsApplicant,
 } from '../../utils'
 import { TrainingLicenseOnAWorkMachineAnswers } from '../../lib/dataSchema'
@@ -96,10 +93,12 @@ export const assigneeInformationSection = buildSection({
                   TrainingLicenseOnAWorkMachineAnswers['certificateOfTenure']
                 >(application.answers, 'certificateOfTenure')
                 return (
-                  certificateOfTenure?.map((item) => ({
-                    value: item.machineNumber,
-                    label: item.machineNumber,
-                  })) ?? []
+                  certificateOfTenure
+                    ?.filter((item) => !item.isContractor.includes('yes'))
+                    .map((item) => ({
+                      value: item.machineNumber,
+                      label: item.machineNumber,
+                    })) ?? []
                 )
               },
               filterOptions: (options, answers, index) =>
@@ -112,26 +111,15 @@ export const assigneeInformationSection = buildSection({
               marginBottom: 0,
               marginTop: 0,
               condition: (application, activeField) => {
-                return (
-                  isSameAsApplicant(
-                    application.answers,
-                    typeof activeField?.assignee === 'string'
-                      ? ''
-                      : activeField?.assignee?.['nationalId'] ?? '',
-                  ) && !isContractor(application.answers)
+                return isSameAsApplicant(
+                  application.answers,
+                  typeof activeField?.assignee === 'string'
+                    ? ''
+                    : activeField?.assignee?.['nationalId'] ?? '',
                 )
               },
             },
           },
-          condition: (answers) => !isContractor(answers),
-        }),
-        buildAlertMessageField({
-          id: 'assigneeInformation.isContractorAlert',
-          title: '',
-          message: assigneeInformation.labels.isContractorAlert,
-          doesNotRequireAnswer: true,
-          alertType: 'info',
-          condition: isContractor,
         }),
         buildAlertMessageField({
           id: 'assigneeInformation.missingWorkMachineAlert',
@@ -146,10 +134,7 @@ export const assigneeInformationSection = buildSection({
           doesNotRequireAnswer: true,
           alertType: 'error',
           condition: (answers) => {
-            return (
-              !isContractor(answers) &&
-              getMissingWorkMachines(answers).length > 0
-            )
+            return getMissingWorkMachines(answers).length > 0
           },
           shouldBlockSubmitIfError: true,
         }),
@@ -166,10 +151,7 @@ export const assigneeInformationSection = buildSection({
           doesNotRequireAnswer: true,
           alertType: 'error',
           condition: (answers) => {
-            return (
-              !isContractor(answers) &&
-              getInvalidWorkMachines(answers).length > 0
-            )
+            return getInvalidWorkMachines(answers).length > 0
           },
           shouldBlockSubmitIfError: true,
         }),
