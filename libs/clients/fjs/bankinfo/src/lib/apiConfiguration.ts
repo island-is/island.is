@@ -13,7 +13,6 @@ export const ApiConfiguration = {
     xroadConfig: ConfigType<typeof XRoadConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) => {
-    console.log('BankinfoClientApiConfiguration', idsClientConfig)
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-fjs-bankinfo',
