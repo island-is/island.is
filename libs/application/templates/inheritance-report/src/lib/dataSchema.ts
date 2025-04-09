@@ -560,7 +560,7 @@ export const inheritanceReportSchema = z.object({
         initial: z.boolean(),
         enabled: z.boolean(),
         phone: z.string().optional(),
-        email: z.string(),
+        email: z.string().optional(),
         heirsPercentage: z.string().optional(),
         taxFreeInheritance: z.string(),
         inheritance: z.string(),
@@ -587,7 +587,7 @@ export const inheritanceReportSchema = z.object({
       })
       .refine(
         ({ enabled, heirsPercentage }) => {
-          const num = heirsPercentage ? parseInt(heirsPercentage, 10) : 0
+          const num = heirsPercentage ? parseFloat(heirsPercentage) : 0
           return enabled ? num > 0 && num < 101 : true
         },
         {
@@ -629,7 +629,7 @@ export const inheritanceReportSchema = z.object({
       )
       .refine(
         ({ enabled, advocate, email }) => {
-          return enabled && !advocate ? isValidEmail(email) : true
+          return enabled && !advocate ? isValidEmail(email ?? '') : true
         },
         {
           path: ['email'],

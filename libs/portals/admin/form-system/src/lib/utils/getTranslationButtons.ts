@@ -1,10 +1,7 @@
 import { Dispatch } from 'react'
 import { ControlAction } from '../../hooks/controlReducer'
 
-
-
 type Types = 'CHANGE_NAME' | 'CHANGE_FORM_NAME' | 'CHANGE_DESCRIPTION'
-
 
 type InputButton = {
   label: string

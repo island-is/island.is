@@ -13,6 +13,11 @@ import { Icon } from '../IconRC/Icon'
 import { Icon as IconTypes } from '../IconRC/iconMap'
 
 export type UploadFileStatus = 'error' | 'done' | 'uploading'
+export enum FileUploadStatus {
+  'error',
+  'done',
+  'uploading',
+}
 
 export interface UploadFile {
   name: string
@@ -95,6 +100,9 @@ export const UploadedFile = ({
       case 'error':
         return { background: 'red100', border: 'red200', icon: 'red600' }
       case 'done':
+        if (!file.size) {
+          return { background: 'red100', border: 'red200', icon: 'red600' }
+        }
         return {
           background: 'blue100',
           border: 'blue200',
@@ -109,7 +117,7 @@ export const UploadedFile = ({
           }
         )
     }
-  }, [file.status, defaultBackgroundColor])
+  }, [file.status, file.size, defaultBackgroundColor])
 
   const statusIcon = (status?: UploadFileStatus): IconTypes => {
     switch (status) {
@@ -172,8 +180,8 @@ export const UploadedFile = ({
       <Text truncate fontWeight="semiBold">
         <Box component="span" className={{ [styles.fileName]: onOpenFile }}>
           {truncateInMiddle(file.name)}
-          {showFileSize && file.size && (
-            <Text as="span">{` (${kb(file.size)}KB)`}</Text>
+          {showFileSize && (
+            <Text as="span">{` (${file.size ? kb(file.size) : 0}KB)`}</Text>
           )}
           {onOpenFile && (
             <Box component="span" marginLeft={1}>

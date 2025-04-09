@@ -11,7 +11,8 @@ import {
   DELETE_FIELD,
   DELETE_SCREEN,
 } from '@island.is/form-system/graphql'
-import { FieldTypesEnum, m } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 
 export const NavButtons = () => {
   const { control, controlDispatch } = useContext(ControlContext)
@@ -20,8 +21,8 @@ export const NavButtons = () => {
   const { formatMessage } = useIntl()
   const hoverText =
     activeItem.type === 'Section'
-      ? formatMessage(m.addGroupHover)
-      : formatMessage(m.addInputHover)
+      ? formatMessage(m.addScreenHover)
+      : formatMessage(m.addFieldHover)
 
   const containsGroupOrInput = (): boolean | undefined => {
     const { type } = activeItem

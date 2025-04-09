@@ -11,11 +11,7 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import type { SubstanceMap } from '@island.is/judicial-system/types'
-import {
-  IndictmentCountOffense,
-  IndictmentSubtype,
-} from '@island.is/judicial-system/types'
+import { IndictmentSubtype } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
 import { Offense } from './offense.model'
@@ -58,14 +54,6 @@ export class IndictmentCount extends Model {
   @HasMany(() => Offense, 'indictmentCountId')
   @ApiPropertyOptional({ type: () => Offense, isArray: true })
   offenses?: Offense[]
-
-  @Column({ type: DataType.JSONB, allowNull: true })
-  @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
-  deprecatedOffenses?: IndictmentCountOffense[]
-
-  @Column({ type: DataType.JSONB, allowNull: true })
-  @ApiPropertyOptional({ type: Object })
-  substances?: SubstanceMap
 
   @Column({ type: DataType.JSONB, allowNull: true })
   @ApiPropertyOptional({ type: [Number, Number], isArray: true })

@@ -1,34 +1,35 @@
-import { Inject, Injectable } from '@nestjs/common'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   DocumentsClientV2Service,
   MessageAction,
 } from '@island.is/clients/documents-v2'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { Locale } from '@island.is/shared/types'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { Category } from './models/v2/category.model'
+import { Inject, Injectable } from '@nestjs/common'
+import differenceInYears from 'date-fns/differenceInYears'
+import { HEALTH_CATEGORY_ID, LAW_AND_ORDER_CATEGORY_ID } from './document.types'
+import { getBirthday } from './helpers/getBirthday'
 import { MailAction } from './models/v2/bulkMailAction.input'
+import { Category } from './models/v2/category.model'
 import {
-  PaginatedDocuments,
   Document,
   DocumentPageNumber,
-  Action,
+  PaginatedDocuments,
 } from './models/v2/document.model'
-import type { ConfigType } from '@island.is/nest/config'
+import { Action } from './models/v2/actions'
+import { FileType } from './models/v2/documentContent.model'
 import { DocumentsInput } from './models/v2/documents.input'
+import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
 import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
 import { Sender } from './models/v2/sender.model'
-import { FileType } from './models/v2/documentContent.model'
-import { HEALTH_CATEGORY_ID, LAW_AND_ORDER_CATEGORY_ID } from './document.types'
 import { Type } from './models/v2/type.model'
-import { DownloadServiceConfig } from '@island.is/nest/config'
-import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
-import type { User } from '@island.is/auth-nest-tools'
-import { AuthDelegationType } from '@island.is/shared/types'
-import { getBirthday } from './helpers/getBirthday'
-import differceInYears from 'date-fns/differenceInYears'
-import type { Locale } from '@island.is/shared/types'
 
 const LOG_CATEGORY = 'documents-api-v2'
+
 @Injectable()
 export class DocumentServiceV2 {
   constructor(
@@ -39,51 +40,6 @@ export class DocumentServiceV2 {
   ) {}
 
   async findDocumentById(
-    nationalId: string,
-    documentId: string,
-  ): Promise<Document | null> {
-    const document = await this.documentService.getCustomersDocument(
-      nationalId,
-      documentId,
-    )
-
-    if (!document) {
-      return null // Null document logged in clients-documents-v2
-    }
-
-    let type: FileType
-    switch (document.fileType) {
-      case 'html':
-        type = FileType.HTML
-        break
-      case 'pdf':
-        type = FileType.PDF
-        break
-      case 'url':
-        type = FileType.URL
-        break
-      default:
-        type = FileType.UNKNOWN
-    }
-
-    return {
-      ...document,
-      publicationDate: document.date,
-      id: documentId,
-      name: document.fileName,
-      downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${documentId}`,
-      sender: {
-        id: document.senderNationalId,
-        name: document.senderName,
-      },
-      content: {
-        type,
-        value: document.content,
-      },
-    }
-  }
-
-  async findDocumentByIdV3(
     nationalId: string,
     documentId: string,
     locale?: Locale,
@@ -118,6 +74,7 @@ export class DocumentServiceV2 {
     let confirmation = document.actions?.find(
       (action) => action.type === 'confirmation',
     )
+
     if (
       !isDefined(confirmation?.title) ||
       confirmation?.title === '' ||
@@ -132,11 +89,6 @@ export class DocumentServiceV2 {
     const actions = document.actions?.filter(
       (action) => action.type !== 'alert' && action.type !== 'confirmation',
     )
-    if (document.urgent)
-      this.logger.info('Urgent document fetched', {
-        documentId: documentId,
-        includeDocument,
-      })
 
     return {
       ...document,
@@ -162,68 +114,6 @@ export class DocumentServiceV2 {
   }
 
   async listDocuments(
-    user: User,
-    input: DocumentsInput,
-  ): Promise<PaginatedDocuments> {
-    //If a delegated user is viewing the mailbox, do not return any health related data
-    //Category is now "1,2,3,...,n"
-    const { categoryIds, ...restOfInput } = input
-    let mutableCategoryIds = categoryIds ?? []
-    if (!mutableCategoryIds.length) {
-      const filteredCategories = await this.getCategories(user)
-      if (isDefined(filteredCategories)) {
-        mutableCategoryIds = filteredCategories.map((c) => c.id)
-      }
-    }
-    // If categoryIds are provided, filter out correct data
-    else {
-      const hiddenCategoryIds = this.getHiddenCategoriesIDs(user)
-      mutableCategoryIds.filter((c) => !hiddenCategoryIds.includes(c))
-    }
-
-    const documents = await this.documentService.getDocumentList({
-      ...restOfInput,
-      categoryId: mutableCategoryIds.join(),
-      nationalId: user.nationalId,
-    })
-
-    if (typeof documents?.totalCount !== 'number') {
-      this.logger.warn('Document total count unavailable', {
-        category: LOG_CATEGORY,
-        totalCount: documents?.totalCount,
-      })
-    }
-
-    const documentData: Array<Document> =
-      documents?.documents
-        .map((d) => {
-          if (!d) {
-            return null
-          }
-
-          return {
-            ...d,
-            id: d.id,
-            downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${d.id}`,
-            sender: {
-              name: d.senderName,
-              id: d.senderNationalId,
-            },
-          }
-        })
-        .filter(isDefined) ?? []
-
-    return {
-      data: documentData,
-      totalCount: documents?.totalCount ?? 0,
-      unreadCount: documents?.unreadCount,
-      pageInfo: {
-        hasNextPage: false,
-      },
-    }
-  }
-
-  async listDocumentsV3(
     user: User,
     input: DocumentsInput,
   ): Promise<PaginatedDocuments> {
@@ -258,6 +148,7 @@ export class DocumentServiceV2 {
         totalCount: documents?.totalCount,
       })
     }
+
     const documentData: Array<Document> =
       documents?.documents
         .map((d) => {
@@ -289,14 +180,23 @@ export class DocumentServiceV2 {
   }
 
   async getCategories(user: User): Promise<Array<Category> | null> {
-    const categories = await this.documentService.getCustomersCategories(
-      user.nationalId,
-    )
+    let categories
+
+    try {
+      categories = await this.documentService.getCustomersCategories(
+        user.nationalId,
+      )
+    } catch (error) {
+      this.logger.warn('Error fetching document categories', {
+        category: LOG_CATEGORY,
+        error: error,
+      })
+    }
 
     const filterOutIds = this.getHiddenCategoriesIDs(user) ?? []
 
     const filteredCategories =
-      categories.categories
+      categories?.categories
         ?.map((c) => {
           if (
             !c.id ||
@@ -535,26 +435,38 @@ export class DocumentServiceV2 {
   }
 
   private getHiddenCategoriesIDs = (user: User) => {
-    const isDelegated = isDefined(user.delegationType)
-    if (!isDelegated) return []
+    try {
+      const isDelegated = isDefined(user.delegationType)
+      if (!isDelegated) return []
 
-    const isLegalGuardian = user.delegationType?.includes(
-      AuthDelegationType.LegalGuardian,
-    )
-    const birthdate = getBirthday(user.nationalId)
-    const childAgeIs16OrOlder = birthdate
-      ? differceInYears(new Date(), birthdate) > 15
-      : false
+      const isLegalGuardian = user.delegationType?.includes(
+        AuthDelegationType.LegalGuardian,
+      )
+      const birthdate = getBirthday(user.nationalId)
+      const childAgeIs16OrOlder = birthdate
+        ? differenceInYears(new Date(), birthdate) > 15
+        : false
 
-    // Hide health data if user is a legal guardian and child is 16 or older
-    const hideHealthData = isLegalGuardian && childAgeIs16OrOlder
-    // Hide law and order data if user is delegated
-    // commented out until we have correct category for law and order files
-    const hideLawAndOrderData = isDelegated
-
-    return [
-      ...(hideHealthData ? [HEALTH_CATEGORY_ID] : []),
-      ...(hideLawAndOrderData ? [LAW_AND_ORDER_CATEGORY_ID] : []),
-    ]
+      // Hide health data if user is a legal guardian and child is 16 or older
+      const hideHealthData = isLegalGuardian && childAgeIs16OrOlder
+      // Hide law and order data if user is delegated
+      const hideLawAndOrderData = isDelegated
+      this.logger.debug('Should hide document categories', {
+        hideHealthData,
+        hideLawAndOrderData,
+        isLegalGuardian,
+        childAgeIs16OrOlder,
+      })
+      return [
+        ...(hideHealthData ? [HEALTH_CATEGORY_ID] : []),
+        ...(hideLawAndOrderData ? [LAW_AND_ORDER_CATEGORY_ID] : []),
+      ]
+    } catch (error) {
+      this.logger.warn('Error fetching hidden categories', {
+        category: LOG_CATEGORY,
+        error: error,
+      })
+      return []
+    }
   }
 }

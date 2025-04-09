@@ -76,9 +76,11 @@ import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User } from '../user'
+import { Victim } from '../victim'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { Case } from './models/case.model'
+import { MinimalCase } from './models/case.types'
 import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
@@ -145,7 +147,6 @@ export interface UpdateCase
     | 'prosecutorAppealAnnouncement'
     | 'accusedPostponedAppealDate'
     | 'prosecutorPostponedAppealDate'
-    | 'registrarId'
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
     | 'caseResentExplanation'
@@ -173,7 +174,6 @@ export interface UpdateCase
     | 'indictmentReviewDecision'
     | 'indictmentDecision'
     | 'rulingSignatureDate'
-    | 'judgeId'
     | 'courtSessionType'
     | 'mergeCaseId'
     | 'mergeCaseNumber'
@@ -185,6 +185,8 @@ export interface UpdateCase
   defendantWaivesRightToCounsel?: boolean
   rulingDate?: Date | null
   courtCaseNumber?: string | null
+  judgeId?: string | null
+  registrarId?: string | null
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
@@ -315,6 +317,7 @@ export const include: Includeable[] = [
     order: [['created', 'ASC']],
     separate: true,
   },
+  { model: Victim, as: 'victims', required: false },
   {
     model: IndictmentCount,
     as: 'indictmentCounts',
@@ -406,6 +409,9 @@ export const include: Includeable[] = [
               CaseFileCategory.CRIMINAL_RECORD_UPDATE,
               CaseFileCategory.CASE_FILE,
               CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.DEFENDANT_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIM,
             ],
@@ -1694,6 +1700,23 @@ export class CaseService {
     return theCase
   }
 
+  async findMinimalById(id: string): Promise<MinimalCase> {
+    const minimalCase = await this.caseModel.findOne({
+      where: {
+        id,
+        isArchived: false,
+        state: { [Op.not]: CaseState.DELETED },
+      },
+      include: [],
+    })
+
+    if (!minimalCase) {
+      throw new NotFoundException(`Case ${id} not found`)
+    }
+
+    return minimalCase
+  }
+
   getAll(user: TUser): Promise<Case[]> {
     return this.caseModel.findAll({
       include: caseListInclude,
@@ -1920,8 +1943,9 @@ export class CaseService {
     user: TUser,
     returnUpdatedCase = true,
   ): Promise<Case | undefined> {
-    const receivingCase =
+    const isReceivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
+
     const completingIndictmentCaseWithoutRuling =
       isIndictmentCase(theCase.type) &&
       update.state === CaseState.COMPLETED &&
@@ -1932,14 +1956,24 @@ export class CaseService {
         CaseIndictmentRulingDecision.MERGE,
         CaseIndictmentRulingDecision.WITHDRAWAL,
       ].includes(theCase.indictmentRulingDecision)
+
+    const requiresCourtTransition =
+      theCase.courtId &&
+      update.courtId &&
+      theCase.courtId !== update.courtId &&
+      theCase.state === CaseState.RECEIVED
+
     const updatedArraignmentDate = update.arraignmentDate
     const schedulingNewArraignmentDateForIndictmentCase =
       isIndictmentCase(theCase.type) && Boolean(updatedArraignmentDate)
 
     return this.sequelize
       .transaction(async (transaction) => {
-        if (receivingCase) {
+        if (isReceivingCase) {
           update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
+        }
+        if (requiresCourtTransition) {
+          update = transitionCase(CaseTransition.MOVE, theCase, user, update)
         }
 
         await this.handleDateUpdates(theCase, update, transaction)
@@ -1999,15 +2033,17 @@ export class CaseService {
           theCase.defendants
         ) {
           await Promise.all(
-            theCase.defendants.map((defendant) =>
-              this.subpoenaService.createSubpoena(
-                defendant.id,
-                theCase.id,
-                transaction,
-                updatedArraignmentDate?.date,
-                updatedArraignmentDate?.location,
+            theCase.defendants
+              .filter((defendant) => !defendant.isAlternativeService)
+              .map((defendant) =>
+                this.subpoenaService.createSubpoena(
+                  defendant.id,
+                  theCase.id,
+                  transaction,
+                  updatedArraignmentDate?.date,
+                  updatedArraignmentDate?.location,
+                ),
               ),
-            ),
           )
         }
       })
@@ -2016,8 +2052,20 @@ export class CaseService {
 
         await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
-        if (receivingCase) {
+        if (isReceivingCase) {
           this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
+        }
+
+        if (requiresCourtTransition) {
+          this.eventService.postEvent(
+            CaseTransition.MOVE,
+            updatedCase ?? theCase,
+            false,
+            {
+              from: theCase.court?.name,
+              to: updatedCase?.court?.name,
+            },
+          )
         }
 
         if (returnUpdatedCase) {

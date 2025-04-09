@@ -159,10 +159,25 @@
     "@nx/eslint:lint": {
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
       "cache": true
+    },
+    "@nx/next:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "@nx/webpack:webpack": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "forceRebuild": [
+      {
+        "runtime": "node .github/actions/force-build.mjs"
+      }
+    ],
     "nodeVersion": [
       {
         "runtime": "node --version"
@@ -187,6 +202,7 @@
     ],
     "production": [
       "default",
+      "forceRebuild",
       "nodeVersion",
       "!{projectRoot}/.eslintrc.json",
       "!{projectRoot}/.storybook/**/*",

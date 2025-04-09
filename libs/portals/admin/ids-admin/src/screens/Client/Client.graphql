@@ -8,6 +8,7 @@ query GetClient($input: AuthAdminClientInput!) {
       id
       environment
       clientId
+      sso
       secrets {
         secretId
         decryptedValue

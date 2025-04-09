@@ -115,14 +115,14 @@ identity-server:
     IdentityServer__KeyManagement__Enabled: 'true'
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
     LOG_LEVEL: 'info'
-    MeUserProfileApiSettings__BaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    MeUserProfileApiSettings__BaseAddress: 'http://service-portal-api.service-portal.svc.cluster.local'
     NODE_OPTIONS: '--max-old-space-size=1843 --enable-source-maps -r dd-trace/init'
     PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'false'
     RedisSettings__Address: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com'
     RedisSettings__Port: '6379'
     SERVERSIDE_FEATURES_ON: ''
-    SessionsApiSettings__BaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
+    SessionsApiSettings__BaseAddress: 'http://services-sessions.services-sessions.svc.cluster.local'
   files:
     - 'ids-signing.pfx'
   grantNamespaces:
@@ -314,6 +314,7 @@ services-auth-admin-api:
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
     ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
     ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
+    ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE'
     ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE'
     ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION'
   securityContext:
@@ -448,7 +449,7 @@ services-auth-ids-api:
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
     USER_PROFILE_CLIENT_SCOPE: '["@island.is/user-profile:read"]'
-    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'

@@ -599,7 +599,8 @@
           "rules": {
             "required": "Municipality is required"
           }
-        }
+        },
+        "recyclingCompanyOther": "Others"
       },
       "buttons": {
         "cancel": "Cancel",

@@ -1,5 +1,9 @@
 import { DefaultEvents } from '@island.is/application/types'
 
+export enum DataProviderTypes {
+  NationalRegistry = 'NationalRegistryProvider',
+}
+
 export const YES = 'Yes'
 export const NO = 'No'
 
@@ -13,6 +17,11 @@ export enum States {
   prerequisites = 'prerequisites',
   draft = 'draft',
   done = 'done',
+}
+
+export enum ApiActions {
+  completeApplication = 'completeApplication',
+  syslumennOnEntry = 'syslumennOnEntry',
 }
 
 export type EstateEvent =

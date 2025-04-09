@@ -10,6 +10,7 @@ export { ApplicationCard } from './components/ApplicationCard/ApplicationCard'
 export {
   formatBankInfo,
   formatPhoneNumber,
+  formatPhoneNumberWithIcelandicCountryCode,
   removeCountryCode,
   formatCurrency,
   formatCurrencyWithoutSuffix,

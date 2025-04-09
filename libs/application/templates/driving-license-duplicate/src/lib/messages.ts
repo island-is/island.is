@@ -259,6 +259,10 @@ export const m = defineMessages({
     id: 'dld.application:deliverySendHome',
     defaultMessage: 'Sent heim í pósti',
   },
+  delivery: {
+    id: 'dld.application:delivery',
+    defaultMessage: 'Heimsending',
+  },
   deliveryPickup: {
     id: 'dld.application:deliveryPickup',
     defaultMessage: 'Sækja á afhendingarstað',

@@ -1,17 +1,7 @@
 name: Monorepo pipeline - build and deploy
 
 on:
-  push:
-    branches:
-      - 'main'
-      - 'release/**'
-      - 'pre-release/**'
-    paths-ignore:
-      - '**/*.md'
-    tags:
-      - docker-build-*
   workflow_dispatch:
-  create:
   pull_request:
     types:
       - opened
@@ -35,6 +25,7 @@ env:
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  NX_SKIP_NX_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nx-cache') }}
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_TASKS_RUNNER: ci
   CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
@@ -424,7 +415,6 @@ jobs:
         run: |
           echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
           echo Image tag is: ${{env.NODE_IMAGE_VERSION}}
-          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_VERSION=${{env.NODE_IMAGE_VERSION}}"
           ./scripts/build-docker-container.sh "$DOCKER_TAG"
           echo "COMMENT<<EOF" >> "$GITHUB_ENV"
           echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> "$GITHUB_ENV"
