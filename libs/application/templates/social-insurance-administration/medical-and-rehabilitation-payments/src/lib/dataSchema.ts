@@ -62,7 +62,7 @@ export const dataSchema = z.object({
       ({ personalAllowance, personalAllowanceUsage }) =>
         personalAllowance === YES ? !!personalAllowanceUsage : true,
       { path: ['personalAllowanceUsage'] },
-    ),  
+    ),
   questions: z
     .object({
       isSelfEmployed: z.enum([YES, NO]),
@@ -100,45 +100,51 @@ export const dataSchema = z.object({
     ),
   unionSickPay: z
     .object({
-      option: z.string().optional().nullable(),
-      union: z.string().optional().nullable(),
-      date: z.string().optional().nullable(),
+      hasUtilizedUnionSickPayRights: z.string().optional().nullable(),
+      unionNationalId: z.string().optional().nullable(),
+      endDate: z.string().optional().nullable(),
       fileupload: z.array(FileSchema).optional(),
       unionName: z.string().optional().nullable(),
     })
     .refine(
-      ({ option, unionName }) => {
+      ({ hasUtilizedUnionSickPayRights, unionName }) => {
         // If the union name is set then we don't need to check the option
         if (unionName) {
           return true
         }
 
-        return !!option
+        return !!hasUtilizedUnionSickPayRights
       },
       {
-        path: ['option'],
+        path: ['hasUtilizedUnionSickPayRights'],
       },
     )
     .refine(
-      ({ option, union, unionName }) => {
+      ({ hasUtilizedUnionSickPayRights, unionNationalId, unionName }) => {
         // If the name is set then we don't need to check the union
         if (unionName) {
           return true
         }
-        console.log('unionName#2', unionName)
-        return option !== NOT_APPLICABLE ? !!union : true
+
+        return hasUtilizedUnionSickPayRights !== NOT_APPLICABLE
+          ? !!unionNationalId
+          : true
       },
       {
-        path: ['union'],
+        path: ['unionNationalId'],
       },
     )
-    .refine(({ option, date }) => (option !== NOT_APPLICABLE ? !!date : true), {
-      path: ['date'],
-      params: errorMessages.dateRequired,
-    })
     .refine(
-      ({ option, fileupload }) =>
-        option === YES && fileupload !== undefined
+      ({ hasUtilizedUnionSickPayRights, endDate }) =>
+        hasUtilizedUnionSickPayRights !== NOT_APPLICABLE ? !!endDate : true,
+      {
+        path: ['endDate'],
+        params: errorMessages.dateRequired,
+      },
+    )
+    .refine(
+      ({ hasUtilizedUnionSickPayRights, fileupload }) =>
+        hasUtilizedUnionSickPayRights === YES && fileupload !== undefined
           ? fileupload.length !== 0
           : true,
       {

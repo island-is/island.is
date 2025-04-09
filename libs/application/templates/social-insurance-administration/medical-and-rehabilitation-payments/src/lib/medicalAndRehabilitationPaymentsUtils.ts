@@ -58,16 +58,20 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'sickPay.didEndDate',
   ) as string
 
-  const unionSickPayOption = getValueViaPath(answers, 'unionSickPay.option') as
-    | YesOrNo
-    | NotApplicable
-
-  const unionSickPayDate = getValueViaPath(
+  const hasUtilizedUnionSickPayRights = getValueViaPath(
     answers,
-    'unionSickPay.date',
+    'unionSickPay.hasUtilizedUnionSickPayRights',
+  ) as YesOrNo | NotApplicable
+
+  const unionSickPayEndDate = getValueViaPath(
+    answers,
+    'unionSickPay.endDate',
   ) as string
 
-  const union = getValueViaPath(answers, 'unionSickPay.union') as string
+  const unionNationalId = getValueViaPath(
+    answers,
+    'unionSickPay.unionNationalId',
+  ) as string
 
   const unionSickPayFileUpload = getValueViaPath(
     answers,
@@ -100,9 +104,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     isWorkingPartTime,
     isStudying,
     isStudyingFileUpload,
-    unionSickPayOption,
-    unionSickPayDate,
-    union,
+    hasUtilizedUnionSickPayRights,
+    unionSickPayEndDate,
+    unionNationalId,
     unionSickPayFileUpload,
     comment,
     bank,
@@ -214,7 +218,7 @@ export const getAttachments = (application: Application) => {
   const {
     isStudying,
     isStudyingFileUpload,
-    unionSickPayOption,
+    hasUtilizedUnionSickPayRights,
     unionSickPayFileUpload,
   } = getApplicationAnswers(answers)
   const attachments: Attachments[] = []
@@ -226,7 +230,7 @@ export const getAttachments = (application: Application) => {
     )
   }
 
-  if (unionSickPayOption === YES) {
+  if (hasUtilizedUnionSickPayRights === YES) {
     getAttachmentDetails(
       unionSickPayFileUpload,
       AttachmentTypes.UNION_SICK_PAY_CONFIRMATION,

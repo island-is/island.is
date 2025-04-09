@@ -44,7 +44,7 @@ export const unionSickPaySubSection = buildSubSection({
           width: 'half',
         }),
         buildDateField({
-          id: 'unionSickPay.date',
+          id: 'unionSickPay.endDate',
           title: () => {
             //TODO: Here we need to check the date we are getting from the API to know what title to show
             return medicalAndRehabilitationPaymentsFormMessage
@@ -70,7 +70,7 @@ export const unionSickPaySubSection = buildSubSection({
       },
       children: [
         buildRadioField({
-          id: 'unionSickPay.option',
+          id: 'unionSickPay.hasUtilizedUnionSickPayRights',
           title:
             medicalAndRehabilitationPaymentsFormMessage.pre
               .applicationTypeTitle,
@@ -88,12 +88,13 @@ export const unionSickPaySubSection = buildSubSection({
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionDescriptionTitle,
           condition: (answers) => {
-            const { unionSickPayOption } = getApplicationAnswers(answers)
-            return unionSickPayOption !== NOT_APPLICABLE
+            const { hasUtilizedUnionSickPayRights } =
+              getApplicationAnswers(answers)
+            return hasUtilizedUnionSickPayRights !== NOT_APPLICABLE
           },
         }),
         buildAsyncSelectField({
-          id: 'unionSickPay.union',
+          id: 'unionSickPay.unionNationalId',
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionSelectTitle,
@@ -102,8 +103,9 @@ export const unionSickPaySubSection = buildSubSection({
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionSelectPlaceholder,
           condition: (answers) => {
-            const { unionSickPayOption } = getApplicationAnswers(answers)
-            return unionSickPayOption !== NOT_APPLICABLE
+            const { hasUtilizedUnionSickPayRights } =
+              getApplicationAnswers(answers)
+            return hasUtilizedUnionSickPayRights !== NOT_APPLICABLE
           },
           loadOptions: async () => {
             return [
@@ -124,11 +126,11 @@ export const unionSickPaySubSection = buildSubSection({
           titleVariant: 'h4',
           space: 4,
           title: (application) => {
-            const { unionSickPayOption } = getApplicationAnswers(
+            const { hasUtilizedUnionSickPayRights } = getApplicationAnswers(
               application.answers,
             )
 
-            if (unionSickPayOption === YES) {
+            if (hasUtilizedUnionSickPayRights === YES) {
               return medicalAndRehabilitationPaymentsFormMessage
                 .generalInformation.unionSickPayDidEndDate
             }
@@ -137,19 +139,21 @@ export const unionSickPaySubSection = buildSubSection({
               .generalInformation.unionSickPayDoesEndDate
           },
           condition: (answers) => {
-            const { unionSickPayOption } = getApplicationAnswers(answers)
-            return unionSickPayOption !== NOT_APPLICABLE
+            const { hasUtilizedUnionSickPayRights } =
+              getApplicationAnswers(answers)
+            return hasUtilizedUnionSickPayRights !== NOT_APPLICABLE
           },
         }),
         buildDateField({
-          id: 'unionSickPay.date',
+          id: 'unionSickPay.endDate',
           title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
           required: true,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
           condition: (answers) => {
-            const { unionSickPayOption } = getApplicationAnswers(answers)
-            return unionSickPayOption !== NOT_APPLICABLE
+            const { hasUtilizedUnionSickPayRights } =
+              getApplicationAnswers(answers)
+            return hasUtilizedUnionSickPayRights !== NOT_APPLICABLE
           },
         }),
         buildDescriptionField({
@@ -160,16 +164,18 @@ export const unionSickPaySubSection = buildSubSection({
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayAttachment,
           condition: (answers) => {
-            const { unionSickPayOption } = getApplicationAnswers(answers)
-            return unionSickPayOption === YES
+            const { hasUtilizedUnionSickPayRights } =
+              getApplicationAnswers(answers)
+            return hasUtilizedUnionSickPayRights === YES
           },
         }),
         buildFileUploadField({
           id: 'unionSickPay.fileupload',
           ...fileUploadSharedProps,
           condition: (answers) => {
-            const { unionSickPayOption } = getApplicationAnswers(answers)
-            return unionSickPayOption === YES
+            const { hasUtilizedUnionSickPayRights } =
+              getApplicationAnswers(answers)
+            return hasUtilizedUnionSickPayRights === YES
           },
         }),
       ],

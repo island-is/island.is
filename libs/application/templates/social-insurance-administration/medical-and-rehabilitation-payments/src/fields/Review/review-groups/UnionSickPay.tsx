@@ -17,9 +17,11 @@ export const UnionSickPay = ({
 }: ReviewGroupProps) => {
   const { formatMessage, formatDate } = useLocale()
 
-  const { unionSickPayOption, unionSickPayDate, union } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    hasUtilizedUnionSickPayRights,
+    unionSickPayEndDate,
+    unionNationalId,
+  } = getApplicationAnswers(application.answers)
 
   //TODO: Get the name of the union from the API
 
@@ -38,14 +40,14 @@ export const UnionSickPay = ({
                   .unionSickPayTitle,
               )}
               value={formatText(
-                getYesNoNotApplicableTranslation(unionSickPayOption),
+                getYesNoNotApplicableTranslation(hasUtilizedUnionSickPayRights),
                 application,
                 formatMessage,
               )}
             />
           </GridColumn>
         </GridRow>
-        {unionSickPayOption !== NOT_APPLICABLE && (
+        {hasUtilizedUnionSickPayRights !== NOT_APPLICABLE && (
           <GridRow rowGap={3}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
@@ -53,13 +55,13 @@ export const UnionSickPay = ({
                   medicalAndRehabilitationPaymentsFormMessage.generalInformation
                     .unionSickPayUnionSelectTitle,
                 )}
-                value={union}
+                value={unionNationalId}
               />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={
-                  unionSickPayOption === YES
+                  hasUtilizedUnionSickPayRights === YES
                     ? formatMessage(
                         medicalAndRehabilitationPaymentsFormMessage
                           .generalInformation.unionSickPayFromUnionDidEndDate,
@@ -69,7 +71,7 @@ export const UnionSickPay = ({
                           .generalInformation.unionSickPayFromUnionDoesEndDate,
                       )
                 }
-                value={formatDate(unionSickPayDate)}
+                value={formatDate(unionSickPayEndDate)}
               />
             </GridColumn>
           </GridRow>
