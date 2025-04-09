@@ -12,8 +12,7 @@ import { FinancialStatementsInaoClientService } from '@island.is/clients/financi
 import { getInput, getShouldGetFileName } from './mappers/helpers'
 import { S3Service } from '@island.is/nest/aws'
 import { FSIUSERTYPE } from '@island.is/application/templates/financial-statements-inao/types'
-
-const FALLBACK_LIMIT = 550000
+import { ELECTION_SPENDING_LIMIT_FALLBACK } from './constants'
 
 export interface AttachmentData {
   key: string
@@ -119,7 +118,10 @@ export class FinancialStatementIndividualElectionService extends BaseTemplateApi
       const electionsWithLimits = elections.map((election) => {
         const year = new Date(election.electionDate).getFullYear()
         const limit = electionLimits.find((limit) => limit.year === year)
-        return { ...election, limit: limit?.limit ?? FALLBACK_LIMIT }
+        return {
+          ...election,
+          limit: limit?.limit ?? ELECTION_SPENDING_LIMIT_FALLBACK,
+        }
       })
 
       return electionsWithLimits
