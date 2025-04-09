@@ -14,7 +14,7 @@ import { formatPhoneNumber } from '@island.is/application/ui-components'
 import format from 'date-fns/format'
 import { EstateMember, PropertiesEnum } from '../types'
 import {
-  estateMemberandShowInDone,
+  estateMemberAndShowInDone,
   getFileRecipientName,
   showInDone,
   showInDoneAndHadFirearms,
@@ -134,13 +134,13 @@ export const testament: Field[] = [
 
 export const inheritance: Field[] = [
   buildDividerField({
-    condition: estateMemberandShowInDone,
+    condition: estateMemberAndShowInDone,
   }),
   buildDescriptionField({
     id: 'inheritance',
     title: m.inheritanceTitle,
     titleVariant: 'h3',
-    condition: estateMemberandShowInDone,
+    condition: estateMemberAndShowInDone,
   }),
   buildCustomField(
     {
@@ -148,7 +148,7 @@ export const inheritance: Field[] = [
       id: 'electPerson',
       component: 'InfoCard',
       width: 'full',
-      condition: estateMemberandShowInDone,
+      condition: estateMemberAndShowInDone,
     },
     {
       cards: (application: Application) => {

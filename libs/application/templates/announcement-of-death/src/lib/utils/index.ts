@@ -53,7 +53,7 @@ export const showInDone = (answers: FormValue) => {
   return viewOverview === true || viewOverview === undefined
 }
 
-export const estateMemberandShowInDone = (answers: FormValue) => {
+export const estateMemberAndShowInDone = (answers: FormValue) => {
   const members =
     getValueViaPath<Array<EstateMember>>(answers, 'estateMembers.members') ?? []
   return members?.length > 0 && showInDone(answers)
