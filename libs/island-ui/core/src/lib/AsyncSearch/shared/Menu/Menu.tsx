@@ -29,7 +29,6 @@ export const Menu = forwardRef<
       ref={ref}
       {...props}
       className={cn(styles.menu, {
-        [styles.defaultBackgroundColor]: colorScheme !== 'blue',
         [styles.blueBackgroundColor]: colorScheme === 'blue',
         [styles.hidden]: !shouldShowItems,
         [styles.open]: isOpen,
