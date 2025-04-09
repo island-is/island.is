@@ -28,55 +28,48 @@ export const Payment = ({
       isEditable={editable}
       editAction={() => goToScreen?.('paymentInfo')}
     >
-      <GridRow marginBottom={3}>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          <DataValue
-            label={formatMessage(
-              socialInsuranceAdministrationMessage.payment.bank,
-            )}
-            value={formatBankInfo(bank)}
-          />
-        </GridColumn>
-      </GridRow>
-
-      <GridRow>
-        <GridColumn
-          span={['12/12', '12/12', '12/12', '5/12']}
-          paddingBottom={3}
-        >
-          <RadioValue
-            label={formatMessage(
-              socialInsuranceAdministrationMessage.confirm.personalAllowance,
-            )}
-            value={personalAllowance}
-          />
-        </GridColumn>
-
-        {personalAllowance === YES && (
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '5/12']}
-            paddingBottom={3}
-          >
+      <Stack space={3}>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(
-                socialInsuranceAdministrationMessage.confirm.ratio,
+                socialInsuranceAdministrationMessage.payment.bank,
               )}
-              value={`${personalAllowanceUsage}%`}
+              value={formatBankInfo(bank)}
             />
           </GridColumn>
-        )}
-      </GridRow>
-
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-          <DataValue
-            label={formatMessage(
-              socialInsuranceAdministrationMessage.payment.taxLevel,
-            )}
-            value={formatMessage(getTaxLevelOption(taxLevel))}
-          />
-        </GridColumn>
-      </GridRow>
+        </GridRow>
+        <GridRow rowGap={3}>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <RadioValue
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.confirm.personalAllowance,
+              )}
+              value={personalAllowance}
+            />
+          </GridColumn>
+          {personalAllowance === YES && (
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  socialInsuranceAdministrationMessage.confirm.ratio,
+                )}
+                value={`${personalAllowanceUsage}%`}
+              />
+            </GridColumn>
+          )}
+        </GridRow>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+            <DataValue
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.payment.taxLevel,
+              )}
+              value={formatMessage(getTaxLevelOption(taxLevel))}
+            />
+          </GridColumn>
+        </GridRow>
+      </Stack>
     </ReviewGroup>
   )
 }
