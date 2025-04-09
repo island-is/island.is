@@ -453,6 +453,53 @@ const DebouncedCheckbox = ({
   )
 }
 
+interface DebouncedDatePickerProps {
+  label: string
+  name: string
+  value: Date | null
+  minDate?: Date | null
+  maxDate?: Date | null
+  handleChange: (_: Date | null) => void
+}
+
+const DebouncedDatePicker = ({
+  label,
+  name,
+  maxDate,
+  minDate,
+  value,
+  handleChange,
+}: DebouncedDatePickerProps) => {
+  const [state, setState] = useState(value)
+  const initialRender = useRef(true)
+  useDebounce(
+    () => {
+      if (initialRender.current) {
+        initialRender.current = false
+        return
+      }
+      handleChange(state)
+    },
+    DEBOUNCE_TIME_IN_MS,
+    [state],
+  )
+
+  return (
+    <DatePicker
+      name={name}
+      label={label}
+      placeholderText=""
+      size="sm"
+      handleChange={(date) => {
+        setState(date)
+      }}
+      selected={state}
+      maxDate={maxDate}
+      minDate={minDate}
+    />
+  )
+}
+
 interface FiltersProps {
   startExpanded?: boolean
   queryState: ReturnType<typeof useVerdictListState>['queryState']
@@ -661,26 +708,22 @@ const Filters = ({
         }
       >
         <Stack space={2} key={renderKey}>
-          <DatePicker
+          <DebouncedDatePicker
             name="from"
             label={formatMessage(m.listPage.dateFromLabel)}
-            placeholderText=""
-            size="sm"
             handleChange={(date) => {
               updateQueryState(QueryParam.DATE_FROM, date)
             }}
-            selected={queryState[QueryParam.DATE_FROM]}
+            value={queryState[QueryParam.DATE_FROM]}
             maxDate={queryState[QueryParam.DATE_TO]}
           />
-          <DatePicker
+          <DebouncedDatePicker
             name="from"
             label={formatMessage(m.listPage.dateToLabel)}
-            placeholderText=""
-            size="sm"
             handleChange={(date) => {
               updateQueryState(QueryParam.DATE_TO, date)
             }}
-            selected={queryState[QueryParam.DATE_TO]}
+            value={queryState[QueryParam.DATE_TO]}
             minDate={queryState[QueryParam.DATE_FROM]}
           />
         </Stack>
