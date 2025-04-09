@@ -27,4 +27,4 @@ yarn feature-env \
   --feature "$FEATURE_NAME" \
   --images "$IMAGE" \
   --dockertag "$DOCKER_TAG" \
-  --writeDest "${FEATURE_DIR}/${FEATURE_NAME}/"
+  --writeDest "${FEATURE_DIR}/${FEATURE_NAME}"
