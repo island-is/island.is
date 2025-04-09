@@ -1120,9 +1120,9 @@ export class Case extends Model {
   @ApiPropertyOptional({ type: Boolean })
   publicProsecutorIsRegisteredInPoliceSystem?: boolean
 
-  // /**********
-  //  * The case's victims
-  //  **********/
+  /**********
+   * The case's victims
+   **********/
   @HasMany(() => Victim, 'caseId')
   @ApiPropertyOptional({ type: () => Victim, isArray: true })
   victims?: Victim[]
