@@ -37,7 +37,7 @@ export class UserNotificationBirthday18WorkerService {
           args: [
             {
               key: 'name',
-              value: 'Nafnur Nafnabur',
+              value: '',
             },
           ],
         }

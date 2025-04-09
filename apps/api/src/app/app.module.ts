@@ -1,4 +1,3 @@
-// TRIGGERLINE FOR FEATURE DEPLOYMENT REMOVE BEFORE MERGE
 import { ApolloDriver } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
@@ -273,10 +272,10 @@ const environment = getConfig
         clientSecret: environment.documentProviderService.prod.clientSecret,
         tokenUrl: environment.documentProviderService.prod.tokenUrl,
       },
-      documentsServiceBasePath:
-        environment.documentProviderService.documentsServiceBasePath!,
-      documentProviderAdmins:
-        environment.documentProviderService.documentProviderAdmins!,
+      documentsServiceBasePath: environment.documentProviderService
+        .documentsServiceBasePath!,
+      documentProviderAdmins: environment.documentProviderService
+        .documentProviderAdmins!,
     }),
     CmsTranslationsModule,
     TerminusModule,

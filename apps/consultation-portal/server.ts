@@ -1,4 +1,3 @@
-// TRIGGERLINE FOR DEPLOYMENT - DO NOT MERGE
 import { bootstrap } from '@island.is/infra-next-server'
 import proxyConfig from './proxy.config'
 
