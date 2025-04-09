@@ -43,9 +43,11 @@ runs:
       shell: bash
       id: check-deps-cache
       run: |
-        # Use AWS CLI to check if the prefix object exists in the bucket
+        # Check if the directory exists and has content
+        content=$(aws s3 ls s3://${{ inputs.s3_cache_bucket }}/${{ steps.cache-prefix.outputs.prefix }}/)
         exists="false"
-        if aws s3 ls s3://${{ inputs.s3_cache_bucket }}/${{ steps.cache-prefix.outputs.prefix }}/ | grep -q "manifest.json"; then
+        if [[ -n "$content" ]]; then
+          # If directory has any content, the cache exists
           exists="true"
         fi
         echo "cache exists: $exists"
@@ -53,6 +55,7 @@ runs:
       continue-on-error: true
 
     - name: Set up Docker Buildx
+      if: steps.check-deps-cache.outputs.cache_exists == 'false'
       id: buildx
       uses: docker/setup-buildx-action@v3
       with:
@@ -61,6 +64,7 @@ runs:
         use: true
 
     - name: Build and push deps layer
+      if: steps.check-deps-cache.outputs.cache_exists == 'false'
       uses: docker/build-push-action@v6
       with:
         context: .

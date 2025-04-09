@@ -74,7 +74,7 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
-      S3_CACHE_PREFIX: ${{ steps.docker-cache.cache-prefix }}
+      S3_CACHE_PREFIX: ${{ steps.docker-cache.outputs.cache-prefix }}
 
     steps:
       - uses: actions/checkout@v4
@@ -258,103 +258,23 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: arc-shared
-    permissions:
-      contents: read
-      packages: write
-    timeout-minutes: 45
-    if: needs.prepare.outputs.BUILD_CHUNKS
-    env:
-      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
-      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION}}
-      PUBLISH: true
-      DISABLE_CHUNKS: true
-      MAX_JOBS: 3
-      NX_PARALLEL: 1
-    strategy:
-      fail-fast: true
-      matrix:
-        chunk: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    steps:
-      - name: Gather apps
-        id: gather
-        run: |
-          set -euo pipefail
-          AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
-          DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
-          APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
-          APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
-          echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
-          echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
-          echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
-          echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
-          echo APP="${AFFECTED_PROJECTS}" >> "$GITHUB_ENV"
-          echo OUTPUT_TYPE="${DOCKER_TYPE/docker/output}" >> "${GITHUB_ENV}"
-          echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
+    uses: ./.github/workflows/docker.yml
+    with:
+      build_chunks: ${{ needs.prepare.outputs.BUILD_CHUNKS }}
+      git_branch: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
+      docker_tag: ${{ needs.prepare.outputs.DOCKER_TAG }}
+      node_image_version: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
+      s3_cache_prefix: ${{ needs.prepare.outputs.S3_CACHE_PREFIX }}
+      git_commit_sha: ${{ github.sha }}
+      server_url: ${{ github.server_url }}
+      nx_parallel: 1
+      affected_all: false
+      publish: true
+      disable_chunks: true
+      max_jobs: 3
+    secrets:
+      inherit: true
 
-      - name: Login to ECR
-        uses: docker/login-action@v3
-        id: login-ecr
-        with:
-          registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Set environment variables for build
-        run: |
-          echo "DOCKER_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-        continue-on-error: true
-
-      - uses: actions/checkout@v4
-        if: steps.gather.outcome == 'success'
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
-
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          driver-opts: |
-            image=${{ env.DOCKER_REGISTRY }}/moby/buildkit:buildx-stable-1
-          use: true
-
-      - name: Building docker images
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./scripts/ci/Dockerfile
-          push: true
-          target: ${{ env.OUTPUT_TYPE }}
-          cache-from: type=s3,blobs_prefix=${{ needs.prepare.outputs.S3_CACHE_PREFIX }}/,manifests_prefix=${{ needs.prepare.outputs.S3_CACHE_PREFIX }}/,region=${AWS_REGION},bucket=${S3_DOCKER_CACHE_BUCKET}
-          build-args: |
-            NODE_IMAGE_VERSION=${{ env.NODE_IMAGE_VERSION }}
-            GIT_BRANCH=${{ env.GIT_BRANCH }}
-            GIT_COMMIT_SHA=${{ env.GIT_COMMIT_SHA }}
-            GIT_REPOSITORY_URL=${{ env.SERVER_URL }}
-            NX_PARALLEL=${{ env.NX_PARALLEL }}
-            NX_MAX_PARALLEL=${{ env.NX_MAX_PARALLEL }}
-            NX_TASKS_RUNNER=ci
-            PLAYWRIGHT_VERSION=${{ env.PLAYWRIGHT_VERSION }}
-            APP=${{ env.APP }}
-            APP_HOME=${{ env.APP_HOME }}
-            APP_DIST_HOME=${{ env.APP_DIST_HOME }}
-          secret_files: |
-            nx_cloud_access_token=./nx_cloud_access_token.txt
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.APP }}:${{ env.DOCKER_TAG }}
-
-      # Add specific directories you need
   helm-docker-build:
     needs:
       - prepare
