@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useDebounce } from 'react-use'
 import isEqual from 'lodash/isEqual'
 import {
   parseAsArrayOf,
@@ -61,7 +62,6 @@ import {
 } from '../queries/Verdicts'
 import { m } from './translations.strings'
 import * as styles from './VerdictsList.css'
-import { useDebounce } from 'react-use'
 
 const ITEMS_PER_PAGE = 10
 const DEBOUNCE_TIME_IN_MS = 1000
@@ -369,6 +369,90 @@ const LawsInput = ({ value, onChange }: LawsInputProps) => {
   )
 }
 
+interface KeywordSelectProps {
+  keywordOptions: {
+    label: string
+    value: string
+  }[]
+  value: { label: string; value: string } | undefined
+  onChange: (_: { label: string; value: string } | undefined) => void
+}
+
+const KeywordSelect = ({
+  keywordOptions,
+  value,
+  onChange,
+}: KeywordSelectProps) => {
+  const { formatMessage } = useIntl()
+  const [state, setState] = useState(value)
+  const initialRender = useRef(true)
+
+  useDebounce(
+    () => {
+      if (initialRender.current) {
+        initialRender.current = false
+        return
+      }
+      onChange(state)
+    },
+    DEBOUNCE_TIME_IN_MS,
+    [state],
+  )
+  return (
+    <Select
+      size="sm"
+      options={keywordOptions}
+      value={state}
+      onChange={(option) => {
+        if (option) setState(option)
+      }}
+      placeholder={formatMessage(m.listPage.keywordSelectPlaceholder)}
+    />
+  )
+}
+
+interface DebouncedCheckboxProps {
+  label: string
+  value: string
+  checked: boolean
+  onChange: (state: boolean) => void
+}
+
+const DebouncedCheckbox = ({
+  label,
+  value,
+  checked,
+  onChange,
+}: DebouncedCheckboxProps) => {
+  const [state, setState] = useState(checked)
+  const initialRender = useRef(true)
+
+  useDebounce(
+    () => {
+      if (initialRender.current) {
+        initialRender.current = false
+        return
+      }
+      onChange(state)
+    },
+    DEBOUNCE_TIME_IN_MS,
+    [state],
+  )
+
+  return (
+    <Checkbox
+      id={value}
+      key={value}
+      name={value}
+      label={label}
+      checked={state}
+      onChange={(event) => {
+        setState(Boolean(event.target.checked))
+      }}
+    />
+  )
+}
+
 interface FiltersProps {
   startExpanded?: boolean
   queryState: ReturnType<typeof useVerdictListState>['queryState']
@@ -459,17 +543,14 @@ const Filters = ({
         labelVariant="h5"
         labelColor={queryState[QueryParam.KEYWORD] ? 'blue400' : undefined}
       >
-        <Select
-          key={renderKey}
-          size="sm"
-          options={keywordOptions}
+        <KeywordSelect
+          keywordOptions={keywordOptions}
           value={keywordOptions.find(
             (option) => option.value === queryState[QueryParam.KEYWORD],
           )}
           onChange={(option) => {
-            if (option) updateQueryState(QueryParam.KEYWORD, option.value)
+            updateQueryState(QueryParam.KEYWORD, option?.value ?? null)
           }}
-          placeholder={formatMessage(m.listPage.keywordSelectPlaceholder)}
         />
       </AccordionItem>
 
@@ -487,22 +568,20 @@ const Filters = ({
       >
         <Stack space={2} key={renderKey}>
           {caseCategoryOptions.map((option) => (
-            <Checkbox
-              id={option.value}
-              key={option.value}
-              name={option.value}
-              label={option.label}
+            <DebouncedCheckbox
               checked={Boolean(
                 queryState[QueryParam.CASE_CATEGORIES]?.includes(option.value),
               )}
-              onChange={(event) => {
+              label={option.label}
+              value={option.value}
+              onChange={(checked) => {
                 updateQueryState(
                   QueryParam.CASE_CATEGORIES,
                   (previousState) => {
                     let updatedCaseCategories = [
                       ...(previousState[QueryParam.CASE_CATEGORIES] ?? []),
                     ]
-                    if (event.target.checked) {
+                    if (checked) {
                       updatedCaseCategories.push(option.value)
                     } else {
                       updatedCaseCategories = updatedCaseCategories.filter(
@@ -536,20 +615,18 @@ const Filters = ({
       >
         <Stack space={2} key={renderKey}>
           {caseTypeOptions.map((option) => (
-            <Checkbox
-              id={option.value}
-              key={option.value}
-              name={option.value}
-              label={option.label}
+            <DebouncedCheckbox
               checked={Boolean(
                 queryState[QueryParam.CASE_TYPES]?.includes(option.value),
               )}
-              onChange={(event) => {
+              label={option.label}
+              value={option.value}
+              onChange={(checked) => {
                 updateQueryState(QueryParam.CASE_TYPES, (previousState) => {
                   let updatedCaseTypes = [
                     ...(previousState[QueryParam.CASE_TYPES] ?? []),
                   ]
-                  if (event.target.checked) {
+                  if (checked) {
                     updatedCaseTypes.push(option.value)
                   } else {
                     updatedCaseTypes = updatedCaseTypes.filter(
