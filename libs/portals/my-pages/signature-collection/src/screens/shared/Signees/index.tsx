@@ -12,13 +12,12 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
-import { PaperSignees } from './PaperSignees'
 import sortBy from 'lodash/sortBy'
 import EditPage from './EditPage'
-import PdfReport from '../PdfReport'
 import { SkeletonTable } from '../../../lib/skeletons'
 import { useGetListSignees } from '../../../hooks'
 import { m } from '../../../lib/messages'
+import { PaperSignees } from './PaperSignees'
 
 const Signees = () => {
   useNamespaces('sp.signatureCollection')
