@@ -453,6 +453,7 @@ const Filters = ({
         <Stack space={2} key={renderKey}>
           {caseCategoryOptions.map((option) => (
             <DebouncedCheckbox
+              key={option.value}
               checked={Boolean(
                 queryState[QueryParam.CASE_CATEGORIES]?.includes(option.value),
               )}
@@ -500,6 +501,7 @@ const Filters = ({
         <Stack space={2} key={renderKey}>
           {caseTypeOptions.map((option) => (
             <DebouncedCheckbox
+              key={option.value}
               checked={Boolean(
                 queryState[QueryParam.CASE_TYPES]?.includes(option.value),
               )}
