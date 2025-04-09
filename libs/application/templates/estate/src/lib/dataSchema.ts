@@ -124,6 +124,15 @@ export const estateSchema = z.object({
             email: z.string(),
           })
           .optional(),
+        // Málsvari 2
+        advocate2: z
+          .object({
+            name: z.string(),
+            nationalId: z.string(),
+            phone: z.string(),
+            email: z.string(),
+          })
+          .optional(),
       })
       .refine(
         ({ foreignCitizenship, nationalId }) => {

@@ -28,17 +28,24 @@ export const OJOIHtmlController = ({
 
   const { useFileUploader } = useApplicationAssetUploader({ applicationId })
 
-  const valueRef = useRef(() =>
-    defaultValue ? (defaultValue as HTMLText) : ('' as HTMLText),
-  )
+  const valueRef = useRef(() => {
+    const defaultHtml = Buffer.from(defaultValue || '', 'base64').toString(
+      'utf-8',
+    )
+
+    return defaultHtml as HTMLText
+  })
 
   const fileUploader = useFileUploader()
 
   const handleChange = (value: HTMLText) => {
-    const currentAnswers = structuredClone(application.answers)
-    const newAnswers = set(currentAnswers, name, value)
+    // convert incoming html to base64
+    const base64 = Buffer.from(value).toString('base64')
 
-    onChange && onChange(value)
+    const currentAnswers = structuredClone(application.answers)
+    const newAnswers = set(currentAnswers, name, base64)
+
+    onChange && onChange(base64 as HTMLText)
     return newAnswers
   }
 
