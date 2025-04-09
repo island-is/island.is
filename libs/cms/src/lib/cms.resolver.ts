@@ -138,6 +138,7 @@ import {
   GetOrganizationPageStandaloneSitemapLevel1Input,
   GetOrganizationPageStandaloneSitemapLevel2Input,
 } from './dto/getOrganizationPageStandaloneSitemap.input'
+import { GetOrganizationByNationalIdInput } from './dto/getOrganizationByNationalId.input'
 import { GrantCardsList } from './models/grantCardsList.model'
 import { sortAlpha } from '@island.is/shared/utils'
 import { GetTeamMembersInputOrderBy } from './dto/getTeamMembers.input'
@@ -257,6 +258,17 @@ export class CmsResolver {
   ): Promise<Organization | null> {
     return this.cmsContentfulService.getOrganizationByTitle(
       input?.title ?? '',
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => Organization, { nullable: true })
+  getOrganizationByNationalId(
+    @Args('input') input: GetOrganizationByNationalIdInput,
+  ): Promise<Organization | null> {
+    return this.cmsContentfulService.getOrganizationByNationalId(
+      input?.nationalId ?? '',
       input?.lang ?? 'is-IS',
     )
   }

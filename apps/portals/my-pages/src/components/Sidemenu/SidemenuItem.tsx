@@ -1,7 +1,7 @@
 import { ReactElement } from 'react'
 import { Box, Icon } from '@island.is/island-ui/core'
 import * as styles from './Sidemenu.css'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { Link } from 'react-router-dom'
 import cn from 'classnames'
 import { PortalNavigationItem } from '@island.is/portals/core'
@@ -15,7 +15,6 @@ const SidemenuItem = ({
   item,
   setSidemenuOpen,
 }: Props): ReactElement | null => {
-  useNamespaces(['service.portal'])
   const { formatMessage } = useLocale()
   const [isHovered, toggleIsHovered] = useToggle(false)
 

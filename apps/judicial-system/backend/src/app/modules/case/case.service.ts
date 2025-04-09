@@ -406,6 +406,9 @@ export const include: Includeable[] = [
               CaseFileCategory.CRIMINAL_RECORD_UPDATE,
               CaseFileCategory.CASE_FILE,
               CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.DEFENDANT_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIM,
             ],
@@ -2010,15 +2013,17 @@ export class CaseService {
           theCase.defendants
         ) {
           await Promise.all(
-            theCase.defendants.map((defendant) =>
-              this.subpoenaService.createSubpoena(
-                defendant.id,
-                theCase.id,
-                transaction,
-                updatedArraignmentDate?.date,
-                updatedArraignmentDate?.location,
+            theCase.defendants
+              .filter((defendant) => !defendant.isAlternativeService)
+              .map((defendant) =>
+                this.subpoenaService.createSubpoena(
+                  defendant.id,
+                  theCase.id,
+                  transaction,
+                  updatedArraignmentDate?.date,
+                  updatedArraignmentDate?.location,
+                ),
               ),
-            ),
           )
         }
       })
