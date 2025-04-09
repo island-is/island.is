@@ -54,9 +54,6 @@ export enum Features {
 
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
 
-  //Occupational License Health directorate fetch enabled
-  occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
-
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
   pkPassV2 = 'isPkPassV2Enabled',

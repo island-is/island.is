@@ -168,9 +168,6 @@
       "@island.is/api/domains/occupational-licenses": [
         "libs/api/domains/occupational-licenses/src/index.ts"
       ],
-      "@island.is/api/domains/occupational-licenses-v2": [
-        "libs/api/domains/occupational-licenses-v2/src/index.ts"
-      ],
       "@island.is/api/domains/official-journal-of-iceland": [
         "libs/api/domains/official-journal-of-iceland/src/index.ts"
       ],
