@@ -18,7 +18,10 @@ export const m = defineMessages({
     id: 'sp.finance:finance-transactions-label',
     defaultMessage: 'Veldu gjaldflokk',
   },
-
+  transactionsVehicleLabel: {
+    id: 'sp.finance:finance-transactions-vehicle-label',
+    defaultMessage: 'Veldu ökutækisnúmer',
+  },
   transactionsYear: {
     id: 'sp.finance:finance-transactions-year',
     defaultMessage: 'Ár',
