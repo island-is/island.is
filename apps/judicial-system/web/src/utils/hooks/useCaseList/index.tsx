@@ -28,7 +28,6 @@ import {
 import {
   Case,
   CaseAppealState,
-  CaseListEntry,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { findFirstInvalidStep } from '../../formHelper'
@@ -183,24 +182,6 @@ const useCaseList = () => {
     ],
   )
 
-  const handleMarkAsRegisteredInPoliceSystemClick = useCallback(
-    (theCase: CaseListEntry) => {
-      console.log(theCase.publicProsecutorIsRegisteredInPoliceSystem)
-      setAndSendCaseToServer(
-        [
-          {
-            publicProsecutorIsRegisteredInPoliceSystem:
-              !theCase.publicProsecutorIsRegisteredInPoliceSystem,
-            force: true,
-          },
-        ],
-        theCase as Case,
-        setWorkingCase,
-      )
-    },
-    [],
-  )
-
   const LoadingIndicator = () => {
     return (
       <motion.div
@@ -219,7 +200,6 @@ const useCaseList = () => {
     showLoading: clickedCase[1],
     handleOpenCase,
     LoadingIndicator,
-    handleMarkAsRegisteredInPoliceSystemClick,
   }
 }
 

@@ -16,7 +16,6 @@ import { TestSupport } from '@island.is/island-ui/utils'
 import { useCaseList } from '../../utils/hooks'
 import { contextMenu as strings } from './ContextMenu.strings'
 import * as styles from './ContextMenu.css'
-import { Case, CaseListEntry } from '../../graphql/schema'
 
 export interface ContextMenuItem {
   href?: string
@@ -45,8 +44,7 @@ interface ContextMenuProps {
 }
 
 export const useContextMenu = () => {
-  const { handleOpenCase, handleMarkAsRegisteredInPoliceSystemClick } =
-    useCaseList()
+  const { handleOpenCase } = useCaseList()
   const { formatMessage } = useIntl()
 
   const openCaseInNewTabMenuItem = (id: string): ContextMenuItem => {
@@ -57,19 +55,8 @@ export const useContextMenu = () => {
     }
   }
 
-  const markAsRegisteredInPoliceSystemMenuItem = (
-    theCase: CaseListEntry,
-  ): ContextMenuItem => {
-    return {
-      title: 'Skráð í LÖKE',
-      onClick: () => handleMarkAsRegisteredInPoliceSystemClick(theCase),
-      icon: 'checkmark',
-    }
-  }
-
   return {
     openCaseInNewTabMenuItem,
-    markAsRegisteredInPoliceSystemMenuItem,
   }
 }
 
