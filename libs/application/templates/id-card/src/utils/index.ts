@@ -26,11 +26,11 @@ export const hasReviewerApproved = (answers: FormValue): string =>
   getValueViaPath<string>(answers, 'secondGuardianInformation.approved') ?? ''
 
 export const getCombinedApplicantInformation = (externalData: ExternalData) => {
-  const applicantName = getValueViaPath(
+  const applicantName = getValueViaPath<string>(
     externalData,
     'nationalRegistry.data.fullName',
     '',
-  ) as string
+  )
 
   const applicantNationalRegistry = getValueViaPath<NationalRegistryIndividual>(
     externalData,
