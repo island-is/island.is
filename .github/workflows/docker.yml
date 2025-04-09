@@ -142,17 +142,8 @@ jobs:
       - uses: actions/checkout@v4
         if: steps.gather.outcome == 'success'
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Set up Docker Buildx
         id: buildx
