@@ -264,6 +264,18 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
     }
+    victims {
+      id
+      name
+      hasNationalId
+      nationalId
+      hasLawyer
+      lawyerNationalId
+      lawyerName
+      lawyerEmail
+      lawyerPhoneNumber
+      lawyerAccessToRequest
+    }
     isCompletedWithoutRuling
     caseSentToCourtDate
   }
