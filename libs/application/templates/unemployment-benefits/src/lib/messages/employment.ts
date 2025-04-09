@@ -10,6 +10,11 @@ export const employment = {
   }),
   labels: defineMessages({}),
   reasonForJobSearch: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:employment.reasonForJobSearch.sectionTitle',
+      defaultMessage: 'Ástæða atvinnuleitar',
+      description: 'applicant reason for job search section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:employment.reasonForJobSearch.pageTitle',
       defaultMessage: 'Ástæða atvinnuleitar',
@@ -23,6 +28,11 @@ export const employment = {
     },
   }),
   yourRightsAgreement: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:employment.yourRightsAgreement.sectionTitle',
+      defaultMessage: 'Réttindi og skyldur',
+      description: 'Your rights agreement section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:employment.yourRightsAgreement.pageTitle',
       defaultMessage: 'Þín réttindi og skyldur á meðan þú ert í atvinnuleit',
@@ -36,6 +46,12 @@ export const employment = {
     },
   }),
   currentSituation: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:employment.currentSituation.sectionTitle',
+      defaultMessage: 'Núverandi staða',
+      description:
+        'applicant current situation reason for job search section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:employment.currentSituation.pageTitle',
       defaultMessage: 'Núverandi staða',
@@ -43,6 +59,11 @@ export const employment = {
     },
   }),
   concurrentWorkAgreement: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:employment.concurrentWorkAgreement.sectionTitle',
+      defaultMessage: 'Vinna samhliða greiðslum',
+      description: 'Concurrent work agreement section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:employment.concurrentWorkAgreement.pageTitle',
       defaultMessage: 'Vinna samhliða greiðslum',
@@ -55,6 +76,11 @@ export const employment = {
     },
   }),
   workingAbility: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:employment.workingAbility.sectionTitle',
+      defaultMessage: 'Vinnufærni',
+      description: 'applicant working ability page section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:employment.workingAbility.pageTitle',
       defaultMessage: 'Vinnufærni',
@@ -62,6 +88,11 @@ export const employment = {
     },
   }),
   employmentHistory: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:employment.employmentHistory.sectionTitle',
+      defaultMessage: 'Atvinnusaga þín',
+      description: 'applicant employment history section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:employment.employmentHistory.pageTitle',
       defaultMessage: 'Atvinnusaga þín',
@@ -75,6 +106,11 @@ export const employment = {
     },
   }),
   lossOfRightsAgreement: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:employment.lossOfRightsAgreement.sectionTitle',
+      defaultMessage: 'Missir bótaréttar',
+      description: 'Loss of rights agreement section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:employment.lossOfRightsAgreement.pageTitle',
       defaultMessage: 'Missir bótaréttar',

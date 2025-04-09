@@ -52,4 +52,15 @@ export const application = defineMessages({
       'Eftirfarandi kafli snýr að því að safna upplýsingum um núverandi eða fyrrverandi atvinnustöðu þína svo hægt sé að reikna út hvort eða hve miklar atvinnuleysisbætur þú hefur rétt á.',
     description: 'Description of first section page',
   },
+  secondSectionTitle: {
+    id: 'vmst.ub.application:secondSectionTitle',
+    defaultMessage: 'Seinni hluti: Atvinnuleitin',
+    description: 'Title of second section page',
+  },
+  secondSectionDescription: {
+    id: 'vmst.ub.application:secondSectionDescription',
+    defaultMessage:
+      'Í fyrri hluta gafstu upp þær upplýsingar sem ákvarða bótarétt þinn. Til að halda atvinnuleysisbótum þarftu að vera virk/ur í atvinnuleit. Vinnumálastofnun getur aðstoðað þig í atvinnuleitinni. Framundan ert beðið um upplýsingar sem geta hjálpað okkur við að finna starf sem hentar þér. Gangi þér vel!',
+    description: 'Description of second section page',
+  },
 })

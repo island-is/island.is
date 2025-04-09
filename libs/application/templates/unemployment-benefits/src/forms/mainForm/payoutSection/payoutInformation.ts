@@ -7,7 +7,7 @@ import { payout as payoutMessages } from '../../../lib/messages'
 
 export const payoutInformationSubSection = buildSubSection({
   id: 'payoutInformationSubSection',
-  title: 'payoutInformationSubSection',
+  title: payoutMessages.payoutInformation.sectionTitle,
   children: [
     buildMultiField({
       id: 'payoutInformationSubSection',

@@ -7,7 +7,7 @@ import { employment as employmentMessages } from '../../../lib/messages'
 
 export const yourRightsAgreementSubSection = buildSubSection({
   id: 'yourRightsAgreementSubSection',
-  title: 'yourRightsAgreementSubSection',
+  title: employmentMessages.yourRightsAgreement.sectionTitle,
   children: [
     buildMultiField({
       id: 'yourRightsAgreementSubSection',

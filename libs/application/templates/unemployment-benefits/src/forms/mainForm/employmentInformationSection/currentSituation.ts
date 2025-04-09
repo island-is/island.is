@@ -7,7 +7,7 @@ import { employment as employmentMessages } from '../../../lib/messages'
 
 export const currentSituationSubSection = buildSubSection({
   id: 'currentSituationSubSection',
-  title: 'currentSituationSubSection',
+  title: employmentMessages.currentSituation.sectionTitle,
   children: [
     buildMultiField({
       id: 'currentSituationSubSection',

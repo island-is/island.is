@@ -10,6 +10,11 @@ export const payout = {
   }),
   labels: defineMessages({}),
   payoutInformation: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:payout.payoutInformation.sectionTitle',
+      defaultMessage: 'Greiðsluupplýsingar',
+      description: 'applicant payout section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:payout.payoutInformation.pageTitle',
       defaultMessage: 'Greiðsluupplýsingar',
@@ -17,6 +22,11 @@ export const payout = {
     },
   }),
   taxDiscount: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:payout.taxDiscount.sectionTitle',
+      defaultMessage: 'Persónuafsláttur',
+      description: 'applicant tax discount section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:payout.taxDiscount.pageTitle',
       defaultMessage: 'Persónuafsláttur',
@@ -24,6 +34,11 @@ export const payout = {
     },
   }),
   vacation: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:payout.vacation.sectionTitle',
+      defaultMessage: 'Orlof',
+      description: 'applicant vacation section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:payout.vacation.pageTitle',
       defaultMessage: 'Orlof',
@@ -31,6 +46,11 @@ export const payout = {
     },
   }),
   vacationsAndForeignWorkAgreement: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:payout.vacationsAndForeignWorkAgreement.sectionTitle',
+      defaultMessage: 'Dvöl og/eða vinna erlendis',
+      description: 'Vacations and foreign work agreement section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:payout.vacationsAndForeignWorkAgreement.pageTitle',
       defaultMessage: 'Utanlandsferðir og atvinna erlendis',
@@ -43,6 +63,11 @@ export const payout = {
     },
   }),
   otherBenefits: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:payout.otherBenefits.sectionTitle',
+      defaultMessage: 'Aðrar greiðslur',
+      description: 'applicant other benefits section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:payout.otherBenefits.pageTitle',
       defaultMessage: 'Aðrar bætur eða lífeyrir',
@@ -57,6 +82,11 @@ Ef viðkomandi er að fá lífeyri þá er upphæðin komin frá RSK í reit mer
     },
   }),
   capitalIncome: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:payout.capitalIncome.sectionTitle',
+      defaultMessage: 'Fjármagnstekjur',
+      description: 'applicant capital income section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:payout.capitalIncome.pageTitle',
       defaultMessage: 'Fjármagnstekjur',
@@ -64,6 +94,11 @@ Ef viðkomandi er að fá lífeyri þá er upphæðin komin frá RSK í reit mer
     },
   }),
   unemploymentBenefitsPayoutAgreement: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:payout.unemploymentBenefitsPayoutAgreement.sectionTitle',
+      defaultMessage: 'Útborgun',
+      description: 'Unemployment benefits payout agreement section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:payout.unemploymentBenefitsPayoutAgreement.pageTitle',
       defaultMessage: 'Útborgun atvinnuleysisbóta',

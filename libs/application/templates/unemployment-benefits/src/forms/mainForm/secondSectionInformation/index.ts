@@ -6,17 +6,17 @@ import {
 import { sectionImage } from '../../../assets/sectionImage'
 
 import { application as applicationMessages } from '../../../lib/messages'
-export const firstSectionInformation = buildSection({
-  id: 'firstSection',
-  title: 'First section',
+export const secondSectionInformation = buildSection({
+  id: 'secondSectionInformation',
+  title: 'Second section',
   children: [
     buildMultiField({
-      id: 'firstSection',
-      title: applicationMessages.firstSectionTitle,
-      description: applicationMessages.firstSectionDescription,
+      id: 'secondSectionInformation',
+      title: applicationMessages.secondSectionTitle,
+      description: applicationMessages.secondSectionDescription,
       children: [
         buildImageField({
-          id: 'firstSectionImage',
+          id: 'secondSectionImage',
           image: sectionImage,
         }),
       ],

@@ -1,9 +1,9 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
-import { secondSection } from '../mainForm/secondSection'
 import { overviewSection } from './overview'
 import { firstSectionInformation } from './firstSectionInformation'
 import { applicantSection } from './applicantSection'
+import { secondSectionInformation } from './secondSectionInformation'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -12,7 +12,7 @@ export const MainForm = buildForm({
   children: [
     firstSectionInformation,
     applicantSection,
-    secondSection,
+    secondSectionInformation,
     overviewSection,
   ],
 })

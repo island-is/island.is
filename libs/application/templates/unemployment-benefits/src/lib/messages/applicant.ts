@@ -10,6 +10,11 @@ export const applicant = {
   }),
   labels: defineMessages({}),
   personalInformation: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:applicant.personalInformation.sectionTitle',
+      defaultMessage: 'Persónuupplýsingar',
+      description: 'applicant personal information section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:applicant.personalInformation.pageTitle',
       defaultMessage: 'Persónuupplýsingar',
@@ -22,6 +27,11 @@ export const applicant = {
     },
   }),
   informationChangeAgreement: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:applicant.informationChangeAgreement.sectionTitle',
+      defaultMessage: 'Breytingar á högum',
+      description: 'applicant information agreement section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:applicant.informationChangeAgreement.pageTitle',
       defaultMessage: 'Breytingar á högum',
@@ -35,6 +45,11 @@ export const applicant = {
     },
   }),
   familyInformation: defineMessages({
+    sectionTitle: {
+      id: 'vmst.ub.application:applicant.familyInformation.sectionTitle',
+      defaultMessage: 'Fjölskylduupplýsingar',
+      description: 'applicant family information section title',
+    },
     pageTitle: {
       id: 'vmst.ub.application:applicant.familyInformation.pageTitle',
       defaultMessage: 'Fjölskylduupplýsingar',

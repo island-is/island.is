@@ -1,4 +1,4 @@
-export const firstSectionImage = () => (
+export const sectionImage = () => (
   <svg
     width="742"
     height="263"

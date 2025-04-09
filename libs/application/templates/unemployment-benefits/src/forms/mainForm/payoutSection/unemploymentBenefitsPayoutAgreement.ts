@@ -7,7 +7,7 @@ import { payout as payoutMessages } from '../../../lib/messages'
 
 export const unemploymentBenefitsPayoutAgreementSubSection = buildSubSection({
   id: 'unemploymentBenefitsPayoutAgreementSubSection',
-  title: 'unemploymentBenefitsPayoutAgreementSubSection',
+  title: payoutMessages.unemploymentBenefitsPayoutAgreement.sectionTitle,
   children: [
     buildMultiField({
       id: 'unemploymentBenefitsPayoutAgreementSubSection',

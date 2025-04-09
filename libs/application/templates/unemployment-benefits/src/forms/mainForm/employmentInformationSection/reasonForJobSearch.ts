@@ -7,7 +7,7 @@ import { employment as employmentMessages } from '../../../lib/messages'
 
 export const reasonForJobSearchSubSection = buildSubSection({
   id: 'reasonForJobSearchSubSection',
-  title: 'reasonForJobSearchSubSection',
+  title: employmentMessages.reasonForJobSearch.sectionTitle,
   children: [
     buildMultiField({
       id: 'reasonForJobSearchSubSection',

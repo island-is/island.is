@@ -7,7 +7,7 @@ import { applicant as applicantMessages } from '../../../lib/messages'
 
 export const personalInformationSubSection = buildSubSection({
   id: 'personalInformation',
-  title: 'Personal information section',
+  title: applicantMessages.personalInformation.sectionTitle,
   children: [
     buildMultiField({
       id: 'personalInformation',

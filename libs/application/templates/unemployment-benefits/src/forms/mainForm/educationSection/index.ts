@@ -7,7 +7,7 @@ import { education as educationMessages } from '../../../lib/messages'
 
 export const educationSection = buildSection({
   id: 'educationSection',
-  title: educationMessages.general.pageTitle,
+  title: educationMessages.general.sectionTitle,
   children: [
     buildMultiField({
       title: educationMessages.general.pageTitle,

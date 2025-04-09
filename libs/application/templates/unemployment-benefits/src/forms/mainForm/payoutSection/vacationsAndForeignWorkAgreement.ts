@@ -7,7 +7,7 @@ import { payout as payoutMessages } from '../../../lib/messages'
 
 export const vacationsAndForeginWorkAgreementSubSection = buildSubSection({
   id: 'vacationsAndForeginWorkAgreementSubSection',
-  title: 'vacationsAndForeginWorkAgreementSubSection',
+  title: payoutMessages.vacationsAndForeignWorkAgreement.sectionTitle,
   children: [
     buildMultiField({
       id: 'vacationsAndForeginWorkAgreementSubSection',

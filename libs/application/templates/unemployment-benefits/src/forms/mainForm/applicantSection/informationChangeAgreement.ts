@@ -7,7 +7,7 @@ import { applicant as applicantMessages } from '../../../lib/messages'
 
 export const informationChangeAgreement = buildSubSection({
   id: 'informationChangeAgreement',
-  title: 'informationChangeAgreement',
+  title: applicantMessages.informationChangeAgreement.sectionTitle,
   children: [
     buildMultiField({
       id: 'informationChangeAgreement',
