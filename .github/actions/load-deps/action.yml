@@ -1,21 +1,31 @@
 name: 'Load Dependencies'
 description: 'Prerequisite is that the prepare step has already been run'
 
+outputs:
+  generated-files-key:
+    description: ''
+    value: ${{ steps.values.outputs.generated-files-key }}
+  generated-files-path:
+    description: ''
+    value: ${{ steps.values.outputs.generated-files-path }}
+
 runs:
   using: 'composite'
   steps:
-    - name: INFO
+    - name: Set outputs
+      id: values
       shell: bash
       run: |
-        echo "generated files: ${{ env.GENERATED_FILES }}"
+        echo generated-files-key="generated-files-${{ github.sha }}" >> $GITHUB_OUTPUT
+        echo generated-files-path="${{ github.sha }}.tar.gz" >> $GITHUB_OUTPUT
 
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
       id: restore-codegen-cache
       with:
         path: |
-          ${{ env.GENERATED_FILES }}
-        key: generated-files-${{ github.sha }}
+          ${{ steps.values.outputs.generated-files-path }}
+        key: ${{ steps.values.outputs.generated-files-path }}
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
@@ -34,5 +44,5 @@ runs:
       uses: runs-on/cache/save@v4
       with:
         path: |
-          ${{ env.GENERATED_FILES }}
-        key: generated-files-${{ github.sha }}
+          ${{ steps.values.outputs.generated-files-path }}
+        key: ${{ steps.values.outputs.generated-files-path }}

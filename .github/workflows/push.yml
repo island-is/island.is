@@ -41,7 +41,6 @@ env:
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
-  GENERATED_FILES: ${{ github.sha }}.tar.gz
   CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
   YARN_ENABLE_HARDENED_MODE: '0'
 
@@ -76,6 +75,8 @@ jobs:
       CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
       S3_CACHE_PREFIX: ${{ steps.docker-cache.outputs.cache-prefix }}
       DOCKER_REGISTRY: ${{ env.DOCKER_REGISTRY }}
+      GENERATED_FILES_KEY: ${{ steps.load-deps.outputs.generated-files-key }}
+      GENERATED_FILES_PATH: ${{ steps.load-deps.outputs.generated-files-path }}
 
     steps:
       - uses: actions/checkout@v4
@@ -188,6 +189,7 @@ jobs:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
+        id: load-deps
         uses: ./.github/actions/load-deps
 
       - name: test-everything
@@ -261,7 +263,8 @@ jobs:
       - prepare
     uses: ./.github/workflows/docker.yml
     with:
-      generated_files: ${{ github.sha }}.tar.gz
+      generated_files_key: ${{ needs.prepare.outputs.GENERATED_FILES_KEY }}
+      generated_files_path: ${{ needs.prepare.outputs.GENERATED_FILES_PATH }}
       docker_registry: ${{ needs.prepare.outputs.DOCKER_REGISTRY }}
       build_chunks: ${{ needs.prepare.outputs.BUILD_CHUNKS }}
       git_branch: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
