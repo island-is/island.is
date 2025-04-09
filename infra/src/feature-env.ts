@@ -19,6 +19,8 @@ import {
 } from './dsl/exports/helm'
 import { ServiceBuilder } from './dsl/dsl'
 import { logger } from './logging'
+import fs from 'fs'
+import path from 'path'
 
 type ChartName = 'islandis' | 'identity-server'
 
@@ -100,6 +102,7 @@ const parseArguments = (argv: Arguments) => {
     affectedServices,
     env,
     skipAppName: argv.skipAppName as boolean,
+    writeDest: argv.writeDest as string,
   }
 }
 
@@ -146,10 +149,15 @@ yargs(process.argv.slice(2))
           description: 'Skip app name in the values file',
           default: false,
         })
+        .option('writeDest', {
+          type: 'string',
+          description: 'Template location where to write file to for down stream apps',
+          default: ''
+        })
     },
     handler: async (argv) => {
       const typedArgv = (argv as unknown) as Arguments
-      const { habitat, affectedServices, env, skipAppName } = parseArguments(
+      const { habitat, affectedServices, env, skipAppName, writeDest } = parseArguments(
         typedArgv,
       )
       const { included: featureYaml } = await getFeatureAffectedServices(
@@ -159,8 +167,8 @@ yargs(process.argv.slice(2))
         env,
       )
       
-      const svcs = await Promise.all(featureYaml.map((svc) => {
-          return renderHelmValueFileContent(
+      const svcs = await featureYaml.map(async (svc) => {
+          const svcString = await renderHelmValueFileContent(
           env,
           habitat,
           [svc],
@@ -169,14 +177,16 @@ yargs(process.argv.slice(2))
             : 'no-mocks',
           skipAppName,
         )
-      }))
-
-      await Promise.all(svcs.map((svc) => {
-        writeToOutput(
-          svc,
-          typedArgv.output,
-        )
-      }))
+        
+        if (writeDest != '') {
+          fs.writeFileSync(`${writeDest}/${svc.name()}/values.yaml`, svcString);
+        } else {
+          writeToOutput(
+            svcString,
+            typedArgv.output,
+          )
+        }
+      })
     },
   })
   .command({

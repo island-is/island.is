@@ -26,4 +26,5 @@ yarn feature-env \
   --chart islandis \
   --feature "$FEATURE_NAME" \
   --images "$IMAGE" \
-  --dockertag "$DOCKER_TAG" >"${FEATURE_DIR}/${FEATURE_NAME}/${IMAGE}/values.yaml"
+  --dockertag "$DOCKER_TAG" \
+  --writeDest "${FEATURE_DIR}/${FEATURE_NAME}/"
