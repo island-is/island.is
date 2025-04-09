@@ -24,6 +24,9 @@ export class BloodDonationRestrictionListItem {
 
   @Field(() => Boolean)
   hasDetailedText!: boolean
+
+  @Field(() => String)
+  keywordsText!: string
 }
 
 @ObjectType()
@@ -44,17 +47,18 @@ export const mapBloodDonationRestrictionListItem = ({
 }: IBloodDonationRestriction): BloodDonationRestrictionListItem => {
   return {
     id: sys.id,
-    title: fields.title ?? '',
+    title: (fields.title ?? '').trim(),
     hasCardText: fields.cardText
       ? documentToPlainTextString(fields.cardText).trim().length > 0
       : false,
     cardText: fields.cardText
       ? mapDocument(fields.cardText, sys.id + ':cardText')
       : [],
-    description: fields.description ?? '',
+    description: (fields.description ?? '').trim(),
     hasDetailedText: fields.detailedText
       ? documentToPlainTextString(fields.detailedText).trim().length > 0
       : false,
+    keywordsText: (fields.keywords ?? '').trim(),
   }
 }
 
@@ -80,6 +84,9 @@ export class BloodDonationRestrictionDetails {
 
   @Field(() => Boolean)
   hasDetailedText!: boolean
+
+  @Field(() => String)
+  keywordsText!: string
 }
 
 export const mapBloodDonationRestrictionDetails = ({
@@ -88,19 +95,38 @@ export const mapBloodDonationRestrictionDetails = ({
 }: IBloodDonationRestriction): BloodDonationRestrictionDetails => {
   return {
     id: sys.id,
-    title: fields.title ?? '',
+    title: (fields.title ?? '').trim(),
     hasCardText: fields.cardText
       ? documentToPlainTextString(fields.cardText).trim().length > 0
       : false,
     cardText: fields.cardText
       ? mapDocument(fields.cardText, sys.id + ':cardText')
       : [],
-    description: fields.description ?? '',
+    description: (fields.description ?? '').trim(),
     hasDetailedText: fields.detailedText
       ? documentToPlainTextString(fields.detailedText).trim().length > 0
       : false,
     detailedText: fields.detailedText
       ? mapDocument(fields.detailedText, sys.id + ':detailedText')
       : [],
+    keywordsText: (fields.keywords ?? '').trim(),
   }
+}
+
+@ObjectType()
+export class BloodDonationRestrictionGenericTag {
+  @Field(() => ID)
+  key!: string
+
+  @Field(() => String)
+  label!: string
+}
+
+@ObjectType()
+export class BloodDonationRestrictionGenericTagList {
+  @Field(() => Int)
+  total!: number
+
+  @CacheField(() => [BloodDonationRestrictionGenericTag])
+  items!: BloodDonationRestrictionGenericTag[]
 }
