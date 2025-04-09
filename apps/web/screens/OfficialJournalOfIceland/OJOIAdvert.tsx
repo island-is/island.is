@@ -42,7 +42,6 @@ import {
   ADVERT_QUERY,
   ADVERT_SIMILAR_QUERY,
 } from '../queries/OfficialJournalOfIceland'
-import { ORGANIZATION_SLUG } from './constants'
 import { m } from './messages'
 
 const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
@@ -114,7 +113,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                   {formatMessage(m.advert.signatureDate)}
                 </Text>
                 <Text variant="small">
-                  {formatDate(advert.signatureDate, 'dd. MMMM yyyy')}
+                  {formatDate(advert.signatureDate, 'd. MMMM yyyy')}
                 </Text>
               </Box>
 
@@ -123,7 +122,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                   {formatMessage(m.advert.publicationDate)}
                 </Text>
                 <Text variant="small">
-                  {formatDate(advert.publicationDate, 'dd. MMMM yyyy')}
+                  {formatDate(advert.publicationDate, 'd. MMMM yyyy')}
                 </Text>
               </Box>
             </Stack>
@@ -168,7 +167,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                         {formatMessage(m.advert.correctedDate)}
                       </Text>
                       <Text variant="small">
-                        {formatDate(correction.createdDate, 'dd. MMMM yyyy')}
+                        {formatDate(correction.createdDate, 'd. MMMM yyyy')}
                       </Text>
                     </Box>
 
@@ -264,7 +263,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
     >
       <OJOIAdvertDisplay
         advertNumber={advert.publicationNumber.full}
-        signatureDate={formatDate(advert.signatureDate, 'dd. MMMM yyyy')}
+        signatureDate={formatDate(advert.signatureDate, 'd. MMMM yyyy')}
         advertType={advert.type.title}
         advertSubject={advert.subject}
         advertText={advert.document.html}
@@ -305,6 +304,10 @@ OJOIAdvert.getProps = async ({
   query,
   customPageData,
 }) => {
+  console.log('starting')
+
+  const organizationSlug = 'stjornartidindi'
+
   const [
     {
       data: { officialJournalOfIcelandAdvert },
@@ -336,7 +339,7 @@ OJOIAdvert.getProps = async ({
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: ORGANIZATION_SLUG,
+          slug: organizationSlug,
           lang: locale as ContentLanguage,
         },
       },
