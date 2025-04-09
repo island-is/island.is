@@ -6,6 +6,7 @@ import {
   capitalize,
   formatDate,
   getInitials,
+  getRoleTitleFromCaseFileCategory,
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
@@ -62,7 +63,7 @@ const CaseFileTable: FC<Props> = ({
           <TableHeaderText title={formatMessage(tables.caseFileDate)} />
           <th className={tableStyles.th}>
             <SortButton
-              {...createSortProps(formatMessage(tables.sent), 'created')}
+              {...createSortProps(formatMessage(tables.received), 'created')}
             />
           </th>
         </>
@@ -87,12 +88,19 @@ const CaseFileTable: FC<Props> = ({
             <td>
               <Box className={styles.noWrapColumn}>
                 <Text>
-                  {formatDate(file.created, "dd.MM.yyyy 'kl.' HH:mm")}
+                  {file.fileRepresentative
+                    ? formatDate(file.submissionDate || file.created)
+                    : formatDate(file.created, "dd.MM.yyyy 'kl.' HH:mm")}
                 </Text>
                 <Text variant="small">
                   {formatMessage(strings.submittedBy, {
-                    category: file.category,
-                    initials: getInitials(file.submittedBy),
+                    title: getRoleTitleFromCaseFileCategory(
+                      file.category ?? null,
+                    ),
+                    initials: getInitials(
+                      file.fileRepresentative ?? file.submittedBy,
+                    ),
+                    fileRepresentative: file.fileRepresentative,
                   })}
                 </Text>
               </Box>

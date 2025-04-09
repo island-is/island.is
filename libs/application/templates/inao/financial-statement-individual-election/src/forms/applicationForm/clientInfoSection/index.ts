@@ -3,7 +3,7 @@ import {
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
-import { m } from '../../../lib/utils/messages'
+import { m } from '../../../lib/messages'
 import { Application, UserProfile } from '@island.is/application/types'
 import { Identity } from '@island.is/api/schema'
 
