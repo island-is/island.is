@@ -12,6 +12,12 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicantInfo: z.object({
@@ -90,6 +96,54 @@ export const dataSchema = z.object({
       {
         path: ['doesEndDate'],
         params: errorMessages.dateRequired,
+      },
+    ),
+  unionSickPay: z
+    .object({
+      option: z.string().optional().nullable(),
+      union: z.string().optional().nullable(),
+      date: z.string().optional().nullable(),
+      fileupload: z.array(FileSchema).optional(),
+      unionName: z.string().optional().nullable(),
+    })
+    .refine(
+      ({ option, unionName }) => {
+        // If the union name is set then we don't need to check the option
+        if (unionName) {
+          return true
+        }
+
+        return !!option
+      },
+      {
+        path: ['option'],
+      },
+    )
+    .refine(
+      ({ option, union, unionName }) => {
+        // If the name is set then we don't need to check the union
+        if (unionName) {
+          return true
+        }
+        console.log('unionName#2', unionName)
+        return option !== NOT_APPLICABLE ? !!union : true
+      },
+      {
+        path: ['union'],
+      },
+    )
+    .refine(({ option, date }) => (option !== NOT_APPLICABLE ? !!date : true), {
+      path: ['date'],
+      params: errorMessages.dateRequired,
+    })
+    .refine(
+      ({ option, fileupload }) =>
+        option === YES && fileupload !== undefined
+          ? fileupload.length !== 0
+          : true,
+      {
+        path: ['fileupload'],
+        params: coreSIAErrorMessages.requireAttachment,
       },
     ),
 })

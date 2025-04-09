@@ -1,0 +1,79 @@
+import { formatText, YES } from '@island.is/application/core'
+import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
+import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import {
+  getApplicationAnswers,
+  getYesNoNotApplicableTranslation,
+} from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+import { ReviewGroupProps } from './props'
+
+import { NOT_APPLICABLE } from '../../../lib/constants'
+import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
+
+export const UnionSickPay = ({
+  application,
+  editable,
+  goToScreen,
+}: ReviewGroupProps) => {
+  const { formatMessage, formatDate } = useLocale()
+
+  const { unionSickPayOption, unionSickPayDate, union } = getApplicationAnswers(
+    application.answers,
+  )
+
+  return (
+    <ReviewGroup
+      isLast
+      isEditable={editable}
+      editAction={() => goToScreen?.('unionSickPay')}
+    >
+      <Stack space={3}>
+        <GridRow rowGap={3}>
+          <GridColumn span={['9/12', '9/12', '9/12', '12/12']}>
+            <DataValue
+              label={formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.generalInformation
+                  .unionSickPayTitle,
+              )}
+              value={formatText(
+                getYesNoNotApplicableTranslation(unionSickPayOption),
+                application,
+                formatMessage,
+              )}
+            />
+          </GridColumn>
+        </GridRow>
+        {unionSickPayOption !== NOT_APPLICABLE && (
+          <GridRow rowGap={3}>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  medicalAndRehabilitationPaymentsFormMessage.generalInformation
+                    .unionSickPayUnionSelectTitle,
+                )}
+                value={union}
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={
+                  unionSickPayOption === YES
+                    ? formatMessage(
+                        medicalAndRehabilitationPaymentsFormMessage
+                          .generalInformation.unionSickPayFromUnionDidEndDate,
+                      )
+                    : formatMessage(
+                        medicalAndRehabilitationPaymentsFormMessage
+                          .generalInformation.unionSickPayFromUnionDoesEndDate,
+                      )
+                }
+                value={formatDate(unionSickPayDate)}
+              />
+            </GridColumn>
+          </GridRow>
+        )}
+      </Stack>
+    </ReviewGroup>
+  )
+}
