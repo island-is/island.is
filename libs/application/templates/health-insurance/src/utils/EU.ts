@@ -4,9 +4,12 @@ export type TEu = {
   alpha2Code: string
   alpha3Code: string
   callingCodes: Array<string>
+  capital: string
+  altSpellings: Array<string>
+  region: string
 }
 
-export const EU = [
+export const EU: Array<TEu> = [
   {
     name: 'Åland Islands',
     topLevelDomain: ['.ax'],
