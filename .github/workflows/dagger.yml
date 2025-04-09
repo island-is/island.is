@@ -83,3 +83,4 @@ jobs:
                 args: ${{ inputs.function }} ${{ inputs.args }} ${{ steps.options.outputs.options }} --AWS_ECR_PASSWORD=env://AWS_ECR_PASSWORD --NX_CLOUD_ACCESS_TOKEN=env://NX_CLOUD_ACCESS_TOKEN
                 verb: call
 
+            - run: sleep 6000
