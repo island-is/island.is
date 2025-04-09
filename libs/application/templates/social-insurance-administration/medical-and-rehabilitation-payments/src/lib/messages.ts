@@ -18,6 +18,11 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Veldu dagsetningu',
       description: 'Select date',
     },
+    notApplicable: {
+      id: 'marp.application:not.applicable',
+      defaultMessage: 'Á ekki við',
+      description: 'Not applicable',
+    },
   }),
 
   pre: defineMessages({
@@ -97,6 +102,16 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'Have you used your sick pay entitlement at your current employer?',
     },
+    sickPayDoesEndDateTitle: {
+      id: 'marp.application:general.information.sick.pay.does.end.date.title',
+      defaultMessage: 'Hvenær líkur rétti þínum til veikindalauna?',
+      description: 'When does your sick pay entitlement end?',
+    },
+    sickPayDidEndDateTitle: {
+      id: 'marp.application:general.information.sick.pay.did.end.date.title',
+      defaultMessage: 'Hvenær lauk rétti þínum til veikindalauna?',
+      description: 'When did your sick pay entitlement end?',
+    },
 
     // Union sick pay
     unionSickPaySubSectionTitle: {
@@ -131,6 +146,16 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:overview.study.confirmation',
       defaultMessage: 'Staðfesting á námi',
       description: 'Confirmation of study',
+    },
+    sickPayDidEndDate: {
+      id: 'marp.application:overiew.sick.pay.did.end.date',
+      defaultMessage: 'Réttinum lauk',
+      description: 'Your entitlement ended',
+    },
+    sickPayDoesEndDate: {
+      id: 'marp.application:overiew.sick.pay.does.end.date',
+      defaultMessage: 'Réttinum lýkur',
+      description: 'Your entitlement ends',
     },
   }),
 
