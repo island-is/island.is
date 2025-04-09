@@ -7,6 +7,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator'
+import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
 export interface ChargeResult {
@@ -174,10 +175,12 @@ export class ApiClientPayment {
 
 export class ApiClientEventMetadata {
   @ValidateNested()
+  @Type(() => ApiClientPayment)
   @ApiProperty()
   readonly payment!: ApiClientPayment
 
   @ValidateNested()
+  @Type(() => ApiClientCharge)
   @ApiProperty()
   readonly charge!: ApiClientCharge
 }
@@ -195,6 +198,7 @@ export class ApiClientPaymentDetails {
   readonly message!: string
 
   @ValidateNested()
+  @Type(() => ApiClientEventMetadata)
   @ApiProperty()
   readonly eventMetadata!: ApiClientEventMetadata
 }
@@ -209,6 +213,7 @@ export class ApiClientCallback {
   readonly paymentFlowId!: string
 
   @ValidateNested()
+  @Type(() => ApiClientCallbackMetadata)
   @ApiProperty()
   readonly paymentFlowMetadata!: ApiClientCallbackMetadata
 
@@ -218,6 +223,7 @@ export class ApiClientCallback {
   readonly occurredAt!: string
 
   @ValidateNested()
+  @Type(() => ApiClientPaymentDetails)
   @ApiProperty()
   readonly details!: ApiClientPaymentDetails
 }
