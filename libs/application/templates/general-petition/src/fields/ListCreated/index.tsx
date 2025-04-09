@@ -11,7 +11,7 @@ const ListCreated = ({ application }: { application: Application }) => {
   const listId =
     getValueViaPath<string>(
       application.externalData,
-      'createEndorsementList.data.is',
+      'createEndorsementList.data.id',
     ) ?? ''
   const baseUrl =
     document.location.origin === 'http://localhost:4242'
