@@ -13,6 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 
+import { Case, CaseListEntry } from '../../graphql/schema'
 import { useCaseList } from '../../utils/hooks'
 import { contextMenu as strings } from './ContextMenu.strings'
 import * as styles from './ContextMenu.css'
