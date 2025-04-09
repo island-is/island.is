@@ -10,11 +10,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-    test:
-        uses: ./.github/workflows/dagger.yml
-        secrets: inherit
-        with:
-            function: prepare
+    prepare:
+          name: Prepare node modules
+          uses: ./.github/workflows/dagger.yml
+          secrets: inherit
+          with:
+            function: prepare-base
             sha: ${{ github.sha }}
-                  
+
 

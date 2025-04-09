@@ -2,6 +2,10 @@ name: 'Dagger action'
 on: 
     workflow_call:
         inputs:
+            debug:
+                required: false
+                type: boolean
+                default: false
             branch:
                 required: false
                 type: string
@@ -41,6 +45,11 @@ jobs:
                     echo "Neither 'branch' nor 'sha' is set. Exiting with status 1."
                     exit 1
                 fi
+                if [ "${{ inputs.debug }}" = "true" ]; then
+                    echo "debug_options=--debug" >> $GITHUB_OUTPUT
+                else
+                    echo "debug_options=" >> $GITHUB_OUTPUT
+                fi
             - name: Get ECR password
               id: ecr-login
               run: |
@@ -60,7 +69,7 @@ jobs:
               env:
                 AWS_ECR_PASSWORD: ${{ steps.ecr-login.outputs.password }}
               with:
-                dagger-flags: --debug --progress plain
+                dagger-flags: ${{ steps.options.outputs.debug_options}} --progress plain
                 version: ${{ inputs.version }}
                 module: ${{ inputs.module }}
                 args: ${{ inputs.function }} ${{ inputs.args }} ${{ steps.options.outputs.options }} --AWS_ECR_PASSWORD=env://AWS_ECR_PASSWORD --NX_CLOUD_ACCESS_TOKEN=env://NX_CLOUD_ACCESS_TOKEN

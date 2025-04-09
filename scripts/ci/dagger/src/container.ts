@@ -33,7 +33,7 @@ const MONO_REPO_FILTERS = {
 }
 
 export async function getMonorepoBase(props: MonorepoBase) {
-  const container = await getMonorepoNodemodules({
+  const container = await getMonorepoNodeModules({
     ...props,
   })
   const files = getMonorepoBaseFiles(props)
@@ -48,7 +48,7 @@ export async function getMonorepoBase(props: MonorepoBase) {
   return newContainer.withExec(['yarn', 'codegen']).sync()
 }
 
-async function getMonorepoNodemodules(props: MonorepoBase) {
+export async function getMonorepoNodeModules(props: MonorepoBase) {
   const container = getEcrContainer({
     ...props,
     image: RUNNER_IMAGE,

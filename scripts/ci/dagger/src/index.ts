@@ -18,23 +18,15 @@ const failedStates: JobState[] = ['failure', 'abandoned', 'cancelled']
 @object()
 export class Dagger {
   @func()
-  hehe(
-    container: Container
-  ) {
-    return "this works"
-  }
-  @func()
-  async prepare(
+  async prepareBase(
     action: string,
     AWS_ECR_PASSWORD: Secret,
-    ref: string = 'main',
-    allIsAffected: boolean = false,
     branch?: string,
     sha?: string,
     files?: Directory,
     NX_CLOUD_ACCESS_TOKEN?: Secret,
   ): Promise<Container> {
-    const targetBranch = getTargetBranch(ref);
+    // const targetBranch = getTargetBranch(ref);
     const props = getProps({
       action: action as FILE_ACTION,
       branch,
