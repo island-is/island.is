@@ -35,7 +35,7 @@ import { CustomerRecords } from './FinanceTransactionsData.types'
 import { useFinanceSwapHook } from '../../utils/financeSwapHook'
 import { useGetCustomerRecordsLazyQuery } from './FinanceTransactions.generated'
 
-const VEHICLE_MILAGE_CHARGE_TYPE = 'BM'
+const VEHICLE_MILEAGE_CHARGE_TYPE = 'BM'
 
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
@@ -57,7 +57,7 @@ const FinanceTransactions = () => {
       loadCustomerRecords({
         variables: {
           input: {
-            chargeTypeID: [VEHICLE_MILAGE_CHARGE_TYPE],
+            chargeTypeID: [VEHICLE_MILEAGE_CHARGE_TYPE],
             dayFrom: format(fromDate, 'yyyy-MM-dd'),
             dayTo: format(toDate, 'yyyy-MM-dd'),
           },
