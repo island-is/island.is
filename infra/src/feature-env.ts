@@ -179,7 +179,7 @@ yargs(process.argv.slice(2))
         )
         
         if (writeDest != '') {
-          fs.mkdirSync(`${writeDest}/${affectedServices[0].name()}`, { recursive: true })
+          fs.mkdirSync(`${writeDest}/${svc.name()}`, { recursive: true })
           console.log(`writing file to directory: ${writeDest}/${svc.name()}/values.yaml`)
           fs.writeFileSync(`${writeDest}/${svc.name()}/values.yaml`, svcString);
         } else {
