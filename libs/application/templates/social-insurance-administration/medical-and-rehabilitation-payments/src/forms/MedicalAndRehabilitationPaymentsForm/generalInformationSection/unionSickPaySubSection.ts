@@ -81,7 +81,7 @@ export const unionSickPaySubSection = buildSubSection({
           required: true,
         }),
         buildDescriptionField({
-          id: 'unionSickPay.doesEndDate.description',
+          id: 'unionSickPay.union.description',
           titleVariant: 'h4',
           space: 4,
           title:

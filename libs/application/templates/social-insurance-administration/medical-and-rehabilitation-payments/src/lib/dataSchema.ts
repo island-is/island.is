@@ -108,7 +108,7 @@ export const dataSchema = z.object({
     })
     .refine(
       ({ hasUtilizedUnionSickPayRights, unionName }) => {
-        // If the union name is set then we don't need to check the option
+        // If the union name is set then we don't need to check the hasUtilizedUnionSickPayRights
         if (unionName) {
           return true
         }
@@ -121,7 +121,7 @@ export const dataSchema = z.object({
     )
     .refine(
       ({ hasUtilizedUnionSickPayRights, unionNationalId, unionName }) => {
-        // If the name is set then we don't need to check the union
+        // If the union name is set then we don't need to check the union
         if (unionName) {
           return true
         }
