@@ -18,7 +18,8 @@ yarn feature-env \
   --feature "$FEATURE_NAME" \
   --images "$IMAGE" \
   --chart islandis \
-  --jobImage "${ECR_REPO}:${DOCKER_TAG}" >"${FEATURE_DIR}/${FEATURE_NAME}/${IMAGE}/values-job-manifest.yaml"
+  --jobImage "${ECR_REPO}:${DOCKER_TAG}" 
+  --writeDest "${FEATURE_DIR}/${FEATURE_NAME}"
 
 yarn feature-env \
   values \

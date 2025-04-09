@@ -151,7 +151,7 @@ yargs(process.argv.slice(2))
         })
         .option('writeDest', {
           type: 'string',
-          description: 'Template location where to write file to for down stream apps',
+          description: 'Template location where to write files to for down stream apps',
           default: ''
         })
     },
@@ -167,7 +167,7 @@ yargs(process.argv.slice(2))
         env,
       )
       
-      const svcs = await featureYaml.map(async (svc) => {
+      featureYaml.map(async (svc) => {
           const svcString = await renderHelmValueFileContent(
           env,
           habitat,
@@ -220,21 +220,38 @@ yargs(process.argv.slice(2))
     command: 'jobs',
     describe: 'get kubernetes jobs to bootstrap feature environment',
     builder: (yargs) => {
-      return yargs.option('jobImage', {
+      return yargs
+      .option('jobImage', {
         type: 'string',
         description: 'Image to run feature bootstrapping jobs',
         demandOption: true,
       })
+      .option('writeDest', {
+        type: 'string',
+        description: 'Template location where to write files to for down stream apps',
+        default: ''
+      })
     },
     handler: async (argv) => {
       const typedArgv = (argv as unknown) as Arguments
-      const { affectedServices, env } = parseArguments(typedArgv)
+      const { affectedServices, env, writeDest } = parseArguments(typedArgv)
       const featureYaml = await renderHelmJobForFeature(
         env,
         typedArgv.jobImage!,
         affectedServices,
       )
-      await writeToOutput(dumpJobYaml(featureYaml), typedArgv.output)
+
+      if (featureYaml.spec.template.spec.containers.length) {
+        return
+      }
+      
+      const svcString = dumpJobYaml(featureYaml)
+      if (writeDest != '') {
+        console.log(`${writeDest}/${affectedServices[0].name()}/values-job-manifest.yaml`)
+        // fs.writeFileSync(`${writeDest}/${svc.name()}/values.yaml`, svcString);
+      } else {
+        await writeToOutput(svcString, typedArgv.output)
+      }
     },
   })
   .options({
