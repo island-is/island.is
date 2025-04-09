@@ -8,7 +8,7 @@ interface DebouncedCheckboxProps {
   value: string
   checked: boolean
   onChange: (state: boolean) => void
-  debounceTimeInMs?: number
+  debounceTimeInMs: number
 }
 
 export const DebouncedCheckbox = ({
@@ -16,7 +16,7 @@ export const DebouncedCheckbox = ({
   value,
   checked,
   onChange,
-  debounceTimeInMs = 1000,
+  debounceTimeInMs,
 }: DebouncedCheckboxProps) => {
   const [state, setState] = useState(checked)
   const initialRender = useRef(true)

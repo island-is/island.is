@@ -64,7 +64,7 @@ import { m } from './translations.strings'
 import * as styles from './VerdictsList.css'
 
 const ITEMS_PER_PAGE = 10
-const DEBOUNCE_TIME_IN_MS = 1000
+const DEBOUNCE_TIME_IN_MS = 700
 
 const ALL_COURTS_TAG = ''
 const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómur Reykjavíkur'
@@ -392,6 +392,7 @@ const Filters = ({
           }}
           label={formatMessage(m.listPage.caseNumberInputLabel)}
           name="casenumber-input"
+          debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
         />
       </AccordionItem>
 
@@ -413,6 +414,7 @@ const Filters = ({
             updateQueryState(QueryParam.LAWS, value)
           }}
           value={queryState[QueryParam.LAWS]}
+          debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
         />
       </AccordionItem>
 
@@ -453,6 +455,7 @@ const Filters = ({
         <Stack space={2} key={renderKey}>
           {caseCategoryOptions.map((option) => (
             <DebouncedCheckbox
+              debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
               key={option.value}
               checked={Boolean(
                 queryState[QueryParam.CASE_CATEGORIES]?.includes(option.value),
@@ -501,6 +504,7 @@ const Filters = ({
         <Stack space={2} key={renderKey}>
           {caseTypeOptions.map((option) => (
             <DebouncedCheckbox
+              debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
               key={option.value}
               checked={Boolean(
                 queryState[QueryParam.CASE_TYPES]?.includes(option.value),
@@ -548,6 +552,7 @@ const Filters = ({
       >
         <Stack space={2} key={renderKey}>
           <DebouncedDatePicker
+            debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
             name="from"
             label={formatMessage(m.listPage.dateFromLabel)}
             handleChange={(date) => {
@@ -557,6 +562,7 @@ const Filters = ({
             maxDate={queryState[QueryParam.DATE_TO]}
           />
           <DebouncedDatePicker
+            debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
             name="from"
             label={formatMessage(m.listPage.dateToLabel)}
             handleChange={(date) => {
@@ -681,6 +687,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
               <Stack space={3}>
                 <Box className={styles.searchInput}>
                   <DebouncedInput
+                    debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
                     key={renderKey}
                     value={queryState[QueryParam.SEARCH_TERM]}
                     loading={loading}

@@ -20,7 +20,7 @@ interface DebouncedInputProps {
   icon?: InputProps['icon']
   loading?: boolean
   backgroundColor?: InputProps['backgroundColor']
-  debounceTimeInMs?: number
+  debounceTimeInMs: number
 }
 
 export const DebouncedInput = ({
@@ -33,7 +33,7 @@ export const DebouncedInput = ({
   onChange,
   loading,
   icon,
-  debounceTimeInMs = 1000,
+  debounceTimeInMs,
 }: DebouncedInputProps) => {
   const [state, setState] = useState(value)
   const initialRender = useRef(true)

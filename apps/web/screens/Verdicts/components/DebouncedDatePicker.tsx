@@ -10,7 +10,7 @@ interface DebouncedDatePickerProps {
   minDate?: Date | null
   maxDate?: Date | null
   handleChange: (_: Date | null) => void
-  debounceTimeInMs?: number
+  debounceTimeInMs: number
 }
 
 export const DebouncedDatePicker = ({
@@ -20,7 +20,7 @@ export const DebouncedDatePicker = ({
   minDate,
   value,
   handleChange,
-  debounceTimeInMs = 1000,
+  debounceTimeInMs,
 }: DebouncedDatePickerProps) => {
   const [state, setState] = useState(value)
   const initialRender = useRef(true)
