@@ -1,3 +1,4 @@
+import type { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql'
 
 @InputType()
@@ -6,8 +7,14 @@ export class GetBloodDonationRestrictionsInput {
   @Field(() => Int, { nullable: true })
   page?: number
 
+  @Field(() => String, { nullable: true })
+  queryString?: string
+
+  @Field(() => [String], { nullable: true })
+  tagKeys?: string[]
+
   @Field(() => String)
-  lang = 'is-IS'
+  lang: ElasticsearchIndexLocale = 'is'
 }
 
 @InputType()
@@ -17,4 +24,10 @@ export class GetBloodDonationRestrictionDetailsInput {
 
   @Field(() => String)
   lang = 'is-IS'
+}
+
+@InputType()
+export class GetBloodDonationRestrictionGenericTagsInput {
+  @Field(() => String)
+  lang: ElasticsearchIndexLocale = 'is'
 }

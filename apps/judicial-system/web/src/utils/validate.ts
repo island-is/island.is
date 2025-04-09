@@ -525,7 +525,11 @@ export const isSubpoenaStepValid = (
       ],
     ]).isValid &&
     Boolean(
-      workingCase.defendants?.every((defendant) => defendant.subpoenaType),
+      workingCase.defendants?.every((defendant) =>
+        defendant.isAlternativeService
+          ? defendant.alternativeServiceDescription
+          : defendant.subpoenaType,
+      ),
     )
   )
 }

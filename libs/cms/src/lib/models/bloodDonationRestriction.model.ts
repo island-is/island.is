@@ -112,3 +112,21 @@ export const mapBloodDonationRestrictionDetails = ({
     keywordsText: (fields.keywords ?? '').trim(),
   }
 }
+
+@ObjectType()
+export class BloodDonationRestrictionGenericTag {
+  @Field(() => ID)
+  key!: string
+
+  @Field(() => String)
+  label!: string
+}
+
+@ObjectType()
+export class BloodDonationRestrictionGenericTagList {
+  @Field(() => Int)
+  total!: number
+
+  @CacheField(() => [BloodDonationRestrictionGenericTag])
+  items!: BloodDonationRestrictionGenericTag[]
+}
