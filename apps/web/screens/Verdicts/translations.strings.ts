@@ -47,15 +47,15 @@ export const m = {
       defaultMessage: 'Sláðu inn málsnúmer',
       description: 'Málsnúmer (label á málsnúmer input)',
     },
-    caseNumberSelectLabel: {
-      id: 'web.verdicts:listPage.caseNumberSelectLabel',
+    caseNumberAccordionLabel: {
+      id: 'web.verdicts:listPage.caseNumberAccordionLabel',
       defaultMessage: 'Málsnúmer',
-      description: 'Málsnúmer (label á málsnúmer select einingu)',
+      description: 'Málsnúmer (label á málsnúmer accordion einingu)',
     },
-    lawsSelectLabel: {
-      id: 'web.verdicts:listPage.lawsSelectLabel',
+    lawsAccordionLabel: {
+      id: 'web.verdicts:listPage.lawsAccordionLabel',
       defaultMessage: 'Lagagreinar',
-      description: 'Label á "Lagagreinar" select einingu',
+      description: 'Label á "Lagagreinar" accordion einingu',
     },
     lawsInputLabel: {
       id: 'web.verdicts:listPage.lawsInputLabel',
@@ -95,27 +95,27 @@ export const m = {
     courtSelectLabel: {
       id: 'web.verdicts:listPage.courtSelectLabel',
       defaultMessage: 'Veldu dómstól',
-      description: 'Label á dómstól select einingu',
+      description: 'Label á dómstóla select einingu',
     },
-    keywordSelectLabel: {
-      id: 'web.verdicts:listPage.keywordSelectLabel',
+    keywordAccordionLabel: {
+      id: 'web.verdicts:listPage.keywordAccordionLabel',
       defaultMessage: 'Lykilorð',
-      description: 'Label á lykilorð select einingu',
+      description: 'Label á lykilorð accordion einingu',
     },
     keywordSelectPlaceholder: {
       id: 'web.verdicts:listPage.keywordSelectPlaceholder',
       defaultMessage: 'Veldu lykilorð',
       description: 'Placeholder á lykilorð select einingu',
     },
-    caseTypeSelectLabel: {
-      id: 'web.verdicts:listPage.caseTypeSelectLabel',
+    caseTypeAccordionLabel: {
+      id: 'web.verdicts:listPage.caseTypeAccordionLabel',
       defaultMessage: 'Málategundir',
-      description: 'Label á "Málategundir" select einingu',
+      description: 'Label á "Málategundir" accordion einingu',
     },
-    caseCategorySelectLabel: {
-      id: 'web.verdicts:listPage.caseCategorySelectLabel',
+    caseCategoryAccordionLabel: {
+      id: 'web.verdicts:listPage.caseCategoryAccordionLabel',
       defaultMessage: 'Málaflokkur',
-      description: 'Label á "Málaflokkur" select einingu',
+      description: 'Label á "Málaflokkur" accordion einingu',
     },
     dateFromLabel: {
       id: 'web.verdicts:listPage.dateFromLabel',
@@ -132,10 +132,10 @@ export const m = {
       defaultMessage: 'Til',
       description: 'Label á "Dagsetning til" select einingu',
     },
-    dateSelectLabel: {
-      id: 'web.verdicts:listPage.dateSelectLabel',
+    dateAccordionLabel: {
+      id: 'web.verdicts:listPage.dateAccordionLabel',
       defaultMessage: 'Dagsetning',
-      description: 'Label á "Dagsetning" select einingu',
+      description: 'Label á "Dagsetning" accordion einingu',
     },
     districtCourtSelectLabel: {
       id: 'web.verdicts:listPage.districtCourtSelectLabel',

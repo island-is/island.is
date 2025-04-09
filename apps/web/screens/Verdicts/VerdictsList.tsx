@@ -378,7 +378,7 @@ const Filters = ({
     <Stack space={4}>
       <AccordionItem
         id="case-number-accordion"
-        label={formatMessage(m.listPage.caseNumberSelectLabel)}
+        label={formatMessage(m.listPage.caseNumberAccordionLabel)}
         startExpanded={startExpanded}
         iconVariant="small"
         labelVariant="h5"
@@ -400,7 +400,7 @@ const Filters = ({
 
       <AccordionItem
         id="laws-accordion"
-        label={formatMessage(m.listPage.lawsSelectLabel)}
+        label={formatMessage(m.listPage.lawsAccordionLabel)}
         startExpanded={startExpanded}
         iconVariant="small"
         labelVariant="h5"
@@ -422,7 +422,7 @@ const Filters = ({
 
       <AccordionItem
         id="keywords-accordion"
-        label={formatMessage(m.listPage.keywordSelectLabel)}
+        label={formatMessage(m.listPage.keywordAccordionLabel)}
         startExpanded={startExpanded}
         iconVariant="small"
         labelVariant="h5"
@@ -444,7 +444,7 @@ const Filters = ({
 
       <AccordionItem
         id="case-category-accordion"
-        label={formatMessage(m.listPage.caseCategorySelectLabel)}
+        label={formatMessage(m.listPage.caseCategoryAccordionLabel)}
         startExpanded={startExpanded}
         iconVariant="small"
         labelVariant="h5"
@@ -495,7 +495,7 @@ const Filters = ({
 
       <AccordionItem
         id="case-types-accordion"
-        label={formatMessage(m.listPage.caseTypeSelectLabel)}
+        label={formatMessage(m.listPage.caseTypeAccordionLabel)}
         startExpanded={startExpanded}
         iconVariant="small"
         labelVariant="h5"
@@ -539,7 +539,7 @@ const Filters = ({
 
       <AccordionItem
         id="date-accordion"
-        label={formatMessage(m.listPage.dateSelectLabel)}
+        label={formatMessage(m.listPage.dateAccordionLabel)}
         startExpanded={startExpanded}
         iconVariant="small"
         labelVariant="h5"
