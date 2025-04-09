@@ -13,6 +13,7 @@ import {
 } from '../../utils'
 import { TrainingLicenseOnAWorkMachineAnswers } from '../../lib/dataSchema'
 import { filterWorkMachineOptions } from '../../utils/filterWorkMachineOptions'
+import { Application } from '@island.is/application/types'
 
 export const assigneeInformationSection = buildSection({
   id: 'assigneeInformationSection',
@@ -70,18 +71,39 @@ export const assigneeInformationSection = buildSection({
               clearOnChange: (index) => [
                 `assigneeInformation.companyAndAssignee[${index}].assignee.name`,
               ],
-              setOnChange: async (value, application, index) => {
-                return [
-                  {
-                    key: `assigneeInformation.companyAndAssignee[${index}].isSameAsApplicant`,
-                    value: isSameAsApplicant(
-                      application.answers,
-                      typeof value === 'string' ? value : '',
-                    )
-                      ? ''
-                      : 'true',
-                  },
-                ]
+              // setOnChange: async (value, application, index) => {
+              //   return [
+              //     {
+              //       key: `assigneeInformation.companyAndAssignee[${index}].isSameAsApplicant`,
+              //       value: isSameAsApplicant(
+              //         application.answers,
+              //         typeof value === 'string' ? value : '',
+              //       )
+              //         ? ''
+              //         : 'true',
+              //     },
+              //   ]
+              // },
+            },
+            isSameAsApplicant: {
+              component: 'hiddenInput',
+              defaultValue: (
+                application: Application,
+                activeField?: Record<string, string>,
+              ) => {
+                const assigneeNationalId =
+                  typeof activeField?.assignee === 'string'
+                    ? ''
+                    : (activeField &&
+                        getValueViaPath<string>(
+                          activeField,
+                          'assignee.nationalId',
+                        )) ??
+                      ''
+                return isSameAsApplicant(
+                  application.answers,
+                  assigneeNationalId,
+                )
               },
             },
             workMachine: {
@@ -106,16 +128,23 @@ export const assigneeInformationSection = buildSection({
             },
             alertMessage: {
               component: 'alertMessage',
-              alertType: 'warning',
+              alertType: 'error',
               message: assigneeInformation.labels.isSameAsApplicantAlert,
               marginBottom: 0,
               marginTop: 0,
               condition: (application, activeField) => {
-                return isSameAsApplicant(
-                  application.answers,
+                const assigneeNationalId =
                   typeof activeField?.assignee === 'string'
                     ? ''
-                    : activeField?.assignee?.['nationalId'] ?? '',
+                    : (activeField &&
+                        getValueViaPath<string>(
+                          activeField,
+                          'assignee.nationalId',
+                        )) ??
+                      ''
+                return isSameAsApplicant(
+                  application.answers,
+                  assigneeNationalId,
                 )
               },
             },
