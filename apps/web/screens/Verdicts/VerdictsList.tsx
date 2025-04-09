@@ -313,10 +313,12 @@ const Filters = ({
   const { formatMessage } = useIntl()
 
   const keywordOptions = useMemo(() => {
-    return keywords.map((keyword) => ({
-      label: keyword.label,
-      value: keyword.label,
-    }))
+    return [{ label: '', value: '' }].concat(
+      keywords.map((keyword) => ({
+        label: keyword.label,
+        value: keyword.label,
+      })),
+    )
   }, [keywords])
   const caseCategoryOptions = useMemo(() => {
     return caseCategories.map((category) => ({
