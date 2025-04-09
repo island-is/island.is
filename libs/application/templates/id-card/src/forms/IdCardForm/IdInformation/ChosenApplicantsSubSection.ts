@@ -43,7 +43,7 @@ export const ChosenApplicantsSubSection = buildSubSection({
 
             const passportList: Array<Option> = [
               {
-                label: applicantInformation.name,
+                label: applicantInformation.name ?? '',
                 subLabel: applicantInformation.passport
                   ? {
                       ...idInformation.labels.idNumber,
