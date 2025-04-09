@@ -65,10 +65,7 @@ const Search = () => {
   return (
     <GridContainer>
       <GridRow>
-        <GridColumn
-          offset={['0', '0', '2/12', '2/12', '2/12']}
-          span={['6/6', '6/6', '5/12', '5/12', '5/12']}
-        >
+        <GridColumn offset={['0', '0', '2/12']} span={['6/6', '6/6', '5/12']}>
           <Breadcrumbs items={breadcrumbs}></Breadcrumbs>
 
           <Box marginTop={3}>
@@ -113,10 +110,7 @@ const Search = () => {
         </GridColumn>
       </GridRow>
       <GridRow marginTop={4} marginBottom={3}>
-        <GridColumn
-          offset={['0', '0', '2/12', '2/12', '2/12']}
-          span={['6/6', '6/6', '8/12', '8/12', '8/12']}
-        >
+        <GridColumn offset={['0', '0', '2/12']} span={['6/6', '6/6', '8/12']}>
           {!query && (
             <Problem
               type="no_data"

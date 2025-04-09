@@ -2,7 +2,6 @@ import { DocumentsScope } from '@island.is/auth/scopes'
 import {
   Box,
   Button,
-  ColorSchemeContext,
   FocusableBox,
   GridColumn,
   GridContainer,

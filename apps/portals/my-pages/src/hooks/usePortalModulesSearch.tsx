@@ -5,6 +5,8 @@ import { MAIN_NAVIGATION } from '../lib/masterNavigation'
 import { MessageDescriptor } from 'react-intl'
 import { PortalNavigationItem } from '@island.is/portals/core'
 
+const MAX_STRING_LENGTH = 97
+
 interface ModuleSet {
   title: string
   breadcrumbs: string[]
@@ -47,8 +49,8 @@ const getNavigationItems = (
     if (!messageId) return undefined
     const content = formatMessage(messageId)
 
-    if (content.length > 97) {
-      return content.substring(0, 97) + '...'
+    if (content.length > MAX_STRING_LENGTH) {
+      return content.substring(0, MAX_STRING_LENGTH) + '...'
     } else if (content.length < 1) {
       return undefined
     }
