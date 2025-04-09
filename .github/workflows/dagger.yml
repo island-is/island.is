@@ -27,11 +27,18 @@ on:
                 required: false
                 type: string
                 default: ""
+        outputs:
+            output: 
+                description: The result of the Dagger function call
+                value: ${{ jobs.run_action.outputs.output }}
+
 env:
     _EXPERIMENTAL_DAGGER_RUNNER_HOST: ${{ secrets._EXPERIMENTAL_DAGGER_RUNNER_HOST }}
     NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 jobs:
     run_action:
+        outputs:
+            output: ${{ steps.dagger.outputs.output }}
         runs-on: arc-shared
         steps:
             - name: Evaluate options
@@ -66,6 +73,7 @@ jobs:
         
             - name: Call Dagger Function
               uses: dagger/dagger-for-github@8.0.0
+              id: dagger
               env:
                 AWS_ECR_PASSWORD: ${{ steps.ecr-login.outputs.password }}
               with:
