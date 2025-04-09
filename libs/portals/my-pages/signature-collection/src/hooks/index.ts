@@ -41,7 +41,7 @@ export const useGetSignatureList = (listId: string) => {
   return { listInfo, refetchSignatureList, loadingList }
 }
 
-export const useGetListSignees = (listId: string, pageNumber?: number) => {
+export const useGetListSignees = (listId: string) => {
   const {
     data: listSignatures,
     refetch: refetchListSignees,

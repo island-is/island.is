@@ -1,4 +1,5 @@
 export enum SignatureCollectionPaths {
+  // Almennir undirskriftalistar
   RootPath = '/min-gogn/listar',
   GeneralPetitions = '/min-gogn/listar/undirskriftalistar',
 

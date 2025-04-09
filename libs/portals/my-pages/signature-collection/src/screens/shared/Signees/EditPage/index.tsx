@@ -11,9 +11,9 @@ import { useLocale } from '@island.is/localization'
 import { Modal } from '@island.is/react/components'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
-import { m } from '../../../../../../lib/messages'
 import { useMutation } from '@apollo/client'
-import { updatePaperSignaturePageNumber } from '../../../../../../hooks/graphql/mutations'
+import { updatePaperSignaturePageNumber } from '../../../../hooks/graphql/mutations'
+import { m } from '../../../../lib/messages'
 
 const EditPage = ({
   page,

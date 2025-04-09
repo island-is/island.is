@@ -15,11 +15,11 @@ import * as nationalId from 'kennitala'
 import { useEffect, useState } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
-import { m } from '../../../../../lib/messages'
-import { useGetCanSign } from '../../../../../hooks'
 import { useMutation } from '@apollo/client'
-import { uploadPaperSignature } from '../../../../../hooks/graphql/mutations'
 import { toast } from 'react-toastify'
+import { useGetCanSign } from '../../../hooks'
+import { uploadPaperSignature } from '../../../hooks/graphql/mutations'
+import { m } from '../../../lib/messages'
 
 export const PaperSignees = ({
   listId,

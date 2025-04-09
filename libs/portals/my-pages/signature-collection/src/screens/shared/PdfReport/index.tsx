@@ -2,9 +2,9 @@ import { useLocale } from '@island.is/localization'
 import { Box, Button } from '@island.is/island-ui/core'
 import { usePDF } from '@react-pdf/renderer'
 import MyPdfDocument from './Document'
-import { useGetPdfReport } from '../../../../../hooks'
-import { m } from '../../../../../lib/messages'
 import { useEffect } from 'react'
+import { useGetPdfReport } from '../../../hooks'
+import { m } from '../../../lib/messages'
 
 export const PdfReport = ({ listId }: { listId: string }) => {
   const { formatMessage } = useLocale()

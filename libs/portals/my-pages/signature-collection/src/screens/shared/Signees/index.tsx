@@ -7,18 +7,18 @@ import {
   Icon,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../../../../lib/messages'
 import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
-import { useGetListSignees } from '../../../../../hooks'
 import { useParams } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
-import { SkeletonTable } from '../../../../../skeletons'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
 import { PaperSignees } from './PaperSignees'
 import sortBy from 'lodash/sortBy'
-import PdfReport from '../PdfReport'
 import EditPage from './EditPage'
+import PdfReport from '../PdfReport'
+import { SkeletonTable } from '../../../lib/skeletons'
+import { useGetListSignees } from '../../../hooks'
+import { m } from '../../../lib/messages'
 
 const Signees = () => {
   useNamespaces('sp.signatureCollection')

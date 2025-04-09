@@ -4,7 +4,7 @@ import { m } from '../../../../lib/messages'
 import { useLocation } from 'react-router-dom'
 import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
-import Signees from './SigneesOverview'
+import Signees from '../../../shared/Signees'
 
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')

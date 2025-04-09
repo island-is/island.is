@@ -9,7 +9,6 @@ import {
   Tag,
   Icon,
   toast,
-  Button,
 } from '@island.is/island-ui/core'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
@@ -23,14 +22,14 @@ import {
 import {
   CollectorSkeleton,
   OwnerParliamentarySkeleton,
-} from '../../../skeletons'
+} from '../../../lib/skeletons'
 import { useGetCollectors, useGetListsForOwner } from '../../../hooks'
 import { SignatureCollection } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
-import copyToClipboard from 'copy-to-clipboard'
-import { formatNationalId } from '@island.is/portals/core'
 import SignedList from '../../shared/SignedList'
+import ShareLink from '../../shared/ShareLink'
+import { formatNationalId } from '@island.is/portals/core'
 
 const OwnerView = ({
   refetchIsOwner,
@@ -238,36 +237,7 @@ const OwnerView = ({
           </T.Body>
         </T.Table>
       </Box>
-      <Box
-        background="blue100"
-        borderRadius="large"
-        display={['block', 'flex', 'flex']}
-        justifyContent="spaceBetween"
-        alignItems="center"
-        padding={3}
-      >
-        <Text marginBottom={[2, 0, 0]} variant="small">
-          {formatMessage(m.copyLinkDescription)}
-        </Text>
-        <Box>
-          <Button
-            onClick={() => {
-              const copied = copyToClipboard(
-                `${document.location.origin}${listsForOwner[0].slug}`,
-              )
-              if (!copied) {
-                return toast.error(formatMessage(m.copyLinkError))
-              }
-              toast.success(formatMessage(m.copyLinkSuccess))
-            }}
-            variant="text"
-            icon="link"
-            size="medium"
-          >
-            {formatMessage(m.copyLinkButton)}
-          </Button>
-        </Box>
-      </Box>
+      <ShareLink slug={listsForOwner?.[0]?.slug} />
     </Stack>
   )
 }
