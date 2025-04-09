@@ -31,13 +31,13 @@ runs:
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+        node ./scripts/ci/generate-files.mjs ${{ steps.values.outputs.generate-files-path }}
 
     - name: Extract generated files
       if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
-        tar -xzvf ${{ env.GENERATED_FILES }}
+        tar -xzvf ${{ steps.values.outputs.generate-files-path }}
 
     - name: Cache Generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
