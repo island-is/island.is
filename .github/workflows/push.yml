@@ -291,6 +291,8 @@ jobs:
           echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
           echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
           echo APP="${AFFECTED_PROJECTS}" >> "$GITHUB_ENV"
+          echo OUTPUT_TYPE="${DOCKER_TYPE/docker/output}" >> "${GITHUB_ENV}"
+          echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
 
       - name: Login to ECR
         uses: docker/login-action@v3
@@ -320,39 +322,6 @@ jobs:
         run: |
           tar -xzvf ${{ env.GENERATED_FILES }}
 
-      - name: Prepare Docker build arguments
-        id: dockerargs
-        if: steps.gather.outcome == 'success'
-        env:
-          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
-          GIT_COMMIT_SHA: ${{ github.sha }}
-        run: |
-          set -x
-          # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
-          echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
-
-          # Strip protocol prefix and .git postfix
-          SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
-          SERVER_URL="${SERVER_URL#*://}"
-          SERVER_URL="${SERVER_URL%.git}"
-          build_args=(
-            --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
-            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
-            --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
-            --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
-            --build-arg="NX_PARALLEL=${NX_PARALLEL}"
-            --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
-            --build-arg="NX_TASKS_RUNNER=ci"
-            --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt
-            # --cache-from=type=registry,ref="${{ needs.prepare.outputs.cache_image }}"
-            --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache"
-            # --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache,mode=max" \
-          )
-          export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
-          echo OUTPUT_TYPE="${DOCKER_TYPE/docker/output}" >> "${GITHUB_ENV}"
-          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
-          echo "push tag: ${{ env.DOCKER_REGISTRY }}/${{ env.APP }}:${{ env.DOCKER_TAG }}"
-
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v3
@@ -381,22 +350,9 @@ jobs:
             APP=${{ env.APP }}
             APP_HOME=${{ env.APP_HOME }}
             APP_DIST_HOME=${{ env.APP_DIST_HOME }}
-          secrets: |
-            "nx_cloud_access_token=${{ secrets.NX_CLOUD_ACCESS_TOKEN }}"
+          secret_files: |
+            nx_cloud_access_token=./nx_cloud_access_token.txt
           tags: ${{ env.DOCKER_REGISTRY }}/${{ env.APP }}:${{ env.DOCKER_TAG }}
-
-      # - name: Building Docker images
-      #   id: dockerbuild
-      #   if: steps.gather.outcome == 'success'
-      #   env:
-      #     NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
-      #     GIT_COMMIT_SHA: ${{ github.sha }}
-      #   run: |
-      #     set -x
-      #     echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
-      #     echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
-      #     export EXTRA_DOCKER_BUILD_ARGS
-      #     ./scripts/ci/"90_${DOCKER_TYPE}.sh"
 
       # Add specific directories you need
   helm-docker-build:
