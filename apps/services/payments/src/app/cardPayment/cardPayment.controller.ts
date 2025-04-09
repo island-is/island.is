@@ -9,8 +9,9 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import type { Logger } from '@island.is/logging'
+import { v4 as uuid } from 'uuid'
 
+import type { Logger } from '@island.is/logging'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -199,9 +200,23 @@ export class CardPaymentController {
         throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
       }
 
+      // Create a unique guid for the merchant reference data
+      const merchantReferenceData = uuid()
+
+      // Create a unique guid for the payment confirmation
+      const paymentConfirmationId = uuid()
+
+      this.logger.info(
+        `Starting card payment for payment flow ${chargeCardInput.paymentFlowId} with correlation id ${paymentConfirmationId}`,
+      )
+
       // Payment confirmation
       const paymentResult = await this.cardPaymentService.charge(
         chargeCardInput,
+        {
+          merchantReferenceData,
+          correlationId: paymentConfirmationId,
+        },
       )
 
       let persistedPaymentConfirmation = false
@@ -212,6 +227,10 @@ export class CardPaymentController {
           paymentResult,
           paymentFlowId: chargeCardInput.paymentFlowId,
           totalPrice,
+          paymentTrackingData: {
+            merchantReferenceData,
+            correlationId: paymentConfirmationId,
+          },
         })
         persistedPaymentConfirmation = true
 
@@ -282,6 +301,7 @@ export class CardPaymentController {
             charges: catalogItems,
             chargeResponse: paymentResult,
             totalPrice,
+            merchantReferenceData,
           })
 
         // Create a paid charge and send to FJS
