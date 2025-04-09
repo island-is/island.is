@@ -43,11 +43,6 @@ const defenderCaseFileCategoriesForIndictmentCases =
     CaseFileCategory.CIVIL_CLAIM,
   )
 
-const civilClaimantCaseFileCategoriesIndictmentCases = [
-  CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
-  CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
-]
-
 const prisonAdminCaseFileCategories = [
   CaseFileCategory.APPEAL_RULING,
   CaseFileCategory.RULING,
@@ -77,21 +72,13 @@ const getDefenceUserIndictmentCaseFileCategories = (
     Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
       nationalId,
       defendants,
-    )
-  ) {
-    return defenderCaseFileCategoriesForIndictmentCases
-  }
-
-  if (
+    ) ||
     CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
       nationalId,
       civilClaimants,
     )
   ) {
-    return [
-      ...defenderCaseFileCategoriesForIndictmentCases,
-      ...civilClaimantCaseFileCategoriesIndictmentCases,
-    ]
+    return defenderCaseFileCategoriesForIndictmentCases
   }
 
   return defenderDefaultCaseFileCategoriesForIndictmentCases
@@ -142,7 +129,8 @@ const canDefenceUserViewCaseFile = ({
     // It is unlikely that a defenders with identical user names have been assigned to the same case but we should remove that possibility for sure.
     // Since defenders aren't registered in the system we should rather rely on the user's national id when submitting a file
     const hasUserSubmittedCaseFile =
-      userName === submittedBy || userName === fileRepresentative
+      (submittedBy || fileRepresentative) &&
+      (userName === submittedBy || userName === fileRepresentative)
     return (
       canDefenceUserViewCaseFileOfIndictmentCase(
         nationalId,
