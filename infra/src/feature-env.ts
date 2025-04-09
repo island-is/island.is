@@ -247,8 +247,7 @@ yargs(process.argv.slice(2))
       
       const svcString = dumpJobYaml(featureYaml)
       if (writeDest != '') {
-        console.log(`${writeDest}/${affectedServices[0].name()}/values-job-manifest.yaml`)
-        // fs.writeFileSync(`${writeDest}/${svc.name()}/values.yaml`, svcString);
+        fs.writeFileSync(`${writeDest}/${affectedServices[0].name()}/values-job-manifest.yaml`, svcString);
       } else {
         await writeToOutput(svcString, typedArgv.output)
       }
