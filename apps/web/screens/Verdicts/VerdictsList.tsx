@@ -15,15 +15,12 @@ import {
   Box,
   Breadcrumbs,
   Button,
-  Checkbox,
-  DatePicker,
   Divider,
   Filter,
   GridContainer,
   Hidden,
   InfoCardGrid,
   Inline,
-  Input,
   Select,
   Stack,
   Tag,
@@ -93,13 +90,6 @@ interface VerdictsListProps {
   keywords: WebVerdictKeyword[]
   caseCategories: WebVerdictCaseCategory[]
   caseTypes: WebVerdictCaseType[]
-}
-
-const handleInputKeyDown = (ev: { key: string; target: unknown }) => {
-  if (ev.key === 'Enter') {
-    // Remove focus from input field after pressing enter
-    ;(ev.target as { blur?: () => void })?.blur?.()
-  }
 }
 
 const extractCourtLevelFromState = (court: string | null | undefined) =>
