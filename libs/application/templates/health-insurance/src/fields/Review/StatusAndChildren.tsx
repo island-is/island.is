@@ -11,11 +11,8 @@ import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
-
 import { ReviewFieldProps, Status } from '../../utils/types'
-// import { ChildrenInfoMessage } from '../ChildrenInfoMessage/ChildrenInfoMessage'
 import { TextWithTooltip } from '../TextWithTooltip/TextWithTooltip'
-
 import { m } from '../../lib/messages/messages'
 import { FileUploadController } from '@island.is/application/ui-components'
 import { FILE_SIZE_LIMIT, EmploymentStatus } from '../../utils/constants'
@@ -28,11 +25,11 @@ export const StatusAndChildren = ({
   const { formatMessage } = useLocale()
 
   const [status, setStatus] = useState(
-    getValueViaPath(application.answers, 'status') as Status,
+    getValueViaPath<Status>(application.answers, 'status'),
   )
 
   const [children, setChildren] = useState(
-    getValueViaPath(application.answers, 'children') as string,
+    getValueViaPath<string>(application.answers, 'children') ?? '',
   )
 
   return (
@@ -48,9 +45,12 @@ export const StatusAndChildren = ({
             disabled={!isEditable}
             largeButtons={true}
             split={'1/2'}
-            onSelect={(value) =>
-              setStatus({ ...status, type: value as EmploymentStatus })
-            }
+            onSelect={(value) => {
+              setStatus({
+                confirmationOfStudies: status?.confirmationOfStudies ?? [],
+                type: value as EmploymentStatus,
+              })
+            }}
             options={[
               {
                 label: formatText(m.statusEmployed, application, formatMessage),
@@ -95,7 +95,7 @@ export const StatusAndChildren = ({
             ]}
           />
         </Stack>
-        {status.type === EmploymentStatus.STUDENT && (
+        {status?.type === EmploymentStatus.STUDENT && (
           <Box marginBottom={2}>
             <Stack space={4}>
               <TextWithTooltip
@@ -148,9 +148,10 @@ export const StatusAndChildren = ({
               id="children"
               name="children"
               disabled={!isEditable}
-              defaultValue={
-                getValueViaPath(application.answers, 'children') as string[]
-              }
+              defaultValue={getValueViaPath<Array<string>>(
+                application.answers,
+                'children',
+              )}
               onSelect={(value) => setChildren(value)}
               largeButtons={true}
               split={'1/2'}
