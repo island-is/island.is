@@ -156,21 +156,35 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                   background="purple100"
                   padding={[2, 2, 3]}
                   borderRadius="large"
-                  key={correction.id ?? correction.title}
+                  key={correction.id}
                 >
                   <Stack space={[1, 1, 2]}>
                     <Text variant="h4">
                       {formatMessage(m.advert.sidebarCorrectionTitle)}
                     </Text>
 
-                    <Box>
-                      <Text variant="h5">
-                        {formatMessage(m.advert.correctedDate)}
-                      </Text>
-                      <Text variant="small">
-                        {formatDate(correction.createdDate, 'd. MMMM yyyy')}
-                      </Text>
-                    </Box>
+                    {correction.legacyDate ||
+                    (correction.createdDate && !correction.isLegacy) ? (
+                      <Box>
+                        <Text variant="h5">
+                          {formatMessage(m.advert.correctedDate)}
+                        </Text>
+                        {correction.isLegacy ? (
+                          <Text variant="small">
+                            {correction.legacyDate
+                              ? formatDate(
+                                  correction.legacyDate,
+                                  'd. MMMM yyyy',
+                                )
+                              : ''}
+                          </Text>
+                        ) : (
+                          <Text variant="small">
+                            {formatDate(correction.createdDate, 'd. MMMM yyyy')}
+                          </Text>
+                        )}
+                      </Box>
+                    ) : undefined}
 
                     <Box>
                       <Text variant="h5">

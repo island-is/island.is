@@ -3,8 +3,8 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { m } from '../../../lib/utils/messages'
-import { CAPITALNUMBERS } from '../../../lib/utils/constants'
+import { m } from '../../../lib/messages'
+import { CAPITALNUMBERS } from '../../../utils/constants'
 
 export const capitalNumberSection = buildSubSection({
   id: 'keynumbers.capitalNumbers',
