@@ -1,15 +1,17 @@
 import {
   buildAlertMessageField,
   buildCustomField,
+  buildHiddenInput,
   buildMultiField,
   buildSection,
   buildTableRepeaterField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { participants as participantMessages } from '../../../lib/messages'
-import { FormValue } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import { isApplyingForMultiple } from '../../../utils'
 import { submitTableForm } from '../../../utils/submitTableForm'
+import { Participant } from '../../../shared/types'
 
 export const participantsSection = buildSection({
   id: 'participants',
@@ -106,6 +108,16 @@ export const participantsSection = buildSection({
             )
 
             return hasError === 'true'
+          },
+        }),
+        buildHiddenInput({
+          id: 'participantFinishedValidation',
+          defaultValue: (application: Application) => {
+            const hasAnswer = getValueViaPath<Array<Participant>>(
+              application.answers,
+              'participantList',
+            )
+            return hasAnswer && hasAnswer.length > 0 ? 'true' : 'false'
           },
         }),
       ],

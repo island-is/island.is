@@ -47,9 +47,10 @@ import {
   SkilavottordAccessControlsQuery,
   SkilavottordAllRecyclingPartnersQuery,
   SkilavottordRecyclingPartnerQuery,
+  SkilavottordRecyclingPartnersQuery,
   UpdateSkilavottordAccessControlMutation,
-} from '@island.is/skilavottord-web/graphql/queries'
-import { SkilavottordRecyclingPartnersQuery } from '../RecyclingCompanies/RecyclingCompanies'
+} from '@island.is/skilavottord-web/graphql/'
+
 import * as styles from './AccessControl.css'
 
 const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {

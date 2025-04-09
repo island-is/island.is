@@ -3,14 +3,12 @@ import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, Input, Select, Tag } from '@island.is/island-ui/core'
-import {
-  IndictmentCountOffense,
-  SubstanceMap,
-} from '@island.is/judicial-system/types'
+import { SubstanceMap } from '@island.is/judicial-system/types'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
   IndictmentCount,
+  IndictmentCountOffense,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
@@ -23,8 +21,7 @@ import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffen
 
 import { Substances } from '../Substances/Substances'
 import { SpeedingOffenseFields } from './SpeedingOffenseFields'
-import { indictmentCount as strings } from '../IndictmentCount.strings'
-import { indictmentCountEnum as enumStrings } from '../IndictmentCountEnum.strings'
+import { strings } from './Offenses.strings'
 
 // when migrating offenses to the new structure they will all have the same creation date, thus we fallback to compare
 // and sort by the offense type
@@ -118,10 +115,10 @@ export const Offenses = ({
     () =>
       Object.values(IndictmentCountOffense).map((offense) => ({
         value: offense,
-        label: formatMessage(enumStrings[offense]),
+        label: strings.offenseText[offense],
         disabled: offenses.some((o) => o.offense === offense),
       })),
-    [formatMessage, offenses],
+    [offenses],
   )
 
   // handlers
@@ -237,7 +234,7 @@ export const Offenses = ({
                   onClick={async () => handleDeleteOffense(offenseId, offense)}
                 >
                   <Box display="flex" alignItems="center">
-                    {formatMessage(enumStrings[offense])}
+                    {strings.offenseText[offense]}
                     <Icon icon="close" size="small" />
                   </Box>
                 </Tag>

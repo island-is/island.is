@@ -103,12 +103,26 @@ const Completed: FC = () => {
 
   const handleCriminalRecordUpdateUpload = useCallback(
     (files: File[]) => {
-      addUploadFiles(files, {
-        category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-        status: 'done',
-      })
+      // If the case has been sent to the public prosecutor
+      // we want to complete these uploads straight away
+      if (isSentToPublicProsecutor) {
+        handleUpload(
+          addUploadFiles(files, {
+            category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+          }),
+          updateUploadFile,
+        )
+      }
+      // Otherwise we don't complete uploads until
+      // we handle the next button click
+      else {
+        addUploadFiles(files, {
+          category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+          status: 'done',
+        })
+      }
     },
-    [addUploadFiles],
+    [addUploadFiles, handleUpload, isSentToPublicProsecutor, updateUploadFile],
   )
 
   const handleNavigationTo = useCallback(
@@ -179,7 +193,7 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        {!isSentToPublicProsecutor && isRulingOrFine && (
+        {isRulingOrFine && (
           <Box marginBottom={isRuling ? 5 : 10} component="section">
             <SectionHeading
               title={formatMessage(strings.criminalRecordUpdateTitle)}
@@ -231,7 +245,6 @@ const Completed: FC = () => {
                         defendant.serviceRequirement ===
                         ServiceRequirement.NOT_APPLICABLE
                       }
-                      disabled={isSentToPublicProsecutor}
                       onChange={() => {
                         setAndSendDefendantToServer(
                           {
@@ -258,7 +271,6 @@ const Completed: FC = () => {
                         defendant.serviceRequirement ===
                         ServiceRequirement.REQUIRED
                       }
-                      disabled={isSentToPublicProsecutor}
                       onChange={() => {
                         setAndSendDefendantToServer(
                           {
@@ -282,7 +294,6 @@ const Completed: FC = () => {
                       defendant.serviceRequirement ===
                       ServiceRequirement.NOT_REQUIRED
                     }
-                    disabled={isSentToPublicProsecutor}
                     onChange={() => {
                       setAndSendDefendantToServer(
                         {
@@ -332,10 +343,7 @@ const Completed: FC = () => {
                           marginBottom={2}
                           required
                         />
-                        <VerdictAppealDecisionChoice
-                          defendant={defendant}
-                          disabled={isSentToPublicProsecutor}
-                        />
+                        <VerdictAppealDecisionChoice defendant={defendant} />
                       </motion.div>
                     )}
                   </AnimatePresence>

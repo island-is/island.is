@@ -10,15 +10,15 @@ import {
   shouldRequestReview,
 } from './miscUtils'
 import { FormValue } from '@island.is/application/types'
+import { AccidentNotificationAnswers } from '..'
+import { NO, YES } from '@island.is/application/core'
 import {
   AccidentTypeEnum,
   GeneralWorkplaceAccidentLocationEnum,
   StudiesAccidentLocationEnum,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
-} from '../types'
-import { AccidentNotificationAnswers } from '..'
-import { NO, YES } from '@island.is/application/core'
+} from './enums'
 
 describe('formatPhonenumber', () => {
   it.each([

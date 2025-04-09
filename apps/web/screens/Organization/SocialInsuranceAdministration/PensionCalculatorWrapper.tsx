@@ -36,9 +36,13 @@ export const PensionCalculatorWrapper = ({
           <meta name="robots" content="noindex, nofollow" />
         )}
       </HeadWithSocialSharing>
-      <OrganizationHeader organizationPage={organizationPage} />
+      <div>
+        <OrganizationHeader organizationPage={organizationPage} />
+      </div>
       {children}
-      <OrganizationFooter organizations={[organization]} />
+      <div>
+        <OrganizationFooter organizations={[organization]} />
+      </div>
     </>
   )
 }
