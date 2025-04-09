@@ -13,7 +13,9 @@ export class BloodDonationRestrictionSyncService
 {
   processSyncData(entries: processSyncDataInput<IBloodDonationRestriction>) {
     return entries.filter(
-      (entry) => entry.sys.contentType.sys.id === 'bloodDonationRestriction',
+      (entry) =>
+        entry.sys.contentType.sys.id === 'bloodDonationRestriction' &&
+        !!entry.fields.title,
     )
   }
 
