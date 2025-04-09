@@ -40,10 +40,9 @@ const useCaseList = () => {
     [id: string | null, showLoading: boolean]
   >([null, false])
   const { user, limitedAccess } = useContext(UserContext)
-  const { getCase, workingCase, setWorkingCase } = useContext(FormContext)
+  const { getCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { isTransitioningCase, isSendingNotification, setAndSendCaseToServer } =
-    useCase()
+  const { isTransitioningCase, isSendingNotification } = useCase()
   const router = useRouter()
 
   const openCase = useCallback(
