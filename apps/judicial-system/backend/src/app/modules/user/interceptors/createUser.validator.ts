@@ -11,20 +11,20 @@ import { isCoreUser } from '@island.is/judicial-system/types'
 import { InstitutionService } from '../../institution'
 
 @Injectable()
-export class UserValidator implements NestInterceptor {
+export class CreateUserValidator implements NestInterceptor {
   constructor(private readonly institutionService: InstitutionService) {}
 
   async intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
-    const user = request.body
+    const createUser = request.body
 
     const institution = await this.institutionService
-      .getById(user.institutionId)
+      .getById(createUser.institutionId)
       .catch((error) => {
         throw new BadRequestException(error, 'Not a valid user')
       })
 
-    if (!isCoreUser({ ...user, institution })) {
+    if (!isCoreUser({ ...createUser, institution })) {
       throw new BadRequestException('Not a valid user')
     }
 
