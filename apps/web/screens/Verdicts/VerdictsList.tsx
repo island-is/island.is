@@ -61,6 +61,7 @@ import {
 } from '../queries/Verdicts'
 import { m } from './translations.strings'
 import * as styles from './VerdictsList.css'
+import { useDebounce } from 'react-use'
 
 const ITEMS_PER_PAGE = 10
 const DEBOUNCE_TIME_IN_MS = 1000
@@ -103,6 +104,7 @@ const extractCourtLevelFromState = (court: string | null | undefined) =>
 
 const useVerdictListState = (props: VerdictsListProps) => {
   const initialRender = useRef(true)
+  const [renderKey, setRenderKey] = useState(1)
   const [queryState, setQueryState] = useQueryStates(
     {
       [QueryParam.SEARCH_TERM]: parseAsString
@@ -277,6 +279,7 @@ const useVerdictListState = (props: VerdictsListProps) => {
   const resetQueryState = useCallback(() => {
     updatePage(1)
     setQueryState(null)
+    setRenderKey((key) => key + 1)
     queryStateRef.current = null
   }, [setQueryState, updatePage])
 
@@ -290,7 +293,80 @@ const useVerdictListState = (props: VerdictsListProps) => {
     page,
     updatePage,
     total,
+    renderKey,
   }
+}
+
+interface CaseNumberInputProps {
+  value: string
+  onChange: (newState: string) => void
+}
+
+const CaseNumberInput = ({ value, onChange }: CaseNumberInputProps) => {
+  const { formatMessage } = useIntl()
+  const [state, setState] = useState(value)
+  const initialRender = useRef(true)
+
+  useDebounce(
+    () => {
+      if (initialRender.current) {
+        initialRender.current = false
+        return
+      }
+      onChange(state)
+    },
+    DEBOUNCE_TIME_IN_MS,
+    [state],
+  )
+
+  return (
+    <Input
+      size="sm"
+      label={formatMessage(m.listPage.caseNumberInputLabel)}
+      name="casenumber-input"
+      onChange={(ev) => {
+        setState(ev.target.value)
+      }}
+      onKeyDown={handleInputKeyDown}
+      value={state}
+    />
+  )
+}
+
+interface LawsInputProps {
+  value: string
+  onChange: (newState: string) => void
+}
+
+const LawsInput = ({ value, onChange }: LawsInputProps) => {
+  const { formatMessage } = useIntl()
+  const [state, setState] = useState(value)
+  const initialRender = useRef(true)
+
+  useDebounce(
+    () => {
+      if (initialRender.current) {
+        initialRender.current = false
+        return
+      }
+      onChange(state)
+    },
+    DEBOUNCE_TIME_IN_MS,
+    [state],
+  )
+
+  return (
+    <Input
+      size="sm"
+      label={formatMessage(m.listPage.lawsInputLabel)}
+      name="laws-input"
+      onChange={(ev) => {
+        setState(ev.target.value)
+      }}
+      onKeyDown={handleInputKeyDown}
+      value={state}
+    />
+  )
 }
 
 interface FiltersProps {
@@ -300,6 +376,7 @@ interface FiltersProps {
   keywords: VerdictsListProps['keywords']
   caseCategories: VerdictsListProps['caseCategories']
   caseTypes: VerdictsListProps['caseTypes']
+  renderKey: string | number
 }
 
 const Filters = ({
@@ -309,6 +386,7 @@ const Filters = ({
   caseCategories,
   caseTypes,
   updateQueryState,
+  renderKey,
 }: FiltersProps) => {
   const { formatMessage } = useIntl()
 
@@ -343,15 +421,12 @@ const Filters = ({
         labelVariant="h5"
         labelColor={queryState[QueryParam.CASE_NUMBER] ? 'blue400' : undefined}
       >
-        <Input
-          size="sm"
-          label={formatMessage(m.listPage.caseNumberInputLabel)}
-          name="casenumber-input"
-          onChange={(ev) => {
-            updateQueryState(QueryParam.CASE_NUMBER, ev.target.value)
-          }}
-          onKeyDown={handleInputKeyDown}
+        <CaseNumberInput
+          key={renderKey}
           value={queryState[QueryParam.CASE_NUMBER]}
+          onChange={(value) => {
+            updateQueryState(QueryParam.CASE_NUMBER, value)
+          }}
         />
       </AccordionItem>
 
@@ -365,15 +440,12 @@ const Filters = ({
         labelVariant="h5"
         labelColor={queryState[QueryParam.LAWS] ? 'blue400' : undefined}
       >
-        <Input
-          size="sm"
-          label={formatMessage(m.listPage.lawsInputLabel)}
-          name="laws-input"
-          onChange={(ev) => {
-            updateQueryState(QueryParam.LAWS, ev.target.value)
+        <LawsInput
+          key={renderKey}
+          value={queryState[QueryParam.LAWS]}
+          onChange={(value) => {
+            updateQueryState(QueryParam.LAWS, value)
           }}
-          onKeyDown={handleInputKeyDown}
-          defaultValue={queryState[QueryParam.LAWS]}
         />
       </AccordionItem>
 
@@ -388,6 +460,7 @@ const Filters = ({
         labelColor={queryState[QueryParam.KEYWORD] ? 'blue400' : undefined}
       >
         <Select
+          key={renderKey}
           size="sm"
           options={keywordOptions}
           value={keywordOptions.find(
@@ -412,7 +485,7 @@ const Filters = ({
           queryState[QueryParam.CASE_CATEGORIES] ? 'blue400' : undefined
         }
       >
-        <Stack space={2}>
+        <Stack space={2} key={renderKey}>
           {caseCategoryOptions.map((option) => (
             <Checkbox
               id={option.value}
@@ -461,7 +534,7 @@ const Filters = ({
         labelVariant="h5"
         labelColor={queryState[QueryParam.CASE_TYPES] ? 'blue400' : undefined}
       >
-        <Stack space={2}>
+        <Stack space={2} key={renderKey}>
           {caseTypeOptions.map((option) => (
             <Checkbox
               id={option.value}
@@ -510,7 +583,7 @@ const Filters = ({
             : undefined
         }
       >
-        <Stack space={2}>
+        <Stack space={2} key={renderKey}>
           <DatePicker
             name="from"
             label={formatMessage(m.listPage.dateFromLabel)}
@@ -539,6 +612,45 @@ const Filters = ({
   )
 }
 
+interface SearchInputProps {
+  value: string
+  onChange: (newState: string) => void
+  loading: boolean
+}
+
+const SearchInput = ({ value, onChange, loading }: SearchInputProps) => {
+  const { formatMessage } = useIntl()
+  const [state, setState] = useState(value)
+  const initialRender = useRef(true)
+
+  useDebounce(
+    () => {
+      if (initialRender.current) {
+        initialRender.current = false
+        return
+      }
+      onChange(state)
+    },
+    DEBOUNCE_TIME_IN_MS,
+    [state],
+  )
+
+  return (
+    <Input
+      name="verdict-search-input"
+      onChange={(ev) => {
+        setState(ev.target.value)
+      }}
+      onKeyDown={handleInputKeyDown}
+      placeholder={formatMessage(m.listPage.searchInputPlaceholder)}
+      icon={{ name: 'search', type: 'outline' }}
+      backgroundColor="blue"
+      loading={loading}
+      value={state}
+    />
+  )
+}
+
 const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
   const {
     queryState,
@@ -550,6 +662,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
     page,
     updatePage,
     total,
+    renderKey,
   } = useVerdictListState(props)
   const { customPageData, keywords, caseCategories, caseTypes } = props
 
@@ -647,23 +760,18 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
 
               <Stack space={3}>
                 <Box className={styles.searchInput}>
-                  <Input
-                    name="verdict-search-input"
-                    onChange={(ev) => {
-                      updateQueryState(QueryParam.SEARCH_TERM, ev.target.value)
-                    }}
-                    onKeyDown={handleInputKeyDown}
-                    placeholder={formatMessage(
-                      m.listPage.searchInputPlaceholder,
-                    )}
-                    icon={{ name: 'search', type: 'outline' }}
-                    backgroundColor="blue"
-                    loading={loading}
+                  <SearchInput
+                    key={renderKey}
                     value={queryState[QueryParam.SEARCH_TERM]}
+                    loading={loading}
+                    onChange={(value) => {
+                      updateQueryState(QueryParam.SEARCH_TERM, value)
+                    }}
                   />
                 </Box>
                 <Hidden above="xs">
                   <Select
+                    key={renderKey}
                     options={courtTags}
                     value={courtTags.find(
                       (tag) => tag.value === queryState[QueryParam.COURT],
@@ -725,6 +833,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     </Hidden>
                     <Hidden above="xs">
                       <Select
+                        key={renderKey}
                         options={districtCourtTags}
                         value={districtCourtTags.find(
                           (tag) => tag.value === queryState[QueryParam.COURT],
@@ -763,6 +872,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 </Text>
                 <Box background="white" padding={3} borderRadius="large">
                   <Filters
+                    renderKey={renderKey}
                     startExpanded={true}
                     caseCategories={caseCategories}
                     caseTypes={caseTypes}
@@ -821,6 +931,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                   >
                     <Box paddingY={3}>
                       <Filters
+                        renderKey={renderKey}
                         caseCategories={caseCategories}
                         caseTypes={caseTypes}
                         keywords={keywords}
