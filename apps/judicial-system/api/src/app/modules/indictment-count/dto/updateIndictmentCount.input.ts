@@ -6,11 +6,9 @@ import {
   IsOptional,
   Min,
 } from 'class-validator'
-import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, ID, InputType, Int } from '@nestjs/graphql'
 
-import type { SubstanceMap } from '@island.is/judicial-system/types'
 import { IndictmentSubtype } from '@island.is/judicial-system/types'
 
 @InputType()
