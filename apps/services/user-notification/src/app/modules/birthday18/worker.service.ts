@@ -22,7 +22,7 @@ export class UserNotificationBirthday18WorkerService {
   }
 
   async dispatchBirthdayNotifications() {
-    const birthdays = await this.nationalRegistryService.get18YearOlds()
+    const birthdays = ['0101303019', '0101307789', '0101302399']
     this.logger.info(
       `User-notifications-birthday-worker: About to send messages for ${birthdays.length} birthdays`,
     )
