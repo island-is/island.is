@@ -31,7 +31,7 @@ export const unionSickPaySubSection = buildSubSection({
           .unionSickPayFromUnionTitle,
       condition: () => {
         // TODO: Here we need to check the data that we are getting from the API to know if we should show this field
-        return true
+        return false
       },
       children: [
         buildTextField({
