@@ -337,12 +337,26 @@ export const investigationCases = [
   CaseType.VIDEO_RECORDING_EQUIPMENT,
 ]
 
+const caseTypesWithoutRuling = [
+  CaseType.STATEMENT_FROM_MINOR,
+  CaseType.STATEMENT_IN_COURT,
+]
+
 export const isInvestigationCase = (type?: CaseType | null): boolean => {
   return Boolean(type && investigationCases.includes(type))
 }
 
 export const isRequestCase = (type?: CaseType | null): boolean => {
   return Boolean(type && (isRestrictionCase(type) || isInvestigationCase(type)))
+}
+
+export const isCaseWithoutRuling = (
+  isCompletedWithoutRuling?: boolean | null,
+  type?: CaseType | null,
+): boolean => {
+  return Boolean(
+    isCompletedWithoutRuling && type && caseTypesWithoutRuling.includes(type),
+  )
 }
 
 export const acceptedCaseDecisions = [
