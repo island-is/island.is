@@ -11,7 +11,6 @@ import {
   Inline,
   SkeletonLoader,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
