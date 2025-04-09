@@ -272,8 +272,7 @@ jobs:
       publish: true
       disable_chunks: true
       max_jobs: 3
-    secrets:
-      inherit: true
+    secrets: inherit
 
   helm-docker-build:
     needs:
