@@ -100,33 +100,13 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
     return mappedLicenses
   }
 
-  private mapChildDocument(
+  private mapChildDocument = (
     document: IdentityDocumentChild,
     formatMessage: FormatMessage,
-  ): Array<Payload> {
-    if (document.passports?.length) {
-      return (
-        document.passports?.map((p) =>
-          this.mapDocument(p, formatMessage, document.childName ?? undefined),
-        ) ?? []
-      )
-    }
-
-    return [
-      {
-        data: [],
-        metadata: {
-          name: document.childName ?? '',
-          title: document.childName ?? '',
-          subtitle: formatMessage(m.noValidIdentityDocument),
-          ctaLink: {
-            label: formatMessage(m.apply),
-            value: formatMessage(m.identityDocumentApplyUrl),
-          },
-        },
-      },
-    ]
-  }
+  ): Array<Payload> =>
+    document.passports?.map((p) =>
+      this.mapDocument(p, formatMessage, document.childName ?? undefined),
+    ) ?? []
 
   private mapDocument(
     document: IdentityDocument,
