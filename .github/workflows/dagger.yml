@@ -78,6 +78,7 @@ jobs:
                 AWS_ECR_PASSWORD: ${{ steps.ecr-login.outputs.password }}
               with:
                 dagger-flags: ${{ steps.options.outputs.debug_options}} --progress plain
+                engine-stop: 'false'
                 version: ${{ inputs.version }}
                 module: ${{ inputs.module }}
                 args: ${{ inputs.function }} ${{ inputs.args }} ${{ steps.options.outputs.options }} --AWS_ECR_PASSWORD=env://AWS_ECR_PASSWORD --NX_CLOUD_ACCESS_TOKEN=env://NX_CLOUD_ACCESS_TOKEN

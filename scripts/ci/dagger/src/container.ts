@@ -10,6 +10,7 @@ import {
   DEFAULT_PLATFORM,
   FILE_SETTINGS,
   GITHUB_URL,
+  OWNER,
   RUNNER_IMAGE,
   WORKDIR,
 } from './const'
@@ -65,9 +66,11 @@ export async function getMonorepoBase(props: MonorepoBase) {
       .withSecretVariable('NX_CLOUD_ACCESS_TOKEN', props.NX_CLOUD_ACCESS_TOKEN)
       .withEnvVariable('NX_TASKS_RUNNER', 'ci')
   }
-  console.info()
+  console.info(`Running codegen`);
   return {
-    container: newContainer.withExec(['yarn', 'codegen']).sync(),
+    container: newContainer.withExec(['yarn', 'codegen'], {
+      redirectStdout: '/tmp/codegen.log'
+    }).sync(),
     headSha: headSha,
     baseSha: baseSha,
   };
@@ -79,6 +82,7 @@ export async function getMonorepoNodeModules(props: MonorepoBase) {
     image: RUNNER_IMAGE,
   })
   const files = getMonorepoInstallFiles(props)
+  const sha = await files.digest();
   return container
     .withDirectory(WORKDIR, files, FILE_SETTINGS)
     .withWorkdir(WORKDIR)
