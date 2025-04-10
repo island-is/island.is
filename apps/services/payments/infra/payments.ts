@@ -76,4 +76,4 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
     .xroad(Base, Client, ChargeFjsV2, RskCompanyInfo, NationalRegistryB2C)
     .readiness('/liveness')
     .liveness('/liveness')
-    .grantNamespaces('nginx-ingress-internal', 'islandis')
+    .grantNamespaces('application-system', 'nginx-ingress-internal', 'islandis')
