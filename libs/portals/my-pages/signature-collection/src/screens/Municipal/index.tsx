@@ -1,6 +1,9 @@
 import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroWrapper, THJODSKRA_SLUG } from '@island.is/portals/my-pages/core'
+import {
+  IntroWrapper,
+  THJODSKRA_SLUG as providerSlug,
+} from '@island.is/portals/my-pages/core'
 import { useGetCurrentCollection, useIsOwner } from '../../hooks'
 import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'
@@ -18,7 +21,7 @@ const SignatureListsMunicipal = () => {
       <IntroWrapper
         title={formatMessage(m.pageTitleMunicipal)}
         intro={formatMessage(m.pageIntroMunicipal)}
-        serviceProviderSlug={THJODSKRA_SLUG}
+        serviceProviderSlug={providerSlug}
       />
       {!loadingCurrentCollection && isOwner.success ? (
         <OwnerView currentCollection={currentCollection} />

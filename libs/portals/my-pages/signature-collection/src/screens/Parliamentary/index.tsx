@@ -3,7 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   IntroWrapper,
-  THJODSKRA_SLUG,
+  THJODSKRA_SLUG as providerSlug,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import OwnerView from './OwnerView'
@@ -27,7 +27,7 @@ const SignatureListsParliamentary = () => {
         title={formatMessage(m.pageTitleParliamentary)}
         intro={formatMessage(m.pageDescriptionSignee)}
         serviceProviderTooltip={formatMessage(m.infoProviderTooltip)}
-        serviceProviderSlug={THJODSKRA_SLUG}
+        serviceProviderSlug={providerSlug}
       />
       {!loadingIsOwner && !loadingCurrentCollection && (
         <Box>
