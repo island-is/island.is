@@ -6,13 +6,14 @@ if [[ $# -eq 0 ]]; then
   echo "Pins to the <major>.<minor>.<patch> that's eventually installed"
   echo ""
   echo "Example: $0 3.14 @islandis/boilerplate"
+  exit 1
 fi
 if [[ -z "${VERSION:-}" ]]; then
   VERSION="$1"
   shift
 fi
 VERSION="${VERSION:-1}"
-PACKAGES="@"
+PACKAGES=("@")
 PACKAGES_VERSIONED=()
 # Make sure packages are present and in correct version
 for package in "${PACKAGES[@]}"; do
