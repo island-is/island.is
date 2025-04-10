@@ -1,12 +1,12 @@
 import { ObjectType, Field, registerEnumType } from '@nestjs/graphql'
-import { ExternalLink } from '../workMachines.types'
 import { BaseLink } from './baseLink.model'
+import { ExternalLink } from '../../workMachines.types'
 
 registerEnumType(ExternalLink, {
-  name: 'WorkMachinesExternalLink',
+  name: 'WorkMachinesV2ExternalLink',
 })
 
-@ObjectType('WorkMachinesCollectionLink', {
+@ObjectType('WorkMachinesV2CollectionLink', {
   implements: () => BaseLink,
 })
 export class CollectionLink implements BaseLink {

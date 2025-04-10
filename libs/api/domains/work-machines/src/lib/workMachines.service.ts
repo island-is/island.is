@@ -8,10 +8,6 @@ import {
 } from '@island.is/clients/work-machines'
 import { isDefined } from '@island.is/shared/utils'
 import { User } from '@island.is/auth-nest-tools'
-import {
-  WorkMachine,
-  PaginatedCollectionResponse,
-} from './models/getWorkMachines'
 import { Inject, Injectable } from '@nestjs/common'
 import { Action, ExternalLink } from './workMachines.types'
 import { GetWorkMachineCollectionInput } from './dto/getWorkMachineCollection.input'
@@ -22,6 +18,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { MachineDto } from '@island.is/clients/work-machines'
 import { GetMachineParentCategoryByTypeAndModelInput } from './dto/getMachineParentCategoryByTypeAndModel.input'
 import isValid from 'date-fns/isValid'
+import { PaginatedCollectionResponse } from './models/v1/getWorkMachines'
 
 @Injectable()
 export class WorkMachinesService {
@@ -80,7 +77,7 @@ export class WorkMachinesService {
     }
 
     const workMachines: Array<WorkMachine> =
-      data.value
+      data.machines
         ?.map((v) => {
           const inspectionDate = v.dateLastInspection
             ? new Date(v.dateLastInspection)

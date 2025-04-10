@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('WorkMachinesPerson')
-export class Person {
+@ObjectType('WorkMachinesV2Entity')
+export class Entity {
   @Field({ nullable: true })
   name!: string
 

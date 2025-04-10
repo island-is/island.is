@@ -2,9 +2,9 @@ import { ObjectType, Field, registerEnumType } from '@nestjs/graphql'
 import { BaseLink } from './baseLink.model'
 import { Action } from '../workMachines.types'
 
-registerEnumType(Action, { name: 'WorkMachinesAction' })
+registerEnumType(Action, { name: 'WorkMachinesV2Action' })
 
-@ObjectType('WorkMachinesCollectionLink', {
+@ObjectType('WorkMachinesV2Link', {
   implements: () => BaseLink,
 })
 export class Link implements BaseLink {
@@ -13,9 +13,6 @@ export class Link implements BaseLink {
 
   @Field(() => Action, { nullable: true })
   rel?: Action
-
-  @Field()
-  method!: string
 
   @Field({ nullable: true })
   displayTitle?: string
