@@ -33,15 +33,17 @@ export const DescriptionFormField: FC<
             formatMessage,
           )}
           {field.titleTooltip && (
-            <Tooltip
-              placement="top"
-              text={formatTextWithLocale(
-                field.titleTooltip,
-                application,
-                locale as Locale,
-                formatMessage,
-              )}
-            />
+            <Box marginLeft={1} display="inlineBlock">
+              <Tooltip
+                placement="top"
+                text={formatTextWithLocale(
+                  field.titleTooltip,
+                  application,
+                  locale as Locale,
+                  formatMessage,
+                )}
+              />
+            </Box>
           )}
         </Text>
       )}
