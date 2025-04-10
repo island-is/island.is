@@ -46,9 +46,6 @@ export class Dagger {
       branch,
       ...props,
     }));
-    return JSON.stringify({
-      NX_HEAD: newHeadSha,
-      NX_BASE: newBaseSha,
-    });
+    return `--head-sha=${newHeadSha} --base-sha=${newBaseSha}`; 
   }
 }
