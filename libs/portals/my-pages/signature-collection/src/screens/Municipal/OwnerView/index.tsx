@@ -1,22 +1,20 @@
 import { ActionCard, Stack, Text, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useGetListsForOwner } from '../../../hooks'
-import ShareLink from '../../shared/ShareLink'
 import { m } from '../../../lib/messages'
 import Managers from '../../shared/Managers'
-import { SignatureCollection } from '@island.is/api/schema'
+import { SignatureCollection, SignatureCollectionList } from '@island.is/api/schema'
 
 const OwnerView = ({
   currentCollection,
+  lists
 }: {
   currentCollection: SignatureCollection
+  lists: SignatureCollectionList[]
 }) => {
   const { formatMessage } = useLocale()
-  const { listsForOwner } = useGetListsForOwner('')
 
   return (
     <Stack space={6}>
-      <ShareLink slug={listsForOwner?.[0]?.slug} />
       <Box>
         <Text variant="h4" marginBottom={3}>
           {formatMessage(m.myListsDescription)}

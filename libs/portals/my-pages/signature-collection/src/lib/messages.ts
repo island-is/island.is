@@ -415,8 +415,8 @@ export const m = defineMessages({
     defaultMessage: 'Meðmælasafnanir fyrir sveitarstjórnarkosningar',
     description: '',
   },
-  pageIntroMunicipal: {
-    id: 'sp.signatureCollection:pageIntroMunicipal',
+  pageIntro: {
+    id: 'sp.signatureCollection:pageIntro',
     defaultMessage:
       'Hér eru upplýsingar um hlekk á söfnunina, stöðuna og yfirlit yfir umsjónaraðila.',
     description: '',

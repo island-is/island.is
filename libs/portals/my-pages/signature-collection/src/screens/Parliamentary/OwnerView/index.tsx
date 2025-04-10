@@ -23,7 +23,6 @@ import { SignatureCollection } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
 import SignedList from '../../shared/SignedList'
-import ShareLink from '../../shared/ShareLink'
 import Managers from '../../shared/Managers'
 
 const OwnerView = ({
@@ -69,8 +68,8 @@ const OwnerView = ({
   }
 
   return (
-    <Stack space={8}>
-      <Box marginTop={5}>
+    <Stack space={6}>
+      <Box>
         <SignedList currentCollection={currentCollection} />
         <Box
           display="flex"
@@ -187,7 +186,6 @@ const OwnerView = ({
         )}
       </Box>
       <Managers />
-      <ShareLink slug={listsForOwner?.[0]?.slug} />
     </Stack>
   )
 }

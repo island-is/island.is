@@ -6,7 +6,7 @@ import { EmptyState, IntroWrapper } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import SigneeView from '../shared/SigneeView'
 
-const SignatureLists = () => {
+const SignatureCollectionPresidential = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
 
@@ -40,4 +40,4 @@ const SignatureLists = () => {
   )
 }
 
-export default SignatureLists
+export default SignatureCollectionPresidential

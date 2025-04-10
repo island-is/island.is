@@ -5,11 +5,11 @@ import { SignatureCollectionPaths } from './lib/paths'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Navigate } from 'react-router-dom'
 
-const SignatureListsParliamentary = lazy(() =>
+const SignatureCollectionParliamentary = lazy(() =>
   import('./screens/Parliamentary/'),
 )
-const SignatureListsPresidential = lazy(() => import('./screens/Presidential'))
-const SignatureListsMunicipal = lazy(() => import('./screens/Municipal'))
+const SignatureCollectionPresidential = lazy(() => import('./screens/Presidential'))
+const SignatureCollectionMunicipal = lazy(() => import('./screens/Municipal'))
 
 const ViewListPresidential = lazy(() =>
   import('./screens/Presidential/OwnerView/ViewList'),
@@ -41,7 +41,7 @@ export const signatureCollectionModule: PortalModule = {
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         path: SignatureCollectionPaths.SignatureCollectionParliamentaryLists,
         key: 'ParliamentaryLists',
-        element: <SignatureListsParliamentary />,
+        element: <SignatureCollectionParliamentary />,
       },
       {
         name: m.signatureCollectionParliamentaryLists,
@@ -56,7 +56,7 @@ export const signatureCollectionModule: PortalModule = {
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         path: SignatureCollectionPaths.SignatureCollectionLists,
         key: 'PresidentialLists',
-        element: <SignatureListsPresidential />,
+        element: <SignatureCollectionPresidential />,
       },
       {
         name: m.signatureCollectionPresidentialLists,
@@ -67,16 +67,16 @@ export const signatureCollectionModule: PortalModule = {
       },
       // Municipal
       {
-        name: 'Sveitarstjórnarkosningar',
+        name: m.signatureCollectionMunicipalLists,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         path: SignatureCollectionPaths.SignatureCollectionMunicipalLists,
-        key: 'PresidentialLists',
-        element: <SignatureListsMunicipal />,
+        key: 'MunicipalLists',
+        element: <SignatureCollectionMunicipal />,
       },
       {
-        name: 'Sveitarstjórnarkosningar',
+        name: m.signatureCollectionMunicipalLists,
         path: SignatureCollectionPaths.ViewMunicipalList,
-        key: 'PresidentialLists',
+        key: 'MunicipalLists',
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         element: <ViewListMunicipal />,
       },
@@ -90,7 +90,7 @@ export const signatureCollectionModule: PortalModule = {
       name: m.signatureCollectionParliamentaryLists,
       path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
       enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
-      element: <SignatureListsParliamentary />,
+      element: <SignatureCollectionParliamentary />,
     },
     {
       name: m.signatureCollectionParliamentaryLists,

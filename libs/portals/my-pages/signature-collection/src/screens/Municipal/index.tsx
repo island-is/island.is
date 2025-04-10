@@ -1,30 +1,35 @@
 import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  IntroWrapper,
-  THJODSKRA_SLUG as providerSlug,
-} from '@island.is/portals/my-pages/core'
-import { useGetCurrentCollection, useIsOwner } from '../../hooks'
+  useGetCurrentCollection,
+  useGetListsForOwner,
+  useIsOwner,
+} from '../../hooks'
 import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'
 import { m } from '../../lib/messages'
+import Intro from '../shared/Intro'
 
-const SignatureListsMunicipal = () => {
+const SignatureCollectionMunicipal = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { isOwner } = useIsOwner()
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection()
+  const { listsForOwner } = useGetListsForOwner('')
 
   return (
     <Box>
-      <IntroWrapper
+      <Intro
         title={formatMessage(m.pageTitleMunicipal)}
-        intro={formatMessage(m.pageIntroMunicipal)}
-        serviceProviderSlug={providerSlug}
+        intro={formatMessage(m.pageIntro)}
+        slug={listsForOwner?.[0]?.slug}
       />
       {!loadingCurrentCollection && isOwner.success ? (
-        <OwnerView currentCollection={currentCollection} />
+        <OwnerView
+          currentCollection={currentCollection}
+          lists={listsForOwner}
+        />
       ) : (
         <SigneeView currentCollection={currentCollection} />
       )}
@@ -32,4 +37,4 @@ const SignatureListsMunicipal = () => {
   )
 }
 
-export default SignatureListsMunicipal
+export default SignatureCollectionMunicipal
