@@ -34,12 +34,9 @@ export interface Unit extends OriginalUnit {
   numOfRooms?: number
 }
 
-interface Errors {
-  registerProperty?: [key: string] // Add index signature to satisfy RecordObject
-}
 interface Props extends FieldBaseProps {
   field: CustomField
-  errors?: any | Errors
+  errors?: any
 }
 
 interface AddressProps extends HmsSearchAddress {
@@ -314,7 +311,6 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   }
 
   const hasErrors = Object.keys(errors).length > 0
-
   console.log('HasErrors: ', hasErrors)
 
   return (
@@ -438,6 +434,11 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                                                 Number(e.target.value),
                                               )
                                             }
+                                            unitInputErrorMessage={
+                                              errors?.registerProperty?.[
+                                                `searchResults.units`
+                                              ]
+                                            }
                                           />
                                         )
                                       })}
@@ -455,15 +456,21 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
           )}
           {hasErrors && (
             <Box marginTop={8}>
-              <AlertMessage
-                type="error"
-                message={
-                  errors?.registerProperty?.['registerProperty.searchResults']
-                }
-                title={formatMessage(
-                  registerProperty.search.searchResultsErrorBannerTitle,
-                )}
-              />
+              {errors?.registerProperty?.['searchResults'] && (
+                <AlertMessage
+                  type="error"
+                  title={errors?.registerProperty?.['searchResults']}
+                />
+              )}
+              {errors?.registerProperty?.['searchResults.units'] && (
+                <AlertMessage
+                  type="error"
+                  message={errors?.registerProperty?.['searchResults.units']}
+                  title={formatMessage(
+                    registerProperty.search.searchResultsErrorBannerTitle,
+                  )}
+                />
+              )}
             </Box>
           )}
         </Box>

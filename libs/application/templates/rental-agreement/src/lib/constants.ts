@@ -19,6 +19,11 @@ export enum Roles {
   ASSIGNEE = 'assignee',
 }
 
+export enum UserRole {
+  LANDLORD = 'landlord',
+  TENANT = 'tenant',
+}
+
 export enum Routes {
   LANDLORDINFORMATION = 'landlordInfo',
   TENANTINFORMATION = 'tenantInfo',
@@ -34,6 +39,9 @@ export enum Routes {
   OTHERFEES = 'otherFees',
 }
 export const IS_REPRESENTATIVE = 'isRepresentative'
+
+export const minChangedUnitSize = 3
+export const maxChangedUnitSize = 500
 
 export enum AnswerOptions {
   YES = 'yes',
@@ -97,7 +105,6 @@ export enum SecurityDepositAmountOptions {
   ONE_MONTH = '1 month',
   TWO_MONTHS = '2 months',
   THREE_MONTHS = '3 months',
-
   OTHER = 'other',
 }
 
@@ -113,9 +120,4 @@ export const pruneAfterDays = (Days: number): StateLifeCycle => {
     shouldBePruned: true,
     whenToPrune: Days * 24 * 3600 * 1000,
   }
-}
-
-export enum UserRole {
-  LANDLORD = 'landlord',
-  TENANT = 'tenant',
 }

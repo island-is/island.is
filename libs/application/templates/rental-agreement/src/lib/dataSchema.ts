@@ -2,6 +2,8 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { CostField } from './types'
 import {
+  maxChangedUnitSize,
+  minChangedUnitSize,
   OtherFeesPayeeOptions,
   RentalAmountIndexTypes,
   RentalAmountPaymentDateOptions,
@@ -231,7 +233,14 @@ const registerProperty = z
       .optional(),
   })
   .superRefine((data, ctx) => {
-    // TODO: Fix this! Not rendering error message on the page, only in console
+    if (data?.searchresults?.units && data.searchresults.units.length < 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.registerProperty.search.searchResultsNoUnitChosenError,
+        path: ['searchResults'],
+      })
+    }
     if (data?.searchresults?.units && data.searchresults.units.length > 0) {
       const totalRooms = data.searchresults.units.reduce(
         (sum, unit) => sum + (unit.numOfRooms || 0),
@@ -240,26 +249,25 @@ const registerProperty = z
       if (totalRooms < 1) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Custom error message',
+          message: 'Custom error message too few rooms',
           params: m.registerProperty.search.numOfRoomsMinimumError,
-          path: ['registerProperty.searchResults'],
+          path: ['searchResults.units'],
         })
       }
       data.searchresults.units.forEach((unit) => {
-        if (unit.changedSize && unit.size && unit.changedSize > unit.size) {
+        if (unit.changedSize && unit.changedSize > maxChangedUnitSize) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Custom error message',
+            message: 'Custom error message size too large',
             params: m.registerProperty.search.changedSizeTooLargeError,
-            path: ['registerProperty.searchResults'],
+            path: ['searchResults.units'],
           })
-        }
-        if (unit.changedSize && unit.changedSize < 3) {
+        } else if (unit.changedSize && unit.changedSize < minChangedUnitSize) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Custom error message',
+            message: 'Custom error message size too small',
             params: m.registerProperty.search.changedSizeTooSmallError,
-            path: ['registerProperty.searchResults'],
+            path: ['searchResults.units'],
           })
         }
       })

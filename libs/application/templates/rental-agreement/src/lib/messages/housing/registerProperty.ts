@@ -52,33 +52,38 @@ export const registerProperty = {
 
     // Error messages
     searchError: {
-      id: 'ra.application:registerProperty.info.searchError',
+      id: 'ra.application:registerProperty.search.searchError',
       defaultMessage: 'Ekki tókst að sækja staðföng',
       description: 'Error message when search fails',
     },
     searchResultsEmptyError: {
-      id: 'ra.application:registerProperty.category.searchResultsEmptyError',
+      id: 'ra.application:registerProperty.search.searchResultsEmptyError',
       defaultMessage:
         'Skráning leiguhúsnæðis þarf að vera til staðar til að halda áfram',
       description: 'Error message when no search results',
     },
+    searchResultsNoUnitChosenError: {
+      id: 'ra.application:registerProperty.search.searchResultsNoUnitChosenError',
+      defaultMessage:
+        'Velja þarf a.m.k. eina einingu undir fasteignanúmeri til að halda áfram',
+      description: 'Error message when no unit is selected in search results',
+    },
     numOfRoomsMinimumError: {
-      id: 'ra.application:registerProperty.category.numOfRoomsMinimumError',
-      defaultMessage: 'Valdar einingar þurfa að vera samtals a.m.k. 1 herbergi',
+      id: 'ra.application:registerProperty.search.numOfRoomsMinimumError',
+      defaultMessage: 'Skrá þarf fjölda herbergja leigðra eininga',
       description:
         'Error message when number of rooms is less than one in search results',
     },
     changedSizeTooLargeError: {
-      id: 'ra.application:registerProperty.category.changedSizeTooLargeError',
+      id: 'ra.application:registerProperty.search.changedSizeTooLargeError',
       defaultMessage:
-        'Heildarstærð leiguhúsnæðis getur ekki verið stærri en {maxSize} fermetrar',
-      description:
-        'Error message when changed size is larger than max size in search results',
+        'Stærð leiguhúsnæðis getur ekki verið stærri en 500m² fermetrar',
+      description: 'Error message when changed size is too large',
     },
     changedSizeTooSmallError: {
-      id: 'ra.application:registerProperty.category.changedSizeTooSmallError',
+      id: 'ra.application:registerProperty.search.changedSizeTooSmallError',
       defaultMessage:
-        'Heildarstærð leiguhúsnæðis getur ekki verið minni en {minSize} fermetrar',
+        'Heildarstærð leiguhúsnæðis getur ekki verið minni en 3m² fermetrar',
       description:
         'Error message when changed size is smaller than min size in search results',
     },

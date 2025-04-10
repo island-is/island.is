@@ -12,6 +12,11 @@ export const input = style({
   borderRadius: '8px',
 })
 
+export const inputError = style({
+  borderColor: '#D50000',
+  backgroundColor: '#FDE8E8',
+})
+
 export const sizeInput = style({
   marginRight: '4px',
   paddingRight: '0',
