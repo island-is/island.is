@@ -245,6 +245,24 @@ const registerProperty = z
           path: ['registerProperty.searchResults'],
         })
       }
+      data.searchresults.units.forEach((unit) => {
+        if (unit.changedSize && unit.size && unit.changedSize > unit.size) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Custom error message',
+            params: m.registerProperty.search.changedSizeTooLargeError,
+            path: ['registerProperty.searchResults'],
+          })
+        }
+        if (unit.changedSize && unit.changedSize < 3) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Custom error message',
+            params: m.registerProperty.search.changedSizeTooSmallError,
+            path: ['registerProperty.searchResults'],
+          })
+        }
+      })
     }
   })
 

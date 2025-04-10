@@ -4,6 +4,7 @@ import { useLazyQuery } from '@apollo/client'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import {
+  AlertMessage,
   AsyncSearch,
   AsyncSearchOption,
   Box,
@@ -26,14 +27,21 @@ import { PropertyTableUnits } from './components/PropertyTableUnits'
 import { PropertyTableHeader } from './components/PropertyTableHeader'
 import { PropertyTableRow } from './components/PropertyTableRow'
 import { registerProperty } from '../../lib/messages'
+
 export interface Unit extends OriginalUnit {
   checked?: boolean
   changedSize?: number
   numOfRooms?: number
 }
+
+interface Errors {
+  registerProperty?: [key: string] // Add index signature to satisfy RecordObject
+}
 interface Props extends FieldBaseProps {
   field: CustomField
+  errors?: any | Errors
 }
+
 interface AddressProps extends HmsSearchAddress {
   label: string
   value: string
@@ -41,6 +49,7 @@ interface AddressProps extends HmsSearchAddress {
 
 export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   field,
+  errors,
 }) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue, getValues } = useFormContext()
@@ -52,7 +61,6 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const [tableExpanded, setTableExpanded] = useState<Record<string, boolean>>(
     {},
   )
-
   const [checkedUnits, setCheckedUnits] = useState<Record<string, boolean>>(
     storedValue?.checkedUnits || {},
   )
@@ -234,6 +242,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
 
   const handleUnitSizeChange = (unit: Unit, value: number) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+
     setUnitSizeChangedValue((prev) => {
       const newValues = {
         ...prev,
@@ -303,6 +312,10 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     setSelectedAddress(selectedOption as AddressProps)
     setValue(id, selection ? selection : undefined)
   }
+
+  const hasErrors = Object.keys(errors).length > 0
+
+  console.log('HasErrors: ', hasErrors)
 
   return (
     <>
@@ -439,6 +452,19 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                 </T.Body>
               </T.Table>
             )
+          )}
+          {hasErrors && (
+            <Box marginTop={8}>
+              <AlertMessage
+                type="error"
+                message={
+                  errors?.registerProperty?.['registerProperty.searchResults']
+                }
+                title={formatMessage(
+                  registerProperty.search.searchResultsErrorBannerTitle,
+                )}
+              />
+            </Box>
           )}
         </Box>
       )}

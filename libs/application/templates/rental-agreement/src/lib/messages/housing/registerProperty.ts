@@ -43,6 +43,12 @@ export const registerProperty = {
       defaultMessage: 'Herbergi',
       description: 'Search result header for number of rooms',
     },
+    searchResultsErrorBannerTitle: {
+      id: 'ra.application:registerProperty.search.searchResultsErrorBannerTitle',
+      defaultMessage:
+        'Laga þarf eftirfarandi villur í skráningu í töflunni hér að ofan',
+      description: 'Error banner title when edits fail validation',
+    },
 
     // Error messages
     searchError: {
@@ -61,6 +67,20 @@ export const registerProperty = {
       defaultMessage: 'Valdar einingar þurfa að vera samtals a.m.k. 1 herbergi',
       description:
         'Error message when number of rooms is less than one in search results',
+    },
+    changedSizeTooLargeError: {
+      id: 'ra.application:registerProperty.category.changedSizeTooLargeError',
+      defaultMessage:
+        'Heildarstærð leiguhúsnæðis getur ekki verið stærri en {maxSize} fermetrar',
+      description:
+        'Error message when changed size is larger than max size in search results',
+    },
+    changedSizeTooSmallError: {
+      id: 'ra.application:registerProperty.category.changedSizeTooSmallError',
+      defaultMessage:
+        'Heildarstærð leiguhúsnæðis getur ekki verið minni en {minSize} fermetrar',
+      description:
+        'Error message when changed size is smaller than min size in search results',
     },
   }),
 
