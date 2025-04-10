@@ -1,5 +1,12 @@
 #!/bin/bash
 set -euo pipefail
+if [[ $# -eq 0 ]]; then
+  echo "usage: $0 <version> <packages...>"
+  echo "Takes in fuzzy version, and sets the version of all the given packages to that version."
+  echo "Pins to the <major>.<minor>.<patch> that's eventually installed"
+  echo ""
+  echo "Example: $0 3.14 @islandis/boilerplate"
+fi
 if [[ -z "${VERSION:-}" ]]; then
   VERSION="$1"
   shift
