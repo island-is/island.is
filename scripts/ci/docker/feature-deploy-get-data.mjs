@@ -52,7 +52,7 @@ async function main(testContext = null) {
 
   const changedFiles = new Set()
 
-  const globPattern = `${_MANIFEST_PATHS.join(',')}/**/values*.yaml`
+  const globPattern = `${_MANIFEST_PATHS.join(',')}/**/*.yaml`
 
   const files = await glob(globPattern)
 
@@ -72,8 +72,8 @@ async function main(testContext = null) {
       fs.writeFileSync(file, jsyaml.dump(yamlContent), { encoding: 'utf-8' })
       console.log(`Changed file ${file}`)
       changedFiles.add(file)
-    } else if (file.includes('job-manifest') && !changedFiles.has(file)) {
-      console.log(`Adding job-manifest file ${file}`)
+    } else if (file.includes('bootstrap-fd-job') && !changedFiles.has(file)) {
+      console.log(`Adding bootstrap-fd-job file ${file}`)
       changedFiles.add(file)
     } else if (!changedFiles.has(file)) {
       console.log(`Skipping file ${file}`)
