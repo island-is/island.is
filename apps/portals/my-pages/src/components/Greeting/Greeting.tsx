@@ -1,5 +1,6 @@
 import {
   Box,
+  ColorSchemeContext,
   GridColumn,
   GridContainer,
   GridRow,
