@@ -63,12 +63,12 @@ export const UnionSickPay = ({
                 label={
                   hasUtilizedUnionSickPayRights === YES
                     ? formatMessage(
-                        medicalAndRehabilitationPaymentsFormMessage
-                          .generalInformation.unionSickPayFromUnionDidEndDate,
+                        medicalAndRehabilitationPaymentsFormMessage.shared
+                          .sickPayDidEndDate,
                       )
                     : formatMessage(
-                        medicalAndRehabilitationPaymentsFormMessage
-                          .generalInformation.unionSickPayFromUnionDoesEndDate,
+                        medicalAndRehabilitationPaymentsFormMessage.shared
+                          .sickPayDoesEndDate,
                       )
                 }
                 value={formatDate(unionSickPayEndDate)}

@@ -23,6 +23,21 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Á ekki við',
       description: 'Not applicable',
     },
+    sickPayDidEndDate: {
+      id: 'marp.application:sick.pay.did.end.date',
+      defaultMessage: 'Réttinum lauk',
+      description: 'Your entitlement ended',
+    },
+    sickPayDoesEndDate: {
+      id: 'marp.application:sick.pay.does.end.date',
+      defaultMessage: 'Réttinum lýkur',
+      description: 'Your entitlement ends',
+    },
+    uploadConfirmationDocument: {
+      id: 'marp.application:upload.confirmation.document',
+      defaultMessage: 'Hlaða inn staðfestingarskjali',
+      description: 'Upload confirmation document',
+    },
   }),
 
   pre: defineMessages({
@@ -82,11 +97,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:general.information.questions.is.studying',
       defaultMessage: 'Ertu í námi?',
       description: 'Are you studying?',
-    },
-    questionsIsStudyingFileUpload: {
-      id: 'marp.application:general.information.questions.is.studying.file.upload',
-      defaultMessage: 'Hlaða inn staðfestingarskjali',
-      description: 'Upload confirmation document',
     },
 
     // Sick pay
@@ -150,11 +160,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Hvenær lýkur rétti þínum til sjúkradagpeninga?',
       description: 'When does your right to sick pay end?',
     },
-    unionSickPayAttachment: {
-      id: 'marp.application:general.information.union.sick.pay.attachment',
-      defaultMessage: 'Hlaða inn staðfestingarskjali',
-      description: 'Upload confirmation document',
-    },
     unionSickPayFromUnionTitle: {
       id: 'marp.application:general.information.union.sick.pay.from.union.title',
       defaultMessage: 'Sjúkradagpeningar frá stéttarfélagi',
@@ -164,16 +169,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:general.information.union.sick.pay.from.union.name',
       defaultMessage: 'Þitt stéttarfélag',
       description: 'Your union',
-    },
-    unionSickPayFromUnionDidEndDate: {
-      id: 'marp.application:general.information.union.sick.pay.from.union.did.end.date',
-      defaultMessage: 'Réttinum lauk',
-      description: 'Your entitlement ended',
-    },
-    unionSickPayFromUnionDoesEndDate: {
-      id: 'marp.application:general.information.union.sick.pay.from.union.does.end.date',
-      defaultMessage: 'Réttinum lýkur',
-      description: 'Your entitlement ends',
     },
 
     // Tengdar umsóknir?
@@ -197,20 +192,10 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Staðfesting á námi',
       description: 'Confirmation of study',
     },
-    sickPayDidEndDate: {
-      id: 'marp.application:overiew.sick.pay.did.end.date',
-      defaultMessage: 'Réttinum lauk',
-      description: 'Your entitlement ended',
-    },
-    sickPayDoesEndDate: {
-      id: 'marp.application:overiew.sick.pay.does.end.date',
-      defaultMessage: 'Réttinum lýkur',
-      description: 'Your entitlement ends',
-    },
     unionSickPayConfirmation: {
       id: 'marp.application:overview.union.sick.pay.confirmation',
-      defaultMessage: 'Fylgiskjal - Sjúkradagpeningar frá stéttarfélagi',
-      description: 'Attachment - Sick pay from union',
+      defaultMessage: 'Sjúkradagpeningar frá stéttarfélagi',
+      description: 'Sick pay from union',
     },
   }),
 
