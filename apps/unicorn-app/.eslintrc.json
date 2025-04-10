@@ -24,8 +24,11 @@
       "warn",
       {
         "groups": [
+          // React related packages come first, followed by all external imports.
           ["^react", "^\\w", "^@(?!island).+"],
+          // Then island.is packages.
           ["^(@island.is).*"],
+          // Then all other imports in this order: "../", "./", "./css"
           [
             "^\\.\\.(?!/?$)",
             "^\\.\\./?$",
