@@ -19,8 +19,8 @@ export const getHasCustodian = (
   externalData: ExternalData,
   index: number,
 ): boolean => {
-  const parent = getCustodian(externalData, index)
-  return !!parent
+  const custodian = getCustodian(externalData, index)
+  return !!custodian
 }
 
 export const checkHasAnyCustodians = (externalData: ExternalData): boolean => {
