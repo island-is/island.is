@@ -495,6 +495,9 @@ export interface IBloodDonationRestrictionFields {
 
   /** Nánar um áhrif á blóðgjöf */
   detailedText?: Document | undefined
+
+  /** Flokkur */
+  filterTags?: IGenericTag[] | undefined
 }
 
 export interface IBloodDonationRestriction
@@ -3521,6 +3524,7 @@ export interface IOrganizationSubpageFields {
         | ISectionHeading
         | ILatestEventsSlice
         | IGenericList
+        | IOrganizationParentSubpageList
       )[]
     | undefined
 
@@ -3543,7 +3547,10 @@ export interface IOrganizationSubpageFields {
   signLanguageVideo?: IEmbeddedVideo | undefined
 
   /** Bottom Slices */
-  bottomSlices?: (ITimeline | ILogoListSlice)[] | undefined
+  bottomSlices?: (ITimeline | ILogoListSlice | ILatestNewsSlice)[] | undefined
+
+  /** Organization Parent Subpage */
+  organizationParentSubpage?: IOrganizationParentSubpage | undefined
 }
 
 export interface IOrganizationSubpage

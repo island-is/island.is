@@ -210,7 +210,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
 
   return (
     <Box className={styles.container} padding={[2, 2, 3, 3]}>
-      <Box className={styles.titleContainer}>
+      <Box className={styles.dataContainer}>
         <SectionHeading
           title={formatMessage(
             isFine ? strings.indictmentRulingDecisionFine : strings.keyDates,

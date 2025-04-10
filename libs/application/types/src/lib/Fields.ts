@@ -81,6 +81,7 @@ export type RepeaterFields =
   | 'nationalIdWithName'
   | 'phone'
   | 'selectAsync'
+  | 'hiddenInput'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -217,6 +218,7 @@ export type RepeaterItem = {
       ): Promise<Option[]>
       updateOnSelect?: MaybeWithIndex<string[]>
     }
+  | { component: 'hiddenInput' }
 )
 
 export type AlertMessageLink = {
@@ -533,6 +535,7 @@ export interface KeyValueField extends BaseField {
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
   paddingBottom?: BoxProps['padding']
+  tooltip?: FormText
 }
 
 export interface InformationCardField extends BaseField {
@@ -923,7 +926,7 @@ export interface OverviewField extends BaseField {
   title: FormText
   titleVariant?: TitleVariants
   description?: FormText
-  backId?: string
+  backId?: string | ((answers: FormValue) => string | undefined)
   bottomLine?: boolean
   items?: (
     answers: FormValue,

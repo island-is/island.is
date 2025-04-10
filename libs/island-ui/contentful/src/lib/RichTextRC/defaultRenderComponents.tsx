@@ -64,7 +64,7 @@ export const defaultRenderComponentObject = {
   Statistics: (slice) => <Statistics {...slice} />,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
-  Image: (slice) => <Image {...slice} thumbnail={slice.url + '?w=50'} />,
+  Image: (slice) => <Image {...slice} />,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   Asset: (slice) => <AssetLink {...slice} />,
