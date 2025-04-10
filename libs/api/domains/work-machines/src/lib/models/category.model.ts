@@ -5,20 +5,20 @@ export class Category {
   @Field()
   name!: string
 
-  @Field(() => String, {
+  @Field({
     nullable: true,
     deprecationReason: 'Use localized name instead',
   })
-  nameEn?: string | null
+  nameEn?: string
 
   @Field({ nullable: true })
   subCategoryName?: string
 
-  @Field(() => String, {
+  @Field({
     nullable: true,
     deprecationReason: 'Use localized subCategoryName instead',
   })
-  subCategoryNameEn?: string | null
+  subCategoryNameEn?: string
 
   @Field({ nullable: true })
   registrationNumberPrefix?: string

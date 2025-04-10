@@ -1,4 +1,4 @@
-import { MachineFriendlyDto } from '../..'
+import { MachineFriendlyDto, MachineHateoasDto } from '../..'
 import { EntityDto } from './entity.dto'
 import { LabelDto } from './label.dto'
 import { LinkDto } from './link.dto'
@@ -15,8 +15,8 @@ export interface WorkMachinesCollectionItem {
   registrationDate?: string
   owner?: EntityDto
   supervisor?: EntityDto
-  productionNumber?: string
   productionCountry?: string
+  productionNumber?: string
   licensePlateNumber?: string
   importer?: string
   insurer?: string
@@ -56,5 +56,50 @@ export const mapWorkMachinesCollectionItem = (
           name: rest.supervisor ?? undefined,
         }
       : undefined,
+  }
+}
+
+export const mapWorkMachine = (
+  item: MachineHateoasDto,
+): WorkMachinesCollectionItem | null => {
+  const { id, ...rest } = item
+  if (!id) {
+    return null
+  }
+
+  return {
+    id,
+    registrationNumber: rest.registrationNumber ?? undefined,
+    registrationDate: rest.registrationDate ?? undefined,
+    type: mapType(rest?.type ?? undefined) ?? undefined,
+    status: rest.status ?? undefined,
+    category: rest.category ?? undefined,
+    subCategory: rest.subCategory ?? undefined,
+    owner: rest.ownerName
+      ? {
+          number: rest.ownerNumber ?? undefined,
+          name: rest.ownerName,
+          address: rest.ownerAddress ?? undefined,
+          nationalId: rest.ownerNationalId ?? undefined,
+          postcode: rest.ownerPostcode ?? undefined,
+        }
+      : undefined,
+    supervisor: rest.supervisorName
+      ? {
+          name: rest.supervisorName,
+          address: rest.supervisorAddress ?? undefined,
+          nationalId: rest.supervisorNationalId ?? undefined,
+          postcode: rest.supervisorPostcode ?? undefined,
+        }
+      : undefined,
+    productionNumber: rest.productionNumber ?? undefined,
+    productionCountry: rest.productionCountry ?? undefined,
+    productionYear: rest.productionYear?.toString() ?? undefined,
+    licensePlateNumber: rest.licensePlateNumber ?? undefined,
+    importer: rest.importer ?? undefined,
+    insurer: rest.insurer ?? undefined,
+    dateLastInspection: rest.dateLastInspection ?? undefined,
+    paymentRequiredForOwnerChange:
+      rest.paymentRequiredForOwnerChange ?? undefined,
   }
 }

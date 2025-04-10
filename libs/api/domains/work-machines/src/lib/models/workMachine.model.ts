@@ -4,7 +4,7 @@ import { Entity } from './person.model'
 import { Label } from './label.model'
 import { Type } from './type.model'
 
-@ObjectType('WorkMachineV2')
+@ObjectType('WorkMachine')
 export class WorkMachine {
   @Field(() => ID)
   id!: string
@@ -36,8 +36,8 @@ export class WorkMachine {
   @Field({ nullable: true })
   productionCountry?: string
 
-  @Field(() => Int, { nullable: true })
-  productionYear?: number
+  @Field({ nullable: true })
+  productionYear?: string
 
   @Field({ nullable: true })
   licensePlateNumber?: string
@@ -57,6 +57,9 @@ export class WorkMachine {
 
   @Field({ nullable: true })
   insurer?: string
+
+  @Field({ nullable: true })
+  paymentRequiredForOwnerChange?: boolean
 
   @Field(() => [Link], { nullable: true })
   links?: Array<Link>

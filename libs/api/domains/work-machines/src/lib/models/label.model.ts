@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql'
 
-@ObjectType('WorkMachinesV2Label')
+@ObjectType('WorkMachinesLabel')
 export class Label {
   @Field({ nullable: true })
   columnName?: string

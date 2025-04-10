@@ -1,6 +1,6 @@
 import { Field, InterfaceType } from '@nestjs/graphql'
 
-@InterfaceType('WorkMachinesV2BaseLink', { isAbstract: true })
+@InterfaceType('WorkMachinesBaseLink', { isAbstract: true })
 export abstract class BaseLink {
   @Field()
   href!: string

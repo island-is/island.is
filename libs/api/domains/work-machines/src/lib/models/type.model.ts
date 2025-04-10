@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql'
 
-@ObjectType('WorkMachinesV2Type')
+@ObjectType('WorkMachinesType')
 export class Type {
   @Field()
   type!: string

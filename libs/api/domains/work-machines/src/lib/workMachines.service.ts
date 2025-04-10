@@ -18,7 +18,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { MachineDto } from '@island.is/clients/work-machines'
 import { GetMachineParentCategoryByTypeAndModelInput } from './dto/getMachineParentCategoryByTypeAndModel.input'
 import isValid from 'date-fns/isValid'
-import { PaginatedCollectionResponse } from './models/v1/getWorkMachines'
+import { PaginatedCollectionResponse } from './models/workMachinePaginatedCollection.model'
+import { WorkMachine } from './models/workMachine.model'
 
 @Injectable()
 export class WorkMachinesService {
@@ -78,29 +79,44 @@ export class WorkMachinesService {
 
     const workMachines: Array<WorkMachine> =
       data.machines
-        ?.map((v) => {
-          const inspectionDate = v.dateLastInspection
-            ? new Date(v.dateLastInspection)
-            : undefined
-          return {
-            ...v,
-            dateLastInspection: isValid(inspectionDate)
-              ? inspectionDate
-              : undefined,
-            ownerName: v.owner,
-            supervisorName: v.supervisor,
-          }
-        })
+        ?.map((v) => ({
+          id: v.id,
+          registrationNumber: v.registrationNumber,
+          typeBreakdown: v.type,
+          status: v.status,
+          category: v.category,
+          subCategory: v.subCategory,
+          dateLastInspection: v.dateLastInspection,
+          licensePlateNumber: v.licensePlateNumber,
+          paymentRequiredForOwnerChange: v.paymentRequiredForOwnerChange,
+          owner: v.owner,
+          supervisor: v.supervisor,
+          labels: v.labels,
+
+          //deprecation line
+          type: v.type?.fullType,
+          ownerNumber: v.owner?.number,
+          ownerName: v.owner?.name,
+          supervisorName: v.supervisor?.name,
+        }))
         .filter(isDefined) ?? []
 
     const links = data.links?.length
-      ? data.links.map((l) => {
-          return {
-            ...l,
-            rel: this.mapRelToCollectionLink(l.rel ?? ''),
-          }
-        })
-      : null
+      ? data.links
+          .map((l) => {
+            const rel = this.mapRelToCollectionLink(l.rel ?? '')
+
+            if (!rel) {
+              return null
+            }
+
+            return {
+              ...l,
+              rel,
+            }
+          })
+          .filter(isDefined)
+      : undefined
 
     return {
       data: workMachines,
@@ -122,7 +138,7 @@ export class WorkMachinesService {
   ): Promise<WorkMachine | null> {
     const data = await this.machineService.getWorkMachineById(user, input)
 
-    if (!data) {
+    if (!data || !data.id) {
       return null
     }
 
@@ -131,22 +147,56 @@ export class WorkMachinesService {
     }
 
     const links = data.links?.length
-      ? data.links.map((l) => {
-          return {
-            ...l,
-            rel: this.mapRelToAction(l.rel ?? ''),
-          }
-        })
-      : null
+      ? data.links
+          .map((l) => {
+            const { href } = l
+            const rel = this.mapRelToAction(l.rel ?? '')
 
-    const inspectionDate = data.dateLastInspection
-      ? new Date(data.dateLastInspection)
+            if (!rel || !href) {
+              return null
+            }
+
+            return {
+              displayTitle: l.displayTitle ?? undefined,
+              href,
+              rel,
+            }
+          })
+          .filter(isDefined)
       : undefined
 
     return {
-      ...data,
-      dateLastInspection: isValid(inspectionDate) ? inspectionDate : undefined,
+      id: data.id,
+      registrationNumber: data.registrationNumber,
+      registrationDate: data.registrationDate,
+      typeBreakdown: data.type,
+      status: data.status,
+      category: data.category,
+      subCategory: data.subCategory,
+      owner: data.owner,
+      supervisor: data.supervisor,
+      productionNumber: data.productionNumber,
+      productionCountry: data.productionCountry,
+      productionYear: data.productionYear,
+      licensePlateNumber: data.licensePlateNumber,
+      importer: data.importer,
+      insurer: data.insurer,
+      dateLastInspection: data.dateLastInspection,
+      paymentRequiredForOwnerChange: data.paymentRequiredForOwnerChange,
       links,
+      labels: data.labels,
+
+      //deprecated line
+      type: data.type?.fullType,
+      ownerNumber: data.owner?.number,
+      ownerName: data.owner?.name,
+      ownerAddress: data.owner?.address,
+      ownerNationalId: data.owner?.nationalId,
+      ownerPostcode: data.owner?.postcode,
+      supervisorName: data.supervisor?.name,
+      supervisorAddress: data.supervisor?.address,
+      supervisorNationalId: data.supervisor?.nationalId,
+      supervisorPostcode: data.supervisor?.postcode,
     }
   }
 

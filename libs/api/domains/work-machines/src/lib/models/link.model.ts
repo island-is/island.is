@@ -2,9 +2,9 @@ import { ObjectType, Field, registerEnumType } from '@nestjs/graphql'
 import { BaseLink } from './baseLink.model'
 import { Action } from '../workMachines.types'
 
-registerEnumType(Action, { name: 'WorkMachinesV2Action' })
+registerEnumType(Action, { name: 'WorkMachinesAction' })
 
-@ObjectType('WorkMachinesV2Link', {
+@ObjectType('WorkMachinesLink', {
   implements: () => BaseLink,
 })
 export class Link implements BaseLink {

@@ -56,7 +56,11 @@ import {
 import { CustomMachineApi } from './providers'
 import { handle404 } from '@island.is/clients/middlewares'
 import { WorkMachineResponseDto } from './dtos/workMachinesResponse.dto'
-import { mapWorkMachinesCollectionItem } from './dtos/workMachineItem.dto'
+import {
+  WorkMachinesCollectionItem,
+  mapWorkMachine,
+  mapWorkMachinesCollectionItem,
+} from './dtos/workMachineItem.dto'
 import { mapLinkDto } from './dtos/link.dto'
 import { mapLabelDto } from './dtos/label.dto'
 import { mapPaginationDto } from './dtos/pagination.dto'
@@ -174,10 +178,16 @@ export class WorkMachinesClientService {
   getWorkMachineById = async (
     user: User,
     input: GetMachineRequest,
-  ): Promise<MachineHateoasDto | null> => {
-    return await this.machineApiWithAuth(user)
+  ): Promise<WorkMachinesCollectionItem | null> => {
+    const data = await this.machineApiWithAuth(user)
       .getMachine(input)
       .catch(handle404)
+
+    if (!data) {
+      return null
+    }
+
+    return mapWorkMachine(data)
   }
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)

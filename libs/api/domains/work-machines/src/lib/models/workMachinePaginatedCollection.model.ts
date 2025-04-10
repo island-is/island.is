@@ -5,7 +5,7 @@ import { CollectionLink } from './collectionLink.model'
 import { Label } from './label.model'
 import { DownloadLink } from './downloadLink.model'
 
-@ObjectType('WorkMachinesV2PaginatedCollection')
+@ObjectType('WorkMachinesPaginatedCollection')
 export class PaginatedCollectionResponse extends PaginatedResponse(
   WorkMachine,
 ) {

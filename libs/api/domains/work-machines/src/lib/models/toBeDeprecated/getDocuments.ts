@@ -1,8 +1,6 @@
 import { Directive, Field, ObjectType } from '@nestjs/graphql'
 
-@Directive(
-  '@deprecated(reason: "Up for removal, use "DownloadServiceUrl" object in paginated collection instead)',
-)
+@Directive('@deprecated(reason: "Up for removal")')
 @ObjectType('WorkMachinesCollectionDocument')
 export class Document {
   @Field(() => String, { nullable: true })
