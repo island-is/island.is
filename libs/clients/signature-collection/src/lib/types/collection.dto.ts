@@ -17,25 +17,23 @@ export enum CollectionStatus {
 // Then the rest is ordered to reflect the numerical values present in the
 // Signature Collection API (see /Tegund/Kosning in the API)
 export enum CollectionType {
-  OtherUnknown,
-  Parliamentary,
-  Presidential,
-  Municipal,
-  Referendum, // is: Þjóðaratkvæðagreiðsla
-  OtherSameRulesAsParliamentary,
-  LocalGovernmental, // is: Sveitarstjórnarkosningar
-  SpecialLocalGovernmental,
-  ResidentPoll, // is: Íbúakönnun
-  ForeignResidentPoll,
+  OtherUnknown = 0,
+  Parliamentary = 1,
+  Presidential = 2,
+  Referendum = 3, // is: Þjóðaratkvæðagreiðsla
+  OtherSameRulesAsParliamentary = 4,
+  LocalGovernmental = 5, // is: Sveitarstjórnarkosningar
+  SpecialLocalGovernmental = 6,
+  ResidentPoll = 9, // is: Íbúakönnun
 }
 
 export const getCollectionTypeFromNumber = (
   nr: number | undefined,
 ): CollectionType => {
-  // Make sure to add to the enum and iterate on the numbers
-  // if needed and when other types of collections are added.
-  if (nr && nr > 0 && nr <= 8) {
-    return nr as CollectionType
+  const collectionNr = (nr ?? 0) as CollectionType
+
+  if (Object.values(CollectionType).includes(collectionNr)) {
+    return collectionNr
   }
   return CollectionType.OtherUnknown
 }
