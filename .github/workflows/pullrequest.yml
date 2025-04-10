@@ -234,78 +234,6 @@ jobs:
       #     ./scripts/ci/20_check-formatting.sh "write"
       #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
-  newlints:
-    needs:
-      - prepare
-    runs-on: arc-runners
-    timeout-minutes: 35
-    if: ${{ needs.prepare.outputs.LINT_CHUNKS && !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NODE_OPTIONS: --max-old-space-size=4096
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
-    steps:
-      - uses: actions/checkout@v4
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
-          ref: ${{ github.event.pull_request.head.ref }}
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-      - name: Verify lint doesn't fail
-        env:
-          NX_SKIP_NX_CACHE: true
-        run: set -x; yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS"
-      # - uses: actions/checkout@v4
-      #   with:
-      #     ref: ${{ github.event.pull_request.head.ref }}
-      - name: Lint head
-        id: lint-head
-        env:
-          NX_SKIP_NX_CACHE: true
-        run: |
-          lints=$(yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS") || echo "There was an error while linting, ignoring"
-          echo "$lints" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
-          echo "lints<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$lints" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.base.ref }}
-      - name: Lint base
-        id: lint-base
-        env:
-          NX_SKIP_NX_CACHE: true
-        run: |
-          lints=$(yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS") || echo "There was an error while linting, ignoring"
-          echo "$lints" | wc -l | xargs -I% echo "lint-lines=%" | tee -a "$GITHUB_OUTPUT"
-          echo "lints<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$lints" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-      - name: No new lint lines
-        env:
-          HEAD_LINTS: ${{steps.lint-head.outputs.lint-lines}}
-          BASE_LINTS: ${{steps.lint-base.outputs.lint-lines}}
-          HEAD_LINT_COUNT: ${{steps.lint-head.outputs.lint-lines || 0}}
-          BASE_LINT_COUNT: ${{steps.lint-base.outputs.lint-lines || 0}}
-        run: |
-          if (( HEAD_LINT_COUNT <= BASE_LINT_COUNT )); then
-            echo "Lint count has not increased"
-            exit 0
-          fi
-          echo "::error title=Found $((HEAD_LINT_COUNT - BASE_LINT_COUNT)) additional lint lines::Please fix your lints 🙏"
-          echo "::group::lintdiff"
-          diff <(echo "$BASE_LINTS") <(echo "$HEAD_LINTS")
-          echo "::endgroup::"
-          exit 1
-
   lintfix-changed-files:
     name: Lintfix Changed Files
     runs-on: arc-runners
@@ -365,8 +293,57 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      - name: Linting
-        run: ./scripts/ci/run-in-parallel-native.sh lint
+      - name: Lint head
+        id: lint-head
+        run: |
+          set -euo pipefail
+          lints=$(mktemp -t lint-head.XXXXXX)
+          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
+          yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
+            tee -a "$lints" | # Show output when running, but preserve pipe-chaining
+            (grep -oP '(?<=✖ )(\d+)(?= problems)' || echo '0') | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee -a "$GITHUB_OUTPUT" # Finally create output
+
+      # Checkout for linting base
+      - uses: actions/checkout@v4
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          clean: false
+
+      - name: Lint base
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+        id: lint-base
+        run: |
+          set -euo pipefail
+          lints=$(mktemp -t lint-base.XXXXXX)
+          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
+          yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
+            tee -a "$lints" | # Show output when running, but preserve pipe-chaining
+            (grep -oP '(?<=✖ )(\d+)(?= problems)' || echo '0') | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee -a "$GITHUB_OUTPUT" # Finally create output
+
+      - name: No new lints
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+        env:
+          HEAD_LINT_COUNT: ${{steps.lint-head.outputs.lint-count}}
+          BASE_LINT_COUNT: ${{steps.lint-base.outputs.lint-count}}
+          HEAD_LINT_FILE: ${{steps.lint-head.outputs.lints-file}}
+          BASE_LINT_FILE: ${{steps.lint-base.outputs.lints-file}}
+        run: |
+          COUNT_DIFF=$(( HEAD_LINT_COUNT - BASE_LINT_COUNT )) || :
+          if (( COUNT_DIFF <= 0 )); then
+            echo "Lint count has not increased"
+            exit 0
+          fi
+          echo "::error title=NEW_LINTS::Please fix your lints 🙏 (found $COUNT_DIFF additional lints)"
+          lints_base=$(mktemp --dry -t lint-.XXX)
+          echo "::group::lintdiff"
+          diff "${BASE_LINT_FILE}" "${HEAD_LINT_FILE}" || : # Ignore diff exit code
+          echo "::endgroup::"
+          exit 1
 
   build:
     needs:
@@ -407,7 +384,6 @@ jobs:
       - formatting
       - e2e
       - build
-      - newlints
       - unicorn-tests
     steps:
       - name: Check prepare success
@@ -417,8 +393,6 @@ jobs:
         run: |
           echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> $GITHUB_STEP_SUMMARY
           exit 1
-      - name: Check newlints success
-        run: '[[ ${{ needs.newlints.result }} != "failure" ]] || exit 1'
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Check e2e success
