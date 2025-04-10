@@ -46,5 +46,10 @@ export const applicationStatus = {
       defaultMessage: 'Samþykki í bið',
       description: `Application status action card tag`,
     },
+    actionCardTagApproved: {
+      id: 'aosh.tlwm.application:applicationStatus.labels.actionCardTag',
+      defaultMessage: 'Samþykkt',
+      description: `Application status action card tag approved`,
+    },
   }),
 }

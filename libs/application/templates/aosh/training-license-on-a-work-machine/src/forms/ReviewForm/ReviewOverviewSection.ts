@@ -15,6 +15,7 @@ import {
   isContractor,
 } from '../../utils'
 import { getMachineTenureOverviewInformation } from '../../utils/getMachineTenureInformation'
+import { TrainingLicenseOnAWorkMachineAnswers } from '../../shared/types'
 
 export const reviewOverviewSection = buildSection({
   id: 'reviewOverviewSection',
@@ -66,16 +67,44 @@ export const reviewOverviewSection = buildSection({
         buildHiddenInput({
           id: 'rejected',
         }),
+        // buildHiddenInput({
+        //   id: 'approved',
+        //   // defaultValue: (
+        //   //   application: Application,
+        //   //   _field: Field,
+        //   //   userInfo: BffUser,
+        //   // ) => {
+        //   //   const approved =
+        //   //     getValueViaPath<string[]>(application.answers, 'approved') ?? []
+        //   //   const nationalId = userInfo.profile.nationalId
+        //   //   if (!approved.includes(nationalId)) approved.push(nationalId)
+        //   //   console.log(userInfo.profile.nationalId, approved)
+        //   //   return ['bla']
+        //   // },
+        // }),
+        // buildHiddenInputWithWatchedValue
         buildCustomField({
           id: 'reviewOverviewSection.handleReject',
           title: '',
           component: 'HandleReject',
+        }),
+        buildCustomField({
+          id: 'reviewOverviewSection.handleApprove',
+          title: '',
+          component: 'HandleApprove',
         }),
         buildSubmitField({
           id: 'submitReview',
           placement: 'footer',
           title: overview.general.approveButton,
           refetchApplicationAfterSubmit: true,
+          condition: (answers, _externalData, user) => {
+            console.log(answers)
+            const approved =
+              getValueViaPath<string[]>(answers, 'approved') ?? []
+            console.log(user?.profile.nationalId, approved)
+            return !approved.includes(user?.profile.nationalId ?? '')
+          },
           actions: [
             {
               event: DefaultEvents.REJECT,
@@ -87,15 +116,38 @@ export const reviewOverviewSection = buildSection({
               name: overview.general.agreeButton,
               type: 'primary',
               condition: (answers) => {
-                const approved = getValueViaPath<string[]>(answers, 'approved')
-                // Change...
-                return approved?.includes('true') ?? true
+                const approved =
+                  getValueViaPath<string[]>(answers, 'approved') ?? []
+                const companyAndAssignee =
+                  getValueViaPath<
+                    TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
+                  >(answers, 'assigneeInformation')?.companyAndAssignee ?? []
+                console.log(
+                  approved,
+                  companyAndAssignee,
+                  approved.length === companyAndAssignee.length,
+                )
+                return approved.length === companyAndAssignee.length - 1
               },
             },
             {
               event: DefaultEvents.APPROVE,
               name: overview.general.agreeButton,
               type: 'primary',
+              condition: (answers) => {
+                const approved =
+                  getValueViaPath<string[]>(answers, 'approved') ?? []
+                const companyAndAssignee =
+                  getValueViaPath<
+                    TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
+                  >(answers, 'assigneeInformation')?.companyAndAssignee ?? []
+                console.log(
+                  approved,
+                  companyAndAssignee,
+                  approved.length !== companyAndAssignee.length,
+                )
+                return approved.length !== companyAndAssignee.length - 1
+              },
             },
           ],
         }),

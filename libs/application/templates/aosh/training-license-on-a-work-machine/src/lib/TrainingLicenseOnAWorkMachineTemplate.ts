@@ -242,7 +242,7 @@ const template: ApplicationTemplate<
                 },
               ],
               write: {
-                answers: ['rejected'],
+                answers: ['rejected', 'approved'],
               },
               read: 'all',
             },

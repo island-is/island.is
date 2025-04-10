@@ -168,6 +168,11 @@ export const overview = {
       defaultMessage: 'Tímabil: {value}',
       description: 'Overview certificate of tenure period',
     },
+    contractor: {
+      id: 'aosh.tlwm.application:overview.certificateOfTenure.contractor',
+      defaultMessage: 'Sjálfstætt starfandi: Já',
+      description: `Overview certificate of tenure contractor label`,
+    },
   }),
   confirmationModal: defineMessages({
     title: {

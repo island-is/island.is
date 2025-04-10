@@ -18,7 +18,9 @@ export const getMissingWorkMachines = (answers: FormValue) => {
     getValueViaPath<
       TrainingLicenseOnAWorkMachineAnswers['certificateOfTenure']
     >(answers, 'certificateOfTenure') || []
-  ).map((x) => x.machineNumber)
+  )
+    .filter((x) => !x.isContractor.includes('yes'))
+    .map((x) => x.machineNumber)
 
   const selectedWorkMachines = (
     getValueViaPath<

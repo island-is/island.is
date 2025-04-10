@@ -33,6 +33,7 @@ export const getMachineTenureOverviewInformation = (
           dateTo,
           tenureInHours,
           practicalRight,
+          isContractor,
         }) => ({
           width: 'full',
           keyText: machineType,
@@ -69,6 +70,9 @@ export const getMachineTenureOverviewInformation = (
                 )}`,
               },
             },
+            ...(isContractor?.includes('yes')
+              ? [overview.certificateOfTenure.contractor]
+              : []),
           ],
         }),
       ) ?? []

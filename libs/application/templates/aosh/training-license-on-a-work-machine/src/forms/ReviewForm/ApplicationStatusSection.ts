@@ -2,6 +2,7 @@ import {
   buildActionCardListField,
   buildMultiField,
   buildSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { applicationStatus } from '../../lib/messages'
 import { getUserInfo } from '../../utils/getUserInfo'
@@ -22,13 +23,18 @@ export const applicationStatusSection = buildSection({
           title: '',
           items: (application, lang, userNationalId) => {
             const userInfo = getUserInfo(application.answers, userNationalId)
+            const approved =
+              getValueViaPath<string[]>(application.answers, 'approved') ?? []
+            const isApproved = approved.includes(userNationalId)
             return [
               {
                 heading: applicationStatus.labels.actionCardTitleAssignee,
                 tag: {
-                  label: applicationStatus.labels.actionCardTag,
+                  label: isApproved
+                    ? applicationStatus.labels.actionCardTagApproved
+                    : applicationStatus.labels.actionCardTag,
                   outlined: false,
-                  variant: 'purple',
+                  variant: isApproved ? 'green' : 'purple',
                 },
                 text: {
                   ...applicationStatus.labels.actionCardMessageAssignee,
