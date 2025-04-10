@@ -179,10 +179,10 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'The applicant’s current position in relation to the labour market or study.',
     },
-    informationApplicationFor: {
-      id: 'marp.application:rehabilitation.plan.information.application.for',
+    informationApplyingFor: {
+      id: 'marp.application:rehabilitation.plan.information.applying.for',
       defaultMessage: 'Sótt er um',
-      description: 'The application is for',
+      description: 'Applying for',
     },
     informationProgress: {
       id: 'marp.application:rehabilitation.plan.information.progress',
@@ -358,9 +358,9 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     rehabilitationObjectivePhysicalHealthGoalsTooltip: {
       id: 'marp.application:rehabilitation.plan.rehabilitation.objective.physical.health.goals.tooltip',
       defaultMessage:
-        'Líkamlegur vandi vísar til skerðinga eða truflana á líkamlegri starfsemi eða uppbyggingu líkamans. Vandinn getur stafað af sjúkdómum, meiðslum eða öðrum líkamlegum áföllum. Slíkur vandi getur haft áhrif á hreyfigetu, líkamsstöðu, skynjun, kraft, verki eða aðra líkamlega eiginleika og þannig takmarkað getu umsækjanda til að sinna daglegum athöfnum. Markmið geta stuðlað að aukinni líkamlegri virkni, getu og vellíðan í daglegu lífi.',
+        'Líkamlegur vandi vísar til skerðinga eða truflana á líkamlegri starfsemi eða uppbyggingu líkamans. Vandinn getur stafað af sjúkdómum, meiðslum eða öðrum líkamlegum áföllum. Slíkur vandi getur haft áhrif á hreyfigetu, líkamsstöðu, skynjun, kraft, verki eða aðra líkamlega eiginleika og þannig takmarkað getu einstaklings til að sinna daglegum athöfnum. Markmið geta stuðlað að aukinni líkamlegri virkni, getu og vellíðan í daglegu lífi.',
       description:
-        'A physical impairment refers to problem or disruption of the physical function or body structure. The impairment may be caused by illness, injury or other physical trauma. Such impairment may affect mobility, posture, sensation, strength, pain or other physical abilities and thus limit the applicant’s ability to perform daily activities. Goals can contribute to increased physical activity, ability and well-being in everyday life.',
+        'A physical impairment refers to problem or disruption of the physical function or body structure. The impairment may be caused by illness, injury or other physical trauma. Such impairment may affect mobility, posture, sensation, strength, pain or other physical abilities and thus limit the person’s ability to perform daily activities. Goals can contribute to increased physical activity, ability and well-being in everyday life.',
     },
     rehabilitationObjectiveResources: {
       id: 'marp.application:rehabilitation.plan.rehabilitation.objective.resources',
@@ -377,7 +377,7 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage:
         'Andlegur vandi vísar til skerðinga eða frávika í starfsemi hugans eða tilfinningalífs. Vandinn getur stafað af sjúkdómum, meiðslum eða öðrum áföllum. Slíkur vandi nær meðal annars til skynjunar, jafnvægis í tilfinningalífi, einbeitingu, minni, samskipta- eða aðlögunarhæfni og þannig takmarkað getu einstaklings til að sinna daglegum athöfnum. Markmið geta stuðlað að andlegu jafnvægi, vellíðan og sjálfstæði.',
       description:
-        'Mental impairment refers to problems or deviation in the functionality of the mind or emotions. The impairment may be caused by illness, injury or other trauma. Such impairments include problems with sensation, emotional balance, focus, memory, communication or adjustment, and thus a person’s ability to perform daily activities. Goals can contribute to increased mental balance, well-being and independence.',
+        'Mental impairment refers to problems or deviation in the functionality of the mind or emotions. The impairment may be caused by illness, injury or other trauma. Such impairments include problems with sensation, emotional balance, focus, memory, communication or adjustment, and thus limit the person’s ability to perform daily activities. Goals can contribute to increased mental balance, well-being and independence.',
     },
     rehabilitationObjectiveActivityAndParticipationGoals: {
       id: 'marp.application:rehabilitation.plan.rehabilitation.objective.activity.and.participation.goals',

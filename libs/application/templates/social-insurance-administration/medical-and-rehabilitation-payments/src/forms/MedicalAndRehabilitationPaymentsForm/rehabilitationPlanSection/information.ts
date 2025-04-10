@@ -24,7 +24,7 @@ export const information = [
   buildKeyValueField({
     label:
       medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-        .informationApplicationFor,
+        .informationApplyingFor,
     value: 'Áframhaldandi greiðslur',
     marginBottom: 3,
   }),
