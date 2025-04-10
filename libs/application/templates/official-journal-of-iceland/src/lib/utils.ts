@@ -4,9 +4,11 @@ import { z } from 'zod'
 import { additionSchema, baseEntitySchema } from './dataSchema'
 import { getValueViaPath } from '@island.is/application/core'
 import { RequiredInputFieldsNames } from './types'
-import { FAST_TRACK_DAYS } from './constants'
+import { FAST_TRACK_DAYS, MINIMUM_WEEKDAYS } from './constants'
 import { MessageDescriptor } from 'react-intl'
 import { v4 as uuid } from 'uuid'
+import { getHolidays, Holiday } from 'fridagar'
+import { toISODate } from '@island.is/regulations'
 
 export const countDaysAgo = (date: Date) => {
   const now = new Date()
@@ -18,6 +20,30 @@ export const countDaysAgo = (date: Date) => {
 const isWeekday = (date: Date) => {
   const day = date.getDay()
   return day !== 0 && day !== 6
+}
+
+type IsHolidayMap = Record<string, true | undefined>
+const holidayCache: Record<number, IsHolidayMap | undefined> = {}
+
+const getHolidayMap = (year: number): IsHolidayMap => {
+  let yearHolidays = holidayCache[year]
+  if (!yearHolidays) {
+    const holidayMap: IsHolidayMap = {}
+    getHolidays(year).forEach((holiday) => {
+      holidayMap[toISODate(holiday.date)] = true
+    })
+    yearHolidays = holidayCache[year] = holidayMap
+  }
+  return yearHolidays
+}
+
+export const isWorkday = (date: Date): boolean => {
+  const wDay = date.getDay()
+  if (wDay === 0 || wDay === 6) {
+    return false
+  }
+  const holidays = getHolidayMap(date.getFullYear())
+  return holidays[toISODate(date)] !== true
 }
 
 export const getWeekendDates = (
@@ -33,6 +59,44 @@ export const getWeekendDates = (
     currentDay = addDays(currentDay, 1)
   }
   return weekdays
+}
+
+const getDateString = (date: Date) => {
+  return date.toISOString().split('T')[0]
+}
+
+// Get default date, but push it to the next workday if it is a weekend or holiday
+export const getDefaultDate = (requestedDate?: string) => {
+  if (!requestedDate) {
+    const date = getNextWorkday(addWeekdays(new Date(), MINIMUM_WEEKDAYS))
+    return getDateString(date)
+  }
+  const date = new Date(requestedDate)
+  return getDateString(getNextWorkday(date))
+}
+
+export const getExcludedDates = (
+  startDate = new Date(),
+  endDate = addYears(new Date(), 1),
+) => {
+  const currentYear = startDate.getFullYear()
+  const endYear = endDate.getFullYear()
+  let holidays: Holiday[] = []
+  for (let year = currentYear; year <= endYear; year++) {
+    holidays = [...holidays, ...getHolidays(year)]
+  }
+  const weekendDates = getWeekendDates(startDate, endDate)
+
+  return [...weekendDates, ...holidays.map((holiday) => holiday.date)]
+}
+
+export const getNextWorkday = (date: Date) => {
+  // Returns the next workday.
+  let nextDay = date
+  while (!isWorkday(nextDay)) {
+    nextDay = addDays(nextDay, 1)
+  }
+  return nextDay
 }
 
 export const addWeekdays = (date: Date, days: number) => {
