@@ -78,7 +78,9 @@ export class SecondarySchoolClient {
     return res.map((program) => ({
       id: program.id || '',
       nameIs: `${program.title || ''} - ${program.code}`,
-      nameEn: `${program.titleEnglish || ''} - ${program.code}`,
+      nameEn: `${program.titleEnglish || program.title || ''} - ${
+        program.code
+      }`,
       registrationEndDate: program.registryEndDate || new Date(),
       isSpecialNeedsProgram: program.isSpecialNeedsProgramme || false,
     }))
