@@ -38,6 +38,13 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
         : 'regular',
   })
 
+  const parsedHtml = Buffer.from(
+    currentApplication.answers.advert?.html ?? '',
+    'base64',
+  ).toString('utf-8')
+
+  const fullHtml = `${parsedHtml}${signatureHtml}`
+
   const {
     fetchPdf,
     error: pdfError,
@@ -226,9 +233,7 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
         <AdvertPreview
           advertSubject={currentApplication.answers.advert?.title}
           advertType={currentApplication.answers.advert?.type?.title}
-          advertText={`${
-            currentApplication.answers.advert?.html ?? ''
-          }${signatureHtml}`}
+          advertText={fullHtml}
         />
       </Box>
     </Stack>

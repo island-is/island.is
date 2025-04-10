@@ -471,6 +471,7 @@ export const buildKeyValueField = (data: {
   paddingBottom?: BoxProps['padding']
   marginTop?: BoxProps['marginTop']
   marginBottom?: BoxProps['marginBottom']
+  tooltip?: FormText
 }): KeyValueField => {
   const {
     label,
@@ -485,6 +486,7 @@ export const buildKeyValueField = (data: {
     paddingBottom,
     marginTop,
     marginBottom,
+    tooltip,
   } = data
 
   return {
@@ -506,6 +508,7 @@ export const buildKeyValueField = (data: {
     paddingBottom,
     marginTop,
     marginBottom,
+    tooltip,
   }
 }
 
