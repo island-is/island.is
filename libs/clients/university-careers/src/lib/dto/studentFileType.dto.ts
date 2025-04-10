@@ -6,13 +6,7 @@ import {
   UnakFileType,
   BifrostFileType,
 } from '../clients'
-
-export type StudentFileType =
-  | 'transcript'
-  | 'diploma'
-  | 'diploma_supplement'
-  | 'course_descriptions'
-  | 'unknown'
+import { StudentFileType } from '../universityCareers.types'
 
 export const mapStudentFileType = (
   fileType:

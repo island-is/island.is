@@ -72,3 +72,36 @@ export const edMessage = defineMessages({
       'Hér getur þú séð yfirlit yfir námsferil þinn úr framhaldsskóla',
   },
 })
+
+export const uniMessages = defineMessages({
+  degree: {
+    id: 'sp.education-graduation:education-grad-detail-degree',
+    defaultMessage: 'Gráða',
+  },
+  graduationIntro: {
+    id: 'sp.education-graduation:education-graduation-intro',
+    defaultMessage:
+      'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi frá árinu 2015.',
+    description: 'education graduation intro',
+  },
+  seeDetails: {
+    id: 'sp.education-graduation:details',
+    defaultMessage: 'Skoða',
+  },
+  program: {
+    id: 'sp.education-graduation:education-grad-detail-program',
+    defaultMessage: 'Námsleið',
+  },
+  faculty: {
+    id: 'sp.education-graduation:education-grad-detail-faculty',
+    defaultMessage: 'Deild',
+  },
+  school: {
+    id: 'sp.education-graduation:education-grad-detail-school',
+    defaultMessage: 'Svið',
+  },
+  institution: {
+    id: 'sp.education-graduation:education-grad-detail-instutution',
+    defaultMessage: 'Stofnun',
+  },
+})

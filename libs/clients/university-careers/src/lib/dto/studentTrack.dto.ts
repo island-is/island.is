@@ -9,7 +9,7 @@ import { UniversityId } from '../universityCareers.types'
 import {
   StudentTrackInstitutionDto,
   mapToStudentTrackInstitutionDto,
-} from './studentTrackInstitutionDto'
+} from './studentTrackInstitution.dto'
 
 export interface StudentTrackDto {
   name?: string

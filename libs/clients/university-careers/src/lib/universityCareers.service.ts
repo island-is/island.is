@@ -32,18 +32,18 @@ import {
   UnakLocale,
   UnakTranscriptLocale,
 } from './clients'
-import { StudentTrackDto, mapToStudentTrackDto } from './dto/studentTrackDto'
 import { Locale } from '@island.is/shared/types'
-import { UniversityId } from './universityCareers.types'
+import { StudentFileType, UniversityId } from './universityCareers.types'
 import { handle404 } from '@island.is/clients/middlewares'
 import { isDefined } from '@island.is/shared/utils'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import {
+  StudentTrackDto,
+  mapToStudentTrackDto,
   StudentTrackOverviewDto,
   mapToStudentTrackOverviewDto,
-} from './dto/studentTrackOverviewDto'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { UniversityDto } from './dto/universityDto'
-import { StudentFileType } from './dto/studentFileType.dto'
+  UniversityDto,
+} from './dto'
 
 @Injectable()
 export class UniversityCareersClientService {

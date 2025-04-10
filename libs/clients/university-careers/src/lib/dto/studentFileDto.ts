@@ -5,7 +5,8 @@ import {
   HIStudentFile,
   HolarStudentFile,
 } from '../clients'
-import { StudentFileType, mapStudentFileType } from './studentFileType.dto'
+import { StudentFileType } from '../universityCareers.types'
+import { mapStudentFileType } from './studentFileType.dto'
 
 export interface StudentFileDto {
   type: StudentFileType
