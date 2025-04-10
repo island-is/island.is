@@ -2,14 +2,19 @@ import { defineConfig } from '@playwright/test'
 import { nxE2EPreset } from '@nx/playwright/preset'
 import { workspaceRoot } from '@nx/devkit'
 
-// For CI, you may want to set BASE_URL to the deployed application.
-const basePort = 4200 // This seems to be hard-coded somewhere, so we can't change it :(
-const baseURL = process.env['BASE_URL'] || `http://localhost:${basePort}`
+export type BaseConfig = {
+  project: string
+  baseURL?: string
+}
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export const baseConfig = (project: string) =>
+export const baseConfig = ({
+  project,
+  baseURL = process.env['BASE_URL'] ||
+    `http://localhost:${process.env.PORT || 4200}`,
+}: BaseConfig) =>
   defineConfig({
     ...nxE2EPreset(__filename, { testDir: './e2e' }),
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
