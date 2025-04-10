@@ -204,7 +204,7 @@ export const getStocksDataRow = (answers: FormValue): RowType[] => {
 export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
   const bankAccountsData = getValueViaPath<Array<BankAccountsData>>(
     answers,
-    'assets.bankAccouns.data',
+    'assets.bankAccounts.data',
   )
   const values = bankAccountsData?.filter((item) => item.enabled)
 
