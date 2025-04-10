@@ -146,27 +146,27 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     return { success: true }
   }
 
-  async courtBankruptcyCert({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<BankruptcyHistoryResult> {
-    const cert = await this.judicialAdministrationService.searchBankruptcy(auth)
+  async courtBankruptcyCert(): Promise<BankruptcyHistoryResult> {
+    const res: BankruptcyHistoryResult = {}
+    return res
+    //const cert = await this.judicialAdministrationService.searchBankruptcy(auth)
 
-    for (const [_, value] of Object.entries(cert)) {
-      if (
-        value.bankruptcyStatus &&
-        BANNED_BANKRUPTCY_STATUSES.includes(value.bankruptcyStatus)
-      ) {
-        throw new TemplateApiError(
-          {
-            title: error.missingJudicialAdministrationificateTitle,
-            summary: error.missingJudicialAdministrationificateSummary,
-          },
-          400,
-        )
-      }
-    }
+    //for (const [_, value] of Object.entries(cert)) {
+    //  if (
+    //    value.bankruptcyStatus &&
+    //    BANNED_BANKRUPTCY_STATUSES.includes(value.bankruptcyStatus)
+    //  ) {
+    //    throw new TemplateApiError(
+    //      {
+    //        title: error.missingJudicialAdministrationificateTitle,
+    //        summary: error.missingJudicialAdministrationificateSummary,
+    //      },
+    //      400,
+    //    )
+    //  }
+    //}
 
-    return cert[0]
+    //return cert[0]
   }
 
   async submitOperatingLicenseApplication({
