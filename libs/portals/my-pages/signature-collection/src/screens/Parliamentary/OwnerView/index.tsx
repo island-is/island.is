@@ -4,7 +4,6 @@ import {
   Stack,
   Text,
   Table as T,
-  Tooltip,
   DialogPrompt,
   Tag,
   Icon,
@@ -193,20 +192,7 @@ const OwnerView = ({
         )}
       </Box>
       <Box>
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="baseline"
-          marginBottom={3}
-        >
-          <Text variant="h4">
-            {formatMessage(m.supervisors) + ' '}
-            <Tooltip
-              placement="bottom"
-              text={formatMessage(m.supervisorsTooltip)}
-            />
-          </Text>
-        </Box>
+        <Text variant="h4">{formatMessage(m.supervisors)}</Text>
         <T.Table>
           <T.Head>
             <T.Row>
@@ -227,7 +213,7 @@ const OwnerView = ({
             ) : collectors.length ? (
               collectors.map((collector) => (
                 <T.Row key={collector.nationalId}>
-                  <T.Data width={'35%'}>{collector.name}</T.Data>
+                  <T.Data width="35%">{collector.name}</T.Data>
                   <T.Data>{formatNationalId(collector.nationalId)}</T.Data>
                 </T.Row>
               ))

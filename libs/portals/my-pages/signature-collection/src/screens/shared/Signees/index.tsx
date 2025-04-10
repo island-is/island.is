@@ -92,7 +92,7 @@ const Signees = () => {
                   .map((s: Signature) => {
                     return (
                       <T.Row key={s.id}>
-                        <T.Data text={{ variant: 'medium' }} width={'20%'}>
+                        <T.Data text={{ variant: 'medium' }} width="20%">
                           {format(new Date(), 'dd.MM.yyyy')}
                         </T.Data>
                         <T.Data text={{ variant: 'medium' }}>

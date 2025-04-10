@@ -40,12 +40,14 @@ export const signatureCollectionModule: PortalModule = {
         name: m.signatureCollectionParliamentaryLists,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         path: SignatureCollectionPaths.SignatureCollectionParliamentaryLists,
+        key: 'ParliamentaryLists',
         element: <SignatureListsParliamentary />,
       },
       {
         name: m.signatureCollectionParliamentaryLists,
         path: SignatureCollectionPaths.ViewParliamentaryList,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        key: 'ParliamentaryLists',
         element: <ViewListParliamentary />,
       },
       // Presidential

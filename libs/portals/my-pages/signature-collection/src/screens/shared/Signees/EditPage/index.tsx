@@ -66,8 +66,8 @@ const EditPage = ({
           setModalIsOpen(false)
         }}
         hideOnClickOutside={false}
-        closeButtonLabel={''}
-        label={''}
+        closeButtonLabel=""
+        label=""
       >
         <Box marginY={3}>
           <GridRow>

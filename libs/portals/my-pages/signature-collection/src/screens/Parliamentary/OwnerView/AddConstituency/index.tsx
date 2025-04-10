@@ -77,7 +77,7 @@ const AddConstituencyModal = ({
           setModalIsOpen(false)
           setSelectedConstituencies([])
         }}
-        label={''}
+        label=""
       >
         <Box display="block" width="full">
           <Text marginBottom={2} variant="h2">

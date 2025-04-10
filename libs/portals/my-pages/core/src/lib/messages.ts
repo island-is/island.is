@@ -565,6 +565,10 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionLists',
     defaultMessage: 'Meðmælasöfnun',
   },
+  signatureCollectionMunicipalLists: {
+    id: 'service.portal:signatureCollectionMunicipalLists',
+    defaultMessage: 'Sveitarstjórnarkosningar',
+  },
   signatureCollectionParliamentaryLists: {
     id: 'service.portal:signatureCollectionParliamentaryLists',
     defaultMessage: 'Alþingiskosningar',

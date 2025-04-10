@@ -14,9 +14,9 @@ const SignatureListsMunicipal = () => {
   return (
     <Box>
       <IntroWrapper
-        title={'Meðmælasafnanir fyrir sveitarstjórnarkosningar'}
+        title={"Meðmælasafnanir fyrir sveitarstjórnarkosningar"}
         intro={
-          'Hér eru upplýsingar um hlekk á söfnunina, stöðuna og yfirlit yfir umsjónaraðila.'
+          "Hér eru upplýsingar um hlekk á söfnunina, stöðuna og yfirlit yfir umsjónaraðila."
         }
         serviceProviderSlug={THJODSKRA_SLUG}
       />

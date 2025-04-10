@@ -19,17 +19,17 @@ const OwnerView = ({
       <ShareLink slug={listsForOwner?.[0]?.slug} />
       <Box>
         <Text variant="h4" marginBottom={3}>
-          {formatMessage(m.myListsDescription) + ': '}
+          {formatMessage(m.myListsDescription)}
         </Text>
         <ActionCard
           backgroundColor="white"
-          heading={'Borgarbyggð'}
+          heading="Borgarbyggð"
           progressMeter={{
             currentProgress: 0,
             maxProgress: 0,
             withLabel: true,
           }}
-          eyebrow={'Framboð A'}
+          eyebrow="Framboð A"
           text="Stofnandi söfnunar: Jón Jónsson"
           cta={{
             label: formatMessage(m.viewList),
@@ -40,7 +40,7 @@ const OwnerView = ({
             },
           }}
           tag={{
-            label: formatMessage('Söfnun í gangi'),
+            label: formatMessage("Söfnun í gangi"),
             variant: 'blue',
             outlined: false,
           }}

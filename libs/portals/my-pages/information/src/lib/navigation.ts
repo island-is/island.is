@@ -57,7 +57,7 @@ export const informationNavigation: PortalNavigationItem = {
       children: [
         // Municipal
         {
-          name: 'Sveitó',
+          name: m.signatureCollectionMunicipalLists,
           path: SignatureCollectionPaths.SignatureCollectionMunicipalLists,
           children: [
             {

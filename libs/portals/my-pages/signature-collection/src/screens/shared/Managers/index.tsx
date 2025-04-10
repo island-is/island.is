@@ -29,7 +29,7 @@ const Managers = () => {
         <T.Body>
           {loadingCollectors ? (
             <T.Row>
-              <T.Data width={'25%'}>
+              <T.Data width="25%">
                 <CollectorSkeleton />
               </T.Data>
               <T.Data>
@@ -39,7 +39,7 @@ const Managers = () => {
           ) : collectors.length ? (
             collectors.map((collector) => (
               <T.Row key={collector.nationalId}>
-                <T.Data width={'25%'}>
+                <T.Data width="25%">
                   {formatNationalId(collector.nationalId)}
                 </T.Data>
                 <T.Data>{collector.name}</T.Data>

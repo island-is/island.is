@@ -8,8 +8,8 @@ const ListActions = () => {
   return (
     <Box marginTop={3} marginBottom={5}>
       <Drawer
-        ariaLabel={''}
-        baseId={''}
+        ariaLabel="listActions"
+        baseId="listActions"
         disclosure={
           <Button variant="utility" icon="settings" iconType="outline">
             Aðgerðir
@@ -20,25 +20,25 @@ const ListActions = () => {
           Aðgerðir
         </Text>
         <Divider />
-        <Text marginY={6}>
+        <Text marginTop={6} marginBottom={8}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu
           justo interdum, pharetra enim vel, ultrices augue.
         </Text>
         {/* Sækja skýrslu */}
-        <Box display="flex" justifyContent="spaceBetween" marginBottom={5}>
+        <Box display="flex" justifyContent="spaceBetween" marginBottom={10}>
           <Box>
-            <Text variant="h5">Sækja skýrslu</Text>
+            <Text variant="h4">Sækja skýrslu</Text>
             <Text>
               Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.
             </Text>
           </Box>
-          <PdfReport listId={'1'} />
+          <PdfReport listId="1" />
         </Box>
 
         {/* Eyða framboði */}
         <Box display="flex" justifyContent="spaceBetween">
           <Box>
-            <Text variant="h5">Eyða framboði</Text>
+            <Text variant="h4">Eyða framboði</Text>
             <Text>
               Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.
             </Text>

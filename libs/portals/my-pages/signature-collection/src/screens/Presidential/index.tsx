@@ -17,7 +17,7 @@ const SignatureLists = () => {
   return (
     <Box>
       <IntroWrapper
-        title={formatMessage(m.pageTitle)}
+        title={formatMessage(m.pageTitlePresidential)}
         intro={formatMessage(m.pageDescriptionSignee)}
       />
       {currentCollection?.isPresidential &&

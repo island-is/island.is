@@ -2,15 +2,9 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   /* Forsetakosningar */
-  pageTitle: {
+  pageTitlePresidential: {
     id: 'sp.signatureCollection:title',
-    defaultMessage: 'Meðmælasöfnun',
-    description: '',
-  },
-  pageDescription: {
-    id: 'sp.signatureCollection:description',
-    defaultMessage:
-      'Upplýsingar um það hvernig umboð er veitt - hvernig aðgangsstýringarnar virka. Linkur á aðgangsstýringu.',
+    defaultMessage: 'Forsetakosningar',
     description: '',
   },
   pageDescriptionSignee: {
@@ -26,22 +20,12 @@ export const m = defineMessages({
   },
   collectionTitle: {
     id: 'sp.signatureCollection:collectionTitle',
-    defaultMessage: 'Forsetakosningar 2024',
-    description: '',
-  },
-  collectionTitleParliamentary: {
-    id: 'sp.signatureCollection:collectionTitleParliamentary',
-    defaultMessage: 'Alþingiskosningar',
+    defaultMessage: 'Forsetakosningar',
     description: '',
   },
   myListsDescription: {
     id: 'sp.signatureCollection:myListsDescription',
     defaultMessage: 'Yfirlit safnana sem þú hefur stofnað',
-    description: '',
-  },
-  myListsInfo: {
-    id: 'sp.signatureCollection:myListsInfo#markdown',
-    defaultMessage: 'Norðvesturkjördæmi - 7 þingsæti. 210 - 280 meðmæli.',
     description: '',
   },
   copyLinkButton: {
@@ -67,16 +51,6 @@ export const m = defineMessages({
   endTime: {
     id: 'sp.signatureCollection:endTime',
     defaultMessage: 'Lokadagur:',
-    description: '',
-  },
-  signedTime: {
-    id: 'sp.signatureCollection:signedTime',
-    defaultMessage: 'Skrifað undir:',
-    description: '',
-  },
-  uploadedTime: {
-    id: 'sp.signatureCollection:uploadedTime',
-    defaultMessage: 'Lesið inn:',
     description: '',
   },
   viewList: {
@@ -295,20 +269,9 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: '',
   },
-  signeeAddress: {
-    id: 'sp.signatureCollection:signeeAddress',
-    defaultMessage: 'Heimilisfang',
-    description: '',
-  },
   paperSigneesHeader: {
     id: 'sp.signatureCollection:paperSigneesHeader',
     defaultMessage: 'Skrá meðmæli af blaði',
-    description: '',
-  },
-  paperSigneesTooltip: {
-    id: 'sp.signatureCollection:paperSigneesTooltip',
-    defaultMessage:
-      'Athugið að ógild meðmæli skrást inn en teljast ekki með í heildartölu meðmæla. Dæmi slegnar eru inn 10 kennitölur en kerfið telur aðeins 8 gildar.',
     description: '',
   },
   paperSigneesClearButton: {
@@ -383,20 +346,14 @@ export const m = defineMessages({
   },
 
   /* Parliamentary */
-  parliamentaryElectionsTitle: {
-    id: 'sp.signatureCollection:parliamentaryElectionsTitle',
+  collectionTitleParliamentary: {
+    id: 'sp.signatureCollection:collectionTitleParliamentary',
     defaultMessage: 'Alþingiskosningar',
     description: '',
   },
   pageTitleParliamentary: {
     id: 'sp.signatureCollection:pageTitleParliamentary',
     defaultMessage: 'Meðmælasöfnun fyrir Alþingiskosningar',
-    description: '',
-  },
-  pageDescriptionParliamentary: {
-    id: 'sp.signatureCollection:pageDescriptionParliamentary',
-    defaultMessage:
-      'Hægt er að gera einstaklinga að umsjónaraðilum hér að neðan. Fjöldi meðmælenda er margfeldi af þingsætatölu hvers kjördæmis og 30 að lágmarki og 40 að hámarki. Söfnun lýkur 16.10.2024.',
     description: '',
   },
   infoProviderTooltip: {
@@ -412,12 +369,6 @@ export const m = defineMessages({
   noSupervisors: {
     id: 'sp.signatureCollection:noSupervisors',
     defaultMessage: 'Enginn umsjónaraðili skráður',
-    description: '',
-  },
-  supervisorsTooltip: {
-    id: 'sp.signatureCollection:supervisorsTooltip',
-    defaultMessage:
-      'Umsjónaraðilar hafa aðgang að öllum upplýsingum safnananna en geta ekki eytt söfnununum.',
     description: '',
   },
   add: {
@@ -438,16 +389,6 @@ export const m = defineMessages({
   nationalIdInvalid: {
     id: 'sp.signatureCollection:nationalIdInvalid',
     defaultMessage: 'Ógild kennitala',
-    description: '',
-  },
-  constituency: {
-    id: 'sp.signatureCollection:constituency',
-    defaultMessage: 'Kjördæmi',
-    description: '',
-  },
-  allConstituencies: {
-    id: 'sp.signatureCollection:allConstituencies',
-    defaultMessage: 'Öll kjördæmi',
     description: '',
   },
   addConstituency: {
