@@ -344,7 +344,7 @@ jobs:
             echo "Lint count has not increased"
             exit 0
           fi
-          echo "::error title=NEW_LINTS::Please fix your lints 🙏 (found $COUNT_DIFF additional lints)"
+          echo "::error title=NEW_LINTS::Please fix your lints 🙏 (found $NEW_LINTS additional lints)"
           echo "Files with changed lints:"
           diff "${BASE_LINT_FILE}_files.out" "${HEAD_LINT_FILE}_files.out" || :
           echo "::group::lintdiff"
