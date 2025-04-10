@@ -3,6 +3,7 @@ import { store } from './store'
 
 export const resolvers: Resolvers = {
   Identity: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     __resolveType: (identity) => {
       return identity.type === 'Company' ? 'IdentityCompany' : 'IdentityPerson'
     },
