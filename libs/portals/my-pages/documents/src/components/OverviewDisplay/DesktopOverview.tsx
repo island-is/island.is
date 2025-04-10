@@ -8,17 +8,15 @@ import { dateFormatWithTime } from '@island.is/shared/constants'
 import { isDefined } from '@island.is/shared/utils'
 import { FC } from 'react'
 import { useDocumentList } from '../../hooks/useDocumentList'
-import {
-  Reply,
-  useDocumentContext,
-} from '../../screens/Overview/DocumentContext'
+import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
 import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
 import NoPDF from '../NoPDF/NoPDF'
-import ReplySent from '../Reply/ReplyBody'
 import ReplyContainer from '../Reply/ReplyContainer'
 import ReplyHeader from '../Reply/ReplyHeader'
 import * as styles from './OverviewDisplay.css'
+import ReplyBody from '../Reply/ReplyBody'
+import { Reply } from '../../lib/types'
 
 interface Props {
   activeBookmark: boolean
@@ -69,7 +67,7 @@ export const DesktopOverview: FC<Props> = ({
     return <NoPDF />
   }
 
-  const toggleReply = (id?: number | null) => {
+  const toggleReply = (id?: string | null) => {
     const updatedReplies: Reply = {
       ...replies,
       comments:
@@ -117,7 +115,7 @@ export const DesktopOverview: FC<Props> = ({
             key={reply.id}
             cursor="pointer"
           >
-            <Box paddingY={3}>
+            <Box paddingY={1}>
               <Divider />
             </Box>
             <ReplyHeader
@@ -127,15 +125,14 @@ export const DesktopOverview: FC<Props> = ({
               subTitle={formatDate(reply?.createdDate, dateFormatWithTime.is)}
               displayEmail={false}
             />
-            {/* {!reply.hide && (
-              <ReplySent
+            {!reply.hide && (
+              <ReplyBody
                 date={reply.createdDate}
-                id={reply.id?.toString()}
-                reply={reply.body}
-                email={reply.author}
-                intro={reply.body}
+                id={reply.id}
+                body={reply.body}
+                sentTo={reply.author}
               />
-            )} */}
+            )}
           </Box>
         ))}
         {/* {If document is marked replyable, we render the reply form} */}

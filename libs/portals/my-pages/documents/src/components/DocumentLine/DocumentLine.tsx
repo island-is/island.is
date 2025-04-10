@@ -21,10 +21,7 @@ import { useDocumentList } from '../../hooks/useDocumentList'
 import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import { DocumentsPaths } from '../../lib/paths'
-import {
-  Reply,
-  useDocumentContext,
-} from '../../screens/Overview/DocumentContext'
+import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import {
   useDocumentConfirmActionsLazyQuery,
   useGetDocumentInboxLineV3LazyQuery,
@@ -34,6 +31,7 @@ import { FavAndStash } from '../FavAndStash/FavAndStash'
 import UrgentTag from '../UrgentTag/UrgentTag'
 import AvatarImage from './AvatarImage'
 import * as styles from './DocumentLine.css'
+import { Reply } from '../../lib/types'
 
 interface Props {
   documentLine: DocumentV2
@@ -87,6 +85,7 @@ export const DocumentLine: FC<Props> = ({
     setLocalRead,
     setReplyable,
     setReplies,
+    setReplyOpen,
     categoriesAvailable,
     localRead,
   } = useDocumentContext()
@@ -180,6 +179,7 @@ export const DocumentLine: FC<Props> = ({
             setDocumentDisplayError(undefined)
             setLocalRead([...localRead, documentLine.id])
             setReplyable(data?.documentV2?.replyable ?? false)
+            setReplyOpen(false)
             if (data?.documentV2?.ticket) {
               const reply: Reply = {
                 id: data.documentV2?.ticket?.id,

@@ -3,8 +3,8 @@ import { DocumentComment } from './comment.model'
 
 @ObjectType('DocumentTicket')
 export class Ticket {
-  @Field(() => Number, { nullable: true })
-  id?: number | null
+  @Field({ nullable: true })
+  id?: string
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   createdDate?: Date | null
@@ -18,8 +18,8 @@ export class Ticket {
   @Field(() => String, { nullable: true })
   status?: string | null
 
-  @Field(() => Number, { nullable: true })
-  authorId?: number | null
+  @Field(() => String, { nullable: true })
+  authorId?: string | null
 
   @Field(() => [DocumentComment], { nullable: true })
   comments?: DocumentComment[] | null

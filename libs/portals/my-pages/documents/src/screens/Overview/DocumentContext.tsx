@@ -1,9 +1,4 @@
-import {
-  DocumentComment,
-  DocumentsV2Category,
-  DocumentsV2Sender,
-  DocumentTicket,
-} from '@island.is/api/schema'
+import { DocumentsV2Category, DocumentsV2Sender } from '@island.is/api/schema'
 import {
   createContext,
   Dispatch,
@@ -13,19 +8,11 @@ import {
   useState,
 } from 'react'
 import { useLoaderData } from 'react-router-dom'
-import { ActiveDocumentType2 } from '../../lib/types'
+import { ActiveDocumentType2, PostReply, Reply } from '../../lib/types'
 import { defaultFilterValues, FilterValuesType } from '../../utils/types'
 
 type SelectedLineType = Array<string>
 type ActiveDocumentStateType = ActiveDocumentType2 | null
-
-export interface Comment extends DocumentComment {
-  hide: boolean
-}
-
-export interface Reply extends DocumentTicket {
-  comments?: Comment[]
-}
 
 export type DocumentsStateProps = {
   selectedLines: SelectedLineType
@@ -42,6 +29,7 @@ export type DocumentsStateProps = {
   replyable: boolean
   replies?: Reply
   replyOpen: boolean
+  reply?: PostReply
 
   setSelectedLines: Dispatch<SetStateAction<SelectedLineType>>
   setActiveDocument: Dispatch<SetStateAction<ActiveDocumentStateType>>
@@ -57,6 +45,7 @@ export type DocumentsStateProps = {
   setReplyable: Dispatch<SetStateAction<boolean>>
   setReplies: Dispatch<SetStateAction<Reply | undefined>>
   setReplyOpen: Dispatch<SetStateAction<boolean>>
+  setReply: Dispatch<SetStateAction<PostReply | undefined>>
 }
 
 export const DocumentsContext = createContext<DocumentsStateProps>({
@@ -74,6 +63,7 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   replyable: false,
   replies: undefined,
   replyOpen: false,
+  reply: undefined,
 
   setSelectedLines: () => undefined,
   setActiveDocument: () => undefined,
@@ -89,6 +79,7 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   setReplyable: () => undefined,
   setReplies: () => undefined,
   setReplyOpen: () => undefined,
+  setReply: () => undefined,
 })
 
 export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
@@ -115,6 +106,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
   const [replyable, setReplyable] = useState<boolean>(true) // TODO: Set to default false
   const [replyOpen, setReplyOpen] = useState<boolean>(false)
   const [replies, setReplies] = useState<Reply>()
+  const [reply, setReply] = useState<PostReply | undefined>(undefined)
 
   return (
     <DocumentsContext.Provider
@@ -133,6 +125,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         replyable,
         replies,
         replyOpen,
+        reply,
 
         setSelectedLines,
         setActiveDocument,
@@ -148,6 +141,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         setReplyable,
         setReplies,
         setReplyOpen,
+        setReply,
       }}
     >
       {children}

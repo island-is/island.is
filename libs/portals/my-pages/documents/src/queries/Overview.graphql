@@ -78,6 +78,28 @@ query GetDocumentInboxLineV3($input: DocumentInput!, $locale: String) {
   }
 }
 
+query GetDocumentTicket($input: DocumentInput!, $locale: String) {
+  documentV2(input: $input, locale: $locale) {
+    replyable
+    ticket {
+      id
+      authorId
+      createdDate
+      updatedDate
+      subject
+      status
+      authorId
+      comments {
+        id
+        authorId
+        author
+        body
+        createdDate
+      }
+    }
+  }
+}
+
 query GetDocumentInboxLineV2($input: DocumentInput!) {
   documentV2(input: $input) {
     content {

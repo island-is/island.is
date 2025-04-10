@@ -50,7 +50,6 @@ export class DocumentServiceV2 {
     const document = await this.documentService.getCustomersDocument(
       nationalId,
       documentId,
-      locale,
       includeDocument,
     )
 
@@ -93,17 +92,17 @@ export class DocumentServiceV2 {
     )
 
     const ticket = {
-      authorId: document.ticket?.authorId,
+      id: document.ticket?.id?.toString(),
+      authorId: document.ticket?.authorId?.toString(),
       createdDate: document.ticket?.createdAt,
       updatedDate: document.ticket?.updatedAt,
       status: document.ticket?.status,
-      id: document.ticket?.id,
       subject: document.ticket?.subject,
       comments: document.ticket?.comments?.map((c) => ({
-        id: c.id,
+        id: c.id?.toString(),
         body: c.body,
         createdDate: c.createdAt,
-        authorId: c.authorId,
+        authorId: c.authorId?.toString(),
         author: c.author,
       })),
     }
@@ -433,7 +432,7 @@ export class DocumentServiceV2 {
         error: error,
         documentId: input.documentId,
       })
-      return null
+      throw error
     }
   }
 
