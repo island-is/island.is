@@ -19,7 +19,7 @@ export const resolvers: Resolvers = {
       return match || null
     },
     vehicleMileageDetails: (_, { input }) => {
-      const match = store.vehicleMilageDetails.find(
+      const match = store.vehicleMileageDetails.find(
         (item) => item?.permno === input.permno,
       )
       return match || null

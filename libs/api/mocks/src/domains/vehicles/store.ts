@@ -32,6 +32,6 @@ export const store = createStore(() => {
   return {
     getVehicleList: vehicleList,
     vehicleDetails,
-    vehicleMilageDetails: vehicleMileageDetails,
+    vehicleMileageDetails: vehicleMileageDetails,
   }
 })
