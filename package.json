@@ -439,7 +439,7 @@
     "babel-loader": "8.2.5",
     "babel-plugin-transform-class-properties": "6.24.1",
     "babel-plugin-transform-imports": "2.0.0",
-    "beygla": "1.4.0",
+    "beygla": "1.5.2",
     "canvas": "3.1.0",
     "chalk": "4.1.2",
     "contentful-cli": "1.5.14",
