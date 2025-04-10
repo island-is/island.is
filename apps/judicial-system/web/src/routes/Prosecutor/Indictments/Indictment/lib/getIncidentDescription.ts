@@ -1,4 +1,5 @@
 import { IntlShape } from 'react-intl'
+import { applyCase } from 'beygla/addresses'
 
 import {
   formatDate,
@@ -15,7 +16,7 @@ import {
 import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'
-import { indictmentCount as strings } from '../IndictmentCount.strings'
+import { strings } from './getIncidentDescription.strings'
 
 const getIncidentDescriptionProps = (
   offenses: Offense[] = [],
@@ -46,7 +47,18 @@ export const getIncidentDescription = (
     policeCaseNumber,
   } = indictmentCount
 
-  const incidentLocation = crimeScene?.place || '[Vettvangur]'
+  // The place where a crime was committed is not fully standardized.
+  // However, a common pattern is to have a street name followed by a town name, separated by a comma.
+  // The implementation below will apply the correct case to the street name and town name.
+  // It also handles a longer list of comma seperated values, such as "Eyrarvegur, Selfoss, Suðurland, Ísland".
+  // If applyCase cannot convert a substring to the correct case, it will return the original substring,
+  // leaving that part of the place unchanged.
+  const incidentLocation = crimeScene?.place
+    ? crimeScene.place
+        .split(',')
+        .map((str, idx) => applyCase(idx > 0 ? 'þgf' : 'þf', str))
+        .join(', ')
+    : '[Vettvangur]'
   const incidentDate = crimeScene?.date
     ? formatDate(crimeScene.date, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
     : '[Dagsetning]'

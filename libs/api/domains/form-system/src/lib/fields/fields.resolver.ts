@@ -20,7 +20,7 @@ import { Field } from '../../models/field.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class FieldsResolver {
-  constructor(private readonly fieldsService: FieldsService) { }
+  constructor(private readonly fieldsService: FieldsService) {}
 
   @Mutation(() => Field, {
     name: 'createFormSystemField',

@@ -23,14 +23,14 @@ export type RepresentativeSelectOption = ReactSelectOption & {
 export const SelectCaseFileRepresentative = ({
   fileRepresentative,
   setFileRepresentative,
-  submittedDate,
-  setSubmittedDate,
+  submissionDate,
+  setSubmissionDate,
   handleCaseFileRepresentativeUpdate,
 }: {
   fileRepresentative: RepresentativeSelectOption
   setFileRepresentative: Dispatch<SetStateAction<RepresentativeSelectOption>>
-  submittedDate: Date
-  setSubmittedDate: Dispatch<SetStateAction<Date>>
+  submissionDate: Date
+  setSubmissionDate: Dispatch<SetStateAction<Date>>
   handleCaseFileRepresentativeUpdate: (
     fileRepresentative?: RepresentativeSelectOption,
     submittedDate?: Date,
@@ -71,18 +71,18 @@ export const SelectCaseFileRepresentative = ({
               setFileRepresentative(representativeSelectOption)
               handleCaseFileRepresentativeUpdate(
                 representativeSelectOption,
-                submittedDate,
+                submissionDate,
               )
             }}
             required
           />
           <DateTime
-            name="fileSubmittedDate"
-            selectedDate={submittedDate}
+            name="fileSubmissionDate"
+            selectedDate={submissionDate}
             onChange={(selectedDate) => {
               if (!selectedDate) return
 
-              setSubmittedDate(selectedDate)
+              setSubmissionDate(selectedDate)
               handleCaseFileRepresentativeUpdate(
                 fileRepresentative,
                 selectedDate,

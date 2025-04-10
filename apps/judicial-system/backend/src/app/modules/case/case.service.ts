@@ -406,6 +406,9 @@ export const include: Includeable[] = [
               CaseFileCategory.CRIMINAL_RECORD_UPDATE,
               CaseFileCategory.CASE_FILE,
               CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.DEFENDANT_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIM,
             ],
@@ -1920,8 +1923,9 @@ export class CaseService {
     user: TUser,
     returnUpdatedCase = true,
   ): Promise<Case | undefined> {
-    const receivingCase =
+    const isReceivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
+
     const completingIndictmentCaseWithoutRuling =
       isIndictmentCase(theCase.type) &&
       update.state === CaseState.COMPLETED &&
@@ -1932,14 +1936,24 @@ export class CaseService {
         CaseIndictmentRulingDecision.MERGE,
         CaseIndictmentRulingDecision.WITHDRAWAL,
       ].includes(theCase.indictmentRulingDecision)
+
+    const requiresCourtTransition =
+      theCase.courtId &&
+      update.courtId &&
+      theCase.courtId !== update.courtId &&
+      theCase.state === CaseState.RECEIVED
+
     const updatedArraignmentDate = update.arraignmentDate
     const schedulingNewArraignmentDateForIndictmentCase =
       isIndictmentCase(theCase.type) && Boolean(updatedArraignmentDate)
 
     return this.sequelize
       .transaction(async (transaction) => {
-        if (receivingCase) {
+        if (isReceivingCase) {
           update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
+        }
+        if (requiresCourtTransition) {
+          update = transitionCase(CaseTransition.MOVE, theCase, user, update)
         }
 
         await this.handleDateUpdates(theCase, update, transaction)
@@ -1999,15 +2013,17 @@ export class CaseService {
           theCase.defendants
         ) {
           await Promise.all(
-            theCase.defendants.map((defendant) =>
-              this.subpoenaService.createSubpoena(
-                defendant.id,
-                theCase.id,
-                transaction,
-                updatedArraignmentDate?.date,
-                updatedArraignmentDate?.location,
+            theCase.defendants
+              .filter((defendant) => !defendant.isAlternativeService)
+              .map((defendant) =>
+                this.subpoenaService.createSubpoena(
+                  defendant.id,
+                  theCase.id,
+                  transaction,
+                  updatedArraignmentDate?.date,
+                  updatedArraignmentDate?.location,
+                ),
               ),
-            ),
           )
         }
       })
@@ -2016,8 +2032,20 @@ export class CaseService {
 
         await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
-        if (receivingCase) {
+        if (isReceivingCase) {
           this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
+        }
+
+        if (requiresCourtTransition) {
+          this.eventService.postEvent(
+            CaseTransition.MOVE,
+            updatedCase ?? theCase,
+            false,
+            {
+              from: theCase.court?.name,
+              to: updatedCase?.court?.name,
+            },
+          )
         }
 
         if (returnUpdatedCase) {
