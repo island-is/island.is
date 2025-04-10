@@ -33778,7 +33778,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-playwright@npm:^0.15.3":
+"eslint-plugin-playwright@npm:0.15.3":
   version: 0.15.3
   resolution: "eslint-plugin-playwright@npm:0.15.3"
   peerDependencies:
@@ -39781,7 +39781,7 @@ __metadata:
     eslint-plugin-import: "npm:2.27.5"
     eslint-plugin-jsx-a11y: "npm:6.7.1"
     eslint-plugin-local-rules: "npm:3.0.2"
-    eslint-plugin-playwright: "npm:^0.15.3"
+    eslint-plugin-playwright: "npm:0.15.3"
     eslint-plugin-react: "npm:7.32.2"
     eslint-plugin-react-hooks: "npm:4.6.0"
     eslint-plugin-simple-import-sort: "npm:10.0.0"
