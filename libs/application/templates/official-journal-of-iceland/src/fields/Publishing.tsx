@@ -14,15 +14,10 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import { useCategories } from '../hooks/useCategories'
-import { MINIMUM_WEEKDAYS, OJOI_INPUT_HEIGHT } from '../lib/constants'
+import { OJOI_INPUT_HEIGHT } from '../lib/constants'
 import set from 'lodash/set'
 import addYears from 'date-fns/addYears'
-import {
-  addWeekdays,
-  getDefaultDate,
-  getExcludedDates,
-  getFastTrack,
-} from '../lib/utils'
+import { getDefaultDate, getExcludedDates, getFastTrack } from '../lib/utils'
 import { useState } from 'react'
 import { baseEntitySchema } from '../lib/dataSchema'
 import { z } from 'zod'
@@ -50,7 +45,9 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
     minDate.setDate(minDate.getDate() + 1)
   }
 
-  const defaultDate = getDefaultDate(currentApplication.answers.advert?.requestedDate)
+  const defaultDate = getDefaultDate(
+    currentApplication.answers.advert?.requestedDate,
+  )
 
   const [fastTrack, setFastTrack] = useState(
     getFastTrack(new Date(defaultDate)).fastTrack,

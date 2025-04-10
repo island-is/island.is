@@ -37,7 +37,7 @@ const getHolidayMap = (year: number): IsHolidayMap => {
   return yearHolidays
 }
 
-export const isWorkday = (date: Date): boolean => {
+const isWorkday = (date: Date): boolean => {
   const wDay = date.getDay()
   if (wDay === 0 || wDay === 6) {
     return false
@@ -45,8 +45,27 @@ export const isWorkday = (date: Date): boolean => {
   const holidays = getHolidayMap(date.getFullYear())
   return holidays[toISODate(date)] !== true
 }
+const getNextWorkday = (date: Date) => {
+  // Returns the next workday.
+  let nextDay = date
+  while (!isWorkday(nextDay)) {
+    nextDay = addDays(nextDay, 1)
+  }
+  return nextDay
+}
 
-export const getWeekendDates = (
+const addWeekdays = (date: Date, days: number) => {
+  let result = new Date(date)
+  while (days > 0) {
+    result = addDays(result, 1)
+    if (isWeekday(result)) {
+      days--
+    }
+  }
+  return result
+}
+
+const getWeekendDates = (
   startDate = new Date(),
   endDate = addYears(new Date(), 1),
 ) => {
@@ -90,32 +109,7 @@ export const getExcludedDates = (
   return [...weekendDates, ...holidays.map((holiday) => holiday.date)]
 }
 
-export const getNextWorkday = (date: Date) => {
-  // Returns the next workday.
-  let nextDay = date
-  while (!isWorkday(nextDay)) {
-    nextDay = addDays(nextDay, 1)
-  }
-  return nextDay
-}
 
-export const addWeekdays = (date: Date, days: number) => {
-  let result = new Date(date)
-  while (days > 0) {
-    result = addDays(result, 1)
-    if (isWeekday(result)) {
-      days--
-    }
-  }
-  return result
-}
-
-export const getNextAvailableDate = (date: Date): Date => {
-  if (isWeekday(date)) {
-    return date
-  }
-  return getNextAvailableDate(addDays(date, 1))
-}
 
 export const getEmptyMember = () => ({
   name: '',
