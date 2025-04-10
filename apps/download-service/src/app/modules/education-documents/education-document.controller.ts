@@ -5,7 +5,7 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { ApiScope } from '@island.is/auth/scopes'
+import { ApiScope, NationalRegistryScope } from '@island.is/auth/scopes'
 import {
   UniversityCareersClientService,
   UniversityIdShort,
