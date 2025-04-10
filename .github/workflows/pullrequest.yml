@@ -338,8 +338,15 @@ jobs:
             exit 0
           fi
           echo "::error title=NEW_LINTS::Please fix your lints 🙏 (found $COUNT_DIFF additional lints)"
-          sed -i -E 's/\[[^]]*cache[^]*]\]/[cached]/g' "${HEAD_LINT_FILE}"
-          sed -i -E 's/\[[^]]*cache[^]*]\]/[cached]/g' "${BASE_LINT_FILE}"
+
+          # Get `<filename> #lints: <n>` lines for easy diff
+          for f in "${HEAD_LINT_FILE}" "${HEAD_LINT_FILE}"; do
+            # Make "Remote cache..." and "Local cache" be the same
+            sed -i -E 's/\[[^]]*cache[^]*]\]/[cached]/g' "${f}"
+            grep -oP "(?<=$PWD/).*" "${f}" | sort -n | uniq -c | awk '{print($2 " #lints: " $1)}' > "${f}.files"
+          done
+          echo "Files with changed lints:"
+          diff "${HEAD_LINT_FILE}.files" "${BASE_LINT_FILE}.files"
           echo "::group::lintdiff"
           diff "${BASE_LINT_FILE}" "${HEAD_LINT_FILE}" || : # Ignore diff exit code
           echo "::endgroup::"
