@@ -3,6 +3,9 @@ import { useDebounce } from 'react-use'
 
 import { DatePicker } from '@island.is/island-ui/core'
 
+const CURRENT_YEAR = new Date().getFullYear()
+const MIN_YEAR = 1900
+
 interface DebouncedDatePickerProps {
   label: string
   name: string
@@ -48,6 +51,8 @@ export const DebouncedDatePicker = ({
       selected={state}
       maxDate={maxDate}
       minDate={minDate}
+      minYear={minDate ? minDate.getFullYear() : MIN_YEAR}
+      maxYear={maxDate ? maxDate.getFullYear() : CURRENT_YEAR}
     />
   )
 }
