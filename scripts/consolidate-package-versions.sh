@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
-if [[ -z "${VERSION:-}" ]]; then VERSION="$1"; shift fi
+if [[ -z "${VERSION:-}" ]]; then
+  VERSION="$1"
+  shift
+fi
 VERSION="${VERSION:-1}"
 PACKAGES="@"
 PACKAGES_VERSIONED=()
