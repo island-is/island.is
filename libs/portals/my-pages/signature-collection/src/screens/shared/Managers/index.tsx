@@ -12,13 +12,9 @@ const Managers = () => {
   return (
     <Box>
       <Text variant="h4" marginBottom={1}>
-        {formatMessage(m.supervisors)}
+        {formatMessage(m.managers)}
       </Text>
-      <Text marginBottom={5}>
-        {formatMessage(
-          'Hægt er að bæta við umsjónaraðilum með því að veita þeim umboð hér. Umsjónaraðilar hafa sömu aðgangsheimildir og stofnandi söfnunar en geta ekki eytt söfnuninni.',
-        )}
-      </Text>
+      <Text marginBottom={5}>{formatMessage(m.managersDescription)}</Text>
       <T.Table>
         <T.Head>
           <T.Row>
@@ -46,7 +42,7 @@ const Managers = () => {
               </T.Row>
             ))
           ) : (
-            <Text marginTop={2}>{formatMessage(m.noSupervisors)}</Text>
+            <Text marginTop={2}>{formatMessage(m.noManagers)}</Text>
           )}
         </T.Body>
       </T.Table>

@@ -3,7 +3,6 @@ import {
   Box,
   Stack,
   Text,
-  Table as T,
   DialogPrompt,
   Tag,
   Icon,
@@ -18,17 +17,14 @@ import {
   SignatureCollectionList,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
-import {
-  CollectorSkeleton,
-  OwnerParliamentarySkeleton,
-} from '../../../lib/skeletons'
-import { useGetCollectors, useGetListsForOwner } from '../../../hooks'
+import { OwnerParliamentarySkeleton } from '../../../lib/skeletons'
+import { useGetListsForOwner } from '../../../hooks'
 import { SignatureCollection } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
 import SignedList from '../../shared/SignedList'
 import ShareLink from '../../shared/ShareLink'
-import { formatNationalId } from '@island.is/portals/core'
+import Managers from '../../shared/Managers'
 
 const OwnerView = ({
   refetchIsOwner,
@@ -46,7 +42,6 @@ const OwnerView = ({
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
     useGetListsForOwner(currentCollection?.id || '')
-  const { collectors, loadingCollectors } = useGetCollectors()
 
   const [cancelCollection] = useMutation<SignatureCollectionSuccess>(
     cancelCollectionMutation,
@@ -191,38 +186,7 @@ const OwnerView = ({
           ))
         )}
       </Box>
-      <Box>
-        <Text variant="h4">{formatMessage(m.supervisors)}</Text>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>{formatMessage(m.personName)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.personNationalId)}</T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {loadingCollectors ? (
-              <T.Row>
-                <T.Data>
-                  <CollectorSkeleton />
-                </T.Data>
-                <T.Data>
-                  <CollectorSkeleton />
-                </T.Data>
-              </T.Row>
-            ) : collectors.length ? (
-              collectors.map((collector) => (
-                <T.Row key={collector.nationalId}>
-                  <T.Data width="35%">{collector.name}</T.Data>
-                  <T.Data>{formatNationalId(collector.nationalId)}</T.Data>
-                </T.Row>
-              ))
-            ) : (
-              <Text marginTop={2}>{formatMessage(m.noSupervisors)}</Text>
-            )}
-          </T.Body>
-        </T.Table>
-      </Box>
+      <Managers />
       <ShareLink slug={listsForOwner?.[0]?.slug} />
     </Stack>
   )

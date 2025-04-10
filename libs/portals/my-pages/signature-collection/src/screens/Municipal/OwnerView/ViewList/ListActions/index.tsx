@@ -1,6 +1,7 @@
 import { Box, Button, Divider, Drawer, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import PdfReport from '../../../../shared/PdfReport'
+import { m } from '../../../../../lib/messages'
 
 const ListActions = () => {
   const { formatMessage } = useLocale()
@@ -12,36 +13,28 @@ const ListActions = () => {
         baseId="listActions"
         disclosure={
           <Button variant="utility" icon="settings" iconType="outline">
-            Aðgerðir
+            {formatMessage(m.listActions)}
           </Button>
         }
       >
         <Text variant="h2" color="backgroundBrand" marginY={3}>
-          Aðgerðir
+          {formatMessage(m.listActions)}
         </Text>
         <Divider />
         <Text marginTop={6} marginBottom={8}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu
-          justo interdum, pharetra enim vel, ultrices augue.
+          {formatMessage(m.listActionsDescription)}
         </Text>
-        {/* Sækja skýrslu */}
         <Box display="flex" justifyContent="spaceBetween" marginBottom={10}>
           <Box>
-            <Text variant="h4">Sækja skýrslu</Text>
-            <Text>
-              Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.
-            </Text>
+            <Text variant="h4">{formatMessage(m.downloadPdf)}</Text>
+            <Text>{formatMessage(m.downloadPdfDescription)}</Text>
           </Box>
           <PdfReport listId="1" />
         </Box>
-
-        {/* Eyða framboði */}
         <Box display="flex" justifyContent="spaceBetween">
           <Box>
-            <Text variant="h4">Eyða framboði</Text>
-            <Text>
-              Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.
-            </Text>
+            <Text variant="h4">{formatMessage(m.deleteCollection)}</Text>
+            <Text>{formatMessage(m.deleteCollectionDescription)}</Text>
           </Box>
           <Button
             iconType="outline"
@@ -49,7 +42,7 @@ const ListActions = () => {
             icon="trash"
             colorScheme="destructive"
           >
-            {formatMessage('Eyða framboði')}
+            {formatMessage(m.deleteCollection)}
           </Button>
         </Box>
       </Drawer>

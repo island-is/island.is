@@ -40,7 +40,7 @@ const OwnerView = ({
             },
           }}
           tag={{
-            label: formatMessage("Söfnun í gangi"),
+            label: formatMessage(m.collectionIsActive),
             variant: 'blue',
             outlined: false,
           }}

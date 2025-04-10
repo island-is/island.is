@@ -12,7 +12,7 @@ const ShareLink = (slug: {
     <Box
       background="blue100"
       borderRadius="large"
-      display={['block', 'flex', 'flex']}
+      display={["block", "flex", "flex"]}
       justifyContent="spaceBetween"
       alignItems="center"
       padding={3}

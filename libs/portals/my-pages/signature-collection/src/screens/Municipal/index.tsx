@@ -1,12 +1,14 @@
 import { Box } from '@island.is/island-ui/core'
-import { useNamespaces } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroWrapper, THJODSKRA_SLUG } from '@island.is/portals/my-pages/core'
 import { useGetCurrentCollection, useIsOwner } from '../../hooks'
 import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'
+import { m } from '../../lib/messages'
 
 const SignatureListsMunicipal = () => {
   useNamespaces('sp.signatureCollection')
+  const { formatMessage } = useLocale()
   const { isOwner } = useIsOwner()
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection()
@@ -14,10 +16,8 @@ const SignatureListsMunicipal = () => {
   return (
     <Box>
       <IntroWrapper
-        title={"Meðmælasafnanir fyrir sveitarstjórnarkosningar"}
-        intro={
-          "Hér eru upplýsingar um hlekk á söfnunina, stöðuna og yfirlit yfir umsjónaraðila."
-        }
+        title={formatMessage(m.pageTitleMunicipal)}
+        intro={formatMessage(m.pageIntroMunicipal)}
         serviceProviderSlug={THJODSKRA_SLUG}
       />
       {!loadingCurrentCollection && isOwner.success ? (

@@ -229,6 +229,12 @@ export const m = defineMessages({
     defaultMessage: 'Sækja skýrslu',
     description: '',
   },
+  downloadPdfDescription: {
+    id: 'sp.signatureCollection:downloadPdfDescription',
+    defaultMessage:
+      '              Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
+    description: '',
+  },
   copyLink: {
     id: 'sp.signatureCollection:copyLink',
     defaultMessage: 'Afrita tengil',
@@ -361,16 +367,6 @@ export const m = defineMessages({
     defaultMessage:
       'Þjóðskrá Íslands hefur umsjón með gögnum um meðmælasöfnun.',
   },
-  supervisors: {
-    id: 'sp.signatureCollection:supervisors',
-    defaultMessage: 'Umsjónaraðilar',
-    description: '',
-  },
-  noSupervisors: {
-    id: 'sp.signatureCollection:noSupervisors',
-    defaultMessage: 'Enginn umsjónaraðili skráður',
-    description: '',
-  },
   add: {
     id: 'sp.signatureCollection:add',
     defaultMessage: 'Bæta við',
@@ -410,6 +406,62 @@ export const m = defineMessages({
   addConstituencyError: {
     id: 'sp.signatureCollection:addConstituencyError',
     defaultMessage: 'Ekki tókst að bæta við kjördæmi',
+    description: '',
+  },
+
+  /* Municipal */
+  pageTitleMunicipal: {
+    id: 'sp.signatureCollection:pageTitleMunicipal',
+    defaultMessage: 'Meðmælasafnanir fyrir sveitarstjórnarkosningar',
+    description: '',
+  },
+  pageIntroMunicipal: {
+    id: 'sp.signatureCollection:pageIntroMunicipal',
+    defaultMessage:
+      'Hér eru upplýsingar um hlekk á söfnunina, stöðuna og yfirlit yfir umsjónaraðila.',
+    description: '',
+  },
+  collectionIsActive: {
+    id: 'sp.signatureCollection:collectionIsActive',
+    defaultMessage: 'Söfnun í gangi',
+    description: '',
+  },
+  managers: {
+    id: 'sp.signatureCollection:managers',
+    defaultMessage: 'Umsjónaraðilar',
+    description: '',
+  },
+  managersDescription: {
+    id: 'sp.signatureCollection:managersDescription',
+    defaultMessage:
+      'Hægt er að bæta við umsjónaraðilum með því að veita þeim umboð hér. Umsjónaraðilar hafa sömu aðgangsheimildir og stofnandi söfnunar en geta ekki eytt söfnuninni.',
+    description: '',
+  },
+  noManagers: {
+    id: 'sp.signatureCollection:noManagers',
+    defaultMessage: 'Enginn umsjónaraðili skráður',
+    description: '',
+  },
+  listActions: {
+    id: 'sp.signatureCollection:listActions',
+    defaultMessage: 'Aðgerðir',
+    description: '',
+  },
+  listActionsDescription: {
+    id: 'sp.signatureCollection:listActionsDescription',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu justo interdum, pharetra enim vel, ultrices augue.',
+    description: '',
+  },
+  deleteCollection: {
+    id: 'sp.signatureCollection:deleteCollection',
+    defaultMessage: 'Eyða frambooði',
+    description: '',
+  },
+  deleteCollectionDescription: {
+    id: 'sp.signatureCollection:deleteCollectionDescription',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
     description: '',
   },
 })
