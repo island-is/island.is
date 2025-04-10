@@ -88,8 +88,8 @@ const CaseFileTable: FC<Props> = ({
             <td>
               <Box className={styles.noWrapColumn}>
                 <Text>
-                  {file.submissionDate
-                    ? formatDate(file.submissionDate)
+                  {file.fileRepresentative
+                    ? formatDate(file.submissionDate || file.created)
                     : formatDate(file.created, "dd.MM.yyyy 'kl.' HH:mm")}
                 </Text>
                 <Text variant="small">

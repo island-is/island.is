@@ -24,6 +24,7 @@ import {
 
 import { CivilClaimant, Defendant } from '../../defendant'
 import { Case } from '../models/case.model'
+import { MinimalCase } from '../models/case.types'
 import { DateLog } from '../models/dateLog.model'
 
 const canProsecutionUserAccessCase = (
@@ -443,5 +444,21 @@ export const canUserAccessCase = (
   }
 
   // Other users cannot access cases
+  return false
+}
+
+export const canUserAccessMinimalCase = (
+  theCase: MinimalCase,
+  user: User,
+): boolean => {
+  if (isProsecutionUser(user)) {
+    return canProsecutionUserAccessCase(theCase, user, false)
+  }
+
+  if (isDistrictCourtUser(user)) {
+    return canDistrictCourtUserAccessCase(theCase, user)
+  }
+
+  // Other users can be added when needed
   return false
 }
