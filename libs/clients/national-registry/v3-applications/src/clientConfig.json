@@ -17,7 +17,9 @@
             "in": "path",
             "description": "Kennitala einstaklings sem verið er að leita eftir.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -25,7 +27,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/EinstaklingurDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/EinstaklingurDTO"
+                }
               }
             }
           },
@@ -33,7 +37,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -41,7 +47,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -49,7 +57,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -67,7 +77,9 @@
             "in": "path",
             "description": "Kennitala þess sem þarf fæðingarstað fyrir.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -75,7 +87,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/FaedingarstadurDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/FaedingarstadurDTO"
+                }
               }
             }
           },
@@ -83,7 +97,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -91,7 +107,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -99,7 +117,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -117,7 +137,9 @@
             "in": "path",
             "description": "Kennitala forsjáraðila.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -125,7 +147,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ForsjaAdiliDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/ForsjaAdiliDTO"
+                }
               }
             }
           },
@@ -133,7 +157,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -141,7 +167,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -149,7 +177,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -167,7 +197,9 @@
             "in": "path",
             "description": "Kennitala forsjáraðila.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -175,7 +207,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ForsjaBarnDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/ForsjaBarnDTO"
+                }
               }
             }
           },
@@ -183,7 +217,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -191,7 +227,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -199,7 +237,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -217,7 +257,9 @@
             "in": "path",
             "description": "Kennitala.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -225,7 +267,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/RikisfangDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/RikisfangDTO"
+                }
               }
             }
           },
@@ -233,7 +277,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -241,7 +287,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -249,7 +297,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -267,7 +317,9 @@
             "in": "path",
             "description": "Kennitala.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -275,7 +327,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/AdseturDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/AdseturDTO"
+                }
               }
             }
           },
@@ -283,7 +337,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -291,7 +347,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -299,7 +357,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -317,7 +377,9 @@
             "in": "path",
             "description": "Kennitala.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -325,7 +387,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HjuskapurDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/HjuskapurDTO"
+                }
               }
             }
           },
@@ -333,7 +397,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -341,7 +407,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -349,7 +417,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -367,7 +437,9 @@
             "in": "path",
             "description": "Kennitala þess sem á að skila lögheimili fyrir.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -375,7 +447,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/LogheimiliDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/LogheimiliDTO"
+                }
               }
             }
           },
@@ -383,7 +457,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -391,7 +467,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -399,7 +477,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -417,7 +497,9 @@
             "in": "path",
             "description": "Kennitala þess sem á að skila lögheimilistengslum fyrir.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -435,7 +517,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -443,7 +527,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -451,7 +537,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -469,7 +557,9 @@
             "in": "path",
             "description": "Kennitala þess sem á að skila upplýsingum um fjölskyldumeðlimi.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -487,7 +577,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -495,7 +587,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -503,7 +597,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -521,7 +617,9 @@
             "in": "path",
             "description": "Kennitala.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -529,7 +627,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ForsjaBarnDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/ForsjaBarnDTO"
+                }
               }
             }
           },
@@ -537,7 +637,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -545,7 +647,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -553,7 +657,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -571,7 +677,9 @@
             "in": "path",
             "description": "Kennitala.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -579,7 +687,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ForsjaBarnDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/ForsjaBarnDTO"
+                }
               }
             }
           },
@@ -587,7 +697,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -595,7 +707,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -603,7 +717,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -621,7 +737,9 @@
             "in": "path",
             "description": "Kennitala þess sem á að skila búsetu fyrir.",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -631,7 +749,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/BusetaDTO" }
+                  "items": {
+                    "$ref": "#/components/schemas/BusetaDTO"
+                  }
                 }
               }
             }
@@ -640,7 +760,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -648,7 +770,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -656,7 +780,9 @@
             "description": "Internal Server Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -682,7 +808,9 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -690,7 +818,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -705,7 +835,9 @@
             "name": "Kennitala",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -713,7 +845,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/EinstaklingurUtlDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/EinstaklingurUtlDTO"
+                }
               }
             }
           }
@@ -726,13 +860,34 @@
       "AdseturDTO": {
         "type": "object",
         "properties": {
-          "ibudanumer": { "type": "string", "nullable": true },
-          "postnumer": { "type": "string", "nullable": true },
-          "stadur": { "type": "string", "nullable": true },
-          "sveitarfelagsnumer": { "type": "string", "nullable": true },
-          "huskodi": { "type": "string", "nullable": true },
-          "heimilisfang": { "type": "string", "nullable": true },
-          "landakodi": { "type": "string", "nullable": true },
+          "ibudanumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "huskodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "heimilisfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "landakodi": {
+            "type": "string",
+            "nullable": true
+          },
           "breytt": {
             "type": "string",
             "format": "date-time",
@@ -744,18 +899,39 @@
       "BusetaDTO": {
         "type": "object",
         "properties": {
-          "ibudanumer": { "type": "string", "nullable": true },
-          "postnumer": { "type": "string", "nullable": true },
-          "stadur": { "type": "string", "nullable": true },
-          "sveitarfelagsnumer": { "type": "string", "nullable": true },
-          "huskodi": { "type": "string", "nullable": true },
+          "ibudanumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "huskodi": {
+            "type": "string",
+            "nullable": true
+          },
           "fasteignanumer": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "heimilisfang": { "type": "string", "nullable": true },
-          "landakodi": { "type": "string", "nullable": true },
+          "heimilisfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "landakodi": {
+            "type": "string",
+            "nullable": true
+          },
           "breytt": {
             "type": "string",
             "format": "date-time",
@@ -781,8 +957,14 @@
         "required": ["kennitala", "nafn"],
         "type": "object",
         "properties": {
-          "kennitala": { "type": "string", "nullable": true },
-          "nafn": { "type": "string", "nullable": true }
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -790,28 +972,59 @@
         "required": ["kennitala"],
         "type": "object",
         "properties": {
-          "kennitala": { "type": "string", "nullable": true },
-          "nafn": { "type": "string", "nullable": true },
-          "kynKodi": { "type": "string", "nullable": true },
-          "kynTexti": { "type": "string", "nullable": true },
-          "bannmerking": { "type": "boolean", "nullable": true },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "kynKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "kynTexti": {
+            "type": "string",
+            "nullable": true
+          },
+          "bannmerking": {
+            "type": "boolean",
+            "nullable": true
+          },
           "faedingardagur": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "logheimili": { "$ref": "#/components/schemas/HeimilisfangBaseDTO" },
-          "adsetur": { "$ref": "#/components/schemas/HeimilisfangBaseDTO" }
+          "logheimili": {
+            "$ref": "#/components/schemas/HeimilisfangBaseDTO"
+          },
+          "adsetur": {
+            "$ref": "#/components/schemas/HeimilisfangBaseDTO"
+          }
         },
         "additionalProperties": false
       },
       "EinstaklingurUtlBaseDTO": {
         "type": "object",
         "properties": {
-          "kennitala": { "type": "string", "nullable": true },
-          "nafn": { "type": "string", "nullable": true },
-          "rikisfangKodi": { "type": "string", "nullable": true },
-          "rikisfangLand": { "type": "string", "nullable": true },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangLand": {
+            "type": "string",
+            "nullable": true
+          },
           "rikisfangBrDagur": {
             "type": "string",
             "format": "date-time",
@@ -823,16 +1036,30 @@
       "EinstaklingurUtlDTO": {
         "type": "object",
         "properties": {
-          "kennitala": { "type": "string", "nullable": true },
-          "nafn": { "type": "string", "nullable": true },
-          "rikisfangKodi": { "type": "string", "nullable": true },
-          "rikisfangLand": { "type": "string", "nullable": true },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangLand": {
+            "type": "string",
+            "nullable": true
+          },
           "rikisfangBrDagur": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "maki": { "$ref": "#/components/schemas/EinstaklingurUtlBaseDTO" },
+          "maki": {
+            "$ref": "#/components/schemas/EinstaklingurUtlBaseDTO"
+          },
           "hjuSambudBrDagur": {
             "type": "string",
             "format": "date-time",
@@ -846,12 +1073,21 @@
         },
         "additionalProperties": false
       },
-      "Error": { "type": "object", "additionalProperties": false },
+      "Error": {
+        "type": "object",
+        "additionalProperties": false
+      },
       "FaedingarstadurDTO": {
         "type": "object",
         "properties": {
-          "sveitarfelagsnumer": { "type": "string", "nullable": true },
-          "stadur": { "type": "string", "nullable": true },
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
           "faedingardagur": {
             "type": "string",
             "format": "date-time",
@@ -863,19 +1099,33 @@
       "ForsjaAdiliBaseDTO": {
         "type": "object",
         "properties": {
-          "forsjaKt": { "type": "string", "nullable": true },
-          "forsjaNafn": { "type": "string", "nullable": true }
+          "forsjaKt": {
+            "type": "string",
+            "nullable": true
+          },
+          "forsjaNafn": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "ForsjaAdiliDTO": {
         "type": "object",
         "properties": {
-          "forsjaKt": { "type": "string", "nullable": true },
-          "forsjaNafn": { "type": "string", "nullable": true },
+          "forsjaKt": {
+            "type": "string",
+            "nullable": true
+          },
+          "forsjaNafn": {
+            "type": "string",
+            "nullable": true
+          },
           "forsjaBornList": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/ForsjaBarnBaseDTO" },
+            "items": {
+              "$ref": "#/components/schemas/ForsjaBarnBaseDTO"
+            },
             "nullable": true
           }
         },
@@ -884,19 +1134,33 @@
       "ForsjaBarnBaseDTO": {
         "type": "object",
         "properties": {
-          "barnKt": { "type": "string", "nullable": true },
-          "barnNafn": { "type": "string", "nullable": true }
+          "barnKt": {
+            "type": "string",
+            "nullable": true
+          },
+          "barnNafn": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "ForsjaBarnDTO": {
         "type": "object",
         "properties": {
-          "barnKt": { "type": "string", "nullable": true },
-          "barnNafn": { "type": "string", "nullable": true },
+          "barnKt": {
+            "type": "string",
+            "nullable": true
+          },
+          "barnNafn": {
+            "type": "string",
+            "nullable": true
+          },
           "forsjaAdilarList": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/ForsjaAdiliBaseDTO" },
+            "items": {
+              "$ref": "#/components/schemas/ForsjaAdiliBaseDTO"
+            },
             "nullable": true
           }
         },
@@ -905,21 +1169,48 @@
       "HeimilisfangBaseDTO": {
         "type": "object",
         "properties": {
-          "heimilisfang": { "type": "string", "nullable": true },
-          "ibudanumer": { "type": "string", "nullable": true },
-          "postnumer": { "type": "string", "nullable": true },
-          "stadur": { "type": "string", "nullable": true },
-          "sveitarfelagsnumer": { "type": "string", "nullable": true }
+          "heimilisfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "ibudanumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "HjuDTO": {
         "type": "object",
         "properties": {
-          "kennitalaMaka": { "type": "string", "nullable": true },
-          "nafnMaka": { "type": "string", "nullable": true },
-          "hjuskaparKodi": { "type": "string", "nullable": true },
-          "hjuskaparTexti": { "type": "string", "nullable": true },
+          "kennitalaMaka": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafnMaka": {
+            "type": "string",
+            "nullable": true
+          },
+          "hjuskaparKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "hjuskaparTexti": {
+            "type": "string",
+            "nullable": true
+          },
           "dagsetningBreytt": {
             "type": "string",
             "format": "date-time",
@@ -931,21 +1222,46 @@
       "HjuskapurDTO": {
         "type": "object",
         "properties": {
-          "hjuskapur": { "$ref": "#/components/schemas/HjuDTO" },
-          "sambud": { "$ref": "#/components/schemas/SamDTO" }
+          "hjuskapur": {
+            "$ref": "#/components/schemas/HjuDTO"
+          },
+          "sambud": {
+            "$ref": "#/components/schemas/SamDTO"
+          }
         },
         "additionalProperties": false
       },
       "LogheimiliDTO": {
         "type": "object",
         "properties": {
-          "ibudanumer": { "type": "string", "nullable": true },
-          "postnumer": { "type": "string", "nullable": true },
-          "stadur": { "type": "string", "nullable": true },
-          "sveitarfelagsnumer": { "type": "string", "nullable": true },
-          "huskodi": { "type": "string", "nullable": true },
-          "heimilisfang": { "type": "string", "nullable": true },
-          "landakodi": { "type": "string", "nullable": true },
+          "ibudanumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelagsnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "huskodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "heimilisfang": {
+            "type": "string",
+            "nullable": true
+          },
+          "landakodi": {
+            "type": "string",
+            "nullable": true
+          },
           "breytt": {
             "type": "string",
             "format": "date-time",
@@ -963,20 +1279,37 @@
         "required": ["kennitala"],
         "type": "object",
         "properties": {
-          "nafn": { "type": "string", "nullable": true },
-          "kennitala": { "type": "string", "nullable": true },
-          "kynkodi": { "type": "string", "nullable": true },
-          "kyntexti": { "type": "string", "nullable": true }
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "kynkodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "kyntexti": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "LogheimilistengslDTO": {
         "type": "object",
         "properties": {
-          "logheimilisTengsl": { "type": "string", "nullable": true },
+          "logheimilisTengsl": {
+            "type": "string",
+            "nullable": true
+          },
           "logheimilistengslmedlimir": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/LogheimilismedlimurDTO" },
+            "items": {
+              "$ref": "#/components/schemas/LogheimilismedlimurDTO"
+            },
             "nullable": true
           }
         },
@@ -985,10 +1318,15 @@
       "LogheimilistengslItarDTO": {
         "type": "object",
         "properties": {
-          "logheimilisTengsl": { "type": "string", "nullable": true },
+          "logheimilisTengsl": {
+            "type": "string",
+            "nullable": true
+          },
           "logheimiliseinstaklingar": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/EinstaklingurDTO" },
+            "items": {
+              "$ref": "#/components/schemas/EinstaklingurDTO"
+            },
             "nullable": true
           }
         },
@@ -997,29 +1335,62 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "nullable": true },
-          "title": { "type": "string", "nullable": true },
-          "status": { "type": "integer", "format": "int32", "nullable": true },
-          "detail": { "type": "string", "nullable": true },
-          "instance": { "type": "string", "nullable": true }
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "RikisfangDTO": {
         "type": "object",
         "properties": {
-          "kodi": { "type": "string", "nullable": true },
-          "land": { "type": "string", "nullable": true }
+          "kodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "land": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "SamDTO": {
         "type": "object",
         "properties": {
-          "kennitalaMaka": { "type": "string", "nullable": true },
-          "nafnMaka": { "type": "string", "nullable": true },
-          "sambud": { "type": "boolean" },
-          "sambudTexti": { "type": "string", "nullable": true },
+          "kennitalaMaka": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafnMaka": {
+            "type": "string",
+            "nullable": true
+          },
+          "sambud": {
+            "type": "boolean"
+          },
+          "sambudTexti": {
+            "type": "string",
+            "nullable": true
+          },
           "dagsetningBreytt": {
             "type": "string",
             "format": "date-time",
@@ -1030,8 +1401,16 @@
       }
     },
     "securitySchemes": {
-      "Bearer": { "type": "http", "scheme": "Bearer", "bearerFormat": "Bearer" }
+      "Bearer": {
+        "type": "http",
+        "scheme": "Bearer",
+        "bearerFormat": "Bearer"
+      }
     }
   },
-  "security": [{ "Bearer": [] }]
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }
