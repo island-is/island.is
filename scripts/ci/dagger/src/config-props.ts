@@ -34,7 +34,7 @@ export function getProps(props: Props) {
     if (!sha) {
       throw new Error('sha is required when action is sha')
     }
-    return { action, sha }
+    return { action, sha, branch }
   }
   if (action === FILE_ACTION_GITHUB_BRANCH) {
     if (!branch) {
