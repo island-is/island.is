@@ -1,4 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { isDefined } from '@island.is/shared/utils'
 import { Injectable } from '@nestjs/common'
 import {
   ApiLicenseGetRequest,
@@ -6,7 +7,6 @@ import {
   ApiMachineModelsGetRequest,
   ApiMachineOwnerChangeOwnerchangeIdDeleteRequest,
   ApiMachineParentCategoriesTypeModelGetRequest,
-  ApiMachineRequestInspectionPostRequest,
   ApiMachineStatusChangePostRequest,
   ApiMachineSubCategoriesGetRequest,
   ApiMachineTypesTypeByRegistrationNumberGetRequest,
@@ -55,6 +55,11 @@ import {
 } from './workMachines.utils'
 import { CustomMachineApi } from './providers'
 import { handle404 } from '@island.is/clients/middlewares'
+import { WorkMachineResponseDto } from './dtos/workMachinesResponse.dto'
+import { mapWorkMachinesCollectionItem } from './dtos/workMachineItem.dto'
+import { mapLinkDto } from './dtos/link.dto'
+import { mapLabelDto } from './dtos/label.dto'
+import { mapPaginationDto } from './dtos/pagination.dto'
 
 @Injectable()
 export class WorkMachinesClientService {
@@ -146,10 +151,24 @@ export class WorkMachinesClientService {
   getWorkMachines = async (
     user: User,
     input: ApiMachinesGetRequest,
-  ): Promise<MachinesFriendlyHateaosDto | null> => {
-    return await this.machinesApiWithAuth(user)
+  ): Promise<WorkMachineResponseDto | null> => {
+    const data = await this.machinesApiWithAuth(user)
       .apiMachinesGet(input)
       .catch(handle404)
+
+    if (!data) {
+      return null
+    }
+
+    return {
+      machines:
+        data.value
+          ?.map((v) => mapWorkMachinesCollectionItem(v))
+          .filter(isDefined) ?? [],
+      links: data.links?.map((l) => mapLinkDto(l)).filter(isDefined) ?? [],
+      labels: data.labels?.map((l) => mapLabelDto(l)).filter(isDefined) ?? [],
+      pagination: mapPaginationDto(data.pagination) ?? undefined,
+    }
   }
 
   getWorkMachineById = async (
