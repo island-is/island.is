@@ -296,7 +296,7 @@ export const m = {
     },
     signatureDate: {
       id: 'web.ojoi:advert.signatureDate',
-      defaultMessage: 'Skráningardagur',
+      defaultMessage: 'Undirritunardagur',
     },
     publicationDate: {
       id: 'web.ojoi:advert.publicationDate',
