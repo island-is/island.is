@@ -167,7 +167,6 @@ codemagic.yaml                                                                  
 /libs/api/domains/rights-portal                                                                           @island-is/hugsmidjan
 /libs/api/domains/social-insurance                                                                        @island-is/hugsmidjan @island-is/stefna
 /libs/api/domains/occupational-licenses/                                                                  @island-is/hugsmidjan
-/libs/api/domains/occupational-licenses-v2/                                                               @island-is/hugsmidjan
 /libs/api/domains/intellectual-properties/                                                                @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland/                                                            @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland-application/                                                @island-is/hugsmidjan
