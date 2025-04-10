@@ -45,15 +45,6 @@ env:
   CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
   YARN_ENABLE_HARDENED_MODE: '0'
 jobs:
-  install:
-    uses: ./.github/workflows/install.yml
-    secrets: inherit
-    with:
-      run_merge_queue: true
-      main_branch: ${{ github.event.merge_group.base_ref  }}
-    needs:
-      - pre-checks
-
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
     secrets: inherit
@@ -255,6 +246,12 @@ jobs:
         id: docker-deps
         run: |
           ./scripts/ci/10_prepare-docker-deps.sh
+
+      - name: Generate docker tags for feature deployments
+        id: prepare-docker-feature-deployment
+        if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
+        run: |
+          node scripts/ci/docker/generate-tag.mjs
 
   docker-build:
     needs:
@@ -481,7 +478,6 @@ jobs:
       id-token: write
       contents: write
     needs:
-      - install
       - pre-checks
       - prepare
       - docker-build
