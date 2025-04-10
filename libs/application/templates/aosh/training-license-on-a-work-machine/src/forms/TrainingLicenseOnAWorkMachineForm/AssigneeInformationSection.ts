@@ -78,19 +78,7 @@ export const assigneeInformationSection = buildSection({
                 application: Application,
                 activeField?: Record<string, string>,
               ) => {
-                const assigneeNationalId =
-                  typeof activeField?.assignee === 'string'
-                    ? ''
-                    : (activeField &&
-                        getValueViaPath<string>(
-                          activeField,
-                          'assignee.nationalId',
-                        )) ??
-                      ''
-                return isSameAsApplicant(
-                  application.answers,
-                  assigneeNationalId,
-                )
+                return isSameAsApplicant(application.answers, activeField)
               },
             },
             workMachine: {
@@ -120,19 +108,7 @@ export const assigneeInformationSection = buildSection({
               marginBottom: 0,
               marginTop: 0,
               condition: (application, activeField) => {
-                const assigneeNationalId =
-                  typeof activeField?.assignee === 'string'
-                    ? ''
-                    : (activeField &&
-                        getValueViaPath<string>(
-                          activeField,
-                          'assignee.nationalId',
-                        )) ??
-                      ''
-                return isSameAsApplicant(
-                  application.answers,
-                  assigneeNationalId,
-                )
+                return isSameAsApplicant(application.answers, activeField)
               },
             },
           },
