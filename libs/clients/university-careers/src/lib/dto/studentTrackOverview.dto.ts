@@ -8,8 +8,8 @@ import {
 } from '../clients'
 import { UniversityId } from '../universityCareers.types'
 import { StudentFileDto, mapToStudentFileDto } from './studentFileDto'
-import { StudentTrackDto, mapToStudentTrackDto } from './studentTrackDto'
-import { StudentTrackOverviewBodyDto } from './studentTrackOverviewBodyDto'
+import { StudentTrackDto, mapToStudentTrackDto } from './studentTrack.dto'
+import { StudentTrackOverviewBodyDto } from './studentTrackOverviewBody.dto'
 
 export interface StudentTrackOverviewDto {
   transcript: StudentTrackDto
