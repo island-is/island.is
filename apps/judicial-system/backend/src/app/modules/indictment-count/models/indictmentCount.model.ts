@@ -11,7 +11,6 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import type { SubstanceMap } from '@island.is/judicial-system/types'
 import { IndictmentSubtype } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'

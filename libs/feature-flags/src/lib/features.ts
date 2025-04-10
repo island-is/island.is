@@ -53,9 +53,6 @@ export enum Features {
 
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
 
-  //Occupational License Health directorate fetch enabled
-  occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
-
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
   pkPassV2 = 'isPkPassV2Enabled',
@@ -109,6 +106,7 @@ export enum Features {
 
   // Islandis Payment
   isIslandisPaymentEnabled = 'islandisPayment',
+  useIslandisPaymentForApplicationSystem = 'useIslandisPaymentForApplicationSystem',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',

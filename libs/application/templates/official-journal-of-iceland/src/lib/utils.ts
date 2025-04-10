@@ -141,3 +141,11 @@ export const cleanTypename = (obj: {
   const { __typename: _, ...rest } = obj
   return rest
 }
+
+export const capitalizeText = (text?: string | null): string => {
+  if (!text) {
+    return ''
+  }
+
+  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()
+}

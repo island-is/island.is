@@ -5,20 +5,16 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { m } from '@island.is/portals/my-pages/core'
 import { olMessage as om } from './lib/messages'
 
-const EducationalDetailScreen = lazy(() =>
-  import('./screens/v1/EducationalDetail/EducationalDetail'),
+const OccupationalLicensesDetailScreen = lazy(
+  () =>
+    import('./screens/OccupationalLicensesDetail/OccupationalLicensesDetail'),
 )
 
-const HealthDirectorateDetailScreen = lazy(() =>
-  import('./screens/v1/HealthDirectorateDetail/HealthDirectorateDetail'),
-)
-
-const OccupationalLicensesDetailScreen = lazy(() =>
-  import('./screens/v2/OccupationalLicensesDetail/OccupationalLicensesDetail'),
-)
-
-const OccupationalLicensesOverviewScreen = lazy(() =>
-  import('./screens/OccupationalLicensesOverview/OccupationalLicensesOverview'),
+const OccupationalLicensesOverviewScreen = lazy(
+  () =>
+    import(
+      './screens/OccupationalLicensesOverview/OccupationalLicensesOverview'
+    ),
 )
 
 export const occupationalLicensesModule: PortalModule = {
@@ -38,20 +34,6 @@ export const occupationalLicensesModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.internal),
 
       element: <OccupationalLicensesDetailScreen />,
-    },
-    {
-      name: om.singleHealthLicense,
-      path: OccupationalLicensesPaths.OccupationalLicensesHealthDirectorateDetail,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
-
-      element: <HealthDirectorateDetailScreen />,
-    },
-    {
-      name: om.singleEducationLicense,
-      path: OccupationalLicensesPaths.OccupationalLicensesEducationDetail,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
-
-      element: <EducationalDetailScreen />,
     },
   ],
 }
