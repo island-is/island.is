@@ -88,6 +88,10 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit',
     id: 'portals:overview',
   },
+  search: {
+    defaultMessage: 'search',
+    id: 'portals:search',
+  },
   somethingWrong: {
     defaultMessage: 'Eitthvað fór úrskeiðis',
     id: 'portals:something-went-wrong',
