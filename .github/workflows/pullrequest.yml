@@ -165,7 +165,7 @@ jobs:
         uses: ./.github/actions/load-deps
 
       - name: Running e2e tests
-        run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}"
+        run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3
 
   linting-workspace:
     needs:
