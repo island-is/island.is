@@ -1,0 +1,9 @@
+appId: 'is.island.app.dev'
+---
+- tapOn:
+    id: 'TABBAR_TAB_WALLET'
+- tapOn:
+    id: 'license-card-title'
+- assertVisible:
+    id: 'license-card-title'
+    text: 'Ökuskírteini (IS)'

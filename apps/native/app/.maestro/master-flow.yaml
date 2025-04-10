@@ -1,0 +1,4 @@
+appId: 'is.island.app.dev'
+---
+- runFlow: sign-in-flow.yaml
+- runFlow: wallet-flow.yaml
