@@ -38,6 +38,7 @@ const main = async () => {
       await exec(
         `nx run-many --target=${target} --all --parallel=${nxParallel} --maxParallel=${nxMaxParallel} $NX_OPTIONS`,
         {
+          stdio: ['inherit', 'ignore', 'inherit'],
           env: skipCache
             ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
             : process.env,
