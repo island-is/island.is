@@ -12,7 +12,7 @@ export const Applications = () => {
   const { slug } = useParams() as unknown as Params
   const navigate = useNavigate()
 
-  const [createApplicationMutation, { error: createError }] = useMutation(
+  const [createApplicationMutation] = useMutation(
     CREATE_APPLICATION, {
     onCompleted({ createApplication }) {
       if (slug) {

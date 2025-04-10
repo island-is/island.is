@@ -17,7 +17,6 @@ export const routes: RouteObject[] = [
     ),
     children: [
       {
-        errorElement: <></>,
         children: [
           {
             path: '/:slug',

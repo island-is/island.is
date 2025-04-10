@@ -6,6 +6,7 @@ type UseParams = {
 }
 export const Application = () => {
   const { slug, id } = useParams() as UseParams
+  if (!slug || !id) return null
   return (
     <>Application</>
   )
