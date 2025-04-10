@@ -60,10 +60,5 @@ export const personal = {
       defaultMessage: 'Skrá bara mig',
       description: `is applying for others radio no`,
     },
-    personalValidationErrorTitle: {
-      id: 'aosh.sem.application:personal.labels.personalValidationErrorTitle',
-      defaultMessage: 'TODO',
-      description: `personal validation error title`,
-    },
   }),
 }
