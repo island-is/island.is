@@ -13,6 +13,7 @@ interface Props {
   colored: boolean
   size: 'medium' | 'large'
   item: AsyncSearchOption
+  showDividerIfActive?: boolean
 }
 
 export const Item: React.FC<React.PropsWithChildren<Props>> = ({
@@ -24,6 +25,7 @@ export const Item: React.FC<React.PropsWithChildren<Props>> = ({
   colored,
   size,
   item,
+  showDividerIfActive,
   ...props
 }) => {
   const selectedClass = colored ? styles.selectedColored : styles.selected
@@ -38,7 +40,8 @@ export const Item: React.FC<React.PropsWithChildren<Props>> = ({
         <Cmp active={isActive} selected={isSelected} colored={colored} />
         <span
           className={cn(styles.divider, {
-            [styles.dividerVisible]: !isPrev && !isActive,
+            [styles.dividerVisible]:
+              (!isPrev && !isActive) || showDividerIfActive,
           })}
         />
       </li>
