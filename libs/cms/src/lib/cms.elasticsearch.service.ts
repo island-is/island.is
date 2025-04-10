@@ -671,7 +671,6 @@ export class CmsElasticsearchService {
 
     if (!input.orderBy) {
       sort = [
-        { _score: { order: SortDirection.DESC } },
         {
           [SortField.RELEASE_DATE]: {
             order: SortDirection.DESC,
@@ -679,33 +678,31 @@ export class CmsElasticsearchService {
         },
         { 'title.sort': { order: SortDirection.ASC } },
         { dateCreated: { order: SortDirection.DESC } },
+      ]
+    } else if (input.orderBy === GetTeamMembersInputOrderBy.Name) {
+      sort = [
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    } else if (input.orderBy === GetTeamMembersInputOrderBy.Manual) {
+      sort = [
+        { dateCreated: { order: SortDirection.DESC } },
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
       ]
     }
 
-    if (input.orderBy === GetTeamMembersInputOrderBy.Name) {
-      sort = [
-        { _score: { order: SortDirection.DESC } },
-        { 'title.sort': { order: SortDirection.ASC } },
-        {
-          [SortField.RELEASE_DATE]: {
-            order: SortDirection.DESC,
-          },
-        },
-        { dateCreated: { order: SortDirection.DESC } },
-      ]
-    }
-
-    if (input.orderBy === GetTeamMembersInputOrderBy.Manual) {
-      sort = [
-        { _score: { order: SortDirection.DESC } },
-        { dateCreated: { order: SortDirection.DESC } },
-        { 'title.sort': { order: SortDirection.ASC } },
-        {
-          [SortField.RELEASE_DATE]: {
-            order: SortDirection.DESC,
-          },
-        },
-      ]
+    if (queryString.length > 0) {
+      sort.unshift({ _score: { order: SortDirection.DESC } })
     }
 
     if (input.tags && input.tags.length > 0 && input.tagGroups) {
