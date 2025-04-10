@@ -338,7 +338,8 @@ jobs:
             exit 0
           fi
           echo "::error title=NEW_LINTS::Please fix your lints 🙏 (found $COUNT_DIFF additional lints)"
-          lints_base=$(mktemp --dry -t lint-.XXX)
+          sed -i -E 's/\[[^]]*cache[^]*]\]/[cached]/g' "${HEAD_LINT_FILE}"
+          sed -i -E 's/\[[^]]*cache[^]*]\]/[cached]/g' "${BASE_LINT_FILE}"
           echo "::group::lintdiff"
           diff "${BASE_LINT_FILE}" "${HEAD_LINT_FILE}" || : # Ignore diff exit code
           echo "::endgroup::"
