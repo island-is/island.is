@@ -1,7 +1,7 @@
 import { NO, YES } from '@island.is/application/core'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { formatBankInfo } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { formatBankInfo } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { NOT_APPLICABLE } from './constants'
@@ -56,7 +56,7 @@ export const dataSchema = z.object({
       ({ personalAllowance, personalAllowanceUsage }) =>
         personalAllowance === YES ? !!personalAllowanceUsage : true,
       { path: ['personalAllowanceUsage'] },
-    ),  
+    ),
   questions: z
     .object({
       isSelfEmployed: z.enum([YES, NO]),
@@ -92,6 +92,9 @@ export const dataSchema = z.object({
         params: errorMessages.dateRequired,
       },
     ),
+  rehabilitationPlanConfirmation: z
+    .array(z.string())
+    .refine((v) => v.includes(YES)),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

@@ -20,6 +20,7 @@ import { BaseInformation } from './review-groups/BaseInformation'
 import { Comment } from './review-groups/Comment'
 import { Payment } from './review-groups/Payment'
 import { Questions } from './review-groups/Questions'
+import { RehabilitationPlan } from './review-groups/RehabilitationPlan'
 import { SickPay } from './review-groups/SickPay'
 
 interface ReviewScreenProps {
@@ -165,6 +166,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <Payment {...childProps} />
       <Questions {...childProps} />
       <SickPay {...childProps} />
+      <RehabilitationPlan />
       <Comment {...childProps} />
       <Attachments {...childProps} />
     </>
