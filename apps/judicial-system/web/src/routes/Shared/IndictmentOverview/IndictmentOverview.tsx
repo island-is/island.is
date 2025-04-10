@@ -265,22 +265,24 @@ const IndictmentOverview: FC = () => {
             </Box>
           )}
           {shouldDisplayReviewDecision && (
-            <ReviewDecision
-              caseId={workingCase.id}
-              indictmentAppealDeadline={
-                workingCase.indictmentAppealDeadline ?? ''
-              }
-              indictmentAppealDeadlineIsInThePast={
-                workingCase.indictmentVerdictAppealDeadlineExpired ?? false
-              }
-              modalVisible={modalVisible}
-              setModalVisible={setModalVisible}
-              isFine={
-                workingCase.indictmentRulingDecision ===
-                CaseIndictmentRulingDecision.FINE
-              }
-              onSelect={() => setIsReviewDecisionSelected(true)}
-            />
+            <Box component="section" marginBottom={10}>
+              <ReviewDecision
+                caseId={workingCase.id}
+                indictmentAppealDeadline={
+                  workingCase.indictmentAppealDeadline ?? ''
+                }
+                indictmentAppealDeadlineIsInThePast={
+                  workingCase.indictmentVerdictAppealDeadlineExpired ?? false
+                }
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                isFine={
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.FINE
+                }
+                onSelect={() => setIsReviewDecisionSelected(true)}
+              />
+            </Box>
           )}
           {isDefenceUser(user) && isCompletedCase(workingCase.state) && (
             <Box marginTop={7}>
