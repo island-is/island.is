@@ -45,6 +45,7 @@ import {
   isProsecutionUser,
   isRequestCase,
   isRestrictionCase,
+  RequestSharedWhen,
   RequestSharedWithDefender,
   SessionArrangements,
   type User,
@@ -383,10 +384,13 @@ export class CaseNotificationService extends BaseNotificationService {
     }
 
     // Investigation and Restriction Cases
+
+    // PROSECUTOR NOTIFICATIONS
     const promises: Promise<Recipient>[] = [
       this.sendReadyForCourtEmailNotificationToProsecutor(theCase),
     ]
 
+    // COURT NOTIFICATIONS
     const courtHasBeenNotified = this.hasReceivedNotification(
       CaseNotificationType.READY_FOR_COURT,
       this.getCourtMobileNumbers(theCase.courtId),
@@ -401,9 +405,11 @@ export class CaseNotificationService extends BaseNotificationService {
       this.eventService.postEvent('RESUBMIT', theCase)
     }
 
+    // DEFENDER
     if (
       theCase.requestSharedWithDefender ===
         RequestSharedWithDefender.READY_FOR_COURT ||
+      // Why are we also checking court date here?
       theCase.requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE
     ) {
       const hasDefenderBeenNotified = this.hasReceivedNotification(
@@ -426,6 +432,30 @@ export class CaseNotificationService extends BaseNotificationService {
         )
       }
     }
+
+    // VICTIM LAWYER
+    theCase.victims?.forEach((victim) => {
+      if (!victim.hasLawyer || !victim.lawyerEmail) return
+
+      const hasReceivedCourtEventNotification = this.hasReceivedNotification(
+        [CaseNotificationType.READY_FOR_COURT, CaseNotificationType.COURT_DATE],
+        victim.lawyerEmail,
+        theCase.notifications,
+      )
+      if (hasReceivedCourtEventNotification) {
+        // what new info would be shown here on resubmit?? => ensure no duplicates
+        promises.push(
+          this.sendResubmittedToCourtEmailNotificationToDefender(theCase),
+          // TODO: this.sendResubmittedToCourtEmailNotificationToVictimLawyer
+        )
+      }
+      if (victim.lawyerAccessToRequest === RequestSharedWhen.READY_FOR_COURT) {
+        promises.push(
+          this.sendReadyForCourtEmailNotificationToDefender(theCase),
+          // TODO: this.sendReadyForCourtEmailNotificationToVictimLawyer
+        )
+      }
+    })
 
     const recipients = await Promise.all(promises)
 
@@ -787,10 +817,12 @@ export class CaseNotificationService extends BaseNotificationService {
         ...this.sendCourtDateEmailNotificationForIndictmentCase(theCase, user),
       )
     } else {
+      // PROSECUTOR
       promises.push(
         this.sendCourtDateEmailNotificationToProsecutor(theCase, user),
       )
 
+      // DEFENDER
       if (theCase.defenderEmail) {
         if (
           isRestrictionCase(theCase.type) ||
@@ -822,6 +854,34 @@ export class CaseNotificationService extends BaseNotificationService {
         }
       }
 
+      // VICTIM LAWYER
+      if (
+        isInvestigationCase(theCase.type) &&
+        theCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+      ) {
+        theCase.victims?.forEach((victim) => {
+          if (!victim.hasLawyer || !victim.lawyerEmail) return
+
+          // can this be sent for new court date?
+          if (
+            victim.lawyerAccessToRequest ===
+            RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED
+          ) {
+            // send assignment notification at court date
+            // TODO: this.sendCourtDateEmailNotificationToVictimLAwyer
+          }
+
+          // TODO: sendCourtDateCalendarInviteEmailNotificationToVictimLawyer
+          promises.push(
+            this.sendCourtDateCalendarInviteEmailNotificationToDefender(
+              theCase,
+              user,
+            ),
+          )
+        })
+      }
+
+      // PRISON
       const shouldSendNotificationToPrison =
         await this.shouldSendNotificationToPrison(theCase)
 
@@ -1086,6 +1146,7 @@ export class CaseNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     const promises = [this.sendRulingEmailNotificationToProsecutor(theCase)]
 
+    // DEFENDANTS BOTH S AND R CASES
     if (isIndictmentCase(theCase.type)) {
       const uniqueDefendants = _uniqBy(
         theCase.defendants ?? [],
@@ -1123,6 +1184,27 @@ export class CaseNotificationService extends BaseNotificationService {
       )
     }
 
+    // VICTIM LAWYER
+    if (
+      isInvestigationCase(theCase.type) &&
+      theCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+    ) {
+      theCase.victims?.forEach((victim) => {
+        if (!victim.hasLawyer || !victim.lawyerEmail) return
+
+        // TODO: sendRulingEmailNotificationToVictimLawyer
+        promises.push(
+          this.sendRulingEmailNotificationToDefender(
+            theCase,
+            theCase.defenderNationalId,
+            theCase.defenderName,
+            theCase.defenderEmail,
+          ),
+        )
+      })
+    }
+
+    // PRISON ADMIN
     if (
       (isRestrictionCase(theCase.type) ||
         theCase.type === CaseType.PAROLE_REVOCATION) &&
@@ -1133,6 +1215,7 @@ export class CaseNotificationService extends BaseNotificationService {
       )
     }
 
+    // PRISON
     if (
       theCase.decision === CaseDecision.ACCEPTING ||
       theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
@@ -2715,6 +2798,7 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendModifiedNotifications(theCase, user)
       case CaseNotificationType.REVOKED:
         return this.sendRevokedNotifications(theCase)
+      // TODO: is this ever triggered?
       case CaseNotificationType.ADVOCATE_ASSIGNED:
         return this.sendAdvocateAssignedNotifications(theCase)
       case CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT:
