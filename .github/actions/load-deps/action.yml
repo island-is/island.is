@@ -25,7 +25,7 @@ runs:
       with:
         path: |
           ${{ steps.values.outputs.generated-files-path }}
-        key: ${{ steps.values.outputs.generated-files-path }}
+        key: ${{ steps.values.outputs.generated-files-key }}
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
@@ -45,4 +45,4 @@ runs:
       with:
         path: |
           ${{ steps.values.outputs.generated-files-path }}
-        key: ${{ steps.values.outputs.generated-files-path }}
+        key: ${{ steps.values.outputs.generated-files-key }}
