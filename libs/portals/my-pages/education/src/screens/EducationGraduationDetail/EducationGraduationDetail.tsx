@@ -92,7 +92,7 @@ export const EducationGraduationDetail = () => {
                     <Box
                       key={`education-graduation-button-${index}`}
                       paddingRight={2}
-                      marginBottom={[1, 1, 1, 0]}
+                      marginBottom={2}
                     >
                       <Button
                         variant="utility"
