@@ -28,7 +28,7 @@ export class Dagger {
     sha?: string,
     files?: Directory,
     NX_CLOUD_ACCESS_TOKEN?: Secret,
-  ): Promise<Container> {
+  ): Promise<string> {
     
     const props = getProps({
       action: action as FILE_ACTION,
@@ -36,7 +36,7 @@ export class Dagger {
       sha,
       files,
     })
-    const container = (await getMonorepoBase({
+    const {headSha: newHeadSha, baseSha: newBaseSha} = (await getMonorepoBase({
       AWS_ECR_PASSWORD,
       NX_CLOUD_ACCESS_TOKEN,
       headSha,
@@ -46,6 +46,9 @@ export class Dagger {
       branch,
       ...props,
     }));
-    return container;
+    return JSON.stringify({
+      NX_HEAD: newHeadSha,
+      NX_BASE: newBaseSha,
+    });
   }
 }

@@ -41,6 +41,7 @@ export async function getBaseAndHeadShaGit(props: GitProps) {
   })()
 
   const targetSha = await (async () => {
+      console.log("OK");
      const latestShaOnTarget = await container.withExec(['git', 'rev-parse', `origin/${targetBranch}`]).stdout();
      if (latestShaOnTarget.trim() === currentSha) {
         return (

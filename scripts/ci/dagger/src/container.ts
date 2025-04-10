@@ -56,8 +56,8 @@ export async function getMonorepoBase(props: MonorepoBase) {
   console.info(`Head sha: ${headSha}`);
   // This only gets recalculated if BASE_SHA or HEAD_SHA changes
   newContainer = newContainer
-    .withEnvVariable('NX_BASE_SHA', baseSha)
-    .withEnvVariable('NX_HEAD_SHA', headSha)
+    .withEnvVariable('NX_BASE', baseSha)
+    .withEnvVariable('NX_HEAD', headSha)
     .withExec(['git', 'fetch', 'origin', baseSha])
 
   if (props.NX_CLOUD_ACCESS_TOKEN) {
@@ -66,7 +66,11 @@ export async function getMonorepoBase(props: MonorepoBase) {
       .withEnvVariable('NX_TASKS_RUNNER', 'ci')
   }
   console.info()
-  return newContainer.withExec(['yarn', 'codegen']).sync()
+  return {
+    container: newContainer.withExec(['yarn', 'codegen']).sync(),
+    headSha: headSha,
+    baseSha: baseSha,
+  };
 }
 
 export async function getMonorepoNodeModules(props: MonorepoBase) {
