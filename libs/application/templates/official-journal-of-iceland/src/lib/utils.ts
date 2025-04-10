@@ -48,8 +48,11 @@ const isWorkday = (date: Date): boolean => {
 const getNextWorkday = (date: Date) => {
   // Returns the next workday.
   let nextDay = date
-  while (!isWorkday(nextDay)) {
+  let iterations = 0
+  const MAX_ITERATIONS = 30 // Prevent infinite loop
+  while (!isWorkday(nextDay) && iterations < MAX_ITERATIONS) {
     nextDay = addDays(nextDay, 1)
+    iterations++
   }
   return nextDay
 }
@@ -106,10 +109,10 @@ export const getExcludedDates = (
   }
   const weekendDates = getWeekendDates(startDate, endDate)
 
-  return [...weekendDates, ...holidays.map((holiday) => holiday.date)]
+  return [
+    ...new Set([...weekendDates, ...holidays.map((holiday) => holiday.date)]),
+  ]
 }
-
-
 
 export const getEmptyMember = () => ({
   name: '',
