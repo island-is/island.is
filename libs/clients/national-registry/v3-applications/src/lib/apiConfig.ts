@@ -20,13 +20,15 @@ export const ApiConfigWithIdsAuth = {
         name: 'clients-national-registry-v3-applications',
         organizationSlug: 'thjodskra',
         timeout: config.fetchTimeout,
-        autoAuth: {
-          mode: 'tokenExchange',
-          issuer: idsClientConfig.issuer,
-          clientId: idsClientConfig.clientId,
-          clientSecret: idsClientConfig.clientSecret,
-          scope: [],
-        },
+        autoAuth: idsClientConfig.isConfigured
+          ? {
+              mode: 'tokenExchange',
+              issuer: idsClientConfig.issuer,
+              clientId: idsClientConfig.clientId,
+              clientSecret: idsClientConfig.clientSecret,
+              scope: [],
+            }
+          : undefined,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {
