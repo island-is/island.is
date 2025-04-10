@@ -1,6 +1,6 @@
 import {Platform} from "@dagger.io/dagger";
 
-export const GITHUB_URL = "git@github.com:island-is/island.is.git";
+export const GITHUB_URL = "https://github.com/island-is/island.is/";
 
 // export const GITHUB_SSH_URL = "git@github.com:island-is/island.is.git";
 export const RUNNER_IMAGE = '821090935708.dkr.ecr.eu-west-1.amazonaws.com/actions-runner:arc-efs_e8a77b7ccb_535';
