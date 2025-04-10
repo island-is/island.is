@@ -21,12 +21,15 @@ export class Dagger {
   async prepareBase(
     action: string,
     AWS_ECR_PASSWORD: Secret,
+    targetBranch: string = 'main',
+    headSha?: string,
+    baseSha?: string,
     branch?: string,
     sha?: string,
     files?: Directory,
     NX_CLOUD_ACCESS_TOKEN?: Secret,
   ): Promise<Container> {
-    // const targetBranch = getTargetBranch(ref);
+    
     const props = getProps({
       action: action as FILE_ACTION,
       branch,
@@ -36,6 +39,11 @@ export class Dagger {
     const container = (await getMonorepoBase({
       AWS_ECR_PASSWORD,
       NX_CLOUD_ACCESS_TOKEN,
+      headSha,
+      baseSha,
+      targetBranch,
+      sha,
+      branch,
       ...props,
     }));
     return container;

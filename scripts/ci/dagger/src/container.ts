@@ -20,6 +20,7 @@ import type {
   FILE_ACTION_LOCAL,
   NXProps,
 } from './interface'
+import { getBaseAndHeadShaGit } from './git'
 
 const MONO_REPO_FILTERS = {
   include: [
@@ -33,18 +34,38 @@ const MONO_REPO_FILTERS = {
 }
 
 export async function getMonorepoBase(props: MonorepoBase) {
+  console.info(`Getting base files from mono repo`);
   const container = await getMonorepoNodeModules({
     ...props,
   })
-  const files = getMonorepoBaseFiles(props)
+  console.log(`Getting all files from mono repo`);
+  const files = await getMonorepoBaseFiles(props).sync()
   let newContainer = container
     .withDirectory(WORKDIR, files, FILE_SETTINGS)
     .withWorkdir(WORKDIR)
+  console.info(`Getting base and head sha`);
+  const { baseSha, headSha } = await getBaseAndHeadShaGit({
+    headSha: props.headSha,
+    baseSha: props.baseSha,
+    sha: props.sha,
+    branch: props.branch,
+    targetBranch: props.targetBranch,
+    container: newContainer,
+  })
+  console.info(`Base sha: ${baseSha}`);
+  console.info(`Head sha: ${headSha}`);
+  // This only gets recalculated if BASE_SHA or HEAD_SHA changes
+  newContainer = newContainer
+    .withEnvVariable('NX_BASE_SHA', baseSha)
+    .withEnvVariable('NX_HEAD_SHA', headSha)
+    .withExec(['git', 'fetch', 'origin', baseSha])
+
   if (props.NX_CLOUD_ACCESS_TOKEN) {
     newContainer = newContainer
       .withSecretVariable('NX_CLOUD_ACCESS_TOKEN', props.NX_CLOUD_ACCESS_TOKEN)
       .withEnvVariable('NX_TASKS_RUNNER', 'ci')
   }
+  console.info()
   return newContainer.withExec(['yarn', 'codegen']).sync()
 }
 
@@ -62,7 +83,9 @@ export async function getMonorepoNodeModules(props: MonorepoBase) {
     .sync()
 }
 
-export type MonorepoBase = MonorepoContainer & AWSProps & NXProps
+export type MonorepoBase = MonorepoContainer &
+  AWSProps &
+  NXProps & { sha?: string; branch?: string; targetBranch: string } & {headSha?: string | undefined; baseSha?: string | undefined}
 
 interface MonorepoContainerGithubSha {
   action: FILE_ACTION_GITHUB_SHA
