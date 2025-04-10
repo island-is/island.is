@@ -37,7 +37,6 @@ import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
 import { OccupationalLicensesModule } from '@island.is/api/domains/occupational-licenses'
-import { OccupationalLicensesV2Module } from '@island.is/api/domains/occupational-licenses-v2'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { ApiDomainsHmsModule } from '@island.is/api/domains/hms'
 import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
@@ -59,6 +58,10 @@ import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-reg
 import { NotificationsModule } from '@island.is/api/domains/notifications'
 import { PassportModule } from '@island.is/api/domains/passport'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
+import {
+  ApiDomainsPaymentsModule,
+  PaymentsApiModuleConfig,
+} from '@island.is/api/domains/payments'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
@@ -135,6 +138,7 @@ import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
+import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { ShipRegistryClientConfig } from '@island.is/clients/ship-registry'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
@@ -292,7 +296,6 @@ const environment = getConfig
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
     OccupationalLicensesModule,
-    OccupationalLicensesV2Module,
     SocialInsuranceModule,
     HealthDirectorateClientModule,
     OfficialJournalOfIcelandClientModule,
@@ -329,6 +332,7 @@ const environment = getConfig
     NationalRegistryXRoadModule,
     NotificationsModule,
     ApiDomainsPaymentModule,
+    ApiDomainsPaymentsModule,
     PaymentScheduleModule,
     ProblemModule,
     MunicipalitiesFinancialAidModule,
@@ -419,6 +423,7 @@ const environment = getConfig
         OfficialJournalOfIcelandApplicationClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
+        PaymentsApiClientConfig,
         AuthAdminApiClientConfig,
         WatsonAssistantChatConfig,
         PowerBiConfig,
@@ -452,6 +457,7 @@ const environment = getConfig
         emailModuleConfig,
         VerdictsClientConfig,
         SecondarySchoolClientConfig,
+        PaymentsApiModuleConfig,
       ],
     }),
   ],

@@ -113,6 +113,9 @@ libs/clients/rsk/relationships/                                                 
 /libs/portals/my-pages/consent                                                                            @island-is/aranja
 /libs/portals/my-pages/restrictions                                                                       @island-is/aranja
 /libs/portals/my-pages/sessions                                                                           @island-is/aranja
+/apps/payments                                                                                            @island-is/aranja
+/apps/services/payments                                                                                   @island-is/aranja
+/libs/clients/payments                                                                                    @island-is/aranja
 /apps/native/app/                                                                                         @island-is/aranja-app
 codemagic.yaml                                                                                            @island-is/aranja-app
 /apps/web/public/.well-known/                                                                             @island-is/aranja-app
@@ -164,7 +167,6 @@ codemagic.yaml                                                                  
 /libs/api/domains/rights-portal                                                                           @island-is/hugsmidjan
 /libs/api/domains/social-insurance                                                                        @island-is/hugsmidjan @island-is/stefna
 /libs/api/domains/occupational-licenses/                                                                  @island-is/hugsmidjan
-/libs/api/domains/occupational-licenses-v2/                                                               @island-is/hugsmidjan
 /libs/api/domains/intellectual-properties/                                                                @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland/                                                            @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland-application/                                                @island-is/hugsmidjan
@@ -228,10 +230,6 @@ codemagic.yaml                                                                  
 /libs/application/templates/accident-notification/                                                        @island-is/norda
 /libs/application/templates/complaints-to-althingi-ombudsman/                                             @island-is/norda
 /libs/application/templates/data-protection-complaint/                                                    @island-is/norda
-<<<<<<< HEAD
-/libs/application/templates/examples/example-payment/                                                     @island-is/norda
-=======
->>>>>>> 33e16d4c9d51f7a5082bb73a1756a5b394b90d3f
 /libs/application/templates/family-matters/children-residence-change-v2                                   @island-is/norda
 /libs/application/templates/financial-aid/                                                                @island-is/norda
 /libs/application/templates/financial-statements-inao/                                                    @island-is/norda
@@ -375,8 +373,8 @@ codemagic.yaml                                                                  
 
 /libs/application/templates/aosh/seminars/                                                                @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/aosh/seminars/                           @island-is/origo
-/libs/api/domains/seminars-ver/                                                                           @island-is/origo  
-/libs/clients/seminars-ver/                                                                               @island-is/origo  
+/libs/api/domains/seminars-ver/                                                                           @island-is/origo
+/libs/clients/seminars-ver/                                                                               @island-is/origo
 
 /libs/application/templates/id-card/                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/id-card/                                 @island-is/origo

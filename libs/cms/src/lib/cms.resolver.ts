@@ -138,16 +138,19 @@ import {
   GetOrganizationPageStandaloneSitemapLevel1Input,
   GetOrganizationPageStandaloneSitemapLevel2Input,
 } from './dto/getOrganizationPageStandaloneSitemap.input'
+import { GetOrganizationByNationalIdInput } from './dto/getOrganizationByNationalId.input'
 import { GrantCardsList } from './models/grantCardsList.model'
 import { sortAlpha } from '@island.is/shared/utils'
 import { GetTeamMembersInputOrderBy } from './dto/getTeamMembers.input'
 import { IntroLinkImage } from './models/introLinkImage.model'
 import {
   GetBloodDonationRestrictionDetailsInput,
+  GetBloodDonationRestrictionGenericTagsInput,
   GetBloodDonationRestrictionsInput,
 } from './dto/getBloodDonationRestrictions.input'
 import {
   BloodDonationRestrictionDetails,
+  BloodDonationRestrictionGenericTagList,
   BloodDonationRestrictionList,
 } from './models/bloodDonationRestriction.model'
 
@@ -255,6 +258,17 @@ export class CmsResolver {
   ): Promise<Organization | null> {
     return this.cmsContentfulService.getOrganizationByTitle(
       input?.title ?? '',
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => Organization, { nullable: true })
+  getOrganizationByNationalId(
+    @Args('input') input: GetOrganizationByNationalIdInput,
+  ): Promise<Organization | null> {
+    return this.cmsContentfulService.getOrganizationByNationalId(
+      input?.nationalId ?? '',
       input?.lang ?? 'is-IS',
     )
   }
@@ -739,11 +753,24 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
+  @Query(() => BloodDonationRestrictionGenericTagList)
+  getBloodDonationRestrictionGenericTags(
+    @Args('input') input: GetBloodDonationRestrictionGenericTagsInput,
+  ): Promise<BloodDonationRestrictionGenericTagList> {
+    return this.cmsElasticsearchService.getBloodDonationRestrictionGenericTags(
+      getElasticsearchIndex(input.lang),
+    )
+  }
+
+  @CacheControl(defaultCache)
   @Query(() => BloodDonationRestrictionList)
   getBloodDonationRestrictions(
     @Args('input') input: GetBloodDonationRestrictionsInput,
   ): Promise<BloodDonationRestrictionList> {
-    return this.cmsContentfulService.getBloodDonationRestrictions(input)
+    return this.cmsElasticsearchService.getBloodDonationRestrictionList(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
   }
 
   @CacheControl(defaultCache)

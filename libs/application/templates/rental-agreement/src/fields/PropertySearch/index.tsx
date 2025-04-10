@@ -33,12 +33,10 @@ export interface Unit extends OriginalUnit {
   changedSize?: number
   numOfRooms?: number
 }
-
 interface Props extends FieldBaseProps {
   field: CustomField
   errors?: any
 }
-
 interface AddressProps extends HmsSearchAddress {
   label: string
   value: string
@@ -86,6 +84,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         },
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAddress])
 
   useEffect(() => {
@@ -100,6 +99,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     } else {
       setSearchOptions([])
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm])
 
   useEffect(() => {
@@ -158,6 +158,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
 
   useEffect(() => {
     clearErrors(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   /**
@@ -208,7 +209,6 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
 
   const handleCheckboxChange = (unit: Unit, checked: boolean) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-
     const chosenUnits = checked
       ? [
           ...(storedValue?.units || []),
@@ -228,24 +228,20 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       ...checkedUnits,
       [unitKey]: checked,
     }
-
     setValue(id, {
       ...storedValue,
       units: chosenUnits,
     })
-
     setCheckedUnits(updateCheckedUnits)
   }
 
   const handleUnitSizeChange = (unit: Unit, value: number) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-
     setUnitSizeChangedValue((prev) => {
       const newValues = {
         ...prev,
         [unitKey]: value,
       }
-
       const updatedUnits = (storedValue?.units || []).map((u: Unit) => {
         if (
           u.propertyCode === unit.propertyCode &&
@@ -258,12 +254,10 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         }
         return u
       })
-
       setValue(id, {
         ...getValues(id),
         units: updatedUnits,
       })
-
       return newValues
     })
   }
@@ -275,7 +269,6 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         ...prev,
         [unitKey]: value,
       }
-
       const updatedUnits = (storedValue?.units || []).map((u: Unit) => {
         if (
           u.propertyCode === unit.propertyCode &&
@@ -288,12 +281,10 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         }
         return u
       })
-
       setValue(id, {
         ...getValues(id),
         units: updatedUnits,
       })
-
       return newValues
     })
   }

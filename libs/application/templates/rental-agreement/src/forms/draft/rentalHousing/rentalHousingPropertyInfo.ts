@@ -20,6 +20,7 @@ import {
   getPropertyClassOptions,
   getPropertyClassGroupOptions,
 } from '../../../lib/utils'
+import { Unit } from '../../../fields/PropertySearch'
 import { registerProperty } from '../../../lib/messages'
 
 const messagesSearch = registerProperty.search
@@ -74,7 +75,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           ],
           rows({ answers }) {
             const selectedPropertyUnits =
-              getValueViaPath<any[]>(
+              getValueViaPath<Unit[]>(
                 answers,
                 'registerProperty.searchresults.units',
               ) || []
