@@ -98,7 +98,6 @@ describe('Financial statement individual election helpers', () => {
     const clientName = 'Fullname Fullname'
     const clientPhone = '1234567'
     const clientEmail = 'email@mockemail.com'
-    const actor = { nationalId: nationalIdActor, scope: ['not', 'relevant'] }
     const otherAnswersRaw = {
       'individualIncome.contributionsByLegalEntities': 100,
       'individualIncome.candidatesOwnContributions': 101,
