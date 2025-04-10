@@ -1,8 +1,12 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
+import { TrainingLicenseOnAWorkMachineAnswers } from '../shared/types'
 
 export const isLastApprovee = (answers: FormValue) => {
-  const approved = getValueViaPath<string[]>(answers, 'approved')
-  // const
-  return true
+  const approved = getValueViaPath<string[]>(answers, 'approved') ?? []
+  const companyAndAssignee =
+    getValueViaPath<
+      TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
+    >(answers, 'assigneeInformation')?.companyAndAssignee ?? []
+  return approved.length === companyAndAssignee.length - 1
 }

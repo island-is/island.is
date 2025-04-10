@@ -15,7 +15,7 @@ import {
   isContractor,
 } from '../../utils'
 import { getMachineTenureOverviewInformation } from '../../utils/getMachineTenureInformation'
-import { TrainingLicenseOnAWorkMachineAnswers } from '../../shared/types'
+import { isLastApprovee } from '../../utils/isLastApprovee'
 
 export const reviewOverviewSection = buildSection({
   id: 'reviewOverviewSection',
@@ -67,22 +67,6 @@ export const reviewOverviewSection = buildSection({
         buildHiddenInput({
           id: 'rejected',
         }),
-        // buildHiddenInput({
-        //   id: 'approved',
-        //   // defaultValue: (
-        //   //   application: Application,
-        //   //   _field: Field,
-        //   //   userInfo: BffUser,
-        //   // ) => {
-        //   //   const approved =
-        //   //     getValueViaPath<string[]>(application.answers, 'approved') ?? []
-        //   //   const nationalId = userInfo.profile.nationalId
-        //   //   if (!approved.includes(nationalId)) approved.push(nationalId)
-        //   //   console.log(userInfo.profile.nationalId, approved)
-        //   //   return ['bla']
-        //   // },
-        // }),
-        // buildHiddenInputWithWatchedValue
         buildCustomField({
           id: 'reviewOverviewSection.handleReject',
           title: '',
@@ -99,10 +83,8 @@ export const reviewOverviewSection = buildSection({
           title: overview.general.approveButton,
           refetchApplicationAfterSubmit: true,
           condition: (answers, _externalData, user) => {
-            console.log(answers)
             const approved =
               getValueViaPath<string[]>(answers, 'approved') ?? []
-            console.log(user?.profile.nationalId, approved)
             return !approved.includes(user?.profile.nationalId ?? '')
           },
           actions: [
@@ -115,39 +97,13 @@ export const reviewOverviewSection = buildSection({
               event: DefaultEvents.SUBMIT,
               name: overview.general.agreeButton,
               type: 'primary',
-              condition: (answers) => {
-                const approved =
-                  getValueViaPath<string[]>(answers, 'approved') ?? []
-                const companyAndAssignee =
-                  getValueViaPath<
-                    TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
-                  >(answers, 'assigneeInformation')?.companyAndAssignee ?? []
-                console.log(
-                  approved,
-                  companyAndAssignee,
-                  approved.length === companyAndAssignee.length,
-                )
-                return approved.length === companyAndAssignee.length - 1
-              },
+              condition: (answers) => isLastApprovee(answers),
             },
             {
               event: DefaultEvents.APPROVE,
               name: overview.general.agreeButton,
               type: 'primary',
-              condition: (answers) => {
-                const approved =
-                  getValueViaPath<string[]>(answers, 'approved') ?? []
-                const companyAndAssignee =
-                  getValueViaPath<
-                    TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
-                  >(answers, 'assigneeInformation')?.companyAndAssignee ?? []
-                console.log(
-                  approved,
-                  companyAndAssignee,
-                  approved.length !== companyAndAssignee.length,
-                )
-                return approved.length !== companyAndAssignee.length - 1
-              },
+              condition: (answers) => !isLastApprovee(answers),
             },
           ],
         }),

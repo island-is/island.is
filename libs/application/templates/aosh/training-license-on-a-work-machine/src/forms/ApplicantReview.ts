@@ -30,23 +30,32 @@ export const ApplicantReview: Form = buildForm({
               doesNotRequireAnswer: true,
               marginTop: 2,
               title: '',
-              items: (application) => {
+              items: (application, _lang) => {
                 const assigneeInformation = getValueViaPath<
                   TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
                 >(application.answers, 'assigneeInformation')
+                const approved =
+                  getValueViaPath<string[]>(application.answers, 'approved') ??
+                  []
                 return (
                   assigneeInformation?.companyAndAssignee?.map(
-                    ({ workMachine }) => ({
+                    ({ workMachine, assignee }) => ({
                       heading: {
                         ...applicationStatus.labels.actionCardTitle,
                         values: { value: workMachine.join(', ') },
                       },
                       tag: {
-                        label: applicationStatus.labels.actionCardTag, // TODO: Make conditional
+                        label: approved.includes(assignee.nationalId)
+                          ? applicationStatus.labels.actionCardTagApproved
+                          : applicationStatus.labels.actionCardTag, // TODO: Make conditional
                         outlined: false,
-                        variant: 'purple',
+                        variant: approved.includes(assignee.nationalId)
+                          ? 'mint'
+                          : 'purple',
                       },
-                      text: applicationStatus.labels.actionCardMessage,
+                      text: approved.includes(assignee.nationalId)
+                        ? applicationStatus.labels.actionCardMessageApproved
+                        : applicationStatus.labels.actionCardMessage,
                     }),
                   ) ?? []
                 )

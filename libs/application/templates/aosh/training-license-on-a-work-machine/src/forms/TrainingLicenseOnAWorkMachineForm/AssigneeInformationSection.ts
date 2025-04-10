@@ -71,19 +71,6 @@ export const assigneeInformationSection = buildSection({
               clearOnChange: (index) => [
                 `assigneeInformation.companyAndAssignee[${index}].assignee.name`,
               ],
-              // setOnChange: async (value, application, index) => {
-              //   return [
-              //     {
-              //       key: `assigneeInformation.companyAndAssignee[${index}].isSameAsApplicant`,
-              //       value: isSameAsApplicant(
-              //         application.answers,
-              //         typeof value === 'string' ? value : '',
-              //       )
-              //         ? ''
-              //         : 'true',
-              //     },
-              //   ]
-              // },
             },
             isSameAsApplicant: {
               component: 'hiddenInput',

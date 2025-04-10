@@ -55,7 +55,7 @@ const AssigneeInformationSchema = z.object({
           phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
         }),
         workMachine: z.array(z.string()).min(1),
-        isSameAsApplicant: z.string().min(1),
+        isSameAsApplicant: z.boolean().refine((val) => !val),
       }),
     )
     .optional(),

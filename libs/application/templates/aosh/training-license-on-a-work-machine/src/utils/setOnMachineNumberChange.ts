@@ -62,14 +62,17 @@ export const setOnMachineNumberChange = async (
               value.slice(0, 2).toUpperCase(),
         )
       : undefined
-  const isMachineTypeValid = certificateOfTenure
-    ?.slice(0, -1) // Remove the last object from the list because it is the active field
-    .find(
-      ({ machineNumber }) =>
-        typeof value === 'string' &&
-        value.length > 0 &&
-        machineNumber[0].toUpperCase() === value[0].toUpperCase(),
-    )
+  const isMachineTypeValid =
+    certificateOfTenure && certificateOfTenure.length > 1
+      ? certificateOfTenure
+          ?.slice(0, -1) // Remove the last object from the list because it is the active field
+          .find(
+            ({ machineNumber }) =>
+              typeof value === 'string' &&
+              value.length > 0 &&
+              machineNumber[0].toUpperCase() === value[0].toUpperCase(),
+          )
+      : true
   if (value && value.length > 0 && !isMachineTypeValid) {
     return [
       {

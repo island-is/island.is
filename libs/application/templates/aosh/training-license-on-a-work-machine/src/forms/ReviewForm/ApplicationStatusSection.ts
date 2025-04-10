@@ -21,7 +21,7 @@ export const applicationStatusSection = buildSection({
           doesNotRequireAnswer: true,
           marginTop: 2,
           title: '',
-          items: (application, lang, userNationalId) => {
+          items: (application, _lang, userNationalId) => {
             const userInfo = getUserInfo(application.answers, userNationalId)
             const approved =
               getValueViaPath<string[]>(application.answers, 'approved') ?? []
@@ -34,7 +34,7 @@ export const applicationStatusSection = buildSection({
                     ? applicationStatus.labels.actionCardTagApproved
                     : applicationStatus.labels.actionCardTag,
                   outlined: false,
-                  variant: isApproved ? 'green' : 'purple',
+                  variant: isApproved ? 'mint' : 'purple',
                 },
                 text: {
                   ...applicationStatus.labels.actionCardMessageAssignee,

@@ -35,6 +35,11 @@ export const applicationStatus = {
         'Beðið er eftir að samþykktaraðili staðfesti starfstíma á vinnuvél/ar',
       description: `Application status action card message`,
     },
+    actionCardMessageApproved: {
+      id: 'aosh.tlwm.application:applicationStatus.labels.actionCardMessageApproved',
+      defaultMessage: 'Samþykktaraðili hefur staðfest starfstíma á vinnuvél/ar',
+      description: `Application status action card message approved`,
+    },
     actionCardMessageAssignee: {
       id: 'aosh.tlwm.application:applicationStatus.labels.actionCardMessageAssignee',
       defaultMessage:
