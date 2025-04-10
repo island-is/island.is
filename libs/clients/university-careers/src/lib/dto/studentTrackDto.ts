@@ -46,5 +46,7 @@ export const mapToStudentTrackDto = (
     ...transcript,
     institution,
     graduationDate: new Date(transcript.graduationDate),
+    studyProgram: transcript.studyProgram ?? undefined,
+    degree: transcript.degree ?? undefined,
   }
 }

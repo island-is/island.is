@@ -1,7 +1,11 @@
 export { StudentTranscriptApi as HIApi } from './gen/fetch'
 export { StudentTrack as HIStudentTrack } from './gen/fetch'
 export { StudentTrackInstitution as HIStudentTrackInstitution } from './gen/fetch'
+export { StudentFile as HIStudentFile } from './gen/fetch'
 export { NemandiGetLocaleEnum as HILocale } from './gen/fetch'
-export { NemandiFerillFerillFileTranscriptGetLocaleEnum as HITranscriptLocale } from './gen/fetch'
 export { NemandiFerillFerillGetLocaleEnum as HIFerillLocale } from './gen/fetch'
+export { NemandiFerillFerillFileTypeGetLocaleEnum as HITranscriptLocale } from './gen/fetch'
+export { FileType as HIFileType } from './gen/fetch'
+export { StudentTrackOverview as HIStudentTrackOverview } from './gen/fetch'
+
 export * from './universityOfIcelandCareerClient.config'

@@ -7,7 +7,6 @@ info:
     email: 'help@hi.is'
 servers:
   - url: '/api/vottord/brautskraning'
-  - url: '/api/vottord/brautskraning'
 paths:
   /nemandi:
     get:
@@ -84,12 +83,18 @@ paths:
             \ ekki brautskráður fyrir feril."
         '5XX':
           description: 'Unexpected error.'
-  /nemandi/ferill/{ferill}/file/transcript:
+  /nemandi/ferill/{ferill}/file/{type}:
     get:
       summary: 'Skilar útskriftargögnum á pdf formi'
       tags:
         - 'studentTranscript'
       parameters:
+        - name: 'type'
+          in: 'path'
+          required: true
+          description: 'Tegund skjalas'
+          schema:
+            $ref: '#/components/schemas/fileType'
         - $ref: '#/components/parameters/ferill'
         - $ref: '#/components/parameters/locale'
       responses:
@@ -110,6 +115,13 @@ paths:
           description: 'Unexpected error.'
 components:
   schemas:
+    fileType:
+      type: 'string'
+      enum:
+        - 'transcript'
+        - 'diploma'
+        - 'diploma_supplement'
+        - 'course_descriptions'
     studentTrack:
       type: 'object'
       properties:
@@ -164,9 +176,7 @@ components:
       type: 'object'
       properties:
         type:
-          type: 'string'
-          description: 'TODO'
-          example: 'transcript'
+          $ref: '#/components/schemas/fileType'
         locale:
           type: 'string'
           description: 'Tungumál fyrir file'
