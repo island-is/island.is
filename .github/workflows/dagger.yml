@@ -63,11 +63,9 @@ jobs:
                 ECR_PASSWORD=$(aws ecr get-login-password)
                 echo "::add-mask::$ECR_PASSWORD"
                 echo "password=$ECR_PASSWORD" >> $GITHUB_OUTPUT
-            - name: Setup SSH
-              id: ssh
-              run: |
-               eval "$(ssh-agent -s)"
-               ssh-add - <<< '${{ secrets.HELM_VALUES_SSH_KEY }}'
+            - uses: webfactory/ssh-agent@v0.9.0
+              with:
+                ssh-private-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
             - name: Checkout dagger code
               uses: actions/checkout@v4
               with:
