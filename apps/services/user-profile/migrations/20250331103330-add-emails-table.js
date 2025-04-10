@@ -63,6 +63,13 @@ module.exports = {
       name: 'emails_national_id_email_unique',
     })
 
+    // Avoid duplicate entries for primary email
+    await queryInterface.addConstraint('emails', {
+      fields: ['national_id', 'primary'],
+      type: 'unique',
+      name: 'emails_national_id_primary_unique',
+    })
+
     // Add index for national_id
     await queryInterface.addIndex('emails', ['national_id'], {
       name: 'emails_national_id_index',
@@ -82,22 +89,31 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    // Remove foreign key constraint
-    await queryInterface.removeConstraint('emails', 'emails_national_id_fkey')
+    try {
+      // Remove foreign key constraint
+      await queryInterface.removeConstraint('emails', 'emails_national_id_fkey')
 
-    // Remove unique constraint
-    await queryInterface.removeConstraint(
-      'emails',
-      'emails_national_id_email_unique',
-    )
+      // Remove unique constraints
+      await queryInterface.removeConstraint(
+        'emails',
+        'emails_national_id_email_unique',
+      )
+      await queryInterface.removeConstraint(
+        'emails',
+        'emails_national_id_primary_unique',
+      )
 
-    // Remove index
-    await queryInterface.removeIndex('emails', 'emails_national_id_index')
+      // Remove index
+      await queryInterface.removeIndex('emails', 'emails_national_id_index')
 
-    // Remove column from actor_profile
-    await queryInterface.removeColumn('actor_profile', 'emails_id')
+      // Remove column from actor_profile
+      await queryInterface.removeColumn('actor_profile', 'emails_id')
 
-    // Drop table
-    await queryInterface.dropTable('emails')
+      // Drop table
+      await queryInterface.dropTable('emails')
+    } catch (error) {
+      console.error('Error dropping emails table:', error)
+      throw error
+    }
   },
 }
