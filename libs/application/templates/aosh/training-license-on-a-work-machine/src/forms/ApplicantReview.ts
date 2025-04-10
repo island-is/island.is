@@ -47,7 +47,7 @@ export const ApplicantReview: Form = buildForm({
                       tag: {
                         label: approved.includes(assignee.nationalId)
                           ? applicationStatus.labels.actionCardTagApproved
-                          : applicationStatus.labels.actionCardTag, // TODO: Make conditional
+                          : applicationStatus.labels.actionCardTag,
                         outlined: false,
                         variant: approved.includes(assignee.nationalId)
                           ? 'mint'

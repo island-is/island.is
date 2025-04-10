@@ -8,7 +8,6 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../lib/messages'
 import { Application } from '@island.is/api/schema'
-import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 
 export const informationSection = buildSection({
   id: 'informationSection',

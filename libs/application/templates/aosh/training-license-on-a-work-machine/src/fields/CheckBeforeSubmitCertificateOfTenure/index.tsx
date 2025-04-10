@@ -20,15 +20,13 @@ export const CheckBeforeSubmitCertificateOfTenure: FC<FieldBaseProps> = ({
     )
     setValue('validCertificateOfTenure', true)
     if (!certificateOfTenure) {
-      console.log('Certificate of tenure is missing')
       return [false, '']
     } else if (totalTenureInHours && totalTenureInHours < 1000) {
-      console.log('Total tenure in hours is less than 1000')
       setValue('validCertificateOfTenure', false)
       return [false, 'Total tenure in hours must be at least 1000']
     }
     return [true, null]
   })
 
-  return <></>
+  return null
 }

@@ -218,11 +218,11 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
       })
 
     // Send Hnipp to applicant if they are not a contractor
-    const isContractor = getValueViaPath<string[]>(
-      application.answers,
-      'assigneeInformation.isContractor',
+
+    const isNotOnlyContractor = certificateOfTenure?.some(
+      ({ isContractor }) => !isContractor?.includes('yes'),
     )
-    if (!isContractor?.includes('yes')) {
+    if (isNotOnlyContractor) {
       const applicantNationalId = getValueViaPath<string>(
         application.externalData,
         'identity.data.nationalId',
