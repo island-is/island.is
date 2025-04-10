@@ -8,6 +8,7 @@ import { CanCreateInput, GetListInput } from './signature-collection.types'
 import {
   Collection,
   CollectionStatus,
+  CollectionType,
   mapCollection,
 } from './types/collection.dto'
 import { List, ListStatus, mapList } from './types/list.dto'
@@ -32,15 +33,13 @@ export class SignatureCollectionSharedClientService {
     //       collections running at the same time. (not projected to happen currently)
     //       So keep CollectionType in mind if you're working on this
     //       for that reason, future programmer.
-    const current = (
-      res
-        .map(mapCollection)
-        .filter(
-          (collection) =>
-            collection?.isSignatureCollection &&
-            collection.startTime < new Date(),
-        ) as Collection[]
-    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
+    const current = (res
+      .map(mapCollection)
+      .filter(
+        (collection) =>
+          collection?.isSignatureCollection &&
+          collection.startTime < new Date(),
+      ) as Collection[]).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
 
     if (!current) {
       throw new Error('No current collection')
@@ -96,13 +95,14 @@ export class SignatureCollectionSharedClientService {
   canCreate({
     requirementsMet = false,
     canCreateInfo,
-    isPresidential,
+    collectionType,
     isActive = true,
     ownedLists,
     areas,
   }: CanCreateInput): Success {
     // can create if requirements met and collection is active
     // if collection is presidential and user has no lists otherwise does not have lists for all areas of collection
+    const isPresidential = collectionType === CollectionType.Presidential
     const alreadyOwnsAllLists = isPresidential
       ? ownedLists.length > 0
       : areas.length === ownedLists.length

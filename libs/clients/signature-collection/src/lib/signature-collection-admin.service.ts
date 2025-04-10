@@ -197,7 +197,7 @@ export class SignatureCollectionAdminClientService {
     auth: Auth,
   ): Promise<CandidateLookup> {
     const collection = await this.currentCollection(auth)
-    const { id, isPresidential, areas } = collection
+    const { id, collectionType, areas } = collection
     const user = await this.getApiWithAuth(
       this.adminApi,
       auth,
@@ -219,7 +219,7 @@ export class SignatureCollectionAdminClientService {
       requirementsMet: user.maFrambod,
       canCreateInfo: user.maFrambodInfo,
       ownedLists,
-      isPresidential,
+      collectionType,
       areas,
     })
 

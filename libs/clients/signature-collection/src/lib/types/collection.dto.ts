@@ -43,7 +43,6 @@ export interface Collection {
   startTime: Date
   endTime: Date
   isActive: boolean
-  isPresidential: boolean
   isSignatureCollection: boolean
   name: string
   areas: Area[]
@@ -126,7 +125,6 @@ export const mapCollection = (
     startTime,
     endTime,
     isActive,
-    isPresidential: collectionType === CollectionType.Presidential,
     isSignatureCollection: kosning?.erMedmaelakosning ?? false,
     candidates: candidates
       ? candidates.map((candidate) => mapCandidate(candidate))

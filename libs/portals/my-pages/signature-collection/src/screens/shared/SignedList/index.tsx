@@ -9,6 +9,7 @@ import { useMutation } from '@apollo/client'
 import { unSignList } from '../../../hooks/graphql/mutations'
 import {
   SignatureCollection,
+  SignatureCollectionCollectionType,
   SignatureCollectionSignedList,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
@@ -26,8 +27,11 @@ const SignedList = ({
   )
 
   // SignedList is typically singular, although it may consist of multiple entries, which in that case will all be invalid
-  const { signedLists, loadingSignedLists, refetchSignedLists } =
-    useGetSignedList()
+  const {
+    signedLists,
+    loadingSignedLists,
+    refetchSignedLists,
+  } = useGetSignedList()
 
   const [unSign, { loading }] = useMutation(unSignList, {
     variables: {
@@ -41,11 +45,9 @@ const SignedList = ({
     try {
       await unSign().then(({ data }) => {
         if (
-          (
-            data as unknown as {
-              signatureCollectionUnsign: SignatureCollectionSuccess
-            }
-          ).signatureCollectionUnsign.success
+          ((data as unknown) as {
+            signatureCollectionUnsign: SignatureCollectionSuccess
+          }).signatureCollectionUnsign.success
         ) {
           toast.success(formatMessage(m.unSignSuccess))
           setModalIsOpen(false)
@@ -73,7 +75,8 @@ const SignedList = ({
                   heading={list.title.split(' - ')[0]}
                   eyebrow={list.area?.name}
                   text={
-                    currentCollection.isPresidential
+                    currentCollection.collectionType ===
+                    SignatureCollectionCollectionType.Presidential
                       ? formatMessage(m.collectionTitle)
                       : formatMessage(m.collectionTitleParliamentary)
                   }
