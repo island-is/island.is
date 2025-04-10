@@ -73,7 +73,6 @@ describe('Financial statement individual election helpers', () => {
     it('should return correct input and loggerInfo', () => {
       const result = financialHelper.getInput(
         answers,
-        actor,
         nationalIdClient,
         fileName,
       )
