@@ -125,7 +125,7 @@ export const expandAnswers = (
         data: (answers.assets.bankAccounts?.data ?? []).map((account) => {
           return {
             assetNumber: account.assetNumber ?? '',
-            propertyValuation: account.propertyValuation ?? '',
+            propertyValuation: account.propertyValuation ?? '0',
             exchangeRateOrInterest: account.exchangeRateOrInterest ?? '',
             foreignBankAccount: account?.foreignBankAccount ?? [],
             deceasedShare: account.deceasedShare ?? '0',
@@ -141,7 +141,7 @@ export const expandAnswers = (
           return {
             assetNumber: claim.assetNumber ?? '',
             description: claim.description ?? '',
-            propertyValuation: claim.propertyValuation ?? '',
+            propertyValuation: claim.propertyValuation ?? '0',
             deceasedShare: claim.deceasedShare ?? '0',
             deceasedShareEnabled: claim.deceasedShareEnabled ?? [],
             deceasedShareAmount: claim.deceasedShareAmount ?? 0,
@@ -155,7 +155,7 @@ export const expandAnswers = (
           return {
             assetNumber: gun.assetNumber ?? '',
             description: gun.description ?? '',
-            propertyValuation: gun.propertyValuation ?? '',
+            propertyValuation: gun.propertyValuation ?? '0',
             deceasedShare: gun.deceasedShare ?? '0',
             deceasedShareEnabled: gun.deceasedShareEnabled ?? [],
             deceasedShareAmount: gun.deceasedShareAmount ?? 0,
@@ -228,7 +228,7 @@ export const expandAnswers = (
           return {
             assetNumber: vehicle.assetNumber ?? '',
             description: vehicle.description ?? '',
-            propertyValuation: vehicle.propertyValuation ?? '',
+            propertyValuation: vehicle.propertyValuation ?? '0',
             deceasedShare: vehicle.deceasedShare ?? '0',
             deceasedShareEnabled: vehicle.deceasedShareEnabled ?? [],
             deceasedShareAmount: vehicle?.deceasedShareAmount ?? 0,
