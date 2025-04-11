@@ -22,6 +22,23 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'applicantInfo.phonenumber',
   ) as string
 
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+
+  const personalAllowance = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowance',
+  ) as YesOrNo
+
+  const personalAllowanceUsage = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowanceUsage',
+  ) as string
+
+  const taxLevel = getValueViaPath(
+    answers,
+    'paymentInfo.taxLevel',
+  ) as TaxLevelOptions
+
   const isSelfEmployed = getValueViaPath(
     answers,
     'questions.isSelfEmployed',
@@ -44,19 +61,14 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'questions.isStudyingFileUpload',
   ) as FileType[]
 
-  const employeeSickPayOption = getValueViaPath(
+  const hasUtilizedEmployeeSickPayRights = getValueViaPath(
     answers,
-    'employeeSickPay.option',
+    'employeeSickPay.hasUtilizedEmployeeSickPayRights',
   ) as YesOrNo | NotApplicable
 
-  const employeeSickPayDoesEndDate = getValueViaPath(
+  const employeeSickPayEndDate = getValueViaPath(
     answers,
-    'employeeSickPay.doesEndDate',
-  ) as string
-
-  const employeeSickPayDidEndDate = getValueViaPath(
-    answers,
-    'employeeSickPay.didEndDate',
+    'employeeSickPay.endDate',
   ) as string
 
   const hasUtilizedUnionSickPayRights = getValueViaPath(
@@ -79,50 +91,32 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'unionSickPay.fileupload',
   ) as FileType[]
 
-  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
-
-  const personalAllowance = getValueViaPath(
-    answers,
-    'paymentInfo.personalAllowance',
-  ) as YesOrNo
-
-  const personalAllowanceUsage = getValueViaPath(
-    answers,
-    'paymentInfo.personalAllowanceUsage',
-  ) as string
-
-  const taxLevel = getValueViaPath(
-    answers,
-    'paymentInfo.taxLevel',
-  ) as TaxLevelOptions
-
-  const comment = getValueViaPath(answers, 'comment') as string
-
   const rehabilitationPlanConfirmation = getValueViaPath(
     answers,
     'rehabilitationPlanConfirmation',
   ) as string[]
 
+  const comment = getValueViaPath(answers, 'comment') as string
+
   return {
     applicantPhonenumber,
+    bank,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
     isSelfEmployed,
     calculatedRemunerationDate,
     isPartTimeEmployed,
     isStudying,
     isStudyingFileUpload,
-    employeeSickPayOption,
-    employeeSickPayDoesEndDate,
-    employeeSickPayDidEndDate,
+    hasUtilizedEmployeeSickPayRights,
+    employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
     unionNationalId,
     unionSickPayFileUpload,
-    bank,
-    personalAllowance,
-    personalAllowanceUsage,
-    taxLevel,
-    comment,
     rehabilitationPlanConfirmation,
+    comment,
   }
 }
 

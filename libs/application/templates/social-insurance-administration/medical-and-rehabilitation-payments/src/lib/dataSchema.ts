@@ -80,21 +80,17 @@ export const dataSchema = z.object({
     ),
   employeeSickPay: z
     .object({
-      option: z.enum([YES, NO, NOT_APPLICABLE]),
-      doesEndDate: z.string().optional(),
-      didEndDate: z.string().optional(),
+      hasUtilizedEmployeeSickPayRights: z.enum([YES, NO, NOT_APPLICABLE]),
+      endDate: z.string().optional(),
     })
     .refine(
-      ({ option, didEndDate }) => (option === YES ? !!didEndDate : true),
+      ({ hasUtilizedEmployeeSickPayRights, endDate }) =>
+        hasUtilizedEmployeeSickPayRights === YES ||
+        hasUtilizedEmployeeSickPayRights === NO
+          ? !!endDate
+          : true,
       {
-        path: ['didEndDate'],
-        params: errorMessages.dateRequired,
-      },
-    )
-    .refine(
-      ({ option, doesEndDate }) => (option === NO ? !!doesEndDate : true),
-      {
-        path: ['doesEndDate'],
+        path: ['endDate'],
         params: errorMessages.dateRequired,
       },
     ),

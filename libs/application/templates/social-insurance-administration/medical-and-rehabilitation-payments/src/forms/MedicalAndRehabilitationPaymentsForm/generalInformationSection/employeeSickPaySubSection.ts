@@ -26,54 +26,49 @@ export const employeeSickPaySubSection = buildSubSection({
           .employeeSickPayTitle,
       children: [
         buildRadioField({
-          id: 'employeeSickPay.option',
+          id: 'employeeSickPay.hasUtilizedEmployeeSickPayRights',
           options: getYesNoNotApplicableOptions(),
           required: true,
         }),
         buildDescriptionField({
-          id: 'employeeSickPay.doesEndDate.description',
-          title:
-            medicalAndRehabilitationPaymentsFormMessage.generalInformation
-              .employeeSickPayDoesEndDateTitle,
+          id: 'employeeSickPay.endDate.description',
+          title: (application) => {
+            const { hasUtilizedEmployeeSickPayRights } = getApplicationAnswers(
+              application.answers,
+            )
+
+            if (hasUtilizedEmployeeSickPayRights === YES) {
+              return medicalAndRehabilitationPaymentsFormMessage
+                .generalInformation.employeeSickPayDidEndDateTitle
+            }
+
+            return medicalAndRehabilitationPaymentsFormMessage
+              .generalInformation.employeeSickPayDoesEndDateTitle
+          },
           titleVariant: 'h4',
           space: 4,
           condition: (answers) => {
-            const { employeeSickPayOption } = getApplicationAnswers(answers)
-            return employeeSickPayOption === NO
+            const { hasUtilizedEmployeeSickPayRights } =
+              getApplicationAnswers(answers)
+            return (
+              hasUtilizedEmployeeSickPayRights === YES ||
+              hasUtilizedEmployeeSickPayRights === NO
+            )
           },
         }),
         buildDateField({
-          id: 'employeeSickPay.doesEndDate', // When does your sick pay entitlement end?
+          id: 'employeeSickPay.endDate',
           title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
           required: true,
           condition: (answers) => {
-            const { employeeSickPayOption } = getApplicationAnswers(answers)
-            return employeeSickPayOption === NO
-          },
-        }),
-        buildDescriptionField({
-          id: 'employeeSickPay.didEndDate.description',
-          title:
-            medicalAndRehabilitationPaymentsFormMessage.generalInformation
-              .employeeSickPayDidEndDateTitle,
-          titleVariant: 'h4',
-          space: 4,
-          condition: (answers) => {
-            const { employeeSickPayOption } = getApplicationAnswers(answers)
-            return employeeSickPayOption === YES
-          },
-        }),
-        buildDateField({
-          id: 'employeeSickPay.didEndDate', // When did your sick pay entitlement end?
-          title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
-          placeholder:
-            medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
-          required: true,
-          condition: (answers) => {
-            const { employeeSickPayOption } = getApplicationAnswers(answers)
-            return employeeSickPayOption === YES
+            const { hasUtilizedEmployeeSickPayRights } =
+              getApplicationAnswers(answers)
+            return (
+              hasUtilizedEmployeeSickPayRights === YES ||
+              hasUtilizedEmployeeSickPayRights === NO
+            )
           },
         }),
       ],

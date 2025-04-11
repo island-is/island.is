@@ -1,4 +1,4 @@
-import { formatText, YES, YesOrNoEnum } from '@island.is/application/core'
+import { formatText, YES } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -17,11 +17,8 @@ export const EmployeeSickPay = ({
 }: ReviewGroupProps) => {
   const { formatMessage, formatDate } = useLocale()
 
-  const {
-    employeeSickPayOption,
-    employeeSickPayDoesEndDate,
-    employeeSickPayDidEndDate,
-  } = getApplicationAnswers(application.answers)
+  const { hasUtilizedEmployeeSickPayRights, employeeSickPayEndDate } =
+    getApplicationAnswers(application.answers)
 
   return (
     <ReviewGroup
@@ -38,19 +35,21 @@ export const EmployeeSickPay = ({
                   .employeeSickPayTitle,
               )}
               value={formatText(
-                getYesNoNotApplicableTranslation(employeeSickPayOption),
+                getYesNoNotApplicableTranslation(
+                  hasUtilizedEmployeeSickPayRights,
+                ),
                 application,
                 formatMessage,
               )}
             />
           </GridColumn>
         </GridRow>
-        {employeeSickPayOption !== NOT_APPLICABLE && (
+        {hasUtilizedEmployeeSickPayRights !== NOT_APPLICABLE && (
           <GridRow>
             <GridColumn span="12/12">
               <DataValue
                 label={
-                  employeeSickPayOption === YES
+                  hasUtilizedEmployeeSickPayRights === YES
                     ? formatMessage(
                         medicalAndRehabilitationPaymentsFormMessage.shared
                           .sickPayDidEndDate,
@@ -60,11 +59,7 @@ export const EmployeeSickPay = ({
                           .sickPayDoesEndDate,
                       )
                 }
-                value={
-                  employeeSickPayOption === YesOrNoEnum.YES
-                    ? formatDate(employeeSickPayDidEndDate)
-                    : formatDate(employeeSickPayDoesEndDate)
-                }
+                value={formatDate(employeeSickPayEndDate)}
               />
             </GridColumn>
           </GridRow>
