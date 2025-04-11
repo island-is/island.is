@@ -13,6 +13,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
@@ -64,6 +65,7 @@ import { UserNotificationClientConfig } from '@island.is/clients/user-notificati
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
+import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 
 @Module({
   imports: [
@@ -81,6 +83,7 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         DrivingLicenseApiConfig,
         DrivingLicenseBookClientConfig,
         NationalRegistryClientConfig,
+        NationalRegistryV3ApplicationsClientConfig,
         FeatureFlagConfig,
         MunicipalitiesFinancialAidConfig,
         FishingLicenseClientConfig,
@@ -127,6 +130,7 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         NationalRegistryV3ClientConfig,
         SeminarsClientConfig,
         SecondarySchoolClientConfig,
+        PaymentsApiClientConfig,
       ],
     }),
   ],
