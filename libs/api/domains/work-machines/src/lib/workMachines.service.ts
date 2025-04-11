@@ -9,7 +9,6 @@ import {
 import { isDefined } from '@island.is/shared/utils'
 import { User } from '@island.is/auth-nest-tools'
 import { Inject, Injectable } from '@nestjs/common'
-import { Action, ExternalLink } from './workMachines.types'
 import { GetWorkMachineCollectionInput } from './dto/getWorkMachineCollection.input'
 import { GetWorkMachineInput } from './dto/getWorkMachine.input'
 import { GetDocumentsInput } from './dto/getDocuments.input'
@@ -17,9 +16,16 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { MachineDto } from '@island.is/clients/work-machines'
 import { GetMachineParentCategoryByTypeAndModelInput } from './dto/getMachineParentCategoryByTypeAndModel.input'
-import isValid from 'date-fns/isValid'
 import { PaginatedCollectionResponse } from './models/workMachinePaginatedCollection.model'
 import { WorkMachine } from './models/workMachine.model'
+import {
+  mapRelToAction,
+  mapRelToCollectionLink,
+  mapRelationToLink,
+} from './mapper'
+import { LinkCategory } from './workMachines.types'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import { ConfigType } from '@nestjs/config'
 
 @Injectable()
 export class WorkMachinesService {
@@ -27,39 +33,11 @@ export class WorkMachinesService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private readonly machineService: WorkMachinesClientService,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
   ) {}
-
-  private mapRelToAction = (rel?: string) => {
-    switch (rel) {
-      case 'requestInspection':
-        return Action.REQUEST_INSPECTION
-      case 'changeStatus':
-        return Action.CHANGE_STATUS
-      case 'ownerChange':
-        return Action.OWNER_CHANGE
-      case 'supervisorChange':
-        return Action.SUPERVISOR_CHANGE
-      case 'registerForTraffic':
-        return Action.REGISTER_FOR_TRAFFIC
-      default:
-        return null
-    }
-  }
-
-  private mapRelToCollectionLink = (rel?: string) => {
-    switch (rel) {
-      case 'self':
-        return ExternalLink.SELF
-      case 'nextPage':
-        return ExternalLink.NEXT_PAGE
-      case 'excel':
-        return ExternalLink.EXCEL
-      case 'csv':
-        return ExternalLink.CSV
-      default:
-        return null
-    }
-  }
 
   async getWorkMachines(
     user: User,
@@ -92,7 +70,6 @@ export class WorkMachinesService {
           owner: v.owner,
           supervisor: v.supervisor,
           labels: v.labels,
-
           //deprecation line
           type: v.type?.fullType,
           ownerNumber: v.owner?.number,
@@ -102,18 +79,34 @@ export class WorkMachinesService {
         .filter(isDefined) ?? []
 
     const links = data.links?.length
+      ? data.links.map((l) => {
+          return {
+            ...l,
+            rel: mapRelToCollectionLink(l.rel ?? '') ?? undefined,
+          }
+        })
+      : undefined
+
+    const linkCollection = data.links?.length
       ? data.links
           .map((l) => {
-            const rel = this.mapRelToCollectionLink(l.rel ?? '')
-
-            if (!rel) {
-              return null
+            const rel = mapRelToAction(l.rel ?? '')
+            const { type, category } = mapRelationToLink(l.rel) ?? {
+              type: undefined,
+              category: undefined,
             }
 
+            const href =
+              category === LinkCategory.DOWNLOAD
+                ? `${this.downloadServiceConfig.baseUrl}/download/v1/workMachines/export/${type}`
+                : l.href
+
             return {
-              ...l,
-              relation: rel,
-              rel,
+              href,
+              displayTitle: l.displayTitle,
+              relation: type,
+              relationCategory: category,
+              rel: rel ?? undefined,
             }
           })
           .filter(isDefined)
@@ -121,6 +114,7 @@ export class WorkMachinesService {
 
     return {
       data: workMachines,
+      linkCollection,
       links,
       labels: data.labels,
       totalCount: data.pagination?.totalCount ?? 0,
@@ -151,17 +145,22 @@ export class WorkMachinesService {
       ? data.links
           .map((l) => {
             const { href } = l
-            const rel = this.mapRelToAction(l.rel ?? '')
+            const rel = mapRelToAction(l.rel ?? '')
+            const { type, category } = mapRelationToLink(l.rel) ?? {
+              type: undefined,
+              category: undefined,
+            }
 
-            if (!rel || !href) {
+            if (!rel || !href || !type) {
               return null
             }
 
             return {
-              displayTitle: l.displayTitle ?? undefined,
-              href,
-              relation: rel,
-              rel,
+              href: l.href,
+              displayTitle: l.displayTitle,
+              relation: type,
+              relationCategory: category,
+              rel: rel ?? undefined,
             }
           })
           .filter(isDefined)

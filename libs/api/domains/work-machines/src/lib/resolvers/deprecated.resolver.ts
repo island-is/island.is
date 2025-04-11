@@ -23,6 +23,8 @@ import { TechInfoItem } from '../models/toBeDeprecated/techInfoItem'
 import { MachineType } from '../models/toBeDeprecated/machineType'
 import { GetDocumentsInput } from '../dto/getDocuments.input'
 import { FileType } from '../workMachines.types'
+import { PaginatedCollectionResponse } from '../models/workMachinePaginatedCollection.model'
+import { GetWorkMachineCollectionInput } from '../dto/getWorkMachineCollection.input'
 
 @Directive('@deprecated(reason: "Use something else")')
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)

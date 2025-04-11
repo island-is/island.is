@@ -3,13 +3,13 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import { useGetWorkMachineByIdQuery } from './WorkMachinesDetail.generated'
 import {
-  IntroHeader,
   TableGrid,
   InfoLine,
   formatDate,
   m,
   VINNUEFTIRLITID_SLUG,
   InfoLineStack,
+  IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import { messages, vehicleMessage } from '../../lib/messages'
 import {
@@ -119,14 +119,11 @@ const WorkMachinesDetail = () => {
     {} as Record<string, string>,
   )
   return (
-    <>
-      <Box marginBottom={[1, 1, 3]}>
-        <IntroHeader
-          title={workMachine?.type ?? ''}
-          serviceProviderSlug={VINNUEFTIRLITID_SLUG}
-          serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
-        />
-      </Box>
+    <IntroWrapper
+      title={workMachine?.type ?? ''}
+      serviceProviderSlug={VINNUEFTIRLITID_SLUG}
+      serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && !data?.workMachine && (
         <Problem
@@ -271,22 +268,22 @@ const WorkMachinesDetail = () => {
             <InfoLineStack label={formatMessage(m.owner)}>
               <InfoLine
                 label={labels.ownerName}
-                content={workMachine?.ownerName ?? ''}
+                content={workMachine?.owner?.name ?? ''}
                 loading={loading}
               />
               <InfoLine
                 label={labels.ownerNationalId}
-                content={format(workMachine?.ownerNationalId ?? '')}
+                content={format(workMachine?.owner?.nationalId ?? '')}
                 loading={loading}
               />
               <InfoLine
                 label={labels.ownerAddress}
-                content={workMachine?.ownerAddress ?? ''}
+                content={workMachine?.owner?.address ?? ''}
                 loading={loading}
               />
               <InfoLine
                 label={labels.ownerPostcode}
-                content={workMachine?.ownerPostcode ?? ''}
+                content={workMachine?.owner?.postcode ?? ''}
                 loading={loading}
               />
             </InfoLineStack>
@@ -295,29 +292,29 @@ const WorkMachinesDetail = () => {
             <InfoLineStack label={formatMessage(vehicleMessage.operator)}>
               <InfoLine
                 label={labels.supervisorName}
-                content={workMachine?.supervisorName ?? ''}
+                content={workMachine?.supervisor?.name ?? ''}
                 loading={loading}
               />
               <InfoLine
                 label={labels.supervisorNationalId}
-                content={format(workMachine?.supervisorNationalId ?? '')}
+                content={format(workMachine?.supervisor?.nationalId ?? '')}
                 loading={loading}
               />
               <InfoLine
                 label={labels.supervisorAddress}
-                content={workMachine?.supervisorAddress ?? ''}
+                content={workMachine?.supervisor?.address ?? ''}
                 loading={loading}
               />
               <InfoLine
                 label={labels.supervisorPostcode}
-                content={workMachine?.supervisorPostcode ?? ''}
+                content={workMachine?.supervisor?.postcode ?? ''}
                 loading={loading}
               />
             </InfoLineStack>
           </Box>
         </>
       )}
-    </>
+    </IntroWrapper>
   )
 }
 

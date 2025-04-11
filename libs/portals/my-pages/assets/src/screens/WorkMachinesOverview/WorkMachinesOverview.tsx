@@ -1,4 +1,7 @@
-import { WorkMachinesFileType } from '@island.is/api/schema'
+import {
+  WorkMachinesLinkCategory,
+  WorkMachinesLinkType,
+} from '@island.is/api/schema'
 import {
   Box,
   Checkbox,
@@ -105,27 +108,27 @@ const WorkMachinesOverview = () => {
 
   const downloadButtons = useMemo(() => {
     return (
-      data?.workMachinesPaginatedCollection?.downloadServiceLinks
+      data?.workMachinesPaginatedCollection?.linkCollection
+        ?.filter(
+          (link) => link.relationCategory === WorkMachinesLinkCategory.DOWNLOAD,
+        )
         .map((link) => {
-          const { href, type } = link
-          if (!type || !href) {
+          const { href, relation } = link
+          if (!relation || !href) {
             return null
           }
 
           return {
             onClick: () => formSubmit(href),
             title:
-              type === WorkMachinesFileType.EXCEL
+              relation === WorkMachinesLinkType.EXCEL
                 ? formatMessage(m.getAsExcel)
                 : formatMessage(m.getAsCsv),
           }
         })
         .filter(isDefined) ?? []
     )
-  }, [
-    data?.workMachinesPaginatedCollection?.downloadServiceLinks,
-    formatMessage,
-  ])
+  }, [data?.workMachinesPaginatedCollection?.linkCollection, formatMessage])
 
   return (
     <IntroWrapper
@@ -134,87 +137,70 @@ const WorkMachinesOverview = () => {
       serviceProviderSlug={VINNUEFTIRLITID_SLUG}
       serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
     >
-      <GridRow marginTop={[2, 2, 6]}>
-        <GridColumn span="12/12">
-          <Box
-            display="flex"
-            flexDirection="row"
-            flexWrap="wrap"
-            justifyContent="flexStart"
-            printHidden
-          >
-            <Box marginBottom={3} paddingRight={2}>
-              <Inline space={2}>
-                <Hidden print={true}>
-                  <Filter
-                    labelOpen={formatMessage(m.openFilter)}
-                    labelClose={formatMessage(m.closeFilter)}
-                    labelClear={formatMessage(m.clearFilter)}
-                    labelClearAll={formatMessage(m.clearAllFilters)}
-                    labelTitle={formatMessage(m.filterBy)}
-                    onFilterClear={() => setActiveFilters(defaultFilterValues)}
-                    variant="popover"
-                    reverse
-                    filterInput={
-                      <Input
-                        icon={{ name: 'search' }}
-                        backgroundColor="blue"
-                        size="xs"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        name="work-machines-input-search"
-                        placeholder={formatMessage(
-                          messages.workMachinesSearchPlaceholder,
-                        )}
-                      />
-                    }
-                  >
-                    {
-                      <Box paddingX={3} marginTop={2}>
-                        <Text variant="h4">{formatMessage(m.filterBy)}</Text>
-                        <Box paddingY={3}>
-                          {Object.keys(activeFilters).map(
-                            (filterKey, index) => {
-                              const key = filterKey as keyof FilterValues
-                              const filter = activeFilters[key]
-                              const labelKey =
-                                filter.label as keyof typeof messages
-                              return (
-                                <Box
-                                  paddingTop={index === 0 ? 0 : 1}
-                                  key={index}
-                                >
-                                  <Checkbox
-                                    id={`work-machine-filter-${index}`}
-                                    label={formatMessage(messages[labelKey])}
-                                    checked={filter.value}
-                                    onChange={() => onFilterChange(key, filter)}
-                                  />
-                                </Box>
-                              )
-                            },
-                          )}
-                        </Box>
-                        <Box
-                          borderBottomWidth="standard"
-                          borderColor="blue200"
-                          width="full"
-                        />
-                      </Box>
-                    }
-                  </Filter>
-                </Hidden>
-                <DropdownMenu
-                  title={formatMessage(m.get)}
-                  icon="download"
-                  items={downloadButtons}
+      <Box
+        display="flex"
+        flexDirection="row"
+        flexWrap="wrap"
+        justifyContent="flexStart"
+        printHidden
+      >
+        <Box marginBottom={3} paddingRight={2}>
+          <Inline space={2}>
+            <Filter
+              labelOpen={formatMessage(m.openFilter)}
+              labelClose={formatMessage(m.closeFilter)}
+              labelClear={formatMessage(m.clearFilter)}
+              labelClearAll={formatMessage(m.clearAllFilters)}
+              labelTitle={formatMessage(m.filterBy)}
+              onFilterClear={() => setActiveFilters(defaultFilterValues)}
+              variant="popover"
+              reverse
+              filterInput={
+                <Input
+                  icon={{ name: 'search' }}
+                  backgroundColor="blue"
+                  size="xs"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  name="work-machines-input-search"
+                  placeholder={formatMessage(
+                    messages.workMachinesSearchPlaceholder,
+                  )}
                 />
-              </Inline>
-            </Box>
-          </Box>
-        </GridColumn>
-        <GridColumn span={'4/12'}>{}</GridColumn>
-      </GridRow>
+              }
+            >
+              {
+                <Box paddingX={3} marginTop={2}>
+                  <Text variant="h4">{formatMessage(m.filterBy)}</Text>
+                  <Box paddingY={3}>
+                    {Object.keys(activeFilters).map((filterKey, index) => {
+                      const key = filterKey as keyof FilterValues
+                      const filter = activeFilters[key]
+                      const labelKey = filter.label as keyof typeof messages
+                      return (
+                        <Box paddingTop={index === 0 ? 0 : 1} key={index}>
+                          <Checkbox
+                            id={`work-machine-filter-${index}`}
+                            label={formatMessage(messages[labelKey])}
+                            checked={filter.value}
+                            onChange={() => onFilterChange(key, filter)}
+                          />
+                        </Box>
+                      )
+                    })}
+                  </Box>
+                </Box>
+              }
+            </Filter>
+            <DropdownMenu
+              title={formatMessage(m.get)}
+              icon="download"
+              items={downloadButtons}
+            />
+          </Inline>
+        </Box>
+      </Box>
+
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && loading && <CardLoader />}
       {!error &&

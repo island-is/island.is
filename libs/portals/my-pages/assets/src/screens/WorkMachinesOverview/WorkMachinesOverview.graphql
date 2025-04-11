@@ -9,17 +9,12 @@ query GetWorkMachines($input: WorkMachinesCollectionInput) {
       status
       dateLastInspection
     }
-    downloadServiceLinks {
+    linkCollection {
       href
-      type
+      relation
+      relationCategory
       displayTitle
     }
     totalCount
-  }
-}
-
-query GetWorkMachineDocument($input: WorkMachinesCollectionDocumentInput) {
-  workMachinesCollectionDocument(input: $input) {
-    downloadUrl
   }
 }

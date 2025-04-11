@@ -1,18 +1,20 @@
 import { ObjectType, Field, registerEnumType } from '@nestjs/graphql'
-import { BaseLink } from './baseLink.model'
-import { Action } from '../workMachines.types'
+import { Action, LinkCategory, LinkType } from '../workMachines.types'
 
 registerEnumType(Action, { name: 'WorkMachinesAction' })
+registerEnumType(LinkType, { name: 'WorkMachinesLinkType' })
+registerEnumType(LinkCategory, { name: 'WorkMachinesLinkCategory' })
 
-@ObjectType('WorkMachinesLink', {
-  implements: () => BaseLink,
-})
-export class Link implements BaseLink {
+@ObjectType('WorkMachinesLink')
+export class Link {
   @Field()
   href!: string
 
-  @Field(() => Action, { nullable: true })
-  relation?: Action
+  @Field(() => LinkType, { nullable: true })
+  relation?: LinkType
+
+  @Field(() => LinkCategory, { nullable: true })
+  relationCategory?: LinkCategory
 
   @Field({ nullable: true })
   displayTitle?: string

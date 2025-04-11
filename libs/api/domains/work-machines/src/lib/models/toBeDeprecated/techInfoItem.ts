@@ -1,5 +1,6 @@
-import { ObjectType, Field } from '@nestjs/graphql'
+import { ObjectType, Field, Directive } from '@nestjs/graphql'
 
+@Directive('@deprecated(reason: "Up for removal")')
 @ObjectType('WorkMachinesTechInfoItem')
 export class TechInfoItem {
   @Field(() => String, { nullable: true })
@@ -24,6 +25,7 @@ export class TechInfoItem {
   values?: Array<TechInfoListItem> | null
 }
 
+@Directive('@deprecated(reason: "Up for removal")')
 @ObjectType('WorkMachinesTechInfoListItem')
 export class TechInfoListItem {
   @Field(() => String, { nullable: true })

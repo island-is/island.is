@@ -7,34 +7,29 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { Inject, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { ConfigType } from '@nestjs/config'
-import { PaginatedCollectionResponse } from '../models/workMachinePaginatedCollection.model'
 import { WorkMachinesService } from '../workMachines.service'
 import { GetWorkMachineCollectionInput } from '../dto/getWorkMachineCollection.input'
-import { FileType } from '../workMachines.types'
+import { FileType, LinkCategory, LinkType } from '../workMachines.types'
 import { mapFileTypeToLabel } from '../mapper'
-import { DownloadLink } from '../models/downloadLink.model'
+import { Link } from '../models/link.model'
+import { PaginatedCollectionResponse } from '../models/workMachinePaginatedCollection.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver(() => PaginatedCollectionResponse)
 @Audit({ namespace: '@island.is/api/work-machines' })
-export class PaginatedCollectionResolver {
-  constructor(
-    private readonly workMachinesService: WorkMachinesService,
-    @Inject(DownloadServiceConfig.KEY)
-    private readonly downloadServiceConfig: ConfigType<
-      typeof DownloadServiceConfig
-    >,
-  ) {}
+export class CollectionResolver {
+  constructor(private readonly workMachinesService: WorkMachinesService) {}
 
   @Scopes(ApiScope.workMachines)
   @Query(() => PaginatedCollectionResponse, {
     name: 'workMachinesPaginatedCollection',
     nullable: true,
+    deprecationReason: 'Up for removal, use workMachinesCollection',
   })
   @Audit()
   async getWorkMachinesPaginatedCollection(
@@ -46,17 +41,5 @@ export class PaginatedCollectionResolver {
     input: GetWorkMachineCollectionInput,
   ) {
     return this.workMachinesService.getWorkMachines(user, input)
-  }
-
-  @ResolveField('downloadServiceLinks', () => [DownloadLink])
-  @Scopes(ApiScope.workMachines)
-  async getDownloadServiceLinks() {
-    return Object.values(FileType).map((fileType) => {
-      return {
-        href: `${this.downloadServiceConfig.baseUrl}/download/v1/workMachines/export/${fileType}`,
-        type: fileType,
-        displayTitle: mapFileTypeToLabel(fileType),
-      }
-    })
   }
 }

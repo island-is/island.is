@@ -1,5 +1,6 @@
-import { ObjectType, Field } from '@nestjs/graphql'
+import { ObjectType, Field, Directive } from '@nestjs/graphql'
 
+@Directive('@deprecated(reason: "Up for removal")')
 @ObjectType('WorkMachinesSubCategory')
 export class SubCategory {
   @Field(() => String, { nullable: true })

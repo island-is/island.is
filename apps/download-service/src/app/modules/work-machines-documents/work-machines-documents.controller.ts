@@ -33,8 +33,6 @@ export class WorkMachinesController {
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
-    console.log('bignbong')
-
     const documentResponse = await this.docService.getDocuments(user, {
       fileType,
     })

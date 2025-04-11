@@ -187,8 +187,19 @@ export class WorkMachinesClientService {
       return null
     }
 
-    return mapWorkMachine(data)
+    const workMachine = mapWorkMachine(data)
+
+    if (!workMachine) {
+      return null
+    }
+
+    return {
+      ...workMachine,
+      links: data.links?.map((l) => mapLinkDto(l)).filter(isDefined) ?? [],
+      labels: data.labels?.map((l) => mapLabelDto(l)).filter(isDefined) ?? [],
+    }
   }
+
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
 
