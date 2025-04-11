@@ -29,4 +29,17 @@ export const resolvers: Resolvers = {
       return store.senders
     },
   },
+  Mutation: {
+    postMailActionV2: (_, { input }) => {
+      if (input.action === 'archive') {
+        store.documentsV2.data = store.documentsV2.data.filter(
+          (doc) => !input.documentIds.includes(doc.id),
+        )
+      }
+      return {
+        success: true,
+        messageIds: [],
+      }
+    },
+  },
 }
