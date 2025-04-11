@@ -26,7 +26,14 @@ export const m = defineMessages({
     id: 'sp.finance:finance-transactions-year',
     defaultMessage: 'Ár',
   },
-
+  submitMileage: {
+    id: 'sp.finance:submit-mileage',
+    defaultMessage: 'Skrá kílómetrastöðu',
+  },
+  actions: {
+    id: 'sp.finance:actions',
+    defaultMessage: 'Aðgerðir',
+  },
   feeCategory: {
     id: 'sp.finance:fee-category',
     defaultMessage: 'Gjaldflokkur / stofnun',

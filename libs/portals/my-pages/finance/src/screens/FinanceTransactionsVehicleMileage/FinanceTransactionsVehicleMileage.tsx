@@ -20,6 +20,7 @@ import {
   LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
+import { AssetsPaths } from '@island.is/portals/my-pages/assets'
 import { m as messages } from '../../lib/messages'
 
 import format from 'date-fns/format'
@@ -212,6 +213,14 @@ const FinanceTransactions = () => {
                   </Box>
                 </Filter>
 
+                <LinkButton
+                  to={AssetsPaths.AssetsVehiclesBulkMileage}
+                  variant="utility"
+                  icon="pencil"
+                  size="medium"
+                  text={formatMessage(messages.submitMileage)}
+                />
+
                 <Button
                   colorScheme="default"
                   icon="print"
@@ -225,6 +234,7 @@ const FinanceTransactions = () => {
                   {formatMessage(m.print)}
                 </Button>
                 <DropdownExport
+                  label={formatMessage(messages.actions)}
                   onGetCSV={() => exportHreyfingarFile(recordsDataArray, 'csv')}
                   onGetExcel={() =>
                     exportHreyfingarFile(recordsDataArray, 'xlsx')
