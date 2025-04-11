@@ -1,4 +1,4 @@
-import { Allow } from 'class-validator'
+import { Allow, IsOptional } from 'class-validator'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
 
@@ -11,30 +11,37 @@ export class UpdateUserInput {
   readonly id!: string
 
   @Allow()
-  @Field(() => String)
-  readonly name!: string
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly name?: string
 
   @Allow()
-  @Field(() => String)
-  readonly title!: string
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly title?: string
 
   @Allow()
-  @Field(() => String)
-  readonly mobileNumber!: string
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly mobileNumber?: string
 
   @Allow()
-  @Field(() => String)
-  readonly email!: string
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly email?: string
 
   @Allow()
-  @Field(() => UserRole)
-  readonly role!: UserRole
+  @IsOptional()
+  @Field(() => UserRole, { nullable: true })
+  readonly role?: UserRole
 
   @Allow()
-  @Field(() => Boolean)
-  readonly active!: boolean
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly active?: boolean
 
   @Allow()
-  @Field(() => Boolean)
-  readonly canConfirmIndictment!: boolean
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly canConfirmIndictment?: boolean
 }
