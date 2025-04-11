@@ -562,6 +562,7 @@ jobs:
           FEATURE_NAME: ${{ env.FEATURE_NAME }}
           DOCKER_TAG: ${{ env.DOCKER_TAG }}
         run: |
+          node scripts/ci/docker/feature-deploy-bootstrap.mjs "$FEATURE_NAME"
           node scripts/ci/docker/feature-deploy-get-data.mjs
 
       - name: Commit and push to helm-values

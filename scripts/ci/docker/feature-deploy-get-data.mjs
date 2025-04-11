@@ -74,12 +74,20 @@ async function main(testContext = null) {
     } else if (file.includes('bootstrap-fd-job') && !changedFiles.has(file)) {
       console.log(`Adding bootstrap-fd-job file ${file}`)
       changedFiles.add(file)
-    } else if (!changedFiles.has(file)) {
+    } else if (!file.includes('values.bootstrap') && !changedFiles.has(file)) {
       console.log(`Skipping file ${file}`)
     }
   }
 
   if (changedFiles.size > 0) {
+    const bootstrapChart = await glob(
+      `${_MANIFEST_PATHS}/**/values.bootstrap.yaml`,
+    )
+
+    for (const file of bootstrapChart) {
+      changedFiles.add(file)
+    }
+
     let c = Array.from(changedFiles)
 
     console.log(`Changed files: ${c.join(', ')}`)
