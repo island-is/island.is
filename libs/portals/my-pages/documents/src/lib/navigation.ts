@@ -1,6 +1,6 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals/my-pages/core'
-import { messages } from '../utils/messages'
+import { m, searchTagsMessages } from '@island.is/portals/my-pages/core'
+
 import { DocumentsPaths } from './paths'
 
 export const documentsNavigation: PortalNavigationItem = {
@@ -9,7 +9,10 @@ export const documentsNavigation: PortalNavigationItem = {
   icon: {
     icon: 'mail',
   },
+  searchTags: [
+    searchTagsMessages.documentsMail,
+    searchTagsMessages.documentsMailTwo,
+  ],
   subscribesTo: 'documents',
   description: m.documentsDescription,
-  heading: messages.intro,
 }

@@ -49,6 +49,9 @@ const SignedList = ({
             signatureCollectionUnsign: SignatureCollectionSuccess
           }).signatureCollectionUnsign.success
         ) {
+        const success = data?.signatureCollectionUnsign?.success
+
+        if (success) {
           toast.success(formatMessage(m.unSignSuccess))
           setModalIsOpen(false)
           refetchSignedLists()
@@ -68,7 +71,7 @@ const SignedList = ({
           <Text marginBottom={2} variant="h4">
             {formatMessage(m.mySigneeListsHeader)}
           </Text>
-          {signedLists?.map((list: SignatureCollectionSignedList) => {
+          {signedLists?.map((list) => {
             return (
               <Box marginBottom={3} key={list.id}>
                 <ActionCard
