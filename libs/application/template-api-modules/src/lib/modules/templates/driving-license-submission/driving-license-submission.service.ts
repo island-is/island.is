@@ -179,7 +179,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       return this.drivingLicenseService.renewDrivingLicense65AndOver(
         auth.authorization.replace('Bearer ', ''),
         {
-          jurisdictionId: jurisdictionId
+          districtId: jurisdictionId
             ? jurisdictionId
             : setJurisdictionToKopavogur,
           ...(deliveryMethod

@@ -44,27 +44,7 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
       locale,
     )
 
-    const emptyIdentityDocument = {
-      licenseName: formatMessage(m.identityDocument),
-      type: 'user' as const,
-      payload: {
-        data: [],
-        rawData: '',
-        metadata: {
-          title: formatMessage(m.identityDocument),
-          name: formatMessage(m.identityDocument),
-          subtitle: formatMessage(m.noValidIdentityDocument),
-          ctaLink: {
-            label: formatMessage(m.apply),
-            value: formatMessage(m.identityDocumentApplyUrl),
-          },
-        },
-      },
-    }
-
-    if (!payload.length) {
-      return [emptyIdentityDocument]
-    }
+    if (!payload) return Promise.resolve([])
 
     const typedPayload = payload as Array<
       IdentityDocument | IdentityDocumentChild
@@ -92,10 +72,6 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
           }
         })
         .flat()
-
-    if (mappedLicenses.findIndex((ml) => ml.type === 'user') < 0) {
-      mappedLicenses.push(emptyIdentityDocument)
-    }
 
     return mappedLicenses
   }
