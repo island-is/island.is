@@ -1,6 +1,8 @@
 import { execSync } from 'node:child_process'
 import process from 'node:process'
 
+import { ROOT } from './_common.mjs'
+
 // ======================== TYPES ========================
 type ProjectInfo = {
   root: string
@@ -50,6 +52,7 @@ const projectInfoCache = new Map<string, ProjectInfo>()
 
 // ====================== CORE FUNCTIONS ========================
 function getGitChangedFiles(): string[] {
+  console.error('getGitChangedFiles...')
   return execSync('git diff-tree --no-commit-id --name-only -r HEAD')
     .toString()
     .split('\n')
@@ -57,6 +60,7 @@ function getGitChangedFiles(): string[] {
 }
 
 function shouldTestEverything(options: BaseOptions): boolean {
+  console.error('shouldTestEverything...', { options })
   return (
     options.testEverything ||
     getGitChangedFiles().includes('.github/actions/force-build.mjs') ||
@@ -67,6 +71,7 @@ function shouldTestEverything(options: BaseOptions): boolean {
 }
 
 function getProjectInfo(project: string): ProjectInfo {
+  console.error('getProjectInfo...', { project })
   const cachedInfo = projectInfoCache.get(project)
   if (cachedInfo) {
     return cachedInfo
@@ -81,10 +86,11 @@ function getProjectInfo(project: string): ProjectInfo {
 
 // ====================== PUBLIC API ========================
 export function getAffectedProjects(options: AffectedOptions): string[] {
+  console.error('getAffectedProjects...', { options })
   const {
     target,
-    base = process.env.BASE || 'main',
-    head = process.env.HEAD || 'HEAD',
+    base = process.env.BASE || process.env.GITHUB_BASE_REF || 'main',
+    head = process.env.HEAD || process.env.GITHUB_HEAD_REF || 'HEAD',
     skipJudicial = process.env.SKIP_JUDICIAL === 'true',
     branch = process.env.BRANCH || process.env.GITHUB_HEAD_REF,
   } = options
@@ -110,6 +116,7 @@ export function generateChunks(
   projects: string[],
   options: { ciDebug?: boolean } = {},
 ): string[] {
+  console.error('generateChunks...', { projects, options })
   if (options.ciDebug && !process.env.TEST_EVERYTHING) {
     return [
       'web',
@@ -120,10 +127,9 @@ export function generateChunks(
     ]
   }
 
+  console.error('Calling _chunk.js', { projects })
   const chunks = execSync(
-    `node ${process.env.PROJECT_ROOT}/scripts/ci/_chunk.js "${projects.join(
-      ', ',
-    )}"`,
+    `node ${ROOT}/scripts/ci/_chunk.js "${projects.join(', ')}"`,
   ).toString()
   return JSON.parse(chunks)
 }
@@ -132,6 +138,7 @@ export function getUnaffectedProjects(
   targets: string[],
   branch?: string,
 ): string[] {
+  console.error('getUnaffectedProjects...', { targets, branch })
   const unaffected: string[] = []
 
   for (const target of targets) {
@@ -155,6 +162,7 @@ export function generateBuildChunks(
   targets: string[],
   options: BaseOptions = {},
 ): Chunk[] {
+  console.error('generateBuildChunks...', { targets, options })
   const {
     skipTests,
     branch = process.env.BRANCH || process.env.GITHUB_HEAD_REF,
@@ -179,6 +187,7 @@ export function generateDockerChunks(
   targets: string[],
   options: DockerChunkOptions = {},
 ): DockerChunk[] {
+  console.error('generateDockerChunks...', {)
   const { skipTests, maxJobs = 100, branch } = options
 
   if (skipTests) {
@@ -204,7 +213,11 @@ export function generateDockerChunks(
           dist: info.targets?.build?.options?.outputPath,
         })
       } catch (error) {
-        console.error(`Error processing project ${project}:`, error)
+        console.error(`Error processing project ${project}:`, error, {
+          error,
+          target,
+          project,
+        })
       }
     }
   }
@@ -234,13 +247,13 @@ if (import.meta.url.endsWith(process.argv[1])) {
 
   switch (command) {
     case 'affected':
-      console.log(
+      process.stdout.write(
         getAffectedProjects({ ...baseOptions, target: args[0] }).join(', '),
       )
       break
 
     case 'chunks':
-      console.log(
+      process.stdout.write(
         JSON.stringify(
           generateChunks(
             getAffectedProjects({ ...baseOptions, target: args[0] }),
@@ -251,11 +264,13 @@ if (import.meta.url.endsWith(process.argv[1])) {
       break
 
     case 'build-chunks':
-      console.log(JSON.stringify(generateBuildChunks(args, baseOptions)))
+      process.stdout.write(
+        JSON.stringify(generateBuildChunks(args, baseOptions)),
+      )
       break
 
     case 'docker-chunks':
-      console.log(
+      process.stdout.write(
         JSON.stringify(
           generateDockerChunks(args, {
             ...baseOptions,
@@ -266,7 +281,20 @@ if (import.meta.url.endsWith(process.argv[1])) {
       break
 
     case 'unaffected':
-      console.log(getUnaffectedProjects(args, branch).join(' '))
+      process.stdout.write(getUnaffectedProjects(args, branch).join(' '))
+      break
+
+    case '-h':
+    case '--help':
+      console.error(
+        [
+          'affected [target]',
+          'chunks [target]',
+          'build-chunks [target]',
+          'docker-chunks [target]',
+          'unaffected [target]',
+        ].join('\n'),
+      )
       break
 
     default:
