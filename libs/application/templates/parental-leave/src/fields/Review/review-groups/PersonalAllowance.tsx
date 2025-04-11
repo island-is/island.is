@@ -29,8 +29,7 @@ export const PersonalAllowance = ({
             parentalLeaveFormMessages.personalAllowance.title,
           )}
           value={
-            `${personalUseAsMuchAsPossible === YES ? 100 : personalUsage}%` ??
-            ''
+            `${personalUseAsMuchAsPossible === YES ? 100 : personalUsage}%`
           }
         />
       ) : (

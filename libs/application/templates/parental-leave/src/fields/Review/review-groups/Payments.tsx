@@ -96,7 +96,7 @@ export const Payments = ({
                       `${getSelectOptionLabel(
                         privatePensionFundOptions,
                         privatePensionFund,
-                      )} ${privatePensionFundPercentage}%` ?? ''
+                      )} ${privatePensionFundPercentage}%`
                     }
                   />
                 </GridColumn>
