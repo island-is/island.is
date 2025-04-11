@@ -132,9 +132,9 @@ export const notifications = {
         'Notaður sem titill í pósti til verjanda þegar ný krafa er tilbúin til afgreiðslu',
     },
     body: {
-      id: 'judicial.system.backend:notifications.defender_ready_for_court.body',
+      id: 'judicial.system.backend:notifications.defender_ready_for_court.body_v2',
       defaultMessage:
-        'Sækjandi hefur valið að deila kröfu með þér {{defenderResponsibility, select, null {} other {sem {defenderResponsibility}}} í máli {policeCaseNumber}.',
+        'Sækjandi hefur valið að deila kröfu með þér {defenderResponsibility, select, null {} other {sem {defenderResponsibility}}} í máli {policeCaseNumber}.',
       description:
         'Notaður sem texti í pósti til verjanda þegar ný krafa er tilbúin til afgreiðslu',
     },
@@ -527,9 +527,9 @@ export const notifications = {
         'Notaður sem beinagrind á pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
     },
     linkBody: {
-      id: 'judicial.system.backend:notifications.defender_court_date_email.link_body',
+      id: 'judicial.system.backend:notifications.defender_court_date_email.link_body_v2',
       defaultMessage:
-        'Sækjandi hefur valið að deila kröfu með þér {{defenderResponsibility, select, null {} other {sem {defenderResponsibility}}} í máli {courtCaseNumber}.',
+        'Sækjandi hefur valið að deila kröfu með þér {defenderResponsibility, select, null {} other {sem {defenderResponsibility}}} í máli {courtCaseNumber}.',
       description:
         'Notaður sem beinagrind á pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
     },
@@ -541,9 +541,9 @@ export const notifications = {
         'Notaður sem vísun í gögn málsins í pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
     },
     linkNoRequestBody: {
-      id: 'judicial.system.backend:notifications.defender_court_date_email.link_no_request_body_v2',
+      id: 'judicial.system.backend:notifications.defender_court_date_email.link_no_request_body_v3',
       defaultMessage:
-        '{courtName} hefur skráð þig {{defenderResponsibility, select, null {} other {sem {defenderResponsibility}}} í máli {courtCaseNumber}.',
+        '{courtName} hefur skráð þig {defenderResponsibility, select, null {} other {sem {defenderResponsibility}}} í máli {courtCaseNumber}.',
       description:
         'Notaður sem beinagrind á pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
     },

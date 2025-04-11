@@ -482,7 +482,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
     // VICTIM LAWYER
     theCase.victims?.forEach((victim) => {
-      if (!victim.hasLawyer || !victim.lawyerEmail) return
+      if (!victim.lawyerEmail) return
 
       const hasReceivedCourtEventNotification = this.hasReceivedNotification(
         [CaseNotificationType.READY_FOR_COURT, CaseNotificationType.COURT_DATE],
@@ -502,7 +502,12 @@ export class CaseNotificationService extends BaseNotificationService {
         victim.lawyerAccessToRequest === RequestSharedWhen.READY_FOR_COURT
       ) {
         promises.push(
-          this.sendReadyForCourtEmailNotificationToVictimLawyer({ theCase }),
+          this.sendReadyForCourtEmailNotificationToVictimLawyer({
+            theCase,
+            lawyerEmail: victim.lawyerEmail,
+            lawyerName: victim.lawyerName,
+            lawyerNationalId: victim.lawyerNationalId,
+          }),
         )
       }
     })
@@ -957,12 +962,9 @@ export class CaseNotificationService extends BaseNotificationService {
       }
 
       // VICTIM LAWYER
-      if (
-        isInvestigationCase(theCase.type) &&
-        theCase.sessionArrangements === SessionArrangements.ALL_PRESENT
-      ) {
+      if (isInvestigationCase(theCase.type)) {
         theCase.victims?.forEach((victim) => {
-          if (!victim.hasLawyer || !victim.lawyerEmail) return
+          if (!victim.lawyerEmail) return
 
           const hasReceivedCourtDateEventNotification =
             this.hasReceivedNotification(
@@ -975,25 +977,29 @@ export class CaseNotificationService extends BaseNotificationService {
               RequestSharedWhen.ARRAIGNMENT_DATE_ASSIGNED &&
             !hasReceivedCourtDateEventNotification
           ) {
-            this.sendCourtDateEmailNotificationToVictimLawyer({
-              theCase,
-              lawyerName: victim.lawyerName,
-              lawyerEmail: victim.lawyerEmail,
-              lawyerNationalId: victim.lawyerNationalId,
-            })
+            promises.push(
+              this.sendCourtDateEmailNotificationToVictimLawyer({
+                theCase,
+                lawyerName: victim.lawyerName,
+                lawyerEmail: victim.lawyerEmail,
+                lawyerNationalId: victim.lawyerNationalId,
+              }),
+            )
           }
 
-          // calendar invite is always sent
-          promises.push(
-            this.sendCourtDateCalendarInviteEmailNotificationToDefender({
-              theCase,
-              user,
-              defenderName: victim.lawyerName,
-              defenderEmail: victim.lawyerEmail,
-              defenderNationalId: victim.lawyerNationalId,
-              defenderSubRole: DefenderSubRole.VICTIM_LAWYER,
-            }),
-          )
+          if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+            // calendar invite is always sent
+            promises.push(
+              this.sendCourtDateCalendarInviteEmailNotificationToDefender({
+                theCase,
+                user,
+                defenderName: victim.lawyerName,
+                defenderEmail: victim.lawyerEmail,
+                defenderNationalId: victim.lawyerNationalId,
+                defenderSubRole: DefenderSubRole.VICTIM_LAWYER,
+              }),
+            )
+          }
         })
       }
 

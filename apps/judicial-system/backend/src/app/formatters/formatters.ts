@@ -426,9 +426,9 @@ export const formatDefenderCourtDateEmailNotification = (
     defenderSubRole === DefenderSubRole.DEFENDANT_DEFENDER
       ? `${
           sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
-            ? 'talsmann '
+            ? 'talsmann'
             : 'verjanda'
-        } sakbornings'`
+        } sakbornings`
       : defenderSubRole === DefenderSubRole.VICTIM_LAWYER
       ? 'réttargæslumaður'
       : null
