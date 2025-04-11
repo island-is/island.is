@@ -153,12 +153,12 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     unionSickPayDidEndDate: {
       id: 'marp.application:general.information.union.sick.pay.did.end.date',
       defaultMessage: 'Hvenær lauk rétti þínum til sjúkradagpeninga?',
-      description: 'When did your right to sick pay end?',
+      description: 'When did your entitlement to union sick pay end?',
     },
     unionSickPayDoesEndDate: {
       id: 'marp.application:general.information.union.sick.pay.does.end.date',
       defaultMessage: 'Hvenær lýkur rétti þínum til sjúkradagpeninga?',
-      description: 'When does your right to sick pay end?',
+      description: 'When does your entitlement to union sick pay end?',
     },
     unionSickPayFromUnionTitle: {
       id: 'marp.application:general.information.union.sick.pay.from.union.title',
