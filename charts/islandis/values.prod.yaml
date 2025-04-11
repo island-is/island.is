@@ -415,6 +415,8 @@ api:
     - 'portals-admin'
     - 'service-portal'
     - 'portals-my-pages'
+    - 'services-payments'
+    - 'payments'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
