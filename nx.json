@@ -164,12 +164,12 @@
     "@nx/next:build": {
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production", "DevOps"]
     },
     "@nx/webpack:webpack": {
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production", "DevOps"]
     }
   },
   "namedInputs": {
