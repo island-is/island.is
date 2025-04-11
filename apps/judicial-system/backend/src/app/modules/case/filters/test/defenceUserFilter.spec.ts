@@ -16,7 +16,7 @@ import {
 import { Case } from '../../models/case.model'
 import { verifyFullAccess, verifyNoAccess, verifyReadAccess } from './verify'
 
-// s: Fix defender indictment tests
+// TODO: Fix defender indictment tests
 //       Add spokesperson tests
 
 describe.each(defenceRoles)('defence user %s', (role) => {

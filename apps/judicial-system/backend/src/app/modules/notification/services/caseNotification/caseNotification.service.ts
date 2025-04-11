@@ -451,7 +451,6 @@ export class CaseNotificationService extends BaseNotificationService {
     if (
       theCase.requestSharedWithDefender ===
         RequestSharedWithDefender.READY_FOR_COURT ||
-      // Why are we also checking court date here?
       theCase.requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE
     ) {
       const hasDefenderBeenNotified = this.hasReceivedNotification(
@@ -988,7 +987,7 @@ export class CaseNotificationService extends BaseNotificationService {
           }
 
           if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-            // calendar invite is always sent
+            // calendar invite is always sent independent of request shared added by prosecutor
             promises.push(
               this.sendCourtDateCalendarInviteEmailNotificationToDefender({
                 theCase,
@@ -1371,7 +1370,7 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.sessionArrangements === SessionArrangements.ALL_PRESENT
     ) {
       theCase.victims?.forEach((victim) => {
-        if (!victim.hasLawyer || !victim.lawyerEmail) return
+        if (victim.lawyerEmail) return
 
         promises.push(
           this.sendRulingEmailNotificationToVictimLawyer({
@@ -2978,7 +2977,6 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendModifiedNotifications(theCase, user)
       case CaseNotificationType.REVOKED:
         return this.sendRevokedNotifications(theCase)
-      // TODO: is this ever triggered?
       case CaseNotificationType.ADVOCATE_ASSIGNED:
         return this.sendAdvocateAssignedNotifications(theCase)
       case CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT:

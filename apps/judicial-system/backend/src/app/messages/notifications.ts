@@ -300,7 +300,7 @@ export const notifications = {
         'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskurðar',
     },
     victimLawyerBody: {
-      id: 'judicial.system.backend:notifications.signed_ruling.lawyer_body_v4',
+      id: 'judicial.system.backend:notifications.signed_ruling.victim_lawyer_body',
       defaultMessage:
         'Dómari hefur {isModifyingRuling, select, true {leiðrétt} other {undirritað og staðfest}} úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
       description:
