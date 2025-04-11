@@ -6,10 +6,14 @@ export const AttachmentLabel: {
 } = {
   studyConfirmation:
     medicalAndRehabilitationPaymentsFormMessage.overview.studyConfirmation,
+  unionSickPayConfirmation:
+    medicalAndRehabilitationPaymentsFormMessage.overview
+      .unionSickPayConfirmation,
 }
 
 export enum AttachmentTypes {
   STUDY_CONFIRMATION = 'studyConfirmation',
+  UNION_SICK_PAY_CONFIRMATION = 'unionSickPayConfirmation',
 }
 
 export type NotApplicable = typeof NOT_APPLICABLE

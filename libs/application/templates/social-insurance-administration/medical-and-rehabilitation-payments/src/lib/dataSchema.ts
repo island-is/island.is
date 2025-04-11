@@ -12,6 +12,12 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicantInfo: z.object({
@@ -90,6 +96,60 @@ export const dataSchema = z.object({
       {
         path: ['doesEndDate'],
         params: errorMessages.dateRequired,
+      },
+    ),
+  unionSickPay: z
+    .object({
+      hasUtilizedUnionSickPayRights: z.string().optional().nullable(),
+      unionNationalId: z.string().optional().nullable(),
+      endDate: z.string().optional().nullable(),
+      fileupload: z.array(FileSchema).optional(),
+      unionName: z.string().optional().nullable(),
+    })
+    .refine(
+      ({ hasUtilizedUnionSickPayRights, unionName }) => {
+        // If the union name is set then we don't need to check the hasUtilizedUnionSickPayRights
+        if (unionName) {
+          return true
+        }
+
+        return !!hasUtilizedUnionSickPayRights
+      },
+      {
+        path: ['hasUtilizedUnionSickPayRights'],
+      },
+    )
+    .refine(
+      ({ hasUtilizedUnionSickPayRights, unionNationalId, unionName }) => {
+        // If the union name is set then we don't need to check the union
+        if (unionName) {
+          return true
+        }
+
+        return hasUtilizedUnionSickPayRights !== NOT_APPLICABLE
+          ? !!unionNationalId
+          : true
+      },
+      {
+        path: ['unionNationalId'],
+      },
+    )
+    .refine(
+      ({ hasUtilizedUnionSickPayRights, endDate }) =>
+        hasUtilizedUnionSickPayRights !== NOT_APPLICABLE ? !!endDate : true,
+      {
+        path: ['endDate'],
+        params: errorMessages.dateRequired,
+      },
+    )
+    .refine(
+      ({ hasUtilizedUnionSickPayRights, fileupload }) =>
+        hasUtilizedUnionSickPayRights === YES && fileupload !== undefined
+          ? fileupload.length !== 0
+          : true,
+      {
+        path: ['fileupload'],
+        params: coreSIAErrorMessages.requireAttachment,
       },
     ),
   rehabilitationPlanConfirmation: z
