@@ -1,5 +1,5 @@
-import { execSync } from 'child_process'
-import process from 'process'
+import { execSync } from 'node:child_process'
+import process from 'node:process'
 
 // ======================== TYPES ========================
 type ProjectInfo = {
@@ -67,8 +67,9 @@ function shouldTestEverything(options: BaseOptions): boolean {
 }
 
 function getProjectInfo(project: string): ProjectInfo {
-  if (projectInfoCache.has(project)) {
-    return projectInfoCache.get(project)!
+  const cachedInfo = projectInfoCache.get(project)
+  if (cachedInfo) {
+    return cachedInfo
   }
 
   const info = JSON.parse(
@@ -258,7 +259,7 @@ if (import.meta.url.endsWith(process.argv[1])) {
         JSON.stringify(
           generateDockerChunks(args, {
             ...baseOptions,
-            maxJobs: parseInt(process.env.MAX_JOBS || '100', 10),
+            maxJobs: Number.parseInt(process.env.MAX_JOBS || '100', 10),
           }),
         ),
       )
