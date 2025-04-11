@@ -36,7 +36,6 @@ type ShareItem = {
 
 export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
-  errors,
 }) => {
   const { answers } = application
   const [, updateState] = useState<unknown>()
@@ -50,12 +49,14 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [estateTotal, setEstateTotal] = useState(0)
   const [netPropertyForExchange, setNetPropertyForExchange] = useState(0)
   const formValues = getValues()
-  const [customSpouseSharePercentage, setCustomSpouseSharePercentage] =
-    useState(
-      formValues?.customShare?.customSpouseSharePercentage
-        ? formValues.customShare?.customSpouseSharePercentage / 100
-        : 50 / 100,
-    )
+  const [
+    customSpouseSharePercentage,
+    setCustomSpouseSharePercentage,
+  ] = useState(
+    formValues?.customShare?.customSpouseSharePercentage
+      ? formValues.customShare?.customSpouseSharePercentage / 100
+      : 50 / 100,
+  )
 
   const deceasedHadAssets = getDeceasedHadAssets(application)
   const deceasedWasInCohabitation = getDeceasedWasInCohabitation(application)
@@ -108,7 +109,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const updateShareCalculations = useCallback(() => {
     const bankAccounts: CalcShared = (
-      (answers.assets as unknown as EstateAssets)?.bankAccounts?.data ?? []
+      ((answers.assets as unknown) as EstateAssets)?.bankAccounts?.data ?? []
     )
       .filter((item) => !!item.enabled)
       .map((item) => {
@@ -133,7 +134,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       })
 
     const claims: CalcShared = (
-      (answers.assets as unknown as EstateAssets)?.claims?.data ?? []
+      ((answers.assets as unknown) as EstateAssets)?.claims?.data ?? []
     )
       .filter((item) => !!item.enabled)
       .map((item) => {
@@ -154,7 +155,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       })
 
     const guns: CalcShared = (
-      (answers.assets as unknown as EstateAssets)?.guns?.data ?? []
+      ((answers.assets as unknown) as EstateAssets)?.guns?.data ?? []
     )
       .filter((item) => !!item.enabled)
       .map((item) => {
@@ -175,7 +176,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       })
 
     const inventory: CalcShared = [
-      (answers.assets as unknown as EstateAssets)?.inventory ?? [],
+      ((answers.assets as unknown) as EstateAssets)?.inventory ?? [],
     ].map((item) => {
       const value = valueToNumber(item.value)
       const deceasedShare = valueToNumber(item.deceasedShare)
@@ -194,7 +195,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     })
 
     const money: CalcShared = [
-      (answers.assets as unknown as EstateAssets)?.money ?? [],
+      ((answers.assets as unknown) as EstateAssets)?.money ?? [],
     ].map((item) => {
       const value = valueToNumber(item.value)
       const deceasedShare = valueToNumber(item.deceasedShare)
@@ -213,7 +214,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     })
 
     const otherAssets: CalcShared = (
-      (answers.assets as unknown as EstateAssets)?.otherAssets?.data ?? []
+      ((answers.assets as unknown) as EstateAssets)?.otherAssets?.data ?? []
     ).map((item) => {
       const value = valueToNumber(item.value)
       const deceasedShare = valueToNumber(item.deceasedShare)
@@ -232,7 +233,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     })
 
     const realEstate: CalcShared = (
-      (answers.assets as unknown as EstateAssets)?.realEstate?.data ?? []
+      ((answers.assets as unknown) as EstateAssets)?.realEstate?.data ?? []
     )
       .filter((item) => item?.enabled)
       .map((item) => {
@@ -253,7 +254,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       })
 
     const stocks: CalcShared = (
-      (answers.assets as unknown as EstateAssets)?.stocks?.data ?? []
+      ((answers.assets as unknown) as EstateAssets)?.stocks?.data ?? []
     )
       .filter((item) => !!item.enabled)
       .map((item) => {
@@ -274,7 +275,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       })
 
     const vehicles: CalcShared = (
-      (answers.assets as unknown as EstateAssets)?.vehicles?.data ?? []
+      ((answers.assets as unknown) as EstateAssets)?.vehicles?.data ?? []
     )
       .filter((item) => !!item.enabled)
       .map((item) => {
@@ -455,10 +456,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     hasCustomSpouseSharePercentage,
     updateShareCalculations,
   ])
-
-  const inputError =
-    (errors?.customShare as { customSpouseSharePercentage: string })
-      ?.customSpouseSharePercentage ?? ''
 
   return (
     <Box>
