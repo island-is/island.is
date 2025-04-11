@@ -72,6 +72,7 @@ export const closeButton = style({
 })
 
 export const showResultsButton = style({
+  zIndex: 21,
   '::before': {
     content: '',
     position: 'absolute',
@@ -92,7 +93,7 @@ export const topBar = style({
     left: 0,
     height: 16,
     width: '100%',
-    zIndex: 1,
+    zIndex: 21,
     background:
       'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.3491771708683473) 86%, rgba(255,255,255,0) 100%)',
   },

@@ -6,6 +6,7 @@ import { Text } from '../Text/Text'
 import { Button } from '../Button/Button'
 import { useSwipeable } from 'react-swipeable'
 import { useLocale } from '@island.is/localization'
+import { usePreventBodyScroll } from './usePreventBodyScroll'
 
 interface FilterMobileDrawerProps {
   /**
@@ -44,7 +45,7 @@ export const FilterMobileDrawer = ({
   children,
 }: PropsWithChildren<FilterMobileDrawerProps>) => {
   const [isClosed, setIsClosed] = useState(true)
-
+  usePreventBodyScroll(!isClosed)
   const { lang } = useLocale()
 
   const handlers = useSwipeable({
@@ -52,20 +53,6 @@ export const FilterMobileDrawer = ({
       setIsClosed(true)
     },
   })
-
-  useEffect(() => {
-    // Prevent body scroll when the modal is open
-    if (!isClosed) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-
-    // Clean up when the component is unmounted
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isClosed])
 
   return (
     <ModalBase
@@ -123,7 +110,6 @@ export const FilterMobileDrawer = ({
                 </Box>
 
                 <Box
-                  marginTop={8}
                   paddingY={2}
                   paddingX={3}
                   width="full"
