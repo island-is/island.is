@@ -43,10 +43,6 @@ type AffectedOptions = BaseOptions & {
   target: string
 }
 
-type DockerChunkOptions = BaseOptions & {
-  maxJobs?: number
-}
-
 // ====================== CACHE ========================
 const projectInfoCache = new Map<string, ProjectInfo>()
 
@@ -89,10 +85,12 @@ export function getAffectedProjects(options: AffectedOptions): string[] {
   console.error('getAffectedProjects...', { options })
   const {
     target,
-    base = process.env.BASE || process.env.GITHUB_BASE_REF || 'main',
+    base = options.branch ||
+      process.env.BASE ||
+      process.env.GITHUB_BASE_REF ||
+      'main',
     head = process.env.HEAD || process.env.GITHUB_HEAD_REF || 'HEAD',
     skipJudicial = process.env.SKIP_JUDICIAL === 'true',
-    branch = process.env.BRANCH || process.env.GITHUB_HEAD_REF,
   } = options
 
   const extraArgs = shouldTestEverything(options)
@@ -185,10 +183,10 @@ export function generateBuildChunks(
 
 export function generateDockerChunks(
   targets: string[],
-  options: DockerChunkOptions = {},
+  options: BaseOptions = {},
 ): DockerChunk[] {
-  console.error('generateDockerChunks...', {)
-  const { skipTests, maxJobs = 100, branch } = options
+  console.error('generateDockerChunks...', { targets, options })
+  const { skipTests, branch } = options
 
   if (skipTests) {
     return []
@@ -274,7 +272,6 @@ if (import.meta.url.endsWith(process.argv[1])) {
         JSON.stringify(
           generateDockerChunks(args, {
             ...baseOptions,
-            maxJobs: Number.parseInt(process.env.MAX_JOBS || '100', 10),
           }),
         ),
       )
