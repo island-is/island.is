@@ -9,11 +9,11 @@ import {
 import { m } from '../../lib/messages'
 import { ResturantCategories } from '../../lib/constants'
 import {
-  APPLICATION_TYPES,
+  ApplicationTypes,
   ResturantTypes,
   HotelTypes,
   Operation,
-  OPERATION_CATEGORY,
+  OperationCategory,
   HotelCategories,
 } from '../../lib/constants'
 
@@ -26,9 +26,9 @@ export const applicationInfo = buildMultiField({
       id: 'applicationInfo.operation',
       title: m.operationSelectionTitle,
       options: [
-        { value: APPLICATION_TYPES.HOTEL, label: m.operationHotel },
+        { value: ApplicationTypes.HOTEL, label: m.operationHotel },
         {
-          value: APPLICATION_TYPES.RESTURANT,
+          value: ApplicationTypes.RESTURANT,
           label: m.operationResturant,
         },
       ],
@@ -44,7 +44,7 @@ export const applicationInfo = buildMultiField({
       defaultValue: '',
       options: ({ answers }) =>
         (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL
+        ApplicationTypes.HOTEL
           ? HotelCategories
           : ResturantCategories,
       condition: (answers) =>
@@ -55,7 +55,7 @@ export const applicationInfo = buildMultiField({
       title: m.operationTypeHotelTitle,
       options: ({ answers }) => {
         return (answers.applicationInfo as Operation).category !==
-          OPERATION_CATEGORY.TWO
+          OperationCategory.TWO
           ? [
               {
                 value: 'A Hótel',
@@ -70,16 +70,16 @@ export const applicationInfo = buildMultiField({
       backgroundColor: 'blue',
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL,
+        ApplicationTypes.HOTEL,
     }),
     //fake field to trigger rerender on category switch
     buildDescriptionField({
       id: 'fake_helper_field',
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
-          APPLICATION_TYPES.HOTEL &&
+          ApplicationTypes.HOTEL &&
         (answers.applicationInfo as Operation)?.category ===
-          OPERATION_CATEGORY.TWO,
+          OperationCategory.TWO,
     }),
     buildCheckboxField({
       id: 'applicationInfo.typeResturant',
@@ -89,7 +89,7 @@ export const applicationInfo = buildMultiField({
       backgroundColor: 'blue',
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.RESTURANT,
+        ApplicationTypes.RESTURANT,
     }),
     buildCheckboxField({
       id: 'applicationInfo.willServe',
@@ -99,8 +99,8 @@ export const applicationInfo = buildMultiField({
       condition: (answers) => {
         const applicationInfo = answers.applicationInfo as Operation
         return (
-          applicationInfo?.operation === APPLICATION_TYPES.RESTURANT ||
-          applicationInfo?.category === OPERATION_CATEGORY.FOUR
+          applicationInfo?.operation === ApplicationTypes.RESTURANT ||
+          applicationInfo?.category === OperationCategory.FOUR
         )
       },
     }),
