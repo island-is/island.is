@@ -92,12 +92,10 @@ export const Payments = ({
                     label={formatMessage(
                       parentalLeaveFormMessages.shared.privatePensionFund,
                     )}
-                    value={
-                      `${getSelectOptionLabel(
-                        privatePensionFundOptions,
-                        privatePensionFund,
-                      )} ${privatePensionFundPercentage}%`
-                    }
+                    value={`${getSelectOptionLabel(
+                      privatePensionFundOptions,
+                      privatePensionFund,
+                    )} ${privatePensionFundPercentage}%`}
                   />
                 </GridColumn>
               )}
