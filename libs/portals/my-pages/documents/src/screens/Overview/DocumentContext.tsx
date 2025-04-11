@@ -26,6 +26,7 @@ export type DocumentsStateProps = {
   docLoading: boolean
   documentDisplayError?: string
   localRead: string[]
+  closedForMoreReplies?: boolean
   replyable: boolean
   replies?: Reply
   replyOpen: boolean
@@ -42,6 +43,7 @@ export type DocumentsStateProps = {
   setDocLoading: Dispatch<SetStateAction<boolean>>
   setDocumentDisplayError: Dispatch<SetStateAction<string | undefined>>
   setLocalRead: Dispatch<SetStateAction<string[]>>
+  setClosedForMoreReplies: Dispatch<SetStateAction<boolean | undefined>>
   setReplyable: Dispatch<SetStateAction<boolean>>
   setReplies: Dispatch<SetStateAction<Reply | undefined>>
   setReplyOpen: Dispatch<SetStateAction<boolean>>
@@ -64,6 +66,7 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   replies: undefined,
   replyOpen: false,
   reply: undefined,
+  closedForMoreReplies: undefined,
 
   setSelectedLines: () => undefined,
   setActiveDocument: () => undefined,
@@ -80,6 +83,7 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   setReplies: () => undefined,
   setReplyOpen: () => undefined,
   setReply: () => undefined,
+  setClosedForMoreReplies: () => undefined,
 })
 
 export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
@@ -107,6 +111,9 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
   const [replyOpen, setReplyOpen] = useState<boolean>(false)
   const [replies, setReplies] = useState<Reply>()
   const [reply, setReply] = useState<PostReply | undefined>(undefined)
+  const [closedForMoreReplies, setClosedForMoreReplies] = useState<
+    boolean | undefined
+  >(undefined)
 
   return (
     <DocumentsContext.Provider
@@ -126,6 +133,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         replies,
         replyOpen,
         reply,
+        closedForMoreReplies,
 
         setSelectedLines,
         setActiveDocument,
@@ -142,6 +150,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         setReplies,
         setReplyOpen,
         setReply,
+        setClosedForMoreReplies,
       }}
     >
       {children}

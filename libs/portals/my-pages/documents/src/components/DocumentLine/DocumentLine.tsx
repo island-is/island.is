@@ -87,6 +87,7 @@ export const DocumentLine: FC<Props> = ({
     setReplies,
     setReplyOpen,
     setReply,
+    setClosedForMoreReplies,
     categoriesAvailable,
     localRead,
   } = useDocumentContext()
@@ -183,6 +184,9 @@ export const DocumentLine: FC<Props> = ({
             setReplyOpen(false)
             setReply(undefined)
             if (data?.documentV2?.ticket) {
+              setClosedForMoreReplies(
+                data?.documentV2?.closedForMoreReplies ?? undefined,
+              )
               const reply: Reply = {
                 id: data.documentV2?.ticket?.id,
                 createdDate: data.documentV2?.ticket?.createdDate,

@@ -25,6 +25,7 @@ const ReplyContainer: React.FC<Props> = ({ sender }) => {
     setReplies,
     reply,
     activeDocument,
+    closedForMoreReplies,
   } = useDocumentContext()
   const hasEmail = true //isDefined(userProfile?.email)
   const [sent, setSent] = useState<boolean>()
@@ -114,7 +115,6 @@ const ReplyContainer: React.FC<Props> = ({ sender }) => {
 
       {reply && (
         <ReplySent
-          sentTo={reply?.email}
           id={reply?.id}
           body={reply.body}
           intro={
@@ -127,14 +127,6 @@ const ReplyContainer: React.FC<Props> = ({ sender }) => {
         <ReplyForm hasEmail={hasEmail} successfulSubmit={successfulSubmit} />
       )}
       {replyable && !replyOpen && button}
-      {!replyable && (
-        <AlertMessage
-          type="info"
-          message={
-            'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.'
-          }
-        />
-      )}
     </Box>
   )
 }

@@ -1,5 +1,10 @@
 import { DocumentsV2Category } from '@island.is/api/schema'
-import { Box, Divider, LoadingDots } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Divider,
+  LoadingDots,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/portals/my-pages/constants'
 import { formatDate, getInitials, m } from '@island.is/portals/my-pages/core'
@@ -8,15 +13,15 @@ import { dateFormatWithTime } from '@island.is/shared/constants'
 import { isDefined } from '@island.is/shared/utils'
 import { FC } from 'react'
 import { useDocumentList } from '../../hooks/useDocumentList'
+import { Reply } from '../../lib/types'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
 import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
 import NoPDF from '../NoPDF/NoPDF'
 import ReplyContainer from '../Reply/ReplyContainer'
 import ReplyHeader from '../Reply/ReplyHeader'
+import ReplySent from '../Reply/ReplySent'
 import * as styles from './OverviewDisplay.css'
-import ReplyBody from '../Reply/ReplyBody'
-import { Reply } from '../../lib/types'
 
 interface Props {
   activeBookmark: boolean
@@ -41,6 +46,7 @@ export const DesktopOverview: FC<Props> = ({
     setReplyOpen,
     hideDocument,
     setHideDocument,
+    closedForMoreReplies,
   } = useDocumentContext()
   const { activeArchive } = useDocumentList()
 
@@ -119,24 +125,31 @@ export const DesktopOverview: FC<Props> = ({
               <Divider />
             </Box>
             <ReplyHeader
-              initials={getInitials(profile.name)}
-              title={profile.name}
+              initials={getInitials(reply.author ?? '')}
+              title={reply.author ?? activeDocument.subject}
               hasEmail={isDefined(profile.email)}
               subTitle={formatDate(reply?.createdDate, dateFormatWithTime.is)}
               displayEmail={false}
             />
             {!reply.hide && (
-              <ReplyBody
+              <ReplySent
                 date={reply.createdDate}
                 id={reply.id}
                 body={reply.body}
-                sentTo={reply.author}
               />
             )}
           </Box>
         ))}
         {/* {If document is marked replyable, we render the reply form} */}
         {replyable && <ReplyContainer sender={activeDocument.sender} />}
+        {closedForMoreReplies && (
+          <AlertMessage
+            type="info"
+            message={
+              'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.'
+            }
+          />
+        )}
       </Box>
       {activeDocument?.id && (
         <Box className={styles.reveal}>

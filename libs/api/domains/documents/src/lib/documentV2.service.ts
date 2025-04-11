@@ -128,6 +128,10 @@ export class DocumentServiceV2 {
       confirmation: confirmation,
       alert: alert,
       replyable: document.replyable,
+      closedForMoreReplies:
+        !document.replyable && ticket.status?.toLowerCase() === 'closed'
+          ? true
+          : false,
       ticket: ticket,
     }
   }
@@ -184,6 +188,7 @@ export class DocumentServiceV2 {
               id: d.senderNationalId,
             },
             isUrgent: d.urgent,
+            replyable: d.replyable,
             ticket: undefined,
           }
         })

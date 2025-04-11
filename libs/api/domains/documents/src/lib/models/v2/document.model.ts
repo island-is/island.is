@@ -63,6 +63,9 @@ export class Document {
   @Field(() => Boolean, { nullable: true })
   replyable?: boolean | null
 
+  @Field(() => Boolean, { nullable: true })
+  closedForMoreReplies?: boolean | null
+
   @Field(() => Ticket, { nullable: true })
   ticket?: Ticket | null
 }
