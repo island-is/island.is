@@ -1370,14 +1370,14 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.sessionArrangements === SessionArrangements.ALL_PRESENT
     ) {
       theCase.victims?.forEach((victim) => {
-        if (victim.lawyerEmail) return
+        if (!victim.lawyerEmail) return
 
         promises.push(
           this.sendRulingEmailNotificationToVictimLawyer({
             theCase,
-            defenderNationalId: theCase.defenderNationalId,
-            defenderName: theCase.defenderName,
-            defenderEmail: theCase.defenderEmail,
+            defenderNationalId: victim.lawyerNationalId,
+            defenderName: victim.lawyerName,
+            defenderEmail: victim.lawyerEmail,
           }),
         )
       })
