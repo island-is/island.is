@@ -17,6 +17,11 @@ export const keyValueSection = buildSection({
           value: 'One value',
         }),
         buildKeyValueField({
+          label: 'Key value with tooltip',
+          value: 'One value',
+          tooltip: 'Tooltip text',
+        }),
+        buildKeyValueField({
           label: 'Key value with divider',
           value: ['Many values', 'Value 2', 'Value 3'],
           divider: true,
