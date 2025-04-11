@@ -1,7 +1,7 @@
 import { NO, YES } from '@island.is/application/core'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { formatBankInfo } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { formatBankInfo } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { NOT_APPLICABLE } from './constants'
@@ -152,6 +152,9 @@ export const dataSchema = z.object({
         params: coreSIAErrorMessages.requireAttachment,
       },
     ),
+  rehabilitationPlanConfirmation: z
+    .array(z.string())
+    .refine((v) => v.includes(YES)),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

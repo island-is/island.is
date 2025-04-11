@@ -97,6 +97,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'paymentInfo.taxLevel',
   ) as TaxLevelOptions
 
+  const rehabilitationPlanConfirmation = getValueViaPath(
+    answers,
+    'rehabilitationPlanConfirmation',
+  ) as string[]
+
   return {
     applicantPhonenumber,
     isSelfEmployed,
@@ -116,6 +121,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     sickPayOption,
     sickPayDidEndDate,
     sickPayDoesEndDate,
+    rehabilitationPlanConfirmation,
   }
 }
 

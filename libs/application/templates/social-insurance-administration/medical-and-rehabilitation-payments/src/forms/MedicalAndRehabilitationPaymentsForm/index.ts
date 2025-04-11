@@ -7,6 +7,7 @@ import { commentSection } from './commentSection'
 import { conclusionSection } from './conclusionSection'
 import { generalInformationSection } from './generalInformationSection'
 import { overviewSection } from './overviewSection'
+import { rehabilitationPlanSection } from './rehabilitationPlanSection'
 import { selfAssessmentSection } from './selfAssessmentSection'
 
 export const MedicalAndRehabilitationPaymentsForm: Form = buildForm({
@@ -17,7 +18,7 @@ export const MedicalAndRehabilitationPaymentsForm: Form = buildForm({
   children: [
     generalInformationSection,
     certificateForSicknessAndRehabilitationSection,
-    // Endurhæfingaráætlun
+    rehabilitationPlanSection,
     selfAssessmentSection,
     commentSection,
     overviewSection,
