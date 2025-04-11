@@ -403,20 +403,15 @@ jobs:
         env:
           NEEDS: ${{ toJSON(needs) }}
         run: |
-          echo -n "Dependencies succeeded? "
-          if ! jq -ne --argjson needs "$NEEDS" '$needs | to_entries | map_values(select(.result != "success")) | length == 0'; then
-            failed_dependencies=$(jq -n --argjson needs "$NEEDS" -r '
-              [
-                  $needs
-                | to_entries
-                | map_values(select(.result != "success"))
-                | .[]
-                | "\(.key) (\(.value.result))"
-              ]
-              | join(", ")')
-            echo "::error title=NEEDS::Some dependencies failed: $failed_dependencies"
+          # "failed" here is everything that wasn't successful or skipped (e.g. "failuer", "cancelled")
+          failed_dependencies=$(jq -nr --argjson needs "$NEEDS" ' $needs | with_entries(select(.value.result != "success" and .value.result != "skipped")) ')
+          echo -n "Did any dependency fail? "
+          if jq -ne --argjson failures "$failed_dependencies" '$failures | length > 0'; then
+            failure_statuses=$(jq -nr --argjson failures "$failed_dependencies" '[ $failures | to_entries | .[] | "\(.key) (\(.value.result))" ] | join(", ")')
+            echo "::error title=NEEDS::Some dependencies failed: $failure_statuses"
             exit 1
           fi
+          echo "::info title=NEEDS::No failing dependencies 🎉"
           exit 0
 
       - name: Announce success
