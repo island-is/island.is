@@ -13,7 +13,11 @@ import {
   laws,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { Gender, UserRole } from '@island.is/judicial-system/types'
+import {
+  DefenderSubRole,
+  Gender,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
@@ -415,12 +419,23 @@ export const formatDefenderCourtDateEmailNotification = (
   prosecutorName?: string,
   prosecutorInstitution?: string,
   sessionArrangements?: SessionArrangements,
+  defenderSubRole?: DefenderSubRole,
 ): string => {
   /** contentful strings */
+  const defenderResponsibility =
+    defenderSubRole === DefenderSubRole.DEFENDANT_DEFENDER
+      ? `${
+          sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
+            ? 'talsmann '
+            : 'verjanda'
+        } sakbornings'`
+      : defenderSubRole === DefenderSubRole.VICTIM_LAWYER
+      ? 'réttargæslumaður'
+      : null
   const cf = notifications.defenderCourtDateEmail
   const sessionArrangementsText = formatMessage(cf.sessionArrangements, {
     court,
-    sessionArrangements,
+    defenderResponsibility,
   })
   const courtDateText = formatMessage(cf.courtDate, {
     courtDate: courtDate
@@ -459,13 +474,21 @@ export const formatDefenderCourtDateEmailNotification = (
   })
 }
 
-export const formatDefenderCourtDateLinkEmailNotification = (
-  formatMessage: FormatMessage,
-  overviewUrl?: string,
-  court?: string,
-  courtCaseNumber?: string,
-  requestSharedWithDefender?: boolean,
-): string => {
+export const formatDefenderCourtDateLinkEmailNotification = ({
+  formatMessage,
+  overviewUrl,
+  court,
+  courtCaseNumber,
+  requestSharedWithDefender,
+  defenderSubRole,
+}: {
+  formatMessage: FormatMessage
+  overviewUrl?: string
+  court?: string
+  courtCaseNumber?: string
+  requestSharedWithDefender?: boolean
+  defenderSubRole?: DefenderSubRole
+}): string => {
   const cf = notifications.defenderCourtDateEmail
 
   const info = {
@@ -475,11 +498,19 @@ export const formatDefenderCourtDateLinkEmailNotification = (
     linkEnd: '</a>',
   }
 
+  const defenderResponsibility =
+    defenderSubRole === DefenderSubRole.DEFENDANT_DEFENDER
+      ? 'verjanda varnaraðila/talsmanns'
+      : defenderSubRole === DefenderSubRole.VICTIM_LAWYER
+      ? 'réttargæslumaður brotaþola'
+      : null
+
   const body = requestSharedWithDefender
-    ? formatMessage(cf.linkBody, { courtCaseNumber })
+    ? formatMessage(cf.linkBody, { courtCaseNumber, defenderResponsibility })
     : formatMessage(cf.linkNoRequestBody, {
         courtName: court,
         courtCaseNumber,
+        defenderResponsibility,
       })
 
   const link = requestSharedWithDefender
@@ -672,21 +703,34 @@ export const formatCourtIndictmentReadyForCourtEmailNotification = (
   return { body, subject }
 }
 
-export const formatDefenderReadyForCourtEmailNotification = (
-  formatMessage: FormatMessage,
-  policeCaseNumber: string,
-  courtName: string,
-  overviewUrl?: string,
-) => {
-  const subject = formatMessage(notifications.defenderReadyForCourtSubject, {
+export const formatDefenderReadyForCourtEmailNotification = ({
+  formatMessage,
+  policeCaseNumber,
+  courtName,
+  overviewUrl,
+  defenderSubRole,
+}: {
+  formatMessage: FormatMessage
+  policeCaseNumber: string
+  courtName: string
+  overviewUrl?: string
+  defenderSubRole?: DefenderSubRole
+}) => {
+  const subject = formatMessage(notifications.defenderReadyForCourt.subject, {
     policeCaseNumber: policeCaseNumber,
   })
 
-  const body = formatMessage(notifications.defenderReadyForCourtBody, {
+  const body = formatMessage(notifications.defenderReadyForCourt.body, {
     policeCaseNumber: policeCaseNumber,
+    defenderResponsibility:
+      defenderSubRole === DefenderSubRole.DEFENDANT_DEFENDER
+        ? 'verjanda varnaraðila'
+        : defenderSubRole === DefenderSubRole.VICTIM_LAWYER
+        ? 'réttargæslumaður brotaþola'
+        : null,
   })
 
-  const link = formatMessage(notifications.defenderLink, {
+  const link = formatMessage(notifications.defenderReadyForCourt.link, {
     defenderHasAccessToRvg: Boolean(overviewUrl),
     courtName: applyDativeCaseToCourtName(courtName),
     linkStart: `<a href="${overviewUrl}">`,

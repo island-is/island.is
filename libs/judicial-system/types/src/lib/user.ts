@@ -128,7 +128,16 @@ export const isPrisonStaffUser = (user?: InstitutionUser): boolean =>
       user.institution?.type === InstitutionType.PRISON,
   )
 
+// currently, we have a single defender user roles for all legal representative scenarios in the system
 export const defenceRoles: string[] = [UserRole.DEFENDER]
+
+// defender sub roles are inferred based on how legal representative is assigned to the case
+// it is currently used to simplify rendering for the defender responsibility in a given case
+export enum DefenderSubRole {
+  DEFENDANT_DEFENDER = 'DEFENDANT_DEFENDER',
+  CIVIL_CLAIMANT_LEGAL_SPOKESPERSON = 'CIVIL_CLAIMANT_LEGAL_SPOKESPERSON',
+  VICTIM_LAWYER = 'VICTIM_LAWYER',
+}
 
 export const isDefenceUser = (user?: InstitutionUser): boolean => {
   return Boolean(user?.role && defenceRoles.includes(user.role))

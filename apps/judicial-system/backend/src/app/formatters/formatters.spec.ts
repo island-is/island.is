@@ -6,6 +6,7 @@ import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
   CaseType,
+  DefenderSubRole,
   Gender,
   InstitutionType,
   RequestSharedWithDefender,
@@ -1249,6 +1250,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
+      DefenderSubRole.DEFENDANT_DEFENDER,
     )
 
     // Assert
@@ -1280,6 +1282,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
+      DefenderSubRole.DEFENDANT_DEFENDER,
     )
 
     // Assert
@@ -1311,6 +1314,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
+      DefenderSubRole.DEFENDANT_DEFENDER,
     )
 
     // Assert
@@ -1342,6 +1346,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
+      DefenderSubRole.DEFENDANT_DEFENDER,
     )
 
     // Assert
@@ -1372,6 +1377,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
+      DefenderSubRole.DEFENDANT_DEFENDER,
     )
 
     // Assert
@@ -1398,13 +1404,15 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
     const requestSharedWithDefender = RequestSharedWithDefender.COURT_DATE
 
     // Act
-    const res = formatDefenderCourtDateLinkEmailNotification(
+    const res = formatDefenderCourtDateLinkEmailNotification({
       formatMessage,
       overviewUrl,
       court,
       courtCaseNumber,
-      requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE,
-    )
+      requestSharedWithDefender:
+        requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE,
+      defenderSubRole: DefenderSubRole.DEFENDANT_DEFENDER,
+    })
 
     // Assert
     expect(res).toBe(
@@ -1419,12 +1427,13 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
     const overviewUrl = 'https://example.com/overview'
 
     // Act
-    const res = formatDefenderCourtDateLinkEmailNotification(
+    const res = formatDefenderCourtDateLinkEmailNotification({
       formatMessage,
       overviewUrl,
       court,
       courtCaseNumber,
-    )
+      defenderSubRole: DefenderSubRole.DEFENDANT_DEFENDER,
+    })
 
     // Assert
     expect(res).toBe(
