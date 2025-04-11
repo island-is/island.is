@@ -20,11 +20,12 @@ import {
   formatDate,
   formSubmit,
   IntroHeader,
+  IntroWrapper,
   m,
   VINNUEFTIRLITID_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { messages, vehicleMessage } from '../../lib/messages'
 import { AssetsPaths } from '../../lib/paths'
@@ -32,6 +33,7 @@ import {
   useGetWorkMachineDocumentLazyQuery,
   useGetWorkMachinesQuery,
 } from './WorkMachinesOverview.generated'
+import { isDefined } from '@island.is/shared/utils'
 
 type FilterValue = {
   label: string
@@ -74,9 +76,6 @@ const WorkMachinesOverview = () => {
 
   const [page, setPage] = useState(DEFAULT_PAGE_NUMBER)
 
-  const [getDocumentExport, { data: fileData }] =
-    useGetWorkMachineDocumentLazyQuery()
-
   const { loading, error, data } = useGetWorkMachinesQuery({
     variables: {
       input: {
@@ -99,22 +98,6 @@ const WorkMachinesOverview = () => {
     [searchTerm],
   )
 
-  useEffect(() => {
-    if (fileData?.workMachinesCollectionDocument?.downloadUrl) {
-      formSubmit(fileData.workMachinesCollectionDocument?.downloadUrl)
-    }
-  }, [fileData])
-
-  const getFileExport = (fileType: WorkMachinesFileType) => {
-    getDocumentExport({
-      variables: {
-        input: {
-          fileType: fileType,
-        },
-      },
-    })
-  }
-
   const onFilterChange = (key: keyof FilterValues, value: FilterValue) => {
     setActiveFilters({
       ...activeFilters,
@@ -125,14 +108,37 @@ const WorkMachinesOverview = () => {
     })
   }
 
+  const downloadButtons = useMemo(() => {
+    return (
+      data?.workMachinesPaginatedCollection?.downloadServiceLinks
+        .map((link) => {
+          const { href, type } = link
+          if (!type || !href) {
+            return null
+          }
+
+          return {
+            href,
+            title:
+              type === WorkMachinesFileType.EXCEL
+                ? formatMessage(m.getAsExcel)
+                : formatMessage(m.getAsCsv),
+          }
+        })
+        .filter(isDefined) ?? []
+    )
+  }, [
+    data?.workMachinesPaginatedCollection?.downloadServiceLinks,
+    formatMessage,
+  ])
+
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={formatMessage(messages.workMachinesTitle)}
-        intro={formatMessage(messages.workMachinesDescription)}
-        serviceProviderSlug={VINNUEFTIRLITID_SLUG}
-        serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
-      />
+    <IntroWrapper
+      title={formatMessage(messages.workMachinesTitle)}
+      intro={formatMessage(messages.workMachinesDescription)}
+      serviceProviderSlug={VINNUEFTIRLITID_SLUG}
+      serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
+    >
       <GridRow marginTop={[2, 2, 6]}>
         <GridColumn span="12/12">
           <Box
@@ -206,16 +212,7 @@ const WorkMachinesOverview = () => {
                 <DropdownMenu
                   title={formatMessage(m.get)}
                   icon="download"
-                  items={[
-                    {
-                      onClick: () => getFileExport(WorkMachinesFileType.CSV),
-                      title: formatMessage(m.getAsCsv),
-                    },
-                    {
-                      onClick: () => getFileExport(WorkMachinesFileType.EXCEL),
-                      title: formatMessage(m.getAsExcel),
-                    },
-                  ]}
+                  items={downloadButtons}
                 />
               </Inline>
             </Box>
@@ -294,10 +291,7 @@ const WorkMachinesOverview = () => {
             />
           </Box>
         )}
-      <Box marginTop={2}>
-        <FootNote serviceProviderSlug={VINNUEFTIRLITID_SLUG} />
-      </Box>
-    </Box>
+    </IntroWrapper>
   )
 }
 

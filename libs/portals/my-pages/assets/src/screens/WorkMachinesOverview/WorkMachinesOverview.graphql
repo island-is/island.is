@@ -10,6 +10,11 @@ query GetWorkMachines($input: WorkMachinesCollectionInput) {
     links {
       rel
     }
+    downloadServiceLinks {
+      href
+      type
+      displayTitle
+    }
     totalCount
   }
 }

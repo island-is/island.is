@@ -37,7 +37,7 @@ export class PaginatedCollectionResolver {
     nullable: true,
   })
   @Audit()
-  async getWorkMachines(
+  async getWorkMachinesPaginatedCollection(
     @CurrentUser() user: User,
     @Args('input', {
       type: () => GetWorkMachineCollectionInput,
