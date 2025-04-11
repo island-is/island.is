@@ -28,6 +28,7 @@ export const assigneeInformationSection = buildSection({
           id: 'assigneeInformation.companyAndAssignee',
           addItemButtonText: assigneeInformation.labels.tableButtonText,
           marginTop: 0,
+          initActiveFieldIfEmpty: true,
           table: {
             format: {
               company: (value) => {

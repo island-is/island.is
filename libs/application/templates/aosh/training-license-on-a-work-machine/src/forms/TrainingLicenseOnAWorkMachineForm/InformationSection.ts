@@ -5,6 +5,7 @@ import {
   buildPhoneField,
   getValueViaPath,
   buildAlertMessageField,
+  buildInformationFormField,
 } from '@island.is/application/core'
 import { information } from '../../lib/messages'
 import { Application } from '@island.is/api/schema'
@@ -64,12 +65,22 @@ export const informationSection = buildSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            getValueViaPath<string>(
+          defaultValue: (application: Application) => {
+            let postalCode = getValueViaPath<string>(
               application.externalData,
               'identity.data.address.postalCode',
-              '105',
-            ),
+            )
+            let city = getValueViaPath<string>(
+              application.externalData,
+              'identity.data.address.city',
+            )
+            if (!postalCode) {
+              postalCode = '999'
+              city = 'Óskráð/Útlönd'
+            }
+            if (!city) city = 'Óskráð/Útlönd'
+            return `${postalCode} ${city}`
+          },
         }),
         buildTextField({
           id: 'information.email',

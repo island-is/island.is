@@ -23,7 +23,8 @@ export const certificateOfTenureSection = buildSection({
       children: [
         buildTableRepeaterField({
           id: 'certificateOfTenure',
-          addItemButtonText: 'Skrá vinnuvélar',
+          addItemButtonText:
+            certificateOfTenure.labels.registerMachineButtonText,
           marginTop: 0,
           table: {
             format: {
