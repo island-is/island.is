@@ -4,8 +4,8 @@ import {
 } from '@island.is/application/types'
 import { OperatingLicenseAnswers } from '@island.is/application/templates/operating-license/types'
 import {
-  APPLICATION_TYPES,
-  OPERATION_CATEGORY,
+  ApplicationTypes,
+  OperationCategory,
   CATEGORIES,
   Operation,
   Property,
@@ -14,8 +14,7 @@ import {
 import { getValueViaPath, YES } from '@island.is/application/core'
 
 export const getExtraData = (application: ApplicationWithAttachments) => {
-  const answers: OperatingLicenseAnswers =
-    application.answers as OperatingLicenseAnswers
+  const answers: OperatingLicenseAnswers = application.answers as OperatingLicenseAnswers
   const chargeItems = getValueViaPath<PaymentCatalogItem[]>(
     application.externalData,
     'payment.data',
@@ -29,7 +28,7 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
     chargeItems
       ?.find((item) => item.chargeItemCode === chargeItemCode)
       ?.priceAmount.toString() || ''
-  const isHotel = answers.applicationInfo.operation === APPLICATION_TYPES.HOTEL
+  const isHotel = answers.applicationInfo.operation === ApplicationTypes.HOTEL
   const category = getHotelCategory(answers.applicationInfo.category)
 
   const type: { [key: string]: string } = isHotel
@@ -116,13 +115,13 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
   return extraData
 }
 
-const getHotelCategory = (category?: OPERATION_CATEGORY) => {
+const getHotelCategory = (category?: OperationCategory) => {
   switch (category) {
-    case OPERATION_CATEGORY.TWO:
+    case OperationCategory.TWO:
       return CATEGORIES.HOTEL
-    case OPERATION_CATEGORY.THREE:
+    case OperationCategory.THREE:
       return CATEGORIES.HOTEL_FOOD
-    case OPERATION_CATEGORY.FOUR:
+    case OperationCategory.FOUR:
       return CATEGORIES.HOTEL_ALCOHOL
     default:
       return CATEGORIES.HOTEL
@@ -149,9 +148,9 @@ const formatOpeningHours = (value?: string) => {
 export const displayOpeningHours = (answers: any) => {
   return (
     (answers.applicationInfo as Operation)?.operation ===
-      APPLICATION_TYPES.RESTURANT ||
+      ApplicationTypes.RESTURANT ||
     !(answers.applicationInfo as Operation)?.category?.includes(
-      OPERATION_CATEGORY.TWO,
+      OperationCategory.TWO,
     ) ||
     false
   )
