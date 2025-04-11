@@ -86,6 +86,7 @@ export const DocumentLine: FC<Props> = ({
     setReplyable,
     setReplies,
     setReplyOpen,
+    setReply,
     categoriesAvailable,
     localRead,
   } = useDocumentContext()
@@ -180,6 +181,7 @@ export const DocumentLine: FC<Props> = ({
             setLocalRead([...localRead, documentLine.id])
             setReplyable(data?.documentV2?.replyable ?? false)
             setReplyOpen(false)
+            setReply(undefined)
             if (data?.documentV2?.ticket) {
               const reply: Reply = {
                 id: data.documentV2?.ticket?.id,
