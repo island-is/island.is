@@ -103,7 +103,7 @@ describe('InternalCaseController - Create', () => {
       role: UserRole.PROSECUTOR,
       institution: {
         id: prosecutorsOfficeId,
-        type: InstitutionType.PROSECUTORS_OFFICE,
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
         defaultCourtId: courtId,
       },
     } as User
@@ -209,7 +209,7 @@ describe('InternalCaseController - Create', () => {
       role: UserRole.PROSECUTOR_REPRESENTATIVE,
       institution: {
         id: uuid(),
-        type: InstitutionType.PROSECUTORS_OFFICE,
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
         defaultCourtId: uuid(),
       },
     } as User
@@ -239,7 +239,7 @@ describe('InternalCaseController - Create', () => {
       role: UserRole.PROSECUTOR_REPRESENTATIVE,
       institution: {
         id: prosecutorsOfficeId,
-        type: InstitutionType.PROSECUTORS_OFFICE,
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
         defaultCourtId: courtId,
       },
     } as User
@@ -280,7 +280,7 @@ describe('InternalCaseController - Create', () => {
       role: UserRole.PROSECUTOR,
       institution: {
         id: prosecutorsOfficeId,
-        type: InstitutionType.PROSECUTORS_OFFICE,
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
         defaultCourtId: courtId,
       },
     } as User
@@ -334,7 +334,7 @@ describe('InternalCaseController - Create', () => {
       role: UserRole.PROSECUTOR,
       institution: {
         id: uuid(),
-        type: InstitutionType.PROSECUTORS_OFFICE,
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
         defaultCourtId: uuid(),
       },
     } as User
@@ -359,7 +359,7 @@ describe('InternalCaseController - Create', () => {
       role: UserRole.PROSECUTOR,
       institution: {
         id: uuid(),
-        type: InstitutionType.PROSECUTORS_OFFICE,
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
         defaultCourtId: uuid(),
       },
     } as User
@@ -387,7 +387,7 @@ describe('InternalCaseController - Create', () => {
       role: UserRole.PROSECUTOR,
       institution: {
         id: uuid(),
-        type: InstitutionType.PROSECUTORS_OFFICE,
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
         defaultCourtId: uuid(),
       },
     } as User

@@ -1,7 +1,7 @@
 import { TagVariant } from '@island.is/island-ui/core'
 import {
   isDistrictCourtUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -88,7 +88,7 @@ const getCompletedIndictmentStateTag = (
   color: TagVariant
   text: { id: string; defaultMessage: string; description: string }
 } => {
-  if (isPublicProsecutorUser(user)) {
+  if (isPublicProsecutionOfficeUser(user)) {
     return {
       color: indictmentReviewer ? 'mint' : 'purple',
       text: indictmentReviewer ? strings.beingReviewed : strings.new,

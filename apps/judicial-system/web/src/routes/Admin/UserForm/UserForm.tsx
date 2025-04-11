@@ -9,7 +9,10 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { isCoreUser } from '@island.is/judicial-system/types'
+import {
+  isCoreUser,
+  prosecutorsOfficeTypes,
+} from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
   FormFooter,
@@ -216,7 +219,8 @@ export const UserForm: FC<Props> = ({
             required
           />
         </Box>
-        {user.institution?.type === InstitutionType.PROSECUTORS_OFFICE ? (
+        {user.institution?.type &&
+        prosecutorsOfficeTypes.includes(user.institution.type) ? (
           <>
             <Box className={styles.roleRow}>
               <Box className={styles.roleColumn}>
@@ -248,8 +252,8 @@ export const UserForm: FC<Props> = ({
               </Box>
             </Box>
             <Box className={styles.roleRow}>
-              {user.institution.id ===
-              '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e' ? (
+              {user.institution.type ===
+              InstitutionType.PUBLIC_PROSECUTORS_OFFICE ? (
                 <>
                   <Box className={styles.roleColumn}>
                     <RadioButton
@@ -449,7 +453,8 @@ export const UserForm: FC<Props> = ({
             </Box>
           </Box>
         ) : null}
-        {user.institution?.type === InstitutionType.PROSECUTORS_OFFICE &&
+        {user.institution?.type &&
+          prosecutorsOfficeTypes.includes(user.institution.type) &&
           user.role === UserRole.PROSECUTOR && (
             <Box marginBottom={2}>
               <Checkbox
