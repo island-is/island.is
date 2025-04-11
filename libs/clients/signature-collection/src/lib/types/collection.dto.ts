@@ -13,29 +13,44 @@ export enum CollectionStatus {
   Inactive = 'inactive',
 }
 
-// We are storing this enum such that an unknown category maps to 0
-// Then the rest is ordered to reflect the numerical values present in the
-// Signature Collection API (see /Tegund/Kosning in the API)
+// We transform the raw numbers coming from the client
+// to string representations so that these values will be comparable
+// when travelling through the GraphQL layers since numerical enums
+// and other objects will default to `Scalar['Float']` which is
+// not accurate enough for comparisons to survive through that layer.
 export enum CollectionType {
-  OtherUnknown = 0,
-  Parliamentary = 1,
-  Presidential = 2,
-  Referendum = 3, // is: Þjóðaratkvæðagreiðsla
-  OtherSameRulesAsParliamentary = 4,
-  LocalGovernmental = 5, // is: Sveitarstjórnarkosningar
-  SpecialLocalGovernmental = 6,
-  ResidentPoll = 9, // is: Íbúakönnun
+  OtherUnknown = 'OtherUnknown',
+  Parliamentary = 'Parliamentary',
+  Presidential = 'Presidential',
+  Referendum = 'Referendum', // is: Þjóðaratkvæðagreiðsla
+  OtherSameRulesAsParliamentary = 'OtherSameRulesAsParliamentary',
+  LocalGovernmental = 'LocalGovernmental', // is: Sveitarstjórnarkosningar
+  SpecialLocalGovernmental = 'SpecialLocalGovernmental',
+  ResidentPoll = 'ResidentPoll', // is: Íbúakönnun
 }
 
-export const getCollectionTypeFromNumber = (
-  nr: number | undefined,
-): CollectionType => {
-  const collectionNr = (nr ?? 0) as CollectionType
+// If you need to update these values, please take a look at the
+// Signature Collection API → see /Tegund/Kosning
+export const getCollectionTypeFromNumber = (number: number): CollectionType => {
+  switch (number) {
+    case 1:
+      return CollectionType.Parliamentary
+    case 2:
+      return CollectionType.Presidential
+    case 3:
+      return CollectionType.Referendum
+    case 4:
+      return CollectionType.OtherSameRulesAsParliamentary
+    case 5:
+      return CollectionType.LocalGovernmental
+    case 6:
+      return CollectionType.SpecialLocalGovernmental
+    case 9:
+      return CollectionType.ResidentPoll
 
-  if (Object.values(CollectionType).includes(collectionNr)) {
-    return collectionNr
+    default:
+      return CollectionType.OtherUnknown
   }
-  return CollectionType.OtherUnknown
 }
 
 export interface Collection {
@@ -107,7 +122,9 @@ export const mapCollection = (
       'Received partial collection information from the national registry.',
     )
   }
-  const collectionType = getCollectionTypeFromNumber(kosning?.kosningTegundNr)
+  const collectionType = getCollectionTypeFromNumber(
+    collection.kosning?.kosningTegundNr ?? 0,
+  )
   const isActive = startTime < new Date() && endTime > new Date()
   const processed = collection.lokadHandvirkt ?? false
   const hasActiveLists = collection.opnirListar ?? false

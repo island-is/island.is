@@ -1,6 +1,6 @@
 import { EinstaklingurMaFrambodInfo, MedmaeliDTO } from '../../gen/fetch'
 import { Area } from './types/area.dto'
-import { CollectionType } from './types/collection.dto'
+import { CollectionTypeValue } from './types/collection.dto'
 import { ListBase } from './types/list.dto'
 import { Signature } from './types/signature.dto'
 
@@ -66,7 +66,7 @@ export interface BulkUploadInput {
 export interface CanCreateInput {
   requirementsMet?: boolean
   canCreateInfo?: EinstaklingurMaFrambodInfo
-  collectionType: CollectionType
+  collectionType: CollectionTypeValue
   isActive?: boolean
   ownedLists: ListBase[]
   areas: Area[]
