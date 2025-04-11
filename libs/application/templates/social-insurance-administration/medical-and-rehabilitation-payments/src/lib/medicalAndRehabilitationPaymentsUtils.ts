@@ -98,6 +98,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const comment = getValueViaPath(answers, 'comment') as string
 
+  const rehabilitationPlanConfirmation = getValueViaPath(
+    answers,
+    'rehabilitationPlanConfirmation',
+  ) as string[]
+
   return {
     applicantPhonenumber,
     isSelfEmployed,
@@ -117,6 +122,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     personalAllowanceUsage,
     taxLevel,
     comment,
+    rehabilitationPlanConfirmation,
   }
 }
 
