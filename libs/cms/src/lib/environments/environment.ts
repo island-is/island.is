@@ -26,6 +26,7 @@ export default {
     'customPage',
     'genericListItem',
     'teamList',
+    'bloodDonationRestriction',
   ],
   nestedContentTypes: [
     'alertBanner',

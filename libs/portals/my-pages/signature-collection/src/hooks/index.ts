@@ -12,7 +12,6 @@ import {
   getPdfReport,
 } from './graphql/queries'
 import {
-  SignatureCollectionListBase,
   SignatureCollectionSignature,
   SignatureCollectionList,
   SignatureCollectionSuccess,
@@ -82,7 +81,7 @@ export const useGetListsForUser = (collectionId?: string) => {
     refetch: refetchListsForUser,
     error: getListsForUserError,
   } = useQuery<{
-    signatureCollectionListsForUser?: SignatureCollectionListBase[]
+    signatureCollectionListsForUser?: SignatureCollectionList[]
   }>(GetListsForUser, {
     variables: {
       input: {
@@ -93,7 +92,7 @@ export const useGetListsForUser = (collectionId?: string) => {
   })
 
   const listsForUser =
-    (getListsForUser?.signatureCollectionListsForUser as SignatureCollectionListBase[]) ??
+    (getListsForUser?.signatureCollectionListsForUser as SignatureCollectionList[]) ??
     []
   return {
     listsForUser,
