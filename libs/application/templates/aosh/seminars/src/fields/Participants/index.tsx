@@ -107,16 +107,16 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     )
 
     if (
-      finishedValues?.filter((x: Participant) => x.disabled === 'true')
+      (finishedValues ?? []).filter((x: Participant) => x.disabled === 'true')
         .length === 0 &&
       finishedValues !== participantList &&
-      unfinishedValues.length === 0
+      unfinishedValues?.length === 0
     ) {
       trigger('participantList')
       setValue('participantValidityError', '')
       setValue('participantFinishedValidation', 'true')
       setFoundNotValid(false)
-    } else if (unfinishedValues.length === 0) {
+    } else if (unfinishedValues?.length === 0) {
       trigger('participantList')
     }
   }, [values, participantList, setValue, trigger])

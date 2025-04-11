@@ -10,7 +10,7 @@ export interface DrivingLicenseType {
 export type DrivingLicenseApplicationType = 'B-full' | 'B-temp' | 'BE'
 
 export interface PostRenewal65AndOverInput {
-  jurisdictionId?: number
+  districtId?: number
   pickupPlasticAtDistrict?: boolean | null
   sendPlasticToPerson?: boolean | null
 }
