@@ -1,0 +1,6 @@
+appId: 'is.island.app.dev'
+---
+- tapOn:
+    id: 'TABBAR_TAB_INBOX'
+- assertVisible:
+    id: 'INBOX_ITEM'

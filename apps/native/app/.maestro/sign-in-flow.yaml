@@ -8,7 +8,6 @@ appId: 'is.island.app.dev'
 - runFlow:
     when:
       notVisible:
-        id: 'LOGIN_SELECTED_ENVIRONMENT'
         text: 'Mock'
     commands:
       - tapOn:
