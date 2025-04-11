@@ -60,7 +60,7 @@ export const Payments = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.paymentInformationBank,
                 )}
-                value={formatBankInfo(bank)}
+                value={formatBankInfo(bank) ?? ''}
               />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -68,7 +68,9 @@ export const Payments = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.salaryLabelPensionFund,
                 )}
-                value={getSelectOptionLabel(pensionFundOptions, pensionFund)}
+                value={
+                  getSelectOptionLabel(pensionFundOptions, pensionFund) ?? ''
+                }
               />
             </GridColumn>
           </GridRow>
@@ -80,7 +82,7 @@ export const Payments = ({
                     label={formatMessage(
                       parentalLeaveFormMessages.shared.union,
                     )}
-                    value={getSelectOptionLabel(unionOptions, union)}
+                    value={getSelectOptionLabel(unionOptions, union) ?? ''}
                   />
                 </GridColumn>
               )}
@@ -90,10 +92,12 @@ export const Payments = ({
                     label={formatMessage(
                       parentalLeaveFormMessages.shared.privatePensionFund,
                     )}
-                    value={`${getSelectOptionLabel(
-                      privatePensionFundOptions,
-                      privatePensionFund,
-                    )} ${privatePensionFundPercentage}%`}
+                    value={
+                      `${getSelectOptionLabel(
+                        privatePensionFundOptions,
+                        privatePensionFund,
+                      )} ${privatePensionFundPercentage}%` ?? ''
+                    }
                   />
                 </GridColumn>
               )}
@@ -105,7 +109,7 @@ export const Payments = ({
           label={formatMessage(
             parentalLeaveFormMessages.shared.paymentInformationBank,
           )}
-          value={formatBankInfo(bank)}
+          value={formatBankInfo(bank) ?? ''}
         />
       )}
     </ReviewGroup>

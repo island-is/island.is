@@ -28,9 +28,10 @@ export const PersonalAllowance = ({
           label={formatMessage(
             parentalLeaveFormMessages.personalAllowance.title,
           )}
-          value={`${
-            personalUseAsMuchAsPossible === YES ? 100 : personalUsage
-          }%`}
+          value={
+            `${personalUseAsMuchAsPossible === YES ? 100 : personalUsage}%` ??
+            ''
+          }
         />
       ) : (
         <RadioValue

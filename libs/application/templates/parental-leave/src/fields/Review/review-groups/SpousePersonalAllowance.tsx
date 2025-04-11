@@ -31,14 +31,14 @@ export const SpousePersonalAllowance = ({
           label={formatMessage(
             parentalLeaveFormMessages.personalAllowance.spouseTitle,
           )}
-          value={`${spouseUseAsMuchAsPossible === YES ? 100 : spouseUsage}%`}
+          value={`${spouseUseAsMuchAsPossible === YES ? 100 : spouseUsage}%` ?? ''}
         />
       ) : (
         <RadioValue
           label={formatMessage(
             parentalLeaveFormMessages.personalAllowance.spouseTitle,
           )}
-          value={usePersonalAllowanceFromSpouse}
+          value={usePersonalAllowanceFromSpouse ?? ''}
         />
       )}
     </ReviewGroup>
