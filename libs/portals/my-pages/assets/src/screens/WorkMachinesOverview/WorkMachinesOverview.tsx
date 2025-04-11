@@ -16,23 +16,18 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
-  FootNote,
   formatDate,
   formSubmit,
-  IntroHeader,
   IntroWrapper,
   m,
   VINNUEFTIRLITID_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { messages, vehicleMessage } from '../../lib/messages'
 import { AssetsPaths } from '../../lib/paths'
-import {
-  useGetWorkMachineDocumentLazyQuery,
-  useGetWorkMachinesQuery,
-} from './WorkMachinesOverview.generated'
+import { useGetWorkMachinesQuery } from './WorkMachinesOverview.generated'
 import { isDefined } from '@island.is/shared/utils'
 
 type FilterValue = {
@@ -118,7 +113,7 @@ const WorkMachinesOverview = () => {
           }
 
           return {
-            href,
+            onClick: () => formSubmit(href),
             title:
               type === WorkMachinesFileType.EXCEL
                 ? formatMessage(m.getAsExcel)
