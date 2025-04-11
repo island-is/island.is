@@ -17,7 +17,6 @@ if (isMainModule(import.meta.url)) {
 function getCommitMsg(context) {
   if (context.eventName === 'pull_request') {
     let pr = context.payload.pull_request
-    console.log('PR: ', pr)
     return `Change from: ${pr.html_url}`
   }
   return `Change from: https://github.com/island-is/island.is/commit/${context.sha}`
