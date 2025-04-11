@@ -3,12 +3,11 @@ query GetWorkMachines($input: WorkMachinesCollectionInput) {
     data {
       id
       registrationNumber
-      type
+      typeBreakdown {
+        fullType
+      }
       status
       dateLastInspection
-    }
-    links {
-      rel
     }
     downloadServiceLinks {
       href

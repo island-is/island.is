@@ -112,6 +112,7 @@ export class WorkMachinesService {
 
             return {
               ...l,
+              relation: rel,
               rel,
             }
           })
@@ -159,6 +160,7 @@ export class WorkMachinesService {
             return {
               displayTitle: l.displayTitle ?? undefined,
               href,
+              relation: rel,
               rel,
             }
           })

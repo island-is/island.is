@@ -12,8 +12,16 @@ export class Link implements BaseLink {
   href!: string
 
   @Field(() => Action, { nullable: true })
-  rel?: Action
+  relation?: Action
 
   @Field({ nullable: true })
   displayTitle?: string
+
+  /** DEPRECATION LINE */
+
+  @Field(() => Action, {
+    deprecationReason: 'Unclear name, use relation instead',
+    nullable: true,
+  })
+  rel?: Action
 }

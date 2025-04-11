@@ -13,12 +13,20 @@ export class CollectionLink implements BaseLink {
   @Field()
   href!: string
 
-  @Field(() => ExternalLink)
-  rel!: ExternalLink
+  @Field(() => ExternalLink, { nullable: true })
+  relation?: ExternalLink
 
   @Field()
   method!: string
 
   @Field({ nullable: true })
   displayTitle?: string
+
+  /** DEPRECATION LINE */
+
+  @Field(() => ExternalLink, {
+    deprecationReason: 'Unclear name, use relation instead',
+    nullable: true,
+  })
+  rel?: ExternalLink
 }
