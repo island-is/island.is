@@ -157,10 +157,9 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             loading={mainTypeLoading}
             options={mainTypeOptions}
             onBeforeChange={(answers, value) => {
-              const typeValue =
-                value.types.length === 1 ? cleanTypename(value.types[0]) : null
-              set(answers, InputFields.advert.type, typeValue)
-              setValue(InputFields.advert.type, typeValue)
+              const mainTypeName = cleanTypename(value)
+              set(answers, InputFields.advert.mainType, mainTypeName)
+              setValue(InputFields.advert.mainType, mainTypeName)
             }}
           />
 
@@ -172,6 +171,11 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
               label={advert.inputs.type.label}
               placeholder={advert.inputs.type.placeholder}
               options={currentTypes}
+              onBeforeChange={(answers, value) => {
+                const typeName = cleanTypename(value)
+                set(answers, InputFields.advert.type, typeName)
+                setValue(InputFields.advert.type, typeName)
+              }}
             />
           )}
 

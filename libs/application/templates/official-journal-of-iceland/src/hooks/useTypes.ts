@@ -1,20 +1,13 @@
 import { useLazyQuery, useQuery } from '@apollo/client'
-import {
-  OfficialJournalOfIcelandAdvertsTypesResponse,
-  OfficialJournalOfIcelandMainTypesResponse,
-} from '@island.is/api/schema'
+import { OfficialJournalOfIcelandMainTypesResponse } from '@island.is/api/schema'
 
-import { MAIN_TYPES_QUERY, TYPES_QUERY } from '../graphql/queries'
+import { MAIN_TYPES_QUERY } from '../graphql/queries'
 
 type UseTypesParams = {
   initalDepartmentId?: string
-  onCompleted?: (data: TypesResponse) => void
+  onCompleted?: (data: MainTypesResponse) => void
   pageSize?: number
   page?: number
-}
-
-type TypesResponse = {
-  officialJournalOfIcelandTypes: OfficialJournalOfIcelandAdvertsTypesResponse
 }
 
 type MainTypesResponse = {
@@ -47,8 +40,8 @@ export const useTypes = ({
     params.pageSize = 1000
   }
 
-  const { data, loading, error } = useQuery<TypesResponse, TypesVariables>(
-    TYPES_QUERY,
+  const { data, loading, error } = useQuery<MainTypesResponse, TypesVariables>(
+    MAIN_TYPES_QUERY,
     {
       variables: {
         params: params,
@@ -68,13 +61,6 @@ export const useTypes = ({
   })
 
   const [
-    getLazyTypes,
-    { data: lazyTypes, loading: lazyTypesLoading, error: lazyTypesError },
-  ] = useLazyQuery<TypesResponse, TypesVariables>(TYPES_QUERY, {
-    fetchPolicy: 'network-only',
-  })
-
-  const [
     getLazyMainTypes,
     {
       data: lazyMainTypes,
@@ -84,10 +70,6 @@ export const useTypes = ({
   ] = useLazyQuery<MainTypesResponse, TypesVariables>(MAIN_TYPES_QUERY, {
     fetchPolicy: 'network-only',
   })
-
-  const currentTypes = lazyTypes
-    ? lazyTypes.officialJournalOfIcelandTypes.types
-    : data?.officialJournalOfIcelandTypes.types
 
   const currentMainTypes = lazyMainTypes
     ? lazyMainTypes.officialJournalOfIcelandMainTypes.mainTypes
@@ -101,13 +83,8 @@ export const useTypes = ({
     lazyMainTypesError,
     getLazyMainTypes,
     lazyMainTypes: lazyMainTypes?.officialJournalOfIcelandMainTypes.mainTypes,
-    lazyTypes: lazyTypes?.officialJournalOfIcelandTypes.types,
-    lazyTypesLoading,
-    lazyTypesError,
-    getLazyTypes,
-    types: currentTypes,
-    initalTypes: data?.officialJournalOfIcelandTypes.types,
-    loading: loading || lazyTypesLoading,
+    initialTypes: data?.officialJournalOfIcelandMainTypes.mainTypes,
+    loading: loading || lazyMainTypesLoading,
     error,
   }
 }
