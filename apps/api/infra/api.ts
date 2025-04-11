@@ -494,5 +494,6 @@ export const serviceSetup = (services: {
       'portals-admin',
       'service-portal',
       'portals-my-pages',
+      'services-payments',
     )
 }
