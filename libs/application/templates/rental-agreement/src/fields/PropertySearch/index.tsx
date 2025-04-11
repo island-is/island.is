@@ -302,7 +302,6 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   }
 
   const hasErrors = Object.keys(errors).length > 0
-  console.log('HasErrors: ', hasErrors)
 
   return (
     <>
