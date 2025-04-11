@@ -206,7 +206,7 @@ jobs:
           DISABLE_PROBLEMATIC: 'true'
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
+          CHUNKS="$(npx tsx ./scripts/ci/affected-projects.mts chunks lint)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
@@ -216,7 +216,7 @@ jobs:
         if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
+          CHUNKS="$(npx tsx ./scripts/ci/affected-projects.mts chunks test)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
@@ -228,7 +228,7 @@ jobs:
           CHUNK_SIZE: 1
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
+          CHUNKS="$(npx tsx ./scripts/ci/affected-projects.mts chunks e2e-ci)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
@@ -239,7 +239,7 @@ jobs:
         if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
+          CHUNKS="$(npx tsx ./scripts/ci/affected-projects.mts chunks build)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
@@ -248,7 +248,7 @@ jobs:
         if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
+          CHUNKS="$(npx tsx ./scripts/ci/affected-projects.mts docker-chunks docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
