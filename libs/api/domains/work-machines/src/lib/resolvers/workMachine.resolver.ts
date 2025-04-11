@@ -34,6 +34,6 @@ export class WorkMachineResolver {
     })
     input: GetWorkMachineInput,
   ) {
-    return this.workMachinesService.getWorkMachines(user, input)
+    return this.workMachinesService.getWorkMachineById(user, input)
   }
 }

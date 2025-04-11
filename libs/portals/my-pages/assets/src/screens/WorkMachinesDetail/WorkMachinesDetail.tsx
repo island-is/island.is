@@ -23,7 +23,7 @@ import {
 } from '@island.is/island-ui/core'
 import { format } from 'kennitala'
 import chunk from 'lodash/chunk'
-import { WorkMachinesAction, WorkMachinesLink } from '@island.is/api/schema'
+import { WorkMachinesLink, WorkMachinesLinkType } from '@island.is/api/schema'
 import { isDefined } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -32,11 +32,11 @@ type UseParams = {
 }
 
 const OrderedLinks = [
-  WorkMachinesAction.OWNER_CHANGE,
-  WorkMachinesAction.REQUEST_INSPECTION,
-  WorkMachinesAction.REGISTER_FOR_TRAFFIC,
-  WorkMachinesAction.CHANGE_STATUS,
-  WorkMachinesAction.SUPERVISOR_CHANGE,
+  WorkMachinesLinkType.OWNER_CHANGE,
+  WorkMachinesLinkType.REQUEST_INSPECTION,
+  WorkMachinesLinkType.REGISTER_FOR_TRAFFIC,
+  WorkMachinesLinkType.CHANGE_STATUS,
+  WorkMachinesLinkType.SUPERVISOR_CHANGE,
 ]
 
 const WorkMachinesDetail = () => {
@@ -57,13 +57,13 @@ const WorkMachinesDetail = () => {
 
   const createLinks = (links: Array<WorkMachinesLink>) => {
     const generateButton = (
-      rel: WorkMachinesAction,
+      rel: WorkMachinesLinkType,
       idx: number,
       title?: string,
       url?: string,
     ) => {
       const icon: IconMapIcon =
-        rel === WorkMachinesAction.CHANGE_STATUS ? 'removeCircle' : 'open'
+        rel === WorkMachinesLinkType.CHANGE_STATUS ? 'removeCircle' : 'open'
 
       const button = (
         <Button
@@ -88,11 +88,11 @@ const WorkMachinesDetail = () => {
     }
 
     const buttons: Array<React.ReactNode> = []
-    const keys = links.map((l) => l.rel).filter(isDefined)
+    const keys = links.map((l) => l.relation).filter(isDefined)
 
     OrderedLinks.forEach((ol, index) => {
       if (keys.includes(ol)) {
-        const link = links.find((link) => link.rel === ol)
+        const link = links.find((link) => link.relation === ol)
         if (link) {
           buttons.push(
             generateButton(
@@ -120,7 +120,7 @@ const WorkMachinesDetail = () => {
   )
   return (
     <IntroWrapper
-      title={workMachine?.type ?? ''}
+      title={workMachine?.typeBreakdown?.fullType ?? ''}
       serviceProviderSlug={VINNUEFTIRLITID_SLUG}
       serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
     >
@@ -159,7 +159,7 @@ const WorkMachinesDetail = () => {
               />
               <InfoLine
                 label={labels.type ?? ''}
-                content={workMachine?.type ?? ''}
+                content={workMachine?.typeBreakdown?.fullType ?? ''}
                 loading={loading}
               />
               <InfoLine
@@ -198,10 +198,10 @@ const WorkMachinesDetail = () => {
               title={formatMessage(messages.baseInfoWorkMachineTitle)}
               dataArray={chunk(
                 [
-                  workMachine?.type
+                  workMachine?.typeBreakdown?.fullType
                     ? {
                         title: labels.type,
-                        value: workMachine.type,
+                        value: workMachine?.typeBreakdown?.fullType,
                       }
                     : undefined,
                   workMachine?.status
