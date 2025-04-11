@@ -2,9 +2,8 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { Provider } from '@nestjs/common'
 import {
   ConfigType,
-  IdsClientConfig,
   LazyDuringDevScope,
-  // XRoadConfig,
+  XRoadConfig,
 } from '@island.is/nest/config'
 import {
   StadfangApi,
@@ -21,34 +20,23 @@ const createApiProvider = <T>(
   scope: LazyDuringDevScope,
   useFactory: (
     config: ConfigType<typeof HmsConfig>,
-    // xroadConfig: ConfigType<typeof XRoadConfig>,
-    idsClientConfig: ConfigType<typeof IdsClientConfig>,
+    xroadConfig: ConfigType<typeof XRoadConfig>,
   ) =>
     new ApiClass(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-hms',
           organizationSlug: 'hms',
-          autoAuth: idsClientConfig.isConfigured
-            ? {
-                mode: 'tokenExchange',
-                issuer: idsClientConfig.issuer,
-                clientId: idsClientConfig.clientId,
-                clientSecret: idsClientConfig.clientSecret,
-                scope: config.tokenExchangeScope,
-              }
-            : undefined,
           timeout: config.fetchTimeout,
         }),
-        // basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadPath}`,
-        basePath: config.xRoadPath,
+        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadPath}`,
         headers: {
           'X-Road-Client': config.xRoadClientHeader,
           Accept: 'application/json',
         },
       }),
     ),
-  inject: [HmsConfig.KEY, IdsClientConfig.KEY],
+  inject: [HmsConfig.KEY, XRoadConfig.KEY],
 })
 
 export const HmsStadfangApiProvider = createApiProvider(StadfangApi)

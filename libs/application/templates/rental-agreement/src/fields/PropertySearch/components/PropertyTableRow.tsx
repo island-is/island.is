@@ -14,10 +14,10 @@ import { MouseEventHandler } from 'react'
 
 interface PropertyTableRowProps {
   appraisalUnits: AppraisalUnit[]
-  propertyCode: number | undefined
-  unitCode: string | undefined
-  size: number | undefined
-  sizeUnit: string | undefined
+  propertyCode?: number
+  unitCode?: string
+  size?: number
+  sizeUnit?: string
   isTableExpanded: boolean
   toggleExpand: MouseEventHandler<HTMLButtonElement> | undefined
 }

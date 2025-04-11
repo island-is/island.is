@@ -4,6 +4,7 @@ import { useLazyQuery } from '@apollo/client'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import {
+  AlertMessage,
   AsyncSearch,
   AsyncSearchOption,
   Box,
@@ -26,6 +27,7 @@ import { PropertyTableUnits } from './components/PropertyTableUnits'
 import { PropertyTableHeader } from './components/PropertyTableHeader'
 import { PropertyTableRow } from './components/PropertyTableRow'
 import { registerProperty } from '../../lib/messages'
+
 export interface Unit extends OriginalUnit {
   checked?: boolean
   changedSize?: number
@@ -33,6 +35,7 @@ export interface Unit extends OriginalUnit {
 }
 interface Props extends FieldBaseProps {
   field: CustomField
+  errors?: any
 }
 interface AddressProps extends HmsSearchAddress {
   label: string
@@ -41,6 +44,7 @@ interface AddressProps extends HmsSearchAddress {
 
 export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   field,
+  errors,
 }) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue, getValues } = useFormContext()
@@ -52,7 +56,6 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const [tableExpanded, setTableExpanded] = useState<Record<string, boolean>>(
     {},
   )
-
   const [checkedUnits, setCheckedUnits] = useState<Record<string, boolean>>(
     storedValue?.checkedUnits || {},
   )
@@ -206,7 +209,6 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
 
   const handleCheckboxChange = (unit: Unit, checked: boolean) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-
     const chosenUnits = checked
       ? [
           ...(storedValue?.units || []),
@@ -226,12 +228,10 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       ...checkedUnits,
       [unitKey]: checked,
     }
-
     setValue(id, {
       ...storedValue,
       units: chosenUnits,
     })
-
     setCheckedUnits(updateCheckedUnits)
   }
 
@@ -242,7 +242,6 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         ...prev,
         [unitKey]: value,
       }
-
       const updatedUnits = (storedValue?.units || []).map((u: Unit) => {
         if (
           u.propertyCode === unit.propertyCode &&
@@ -255,12 +254,10 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         }
         return u
       })
-
       setValue(id, {
         ...getValues(id),
         units: updatedUnits,
       })
-
       return newValues
     })
   }
@@ -272,7 +269,6 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         ...prev,
         [unitKey]: value,
       }
-
       const updatedUnits = (storedValue?.units || []).map((u: Unit) => {
         if (
           u.propertyCode === unit.propertyCode &&
@@ -285,12 +281,10 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         }
         return u
       })
-
       setValue(id, {
         ...getValues(id),
         units: updatedUnits,
       })
-
       return newValues
     })
   }
@@ -306,6 +300,8 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     setSelectedAddress(selectedOption as AddressProps)
     setValue(id, selection ? selection : undefined)
   }
+
+  const hasErrors = Object.keys(errors).length > 0
 
   return (
     <>
@@ -428,6 +424,11 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                                                 Number(e.target.value),
                                               )
                                             }
+                                            unitInputErrorMessage={
+                                              errors?.registerProperty?.[
+                                                `searchResults.units`
+                                              ]
+                                            }
                                           />
                                         )
                                       })}
@@ -442,6 +443,25 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                 </T.Body>
               </T.Table>
             )
+          )}
+          {hasErrors && (
+            <Box marginTop={8}>
+              {errors?.registerProperty?.['searchResults'] && (
+                <AlertMessage
+                  type="error"
+                  title={errors?.registerProperty?.['searchResults']}
+                />
+              )}
+              {errors?.registerProperty?.['searchResults.units'] && (
+                <AlertMessage
+                  type="error"
+                  message={errors?.registerProperty?.['searchResults.units']}
+                  title={formatMessage(
+                    registerProperty.search.searchResultsErrorBannerTitle,
+                  )}
+                />
+              )}
+            </Box>
           )}
         </Box>
       )}

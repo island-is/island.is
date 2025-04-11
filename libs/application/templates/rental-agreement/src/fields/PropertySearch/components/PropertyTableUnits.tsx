@@ -8,30 +8,28 @@ import {
   tableCellSize,
   tableCellNumOfRooms,
   input,
+  inputError,
   sizeInput,
   roomsInput,
   tableCellFastNum,
 } from '../propertySearch.css'
+import { registerProperty } from '../../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 interface PropertyUnitsProps {
-  unitCode: string | undefined
-  propertyUsageDescription: string | undefined
-  sizeUnit: string | undefined
+  unitCode?: string
+  propertyUsageDescription?: string
+  sizeUnit?: string
   checkedUnits: boolean
   isTableExpanded: boolean
-  unitSizeValue: string | number | undefined
-  numOfRoomsValue: string | number | undefined
+  unitSizeValue?: string | number
+  numOfRoomsValue?: string | number
   isUnitSizeDisabled: boolean
   isNumOfRoomsDisabled: boolean
-  onCheckboxChange:
-    | ((event: React.ChangeEvent<HTMLInputElement>) => void)
-    | undefined
-  onUnitSizeChange:
-    | ((event: React.ChangeEvent<HTMLInputElement>) => void)
-    | undefined
-  onUnitRoomsChange:
-    | ((event: React.ChangeEvent<HTMLInputElement>) => void)
-    | undefined
+  unitInputErrorMessage?: string
+  onCheckboxChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onUnitSizeChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onUnitRoomsChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export const PropertyTableUnits = ({
@@ -44,10 +42,23 @@ export const PropertyTableUnits = ({
   numOfRoomsValue,
   isUnitSizeDisabled,
   isNumOfRoomsDisabled,
+  unitInputErrorMessage,
   onCheckboxChange,
   onUnitSizeChange,
   onUnitRoomsChange,
 }: PropertyUnitsProps) => {
+  const { formatMessage } = useLocale()
+
+  const sizeInputError =
+    unitInputErrorMessage ===
+      formatMessage(registerProperty.search.changedSizeTooLargeError) ||
+    unitInputErrorMessage ===
+      formatMessage(registerProperty.search.changedSizeTooSmallError)
+
+  const roomsInputError =
+    unitInputErrorMessage ===
+    formatMessage(registerProperty.search.numOfRoomsMinimumError)
+
   return (
     <tr key={unitCode}>
       <T.Data
@@ -102,9 +113,13 @@ export const PropertyTableUnits = ({
               }}
             >
               <input
-                className={`${input} ${sizeInput}`}
+                className={`${input} ${sizeInput} ${
+                  checkedUnits && sizeInputError ? inputError : ''
+                }`}
                 type="number"
                 name="propertySize"
+                min={0}
+                step={0.1}
                 value={unitSizeValue}
                 onChange={onUnitSizeChange}
                 disabled={isUnitSizeDisabled}
@@ -118,9 +133,12 @@ export const PropertyTableUnits = ({
             }}
           >
             <input
-              className={`${input} ${roomsInput}`}
+              className={`${input} ${roomsInput} ${
+                checkedUnits && roomsInputError ? inputError : ''
+              }`}
               type="number"
               name="numOfRooms"
+              min={0}
               value={numOfRoomsValue}
               onChange={onUnitRoomsChange}
               disabled={isNumOfRoomsDisabled}
