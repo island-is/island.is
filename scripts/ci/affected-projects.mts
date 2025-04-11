@@ -25,8 +25,7 @@ type Chunk = {
   docker_type: string
 }
 
-type AffectedOptions = {
-  target: string
+type BaseOptions = {
   base?: string
   head?: string
   skipJudicial?: boolean
@@ -35,6 +34,15 @@ type AffectedOptions = {
   skipTests?: boolean
   ciDebug?: boolean
   branch?: string
+  skipTestsOnBranch?: string
+}
+
+type AffectedOptions = BaseOptions & {
+  target: string
+}
+
+type DockerChunkOptions = BaseOptions & {
+  maxJobs?: number
 }
 
 // ====================== CACHE ========================
@@ -48,7 +56,7 @@ function getGitChangedFiles(): string[] {
     .filter(Boolean)
 }
 
-function shouldTestEverything(options: AffectedOptions): boolean {
+function shouldTestEverything(options: BaseOptions): boolean {
   return (
     options.testEverything ||
     getGitChangedFiles().includes('.github/actions/force-build.mjs') ||
@@ -144,7 +152,7 @@ export function getUnaffectedProjects(
 
 export function generateBuildChunks(
   targets: string[],
-  options: Omit<AffectedOptions, 'target'> = {},
+  options: BaseOptions = {},
 ): Chunk[] {
   const {
     skipTests,
@@ -168,7 +176,7 @@ export function generateBuildChunks(
 
 export function generateDockerChunks(
   targets: string[],
-  options: AffectedOptions & { maxJobs?: number } = {},
+  options: DockerChunkOptions = {},
 ): DockerChunk[] {
   const { skipTests, maxJobs = 100, branch } = options
 
@@ -209,7 +217,7 @@ if (import.meta.url.endsWith(process.argv[1])) {
   const args = process.argv.slice(3)
 
   const branch = process.env.BRANCH || process.env.GITHUB_HEAD_REF
-  const baseOptions = {
+  const baseOptions: BaseOptions = {
     base: process.env.BASE,
     head: process.env.HEAD,
     skipJudicial: process.env.SKIP_JUDICIAL === 'true',
