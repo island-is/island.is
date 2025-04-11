@@ -3,10 +3,10 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
-import { m } from '../../lib/utils/messages'
+import { m } from '../../lib/messages'
 import { FSIUSERTYPE } from '../../types/types'
 import { Application } from '@island.is/application/types'
-import { getCurrentUserType } from '../../lib/utils/helpers'
+import { getCurrentUserType } from '../../utils/helpers'
 
 export const conclusionSection = buildSection({
   id: 'conclusionSection',

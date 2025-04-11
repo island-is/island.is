@@ -52,11 +52,11 @@ export const EmployeeSickPay = ({
                 label={
                   employeeSickPayOption === YES
                     ? formatMessage(
-                        medicalAndRehabilitationPaymentsFormMessage.overview
+                        medicalAndRehabilitationPaymentsFormMessage.shared
                           .sickPayDidEndDate,
                       )
                     : formatMessage(
-                        medicalAndRehabilitationPaymentsFormMessage.overview
+                        medicalAndRehabilitationPaymentsFormMessage.shared
                           .sickPayDoesEndDate,
                       )
                 }

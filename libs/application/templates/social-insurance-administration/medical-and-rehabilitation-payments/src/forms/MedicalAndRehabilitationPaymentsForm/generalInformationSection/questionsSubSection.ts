@@ -82,8 +82,8 @@ export const questionsSubSection = buildSubSection({
         buildDescriptionField({
           id: 'questions.isStudyingFileUpload.description',
           title:
-            medicalAndRehabilitationPaymentsFormMessage.generalInformation
-              .questionsIsStudyingFileUpload,
+            medicalAndRehabilitationPaymentsFormMessage.shared
+              .uploadConfirmationDocument,
           titleVariant: 'h4',
           space: 4,
           condition: (answers) => {

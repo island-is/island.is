@@ -191,6 +191,7 @@ const OrganizationHomePage = ({
                   marginBottom={
                     index === organizationPage.slices.length - 1 ? 5 : 0
                   }
+                  params={{ isFrontpage: true }}
                 />
               )
             })}

@@ -30,6 +30,7 @@ export enum GenericLicenseType {
   PCard = 'PCard',
   Ehic = 'Ehic',
   Passport = 'Passport',
+  IdentityDocument = 'IdentityDocument',
 }
 
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
@@ -37,6 +38,7 @@ export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 export enum GenericLicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',
   EnvironmentAgency = 'EnvironmentAgency',
+  NatureConservationAgency = 'NatureConservationAgency',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
   SocialInsuranceAdministration = 'SocialInsuranceAdministration', // Tryggingastofnun
   DistrictCommissioners = 'DistrictCommissioners', // Sýslumenn
@@ -113,7 +115,8 @@ export type GenericLicenseMetadata = {
   type: GenericLicenseType
   provider: {
     id: GenericLicenseProviderId
-    referenceId: string
+    referenceId?: string
+    entryId: string
   }
   pkpass: boolean
   pkpassVerify: boolean
