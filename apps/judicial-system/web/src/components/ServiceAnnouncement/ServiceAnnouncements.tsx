@@ -198,6 +198,7 @@ const ServiceAnnouncements: FC<ServiceAnnouncementsProps> = (props) => {
       <>
         {defendant.alternativeServiceDescription && (
           <AlternativeServiceAnnouncement
+            key={defendant.id}
             alternativeServiceDescription={
               defendant.alternativeServiceDescription
             }

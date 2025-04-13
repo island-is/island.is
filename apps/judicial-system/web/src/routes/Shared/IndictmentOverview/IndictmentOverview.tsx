@@ -176,6 +176,7 @@ const IndictmentOverview: FC = () => {
               <>
                 {defendant.alternativeServiceDescription && (
                   <AlternativeServiceAnnouncement
+                    key={defendant.id}
                     alternativeServiceDescription={
                       defendant.alternativeServiceDescription
                     }
