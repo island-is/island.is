@@ -46,7 +46,7 @@ export const Permission = ({
           {permission.isCommon ? (
             <ToggleSwitchCheckbox
               name={organizationId + '-' + permission.id}
-              label={''}
+              label={permission.name?.is || ''}
               checked={true}
               disabled={true}
               onChange={() => {}}
@@ -54,7 +54,7 @@ export const Permission = ({
           ) : (
             <ToggleSwitchCheckbox
               name={organizationId + '-' + permission.id}
-              label={''}
+              label={permission.name?.is || ''}
               checked={isSelectedState}
               onChange={async (e) => {
                 setIsSelectedState(e)
@@ -89,9 +89,6 @@ export const Permission = ({
               }}
             />
           )}
-        </Box>
-        <Box marginLeft={2}>
-          <h2>{permission.name?.is}</h2>
         </Box>
       </GridRow>
       <Box paddingBottom={2}></Box>

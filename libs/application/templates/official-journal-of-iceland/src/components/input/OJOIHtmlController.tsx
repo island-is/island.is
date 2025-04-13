@@ -45,7 +45,7 @@ export const OJOIHtmlController = ({
     const currentAnswers = structuredClone(application.answers)
     const newAnswers = set(currentAnswers, name, base64)
 
-    onChange && onChange(value)
+    onChange && onChange(base64 as HTMLText)
     return newAnswers
   }
 
