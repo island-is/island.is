@@ -2,7 +2,7 @@ import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import OwnerView from './OwnerView'
 import { useGetCurrentCollection, useIsOwner } from '../../hooks'
-import { EmptyState, IntroWrapper } from '@island.is/portals/my-pages/core'
+import { EmptyState, IntroWrapper, THJODSKRA_SLUG } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import SigneeView from '../shared/SigneeView'
 
@@ -19,22 +19,24 @@ const SignatureLists = () => {
       <IntroWrapper
         title={formatMessage(m.pageTitle)}
         intro={formatMessage(m.pageDescriptionSignee)}
+        serviceProviderTooltip={formatMessage(m.infoProviderTooltip)}
+        serviceProviderSlug={THJODSKRA_SLUG}
       />
-      {currentCollection?.isPresidential &&
-      !loadingIsOwner &&
-      !loadingCurrentCollection ? (
+      {!loadingIsOwner && !loadingCurrentCollection && (
         <Box>
-          {isOwner.success ? (
-            <OwnerView currentCollection={currentCollection} />
+          {currentCollection?.isPresidential ? (
+            isOwner.success ? (
+              <OwnerView currentCollection={currentCollection} />
+            ) : (
+              <SigneeView currentCollection={currentCollection} />
+            )
           ) : (
-            <SigneeView currentCollection={currentCollection} />
+            <EmptyState
+              title={m.noCollectionIsActive}
+              description={m.noCollectionIsActiveDescription}
+            />
           )}
         </Box>
-      ) : (
-        <EmptyState
-          title={m.noCollectionIsActive}
-          description={m.noCollectionIsActiveDescription}
-        />
       )}
     </Box>
   )

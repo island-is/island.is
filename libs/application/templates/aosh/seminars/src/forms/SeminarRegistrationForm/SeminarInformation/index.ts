@@ -1,13 +1,11 @@
 import {
-  buildAlertMessageField,
   buildInformationFormField,
   buildMultiField,
   buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
 import { seminar as seminarMessages } from '../../../lib/messages'
-import { ExternalData, PaymentCatalogItem } from '@island.is/application/types'
-import { isPersonType } from '../../../utils'
+import { PaymentCatalogItem } from '@island.is/application/types'
 import { CourseDTO } from '@island.is/clients/seminars-ver'
 import { getSeminarInfo } from '../../../utils/getSeminarInfo'
 
@@ -38,15 +36,6 @@ export const seminarInformationSection = buildSection({
 
             return getSeminarInfo(seminar, paymentItem)
           },
-        }),
-        buildAlertMessageField({
-          id: 'seminarInformationAlert',
-          message: seminarMessages.labels.alertMessage,
-          alertType: 'info',
-          marginTop: 4,
-          doesNotRequireAnswer: true,
-          condition: (_, externalData: ExternalData) =>
-            isPersonType(externalData),
         }),
       ],
     }),
