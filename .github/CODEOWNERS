@@ -38,6 +38,7 @@
 /libs/clients/rsk/                                                                                        @island-is/juni
 /libs/clients/zendesk/                                                                                    @island-is/juni
 /libs/icelandic-names-registry/                                                                           @island-is/juni
+/libs/portals/my-pages/signature-collection/                                                              @island-is/juni
 /libs/portals/my-pages/petitions/                                                                         @island-is/juni
 /libs/portals/my-pages/education/                                                                         @island-is/juni @island-is/hugsmidjan
 /libs/portals/my-pages/education-career/                                                                  @island-is/juni @island-is/hugsmidjan
@@ -164,7 +165,6 @@ codemagic.yaml                                                                  
 /libs/api/domains/rights-portal                                                                           @island-is/hugsmidjan
 /libs/api/domains/social-insurance                                                                        @island-is/hugsmidjan @island-is/stefna
 /libs/api/domains/occupational-licenses/                                                                  @island-is/hugsmidjan
-/libs/api/domains/occupational-licenses-v2/                                                               @island-is/hugsmidjan
 /libs/api/domains/intellectual-properties/                                                                @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland/                                                            @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland-application/                                                @island-is/hugsmidjan
@@ -272,7 +272,6 @@ codemagic.yaml                                                                  
 
 /libs/shared/form-fields/                                                                                 @island-is/norda @island-is/island-ui
 
-/libs/portals/my-pages/signature-collection/                                                              @island-is/norda
 /libs/portals/my-pages/applications/                                                                      @island-is/norda
 /libs/portals/admin/application-system/                                                                   @island-is/norda
 /libs/api/domains/application/                                                                            @island-is/norda
@@ -371,8 +370,8 @@ codemagic.yaml                                                                  
 
 /libs/application/templates/aosh/seminars/                                                                @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/aosh/seminars/                           @island-is/origo
-/libs/api/domains/seminars-ver/                                                                           @island-is/origo  
-/libs/clients/seminars-ver/                                                                               @island-is/origo  
+/libs/api/domains/seminars-ver/                                                                           @island-is/origo
+/libs/clients/seminars-ver/                                                                               @island-is/origo
 
 /libs/application/templates/id-card/                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/id-card/                                 @island-is/origo
