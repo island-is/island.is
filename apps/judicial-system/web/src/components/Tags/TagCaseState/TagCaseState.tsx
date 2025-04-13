@@ -34,9 +34,14 @@ interface Props {
 
 const haveAllSubpoenasBeenServiced = (defendants: Defendant[]): boolean => {
   return defendants.every((defendant) => {
-    // if at least one subpoena for each defendant was serviced, we return true
-    return defendant.subpoenas?.some((subpoena) =>
-      isSuccessfulServiceStatus(subpoena.serviceStatus),
+    // if the defendant was served by alternative means or
+    // at least one subpoena for each defendant was serviced,
+    // then we return true
+    return (
+      defendant.isAlternativeService ||
+      defendant.subpoenas?.some((subpoena) =>
+        isSuccessfulServiceStatus(subpoena.serviceStatus),
+      )
     )
   })
 }
