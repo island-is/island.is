@@ -10,7 +10,7 @@ import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'
 import { useGetCurrentCollection, useIsOwner } from '../../hooks'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { AuthDelegationType } from '../../types/schema'
+import { AuthDelegationType } from '@island.is/api/schema'
 
 const SignatureListsParliamentary = () => {
   useNamespaces('sp.signatureCollection')
@@ -31,26 +31,22 @@ const SignatureListsParliamentary = () => {
       />
       {!loadingIsOwner && !loadingCurrentCollection && (
         <Box>
-          {!currentCollection?.isPresidential ? (
-            isOwner.success ? (
-              <OwnerView
-                refetchIsOwner={refetchIsOwner}
-                currentCollection={currentCollection}
-                isListHolder={
-                  !userInfo?.profile?.delegationType ||
-                  userInfo?.profile?.delegationType?.includes(
-                    AuthDelegationType.ProcurationHolder,
-                  )
-                }
-              />
-            ) : (
-              <SigneeView currentCollection={currentCollection} />
-            )
-          ) : (
+          {currentCollection?.isPresidential ? (
             <EmptyState
               title={m.noCollectionIsActive}
               description={m.noCollectionIsActiveDescription}
             />
+          ) : isOwner.success ? (
+            <OwnerView
+              refetchIsOwner={refetchIsOwner}
+              currentCollection={currentCollection}
+              isListHolder={
+                !userInfo?.profile?.delegationType ||
+                userInfo?.profile?.delegationType?.includes(AuthDelegationType.ProcurationHolder)
+              }
+            />
+          ) : (
+            <SigneeView currentCollection={currentCollection} />
           )}
         </Box>
       )}

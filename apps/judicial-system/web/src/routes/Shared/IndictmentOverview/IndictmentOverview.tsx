@@ -28,7 +28,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
-  serviceAnnouncementStrings,
+  serviceAnnouncementsStrings,
   useIndictmentsLawsBroken,
   UserContext,
   ZipButton,
@@ -62,7 +62,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 
   const getTitle = (defendantName?: string | null): string => {
     const successMessage = formatMessage(
-      serviceAnnouncementStrings.serviceStatusSuccess,
+      serviceAnnouncementsStrings.serviceStatusSuccess,
     )
 
     return defendantName
