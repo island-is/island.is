@@ -70,9 +70,5 @@ jobs:
         run: |
           AFFECTED_PROJECTS='judicial-system-web, judicial-system-types, judicial-system-digital-mailbox-api, judicial-system-message-handler, judicial-system-formatters, judicial-system-backend, judicial-system-xrd-api, judicial-system-api, judicial-system-scheduler, judicial-system-message, judicial-system-consts, judicial-system-auth'
           lints=$(mktemp -t lint-head.XXXXXX)
-          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
-          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS" |
-            tee -a "$lints" | # Show output when running, but preserve pipe-chaining
-            grep -oP '(?<=✖ )(\d+)(?= problems)' | # Find number of problems
-            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d",SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
-            tee -a "$GITHUB_OUTPUT" # Finally create output
+          echo "lints-file=$lints"
+          yarn nx run-many -t lint --projects "$AFFECTED_PROJECTS"
