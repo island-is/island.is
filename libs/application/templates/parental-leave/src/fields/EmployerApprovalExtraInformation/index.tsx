@@ -34,7 +34,7 @@ const EmployerApprovalExtraInformation: FC<
           label={formatMessage(
             parentalLeaveFormMessages.shared.salaryLabelPensionFund,
           )}
-          value={getSelectOptionLabel(pensionFundOptions, pensionFund)}
+          value={getSelectOptionLabel(pensionFundOptions, pensionFund) ?? ''}
         />
       </GridColumn>
 
@@ -46,7 +46,7 @@ const EmployerApprovalExtraInformation: FC<
           label={formatMessage(
             parentalLeaveFormMessages.shared.salaryLabelUnion,
           )}
-          value={getSelectOptionLabel(unionOptions, union)}
+          value={getSelectOptionLabel(unionOptions, union) ?? ''}
         />
       </GridColumn>
     </GridRow>
