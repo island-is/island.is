@@ -23,8 +23,6 @@ import { TechInfoItem } from '../models/toBeDeprecated/techInfoItem'
 import { MachineType } from '../models/toBeDeprecated/machineType'
 import { GetDocumentsInput } from '../dto/getDocuments.input'
 import { FileType } from '../workMachines.types'
-import { PaginatedCollectionResponse } from '../models/workMachinePaginatedCollection.model'
-import { GetWorkMachineCollectionInput } from '../dto/getWorkMachineCollection.input'
 
 @Directive('@deprecated(reason: "Use something else")')
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -40,7 +38,9 @@ export class DeprecatedResolver {
   ) {}
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => MachineDetails, { deprecationReason: 'TO BE REMOVED' })
+  @Query(() => MachineDetails, {
+    deprecationReason: 'use workMachine model',
+  })
   @Audit()
   async getWorkerMachineDetails(
     @CurrentUser() auth: User,
@@ -51,7 +51,9 @@ export class DeprecatedResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => Boolean, { deprecationReason: 'TO BE REMOVED' })
+  @Query(() => Boolean, {
+    deprecationReason: 'Property available in workMachine model',
+  })
   @Audit()
   async getWorkerMachinePaymentRequired(
     @CurrentUser() auth: User,
@@ -61,7 +63,10 @@ export class DeprecatedResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => MachineDetails, { deprecationReason: 'TO BE REMOVED' })
+  @Query(() => MachineDetails, {
+    deprecationReason:
+      'TO BE REMOVED. Pass in registrationnumber to "workMachine" resolver function instead',
+  })
   @Audit()
   async getWorkerMachineByRegno(
     @CurrentUser() auth: User,

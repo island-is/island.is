@@ -5,40 +5,40 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { BadRequestException, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { WorkMachinesService } from '../workMachines.service'
-import { WorkMachine } from '../models/workMachine.model'
-import { GetWorkMachineInput } from '../dto/getWorkMachine.input'
+import { GetWorkMachineModelsInput } from '../dto/getModels.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Resolver(() => WorkMachine)
+@Resolver(() => ModelCollection)
 @Audit({ namespace: '@island.is/api/work-machines' })
-export class WorkMachineResolver {
+export class ModelCollection {
   constructor(private readonly workMachinesService: WorkMachinesService) {}
 
   @Scopes(ApiScope.workMachines)
-  @Query(() => WorkMachine, {
-    name: 'workMachine',
+  @Query(() => ModelCollection, {
+    name: 'workMachinesModelCollection',
     nullable: true,
   })
   @Audit()
-  async getWorkMachine(
+  async getModelCollection(
     @CurrentUser() user: User,
     @Args('input', {
-      type: () => GetWorkMachineInput,
-      nullable: true,
+      type: () => GetWorkMachineModelsInput,
     })
-    input: GetWorkMachineInput,
+    input: GetWorkMachineModelsInput,
   ) {
-    if (!input.id && !input.registrationNumber) {
-      throw new BadRequestException(
-        'Must supply either id or registrationNumber',
-      )
+    const models = await this.workMachinesService.getMachineModels(
+      user,
+      input.type,
+    )
+
+    return {
+      models,
     }
-    return this.workMachinesService.getWorkMachineById(user, input)
   }
 }

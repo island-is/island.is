@@ -27,6 +27,8 @@ export class MachineDetails {
   @Field(() => String, { nullable: true })
   plate?: string | null
 
+  //this should probaby be an application specific utility, since
+  //it doesn't really describe the object itself. imo
   @Field(() => Boolean, { nullable: true })
   disabled?: boolean | null
 

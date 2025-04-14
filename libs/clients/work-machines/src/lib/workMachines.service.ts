@@ -64,6 +64,11 @@ import {
 import { mapLinkDto } from './dtos/link.dto'
 import { mapLabelDto } from './dtos/label.dto'
 import { mapPaginationDto } from './dtos/pagination.dto'
+import {
+  GetMachineByIdInput,
+  GetMachineByRegNumberInput,
+  isIdInput,
+} from './inputs/getWorkMachineInput.dto'
 
 @Injectable()
 export class WorkMachinesClientService {
@@ -175,9 +180,35 @@ export class WorkMachinesClientService {
     }
   }
 
+  getWorkMachine = async (
+    user: User,
+    input: GetMachineByIdInput | GetMachineByRegNumberInput,
+  ): Promise<WorkMachinesCollectionItem | null> => {
+    if (isIdInput(input)) {
+      return this.getWorkMachineById(user, input)
+    }
+
+    const defaultOptions = {
+      onlyShowOwnedMachines: true,
+      searchQuery: input.regNumber,
+    }
+    const result = await this.machinesApiWithAuth(user).apiMachinesGet({
+      ...defaultOptions,
+      searchQuery: input.regNumber,
+    })
+
+    const machineId = result?.value?.[0]?.id ?? undefined
+
+    if (!machineId) {
+      return null
+    }
+
+    return this.getWorkMachineById(user, { id: machineId, ...input })
+  }
+
   getWorkMachineById = async (
     user: User,
-    input: GetMachineRequest,
+    input: GetMachineByIdInput,
   ): Promise<WorkMachinesCollectionItem | null> => {
     const data = await this.machineApiWithAuth(user)
       .getMachine(input)

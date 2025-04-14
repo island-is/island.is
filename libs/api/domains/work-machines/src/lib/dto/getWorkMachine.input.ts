@@ -3,11 +3,23 @@ import { IsString } from 'class-validator'
 
 @InputType('WorkMachinesInput')
 export class GetWorkMachineInput {
-  @Field()
+  @Field({
+    nullable: true,
+    description:
+      'Work machine id, must pass in either this or the registration number',
+  })
   @IsString()
-  id!: string
+  id?: string
 
-  @Field(() => String)
+  @Field({
+    nullable: true,
+    description:
+      'Work machine registration number, must pass in either this or the id',
+  })
+  @IsString()
+  registrationNumber?: string
+
+  @Field()
   @IsString()
   locale!: string
 }

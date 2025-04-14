@@ -29,7 +29,6 @@ export class CollectionResolver {
   @Query(() => PaginatedCollectionResponse, {
     name: 'workMachinesPaginatedCollection',
     nullable: true,
-    deprecationReason: 'Up for removal, use workMachinesCollection',
   })
   @Audit()
   async getWorkMachinesPaginatedCollection(

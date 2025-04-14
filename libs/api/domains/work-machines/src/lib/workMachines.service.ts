@@ -5,6 +5,7 @@ import {
   MachineTypeDto,
   TechInfoItemDto,
   WorkMachinesClientService,
+  WorkMachinesCollectionItem,
 } from '@island.is/clients/work-machines'
 import { isDefined } from '@island.is/shared/utils'
 import { User } from '@island.is/auth-nest-tools'
@@ -131,7 +132,19 @@ export class WorkMachinesService {
     user: User,
     input: GetWorkMachineInput,
   ): Promise<WorkMachine | null> {
-    const data = await this.machineService.getWorkMachineById(user, input)
+    const { id, registrationNumber, locale } = input
+
+    let data: WorkMachinesCollectionItem | null
+    if (registrationNumber) {
+      data = await this.machineService.getWorkMachine(user, {
+        regNumber: registrationNumber,
+        locale,
+      })
+    } else if (id) {
+      data = await this.machineService.getWorkMachine(user, { id, locale })
+    } else {
+      return null
+    }
 
     if (!data || !data.id) {
       return null
@@ -228,8 +241,12 @@ export class WorkMachinesService {
     )
   }
 
-  async getMachineModels(auth: User, type: string): Promise<MachineModelDto[]> {
-    return this.machineService.getMachineModels(auth, { tegund: type })
+  async getMachineModels(auth: User, type: string): Promise<Array<string>> {
+    const models = await this.machineService.getMachineModels(auth, {
+      tegund: type,
+    })
+
+    return models.map((m) => m.name).filter(isDefined)
   }
 
   async getMachineParentCategoriesTypeModelGet(
