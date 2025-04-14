@@ -51,7 +51,7 @@ jobs:
     secrets: inherit
 
   prepare:
-    runs-on: arc-runners
+    runs-on: arc-shared
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -222,10 +222,9 @@ jobs:
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
-          echo "CHUNKS: '$CHUNKS'"
+          echo "CHUNKS: $CHUNKS"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
-            echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
+            echo "BUILD_CHUNKS=$CHUNKS" >> "$GITHUB_OUTPUT"
           fi
 
       # NOTE: only on PRs
@@ -234,13 +233,20 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
           set -euo pipefail
-          CHUNKS=${{ steps.build_map.outputs.CHUNKS }}
-          echo "CHUNKS: '$CHUNKS'"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            # NOTE: validate the jq command to trigger failure
-            echo "$CHUNKS" | jq -r 'map(.projects) | join(",")'
-            IMAGES=$(echo "$CHUNKS" | jq -r 'map(.projects) | join(",")')
-            echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
+          # Output raw value for debugging
+          echo "Raw BUILD_CHUNKS: '${{ steps.build_map.outputs.BUILD_CHUNKS }}'"
+
+          # Properly handle the JSON by writing it to a temporary file
+          echo '${{ steps.build_map.outputs.BUILD_CHUNKS }}' > chunks.json
+          # Remove surrounding quotes and other potential problematic characters
+          sed -i.bak 's/^'"'"'\(.*\)'"'"'$/\1/' chunks.json
+          cat chunks.json
+
+          if [[ -s chunks.json && "$(cat chunks.json)" != "[]" ]]; then
+            # NOTE: validate the jq command to trigger failure using the file
+            PROJECTS=$(jq -r 'map(.projects) | join(",")' chunks.json)
+            echo "Extracted projects: $PROJECTS"
+            echo "IMAGES=$PROJECTS" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare docker deps
@@ -248,73 +254,36 @@ jobs:
         run: |
           ./scripts/ci/10_prepare-docker-deps.sh
 
-  docker-build:
-    needs:
-      - pre-checks
-      - prepare
-    runs-on: arc-docker
-    timeout-minutes: 45
-    if: needs.prepare.outputs.BUILD_CHUNKS
-    env:
-      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
-      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION}}
-      PUBLISH: true
-      DISABLE_CHUNKS: true
-      MAX_JOBS: 3
-      NX_PARALLEL: 1
-    strategy:
-      fail-fast: false
-      matrix:
-        chunk: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    steps:
-      - name: Gather apps
-        id: gather
+      - name: Set up Docker Buildx with parallel capabilities
+        uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-config-inline: |
+            [worker.oci]
+            max-parallelism = 10
+
+      - name: Check if cached buildx image exists
+        id: cache-check
+        run: |
+          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
+            docker pull docker.io/moby/buildkit:buildx-stable-1
+            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+          fi
+
+      - name: Parallel Docker builds with BuildKit
+        if: steps.build_map.outputs.BUILD_CHUNKS
+        env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
+          BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
         run: |
           set -euo pipefail
-          AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
-          DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
-          APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
-          APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
-          echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
-          echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
-          echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
-          echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
-        continue-on-error: true
+          # Remove surrounding single quotes if present before parsing JSON
+          CHUNKS="${BUILD_CHUNKS#\'}"
+          CHUNKS="${CHUNKS%\'}"
+          echo "CHUNKS debug:\n"
+          echo "$CHUNKS"
 
-      - uses: actions/checkout@v4
-        if: steps.gather.outcome == 'success'
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
-
-      - name: Docker login to ECR repo
-        if: steps.gather.outcome == 'success'
-        run: ./scripts/ci/docker-login-ecr.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Prepare Docker build arguments
-        id: dockerargs
-        if: steps.gather.outcome == 'success'
-        env:
-          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
-          GIT_COMMIT_SHA: ${{ github.sha }}
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-        run: |
-          set -x
-          # Strip protocol prefix and .git postfix
+          # Prepare common Docker build arguments
           SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
           SERVER_URL="${SERVER_URL#*://}"
           SERVER_URL="${SERVER_URL%.git}"
@@ -328,62 +297,178 @@ jobs:
             --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
             --build-arg="NX_TASKS_RUNNER=ci"
           )
-          export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
-          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
+          EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
 
           # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
           echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
+          EXTRA_DOCKER_BUILD_ARGS="${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt"
 
-          # Add secret to EXTRA_DOCKER_BUILD_ARGS
-          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
+          # Parse BUILD_CHUNKS and launch builds using BuildKit
 
-      - name: Check if cached buildx image exists
-        id: cache-check
-        run: |
-          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
-            docker pull docker.io/moby/buildkit:buildx-stable-1
-            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-          fi
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          # Prepare all builds commands
+          mkdir -p .buildkit-commands
+          chunk_index=0
 
-      - name: Building Docker images
-        continue-on-error: true
-        id: dockerbuild
-        if: steps.gather.outcome == 'success'
-        env:
-          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
-          GIT_COMMIT_SHA: ${{ github.sha }}
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-        run: |
-          set -x
-          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
-          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
-          export EXTRA_DOCKER_BUILD_ARGS
+          echo "Starting chunk loop:\n"
+          for chunk in $(echo "$CHUNKS" | jq -c '.[]'); do
+            AFFECTED_PROJECTS="$(echo "$chunk" | jq -r '.projects')"
+            DOCKER_TYPE="$(echo "$chunk" | jq -r '.docker_type')"
+            APP_HOME="$(echo "$chunk" | jq -r '.home')"
+            APP_DIST_HOME="$(echo "$chunk" | jq -r '.dist')"
+            if [[ "$APP_DIST_HOME" == "null" || -z "$APP_DIST_HOME" || "$APP_DIST_HOME" == "" ]]; then
+              echo "Error: Project '$AFFECTED_PROJECTS' has an invalid dist filepath: '$APP_DIST_HOME'"
+              exit 1
+            fi
+
+          echo "Generating script:\n"
+            # Create a build script for this chunk
+            cat > .buildkit-commands/build-${chunk_index}.sh << EOF
+          #!/bin/bash
+          set -euo pipefail
+          export AFFECTED_PROJECTS="$AFFECTED_PROJECTS"
+          export DOCKER_TYPE="$DOCKER_TYPE"
+          export APP_HOME="$APP_HOME"
+          export APP_DIST_HOME="$APP_DIST_HOME"
+          export EXTRA_DOCKER_BUILD_ARGS="$EXTRA_DOCKER_BUILD_ARGS"
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+          EOF
 
-      - name: Building Docker images Retry
-        if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
-        env:
-          NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
-          GIT_COMMIT_SHA: ${{ github.sha }}
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-        run: |
-          set -x
-          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
-          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
-          export EXTRA_DOCKER_BUILD_ARGS
-          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+            chmod +x .buildkit-commands/build-${chunk_index}.sh
+            ((chunk_index++))
+          done
 
+          # Execute all builds in parallel using GNU Parallel
+          find .buildkit-commands -name "build-*.sh" | parallel -j 8
+
+  # docker-build:
+  #   needs:
+  #     - pre-checks
+  #     - prepare
+  #   runs-on: arc-shared
+  #   timeout-minutes: 45
+  #   if: needs.prepare.outputs.BUILD_CHUNKS
+  #   env:
+  #     AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+  #     GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
+  #     DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+  #     NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION}}
+  #     PUBLISH: true
+  #     DISABLE_CHUNKS: true
+  #     MAX_JOBS: 3
+  #     NX_PARALLEL: 1
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       chunk: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
+  #   steps:
+  #     - name: Gather apps
+  #       id: gather
+  #       run: |
+  #         set -euo pipefail
+  #         AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
+  #         DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
+  #         APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
+  #         APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
+  #         echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
+  #         echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
+  #         echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
+  #         echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
+  #       continue-on-error: true
+  #
+  #     - uses: actions/checkout@v4
+  #       if: steps.gather.outcome == 'success'
+  #
+  #     - name: Restore generated files
+  #       uses: runs-on/cache/restore@v4
+  #       id: restore-generated-files-cache
+  #       with:
+  #         path: |
+  #           ${{ env.GENERATED_FILES }}
+  #         key: generated-files-${{ github.sha }}
+  #
+  #     - name: Extract generated files
+  #       run: |
+  #         tar -xzvf ${{ env.GENERATED_FILES }}
+  #
+  #     - name: Prepare Docker build arguments
+  #       id: dockerargs
+  #       if: steps.gather.outcome == 'success'
+  #       env:
+  #         NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
+  #         GIT_COMMIT_SHA: ${{ github.sha }}
+  #         DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+  #       run: |
+  #         set -x
+  #         # Strip protocol prefix and .git postfix
+  #         SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
+  #         SERVER_URL="${SERVER_URL#*://}"
+  #         SERVER_URL="${SERVER_URL%.git}"
+  #         build_args=(
+  #           --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+  #           --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
+  #           --build-arg="GIT_BRANCH=${GIT_BRANCH}"
+  #           --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
+  #           --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
+  #           --build-arg="NX_PARALLEL=${NX_PARALLEL}"
+  #           --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
+  #           --build-arg="NX_TASKS_RUNNER=ci"
+  #         )
+  #         export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
+  #         echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
+  #
+  #         # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
+  #         echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
+  #
+  #         # Add secret to EXTRA_DOCKER_BUILD_ARGS
+  #         echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
+  #
+  #     - name: Check if cached buildx image exists
+  #       id: cache-check
+  #       run: |
+  #         if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
+  #           docker pull docker.io/moby/buildkit:buildx-stable-1
+  #           docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+  #           docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+  #         fi
+  #     - name: Setup yarn
+  #       uses: ./.github/actions/setup-yarn
+  #       with:
+  #         RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  #
+  #     - name: Building Docker images
+  #       continue-on-error: true
+  #       id: dockerbuild
+  #       if: steps.gather.outcome == 'success'
+  #       env:
+  #         NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
+  #         GIT_COMMIT_SHA: ${{ github.sha }}
+  #         DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+  #       run: |
+  #         set -x
+  #         echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
+  #         echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+  #         export EXTRA_DOCKER_BUILD_ARGS
+  #         ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+  #
+  #     - name: Building Docker images Retry
+  #       if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
+  #       env:
+  #         NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
+  #         GIT_COMMIT_SHA: ${{ github.sha }}
+  #         DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+  #       run: |
+  #         set -x
+  #         echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
+  #         echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+  #         export EXTRA_DOCKER_BUILD_ARGS
+  #         ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+  #
   helm-docker-build:
     needs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: arc-docker
+    runs-on: arc-shared
     timeout-minutes: 30
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
@@ -416,9 +501,17 @@ jobs:
           echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
           echo Image tag is: ${{env.NODE_IMAGE_VERSION}}
           ./scripts/build-docker-container.sh "$DOCKER_TAG"
+
+          # Properly handle IMAGES output without quotes
+          IMAGES="${{needs.prepare.outputs.IMAGES}}"
+          # Remove any surrounding quotes if present
+          IMAGES="${IMAGES#\'}"
+          IMAGES="${IMAGES%\'}"
+
+          echo "Clean IMAGES: $IMAGES"
           echo "COMMENT<<EOF" >> "$GITHUB_ENV"
-          echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> "$GITHUB_ENV"
-          docker run --rm "${DOCKER_REGISTRY}/helm-config:$DOCKER_TAG" ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME" >> "$GITHUB_ENV"
+          echo "Affected services are: $IMAGES" >> "$GITHUB_ENV"
+          docker run --rm "${DOCKER_REGISTRY}/helm-config:$DOCKER_TAG" ingress-comment --images=$IMAGES --chart=islandis --feature="$FEATURE_NAME" >> "$GITHUB_ENV"
           echo 'EOF' >> "$GITHUB_ENV"
         env:
           PUBLISH: 'true'
@@ -434,13 +527,12 @@ jobs:
             await updateComment({github, context, comment: COMMENT})
 
   deploy:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: ${{ !cancelled() && needs.helm-docker-build.result != 'failure' && needs.docker-build.result == 'success' }}
 
     needs:
       - pre-checks
       - prepare
-      - docker-build
       - helm-docker-build
     env:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
@@ -454,6 +546,13 @@ jobs:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
           echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
+
+          # Properly handle IMAGES without quotes
+          CLEAN_IMAGES="${IMAGES#\'}"
+          CLEAN_IMAGES="${CLEAN_IMAGES%\'}"
+          echo "Original IMAGES: $IMAGES"
+          echo "Clean IMAGES: $CLEAN_IMAGES"
+
           curl "$SPINNAKER_URL/webhooks/webhook/islandis" -H "content-type: application/json" --data-binary @- <<BODY
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
@@ -461,7 +560,7 @@ jobs:
             "parameters": {
               "docker_tag": "$DOCKER_TAG",
               "feature_name": "$FEATURE_NAME",
-              "images": "$IMAGES",
+              "images": "$CLEAN_IMAGES",
               "pull_request_number": "$(echo "$GITHUB_REF" | cut -d'/' -f3)"
             }
           }
@@ -489,11 +588,11 @@ jobs:
           }
           BODY
   push-success:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs:
       - pre-checks
-      - docker-build
+      - prepare
       - deploy
     steps:
       - name: Check deploy success
@@ -506,12 +605,11 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
       - prepare
-      - docker-build
       - deploy
     steps:
       - name: Send Slack notification
@@ -526,7 +624,7 @@ jobs:
 
   scanflags:
     if: github.ref == 'ref/heads/main'
-    runs-on: arc-runners
+    runs-on: arc-shared
     steps:
       - name: Checkout
         uses: actions/checkout@v4
