@@ -104,6 +104,7 @@ const OverviewBody = ({
             <Button
               variant="primary"
               icon="add"
+              size="small"
               onClick={() => {
                 router.push(
                   `${constants.INDICTMENTS_ADD_FILES_IN_COURT_ROUTE}/${workingCase.id}`,
