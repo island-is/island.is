@@ -6,13 +6,14 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { type Lawyer } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
+  Defendant,
   ServiceStatus,
   Subpoena,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useSubpoena } from '../../utils/hooks'
 import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
-import { strings } from './ServiceAnnouncement.strings'
+import { strings } from './ServiceAnnouncements.strings'
 
 const mapServiceStatusTitle = (
   serviceStatus?: ServiceStatus | null,
@@ -134,7 +135,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
     <Box marginBottom={2}>
       <AlertMessage
         title={`${formatMessage(title)}${
-          defendantName && subpoena.serviceStatus ? ` - ${defendantName}` : ''
+          defendantName ? ` - ${defendantName}` : ''
         }`}
         message={
           <Box>
@@ -158,4 +159,62 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   )
 }
 
-export default ServiceAnnouncement
+interface AlternativeServiceAnnouncementProps {
+  alternativeServiceDescription: string | null | undefined
+  defendantName: string | null | undefined
+}
+
+export const AlternativeServiceAnnouncement: FC<
+  AlternativeServiceAnnouncementProps
+> = (props) => {
+  const { alternativeServiceDescription, defendantName } = props
+
+  return (
+    <Box marginBottom={2}>
+      <AlertMessage
+        title={`Birt með öðrum hætti${
+          defendantName ? ` - ${defendantName}` : ''
+        }`}
+        message={
+          <Box>
+            <Text variant="small">{alternativeServiceDescription}</Text>
+          </Box>
+        }
+        type="success"
+      />
+    </Box>
+  )
+}
+
+interface ServiceAnnouncementsProps {
+  defendants: Defendant[] | null | undefined
+}
+
+const ServiceAnnouncements: FC<ServiceAnnouncementsProps> = (props) => {
+  const { defendants } = props
+
+  return defendants?.map((defendant) => {
+    return (
+      <>
+        {defendant.alternativeServiceDescription && (
+          <AlternativeServiceAnnouncement
+            key={defendant.id}
+            alternativeServiceDescription={
+              defendant.alternativeServiceDescription
+            }
+            defendantName={defendant.name}
+          />
+        )}
+        {defendant.subpoenas?.map((subpoena) => (
+          <ServiceAnnouncement
+            key={`${subpoena.id}-${subpoena.created}`}
+            subpoena={subpoena}
+            defendantName={defendant.name}
+          />
+        ))}
+      </>
+    )
+  })
+}
+
+export default ServiceAnnouncements
