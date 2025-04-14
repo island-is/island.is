@@ -179,9 +179,14 @@ yargs(process.argv.slice(2))
         )
         
         if (writeDest != '') {
-          fs.mkdirSync(`${writeDest}/${svc.name()}`, { recursive: true })
-          console.log(`writing file to directory: ${writeDest}/${svc.name()}/values.yaml`)
-          fs.writeFileSync(`${writeDest}/${svc.name()}/values.yaml`, svcString);
+          try {
+            fs.mkdirSync(`${writeDest}/${svc.name()}`, { recursive: true })
+            console.log(`writing file to directory: ${writeDest}/${svc.name()}/values.yaml`)
+            fs.writeFileSync(`${writeDest}/${svc.name()}/values.yaml`, svcString);
+          } catch (error) {
+            console.log(`Failed to write values file for ${svc.name()}:`, error)
+            throw new Error(error);
+          }
         } else {
           writeToOutput(
             svcString,
@@ -250,9 +255,14 @@ yargs(process.argv.slice(2))
       const svcString = dumpJobYaml(featureYaml)
   
       if (writeDest != '') {
-        fs.mkdirSync(`${writeDest}/${affectedServices[0].name()}`, { recursive: true })
+        try {
+          fs.mkdirSync(`${writeDest}/${affectedServices[0].name()}`, { recursive: true })
         console.log(`writing file to: ${writeDest}/${affectedServices[0].name()}/bootstrap-fd-job.yaml}`)
         fs.writeFileSync(`${writeDest}/${affectedServices[0].name()}/bootstrap-fd-job.yaml`, svcString);
+        } catch (error) {
+          console.log(`Failed to write values file for ${affectedServices[0].name()}:`, error)
+          throw new Error(error);
+        }
       } else {
         await writeToOutput(svcString, typedArgv.output)
       }
