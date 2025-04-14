@@ -31,8 +31,8 @@ jobs:
           FEATURE_NAME: ${{ env.FEATURE_NAME }}
           FEATURE_NAME_2: ${{join(steps.run_tests.outputs.*, '\n')}}
         run: |
-          echo $FEATURE_NAME
-          echo $FEATURE_NAME_2
+          echo "$FEATURE_NAME"
+          echo "$FEATURE_NAME_2"
         # run: |
         #   repo_owner="island-is"
         #   repository="helm-values"
