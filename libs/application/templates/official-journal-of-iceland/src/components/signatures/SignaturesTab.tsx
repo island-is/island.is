@@ -120,6 +120,7 @@ export const SignaturesTab = ({ application, variant = 'regular' }: Props) => {
                     size="sm"
                     backgroundColor="blue"
                     name={`additional-${recordIndex}`}
+                    defaultValue={record.additional}
                     onChange={(e) =>
                       handleUpdateSignature(
                         'additional',

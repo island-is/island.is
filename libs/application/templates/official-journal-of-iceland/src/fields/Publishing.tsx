@@ -14,10 +14,10 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import { useCategories } from '../hooks/useCategories'
-import { MINIMUM_WEEKDAYS, OJOI_INPUT_HEIGHT } from '../lib/constants'
+import { OJOI_INPUT_HEIGHT } from '../lib/constants'
 import set from 'lodash/set'
 import addYears from 'date-fns/addYears'
-import { addWeekdays, getFastTrack, getWeekendDates } from '../lib/utils'
+import { getDefaultDate, getExcludedDates, getFastTrack } from '../lib/utils'
 import { useState } from 'react'
 import { baseEntitySchema } from '../lib/dataSchema'
 import { z } from 'zod'
@@ -45,11 +45,9 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
     minDate.setDate(minDate.getDate() + 1)
   }
 
-  const defaultDate = currentApplication.answers.advert?.requestedDate
-    ? new Date(currentApplication.answers.advert.requestedDate)
-        .toISOString()
-        .split('T')[0]
-    : addWeekdays(today, MINIMUM_WEEKDAYS).toISOString().split('T')[0]
+  const defaultDate = getDefaultDate(
+    currentApplication.answers.advert?.requestedDate,
+  )
 
   const [fastTrack, setFastTrack] = useState(
     getFastTrack(new Date(defaultDate)).fastTrack,
@@ -95,7 +93,7 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
           label={f(publishing.inputs.datepicker.label)}
           placeholder={f(publishing.inputs.datepicker.placeholder)}
           applicationId={application.id}
-          excludeDates={getWeekendDates(today, maxEndDate)}
+          excludeDates={getExcludedDates(today, maxEndDate)}
           minDate={minDate}
           maxDate={maxEndDate}
           defaultValue={defaultDate}
@@ -120,8 +118,8 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
               size="sm"
               label={f(publishing.inputs.contentCategories.label)}
               backgroundColor="blue"
+              placeholder={f(publishing.inputs.contentCategories.placeholder)}
               options={mappedCategories}
-              defaultValue={mappedCategories?.[0]}
               onChange={(opt) => onCategoryChange(opt?.value)}
               filterConfig={{
                 matchFrom: 'start',

@@ -6,7 +6,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
-import { DateType, type User, UserRole } from '@island.is/judicial-system/types'
+import { DateType, type User } from '@island.is/judicial-system/types'
 
 import {
   Case,
@@ -21,7 +21,6 @@ import {
   DeleteCivilClaimantResponse,
   DeleteDefendantResponse,
 } from '../defendant'
-import { CreateEventLogInput } from '../event-log'
 import {
   CaseFile,
   DeleteFileResponse,
@@ -48,6 +47,8 @@ import {
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { Subpoena } from '../subpoena'
+import { Victim } from '../victim'
+import { DeleteVictimResponse } from '../victim/models/deleteVictim.response'
 import { backendModuleConfig } from './backend.config'
 
 @Injectable()
@@ -412,6 +413,25 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/civilClaimant/${civilClaimantId}`)
   }
 
+  createVictim(caseId: string, createVictim: unknown): Promise<Victim> {
+    return this.post(`case/${caseId}/victim`, createVictim)
+  }
+
+  updateVictim(
+    caseId: string,
+    victimId: string,
+    updateVictim: unknown,
+  ): Promise<Victim> {
+    return this.patch(`case/${caseId}/victim/${victimId}`, updateVictim)
+  }
+
+  deleteVictim(
+    caseId: string,
+    victimId: string,
+  ): Promise<DeleteVictimResponse> {
+    return this.delete(`case/${caseId}/victim/${victimId}`)
+  }
+
   createIndictmentCount(
     input: CreateIndictmentCountInput,
   ): Promise<IndictmentCount> {
@@ -545,17 +565,14 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
   }
 
-  createEventLog(eventLog: CreateEventLogInput, userRole?: UserRole) {
+  createEventLog(createEventLog: unknown) {
     return fetch(`${this.config.backendUrl}/api/eventLog/event`, {
       method: 'POST',
       headers: {
         authorization: `Bearer ${this.config.secretToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        ...eventLog,
-        userRole,
-      }),
+      body: JSON.stringify(createEventLog),
     })
   }
 }

@@ -11,34 +11,56 @@ import { Box, Stack, Tabs, TagVariant } from '@island.is/island-ui/core'
 import {
   ActionCard,
   CardLoader,
-  IntroHeader,
+  IntroWrapper,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import { getPathFromType } from '../../../utils/mapPaths'
+import { useEffect, useState } from 'react'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+
+const BASE_INCLUDED_TYPES = [
+  GenericLicenseType.AdrLicense,
+  GenericLicenseType.DisabilityLicense,
+  GenericLicenseType.DriversLicense,
+  GenericLicenseType.Ehic,
+  GenericLicenseType.FirearmLicense,
+  GenericLicenseType.HuntingLicense,
+  GenericLicenseType.MachineLicense,
+  GenericLicenseType.PCard,
+  GenericLicenseType.Passport,
+]
 
 export const LicensesOverviewV2 = () => {
   useNamespaces('sp.license')
-  const { formatMessage } = useLocale()
-  const { data: userProfile } = useUserProfile()
-  const locale = (userProfile?.locale as Locale) ?? 'is'
+  const { formatMessage, lang } = useLocale()
 
-  const includedTypes = [
-    GenericLicenseType.AdrLicense,
-    GenericLicenseType.DisabilityLicense,
-    GenericLicenseType.DriversLicense,
-    GenericLicenseType.Ehic,
-    GenericLicenseType.FirearmLicense,
-    GenericLicenseType.HuntingLicense,
-    GenericLicenseType.MachineLicense,
-    GenericLicenseType.PCard,
-    GenericLicenseType.Passport,
-  ]
+  const [includedTypes, setIncludedTypes] = useState<Array<GenericLicenseType>>(
+    [],
+  )
+
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        Features.isIdentityDocumentEnabled,
+        false,
+      )
+      if (ffEnabled) {
+        setIncludedTypes([
+          ...BASE_INCLUDED_TYPES,
+          GenericLicenseType.IdentityDocument,
+        ])
+      } else setIncludedTypes(BASE_INCLUDED_TYPES)
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const { data, loading, error } = useGenericLicenseCollectionQuery({
     variables: {
-      locale,
+      locale: lang,
       input: {
         includedTypes,
       },
@@ -95,12 +117,11 @@ export const LicensesOverviewV2 = () => {
     data?.genericLicenseCollection?.licenses ?? []
 
   return (
-    <>
-      <IntroHeader
-        title={formatMessage(m.title)}
-        intro={formatMessage(m.intro)}
-        marginBottom={4}
-      />
+    <IntroWrapper
+      title={formatMessage(m.title)}
+      intro={formatMessage(m.intro)}
+      marginBottom={4}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}{' '}
       {!error && !loading && !errors?.length && !licenses?.length && (
         <Problem
@@ -148,7 +169,7 @@ export const LicensesOverviewV2 = () => {
             .map((license, index) => generateLicense(license, index))}
         </Stack>
       )}
-    </>
+    </IntroWrapper>
   )
 }
 

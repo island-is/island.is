@@ -25,6 +25,7 @@ export interface NewDrivingLicenseInput {
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
   licenseCategory: DrivingLicenseCategory
+  sendLicenseInMail: number
 }
 
 export interface NewTemporaryDrivingLicenseInput {
@@ -34,6 +35,7 @@ export interface NewTemporaryDrivingLicenseInput {
   teacherNationalId: string
   email: string
   phone: string
+  sendLicenseInMail: boolean
 }
 
 export interface NewBEDrivingLicenseInput {
@@ -104,7 +106,7 @@ export enum DrivingLicenseCategory {
   BE = 'BE',
 }
 
-export enum NeedsHealhCertificate {
+export enum NeedsHealthCertificate {
   TRUE = 1,
   FALSE = 0,
 }

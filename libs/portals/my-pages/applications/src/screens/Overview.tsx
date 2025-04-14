@@ -46,8 +46,7 @@ const defaultFilterValues: FilterValues = {
 }
 
 const Overview = () => {
-  useNamespaces('sp.applications')
-  useNamespaces('application.system')
+  useNamespaces(['sp.applications', 'application.system'])
   const { formatMessage, locale } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
   const location = useLocation()

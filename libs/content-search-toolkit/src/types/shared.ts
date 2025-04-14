@@ -29,6 +29,7 @@ export type sortableFields =
   | 'title.sort'
   | 'popularityScore'
   | 'releaseDate'
+  | '_score'
 
 export type sortRule = {
   [key in sortableFields]?: {

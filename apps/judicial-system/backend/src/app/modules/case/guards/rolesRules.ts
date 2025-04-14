@@ -212,7 +212,7 @@ export const prosecutorTransitionRule: RolesRule = {
     CaseTransition.WITHDRAW_APPEAL,
   ],
   canActivate: (request) => {
-    const user: User = request.user
+    const user: User = request.user?.currentUser
     const dto: TransitionCaseDto = request.body
     const theCase: Case = request.case
 
@@ -285,7 +285,7 @@ export const defenderGeneratedPdfRule: RolesRule = {
   role: UserRole.DEFENDER,
   type: RulesType.BASIC,
   canActivate: (request) => {
-    const user: User = request.user
+    const user: User = request.user?.currentUser
     const theCase: Case = request.case
 
     // Deny if something is missing - should never happen
@@ -395,7 +395,7 @@ export const districtCourtJudgeSignRulingRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_JUDGE,
   type: RulesType.BASIC,
   canActivate: (request) => {
-    const user: User = request.user
+    const user: User = request.user?.currentUser
     const theCase: Case = request.case
 
     // Deny if something is missing - should never happen

@@ -12,7 +12,6 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     .codeOwner(CodeOwners.Advania)
     .db()
     .migrations()
-    .seed()
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -20,6 +19,21 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         prod: 'https://innskra.island.is',
       },
     })
+    .ingress({
+      primary: {
+        host: {
+          dev: ['beta'],
+          staging: ['beta'],
+          prod: ['', 'www.island.is'],
+        },
+        paths: ['/form'],
+        public: true,
+      },
+    })
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '50m', memory: '256Mi' },
+    })
     .liveness('/liveness')
-    .readiness('/readiness')
-    .grantNamespaces('islandis')
+    .readiness('/liveness')
+    .grantNamespaces('islandis', 'nginx-ingress-external')

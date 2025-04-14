@@ -4,7 +4,7 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
-import { SectionTypes } from '../../enums/sectionTypes'
+import { SectionTypes } from '@island.is/form-system/shared'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
@@ -17,7 +17,10 @@ import { FormResponseDto } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
-import { OrganizationCertificationType } from '../organizationCertificationTypes/models/organizationCertificationType.model'
+import {
+  UpdateFormResponse,
+  UpdateFormError,
+} from '@island.is/form-system/shared'
 import {
   CertificationType,
   CertificationTypes,
@@ -34,23 +37,24 @@ import {
   FieldType,
   FieldTypes,
 } from '../../dataTypes/fieldTypes/fieldType.model'
-import { OrganizationFieldType } from '../organizationFieldTypes/models/organizationFieldType.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { randomUUID } from 'crypto'
 import { ListType, ListTypes } from '../../dataTypes/listTypes/listType.model'
-import { OrganizationListType } from '../organizationListTypes/models/organizationListType.model'
 import { FormApplicantTypeDto } from '../formApplicantTypes/models/dto/formApplicantType.dto'
 import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
 import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationUrl.dto'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { FormUrl } from '../formUrls/models/formUrl.model'
 import { FormUrlDto } from '../formUrls/models/dto/formUrl.dto'
-import { FormStatus } from '../../enums/formStatus'
-import { Op } from 'sequelize'
+import { FormStatus } from '@island.is/form-system/shared'
+import { Option } from '../../dataTypes/option.model'
+import { Op, UniqueConstraintError } from 'sequelize'
 import { v4 as uuidV4 } from 'uuid'
 import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
+import { jwtDecode } from 'jwt-decode'
+import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
 
 @Injectable()
 export class FormsService {
@@ -75,21 +79,43 @@ export class FormsService {
     private readonly formApplicantTypeModel: typeof FormApplicantType,
     @InjectModel(FormUrl)
     private readonly formUrlModel: typeof FormUrl,
-
     private readonly sequelize: Sequelize,
   ) {}
 
-  async findAll(user: User): Promise<FormResponseDto> {
-    const organizationNationalId = user.nationalId
+  async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
+    const token = jwtDecode<{ name: string; nationalId: string }>(
+      user.authorization,
+    )
+
+    console.log('organizationNationalId', nationalId)
+
+    // the loader is not sending the nationalId
+    if (nationalId === '0') {
+      console.log('changing nationalId')
+      nationalId = token.nationalId
+    }
+
+    // const res = await this.cmsService.fetchData(GetOrganizationByNationalId, {
+    //   nationalId: nationalId,
+    //   locale: 'en',
+    // })
+    // console.log('res', res)
+
     let organization = await this.organizationModel.findOne({
-      where: { nationalId: organizationNationalId },
+      where: { nationalId: nationalId },
     })
 
     if (!organization) {
       organization = await this.organizationModel.create({
-        nationalId: organizationNationalId,
+        nationalId: nationalId,
         name: { is: '', en: '' },
       } as Organization)
+    }
+
+    // If Admin is logged in for SÍ and chooses a different organization we don't want to change the name
+    if (nationalId === token.nationalId) {
+      organization.name = { is: token.name, en: organization.name.en }
+      await organization.save()
     }
 
     const forms = await this.formModel.findAll({
@@ -100,10 +126,13 @@ export class FormsService {
       'id',
       'name',
       'slug',
+      'organizationNationalId',
+      'organizationDisplayName',
       'invalidationDate',
       'created',
       'modified',
       'isTranslated',
+      'hasPayment',
       'beenPublished',
       'status',
       'applicationDaysToRemove',
@@ -122,6 +151,20 @@ export class FormsService {
           attributes: ['nationalId'],
         })
         .then((organizations) => organizations.map((org) => org.nationalId)),
+      organizations: await this.organizationModel
+        .findAll({
+          attributes: ['nationalId', 'name'],
+        })
+        .then((organizations) =>
+          organizations.map(
+            (org) =>
+              ({
+                value: org.nationalId,
+                label: org.name.is,
+                isSelected: org.nationalId === nationalId,
+              } as Option),
+          ),
+        ),
     }
 
     return formResponseDto
@@ -142,8 +185,11 @@ export class FormsService {
     return formResponse
   }
 
-  async create(user: User): Promise<FormResponseDto> {
-    const organizationNationalId = user.nationalId
+  async create(
+    user: User,
+    organizationNationalId: string,
+  ): Promise<FormResponseDto> {
+    // const organizationNationalId = user.nationalId
     const organization = await this.organizationModel.findOne({
       where: { nationalId: organizationNationalId },
     })
@@ -155,8 +201,8 @@ export class FormsService {
     }
 
     const newForm: Form = await this.formModel.create({
-      name: { is: 'Nýtt', en: 'New' },
       organizationId: organization.id,
+      organizationNationalId: organizationNationalId,
       status: FormStatus.IN_DEVELOPMENT,
     } as Form)
 
@@ -192,7 +238,7 @@ export class FormsService {
     const formResponse = await this.buildFormResponse(newForm)
 
     if (!formResponse) {
-      throw new Error('Error generating form response')
+      throw new Error('Error generating form response.')
     }
 
     return formResponse
@@ -239,10 +285,13 @@ export class FormsService {
       await form.save()
     }
 
-    return this.findAll(user)
+    return this.findAll(user, user.nationalId)
   }
 
-  async update(id: string, updateFormDto: UpdateFormDto): Promise<void> {
+  async update(
+    id: string,
+    updateFormDto: UpdateFormDto,
+  ): Promise<UpdateFormResponse> {
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
@@ -251,14 +300,33 @@ export class FormsService {
 
     Object.assign(form, updateFormDto)
 
-    await form.save()
+    const response = new UpdateFormResponse()
+
+    try {
+      await form.save()
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        response.updateSuccess = false
+        response.errors = error.errors.map(
+          (err) =>
+            ({
+              field: err.path,
+              message: err.message,
+            } as UpdateFormError),
+        )
+      } else {
+        throw error
+      }
+    }
+
+    return response
   }
 
   async delete(id: string): Promise<void> {
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
-      throw new NotFoundException(`Form with id '${id}' not found`)
+      throw new NotFoundException(`Form with id '${id}' not found.`)
     }
 
     form.destroy()
@@ -383,13 +451,13 @@ export class FormsService {
     )
 
     const organization = await this.organizationModel.findByPk(organizationId, {
-      include: [OrganizationCertificationType],
+      include: [OrganizationPermission],
     })
 
     const uncommonCertificationTypes = CertificationTypes.filter(
       (certificationType) =>
-        organization?.organizationCertificationTypes?.some(
-          (item) => item.certificationTypeId === certificationType.id,
+        organization?.organizationPermissions?.some(
+          (item) => item.permission === certificationType.id,
         ),
     )
 
@@ -406,12 +474,12 @@ export class FormsService {
     )
 
     const organization = await this.organizationModel.findByPk(organizationId, {
-      include: [OrganizationFieldType],
+      include: [OrganizationPermission],
     })
 
     const uncommonFieldTypes = FieldTypes.filter((fieldType) =>
-      organization?.organizationFieldTypes?.some(
-        (item) => item.fieldTypeId === fieldType.id,
+      organization?.organizationPermissions?.some(
+        (item) => item.permission === fieldType.id,
       ),
     )
 
@@ -439,12 +507,12 @@ export class FormsService {
     const commonListTypes = ListTypes.filter((listType) => listType.isCommon)
 
     const organization = await this.organizationModel.findByPk(organizationId, {
-      include: [OrganizationListType],
+      include: [OrganizationPermission],
     })
 
     const uncommonListTypes = ListTypes.filter((listType) =>
-      organization?.organizationListTypes?.some(
-        (item) => item.listTypeId === listType.id,
+      organization?.organizationPermissions?.some(
+        (item) => item.permission === listType.id,
       ),
     )
 
@@ -457,12 +525,15 @@ export class FormsService {
     const formKeys = [
       'id',
       'organizationId',
+      'organizationNationalId',
+      'organizationDisplayName',
       'name',
       'slug',
       'invalidationDate',
       'created',
       'modified',
       'isTranslated',
+      'hasPayment',
       'beenPublished',
       'status',
       'applicationDaysToRemove',
@@ -611,13 +682,20 @@ export class FormsService {
         displayOrder: 1,
         name: { is: 'Hlutaðeigandi aðilar', en: 'Relevant parties' },
       } as Section,
-      {
-        formId: form.id,
-        sectionType: SectionTypes.PAYMENT,
-        displayOrder: 3,
-        name: { is: 'Greiðsla', en: 'Payment' },
-      } as Section,
     ])
+
+    const paymentSection = await this.sectionModel.create({
+      formId: form.id,
+      sectionType: SectionTypes.PAYMENT,
+      displayOrder: 3,
+      name: { is: 'Greiðsla', en: 'Payment' },
+    } as Section)
+
+    await this.screenModel.create({
+      sectionId: paymentSection.id,
+      displayOrder: 0,
+      name: { is: 'Greiðslusíða', en: 'Payment screen' },
+    } as Screen)
 
     const inputSection = await this.sectionModel.create({
       formId: form.id,

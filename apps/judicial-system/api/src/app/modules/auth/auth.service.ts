@@ -14,11 +14,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import {
-  EventType,
-  type User,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { type User, UserRole } from '@island.is/judicial-system/types'
 
 import { DefenderService } from '../defender'
 import { authModuleConfig } from './auth.config'
@@ -33,28 +29,24 @@ export class AuthService {
     private readonly logger: Logger,
   ) {}
 
-  async findUser(nationalId: string): Promise<User | undefined> {
+  async findUsersByNationalId(nationalId: string): Promise<User[] | undefined> {
     const res = await fetch(
       `${this.config.backendUrl}/api/user/?nationalId=${nationalId}`,
-      {
-        headers: { authorization: `Bearer ${this.config.secretToken}` },
-      },
+      { headers: { authorization: `Bearer ${this.config.secretToken}` } },
     )
 
     if (!res.ok) {
       return undefined
     }
 
-    return await res.json()
+    return res.json()
   }
 
   async findDefender(nationalId: string): Promise<User | undefined> {
     try {
       const res = await fetch(
         `${this.config.backendUrl}/api/cases/limitedAccess/defender?nationalId=${nationalId}`,
-        {
-          headers: { authorization: `Bearer ${this.config.secretToken}` },
-        },
+        { headers: { authorization: `Bearer ${this.config.secretToken}` } },
       )
       if (res.ok) {
         return await res.json()
@@ -62,7 +54,9 @@ export class AuthService {
     } catch (error) {
       if (error instanceof NotFoundException) {
         this.logger.info('Defender not found', error)
-      } else throw error
+      } else {
+        throw error
+      }
     }
 
     // If a defender doesn't have any active cases, we look them up
@@ -163,24 +157,5 @@ export class AuthService {
       this.logger.error('Token verification failed:', error)
       throw error
     }
-  }
-
-  async logLogin(
-    eventType: EventType,
-    nationalId: string,
-    userRole?: UserRole,
-  ) {
-    await fetch(`${this.config.backendUrl}/api/eventLog/event`, {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${this.config.secretToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        eventType,
-        nationalId,
-        userRole,
-      }),
-    })
   }
 }

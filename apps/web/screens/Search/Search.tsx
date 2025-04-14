@@ -37,7 +37,6 @@ import {
   SearchInput,
 } from '@island.is/web/components'
 import {
-  AdgerdirPage,
   AnchorPage,
   Article,
   ContentLanguage,
@@ -111,7 +110,6 @@ export type SearchEntryType = Article &
   AnchorPage &
   LifeEventPage &
   News &
-  AdgerdirPage &
   SubArticle &
   OrganizationSubpage &
   OrganizationPage &
@@ -133,7 +131,6 @@ const connectedTypes: Partial<
     'webOrganizationPage',
     'WebProjectPage',
   ],
-  webAdgerdirPage: ['WebAdgerdirPage'],
   webNews: ['WebNews'],
   webQNA: ['WebQna'],
   webLifeEventPage: ['WebLifeEventPage'],
@@ -228,9 +225,6 @@ const Search: Screen<CategoryProps> = ({
         break
       case 'News':
         labels.push(n('newsTitle'))
-        break
-      case 'AdgerdirPage':
-        labels.push(n('adgerdirTitle'))
         break
       case 'ManualChapterItem':
         labels.push(item.manualChapter.title)
@@ -327,6 +321,10 @@ const Search: Screen<CategoryProps> = ({
         item.manualChapter.slug,
         item.id,
       ])
+    }
+
+    if (item.__typename === 'OrganizationSubpage' && item.url.length === 3) {
+      return linkResolver('organizationparentsubpagechild', item.url)
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -858,7 +856,6 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     'webLifeEventPage',
     'webDigitalIcelandService',
     'webDigitalIcelandCommunityPage',
-    'webAdgerdirPage',
     'webSubArticle',
     'webLink',
     'webNews',

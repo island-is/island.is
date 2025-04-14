@@ -639,6 +639,7 @@ export const Form = ({ form }: FormProps) => {
               files: files.map((f) => f[1]).flat(),
               recipientFormFieldDeciderValue:
                 getRecipientFormFieldDeciderValue(),
+              lang: activeLocale,
             },
           },
         }).then(() => {

@@ -1,6 +1,7 @@
 import {
   coreHistoryMessages,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -65,7 +66,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: pruneAfterDays(14),
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
@@ -114,7 +115,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0.15,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: pruneAfterDays(14),
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
@@ -156,7 +157,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
           name: 'Done',
           status: 'approved',
           progress: 1,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
             action: ApiActions.completeApplication,
             throwOnError: true,

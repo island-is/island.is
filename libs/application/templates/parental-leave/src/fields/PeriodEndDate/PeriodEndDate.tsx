@@ -25,6 +25,11 @@ import { Box } from '@island.is/island-ui/core'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { StartDateOptions } from '../../constants'
+import { getExpectedDateOfBirthOrAdoptionDateOrBirthDate } from '../../lib/parentalLeaveUtils'
+import parseISO from 'date-fns/parseISO'
+import { usageMaxMonths } from '../../config'
+import addMonths from 'date-fns/addMonths'
+import addDays from 'date-fns/addDays'
 
 type FieldPeriodEndDateProps = {
   field: {
@@ -50,6 +55,15 @@ export const PeriodEndDate: FC<
     `periods[${currentIndex}].firstPeriodStart`,
   ) as StartDateOptions
   const error = getErrorViaPath(errors as FieldErrors<FieldValues>, fieldId)
+  const expectedDateOfBirthOrAdoptionDateOrBirthDate =
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
+  const dob = expectedDateOfBirthOrAdoptionDateOrBirthDate
+    ? parseISO(expectedDateOfBirthOrAdoptionDateOrBirthDate)
+    : null
+  // Day before child becomes 2 years old
+  const maximumEndDate = dob
+    ? addDays(addMonths(dob, usageMaxMonths), -1)
+    : undefined
 
   useEffect(() => {
     if (currentIndex < 0) {
@@ -83,6 +97,7 @@ export const PeriodEndDate: FC<
           title,
           id: fieldId,
           minDate: props.minDate,
+          maxDate: maximumEndDate,
           excludeDates: props.excludeDates,
           children: undefined,
           placeholder: parentalLeaveFormMessages.endDate.placeholder,

@@ -247,7 +247,19 @@ export const getSubpageNavList = (
     return generateNavigationItems(organizationPage, pathname)
   }
 
-  const items = generateNavigationItems(
+  let items = generateNavigationItems(organizationPage, pathname)
+  const someItemIsActive = items.some(
+    (item) =>
+      Boolean(item.active) ||
+      Boolean(item.items?.some((subItem) => Boolean(subItem.active))),
+  )
+
+  if (someItemIsActive) {
+    return items
+  }
+
+  // Only match a potential smaller depth if no match is found otherwise
+  items = generateNavigationItems(
     organizationPage,
     pathname
       .split('/')
@@ -317,6 +329,7 @@ const SubPage: Screen<SubPageProps, SubPageScreenContext> = ({
   backLink,
 }) => {
   const router = useRouter()
+  const { activeLocale } = useI18n()
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -362,7 +375,11 @@ const SubPage: Screen<SubPageProps, SubPageScreenContext> = ({
       }
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
-        items: getSubpageNavList(organizationPage, router),
+        items: getSubpageNavList(
+          organizationPage,
+          router,
+          activeLocale === 'is' ? 3 : 4,
+        ),
       }}
       mainContent={
         customContent ? (

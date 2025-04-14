@@ -11,7 +11,7 @@ export const educationLicenseNavigation: PortalNavigationItem = {
   description: m.educationLicenseDescription,
   children: [
     {
-      name: m.myEducationLicense,
+      name: m.occupationalLicenses,
       path: EducationLicensePaths.EducationLicense,
     },
   ],

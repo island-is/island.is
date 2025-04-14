@@ -56,7 +56,7 @@ describe('InternalSubpoenaController - Deliver subpoena certificate to court', (
     const mockCreateDocument = mockCourtService.createDocument as jest.Mock
     mockCreateDocument.mockRejectedValue(new Error('Some error'))
 
-    givenWhenThen = async () => {
+    givenWhenThen = async (): Promise<Then> => {
       const then = {} as Then
 
       await internalSubpoenaController

@@ -6,11 +6,11 @@ import {
 import {
   FieldComponents,
   Application,
-  AsyncSelectContext,
   RepeaterItem,
-  Option,
   FieldTypes,
   AsyncSelectField,
+  RepeaterOptionValue,
+  HiddenInputField,
 } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -27,6 +27,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { NationalIdWithName } from '@island.is/application/ui-components'
 import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormField'
+import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
 
 interface ItemFieldProps {
   application: Application
@@ -35,9 +36,6 @@ interface ItemFieldProps {
   dataId: string
   index: number
   values: Array<Record<string, string>>
-  loadOptions?: (c: AsyncSelectContext) => Promise<Option[]>
-  clearOnChange?: boolean
-  updateOnSelect?: string
 }
 
 const componentMapper = {
@@ -58,8 +56,8 @@ export const Item = ({
   index,
   values,
 }: ItemFieldProps) => {
-  const { formatMessage } = useLocale()
-  const { setValue, control, clearErrors } = useFormContext()
+  const { formatMessage, lang } = useLocale()
+  const { setValue, getValues, control, clearErrors } = useFormContext()
   const prevWatchedValuesRef = useRef<string | (string | undefined)[]>()
 
   const getSpan = (component: string, width: string) => {
@@ -86,8 +84,12 @@ export const Item = ({
     condition,
     readonly = false,
     disabled = false,
+    required = false,
+    isClearable = false,
     updateValueObj,
     defaultValue,
+    clearOnChange,
+    setOnChange,
     ...props
   } = item
 
@@ -96,6 +98,8 @@ export const Item = ({
 
   if (component === 'selectAsync') {
     Component = AsyncSelectFormField
+  } else if (component === 'hiddenInput') {
+    Component = HiddenInputFormField
   } else {
     Component = componentMapper[component]
   }
@@ -165,12 +169,14 @@ export const Item = ({
       return undefined
     }
 
-    return defaultValue(application, activeField)
+    return typeof defaultValue === 'function'
+      ? defaultValue(application, activeField)
+      : defaultValue
   }
 
   let translatedOptions: any = []
   if (typeof options === 'function') {
-    translatedOptions = options(application, activeValues)
+    translatedOptions = options(application, activeValues, lang)
   } else {
     translatedOptions =
       options?.map((option) => ({
@@ -182,44 +188,86 @@ export const Item = ({
       })) ?? []
   }
 
-  let Readonly: boolean | undefined
+  if (item.filterOptions && typeof item.filterOptions === 'function') {
+    translatedOptions = item.filterOptions(
+      translatedOptions,
+      getValues(),
+      index,
+    )
+  }
+
+  let readonlyVal: boolean | undefined
   if (typeof readonly === 'function') {
-    Readonly = readonly(application, activeValues)
+    readonlyVal = readonly(application, activeValues)
   } else {
-    Readonly = readonly
+    readonlyVal = readonly
   }
 
-  let Disabled: boolean | undefined
+  let disabledVal: boolean | undefined
   if (typeof disabled === 'function') {
-    Disabled = disabled(application, activeValues)
+    disabledVal = disabled(application, activeValues)
   } else {
-    Disabled = disabled
+    disabledVal = disabled
   }
 
-  let DefaultValue: any
+  let requiredVal: boolean | undefined
+  if (typeof required === 'function') {
+    requiredVal = required(application, activeValues)
+  } else {
+    requiredVal = required
+  }
+
+  let isClearableVal: boolean | undefined
+  if (typeof isClearable === 'function') {
+    isClearableVal = isClearable(application, activeValues)
+  } else {
+    isClearableVal = isClearable
+  }
+
+  let defaultVal: any
   if (component === 'input') {
-    DefaultValue = getDefaultValue(item, application, activeValues)
+    defaultVal = getDefaultValue(item, application, activeValues)
   }
   if (component === 'select') {
-    DefaultValue =
+    defaultVal =
       getValueViaPath(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'radio') {
-    DefaultValue =
+    defaultVal =
       getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'checkbox') {
-    DefaultValue =
+    defaultVal =
       getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'date') {
-    DefaultValue =
+    defaultVal =
       getValueViaPath<string>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
+  if (component === 'hiddenInput') {
+    defaultVal = getDefaultValue(item, application, activeValues)
+  }
+
+  let clearOnChangeVal: string[] | undefined
+  if (typeof clearOnChange === 'function') {
+    clearOnChangeVal = clearOnChange(index)
+  } else {
+    clearOnChangeVal = clearOnChange
+  }
+
+  const setOnChangeFunc =
+    setOnChange &&
+    ((optionValue: RepeaterOptionValue) => {
+      if (typeof setOnChange === 'function') {
+        return setOnChange(optionValue, application, index, activeValues)
+      } else {
+        return setOnChange || []
+      }
+    })
 
   let selectAsyncProps: AsyncSelectField | undefined
   if (component === 'selectAsync') {
@@ -232,13 +280,39 @@ export const Item = ({
       backgroundColor: backgroundColor,
       isSearchable: item.isSearchable,
       isMulti: item.isMulti,
-      loadOptions: item.loadOptions,
-      clearOnChange: item.clearOnChange,
-      updateOnSelect: `${dataId}[${index}].${item.updateOnSelect}`,
+      loadOptions: (c) =>
+        item.loadOptions(c, lang, activeValues, (subKey, value) => {
+          setValue(`${dataId}[${index}].${subKey}`, value)
+        }),
+      updateOnSelect:
+        typeof item.updateOnSelect === 'function'
+          ? item.updateOnSelect(index)
+          : item.updateOnSelect,
+      disabled: disabledVal,
+      required: requiredVal,
+      isClearable: isClearableVal,
+      defaultValue: defaultVal,
+      clearOnChange: clearOnChangeVal,
+      setOnChange: setOnChangeFunc,
     }
   }
 
-  if (condition && !condition(application, activeValues)) {
+  let hiddenInputProps: HiddenInputField | undefined
+  if (component === 'hiddenInput') {
+    hiddenInputProps = {
+      id: id,
+      type: FieldTypes.HIDDEN_INPUT,
+      component: FieldComponents.HIDDEN_INPUT,
+      children: undefined,
+      defaultValue: defaultVal,
+    }
+  }
+
+  if (
+    typeof condition === 'function'
+      ? condition && !condition(application, activeValues)
+      : condition
+  ) {
     return null
   }
 
@@ -258,32 +332,45 @@ export const Item = ({
           }}
         />
       )}
-      {component !== 'selectAsync' && (
-        <Component
-          id={id}
-          name={id}
-          label={formatMessage(label, {
-            index: index + 1,
-          })}
-          options={translatedOptions}
-          split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
-          error={getFieldError(itemId)}
-          control={control}
-          readOnly={Readonly}
-          disabled={Disabled}
-          backgroundColor={backgroundColor}
-          onChange={() => {
-            if (error) {
-              clearErrors(id)
-            }
-          }}
+      {component === 'hiddenInput' && hiddenInputProps && (
+        <HiddenInputFormField
           application={application}
-          defaultValue={DefaultValue}
-          large={true}
-          placeholder={formatText(placeholder, application, formatMessage)}
-          {...props}
+          field={{
+            ...hiddenInputProps,
+          }}
         />
       )}
+      {!(component === 'selectAsync' && selectAsyncProps) &&
+        !(component === 'hiddenInput' && hiddenInputProps) && (
+          <Component
+            id={id}
+            name={id}
+            label={formatMessage(label, {
+              index: index + 1,
+            })}
+            options={translatedOptions}
+            split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
+            error={getFieldError(itemId)}
+            control={control}
+            readOnly={readonlyVal}
+            disabled={disabledVal}
+            required={requiredVal}
+            isClearable={isClearableVal}
+            defaultValue={defaultVal}
+            backgroundColor={backgroundColor}
+            onChange={() => {
+              if (error) {
+                clearErrors(id)
+              }
+            }}
+            application={application}
+            large={true}
+            placeholder={formatText(placeholder, application, formatMessage)}
+            clearOnChange={clearOnChangeVal}
+            setOnChange={setOnChangeFunc}
+            {...props}
+          />
+        )}
     </GridColumn>
   )
 }

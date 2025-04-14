@@ -9,11 +9,11 @@ import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseTransition,
   NotificationType,
   UpdateCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useCreateCaseMutation } from './createCase.generated'
 import { useCreateCourtCaseMutation } from './createCourtCase.generated'
@@ -192,6 +192,7 @@ const useCase = () => {
                   requestSharedWithDefender: theCase.requestSharedWithDefender,
                   leadInvestigator: theCase.leadInvestigator,
                   crimeScenes: theCase.crimeScenes,
+                  prosecutorId: theCase.prosecutor?.id,
                 },
               },
             })

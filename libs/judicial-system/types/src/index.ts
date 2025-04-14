@@ -8,6 +8,7 @@ export {
   ServiceRequirement,
   ServiceStatus,
   PunishmentType,
+  VerdictAppealDecision,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
@@ -34,7 +35,7 @@ export {
 export { DateType, dateTypes } from './lib/dateLog'
 export { StringType, stringTypes } from './lib/caseString'
 
-export { CaseFileState, CaseFileCategory } from './lib/file'
+export { CaseFileState, CaseFileCategory, HashAlgorithm } from './lib/file'
 
 export {
   UserRole,
@@ -76,6 +77,7 @@ export {
   CaseAppealRulingDecision,
   CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
+  RequestSharedWhen,
   SessionArrangements,
   indictmentCases,
   restrictionCases,
@@ -88,6 +90,7 @@ export {
   isRequestCase,
   isAcceptingCaseDecision,
   isTrafficViolationCase,
+  hasTrafficViolationSubtype,
   completedRequestCaseStates,
   completedIndictmentCaseStates,
   completedCaseStates,
@@ -118,9 +121,10 @@ export type {
 
 export {
   IndictmentCountOffense,
-  Substance,
   offenseSubstances,
 } from './lib/indictmentCount'
+
+export { Substance } from './lib/substances'
 
 export { type Lawyer, mapToLawyer } from './lib/lawyer'
 

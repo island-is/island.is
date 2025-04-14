@@ -3,9 +3,11 @@ import {
   LICENSE_NAMESPACE,
 } from '../licenseService.constants'
 import {
+  ExpiryStatus,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
+  GenericLicenseType,
   GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import isAfter from 'date-fns/isAfter'
@@ -16,6 +18,8 @@ import { isDefined } from '@island.is/shared/utils'
 import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
 import { formatDate, expiryTag } from '../utils'
+import { format } from 'kennitala'
+import { formatPhoto } from '../utils/formatPhoto'
 
 @Injectable()
 export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
@@ -53,6 +57,11 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.fullName),
             value: t.name ?? '',
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: formatMessage(m.nationalId),
+            value: t.socialSecurityNumber ? format(t.socialSecurityNumber) : '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
@@ -121,6 +130,12 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
                 arg: t.id?.toString() ?? formatMessage(m.unknown),
               }),
               licenseId: DEFAULT_LICENSE_ID,
+              expiryStatus:
+                isExpired === undefined
+                  ? ExpiryStatus.UNKNOWN
+                  : isExpired
+                  ? ExpiryStatus.EXPIRED
+                  : ExpiryStatus.ACTIVE,
               expired: isExpired,
               expireDate: t.dateValidTo?.toISOString() ?? undefined,
               displayTag:
@@ -138,6 +153,10 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
               description: [
                 { text: formatMessage(m.yourDrivingLicenseDescription) },
               ],
+              photo: formatPhoto(
+                t.photo?.image,
+                GenericLicenseType.DriversLicense,
+              ),
             },
           },
         }

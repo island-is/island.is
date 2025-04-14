@@ -1,4 +1,4 @@
-import { Column, Columns, Divider, Text } from '@island.is/island-ui/core'
+import { Divider, Text } from '@island.is/island-ui/core'
 import { FC, useEffect } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
@@ -10,6 +10,7 @@ import { PaymentCatalogItem } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
 import { info } from 'kennitala'
 import { DriversLicense } from '@island.is/clients/driving-license'
+import { Delivery } from '../../lib/constants'
 
 export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -17,7 +18,7 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
-  // AY110: Ökuskírteini / Driving License
+  // Ökuskírteini / Driving License
   let chargeCode = 'AY116'
   // Change price based on temporary license
   const licenseData = getValueViaPath<DriversLicense>(
@@ -38,7 +39,7 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     (!fakeAllowed &&
       licenseData?.categories.some((category) => category.validToCode === 8))
   ) {
-    // AY114: Bráðabirgðaskirteini / Temporary Driving License
+    // Bráðabirgðaskirteini / Temporary Driving License
     chargeCode = 'AY114'
   }
 
@@ -52,52 +53,54 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     )
   }
   if (age >= 65) {
-    // AY113: Skírteini fyrir 65 ára og eldri / License for 65 years and over
+    // Skírteini fyrir 65 ára og eldri / License for 65 years and over
     chargeCode = 'AY137'
   }
 
-  const chargeItems = getValueViaPath(
+  const chargeItems = getValueViaPath<PaymentCatalogItem[]>(
     application.externalData,
     'payment.data',
-  ) as PaymentCatalogItem[]
+  )
 
-  const chargeItem = chargeItems.find(
+  const chargeItem = chargeItems?.find(
     (item) => item.chargeItemCode === chargeCode,
   )
+
+  const withDeliveryFee =
+    getValueViaPath(application.answers, 'delivery.deliveryMethod') ===
+    Delivery.SEND_HOME
+  const deliveryFee = chargeItems?.find(
+    (item) => item.chargeItemCode === 'AY145',
+  )
+
   useEffect(() => {
     setValue('chargeItemCode', chargeCode)
   }, [chargeCode, setValue])
 
   return (
-    <Box paddingTop="smallGutter">
-      <Columns alignY="bottom" space="gutter">
-        <Column>
-          <Box marginBottom="gutter">
-            <Text variant="h4">{formatMessage(m.paymentAmount)}</Text>
-            <Text marginTop="smallGutter">{chargeItem?.chargeItemName}</Text>
-          </Box>
-        </Column>
-        <Column>
-          <Box display="flex" justifyContent="flexEnd" marginBottom="gutter">
-            <Text>{getCurrencyString(chargeItem?.priceAmount || 0)}</Text>
-          </Box>
-        </Column>
-      </Columns>
-      <Divider />
-      <Columns alignY="bottom" space="gutter">
-        <Column>
-          <Box marginTop="gutter">
-            <Text variant="h5">{formatMessage(m.paymentSum)}</Text>
-          </Box>
-        </Column>
-        <Column>
-          <Box display="flex" justifyContent="flexEnd">
-            <Text variant="h4" color="blue400">
-              {getCurrencyString(chargeItem?.priceAmount || 0)}
-            </Text>
-          </Box>
-        </Column>
-      </Columns>
+    <Box>
+      <Box display="flex" justifyContent="spaceBetween">
+        <Text marginTop="smallGutter">{chargeItem?.chargeItemName}</Text>
+        <Text>{getCurrencyString(chargeItem?.priceAmount || 0)}</Text>
+      </Box>
+      {withDeliveryFee && (
+        <Box display="flex" justifyContent="spaceBetween">
+          <Text marginTop="smallGutter">{formatMessage(m.delivery)}</Text>
+          <Text>{getCurrencyString(deliveryFee?.priceAmount || 0)}</Text>
+        </Box>
+      )}
+      <Box marginTop={2}>
+        <Divider />
+      </Box>
+      <Box marginTop={5} display="flex" justifyContent="spaceBetween">
+        <Text variant="h4">{formatMessage(m.paymentSum)}</Text>
+        <Text variant="h4" color="blue400">
+          {getCurrencyString(
+            (chargeItem?.priceAmount || 0) +
+              (deliveryFee?.priceAmount ? deliveryFee.priceAmount : 0),
+          )}
+        </Text>
+      </Box>
     </Box>
   )
 }

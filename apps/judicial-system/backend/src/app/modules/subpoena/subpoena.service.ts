@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  HashAlgorithm,
   isFailedServiceStatus,
   isSuccessfulServiceStatus,
   ServiceStatus,
@@ -36,6 +37,7 @@ import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
+import { Institution } from '../institution'
 import { PoliceDocumentType, PoliceService, SubpoenaInfo } from '../police'
 import { User } from '../user'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
@@ -54,6 +56,14 @@ export const include: Includeable[] = [
       {
         model: User,
         as: 'registrar',
+      },
+      {
+        model: Institution,
+        as: 'prosecutorsOffice',
+      },
+      {
+        model: Institution,
+        as: 'court',
       },
     ],
   },
@@ -118,9 +128,13 @@ export class SubpoenaService {
     )
   }
 
-  async setHash(id: string, hash: string): Promise<void> {
+  async setHash(
+    id: string,
+    hash: string,
+    hashAlgorithm: HashAlgorithm,
+  ): Promise<void> {
     const [numberOfAffectedRows] = await this.subpoenaModel.update(
-      { hash },
+      { hash, hashAlgorithm },
       { where: { id } },
     )
 
@@ -501,7 +515,7 @@ export class SubpoenaService {
       return subpoena
     }
 
-    if (subpoena.serviceStatus) {
+    if (isSuccessfulServiceStatus(subpoena.serviceStatus)) {
       // The subpoena has already been served to the defendant
       return subpoena
     }

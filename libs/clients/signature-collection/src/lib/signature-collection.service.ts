@@ -11,7 +11,6 @@ import {
   CreateListInput,
   ReasonKey,
   CanSignInput,
-  CreateParliamentaryCandidacyInput,
   AddListsInput,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
@@ -103,7 +102,7 @@ export class SignatureCollectionClientService {
     }
     // check if user is already owner of lists
 
-    const { canCreate, isOwner, name } = await this.getSignee(auth)
+    const { canCreate, isOwner } = await this.getSignee(auth)
     if (!canCreate || isOwner) {
       throw new Error('User is already owner of lists')
     }
@@ -138,7 +137,7 @@ export class SignatureCollectionClientService {
   }
 
   async createParliamentaryCandidacy(
-    { collectionId, owner, areas, agents }: CreateParliamentaryCandidacyInput,
+    { collectionId, owner, areas }: CreateListInput,
     auth: User,
   ): Promise<Slug> {
     const {
@@ -447,15 +446,17 @@ export class SignatureCollectionClientService {
           ? user.medmaelalistar?.map((list) => mapListBase(list))
           : []
 
-      const { success: canCreate, reasons: canCreateInfo } =
-        await this.sharedService.canCreate({
-          requirementsMet: user.maFrambod,
-          canCreateInfo: user.maFrambodInfo,
-          ownedLists,
-          isPresidential,
-          isActive,
-          areas,
-        })
+      const {
+        success: canCreate,
+        reasons: canCreateInfo,
+      } = this.sharedService.canCreate({
+        requirementsMet: user.maFrambod,
+        canCreateInfo: user.maFrambodInfo,
+        ownedLists,
+        isPresidential,
+        isActive,
+        areas,
+      })
 
       const { success: canSign, reasons: canSignInfo } = await this.canSign({
         requirementsMet: user.maKjosa,
@@ -482,7 +483,7 @@ export class SignatureCollectionClientService {
         candidate,
         hasPartyBallotLetter: !!user.maFrambodInfo?.medListabokstaf,
         partyBallotLetterInfo: {
-          letter: user.listabokstafur?.stafur ?? '',
+          letter: user.listabokstafur?.listabokstafur ?? '',
           name: user.listabokstafur?.frambodNafn ?? '',
         },
       }

@@ -124,14 +124,14 @@ export const BffProvider = ({
     return params
   }, [applicationBasePath, oldLoginPath])
 
-  const checkLogin = async (noRefresh = false) => {
+  const checkLogin = async () => {
     dispatch({
       type: ActionType.SIGNIN_START,
     })
 
     try {
       const url = bffUrlGenerator('/user', {
-        refresh: noRefresh.toString(),
+        refresh: 'true',
       })
 
       const res = await fetch(url, {

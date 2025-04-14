@@ -1,10 +1,10 @@
 // TODO: Add tests
 import {
-  IndictmentSubtype,
   isIndictmentCase,
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import {
+  Case,
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseFileCategory,
@@ -15,10 +15,11 @@ import {
   IndictmentCount,
   IndictmentCountOffense,
   IndictmentDecision,
+  IndictmentSubtype,
   SessionArrangements,
   User,
+  Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { isBusiness } from './utils'
 
@@ -161,6 +162,21 @@ const someDefendantIsInvalid = (workingCase: Case): boolean => {
   )
 }
 
+const areVictimsValid = (victims?: Victim[] | null): boolean => {
+  if (!victims) return true
+
+  return victims?.every((victim) => {
+    return validate([
+      [
+        victim.nationalId,
+        victim.hasNationalId ? ['empty', 'national-id'] : ['date-of-birth'],
+      ],
+      [victim.name, ['empty']],
+      [victim.lawyerAccessToRequest, victim.lawyerNationalId ? ['empty'] : []],
+    ]).isValid
+  })
+}
+
 export const isDefendantStepValidRC = (
   workingCase: Case,
   policeCaseNumbers?: string[] | null,
@@ -195,6 +211,7 @@ export const isDefendantStepValidIC = (
       policeCaseNumbers.length > 0 &&
       workingCase.type === caseType &&
       !someDefendantIsInvalid(workingCase) &&
+      areVictimsValid(workingCase.victims) &&
       (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
         : true) &&
@@ -289,7 +306,7 @@ export const isProcessingStepValidIndictments = (
   )
 }
 
-export const isIndictmentStepValid = (workingCase: Case, isOffenseEndpointEnabled?: boolean): boolean => {
+export const isIndictmentStepValid = (workingCase: Case): boolean => {
   const hasValidDemands = Boolean(
     workingCase.demands &&
       (!workingCase.hasCivilClaims || workingCase.civilDemands),
@@ -300,16 +317,8 @@ export const isIndictmentStepValid = (workingCase: Case, isOffenseEndpointEnable
   }
 
   const isValidSpeedingIndictmentCount = (indictmentCount: IndictmentCount) => {
-    if (indictmentCount.offenses) {
-      return indictmentCount.offenses.some(
-        (o) => o.offense === IndictmentCountOffense.SPEEDING,
-      )
-        ? Boolean(indictmentCount.recordedSpeed) &&
-            Boolean(indictmentCount.speedLimit)
-        : true
-    }
-    return indictmentCount.deprecatedOffenses?.includes(
-      IndictmentCountOffense.SPEEDING,
+    return indictmentCount.offenses?.some(
+      (o) => o.offense === IndictmentCountOffense.SPEEDING,
     )
       ? Boolean(indictmentCount.recordedSpeed) &&
           Boolean(indictmentCount.speedLimit)
@@ -317,14 +326,8 @@ export const isIndictmentStepValid = (workingCase: Case, isOffenseEndpointEnable
   }
 
   const hasOffenses = (indictmentCount: IndictmentCount) => {
-    if (isOffenseEndpointEnabled) {
-      return Boolean(
-        indictmentCount.offenses && indictmentCount.offenses?.length > 0,
-      )
-    }
     return Boolean(
-      indictmentCount.deprecatedOffenses &&
-        indictmentCount.deprecatedOffenses?.length > 0,
+      indictmentCount.offenses && indictmentCount.offenses?.length > 0,
     )
   }
 
@@ -522,7 +525,11 @@ export const isSubpoenaStepValid = (
       ],
     ]).isValid &&
     Boolean(
-      workingCase.defendants?.every((defendant) => defendant.subpoenaType),
+      workingCase.defendants?.every((defendant) =>
+        defendant.isAlternativeService
+          ? defendant.alternativeServiceDescription
+          : defendant.subpoenaType,
+      ),
     )
   )
 }

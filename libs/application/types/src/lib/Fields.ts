@@ -50,10 +50,14 @@ export type Context = {
   apolloClient: ApolloClient<object>
 }
 
+export type TableContext = Context & {
+  tableItems: Array<any>
+}
+
 export type AsyncSelectContext = {
   application: Application
   apolloClient: ApolloClient<object>
-  selectedValue?: string | string[]
+  selectedValues?: string[]
 }
 
 export type TagVariant =
@@ -77,6 +81,7 @@ export type RepeaterFields =
   | 'nationalIdWithName'
   | 'phone'
   | 'selectAsync'
+  | 'hiddenInput'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -85,7 +90,20 @@ type TableRepeaterOptions =
   | ((
       application: Application,
       activeField?: Record<string, string>,
+      locale?: Locale,
     ) => RepeaterOption[] | [])
+
+type MaybeWithApplicationAndActiveField<T> =
+  | T
+  | ((application: Application, activeField?: Record<string, string>) => T)
+
+type MaybeWithIndex<T> = T | ((index: number) => T)
+
+type MaybeWithAnswersAndExternalData<T> =
+  | T
+  | ((formValue: FormValue, externalData: ExternalData) => T)
+
+export type RepeaterOptionValue = string | readonly string[] | undefined | null
 
 export type RepeaterItem = {
   component: RepeaterFields
@@ -98,13 +116,15 @@ export type RepeaterItem = {
   emailLabel?: StaticText
   placeholder?: StaticText
   options?: TableRepeaterOptions
+  filterOptions?: (
+    options: RepeaterOption[],
+    answers: FormValue,
+    index: number,
+  ) => RepeaterOption[]
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full' | 'third'
-  required?: boolean
-  condition?: (
-    application: Application,
-    activeField?: Record<string, string>,
-  ) => boolean
+  required?: MaybeWithApplicationAndActiveField<boolean>
+  condition?: MaybeWithApplicationAndActiveField<boolean>
   dataTestId?: string
   showPhoneField?: boolean
   phoneRequired?: boolean
@@ -112,18 +132,10 @@ export type RepeaterItem = {
   emailRequired?: boolean
   searchCompanies?: boolean
   searchPersons?: boolean
-  readonly?:
-    | boolean
-    | ((
-        application: Application,
-        activeField?: Record<string, string>,
-      ) => boolean)
-  disabled?:
-    | boolean
-    | ((
-        application: Application,
-        activeField?: Record<string, string>,
-      ) => boolean)
+  readonly?: MaybeWithApplicationAndActiveField<boolean>
+  disabled?: MaybeWithApplicationAndActiveField<boolean>
+  isClearable?: MaybeWithApplicationAndActiveField<boolean>
+  defaultValue?: MaybeWithApplicationAndActiveField<unknown>
   updateValueObj?: {
     valueModifier: (
       application: Application,
@@ -136,10 +148,15 @@ export type RepeaterItem = {
           activeField?: Record<string, string>,
         ) => string | string[] | undefined)
   }
-  defaultValue?: (
-    application: Application,
-    activeField?: Record<string, string>,
-  ) => unknown
+  clearOnChange?: MaybeWithIndex<string[]>
+  setOnChange?:
+    | { key: string; value: any }[]
+    | ((
+        optionValue: RepeaterOptionValue,
+        application: Application,
+        index: number,
+        activeField?: Record<string, string>,
+      ) => { key: string; value: any }[])
 } & (
   | {
       component: 'input'
@@ -193,10 +210,15 @@ export type RepeaterItem = {
       label: StaticText
       isMulti?: boolean
       isSearchable?: boolean
-      loadOptions(c: AsyncSelectContext): Promise<Option[]>
-      clearOnChange?: string[]
-      updateOnSelect?: string
+      loadOptions(
+        c: AsyncSelectContext,
+        lang: Locale,
+        activeField?: Record<string, string>,
+        setValueAtIndex?: (key: string, value: any) => void,
+      ): Promise<Option[]>
+      updateOnSelect?: MaybeWithIndex<string[]>
     }
+  | { component: 'hiddenInput' }
 )
 
 export type AlertMessageLink = {
@@ -241,6 +263,9 @@ export interface BaseField extends FormItem {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
   clearOnChange?: string[]
+  setOnChange?:
+    | { key: string; value: any }[]
+    | ((optionValue: RepeaterOptionValue) => { key: string; value: any }[])
 
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
@@ -286,11 +311,13 @@ export enum FieldTypes {
   VEHICLE_SELECT = 'VEHICLE_SELECT',
   STATIC_TABLE = 'STATIC_TABLE',
   SLIDER = 'SLIDER',
+  INFORMATION_CARD = 'INFORMATION_CARD',
   DISPLAY = 'DISPLAY',
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
   TITLE = 'TITLE',
   OVERVIEW = 'OVERVIEW',
+  COPY_LINK = 'COPY_LINK',
 }
 
 export enum FieldComponents {
@@ -326,11 +353,13 @@ export enum FieldComponents {
   VEHICLE_SELECT = 'VehicleSelectFormField',
   STATIC_TABLE = 'StaticTableFormField',
   SLIDER = 'SliderFormField',
+  INFORMATION_CARD = 'InformationCardFormField',
   DISPLAY = 'DisplayFormField',
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
   TITLE = 'TitleFormField',
   OVERVIEW = 'OverviewFormField',
+  COPY_LINK = 'CopyLinkFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -410,7 +439,8 @@ export interface AsyncSelectField extends InputField {
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   isMulti?: boolean
-  updateOnSelect?: string
+  isClearable?: boolean
+  updateOnSelect?: string[]
 }
 
 export interface TextField extends InputField {
@@ -421,6 +451,7 @@ export interface TextField extends InputField {
   rightAlign?: boolean
   minLength?: number
   maxLength?: number
+  showMaxLength?: boolean
   max?: number
   min?: number
   step?: string
@@ -504,6 +535,17 @@ export interface KeyValueField extends BaseField {
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
   paddingBottom?: BoxProps['padding']
+  tooltip?: FormText
+}
+
+export interface InformationCardField extends BaseField {
+  readonly type: FieldTypes.INFORMATION_CARD
+  component: FieldComponents.INFORMATION_CARD
+  items: MaybeWithApplicationAndFieldAndLocale<
+    Array<{ label: FormText; value: FormText | FormTextArray }>
+  >
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
 }
 
 export interface CustomField extends BaseField {
@@ -529,6 +571,7 @@ export interface MessageWithLinkButtonField extends BaseField {
   url: string
   buttonTitle: FormText
   message: FormText
+  messageColor?: Colors
 }
 
 export interface ExpandableDescriptionField extends BaseField {
@@ -552,6 +595,8 @@ export interface LinkField extends BaseField {
   component: FieldComponents.LINK
   s3key?: FormText
   link?: FormText
+  variant?: 'ghost' | 'text'
+  justifyContent?: 'flexStart' | 'center' | 'flexEnd'
   iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
 
@@ -660,6 +705,10 @@ export type TableRepeaterField = BaseField & {
   editField?: boolean
   titleVariant?: TitleVariants
   fields: Record<string, RepeaterItem>
+  onSubmitLoad?(c: TableContext): Promise<{
+    dictionaryOfItems: Array<{ path: string; value: string }>
+  }>
+  loadErrorMessage?: StaticText
   /**
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
@@ -684,7 +733,7 @@ export type FieldsRepeaterField = BaseField & {
   readonly type: FieldTypes.FIELDS_REPEATER
   component: FieldComponents.FIELDS_REPEATER
   titleVariant?: TitleVariants
-  formTitle?: StaticText
+  formTitle?: MaybeWithIndex<StaticText>
   formTitleVariant?: TitleVariants
   formTitleNumbering?: 'prefix' | 'suffix' | 'none'
   removeItemButtonText?: StaticText
@@ -695,8 +744,8 @@ export type FieldsRepeaterField = BaseField & {
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
    */
-  minRows?: MaybeWithApplicationAndField<number>
-  maxRows?: number
+  minRows?: MaybeWithAnswersAndExternalData<number>
+  maxRows?: MaybeWithAnswersAndExternalData<number>
 }
 
 export type AccordionItem = {
@@ -854,7 +903,7 @@ export interface DisplayField extends BaseField {
 export type KeyValueItem = {
   width?: 'full' | 'half' | 'snug'
   keyText?: FormText
-  valueText?: FormText
+  valueText?: FormText | FormTextArray
   boldValueText?: boolean
   lineAboveKeyText?: boolean
 }
@@ -866,7 +915,7 @@ export type AttachmentItem = {
   fileType?: FormText
 }
 
-type TableData = {
+export type TableData = {
   header: Array<FormTextWithLocale>
   rows: Array<Array<string>>
 }
@@ -875,8 +924,9 @@ export interface OverviewField extends BaseField {
   readonly type: FieldTypes.OVERVIEW
   component: FieldComponents.OVERVIEW
   title: FormText
+  titleVariant?: TitleVariants
   description?: FormText
-  backId?: string
+  backId?: string | ((answers: FormValue) => string | undefined)
   bottomLine?: boolean
   items?: (
     answers: FormValue,
@@ -887,6 +937,15 @@ export interface OverviewField extends BaseField {
     externalData: ExternalData,
   ) => Array<AttachmentItem>
   tableData?: (answers: FormValue, externalData: ExternalData) => TableData
+}
+
+export interface CopyLinkField extends BaseField {
+  readonly type: FieldTypes.COPY_LINK
+  component: FieldComponents.COPY_LINK
+  title?: FormText
+  link: FormText
+  buttonTitle?: FormText
+  semiBoldLink?: boolean
 }
 
 export type Field =
@@ -924,8 +983,10 @@ export type Field =
   | VehicleSelectField
   | StaticTableField
   | SliderField
+  | InformationCardField
   | DisplayField
   | AccordionField
   | BankAccountField
   | TitleField
   | OverviewField
+  | CopyLinkField

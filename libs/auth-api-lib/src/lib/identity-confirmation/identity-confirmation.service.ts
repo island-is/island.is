@@ -1,17 +1,23 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { IdentityConfirmationInputDto } from './dto/IdentityConfirmationInput.dto'
 import { InjectModel } from '@nestjs/sequelize'
 import { IdentityConfirmation } from './models/Identity-Confirmation.model'
-import { Ticket, ZendeskService } from '@island.is/clients/zendesk'
+import { ZendeskService } from '@island.is/clients/zendesk'
 import { uuid } from 'uuidv4'
 import { IdentityConfirmationType } from './types/identity-confirmation-type'
 import { SmsService } from '@island.is/nova-sms'
-import { EmailService } from '@island.is/email-service'
-import { IdentityConfirmationApiConfig } from './config'
-import type { ConfigType } from '@island.is/nest/config'
+import { IdentityConfirmationDTO } from './dto/identity-confirmation-dto.dto'
+import type { User } from '@island.is/auth-nest-tools'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { NoContentException } from '@island.is/nest/problem'
+import { Op } from 'sequelize'
+
+export const LIFE_TIME_DAYS = 28
+const LIFE_TIME = LIFE_TIME_DAYS * 24 * 60 * 60 * 1000
+export const EXPIRATION = 2 * LIFE_TIME
 
 const ZENDESK_CUSTOM_FIELDS = {
-  Link: 24598388531474,
+  Link: 24596286118546,
 }
 
 @Injectable()
@@ -21,10 +27,7 @@ export class IdentityConfirmationService {
     private identityConfirmationModel: typeof IdentityConfirmation,
     private readonly zendeskService: ZendeskService,
     private readonly smsService: SmsService,
-    @Inject(EmailService)
-    private readonly emailService: EmailService,
-    @Inject(IdentityConfirmationApiConfig.KEY)
-    private readonly config: ConfigType<typeof IdentityConfirmationApiConfig>,
+    private nationalRegistryClient: NationalRegistryV3ClientService,
   ) {}
 
   async identityConfirmation({
@@ -33,13 +36,7 @@ export class IdentityConfirmationService {
     number,
   }: IdentityConfirmationInputDto): Promise<string> {
     if (type === IdentityConfirmationType.PHONE && !number) {
-      throw new Error('Phone number is required')
-    }
-
-    const zendeskCase = await this.zendeskService.getTicket(id)
-
-    if (!zendeskCase) {
-      throw new Error('Ticket not found')
+      throw new BadRequestException('Phone number is required')
     }
 
     const identityConfirmation = await this.identityConfirmationModel.create({
@@ -114,12 +111,90 @@ export class IdentityConfirmationService {
         ],
       })
     } catch (e) {
-      console.error(e)
       throw new Error('Failed to send chat message')
     }
   }
 
   private generateLink = (id: string) => {
     return `${process.env.IDENTITY_SERVER_ISSUER_URL}/app/confirm-identity/${id}`
+  }
+
+  async confirmIdentity(user: User, id: string) {
+    const identityConfirmation = await this.identityConfirmationModel.findOne({
+      where: {
+        id,
+      },
+    })
+
+    if (!identityConfirmation) {
+      throw new NoContentException()
+    }
+
+    // Throw error if identity confirmation is expired
+    if (
+      new Date(identityConfirmation.created).getTime() + LIFE_TIME <
+      Date.now()
+    ) {
+      throw new Error('Identity confirmation expired')
+    }
+
+    const person = await this.nationalRegistryClient.getAllDataIndividual(
+      user.nationalId,
+    )
+
+    if (!person) {
+      throw new BadRequestException(
+        'A person with that national id could not be found',
+      )
+    }
+
+    await this.zendeskService.updateTicket(identityConfirmation.ticketId, {
+      comment: {
+        html_body: `
+          <b>Auðkenning hefur verið staðfest</b>
+          <p>Umsækjandi: ${person.nafn}, kennitala: ${user.nationalId}</p>
+          <p>${
+            person.heimilisfang?.husHeiti
+              ? 'Heimilisfang:' + person.heimilisfang.husHeiti
+              : ''
+          }</p>
+          `,
+        public: false,
+      },
+    })
+
+    await identityConfirmation.destroy()
+  }
+
+  async getIdentityConfirmation(id: string): Promise<IdentityConfirmationDTO> {
+    const identityConfirmation = await this.identityConfirmationModel.findOne({
+      where: {
+        id,
+      },
+    })
+
+    if (!identityConfirmation) {
+      throw new NoContentException()
+    }
+
+    return {
+      id: identityConfirmation.id,
+      ticketId: identityConfirmation.ticketId,
+      type: identityConfirmation.type,
+      // Check if time now is 2 days older than created at time
+      isExpired:
+        new Date(identityConfirmation.created).getTime() + LIFE_TIME <
+        Date.now(),
+    }
+  }
+
+  async deleteExpiredIdentityConfirmations(): Promise<number> {
+    return this.identityConfirmationModel.destroy({
+      where: {
+        created: {
+          [Op.lt]: new Date(Date.now() - EXPIRATION),
+        },
+      },
+    })
   }
 }

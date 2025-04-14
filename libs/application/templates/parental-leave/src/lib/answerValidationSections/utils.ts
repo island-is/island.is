@@ -16,11 +16,11 @@ import {
   StaticText,
   StaticTextObject,
 } from '@island.is/application/types'
+import { StartDateOptions, MINIMUM_PERIOD_LENGTH } from '../../constants'
 import {
-  StartDateOptions,
-  MINIMUM_PERIOD_LENGTH,
-} from '../../constants'
-import { getExpectedDateOfBirthOrAdoptionDateOrBirthDate } from '../parentalLeaveUtils'
+  getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
+  isPeriodsContinuous,
+} from '../parentalLeaveUtils'
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minimumRatio,
@@ -231,7 +231,7 @@ export const validatePeriod = (
       )
     }
 
-    if (endDateValue > maximumEndDate) {
+    if (endDateValue >= maximumEndDate) {
       return buildError(
         useLength === YES ? 'endDateDuration' : 'endDate',
         errorMessages.periodsPeriodRange,
@@ -257,7 +257,8 @@ export const validatePeriod = (
     if (
       !(
         endDateValue.getTime() < today.getTime() && !isThisMonth(startDateValue)
-      )
+      ) &&
+      !isPeriodsContinuous(existingPeriods.at(-1), period)
     ) {
       if (
         calculatePeriodLength(startDateValue, endDateValue) <

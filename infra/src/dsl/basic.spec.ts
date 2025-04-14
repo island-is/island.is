@@ -103,7 +103,8 @@ describe('Basic serialization', () => {
       DB_NAME: 'api',
       DB_HOST: 'a',
       DB_REPLICAS_HOST: 'a',
-      NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init',
+      NODE_OPTIONS:
+        '--max-old-space-size=460 --enable-source-maps -r dd-trace/init',
       SERVERSIDE_FEATURES_ON: '',
       LOG_LEVEL: 'info',
     })

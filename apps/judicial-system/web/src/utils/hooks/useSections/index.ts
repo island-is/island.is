@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -8,7 +7,6 @@ import {
   getAppealResultTextByValue,
 } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -19,10 +17,10 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
+  Case,
   CaseAppealState,
   CaseState,
   CaseType,
@@ -31,7 +29,6 @@ import {
   InstitutionType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { shouldUseAppealWithdrawnRoutes } from '../../utils'
@@ -40,7 +37,6 @@ const validateFormStepper = (
   isActiveSubSectionValid: boolean,
   steps: string[],
   workingCase: Case,
-  isOffenseEndpointEnabled?: boolean
 ) => {
   if (!isActiveSubSectionValid) {
     return false
@@ -50,7 +46,7 @@ const validateFormStepper = (
 
   return steps.some(
     (step) =>
-      validationForStep[step as keyof typeof validationForStep](workingCase, isOffenseEndpointEnabled) ===
+      validationForStep[step as keyof typeof validationForStep](workingCase) ===
       false,
   )
     ? false
@@ -61,9 +57,6 @@ const useSections = (
   isValid = true,
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>,
 ) => {
-  const { features } = useContext(FeatureContext)
-  const isOffenseEndpointEnabled = features.includes(Feature.OFFENSE_ENDPOINTS)
-  
   const { formatMessage } = useIntl()
 
   const router = useRouter()
@@ -503,7 +496,7 @@ const useSections = (
                 onNavigationTo
                   ? async () =>
                       await onNavigationTo(
-                        constants.INDICTMENTS_PROCESSING_ROUTE,
+                        constants.INDICTMENTS_CASE_FILES_ROUTE,
                       )
                   : undefined,
             },
@@ -552,7 +545,6 @@ const useSections = (
                     constants.INDICTMENTS_PROCESSING_ROUTE,
                   ],
                   workingCase,
-                  isOffenseEndpointEnabled
                 ) &&
                 onNavigationTo
                   ? async () =>
@@ -971,7 +963,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+              name: formatMessage(sections.indictmentsCourtSection.conclusion),
               isActive: isActive(constants.INDICTMENTS_CONCLUSION_ROUTE),
               href: `${constants.INDICTMENTS_CONCLUSION_ROUTE}/${id}`,
               onClick:

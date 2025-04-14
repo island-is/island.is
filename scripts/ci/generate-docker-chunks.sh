@@ -4,23 +4,29 @@ set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
-export \
-  HEAD=${HEAD:-HEAD} \
-  BASE=${BASE:-main} \
-  MAX_JOBS='100'
+export MAX_JOBS='100'
+chunks='[]'
 
-if [[ -n "${CHUNKS_DEBUG:-}" ]]; then
-  echo "$CHUNKS_DEBUG" | jq -cM '. | map("\(.|tostring)")'
-  exit 0
-elif [[ "${SKIP_TESTS:-}" == true ]]; then
+if [[ "${SKIP_TESTS:-}" == true ]]; then
   #Skipping tests
-  echo "[]"
+  echo "$chunks"
   exit 0
 fi
 
-chunks='[]'
+LAST_COMMIT_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD)
+if echo "$LAST_COMMIT_FILES" | grep -q ".github/actions/force-build.mjs"; then
+  export TEST_EVERYTHING=true
+fi
+
+
+if [[ (-n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH") || (-n "$NX_AFFECTED_ALL" && "$NX_AFFECTED_ALL" == "true") || (-n "$TEST_EVERYTHING" && "$TEST_EVERYTHING" == "true") ]]; then
+  EXTRA_ARGS=""
+else
+  EXTRA_ARGS=(--affected --base "$BASE" --head "$HEAD")
+fi
+
 for target in "$@"; do
-  processed_chunks=$(yarn nx show projects --withTarget="$target" --affected --base "$BASE" --head "$HEAD" --json |
+  processed_chunks=$(yarn nx show projects --withTarget="$target" "${EXTRA_ARGS[@]}" --json |
     jq -r '.[]' |
     xargs -I {} -P "${MAX_JOBS:-4}" bash -c "
       project=\"\$1\"
@@ -41,4 +47,5 @@ for target in "$@"; do
 done
 
 >&2 echo "Map: ${chunks}"
-echo "$chunks" | jq -cM '. | map("\(.|tostring)")'
+# echo "$chunks" | jq -cM '. | map("\(.|tostring)")'
+echo "$chunks"

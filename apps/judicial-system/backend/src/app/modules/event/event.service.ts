@@ -66,6 +66,7 @@ const caseEvent: Record<CaseEvent, string> = {
   [CaseTransition.SUBMIT]: ':mailbox_with_mail: Sent',
   [CaseTransition.WITHDRAW_APPEAL]:
     ':leftwards_arrow_with_hook: Kæru afturkallað',
+  [CaseTransition.MOVE]: ':flying_disc: Máli úthlutað á nýjan dómstól',
 }
 
 export type CaseEvent =
@@ -261,7 +262,9 @@ export class EventService {
     if (info) {
       let property: keyof typeof info
       for (property in info) {
-        infoText = `${infoText}${property}: ${info[property]}\n`
+        infoText = `${infoText}${property}: ${
+          info[property] ?? 'Ekki skráð'
+        }\n>`
       }
     }
 

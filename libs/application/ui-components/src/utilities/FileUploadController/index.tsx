@@ -1,6 +1,6 @@
 import { useState, useReducer, useEffect } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { FileRejection } from 'react-dropzone'
 
 import { getValueViaPath, coreErrorMessages } from '@island.is/application/core'
@@ -15,11 +15,13 @@ import {
   CREATE_UPLOAD_URL,
   ADD_ATTACHMENT,
   DELETE_ATTACHMENT,
+  GET_MALWARE_SCAN_STATUS,
 } from '@island.is/application/graphql'
 
 import { Action, ActionTypes } from './types'
 import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
 import { DEFAULT_TOTAL_MAX_SIZE, uploadFileToS3 } from './utils'
+import { MalwareScanStatus } from '@island.is/shared/types'
 
 type UploadFileAnswer = {
   name: string
@@ -99,6 +101,7 @@ export const FileUploadController = ({
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
   const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
+  const { refetch: fileUploadMalwareStatus } = useQuery(GET_MALWARE_SCAN_STATUS, { skip: true })
   const [sumOfFileSizes, setSumOfFileSizes] = useState(0)
   const initialUploadFiles: UploadFile[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
@@ -115,6 +118,12 @@ export const FileUploadController = ({
     setValue(id, uploadAnswer)
   }, [state, id, setValue])
 
+  const isFreeOfMalware = async (fileKey: string): Promise<boolean> => {
+    const { data } = await fileUploadMalwareStatus({ filename: fileKey })
+    const status = data?.malwareScanStatus ?? MalwareScanStatus.UNKNOWN
+    return status !== undefined && status === MalwareScanStatus.SAFE
+  }
+
   const uploadFileFlow = async (file: UploadFile) => {
     try {
       // 1. Get the upload URL
@@ -130,6 +139,7 @@ export const FileUploadController = ({
       } = data
 
       const response = await uploadFileToS3(file, dispatch, url, fields)
+      const responseUrl = `${response.url}/${fields.key}`
 
       // 3. Add Attachment Data
       await addAttachment({
@@ -137,13 +147,15 @@ export const FileUploadController = ({
           input: {
             id: application.id,
             key: fields.key,
-            url: `${response.url}/${fields.key}`,
+            url: responseUrl,
           },
         },
       })
 
+      const isClean = await isFreeOfMalware(fields.key)
+
       // Done!
-      return Promise.resolve({ key: fields.key })
+      return Promise.resolve({ key: fields.key, url: responseUrl, isClean })
     } catch (e) {
       console.error(`Error with FileUploadController ${e}`)
       setUploadError(formatMessage(coreErrorMessages.fileUpload))
@@ -151,8 +163,21 @@ export const FileUploadController = ({
     }
   }
 
-  const onFileChange = async (newFiles: File[]) => {
-    if (!multiple && state.length > 0) return
+  const onFileChange = async (newFiles: File[], uploadCount?: number) => {
+    clearErrors(id)
+    setUploadError(undefined)
+
+    if(!multiple) {
+      // Trying to upload more than 1 file
+      if(uploadCount && uploadCount > 1) {
+        setUploadError(formatMessage(coreErrorMessages.uploadMultipleNotAllowed))
+        return
+      }
+      // Trying to upload a single file, but a file has already been uploaded
+      if(state.length === 1) {
+        await onRemoveFile(state[0])
+      }
+    }
 
     const addedUniqueFiles = newFiles.filter((newFile: File) => {
       let isUnique = true
@@ -163,9 +188,6 @@ export const FileUploadController = ({
     })
 
     if (addedUniqueFiles.length === 0) return
-
-    clearErrors(id)
-    setUploadError(undefined)
 
     const totalNewFileSize = addedUniqueFiles
       .map((f) => f.size)
@@ -196,27 +218,47 @@ export const FileUploadController = ({
       },
     })
 
-    // Upload each file.
-    newUploadFiles.forEach(async (f: UploadFile) => {
+    const malwareFiles: UploadFile[] = []
+    const uploadPromises = newUploadFiles.map(async (f) => {
       try {
         const res = await uploadFileFlow(f)
 
+        if(!res.isClean) {
+          // We need the file to have the key because we are about to remove it
+          // before the dispatch event finishes
+          if(res.key)
+            f.key = res.key
+
+          malwareFiles.push(f)
+        }
         dispatch({
           type: ActionTypes.UPDATE,
           payload: {
             file: f,
-            status: 'done',
+            status: res.isClean ? 'done' : 'error',
             percent: 100,
             key: res.key,
+            url: res.url
           },
         })
       } catch {
         setUploadError(formatMessage(coreErrorMessages.fileUpload))
       }
     })
+
+    await Promise.allSettled(uploadPromises)
+
+    if(malwareFiles.length > 0) {
+      const malwareFileNamesFormatted = malwareFiles.map(f => f.name).join(', ')
+
+      for (const f of malwareFiles) {
+        await onRemoveFile(f, false, false)
+      }
+      setUploadError(formatMessage(coreErrorMessages.fileUploadMalware, {files: malwareFileNamesFormatted}))
+    }
   }
 
-  const onRemoveFile = async (fileToRemove: UploadFile) => {
+  const onRemoveFile = async (fileToRemove: UploadFile, overwriteError = true, removeFileCard = true) => {
     // If it's previously been uploaded, remove it from the application attachment.
     if (fileToRemove.key) {
       try {
@@ -236,17 +278,22 @@ export const FileUploadController = ({
 
     onRemove?.(fileToRemove)
 
-    // We remove it from the list if: the delete attachment above succeeded,
-    // or if the user clicked x for a file that failed to upload and is in
-    // an error state.
-    dispatch({
-      type: ActionTypes.REMOVE,
-      payload: {
-        fileToRemove,
-      },
-    })
+    // There is a case for not removing the file card in the component if
+    // it has malware and we want it there to show that those exact files have errors
+    if(removeFileCard) {
+      // We remove it from the list if: the delete attachment above succeeded,
+      // or if the user clicked x for a file that failed to upload and is in
+      // an error state.
+      dispatch({
+        type: ActionTypes.REMOVE,
+        payload: {
+          fileToRemove,
+        },
+      })
+    }
 
-    setUploadError(undefined)
+    if(overwriteError)
+      setUploadError(undefined)
   }
 
   const onFileRejection = (files: FileRejection[]) => {

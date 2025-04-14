@@ -3,8 +3,16 @@ import { defineMessages } from 'react-intl'
 export const m = {
   breadcrumb: defineMessages({
     frontpage: {
-      id: 'web.ojoi.breadcrumb.frontpage',
+      id: 'web.ojoi:breadcrumb.frontpage',
       defaultMessage: 'Ísland.is',
+    },
+    help: {
+      id: 'web.ojoi:breadcrumb.help',
+      defaultMessage: 'Leiðbeiningar',
+    },
+    about: {
+      id: 'web.ojoi:breadcrumb.about',
+      defaultMessage: 'Um stjórnartíðindi',
     },
   }),
   general: defineMessages({
@@ -27,6 +35,10 @@ export const m = {
       id: 'web.ojoi:home.featuredImage',
       defaultMessage:
         'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
+    },
+    readMore: {
+      id: 'web.ojoi:home.readMore',
+      defaultMessage: 'Lesa meira',
     },
 
     inputPlaceholder: {
@@ -284,7 +296,7 @@ export const m = {
     },
     signatureDate: {
       id: 'web.ojoi:advert.signatureDate',
-      defaultMessage: 'Skráningardagur',
+      defaultMessage: 'Undirritunardagur',
     },
     publicationDate: {
       id: 'web.ojoi:advert.publicationDate',
@@ -340,6 +352,43 @@ export const m = {
     involvedParty: {
       id: 'web.ojoi:casesInProgress.involvedParty',
       defaultMessage: 'Stofnun',
+    },
+  }),
+  rss: defineMessages({
+    rssFeeds: {
+      id: 'web.ojoi:rss.rssFeeds',
+      defaultMessage: 'RSS veitur',
+    },
+    departmentA: {
+      id: 'web.ojoi:rss.departmentA',
+      defaultMessage:
+        'Í A-deild Stjórnartíðinda skal birta lög öll, tilskipanir, opin bréf, auglýsingar og aðrar tilkynningar almenns efnis, sem út eru gefnar af æðsta handhafa framkvæmdarvaldsins, svo og reglur, sem Alþingi kann að setja um framkvæmd almennra málefna í þingsályktunum, sbr. 2. gr. laga nr. 15/2005.',
+    },
+    departmentB: {
+      id: 'web.ojoi:rss.departmentB',
+      defaultMessage:
+        'Í B-deild Stjórnartíðinda skal birta reglugerðir, erindisbréf, samþykktir og auglýsingar, sem gefnar eru út eða staðfestar af ráðherra, umburðarbréf, ákvarðanir og úrlausnir ráðuneyta, sem almenna þýðingu hafa, veitingar opinberra starfa og lausn frá þeim, er handhafi æðsta framkvæmdarvalds eða ráðherra fer með, reikninga sjóða, ef svo er mælt í staðfestum skipulagsákvæðum þeirra, úrslit alþingiskosninga, skrá yfir félög, firmu og vörumerki, sem tilkynnt hafa verið á árinu, heiðursmerki, nafnbætur og heiðursverðlaun, sem ríkisstjórnin veitir. Einnig skal þar birta reglur sem opinberum stjórnvöldum og stofnunum, öðrum en ráðuneytum, er falið lögum samkvæmt að gefa út, sbr. 1. mgr. 3. gr. laga nr. 15/2005.',
+    },
+    departmentC: {
+      id: 'web.ojoi:rss.departmentC',
+      defaultMessage:
+        'Í C-deild Stjórnartíðinda skal birta samninga við önnur ríki, svo og auglýsingar varðandi gildi þeirra, sbr. 1. mgr. 4. gr. laga nr. 15/2005.',
+    },
+  }),
+  help: defineMessages({
+    title: {
+      id: 'web.ojoi:help.title',
+      defaultMessage: 'Leiðbeiningar fyrir Stjórnartíðindi',
+    },
+  }),
+  about: defineMessages({
+    title: {
+      id: 'web.ojoi:about.title',
+      defaultMessage: 'Um stjórnartíðindi',
+    },
+    description: {
+      id: 'web.ojoi:about.description',
+      defaultMessage: 'Einhver lýsing',
     },
   }),
 }

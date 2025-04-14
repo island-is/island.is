@@ -7,7 +7,11 @@ on:
 defaults:
   run:
     shell: bash
-
+env:
+  S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  AWS_REGION: eu-west-1
+  YARN_ENABLE_HARDENED_MODE: '0'
 jobs:
   check-unicorn:
     name: Is this a unicorn PR
@@ -22,19 +26,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
       - name: Setup yarn
-        run: corepack enable
-
-      - name: Get cache
-        id: get-cache
-        uses: ./.github/actions/get-cache
+        uses: ./.github/actions/setup-yarn
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules'
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
@@ -46,7 +41,7 @@ jobs:
         id: unicorn_affected
         run: |
           echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
-          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
+          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
 
       - name: Results
         run: |

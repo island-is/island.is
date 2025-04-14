@@ -39,7 +39,6 @@ export const languageSubSection = buildSubSection({
             title:
               newPrimarySchoolMessages.differentNeeds.languageEnvironmentTitle,
             component: 'FriggOptionsAsyncSelectField',
-            dataTestId: 'languages-language-environment',
           },
           {
             optionsType: OptionsType.LANGUAGE_ENVIRONMENT,
@@ -67,10 +66,8 @@ export const languageSubSection = buildSubSection({
             newPrimarySchoolMessages.differentNeeds.addLanguageButton,
           removeItemButtonText:
             newPrimarySchoolMessages.differentNeeds.removeLanguageButton,
-          minRows: (application) => {
-            const { languageEnvironment } = getApplicationAnswers(
-              application.answers,
-            )
+          minRows: (answers) => {
+            const { languageEnvironment } = getApplicationAnswers(answers)
 
             return languageEnvironment ===
               LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
@@ -127,7 +124,6 @@ export const languageSubSection = buildSubSection({
         }),
         buildSelectField({
           id: 'languages.preferredLanguage',
-          dataTestId: 'languages-preferred-language',
           title:
             newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
           placeholder:
@@ -189,12 +185,12 @@ export const languageSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'guardianRequiresInterpreter',
+              dataTestId: 'guardian-requires-interpreter',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-guardianRequiresInterpreter',
+              dataTestId: 'no-guardian-requires-interpreter',
               value: NO,
             },
           ],

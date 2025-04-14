@@ -34,6 +34,7 @@ import {
   EmailSignup,
   Form,
   GenericListWrapper,
+  IntroLinkImageSlice,
   KilometerFee,
   MasterList,
   MultipleStatistics,
@@ -70,6 +71,7 @@ import {
   GenericList as GenericListSchema,
   GetTeamMembersInputOrderBy,
   GrantCardsList as GrantCardsListSchema,
+  IntroLinkImage,
   MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
   OrganizationParentSubpageList,
@@ -91,6 +93,7 @@ import { DigitalIcelandStatistics } from '../components/connected/DigitalIceland
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
+import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
 import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSkuldara'
@@ -221,6 +224,9 @@ export const webRenderConnectedComponent = (
     case 'DigitalIcelandStatistics':
       connectedComponent = <DigitalIcelandStatistics />
       break
+    case 'Trufelog/Lifsskodunarfelog':
+      connectedComponent = <ReligiousOrganizationList slice={slice} />
+      break
     default:
       connectedComponent = renderConnectedComponent(slice)
   }
@@ -308,15 +314,17 @@ const defaultRenderComponent = {
     />
   ),
   Image: (slice: ImageProps) => {
-    const thumbnailUrl = slice?.url ? slice.url + '?w=50' : ''
-    const url = slice?.url ? slice.url + '?w=1000' : ''
-    return <Image {...slice} thumbnail={thumbnailUrl} url={url} />
+    const url = slice?.url ? slice.url : ''
+    return <Image {...slice} url={url} />
   },
   GrantCardsList: (slice: GrantCardsListSchema) => (
     <GrantCardsList slice={slice} />
   ),
   OrganizationParentSubpageList: (slice: OrganizationParentSubpageList) => (
     <OrganizationParentSubpageListSlice slice={slice} />
+  ),
+  IntroLinkImage: (slice: IntroLinkImage) => (
+    <IntroLinkImageSlice slice={slice} />
   ),
 }
 

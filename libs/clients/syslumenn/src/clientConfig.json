@@ -128,6 +128,49 @@
         ]
       }
     },
+    "/api/TrufelogOgLifsskodunarfelog/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "TrufelogOgLifsskodunarfelog_Get",
+        "parameters": [
+          {
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrufelogOgLisskodunarfelogModel"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": ""
+          },
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
     "/api/SkraSveinsbref": {
       "post": {
         "tags": ["Syslumenn"],
@@ -2358,6 +2401,41 @@
         ]
       }
     },
+    "/api/v1/AfgreidaSakavottord": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "AfgreidaSakavottord_Post",
+        "requestBody": {
+          "x-name": "payload",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyslSkeyti"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Skilabod"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
     "/api/AlmennFyrirspurn/{audkenni}/{eining}/{adgerd}": {
       "get": {
         "tags": ["Syslumenn"],
@@ -3019,6 +3097,42 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    },
+    "/api/KannaSakavottordAuth": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "KannaSakavottordAuth_Get",
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -4245,6 +4359,32 @@
             "nullable": true
           },
           "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "TrufelogOgLisskodunarfelogModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "nafnFelags": {
+            "type": "string",
+            "nullable": true
+          },
+          "forstodumadur": {
+            "type": "string",
+            "nullable": true
+          },
+          "heimili": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelag": {
             "type": "string",
             "nullable": true
           }

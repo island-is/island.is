@@ -1,24 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
-  // Application begin
-  institutionName: {
-    id: 'es.application:institution.name',
-    defaultMessage: 'Sýslumenn',
-    description: 'Institution name',
-  },
-  draftTitle: {
-    id: 'es.application:draft.title',
-    defaultMessage: 'Drög',
-    description: 'Draft title',
-  },
-  draftDescription: {
-    id: 'es.application:draft.description',
-    defaultMessage: 'Drög að ólokinni umsókn',
-    description: 'Draft description',
-  },
-  // Application end
-
   // Pre-data collection
   preDataCollectionHeading: {
     id: 'es.application:preDataCollectionHeading',
@@ -36,7 +18,6 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar um dánarbú',
     description: 'Title of provider for pre-collection',
   },
-
   preDataCollectionDescription: {
     id: 'es.application:preDataCollectionDescription',
     defaultMessage: 'Sóttar verða upplýsingar frá sýslumanni um dánarbú',
@@ -44,17 +25,6 @@ export const m = defineMessages({
   },
 
   // Prereqs title
-  chooseEstate: {
-    id: 'es.application:chooseEstate',
-    defaultMessage: 'Valið dánarbú',
-    description: '',
-  },
-  chooseEstateDescription: {
-    id: 'es.application:chooseEstateDescription',
-    defaultMessage:
-      'Eftirfarandi dánarbú eru skráð fyrir þinni kennitölu hjá Sýslumanni. Vinsamlegast veldu það sem við á.',
-    description: '',
-  },
   chooseEstateSelectTitle: {
     id: 'es.application:chooseEstateSelectTitle',
     defaultMessage: 'Dánarbú',
@@ -86,6 +56,22 @@ export const m = defineMessages({
     defaultMessage: 'Án upplýsinga um samskipti',
     description: '',
   },
+  estateTypeOfficialDivision: {
+    id: 'es.application:selectedEstateOfficialDivision',
+    defaultMessage: 'Opinber skipti',
+  },
+  estateTypeWithoutAssets: {
+    id: 'es.application:estateTypeWithoutAssets',
+    defaultMessage: 'Eignalaust dánarbú',
+  },
+  estateTypeUndividedEstate: {
+    id: 'es.application:estateTypeUndividedEstate',
+    defaultMessage: 'Seta í óskiptu búi',
+  },
+  estateTypeDivisionByHeirs: {
+    id: 'es.application:estateTypeDivisionByHeirs',
+    defaultMessage: 'Einkaskipti',
+  },
 
   // Data collection - external data providers
   dataCollectionTitle: {
@@ -110,13 +96,11 @@ export const m = defineMessages({
     description:
       'User not eligible for estate or no estates found bound to their national id',
   },
-
   applicationDescriptionSectionTitle: {
     id: 'es.application:applicationDescriptionSectionTitle',
     defaultMessage: 'Upplýsingar',
     description: 'Titill fyrir hliðastiku',
   },
-
   applicationDescriptionTitleEstateWithoutAssets: {
     id: 'es.application:applicationDescriptionTitleEstateWithoutAssets',
     defaultMessage: 'Upplýsingar fyrir eingnalaust dánarbú',
@@ -137,7 +121,6 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar',
     description: 'Upplýsinga skjár titill fyrir Einkaskipti',
   },
-
   applicationDescriptionTextEstateWithoutAssets: {
     id: 'es.application:applicationDescriptionTextEstateWithoutAssets#markdown',
     defaultMessage: 'Upplýsinga Texti fyrir eignalaust dánarbú',
@@ -158,7 +141,6 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsinga Texti fyrir einkaskipti',
     description: 'Upplýsingar skjár titill fyrir Einkaskipti',
   },
-
   deceasedInfoProviderTitle: {
     id: 'es.application:deceasedInfoProviderTitle',
     defaultMessage: 'Upplýsingar um hinn látna',
@@ -193,11 +175,6 @@ export const m = defineMessages({
     defaultMessage: 'Persónuupplýsingar um þig',
     description: '',
   },
-  personalInfoProviderSubtitle: {
-    id: 'es.application:personalInfoProviderSubtitle',
-    defaultMessage: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
-    description: '',
-  },
   personalInfoProviderSubtitleEstateWithoutAssets: {
     id: 'es.application:personalInfoProviderSubtitleEstateWithoutAssets',
     defaultMessage: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
@@ -221,11 +198,6 @@ export const m = defineMessages({
   settingsInfoProviderTitle: {
     id: 'es.application:settingsInfoProviderTitle',
     defaultMessage: 'Stillingar frá Ísland.is',
-    description: '',
-  },
-  settingsInfoProviderSubtitle: {
-    id: 'es.application:settingsInfoProviderSubtitle',
-    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
     description: '',
   },
   settingsInfoProviderSubtitleDivisionOfEstateByHeirs: {
@@ -393,16 +365,6 @@ export const m = defineMessages({
     defaultMessage: 'Erfingi',
     description: '',
   },
-  estateMembersHeaderDescription: {
-    id: 'es.application:estateMembersHeaderDescription',
-    defaultMessage: 'Vantar uppl hér',
-    description: '',
-  },
-  willsInCustody: {
-    id: 'es.application:willsInCustody',
-    defaultMessage: 'Erfðaskrá í vörslu sýslumanns',
-    description: '',
-  },
   willsAndAgreements: {
     id: 'es.application:willsAndAgreements',
     defaultMessage: 'Erfðaskrá og kaupmáli',
@@ -447,11 +409,6 @@ export const m = defineMessages({
     defaultMessage: 'Er til leyfi til setu í óskiptu búi?',
     description: '',
   },
-  agreements: {
-    id: 'es.application:agreements',
-    defaultMessage: 'Kaupmáli',
-    description: '',
-  },
   additionalInfo: {
     id: 'es.application:additionalInfo',
     defaultMessage: 'Athugasemdir',
@@ -462,11 +419,6 @@ export const m = defineMessages({
     defaultMessage: 'Skráðu athugasemdir ef einhverjar eru',
     description: '',
   },
-  otherWills: {
-    id: 'es.application:otherWills',
-    defaultMessage: 'Vitneskja um aðra erfðaskrá',
-    description: '',
-  },
   properties: {
     id: 'es.application:properties',
     defaultMessage: 'Eignir',
@@ -475,11 +427,6 @@ export const m = defineMessages({
   propertiesTitle: {
     id: 'es.application:propertiesTitle',
     defaultMessage: 'Innlendar og erlendar eignir á dánardegi hins látna',
-    description: '',
-  },
-  propertiesDescription: {
-    id: 'es.application:propertiesDescription#markdown',
-    defaultMessage: 'Tilgreina skal allar hjúskapaeignir beggja hjóna.',
     description: '',
   },
   propertiesDescriptionOfficialDivision: {
@@ -600,9 +547,9 @@ export const m = defineMessages({
     defaultMessage: 'Innistæða með vöxtum á dánardegi',
     description: '',
   },
-  bankAccountPlaceholder: {
-    id: 'es.application:bankAccountPlaceholder',
-    defaultMessage: 'xxxx - xx - xxxxxx',
+  bankAccountInterestRate: {
+    id: 'es.application:bankAccountInterestRate',
+    defaultMessage: 'Áfallnir vextir',
     description: '',
   },
   bankAccountRepeaterButton: {
@@ -726,11 +673,6 @@ export const m = defineMessages({
   otherAssetsText: {
     id: 'es.application:otherAssetsText',
     defaultMessage: 'Upplýsingar um aðrar eignir',
-    description: '',
-  },
-  otherAssetsPlaceholder: {
-    id: 'es.application:otherAssetsPlaceholder',
-    defaultMessage: 'Skráðu inn upplýsingar hér',
     description: '',
   },
   otherAssetsValue: {
@@ -920,7 +862,7 @@ export const m = defineMessages({
     description: '',
   },
   divisionOfEstateConfirmActionCheckbox: {
-    id: 'es.application:divisionOfEstateConfirmActionCheckbox',
+    id: 'es.application:divisionOfEstateConfirmActionCheckbox#markdown',
     defaultMessage:
       'Ég krefst þess að eftirfarandi dánarbú verði tekið til opinberra skipta.',
     description: '',
@@ -1033,11 +975,6 @@ export const m = defineMessages({
     defaultMessage: 'Tengsl virðast ekki vera rétt',
     description: 'Relation is invalid',
   },
-  fillOutRates: {
-    id: 'es.application:error.fillOutRates',
-    defaultMessage: 'Vinsamlegast fylltu út í alla reiti',
-    description: '',
-  },
   errorNationalIdIncorrect: {
     id: 'es.application:error.nationalIdIncorrect',
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
@@ -1090,11 +1027,6 @@ export const m = defineMessages({
     id: 'es.application:inheritanceRelationWithApplicantLabel',
     defaultMessage: 'Tengsl við umsækjanda',
     description: 'Relation label',
-  },
-  inheritanceRelationPlaceholder: {
-    id: 'es.application:inheritanceRelationPlaceholder',
-    defaultMessage: 'Veldu tengsl',
-    description: 'Relation placeholder',
   },
   inheritanceNameLabel: {
     id: 'es.application:inheritanceNameLabel',
@@ -1154,55 +1086,10 @@ export const m = defineMessages({
   },
 
   // Properties
-  realEstatesDescription: {
-    id: 'es.application:realEstatesDescription',
-    defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
-    description: 'Real estates and lands description',
-  },
   gunTitle: {
     id: 'es.application:gunTitle',
     defaultMessage: 'Skotvopn',
     description: 'Vehicles title',
-  },
-  vehiclesTitle: {
-    id: 'es.application:vehiclesTitle',
-    defaultMessage: 'Faratæki',
-    description: 'Vehicles title',
-  },
-  vehiclesPlaceholder: {
-    id: 'es.application:vehiclesPlaceholder',
-    defaultMessage: 't.d. Toyota Yaris',
-    description: 'Placeholder for vehicles type',
-  },
-  otherPropertiesTitle: {
-    id: 'es.application:otherPropertiesTitle',
-    defaultMessage: 'Aðrar eignir',
-    description: 'Other properties title',
-  },
-  otherPropertiesDescription: {
-    id: 'es.application:otherPropertiesDescription',
-    defaultMessage: 'Merktu við það sem á við eftir bestu vitund.',
-    description: 'Other properties description',
-  },
-  otherPropertiesAccounts: {
-    id: 'es.application:otherPropertiesAccounts',
-    defaultMessage: 'Bankareikningar, verðbréf eða hlutabréf',
-    description: 'Other properties option: Accounts',
-  },
-  otherPropertiesOwnBusiness: {
-    id: 'es.application:otherPropertiesOwnBusiness',
-    defaultMessage: 'Eigin rekstur',
-    description: 'Other properties option: Own business',
-  },
-  otherPropertiesResidence: {
-    id: 'es.application:otherPropertiesResidence',
-    defaultMessage: 'Búseturéttur vegna kaupleigu íbúða',
-    description: 'Other properties option: Residence',
-  },
-  otherPropertiesAssetsAbroad: {
-    id: 'es.application:otherPropertiesAssetsAbroad',
-    defaultMessage: 'Eignir erlendis',
-    description: 'Other properties option: Assets abroad',
   },
   propertyNumber: {
     id: 'es.application:propertyNumber',
@@ -1223,16 +1110,6 @@ export const m = defineMessages({
     id: 'es.application:addVehicle',
     defaultMessage: 'Bæta við ökutæki',
     description: 'Add vehicle',
-  },
-  vehicleNumberLabel: {
-    id: 'es.application:vehicleNumberLabel',
-    defaultMessage: 'Skráninganúmer ökutækis',
-    description: 'Vehicle number label',
-  },
-  vehicleTypeLabel: {
-    id: 'es.application:vehicleTypeLabel',
-    defaultMessage: 'Tegund faratækis',
-    description: 'Vehicle type label',
   },
   addGun: {
     id: 'es.application:addGun',
