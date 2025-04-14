@@ -1416,7 +1416,7 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast gögn málsins á <a href="https://example.com/overview">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
+      'Sækjandi hefur valið að deila kröfu með þér sem verjanda/talsmann sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast gögn málsins á <a href="https://example.com/overview">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
   })
 
