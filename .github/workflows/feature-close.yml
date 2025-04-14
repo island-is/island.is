@@ -9,7 +9,7 @@ on:
 jobs:
   close_feature:
     runs-on: arc-runners
-    # if: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+    if: ${{ github.event.label.name == 'deploy-feature' }}
     permissions:
       id-token: write
       contents: write
@@ -31,8 +31,9 @@ jobs:
           FEATURE_NAME: ${{ env.FEATURE_NAME }}
           FEATURE_NAME_2: ${{join(steps.run_tests.outputs.*, '\n')}}
         run: |
-          echo "$FEATURE_NAME"
-          echo "$FEATURE_NAME_2"
+          echo "AA: $FEATURE_NAME"
+          echo "BB: $FEATURE_NAME_2"
+          echo "TEST"
         # run: |
         #   repo_owner="island-is"
         #   repository="helm-values"
