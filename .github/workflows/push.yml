@@ -264,7 +264,7 @@ jobs:
       actions: read
       contents: read
     outputs:
-      json: ${{ steps.martix-output.outputs.json }}
+      json: ${{ steps.matrix-output.outputs.json }}
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
