@@ -14,11 +14,11 @@ export const HmsConfig = defineConfig<z.infer<typeof schema>>({
   load(env) {
     return {
       xRoadPath: env.required(
-        'XROAD_HMS_PATH',
+        'XROAD_HMS_PROPERTY_SEARCH_PATH',
         'IS-DEV/GOV/10033/HMS-Protected/fasteignir-v2-beta',
       ),
       xRoadClientHeader: env.required(
-        'XROAD_HMS_CLIENT_HEADER',
+        'XROAD_HMS_PROPERTY_SEARCH_CLIENT_HEADER',
         'IS-DEV/GOV/10000/island-is-client',
       ),
       fetchTimeout: env.optionalJSON('XROAD_PROPERTIES_TIMEOUT') ?? 15000,
