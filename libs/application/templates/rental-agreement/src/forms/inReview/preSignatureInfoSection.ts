@@ -54,7 +54,8 @@ export const PreSignatureInfoSection = buildSection({
 
             return signees.map((person) => [
               person.nationalIdWithName.name ?? '',
-              formatNationalId(person.nationalIdWithName.nationalId) ?? '',
+              formatNationalId(person.nationalIdWithName.nationalId || '') ??
+                '',
               formatPhoneNumber(person.phone as string) ?? '',
               person.email ?? '',
             ])

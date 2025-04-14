@@ -379,6 +379,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                                         const unitKey = `${unit.propertyCode}_${unit.unitCode}`
                                         return (
                                           <PropertyTableUnits
+                                            key={unitKey}
                                             unitCode={unit.unitCode ?? ''}
                                             propertyUsageDescription={
                                               unit.propertyUsageDescription ??

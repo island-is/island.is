@@ -60,10 +60,13 @@ const landlordInfo = z
     table: z.array(
       z.object({
         nationalIdWithName: z.object({
-          nationalId: z.string().refine((x) => !!x && x.trim().length > 0, {
-            params: m.landlordDetails.landlordNationalIdEmptyError,
-          }),
-          name: z.string(),
+          nationalId: z
+            .string()
+            .optional()
+            .refine((x) => !!x && x.trim().length > 0, {
+              params: m.landlordDetails.landlordNationalIdEmptyError,
+            }),
+          name: z.string().optional(),
         }),
         phone: z
           .string()
