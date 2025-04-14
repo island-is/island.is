@@ -25,7 +25,8 @@ export const getAssigneeOverviewInformation = (
     assigneeInformation
       ?.filter(({ assignee }) =>
         isAssignee
-          ? assignee.nationalId === userInfo?.assignee.nationalId
+          ? userInfo?.assignee?.nationalId &&
+            assignee.nationalId === userInfo.assignee.nationalId
           : true,
       )
       .map(({ company, assignee, workMachine }, index) => ({
