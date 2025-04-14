@@ -493,6 +493,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: monorepo
+          fetch-depth: 0
 
       - name: Get docker-build output
         uses: cloudposse/github-action-matrix-outputs-read@v1
