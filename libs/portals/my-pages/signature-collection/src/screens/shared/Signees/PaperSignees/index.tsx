@@ -7,7 +7,6 @@ import {
   GridContainer,
   AlertMessage,
   Input,
-  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useIdentityQuery } from '@island.is/portals/my-pages/graphql'
@@ -15,11 +14,11 @@ import * as nationalId from 'kennitala'
 import { useEffect, useState } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
-import { m } from '../../../../../lib/messages'
-import { useGetCanSign } from '../../../../../hooks'
 import { useMutation } from '@apollo/client'
-import { uploadPaperSignature } from '../../../../../hooks/graphql/mutations'
 import { toast } from 'react-toastify'
+import { useGetCanSign } from '../../../../hooks'
+import { uploadPaperSignature } from '../../../../hooks/graphql/mutations'
+import { m } from '../../../../lib/messages'
 
 export const PaperSignees = ({
   listId,
@@ -94,13 +93,9 @@ export const PaperSignees = ({
 
   return (
     <Box marginTop={8}>
-      <Box display="flex" justifyContent={'spaceBetween'}>
+      <Box display="flex" justifyContent="spaceBetween">
         <Text variant="h4" marginBottom={2}>
-          {formatMessage(m.paperSigneesHeader) + ' '}
-          <Tooltip
-            placement="bottom"
-            text={formatMessage(m.paperSigneesTooltip)}
-          />
+          {formatMessage(m.paperSigneesHeader)}
         </Text>
         <Box>
           <Button
@@ -115,7 +110,7 @@ export const PaperSignees = ({
       </Box>
 
       <Box
-        background={'blue100'}
+        background="blue100"
         height="full"
         padding={3}
         border="standard"
@@ -155,7 +150,7 @@ export const PaperSignees = ({
             </GridColumn>
           </GridRow>
           <GridRow marginBottom={3}>
-            <GridColumn span={'12/12'}>
+            <GridColumn span="12/12">
               <Input
                 id="name"
                 name="name"
@@ -166,7 +161,7 @@ export const PaperSignees = ({
               />
             </GridColumn>
           </GridRow>
-          <Box display={'flex'} justifyContent={'flexEnd'}>
+          <Box display="flex" justifyContent="flexEnd">
             <Button
               variant="ghost"
               size="small"
