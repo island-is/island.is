@@ -1,5 +1,5 @@
-import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
+import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
@@ -22,19 +22,36 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'applicantInfo.phonenumber',
   ) as string
 
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+
+  const personalAllowance = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowance',
+  ) as YesOrNo
+
+  const personalAllowanceUsage = getValueViaPath(
+    answers,
+    'paymentInfo.personalAllowanceUsage',
+  ) as string
+
+  const taxLevel = getValueViaPath(
+    answers,
+    'paymentInfo.taxLevel',
+  ) as TaxLevelOptions
+
   const isSelfEmployed = getValueViaPath(
     answers,
     'questions.isSelfEmployed',
   ) as YesOrNo
 
-  const isSelfEmployedDate = getValueViaPath(
+  const calculatedRemunerationDate = getValueViaPath(
     answers,
-    'questions.isSelfEmployedDate',
+    'questions.calculatedRemunerationDate',
   ) as string
 
-  const isWorkingPartTime = getValueViaPath(
+  const isPartTimeEmployed = getValueViaPath(
     answers,
-    'questions.isWorkingPartTime',
+    'questions.isPartTimeEmployed',
   ) as YesOrNo
 
   const isStudying = getValueViaPath(answers, 'questions.isStudying') as YesOrNo
@@ -44,18 +61,14 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'questions.isStudyingFileUpload',
   ) as FileType[]
 
-  const sickPayOption = getValueViaPath(answers, 'sickPay.option') as
-    | YesOrNo
-    | NotApplicable
-
-  const sickPayDoesEndDate = getValueViaPath(
+  const hasUtilizedEmployeeSickPayRights = getValueViaPath(
     answers,
-    'sickPay.doesEndDate',
-  ) as string
+    'employeeSickPay.hasUtilizedEmployeeSickPayRights',
+  ) as YesOrNo | NotApplicable
 
-  const sickPayDidEndDate = getValueViaPath(
+  const employeeSickPayEndDate = getValueViaPath(
     answers,
-    'sickPay.didEndDate',
+    'employeeSickPay.endDate',
   ) as string
 
   const hasUtilizedUnionSickPayRights = getValueViaPath(
@@ -78,50 +91,32 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'unionSickPay.fileupload',
   ) as FileType[]
 
-  const comment = getValueViaPath(answers, 'comment') as string
-
-  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
-
-  const personalAllowance = getValueViaPath(
-    answers,
-    'paymentInfo.personalAllowance',
-  ) as YesOrNo
-
-  const personalAllowanceUsage = getValueViaPath(
-    answers,
-    'paymentInfo.personalAllowanceUsage',
-  ) as string
-
-  const taxLevel = getValueViaPath(
-    answers,
-    'paymentInfo.taxLevel',
-  ) as TaxLevelOptions
-
   const rehabilitationPlanConfirmation = getValueViaPath(
     answers,
     'rehabilitationPlanConfirmation',
   ) as string[]
 
+  const comment = getValueViaPath(answers, 'comment') as string
+
   return {
     applicantPhonenumber,
-    isSelfEmployed,
-    isSelfEmployedDate,
-    isWorkingPartTime,
-    isStudying,
-    isStudyingFileUpload,
-    hasUtilizedUnionSickPayRights,
-    unionSickPayEndDate,
-    unionNationalId,
-    unionSickPayFileUpload,
-    comment,
     bank,
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
-    sickPayOption,
-    sickPayDidEndDate,
-    sickPayDoesEndDate,
+    isSelfEmployed,
+    calculatedRemunerationDate,
+    isPartTimeEmployed,
+    isStudying,
+    isStudyingFileUpload,
+    hasUtilizedEmployeeSickPayRights,
+    employeeSickPayEndDate,
+    hasUtilizedUnionSickPayRights,
+    unionSickPayEndDate,
+    unionNationalId,
+    unionSickPayFileUpload,
     rehabilitationPlanConfirmation,
+    comment,
   }
 }
 

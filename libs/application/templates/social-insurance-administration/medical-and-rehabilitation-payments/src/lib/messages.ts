@@ -83,13 +83,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'Self-employed individuals must enter the date of reduction in calculated remuneration',
     },
-    questionsIsSelfEmployedDate: {
-      id: 'marp.application:general.information.questions.is.self.employed.date',
+    questionsCalculatedRemunerationDate: {
+      id: 'marp.application:general.information.questions.calculated.remuneration.date',
       defaultMessage: 'Hvenær var lækkun á reiknuðu endurgjaldi?',
       description: 'When was the reduction in calculated remuneration?',
     },
-    questionsIsWorkingPartTime: {
-      id: 'marp.application:general.information.questions.is.working.part.time',
+    questionsIsPartTimeEmployed: {
+      id: 'marp.application:general.information.questions.is.part.time.employed',
       defaultMessage: 'Ertu í hlutastarfi?',
       description: 'Are you working part-time?',
     },
@@ -99,26 +99,26 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description: 'Are you studying?',
     },
 
-    // Sick pay
-    sickPaySubSectionTitle: {
-      id: 'marp.application:general.information.sick.pay.sub.section.title',
+    // Employee sick pay
+    employeeSickPaySubSectionTitle: {
+      id: 'marp.application:general.information.employee.sick.pay.sub.section.title',
       defaultMessage: 'Veikindalaun',
       description: 'Sick pay',
     },
-    sickPayTitle: {
-      id: 'marp.application:general.information.sick.pay.title',
+    employeeSickPayTitle: {
+      id: 'marp.application:general.information.employee.sick.pay.title',
       defaultMessage:
         'Hefur þú nýtt rétt þinn til veikindalauna hjá atvinnurekanda?',
       description:
         'Have you used your sick pay entitlement at your current employer?',
     },
-    sickPayDoesEndDateTitle: {
-      id: 'marp.application:general.information.sick.pay.does.end.date.title',
+    employeeSickPayDoesEndDateTitle: {
+      id: 'marp.application:general.information.employee.sick.pay.does.end.date.title',
       defaultMessage: 'Hvenær líkur rétti þínum til veikindalauna?',
       description: 'When does your sick pay entitlement end?',
     },
-    sickPayDidEndDateTitle: {
-      id: 'marp.application:general.information.sick.pay.did.end.date.title',
+    employeeSickPayDidEndDateTitle: {
+      id: 'marp.application:general.information.employee.sick.pay.did.end.date.title',
       defaultMessage: 'Hvenær lauk rétti þínum til veikindalauna?',
       description: 'When did your sick pay entitlement end?',
     },

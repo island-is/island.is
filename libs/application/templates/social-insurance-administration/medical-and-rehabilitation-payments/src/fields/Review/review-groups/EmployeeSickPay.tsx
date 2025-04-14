@@ -1,54 +1,55 @@
-import { formatText, YES, YesOrNoEnum } from '@island.is/application/core'
+import { formatText, YES } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { NOT_APPLICABLE } from '../../../lib/constants'
 import {
   getApplicationAnswers,
   getYesNoNotApplicableTranslation,
 } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 
-import { NOT_APPLICABLE } from '../../../lib/constants'
-import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
-
-export const SickPay = ({
+export const EmployeeSickPay = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage, formatDate } = useLocale()
 
-  const { sickPayOption, sickPayDoesEndDate, sickPayDidEndDate } =
+  const { hasUtilizedEmployeeSickPayRights, employeeSickPayEndDate } =
     getApplicationAnswers(application.answers)
 
   return (
     <ReviewGroup
       isLast
       isEditable={editable}
-      editAction={() => goToScreen?.('sickPay')}
+      editAction={() => goToScreen?.('employeeSickPay')}
     >
-      <Stack space={2}>
-        <GridRow rowGap={2}>
+      <Stack space={3}>
+        <GridRow>
           <GridColumn span={['9/12', '9/12', '9/12', '12/12']}>
             <DataValue
               label={formatMessage(
                 medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                  .sickPayTitle,
+                  .employeeSickPayTitle,
               )}
               value={formatText(
-                getYesNoNotApplicableTranslation(sickPayOption),
+                getYesNoNotApplicableTranslation(
+                  hasUtilizedEmployeeSickPayRights,
+                ),
                 application,
                 formatMessage,
               )}
             />
           </GridColumn>
         </GridRow>
-        {sickPayOption !== NOT_APPLICABLE && (
-          <GridRow rowGap={2}>
-            <GridColumn span={'12/12'}>
+        {hasUtilizedEmployeeSickPayRights !== NOT_APPLICABLE && (
+          <GridRow>
+            <GridColumn span="12/12">
               <DataValue
                 label={
-                  sickPayOption === YES
+                  hasUtilizedEmployeeSickPayRights === YES
                     ? formatMessage(
                         medicalAndRehabilitationPaymentsFormMessage.shared
                           .sickPayDidEndDate,
@@ -58,11 +59,7 @@ export const SickPay = ({
                           .sickPayDoesEndDate,
                       )
                 }
-                value={
-                  sickPayOption === YesOrNoEnum.YES
-                    ? formatDate(sickPayDidEndDate)
-                    : formatDate(sickPayDoesEndDate)
-                }
+                value={formatDate(employeeSickPayEndDate)}
               />
             </GridColumn>
           </GridRow>

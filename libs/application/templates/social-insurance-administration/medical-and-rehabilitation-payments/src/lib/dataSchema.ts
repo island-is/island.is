@@ -66,35 +66,31 @@ export const dataSchema = z.object({
   questions: z
     .object({
       isSelfEmployed: z.enum([YES, NO]),
-      isWorkingPartTime: z.enum([YES, NO]),
+      isPartTimeEmployed: z.enum([YES, NO]),
       isStudying: z.enum([YES, NO]),
-      isSelfEmployedDate: z.string().optional(),
+      calculatedRemunerationDate: z.string().optional(),
     })
     .refine(
-      ({ isSelfEmployed, isSelfEmployedDate }) =>
-        isSelfEmployed === YES ? !!isSelfEmployedDate : true,
+      ({ isSelfEmployed, calculatedRemunerationDate }) =>
+        isSelfEmployed === YES ? !!calculatedRemunerationDate : true,
       {
-        path: ['isSelfEmployedDate'],
+        path: ['calculatedRemunerationDate'],
         params: errorMessages.dateRequired,
       },
     ),
-  sickPay: z
+  employeeSickPay: z
     .object({
-      option: z.enum([YES, NO, NOT_APPLICABLE]),
-      doesEndDate: z.string().optional(),
-      didEndDate: z.string().optional(),
+      hasUtilizedEmployeeSickPayRights: z.enum([YES, NO, NOT_APPLICABLE]),
+      endDate: z.string().optional(),
     })
     .refine(
-      ({ option, didEndDate }) => (option === YES ? !!didEndDate : true),
+      ({ hasUtilizedEmployeeSickPayRights, endDate }) =>
+        hasUtilizedEmployeeSickPayRights === YES ||
+        hasUtilizedEmployeeSickPayRights === NO
+          ? !!endDate
+          : true,
       {
-        path: ['didEndDate'],
-        params: errorMessages.dateRequired,
-      },
-    )
-    .refine(
-      ({ option, doesEndDate }) => (option === NO ? !!doesEndDate : true),
-      {
-        path: ['doesEndDate'],
+        path: ['endDate'],
         params: errorMessages.dateRequired,
       },
     ),

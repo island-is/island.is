@@ -38,8 +38,9 @@ export const unionSickPaySubSection = buildSubSection({
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayFromUnionName,
-          disabled: true,
           width: 'half',
+          disabled: true,
+          defaultValue: 'VR',
         }),
         buildDateField({
           id: 'unionSickPay.endDate',
@@ -50,10 +51,11 @@ export const unionSickPaySubSection = buildSubSection({
             return medicalAndRehabilitationPaymentsFormMessage.shared
               .sickPayDoesEndDate
           },
-          disabled: true,
-          width: 'half',
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
+          width: 'half',
+          disabled: true,
+          defaultValue: '2024-11-25',
         }),
       ],
     }),
@@ -73,12 +75,12 @@ export const unionSickPaySubSection = buildSubSection({
           required: true,
         }),
         buildDescriptionField({
-          id: 'unionSickPay.union.description',
-          titleVariant: 'h4',
-          space: 4,
+          id: 'unionSickPay.unionNationalId.description',
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionDescriptionTitle,
+          titleVariant: 'h4',
+          space: 4,
           condition: (answers) => {
             const { hasUtilizedUnionSickPayRights } =
               getApplicationAnswers(answers)
@@ -93,10 +95,10 @@ export const unionSickPaySubSection = buildSubSection({
           title:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionSelectTitle,
-          required: true,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionSelectPlaceholder,
+          required: true,
           condition: (answers) => {
             const { hasUtilizedUnionSickPayRights } =
               getApplicationAnswers(answers)
@@ -120,9 +122,7 @@ export const unionSickPaySubSection = buildSubSection({
           },
         }),
         buildDescriptionField({
-          id: 'unionSickPay.date.description',
-          titleVariant: 'h4',
-          space: 4,
+          id: 'unionSickPay.endDate.description',
           title: (application) => {
             const { hasUtilizedUnionSickPayRights } = getApplicationAnswers(
               application.answers,
@@ -136,6 +136,8 @@ export const unionSickPaySubSection = buildSubSection({
             return medicalAndRehabilitationPaymentsFormMessage
               .generalInformation.unionSickPayDoesEndDate
           },
+          titleVariant: 'h4',
+          space: 4,
           condition: (answers) => {
             const { hasUtilizedUnionSickPayRights } =
               getApplicationAnswers(answers)
@@ -148,9 +150,9 @@ export const unionSickPaySubSection = buildSubSection({
         buildDateField({
           id: 'unionSickPay.endDate',
           title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
-          required: true,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
+          required: true,
           condition: (answers) => {
             const { hasUtilizedUnionSickPayRights } =
               getApplicationAnswers(answers)
@@ -162,11 +164,11 @@ export const unionSickPaySubSection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'unionSickPay.fileupload.description',
-          titleVariant: 'h4',
-          space: 4,
           title:
             medicalAndRehabilitationPaymentsFormMessage.shared
               .uploadConfirmationDocument,
+          titleVariant: 'h4',
+          space: 4,
           condition: (answers) => {
             const { hasUtilizedUnionSickPayRights } =
               getApplicationAnswers(answers)

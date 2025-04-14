@@ -18,10 +18,10 @@ import { FC } from 'react'
 import { Attachments } from './review-groups/Attachments'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { Comment } from './review-groups/Comment'
+import { EmployeeSickPay } from './review-groups/EmployeeSickPay'
 import { Payment } from './review-groups/Payment'
 import { Questions } from './review-groups/Questions'
 import { RehabilitationPlan } from './review-groups/RehabilitationPlan'
-import { SickPay } from './review-groups/SickPay'
 import { UnionSickPay } from './review-groups/UnionSickPay'
 
 interface ReviewScreenProps {
@@ -166,7 +166,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <BaseInformation {...childProps} />
       <Payment {...childProps} />
       <Questions {...childProps} />
-      <SickPay {...childProps} />
+      <EmployeeSickPay {...childProps} />
       <UnionSickPay {...childProps} />
       <RehabilitationPlan />
       <Comment {...childProps} />
