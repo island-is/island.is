@@ -9,8 +9,7 @@ on:
 jobs:
   close_feature:
     runs-on: arc-runners
-    if: ${{ !cancelled()
-      && contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
     permissions:
       id-token: write
       contents: write
