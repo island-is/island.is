@@ -70,7 +70,11 @@ const Confirmation: FC = () => {
   const isAssignedRegistrar = user && workingCase.registrar?.id === user.id
 
   const hideNextButton = () => {
-    if (isCorrectingRuling || workingCase.isCompletedWithoutRuling) {
+    if (workingCase.isCompletedWithoutRuling) {
+      return false
+    }
+
+    if (isCorrectingRuling) {
       return !isAssignedJudge && !isAssignedRegistrar
     }
 
