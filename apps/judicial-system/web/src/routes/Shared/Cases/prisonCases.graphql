@@ -88,7 +88,6 @@ query PrisonCases {
     postponedIndefinitelyExplanation
     indictmentRulingDecision
     indictmentAppealDeadline
-    indictmentCompletedDate
     caseSentToCourtDate
   }
 }

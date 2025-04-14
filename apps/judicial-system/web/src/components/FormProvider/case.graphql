@@ -304,7 +304,6 @@ query Case($input: CaseQueryInput!) {
     indictmentVerdictAppealDeadlineExpired
     indictmentDecision
     indictmentReviewDecision
-    indictmentCompletedDate
     courtSessionType
     mergeCase {
       id
