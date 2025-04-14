@@ -8,7 +8,7 @@ import {
   NationalRegistryV3ApplicationsClientModule,
 } from '@island.is/clients/national-registry-v3-applications'
 import { ConfigModule } from '@nestjs/config'
-import { XRoadConfig } from '@island.is/nest/config'
+import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 
 @Module({
   imports: [
@@ -26,7 +26,11 @@ import { XRoadConfig } from '@island.is/nest/config'
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [XRoadConfig, NationalRegistryV3ApplicationsClientConfig],
+      load: [
+        XRoadConfig,
+        NationalRegistryV3ApplicationsClientConfig,
+        IdsClientConfig,
+      ],
     }),
     NationalRegistryV3ApplicationsClientModule,
   ],
