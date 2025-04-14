@@ -32,39 +32,29 @@ export const CertificateOfTenureSchema = z.object({
 })
 
 const AssigneeInformationSchema = z.object({
-  companyAndAssignee: z
-    .array(
-      z.object({
-        company: z.object({
-          nationalId: z
-            .string()
-            .refine(
-              (nationalId) => nationalId && kennitala.isCompany(nationalId),
-            ),
-          name: z.string().min(1),
-        }),
-        assignee: z.object({
-          nationalId: z
-            .string()
-            .refine(
-              (nationalId) => nationalId && kennitala.isPerson(nationalId),
-            ),
-          name: z.string().min(1),
-          email: z.string().refine((email) => isValidEmail(email)),
-          phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
-        }),
-        workMachine: z.array(z.string()).min(1),
-        isSameAsApplicant: z.boolean().refine((val) => !val),
-      }),
-    )
-    .optional(),
+  company: z.object({
+    nationalId: z
+      .string()
+      .refine((nationalId) => nationalId && kennitala.isCompany(nationalId)),
+    name: z.string().min(1),
+  }),
+  assignee: z.object({
+    nationalId: z
+      .string()
+      .refine((nationalId) => nationalId && kennitala.isPerson(nationalId)),
+    name: z.string().min(1),
+    email: z.string().refine((email) => isValidEmail(email)),
+    phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
+  }),
+  workMachine: z.array(z.string()).min(1),
+  isSameAsApplicant: z.boolean().refine((val) => !val),
 })
 
 export const TrainingLicenseOnAWorkMachineAnswersSchema = z.object({
   information: InformationSchema,
   certificateOfTenure: z.array(CertificateOfTenureSchema),
   validCertificateOfTenure: z.boolean().optional(),
-  assigneeInformation: AssigneeInformationSchema,
+  assigneeInformation: z.array(AssigneeInformationSchema),
   rejected: z.boolean().optional(),
   approved: z.array(z.string()).optional(),
 })

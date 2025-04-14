@@ -25,10 +25,9 @@ export const assigneeInformationSection = buildSection({
       description: assigneeInformation.general.description,
       children: [
         buildTableRepeaterField({
-          id: 'assigneeInformation.companyAndAssignee',
+          id: 'assigneeInformation',
           addItemButtonText: assigneeInformation.labels.tableButtonText,
           marginTop: 0,
-          initActiveFieldIfEmpty: true,
           table: {
             format: {
               company: (value) => {
@@ -42,6 +41,7 @@ export const assigneeInformationSection = buildSection({
             ],
             rows: ['company', 'name', 'workMachine'],
           },
+          initActiveFieldIfEmpty: true,
           fields: {
             company: {
               component: 'nationalIdWithName',
@@ -52,7 +52,7 @@ export const assigneeInformationSection = buildSection({
               customNationalIdLabel:
                 assigneeInformation.labels.companyNationalId,
               clearOnChange: (index) => [
-                `assigneeInformation.companyAndAssignee[${index}].company.name`,
+                `assigneeInformation[${index}].company.name`,
               ],
             },
             assignee: {
@@ -70,7 +70,7 @@ export const assigneeInformationSection = buildSection({
               customNationalIdLabel:
                 assigneeInformation.labels.assigneeNationalId,
               clearOnChange: (index) => [
-                `assigneeInformation.companyAndAssignee[${index}].assignee.name`,
+                `assigneeInformation[${index}].assignee.name`,
               ],
             },
             isSameAsApplicant: {

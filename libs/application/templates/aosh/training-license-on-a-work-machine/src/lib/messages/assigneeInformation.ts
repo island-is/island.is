@@ -92,6 +92,11 @@ export const assigneeInformation = {
         'Það vantar að velja staðfestingaraðila fyrir eftirfarandi vinnuvélar: {value}',
       description: `Assignee information missing work machine alert`,
     },
+    noAssigneeError: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.noAssigneeError',
+      defaultMessage: 'Þú þarft að skrá staðfestingaraðila fyrir vinnuvél/ar.',
+      description: `Assignee information missing assignees alert`,
+    },
     invalidWorkMachineAlert: {
       id: 'aosh.tlwm.application:assigneeInformation.labels.invalidWorkMachineAlert',
       defaultMessage:

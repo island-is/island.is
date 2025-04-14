@@ -12,7 +12,7 @@ export const filterWorkMachineOptions = (
   const assigneeInformation = getValueViaPath<
     TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
   >(answers, 'assigneeInformation')
-  assigneeInformation?.companyAndAssignee?.forEach((item, i) => {
+  assigneeInformation?.forEach((item, i) => {
     if (
       i !== index &&
       item.workMachine?.some((machine) =>

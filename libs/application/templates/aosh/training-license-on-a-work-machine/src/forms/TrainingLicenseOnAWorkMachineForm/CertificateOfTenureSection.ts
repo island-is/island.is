@@ -4,13 +4,13 @@ import {
   getValueViaPath,
   buildTableRepeaterField,
   YES,
-  buildCustomField,
   buildAlertMessageField,
 } from '@island.is/application/core'
 import { assigneeInformation, certificateOfTenure } from '../../lib/messages'
 import { setOnMachineNumberChange } from '../../utils/setOnMachineNumberChange'
 import { formatDate } from '../../utils'
 import { Application } from '@island.is/api/schema'
+import { TrainingLicenseOnAWorkMachine } from '../..'
 
 export const certificateOfTenureSection = buildSection({
   id: 'certificateOfTenureSection',
@@ -225,9 +225,18 @@ export const certificateOfTenureSection = buildSection({
             },
           },
         }),
-        buildCustomField({
-          component: 'CheckBeforeSubmitCertificateOfTenure',
-          id: 'checkBeforeSubmitCertificateOfTenure',
+        buildAlertMessageField({
+          id: 'certificateOfTenure.noCertificatesError',
+          message: certificateOfTenure.labels.noCertificatesError,
+          doesNotRequireAnswer: true,
+          alertType: 'error',
+          condition: (answers) => {
+            const certificateOfTenure = getValueViaPath<
+              TrainingLicenseOnAWorkMachine['certificateOfTenure']
+            >(answers, 'certificateOfTenure')
+            return !certificateOfTenure || certificateOfTenure.length === 0
+          },
+          shouldBlockSubmitIfError: true,
         }),
         buildAlertMessageField({
           id: 'certificateOfTenure.validityError',
@@ -236,11 +245,16 @@ export const certificateOfTenureSection = buildSection({
           doesNotRequireAnswer: true,
           alertType: 'error',
           condition: (answers) => {
-            const validCertificateOfTenure =
-              getValueViaPath<boolean>(answers, 'validCertificateOfTenure') ??
-              true
-            return !validCertificateOfTenure
+            const certificateOfTenure = getValueViaPath<
+              TrainingLicenseOnAWorkMachine['certificateOfTenure']
+            >(answers, 'certificateOfTenure')
+            const totalTenureInHours = certificateOfTenure?.reduce(
+              (sum, tenure) => sum + (parseInt(tenure.tenureInHours, 10) || 0),
+              0,
+            )
+            return !!(totalTenureInHours && totalTenureInHours < 1000)
           },
+          shouldBlockSubmitIfError: true,
         }),
       ],
     }),

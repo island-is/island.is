@@ -143,5 +143,10 @@ export const certificateOfTenure = {
         'Þú þarft að hafa unnið að lágmarki 1000 tíma í vélaflokknum. Skráðu allar þær vinnuvélar sem þú hefur unnið á til að ná þessum tímamörkum.',
       description: 'Certificate of tenure validity error label',
     },
+    noCertificatesError: {
+      id: 'aosh.tlwm.application:certificateOfTenure.labels.noCertificatesError',
+      defaultMessage: 'Þú þarft að skrá að minnsta kosti eina vinnuvél.',
+      description: 'Certificate of tenure no certificates error label',
+    },
   }),
 }

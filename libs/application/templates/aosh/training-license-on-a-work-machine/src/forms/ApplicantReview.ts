@@ -38,26 +38,24 @@ export const ApplicantReview: Form = buildForm({
                   getValueViaPath<string[]>(application.answers, 'approved') ??
                   []
                 return (
-                  assigneeInformation?.companyAndAssignee?.map(
-                    ({ workMachine, assignee }) => ({
-                      heading: {
-                        ...applicationStatus.labels.actionCardTitle,
-                        values: { value: workMachine.join(', ') },
-                      },
-                      tag: {
-                        label: approved.includes(assignee.nationalId)
-                          ? applicationStatus.labels.actionCardTagApproved
-                          : applicationStatus.labels.actionCardTag,
-                        outlined: false,
-                        variant: approved.includes(assignee.nationalId)
-                          ? 'mint'
-                          : 'purple',
-                      },
-                      text: approved.includes(assignee.nationalId)
-                        ? applicationStatus.labels.actionCardMessageApproved
-                        : applicationStatus.labels.actionCardMessage,
-                    }),
-                  ) ?? []
+                  assigneeInformation?.map(({ workMachine, assignee }) => ({
+                    heading: {
+                      ...applicationStatus.labels.actionCardTitle,
+                      values: { value: workMachine.join(', ') },
+                    },
+                    tag: {
+                      label: approved.includes(assignee.nationalId)
+                        ? applicationStatus.labels.actionCardTagApproved
+                        : applicationStatus.labels.actionCardTag,
+                      outlined: false,
+                      variant: approved.includes(assignee.nationalId)
+                        ? 'mint'
+                        : 'purple',
+                    },
+                    text: approved.includes(assignee.nationalId)
+                      ? applicationStatus.labels.actionCardMessageApproved
+                      : applicationStatus.labels.actionCardMessage,
+                  })) ?? []
                 )
               },
             }),

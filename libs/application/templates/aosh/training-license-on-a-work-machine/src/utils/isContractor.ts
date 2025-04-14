@@ -6,5 +6,5 @@ export const isContractor = (answers: FormValue) => {
   const certificateOfTenure = getValueViaPath<
     TrainingLicenseOnAWorkMachineAnswers['certificateOfTenure']
   >(answers, 'certificateOfTenure')
-  return !certificateOfTenure?.find((x) => !x.isContractor.includes('yes'))
+  return !certificateOfTenure?.find((x) => !x?.isContractor?.includes('yes'))
 }

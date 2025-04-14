@@ -19,13 +19,13 @@ export const getMissingWorkMachines = (answers: FormValue) => {
       TrainingLicenseOnAWorkMachineAnswers['certificateOfTenure']
     >(answers, 'certificateOfTenure') || []
   )
-    .filter((x) => !x.isContractor.includes('yes'))
+    .filter((x) => !x?.isContractor?.includes('yes'))
     .map((x) => x.machineNumber)
 
   const selectedWorkMachines = (
     getValueViaPath<
       TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
-    >(answers, 'assigneeInformation')?.companyAndAssignee || []
+    >(answers, 'assigneeInformation') || []
   ).flatMap((x) => x.workMachine)
 
   const missingWorkMachines = allWorkMachines.filter(
@@ -45,7 +45,7 @@ export const getInvalidWorkMachines = (answers: FormValue) => {
   const selectedWorkMachines = (
     getValueViaPath<
       TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
-    >(answers, 'assigneeInformation')?.companyAndAssignee || []
+    >(answers, 'assigneeInformation') || []
   ).flatMap((x) => x.workMachine)
 
   const invalidWorkMachines = selectedWorkMachines.filter(

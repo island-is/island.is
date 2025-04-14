@@ -357,7 +357,7 @@ const getNationalIdListOfAssignees = (application: Application) => {
     const assigneeInformation = getValueViaPath<
       TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
     >(application.answers, 'assigneeInformation')
-    const assignees = assigneeInformation?.companyAndAssignee?.map(
+    const assignees = assigneeInformation?.map(
       ({ assignee }) => assignee.nationalId,
     )
     return assignees ?? []

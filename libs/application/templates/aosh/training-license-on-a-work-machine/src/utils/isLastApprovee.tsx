@@ -4,9 +4,9 @@ import { TrainingLicenseOnAWorkMachineAnswers } from '../shared/types'
 
 export const isLastApprovee = (answers: FormValue) => {
   const approved = getValueViaPath<string[]>(answers, 'approved') ?? []
-  const companyAndAssignee =
+  const assigneeInformation =
     getValueViaPath<
       TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
-    >(answers, 'assigneeInformation')?.companyAndAssignee ?? []
-  return approved.length === companyAndAssignee.length - 1
+    >(answers, 'assigneeInformation') ?? []
+  return approved.length === assigneeInformation.length - 1
 }

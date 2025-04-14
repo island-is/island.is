@@ -59,9 +59,9 @@ export const getCleanCompanyInformationList = (
   const companyInformation = getValueViaPath<
     TrainingLicenseOnAWorkMachine['assigneeInformation']
   >(application.answers, 'assigneeInformation')
-  const companyAndAssignee = companyInformation?.companyAndAssignee ?? []
+  const assigneeInformation = companyInformation ?? []
 
-  return companyAndAssignee.map((info) => ({
+  return assigneeInformation.map((info) => ({
     companyName: info?.company.name ?? '',
     companyNationalId: info?.company.nationalId ?? '',
     contactNationalId: info?.assignee.nationalId ?? '',

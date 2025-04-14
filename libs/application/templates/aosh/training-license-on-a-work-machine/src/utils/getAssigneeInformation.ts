@@ -22,7 +22,7 @@ export const getAssigneeOverviewInformation = (
   const userInfo = getUserInfo(answers, userNationalId)
 
   return (
-    assigneeInformation?.companyAndAssignee
+    assigneeInformation
       ?.filter(({ assignee }) =>
         isAssignee
           ? assignee.nationalId === userInfo?.assignee.nationalId

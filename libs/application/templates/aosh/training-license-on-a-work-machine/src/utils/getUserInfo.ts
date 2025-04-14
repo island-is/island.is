@@ -6,7 +6,7 @@ export const getUserInfo = (answers: FormValue, userNationalId: string) => {
   const assigneeInformation = getValueViaPath<
     TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
   >(answers, 'assigneeInformation')
-  const userInfo = assigneeInformation?.companyAndAssignee?.find(
+  const userInfo = assigneeInformation?.find(
     ({ assignee }) => assignee.nationalId === userNationalId,
   )
   return userInfo
