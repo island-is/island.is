@@ -30,7 +30,7 @@ jobs:
           HELM_VALUES_TOKEN: ${{ steps.get-token.outputs.token }}
           FEATURE_NAME: ${{ env.FEATURE_NAME }}
         run: |
-          echo $FEATURE_NAME"
+          echo $FEATURE_NAME
         # run: |
         #   repo_owner="island-is"
         #   repository="helm-values"
