@@ -338,12 +338,10 @@ const canCaseDefendantDefenceUserAccessRequestCase = (
   )
 
   // Check case defender assignment
-  if (
+  return (
     theCase.defenderNationalId &&
     normalizedAndFormattedNationalId.includes(theCase.defenderNationalId)
-  ) {
-    return true
-  }
+  )
 }
 
 const canDefenceUserAccessRequestCase = (
@@ -377,64 +375,15 @@ const canDefenceUserAccessRequestCase = (
       ) &&
       victim.lawyerAccessToRequest !== RequestSharedWhen.OBLIGATED,
   )
-  if (
+
+  return Boolean(
     victimWithLawyer &&
-    canDefenceUserAccessRequestCaseState({
-      requestSharedWhen: victimWithLawyer.lawyerAccessToRequest,
-      state: theCase.state,
-      dateLogs: theCase.dateLogs,
-    })
-  ) {
-    return true
-  }
-  return false
-}
-
-const canDefenceUserAccessIndictmentCase = (
-  theCase: Case,
-  user: User,
-): boolean => {
-  // Check case state access
-  if (
-    ![
-      CaseState.WAITING_FOR_CANCELLATION,
-      CaseState.RECEIVED,
-      CaseState.COMPLETED,
-    ].includes(theCase.state)
-  ) {
-    return false
-  }
-
-  // Check received case access
-  const canDefenderAccessReceivedCase = Boolean(
-    DateLog.arraignmentDate(theCase.dateLogs),
+      canDefenceUserAccessRequestCaseState({
+        requestSharedWhen: victimWithLawyer.lawyerAccessToRequest,
+        state: theCase.state,
+        dateLogs: theCase.dateLogs,
+      }),
   )
-
-  if (theCase.state === CaseState.RECEIVED && !canDefenderAccessReceivedCase) {
-    return false
-  }
-
-  // Check case defender assignment
-  if (
-    Defendant.isConfirmedDefenderOfDefendant(
-      user.nationalId,
-      theCase.defendants,
-    )
-  ) {
-    return true
-  }
-
-  // Check case spokesperson assignment
-  if (
-    CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
-      user.nationalId,
-      theCase.civilClaimants,
-    )
-  ) {
-    return true
-  }
-
-  return false
 }
 
 const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
