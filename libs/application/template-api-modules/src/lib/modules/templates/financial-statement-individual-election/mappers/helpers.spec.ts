@@ -18,8 +18,8 @@ describe('Financial statement individual election helpers', () => {
       }
 
       const answers = {
-        'election.incomeLimit': expectedResult.incomeLimit,
-        'election.selectElection': expectedResult.electionId,
+        'incomeLimit.limit': expectedResult.incomeLimit,
+        'election.electionId': expectedResult.electionId,
         'about.fullName': expectedResult.clientName,
         'about.phoneNumber': expectedResult.clientPhone,
         'about.email': expectedResult.clientEmail,
