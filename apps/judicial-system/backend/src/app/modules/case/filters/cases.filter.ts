@@ -22,6 +22,7 @@ import {
   isPrisonStaffUser,
   isProsecutionUser,
   isPublicProsecutorUser,
+  RequestSharedWhen,
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
@@ -247,6 +248,21 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                           (SELECT case_id
                             FROM date_log
                             WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
+                        `),
+                      },
+                    },
+                  ],
+                },
+                {
+                  [Op.and]: [
+                    { state: [CaseState.SUBMITTED, CaseState.RECEIVED] },
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                          (SELECT case_id
+                            FROM victim
+                            WHERE lawyer_national_id in ('${normalizedNationalId}', '${formattedNationalId}') 
+                            AND lawyer_access_to_request = '${RequestSharedWhen.READY_FOR_COURT}')
                         `),
                       },
                     },
