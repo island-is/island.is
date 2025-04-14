@@ -501,13 +501,6 @@ jobs:
         with:
           matrix-step-name: docker-build
 
-      - name: AWS login for setup-yarn
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ${{ env.AWS_REGION }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
       - name: Setup yarn
         uses: ./monorepo/.github/actions/setup-yarn
         with:
