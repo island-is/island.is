@@ -29,17 +29,12 @@ jobs:
         env:
           HELM_VALUES_TOKEN: ${{ steps.get-token.outputs.token }}
           FEATURE_NAME: ${{ env.FEATURE_NAME }}
-          FEATURE_NAME_2: ${{join(steps.run_tests.outputs.*, '\n')}}
         run: |
-          echo "AA: $FEATURE_NAME"
-          echo "BB: $FEATURE_NAME_2"
-          echo "TEST"
-        # run: |
-        #   repo_owner="island-is"
-        #   repository="helm-values"
-        #   echo "Dispatch workflow for feature name: $FEATURE_NAME"
-        #   curl -X POST \
-        #   -H "Accept: application/vnd.github+json" \
-        #   -H "Authorization: Bearer $HELM_VALUES_TOKEN" \
-        #   "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
-        #   -d "{\"event_type\":\"destroy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}"
+          repo_owner="island-is"
+          repository="helm-values"
+          echo "Dispatch workflow for feature name: $FEATURE_NAME"
+          curl -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer $HELM_VALUES_TOKEN" \
+          "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
+          -d "{\"event_type\":\"destroy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}"
