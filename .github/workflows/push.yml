@@ -572,7 +572,7 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer $HELM_VALUES_TOKEN" \
           "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
-          -d "{\"event_type\":\"deploy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}"
+          -d "{\"event_type\":\"deploy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}}"
   push-success:
     runs-on: arc-runners
     if: ${{ !cancelled() }}
