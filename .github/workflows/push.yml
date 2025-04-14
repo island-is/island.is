@@ -94,24 +94,6 @@ jobs:
         id: git_nx_base
         uses: ./.github/actions/prerelease-checkout
 
-      #   # NOTE: checkout features
-      # - name: Checkout branches for feature deployment
-      #   if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
-      #   run: |
-      #     set -euo pipefail
-      #     git checkout "$GITHUB_HEAD_REF"
-      #     git checkout "$GITHUB_BASE_REF"
-      #     git checkout "$GITHUB_SHA"
-      #     git config --global user.email "ci@island.is"
-      #     git config --global user.name "CI Bot"
-      #
-      #     # BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-      #     # HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
-      #     BASE_SHA=${{ env.NX_BASE }}
-      #     HEAD_SHA=${{ env.NX_HEAD }}
-      #     echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
-      #     echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
-
       # NOTE: checkout main
       - name: Checkout main branch
         if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
@@ -599,8 +581,6 @@ jobs:
       - docker-build
       - deploy-feature
     steps:
-      # - name: Check deploy success
-      #   run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
       - name: Announce success
         if: needs.pre-checks.outputs.PRE_CHECK
         run: echo "Build is successful"
