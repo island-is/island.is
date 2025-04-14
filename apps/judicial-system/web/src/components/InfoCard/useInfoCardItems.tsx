@@ -375,11 +375,9 @@ const useInfoCardItems = () => {
           workingCase.victims && workingCase.victims.length > 1 ? 3 : 2
         }
       >
-        {capitalize(
-          workingCase.victims && workingCase.victims.length > 1
-            ? 'Brotaþolar'
-            : 'Brotaþoli',
-        )}
+        {workingCase.victims && workingCase.victims.length > 1
+          ? 'Brotaþolar'
+          : 'Brotaþoli'}
       </Text>
     ),
     values: workingCase.victims

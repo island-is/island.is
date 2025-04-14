@@ -15,7 +15,7 @@ export const VictimInfo: FC<VictimInfoProps> = (props) => {
 
   return (
     <>
-      <Box marginBottom={1}>
+      <Box component="p" marginBottom={1}>
         <Text as="span" fontWeight="semiBold">
           {'Nafn: '}
         </Text>
@@ -25,25 +25,18 @@ export const VictimInfo: FC<VictimInfoProps> = (props) => {
             `, ${formatDOB(victim.nationalId, !victim.hasNationalId)}`}
         </Text>
       </Box>
+      <Text as="span" whiteSpace="pre" fontWeight="semiBold">
+        {'Réttargæslumaður: '}
+      </Text>
       {victim.lawyerName ? (
-        <>
-          <Text as="span" whiteSpace="pre" fontWeight="semiBold">
-            {'Réttargæslumaður: '}
-          </Text>
-          {RenderPersonalData(
-            victim.lawyerName,
-            victim.lawyerEmail,
-            victim.lawyerPhoneNumber,
-            false,
-          )}
-        </>
+        RenderPersonalData(
+          victim.lawyerName,
+          victim.lawyerEmail,
+          victim.lawyerPhoneNumber,
+          false,
+        )
       ) : (
-        <>
-          <Text as="span" whiteSpace="pre" fontWeight="semiBold">
-            {'Réttargæslumaður: '}
-          </Text>
-          <Text as="span">Hefur ekki verið skráður</Text>
-        </>
+        <Text as="span">Hefur ekki verið skráður</Text>
       )}
     </>
   )
