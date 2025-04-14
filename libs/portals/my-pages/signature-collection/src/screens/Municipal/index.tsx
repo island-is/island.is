@@ -26,10 +26,7 @@ const SignatureCollectionMunicipal = () => {
         slug={listsForOwner?.[0]?.slug}
       />
       {!loadingCurrentCollection && isOwner.success ? (
-        <OwnerView
-          currentCollection={currentCollection}
-          lists={listsForOwner}
-        />
+        <OwnerView />
       ) : (
         <SigneeView currentCollection={currentCollection} />
       )}
