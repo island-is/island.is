@@ -3,7 +3,7 @@ name: Monorepo pipeline - build and deploy
 on:
   push:
     branches:
-      - chore/runner-debug
+      - fix/runner-debug
 
 defaults:
   run:
@@ -11,7 +11,7 @@ defaults:
 
 jobs:
   prepare:
-    runs-on: arc-runners
+    runs-on: arc-docker
     timeout-minutes: 90
 
     steps:
