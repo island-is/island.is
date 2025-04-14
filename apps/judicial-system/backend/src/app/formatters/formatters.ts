@@ -422,16 +422,16 @@ export const formatDefenderCourtDateEmailNotification = (
   defenderSubRole?: DefenderSubRole,
 ): string => {
   /** contentful strings */
-  const defenderResponsibility =
-    defenderSubRole === DefenderSubRole.DEFENDANT_DEFENDER
-      ? `${
-          sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
-            ? 'talsmann'
-            : 'verjanda'
-        } sakbornings`
-      : defenderSubRole === DefenderSubRole.VICTIM_LAWYER
-      ? 'réttargæslumaður'
-      : null
+  const defenderResponsibility = formatDefenderResponsibility({
+    defenderSubRole,
+    getCustomDefendantDefenderLabel: () =>
+      `${
+        sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
+          ? 'talsmann'
+          : 'verjanda'
+      } sakbornings`,
+  })
+
   const cf = notifications.defenderCourtDateEmail
   const sessionArrangementsText = formatMessage(cf.sessionArrangements, {
     court,
@@ -498,12 +498,10 @@ export const formatDefenderCourtDateLinkEmailNotification = ({
     linkEnd: '</a>',
   }
 
-  const defenderResponsibility =
-    defenderSubRole === DefenderSubRole.DEFENDANT_DEFENDER
-      ? 'verjanda varnaraðila/talsmanns'
-      : defenderSubRole === DefenderSubRole.VICTIM_LAWYER
-      ? 'réttargæslumaður brotaþola'
-      : null
+  const defenderResponsibility = formatDefenderResponsibility({
+    defenderSubRole,
+    getCustomDefendantDefenderLabel: () => 'verjanda/talsmann sakbornings',
+  })
 
   const body = requestSharedWithDefender
     ? formatMessage(cf.linkBody, { courtCaseNumber, defenderResponsibility })
@@ -703,6 +701,21 @@ export const formatCourtIndictmentReadyForCourtEmailNotification = (
   return { body, subject }
 }
 
+export const formatDefenderResponsibility = ({
+  defenderSubRole,
+  getCustomDefendantDefenderLabel,
+}: {
+  defenderSubRole?: DefenderSubRole
+  getCustomDefendantDefenderLabel?: () => string
+}) =>
+  defenderSubRole === DefenderSubRole.DEFENDANT_DEFENDER
+    ? getCustomDefendantDefenderLabel
+      ? getCustomDefendantDefenderLabel()
+      : 'verjanda varnaraðila'
+    : defenderSubRole === DefenderSubRole.VICTIM_LAWYER
+    ? 'réttargæslumaður'
+    : null
+
 export const formatDefenderReadyForCourtEmailNotification = ({
   formatMessage,
   policeCaseNumber,
@@ -722,12 +735,7 @@ export const formatDefenderReadyForCourtEmailNotification = ({
 
   const body = formatMessage(notifications.defenderReadyForCourt.body, {
     policeCaseNumber: policeCaseNumber,
-    defenderResponsibility:
-      defenderSubRole === DefenderSubRole.DEFENDANT_DEFENDER
-        ? 'verjanda varnaraðila'
-        : defenderSubRole === DefenderSubRole.VICTIM_LAWYER
-        ? 'réttargæslumaður brotaþola'
-        : null,
+    defenderResponsibility: formatDefenderResponsibility({ defenderSubRole }),
   })
 
   const link = formatMessage(notifications.defenderReadyForCourt.link, {
