@@ -232,7 +232,7 @@ export const Properties = new XroadConf({
 export const PropertySearch = new XroadConf({
   env: {
     XROAD_HMS_PROPERTY_SEARCH_PATH: {
-      dev: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v2-beta',
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/fasteignir-v2-beta',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/fasteignir-v2-beta',
       prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v2',
     },
