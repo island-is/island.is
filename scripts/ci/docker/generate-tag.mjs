@@ -110,8 +110,7 @@ function getTypeOfDeployment() {
       prod: true,
     }
   }
-  // UNKNOWN BRANCH
-  // console.error(`Unknown branch: ${targetBranch} - not sure how to tag this deployment`);
+
   throw new Error(`Unsupported branch: ${targetBranch}`)
 }
 

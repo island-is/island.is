@@ -505,7 +505,7 @@ jobs:
 
           for image in ${IMAGES//,/ }; do
             image=$(echo "$image" | tr -d "'")
-            ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$image"
+            ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$image" "$DOCKER_REGISTRY"
           done
 
           echo "Change directory to root"
