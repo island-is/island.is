@@ -1,4 +1,4 @@
-name: Monorepo pipeline - build and deploy
+name: Debug
 
 on:
   push:
