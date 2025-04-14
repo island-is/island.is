@@ -25,7 +25,6 @@ jobs:
 
       - name: Get token
         id: get-token
-        working-directory: ${{ inputs.working-directory }}
         shell: bash
         env:
           APP_ID: ${{ secrets.HELM_VALUES_APP_ID }}
