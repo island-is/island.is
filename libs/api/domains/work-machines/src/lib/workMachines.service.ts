@@ -60,13 +60,8 @@ export class WorkMachinesService {
         ?.map((v) => ({
           id: v.id,
           registrationNumber: v.registrationNumber,
-          typeBreakdown: v.type
-            ? {
-                name: v.type.type,
-                subTypeName: v.type.subType,
-                fulLTypeName: v.type.fullType,
-              }
-            : undefined,
+          type: v.type,
+          model: v.model,
           status: v.status,
           category: v.category,
           subCategory: v.subCategory,
@@ -77,7 +72,6 @@ export class WorkMachinesService {
           supervisor: v.supervisor,
           labels: v.labels,
           //deprecation line
-          type: v.type?.fullType,
           ownerNumber: v.owner?.number,
           ownerName: v.owner?.name,
           supervisorName: v.supervisor?.name,
@@ -188,6 +182,8 @@ export class WorkMachinesService {
       id: data.id,
       registrationNumber: data.registrationNumber,
       registrationDate: data.registrationDate,
+      type: data.type,
+      model: data.model,
       status: data.status,
       category: data.category,
       subCategory: data.subCategory,
@@ -205,7 +201,6 @@ export class WorkMachinesService {
       labels: data.labels,
 
       //deprecated line
-      type: data.type?.fullType,
       ownerNumber: data.owner?.number,
       ownerName: data.owner?.name,
       ownerAddress: data.owner?.address,

@@ -2,12 +2,13 @@ import { MachineFriendlyDto, MachineHateoasDto } from '../..'
 import { EntityDto } from './entity.dto'
 import { LabelDto } from './label.dto'
 import { LinkDto } from './link.dto'
-import { TypeDto, mapType } from './type.dto'
+import { mapType } from './type.dto'
 
 export interface WorkMachinesCollectionItem {
   id: string
   registrationNumber?: string
-  type?: TypeDto
+  type?: string
+  model?: string
   status?: string
   category?: string
   subCategory?: string
@@ -34,10 +35,13 @@ export const mapWorkMachinesCollectionItem = (
     return null
   }
 
+  const { type, model } = mapType(rest?.type ?? undefined)
+
   return {
     id,
     registrationNumber: rest.registrationNumber ?? undefined,
-    type: mapType(rest?.type ?? undefined) ?? undefined,
+    type,
+    model,
     status: rest.status ?? undefined,
     category: rest.category ?? undefined,
     subCategory: rest.subCategory ?? undefined,
@@ -67,11 +71,14 @@ export const mapWorkMachine = (
     return null
   }
 
+  const { type, model } = mapType(rest?.type ?? undefined)
+
   return {
     id,
     registrationNumber: rest.registrationNumber ?? undefined,
     registrationDate: rest.registrationDate ?? undefined,
-    type: mapType(rest?.type ?? undefined) ?? undefined,
+    type,
+    model,
     status: rest.status ?? undefined,
     category: rest.category ?? undefined,
     subCategory: rest.subCategory ?? undefined,

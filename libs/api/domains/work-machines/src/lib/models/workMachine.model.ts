@@ -1,25 +1,27 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { Link } from './link.model'
 import { Entity } from './person.model'
 import { Label } from './label.model'
-import { TypeBreakdown } from './typeBreakdown.model'
 
 @ObjectType('WorkMachine')
 export class WorkMachine {
   @Field(() => ID)
   id!: string
 
-  @Field(() => TypeBreakdown, { nullable: true })
-  typeBreakdown?: TypeBreakdown
+  @Field({ nullable: true })
+  type?: string
 
   @Field({ nullable: true })
-  status?: string
+  model?: string
 
   @Field({ nullable: true })
   category?: string
 
   @Field({ nullable: true })
   subCategory?: string
+
+  @Field({ nullable: true })
+  status?: string
 
   @Field({ nullable: true, description: 'ISO8601' })
   dateLastInspection?: string
@@ -95,7 +97,4 @@ export class WorkMachine {
 
   @Field({ nullable: true, deprecationReason: 'Use supervisor property' })
   supervisorPostcode?: string
-
-  @Field({ nullable: true, deprecationReason: 'Use typeBreakdown' })
-  type?: string
 }

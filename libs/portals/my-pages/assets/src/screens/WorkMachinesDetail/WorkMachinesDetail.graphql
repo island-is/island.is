@@ -1,8 +1,7 @@
 query GetWorkMachineById($input: WorkMachinesInput!) {
   workMachine(input: $input) {
-    typeBreakdown {
-      fullTypeName
-    }
+    type
+    model
     status
     category
     subCategory

@@ -1,23 +1,27 @@
 export interface TypeDto {
-  fullType: string
-  type: string
-  subType?: string
+  type?: string
+  model?: string
 }
 
-export const mapType = (data?: string): TypeDto | null => {
+export const mapType = (data?: string): TypeDto => {
   if (!data) {
-    return null
+    return {
+      type: undefined,
+      model: undefined,
+    }
   }
 
-  const [type, ...subType] = data.split(' ')
+  const [type, ...model] = data.split(' ')
 
   if (!type) {
-    return null
+    return {
+      type: undefined,
+      model: undefined,
+    }
   }
 
   return {
-    fullType: data,
     type,
-    subType: subType.join(' '),
+    model: model.join(' '),
   }
 }
