@@ -74,11 +74,10 @@ export const informationSection = buildSection({
               application.externalData,
               'identity.data.address.city',
             )
-            if (!postalCode) {
+            if (!postalCode || !city) {
               postalCode = '999'
               city = 'Óskráð/Útlönd'
             }
-            if (!city) city = 'Óskráð/Útlönd'
             return `${postalCode} ${city}`
           },
         }),
