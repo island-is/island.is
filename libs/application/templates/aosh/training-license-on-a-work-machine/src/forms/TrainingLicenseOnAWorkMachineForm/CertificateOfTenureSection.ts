@@ -226,35 +226,49 @@ export const certificateOfTenureSection = buildSection({
           },
         }),
         buildAlertMessageField({
-          id: 'certificateOfTenure.noCertificatesError',
-          message: certificateOfTenure.labels.noCertificatesError,
-          doesNotRequireAnswer: true,
-          alertType: 'error',
-          condition: (answers) => {
-            const certificateOfTenure = getValueViaPath<
+          id: 'certificateOfTenure.alertValidation',
+          title: certificateOfTenure.labels.validationErrorTitle,
+          message: (application) => {
+            const certificateOfTenureList = getValueViaPath<
               TrainingLicenseOnAWorkMachine['certificateOfTenure']
-            >(answers, 'certificateOfTenure')
-            return !certificateOfTenure || certificateOfTenure.length === 0
-          },
-          shouldBlockSubmitIfError: true,
-        }),
-        buildAlertMessageField({
-          id: 'certificateOfTenure.validityError',
-          title: certificateOfTenure.labels.validityErrorTitle,
-          message: certificateOfTenure.labels.validityError,
-          doesNotRequireAnswer: true,
-          alertType: 'error',
-          condition: (answers) => {
-            const certificateOfTenure = getValueViaPath<
-              TrainingLicenseOnAWorkMachine['certificateOfTenure']
-            >(answers, 'certificateOfTenure')
-            const totalTenureInHours = certificateOfTenure?.reduce(
+            >(application.answers, 'certificateOfTenure')
+            const totalTenureInHours = certificateOfTenureList?.reduce(
               (sum, tenure) => sum + (parseInt(tenure.tenureInHours, 10) || 0),
               0,
             )
-            return !!(totalTenureInHours && totalTenureInHours < 1000)
+
+            const hasNoCertificatesError =
+              !certificateOfTenureList || certificateOfTenureList.length === 0
+            const hasMinTenureInHoursError = !!(
+              totalTenureInHours && totalTenureInHours < 1000
+            )
+
+            if (hasNoCertificatesError)
+              return certificateOfTenure.labels.noCertificatesError
+            else if (hasMinTenureInHoursError)
+              return certificateOfTenure.labels.minTenureInHoursError
+            else return ''
           },
-          shouldBlockSubmitIfError: true,
+          doesNotRequireAnswer: true,
+          alertType: 'error',
+          condition: (answers) => {
+            const certificateOfTenureList = getValueViaPath<
+              TrainingLicenseOnAWorkMachine['certificateOfTenure']
+            >(answers, 'certificateOfTenure')
+            const totalTenureInHours = certificateOfTenureList?.reduce(
+              (sum, tenure) => sum + (parseInt(tenure.tenureInHours, 10) || 0),
+              0,
+            )
+
+            const hasNoCertificatesError =
+              !certificateOfTenureList || certificateOfTenureList.length === 0
+            const hasMinTenureInHoursError = !!(
+              totalTenureInHours && totalTenureInHours < 1000
+            )
+
+            return hasNoCertificatesError || hasMinTenureInHoursError
+          },
+          shouldBlockInSetBeforeSubmitCallback: true,
         }),
       ],
     }),
