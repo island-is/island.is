@@ -18,11 +18,11 @@ import { MachineDetails } from '../models/toBeDeprecated/machineDetails'
 import { Model } from '../models/model.model'
 import { Category } from '../models/category.model'
 import { GetMachineParentCategoryByTypeAndModelInput } from '../dto/getMachineParentCategoryByTypeAndModel.input'
-import { SubCategory } from '../models/toBeDeprecated/subCategory'
-import { TechInfoItem } from '../models/toBeDeprecated/techInfoItem'
+import { TechInfoItem } from '../models/techInfoItem'
 import { MachineType } from '../models/toBeDeprecated/machineType'
 import { GetDocumentsInput } from '../dto/getDocuments.input'
 import { FileType } from '../workMachines.types'
+import { SubCategory } from '../models/subCategory.model'
 
 @Directive('@deprecated(reason: "Use something else")')
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -128,7 +128,9 @@ export class DeprecatedResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => MachineType, { deprecationReason: 'TO BE REMOVED' })
+  @Query(() => MachineType, {
+    deprecationReason: 'Use workMachine with registrationNumber input',
+  })
   @Audit()
   async getTypeByRegistrationNumber(
     @CurrentUser() auth: User,

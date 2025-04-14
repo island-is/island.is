@@ -230,7 +230,7 @@ const WorkMachinesOverview = () => {
                     ? formatDate(wm.dateLastInspection)
                     : formatMessage(messages.noInspection)
                 }`}
-                heading={wm.typeBreakdown?.fullType ?? ''}
+                heading={wm.typeBreakdown?.fullTypeName ?? ''}
                 cta={{
                   label: formatMessage(m.seeDetails),
                   variant: 'text',

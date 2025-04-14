@@ -1,5 +1,4 @@
 import {
-  MachineModelDto,
   MachineParentCategoryDetailsDto,
   MachineSubCategoryDto,
   MachineTypeDto,
@@ -24,7 +23,7 @@ import {
   mapRelToCollectionLink,
   mapRelationToLink,
 } from './mapper'
-import { LinkCategory } from './workMachines.types'
+import { LinkCategory, ModelDto } from './workMachines.types'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
 
@@ -61,7 +60,13 @@ export class WorkMachinesService {
         ?.map((v) => ({
           id: v.id,
           registrationNumber: v.registrationNumber,
-          typeBreakdown: v.type,
+          typeBreakdown: v.type
+            ? {
+                name: v.type.type,
+                subTypeName: v.type.subType,
+                fulLTypeName: v.type.fullType,
+              }
+            : undefined,
           status: v.status,
           category: v.category,
           subCategory: v.subCategory,
@@ -183,7 +188,6 @@ export class WorkMachinesService {
       id: data.id,
       registrationNumber: data.registrationNumber,
       registrationDate: data.registrationDate,
-      typeBreakdown: data.type,
       status: data.status,
       category: data.category,
       subCategory: data.subCategory,
@@ -241,12 +245,29 @@ export class WorkMachinesService {
     )
   }
 
-  async getMachineModels(auth: User, type: string): Promise<Array<string>> {
+  async isTypeValid(auth: User, type: string): Promise<boolean> {
+    const types = await this.machineService.getMachineTypes(auth)
+
+    return !!types.find((t) => t.name === type)
+  }
+
+  async getMachineModels(auth: User, type: string): Promise<Array<ModelDto>> {
     const models = await this.machineService.getMachineModels(auth, {
       tegund: type,
     })
 
-    return models.map((m) => m.name).filter(isDefined)
+    return models
+      .map((model) => {
+        if (!model.name) {
+          return null
+        }
+
+        return {
+          name: model.name,
+          type,
+        }
+      })
+      .filter(isDefined)
   }
 
   async getMachineParentCategoriesTypeModelGet(

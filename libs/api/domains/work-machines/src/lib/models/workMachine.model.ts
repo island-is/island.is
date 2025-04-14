@@ -2,15 +2,15 @@ import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 import { Link } from './link.model'
 import { Entity } from './person.model'
 import { Label } from './label.model'
-import { Type } from './type.model'
+import { TypeBreakdown } from './typeBreakdown.model'
 
 @ObjectType('WorkMachine')
 export class WorkMachine {
   @Field(() => ID)
   id!: string
 
-  @Field(() => Type, { nullable: true })
-  typeBreakdown?: Type
+  @Field(() => TypeBreakdown, { nullable: true })
+  typeBreakdown?: TypeBreakdown
 
   @Field({ nullable: true })
   status?: string

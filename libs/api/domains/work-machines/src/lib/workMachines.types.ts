@@ -1,3 +1,9 @@
+import { Model } from './models/model.model'
+
+export type ModelDto = Model & {
+  type: string
+}
+
 export enum Action {
   OWNER_CHANGE = 'ownerChange',
   REQUEST_INSPECTION = 'requestInspection',

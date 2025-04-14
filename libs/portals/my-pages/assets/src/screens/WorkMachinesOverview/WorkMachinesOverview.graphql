@@ -4,7 +4,7 @@ query GetWorkMachines($input: WorkMachinesCollectionInput) {
       id
       registrationNumber
       typeBreakdown {
-        fullType
+        fullTypeName
       }
       status
       dateLastInspection

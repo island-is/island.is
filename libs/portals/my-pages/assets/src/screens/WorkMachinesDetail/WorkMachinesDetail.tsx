@@ -120,7 +120,7 @@ const WorkMachinesDetail = () => {
   )
   return (
     <IntroWrapper
-      title={workMachine?.typeBreakdown?.fullType ?? ''}
+      title={workMachine?.typeBreakdown?.fullTypeName ?? ''}
       serviceProviderSlug={VINNUEFTIRLITID_SLUG}
       serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
     >
@@ -159,7 +159,7 @@ const WorkMachinesDetail = () => {
               />
               <InfoLine
                 label={labels.type ?? ''}
-                content={workMachine?.typeBreakdown?.fullType ?? ''}
+                content={workMachine?.typeBreakdown?.fullTypeName ?? ''}
                 loading={loading}
               />
               <InfoLine
@@ -198,10 +198,10 @@ const WorkMachinesDetail = () => {
               title={formatMessage(messages.baseInfoWorkMachineTitle)}
               dataArray={chunk(
                 [
-                  workMachine?.typeBreakdown?.fullType
+                  workMachine?.typeBreakdown?.fullTypeName
                     ? {
                         title: labels.type,
-                        value: workMachine?.typeBreakdown?.fullType,
+                        value: workMachine?.typeBreakdown?.fullTypeName,
                       }
                     : undefined,
                   workMachine?.status
