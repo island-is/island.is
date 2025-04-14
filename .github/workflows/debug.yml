@@ -3,7 +3,7 @@ name: Monorepo pipeline - build and deploy
 on:
   push:
     branches:
-      - fix/runner-debug
+      - fix/back-to-arc-docker
 
 defaults:
   run:
