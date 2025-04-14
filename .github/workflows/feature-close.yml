@@ -18,6 +18,21 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
+      - name: Get token
+        id: get-token
+        working-directory: ${{ inputs.working-directory }}
+        shell: bash
+        env:
+          APP_ID: ${{ secrets.HELM_VALUES_APP_ID }}
+          PRIVATE_KEY: ${{ secrets.HELM_VALUES_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
+          
       - name: Prepare feature deployment tag
         uses: ./.github/actions/feature-checkout
         id: prepare-docker-tag
