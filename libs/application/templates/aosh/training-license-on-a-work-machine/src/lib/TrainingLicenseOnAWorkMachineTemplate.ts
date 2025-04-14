@@ -338,11 +338,11 @@ const template: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    const assignees = getNationalIdListOfAssignees(application)
-    if (id === application.applicant) {
+    const { assignees, applicant } = application
+    if (id === applicant) {
       return Roles.APPLICANT
     }
-    if (assignees.includes(id) && application.assignees.includes(id)) {
+    if (assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
 
@@ -353,16 +353,11 @@ const template: ApplicationTemplate<
 export default template
 
 const getNationalIdListOfAssignees = (application: Application) => {
-  try {
-    const assigneeInformation = getValueViaPath<
-      TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
-    >(application.answers, 'assigneeInformation')
-    const assignees = assigneeInformation?.map(
-      ({ assignee }) => assignee.nationalId,
-    )
-    return assignees ?? []
-  } catch (error) {
-    console.error('Error mapping user to role:', error)
-    return []
-  }
+  const assigneeInformation = getValueViaPath<
+    TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
+  >(application.answers, 'assigneeInformation')
+  const assignees = assigneeInformation?.map(
+    ({ assignee }) => assignee.nationalId,
+  )
+  return assignees ?? []
 }
