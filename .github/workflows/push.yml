@@ -482,7 +482,6 @@ jobs:
       - prepare
       - docker-build
       - helm-docker-build
-      # - retag-unaffected
     env:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
