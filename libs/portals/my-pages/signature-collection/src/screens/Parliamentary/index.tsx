@@ -2,17 +2,16 @@ import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
-  IntroWrapper,
-  THJODSKRA_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'
-import { useGetCurrentCollection, useIsOwner } from '../../hooks'
+import { useGetCurrentCollection, useGetListsForOwner, useIsOwner } from '../../hooks'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import Intro from '../shared/Intro'
 import { AuthDelegationType } from '@island.is/api/schema'
 
-const SignatureListsParliamentary = () => {
+const SignatureCollectionParliamentary = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
 
@@ -20,14 +19,14 @@ const SignatureListsParliamentary = () => {
   const userInfo = useUserInfo()
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection()
+  const { listsForOwner } = useGetListsForOwner('')
 
   return (
     <Box>
-      <IntroWrapper
+      <Intro
         title={formatMessage(m.pageTitleParliamentary)}
-        intro={formatMessage(m.pageDescriptionSignee)}
-        serviceProviderTooltip={formatMessage(m.infoProviderTooltip)}
-        serviceProviderSlug={THJODSKRA_SLUG}
+        intro={formatMessage(m.pageIntro)}
+        slug={listsForOwner?.[0]?.slug}
       />
       {!loadingIsOwner && !loadingCurrentCollection && (
         <Box>
@@ -54,4 +53,4 @@ const SignatureListsParliamentary = () => {
   )
 }
 
-export default SignatureListsParliamentary
+export default SignatureCollectionParliamentary

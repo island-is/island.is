@@ -252,7 +252,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-docker
     timeout-minutes: 45
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
@@ -383,7 +383,7 @@ jobs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: arc-runners
+    runs-on: arc-docker
     timeout-minutes: 30
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
