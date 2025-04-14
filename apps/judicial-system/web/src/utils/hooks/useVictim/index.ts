@@ -108,7 +108,7 @@ const useVictims = () => {
   ) => {
     setWorkingCase((prev) => ({
       ...prev,
-      victims: [...(prev.victims ?? []), { id: victimId }],
+      victims: [...(prev.victims ?? []), { id: victimId, hasNationalId: true }],
     }))
   }
 

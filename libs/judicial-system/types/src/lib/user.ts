@@ -11,6 +11,7 @@ export enum UserRole {
   COURT_OF_APPEALS_REGISTRAR = 'COURT_OF_APPEALS_REGISTRAR', // dómritari
   COURT_OF_APPEALS_ASSISTANT = 'COURT_OF_APPEALS_ASSISTANT', // aðstoðarmaður dómara
   PRISON_SYSTEM_STAFF = 'PRISON_SYSTEM_STAFF', // fangelsismálastarfsmaður
+  LOCAL_ADMIN = 'LOCAL_ADMIN',
   ADMIN = 'ADMIN', // Does not exist in the database // notendaumsjón
   DEFENDER = 'DEFENDER', // Does not exist in the database // verjandi
 }
@@ -140,12 +141,19 @@ export const isAdminUser = (user?: InstitutionUser): boolean => {
   return Boolean(user?.role && adminRoles.includes(user.role))
 }
 
+const localAdminRoles: string[] = [UserRole.LOCAL_ADMIN]
+
+export const isLocalAdminUser = (user?: InstitutionUser): boolean => {
+  return Boolean(user?.role && localAdminRoles.includes(user.role))
+}
+
 export const isCoreUser = (user?: InstitutionUser): boolean => {
   return (
     isProsecutionUser(user) ||
     isPublicProsecutorUser(user) ||
     isDistrictCourtUser(user) ||
     isCourtOfAppealsUser(user) ||
-    isPrisonSystemUser(user)
+    isPrisonSystemUser(user) ||
+    isLocalAdminUser(user)
   )
 }
