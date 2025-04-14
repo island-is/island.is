@@ -52,7 +52,7 @@ export const applicationStatus = {
       description: `Application status action card tag`,
     },
     actionCardTagApproved: {
-      id: 'aosh.tlwm.application:applicationStatus.labels.actionCardTag',
+      id: 'aosh.tlwm.application:applicationStatus.labels.actionCardTagApproved',
       defaultMessage: 'Samþykkt',
       description: `Application status action card tag approved`,
     },

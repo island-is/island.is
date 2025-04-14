@@ -100,7 +100,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
           )
         } catch (e) {
           this.logger.error(
-            `Error sending email about initReview in application: ID: ${application.id}`,
+            `Error sending email about initReview in application: ID: ${application.id} and company: ${company.companyName}`,
             e,
           )
         }
@@ -115,7 +115,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
           )
         } catch (e) {
           this.logger.error(
-            `Error sending SMS about initReview to a phone number in application: ID: ${application.id}`,
+            `Error sending SMS about initReview to a phone number in application: ID: ${application.id} and company: ${company.companyName}`,
             e,
           )
         }
@@ -139,7 +139,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
           )
         } catch (e) {
           this.logger.error(
-            `Error sending email about deleteApplication in application: ID: ${application.id}`,
+            `Error sending email about deleteApplication in application: ID: ${application.id} and company: ${company.companyName}`,
             e,
           )
         }
@@ -153,7 +153,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
           )
         } catch (e) {
           this.logger.error(
-            `Error sending SMS about deleteApplication to a phone number in application: ID: ${application.id}`,
+            `Error sending SMS about deleteApplication to a phone number in application: ID: ${application.id} and company: ${company.companyName}`,
             e,
           )
         }
@@ -217,7 +217,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
         )
       })
 
-    // Send Hnipp to applicant if they are not a contractor
+    // Send Hnipp to applicant if they are not only a contractor
 
     const isNotOnlyContractor = certificateOfTenure?.some(
       ({ isContractor }) => !isContractor?.includes('yes'),

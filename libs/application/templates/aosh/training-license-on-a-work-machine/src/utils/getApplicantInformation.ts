@@ -1,17 +1,11 @@
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  ExternalData,
-  FormValue,
-  KeyValueItem,
-} from '@island.is/application/types'
+import { FormValue, KeyValueItem } from '@island.is/application/types'
 import { overview } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { formatPhoneNumber } from './formatPhoneNumber'
 
 export const getApplicantOverviewInformation = (
   answers: FormValue,
-  _externalData: ExternalData,
-  userNationalId: string,
   isAssignee?: boolean,
 ): Array<KeyValueItem> => {
   const applicantNationalId = getValueViaPath<string>(

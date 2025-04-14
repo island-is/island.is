@@ -26,12 +26,14 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
   const [showAlertMessage, setShowAlertMessage] = useState<boolean>(
     !field.shouldBlockSubmitIfError,
   )
-
-  setBeforeSubmitCallback?.(async () => {
-    if (field.shouldBlockSubmitIfError && field.alertType === 'error') {
+  if (field.shouldBlockSubmitIfError && field.alertType === 'error') {
+    setBeforeSubmitCallback?.(async () => {
       const condition = shouldShowFormItem(
         field,
-        getValues(),
+        {
+          ...application.answers,
+          ...getValues(),
+        },
         application.externalData,
         user,
       )
@@ -39,9 +41,10 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
         setShowAlertMessage(true)
         return [false, ''] // Block submit
       }
-    }
-    return [true, null] // Continue
-  })
+
+      return [true, null] // Continue
+    })
+  }
 
   return (
     showAlertMessage && (

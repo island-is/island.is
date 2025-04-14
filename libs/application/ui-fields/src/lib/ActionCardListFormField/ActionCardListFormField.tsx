@@ -20,7 +20,7 @@ export const ActionCardListFormField: FC<Props> = ({ application, field }) => {
   return (
     <Box marginBottom={marginBottom} marginTop={marginTop}>
       <Stack space={space}>
-        {items(application, lang, userInfo.profile.nationalId).map(
+        {items(application, lang, userInfo.profile.nationalId || '').map(
           (item, index) => {
             const itemWithTranslatedTexts: ActionCardProps = {
               ...item,

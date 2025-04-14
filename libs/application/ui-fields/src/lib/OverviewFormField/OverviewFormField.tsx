@@ -27,7 +27,7 @@ export const OverviewFormField = ({
   const items = field?.items?.(
     application.answers,
     application.externalData,
-    userInfo.profile.nationalId,
+    userInfo?.profile?.nationalId,
   )
   const attachments = field?.attachments?.(
     application.answers,

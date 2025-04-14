@@ -28,7 +28,7 @@ export const overviewSection = buildSection({
           title: '',
           backId: 'informationMultiField',
           bottomLine: false,
-          items: getApplicantOverviewInformation,
+          items: (answers) => getApplicantOverviewInformation(answers),
         }),
         buildOverviewField({
           id: 'overviewMachineTenure',

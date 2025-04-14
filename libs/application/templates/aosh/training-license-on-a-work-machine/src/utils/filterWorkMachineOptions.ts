@@ -20,9 +20,9 @@ export const filterWorkMachineOptions = (
       )
     ) {
       validWorkMachines.push(
-        ...item.workMachine.filter((machine) =>
+        ...(item.workMachine?.filter((machine) =>
           options.some((option) => option.value === machine),
-        ),
+        ) ?? []),
       )
     }
   })
