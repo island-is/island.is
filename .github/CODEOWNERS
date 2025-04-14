@@ -38,6 +38,7 @@
 /libs/clients/rsk/                                                                                        @island-is/juni
 /libs/clients/zendesk/                                                                                    @island-is/juni
 /libs/icelandic-names-registry/                                                                           @island-is/juni
+/libs/portals/my-pages/signature-collection/                                                              @island-is/juni
 /libs/portals/my-pages/petitions/                                                                         @island-is/juni
 /libs/portals/my-pages/education/                                                                         @island-is/juni @island-is/hugsmidjan
 /libs/portals/my-pages/education-career/                                                                  @island-is/juni @island-is/hugsmidjan
@@ -271,7 +272,6 @@ codemagic.yaml                                                                  
 
 /libs/shared/form-fields/                                                                                 @island-is/norda @island-is/island-ui
 
-/libs/portals/my-pages/signature-collection/                                                              @island-is/norda
 /libs/portals/my-pages/applications/                                                                      @island-is/norda
 /libs/portals/admin/application-system/                                                                   @island-is/norda
 /libs/api/domains/application/                                                                            @island-is/norda

@@ -15,6 +15,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  AlternativeServiceAnnouncement,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
@@ -28,7 +29,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
-  serviceAnnouncementStrings,
+  serviceAnnouncementsStrings,
   useIndictmentsLawsBroken,
   UserContext,
   ZipButton,
@@ -62,7 +63,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
 
   const getTitle = (defendantName?: string | null): string => {
     const successMessage = formatMessage(
-      serviceAnnouncementStrings.serviceStatusSuccess,
+      serviceAnnouncementsStrings.serviceStatusSuccess,
     )
 
     return defendantName
@@ -171,20 +172,31 @@ const IndictmentOverview: FC = () => {
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
           {isDefenceUser(user) &&
-            workingCase.defendants?.map((defendant) =>
-              (defendant.subpoenas ?? [])
-                .filter((subpoena) =>
-                  isSuccessfulServiceStatus(subpoena.serviceStatus),
-                )
-                .map((subpoena) => (
-                  <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
-                    <ServiceAnnouncement
-                      defendant={defendant}
-                      subpoena={subpoena}
-                    />
-                  </Box>
-                )),
-            )}
+            workingCase.defendants?.map((defendant) => (
+              <>
+                {defendant.alternativeServiceDescription && (
+                  <AlternativeServiceAnnouncement
+                    key={defendant.id}
+                    alternativeServiceDescription={
+                      defendant.alternativeServiceDescription
+                    }
+                    defendantName={defendant.name}
+                  />
+                )}
+                {defendant.subpoenas
+                  ?.filter((subpoena) =>
+                    isSuccessfulServiceStatus(subpoena.serviceStatus),
+                  )
+                  .map((subpoena) => (
+                    <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
+                      <ServiceAnnouncement
+                        defendant={defendant}
+                        subpoena={subpoena}
+                      />
+                    </Box>
+                  ))}
+              </>
+            ))}
           {caseHasBeenReceivedByCourt &&
             workingCase.court &&
             latestDate?.date &&
