@@ -2,15 +2,8 @@ import { ActionCard, Stack, Text, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import Managers from '../../shared/Managers'
-import { SignatureCollection, SignatureCollectionList } from '@island.is/api/schema'
 
-const OwnerView = ({
-  currentCollection,
-  lists
-}: {
-  currentCollection: SignatureCollection
-  lists: SignatureCollectionList[]
-}) => {
+const OwnerView = () => {
   const { formatMessage } = useLocale()
 
   return (

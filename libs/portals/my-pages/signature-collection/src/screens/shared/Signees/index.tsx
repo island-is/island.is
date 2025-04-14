@@ -40,7 +40,7 @@ const Signees = () => {
         }).reverse(),
       )
     }
-  }, [listSignees])
+  }, [listSignees, loadingSignees])
 
   // list search
   useEffect(() => {
@@ -56,7 +56,7 @@ const Signees = () => {
 
     setPage(1)
     setSignees(filteredSignees)
-  }, [searchTerm])
+  }, [searchTerm, listSignees])
 
   return (
     <Box>
