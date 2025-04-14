@@ -306,4 +306,5 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   contentfulApps,
   githubActionsCache,
   xroadCollector,
+  nameRegistryBackend,
 ]
