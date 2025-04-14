@@ -1,38 +1,52 @@
 name: 'Load Dependencies'
 description: 'Prerequisite is that the prepare step has already been run'
 
+outputs:
+  generated-files-key:
+    description: ''
+    value: ${{ steps.values.outputs.generated-files-key }}
+  generated-files-path:
+    description: ''
+    value: ${{ steps.values.outputs.generated-files-path }}
+
 runs:
   using: 'composite'
   steps:
-    - name: INFO
+    - name: Set outputs
+      id: values
       shell: bash
       run: |
-        echo "generated files: ${{ env.GENERATED_FILES }}"
+        GENERATED_FILES_KEY="generated-files-${{ github.sha }}"
+        GENERATED_FILES_PATH="${{ github.sha }}.tar.gz"
+        echo generated-files-key="${GENERATED_FILES_KEY}" >> $GITHUB_OUTPUT
+        echo generated-files-path="${GENERATED_FILES_PATH}" >> $GITHUB_OUTPUT
+        echo GENERATED_FILES_KEY="${GENERATED_FILES_KEY}" >> $GITHUB_ENV
+        echo GENERATED_FILES_PATH="${GENERATED_FILES_PATH}" >> $GITHUB_ENV
 
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
       id: restore-codegen-cache
       with:
         path: |
-          ${{ env.GENERATED_FILES }}
-        key: generated-files-${{ github.sha }}
+          ${{ env.GENERATED_FILES_PATH }}
+        key: ${{ env.GENERATED_FILES_KEY }}
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+        node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES_PATH }}
 
     - name: Extract generated files
       if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
-        tar -xzvf ${{ env.GENERATED_FILES }}
+        tar -xzvf ${{ env.GENERATED_FILES_PATH }}
 
     - name: Cache Generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       uses: runs-on/cache/save@v4
       with:
         path: |
-          ${{ env.GENERATED_FILES }}
-        key: generated-files-${{ github.sha }}
+          ${{ env.GENERATED_FILES_PATH }}
+        key: ${{ env.GENERATED_FILES_KEY }}

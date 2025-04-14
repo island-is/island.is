@@ -34,7 +34,6 @@ env:
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
-  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
   DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
@@ -52,7 +51,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-runners
+    runs-on: arc-shared
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -85,7 +84,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.is-unicorn == 'true' }}
-    runs-on: arc-runners
+    runs-on: arc-shared
     env:
       CHUNKS: ${{ needs.prepare.outputs.TEST_CHUNKS }}
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
@@ -138,7 +137,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-runners
+    runs-on: arc-shared
     timeout-minutes: 45
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -170,7 +169,7 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-shared
     timeout-minutes: 15
     steps:
       - name: checkout
@@ -205,7 +204,7 @@ jobs:
   formatting:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-shared
     timeout-minutes: 15
     env:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
@@ -271,7 +270,7 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-shared
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -355,7 +354,7 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-shared
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -380,7 +379,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs:
       - prepare
