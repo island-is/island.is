@@ -67,6 +67,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderNationalId',
   'defenderEmail',
   'defenderPhoneNumber',
+  'requestSharedWithDefender', // court users are only allowed to set "NOT_SHARED".
   'courtCaseNumber',
   'sessionArrangements',
   'arraignmentDate',
