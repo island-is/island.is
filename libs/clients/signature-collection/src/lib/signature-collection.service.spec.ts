@@ -14,6 +14,10 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { CreateListInput } from './signature-collection.types'
 import { User } from '@island.is/auth-nest-tools'
 import { LoggingModule } from '@island.is/logging'
+import {
+  CollectionType,
+  getNumberFromCollectionType,
+} from './types/collection.dto'
 
 const user: User = {
   nationalId: '0101302399',
@@ -32,7 +36,7 @@ const sofnun: MedmaelasofnunExtendedDTO[] = [
       id: 123,
       erMedmaelakosning: true,
       kosningTegund: 'Forsetakosning',
-      kosningTegundNr: 5, // CollectionType.Presidential,
+      kosningTegundNr: getNumberFromCollectionType(CollectionType.Presidential),
       nafn: 'Gervikosning',
     },
     kosningTegund: 'Forsetakosning',

@@ -31,26 +31,32 @@ export enum CollectionType {
 
 // If you need to update these values, please take a look at the
 // Signature Collection API → see /Tegund/Kosning
-export const getCollectionTypeFromNumber = (number: number): CollectionType => {
-  switch (number) {
-    case 1:
-      return CollectionType.Parliamentary
-    case 2:
-      return CollectionType.Presidential
-    case 3:
-      return CollectionType.Referendum
-    case 4:
-      return CollectionType.OtherSameRulesAsParliamentary
-    case 5:
-      return CollectionType.LocalGovernmental
-    case 6:
-      return CollectionType.SpecialLocalGovernmental
-    case 9:
-      return CollectionType.ResidentPoll
+const collectionTypeTable = {
+  0: CollectionType.OtherUnknown,
+  1: CollectionType.Parliamentary,
+  2: CollectionType.Presidential,
+  3: CollectionType.Referendum,
+  4: CollectionType.OtherSameRulesAsParliamentary,
+  5: CollectionType.LocalGovernmental,
+  6: CollectionType.SpecialLocalGovernmental,
+  9: CollectionType.ResidentPoll,
+}
 
-    default:
-      return CollectionType.OtherUnknown
+export const getCollectionTypeFromNumber = (number: number): CollectionType => {
+  const index = number as keyof typeof collectionTypeTable
+  if (collectionTypeTable?.[index]) {
+    return collectionTypeTable[index]
   }
+  return CollectionType.OtherUnknown
+}
+
+export const getNumberFromCollectionType = (
+  collectionType: CollectionType,
+): number => {
+  const found = Object.entries(collectionTypeTable).find(
+    (e) => e[1] === collectionType,
+  )
+  return parseInt(found?.[0] ?? '0', 10)
 }
 
 export interface Collection {
