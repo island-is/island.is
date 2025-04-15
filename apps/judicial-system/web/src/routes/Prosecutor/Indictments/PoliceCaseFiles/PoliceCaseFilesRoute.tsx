@@ -14,7 +14,7 @@ import router from 'next/router'
 import {
   Box,
   FileUploadStatus,
-  InputFileUploadV2,
+  InputFileUpload,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
@@ -266,7 +266,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
         policeCaseFileList={policeCaseFileList}
         policeCaseFiles={policeCaseFiles}
       />
-      <InputFileUploadV2
+      <InputFileUpload
         name="fileUpload"
         files={uploadFiles}
         accept="application/pdf"

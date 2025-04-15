@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, InputFileUploadV2, Text } from '@island.is/island-ui/core'
+import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -58,7 +58,7 @@ const WithdrawnAppealCase = () => {
             {formatMessage(strings.courtRecordFileSubtitle)}
             {'\n'}
           </Text>
-          <InputFileUploadV2
+          <InputFileUpload
             name="appealCourtRecord"
             files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.APPEAL_COURT_RECORD,

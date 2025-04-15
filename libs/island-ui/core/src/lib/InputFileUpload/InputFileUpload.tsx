@@ -73,7 +73,7 @@ interface UploadedFileProps {
   onOpenFile?: (file: UploadFile) => void
 }
 
-export const UploadedFileV2: FC<UploadedFileProps> = (props) => {
+export const UploadedFile: FC<UploadedFileProps> = (props) => {
   const {
     file,
     defaultBackgroundColor,
@@ -251,7 +251,7 @@ interface Props {
   defaultFileBackgroundColor?: StatusColor
 }
 
-export const InputFileUploadV2: FC<Props> = (props) => {
+export const InputFileUpload: FC<Props> = (props) => {
   const {
     name,
     files = [],
@@ -335,7 +335,7 @@ export const InputFileUploadV2: FC<Props> = (props) => {
       <Box width="full" paddingX={[2, 2, 2, 2, 12]}>
         {files.map((file, index) => (
           <Box marginBottom={2} key={file.id ?? `${file.name}_${index}`}>
-            <UploadedFileV2
+            <UploadedFile
               file={file}
               defaultBackgroundColor={defaultFileBackgroundColor}
               hideIcons={hideIcons}

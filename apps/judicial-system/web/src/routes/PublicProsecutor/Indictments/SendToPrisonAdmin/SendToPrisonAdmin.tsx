@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import {
   Box,
   FileUploadStatus,
-  InputFileUploadV2,
+  InputFileUpload,
   UploadFile,
 } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
@@ -126,7 +126,7 @@ const SendToPrisonAdmin: FC = () => {
           description={formatMessage(strings.fileUploadDescription)}
         />
         <Box marginBottom={10}>
-          <InputFileUploadV2
+          <InputFileUpload
             name="sentToPrisonAdminFileUpload"
             files={uploadFiles.filter(
               (file) =>

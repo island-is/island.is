@@ -2,7 +2,7 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, InputFileUploadV2 } from '@island.is/island-ui/core'
+import { Box, InputFileUpload } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -64,7 +64,7 @@ const CaseFiles = () => {
             title={formatMessage(strings.caseFiles.criminalRecordSection)}
             heading="h2"
           />
-          <InputFileUploadV2
+          <InputFileUpload
             name="criminalRecord"
             files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
@@ -89,7 +89,7 @@ const CaseFiles = () => {
             title={formatMessage(strings.caseFiles.costBreakdownSection)}
             heading="h2"
           />
-          <InputFileUploadV2
+          <InputFileUpload
             name="costBreakdown"
             files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
@@ -114,7 +114,7 @@ const CaseFiles = () => {
             title={formatMessage(strings.caseFiles.otherDocumentsSection)}
             heading="h2"
           />
-          <InputFileUploadV2
+          <InputFileUpload
             name="caseFiles"
             files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.CASE_FILE,

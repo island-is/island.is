@@ -6,7 +6,7 @@ import {
   Box,
   FileUploadStatus,
   Input,
-  InputFileUploadV2,
+  InputFileUpload,
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
@@ -214,7 +214,7 @@ const CourtOfAppealRuling = () => {
         CaseAppealRulingDecision.DISCONTINUED ? (
           <Box marginBottom={10}>
             <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
-            <InputFileUploadV2
+            <InputFileUpload
               name="appealCourtRecord"
               files={uploadFiles.filter(
                 (file) =>
@@ -342,7 +342,7 @@ const CourtOfAppealRuling = () => {
                 title={formatMessage(strings.courtConclusionHeading)}
                 required
               />
-              <InputFileUploadV2
+              <InputFileUpload
                 name="appealRuling"
                 files={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.APPEAL_RULING,

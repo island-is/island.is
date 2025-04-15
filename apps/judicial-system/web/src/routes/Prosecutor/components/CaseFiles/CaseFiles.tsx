@@ -7,7 +7,7 @@ import {
   ContentBlock,
   FileUploadStatus,
   Input,
-  InputFileUploadV2,
+  InputFileUpload,
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
@@ -222,7 +222,7 @@ export const CaseFiles = () => {
         </Box>
         <Box marginBottom={5}>
           <ContentBlock>
-            <InputFileUploadV2
+            <InputFileUpload
               name="fileUpload"
               accept={Object.values(fileExtensionWhitelist)}
               files={uploadFiles.filter((file) => !file.category)}

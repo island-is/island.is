@@ -102,7 +102,7 @@ export {
   UploadedFileDeprecated,
   InputFileUploadPropsDeprecated,
 } from './lib/InputFileUpload/InputFileUploadDeprecated'
-export * from './lib/InputFileUpload/InputFileUploadV2'
+export * from './lib/InputFileUpload/InputFileUpload'
 export * from './lib/InputError/InputError'
 export * from './lib/ToggleSwitch'
 export * from './lib/PhoneInput/PhoneInput'

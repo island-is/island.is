@@ -6,7 +6,7 @@ import {
   Box,
   FileUploadStatus,
   Input,
-  InputFileUploadV2,
+  InputFileUpload,
   RadioButton,
   Select,
 } from '@island.is/island-ui/core'
@@ -572,7 +572,7 @@ const Conclusion: FC = () => {
               title={formatMessage(strings.courtRecordTitle)}
               required={selectedAction === IndictmentDecision.COMPLETING}
             />
-            <InputFileUploadV2
+            <InputFileUpload
               name="court-records"
               files={uploadFiles.filter(
                 (file) => file.category === CaseFileCategory.COURT_RECORD,
@@ -608,7 +608,7 @@ const Conclusion: FC = () => {
                 )}
                 required
               />
-              <InputFileUploadV2
+              <InputFileUpload
                 name="ruling"
                 files={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.RULING,

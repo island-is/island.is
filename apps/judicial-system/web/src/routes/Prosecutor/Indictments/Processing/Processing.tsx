@@ -13,7 +13,7 @@ import {
   Box,
   Button,
   Checkbox,
-  InputFileUploadV2,
+  InputFileUpload,
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
@@ -738,7 +738,7 @@ const Processing: FC = () => {
             </Box>
             <Box component="section" marginBottom={10}>
               <SectionHeading title="Bótakrafa" heading="h2" />
-              <InputFileUploadV2
+              <InputFileUpload
                 name="civilClaim"
                 files={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.CIVIL_CLAIM,

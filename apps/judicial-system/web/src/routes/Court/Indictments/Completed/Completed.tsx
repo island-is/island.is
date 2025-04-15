@@ -7,9 +7,8 @@ import {
   Accordion,
   Box,
   FileUploadStatus,
-  InputFileUploadV2,
+  InputFileUpload,
   RadioButton,
-  UploadFile,
   UploadFile,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -200,7 +199,7 @@ const Completed: FC = () => {
             <SectionHeading
               title={formatMessage(strings.criminalRecordUpdateTitle)}
             />
-            <InputFileUploadV2
+            <InputFileUpload
               name="criminalRecordUpdate"
               files={uploadFiles.filter(
                 (file) =>

@@ -5,9 +5,8 @@ import { useRouter } from 'next/router'
 import {
   Box,
   FileUploadStatus,
-  InputFileUploadV2,
+  InputFileUpload,
   Text,
-  UploadFile,
   UploadFile,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -163,7 +162,7 @@ const AppealFiles = () => {
             {!isDefenceUser(user) &&
               `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
-          <InputFileUploadV2
+          <InputFileUpload
             name="appealCaseFiles"
             files={uploadFiles.filter(
               (file) =>

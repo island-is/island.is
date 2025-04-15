@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import {
   Box,
   FileUploadStatus,
-  InputFileUploadV2,
+  InputFileUpload,
   Text,
   UploadFile,
 } from '@island.is/island-ui/core'
@@ -151,7 +151,7 @@ const Statement = () => {
                 title={formatMessage(strings.uploadStatementTitle)}
                 required
               />
-              <InputFileUploadV2
+              <InputFileUpload
                 name="appealStatement"
                 files={uploadFiles.filter(
                   (file) => file.category === appealStatementType,
@@ -182,7 +182,7 @@ const Statement = () => {
                 {!isDefenceUser(user) &&
                   `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
               </Text>
-              <InputFileUploadV2
+              <InputFileUpload
                 name="appealCaseFiles"
                 files={uploadFiles.filter(
                   (file) => file.category === appealCaseFilesType,
