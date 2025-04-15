@@ -215,11 +215,11 @@ jobs:
         id: build_map
         run: |
           set -euo pipefail
-          FFECTED_TARGETS="$(yarn nx show projects --affected --base $BASE --head $HEAD --json | jq -r '. | join(",")')"
+          AFFECTED_TARGETS="$(yarn nx show projects --affected --base $BASE --head $HEAD --json | jq -r '. | join(",")')"
           cd infra
           ADDITIONAL_PROJECTS="$(yarn feature-env downstream --feature tmp --images $AFFECTED_TARGETS --chart islandis)"
           cd ..
-          export ADDITIONAL_PROJECTS=$ADDITIONAL_PROJECTS
+          export ADDITIONAL_PROJECTS
           echo $ADDITIONAL_PROJECTS
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
