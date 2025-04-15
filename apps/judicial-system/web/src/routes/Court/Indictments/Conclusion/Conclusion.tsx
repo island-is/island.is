@@ -4,7 +4,7 @@ import router from 'next/router'
 
 import {
   Box,
-  FileUploadStatusV2,
+  FileUploadStatus,
   Input,
   InputFileUploadV2,
   RadioButton,
@@ -264,12 +264,12 @@ const Conclusion: FC = () => {
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.COURT_RECORD &&
-                  file.status === FileUploadStatusV2.done,
+                  file.status === FileUploadStatus.done,
               ) &&
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.RULING &&
-                  file.status === FileUploadStatusV2.done,
+                  file.status === FileUploadStatus.done,
               )
             )
           case CaseIndictmentRulingDecision.CANCELLATION:
@@ -277,14 +277,14 @@ const Conclusion: FC = () => {
             return uploadFiles.some(
               (file) =>
                 file.category === CaseFileCategory.COURT_RECORD &&
-                file.status === FileUploadStatusV2.done,
+                file.status === FileUploadStatus.done,
             )
           case CaseIndictmentRulingDecision.MERGE:
             return Boolean(
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.COURT_RECORD &&
-                  file.status === FileUploadStatusV2.done,
+                  file.status === FileUploadStatus.done,
               ) &&
                 (workingCase.mergeCase?.id ||
                   validate([[mergeCaseNumber, ['empty', 'S-case-number']]])

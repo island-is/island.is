@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
-  FileUploadStatusV2,
+  FileUploadStatus,
   Input,
   InputFileUploadV2,
   RadioButton,
@@ -103,7 +103,7 @@ const CourtOfAppealRuling = () => {
       uploadFiles.some(
         (file) =>
           file.category === CaseFileCategory.APPEAL_RULING &&
-          file.status === FileUploadStatusV2.done,
+          file.status === FileUploadStatus.done,
       ))
 
   const handleRulingDecisionChange = (

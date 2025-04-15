@@ -13,7 +13,7 @@ import router from 'next/router'
 
 import {
   Box,
-  FileUploadStatusV2,
+  FileUploadStatus,
   InputFileUploadV2,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -102,7 +102,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
   >([])
 
   const errorMessage = useMemo(() => {
-    if (uploadFiles.some((file) => file.status === FileUploadStatusV2.error)) {
+    if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
       return formatMessage(errorMessages.general)
     }
     if (uploadFiles.some((file) => file.size === 0)) {

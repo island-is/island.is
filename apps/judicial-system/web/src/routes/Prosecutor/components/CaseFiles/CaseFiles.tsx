@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import {
   Box,
   ContentBlock,
-  FileUploadStatusV2,
+  FileUploadStatus,
   Input,
   InputFileUploadV2,
   Text,
@@ -128,7 +128,7 @@ export const CaseFiles = () => {
   }, [policeCaseFiles, workingCase.caseFiles])
 
   const uploadErrorMessage = useMemo(() => {
-    if (uploadFiles.some((file) => file.status === FileUploadStatusV2.error)) {
+    if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
       return formatMessage(errors.general)
     }
     if (uploadFiles.some((file) => file.size === 0)) {

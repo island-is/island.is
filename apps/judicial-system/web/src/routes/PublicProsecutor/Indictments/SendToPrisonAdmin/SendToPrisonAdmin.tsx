@@ -4,9 +4,9 @@ import { useParams, useRouter } from 'next/navigation'
 
 import {
   Box,
-  FileUploadStatusV2,
+  FileUploadStatus,
   InputFileUploadV2,
-  UploadFileV2,
+  UploadFile,
 } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { core, errors } from '@island.is/judicial-system-web/messages'
@@ -92,14 +92,14 @@ const SendToPrisonAdmin: FC = () => {
     (files: File[]) => {
       addUploadFiles(files, {
         category: CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
-        status: FileUploadStatusV2.done,
+        status: FileUploadStatus.done,
       })
     },
     [addUploadFiles],
   )
 
   const handleRemoveFile = useCallback(
-    (file: UploadFileV2) => {
+    (file: UploadFile) => {
       if (file.key) {
         handleRemove(file, removeUploadFile)
       } else {

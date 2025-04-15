@@ -11,7 +11,7 @@ import { Icon } from '../IconRC/Icon'
 import { Icon as IconTypes } from '../IconRC/iconMap'
 import * as styles from './InputFileUpload.css'
 
-export enum FileUploadStatusV2 {
+export enum FileUploadStatus {
   'error',
   'done',
   'uploading',
@@ -23,12 +23,12 @@ export type StatusColor = {
   icon?: Colors
 }
 
-export interface UploadFileV2 {
+export interface UploadFile {
   name: string
   id?: string
   type?: string
   key?: string
-  status?: FileUploadStatusV2
+  status?: FileUploadStatus
   percent?: number
   originalFileObj?: File | Blob
   error?: string
@@ -64,13 +64,13 @@ interface Icons {
 }
 
 interface UploadedFileProps {
-  file: UploadFileV2
+  file: UploadFile
   defaultBackgroundColor?: StatusColor
   icons?: Icons
   hideIcons?: boolean
-  onRemoveClick?: (file: UploadFileV2) => void
-  onRetryClick?: (file: UploadFileV2) => void
-  onOpenFile?: (file: UploadFileV2) => void
+  onRemoveClick?: (file: UploadFile) => void
+  onRetryClick?: (file: UploadFile) => void
+  onOpenFile?: (file: UploadFile) => void
 }
 
 export const UploadedFileV2: FC<UploadedFileProps> = (props) => {
@@ -99,7 +99,7 @@ export const UploadedFileV2: FC<UploadedFileProps> = (props) => {
 
   const handleClick = (
     evt: React.MouseEvent<HTMLElement, MouseEvent>,
-    handler?: (file: UploadFileV2) => void,
+    handler?: (file: UploadFile) => void,
   ) => {
     evt.stopPropagation()
 
@@ -136,9 +136,9 @@ export const UploadedFileV2: FC<UploadedFileProps> = (props) => {
 
   const statusColor: StatusColor = useMemo<StatusColor>(() => {
     switch (file.status) {
-      case FileUploadStatusV2.error:
+      case FileUploadStatus.error:
         return { background: 'red100', border: 'red200', icon: 'red600' }
-      case FileUploadStatusV2.done:
+      case FileUploadStatus.done:
         // Display an error color if the file is empty
         if (file.size && file.size === 0) {
           return { background: 'red100', border: 'red200', icon: 'red600' }
@@ -162,7 +162,7 @@ export const UploadedFileV2: FC<UploadedFileProps> = (props) => {
   const isUploading =
     file.percent !== undefined &&
     file.percent < 100 &&
-    file.status === FileUploadStatusV2.uploading
+    file.status === FileUploadStatus.uploading
 
   return (
     <Box
@@ -206,7 +206,7 @@ export const UploadedFileV2: FC<UploadedFileProps> = (props) => {
             >
               <Icon color="blue400" icon={icons.uploading} />
             </div>
-          ) : file.status === FileUploadStatusV2.error ? (
+          ) : file.status === FileUploadStatus.error ? (
             <button
               onClick={(evt) => handleClick(evt, onRetryClick)}
               aria-label="Reyna aftur"
@@ -232,7 +232,7 @@ export const UploadedFileV2: FC<UploadedFileProps> = (props) => {
 
 interface Props {
   name: string
-  files: UploadFileV2[]
+  files: UploadFile[]
   title?: string
   description?: string
   buttonLabel?: string
@@ -243,8 +243,8 @@ interface Props {
   // Maximum file size in bytes
   maxSize?: number
   hideIcons?: boolean
-  onRemove: (file: UploadFileV2) => void
-  onRetry?: (file: UploadFileV2) => void
+  onRemove: (file: UploadFile) => void
+  onRetry?: (file: UploadFile) => void
   onChange?: (files: File[], uploadCount?: number) => void
   onUploadRejection?: (files: FileRejection[]) => void
   errorMessage?: string

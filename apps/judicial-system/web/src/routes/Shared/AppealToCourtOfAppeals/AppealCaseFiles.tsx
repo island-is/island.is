@@ -4,11 +4,11 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
-  FileUploadStatusV2,
+  FileUploadStatus,
   InputFileUploadV2,
   Text,
   UploadFile,
-  UploadFileV2,
+  UploadFile,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -105,7 +105,7 @@ const AppealFiles = () => {
     workingCase.id,
   ])
 
-  const handleRemoveFile = (file: UploadFileV2) => {
+  const handleRemoveFile = (file: UploadFile) => {
     if (file.key) {
       handleRemove(file, removeUploadFile)
     } else {
@@ -116,7 +116,7 @@ const AppealFiles = () => {
   const handleChange = (files: File[]) => {
     addUploadFiles(files, {
       category: appealCaseFilesType,
-      status: FileUploadStatusV2.done,
+      status: FileUploadStatus.done,
     })
   }
 
