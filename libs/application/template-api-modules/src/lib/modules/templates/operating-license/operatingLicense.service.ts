@@ -146,7 +146,9 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     return { success: true }
   }
 
-  async courtBankruptcyCert(): Promise<BankruptcyHistoryResult> {
+  async courtBankruptcyCert({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<BankruptcyHistoryResult> {
     const cert = await this.judicialAdministrationService.searchBankruptcy(auth)
 
     for (const [_, value] of Object.entries(cert)) {
