@@ -185,7 +185,7 @@ yargs(process.argv.slice(2))
             fs.writeFileSync(`${writeDest}/${svc.name()}/values.yaml`, svcString);
           } catch (error) {
             console.log(`Failed to write values file for ${svc.name()}:`, error)
-            throw new Error(error);
+            throw new Error(`Failed to write values file for ${svc.name()}`);
           }
         } else {
           writeToOutput(
@@ -261,7 +261,7 @@ yargs(process.argv.slice(2))
         fs.writeFileSync(`${writeDest}/${affectedServices[0].name()}/bootstrap-fd-job.yaml`, svcString);
         } catch (error) {
           console.log(`Failed to write values file for ${affectedServices[0].name()}:`, error)
-          throw new Error(error);
+          throw new Error(`Failed to write values for ${affectedServices[0].name()}`);
         }
       } else {
         await writeToOutput(svcString, typedArgv.output)
