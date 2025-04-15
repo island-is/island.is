@@ -8,7 +8,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { EmptyState } from '@island.is/portals/my-pages/core'
 import { useGetListsForUser, useGetSignedList } from '../../../hooks'
-import { Skeleton } from '../../../skeletons'
+import { Skeleton } from '../../../lib/skeletons'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { sortAlpha } from '@island.is/shared/utils'
 import { m } from '../../../lib/messages'
