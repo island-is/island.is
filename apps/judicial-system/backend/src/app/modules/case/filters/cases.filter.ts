@@ -280,11 +280,11 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                     {
                       id: {
                         [Op.in]: Sequelize.literal(`
-                      (SELECT case_id
-                        FROM victim
-                        WHERE lawyer_national_id in ('${normalizedNationalId}', '${formattedNationalId}') 
-                        AND lawyer_access_to_request = '${RequestSharedWhen.READY_FOR_COURT}')
-                    `),
+                        (SELECT case_id
+                          FROM victim
+                          WHERE lawyer_national_id in ('${normalizedNationalId}', '${formattedNationalId}') 
+                          AND lawyer_access_to_request = '${RequestSharedWhen.READY_FOR_COURT}')
+                      `),
                       },
                     },
                     { state: [CaseState.SUBMITTED, CaseState.RECEIVED] },
@@ -296,11 +296,11 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                     {
                       id: {
                         [Op.in]: Sequelize.literal(`
-                      (SELECT case_id
-                        FROM victim
-                        WHERE lawyer_national_id in ('${normalizedNationalId}', '${formattedNationalId}') 
-                        AND lawyer_access_to_request != '${RequestSharedWhen.OBLIGATED}')
-                    `),
+                          (SELECT case_id
+                            FROM victim
+                            WHERE lawyer_national_id in ('${normalizedNationalId}', '${formattedNationalId}') 
+                            AND lawyer_access_to_request != '${RequestSharedWhen.OBLIGATED}')
+                        `),
                       },
                     },
                     {
@@ -311,10 +311,10 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                             {
                               id: {
                                 [Op.in]: Sequelize.literal(`
-                            (SELECT case_id
-                              FROM date_log
-                              WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
-                          `),
+                                (SELECT case_id
+                                  FROM date_log
+                                  WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
+                              `),
                               },
                             },
                           ],
