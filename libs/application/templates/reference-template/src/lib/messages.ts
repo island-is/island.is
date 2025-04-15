@@ -230,6 +230,12 @@ export const m = defineMessages({
       'If the options in a field are all in one `enum`, then use `z.nativeEnum()` in zod validation to skip listing all the options in the enum as is required when using `z.enum()`.',
     description: 'Validation description',
   },
+  validationDescription4: {
+    id: 'example.application:validation.validationDescription4#markdown',
+    defaultMessage:
+      'If not possible to use zod validation because you need externalData or answers from another step to validate, it is possible to use AlertMessage with shouldBlockInSetBeforeSubmitCallback=true.\n\n Note: Should only use max one per screen, and no other custom component on the same screen that uses setBeforeSubmitCallback.',
+    description: 'Validation description',
+  },
   conditionsDescription2: {
     id: 'example.application:conditions.description2#markdown',
     defaultMessage:
