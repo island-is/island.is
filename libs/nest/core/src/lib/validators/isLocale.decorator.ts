@@ -10,7 +10,9 @@ export const IsLocale = (validationOptions?: ValidationOptions) => {
       target: object.constructor,
       propertyName: propertyName,
       options: {
-        message: `${propertyName} contains an invalid locale`,
+        message: `Invalid locale supplied. Must be any of the following: „${supportedLocales.join(
+          '“, „',
+        )}“`,
         ...validationOptions,
       },
       validator: {
