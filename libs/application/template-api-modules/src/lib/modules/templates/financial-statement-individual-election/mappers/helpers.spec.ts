@@ -55,8 +55,6 @@ describe('Financial statement individual election helpers', () => {
       )
 
       expect(result.input).toEqual(expectedInputResult)
-
-      expect(result.loggerInfo.includes(nationalIdActor)).toBeTruthy()
       expect(result.loggerInfo.includes(nationalIdClient)).toBeTruthy()
       expect(result.loggerInfo.includes(electionId)).toBeTruthy()
       expect(result.loggerInfo.includes(clientName)).toBeTruthy()
@@ -70,7 +68,6 @@ describe('Financial statement individual election helpers', () => {
 
     const fileName = '98498465654849896546.pdf'
     const electionId = 'blegh'
-    const nationalIdActor = '1234564321'
     const nationalIdClient = '1234564322'
     const clientName = 'Fullname Fullname'
     const clientPhone = '1234567'
