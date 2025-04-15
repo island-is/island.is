@@ -203,18 +203,20 @@ jobs:
         run: |
           echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
 
-      - name: Prepare docker build targets
-        id: build_map
+      - name: Get downstream apps
         run: |
           set -euo pipefail
           AFFECTED_TARGETS="$(yarn nx show projects --affected --base $BASE --head $HEAD --json | jq -r '. | join(",")')"
           cd infra
           ADDITIONAL_PROJECTS="$(yarn feature-env downstream --feature tmp --images $AFFECTED_TARGETS --chart islandis)"
-          cd ..
-          echo "$AFFECTED_TARGETS"
-          echo "$ADDITIONAL_PROJECTS"
           echo ADDITIONAL_PROJECTS="$ADDITIONAL_PROJECTS" >> "$GITHUB_ENV"
-          CHUNKS="$(ADDITIONAL_PROJECTS="$ADDITIONAL_PROJECTS" ./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
+
+      - name: Prepare docker build targets
+        id: build_map
+        run: |
+          set -euo pipefail
+          echo $ADDITIONAL_PROJECTS
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
