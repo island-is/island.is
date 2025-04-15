@@ -132,13 +132,13 @@ export const certificateOfTenure = {
       defaultMessage: 'Þú ert nú þegar með kennsluréttindi á þessa vél.',
       description: 'Certificate of tenure already have training license label',
     },
-    validityErrorTitle: {
-      id: 'aosh.tlwm.application:certificateOfTenure.labels.validityErrorTitle',
+    validationErrorTitle: {
+      id: 'aosh.tlwm.application:certificateOfTenure.labels.validationErrorTitle',
       defaultMessage: 'Athugið',
       description: 'Certificate of tenure validity error title label',
     },
-    validityError: {
-      id: 'aosh.tlwm.application:certificateOfTenure.labels.validityError',
+    minTenureInHoursError: {
+      id: 'aosh.tlwm.application:certificateOfTenure.labels.minTenureInHoursError',
       defaultMessage:
         'Þú þarft að hafa unnið að lágmarki 1000 tíma í vélaflokknum. Skráðu allar þær vinnuvélar sem þú hefur unnið á til að ná þessum tímamörkum.',
       description: 'Certificate of tenure validity error label',

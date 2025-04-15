@@ -24,9 +24,9 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
   const { getValues } = useFormContext()
   const user = useUserInfo()
   const [showAlertMessage, setShowAlertMessage] = useState<boolean>(
-    !field.shouldBlockSubmitIfError,
+    !field.shouldBlockInSetBeforeSubmitCallback,
   )
-  if (field.shouldBlockSubmitIfError && field.alertType === 'error') {
+  if (field.shouldBlockInSetBeforeSubmitCallback) {
     setBeforeSubmitCallback?.(async () => {
       const condition = shouldShowFormItem(
         field,
@@ -68,7 +68,13 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
                     <Markdown>
                       {formatTextWithLocale(
                         field.message,
-                        { ...application, answers: getValues() },
+                        {
+                          ...application,
+                          answers: {
+                            ...application.answers,
+                            ...getValues(),
+                          },
+                        },
                         locale as Locale,
                         formatMessage,
                       )}

@@ -115,38 +115,46 @@ export const assigneeInformationSection = buildSection({
           },
         }),
         buildAlertMessageField({
-          id: 'assigneeInformation.missingWorkMachineAlert',
+          id: 'assigneeInformation.alertValidation',
           message: (application) => {
-            return {
-              ...assigneeInformation.labels.missingWorkMachineAlert,
-              values: {
-                value: getMissingWorkMachines(application.answers).join(', '),
-              },
-            }
+            const missingWorkMachines = getMissingWorkMachines(
+              application.answers,
+            )
+            const invalidWorkMachines = getInvalidWorkMachines(
+              application.answers,
+            )
+
+            const hasMissingWorkMachinesError = missingWorkMachines.length > 0
+            const hasInvalidWorkMachinesError = invalidWorkMachines.length > 0
+
+            if (hasMissingWorkMachinesError)
+              return {
+                ...assigneeInformation.labels.missingWorkMachineAlert,
+                values: {
+                  value: missingWorkMachines.join(', '),
+                },
+              }
+            else if (hasInvalidWorkMachinesError)
+              return {
+                ...assigneeInformation.labels.invalidWorkMachineAlert,
+                values: {
+                  value: invalidWorkMachines.join(', '),
+                },
+              }
+            else return ''
           },
           doesNotRequireAnswer: true,
           alertType: 'error',
           condition: (answers) => {
-            return getMissingWorkMachines(answers).length > 0
+            const missingWorkMachines = getMissingWorkMachines(answers)
+            const invalidWorkMachines = getInvalidWorkMachines(answers)
+
+            const hasMissingWorkMachinesError = missingWorkMachines.length > 0
+            const hasInvalidWorkMachinesError = invalidWorkMachines.length > 0
+
+            return hasMissingWorkMachinesError || hasInvalidWorkMachinesError
           },
-          shouldBlockSubmitIfError: true,
-        }),
-        buildAlertMessageField({
-          id: 'assigneeInformation.invalidWorkMachineAlert',
-          message: (application) => {
-            return {
-              ...assigneeInformation.labels.invalidWorkMachineAlert,
-              values: {
-                value: getInvalidWorkMachines(application.answers).join(', '),
-              },
-            }
-          },
-          doesNotRequireAnswer: true,
-          alertType: 'error',
-          condition: (answers) => {
-            return getInvalidWorkMachines(answers).length > 0
-          },
-          shouldBlockSubmitIfError: true,
+          shouldBlockInSetBeforeSubmitCallback: true,
         }),
       ],
     }),
