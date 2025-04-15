@@ -52,7 +52,7 @@ export const ConfirmationField: FC<
   const { document } =
     externalData.noDebtCertificate.data.debtLessCertificateResult.certificate
 
-  function renderFooter() {
+  const renderFooter = () => {
     return (
       <>
         <Divider />

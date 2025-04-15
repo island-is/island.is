@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { error } from './error'
-import { APPLICATION_TYPES, OPERATION_CATEGORY } from './constants'
+import { ApplicationTypes, OperationCategory } from './constants'
 import {
   isValid24HFormatTime,
   isValidEmail,
@@ -89,13 +89,13 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicationInfo: z
     .object({
-      operation: z.enum([APPLICATION_TYPES.HOTEL, APPLICATION_TYPES.RESTURANT]),
+      operation: z.enum([ApplicationTypes.HOTEL, ApplicationTypes.RESTURANT]),
       typeHotel: z.string().optional(),
       typeResturant: z.array(z.string()).optional(),
       category: z.enum([
-        OPERATION_CATEGORY.TWO,
-        OPERATION_CATEGORY.THREE,
-        OPERATION_CATEGORY.FOUR,
+        OperationCategory.TWO,
+        OperationCategory.THREE,
+        OperationCategory.FOUR,
       ]),
       willServe: z.array(z.enum([YES, NO])).optional(),
     })
@@ -103,9 +103,9 @@ export const dataSchema = z.object({
     // Check category
     .refine(
       ({ operation, category }) =>
-        (operation === APPLICATION_TYPES.HOTEL &&
+        (operation === ApplicationTypes.HOTEL &&
           validateApplicationInfoCategory({ operation, category })) ||
-        (operation === APPLICATION_TYPES.RESTURANT &&
+        (operation === ApplicationTypes.RESTURANT &&
           validateApplicationInfoCategory({ operation, category })),
       {
         message: error.invalidValue.defaultMessage,
@@ -115,8 +115,8 @@ export const dataSchema = z.object({
     // Check type for hotel
     .refine(
       ({ operation, typeHotel }) =>
-        (operation === APPLICATION_TYPES.HOTEL && !!typeHotel) ||
-        operation === APPLICATION_TYPES.RESTURANT,
+        (operation === ApplicationTypes.HOTEL && !!typeHotel) ||
+        operation === ApplicationTypes.RESTURANT,
       {
         message: error.invalidValue.defaultMessage,
         path: ['typeHotel'],
@@ -125,8 +125,8 @@ export const dataSchema = z.object({
     // Check type for resturant
     .refine(
       ({ operation, typeResturant }) =>
-        operation === APPLICATION_TYPES.HOTEL ||
-        (operation === APPLICATION_TYPES.RESTURANT &&
+        operation === ApplicationTypes.HOTEL ||
+        (operation === ApplicationTypes.RESTURANT &&
           typeResturant?.length &&
           typeResturant?.length > 0),
       {
