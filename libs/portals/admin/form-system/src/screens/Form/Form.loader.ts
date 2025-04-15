@@ -1,6 +1,10 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { FormSystemFormResponse } from '@island.is/api/schema'
-import { FormLoaderResponse, GET_FORM, LoaderResponse } from '@island.is/form-system/graphql'
+import {
+  FormLoaderResponse,
+  GET_FORM,
+  LoaderResponse,
+} from '@island.is/form-system/graphql'
 import { removeTypename } from '../../lib/utils/removeTypename'
 
 interface FormLoaderQueryResponse {
@@ -21,6 +25,7 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
             id: params.formId,
           },
         },
+        fetchPolicy: 'no-cache',
       })
       if (!loading && !data) {
         throw new Error('No form data found')

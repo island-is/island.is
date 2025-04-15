@@ -215,12 +215,13 @@ export class CmsContentfulService {
 
   async getOrganizationTitles(
     organizationKeys: string[],
+    searchByField: keyof types.IOrganizationFields,
     locale?: 'en' | 'is',
   ): Promise<Array<string | null>> {
     const params = {
       ['content_type']: 'organization',
-      select: 'fields.title,fields.referenceIdentifier',
-      'fields.referenceIdentifier[in]': organizationKeys.join(','),
+      select: `fields.title,fields.${searchByField}`,
+      [`fields.${searchByField}[in]`]: organizationKeys.join(','),
     }
 
     const result = await this.contentfulRepository
@@ -232,7 +233,7 @@ export class CmsContentfulService {
         return null
       } else {
         const organization = result.items.find(
-          (item) => item.fields.referenceIdentifier === key,
+          (item) => item.fields[searchByField] === key,
         )
 
         const title = organization?.fields.title || organization?.fields.title

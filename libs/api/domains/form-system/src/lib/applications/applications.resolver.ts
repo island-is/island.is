@@ -20,7 +20,7 @@ import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ApplicationsResolver {
-  constructor(private readonly applicationsService: ApplicationsService) { }
+  constructor(private readonly applicationsService: ApplicationsService) {}
 
   @Query(() => Application, {
     name: 'formSystemApplication',
@@ -56,7 +56,7 @@ export class ApplicationsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'submitFormSystemApplication'
+    name: 'submitFormSystemApplication',
   })
   async submitApplication(
     @Args('input', { type: () => GetApplicationInput })
@@ -76,5 +76,4 @@ export class ApplicationsResolver {
   ): Promise<void> {
     return this.applicationsService.submitScreen(user, input)
   }
-
 }

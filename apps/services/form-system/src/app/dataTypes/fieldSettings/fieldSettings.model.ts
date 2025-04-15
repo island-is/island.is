@@ -9,7 +9,7 @@ import {
   ValidateNested,
 } from 'class-validator'
 import { Type } from 'class-transformer'
-import { ListTypesEnum } from '../listTypes/listTypes.enum'
+import { ListTypesEnum } from '@island.is/form-system/shared'
 
 export class FieldSettings {
   @IsOptional()

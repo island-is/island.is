@@ -7,6 +7,7 @@ import {
 } from '@apollo/client'
 import { FormSystemForm } from '@island.is/api/schema'
 import { ControlState } from '../../hooks/controlReducer'
+import { UpdateFormResponse } from '@island.is/form-system/shared'
 
 export const updateFormFn = async (
   control: ControlState,
@@ -21,7 +22,7 @@ export const updateFormFn = async (
       | undefined,
   ) => Promise<any>,
   updatedForm?: FormSystemForm,
-) => {
+): Promise<UpdateFormResponse> => {
   const newForm = updatedForm ? updatedForm : control.form
   try {
     const response = await updateForm({
@@ -31,6 +32,7 @@ export const updateFormFn = async (
           updateFormDto: {
             organizationId: newForm.organizationId,
             name: newForm.name,
+            organizationDisplayName: newForm.organizationDisplayName,
             slug: newForm.slug,
             invalidationDate:
               newForm.invalidationDate === null
@@ -46,8 +48,9 @@ export const updateFormFn = async (
         },
       },
     })
-    console.log('Form updated successfully:', response.data)
+    return response.data.formSystemUpdateForm as UpdateFormResponse
   } catch (err) {
     console.error('Error updating form:', err.message)
+    throw err
   }
 }

@@ -20,11 +20,6 @@
             "output": "./migrations"
           },
           {
-            "glob": "*",
-            "input": "apps/services/form-system/seeders",
-            "output": "./seeders"
-          },
-          {
             "glob": ".sequelizerc",
             "input": "apps/services/form-system",
             "output": "./"
@@ -101,20 +96,6 @@
         "cwd": "apps/services/form-system"
       }
     },
-    "seed/generate": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "sequelize-cli seed:generate",
-        "cwd": "apps/services/form-system"
-      }
-    },
-    "seed": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "sequelize-cli db:seed:all",
-        "cwd": "apps/services/form-system"
-      }
-    },
     "docker-express": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
     },
@@ -123,8 +104,7 @@
       "options": {
         "commands": [
           "yarn dev-services services-form-system-api",
-          "yarn nx run services-form-system-api:migrate",
-          "yarn nx run services-form-system-api:seed"
+          "yarn nx run services-form-system-api:migrate"
         ],
         "parallel": false
       }

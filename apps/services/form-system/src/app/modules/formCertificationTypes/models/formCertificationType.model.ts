@@ -9,7 +9,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Form } from '../../forms/models/form.model'
-import { CertificationTypesEnum } from '../../../dataTypes/certificationTypes/certificationTypes.enum'
+import { CertificationTypesEnum } from '@island.is/form-system/shared'
 
 @Table({ tableName: 'form_certification_type' })
 export class FormCertificationType extends Model<FormCertificationType> {

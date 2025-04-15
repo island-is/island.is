@@ -1,5 +1,5 @@
 import { Option } from '@island.is/island-ui/core'
-import { FieldTypesEnum } from '@island.is/form-system/ui'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 
 /* eslint-disable @typescript-eslint/naming-convention */
 enum FieldTypes {
