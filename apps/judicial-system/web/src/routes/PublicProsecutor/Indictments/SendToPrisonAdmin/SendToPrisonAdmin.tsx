@@ -2,7 +2,7 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams, useRouter } from 'next/navigation'
 
-import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
+import { Box, InputFileUploadV2, UploadFile } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 import {
@@ -121,7 +121,7 @@ const SendToPrisonAdmin: FC = () => {
           description={formatMessage(strings.fileUploadDescription)}
         />
         <Box marginBottom={10}>
-          <InputFileUpload
+          <InputFileUploadV2
             fileList={uploadFiles.filter(
               (file) =>
                 file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,

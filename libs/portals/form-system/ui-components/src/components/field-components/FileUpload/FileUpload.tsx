@@ -1,5 +1,5 @@
 import {
-  InputFileUpload,
+  InputFileUploadDeprecated,
   UploadFile,
   fileToObject,
 } from '@island.is/island-ui/core'
@@ -45,7 +45,7 @@ export const FileUpload = ({ item }: Props) => {
   }
 
   return (
-    <InputFileUpload
+    <InputFileUploadDeprecated
       name="fileUpload"
       fileList={fileList}
       header={item?.name?.is ?? ''}

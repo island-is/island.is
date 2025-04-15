@@ -2,7 +2,7 @@ import {
   Accordion,
   Box,
   Checkbox,
-  InputFileUpload,
+  InputFileUploadDeprecated,
   Text,
   AccordionItem,
   UploadFile,
@@ -118,7 +118,7 @@ const PaperUpload = ({
               <Text>{formatMessage(m.uploadFileDescription)}</Text>
             </Box>
             <Box marginBottom={3}>
-              <InputFileUpload
+              <InputFileUploadDeprecated
                 fileList={fileList}
                 header={formatMessage(m.uploadHeader)}
                 description={formatMessage(m.uploadText)}

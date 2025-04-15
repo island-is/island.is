@@ -1,0 +1,355 @@
+import cn from 'classnames'
+import { FC, useMemo } from 'react'
+import { FileRejection, useDropzone } from 'react-dropzone'
+
+import { Colors, theme } from '@island.is/island-ui/theme'
+
+import { Box } from '../Box/Box'
+import { Button } from '../Button/Button'
+import { Text } from '../Text/Text'
+import { Icon } from '../IconRC/Icon'
+import { Icon as IconTypes } from '../IconRC/iconMap'
+import * as styles from './InputFileUpload.css'
+
+export enum FileUploadStatusV2 {
+  'error',
+  'done',
+  'uploading',
+}
+
+export type StatusColorV2 = {
+  background: Colors
+  border: Colors
+  icon?: Colors
+}
+
+export interface UploadFileV2 {
+  name: string
+  id?: string
+  key?: string
+  status?: FileUploadStatusV2
+  percent?: number
+  originalFileObj?: File | Blob
+  error?: string
+  size?: number
+}
+
+interface UploadingIndicatorProps {
+  percent?: number
+}
+
+const UploadingIndicator: FC<UploadingIndicatorProps> = (props) => {
+  const { percent } = props
+  const isDoneUploading = percent === 100
+
+  return (
+    <Box
+      position="absolute"
+      left={0}
+      borderRadius="large"
+      display={isDoneUploading ? 'none' : 'block'}
+      marginX={1}
+      className={styles.uploadingIndicator}
+      style={{ width: `${percent}%` }}
+    />
+  )
+}
+
+interface Icons {
+  remove: {
+    icon: IconTypes
+    onClick: (file: UploadFileV2) => void
+  }
+  retry: {
+    icon: IconTypes
+    onClick: (file: UploadFileV2) => void
+  }
+  uploading: { icon: IconTypes }
+  done: { icon: IconTypes }
+}
+
+interface UploadedFileProps {
+  file: UploadFileV2
+  defaultBackgroundColor?: StatusColorV2
+  icons?: Icons
+  onRemoveClick?: (file: UploadFileV2) => void
+  onRetryClick?: (file: UploadFileV2) => void
+  onOpenFile?: (file: UploadFileV2) => void
+}
+
+export const UploadedFileV2: FC<UploadedFileProps> = (props) => {
+  const {
+    file,
+    defaultBackgroundColor,
+    onRemoveClick,
+    onRetryClick,
+    onOpenFile,
+    icons = {
+      remove: { icon: 'remove', onClick: onRemoveClick },
+      retry: { icon: 'reload', onClick: onRetryClick },
+      uploading: { icon: 'reload' },
+      done: { icon: 'checkmark' },
+    },
+  } = props
+
+  const handleOpenFile = (evt: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    evt.stopPropagation()
+
+    if (onOpenFile) {
+      onOpenFile(file)
+    }
+  }
+
+  const handleClick = (
+    evt: React.MouseEvent<HTMLElement, MouseEvent>,
+    handler?: (file: UploadFileV2) => void,
+  ) => {
+    evt.stopPropagation()
+
+    if (handler) handler(file)
+  }
+
+  const truncateMiddle = (fileName: string) => {
+    const maxLength = 40
+    if (fileName.length <= maxLength) return fileName
+
+    const ellipsis = '...'
+    const keepLength = maxLength - ellipsis.length
+    const start = Math.ceil(keepLength / 2)
+    const end = fileName.length - Math.floor(keepLength / 2)
+
+    return `${fileName.slice(0, start)}${ellipsis}${fileName.slice(end)}`
+  }
+
+  const formatFileSize = (bytes: number) => {
+    const kb = 1024
+    const mb = kb * 1024
+    const gb = mb * 1024
+
+    if (bytes < kb) {
+      return `${bytes} B`
+    } else if (bytes < mb) {
+      return `${(bytes / kb).toFixed(2)} KB`
+    } else if (bytes < gb) {
+      return `${(bytes / mb).toFixed(2)} MB`
+    } else {
+      return `${(bytes / gb).toFixed(2)} GB`
+    }
+  }
+
+  const statusColor: StatusColorV2 = useMemo<StatusColorV2>(() => {
+    switch (file.status) {
+      case FileUploadStatusV2.error:
+        return { background: 'red100', border: 'red200', icon: 'red600' }
+      case FileUploadStatusV2.done:
+        // Display an error color if the file is empty
+        if (file.size && file.size === 0) {
+          return { background: 'red100', border: 'red200', icon: 'red600' }
+        }
+        return {
+          background: 'blue100',
+          border: 'blue200',
+          icon: 'blue400',
+        }
+      default:
+        return (
+          defaultBackgroundColor ?? {
+            background: 'transparent',
+            border: 'blue200',
+            icon: 'blue400',
+          }
+        )
+    }
+  }, [file.status, file.size, defaultBackgroundColor])
+
+  const isUploading =
+    file.percent !== undefined &&
+    file.percent < 100 &&
+    file.status === FileUploadStatusV2.uploading
+
+  return (
+    <Box
+      width="full"
+      position="relative"
+      display="flex"
+      flexDirection="row"
+      alignItems="center"
+      justifyContent="spaceBetween"
+      borderRadius="large"
+      borderStyle="solid"
+      borderWidth="standard"
+      borderColor={statusColor.border}
+      background={statusColor.background}
+      paddingX={2}
+      paddingY={1}
+      className={cn(styles.uploadedFile, {
+        [styles.canOpenFiles]: onOpenFile,
+      })}
+      onClick={handleOpenFile}
+      title={file.name}
+      aria-label={onOpenFile ? `Opna ${file.name}` : undefined}
+    >
+      <Text fontWeight="semiBold">
+        <Box component="span" className={{ [styles.fileName]: onOpenFile }}>
+          {truncateMiddle(file.name)}
+          {file.size && <Text as="span">{formatFileSize(file.size)}</Text>}
+          {onOpenFile && (
+            <Box component="span" marginLeft={1}>
+              <Icon icon="open" type="outline" size="small" />
+            </Box>
+          )}
+        </Box>
+      </Text>
+      {icons && (
+        <Box display="flex">
+          {isUploading ? (
+            <div
+              className={styles.progressIconAnimation}
+              aria-label="Hleð upp skrá"
+            >
+              <Icon color="blue400" icon={icons.uploading.icon} />
+            </div>
+          ) : file.status === FileUploadStatusV2.error ? (
+            <button
+              onClick={(evt) => handleClick(evt, icons.retry.onClick)}
+              aria-label="Reyna aftur"
+            >
+              <Icon color={statusColor.icon} icon={icons.retry.icon} />
+            </button>
+          ) : (
+            <button
+              onClick={(evt) => handleClick(evt, icons.remove.onClick)}
+              aria-label="Fjarlægja skrá"
+            >
+              <Icon color={statusColor.icon} icon={icons.remove.icon} />
+            </button>
+          )}
+        </Box>
+      )}
+      {file.percent !== undefined && (
+        <UploadingIndicator percent={file.percent} />
+      )}
+    </Box>
+  )
+}
+
+interface Props {
+  name: string
+  files: UploadFileV2[]
+  title?: string
+  description?: string
+  buttonLabel?: string
+  disabled?: boolean
+  accept?: string | string[]
+  // Enable upload of multiple files
+  multiple?: boolean
+  // Maximum file size in bytes
+  maxSize?: number
+  onRemove: (file: UploadFileV2) => void
+  onRetry?: (file: UploadFileV2) => void
+  onChange?: (files: File[], uploadCount?: number) => void
+  onUploadRejection?: (files: FileRejection[]) => void
+  errorMessage?: string
+  defaultFileBackgroundColor?: StatusColorV2
+}
+
+export const InputFileUploadV2: FC<Props> = (props) => {
+  const {
+    name,
+    files = [],
+    title,
+    description,
+    buttonLabel = 'Velja skjöl til að hlaða upp',
+    disabled = false,
+    accept,
+    multiple = true,
+    maxSize,
+    onChange,
+    onRemove,
+    onRetry,
+    onUploadRejection,
+    errorMessage,
+    defaultFileBackgroundColor,
+  } = props
+
+  const onDrop = (acceptedFiles: File[], fileRejections: FileRejection[]) => {
+    if (fileRejections.length !== 0 && onUploadRejection) {
+      onUploadRejection(fileRejections)
+    }
+
+    if (acceptedFiles.length === 0 || !onChange) return
+
+    if (!multiple) {
+      onChange(acceptedFiles.slice(0, 1), acceptedFiles.length)
+      return
+    }
+
+    onChange(acceptedFiles)
+  }
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept,
+    disabled,
+    maxSize,
+  })
+
+  const getActiveStyle = useMemo(
+    () => ({
+      ...(isDragActive ? { borderColor: theme.color.blue400 } : {}),
+    }),
+    [isDragActive],
+  )
+
+  const ariaError = errorMessage
+    ? {
+        'aria-invalid': true,
+        'aria-describedby': name,
+      }
+    : {}
+
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      borderRadius="standard"
+      textAlign="center"
+      padding={4}
+      className={cn(styles.container, { [styles.containerDisabled]: disabled })}
+      {...getRootProps({ getActiveStyle })}
+    >
+      {title && (
+        <Text variant="h4" as="h4">
+          {title}
+        </Text>
+      )}
+      {description && <Text>{description}</Text>}
+      <Box marginY={4}>
+        {(multiple || (!multiple && files.length === 0)) && (
+          <Button variant="ghost" icon="attach" disabled={disabled}>
+            {buttonLabel}
+          </Button>
+        )}
+      </Box>
+
+      <Box width="full" paddingX={[2, 2, 2, 2, 12]}>
+        {files.map((file, index) => (
+          <Box marginBottom={2} key={file.id ?? `${file.name}_${index}`}>
+            <UploadedFileV2
+              file={file}
+              defaultBackgroundColor={defaultFileBackgroundColor}
+              onRemoveClick={onRemove}
+              onRetryClick={onRetry}
+            />
+          </Box>
+        ))}
+      </Box>
+      <input id={name} name={name} {...getInputProps()} {...ariaError} />
+      {errorMessage && (
+        <div className={styles.errorMessage}>{errorMessage}</div>
+      )}
+    </Box>
+  )
+}

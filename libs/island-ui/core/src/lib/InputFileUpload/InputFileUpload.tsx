@@ -12,6 +12,8 @@ import { theme, Colors } from '@island.is/island-ui/theme'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconTypes } from '../IconRC/iconMap'
 
+import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
+
 export type UploadFileStatus = 'error' | 'done' | 'uploading'
 export enum FileUploadStatus {
   'error',
@@ -93,6 +95,7 @@ export const UploadedFile = ({
   onOpenFile,
   hideIcons = false,
 }: UploadedFileProps) => {
+  useDeprecatedComponent('UploadedFile', 'UploadedFileV2')
   const [ref, { width }] = useMeasure()
 
   const statusColor: StatusColor = useMemo<StatusColor>(() => {
@@ -100,7 +103,8 @@ export const UploadedFile = ({
       case 'error':
         return { background: 'red100', border: 'red200', icon: 'red600' }
       case 'done':
-        if (!file.size) {
+        // Display an error color if the file is empty
+        if (file.size && file.size === 0) {
           return { background: 'red100', border: 'red200', icon: 'red600' }
         }
         return {
@@ -258,7 +262,7 @@ export interface InputFileUploadProps {
   hideIcons?: boolean
 }
 
-export const InputFileUpload = ({
+export const InputFileUploadDeprecated = ({
   name,
   showFileSize = false,
   id,
@@ -279,6 +283,8 @@ export const InputFileUpload = ({
   doneIcon,
   hideIcons = false,
 }: InputFileUploadProps) => {
+  useDeprecatedComponent('InputFileUpload', 'InputFileUploadV2')
+
   const onDrop = (acceptedFiles: File[], fileRejections: FileRejection[]) => {
     if (fileRejections.length !== 0 && onUploadRejection) {
       onUploadRejection(fileRejections)

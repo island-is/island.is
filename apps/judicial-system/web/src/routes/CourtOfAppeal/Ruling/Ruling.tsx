@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import {
   Box,
   Input,
-  InputFileUpload,
+  InputFileUploadV2,
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
@@ -213,7 +213,7 @@ const CourtOfAppealRuling = () => {
         CaseAppealRulingDecision.DISCONTINUED ? (
           <Box marginBottom={10}>
             <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
-            <InputFileUpload
+            <InputFileUploadV2
               fileList={uploadFiles.filter(
                 (file) =>
                   file.category === CaseFileCategory.APPEAL_COURT_RECORD,
@@ -340,7 +340,7 @@ const CourtOfAppealRuling = () => {
                 title={formatMessage(strings.courtConclusionHeading)}
                 required
               />
-              <InputFileUpload
+              <InputFileUploadV2
                 fileList={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.APPEAL_RULING,
                 )}

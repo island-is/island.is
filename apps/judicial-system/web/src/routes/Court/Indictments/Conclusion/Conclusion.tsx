@@ -5,7 +5,7 @@ import router from 'next/router'
 import {
   Box,
   Input,
-  InputFileUpload,
+  InputFileUploadV2,
   RadioButton,
   Select,
 } from '@island.is/island-ui/core'
@@ -571,7 +571,7 @@ const Conclusion: FC = () => {
               title={formatMessage(strings.courtRecordTitle)}
               required={selectedAction === IndictmentDecision.COMPLETING}
             />
-            <InputFileUpload
+            <InputFileUploadV2
               fileList={uploadFiles.filter(
                 (file) => file.category === CaseFileCategory.COURT_RECORD,
               )}
@@ -606,7 +606,7 @@ const Conclusion: FC = () => {
                 )}
                 required
               />
-              <InputFileUpload
+              <InputFileUploadV2
                 fileList={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.RULING,
                 )}

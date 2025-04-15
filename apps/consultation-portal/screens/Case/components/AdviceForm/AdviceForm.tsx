@@ -10,7 +10,7 @@ import {
   Input,
   Text,
   Button,
-  InputFileUpload,
+  InputFileUploadDeprecated,
   Inline,
   Divider,
   UploadFile,
@@ -282,7 +282,7 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
       <Box paddingTop={3}>
         <Stack space={3}>
           {showUpload && (
-            <InputFileUpload
+            <InputFileUploadDeprecated
               name="fileUpload"
               fileList={fileList}
               accept={Object.values(fileExtensionWhitelist)}

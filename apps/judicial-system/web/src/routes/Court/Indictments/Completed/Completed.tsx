@@ -6,7 +6,7 @@ import router from 'next/router'
 import {
   Accordion,
   Box,
-  InputFileUpload,
+  InputFileUploadV2,
   RadioButton,
   UploadFile,
 } from '@island.is/island-ui/core'
@@ -198,7 +198,7 @@ const Completed: FC = () => {
             <SectionHeading
               title={formatMessage(strings.criminalRecordUpdateTitle)}
             />
-            <InputFileUpload
+            <InputFileUploadV2
               fileList={uploadFiles.filter(
                 (file) =>
                   file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,

@@ -1,6 +1,6 @@
 import {
   Box,
-  InputFileUpload,
+  InputFileUploadDeprecated,
   Text,
   Button,
   Table as T,
@@ -118,7 +118,7 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
       >
         <Text>{formatMessage(m.compareListsModalDescription)}</Text>
         <Box paddingTop={5} paddingBottom={5}>
-          <InputFileUpload
+          <InputFileUploadDeprecated
             fileList={fileList}
             header={formatMessage(m.uploadHeader)}
             description={formatMessage(m.uploadText)}

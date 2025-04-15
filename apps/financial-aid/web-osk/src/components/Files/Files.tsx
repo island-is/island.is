@@ -1,5 +1,8 @@
 import React, { useEffect, useContext } from 'react'
-import { InputFileUpload, UploadFile } from '@island.is/island-ui/core'
+import {
+  InputFileUploadDeprecated,
+  UploadFile,
+} from '@island.is/island-ui/core'
 
 import { FileUploadContainer } from '@island.is/financial-aid-web/osk/src/components'
 
@@ -43,7 +46,7 @@ const Files = ({ header, uploadFiles, fileKey, hasError = false }: Props) => {
 
   return (
     <FileUploadContainer hasError={hasError}>
-      <InputFileUpload
+      <InputFileUploadDeprecated
         fileList={files}
         header={header}
         description="Tekið er við öllum hefðbundnum skráargerðum"

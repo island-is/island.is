@@ -6,9 +6,10 @@ import { FileRejection } from 'react-dropzone'
 import { getValueViaPath, coreErrorMessages } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
-  InputFileUpload,
+  InputFileUploadDeprecated,
   UploadFile,
   fileToObject,
+  FileUploadStatus,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -101,7 +102,10 @@ export const FileUploadController = ({
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
   const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
-  const { refetch: fileUploadMalwareStatus } = useQuery(GET_MALWARE_SCAN_STATUS, { skip: true })
+  const { refetch: fileUploadMalwareStatus } = useQuery(
+    GET_MALWARE_SCAN_STATUS,
+    { skip: true },
+  )
   const [sumOfFileSizes, setSumOfFileSizes] = useState(0)
   const initialUploadFiles: UploadFile[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
@@ -167,14 +171,16 @@ export const FileUploadController = ({
     clearErrors(id)
     setUploadError(undefined)
 
-    if(!multiple) {
+    if (!multiple) {
       // Trying to upload more than 1 file
-      if(uploadCount && uploadCount > 1) {
-        setUploadError(formatMessage(coreErrorMessages.uploadMultipleNotAllowed))
+      if (uploadCount && uploadCount > 1) {
+        setUploadError(
+          formatMessage(coreErrorMessages.uploadMultipleNotAllowed),
+        )
         return
       }
       // Trying to upload a single file, but a file has already been uploaded
-      if(state.length === 1) {
+      if (state.length === 1) {
         await onRemoveFile(state[0])
       }
     }
@@ -223,11 +229,10 @@ export const FileUploadController = ({
       try {
         const res = await uploadFileFlow(f)
 
-        if(!res.isClean) {
+        if (!res.isClean) {
           // We need the file to have the key because we are about to remove it
           // before the dispatch event finishes
-          if(res.key)
-            f.key = res.key
+          if (res.key) f.key = res.key
 
           malwareFiles.push(f)
         }
@@ -238,7 +243,7 @@ export const FileUploadController = ({
             status: res.isClean ? 'done' : 'error',
             percent: 100,
             key: res.key,
-            url: res.url
+            url: res.url,
           },
         })
       } catch {
@@ -248,17 +253,27 @@ export const FileUploadController = ({
 
     await Promise.allSettled(uploadPromises)
 
-    if(malwareFiles.length > 0) {
-      const malwareFileNamesFormatted = malwareFiles.map(f => f.name).join(', ')
+    if (malwareFiles.length > 0) {
+      const malwareFileNamesFormatted = malwareFiles
+        .map((f) => f.name)
+        .join(', ')
 
       for (const f of malwareFiles) {
         await onRemoveFile(f, false, false)
       }
-      setUploadError(formatMessage(coreErrorMessages.fileUploadMalware, {files: malwareFileNamesFormatted}))
+      setUploadError(
+        formatMessage(coreErrorMessages.fileUploadMalware, {
+          files: malwareFileNamesFormatted,
+        }),
+      )
     }
   }
 
-  const onRemoveFile = async (fileToRemove: UploadFile, overwriteError = true, removeFileCard = true) => {
+  const onRemoveFile = async (
+    fileToRemove: UploadFile,
+    overwriteError = true,
+    removeFileCard = true,
+  ) => {
     // If it's previously been uploaded, remove it from the application attachment.
     if (fileToRemove.key) {
       try {
@@ -280,7 +295,7 @@ export const FileUploadController = ({
 
     // There is a case for not removing the file card in the component if
     // it has malware and we want it there to show that those exact files have errors
-    if(removeFileCard) {
+    if (removeFileCard) {
       // We remove it from the list if: the delete attachment above succeeded,
       // or if the user clicked x for a file that failed to upload and is in
       // an error state.
@@ -292,8 +307,7 @@ export const FileUploadController = ({
       })
     }
 
-    if(overwriteError)
-      setUploadError(undefined)
+    if (overwriteError) setUploadError(undefined)
   }
 
   const onFileRejection = (files: FileRejection[]) => {
@@ -326,7 +340,7 @@ export const FileUploadController = ({
 
   const FileUploadComponent = forImageUpload
     ? InputImageUpload
-    : InputFileUpload
+    : InputFileUploadDeprecated
 
   return (
     <Controller

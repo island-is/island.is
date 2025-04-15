@@ -4,7 +4,7 @@ import {
   Box,
   Button,
   FileUploadStatus,
-  InputFileUpload,
+  InputFileUploadDeprecated,
   LoadingDots,
   UploadFile,
 } from '@island.is/island-ui/core'
@@ -355,7 +355,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <Controller
         name="csv-upload-participants"
         render={() => (
-          <InputFileUpload
+          <InputFileUploadDeprecated
             applicationId={application.id}
             fileList={fileState}
             header={formatMessage(participantMessages.labels.uploadHeader)}

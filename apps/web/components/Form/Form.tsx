@@ -9,7 +9,7 @@ import {
   Checkbox,
   DatePicker,
   Input,
-  InputFileUpload,
+  InputFileUploadDeprecated,
   RadioButton,
   Select,
   Stack,
@@ -794,7 +794,7 @@ export const Form = ({ form }: FormProps) => {
               .map((field) => {
                 const slug = getUniqueFormFieldValue(field)
                 return (
-                  <InputFileUpload
+                  <InputFileUploadDeprecated
                     key={slug}
                     header={field.title}
                     description={field.placeholder}

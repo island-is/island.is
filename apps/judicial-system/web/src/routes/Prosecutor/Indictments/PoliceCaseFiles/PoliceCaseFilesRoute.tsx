@@ -11,7 +11,7 @@ import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
 import router from 'next/router'
 
-import { Box, InputFileUpload } from '@island.is/island-ui/core'
+import { Box, InputFileUploadV2 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeSceneMap,
@@ -262,7 +262,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
         policeCaseFileList={policeCaseFileList}
         policeCaseFiles={policeCaseFiles}
       />
-      <InputFileUpload
+      <InputFileUploadV2
         name="fileUpload"
         fileList={uploadFiles}
         accept="application/pdf"

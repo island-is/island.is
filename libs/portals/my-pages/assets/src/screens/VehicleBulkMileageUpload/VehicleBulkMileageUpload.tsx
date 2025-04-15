@@ -1,5 +1,5 @@
 import {
-  InputFileUpload,
+  InputFileUploadDeprecated,
   Box,
   Text,
   fileToObject,
@@ -230,7 +230,7 @@ const VehicleBulkMileageUpload = () => {
               }
             />
           )}
-        <InputFileUpload
+        <InputFileUploadDeprecated
           fileList={uploadedFile ? [uploadedFile] : []}
           showFileSize
           header={formatMessage(vehicleMessage.dragFileToUpload)}

@@ -5,7 +5,7 @@ import {
   Accordion,
   AccordionItem,
   Box,
-  UploadedFile,
+  UploadedFileV2,
 } from '@island.is/island-ui/core'
 import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -32,15 +32,13 @@ const ParentCaseFiles: FC<Props> = ({ files }) => {
         >
           {files.map((file, index) => (
             <Box key={`${file.id}-${index}`} marginTop={3}>
-              <UploadedFile
+              <UploadedFileV2
                 file={{
                   ...file,
                   name: `${index + 1}. ${file.name}`,
-                  type: file.type ?? undefined,
                   key: file.key ?? undefined,
                   size: file.size ?? undefined,
                 }}
-                showFileSize
                 hideIcons
                 defaultBackgroundColor={{
                   background: 'blue100',
