@@ -22,11 +22,12 @@ import { formatNationalId } from '@island.is/portals/core'
 const Signees = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const { id } = useParams<{id: string}>()
+  const { id } = useParams<{ id: string }>()
 
   const [searchTerm, setSearchTerm] = useState('')
-  const { listSignees, loadingSignees, refetchListSignees } =
-    useGetListSignees(id ?? '')
+  const { listSignees, loadingSignees, refetchListSignees } = useGetListSignees(
+    id ?? '',
+  )
   const [signees, setSignees] = useState(listSignees)
 
   const [page, setPage] = useState(1)

@@ -8,10 +8,9 @@ import format from 'date-fns/format'
 import { useMutation } from '@apollo/client'
 import { unSignList } from '../../../hooks/graphql/mutations'
 import {
+  Mutation,
   SignatureCollection,
   SignatureCollectionCollectionType,
-  SignatureCollectionSignedList,
-  SignatureCollectionSuccess,
 } from '@island.is/api/schema'
 
 const SignedList = ({
@@ -27,13 +26,12 @@ const SignedList = ({
   )
 
   // SignedList is typically singular, although it may consist of multiple entries, which in that case will all be invalid
-  const {
-    signedLists,
-    loadingSignedLists,
-    refetchSignedLists,
-  } = useGetSignedList()
+  const { signedLists, loadingSignedLists, refetchSignedLists } =
+    useGetSignedList()
 
-  const [unSign, { loading }] = useMutation(unSignList, {
+  const [unSign, { loading }] = useMutation<{
+    signatureCollectionUnsign: Mutation['signatureCollectionUnsign']
+  }>(unSignList, {
     variables: {
       input: {
         listId: listIdToUnsign,
@@ -43,22 +41,15 @@ const SignedList = ({
 
   const onUnSignList = async () => {
     try {
-      await unSign().then(({ data }) => {
-        if (
-          ((data as unknown) as {
-            signatureCollectionUnsign: SignatureCollectionSuccess
-          }).signatureCollectionUnsign.success
-        ) {
-        const success = data?.signatureCollectionUnsign?.success
-
-        if (success) {
-          toast.success(formatMessage(m.unSignSuccess))
-          setModalIsOpen(false)
-          refetchSignedLists()
-        } else {
-          setModalIsOpen(false)
-        }
-      })
+      const { data } = await unSign()
+      const success = data?.signatureCollectionUnsign?.success
+      if (success) {
+        toast.success(formatMessage(m.unSignSuccess))
+        setModalIsOpen(false)
+        refetchSignedLists()
+      } else {
+        setModalIsOpen(false)
+      }
     } catch (e) {
       toast.error(formatMessage(m.unSignError))
     }

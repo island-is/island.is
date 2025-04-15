@@ -33,13 +33,15 @@ export class SignatureCollectionSharedClientService {
     //       collections running at the same time. (not projected to happen currently)
     //       So keep CollectionType in mind if you're working on this
     //       for that reason, future programmer.
-    const current = (res
-      .map(mapCollection)
-      .filter(
-        (collection) =>
-          collection?.isSignatureCollection &&
-          collection.startTime < new Date(),
-      ) as Collection[]).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
+    const current = (
+      res
+        .map(mapCollection)
+        .filter(
+          (collection) =>
+            collection?.isSignatureCollection &&
+            collection.startTime < new Date(),
+        ) as Collection[]
+    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
 
     if (!current) {
       throw new Error('No current collection')

@@ -212,16 +212,14 @@ export class SignatureCollectionAdminClientService {
         ? user.medmaelalistar?.map((list) => mapListBase(list))
         : []
 
-    const {
-      success: canCreate,
-      reasons: canCreateInfo,
-    } = this.sharedService.canCreate({
-      requirementsMet: user.maFrambod,
-      canCreateInfo: user.maFrambodInfo,
-      ownedLists,
-      collectionType,
-      areas,
-    })
+    const { success: canCreate, reasons: canCreateInfo } =
+      this.sharedService.canCreate({
+        requirementsMet: user.maFrambod,
+        canCreateInfo: user.maFrambodInfo,
+        ownedLists,
+        collectionType,
+        areas,
+      })
 
     return {
       nationalId: user.kennitala ?? '',
