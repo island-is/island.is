@@ -265,6 +265,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       spokespersonEmail
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
+      isSpokespersonConfirmed
     }
     isCompletedWithoutRuling
     caseSentToCourtDate
