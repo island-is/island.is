@@ -9,13 +9,13 @@ import { AnimatePresence, motion } from 'motion/react'
 
 import {
   Box,
+  FileUploadStatus,
   Icon,
   Input,
   LoadingDots,
   Text,
   toast,
   UploadFile,
-  FileUploadStatus,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
