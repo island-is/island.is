@@ -20,7 +20,7 @@ import { TechInfoItem } from '../models/techInfoItem'
 export class SubCategoryResolver {
   constructor(private readonly workMachinesService: WorkMachinesService) {}
 
-  @ResolveField('techInfoItem', () => [TechInfoItem])
+  @ResolveField('techInfoItems', () => [TechInfoItem])
   async resolveTechInfoItems(
     @CurrentUser() user: User,
     @Parent() category: SubCategory,

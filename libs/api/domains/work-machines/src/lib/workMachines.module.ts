@@ -5,6 +5,9 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { CollectionResolver } from './resolvers/collection.resolver'
 import { WorkMachineResolver } from './resolvers/workMachine.resolver'
 import { DeprecatedResolver } from './resolvers/deprecated.resolver'
+import { SubCategoryResolver } from './resolvers/subCategory.resolver'
+import { ModelResolver } from './resolvers/model.resolver'
+import { TypeClassificationResolver } from './resolvers/typeClassification.resolver'
 
 @Module({
   imports: [WorkMachinesClientModule, FeatureFlagModule],
@@ -12,6 +15,9 @@ import { DeprecatedResolver } from './resolvers/deprecated.resolver'
     CollectionResolver,
     WorkMachineResolver,
     DeprecatedResolver,
+    TypeClassificationResolver,
+    ModelResolver,
+    SubCategoryResolver,
     WorkMachinesService,
   ],
 })
