@@ -2,7 +2,12 @@ import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
-import { Box, IconMapIcon, StatusColor, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  IconMapIcon,
+  StatusColorDeprecated,
+  Text,
+} from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 import { caseFiles as m } from '@island.is/judicial-system-web/messages'
 import {
@@ -20,7 +25,9 @@ interface Props {
   handleRetryClick?: (id: string) => void
 }
 
-const getBackgroundColor = (caseFile: CaseFileWithStatus): StatusColor => {
+const getBackgroundColor = (
+  caseFile: CaseFileWithStatus,
+): StatusColorDeprecated => {
   if (
     caseFile.status === 'broken' ||
     caseFile.status === 'done-broken' ||

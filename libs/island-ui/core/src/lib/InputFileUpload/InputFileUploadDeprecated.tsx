@@ -14,29 +14,29 @@ import { Icon as IconTypes } from '../IconRC/iconMap'
 
 import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
-export type UploadFileStatus = 'error' | 'done' | 'uploading'
-export enum FileUploadStatus {
+export type UploadFileStatusDeprecated = 'error' | 'done' | 'uploading'
+export enum FileUploadStatusDeprecated {
   'error',
   'done',
   'uploading',
 }
 
-export interface UploadFile {
+export interface UploadFileDeprecated {
   name: string
   type?: string
   id?: string
   key?: string
-  status?: UploadFileStatus
+  status?: UploadFileStatusDeprecated
   percent?: number
   originalFileObj?: File | Blob
   error?: string
   size?: number
 }
 
-export const fileToObject = (
+export const fileToObjectDeprecated = (
   file: File,
-  status?: UploadFileStatus,
-): UploadFile => {
+  status?: UploadFileStatusDeprecated,
+): UploadFileDeprecated => {
   return {
     name: file.name,
     type: file.type,
@@ -68,24 +68,24 @@ const UploadingIndicator = (
   )
 }
 
-export type StatusColor = {
+export type StatusColorDeprecated = {
   background: Colors
   border: Colors
   icon?: Colors
 }
 
 interface UploadedFileProps {
-  file: UploadFile
+  file: UploadFileDeprecated
   showFileSize: boolean
-  onRemoveClick?: (file: UploadFile) => void
-  onRetryClick?: (file: UploadFile) => void
-  onOpenFile?: (file: UploadFile) => void
-  defaultBackgroundColor?: StatusColor
+  onRemoveClick?: (file: UploadFileDeprecated) => void
+  onRetryClick?: (file: UploadFileDeprecated) => void
+  onOpenFile?: (file: UploadFileDeprecated) => void
+  defaultBackgroundColor?: StatusColorDeprecated
   doneIcon?: IconTypes
   hideIcons?: boolean
 }
 
-export const UploadedFile = ({
+export const UploadedFileDeprecated = ({
   file,
   showFileSize,
   defaultBackgroundColor,
@@ -98,32 +98,33 @@ export const UploadedFile = ({
   useDeprecatedComponent('UploadedFile', 'UploadedFileV2')
   const [ref, { width }] = useMeasure()
 
-  const statusColor: StatusColor = useMemo<StatusColor>(() => {
-    switch (file.status) {
-      case 'error':
-        return { background: 'red100', border: 'red200', icon: 'red600' }
-      case 'done':
-        // Display an error color if the file is empty
-        if (file.size && file.size === 0) {
+  const statusColor: StatusColorDeprecated =
+    useMemo<StatusColorDeprecated>(() => {
+      switch (file.status) {
+        case 'error':
           return { background: 'red100', border: 'red200', icon: 'red600' }
-        }
-        return {
-          background: 'blue100',
-          border: 'blue200',
-          icon: 'blue400',
-        }
-      default:
-        return (
-          defaultBackgroundColor ?? {
-            background: 'transparent',
+        case 'done':
+          // Display an error color if the file is empty
+          if (file.size && file.size === 0) {
+            return { background: 'red100', border: 'red200', icon: 'red600' }
+          }
+          return {
+            background: 'blue100',
             border: 'blue200',
             icon: 'blue400',
           }
-        )
-    }
-  }, [file.status, file.size, defaultBackgroundColor])
+        default:
+          return (
+            defaultBackgroundColor ?? {
+              background: 'transparent',
+              border: 'blue200',
+              icon: 'blue400',
+            }
+          )
+      }
+    }, [file.status, file.size, defaultBackgroundColor])
 
-  const statusIcon = (status?: UploadFileStatus): IconTypes => {
+  const statusIcon = (status?: UploadFileStatusDeprecated): IconTypes => {
     switch (status) {
       case 'error':
         return 'close'
@@ -239,7 +240,7 @@ export const UploadedFile = ({
   )
 }
 
-export interface InputFileUploadProps {
+export interface InputFileUploadPropsDeprecated {
   applicationId?: string
   name?: string
   showFileSize?: boolean
@@ -250,14 +251,14 @@ export interface InputFileUploadProps {
   disabled?: boolean
   accept?: string | string[]
   multiple?: boolean
-  fileList: UploadFile[]
+  fileList: UploadFileDeprecated[]
   maxSize?: number
-  onRemove: (file: UploadFile) => void
-  onRetry?: (file: UploadFile) => void
+  onRemove: (file: UploadFileDeprecated) => void
+  onRetry?: (file: UploadFileDeprecated) => void
   onChange?: (files: File[], uploadCount?: number) => void
   onUploadRejection?: (files: FileRejection[]) => void
   errorMessage?: string
-  defaultFileBackgroundColor?: StatusColor
+  defaultFileBackgroundColor?: StatusColorDeprecated
   doneIcon?: IconTypes
   hideIcons?: boolean
 }
@@ -282,7 +283,7 @@ export const InputFileUploadDeprecated = ({
   defaultFileBackgroundColor,
   doneIcon,
   hideIcons = false,
-}: InputFileUploadProps) => {
+}: InputFileUploadPropsDeprecated) => {
   useDeprecatedComponent('InputFileUpload', 'InputFileUploadV2')
 
   const onDrop = (acceptedFiles: File[], fileRejections: FileRejection[]) => {
@@ -346,7 +347,7 @@ export const InputFileUploadDeprecated = ({
       <Box width="full" paddingX={[2, 2, 2, 2, 12]}>
         {fileList.map((file, index) => (
           <Box marginBottom={2} key={file.id ?? `${file.name}_${index}`}>
-            <UploadedFile
+            <UploadedFileDeprecated
               file={file}
               showFileSize={showFileSize}
               defaultBackgroundColor={defaultFileBackgroundColor}

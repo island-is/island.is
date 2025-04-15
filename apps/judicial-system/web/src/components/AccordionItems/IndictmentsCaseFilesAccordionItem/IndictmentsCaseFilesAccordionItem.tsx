@@ -24,7 +24,7 @@ import {
   Box,
   Text,
   toast,
-  UploadFileStatus,
+  UploadFileStatusDeprecated,
 } from '@island.is/island-ui/core'
 import {
   CrimeSceneMap,
@@ -161,7 +161,7 @@ export const sortedFilesInChapter = (
         userGeneratedFilename: file.userGeneratedFilename,
         displayDate: file.displayDate,
         canOpen: Boolean(file.key),
-        status: 'done' as UploadFileStatus,
+        status: 'done' as UploadFileStatusDeprecated,
         canEdit: true,
         size: file.size,
       }
@@ -353,7 +353,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
             userGeneratedFilename: caseFile.userGeneratedFilename,
             displayDate: caseFile.displayDate,
             canOpen: Boolean(caseFile.key),
-            status: 'done' as UploadFileStatus,
+            status: 'done' as UploadFileStatusDeprecated,
             size: caseFile.size,
             canEdit: true,
           }

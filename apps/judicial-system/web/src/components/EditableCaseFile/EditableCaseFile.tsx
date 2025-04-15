@@ -15,7 +15,7 @@ import {
   Text,
   toast,
   UploadFile,
-  UploadFileStatus,
+  UploadFileStatusDeprecated,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
@@ -33,7 +33,7 @@ export interface TEditableCaseFile {
   displayDate?: string | null
   canOpen?: boolean
   canEdit?: boolean
-  status?: UploadFileStatus
+  status?: UploadFileStatusDeprecated
   size?: number | null
 }
 

@@ -94,14 +94,14 @@ export * from './lib/Select/Select.types'
 export * from './lib/Input/Input'
 export {
   InputFileUploadDeprecated,
-  UploadFileStatus,
-  FileUploadStatus,
-  UploadFile,
-  fileToObject,
-  StatusColor,
-  UploadedFile,
-  InputFileUploadProps,
-} from './lib/InputFileUpload/InputFileUpload'
+  UploadFileStatusDeprecated,
+  FileUploadStatusDeprecated,
+  UploadFileDeprecated,
+  fileToObjectDeprecated,
+  StatusColorDeprecated,
+  UploadedFileDeprecated,
+  InputFileUploadPropsDeprecated,
+} from './lib/InputFileUpload/InputFileUploadDeprecated'
 export * from './lib/InputFileUpload/InputFileUploadV2'
 export * from './lib/InputError/InputError'
 export * from './lib/ToggleSwitch'

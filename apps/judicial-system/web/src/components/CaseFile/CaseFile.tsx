@@ -2,7 +2,12 @@ import { FC } from 'react'
 import cn from 'classnames'
 
 import { IconMapIcon } from '@island.is/island-ui/core'
-import { Box, Icon, StatusColor, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Icon,
+  StatusColorDeprecated,
+  Text,
+} from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 
 import { fileSize } from '../../utils/utils'
@@ -11,7 +16,7 @@ import * as styles from './CaseFile.css'
 
 interface Props {
   name: string
-  color: StatusColor
+  color: StatusColorDeprecated
   id: string
   size?: number | null
   icon?: {

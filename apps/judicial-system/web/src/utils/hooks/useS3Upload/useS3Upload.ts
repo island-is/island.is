@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
 import {
-  FileUploadStatus,
   FileUploadStatusV2,
   toast,
   UploadFileV2,

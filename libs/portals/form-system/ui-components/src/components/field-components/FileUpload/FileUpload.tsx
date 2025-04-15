@@ -1,7 +1,7 @@
 import {
   InputFileUploadDeprecated,
-  UploadFile,
-  fileToObject,
+  UploadFileDeprecated,
+  fileToObjectDeprecated,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { uuid } from 'uuidv4'
@@ -16,11 +16,11 @@ interface Props {
 
 export const FileUpload = ({ item }: Props) => {
   const [error, setError] = useState<string | undefined>(undefined)
-  const [fileList, setFileList] = useState<Array<UploadFile>>([])
+  const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
   const { formatMessage } = useIntl()
   const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
   const onChange = (files: File[]) => {
-    const uploadFiles = files.map((file) => fileToObject(file))
+    const uploadFiles = files.map((file) => fileToObjectDeprecated(file))
     const uploadFilesWithKey = uploadFiles.map((f) => ({
       ...f,
       key: uuid(),
@@ -39,7 +39,7 @@ export const FileUpload = ({ item }: Props) => {
     setFileList(newFileList)
   }
 
-  const onRemove = (fileToRemove: UploadFile) => {
+  const onRemove = (fileToRemove: UploadFileDeprecated) => {
     const newFileList = fileList.filter((file) => file.key !== fileToRemove.key)
     setFileList(newFileList)
   }
