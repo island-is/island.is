@@ -1,5 +1,6 @@
+import { Locale } from '@island.is/shared/types'
 import { Field, InputType } from '@nestjs/graphql'
-import { IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 
 @InputType('WorkMachinesTypeClassificationInput')
 export class GetWorkMachineTypeClassificationInput {
@@ -9,5 +10,10 @@ export class GetWorkMachineTypeClassificationInput {
 
   @Field()
   @IsString()
-  locale!: string
+  locale!: Locale
+
+  @Field()
+  @IsString()
+  @IsOptional()
+  correlationId?: string
 }

@@ -4,7 +4,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
@@ -13,13 +13,17 @@ import { Model } from '../models/model.model'
 import { Category } from '../models/category.model'
 import { ModelDto } from '../workMachines.types'
 import { GetWorkMachineModelCategoriesInput } from '../dto/getModelCategories.input'
-import { ModelCategory, ModelSubCategory } from '../dto/modelCategory.dto'
+import { ModelSubCategory } from '../dto/modelCategory.dto'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver(() => Model)
 @Audit({ namespace: '@island.is/api/work-machines' })
 export class ModelResolver {
-  constructor(private readonly workMachinesService: WorkMachinesService) {}
+  constructor(
+    private readonly workMachinesService: WorkMachinesService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @ResolveField('categories', () => [Category], { nullable: true })
   async resolveCategories(
@@ -35,18 +39,22 @@ export class ModelResolver {
       return undefined
     }
 
+    const { name, type, locale, correlationId } = model
+
+    this.logger.debug('model', model)
+
     const data =
       await this.workMachinesService.getMachineParentCategoriesTypeModelGet(
         user,
         {
-          model: model.name,
-          type: model.type,
+          model: name,
+          type,
         },
-        model.locale,
-        model.correlationId,
+        locale,
+        correlationId,
       )
 
-    const categories: Array<ModelCategory> = []
+    const categories: Array<Category> = []
     data.map((cat) => {
       if (!cat.name) {
         return
@@ -54,6 +62,7 @@ export class ModelResolver {
       const existingCategoryIndex = categories.findIndex(
         (c) => c.name === cat.name,
       )
+
       if (existingCategoryIndex === -1) {
         const subCategories: Array<ModelSubCategory> = cat.subCategoryName
           ? [
@@ -64,8 +73,8 @@ export class ModelResolver {
                 parentCategoryNameEn: cat.nameEn ?? undefined,
                 registrationNumberPrefix:
                   cat.registrationNumberPrefix ?? undefined,
-                locale: cat.locale,
-                correlationId: cat.correlationId,
+                locale,
+                correlationId,
               },
             ]
           : []
@@ -75,8 +84,6 @@ export class ModelResolver {
           nameEn: cat.nameEn ?? undefined,
           registrationNumberPrefix: cat.registrationNumberPrefix ?? undefined,
           subCategories,
-          locale: cat.locale,
-          correlationId: cat.correlationId,
         })
       } else {
         const existingCategorySubCategories: Array<ModelSubCategory> =
@@ -93,8 +100,8 @@ export class ModelResolver {
           parentCategoryName: cat.name,
           parentCategoryNameEn: cat.nameEn ?? undefined,
           registrationNumberPrefix: cat.registrationNumberPrefix ?? undefined,
-          locale: cat.locale,
-          correlationId: cat.correlationId,
+          locale,
+          correlationId,
         }
 
         existingCategorySubCategories.push(subCat)
