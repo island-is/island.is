@@ -263,6 +263,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
     <>
       <PoliceCaseFiles
         onUpload={onPoliceCaseFileUpload}
+        policeCaseFileList={policeCaseFileList}
         policeCaseFiles={policeCaseFiles}
       />
       <InputFileUploadV2
