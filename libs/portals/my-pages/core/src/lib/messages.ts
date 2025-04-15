@@ -623,8 +623,7 @@ export const m = defineMessages({
   },
   signatureCollectionParliamentaryListsCompany: {
     id: 'service.portal:signatureCollectionParliamentaryListsCompany',
-    defaultMessage:
-      'Alþingiskosningar - Aðeins fyrir stjórnmálasamtök',
+    defaultMessage: 'Alþingiskosningar - Aðeins fyrir stjórnmálasamtök',
   },
   signatureCollectionPresidentialLists: {
     id: 'service.portal:signatureCollectionPresidentialLists',

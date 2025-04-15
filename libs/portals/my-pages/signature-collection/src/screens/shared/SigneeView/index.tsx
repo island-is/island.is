@@ -13,7 +13,10 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import { sortAlpha } from '@island.is/shared/utils'
 import { m } from '../../../lib/messages'
 import SignedList from '../SignedList'
-import { SignatureCollection } from '@island.is/api/schema'
+import {
+  SignatureCollection,
+  SignatureCollectionCollectionType,
+} from '@island.is/api/schema'
 
 const SigneeView = ({
   currentCollection,
@@ -69,7 +72,8 @@ const SigneeView = ({
                       eyebrow={list.area?.name}
                       heading={list.title.split(' - ')[0]}
                       text={
-                        currentCollection.isPresidential
+                        currentCollection.collectionType ===
+                        SignatureCollectionCollectionType.Presidential
                           ? formatMessage(m.collectionTitle)
                           : formatMessage(m.collectionTitleParliamentary)
                       }
