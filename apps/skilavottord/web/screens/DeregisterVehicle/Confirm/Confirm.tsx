@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
 import { useRouter } from 'next/router'
 import React, { FC, useContext, useEffect, useState } from 'react'
 
@@ -25,6 +24,12 @@ import {
 } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import {
+  SkilavottordRecyclingRequestMutation,
+  SkilavottordTrafficQuery,
+  SkilavottordVehicleReadyToDeregisteredQuery,
+  UpdateSkilavottordVehicleInfoMutation,
+} from '@island.is/skilavottord-web/graphql/queries'
+import {
   Mutation,
   Query,
   RecyclingRequestTypes,
@@ -36,68 +41,6 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { OutInUsage, UseStatus } from '@island.is/skilavottord-web/utils/consts'
 import { getYear } from '@island.is/skilavottord-web/utils/dateUtils'
 import { FormProvider, useForm } from 'react-hook-form'
-
-const SkilavottordVehicleReadyToDeregisteredQuery = gql`
-  query skilavottordVehicleReadyToDeregisteredQuery($permno: String!) {
-    skilavottordVehicleReadyToDeregistered(permno: $permno) {
-      vehicleId
-      vehicleType
-      newregDate
-      vinNumber
-      mileage
-      recyclingRequests {
-        nameOfRequestor
-      }
-    }
-  }
-`
-
-const SkilavottordTrafficQuery = gql`
-  query skilavottordTrafficQuery($permno: String!) {
-    skilavottordTraffic(permno: $permno) {
-      permno
-      outInStatus
-      useStatus
-      useStatusName
-    }
-  }
-`
-
-const SkilavottordRecyclingRequestMutation = gql`
-  mutation skilavottordRecyclingRequestMutation(
-    $permno: String!
-    $requestType: RecyclingRequestTypes!
-  ) {
-    createSkilavottordRecyclingRequest(
-      permno: $permno
-      requestType: $requestType
-    ) {
-      ... on RequestErrors {
-        message
-        operation
-      }
-      ... on RequestStatus {
-        status
-      }
-    }
-  }
-`
-
-const UpdateSkilavottordVehicleInfoMutation = gql`
-  mutation updateSkilavottordVehicleInfo(
-    $permno: String!
-    $mileage: Float!
-    $plateCount: Float!
-    $plateLost: Boolean!
-  ) {
-    updateSkilavottordVehicleInfo(
-      permno: $permno
-      mileage: $mileage
-      plateCount: $plateCount
-      plateLost: $plateLost
-    )
-  }
-`
 
 const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
   const [plateCount, setPlateCount] = useState<number>(2)
@@ -350,7 +293,10 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
             </Button>
           </Hidden>
           {vehicle && (
-            <Button onClick={handleConfirm} disabled={loadingTraffic}>
+            <Button
+              onClick={handleConfirm}
+              disabled={loadingTraffic || !methods.formState.isValid}
+            >
               {t.buttons.confirm}
             </Button>
           )}
