@@ -4,7 +4,7 @@ query collection {
     endTime
     startTime
     isActive
-    isPresidential
+    collectionType
     name
     status
     areas {
