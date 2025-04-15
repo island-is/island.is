@@ -4,9 +4,10 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
+  FileUploadStatusV2,
   InputFileUploadV2,
   Text,
-  UploadFile,
+  UploadFileV2,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
@@ -95,7 +96,7 @@ const AppealToCourtOfAppeals = () => {
     workingCase.id,
   ])
 
-  const handleRemoveFile = (file: UploadFile) => {
+  const handleRemoveFile = (file: UploadFileV2) => {
     if (file.key) {
       handleRemove(file, removeUploadFile)
     } else {
@@ -104,7 +105,7 @@ const AppealToCourtOfAppeals = () => {
   }
 
   const handleChange = (files: File[], category: CaseFileCategory) => {
-    addUploadFiles(files, { category, status: 'done' })
+    addUploadFiles(files, { category, status: FileUploadStatusV2.uploading })
   }
 
   return (
@@ -129,7 +130,7 @@ const AppealToCourtOfAppeals = () => {
               (file) => file.category === appealBriefType,
             )}
             accept={'application/pdf'}
-            header={formatMessage(core.uploadBoxTitle)}
+            title={formatMessage(core.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {
               fileEndings: '.pdf',
             })}
@@ -161,7 +162,7 @@ const AppealToCourtOfAppeals = () => {
               (file) => file.category === appealCaseFilesType,
             )}
             accept={'application/pdf'}
-            header={formatMessage(core.uploadBoxTitle)}
+            title={formatMessage(core.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {
               fileEndings: '.pdf',
             })}
