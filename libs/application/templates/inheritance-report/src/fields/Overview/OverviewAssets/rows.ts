@@ -232,7 +232,6 @@ export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
 
 export const getOtherAssetsDataRow = (answers: FormValue): RowType[] => {
   const values = (answers.assets as unknown as EstateAssets)?.otherAssets?.data
-  const isPrePaid = answers.applicationFor === PREPAID_INHERITANCE
 
   const data = (values ?? []).map((item) => {
     const value = roundedValueToNumber(item.value)
