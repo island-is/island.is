@@ -6,9 +6,11 @@ import router from 'next/router'
 import {
   Accordion,
   Box,
+  FileUploadStatusV2,
   InputFileUploadV2,
   RadioButton,
   UploadFile,
+  UploadFileV2,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -91,7 +93,7 @@ const Completed: FC = () => {
   ])
 
   const handleRemoveFile = useCallback(
-    (file: UploadFile) => {
+    (file: UploadFileV2) => {
       if (file.key) {
         handleRemove(file, removeUploadFile)
       } else {
@@ -118,7 +120,7 @@ const Completed: FC = () => {
       else {
         addUploadFiles(files, {
           category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-          status: 'done',
+          status: FileUploadStatusV2.done,
         })
       }
     },
@@ -199,12 +201,13 @@ const Completed: FC = () => {
               title={formatMessage(strings.criminalRecordUpdateTitle)}
             />
             <InputFileUploadV2
+              name="criminalRecordUpdate"
               files={uploadFiles.filter(
                 (file) =>
                   file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
               )}
               accept="application/pdf"
-              header={formatMessage(core.uploadBoxTitle)}
+              title={formatMessage(core.uploadBoxTitle)}
               buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
               description={formatMessage(core.uploadBoxDescription, {
                 fileEndings: '.pdf',

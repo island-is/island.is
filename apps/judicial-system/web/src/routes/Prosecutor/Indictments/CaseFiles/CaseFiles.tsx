@@ -65,11 +65,12 @@ const CaseFiles = () => {
             heading="h2"
           />
           <InputFileUploadV2
+            name="criminalRecord"
             files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            title={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
@@ -89,11 +90,12 @@ const CaseFiles = () => {
             heading="h2"
           />
           <InputFileUploadV2
+            name="costBreakdown"
             files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            title={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
@@ -113,11 +115,12 @@ const CaseFiles = () => {
             heading="h2"
           />
           <InputFileUploadV2
+            name="caseFiles"
             files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.CASE_FILE,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            title={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(

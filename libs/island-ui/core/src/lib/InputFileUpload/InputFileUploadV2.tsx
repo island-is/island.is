@@ -26,6 +26,7 @@ export type StatusColorV2 = {
 export interface UploadFileV2 {
   name: string
   id?: string
+  type?: string
   key?: string
   status?: FileUploadStatusV2
   percent?: number
@@ -84,12 +85,7 @@ export const UploadedFileV2: FC<UploadedFileProps> = (props) => {
     onRemoveClick,
     onRetryClick,
     onOpenFile,
-    icons = {
-      remove: { icon: 'remove', onClick: onRemoveClick },
-      retry: { icon: 'reload', onClick: onRetryClick },
-      uploading: { icon: 'reload' },
-      done: { icon: 'checkmark' },
-    },
+    icons,
   } = props
 
   const handleOpenFile = (evt: React.MouseEvent<HTMLElement, MouseEvent>) => {

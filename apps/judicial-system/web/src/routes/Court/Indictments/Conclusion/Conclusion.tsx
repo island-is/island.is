@@ -4,6 +4,7 @@ import router from 'next/router'
 
 import {
   Box,
+  FileUploadStatusV2,
   Input,
   InputFileUploadV2,
   RadioButton,
@@ -263,12 +264,12 @@ const Conclusion: FC = () => {
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.COURT_RECORD &&
-                  file.status === 'done',
+                  file.status === FileUploadStatusV2.done,
               ) &&
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.RULING &&
-                  file.status === 'done',
+                  file.status === FileUploadStatusV2.done,
               )
             )
           case CaseIndictmentRulingDecision.CANCELLATION:
@@ -276,14 +277,14 @@ const Conclusion: FC = () => {
             return uploadFiles.some(
               (file) =>
                 file.category === CaseFileCategory.COURT_RECORD &&
-                file.status === 'done',
+                file.status === FileUploadStatusV2.done,
             )
           case CaseIndictmentRulingDecision.MERGE:
             return Boolean(
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.COURT_RECORD &&
-                  file.status === 'done',
+                  file.status === FileUploadStatusV2.done,
               ) &&
                 (workingCase.mergeCase?.id ||
                   validate([[mergeCaseNumber, ['empty', 'S-case-number']]])
@@ -572,11 +573,12 @@ const Conclusion: FC = () => {
               required={selectedAction === IndictmentDecision.COMPLETING}
             />
             <InputFileUploadV2
+              name="court-records"
               files={uploadFiles.filter(
                 (file) => file.category === CaseFileCategory.COURT_RECORD,
               )}
               accept="application/pdf"
-              header={formatMessage(strings.inputFieldLabel)}
+              title={formatMessage(strings.inputFieldLabel)}
               description={formatMessage(core.uploadBoxDescription, {
                 fileEndings: '.pdf',
               })}
@@ -607,11 +609,12 @@ const Conclusion: FC = () => {
                 required
               />
               <InputFileUploadV2
+                name="ruling"
                 files={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.RULING,
                 )}
                 accept="application/pdf"
-                header={formatMessage(strings.inputFieldLabel)}
+                title={formatMessage(strings.inputFieldLabel)}
                 description={formatMessage(core.uploadBoxDescription, {
                   fileEndings: '.pdf',
                 })}

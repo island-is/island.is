@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
+  FileUploadStatusV2,
   Input,
   InputFileUploadV2,
   RadioButton,
@@ -102,7 +103,7 @@ const CourtOfAppealRuling = () => {
       uploadFiles.some(
         (file) =>
           file.category === CaseFileCategory.APPEAL_RULING &&
-          file.status === 'done',
+          file.status === FileUploadStatusV2.done,
       ))
 
   const handleRulingDecisionChange = (
@@ -214,12 +215,13 @@ const CourtOfAppealRuling = () => {
           <Box marginBottom={10}>
             <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
             <InputFileUploadV2
+              name="appealCourtRecord"
               files={uploadFiles.filter(
                 (file) =>
                   file.category === CaseFileCategory.APPEAL_COURT_RECORD,
               )}
               accept="application/pdf"
-              header={formatMessage(strings.inputFieldLabel)}
+              title={formatMessage(strings.inputFieldLabel)}
               description={formatMessage(core.uploadBoxDescription, {
                 fileEndings: '.pdf',
               })}
@@ -341,11 +343,12 @@ const CourtOfAppealRuling = () => {
                 required
               />
               <InputFileUploadV2
+                name="appealRuling"
                 files={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.APPEAL_RULING,
                 )}
                 accept="application/pdf"
-                header={formatMessage(strings.inputFieldLabel)}
+                title={formatMessage(strings.inputFieldLabel)}
                 description={formatMessage(core.uploadBoxDescription, {
                   fileEndings: '.pdf',
                 })}
