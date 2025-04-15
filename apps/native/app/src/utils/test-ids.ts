@@ -87,6 +87,8 @@ export const testIDs = {
 
   // applications screen
   SCREEN_APPLICATIONS: 'SCREEN_APPLICATIONS',
+  SCREEN_APPLICATIONS_DETAILS: 'SCREEN_APPLICATIONS_DETAILS',
+  APPLICATION_ITEM: 'APPLICATION_ITEM',
 
   // vehicles screen
   SCREEN_VEHICLES: 'SCREEN_VEHICLES',
@@ -113,4 +115,6 @@ export const testIDs = {
 
   // inbox
   INBOX_ITEM: 'INBOX_ITEM',
+  // passkey
+  SCREEN_PASSKEY: 'SCREEN_PASSKEY',
 }

@@ -1,0 +1,21 @@
+appId: 'is.island.app.dev'
+---
+- tapOn:
+    id: 'TABBAR_TAB_APPLICATION'
+- assertVisible:
+    id: 'APPLICATION_ITEM'
+- runFlow:
+    when:
+      visible:
+        text: '.*Sjá allt.*'
+    commands:
+      - tapOn:
+          text: 'Ókláraðar umsóknir Sjá allt'
+      - assertVisible:
+          id: 'SCREEN_APPLICATIONS_DETAILS'
+      - assertVisible:
+          id: 'APPLICATION_ITEM'
+      - tapOn:
+          text: 'Opna umsókn'
+      - assertVisible:
+          id: 'SCREEN_PASSKEY'
