@@ -17,7 +17,7 @@ import {
 } from './constants'
 
 const deceasedShare = {
-  deceasedShare: z.string().nonempty().optional(),
+  deceasedShare: z.string().min(1).optional(),
   deceasedShareEnabled: z.array(z.enum([YES])).optional(),
   deceasedShareAmount: z.number().min(0).max(100).optional(),
 }

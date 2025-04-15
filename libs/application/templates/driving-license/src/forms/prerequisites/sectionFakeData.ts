@@ -2,7 +2,6 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSubSection,
   buildTextField,
   getValueViaPath,

@@ -8,7 +8,6 @@ import {
   buildSection,
   buildSelectField,
   buildTextField,
-  buildTitleField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages/messages'
 import { FormValue } from '@island.is/application/types'
