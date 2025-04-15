@@ -214,7 +214,7 @@ jobs:
           echo "$AFFECTED_TARGETS"
           echo "$ADDITIONAL_PROJECTS"
           echo ADDITIONAL_PROJECTS="$ADDITIONAL_PROJECTS" >> "$GITHUB_ENV"
-          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
+          CHUNKS="$(ADDITIONAL_PROJECTS="$ADDITIONAL_PROJECTS" ./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
