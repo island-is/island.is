@@ -32,7 +32,6 @@ export const reviewOverviewSection = buildSection({
           id: 'overviewMachineTenure',
           title: '',
           bottomLine: false,
-          width: 'half',
           items: (answers, externalData, userNationalId) =>
             getMachineTenureOverviewInformation(
               answers,
