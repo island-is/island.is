@@ -1,8 +1,6 @@
 import {
-  MachineParentCategoryDetailsDto,
   MachineSubCategoryDto,
   MachineTypeDto,
-  TechInfoItemDto,
   WorkMachinesClientService,
   WorkMachinesCollectionItem,
 } from '@island.is/clients/work-machines'
@@ -26,6 +24,10 @@ import {
 import { LinkCategory, ModelDto } from './workMachines.types'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
+import { type Locale } from '@island.is/shared/types'
+import { Category } from './models/category.model'
+import { CategoryDto } from './dto/category.dto'
+import { TechInfoItem } from './models/techInfoItem'
 
 @Injectable()
 export class WorkMachinesService {
@@ -246,9 +248,15 @@ export class WorkMachinesService {
     return !!types.find((t) => t.name === type)
   }
 
-  async getMachineModels(auth: User, type: string): Promise<Array<ModelDto>> {
+  async getMachineModels(
+    auth: User,
+    type: string,
+    locale: Locale = 'is',
+    correlationId?: string,
+  ): Promise<Array<ModelDto>> {
     const models = await this.machineService.getMachineModels(auth, {
       tegund: type,
+      xCorrelationID: correlationId,
     })
 
     return models
@@ -260,6 +268,8 @@ export class WorkMachinesService {
         return {
           name: model.name,
           type,
+          locale,
+          correlationId,
         }
       })
       .filter(isDefined)
@@ -268,11 +278,37 @@ export class WorkMachinesService {
   async getMachineParentCategoriesTypeModelGet(
     auth: User,
     input: GetMachineParentCategoryByTypeAndModelInput,
-  ): Promise<MachineParentCategoryDetailsDto[]> {
-    return this.machineService.getMachineParentCategoriesTypeModel(auth, {
-      type: input.type,
-      model: input.model,
-    })
+    locale: Locale = 'is',
+    correlationId?: string,
+  ): Promise<Array<CategoryDto>> {
+    const data = await this.machineService.getMachineParentCategoriesTypeModel(
+      auth,
+      {
+        type: input.type,
+        model: input.model,
+        xCorrelationID: correlationId,
+      },
+    )
+
+    return data
+      .map((d) => {
+        if (!d.name || !d.subCategoryName) {
+          return undefined
+        }
+        return {
+          name: d.nameEn && locale !== 'is' ? d.nameEn : d.name,
+          nameEn: d.nameEn ?? undefined,
+          subCategoryName:
+            d.subCategoryNameEn && locale !== 'is'
+              ? d.subCategoryNameEn
+              : d.subCategoryName,
+          subCategoryNameEn: d.subCategoryNameEn ?? undefined,
+          registrationNumberPrefix: d.registrationNumberPrefix ?? undefined,
+          locale,
+          correlationId,
+        }
+      })
+      .filter(isDefined)
   }
 
   async getMachineSubCategories(
@@ -286,11 +322,41 @@ export class WorkMachinesService {
     auth: User,
     parentCategory: string,
     subCategory: string,
-  ): Promise<TechInfoItemDto[]> {
-    return this.machineService.getTechnicalInfoInputs(auth, {
+    locale: Locale = 'is',
+    correlationId?: string,
+  ): Promise<TechInfoItem[]> {
+    const data = await this.machineService.getTechnicalInfoInputs(auth, {
       parentCategory,
       subCategory,
+      xCorrelationID: correlationId,
     })
+
+    return data
+      ?.map((input) => {
+        if (!input.variableName) {
+          return null
+        }
+
+        return {
+          name: input.variableName,
+          label:
+            locale !== 'is'
+              ? input.labelEn ?? undefined
+              : input.label ?? undefined,
+          labelEn: input.labelEn ?? undefined,
+          type: input.type ?? undefined,
+          required: input.required,
+          maxLength: input.maxLength?.toString() ?? undefined,
+          itemValues: input.values
+            ?.map((v) => (locale !== 'is' ? v.nameEn : v.name))
+            .filter(isDefined),
+          values: input.values?.map((v) => ({
+            name: v.name ?? undefined,
+            nameEn: v.nameEn ?? undefined,
+          })),
+        }
+      })
+      .filter(isDefined)
   }
 
   async getTypeByRegistrationNumber(

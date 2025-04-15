@@ -5,7 +5,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { WorkMachinesService } from '../workMachines.service'
@@ -13,6 +13,8 @@ import { Model } from '../models/model.model'
 import { SubCategory } from '../models/subCategory.model'
 import { isDefined } from '@island.is/shared/utils'
 import { TechInfoItem } from '../models/techInfoItem'
+import { GetWorkMachineSubCategoryTechInfoItemsInput } from '../dto/getSubCategoriesTechItems.input'
+import { ModelSubCategory } from '../dto/modelCategory.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver(() => SubCategory)
@@ -20,42 +22,32 @@ import { TechInfoItem } from '../models/techInfoItem'
 export class SubCategoryResolver {
   constructor(private readonly workMachinesService: WorkMachinesService) {}
 
-  @ResolveField('techInfoItems', () => [TechInfoItem])
+  @ResolveField('techInfoItems', () => [TechInfoItem], { nullable: true })
   async resolveTechInfoItems(
     @CurrentUser() user: User,
-    @Parent() category: SubCategory,
-  ): Promise<Array<Model>> {
+    @Parent() category: ModelSubCategory,
+    @Args('input', {
+      type: () => GetWorkMachineSubCategoryTechInfoItemsInput,
+      nullable: true,
+    })
+    input: GetWorkMachineSubCategoryTechInfoItemsInput,
+  ): Promise<Array<Model> | undefined> {
+    if (
+      !input?.populateTechInfoItemsForSubCategories?.includes(category.name)
+    ) {
+      return undefined
+    }
+
     if (!category.parentCategoryName || !category.name) {
       return []
     }
-    const technicalInfoInputs =
-      await this.workMachinesService.getTechnicalInfoInputs(
-        user,
-        category.parentCategoryName,
-        category.name,
-      )
 
-    return technicalInfoInputs
-      .map((input) => {
-        if (!input.variableName) {
-          return null
-        }
-        return {
-          name: input.variableName,
-          label: input.label ?? undefined,
-          labelEn: input.labelEn ?? undefined,
-          type: input.type ?? undefined,
-          required: input.required,
-          maxLength: input.maxLength ?? undefined,
-          itemValues: input.values
-            ?.map((v) => v.name ?? undefined)
-            .filter(isDefined),
-          values: input.values?.map((v) => ({
-            name: v.name ?? undefined,
-            nameEn: v.nameEn ?? undefined,
-          })),
-        }
-      })
-      .filter(isDefined)
+    return await this.workMachinesService.getTechnicalInfoInputs(
+      user,
+      category.parentCategoryName,
+      category.name,
+      category.locale,
+      category.correlationId,
+    )
   }
 }
