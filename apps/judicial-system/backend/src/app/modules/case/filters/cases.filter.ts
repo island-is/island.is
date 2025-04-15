@@ -226,8 +226,12 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
     {
       [Op.or]: [
         {
+          // defender per case
           [Op.and]: [
             { type: [...restrictionCases, ...investigationCases] },
+            {
+              defender_national_id: [normalizedNationalId, formattedNationalId],
+            },
             {
               [Op.or]: [
                 {
@@ -254,21 +258,6 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                   ],
                 },
                 {
-                  [Op.and]: [
-                    { state: [CaseState.SUBMITTED, CaseState.RECEIVED] },
-                    {
-                      id: {
-                        [Op.in]: Sequelize.literal(`
-                              (SELECT case_id
-                                FROM victim
-                                WHERE lawyer_national_id in ('${normalizedNationalId}', '${formattedNationalId}') 
-                                AND lawyer_access_to_request = '${RequestSharedWhen.READY_FOR_COURT}')
-                            `),
-                      },
-                    },
-                  ],
-                },
-                {
                   state: [
                     CaseState.ACCEPTED,
                     CaseState.REJECTED,
@@ -277,12 +266,76 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                 },
               ],
             },
+          ],
+        },
+        {
+          // victim lawyer assigned to a case
+          [Op.and]: [
+            { type: [...restrictionCases, ...investigationCases] },
             {
-              defender_national_id: [normalizedNationalId, formattedNationalId],
+              [Op.or]: [
+                {
+                  // lawyer should get access when sent to court
+                  [Op.and]: [
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                      (SELECT case_id
+                        FROM victim
+                        WHERE lawyer_national_id in ('${normalizedNationalId}', '${formattedNationalId}') 
+                        AND lawyer_access_to_request = '${RequestSharedWhen.READY_FOR_COURT}')
+                    `),
+                      },
+                    },
+                    { state: [CaseState.SUBMITTED, CaseState.RECEIVED] },
+                  ],
+                },
+                {
+                  // lawyer should get access when court date is scheduled or when case is concluded
+                  [Op.and]: [
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                      (SELECT case_id
+                        FROM victim
+                        WHERE lawyer_national_id in ('${normalizedNationalId}', '${formattedNationalId}') 
+                        AND lawyer_access_to_request != '${RequestSharedWhen.OBLIGATED}')
+                    `),
+                      },
+                    },
+                    {
+                      [Op.or]: [
+                        {
+                          [Op.and]: [
+                            { state: CaseState.RECEIVED },
+                            {
+                              id: {
+                                [Op.in]: Sequelize.literal(`
+                            (SELECT case_id
+                              FROM date_log
+                              WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
+                          `),
+                              },
+                            },
+                          ],
+                        },
+                        {
+                          state: [
+                            CaseState.ACCEPTED,
+                            CaseState.REJECTED,
+                            CaseState.DISMISSED,
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },
         {
+          // confirmed defender and civil claimants in indictment cases
           [Op.and]: [
             { type: indictmentCases },
             {
