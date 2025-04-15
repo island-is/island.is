@@ -89,7 +89,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
   }: TemplateApiModuleActionProps): Promise<void> {
     const companyList = getCleanCompanyInformationList(application)
 
-    for (const company of companyList) {
+    for (const [index, company] of companyList.entries()) {
       const recipient = getRecipient(company)
 
       if (company.contactEmail) {
@@ -100,7 +100,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
           )
         } catch (e) {
           this.logger.error(
-            `Error sending email about initReview in application: ID: ${application.id} and company: ${company.companyName}`,
+            `Error sending email about initReview in application: ID: ${application.id}, assignee: ${index}`,
             e,
           )
         }
@@ -115,7 +115,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
           )
         } catch (e) {
           this.logger.error(
-            `Error sending SMS about initReview to a phone number in application: ID: ${application.id} and company: ${company.companyName}`,
+            `Error sending SMS about initReview to a phone number in application: ID: ${application.id}, assignee: ${index}`,
             e,
           )
         }
@@ -128,7 +128,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
   }: TemplateApiModuleActionProps): Promise<void> {
     const companyList = getCleanCompanyInformationList(application)
 
-    for (const company of companyList) {
+    for (const [index, company] of companyList.entries()) {
       const recipient = getRecipient(company)
 
       if (company.contactEmail) {
@@ -139,7 +139,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
           )
         } catch (e) {
           this.logger.error(
-            `Error sending email about deleteApplication in application: ID: ${application.id} and company: ${company.companyName}`,
+            `Error sending email about deleteApplication in application: ID: ${application.id} and assignee: ${index}`,
             e,
           )
         }
@@ -153,7 +153,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
           )
         } catch (e) {
           this.logger.error(
-            `Error sending SMS about deleteApplication to a phone number in application: ID: ${application.id} and company: ${company.companyName}`,
+            `Error sending SMS about deleteApplication to a phone number in application: ID: ${application.id} and assignee: ${index}`,
             e,
           )
         }
