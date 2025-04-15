@@ -59,7 +59,7 @@ const WithdrawnAppealCase = () => {
             {'\n'}
           </Text>
           <InputFileUploadV2
-            fileList={uploadFiles.filter(
+            files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.APPEAL_COURT_RECORD,
             )}
             accept={'application/pdf'}

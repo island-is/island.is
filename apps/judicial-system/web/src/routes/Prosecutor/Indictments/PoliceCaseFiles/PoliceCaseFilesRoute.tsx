@@ -259,12 +259,12 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
     <>
       <PoliceCaseFiles
         onUpload={onPoliceCaseFileUpload}
-        policeCaseFileList={policeCaseFileList}
+        policeCasefiles={policeCaseFileList}
         policeCaseFiles={policeCaseFiles}
       />
       <InputFileUploadV2
         name="fileUpload"
-        fileList={uploadFiles}
+        files={uploadFiles}
         accept="application/pdf"
         header={formatMessage(strings.inputFileUpload.header)}
         description={formatMessage(strings.inputFileUpload.description)}

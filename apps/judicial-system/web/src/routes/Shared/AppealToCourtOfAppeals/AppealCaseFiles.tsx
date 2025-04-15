@@ -159,7 +159,7 @@ const AppealFiles = () => {
               `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUploadV2
-            fileList={uploadFiles.filter(
+            files={uploadFiles.filter(
               (file) =>
                 file.category &&
                 caseFilesTypesToDisplay.includes(file.category),

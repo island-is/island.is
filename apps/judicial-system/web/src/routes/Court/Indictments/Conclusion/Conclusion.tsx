@@ -572,7 +572,7 @@ const Conclusion: FC = () => {
               required={selectedAction === IndictmentDecision.COMPLETING}
             />
             <InputFileUploadV2
-              fileList={uploadFiles.filter(
+              files={uploadFiles.filter(
                 (file) => file.category === CaseFileCategory.COURT_RECORD,
               )}
               accept="application/pdf"
@@ -607,7 +607,7 @@ const Conclusion: FC = () => {
                 required
               />
               <InputFileUploadV2
-                fileList={uploadFiles.filter(
+                files={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.RULING,
                 )}
                 accept="application/pdf"

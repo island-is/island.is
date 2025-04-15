@@ -210,7 +210,7 @@ export const CaseFiles = () => {
         />
         <PoliceCaseFiles
           onUpload={handlePoliceCaseFileUpload}
-          policeCaseFileList={policeCaseFileList}
+          policeCasefiles={policeCaseFileList}
           policeCaseFiles={policeCaseFiles}
         />
         <Box marginBottom={3}>
@@ -224,7 +224,7 @@ export const CaseFiles = () => {
             <InputFileUpload
               name="fileUpload"
               accept={Object.values(fileExtensionWhitelist)}
-              fileList={uploadFiles.filter((file) => !file.category)}
+              files={uploadFiles.filter((file) => !file.category)}
               header={formatMessage(strings.filesLabel)}
               buttonLabel={formatMessage(strings.filesButtonLabel)}
               onChange={(files) =>

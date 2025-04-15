@@ -65,7 +65,7 @@ const CaseFiles = () => {
             heading="h2"
           />
           <InputFileUploadV2
-            fileList={uploadFiles.filter(
+            files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
             )}
             accept={Object.values(fileExtensionWhitelist)}
@@ -89,7 +89,7 @@ const CaseFiles = () => {
             heading="h2"
           />
           <InputFileUploadV2
-            fileList={uploadFiles.filter(
+            files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
             )}
             accept={Object.values(fileExtensionWhitelist)}
@@ -113,7 +113,7 @@ const CaseFiles = () => {
             heading="h2"
           />
           <InputFileUploadV2
-            fileList={uploadFiles.filter(
+            files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.CASE_FILE,
             )}
             accept={Object.values(fileExtensionWhitelist)}

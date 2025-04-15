@@ -199,7 +199,7 @@ const Completed: FC = () => {
               title={formatMessage(strings.criminalRecordUpdateTitle)}
             />
             <InputFileUploadV2
-              fileList={uploadFiles.filter(
+              files={uploadFiles.filter(
                 (file) =>
                   file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
               )}

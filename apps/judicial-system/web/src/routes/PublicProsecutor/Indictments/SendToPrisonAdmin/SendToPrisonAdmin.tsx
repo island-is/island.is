@@ -122,7 +122,7 @@ const SendToPrisonAdmin: FC = () => {
         />
         <Box marginBottom={10}>
           <InputFileUploadV2
-            fileList={uploadFiles.filter(
+            files={uploadFiles.filter(
               (file) =>
                 file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
             )}

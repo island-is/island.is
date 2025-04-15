@@ -739,7 +739,7 @@ const Processing: FC = () => {
             <Box component="section" marginBottom={10}>
               <SectionHeading title="Bótakrafa" heading="h2" />
               <InputFileUploadV2
-                fileList={uploadFiles.filter(
+                files={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
                 )}
                 accept={Object.values(fileExtensionWhitelist)}

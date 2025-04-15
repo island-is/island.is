@@ -125,7 +125,7 @@ const AppealToCourtOfAppeals = () => {
             required
           />
           <InputFileUploadV2
-            fileList={uploadFiles.filter(
+            files={uploadFiles.filter(
               (file) => file.category === appealBriefType,
             )}
             accept={'application/pdf'}
@@ -157,7 +157,7 @@ const AppealToCourtOfAppeals = () => {
               `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUploadV2
-            fileList={uploadFiles.filter(
+            files={uploadFiles.filter(
               (file) => file.category === appealCaseFilesType,
             )}
             accept={'application/pdf'}

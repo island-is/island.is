@@ -214,7 +214,7 @@ const CourtOfAppealRuling = () => {
           <Box marginBottom={10}>
             <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
             <InputFileUploadV2
-              fileList={uploadFiles.filter(
+              files={uploadFiles.filter(
                 (file) =>
                   file.category === CaseFileCategory.APPEAL_COURT_RECORD,
               )}
@@ -341,7 +341,7 @@ const CourtOfAppealRuling = () => {
                 required
               />
               <InputFileUploadV2
-                fileList={uploadFiles.filter(
+                files={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.APPEAL_RULING,
                 )}
                 accept="application/pdf"

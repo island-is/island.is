@@ -151,7 +151,7 @@ const Statement = () => {
                 required
               />
               <InputFileUploadV2
-                fileList={uploadFiles.filter(
+                files={uploadFiles.filter(
                   (file) => file.category === appealStatementType,
                 )}
                 accept={'application/pdf'}
@@ -181,7 +181,7 @@ const Statement = () => {
                   `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
               </Text>
               <InputFileUploadV2
-                fileList={uploadFiles.filter(
+                files={uploadFiles.filter(
                   (file) => file.category === appealCaseFilesType,
                 )}
                 accept={'application/pdf'}
