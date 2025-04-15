@@ -2,7 +2,12 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams, useRouter } from 'next/navigation'
 
-import { Box, InputFileUploadV2, UploadFile } from '@island.is/island-ui/core'
+import {
+  Box,
+  FileUploadStatusV2,
+  InputFileUploadV2,
+  UploadFileV2,
+} from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 import {
@@ -87,14 +92,14 @@ const SendToPrisonAdmin: FC = () => {
     (files: File[]) => {
       addUploadFiles(files, {
         category: CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
-        status: 'done',
+        status: FileUploadStatusV2.done,
       })
     },
     [addUploadFiles],
   )
 
   const handleRemoveFile = useCallback(
-    (file: UploadFile) => {
+    (file: UploadFileV2) => {
       if (file.key) {
         handleRemove(file, removeUploadFile)
       } else {
@@ -122,12 +127,13 @@ const SendToPrisonAdmin: FC = () => {
         />
         <Box marginBottom={10}>
           <InputFileUploadV2
+            name="sentToPrisonAdminFileUpload"
             files={uploadFiles.filter(
               (file) =>
                 file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
             )}
             accept="application/pdf"
-            header={formatMessage(core.uploadBoxTitle)}
+            title={formatMessage(core.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {
               fileEndings: '.pdf',
             })}

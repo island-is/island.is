@@ -5,8 +5,9 @@ import { useRouter } from 'next/router'
 import {
   Box,
   ContentBlock,
+  FileUploadStatusV2,
   Input,
-  InputFileUpload,
+  InputFileUploadV2,
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
@@ -127,7 +128,7 @@ export const CaseFiles = () => {
   }, [policeCaseFiles, workingCase.caseFiles])
 
   const uploadErrorMessage = useMemo(() => {
-    if (uploadFiles.some((file) => file.status === 'error')) {
+    if (uploadFiles.some((file) => file.status === FileUploadStatusV2.error)) {
       return formatMessage(errors.general)
     }
     if (uploadFiles.some((file) => file.size === 0)) {
@@ -210,7 +211,7 @@ export const CaseFiles = () => {
         />
         <PoliceCaseFiles
           onUpload={handlePoliceCaseFileUpload}
-          policeCasefiles={policeCaseFileList}
+          policeCaseFileList={policeCaseFileList}
           policeCaseFiles={policeCaseFiles}
         />
         <Box marginBottom={3}>
@@ -221,11 +222,11 @@ export const CaseFiles = () => {
         </Box>
         <Box marginBottom={5}>
           <ContentBlock>
-            <InputFileUpload
+            <InputFileUploadV2
               name="fileUpload"
               accept={Object.values(fileExtensionWhitelist)}
               files={uploadFiles.filter((file) => !file.category)}
-              header={formatMessage(strings.filesLabel)}
+              title={formatMessage(strings.filesLabel)}
               buttonLabel={formatMessage(strings.filesButtonLabel)}
               onChange={(files) =>
                 handleUpload(addUploadFiles(files), updateUploadFile)
@@ -234,7 +235,6 @@ export const CaseFiles = () => {
               onRetry={(file) => handleRetry(file, updateUploadFile)}
               errorMessage={uploadErrorMessage}
               disabled={isUploadingPoliceCaseFiles}
-              showFileSize
             />
           </ContentBlock>
         </Box>

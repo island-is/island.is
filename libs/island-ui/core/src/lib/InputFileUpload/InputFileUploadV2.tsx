@@ -57,22 +57,17 @@ const UploadingIndicator: FC<UploadingIndicatorProps> = (props) => {
 }
 
 interface Icons {
-  remove: {
-    icon: IconTypes
-    onClick: (file: UploadFileV2) => void
-  }
-  retry: {
-    icon: IconTypes
-    onClick: (file: UploadFileV2) => void
-  }
-  uploading: { icon: IconTypes }
-  done: { icon: IconTypes }
+  remove: IconTypes
+  retry: IconTypes
+  uploading: IconTypes
+  done: IconTypes
 }
 
 interface UploadedFileProps {
   file: UploadFileV2
   defaultBackgroundColor?: StatusColorV2
   icons?: Icons
+  hideIcons?: boolean
   onRemoveClick?: (file: UploadFileV2) => void
   onRetryClick?: (file: UploadFileV2) => void
   onOpenFile?: (file: UploadFileV2) => void
@@ -82,10 +77,16 @@ export const UploadedFileV2: FC<UploadedFileProps> = (props) => {
   const {
     file,
     defaultBackgroundColor,
+    hideIcons,
     onRemoveClick,
     onRetryClick,
     onOpenFile,
-    icons,
+    icons = {
+      remove: 'close',
+      retry: 'reload',
+      uploading: 'reload',
+      done: 'checkmark',
+    },
   } = props
 
   const handleOpenFile = (evt: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -196,28 +197,28 @@ export const UploadedFileV2: FC<UploadedFileProps> = (props) => {
           )}
         </Box>
       </Text>
-      {icons && (
+      {!hideIcons && (
         <Box display="flex">
           {isUploading ? (
             <div
               className={styles.progressIconAnimation}
               aria-label="Hleð upp skrá"
             >
-              <Icon color="blue400" icon={icons.uploading.icon} />
+              <Icon color="blue400" icon={icons.uploading} />
             </div>
           ) : file.status === FileUploadStatusV2.error ? (
             <button
-              onClick={(evt) => handleClick(evt, icons.retry.onClick)}
+              onClick={(evt) => handleClick(evt, onRetryClick)}
               aria-label="Reyna aftur"
             >
-              <Icon color={statusColor.icon} icon={icons.retry.icon} />
+              <Icon color={statusColor.icon} icon={icons.retry} />
             </button>
           ) : (
             <button
-              onClick={(evt) => handleClick(evt, icons.remove.onClick)}
+              onClick={(evt) => handleClick(evt, onRemoveClick)}
               aria-label="Fjarlægja skrá"
             >
-              <Icon color={statusColor.icon} icon={icons.remove.icon} />
+              <Icon color={statusColor.icon} icon={icons.remove} />
             </button>
           )}
         </Box>
@@ -241,6 +242,7 @@ interface Props {
   multiple?: boolean
   // Maximum file size in bytes
   maxSize?: number
+  hideIcons?: boolean
   onRemove: (file: UploadFileV2) => void
   onRetry?: (file: UploadFileV2) => void
   onChange?: (files: File[], uploadCount?: number) => void
@@ -260,6 +262,7 @@ export const InputFileUploadV2: FC<Props> = (props) => {
     accept,
     multiple = true,
     maxSize,
+    hideIcons = false,
     onChange,
     onRemove,
     onRetry,
@@ -329,13 +332,13 @@ export const InputFileUploadV2: FC<Props> = (props) => {
           </Button>
         )}
       </Box>
-
       <Box width="full" paddingX={[2, 2, 2, 2, 12]}>
         {files.map((file, index) => (
           <Box marginBottom={2} key={file.id ?? `${file.name}_${index}`}>
             <UploadedFileV2
               file={file}
               defaultBackgroundColor={defaultFileBackgroundColor}
+              hideIcons={hideIcons}
               onRemoveClick={onRemove}
               onRetryClick={onRetry}
             />
