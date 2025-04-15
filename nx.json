@@ -184,7 +184,7 @@
         "runtime": "node --version"
       }
     ],
-    "DevOps": [],
+    "DevOps": ["CI", "Dockerfiles", "{workspaceRoot}/scripts/**/*"],
     "CI": [
       "{workspaceRoot}/.github/actions/",
       "{workspaceRoot}/.github/workflows/",

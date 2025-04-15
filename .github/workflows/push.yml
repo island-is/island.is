@@ -167,7 +167,6 @@ jobs:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Install infra modules
-        if: steps.infra-node-modules.outputs.cache-hit != 'true'
         working-directory: infra
         run: |
           corepack enable && CI=true yarn install --immutable
