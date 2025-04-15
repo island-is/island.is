@@ -49,7 +49,7 @@ done
 
 if [ ${ADDITIONAL_PROJECTS+x} ]; then
   for target in "$@"; do
-  processed_chunks=$(yarn nx show projects --withTarget="$target" --affected -p $ADDITIONAL_PROJECTS --json |
+  processed_chunks=$(yarn nx show projects --withTarget="$target" --affected -p "$ADDITIONAL_PROJECTS" --json |
     jq -r '.[]' |
     xargs -I {} -P "${MAX_JOBS:-4}" bash -c "
       project=\"\$1\"
