@@ -32,6 +32,7 @@ type Props = Partial<{
   conclusionLink: string
   conclusionLinkLabel: StaticText
   sectionTitle: StaticText
+  tabTitle?: StaticText
   bottomButtonLink: string
   bottomButtonLabel: StaticText
   bottomButtonMessage: FormText
@@ -56,6 +57,7 @@ type Props = Partial<{
  * @param  conclusionLink Link that user can click on top.
  * @param  conclusionLinkLabel The text of the button that links to a url on top.
  * @param  sectionTitle The title for the section
+ * @param  tabTitle The tab title for the section
  * @param  bottomButtonLink The link for the bottom button
  * @param  bottomButtonLabel The label for the bottom button
  * @param  bottomButtonMessage The message for the bottom button
@@ -75,6 +77,7 @@ export const buildFormConclusionSection = ({
   conclusionLink = '',
   conclusionLinkLabel = undefined,
   sectionTitle = conclusion.information.sectionTitle,
+  tabTitle = undefined,
   bottomButtonLink = '/minarsidur/umsoknir',
   bottomButtonLabel = coreMessages.openServicePortalButtonTitle,
   bottomButtonMessage = coreMessages.openServicePortalMessageText,
@@ -97,6 +100,7 @@ export const buildFormConclusionSection = ({
   return buildSection({
     id: 'uiForms.conclusionSection',
     title: sectionTitle,
+    tabTitle,
     condition,
     children: [
       buildMultiField({

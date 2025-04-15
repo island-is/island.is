@@ -225,6 +225,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.SECONDARY_SCHOOL]: () =>
     import('@island.is/application/templates/secondary-school'),
+  [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/exemption-for-transportation'
+    ),
 }
 
 export default templates
