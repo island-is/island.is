@@ -32,7 +32,6 @@ type ReviewSectionProps = {
 }
 
 const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
-  application,
   step: { state, description, title, daysOfResidency },
 }) => {
   const { formatMessage } = useLocale()

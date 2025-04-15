@@ -13,18 +13,6 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid() && phoneNumber.length > 0
 }
 
-const isWorkday = (date: Date): boolean => {
-  const day = date.getDay()
-  return day !== 0 && day !== 6
-}
-
-const adjustToNextWorkday = (date: Date): Date => {
-  while (!isWorkday(date)) {
-    date.setDate(date.getDate() + 1)
-  }
-  return date
-}
-
 export const isValidEmail = (value: string): boolean => EMAIL_REGEX.test(value)
 
 export const GeneralPetitionSchema = z.object({

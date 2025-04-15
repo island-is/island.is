@@ -4,7 +4,6 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { selectOptions } from '../../../utils/options'
-import { title } from 'process'
 
 export const selectSubsection = buildSubSection({
   id: 'select',
