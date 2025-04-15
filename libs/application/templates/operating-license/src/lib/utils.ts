@@ -68,23 +68,24 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
 }
 
 export const displayOpeningHours = (answers: FormValue) => {
+  const operation = getValueViaPath<ApplicationTypes>(
+    answers,
+    'applicationInfo.operation',
+  )
+  const category = getValueViaPath<
+    OperationCategory | Array<OperationCategory>
+  >(answers, 'applicationInfo.category')
   return (
-    (answers.applicationInfo as Operation)?.operation ===
-      ApplicationTypes.RESTURANT ||
-    (answers.applicationInfo as Operation)?.category?.includes(
-      OperationCategory.FOUR,
-    ) ||
+    operation === ApplicationTypes.RESTURANT ||
+    category?.includes(OperationCategory.FOUR) ||
     false
   )
 }
 
 export const getChargeItemCode = (answers: FormValue) => {
-  const applicationInfo = getValueViaPath(
-    answers,
-    'applicationInfo',
-  ) as Operation
-  const isHotel = applicationInfo.operation === ApplicationTypes.HOTEL
-  switch (applicationInfo.category) {
+  const applicationInfo = getValueViaPath<Operation>(answers, 'applicationInfo')
+  const isHotel = applicationInfo?.operation === ApplicationTypes.HOTEL
+  switch (applicationInfo?.category) {
     case OperationCategory.TWO:
       return isHotel ? 'AY121' : 'AY124'
     case OperationCategory.THREE:

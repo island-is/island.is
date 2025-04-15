@@ -5,6 +5,7 @@ import {
   buildDescriptionField,
   YES,
   NO,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { ResturantCategories } from '../../lib/constants'
@@ -43,19 +44,26 @@ export const applicationInfo = buildMultiField({
       space: 'none',
       defaultValue: '',
       options: ({ answers }) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        ApplicationTypes.HOTEL
+        getValueViaPath<ApplicationTypes>(
+          answers,
+          'applicationInfo.operation',
+        ) === ApplicationTypes.HOTEL
           ? HotelCategories
           : ResturantCategories,
       condition: (answers) =>
-        !!(answers.applicationInfo as Operation)?.operation,
+        !!getValueViaPath<ApplicationTypes>(
+          answers,
+          'applicationInfo.operation',
+        ),
     }),
     buildRadioField({
       id: 'applicationInfo.typeHotel',
       title: m.operationTypeHotelTitle,
       options: ({ answers }) => {
-        return (answers.applicationInfo as Operation).category !==
-          OperationCategory.TWO
+        return getValueViaPath<OperationCategory>(
+          answers,
+          'applicationInfo.category',
+        ) !== OperationCategory.TWO
           ? [
               {
                 value: 'A Hótel',
@@ -69,17 +77,23 @@ export const applicationInfo = buildMultiField({
       },
       backgroundColor: 'blue',
       condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        ApplicationTypes.HOTEL,
+        getValueViaPath<ApplicationTypes>(
+          answers,
+          'applicationInfo.operation',
+        ) === ApplicationTypes.HOTEL,
     }),
     //fake field to trigger rerender on category switch
     buildDescriptionField({
       id: 'fake_helper_field',
       condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-          ApplicationTypes.HOTEL &&
-        (answers.applicationInfo as Operation)?.category ===
-          OperationCategory.TWO,
+        getValueViaPath<ApplicationTypes>(
+          answers,
+          'applicationInfo.operation',
+        ) === ApplicationTypes.HOTEL &&
+        getValueViaPath<OperationCategory>(
+          answers,
+          'applicationInfo.category',
+        ) === OperationCategory.TWO,
     }),
     buildCheckboxField({
       id: 'applicationInfo.typeResturant',
@@ -88,8 +102,10 @@ export const applicationInfo = buildMultiField({
       options: ResturantTypes,
       backgroundColor: 'blue',
       condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        ApplicationTypes.RESTURANT,
+        getValueViaPath<ApplicationTypes>(
+          answers,
+          'applicationInfo.operation',
+        ) === ApplicationTypes.RESTURANT,
     }),
     buildCheckboxField({
       id: 'applicationInfo.willServe',
@@ -97,7 +113,10 @@ export const applicationInfo = buildMultiField({
       options: [{ value: YES, label: m.openingHoursOutsideCheck }],
       defaultValue: [NO],
       condition: (answers) => {
-        const applicationInfo = answers.applicationInfo as Operation
+        const applicationInfo = getValueViaPath<Operation>(
+          answers,
+          'applicationInfo',
+        )
         return (
           applicationInfo?.operation === ApplicationTypes.RESTURANT ||
           applicationInfo?.category === OperationCategory.FOUR

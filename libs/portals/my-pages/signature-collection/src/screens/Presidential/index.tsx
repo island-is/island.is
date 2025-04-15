@@ -2,11 +2,16 @@ import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import OwnerView from './OwnerView'
 import { useGetCurrentCollection, useIsOwner } from '../../hooks'
-import { EmptyState, IntroWrapper, THJODSKRA_SLUG } from '@island.is/portals/my-pages/core'
+import {
+  EmptyState,
+  IntroWrapper,
+  THJODSKRA_SLUG,
+} from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import SigneeView from '../shared/SigneeView'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
-const SignatureLists = () => {
+const SignatureCollectionPresidential = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
 
@@ -17,14 +22,15 @@ const SignatureLists = () => {
   return (
     <Box>
       <IntroWrapper
-        title={formatMessage(m.pageTitle)}
+        title={formatMessage(m.pageTitlePresidential)}
         intro={formatMessage(m.pageDescriptionSignee)}
         serviceProviderTooltip={formatMessage(m.infoProviderTooltip)}
         serviceProviderSlug={THJODSKRA_SLUG}
       />
       {!loadingIsOwner && !loadingCurrentCollection && (
         <Box>
-          {currentCollection?.isPresidential ? (
+          {currentCollection?.collectionType ===
+          SignatureCollectionCollectionType.Presidential ? (
             isOwner.success ? (
               <OwnerView currentCollection={currentCollection} />
             ) : (
@@ -42,4 +48,4 @@ const SignatureLists = () => {
   )
 }
 
-export default SignatureLists
+export default SignatureCollectionPresidential
