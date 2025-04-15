@@ -1,9 +1,10 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { FJARSYSLAN_SLUG, HMS_SLUG, m } from '@island.is/portals/my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { FinancePaths } from './paths'
 
 export const financeNavigation: PortalNavigationItem = {
   name: m.finance,
+  description: m.financeHeading,
   path: FinancePaths.FinanceRoot,
   children: [
     {
@@ -25,6 +26,11 @@ export const financeNavigation: PortalNavigationItem = {
           name: m.financeTransactionsCategories,
           description: m.financeTransactionsDescription,
           path: FinancePaths.FinanceTransactionCategories,
+        },
+        {
+          name: m.financeTransactionsVehiclesMileage,
+          description: m.financeTransactionsVehicleMileageDescription,
+          path: FinancePaths.FinanceTransactionVehicleMileage,
         },
         {
           name: m.financeTransactionPeriods,
@@ -87,6 +93,4 @@ export const financeNavigation: PortalNavigationItem = {
   icon: {
     icon: 'cellular',
   },
-  heading: m.financeHeading,
-  description: m.financeTooltip,
 }

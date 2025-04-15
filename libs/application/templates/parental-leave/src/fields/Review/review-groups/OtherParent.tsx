@@ -74,7 +74,9 @@ export const OtherParent = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentName,
                 )}
-                value={VMSTOtherParent.otherParentName || otherParentName}
+                value={
+                  (VMSTOtherParent.otherParentName || otherParentName) ?? ''
+                }
               />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -83,11 +85,11 @@ export const OtherParent = ({
                   parentalLeaveFormMessages.shared.otherParentID,
                 )}
                 value={
-                  VMSTOtherParent.otherParentId
+                  (VMSTOtherParent.otherParentId
                     ? formatKennitala(VMSTOtherParent.otherParentId)
                     : otherParentId
                     ? formatKennitala(otherParentId)
-                    : otherParentId
+                    : otherParentId) ?? ''
                 }
               />
             </GridColumn>
@@ -100,7 +102,7 @@ export const OtherParent = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentEmailSubSection,
                 )}
-                value={otherParentEmail}
+                value={otherParentEmail ?? ''}
               />
             </GridColumn>
             {otherParentPhoneNumber && (
@@ -110,7 +112,7 @@ export const OtherParent = ({
                     parentalLeaveFormMessages.shared
                       .otherParentPhoneNumberSubSection,
                   )}
-                  value={formatPhoneNumber(otherParentPhoneNumber)}
+                  value={formatPhoneNumber(otherParentPhoneNumber) ?? ''}
                 />
               </GridColumn>
             )}
