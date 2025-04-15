@@ -168,7 +168,7 @@ jobs:
 
       - name: Install infra modules
         if: steps.infra-node-modules.outputs.cache-hit != 'true'
-        working-directory: island.is/infra
+        working-directory: infra
         run: |
           corepack enable && CI=true yarn install --immutable
 
@@ -207,7 +207,7 @@ jobs:
 
       - name: Prepare docker build targets
         id: build_map
-        working-directory: island.is/infra
+        working-directory: infra
         run: |
           set -euo pipefail
           AFFECTED_TARGETS="$(yarn nx show projects --affected --base $BASE --head $HEAD --json | jq -r '. | join(",")')"
