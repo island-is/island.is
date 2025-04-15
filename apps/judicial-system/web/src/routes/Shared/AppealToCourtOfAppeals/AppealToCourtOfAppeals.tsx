@@ -105,7 +105,7 @@ const AppealToCourtOfAppeals = () => {
   }
 
   const handleChange = (files: File[], category: CaseFileCategory) => {
-    addUploadFiles(files, { category, status: FileUploadStatus.uploading })
+    addUploadFiles(files, { category, status: FileUploadStatus.done })
   }
 
   return (
@@ -126,6 +126,7 @@ const AppealToCourtOfAppeals = () => {
             required
           />
           <InputFileUploadV2
+            name="appealBrief"
             files={uploadFiles.filter(
               (file) => file.category === appealBriefType,
             )}
@@ -158,6 +159,7 @@ const AppealToCourtOfAppeals = () => {
               `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUploadV2
+            name="appealCaseFiles"
             files={uploadFiles.filter(
               (file) => file.category === appealCaseFilesType,
             )}
