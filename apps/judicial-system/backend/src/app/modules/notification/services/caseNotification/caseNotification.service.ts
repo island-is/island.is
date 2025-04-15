@@ -1236,7 +1236,7 @@ export class CaseNotificationService extends BaseNotificationService {
       }),
       recipientName: defenderName ?? '',
       recipientEmail: defenderEmail ?? '',
-      skipTail: Boolean(defenderNationalId) === false,
+      skipTail: !defenderNationalId,
     })
   }
 
