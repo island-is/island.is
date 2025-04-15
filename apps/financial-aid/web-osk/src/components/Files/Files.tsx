@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react'
 import {
   InputFileUploadDeprecated,
-  UploadFile,
+  UploadFileDeprecated,
 } from '@island.is/island-ui/core'
 
 import { FileUploadContainer } from '@island.is/financial-aid-web/osk/src/components'
@@ -13,7 +13,7 @@ import { UploadFileType } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   header: string
-  uploadFiles: UploadFile[]
+  uploadFiles: UploadFileDeprecated[]
   fileKey: UploadFileType
   hasError?: boolean
 }
@@ -24,7 +24,7 @@ const Files = ({ header, uploadFiles, fileKey, hasError = false }: Props) => {
   const { files, uploadErrorMessage, onChange, onRemove, onRetry } =
     useFileUpload(uploadFiles)
 
-  const stringifyFile = (file: UploadFile) => {
+  const stringifyFile = (file: UploadFileDeprecated) => {
     return {
       key: file.key,
       name: file.name,

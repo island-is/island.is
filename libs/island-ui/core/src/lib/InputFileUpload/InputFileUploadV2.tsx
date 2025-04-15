@@ -17,7 +17,7 @@ export enum FileUploadStatusV2 {
   'uploading',
 }
 
-export type StatusColorV2 = {
+export type StatusColor = {
   background: Colors
   border: Colors
   icon?: Colors
@@ -65,7 +65,7 @@ interface Icons {
 
 interface UploadedFileProps {
   file: UploadFileV2
-  defaultBackgroundColor?: StatusColorV2
+  defaultBackgroundColor?: StatusColor
   icons?: Icons
   hideIcons?: boolean
   onRemoveClick?: (file: UploadFileV2) => void
@@ -134,7 +134,7 @@ export const UploadedFileV2: FC<UploadedFileProps> = (props) => {
     }
   }
 
-  const statusColor: StatusColorV2 = useMemo<StatusColorV2>(() => {
+  const statusColor: StatusColor = useMemo<StatusColor>(() => {
     switch (file.status) {
       case FileUploadStatusV2.error:
         return { background: 'red100', border: 'red200', icon: 'red600' }
@@ -248,7 +248,7 @@ interface Props {
   onChange?: (files: File[], uploadCount?: number) => void
   onUploadRejection?: (files: FileRejection[]) => void
   errorMessage?: string
-  defaultFileBackgroundColor?: StatusColorV2
+  defaultFileBackgroundColor?: StatusColor
 }
 
 export const InputFileUploadV2: FC<Props> = (props) => {
