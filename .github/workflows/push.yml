@@ -209,7 +209,7 @@ jobs:
           set -euo pipefail
           AFFECTED_TARGETS="$(yarn nx show projects --affected --base $BASE --head $HEAD --json | jq -r '. | join(",")')"
           cd infra
-          ADDITIONAL_PROJECTS="$(yarn feature-env src/feature-env.ts downstream --feature tmp --images $AFFECTED_TARGETS --chart islandis)"
+          ADDITIONAL_PROJECTS="$(yarn feature-env downstream --feature tmp --images $AFFECTED_TARGETS --chart islandis)"
           cd ..
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
