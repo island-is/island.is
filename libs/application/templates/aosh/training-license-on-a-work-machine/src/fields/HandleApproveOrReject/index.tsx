@@ -42,7 +42,7 @@ export const HandleApproveOrReject: FC<FieldBaseProps> = ({
   const canApprove = () => {
     const approved =
       getValueViaPath<string[]>(application.answers, 'approved') ?? []
-    return !approved.includes(userInfo?.profile.nationalId ?? '')
+    return !approved.includes(userInfo?.profile?.nationalId ?? '')
   }
 
   const onApproveButtonClick = async () => {
@@ -58,7 +58,7 @@ export const HandleApproveOrReject: FC<FieldBaseProps> = ({
     const updatedApplication = applicationInfo?.data?.applicationApplication
     const approved =
       getValueViaPath<string[]>(updatedApplication.answers, 'approved') ?? []
-    approved.push(userInfo?.profile.nationalId)
+    approved.push(userInfo?.profile?.nationalId ?? '')
     const res = await submitApplication({
       variables: {
         input: {
