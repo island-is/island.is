@@ -211,6 +211,8 @@ jobs:
           cd infra
           ADDITIONAL_PROJECTS="$(yarn feature-env downstream --feature tmp --images $AFFECTED_TARGETS --chart islandis)"
           cd ..
+          echo "$AFFECTED_TARGETS"
+          echo "$ADDITIONAL_PROJECTS"
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
