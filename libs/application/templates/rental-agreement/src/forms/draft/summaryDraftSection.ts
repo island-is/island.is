@@ -7,7 +7,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { summary } from '../../lib/messages'
+import { summary, application } from '../../lib/messages'
 
 export const SummaryDraftSection = buildSection({
   id: 'summary',
@@ -44,7 +44,7 @@ export const SummaryDraftSection = buildSection({
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: 'Áfram í yfirlit',
+              name: application.goToOverviewButton,
               type: 'primary',
             },
           ],

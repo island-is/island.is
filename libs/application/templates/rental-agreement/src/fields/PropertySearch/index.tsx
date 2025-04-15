@@ -23,9 +23,9 @@ import {
   HmsPropertyInfoInput,
   Unit as OriginalUnit,
 } from '@island.is/api/schema'
-import { PropertyTableUnits } from './components/PropertyTableUnits'
 import { PropertyTableHeader } from './components/PropertyTableHeader'
 import { PropertyTableRow } from './components/PropertyTableRow'
+import { PropertyTableUnits } from './components/PropertyTableUnits'
 import { registerProperty } from '../../lib/messages'
 
 export interface Unit extends OriginalUnit {
@@ -35,9 +35,13 @@ export interface Unit extends OriginalUnit {
 }
 interface Props extends FieldBaseProps {
   field: CustomField
-  errors?: any
+  errors?: {
+    registerProperty?: {
+      [key: string]: string
+    }
+  }
 }
-interface AddressProps extends HmsSearchAddress {
+export interface AddressProps extends HmsSearchAddress {
   label: string
   value: string
 }
@@ -103,57 +107,11 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   }, [searchTerm])
 
   useEffect(() => {
-    // Restore tableExpanded based on checked units in storedValue.units
-    if (storedValue?.units) {
-      const expandedTables = storedValue.units.reduce(
-        (acc: Record<string, boolean>, unit: Unit) => {
-          if (unit.checked) {
-            if (unit.propertyCode) {
-              acc[unit.propertyCode] = true
-            }
-          }
-          return acc
-        },
-        {} as Record<string, boolean>,
-      )
-      setTableExpanded(expandedTables)
-
-      // Restore checked units based on storedValue.units
-      const initialCheckedUnits = storedValue.units.reduce(
-        (acc: Record<string, boolean>, unit: Unit) => {
-          const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-          acc[unitKey] = unit.checked || false
-          return acc
-        },
-        {} as Record<string, boolean>,
-      )
-      setCheckedUnits(initialCheckedUnits)
-    }
-
-    // Restore numOfRooms per unit based on storedValue.units --> numOfRooms
-    if (storedValue?.units) {
-      const initialRoomsValue = storedValue.units.reduce(
-        (acc: Record<string, number>, unit: Unit) => {
-          const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-          acc[unitKey] = unit.numOfRooms || 0
-          return acc
-        },
-        {} as Record<string, number>,
-      )
-      setNumOfRoomsValue(initialRoomsValue)
-    }
-    // Restore size value per unit based on storedValue.units --> changedSize | size
-    if (storedValue?.units) {
-      const initialSizeValue = storedValue.units.reduce(
-        (acc: Record<string, number>, unit: Unit) => {
-          const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-          acc[unitKey] = unit.changedSize || 0
-          return acc
-        },
-        {} as Record<string, number>,
-      )
-      setUnitSizeChangedValue(initialSizeValue)
-    }
+    if (!storedValue) return
+    setTableExpanded(restoreTableExpanded(storedValue))
+    setCheckedUnits(restoreCheckedUnits(storedValue))
+    setNumOfRoomsValue(restoreRoomsValue(storedValue))
+    setUnitSizeChangedValue(restoreSizeValue(storedValue))
   }, [storedValue])
 
   useEffect(() => {
@@ -199,6 +157,52 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       }
     },
   })
+
+  const restoreTableExpanded = (storedValue: any) => {
+    if (!storedValue?.units) return {}
+    return storedValue.units.reduce(
+      (acc: Record<string, boolean>, unit: Unit) => {
+        if (unit.checked && unit.propertyCode) {
+          acc[unit.propertyCode] = true
+        }
+        return acc
+      },
+      {} as Record<string, boolean>,
+    )
+  }
+  const restoreCheckedUnits = (storedValue: any) => {
+    if (!storedValue?.units) return {}
+    return storedValue.units.reduce(
+      (acc: Record<string, boolean>, unit: Unit) => {
+        const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+        acc[unitKey] = unit.checked || false
+        return acc
+      },
+      {} as Record<string, boolean>,
+    )
+  }
+  const restoreRoomsValue = (storedValue: any) => {
+    if (!storedValue?.units) return {}
+    return storedValue.units.reduce(
+      (acc: Record<string, number>, unit: Unit) => {
+        const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+        acc[unitKey] = unit.numOfRooms || 0
+        return acc
+      },
+      {} as Record<string, number>,
+    )
+  }
+  const restoreSizeValue = (storedValue: any) => {
+    if (!storedValue?.units) return {}
+    return storedValue.units.reduce(
+      (acc: Record<string, number>, unit: Unit) => {
+        const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+        acc[unitKey] = unit.changedSize || 0
+        return acc
+      },
+      {} as Record<string, number>,
+    )
+  }
 
   const toggleExpand = (propertyId: number) => {
     setTableExpanded((prev) => ({
@@ -301,7 +305,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     setValue(id, selection ? selection : undefined)
   }
 
-  const hasErrors = Object.keys(errors).length > 0
+  const hasValidationErrors = errors ? Object.keys(errors).length > 0 : false
 
   return (
     <>
@@ -445,7 +449,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
               </T.Table>
             )
           )}
-          {hasErrors && (
+          {hasValidationErrors && (
             <Box marginTop={8}>
               {errors?.registerProperty?.['searchResults'] && (
                 <AlertMessage

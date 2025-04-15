@@ -275,6 +275,17 @@ const registerProperty = z
         }
       })
     }
+    if (
+      data.categoryClass === RentalHousingCategoryClass.SPECIAL_GROUPS &&
+      !data.categoryClassGroup
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.registerProperty.category.classGroupRequiredError,
+        path: ['categoryClassGroup'],
+      })
+    }
   })
 
 const specialProvisions = z
@@ -689,7 +700,10 @@ const otherFees = z
     heatingCostMeterStatus: z.string().optional(),
     heatingCostMeterStatusDate: z.string().optional(),
     otherCosts: z.array(z.string()).optional(),
-    otherCostItems: z.union([z.string(), z.array(otherCostItemsSchema)]), // String so that it clears on OtherCosts change (clearOnChange)
+    otherCostItems: z.union([
+      z.string(),
+      z.array(otherCostItemsSchema).optional(),
+    ]), // String so that it clears on OtherCosts change (clearOnChange)
     otherCostsDescription: z.string().optional(),
     otherCostsAmount: z.string().optional(),
   })
@@ -700,6 +714,7 @@ const otherFees = z
       data.electricityCost === OtherFeesPayeeOptions.TENANT
     const tenantPaysHeatingCost =
       data.heatingCost === OtherFeesPayeeOptions.TENANT
+    const hasOtherCosts = data.otherCosts?.includes(TRUE)
 
     if (data.housingFund && tenantPaysHousingFund) {
       if (!data.housingFundAmount) {
@@ -810,18 +825,19 @@ const otherFees = z
       }
     }
 
-    if (
-      data.otherCostItems &&
-      hasInvalidCostItems(data.otherCostItems as CostField[])
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.otherFees.errorOtherCost,
-        path: ['otherCostItems'],
-      })
+    if (hasOtherCosts) {
+      if (
+        data.otherCostItems &&
+        hasInvalidCostItems(data.otherCostItems as CostField[])
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorOtherCost,
+          path: ['otherCostItems'],
+        })
+      }
     }
-    return true
   })
 
 const preSignatureInfo = z.object({

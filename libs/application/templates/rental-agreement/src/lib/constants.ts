@@ -65,8 +65,6 @@ export enum RentalHousingCategoryClassGroup {
   COMMUNE = 'commune',
   HALFWAY_HOUSE = 'halfwayHouse',
   INCOME_BASED_HOUSING = 'incomeBasedHousing',
-  // TODO: Add this option if decision is made to use
-  // EMPLOYEE_HOUSING = 'employeeHousing',
 }
 
 export enum RentalHousingConditionInspector {

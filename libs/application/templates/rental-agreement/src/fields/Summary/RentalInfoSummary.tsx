@@ -1,8 +1,7 @@
 import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps } from '@island.is/application/types'
-import { RentalAgreement } from '../../lib/dataSchema'
+import { FieldBaseProps, FormValue } from '@island.is/application/types'
 import {
   AnswerOptions,
   RentalPaymentMethodOptions,
@@ -24,6 +23,8 @@ import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { KeyValue } from './components/KeyValue'
 import { summary } from '../../lib/messages'
+import { getValueViaPath } from '@island.is/application/core'
+import { AddressProps } from '../PropertySearch'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -43,11 +44,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
     securityDepositRoute,
     hasChangeButton,
   } = props
-  const answers = application.answers as RentalAgreement
-
-  const isSecurityDepositRequired =
-    answers.rentalAmount.isPaymentInsuranceRequired?.includes(AnswerOptions.YES)
-  const isSecurityDepositType = answers.securityDeposit?.securityType
+  const { answers } = application
 
   const securityDepositType = (answer: string) => {
     const options = getSecurityDepositTypeOptions()
@@ -73,20 +70,72 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
     return matchingOption ? matchingOption.label : '-'
   }
 
+  const paymentInsuranceRequired = getValueViaPath<AnswerOptions>(
+    answers,
+    'rentalAmount.isPaymentInsuranceRequired',
+  )
+  const isSecurityDepositType = getValueViaPath<SecurityDepositTypeOptions>(
+    answers,
+    'securityDeposit.securityType',
+  )
+  const searchResults = getValueViaPath<AddressProps>(
+    answers,
+    'registerProperty.searchresults',
+  )
+  const searchResultUnits = getValueViaPath<FormValue[]>(
+    answers,
+    'registerProperty.searchresults.units',
+  )
+  const startDate = getValueViaPath<string>(answers, 'rentalPeriod.startDate')
+  const endDate = getValueViaPath<string>(answers, 'rentalPeriod.endDate')
+  const isDefinite = getValueViaPath<string>(answers, 'rentalPeriod.isDefinite')
+  const rentalAmount = getValueViaPath<string>(answers, 'rentalAmount.amount')
+  const paymentDateOptions = getValueViaPath<string>(
+    answers,
+    'rentalAmount.paymentDateOptions',
+  )
+  const paymentMethodOptions = getValueViaPath<RentalPaymentMethodOptions>(
+    answers,
+    'rentalAmount.paymentMethodOptions',
+  )
+  const paymentMethodNationalId = getValueViaPath<string>(
+    answers,
+    'rentalAmount.paymentMethodNationalId',
+  )
+  const paymentMethodAccountNumber = getValueViaPath<string>(
+    answers,
+    'rentalAmount.paymentMethodBankAccountNumber',
+  )
+  const paymentMethodOtherTextField = getValueViaPath<string>(
+    answers,
+    'rentalAmount.paymentMethodOtherTextField',
+  )
+  const indexConnected = getValueViaPath<AnswerOptions>(
+    answers,
+    'rentalAmount.isIndexConnected',
+  )
+  const indexTypes = getValueViaPath<string>(answers, 'rentalAmount.indexTypes')
+  const securityAmountCalculated = getValueViaPath<string>(
+    answers,
+    'securityDeposit.securityAmountCalculated',
+  )
+  const securityType = getValueViaPath<SecurityDepositTypeOptions>(
+    answers,
+    'securityDeposit.securityType',
+  )
+
   return (
     <SummaryCard>
       {/* Property Address */}
       <SummaryCardRow hasChangeButton={false}>
         <GridColumn span={['12/12']}>
-          {answers.registerProperty.searchresults?.label && (
+          {searchResults?.label && (
             <KeyValue
-              label={`${answers.registerProperty.searchresults.label}`}
+              label={`${searchResults.label}`}
               value={
                 `${formatMessage(summary.rentalPropertyIdPrefix)}${[
                   ...new Set(
-                    answers.registerProperty.searchresults.units?.map(
-                      (unit) => 'F' + unit.propertyCode,
-                    ),
+                    searchResultUnits?.map((unit) => 'F' + unit.propertyCode),
                   ),
                 ].join(', ')}` || '-'
               }
@@ -98,7 +147,6 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
           )}
         </GridColumn>
       </SummaryCardRow>
-
       {/* Rental period */}
       <SummaryCardRow
         editAction={goToScreen}
@@ -108,30 +156,24 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.rentalPeriodStartDateLabel}
-            value={
-              (answers.rentalPeriod.startDate &&
-                formatDate(answers.rentalPeriod.startDate.toString())) ||
-              '-'
-            }
+            value={(startDate && formatDate(startDate.toString())) || '-'}
           />
         </GridColumn>
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={
-              answers.rentalPeriod.isDefinite?.includes('true')
+              isDefinite?.includes(TRUE)
                 ? summary.rentalPeriodEndDateLabel
                 : summary.rentalPeriodDefiniteLabel
             }
             value={
-              answers.rentalPeriod.isDefinite?.includes('true') &&
-              answers.rentalPeriod.endDate
-                ? formatDate(answers.rentalPeriod.endDate.toString())
+              isDefinite?.includes(TRUE) && endDate
+                ? formatDate(endDate.toString())
                 : summary.rentalPeriodDefiniteValue
             }
           />
         </GridColumn>
       </SummaryCardRow>
-
       {/* Rental amount */}
       <SummaryCardRow
         editAction={goToScreen}
@@ -141,35 +183,26 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.rentalAmountLabel}
-            value={
-              (answers.rentalAmount.amount &&
-                formatCurrency(answers.rentalAmount.amount)) ||
-              '-'
-            }
+            value={(rentalAmount && formatCurrency(rentalAmount)) || '-'}
           />
         </GridColumn>
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.paymentDateOptionsLabel}
-            value={
-              paymentDate(answers.rentalAmount.paymentDateOptions as string) ||
-              '-'
-            }
+            value={paymentDate(paymentDateOptions || '') || '-'}
           />
         </GridColumn>
-        {answers.rentalAmount.isIndexConnected?.includes(TRUE) &&
-          answers.rentalAmount.indexTypes && (
-            <GridColumn span={['12/12', '4/12']}>
-              <KeyValue
-                label={summary.indexTypeLabel}
-                value={indexType(answers.rentalAmount.indexTypes) || '-'}
-              />
-            </GridColumn>
-          )}
+        {indexConnected?.includes(TRUE) && indexTypes && (
+          <GridColumn span={['12/12', '4/12']}>
+            <KeyValue
+              label={summary.indexTypeLabel}
+              value={indexType(indexTypes) || '-'}
+            />
+          </GridColumn>
+        )}
       </SummaryCardRow>
-
       {/* Security deposit */}
-      {isSecurityDepositRequired && (
+      {paymentInsuranceRequired?.includes(AnswerOptions.YES) && (
         <SummaryCardRow
           editAction={goToScreen}
           route={securityDepositRoute}
@@ -178,7 +211,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
           <GridColumn span={['12/12', '4/12']}>
             <KeyValue
               label={summary.securityDepositLabel}
-              value={answers.securityDeposit.securityAmountCalculated || '-'}
+              value={formatCurrency(securityAmountCalculated || '') || '-'}
             />
           </GridColumn>
           <GridColumn span={['12/12', '4/12']}>
@@ -186,56 +219,77 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
               label={summary.securityTypeLabel}
               value={
                 isSecurityDepositType
-                  ? securityDepositType(
-                      answers.securityDeposit.securityType as string,
-                    )
+                  ? securityDepositType(securityType || '')
                   : '-'
               }
             />
           </GridColumn>
-          {answers.securityDeposit.securityType !==
-            SecurityDepositTypeOptions.CAPITAL && (
+          {securityType !== SecurityDepositTypeOptions.CAPITAL && (
             <GridColumn span={['12/12', '4/12']}>
-              {answers.securityDeposit.securityType ===
-                SecurityDepositTypeOptions.BANK_GUARANTEE && (
+              {securityType === SecurityDepositTypeOptions.BANK_GUARANTEE && (
                 <KeyValue
                   label={summary.securityTypeInstitutionLabel}
-                  value={answers.securityDeposit.bankGuaranteeInfo || '-'}
+                  value={
+                    getValueViaPath(
+                      answers,
+                      'securityDeposit.bankGuaranteeInfo',
+                      '',
+                    ) || '-'
+                  }
                 />
               )}
-              {answers.securityDeposit.securityType ===
+              {securityType ===
                 SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE && (
                 <KeyValue
                   label={summary.securityTypeThirdPartyGuaranteeLabel}
-                  value={answers.securityDeposit.thirdPartyGuaranteeInfo || '-'}
+                  value={
+                    getValueViaPath(
+                      answers,
+                      'securityDeposit.thirdPartyGuaranteeInfo',
+                      '',
+                    ) || '-'
+                  }
                 />
               )}
-              {answers.securityDeposit.securityType ===
+              {securityType ===
                 SecurityDepositTypeOptions.INSURANCE_COMPANY && (
                 <KeyValue
                   label={summary.securityTypeInsuranceLabel}
-                  value={answers.securityDeposit.insuranceCompanyInfo || '-'}
+                  value={
+                    getValueViaPath(
+                      answers,
+                      'securityDeposit.insuranceCompanyInfo',
+                      '',
+                    ) || '-'
+                  }
                 />
               )}
-              {answers.securityDeposit.securityType ===
+              {securityType ===
                 SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND && (
                 <KeyValue
                   label={summary.securityTypeMutualFundLabel}
-                  value={answers.securityDeposit.mutualFundInfo || '-'}
+                  value={
+                    getValueViaPath(
+                      answers,
+                      'securityDeposit.mutualFundInfo',
+                      '',
+                    ) || '-'
+                  }
                 />
               )}
-              {answers.securityDeposit.securityType ===
-                SecurityDepositTypeOptions.OTHER && (
+              {securityType === SecurityDepositTypeOptions.OTHER && (
                 <KeyValue
                   label={summary.securityTypeOtherLabel}
-                  value={answers.securityDeposit.otherInfo || '-'}
+                  value={
+                    getValueViaPath(answers, 'securityDeposit.otherInfo', '') ||
+                    '-'
+                  }
                 />
               )}
             </GridColumn>
           )}
         </SummaryCardRow>
       )}
-
       {/* Payment method */}
       <SummaryCardRow
         editAction={goToScreen}
@@ -244,8 +298,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
       >
         <GridColumn
           span={
-            answers.rentalAmount.paymentMethodOptions ===
-            RentalPaymentMethodOptions.OTHER
+            paymentMethodOptions === RentalPaymentMethodOptions.OTHER
               ? ['12/12']
               : ['12/12', '4/12']
           }
@@ -253,33 +306,25 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
           <KeyValue
             label={summary.paymentMethodTypeLabel}
             value={
-              answers.rentalAmount.paymentMethodOptions ===
-              RentalPaymentMethodOptions.OTHER
-                ? answers.rentalAmount.paymentMethodOtherTextField || '-'
-                : paymentMethodType(
-                    answers.rentalAmount.paymentMethodOptions as string,
-                  ) || '-'
+              paymentMethodOptions === RentalPaymentMethodOptions.OTHER
+                ? paymentMethodOtherTextField || '-'
+                : paymentMethodType(paymentMethodOptions || '') || '-'
             }
           />
         </GridColumn>
-        {answers.rentalAmount.paymentMethodOptions ===
-          RentalPaymentMethodOptions.BANK_TRANSFER && (
+        {paymentMethodOptions === RentalPaymentMethodOptions.BANK_TRANSFER && (
           <>
             <GridColumn span={['12/12', '4/12']}>
               <KeyValue
                 label={summary.paymentMethodNationalIdLabel}
-                value={formatNationalId(
-                  answers.rentalAmount.paymentMethodNationalId || '-',
-                )}
+                value={formatNationalId(paymentMethodNationalId || '-')}
               />
             </GridColumn>
 
             <GridColumn span={['12/12', '4/12']}>
               <KeyValue
                 label={summary.paymentMethodAccountLabel}
-                value={formatBankInfo(
-                  answers.rentalAmount.paymentMethodBankAccountNumber || '-',
-                )}
+                value={formatBankInfo(paymentMethodAccountNumber || '-')}
               />
             </GridColumn>
           </>

@@ -65,7 +65,7 @@ export const housingCondition = defineMessages({
     description: 'Housing condition inspection results input label',
   },
   inspectionResultsInputPlaceholder: {
-    id: 'ra.application:housingCondition.inspectionResultsPlaceholder',
+    id: 'ra.application:housingCondition.inspectionResultsInputPlaceholder',
     defaultMessage: 'Skrifaðu hér allt sem á við',
     description: 'Housing condition inspection results placeholder',
   },

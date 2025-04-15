@@ -26,7 +26,6 @@ export const SummaryForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'summary',
-          title: '',
           children: [
             buildDescriptionField({
               id: 'summaryTitle',
@@ -35,32 +34,29 @@ export const SummaryForm: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'summaryFirstDescription',
-              title: '',
               description: summary.pageDescriptionFirstParagraph,
             }),
             buildDescriptionField({
               id: 'summarySecondDescription',
-              title: '',
               description: summary.pageDescriptionSecondparagraph,
             }),
             buildCustomField({
               id: 'summary',
-              title: 'Samantekt',
+              title: summary.sectionName,
               component: 'SummaryNoEdit',
             }),
             buildSubmitField({
               id: 'summarySubmit',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.EDIT,
-                  name: 'Uppfæra umsókn',
+                  name: summary.editButtonLabel,
                   type: 'signGhost',
                 },
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Áfram í undirritun',
+                  name: summary.submitButtonLabel,
                   type: 'primary',
                 },
               ],

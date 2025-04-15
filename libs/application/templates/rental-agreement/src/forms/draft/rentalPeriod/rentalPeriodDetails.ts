@@ -11,12 +11,12 @@ import { Routes, TRUE } from '../../../lib/constants'
 import { rentalPeriod } from '../../../lib/messages'
 
 const rentalPeriodIsDefinite = (answers: FormValue) => {
-  const rentalPeriodDefinite = getValueViaPath(
+  const rentalPeriodDefinite = getValueViaPath<string[]>(
     answers,
     'rentalPeriod.isDefinite',
     [],
-  ) as string[]
-  return rentalPeriodDefinite && rentalPeriodDefinite.includes(TRUE)
+  )
+  return !!rentalPeriodDefinite && rentalPeriodDefinite.includes(TRUE)
 }
 
 export const RentalPeriodDetails = buildSubSection({

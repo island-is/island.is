@@ -73,9 +73,7 @@ export const PropertyTableRow = ({
         box={{
           className: `${tableCell} ${tableCellNumOfRooms}`,
         }}
-      >
-        {'-'}
-      </T.Data>
+      ></T.Data>
     </T.Row>
   )
 }

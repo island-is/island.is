@@ -2,13 +2,13 @@ import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
-import { RentalAgreement } from '../../lib/dataSchema'
 import { Routes } from '../../lib/constants'
 import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
 import { KeyValue } from './components/KeyValue'
 import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { summary } from '../../lib/messages'
+import { getValueViaPath } from '@island.is/application/core'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -26,14 +26,31 @@ export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
     tenantsRoute,
     hasChangeButton,
   } = props
-  const answers = application.answers as RentalAgreement
+  const { answers } = application
 
-  const landlordListWithoutRepresentatives = answers.landlordInfo.table.filter(
+  const landlords = getValueViaPath(
+    answers,
+    'landlordInfo.table',
+    [],
+  ) as Array<{
+    isRepresentative: string[]
+    nationalIdWithName: { nationalId: string; name: string }
+    email?: string
+    phone?: string
+  }>
+  const tenants = getValueViaPath(answers, 'tenantInfo.table', []) as Array<{
+    isRepresentative: string[]
+    nationalIdWithName: { nationalId: string; name: string }
+    email?: string
+    phone?: string
+  }>
+
+  const landlordListWithoutRepresentatives = landlords.filter(
     (landlord) =>
       !landlord.isRepresentative || landlord.isRepresentative.length === 0,
   )
 
-  const tenantListWithoutRepresentatives = answers.tenantInfo.table.filter(
+  const tenantListWithoutRepresentatives = tenants.filter(
     (tenant) =>
       !tenant.isRepresentative || tenant.isRepresentative.length === 0,
   )
@@ -60,11 +77,11 @@ export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
                 <KeyValue
                   labelVariant="h5"
                   labelAs="p"
-                  label={landlord.nationalIdWithName?.name as string}
+                  label={landlord.nationalIdWithName?.name ?? ''}
                   value={`${formatMessage(
                     summary.nationalIdLabel,
                   )}${formatNationalId(
-                    landlord.nationalIdWithName?.nationalId || '-',
+                    landlord.nationalIdWithName?.nationalId || '',
                   )}`}
                   gap={'smallGutter'}
                 />
@@ -78,7 +95,7 @@ export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
               <GridColumn span={['12/12', '4/12']}>
                 <KeyValue
                   label={summary.phoneNumberLabel}
-                  value={formatPhoneNumber(landlord.phone || '-')}
+                  value={formatPhoneNumber(landlord.phone || '')}
                 />
               </GridColumn>
             </SummaryCardRow>
@@ -105,7 +122,7 @@ export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
                 <KeyValue
                   labelVariant="h5"
                   labelAs="p"
-                  label={tenant.nationalIdWithName?.name as string}
+                  label={tenant.nationalIdWithName?.name ?? ''}
                   value={`${formatMessage(
                     summary.nationalIdLabel,
                   )}${formatNationalId(

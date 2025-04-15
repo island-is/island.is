@@ -28,6 +28,16 @@ export const summary = defineMessages({
     defaultMessage: 'Breyta',
     description: 'Change section button label',
   },
+  submitButtonLabel: {
+    id: 'ra.application:summary.submitButtonLabel',
+    defaultMessage: 'Áfram í undirritun',
+    description: 'Submit button label',
+  },
+  editButtonLabel: {
+    id: 'ra.application:summary.editButtonLabel',
+    defaultMessage: 'Uppfæra umsókn',
+    description: 'Edit button label',
+  },
 
   // Property address
   rentalPropertyIdPrefix: {
@@ -226,6 +236,16 @@ export const summary = defineMessages({
     id: 'ra.application:summary.propertyClassGroupLabel',
     defaultMessage: 'Hópur',
     description: 'Property classification group label',
+  },
+  propertyClassSpecialGroups: {
+    id: 'ra.application:summary.propertyClassSpecialGroups',
+    defaultMessage: 'Húsnæði fyrir sérstaka hópa',
+    description: 'Property classification special group value',
+  },
+  propertyClassGeneralMarket: {
+    id: 'ra.application:summary.propertyClassGeneralMarket',
+    defaultMessage: 'Almennur markaður',
+    description: 'Property classification general market value',
   },
   propertyDescriptionLabel: {
     id: 'ra.application:summary.propertyDescriptionLabel',
