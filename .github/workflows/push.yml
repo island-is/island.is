@@ -202,6 +202,8 @@ jobs:
         id: build_map
         run: |
           set -euo pipefail
+          AFFECTED_TARGETS="$(yarn nx show projects --affected --base $BASE --head $HEAD --json | jq -r '. | join(",")')"
+          ADDITIONAL_PROJECTS="$(yarn node -r esbuild-register src/feature-env.ts downstream --feature tmp --images $AFFECTED_TARGETS --chart islandis)"
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then

@@ -197,6 +197,32 @@ yargs(process.argv.slice(2))
     },
   })
   .command({
+    command: 'downstream',
+    describe: 'get downstream services',
+    builder: () => {},
+    handler: async (argv) => {
+      const typedArgv = (argv as unknown) as Arguments
+      const { habitat, affectedServices, env, skipAppName, writeDest } = parseArguments(
+        typedArgv,
+      )
+      const { included: featureYaml } = await getFeatureAffectedServices(
+        habitat,
+        affectedServices.slice(),
+        ExcludedFeatureDeploymentServices,
+        env,
+      )
+      
+      const affectedServiceNames = affectedServices.map((svc) => svc.name())
+
+      const formattedStringList = featureYaml.map((svc) => svc.name()).filter((name) => !affectedServiceNames.includes(name)).toString()
+      
+      writeToOutput(
+        formattedStringList,
+        typedArgv.output,
+      )
+    },
+  })
+  .command({
     command: 'ingress-comment',
     describe: 'get helm values file',
     builder: (yargs) => yargs,
