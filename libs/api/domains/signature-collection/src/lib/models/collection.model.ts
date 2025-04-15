@@ -21,8 +21,6 @@ export class SignatureCollection {
   isActive!: boolean
 
   @Field(() => CollectionType)
-  // Coerce graphql generation to respect the numbers
-  // instead of creating a string enum
   collectionType!: CollectionType
 
   @Field()
