@@ -50,6 +50,11 @@ export const overview = {
       defaultMessage: 'Hafna',
       description: 'Overview rejectButton label',
     },
+    backButton: {
+      id: 'aosh.tlwm.application:overview.general.backButton',
+      defaultMessage: 'Til baka',
+      description: 'Overview backButton label',
+    },
   }),
   labels: defineMessages({
     editMessage: {

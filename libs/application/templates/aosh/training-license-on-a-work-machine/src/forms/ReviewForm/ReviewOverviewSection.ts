@@ -4,18 +4,14 @@ import {
   buildMultiField,
   buildOverviewField,
   buildSection,
-  buildSubmitField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { overview } from '../../lib/messages'
-import { DefaultEvents } from '@island.is/application/types'
 import {
   getApplicantOverviewInformation,
   getAssigneeOverviewInformation,
   isContractor,
 } from '../../utils'
 import { getMachineTenureOverviewInformation } from '../../utils/getMachineTenureInformation'
-import { isLastApprovee } from '../../utils/isLastApprovee'
 
 export const reviewOverviewSection = buildSection({
   id: 'reviewOverviewSection',
@@ -62,44 +58,9 @@ export const reviewOverviewSection = buildSection({
           id: 'rejected',
         }),
         buildCustomField({
-          id: 'reviewOverviewSection.handleReject',
-          title: '',
-          component: 'HandleReject',
-        }),
-        buildCustomField({
           id: 'reviewOverviewSection.handleApprove',
           title: '',
-          component: 'HandleApprove',
-        }),
-        buildSubmitField({
-          id: 'submitReview',
-          placement: 'footer',
-          title: overview.general.approveButton,
-          refetchApplicationAfterSubmit: true,
-          condition: (answers, _externalData, user) => {
-            const approved =
-              getValueViaPath<string[]>(answers, 'approved') ?? []
-            return !approved.includes(user?.profile.nationalId ?? '')
-          },
-          actions: [
-            {
-              event: DefaultEvents.REJECT,
-              name: overview.general.rejectButton,
-              type: 'reject',
-            },
-            {
-              event: DefaultEvents.SUBMIT,
-              name: overview.general.agreeButton,
-              type: 'primary',
-              condition: (answers) => isLastApprovee(answers),
-            },
-            {
-              event: DefaultEvents.APPROVE,
-              name: overview.general.agreeButton,
-              type: 'primary',
-              condition: (answers) => !isLastApprovee(answers),
-            },
-          ],
+          component: 'HandleApproveOrReject',
         }),
       ],
     }),

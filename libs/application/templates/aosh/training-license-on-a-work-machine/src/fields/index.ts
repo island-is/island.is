@@ -1,2 +1,1 @@
-export { HandleReject } from './HandleReject'
-export { HandleApprove } from './HandleApprove'
+export { HandleApproveOrReject } from './HandleApproveOrReject'

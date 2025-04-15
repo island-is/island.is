@@ -10,7 +10,7 @@ export const ReviewForm: Form = buildForm({
   title: application.name,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenButton: false,
+  renderLastScreenBackButton: false,
   children: [applicationStatusSection, reviewOverviewSection],
 })
