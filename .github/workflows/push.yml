@@ -206,10 +206,10 @@ jobs:
 
       - name: Prepare docker build targets
         id: build_map
-        working-directory: infra
         run: |
           set -euo pipefail
           AFFECTED_TARGETS="$(yarn nx show projects --affected --base $BASE --head $HEAD --json | jq -r '. | join(",")')"
+          cd infra
           ADDITIONAL_PROJECTS="$(yarn feature-env src/feature-env.ts downstream --feature tmp --images $AFFECTED_TARGETS --chart islandis)"
           cd ..
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
@@ -223,7 +223,6 @@ jobs:
       - name: Prepare deployment targets
         id: deploy_map
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
-        working-directory: ../
         run: |
           set -euo pipefail
           CHUNKS=${{ steps.build_map.outputs.CHUNKS }}
