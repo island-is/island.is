@@ -129,11 +129,6 @@ describe('Financial statement individual election helpers', () => {
         phone: clientPhone,
         email: clientEmail,
       },
-      actor: {
-        nationalId: nationalIdActor,
-        name: clientName,
-        contactType: ContactType.Actor,
-      },
       digitalSignee: {
         phone: clientPhone,
         email: clientEmail,
