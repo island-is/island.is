@@ -4,10 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  formatDate,
-  normalizeAndFormatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDefenceUser,
@@ -43,7 +40,11 @@ import {
   Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { shouldDisplayGeneratedPdfFiles } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  isCaseCivilClaimantSpokesperson,
+  isCaseDefendantDefender,
+  shouldDisplayGeneratedPdfFiles,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import {
@@ -131,13 +132,8 @@ const IndictmentOverview: FC = () => {
   const canAddFiles =
     !isCompletedCase(workingCase.state) &&
     isDefenceUser(user) &&
-    workingCase.defendants?.some(
-      (defendant) =>
-        defendant?.defenderNationalId &&
-        normalizeAndFormatNationalId(user?.nationalId).includes(
-          defendant.defenderNationalId,
-        ),
-    ) &&
+    (isCaseDefendantDefender(user, workingCase) ||
+      isCaseCivilClaimantSpokesperson(user, workingCase)) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT
 

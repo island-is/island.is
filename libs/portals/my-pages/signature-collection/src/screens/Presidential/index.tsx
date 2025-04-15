@@ -6,7 +6,7 @@ import { EmptyState, IntroWrapper, THJODSKRA_SLUG } from '@island.is/portals/my-
 import { m } from '../../lib/messages'
 import SigneeView from '../shared/SigneeView'
 
-const SignatureLists = () => {
+const SignatureCollectionPresidential = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
 
@@ -17,7 +17,7 @@ const SignatureLists = () => {
   return (
     <Box>
       <IntroWrapper
-        title={formatMessage(m.pageTitle)}
+        title={formatMessage(m.pageTitlePresidential)}
         intro={formatMessage(m.pageDescriptionSignee)}
         serviceProviderTooltip={formatMessage(m.infoProviderTooltip)}
         serviceProviderSlug={THJODSKRA_SLUG}
@@ -42,4 +42,4 @@ const SignatureLists = () => {
   )
 }
 
-export default SignatureLists
+export default SignatureCollectionPresidential

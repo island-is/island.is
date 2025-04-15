@@ -613,18 +613,22 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionLists',
     defaultMessage: 'Meðmælasöfnun',
   },
+  signatureCollectionMunicipalLists: {
+    id: 'service.portal:signatureCollectionMunicipalLists',
+    defaultMessage: 'Sveitarstjórnarkosningar',
+  },
   signatureCollectionParliamentaryLists: {
     id: 'service.portal:signatureCollectionParliamentaryLists',
-    defaultMessage: 'Alþingiskosningar - Meðmælasöfnun',
+    defaultMessage: 'Alþingiskosningar',
   },
   signatureCollectionParliamentaryListsCompany: {
     id: 'service.portal:signatureCollectionParliamentaryListsCompany',
     defaultMessage:
-      'Alþingiskosningar - Meðmælasöfnun (Aðeins fyrir stjórnmálasamtök)',
+      'Alþingiskosningar - Aðeins fyrir stjórnmálasamtök',
   },
   signatureCollectionPresidentialLists: {
     id: 'service.portal:signatureCollectionPresidentialLists',
-    defaultMessage: 'Forsetakosningar - Meðmælasöfnun',
+    defaultMessage: 'Forsetakosningar',
   },
   notifications: {
     id: 'service.portal:notifications',
