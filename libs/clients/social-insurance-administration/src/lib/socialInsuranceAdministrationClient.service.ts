@@ -64,73 +64,130 @@ export class SocialInsuranceAdministrationClientService {
     user: User,
   ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
     return Promise.resolve({
-      totalPayment: 999999,
-      subtracted: 20,
-      paidOut: 25,
+      totalPayment: 4578995,
+      subtracted: 1127507,
+      paidOut: 3451488,
       groups: [
         {
-          group: 'Óskattskyldar greiðslur',
-          groupId: 2,
-          total: 5000,
+          group: 'Skattskyldar greiðslutegundir',
+          groupId: 10,
+          total: 4578995,
           monthTotals: [
             {
               month: 1,
-              amount: 10,
+              amount: 370517,
             },
             {
               month: 2,
-              amount: 20,
+              amount: 370517,
             },
             {
               month: 3,
-              amount: 30,
+              amount: 370517,
             },
             {
               month: 4,
-              amount: 40,
+              amount: 370517,
             },
             {
               month: 5,
-              amount: 50,
+              amount: 370517,
             },
             {
               month: 6,
-              amount: 60,
+              amount: 370517,
             },
             {
               month: 7,
-              amount: 70,
+              amount: 423634,
             },
             {
               month: 8,
-              amount: 80,
+              amount: 370517,
             },
             {
               month: 9,
-              amount: 90,
+              amount: 370517,
             },
             {
               month: 10,
-              amount: 100,
+              amount: 370517,
             },
             {
               month: 11,
-              amount: 110,
+              amount: 370517,
             },
             {
               month: 12,
-              amount: 120,
+              amount: 450191,
             },
           ],
           rows: [
             {
-              name: 'TEST 2',
-              total: 500009,
-              markWithAsterisk: true,
+              name: 'Ellilífeyrir',
+              total: 4446204,
               months: [
                 {
+                  month: 1,
+                  amount: 370517,
+                },
+                {
+                  month: 2,
+                  amount: 370517,
+                },
+                {
+                  month: 3,
+                  amount: 370517,
+                },
+                {
+                  month: 4,
+                  amount: 370517,
+                },
+                {
+                  month: 5,
+                  amount: 370517,
+                },
+                {
+                  month: 6,
+                  amount: 370517,
+                },
+                {
+                  month: 7,
+                  amount: 370517,
+                },
+                {
                   month: 8,
-                  amount: 513215,
+                  amount: 370517,
+                },
+                {
+                  month: 9,
+                  amount: 370517,
+                },
+                {
+                  month: 10,
+                  amount: 370517,
+                },
+                {
+                  month: 11,
+                  amount: 370517,
+                },
+                {
+                  month: 12,
+                  amount: 370517,
+                },
+              ],
+            },
+            {
+              name: 'Orlofs- og desemberuppbót á ellilífeyri',
+              total: 132791,
+              months: [
+                {
+                  month: 7,
+                  amount: 53117,
+                },
+                {
+                  month: 12,
+                  amount: 79674,
                 },
               ],
             },
@@ -138,135 +195,235 @@ export class SocialInsuranceAdministrationClientService {
         },
         {
           group: 'Frádráttur',
-          groupId: 3,
-          total: 995,
+          groupId: 20,
+          total: 1127507,
           monthTotals: [
             {
               month: 1,
-              amount: 10,
+              amount: 105160,
             },
             {
               month: 2,
-              amount: 20,
+              amount: 105161,
             },
             {
               month: 3,
-              amount: 30,
+              amount: 86675,
             },
             {
               month: 4,
-              amount: 40,
+              amount: 86675,
             },
             {
               month: 5,
-              amount: 50,
+              amount: 86675,
             },
             {
               month: 6,
-              amount: 60,
+              amount: 86676,
             },
             {
               month: 7,
-              amount: 70,
+              amount: 106849,
             },
             {
               month: 8,
-              amount: 80,
+              amount: 86675,
             },
             {
               month: 9,
-              amount: 90,
+              amount: 86675,
             },
             {
               month: 10,
-              amount: 100,
+              amount: 86676,
             },
             {
               month: 11,
-              amount: 110,
+              amount: 86675,
             },
             {
               month: 12,
-              amount: 120,
+              amount: 116935,
             },
           ],
           rows: [
             {
-              name: 'Lífeyrir test',
-              total: 500009,
-              markWithAsterisk: true,
+              name: 'Innborgun á kröfur',
+              total: 36970,
               months: [
                 {
+                  month: 1,
+                  amount: 18485,
+                },
+                {
+                  month: 2,
+                  amount: 18485,
+                },
+              ],
+            },
+            {
+              name: 'Staðgreiðsla',
+              total: 1090537,
+              months: [
+                {
+                  month: 1,
+                  amount: 86675,
+                },
+                {
+                  month: 2,
+                  amount: 86676,
+                },
+                {
+                  month: 3,
+                  amount: 86675,
+                },
+                {
+                  month: 4,
+                  amount: 86675,
+                },
+                {
+                  month: 5,
+                  amount: 86675,
+                },
+                {
+                  month: 6,
+                  amount: 86676,
+                },
+                {
+                  month: 7,
+                  amount: 106849,
+                },
+                {
                   month: 8,
-                  amount: 513215,
+                  amount: 86675,
+                },
+                {
+                  month: 9,
+                  amount: 86675,
+                },
+                {
+                  month: 10,
+                  amount: 86676,
+                },
+                {
+                  month: 11,
+                  amount: 86675,
+                },
+                {
+                  month: 12,
+                  amount: 116935,
                 },
               ],
             },
           ],
         },
         {
-          group: 'Test cat 1',
-          groupId: 1,
-          total: 995,
+          group: 'Ráðstöfun',
+          groupId: 30,
+          total: 3451488,
           monthTotals: [
             {
               month: 1,
-              amount: 10,
+              amount: 265357,
             },
             {
               month: 2,
-              amount: 20,
+              amount: 265356,
             },
             {
               month: 3,
-              amount: 30,
+              amount: 283842,
             },
             {
               month: 4,
-              amount: 40,
+              amount: 283842,
             },
             {
               month: 5,
-              amount: 50,
+              amount: 283842,
             },
             {
               month: 6,
-              amount: 60,
+              amount: 283841,
             },
             {
               month: 7,
-              amount: 70,
+              amount: 316785,
             },
             {
               month: 8,
-              amount: 80,
+              amount: 283842,
             },
             {
               month: 9,
-              amount: 90,
+              amount: 283842,
             },
             {
               month: 10,
-              amount: 100,
+              amount: 283841,
             },
             {
               month: 11,
-              amount: 110,
+              amount: 283842,
             },
             {
               month: 12,
-              amount: 120,
+              amount: 333256,
             },
           ],
           rows: [
             {
-              name: 'Lífeyrir test',
-              total: 500009,
-              markWithAsterisk: true,
+              name: 'Til greiðslu',
+              total: 3451488,
               months: [
                 {
+                  month: 1,
+                  amount: 265357,
+                },
+                {
+                  month: 2,
+                  amount: 265356,
+                },
+                {
+                  month: 3,
+                  amount: 283842,
+                },
+                {
+                  month: 4,
+                  amount: 283842,
+                },
+                {
+                  month: 5,
+                  amount: 283842,
+                },
+                {
+                  month: 6,
+                  amount: 283841,
+                },
+                {
+                  month: 7,
+                  amount: 316785,
+                },
+                {
                   month: 8,
-                  amount: 513215,
+                  amount: 283842,
+                },
+                {
+                  month: 9,
+                  amount: 283842,
+                },
+                {
+                  month: 10,
+                  amount: 283841,
+                },
+                {
+                  month: 11,
+                  amount: 283842,
+                },
+                {
+                  month: 12,
+                  amount: 333256,
                 },
               ],
             },
