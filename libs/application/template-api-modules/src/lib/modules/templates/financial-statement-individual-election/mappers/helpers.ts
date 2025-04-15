@@ -40,24 +40,6 @@ export const getShouldGetFileName = (answers: FormValue) => {
   return incomeLimit === FinancialElectionIncomeLimit.GREATER
 }
 
-export const getActorContact = (
-  actor:
-    | {
-        nationalId: string
-        scope: string[]
-      }
-    | undefined,
-  clientName: string,
-) => {
-  return actor
-    ? {
-        nationalId: actor.nationalId,
-        name: clientName,
-        contactType: ContactType.Actor,
-      }
-    : undefined
-}
-
 export const getInput = (
   answers: FormValue,
   nationalId: string,

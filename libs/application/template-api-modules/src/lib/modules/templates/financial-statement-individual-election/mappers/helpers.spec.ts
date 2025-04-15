@@ -37,35 +37,12 @@ describe('Financial statement individual election helpers', () => {
       { input: FinancialElectionIncomeLimit.GREATER, expectedOutput: true },
     ])('should map correctly', (inputOutputCombo) => {
       const answers = {
-        'election.incomeLimit': inputOutputCombo.input,
+        'incomeLimit.limit': inputOutputCombo.input,
       }
 
       const result = financialHelper.getShouldGetFileName(answers)
 
       expect(result).toEqual(inputOutputCombo.expectedOutput)
-    })
-  })
-
-  describe('getActorContact', () => {
-    it.each([true, false])('should map correctly', (shouldBeDefined) => {
-      const clientName = 'Fullname Fullname'
-      const nationalId = '1234564321'
-
-      const expectedResult = shouldBeDefined
-        ? {
-            nationalId: nationalId,
-            name: clientName,
-            contactType: ContactType.Actor,
-          }
-        : undefined
-
-      const actor = shouldBeDefined
-        ? { nationalId, scope: ['not', 'applicable?'] }
-        : undefined
-
-      const result = financialHelper.getActorContact(actor, clientName)
-
-      expect(result).toEqual(expectedResult)
     })
   })
 
@@ -118,7 +95,7 @@ describe('Financial statement individual election helpers', () => {
 
     const answers = {
       'election.incomeLimit': FinancialElectionIncomeLimit.GREATER,
-      'election.selectElection': electionId,
+      'election.electionId': electionId,
       'about.fullName': clientName,
       'about.phoneNumber': clientPhone,
       'about.email': clientEmail,
