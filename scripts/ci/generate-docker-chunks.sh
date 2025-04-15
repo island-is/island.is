@@ -70,6 +70,7 @@ if [ ${ADDITIONAL_PROJECTS+x} ]; then
 done
 fi
 
+>&2 echo "Additional projects: ${ADDITIONAL_PROJECTS}"
 >&2 echo "Map: ${chunks}"
 # echo "$chunks" | jq -cM '. | map("\(.|tostring)")'
 echo "$chunks"
