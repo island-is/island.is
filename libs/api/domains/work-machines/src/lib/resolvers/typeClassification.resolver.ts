@@ -5,7 +5,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { BadRequestException, Inject, UseGuards } from '@nestjs/common'
+import { BadRequestException, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
@@ -13,16 +13,13 @@ import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { WorkMachinesService } from '../workMachines.service'
 import { TypeClassification } from '../models/typeList.model'
 import { GetWorkMachineTypeClassificationInput } from '../dto/getTypeClassification.input'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { Locale } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver(() => TypeClassification)
 @Audit({ namespace: '@island.is/api/work-machines' })
 export class TypeClassificationResolver {
-  constructor(
-    private readonly workMachinesService: WorkMachinesService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
+  constructor(private readonly workMachinesService: WorkMachinesService) {}
 
   @Scopes(ApiScope.workMachines)
   @Query(() => TypeClassification, {
@@ -55,8 +52,6 @@ export class TypeClassificationResolver {
       input.locale as Locale,
       input.correlationId,
     )
-
-    this.logger.debug('models', models)
 
     return {
       name: typeName,

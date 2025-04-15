@@ -4,7 +4,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { Inject, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
@@ -14,16 +14,12 @@ import { Category } from '../models/category.model'
 import { ModelDto } from '../workMachines.types'
 import { GetWorkMachineModelCategoriesInput } from '../dto/getModelCategories.input'
 import { ModelSubCategory } from '../dto/modelCategory.dto'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver(() => Model)
 @Audit({ namespace: '@island.is/api/work-machines' })
 export class ModelResolver {
-  constructor(
-    private readonly workMachinesService: WorkMachinesService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
+  constructor(private readonly workMachinesService: WorkMachinesService) {}
 
   @ResolveField('categories', () => [Category], { nullable: true })
   async resolveCategories(
@@ -40,8 +36,6 @@ export class ModelResolver {
     }
 
     const { name, type, locale, correlationId } = model
-
-    this.logger.debug('model', model)
 
     const data =
       await this.workMachinesService.getMachineParentCategoriesTypeModelGet(

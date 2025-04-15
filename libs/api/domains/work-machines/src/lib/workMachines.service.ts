@@ -25,7 +25,6 @@ import { LinkCategory, ModelDto } from './workMachines.types'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
 import { type Locale } from '@island.is/shared/types'
-import { Category } from './models/category.model'
 import { CategoryDto } from './dto/category.dto'
 import { TechInfoItem } from './models/techInfoItem'
 
