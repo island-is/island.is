@@ -5,7 +5,6 @@ import type {
   DatePickerProps,
   IconProps,
   InputBackgroundColor,
-  ResponsiveProp,
   SpanType,
 } from '@island.is/island-ui/core/types'
 import {
@@ -18,7 +17,7 @@ import {
 import { ApolloClient } from '@apollo/client'
 import { Application, ExternalData, FormValue } from './Application'
 import { CallToAction } from './StateMachine'
-import { Colors, theme } from '@island.is/island-ui/theme'
+import { Colors } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
 import { FormatInputValueFunction } from 'react-number-format'
 import React, { CSSProperties } from 'react'

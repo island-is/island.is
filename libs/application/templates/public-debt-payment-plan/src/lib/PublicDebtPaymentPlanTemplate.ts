@@ -27,7 +27,7 @@ const States = {
   closed: 'closed',
   prerequisites: 'prerequisites',
 }
-export enum API_MODULE_ACTIONS {
+export enum ApiModuleActions {
   sendApplication = 'sendApplication',
 }
 
@@ -174,7 +174,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
             },
           },
           onEntry: defineTemplateApi({
-            action: API_MODULE_ACTIONS.sendApplication,
+            action: ApiModuleActions.sendApplication,
           }),
           progress: 1,
           lifecycle: {

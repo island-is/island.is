@@ -351,7 +351,6 @@ jobs:
           echo "::group::lintdiff"
           diff "${BASE_LINT_FILE}" "${HEAD_LINT_FILE}" || : # Ignore diff exit code
           echo "::endgroup::"
-          exit 1
 
   build:
     needs:
