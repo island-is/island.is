@@ -607,3 +607,14 @@ export const getFinanceDocumentData = {
     document: 'test',
   },
 }
+
+export const getDebtStatusData = {
+  myDebtStatus: [
+    {
+      approvedSchedule: 0,
+      possibleToSchedule: 38433,
+      notPossibleToSchedule: 0,
+      totalAmount: 38433,
+    },
+  ],
+}

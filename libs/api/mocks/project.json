@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/mocks/src",
   "projectType": "library",
-  "tags": ["lib:dom", "scope:dom"],
+  "tags": ["lib:js", "scope:js"],
   "generators": {},
   "targets": {
     "lint": {
