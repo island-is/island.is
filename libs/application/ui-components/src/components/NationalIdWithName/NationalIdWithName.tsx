@@ -80,6 +80,8 @@ export const NationalIdWithName: FC<
   clearOnChange,
   setOnChange,
 }) => {
+  const [invalidNationalId, setInvalidNationalId] = useState(false)
+
   const fieldId = customId.length > 0 ? customId : id
   const nameField = `${fieldId}.name`
   const nationalIdField = `${fieldId}.nationalId`
@@ -147,6 +149,7 @@ export const NationalIdWithName: FC<
       {
         onCompleted: (data) => {
           onNameChange && onNameChange(data.identity?.name ?? '')
+          console.log('data', data)
           if (data.identity?.name) {
             setValue(nameField, data.identity?.name)
           } else if (
@@ -181,6 +184,7 @@ export const NationalIdWithName: FC<
       onCompleted: (companyData) => {
         onNameChange &&
           onNameChange(companyData.companyRegistryCompany?.name ?? '')
+        console.log('companyData', companyData)
         if (companyData.companyRegistryCompany?.name) {
           setValue(nameField, companyData.companyRegistryCompany?.name)
         } else if (
@@ -189,10 +193,7 @@ export const NationalIdWithName: FC<
           companyData?.companyRegistryCompany === null
         ) {
           setValue(nameField, '')
-        } else if (
-          searchCompanies &&
-          companyData?.companyRegistryCompany === null
-        ) {
+        } else if (searchPersons && data?.identity === null) {
           setValue(nameField, '')
         }
       },
@@ -201,28 +202,32 @@ export const NationalIdWithName: FC<
 
   // fetch and update name when user has entered a valid national id
   useEffect(() => {
-    if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
-      {
-        searchPersons &&
-          getIdentity({
-            variables: {
-              input: {
-                nationalId: nationalIdInput,
-              },
-            },
-          })
-      }
+    if (nationalIdInput.length !== 10) {
+      return
+    }
 
-      {
-        searchCompanies &&
-          getCompanyIdentity({
-            variables: {
-              input: {
-                nationalId: nationalIdInput,
-              },
+    if (kennitala.isValid(nationalIdInput)) {
+      setInvalidNationalId(false)
+      searchPersons &&
+        getIdentity({
+          variables: {
+            input: {
+              nationalId: nationalIdInput,
             },
-          })
-      }
+          },
+        })
+
+      searchCompanies &&
+        getCompanyIdentity({
+          variables: {
+            input: {
+              nationalId: nationalIdInput,
+            },
+          },
+        })
+    } else {
+      setValue(nameField, '')
+      setInvalidNationalId(true)
     }
   }, [
     nationalIdInput,
@@ -230,6 +235,8 @@ export const NationalIdWithName: FC<
     getCompanyIdentity,
     searchPersons,
     searchCompanies,
+    setValue,
+    nameField,
   ])
 
   return (
@@ -278,7 +285,7 @@ export const NationalIdWithName: FC<
             required={disabled ? required : false}
             error={
               searchPersons
-                ? queryError || data?.identity === null
+                ? queryError || data?.identity === null || invalidNationalId
                   ? formatMessage(
                       coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
                     )
