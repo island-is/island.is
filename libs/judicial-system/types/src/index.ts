@@ -39,6 +39,7 @@ export { CaseFileState, CaseFileCategory, HashAlgorithm } from './lib/file'
 
 export {
   UserRole,
+  DefenderSubRole,
   prosecutionRoles,
   isProsecutionUser,
   publicProsecutorRoles,
