@@ -1,4 +1,4 @@
-validate // To parse this data:
+// To parse this data:
 //
 //   import { Convert, Translation } from "./file";
 //
