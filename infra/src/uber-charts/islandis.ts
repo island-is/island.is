@@ -45,6 +45,7 @@ import {
   userNotificationCleanUpWorkerSetup,
   userNotificationServiceSetup,
   userNotificationWorkerSetup,
+  userNotificationBirthdayWorkerSetup,
 } from '../../../apps/services/user-notification/infra/user-notification'
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
@@ -161,8 +162,11 @@ const downloadService = downloadServiceSetup({
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
-const userNotificationCleanupWorkerService =
-  userNotificationCleanUpWorkerSetup()
+const userNotificationCleanupWorkerService = userNotificationCleanUpWorkerSetup()
+
+const userNotificationBirthdayWorkerService = userNotificationBirthdayWorkerSetup(
+  { userProfileApi: servicePortalApi },
+)
 
 const unicornApp = unicornAppSetup()
 
@@ -197,6 +201,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
     sessionsService,
@@ -236,6 +241,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
     sessionsService,
@@ -273,6 +279,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
@@ -301,6 +308,7 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationService,
   userNotificationWorkerService,
   userNotificationCleanupWorkerService,
+  userNotificationBirthdayWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
