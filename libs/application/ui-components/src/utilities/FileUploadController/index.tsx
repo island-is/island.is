@@ -103,11 +103,11 @@ export const FileUploadController = ({
   const { formatMessage } = useLocale()
   const { clearErrors, setValue } = useFormContext()
   const [uploadError, setUploadError] = useState<string | undefined>(error)
-  const val = getValueViaPath(
+  const val = getValueViaPath<UploadFileDeprecated[]>(
     application.answers,
     id,
     [],
-  ) as UploadFileDeprecated[]
+  )
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
   const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
