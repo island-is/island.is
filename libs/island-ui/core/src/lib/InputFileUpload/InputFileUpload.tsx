@@ -89,14 +89,6 @@ export const UploadedFile: FC<UploadedFileProps> = (props) => {
     },
   } = props
 
-  const handleOpenFile = (evt: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    evt.stopPropagation()
-
-    if (onOpenFile) {
-      onOpenFile(file)
-    }
-  }
-
   const handleClick = (
     evt: React.MouseEvent<HTMLElement, MouseEvent>,
     handler?: (file: UploadFile) => void,
@@ -182,7 +174,7 @@ export const UploadedFile: FC<UploadedFileProps> = (props) => {
       className={cn(styles.uploadedFile, {
         [styles.canOpenFiles]: onOpenFile,
       })}
-      onClick={handleOpenFile}
+      onClick={(evt) => handleClick(evt, onOpenFile)}
       title={file.name}
       aria-label={onOpenFile ? `Opna ${file.name}` : undefined}
     >
