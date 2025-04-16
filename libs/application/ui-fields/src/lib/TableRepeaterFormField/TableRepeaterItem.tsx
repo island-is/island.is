@@ -255,17 +255,17 @@ export const Item = ({
   }
 
   let maxDateVal: Date | undefined
-  if (component === 'date') {
-    if (typeof item.maxDate === 'function')
-      maxDateVal = item.maxDate(application, activeValues)
-    else maxDateVal = item.maxDate
-  }
-
   let minDateVal: Date | undefined
   if (component === 'date') {
-    if (typeof item.minDate === 'function')
-      minDateVal = item.minDate(application, activeValues)
-    else minDateVal = item.minDate
+    maxDateVal =
+      typeof item.maxDate === 'function'
+        ? item.maxDate(application, activeValues)
+        : item.maxDate
+
+    minDateVal =
+      typeof item.minDate === 'function'
+        ? item.minDate(application, activeValues)
+        : item.minDate
   }
 
   let clearOnChangeVal: string[] | undefined
@@ -336,19 +336,14 @@ export const Item = ({
 
   let alertMessageProps: AlertMessageField | undefined
   if (component === 'alertMessage') {
-    let titleVal: StaticText | undefined
-    if (typeof item.title === 'function') {
-      titleVal = item.title(application, activeValues)
-    } else {
-      titleVal = item.title
-    }
-
-    let messageVal: StaticText | undefined
-    if (typeof item.message === 'function') {
-      messageVal = item.message(application, activeValues)
-    } else {
-      messageVal = item.message
-    }
+    const titleVal =
+      typeof item.title === 'function'
+        ? item.title(application, activeValues)
+        : item.title
+    const messageVal =
+      typeof item.message === 'function'
+        ? item.message(application, activeValues)
+        : item.message
 
     alertMessageProps = {
       id: id,
