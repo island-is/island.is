@@ -85,8 +85,8 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
     questionsCalculatedRemunerationDate: {
       id: 'marp.application:general.information.questions.calculated.remuneration.date',
-      defaultMessage: 'Hvenær var lækkun á reiknuðu endurgjaldi?',
-      description: 'When was the reduction in calculated remuneration?',
+      defaultMessage: 'Hvenær fellur niður reiknað endurgjald?',
+      description: 'When does the calculated remuneration expire?',
     },
     questionsIsPartTimeEmployed: {
       id: 'marp.application:general.information.questions.is.part.time.employed',
