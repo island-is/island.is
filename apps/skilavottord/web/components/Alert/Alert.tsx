@@ -2,6 +2,9 @@ import {
   AlertMessage,
   Box,
   Button,
+  GridColumn,
+  GridContainer,
+  GridRow,
   Icon,
   Stack,
 } from '@island.is/island-ui/core'
@@ -27,21 +30,25 @@ export const Alert = ({ type }: { type: AlertType }) => {
       : { title: t.accessDenied.title, message: t.accessDenied.message }
 
   return (
-    <Box padding={10}>
-      <Stack space={2}>
-        <AlertMessage
-          type="info"
-          title={message.title}
-          message={message.message}
-        ></AlertMessage>
-        <Button variant="text" onClick={() => Router.back()}>
-          <Box alignItems="center" display="flex">
-            <Icon icon="arrowBack" size="medium" />
-            <Box margin={1}>{t.notFound.button}</Box>
-          </Box>
-        </Button>
-      </Stack>
-    </Box>
+    <GridContainer>
+      <GridRow>
+        <GridColumn span="12/12">
+          <Stack space={2}>
+            <AlertMessage
+              type="info"
+              title={message.title}
+              message={message.message}
+            ></AlertMessage>
+            <Button variant="text" onClick={() => Router.back()}>
+              <Box alignItems="center" display="flex">
+                <Icon icon="arrowBack" size="medium" />
+                <Box margin={1}>{t.notFound.button}</Box>
+              </Box>
+            </Button>
+          </Stack>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 
