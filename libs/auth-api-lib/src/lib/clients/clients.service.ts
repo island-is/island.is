@@ -624,6 +624,10 @@ export class ClientsService {
       delegationTypes.push(AuthDelegationType.GeneralMandate)
     }
 
+    if (supportsProcuringHolders) {
+      delegationTypes.push(AuthDelegationType.ExecutiveDirector)
+    }
+
     return Promise.all(
       delegationTypes.map((delegationType) =>
         this.clientDelegationType.upsert(
@@ -693,6 +697,10 @@ export class ClientsService {
 
     if (delegationTypes.includes(AuthDelegationType.Custom)) {
       delegationTypes.push(AuthDelegationType.GeneralMandate)
+    }
+
+    if (delegationTypes.includes(AuthDelegationType.ProcurationHolder)) {
+      delegationTypes.push(AuthDelegationType.ExecutiveDirector)
     }
 
     return Promise.all(
