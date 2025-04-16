@@ -207,8 +207,10 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
         // @ts-ignore make web strict
         newsTags={organizationPage.secondaryNewsTags}
         variant={
-          organizationHasDigitalIcelandNewsVisuals(organizationPage.slug) &&
-          (namespace?.digitalIcelandNewsVisualsEnabled ?? false)
+          organizationPage.slug === 'stafraent-island' ||
+          organizationPage.slug === 'digital-iceland' ||
+          (organizationHasDigitalIcelandNewsVisuals(organizationPage.slug) &&
+            (namespace?.digitalIcelandNewsVisualsEnabled ?? false))
             ? 'digital-iceland'
             : 'default'
         }
