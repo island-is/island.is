@@ -9,6 +9,8 @@ import {
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { StateNodeConfig } from 'xstate'
 
+// Deployme
+
 export const prerequisitesState: StateNodeConfig<
   ApplicationContext,
   ApplicationStateSchema<Events>,
