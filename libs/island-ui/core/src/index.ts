@@ -96,7 +96,7 @@ export {
   InputFileUploadDeprecated,
   type UploadFileStatusDeprecated,
   FileUploadStatusDeprecated,
-  UploadFileDeprecated,
+  type UploadFileDeprecated,
   fileToObjectDeprecated,
   StatusColorDeprecated,
   UploadedFileDeprecated,
