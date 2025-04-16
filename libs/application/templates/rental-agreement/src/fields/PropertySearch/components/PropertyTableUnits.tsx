@@ -69,6 +69,7 @@ export const PropertyTableUnits = ({
           paddingTop: 0,
           paddingBottom: 0,
           borderColor: 'transparent',
+          borderBottomWidth: isTableExpanded ? 'standard' : undefined,
         }}
       >
         <div

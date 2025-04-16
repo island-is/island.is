@@ -17,7 +17,6 @@ export const SigningSection: Section = buildSection({
     buildMultiField({
       id: 'signing.info',
       title: signing.pageTitle,
-      description: '',
       children: [
         buildAlertMessageField({
           id: 'signing.alert',
@@ -35,7 +34,6 @@ export const SigningSection: Section = buildSection({
         }),
         buildImageField({
           id: 'signing.image',
-          title: '',
           width: 'full',
           image: RA,
           imagePosition: 'center',

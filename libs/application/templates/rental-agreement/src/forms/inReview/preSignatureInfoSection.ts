@@ -54,15 +54,15 @@ export const PreSignatureInfoSection = buildSection({
 
             return signees.map((person) => [
               person.nationalIdWithName.name ?? '',
-              formatNationalId(person.nationalIdWithName.nationalId) ?? '',
-              formatPhoneNumber(person.phone as string) ?? '',
+              formatNationalId(person.nationalIdWithName.nationalId || '') ??
+                '',
+              formatPhoneNumber(person.phone || '') ?? '',
               person.email ?? '',
             ])
           },
         }),
         buildCheckboxField({
           id: 'preSignatureInfo.statement',
-          title: '',
           required: true,
           options: [
             {
@@ -75,7 +75,6 @@ export const PreSignatureInfoSection = buildSection({
         }),
         buildSubmitField({
           id: 'preSignatureInfo.buttons',
-          title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
             {

@@ -24,7 +24,7 @@ export const externalData = buildSection({
         actions: [
           {
             event: DefaultEvents.SUBMIT,
-            name: 'Hefja umsókn',
+            name: prerequisites.externalData.submitButton,
             type: 'primary',
           },
         ],

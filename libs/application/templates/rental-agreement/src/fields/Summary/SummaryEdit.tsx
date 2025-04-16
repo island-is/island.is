@@ -110,9 +110,9 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         route={Routes.OTHERFEES}
         hasChangeButton={true}
       />
-      {!isFireProtectionsPresent ||
-      !isConditionPresent ||
-      !isOtherFeesPresent ? (
+      {(!isFireProtectionsPresent ||
+        !isConditionPresent ||
+        !isOtherFeesPresent) && (
         <Box marginTop={4} marginBottom={4}>
           <AlertMessage
             type="error"
@@ -138,8 +138,6 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             }
           />
         </Box>
-      ) : (
-        ''
       )}
     </Box>
   )

@@ -4,46 +4,44 @@ import { IS_REPRESENTATIVE } from './constants'
 
 export const getAssigneesNationalIdList = (application: Application) => {
   try {
-    const assigneesNationalIdList = [] as string[]
+    const assigneesNationalIdList: string[] = []
 
-    const landlords = getValueViaPath(
+    type IdAndRep = {
+      nationalIdWithName: { nationalId: string }
+      isRepresentative: string[]
+    }
+
+    const landlords = getValueViaPath<Array<IdAndRep>>(
       application.answers,
       'landlordInfo.table',
       [],
-    ) as Array<{
-      nationalIdWithName: { nationalId: string }
-      isRepresentative: string[]
-    }>
+    )
 
-    const tenants = getValueViaPath(
+    const tenants = getValueViaPath<Array<IdAndRep>>(
       application.answers,
       'tenantInfo.table',
       [],
-    ) as Array<{
-      nationalIdWithName: { nationalId: string }
-      isRepresentative: string[]
-    }>
+    )
 
-    const filterLandlords = landlords.filter(
+    const filterLandlords = landlords?.filter(
       ({ isRepresentative }) => !isRepresentative?.includes(IS_REPRESENTATIVE),
     )
 
-    const filterTenants = tenants.filter(
+    const filterTenants = tenants?.filter(
       ({ isRepresentative }) => !isRepresentative?.includes(IS_REPRESENTATIVE),
     )
 
     filterLandlords?.forEach(({ nationalIdWithName: { nationalId } }) => {
-      if (nationalId) {
-        assigneesNationalIdList.push(nationalId)
-        return nationalId
-      } else return null
+      if (!nationalId) return null
+      assigneesNationalIdList.push(nationalId)
+      return nationalId
     })
 
     filterTenants?.forEach(({ nationalIdWithName: { nationalId } }) => {
-      if (nationalId) {
-        assigneesNationalIdList.push(nationalId)
-        return nationalId
-      } else return null
+      if (!nationalId) return null
+
+      assigneesNationalIdList.push(nationalId)
+      return nationalId
     })
 
     return assigneesNationalIdList

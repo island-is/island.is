@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css'
+import { theme } from '@island.is/island-ui/theme'
 
 export const summaryWrap = style({
   paddingTop: '.75rem',
@@ -28,11 +29,11 @@ export const gridRowChangeButton = style({
 export const divider = style({
   marginTop: '.75rem',
   marginBottom: '.75rem',
-  borderBottom: '1px solid #F2F7FF',
+  borderBottom: `1px solid ${theme.color.blue100}`,
 
   selectors: {
     '&:last-child': {
-      borderColor: '#CCDFFF',
+      borderColor: theme.color.blue200,
     },
   },
 })

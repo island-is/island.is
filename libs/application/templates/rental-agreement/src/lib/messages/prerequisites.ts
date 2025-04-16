@@ -6,6 +6,11 @@ export const application = defineMessages({
     defaultMessage: 'Leigusamningur',
     description: `Name of rental agreement application`,
   },
+  institutionName: {
+    id: 'ra.application:application.institutionName',
+    defaultMessage: 'Húsnæðis- og mannvirkjastofnun',
+    description: `Name of institution`,
+  },
   housingSectionName: {
     id: 'ra.application:application.housingSectionName',
     defaultMessage: 'Húsnæðið',
@@ -25,6 +30,16 @@ export const application = defineMessages({
     id: 'ra.application:application.signingSectionName',
     defaultMessage: 'Undirritun',
     description: `Name of signing section`,
+  },
+  goToOverviewButton: {
+    id: 'ra.application:application.goToOverviewButton',
+    defaultMessage: 'Áfram í yfirlit',
+    description: `Button text for going to overview`,
+  },
+  backToOverviewButton: {
+    id: 'ra.application:application.backToOverviewButton',
+    defaultMessage: 'Til baka í yfirlit',
+    description: `Button text for going back to overview`,
   },
 })
 
@@ -58,6 +73,7 @@ export const prerequisites = {
       description: 'First bullet point about the application',
     },
   }),
+
   externalData: defineMessages({
     sectionTitle: {
       id: 'ra.application:prerequisites.externalData.sectionTitle',
@@ -100,6 +116,11 @@ export const prerequisites = {
       defaultMessage:
         'Upplýsingar um símanúmer og netfang til að auðvelda samningagerðina.',
       description: 'Subtitle for current application data collection',
+    },
+    submitButton: {
+      id: 'ra.application:prerequisites.externalData.submitButton',
+      defaultMessage: 'Hefja umsókn',
+      description: 'Text for the submit button in external data collection',
     },
   }),
 }

@@ -1,6 +1,9 @@
 import set from 'lodash/set'
 import { assign } from 'xstate'
-import { pruneAfterDays } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -23,6 +26,7 @@ import {
   NationalRegistrySpouseApi,
 } from '../dataProviders'
 import { getAssigneesNationalIdList } from './getAssigneesNationalIdList'
+import { application } from './messages'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -37,8 +41,8 @@ const RentalAgreementTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.RENTAL_AGREEMENT,
   codeOwner: CodeOwners.KolibriKotid,
-  name: 'Leigusamningur',
-  institution: 'Húsnæðis- og mannvirkjastofnun',
+  name: application.name,
+  institution: application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.RentalAgreement.translation,
   ],
@@ -52,7 +56,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
-          lifecycle: pruneAfterDays(30),
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

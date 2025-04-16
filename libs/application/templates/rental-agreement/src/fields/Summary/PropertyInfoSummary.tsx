@@ -7,9 +7,11 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { RentalAgreement } from '../../lib/dataSchema'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   RentalHousingCategoryClass,
+  RentalHousingCategoryClassGroup,
+  RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
   Routes,
 } from '../../lib/constants'
@@ -23,7 +25,7 @@ import { SummaryCard } from './components/SummaryCard'
 
 import { fileLink, fileLinksList } from './summaryStyles.css'
 import { summary } from '../../lib/messages'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, FormValue } from '@island.is/application/types'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -51,7 +53,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
     fireProtectionsRoute,
     hasChangeButton,
   } = props
-  const answers = application.answers as RentalAgreement
+  const { answers } = application
 
   const propertyType = (answer: string) => {
     const options = getPropertyTypeOptions()
@@ -61,9 +63,9 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
 
   const propertyClass = (answer: string) => {
     if (answer === RentalHousingCategoryClass.SPECIAL_GROUPS) {
-      return 'Húsnæði fyrir sérstaka hópa'
+      return formatMessage(summary.propertyClassSpecialGroups)
     }
-    return 'Almennur markaður'
+    return formatMessage(summary.propertyClassGeneralMarket)
   }
 
   const propertyClassGroup = (answer: string) => {
@@ -72,7 +74,37 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
     return matchingOption ? matchingOption.label : '-'
   }
 
-  const uploadFiles = answers.condition.resultsFiles as UploadFile[]
+  const uploadFiles = getValueViaPath<UploadFile[]>(
+    answers,
+    'condition.resultsFiles',
+  )
+
+  const categoryClass = getValueViaPath<RentalHousingCategoryClass>(
+    answers,
+    'registerProperty.categoryClass',
+  )
+
+  const categoryType = getValueViaPath<RentalHousingCategoryTypes>(
+    answers,
+    'registerProperty.categoryType',
+  )
+
+  const categoryClassGroup = getValueViaPath<RentalHousingCategoryClassGroup>(
+    answers,
+    'registerProperty.categoryClassGroup',
+  )
+
+  const searchResultUnits = getValueViaPath<FormValue[]>(
+    answers,
+    'registerProperty.searchresults.units',
+  )
+
+  const inspector = getValueViaPath<RentalHousingConditionInspector>(
+    answers,
+    'condition.inspector',
+  )
+
+  const inspectorName = getValueViaPath(answers, 'condition.inspectorName', '')
 
   return (
     <SummaryCard cardLabel={formatMessage(summary.propertyInfoHeader)}>
@@ -84,32 +116,21 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <KeyValue
             label={summary.propertyTypeLabel}
-            value={
-              propertyType(answers.registerProperty.categoryType as string) ||
-              '-'
-            }
+            value={propertyType(categoryType || '-')}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <KeyValue
             label={summary.propertyClassLabel}
-            value={
-              propertyClass(answers.registerProperty.categoryClass as string) ||
-              '-'
-            }
+            value={propertyClass(categoryClass || '-')}
           />
         </GridColumn>
-        {answers.registerProperty.categoryClass ===
-          RentalHousingCategoryClass.SPECIAL_GROUPS &&
-          answers.registerProperty.categoryClassGroup && (
+        {categoryClass === RentalHousingCategoryClass.SPECIAL_GROUPS &&
+          categoryClassGroup && (
             <GridColumn span={['12/12', '12/12', '12/12', '12/12', '4/12']}>
               <KeyValue
                 label={summary.propertyClassGroupLabel}
-                value={
-                  propertyClassGroup(
-                    answers.registerProperty.categoryClassGroup as string,
-                  ) || '-'
-                }
+                value={propertyClassGroup(categoryClassGroup || '-')}
               />
             </GridColumn>
           )}
@@ -124,8 +145,8 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
           <KeyValue
             label={summary.PropertyNumOfRoomsLabel}
             value={(
-              answers.registerProperty.searchresults?.units?.reduce(
-                (total, unit) => total + (unit.numOfRooms || 0),
+              searchResultUnits?.reduce(
+                (total, unit) => total + ((unit.numOfRooms as number) || 0),
                 0,
               ) || 0
             ).toString()}
@@ -135,12 +156,12 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
           <KeyValue
             label={summary.propertySizeLabel}
             value={(
-              answers.registerProperty.searchresults?.units?.reduce(
+              searchResultUnits?.reduce(
                 (total, unit) =>
                   total +
                   (unit.changedSize && unit.changedSize !== 0
-                    ? unit.changedSize
-                    : unit.size || 0),
+                    ? (unit.changedSize as number)
+                    : (unit.size as number) || 0),
                 0,
               ) || 0
             ).toString()}
@@ -156,7 +177,13 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12']}>
           <KeyValue
             label={summary.propertyDescriptionLabel}
-            value={answers.specialProvisions.descriptionInput || '-'}
+            value={
+              getValueViaPath(
+                answers,
+                'specialProvisions.descriptionInput',
+                '',
+              ) || ''
+            }
           />
         </GridColumn>
       </SummaryCardRow>
@@ -169,7 +196,9 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12']}>
           <KeyValue
             label={summary.PropertySpecialProvisionsLabel}
-            value={answers.specialProvisions.rulesInput || '-'}
+            value={
+              getValueViaPath(answers, 'specialProvisions.rulesInput', '') || ''
+            }
           />
         </GridColumn>
       </SummaryCardRow>
@@ -183,12 +212,11 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
           <KeyValue
             label={summary.propertyConditionInspectorLabel}
             value={
-              answers.condition.inspector ===
-                RentalHousingConditionInspector.INDEPENDENT_PARTY &&
-              answers.condition.inspectorName
+              inspector === RentalHousingConditionInspector.INDEPENDENT_PARTY &&
+              inspectorName
                 ? `${formatMessage(
                     summary.propertyConditionInspectorValuePrefix,
-                  )}: ${answers.condition.inspectorName}`
+                  )}: ${inspectorName}`
                 : `${formatMessage(
                     summary.propertyConditionInspectorValuePrefix,
                   )}${formatMessage(
@@ -200,12 +228,14 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '12/12', '12/12', '12/12', '8/12']}>
           <KeyValue
             label={summary.propertyConditionDescriptionLabel}
-            value={answers.condition.resultsDescription || '-'}
+            value={
+              getValueViaPath(answers, 'condition.resultsDescription', '') || ''
+            }
           />
         </GridColumn>
       </SummaryCardRow>
 
-      {uploadFiles.length > 0 && (
+      {uploadFiles && uploadFiles.length > 0 && (
         <SummaryCardRow
           editAction={goToScreen}
           route={fileUploadRoute}
@@ -232,7 +262,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
                       iconType="outline"
                       truncate={true}
                       onClick={() => {
-                        // TODO: go over this, check if (code given by coderabbit)
+                        // TODO: Fix this
                         const fileUrl = new URL(
                           file.key as string,
                           window.location.origin,
@@ -275,25 +305,39 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
             label={summary.fireProtectionsSmokeDetectorsLabel}
-            value={answers.fireProtections.smokeDetectors || '-'}
+            value={
+              getValueViaPath(answers, 'fireProtections.smokeDetectors', '') ||
+              '-'
+            }
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
             label={summary.fireProtectionsFireExtinguisherLabel}
-            value={answers.fireProtections.fireExtinguisher || '-'}
+            value={
+              getValueViaPath(
+                answers,
+                'fireProtections.fireExtinguisher',
+                '',
+              ) || '-'
+            }
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
             label={summary.fireProtectionsExitsLabel}
-            value={answers.fireProtections.emergencyExits || '-'}
+            value={
+              getValueViaPath(answers, 'fireProtections.emergencyExits', '') ||
+              '-'
+            }
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
             label={summary.fireProtectionsFireBlanketLabel}
-            value={answers.fireProtections.fireBlanket || '-'}
+            value={
+              getValueViaPath(answers, 'fireProtections.fireBlanket', '') || '-'
+            }
           />
         </GridColumn>
       </SummaryCardRow>

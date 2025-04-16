@@ -8,11 +8,10 @@ import { summary } from '../../lib/messages'
 
 export const summaryNoEditSection = buildSection({
   id: 'summaryNoEditSection',
-  title: 'Samantekt',
+  title: summary.sectionName,
   children: [
     buildMultiField({
       id: 'summary',
-      title: '',
       children: [
         buildDescriptionField({
           id: 'summaryTitle',
@@ -21,17 +20,15 @@ export const summaryNoEditSection = buildSection({
         }),
         buildDescriptionField({
           id: 'summaryFirstDescription',
-          title: '',
           description: summary.pageDescriptionFirstParagraph,
         }),
         buildDescriptionField({
           id: 'summarySecondDescription',
-          title: '',
           description: summary.pageDescriptionSecondparagraph,
         }),
         buildCustomField({
           id: 'SummaryNoEdit',
-          title: 'Samantekt',
+          title: summary.sectionName,
           component: 'SummaryNoEdit',
         }),
       ],

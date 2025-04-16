@@ -15,7 +15,7 @@ import {
   getOtherFeesHousingFundPayeeOptions,
   getOtherFeesPayeeOptions,
 } from '../../../lib/utils'
-import { OtherFeesPayeeOptions, Routes } from '../../../lib/constants'
+import { OtherFeesPayeeOptions, Routes, TRUE } from '../../../lib/constants'
 import { otherFees } from '../../../lib/messages'
 
 const housingFundAmountPayedByTenant = (answers: FormValue) => {
@@ -145,7 +145,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           title: '',
           options: [
             {
-              value: 'true',
+              value: TRUE,
               label: otherFees.otherCostsLabel,
             },
           ],
@@ -162,7 +162,7 @@ export const RentalPeriodOtherFees = buildSubSection({
               'otherFees.otherCosts',
               [],
             ) as string[]
-            return otherFeesOtherCosts && otherFeesOtherCosts.includes('true')
+            return otherFeesOtherCosts && otherFeesOtherCosts.includes(TRUE)
           },
         }),
       ],
