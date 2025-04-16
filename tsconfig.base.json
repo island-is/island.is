@@ -77,6 +77,9 @@
       "@island.is/api/domains/education": [
         "libs/api/domains/education/src/index.ts"
       ],
+      "@island.is/api/domains/education-v3": [
+        "libs/api/domains/education-v3/src/index.ts"
+      ],
       "@island.is/api/domains/electronic-registration-statistics": [
         "libs/api/domains/electronic-registration-statistics/src/index.ts"
       ],
@@ -1078,6 +1081,9 @@
       ],
       "@island.is/portals/my-pages/education-student-assessment": [
         "libs/portals/my-pages/education-student-assessment/src/index.ts"
+      ],
+      "@island.is/portals/my-pages/education-v2": [
+        "libs/portals/my-pages/education-v2/src/index.ts"
       ],
       "@island.is/portals/my-pages/eligibility": [
         "libs/portals/my-pages/eligibility/src/index.ts"
