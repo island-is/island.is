@@ -98,9 +98,9 @@ export {
   FileUploadStatusDeprecated,
   type UploadFileDeprecated,
   fileToObjectDeprecated,
-  StatusColorDeprecated,
+  type StatusColorDeprecated,
   UploadedFileDeprecated,
-  InputFileUploadPropsDeprecated,
+  type InputFileUploadPropsDeprecated,
 } from './lib/InputFileUpload/InputFileUploadDeprecated'
 export * from './lib/InputFileUpload/InputFileUpload'
 export * from './lib/InputError/InputError'
