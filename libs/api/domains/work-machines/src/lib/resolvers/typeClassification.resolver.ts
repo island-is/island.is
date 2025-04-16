@@ -11,9 +11,9 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { WorkMachinesService } from '../workMachines.service'
-import { TypeClassification } from '../models/typeList.model'
-import { GetWorkMachineTypeClassificationInput } from '../dto/getTypeClassification.input'
 import { Locale } from '@island.is/shared/types'
+import { TypeClassification } from '../models/typeClassification.model'
+import { GetWorkMachineTypeClassificationInput } from '../dto/getTypeClassification.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver(() => TypeClassification)
@@ -35,12 +35,9 @@ export class TypeClassificationResolver {
     })
     input: GetWorkMachineTypeClassificationInput,
   ): Promise<TypeClassification | null> {
-    const { typeName } = input
+    const { type } = input
 
-    const isTypeValid = await this.workMachinesService.isTypeValid(
-      user,
-      typeName,
-    )
+    const isTypeValid = await this.workMachinesService.isTypeValid(user, type)
 
     if (!isTypeValid) {
       throw new BadRequestException('Invalid type input')
@@ -48,13 +45,13 @@ export class TypeClassificationResolver {
 
     const models = await this.workMachinesService.getMachineModels(
       user,
-      typeName,
+      type,
       input.locale as Locale,
       input.correlationId,
     )
 
     return {
-      name: typeName,
+      name: type,
       models,
     }
   }

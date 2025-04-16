@@ -2,12 +2,8 @@ import { Field, InputType } from '@nestjs/graphql'
 import { IsOptional, IsString } from 'class-validator'
 import { IsLocale } from '@island.is/nest/core'
 
-@InputType('WorkMachineTypeClassificationInput')
-export class GetWorkMachineTypeClassificationInput {
-  @Field()
-  @IsString()
-  type!: string
-
+@InputType('WorkMachinesTypeClassificationsInput')
+export class GetWorkMachineTypeClassificationsInput {
   @Field({ nullable: true })
   @IsLocale()
   @IsOptional()

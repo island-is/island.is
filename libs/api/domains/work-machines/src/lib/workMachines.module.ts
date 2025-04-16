@@ -7,6 +7,7 @@ import { WorkMachineResolver } from './resolvers/workMachine.resolver'
 import { DeprecatedResolver } from './resolvers/deprecated.resolver'
 import { SubCategoryResolver } from './resolvers/subCategory.resolver'
 import { ModelResolver } from './resolvers/model.resolver'
+import { TypeClassificationsResolver } from './resolvers/typeClassifications.resolver'
 import { TypeClassificationResolver } from './resolvers/typeClassification.resolver'
 
 @Module({
@@ -16,6 +17,7 @@ import { TypeClassificationResolver } from './resolvers/typeClassification.resol
     WorkMachineResolver,
     DeprecatedResolver,
     TypeClassificationResolver,
+    TypeClassificationsResolver,
     ModelResolver,
     SubCategoryResolver,
     WorkMachinesService,

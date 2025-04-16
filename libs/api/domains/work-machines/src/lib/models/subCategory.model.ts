@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql'
 import { BaseCategory } from './baseCategory.model'
-import { TechInfoItem } from './techInfoItem'
+import { TechInfoItem } from './techInfoItem.model'
 
 @ObjectType('WorkMachinesSubCategory', {
   implements: () => BaseCategory,

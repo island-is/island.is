@@ -26,7 +26,8 @@ import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
 import { type Locale } from '@island.is/shared/types'
 import { CategoryDto } from './dto/category.dto'
-import { TechInfoItem } from './models/techInfoItem'
+import { TechInfoItem } from './models/techInfoItem.model'
+import { TypeClassificationDto } from './dto/typeClassification.dto'
 
 @Injectable()
 export class WorkMachinesService {
@@ -245,6 +246,28 @@ export class WorkMachinesService {
     const types = await this.machineService.getMachineTypes(auth)
 
     return !!types.find((t) => t.name === type)
+  }
+
+  async getMachineTypes(
+    auth: User,
+    locale: Locale = 'is',
+    correlationId?: string,
+  ): Promise<Array<TypeClassificationDto>> {
+    const types = await this.machineService.getMachineTypes(auth)
+
+    return types
+      .map((type) => {
+        if (!type.name) {
+          return null
+        }
+
+        return {
+          name: type.name,
+          locale,
+          correlationId,
+        }
+      })
+      .filter(isDefined)
   }
 
   async getMachineModels(

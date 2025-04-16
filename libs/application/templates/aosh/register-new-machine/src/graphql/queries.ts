@@ -1,3 +1,37 @@
+export const NEW_MACHINE_TEST_QUERY = `
+  query WorkMachinesTypeClassification {
+      workMachinesTypeClassification($input: WorkMachineTypeClassificationInput!) {
+          name
+          models {
+              name
+              categories($input: WorkMachineTypeClassificationInput!) {
+                  name
+                  nameEn
+                  registrationNumberPrefix
+                  subCategoryName
+                  subCategoryNameEn
+                  subCategories {
+                      name
+                      nameEn
+                      registrationNumberPrefix
+                      parentCategoryName
+                      parentCategoryNameEn
+                      techInfoItems {
+                          name
+                          label
+                          labelEn
+                          type
+                          required
+                          maxLength
+                          itemValues
+                      }
+                  }
+              }
+          }
+      }
+  }
+`
+
 export const MACHINE_MODELS = `
   query GetMachineModels($type: String!) {
     getMachineModels(type: $type) {

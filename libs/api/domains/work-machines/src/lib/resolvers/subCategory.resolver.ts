@@ -11,7 +11,7 @@ import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { WorkMachinesService } from '../workMachines.service'
 import { Model } from '../models/model.model'
 import { SubCategory } from '../models/subCategory.model'
-import { TechInfoItem } from '../models/techInfoItem'
+import { TechInfoItem } from '../models/techInfoItem.model'
 import { GetWorkMachineSubCategoryTechInfoItemsInput } from '../dto/getSubCategoriesTechItems.input'
 import { type ModelSubCategory } from '../dto/modelCategory.dto'
 
@@ -25,18 +25,7 @@ export class SubCategoryResolver {
   async resolveTechInfoItems(
     @CurrentUser() user: User,
     @Parent() category: ModelSubCategory,
-    @Args('input', {
-      type: () => GetWorkMachineSubCategoryTechInfoItemsInput,
-      nullable: true,
-    })
-    input: GetWorkMachineSubCategoryTechInfoItemsInput,
   ): Promise<Array<Model> | undefined> {
-    if (
-      !input?.populateTechInfoItemsForSubCategories?.includes(category.name)
-    ) {
-      return undefined
-    }
-
     if (!category.parentCategoryName || !category.name) {
       return []
     }
