@@ -33,6 +33,12 @@ export interface Unit extends OriginalUnit {
   changedSize?: number
   numOfRooms?: number
 }
+
+export interface AddressProps extends HmsSearchAddress {
+  label: string
+  value: string
+}
+
 interface Props extends FieldBaseProps {
   field: CustomField
   errors?: {
@@ -40,10 +46,6 @@ interface Props extends FieldBaseProps {
       [key: string]: string
     }
   }
-}
-export interface AddressProps extends HmsSearchAddress {
-  label: string
-  value: string
 }
 
 export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
@@ -158,7 +160,11 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     },
   })
 
-  const restoreTableExpanded = (storedValue: any) => {
+  interface StoredValueUnits {
+    units?: Unit[]
+  }
+
+  const restoreTableExpanded = (storedValue: StoredValueUnits) => {
     if (!storedValue?.units) return {}
     return storedValue.units.reduce(
       (acc: Record<string, boolean>, unit: Unit) => {
@@ -170,7 +176,8 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       {} as Record<string, boolean>,
     )
   }
-  const restoreCheckedUnits = (storedValue: any) => {
+
+  const restoreCheckedUnits = (storedValue: StoredValueUnits) => {
     if (!storedValue?.units) return {}
     return storedValue.units.reduce(
       (acc: Record<string, boolean>, unit: Unit) => {
@@ -181,7 +188,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       {} as Record<string, boolean>,
     )
   }
-  const restoreRoomsValue = (storedValue: any) => {
+  const restoreRoomsValue = (storedValue: StoredValueUnits) => {
     if (!storedValue?.units) return {}
     return storedValue.units.reduce(
       (acc: Record<string, number>, unit: Unit) => {
@@ -192,7 +199,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       {} as Record<string, number>,
     )
   }
-  const restoreSizeValue = (storedValue: any) => {
+  const restoreSizeValue = (storedValue: StoredValueUnits) => {
     if (!storedValue?.units) return {}
     return storedValue.units.reduce(
       (acc: Record<string, number>, unit: Unit) => {
