@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
-import { toast, UploadFile } from '@island.is/island-ui/core'
+import { FileUploadStatus, toast, UploadFile } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFile,
@@ -76,11 +76,10 @@ export interface UploadFileState {
 const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   id: file.id,
   name: file.name ?? '',
-  type: file.type ?? undefined,
   size: file.size ?? undefined,
   key: file.key ?? undefined,
   percent: 100,
-  status: 'done',
+  status: FileUploadStatus.done,
   category: file.category,
   policeCaseNumber: file.policeCaseNumber,
   chapter: file.chapter,
@@ -102,10 +101,14 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
   }, [files])
 
   const allFilesDoneOrError = uploadFiles.every(
-    (file) => file.status === 'done' || file.status === 'error',
+    (file) =>
+      file.status === FileUploadStatus.done ||
+      file.status === FileUploadStatus.error,
   )
 
-  const someFilesError = uploadFiles.some((file) => file.status === 'error')
+  const someFilesError = uploadFiles.some(
+    (file) => file.status === FileUploadStatus.error,
+  )
 
   const addUploadFile = (file: TUploadFile) =>
     setUploadFiles((previous) => [file, ...previous])
@@ -381,7 +384,7 @@ const useS3Upload = (
     ) => {
       const promises = files.map(async (file) => {
         try {
-          updateFile({ ...file, status: 'uploading' })
+          updateFile({ ...file, status: FileUploadStatus.uploading })
 
           const presignedPost = await getPresignedPost(file)
 
@@ -399,7 +402,7 @@ const useS3Upload = (
               ...file,
               key: presignedPost.key,
               percent: 100,
-              status: 'done',
+              status: FileUploadStatus.done,
             },
             // We need to set the id so we are able to delete the file later
             newFileId,
@@ -408,7 +411,7 @@ const useS3Upload = (
           return true
         } catch (e) {
           toast.error(formatMessage(strings.uploadFailed))
-          updateFile({ ...file, percent: 0, status: 'error' })
+          updateFile({ ...file, percent: 0, status: FileUploadStatus.error })
 
           return false
         }
@@ -461,7 +464,7 @@ const useS3Upload = (
                 size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
                 key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
                 percent: 100,
-                status: 'done',
+                status: FileUploadStatus.done,
               },
               // We need to set the id so we are able to delete the file later
               newFileId,
@@ -483,7 +486,7 @@ const useS3Upload = (
       file: TUploadFile,
       callback: (file: TUploadFile, newId?: string) => void,
     ) => {
-      callback({ ...file, percent: 1, status: 'uploading' })
+      callback({ ...file, percent: 1, status: FileUploadStatus.uploading })
 
       return handleUpload([file], callback)
     },

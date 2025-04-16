@@ -92,6 +92,16 @@ export * from './lib/DatePicker/DatePicker'
 export * from './lib/Select/Select'
 export * from './lib/Select/Select.types'
 export * from './lib/Input/Input'
+export {
+  InputFileUploadDeprecated,
+  type UploadFileStatusDeprecated,
+  FileUploadStatusDeprecated,
+  type UploadFileDeprecated,
+  fileToObjectDeprecated,
+  type StatusColorDeprecated,
+  UploadedFileDeprecated,
+  type InputFileUploadPropsDeprecated,
+} from './lib/InputFileUpload/InputFileUploadDeprecated'
 export * from './lib/InputFileUpload/InputFileUpload'
 export * from './lib/InputError/InputError'
 export * from './lib/ToggleSwitch'

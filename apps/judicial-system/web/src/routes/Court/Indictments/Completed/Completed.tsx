@@ -6,6 +6,7 @@ import router from 'next/router'
 import {
   Accordion,
   Box,
+  FileUploadStatus,
   InputFileUpload,
   RadioButton,
   UploadFile,
@@ -118,7 +119,7 @@ const Completed: FC = () => {
       else {
         addUploadFiles(files, {
           category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-          status: 'done',
+          status: FileUploadStatus.done,
         })
       }
     },
@@ -199,12 +200,13 @@ const Completed: FC = () => {
               title={formatMessage(strings.criminalRecordUpdateTitle)}
             />
             <InputFileUpload
-              fileList={uploadFiles.filter(
+              name="criminalRecordUpdate"
+              files={uploadFiles.filter(
                 (file) =>
                   file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
               )}
               accept="application/pdf"
-              header={formatMessage(core.uploadBoxTitle)}
+              title={formatMessage(core.uploadBoxTitle)}
               buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
               description={formatMessage(core.uploadBoxDescription, {
                 fileEndings: '.pdf',

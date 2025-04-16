@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
-import { Text, Box, UploadFile } from '@island.is/island-ui/core'
+import { Text, Box, UploadFileDeprecated } from '@island.is/island-ui/core'
 import {
   getFileSizeInKilo,
   getFileType,
@@ -14,7 +14,7 @@ import { useFileUpload } from '../../../lib/hooks/useFileUpload'
 
 interface Props {
   applicationSystemId: string
-  files?: UploadFile[]
+  files?: UploadFileDeprecated[]
 }
 
 const FileList = ({ files, applicationSystemId }: Props) => {

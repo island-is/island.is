@@ -10,11 +10,11 @@ import {
   Input,
   Text,
   Button,
-  InputFileUpload,
+  InputFileUploadDeprecated,
   Inline,
   Divider,
-  UploadFile,
-  fileToObject,
+  UploadFileDeprecated,
+  fileToObjectDeprecated,
   toast,
   Checkbox,
   Stack,
@@ -54,7 +54,7 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
   const [review, setReview] = useState('')
   const [showInputError, setShowInputError] = useState(false)
   const [showUpload, setShowUpload] = useState(false)
-  const [fileList, setFileList] = useState<Array<UploadFile>>([])
+  const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showInputFileError, setShowInputFileError] = useState(false)
   const [inputFileErrorText, setInputFileErrorText] = useState('')
@@ -65,7 +65,10 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
 
   const handlePrivateChange = () => setPrivateAdvice(!privateAdvice)
 
-  const uploadFile = async (file: UploadFile, response: PresignedPost) => {
+  const uploadFile = async (
+    file: UploadFileDeprecated,
+    response: PresignedPost,
+  ) => {
     return new Promise((resolve, reject) => {
       const request = new XMLHttpRequest()
       request.withCredentials = true
@@ -181,7 +184,7 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
   }
 
   const onChange = (files: File[]) => {
-    const uploadFiles = files.map((file) => fileToObject(file))
+    const uploadFiles = files.map((file) => fileToObjectDeprecated(file))
     const uploadFilesWithKey = uploadFiles.map((f) => ({
       ...f,
       key: createUUIDString(),
@@ -190,7 +193,7 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
     setFileList(newFileList)
   }
 
-  const onRemove = (fileToRemove: UploadFile) => {
+  const onRemove = (fileToRemove: UploadFileDeprecated) => {
     const newFileList = fileList.filter((file) => file.key !== fileToRemove.key)
     setFileList(newFileList)
   }
@@ -282,7 +285,7 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
       <Box paddingTop={3}>
         <Stack space={3}>
           {showUpload && (
-            <InputFileUpload
+            <InputFileUploadDeprecated
               name="fileUpload"
               fileList={fileList}
               accept={Object.values(fileExtensionWhitelist)}
