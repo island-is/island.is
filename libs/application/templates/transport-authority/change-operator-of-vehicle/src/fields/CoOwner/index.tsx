@@ -17,7 +17,7 @@ import {
 import { FC, useEffect, useState } from 'react'
 import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
-import { UserInformation, VehiclesCurrentVehicle } from '../../shared'
+import { UserInformation } from '../../shared'
 import { useFormContext } from 'react-hook-form'
 
 export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = ({

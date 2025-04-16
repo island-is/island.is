@@ -24,6 +24,11 @@ export const overview = {
       defaultMessage: 'Yfirlit skráningar',
       description: 'Title of overview section',
     },
+    pageTitleAssignee: {
+      id: 'aosh.tlwm.application:overview.general.pageTitleAssignee',
+      defaultMessage: 'Upplýsingar um skráningu',
+      description: 'Title of overview section for assignee',
+    },
     agreementText: {
       id: 'aosh.tlwm.application:overview.general.agreementText',
       defaultMessage:
@@ -45,6 +50,11 @@ export const overview = {
       defaultMessage: 'Hafna',
       description: 'Overview rejectButton label',
     },
+    backButton: {
+      id: 'aosh.tlwm.application:overview.general.backButton',
+      defaultMessage: 'Til baka',
+      description: 'Overview backButton label',
+    },
   }),
   labels: defineMessages({
     editMessage: {
@@ -54,17 +64,17 @@ export const overview = {
     },
     applicant: {
       id: 'aosh.tlwm.application:overview.labels.applicant',
-      defaultMessage: 'Umsækjandi (skráningaraðili)',
+      defaultMessage: 'Umsækjandi',
       description: 'Applicant label on overview page',
     },
     machineTenure: {
       id: 'aosh.tlwm.application:overview.labels.machineTenure',
-      defaultMessage: 'Skráður starfstími á vinnuvél (Vottorð um starfstíma)',
+      defaultMessage: 'Starfstími á vinnuvél',
       description: 'Machine tenure label on overview page',
     },
     assignee: {
       id: 'aosh.tlwm.application:overview.labels.assignee',
-      defaultMessage: 'Staðfestingaraðili',
+      defaultMessage: 'Staðfestingaraðili {value}',
       description: 'Assignee label on overview page',
     },
   }),
@@ -131,6 +141,11 @@ export const overview = {
       defaultMessage: 'Netfang tengiliðs: {value}',
       description: `Overview assignee information email label`,
     },
+    workMachines: {
+      id: 'aosh.tlwm.application:overview.assignee.workMachines',
+      defaultMessage: 'Vinnuvél/ar: {value}',
+      description: `Overview assignee information work machines label`,
+    },
   }),
   certificateOfTenure: defineMessages({
     machineNumber: {
@@ -157,6 +172,11 @@ export const overview = {
       id: 'aosh.tlwm.application:overview.certificateOfTenure.period',
       defaultMessage: 'Tímabil: {value}',
       description: 'Overview certificate of tenure period',
+    },
+    contractor: {
+      id: 'aosh.tlwm.application:overview.certificateOfTenure.contractor',
+      defaultMessage: 'Sjálfstætt starfandi: Já',
+      description: `Overview certificate of tenure contractor label`,
     },
   }),
   confirmationModal: defineMessages({
