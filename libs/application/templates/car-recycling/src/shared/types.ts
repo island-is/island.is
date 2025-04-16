@@ -7,4 +7,5 @@ export interface VehicleDto extends VehicleMiniDto {
   colorName?: string
   requiresMileageRegistration?: boolean
   modelYear?: number
+  latestMileage?: number
 }

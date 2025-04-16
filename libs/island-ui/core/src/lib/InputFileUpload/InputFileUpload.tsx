@@ -132,9 +132,10 @@ export const UploadedFile: FC<UploadedFileProps> = (props) => {
         return { background: 'red100', border: 'red200', icon: 'red600' }
       case FileUploadStatus.done:
         // Display an error color if the file is empty
-        if (file.size && file.size === 0) {
+        if (file.size === 0) {
           return { background: 'red100', border: 'red200', icon: 'red600' }
         }
+
         return {
           background: 'blue100',
           border: 'blue200',
