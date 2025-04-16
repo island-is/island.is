@@ -5,7 +5,7 @@ import {
   InputFileUploadDeprecated,
   Text,
   AccordionItem,
-  UploadFile,
+  UploadFileDeprecated,
   Button,
   toast,
 } from '@island.is/island-ui/core'
@@ -31,7 +31,7 @@ const PaperUpload = ({
 }) => {
   const { formatMessage } = useLocale()
   const [withPaperUpload, setWithPaperUpload] = useState(false)
-  const [fileList, setFileList] = useState<Array<UploadFile>>([])
+  const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
   const [uploadResults, setUploadResults] = useState<any>()
   const [uploadMutation] = useBulkUploadMutation()
   const { revalidate } = useRevalidator()

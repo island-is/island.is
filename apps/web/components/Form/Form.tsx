@@ -14,7 +14,7 @@ import {
   Select,
   Stack,
   Text,
-  UploadFile,
+  UploadFileDeprecated,
 } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import {
@@ -293,7 +293,9 @@ export const Form = ({ form }: FormProps) => {
 
     return Object.fromEntries(fields)
   })
-  const [fileList, setFileList] = useState<Record<string, UploadFile[]>>(() =>
+  const [fileList, setFileList] = useState<
+    Record<string, UploadFileDeprecated[]>
+  >(() =>
     Object.fromEntries(
       form.fields
         .filter((field) => field.type === FormFieldType.FILE)
@@ -506,7 +508,7 @@ export const Form = ({ form }: FormProps) => {
   }
 
   const uploadFile = async (
-    file: UploadFile,
+    file: UploadFileDeprecated,
     response: PresignedPost,
     fieldSlug: string,
   ) => {
