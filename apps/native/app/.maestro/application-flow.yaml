@@ -17,5 +17,6 @@ appId: 'is.island.app.dev'
           id: 'APPLICATION_ITEM'
       - tapOn:
           text: 'Opna umsókn'
+      # Need to make sure preferences are reset for this to pass, if the user has already hasOnboardedPasskeys: true then this will fail
       - assertVisible:
           id: 'SCREEN_PASSKEY'
