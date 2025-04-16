@@ -1,6 +1,5 @@
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import sortBy from 'lodash/sortBy'
 
 import { StringOption as Option } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
