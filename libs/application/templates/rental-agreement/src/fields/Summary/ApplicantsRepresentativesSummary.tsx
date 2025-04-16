@@ -2,7 +2,6 @@ import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
-import { RentalAgreement } from '../../lib/dataSchema'
 import { summary } from '../../lib/messages'
 import { Routes } from '../../lib/constants'
 import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
@@ -29,28 +28,29 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
   } = props
   const { answers } = application
 
-  const landlords = getValueViaPath(
+  type tableInfo = {
+    isRepresentative: string[]
+    nationalIdWithName: { nationalId: string; name: string }
+    email?: string
+    phone?: string
+  }
+
+  const landlords = getValueViaPath<Array<tableInfo>>(
     answers,
     'landlordInfo.table',
     [],
-  ) as Array<{
-    isRepresentative: string[]
-    nationalIdWithName: { nationalId: string; name: string }
-    email?: string
-    phone?: string
-  }>
-  const tenants = getValueViaPath(answers, 'tenantInfo.table', []) as Array<{
-    isRepresentative: string[]
-    nationalIdWithName: { nationalId: string; name: string }
-    email?: string
-    phone?: string
-  }>
+  )
+  const tenants = getValueViaPath<Array<tableInfo>>(
+    answers,
+    'tenantInfo.table',
+    [],
+  )
 
-  const landlordListHasRepresentatives = landlords.some(
+  const landlordListHasRepresentatives = landlords?.some(
     (landlord) =>
       landlord.isRepresentative && landlord.isRepresentative.length > 0,
   )
-  const tenantListHasRepresentatives = tenants.some(
+  const tenantListHasRepresentatives = tenants?.some(
     (tenant) => tenant.isRepresentative && tenant.isRepresentative.length > 0,
   )
 
@@ -58,7 +58,7 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
     (landlordRep) =>
       landlordRep.isRepresentative && landlordRep.isRepresentative.length > 0,
   )
-  const tenantRepresentatives = tenants.filter(
+  const tenantRepresentatives = tenants?.filter(
     (tenantRep) =>
       tenantRep.isRepresentative && tenantRep.isRepresentative.length > 0,
   )
@@ -118,7 +118,7 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
         <SummaryCard
           cardLabel={formatMessage(summary.tenantsRepresentativeLabel)}
         >
-          {tenantRepresentatives.map((tenantRep) => {
+          {tenantRepresentatives?.map((tenantRep) => {
             return (
               <SummaryCardRow
                 key={tenantRep.nationalIdWithName?.nationalId}
