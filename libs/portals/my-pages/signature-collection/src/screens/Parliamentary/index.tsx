@@ -1,15 +1,20 @@
 import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  EmptyState,
-} from '@island.is/portals/my-pages/core'
+import { EmptyState } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'
-import { useGetCurrentCollection, useGetListsForOwner, useIsOwner } from '../../hooks'
+import {
+  useGetCurrentCollection,
+  useGetListsForOwner,
+  useIsOwner,
+} from '../../hooks'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import Intro from '../shared/Intro'
-import { AuthDelegationType } from '@island.is/api/schema'
+import {
+  AuthDelegationType,
+  SignatureCollectionCollectionType,
+} from '@island.is/api/schema'
 
 const SignatureCollectionParliamentary = () => {
   useNamespaces('sp.signatureCollection')
@@ -30,7 +35,8 @@ const SignatureCollectionParliamentary = () => {
       />
       {!loadingIsOwner && !loadingCurrentCollection && (
         <Box>
-          {currentCollection?.isPresidential ? (
+          {currentCollection?.collectionType ===
+          SignatureCollectionCollectionType.Presidential ? (
             <EmptyState
               title={m.noCollectionIsActive}
               description={m.noCollectionIsActiveDescription}
@@ -41,7 +47,9 @@ const SignatureCollectionParliamentary = () => {
               currentCollection={currentCollection}
               isListHolder={
                 !userInfo?.profile?.delegationType ||
-                userInfo?.profile?.delegationType?.includes(AuthDelegationType.ProcurationHolder)
+                userInfo?.profile?.delegationType?.includes(
+                  AuthDelegationType.ProcurationHolder,
+                )
               }
             />
           ) : (

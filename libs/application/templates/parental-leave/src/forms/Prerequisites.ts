@@ -23,7 +23,6 @@ import {
   FormModes,
   UserProfileApi,
 } from '@island.is/application/types'
-import { conclusionMessages } from '@island.is/application/ui-forms'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import Logo from '../assets/Logo'
 import { defaultMultipleBirthsMonths } from '../config'

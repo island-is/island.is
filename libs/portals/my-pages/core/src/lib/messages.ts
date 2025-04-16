@@ -623,8 +623,7 @@ export const m = defineMessages({
   },
   signatureCollectionParliamentaryListsCompany: {
     id: 'service.portal:signatureCollectionParliamentaryListsCompany',
-    defaultMessage:
-      'Alþingiskosningar - Aðeins fyrir stjórnmálasamtök',
+    defaultMessage: 'Alþingiskosningar - Aðeins fyrir stjórnmálasamtök',
   },
   signatureCollectionPresidentialLists: {
     id: 'service.portal:signatureCollectionPresidentialLists',
@@ -782,6 +781,10 @@ export const m = defineMessages({
     defaultMessage:
       'Hér sérð þú hreyfingar gjaldflokka fyrir valin skilyrði. Opnaðu síu og veldu gjaldflokka og tímabil. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
   },
+  financeTransactionsVehicleMileageDescription: {
+    id: 'service.portal:finance-transactions-vehicle-mileage-description',
+    defaultMessage: 'Kílómetragjaldslýsing',
+  },
   financeTransactionPeriodsDescription: {
     id: 'service.portal:finance-transaction-periods-description',
     defaultMessage:
@@ -790,6 +793,10 @@ export const m = defineMessages({
   financeTransactionsCategories: {
     id: 'service.portal:finance-transactions-categories',
     defaultMessage: 'Gjaldflokkar',
+  },
+  financeTransactionsVehiclesMileage: {
+    id: 'service.portal:finance-transactions-vehicles-mileage',
+    defaultMessage: 'Kílómetragjald',
   },
   financeTransactionPeriods: {
     id: 'service.portal:finance-transaction-periods',
