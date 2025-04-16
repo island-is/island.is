@@ -61,7 +61,7 @@ jobs:
         id: create_pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_BRANCH: ${{ github.head_ref}}/cherry-pick
+          PR_BRANCH: ${{ github.head_ref}}#cherry-pick
           TARGET_BRANCH: release/${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
@@ -69,12 +69,12 @@ jobs:
           echo ${{ github.event.pull_request.merge_commit_sha }}
           echo ${{ github.head_ref}}
           git checkout $TARGET_BRANCH
-          git checkout -b $PR_BRANCH
+          git checkout -b "$PR_BRANCH"
           git cherry-pick -x ${{ github.event.pull_request.merge_commit_sha }}
           git commit --allow-empty -am "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
-          git push --set-upstream origin $PR_BRANCH
+          git push --set-upstream origin "$PR_BRANCH"
           echo "new branch created"
-          PR=$(gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
+          PR=$(gh pr create -B $TARGET_BRANCH -H "$PR_BRANCH" --title "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
           echo "$PR created"
           echo PR=$PR >> "$GITHUB_OUTPUT"
 
