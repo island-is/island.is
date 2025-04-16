@@ -29,7 +29,10 @@ type UploadFileAnswer = {
 }
 
 // Transform an uploaded file to an form answer.
-const transformToAnswer = ({ name, key }: UploadFile): UploadFileAnswer => {
+const transformToAnswer = ({
+  name,
+  key,
+}: UploadFileDeprecated): UploadFileAnswer => {
   return { name, key }
 }
 
@@ -41,7 +44,7 @@ const answerToUploadFile = ({
   return { name, key, status: 'done' }
 }
 
-const reducer = (state: UploadFile[], action: Action) => {
+const reducer = (state: UploadFileDeprecated[], action: Action) => {
   switch (action.type) {
     case ActionTypes.ADD:
       return state.concat(action.payload.newFiles)
@@ -52,7 +55,7 @@ const reducer = (state: UploadFile[], action: Action) => {
       )
 
     case ActionTypes.UPDATE:
-      return state.map((file: UploadFile) => {
+      return state.map((file: UploadFileDeprecated) => {
         if (file.name === action.payload.file.name) {
           file.status = action.payload.status
           file.percent = action.payload.percent
@@ -70,7 +73,7 @@ interface FileUploadControllerProps {
   readonly id: string
   error?: string
   application: Application
-  onRemove?: (f: UploadFile) => void
+  onRemove?: (f: UploadFileDeprecated) => void
   readonly header?: string
   readonly description?: string
   readonly buttonLabel?: string
@@ -100,7 +103,11 @@ export const FileUploadController = ({
   const { formatMessage } = useLocale()
   const { clearErrors, setValue } = useFormContext()
   const [uploadError, setUploadError] = useState<string | undefined>(error)
-  const val = getValueViaPath(application.answers, id, []) as UploadFile[]
+  const val = getValueViaPath(
+    application.answers,
+    id,
+    [],
+  ) as UploadFileDeprecated[]
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
   const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
@@ -109,13 +116,13 @@ export const FileUploadController = ({
     { skip: true },
   )
   const [sumOfFileSizes, setSumOfFileSizes] = useState(0)
-  const initialUploadFiles: UploadFile[] =
+  const initialUploadFiles: UploadFileDeprecated[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
 
   useEffect(() => {
     const onlyUploadedFiles = state.filter(
-      (f: UploadFile) => f.key && f.status === 'done',
+      (f: UploadFileDeprecated) => f.key && f.status === 'done',
     )
 
     const uploadAnswer: UploadFileAnswer[] =
@@ -130,7 +137,7 @@ export const FileUploadController = ({
     return status !== undefined && status === MalwareScanStatus.SAFE
   }
 
-  const uploadFileFlow = async (file: UploadFile) => {
+  const uploadFileFlow = async (file: UploadFileDeprecated) => {
     try {
       // 1. Get the upload URL
       const { data } = await createUploadUrl({
@@ -226,7 +233,7 @@ export const FileUploadController = ({
       },
     })
 
-    const malwareFiles: UploadFile[] = []
+    const malwareFiles: UploadFileDeprecated[] = []
     const uploadPromises = newUploadFiles.map(async (f) => {
       try {
         const res = await uploadFileFlow(f)
@@ -272,7 +279,7 @@ export const FileUploadController = ({
   }
 
   const onRemoveFile = async (
-    fileToRemove: UploadFile,
+    fileToRemove: UploadFileDeprecated,
     overwriteError = true,
     removeFileCard = true,
   ) => {
