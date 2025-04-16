@@ -124,13 +124,13 @@ export const UploadedFile: FC<UploadedFileProps> = (props) => {
     const gb = mb * 1024
 
     if (bytes < kb) {
-      return `${bytes} B`
+      return `${bytes}B`
     } else if (bytes < mb) {
-      return `${(bytes / kb).toFixed(2)} KB`
+      return `${(bytes / kb).toFixed(2)}KB`
     } else if (bytes < gb) {
-      return `${(bytes / mb).toFixed(2)} MB`
+      return `${(bytes / mb).toFixed(2)}MB`
     } else {
-      return `${(bytes / gb).toFixed(2)} GB`
+      return `${(bytes / gb).toFixed(2)}GB`
     }
   }
 
@@ -189,9 +189,12 @@ export const UploadedFile: FC<UploadedFileProps> = (props) => {
       <Text fontWeight="semiBold">
         <Box component="span" className={{ [styles.fileName]: onOpenFile }}>
           {truncateMiddle(file.name)}
-          {file.size && <Text as="span">{formatFileSize(file.size)}</Text>}
+          {file.size && (
+            <Text as="span">{` ${formatFileSize(file.size)}`}</Text>
+          )}
           {onOpenFile && (
             <Box component="span" marginLeft={1}>
+              {' '}
               <Icon icon="open" type="outline" size="small" />
             </Box>
           )}
