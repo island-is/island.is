@@ -43,7 +43,7 @@ const UploadFiles: FC<Props> = (props) => {
   )
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: 'application/pdf',
+    accept: ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'],
     onDrop,
   })
 
@@ -60,7 +60,7 @@ const UploadFiles: FC<Props> = (props) => {
         </Text>
       </Box>
       <Box marginBottom={2}>
-        <Text>{formatMessage(strings.acceptFiles)}</Text>
+        <Text>Tekið er við skjölum með endingu: .pdf, .png, .jpg, .jpeg</Text>
       </Box>
       <Box marginBottom={3}>
         <Button variant="ghost" size="small" icon="attach">

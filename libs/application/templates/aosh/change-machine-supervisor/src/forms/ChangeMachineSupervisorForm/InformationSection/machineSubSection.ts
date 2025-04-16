@@ -2,7 +2,6 @@ import { Application } from '@island.is/api/schema'
 import {
   buildMultiField,
   buildTextField,
-  buildDateField,
   buildSubSection,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
