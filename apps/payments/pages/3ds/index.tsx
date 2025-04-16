@@ -4,13 +4,23 @@ import { useLocale } from '@island.is/localization'
 import { PaymentCompleteIcon } from '../../components/PaymentCompleteIcon'
 import { threeDSecure } from '../../messages'
 
-import * as styles from './index.css'
-
 export default function ThreeDSecureSuccessPage() {
   const { formatMessage } = useLocale()
 
   return (
-    <div className={styles.container}>
+    <div
+      style={{
+        alignItems: 'center',
+        backgroundColor: 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        justifyContent: 'center',
+        maxHeight: '100%',
+        maxWidth: '100%',
+        width: '100%',
+      }}
+    >
       <PaymentCompleteIcon />
 
       <Text as="h1" variant="h1" marginTop={2}>
