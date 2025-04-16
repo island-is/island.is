@@ -18,12 +18,22 @@ export const m = defineMessages({
     id: 'sp.finance:finance-transactions-label',
     defaultMessage: 'Veldu gjaldflokk',
   },
-
+  transactionsVehicleLabel: {
+    id: 'sp.finance:finance-transactions-vehicle-label',
+    defaultMessage: 'Veldu ökutækisnúmer',
+  },
   transactionsYear: {
     id: 'sp.finance:finance-transactions-year',
     defaultMessage: 'Ár',
   },
-
+  submitMileage: {
+    id: 'sp.finance:submit-mileage',
+    defaultMessage: 'Skrá kílómetrastöðu',
+  },
+  actions: {
+    id: 'sp.finance:actions',
+    defaultMessage: 'Aðgerðir',
+  },
   feeCategory: {
     id: 'sp.finance:fee-category',
     defaultMessage: 'Gjaldflokkur / stofnun',
@@ -33,7 +43,14 @@ export const m = defineMessages({
     id: 'sp.finance:charge-type',
     defaultMessage: 'Gjaldflokkur',
   },
-
+  mileageFeeLink: {
+    id: 'sp.finance:mileage-fee-link',
+    defaultMessage: 'https://island.is/kilometragjald',
+  },
+  mileageFeeLinkLabel: {
+    id: 'sp.finance:mileage-fee-link-label',
+    defaultMessage: 'Sjá meira',
+  },
   feeBase: {
     id: 'sp.finance:fee-base',
     defaultMessage: 'Gjaldgrunnur',

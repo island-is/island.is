@@ -36,5 +36,5 @@ export const ChangeAnswers: FC<
     setValue(`${sectionName}.${questionName}`, NO)
   }
 
-  return <></>
+  return null
 }

@@ -6,7 +6,6 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  buildTitleField,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
