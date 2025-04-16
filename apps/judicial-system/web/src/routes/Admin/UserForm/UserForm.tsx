@@ -29,6 +29,7 @@ import {
   validate,
   Validation,
 } from '../../../utils/validate'
+import { userRoleToString } from '../userRoleToString'
 import * as styles from './UserForm.css'
 
 type ExtendedOption = ReactSelectOption & { institution: Institution }
@@ -94,9 +95,7 @@ export const UserForm: FC<Props> = ({
     (institution) => institution.value === user.institution?.id,
   )
 
-  const isValid = () => {
-    return isAdminUserFormValid(user) && isCoreUser(user)
-  }
+  const isValid = isAdminUserFormValid(user) && isCoreUser(user)
 
   const storeAndRemoveErrorIfValid = (
     field: string,
@@ -218,139 +217,232 @@ export const UserForm: FC<Props> = ({
           />
         </Box>
         {user.institution?.type === InstitutionType.PROSECUTORS_OFFICE ? (
-          <Box display="flex" marginBottom={2}>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleProsecutor"
-                label="Saksóknari"
-                checked={user.role === UserRole.PROSECUTOR}
-                onChange={() => setUser({ ...user, role: UserRole.PROSECUTOR })}
-                large
-              />
-            </Box>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleProsecutorRepresentative"
-                label="Fulltrúi"
-                checked={user.role === UserRole.PROSECUTOR_REPRESENTATIVE}
-                onChange={() =>
-                  setUser({ ...user, role: UserRole.PROSECUTOR_REPRESENTATIVE })
-                }
-                large
-              />
-            </Box>
-            {user.institution.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e' && (
+          <>
+            <Box className={styles.roleRow}>
               <Box className={styles.roleColumn}>
                 <RadioButton
                   name="role"
-                  id="rolePublicProsecutorStaff"
-                  label="Skrifstofa"
-                  checked={user.role === UserRole.PUBLIC_PROSECUTOR_STAFF}
+                  id="roleProsecutor"
+                  label={userRoleToString(UserRole.PROSECUTOR)}
+                  checked={user.role === UserRole.PROSECUTOR}
                   onChange={() =>
-                    setUser({ ...user, role: UserRole.PUBLIC_PROSECUTOR_STAFF })
+                    setUser({ ...user, role: UserRole.PROSECUTOR })
                   }
                   large
                 />
               </Box>
-            )}
-          </Box>
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="roleProsecutorRepresentative"
+                  label={userRoleToString(UserRole.PROSECUTOR_REPRESENTATIVE)}
+                  checked={user.role === UserRole.PROSECUTOR_REPRESENTATIVE}
+                  onChange={() =>
+                    setUser({
+                      ...user,
+                      role: UserRole.PROSECUTOR_REPRESENTATIVE,
+                    })
+                  }
+                  large
+                />
+              </Box>
+            </Box>
+            <Box className={styles.roleRow}>
+              {user.institution.id ===
+              '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e' ? (
+                <>
+                  <Box className={styles.roleColumn}>
+                    <RadioButton
+                      name="role"
+                      id="rolePublicProsecutorStaff"
+                      label={userRoleToString(UserRole.PUBLIC_PROSECUTOR_STAFF)}
+                      checked={user.role === UserRole.PUBLIC_PROSECUTOR_STAFF}
+                      onChange={() =>
+                        setUser({
+                          ...user,
+                          role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+                        })
+                      }
+                      large
+                    />
+                  </Box>
+                  <Box className={styles.roleColumn}>
+                    <RadioButton
+                      name="role"
+                      id="roleLocalAdmin"
+                      label={userRoleToString(UserRole.LOCAL_ADMIN)}
+                      checked={user.role === UserRole.LOCAL_ADMIN}
+                      onChange={() =>
+                        setUser({ ...user, role: UserRole.LOCAL_ADMIN })
+                      }
+                      large
+                    />
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <Box className={styles.roleColumn}>
+                    <RadioButton
+                      name="role"
+                      id="roleLocalAdmin"
+                      label={userRoleToString(UserRole.LOCAL_ADMIN)}
+                      checked={user.role === UserRole.LOCAL_ADMIN}
+                      onChange={() =>
+                        setUser({ ...user, role: UserRole.LOCAL_ADMIN })
+                      }
+                      large
+                    />
+                  </Box>
+                  <Box className={styles.roleColumn} />
+                </>
+              )}
+            </Box>
+          </>
         ) : user.institution?.type === InstitutionType.DISTRICT_COURT ? (
-          <Box display="flex" marginBottom={2}>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleJudge"
-                label="Dómari"
-                checked={user.role === UserRole.DISTRICT_COURT_JUDGE}
-                onChange={() =>
-                  setUser({ ...user, role: UserRole.DISTRICT_COURT_JUDGE })
-                }
-                large
-              />
+          <>
+            <Box className={styles.roleRow}>
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="roleJudge"
+                  label={userRoleToString(UserRole.DISTRICT_COURT_JUDGE)}
+                  checked={user.role === UserRole.DISTRICT_COURT_JUDGE}
+                  onChange={() =>
+                    setUser({ ...user, role: UserRole.DISTRICT_COURT_JUDGE })
+                  }
+                  large
+                />
+              </Box>
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="roleRegistrar"
+                  label={userRoleToString(UserRole.DISTRICT_COURT_REGISTRAR)}
+                  checked={user.role === UserRole.DISTRICT_COURT_REGISTRAR}
+                  onChange={() =>
+                    setUser({
+                      ...user,
+                      role: UserRole.DISTRICT_COURT_REGISTRAR,
+                    })
+                  }
+                  large
+                />
+              </Box>
             </Box>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleRegistrar"
-                label="Dómritari"
-                checked={user.role === UserRole.DISTRICT_COURT_REGISTRAR}
-                onChange={() =>
-                  setUser({ ...user, role: UserRole.DISTRICT_COURT_REGISTRAR })
-                }
-                large
-              />
+            <Box className={styles.roleRow}>
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="roleAssistant"
+                  label={userRoleToString(UserRole.DISTRICT_COURT_ASSISTANT)}
+                  checked={user.role === UserRole.DISTRICT_COURT_ASSISTANT}
+                  onChange={() =>
+                    setUser({
+                      ...user,
+                      role: UserRole.DISTRICT_COURT_ASSISTANT,
+                    })
+                  }
+                  large
+                />
+              </Box>
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="roleLocalAdmin"
+                  label={userRoleToString(UserRole.LOCAL_ADMIN)}
+                  checked={user.role === UserRole.LOCAL_ADMIN}
+                  onChange={() =>
+                    setUser({ ...user, role: UserRole.LOCAL_ADMIN })
+                  }
+                  large
+                />
+              </Box>
             </Box>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleAssistant"
-                label="Aðstoðarmaður dómara"
-                checked={user.role === UserRole.DISTRICT_COURT_ASSISTANT}
-                onChange={() =>
-                  setUser({ ...user, role: UserRole.DISTRICT_COURT_ASSISTANT })
-                }
-                large
-              />
-            </Box>
-          </Box>
+          </>
         ) : user.institution?.type === InstitutionType.COURT_OF_APPEALS ? (
-          <Box display="flex" marginBottom={2}>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleJudge"
-                label="Dómari"
-                checked={user.role === UserRole.COURT_OF_APPEALS_JUDGE}
-                onChange={() =>
-                  setUser({ ...user, role: UserRole.COURT_OF_APPEALS_JUDGE })
-                }
-                large
-              />
+          <>
+            <Box className={styles.roleRow}>
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="roleJudge"
+                  label={userRoleToString(UserRole.COURT_OF_APPEALS_JUDGE)}
+                  checked={user.role === UserRole.COURT_OF_APPEALS_JUDGE}
+                  onChange={() =>
+                    setUser({ ...user, role: UserRole.COURT_OF_APPEALS_JUDGE })
+                  }
+                  large
+                />
+              </Box>
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="roleRegistrar"
+                  label={userRoleToString(UserRole.COURT_OF_APPEALS_REGISTRAR)}
+                  checked={user.role === UserRole.COURT_OF_APPEALS_REGISTRAR}
+                  onChange={() =>
+                    setUser({
+                      ...user,
+                      role: UserRole.COURT_OF_APPEALS_REGISTRAR,
+                    })
+                  }
+                  large
+                />
+              </Box>
             </Box>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleRegistrar"
-                label="Dómritari"
-                checked={user.role === UserRole.COURT_OF_APPEALS_REGISTRAR}
-                onChange={() =>
-                  setUser({
-                    ...user,
-                    role: UserRole.COURT_OF_APPEALS_REGISTRAR,
-                  })
-                }
-                large
-              />
+            <Box className={styles.roleRow}>
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="roleAssistant"
+                  label={userRoleToString(UserRole.COURT_OF_APPEALS_ASSISTANT)}
+                  checked={user.role === UserRole.COURT_OF_APPEALS_ASSISTANT}
+                  onChange={() =>
+                    setUser({
+                      ...user,
+                      role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+                    })
+                  }
+                  large
+                />
+              </Box>
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="roleLocalAdmin"
+                  label={userRoleToString(UserRole.LOCAL_ADMIN)}
+                  checked={user.role === UserRole.LOCAL_ADMIN}
+                  onChange={() =>
+                    setUser({ ...user, role: UserRole.LOCAL_ADMIN })
+                  }
+                  large
+                />
+              </Box>
             </Box>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleAssistant"
-                label="Aðstoðarmaður dómara"
-                checked={user.role === UserRole.COURT_OF_APPEALS_ASSISTANT}
-                onChange={() =>
-                  setUser({
-                    ...user,
-                    role: UserRole.COURT_OF_APPEALS_ASSISTANT,
-                  })
-                }
-                large
-              />
-            </Box>
-          </Box>
+          </>
         ) : user.institution?.type === InstitutionType.PRISON ||
           user.institution?.type === InstitutionType.PRISON_ADMIN ? (
-          <Box display="flex" marginBottom={2}>
+          <Box className={styles.roleRow}>
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
                 id="rolePrisonSystemStaff"
-                label="Fangelsisyfirvöld"
+                label={userRoleToString(UserRole.PRISON_SYSTEM_STAFF)}
                 checked={user.role === UserRole.PRISON_SYSTEM_STAFF}
                 onChange={() =>
                   setUser({ ...user, role: UserRole.PRISON_SYSTEM_STAFF })
+                }
+                large
+              />
+            </Box>
+            <Box className={styles.roleColumn}>
+              <RadioButton
+                name="role"
+                id="roleLocalAdmin"
+                label={userRoleToString(UserRole.LOCAL_ADMIN)}
+                checked={user.role === UserRole.LOCAL_ADMIN}
+                onChange={() =>
+                  setUser({ ...user, role: UserRole.LOCAL_ADMIN })
                 }
                 large
               />
@@ -475,7 +567,7 @@ export const UserForm: FC<Props> = ({
         <FormFooter
           nextButtonIcon="arrowForward"
           onNextButtonClick={saveUser}
-          nextIsDisabled={!isValid()}
+          nextIsDisabled={!isValid}
           nextIsLoading={loading}
           nextButtonText="Vista"
           previousUrl={constants.USERS_ROUTE}

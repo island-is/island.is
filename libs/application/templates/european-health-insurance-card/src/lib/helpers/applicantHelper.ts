@@ -10,28 +10,36 @@ import {
   NationalRegistrySpouse,
   Answer,
 } from '../types'
+import { getValueViaPath } from '@island.is/application/core'
 
-function getObjectKey(obj: FormValue, value: string | boolean) {
+const getObjectKey = (obj: FormValue, value: string | boolean) => {
   return Object.keys(obj).filter((key) => obj[key] === value)
 }
 
-export function getFromRegistry(formValues: Application<FormValue>) {
+export const getFromRegistry = (formValues: Application<FormValue>) => {
   const nridArr: NridName[] = []
-  const userData = formValues.externalData.nationalRegistry
-    ?.data as NationalRegistry
+  const { externalData } = formValues
+  const userData = getValueViaPath<NationalRegistry>(
+    externalData,
+    'nationalRegistry.data',
+  )
 
   if (userData?.nationalId) {
     nridArr.push({ nrid: userData?.nationalId, name: userData?.fullName })
   }
-  const spouseData = formValues?.externalData?.nationalRegistrySpouse
-    ?.data as NationalRegistrySpouse
+  const spouseData = getValueViaPath<NationalRegistrySpouse>(
+    externalData,
+    'nationalRegistrySpouse.data',
+  )
 
   if (spouseData?.nationalId) {
     nridArr.push({ nrid: spouseData?.nationalId, name: spouseData?.name })
   }
 
-  const custodyData = formValues?.externalData?.childrenCustodyInformation
-    ?.data as NationalRegistry[]
+  const custodyData = getValueViaPath<Array<NationalRegistry>>(
+    externalData,
+    'childrenCustodyInformation.data',
+  )
 
   if (custodyData) {
     for (let i = 0; i < custodyData.length; i++) {
@@ -45,10 +53,10 @@ export function getFromRegistry(formValues: Application<FormValue>) {
 }
 
 /** Returns name of person by national registry id by external data from National Registry */
-export function getFullName(
+export const getFullName = (
   formValues: Application<FormValue>,
   nrid: string | null | undefined,
-) {
+) => {
   if (nrid) {
     const persons = getFromRegistry(formValues)
     return persons.find((x) => x.nrid === nrid)?.name
@@ -56,11 +64,11 @@ export function getFullName(
   return null
 }
 
-export function getPlasticExpiryDate(resp: CardResponse): Date | undefined {
+export const getPlasticExpiryDate = (resp: CardResponse): Date | undefined => {
   try {
     const obj = resp.cards?.find((x) => x.isPlastic)
     if (obj && obj.expiryDate) {
-      return new Date(obj.expiryDate as Date)
+      return new Date(obj.expiryDate)
     } else {
       return undefined
     }
@@ -69,25 +77,33 @@ export function getPlasticExpiryDate(resp: CardResponse): Date | undefined {
   }
 }
 
-export function getEhicApplicants(
+export const getEhicApplicants = (
   formValues: Application<FormValue>,
   cardType: string | null,
-) {
+) => {
   const nridArr: string[] = []
-  const userData = formValues.externalData.nationalRegistry
-    ?.data as NationalRegistry
+  const { externalData } = formValues
+  const userData = getValueViaPath<NationalRegistry>(
+    externalData,
+    'nationalRegistry.data',
+  )
   if (userData?.nationalId) {
     nridArr.push(userData?.nationalId)
   }
-  const spouseData = formValues?.externalData?.nationalRegistrySpouse
-    ?.data as NationalRegistry
+  const spouseData = getValueViaPath<NationalRegistrySpouse>(
+    externalData,
+    'nationalRegistrySpouse.data',
+  )
 
   if (spouseData?.nationalId) {
     nridArr.push(spouseData?.nationalId)
   }
 
-  const custodyData = formValues?.externalData?.childrenCustodyInformation
-    ?.data as NationalRegistry[]
+  const custodyData =
+    getValueViaPath<Array<NationalRegistry>>(
+      externalData,
+      'childrenCustodyInformation.data',
+    ) ?? []
 
   for (let i = 0; i < custodyData.length; i++) {
     if (custodyData[i].nationalId) {
@@ -103,11 +119,11 @@ export function getEhicApplicants(
   const applying: string[] = []
 
   if (applicants.includes(`${cardType}-${userData?.nationalId}`)) {
-    applying.push(userData?.nationalId)
+    applying.push(userData?.nationalId ?? '')
   }
 
   if (applicants.includes(`${cardType}-${spouseData?.nationalId}`)) {
-    applying.push(spouseData?.nationalId)
+    applying.push(spouseData?.nationalId ?? '')
   }
 
   for (let i = 0; i < custodyData.length; i++) {
@@ -119,7 +135,7 @@ export function getEhicApplicants(
   return applying
 }
 
-export function base64ToArrayBuffer(base64Pdf: string) {
+export const base64ToArrayBuffer = (base64Pdf: string) => {
   const binaryString = window.atob(base64Pdf)
   const binaryLen = binaryString.length
   const bytes = new Uint8Array(binaryLen)
@@ -130,37 +146,41 @@ export function base64ToArrayBuffer(base64Pdf: string) {
   return bytes
 }
 
-export function someCanApplyForPlasticOrPdf(
+export const someCanApplyForPlasticOrPdf = (
   externalData: ExternalData,
-): boolean {
+): boolean => {
   if (externalData?.cardResponse?.data) {
-    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+    const cardResponse =
+      getValueViaPath<CardResponse[]>(externalData, 'cardResponse.data') ?? []
     return cardResponse.some((x) => x.canApply || x.canApplyForPDF)
   }
   return false
 }
 
 /** Checks if some are insured*/
-export function someAreInsured(externalData: ExternalData): boolean {
+export const someAreInsured = (externalData: ExternalData): boolean => {
   if (externalData?.cardResponse?.data) {
-    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+    const cardResponse =
+      getValueViaPath<CardResponse[]>(externalData, 'cardResponse.data') ?? []
     return cardResponse.some((x) => x.isInsured)
   }
   return false
 }
 
 /** Checks if one of all persons from national registry for this user has an health insurance and can apply*/
-export function someCanApplyForPlastic(externalData: ExternalData): boolean {
+export const someCanApplyForPlastic = (externalData: ExternalData): boolean => {
   if (externalData?.cardResponse?.data) {
-    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+    const cardResponse =
+      getValueViaPath<CardResponse[]>(externalData, 'cardResponse.data') ?? []
     return cardResponse.some((x) => x.isInsured && x.canApply)
   }
   return false
 }
 
-export function someHavePDF(externalData: ExternalData): boolean {
+export const someHavePDF = (externalData: ExternalData): boolean => {
   if (externalData?.cardResponse?.data) {
-    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+    const cardResponse =
+      getValueViaPath<CardResponse[]>(externalData, 'cardResponse.data') ?? []
     return cardResponse.some(
       (x) => x.isInsured && !x.canApplyForPDF && x.cards?.some((y) => y.isTemp),
     )
@@ -168,28 +188,33 @@ export function someHavePDF(externalData: ExternalData): boolean {
   return false
 }
 
-export function someHavePlasticButNotPdf(externalData: ExternalData): boolean {
+export const someHavePlasticButNotPdf = (
+  externalData: ExternalData,
+): boolean => {
   if (externalData?.cardResponse?.data) {
-    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+    const cardResponse =
+      getValueViaPath<CardResponse[]>(externalData, 'cardResponse.data') ?? []
     return cardResponse.some((x) => x.canApplyForPDF)
   }
   return false
 }
 
-export function someAreNotInsured(externalData: ExternalData): boolean {
+export const someAreNotInsured = (externalData: ExternalData): boolean => {
   if (externalData?.cardResponse?.data) {
-    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+    const cardResponse =
+      getValueViaPath<CardResponse[]>(externalData, 'cardResponse.data') ?? []
     return cardResponse.some((x) => !x.isInsured)
   }
   return false
 }
 
 // In some instances, users can be insured but cannot apply although a user doesn't have a valid card issued
-export function someAreInsuredButCannotApply(
+export const someAreInsuredButCannotApply = (
   externalData: ExternalData,
-): boolean {
+): boolean => {
   if (externalData?.cardResponse?.data) {
-    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+    const cardResponse =
+      getValueViaPath<CardResponse[]>(externalData, 'cardResponse.data') ?? []
     return cardResponse.some(
       (x) =>
         x.isInsured &&
@@ -202,20 +227,24 @@ export function someAreInsuredButCannotApply(
   return false
 }
 
-export function getEhicResponse(
+export const getEhicResponse = (
   application: Application<FormValue>,
-): CardResponse[] {
-  return application.externalData.cardResponse.data as CardResponse[]
+): CardResponse[] => {
+  return (
+    getValueViaPath<CardResponse[]>(
+      application.externalData,
+      'cardResponse.data',
+    ) ?? []
+  )
 }
 
 /** Get's a array of nationalRegistries for applicants that want to apply for PDF in the first step */
-export function getDefaultValuesForPDFApplicants(
+export const getDefaultValuesForPDFApplicants = (
   formValues: Application<FormValue>,
-) {
+) => {
   const defaultValues: string[] = []
-
-  const answers = formValues.answers as unknown as Answer
-  const ans = answers.delimitations.addForPDF
+  const { answers } = formValues
+  const ans = getValueViaPath<Array<string>>(answers, 'delimitations.addForPDF')
 
   if (ans) {
     ans.forEach((item) => defaultValues.push(item))
@@ -223,14 +252,14 @@ export function getDefaultValuesForPDFApplicants(
   return defaultValues
 }
 
-export function hasAPDF(cardInfo: CardResponse) {
+export const hasAPDF = (cardInfo: CardResponse): boolean => {
   if (cardInfo && cardInfo.cards && cardInfo.cards.length > 0) {
     return cardInfo.cards.some((x) => x.isTemp)
   }
   return false
 }
 
-export function hasPlastic(cardInfo: CardResponse) {
+export const hasPlastic = (cardInfo: CardResponse): boolean => {
   if (cardInfo && cardInfo.cards && cardInfo.cards.length > 0) {
     return cardInfo.cards.some((x) => x.isPlastic)
   }

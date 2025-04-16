@@ -304,7 +304,7 @@ export const serviceSetup = (services: {
       PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
       PAYMENT_API_CALLBACK_URL: ref(
         (ctx) =>
-          `http://web-application-system-api.${
+          `http://application-system-api.${
             ctx.featureDeploymentName
               ? `feature-${ctx.featureDeploymentName}`
               : 'application-system'
