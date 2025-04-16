@@ -46,8 +46,7 @@ for target in "$@"; do
   chunks=$(echo "$chunks" | jq -cM --argjson new_chunks "$processed_chunks" '. + $new_chunks')
 done
 
-
-if [ ${ADDITIONAL_PROJECTS+x} ]; then
+if [[ -n ${ADDITIONAL_PROJECTS+x} ]]; then
   for target in "$@"; do
   processed_chunks=$(yarn nx show projects --withTarget="$target" --affected -p "$ADDITIONAL_PROJECTS" --json |
     jq -r '.[]' |

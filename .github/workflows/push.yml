@@ -215,7 +215,7 @@ jobs:
       - name: Prepare docker build targets
         id: build_map
         run: |
-          echo $ADDITIONAL_PROJECTS
+          echo "Additional Projects: $ADDITIONAL_PROJECTS"
           CHUNKS="$(ADDITIONAL_PROJECTS="$ADDITIONAL_PROJECTS" ./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
