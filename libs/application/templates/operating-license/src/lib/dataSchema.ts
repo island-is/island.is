@@ -210,7 +210,7 @@ export const dataSchema = z.object({
     .refine(
       ({ outside, willServe }) => {
         if (willServe?.includes(YES)) {
-          return isValid24HFormatTime(outside?.weekdays?.to ?? '')
+          return isValid24HFormatTime(outside?.weekends?.to ?? '')
         }
         return true
       },
