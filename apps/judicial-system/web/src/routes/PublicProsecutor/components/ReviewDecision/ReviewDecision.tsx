@@ -2,7 +2,7 @@ import { Dispatch, FC, SetStateAction, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
+import { RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -85,7 +85,7 @@ export const ReviewDecision: FC<Props> = (props) => {
   }
 
   return (
-    <Box marginBottom={5}>
+    <>
       <SectionHeading
         title={fm(strings.title, { isFine })}
         description={
@@ -135,6 +135,6 @@ export const ReviewDecision: FC<Props> = (props) => {
           onSecondaryButtonClick={() => setModalVisible(undefined)}
         />
       )}
-    </Box>
+    </>
   )
 }

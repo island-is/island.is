@@ -234,31 +234,33 @@ export const Overview = () => {
         <Box component="section" marginBottom={5}>
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        {!workingCase.indictmentReviewDecision ? (
-          <IndictmentReviewerSelector
-            workingCase={workingCase}
-            selectedIndictmentReviewer={selectedIndictmentReviewer}
-            setSelectedIndictmentReviewer={setSelectedIndictmentReviewer}
-          />
-        ) : (
-          <ReviewDecision
-            caseId={workingCase.id}
-            currentDecision={workingCase.indictmentReviewDecision}
-            indictmentAppealDeadline={
-              workingCase.indictmentAppealDeadline ?? ''
-            }
-            indictmentAppealDeadlineIsInThePast={
-              workingCase.indictmentVerdictAppealDeadlineExpired ?? false
-            }
-            modalVisible={confirmationModal}
-            setModalVisible={setConfirmationModal}
-            isFine={
-              workingCase.indictmentRulingDecision ===
-              CaseIndictmentRulingDecision.FINE
-            }
-            onSelect={onSelect}
-          />
-        )}
+        <Box component="section" marginBottom={10}>
+          {!workingCase.indictmentReviewDecision ? (
+            <IndictmentReviewerSelector
+              workingCase={workingCase}
+              selectedIndictmentReviewer={selectedIndictmentReviewer}
+              setSelectedIndictmentReviewer={setSelectedIndictmentReviewer}
+            />
+          ) : (
+            <ReviewDecision
+              caseId={workingCase.id}
+              currentDecision={workingCase.indictmentReviewDecision}
+              indictmentAppealDeadline={
+                workingCase.indictmentAppealDeadline ?? ''
+              }
+              indictmentAppealDeadlineIsInThePast={
+                workingCase.indictmentVerdictAppealDeadlineExpired ?? false
+              }
+              modalVisible={confirmationModal}
+              setModalVisible={setConfirmationModal}
+              isFine={
+                workingCase.indictmentRulingDecision ===
+                CaseIndictmentRulingDecision.FINE
+              }
+              onSelect={onSelect}
+            />
+          )}
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         {!workingCase.indictmentReviewDecision ? (
