@@ -117,7 +117,7 @@ export const m = defineMessages({
   },
   createCollection: {
     id: 'admin-portal.signature-collection:createCollection',
-    defaultMessage: 'Stofna nýja meðmælasöfnun',
+    defaultMessage: 'Stofna söfnun',
     description: '',
   },
   createCollectionSuccess: {
@@ -164,6 +164,17 @@ export const m = defineMessages({
   collectionTitle: {
     id: 'admin-portal.signature-collection:collectionTitle',
     defaultMessage: 'Forsetakosningar 2024',
+    description: '',
+  },
+  municipalCollectionTitle: {
+    id: 'admin-portal.signature-collection:municipalCollectionTitle',
+    defaultMessage: 'Sveitarstjórnarkosningar',
+    description: '',
+  },
+  municipalCollectionIntro: {
+    id: 'admin-portal.signature-collection:municipalCollectionIntro',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum varius, nisi id consequat ornare, ante sem semper sapien.',
     description: '',
   },
   parliamentaryCollectionTitle: {
@@ -415,6 +426,11 @@ export const m = defineMessages({
   signeeAddress: {
     id: 'admin-portal.signature-collection:signeeAddress',
     defaultMessage: 'Heimilisfang',
+    description: '',
+  },
+  signeePage: {
+    id: 'admin-portal.signature-collection:signeePage',
+    defaultMessage: 'Bls.',
     description: '',
   },
   updateListEndTime: {
@@ -731,7 +747,7 @@ export const m = defineMessages({
   },
   signPaperSigneeButton: {
     id: 'admin-portal.signature-collection:signPaperSigneeButton',
-    defaultMessage: 'Skrá meðmæli á lista',
+    defaultMessage: 'Skrá meðmæli',
     description: '',
   },
   paperSigneeTypoTitle: {
