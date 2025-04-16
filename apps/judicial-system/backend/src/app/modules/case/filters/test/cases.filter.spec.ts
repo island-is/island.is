@@ -16,7 +16,7 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
-  publicProsecutorRoles,
+  publicProsecutionOfficeRoles,
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
@@ -32,7 +32,7 @@ describe('getCasesQueryFilter', () => {
       role: UserRole.PROSECUTOR,
       institution: {
         id: 'Prosecutors Office Id',
-        type: InstitutionType.PROSECUTORS_OFFICE,
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
       },
     }
 
@@ -91,7 +91,7 @@ describe('getCasesQueryFilter', () => {
       role: UserRole.PROSECUTOR_REPRESENTATIVE,
       institution: {
         id: 'Prosecutors Office Id',
-        type: InstitutionType.PROSECUTORS_OFFICE,
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
       },
     }
 
@@ -245,15 +245,15 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  describe.each(publicProsecutorRoles)('given %s role', (role) => {
+  describe.each(publicProsecutionOfficeRoles)('given %s role', (role) => {
     it('should get public prosecutor filter', () => {
       // Arrange
       const user = {
         id: 'Public Prosecutor Office Id',
         role,
         institution: {
-          id: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
-          type: InstitutionType.PROSECUTORS_OFFICE,
+          id: 'Public Prosecutors Office Id',
+          type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
         },
       }
 

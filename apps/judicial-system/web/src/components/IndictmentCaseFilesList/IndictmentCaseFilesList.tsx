@@ -10,8 +10,8 @@ import {
   isDistrictCourtUser,
   isPrisonAdminUser,
   isProsecutionUser,
-  isPublicProsecutor,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
@@ -135,15 +135,15 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
     () => ({
       canViewCriminalRecordUpdate:
         isDistrictCourtUser(user) ||
-        isPublicProsecutor(user) ||
-        isPublicProsecutorUser(user),
+        isPublicProsecutionUser(user) ||
+        isPublicProsecutionOfficeUser(user),
       canViewCivilClaims:
         Boolean(workingCase.hasCivilClaims) &&
         (isDistrictCourtUser(user) ||
           isProsecutionUser(user) ||
           isDefenceUser(user)),
       canViewSentToPrisonAdminFiles:
-        isPrisonAdminUser(user) || isPublicProsecutorUser(user),
+        isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user),
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
     }),

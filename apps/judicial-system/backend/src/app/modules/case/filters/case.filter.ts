@@ -14,7 +14,7 @@ import {
   isPrisonAdminUser,
   isPrisonStaffUser,
   isProsecutionUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
   isRequestCase,
   isRestrictionCase,
   RequestSharedWithDefender,
@@ -433,7 +433,7 @@ export const canUserAccessCase = (
     return canDefenceUserAccessCase(theCase, user)
   }
 
-  if (isPublicProsecutorUser(user)) {
+  if (isPublicProsecutionOfficeUser(user)) {
     return canPublicProsecutionUserAccessCase(theCase)
   }
 

@@ -110,7 +110,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
             user: {
               id: userId,
               role: userRole,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+              institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
             } as User,
             type: CaseNotificationType.APPEAL_WITHDRAWN,
           },

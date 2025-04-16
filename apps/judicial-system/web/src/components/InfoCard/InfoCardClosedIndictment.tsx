@@ -2,7 +2,7 @@ import { FC, useContext } from 'react'
 
 import {
   isPrisonAdminUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 
 import { EventType } from '../../graphql/schema'
@@ -84,7 +84,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
           columns: 2,
         },
         ...(workingCase.indictmentReviewer?.name &&
-        (isPublicProsecutorUser(user) || isPrisonAdminUser(user))
+        (isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user))
           ? [
               {
                 id: 'additional-data-section',

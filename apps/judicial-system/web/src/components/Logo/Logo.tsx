@@ -28,10 +28,7 @@ const Logo: FC<Props> = ({ defaultInstitution = '' }) => {
       : institutionNameArr.length - 2,
   )
   const institutionType = user?.institution?.type
-  const isPolice =
-    institutionType === InstitutionType.PROSECUTORS_OFFICE &&
-    institutionName !== 'Héraðssaksóknari' &&
-    institutionName !== 'Ríkissaksóknari'
+  const isPolice = institutionType === InstitutionType.POLICE_PROSECUTORS_OFFICE
 
   return (
     <Box display="flex">

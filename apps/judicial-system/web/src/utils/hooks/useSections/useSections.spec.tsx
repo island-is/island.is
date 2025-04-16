@@ -54,7 +54,7 @@ describe('useSections getSections', () => {
       id: faker.datatype.uuid(),
       name: faker.company.companyName(),
       active: true,
-      type: InstitutionType.PROSECUTORS_OFFICE,
+      type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
     },
   }
 
@@ -83,7 +83,9 @@ describe('useSections getSections', () => {
       policeCaseNumbers: [],
     }
 
-    expect(result.current.getSections(c, u)).toStrictEqual([
+    const res = result.current.getSections(c, u)
+
+    expect(res).toStrictEqual([
       {
         children: generateSubsteps(6),
         isActive: true,

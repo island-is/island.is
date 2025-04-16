@@ -9,7 +9,7 @@ import {
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
-  isPublicProsecutor,
+  isPublicProsecutionUser,
   isRequestCase,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
@@ -307,7 +307,7 @@ export const Cases: FC = () => {
                       onContextMenuDeleteClick={setVisibleModal}
                       canDeleteCase={canDeleteCase}
                     />
-                    {isPublicProsecutor(user) && (
+                    {isPublicProsecutionUser(user) && (
                       <CasesAwaitingReview
                         loading={loading}
                         cases={casesAwaitingReview}
