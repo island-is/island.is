@@ -29,7 +29,7 @@ const InformationSchema = z
   })
   .refine(
     (data) => {
-      if (data.selfOrOthers === SelfOrOthers.others) {
+      if (data.selfOrOthers === SelfOrOthers.self) {
         // TODO(balli) Create util function to validate license number ??
         return data.licenseNumber && data.countryOfIssue
       }
@@ -68,8 +68,7 @@ const PaymentArrangementSchema = z
         phone: z.string().optional(),
       })
       .optional(),
-    explanation: z.string().optional(),
-    agreementCheckbox: z.array(z.string().min(1)).nonempty(),
+    explanation: z.string().max(40).optional(),
   })
   .refine(
     ({ individualInfo, individualOrCompany }) => {
@@ -159,6 +158,19 @@ const PaymentArrangementSchema = z
       path: ['contactInfo', 'phone'],
     },
   )
+  .refine(
+    ({ explanation, individualOrCompany, paymentOptions }) => {
+      if (
+        individualOrCompany === IndividualOrCompany.individual ||
+        paymentOptions === PaymentOptions.cashOnDelivery
+      )
+        return true
+      return explanation && explanation.length < 41 && explanation.length > 0
+    },
+    {
+      path: ['explanation'],
+    },
+  )
 
 const ExamineeSchema = z
   .array(
@@ -204,6 +216,7 @@ const InstructorSchema = z
       email: z.string().refine((email) => isValidEmail(email)),
       phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
       disabled: z.enum([TrueOrFalse.true, TrueOrFalse.false]).optional(),
+      categoriesMayTeach: z.string().optional(),
     }),
   )
   .min(1)
@@ -243,27 +256,20 @@ const InstructorSchema = z
   })
 
 const ExamCategorySchema = z.object({
-  nationalId: z.string().refine((nationalId) => {
-    return (
-      nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId)
-    )
-  }),
-  name: z.string().min(1).max(256),
-  categoryAndInstructor: z.array(
+  categories: z.array(
     z.object({
-      category: z.string().min(1).max(256),
-      instructor: z.object({
-        nationalId: z.string().refine((nationalId) => {
-          return (
-            nationalId &&
-            nationalId.length !== 0 &&
-            kennitala.isValid(nationalId)
-          )
-        }),
-        name: z.string().min(1).max(256),
-      }),
+      disabled: z.boolean(),
+      label: z.string(),
+      value: z.string(),
     }),
   ),
+  instructor: z.array(
+    z.object({
+      value: z.string(),
+      label: z.string(),
+    }),
+  ),
+  isValid: z.boolean(),
 })
 
 const ExamLocationSchema = z.object({
@@ -273,13 +279,24 @@ const ExamLocationSchema = z.object({
   postalCode: z.string().min(3).max(3),
 })
 
+const OverviewSchema = z.object({
+  agreementCheckbox: z.array(z.string().min(1)).nonempty(),
+})
 export const PracticalExamAnswersSchema = z.object({
   information: InformationSchema,
   examinees: ExamineeSchema,
   instructors: InstructorSchema,
   examLocation: ExamLocationSchema,
   paymentArrangement: PaymentArrangementSchema,
-  examCategory: z.array(ExamCategorySchema),
+  examCategories: z.array(ExamCategorySchema).refine(
+    (data) => {
+      if (data.every((cat) => cat.isValid)) return true
+      return false
+    },
+    { path: ['examCategories'], message: 'testing' },
+  ),
+  examCategoryTable: z.array(z.array(z.string())),
+  overview: OverviewSchema,
 })
 
 export type PracticalExamAnswers = z.TypeOf<typeof PracticalExamAnswersSchema>
@@ -287,3 +304,5 @@ export type PaymentArrangementType = z.TypeOf<typeof PaymentArrangementSchema>
 export type ExamineeType = z.TypeOf<typeof ExamineeSchema>
 export type ExamCategoryType = z.TypeOf<typeof ExamCategorySchema>
 export type InstructorType = z.TypeOf<typeof InstructorSchema>
+export type InformationType = z.TypeOf<typeof InformationSchema>
+export type ExamLocationType = z.TypeOf<typeof ExamLocationSchema>

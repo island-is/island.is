@@ -126,6 +126,7 @@ export const examineeSection = buildSection({
         buildCustomField({
           id: 'examinees.examineeValidation',
           title: '',
+          doesNotRequireAnswer: true,
           component: 'ExamineeValidation',
         }),
       ],

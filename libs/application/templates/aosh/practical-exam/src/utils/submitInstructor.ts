@@ -28,16 +28,27 @@ export const submitInstructor = async (
         },
       },
     })
+    console.log('BLARG', data)
+
     if (
       !Array.isArray(data.validateInstructor.categoriesMayTeach) ||
       data.validateInstructor.categoriesMayTeach.length === 0
-    )
+    ) {
       return [
         { path: `instructors[${index}].disabled`, value: 'true' },
         { path: 'instructorsValidityError', value: 'true' },
       ]
-
-    return [{ path: `instructors[${index}].disabled`, value: 'false' }]
+    }
+    const categoriesMayTeachJoined =
+      data.validateInstructor.categoriesMayTeach?.join() || ''
+    console.log(categoriesMayTeachJoined)
+    return [
+      { path: `instructors[${index}].disabled`, value: 'false' },
+      {
+        path: `instructors[${index}].categoriesMayTeach`,
+        value: categoriesMayTeachJoined,
+      },
+    ]
   } catch (e) {
     return [{ path: 'instructorsGraphQLError', value: 'true' }]
   }

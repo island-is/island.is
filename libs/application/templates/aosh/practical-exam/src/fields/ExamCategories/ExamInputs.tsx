@@ -1,0 +1,427 @@
+import { FieldBaseProps } from '@island.is/application/types'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  InputFileUpload,
+  LoadingDots,
+  Select,
+} from '@island.is/island-ui/core'
+import { FC, SetStateAction, useCallback, useEffect, useState } from 'react'
+import {
+  ExamCategoryType,
+  ExamineeType,
+  InstructorType,
+} from '../../lib/dataSchema'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
+import { getValueViaPath } from '@island.is/application/core'
+import { ExamCategoryDto } from '@island.is/clients/practical-exams-ver'
+import { useLocale } from '@island.is/localization'
+import { examCategories } from '../../lib/messages'
+import { InstructorInformationInput } from '../../utils/type'
+import { useLazyValidateExaminee } from '../../hooks/useLazyValidateExaminee'
+import { WorkMachineExamineeInput } from '@island.is/api/schema'
+import { MultiValue } from 'react-select'
+import { useMutation } from '@apollo/client'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { FileUpload } from './FileUpload'
+
+type ExamInputProps = {
+  instructors: InstructorType
+  idx: number
+  onSave: () => void
+  setTable: React.Dispatch<SetStateAction<string[][]>>
+  tableData: string[][]
+}
+
+type Option = {
+  value: string
+  label: string
+  disabled?: boolean
+}
+
+const hasValidCategoryCode = (
+  category: ExamCategoryDto,
+): category is ExamCategoryDto & { categoryCode: string } => {
+  return typeof category.categoryCode === 'string'
+}
+
+export const ExamInputs: FC<
+  React.PropsWithChildren<FieldBaseProps & ExamInputProps>
+> = ({ instructors, application, idx, onSave, tableData, setTable, field }) => {
+  // TODO Fetch exam categories from externalData
+  const { externalData, answers } = application
+  const { lang, formatMessage } = useLocale()
+  const [categoryList, setCategoryList] = useState<Array<Option>>([])
+  const [chosenCategories, setChosenCategories] = useState<Option[]>([])
+  const [isInvalidInput, setIsInvalidInput] = useState<boolean>(false)
+  const [isInvalidValidation, setIsInvalidValidation] = useState<boolean>(false)
+  const [validationError, setValidationError] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const getExamineeValidation = useLazyValidateExaminee()
+  const getExamineeValidationCallback = useCallback(
+    async (workMachineExaminee: WorkMachineExamineeInput) => {
+      const { data } = await getExamineeValidation({
+        input: {
+          workMachineExamineeDto: workMachineExaminee,
+          xCorrelationID: application.id,
+        },
+      })
+      return data
+    },
+    [application.id, getExamineeValidation],
+  )
+  const { control, trigger, getValues, setValue } = useFormContext()
+  const externalExamCategories = getValueViaPath<Array<ExamCategoryDto>>(
+    externalData,
+    'examCategories.data',
+  )
+  const allCategoriesThatInclude =
+    externalExamCategories
+      ?.map((cat) => {
+        if (cat.includedExamCategories && cat.includedExamCategories.length > 0)
+          return cat.categoryCode
+        return null
+      })
+      .filter(Boolean)
+      .flat() || []
+  const examCategoriesRequireMedicalCertificate =
+    externalExamCategories
+      ?.filter((category) => category.requiresMedicalCertificate)
+      .map((i) => i.categoryCode) || []
+  const showInfo = chosenCategories.some((cat) =>
+    allCategoriesThatInclude.includes(cat.value),
+  )
+  const chosenMedicalCategories = chosenCategories
+    .map((cat) => cat.value)
+    .filter((cat) => examCategoriesRequireMedicalCertificate.includes(cat))
+    .join(', ')
+
+  useEffect(() => {
+    const examCategories = getValueViaPath<Array<ExamCategoryDto>>(
+      externalData,
+      'examCategories.data',
+    )
+
+    if (!examCategories) {
+      // Only update state if it's different from current state
+      setCategoryList((prev) => (prev.length === 0 ? prev : []))
+      return
+    }
+
+    const mappedCategories = examCategories
+      .filter(hasValidCategoryCode)
+      .map((category) => {
+        const name = lang === 'is' ? category.name : category.nameEn
+        return {
+          value: category.categoryCode,
+          label: `${category.categoryCode} - ${name}`,
+          disabled: false,
+        }
+      })
+
+    setCategoryList(mappedCategories)
+  }, [externalData, lang])
+
+  // Get the selected categories directly from form state
+  const watchedCategories = useWatch({
+    control,
+    name: `examCategories[${idx}].categories`,
+    defaultValue: [],
+  }) as Option[]
+
+  useEffect(() => {
+    setChosenCategories(watchedCategories)
+  }, [watchedCategories])
+
+  useEffect(() => {
+    const categories = getValueViaPath<ExamCategoryType[]>(
+      answers,
+      'examCategories',
+    )
+    if (!categories) return
+    setChosenCategories(categories[idx].categories)
+  }, [idx])
+
+  const shouldShowUpload = chosenCategories.some((category) =>
+    examCategoriesRequireMedicalCertificate.includes(category.value),
+  )
+
+  const onSubmit = async () => {
+    // Reset Validation error
+    setIsInvalidValidation(false)
+    setValidationError('')
+    setValue(`examCategories[${idx}].isValid`, false)
+    const instructors: Option[] = getValues(`examCategories[${idx}].instructor`)
+
+    const isUndefinedInstr = instructors.some(
+      (instr: Option) => instr === undefined,
+    )
+
+    if (isUndefinedInstr) {
+      setIsInvalidInput(true)
+      return null
+    }
+    setIsInvalidInput(false)
+
+    const examinees = getValueViaPath<ExamineeType>(answers, 'examinees')
+    if (!examinees) return null // TODO Deal with this case
+
+    const { nationalId, email, phone, countryIssuer, licenseNumber } =
+      examinees[idx]
+    // Trigger validation on empty categories etc .. ?
+    const payload: WorkMachineExamineeInput = {
+      nationalId: nationalId.nationalId,
+      email: email,
+      phoneNumber: phone,
+      drivingLicenseNumber: licenseNumber,
+      drivingLicenseCountryOfOrigin: countryIssuer,
+      examCategories: chosenCategories.map((category) => category.value),
+    }
+
+    setIsLoading(true)
+    const response = await getExamineeValidationCallback(payload)
+
+    setIsLoading(false)
+    if (response.getExamineeValidation.isValid) {
+      setValue(`examCategories[${idx}].isValid`, true)
+
+      let updatedTable: string[][] = []
+      // Find if this person (by SSN) already exists in the table
+      const existingIndex = tableData.findIndex(
+        (row) => row[1] === nationalId.nationalId, // SSN is at index 1
+      )
+
+      // Create the new/updated entry (list of strings)
+      const updatedEntry: string[] = [
+        nationalId.name, // string (name)
+        nationalId.nationalId, // string (SSN)
+        chosenCategories.map((i) => i.label).join(', '), // Ensure all categories are strings
+      ]
+
+      // Create a new array with either the updated or new entry
+      updatedTable = [...tableData]
+      if (existingIndex >= 0) {
+        updatedTable[existingIndex] = updatedEntry // Update existing
+      } else {
+        updatedTable.push(updatedEntry) // Add new
+      }
+      setTable(updatedTable)
+
+      await updateApplication({
+        variables: {
+          input: {
+            id: application.id,
+            answers: {
+              examCategoryTable: updatedTable,
+            },
+          },
+          locale: lang,
+        },
+      })
+      onSave()
+
+      return
+    }
+
+    const error =
+      lang === 'is'
+        ? response.getExamineeValidation.errorMessage
+        : response.getExamineeValidation.errorMessageEn
+    setValidationError(error || '')
+    setIsInvalidValidation(true)
+  }
+
+  const handleSelectOption = (
+    value: Array<Option>,
+    includedCategories: string[] | null | undefined,
+    onChange: (...event: any[]) => void,
+  ) => {
+    if (!includedCategories || !Array.isArray(value)) return onChange(value)
+
+    // Disable included categories
+    const updatedOptions = categoryList.map((cat) => ({
+      ...cat,
+      disabled: cat.disabled || includedCategories.includes(cat.value),
+    }))
+    setCategoryList(updatedOptions)
+
+    // Filter out any category that's now implicitly included
+    const filteredValue = value.filter(
+      (selected) => !includedCategories.includes(selected.value),
+    )
+    onChange(filteredValue)
+  }
+
+  const handleRemoveValue = (
+    value: Array<Option>,
+    includedCategories: string[] | null | undefined,
+    removedValue: Option,
+    onChange: (...event: any[]) => void,
+  ) => {
+    onChange(value)
+    if (includedCategories && Array.isArray(value)) {
+      const updatedOptions = categoryList.map((cat) => ({
+        ...cat,
+        disabled: cat.disabled
+          ? !includedCategories.includes(cat.value)
+          : false,
+      }))
+      setCategoryList(updatedOptions)
+    }
+
+    // Remove instructor input for removed category
+    const allInstructors = getValues(`examCategories[${idx}].instructor`)
+    const removeIndex = chosenCategories.findIndex(
+      (cat) => cat.value === removedValue.value,
+    )
+    if (removeIndex === -1) return
+
+    const updatedInstructors = allInstructors.filter(
+      (_: InstructorInformationInput, i: number) => i !== removeIndex,
+    )
+    setValue(`examCategories[${idx}].instructor`, updatedInstructors)
+  }
+
+  const handleClear = () => {
+    setValue(`examCategories[${idx}].instructor`, [])
+    setChosenCategories([])
+    setCategoryList((prev) =>
+      prev.map((option) => ({
+        ...option,
+        disabled: false,
+      })),
+    )
+  }
+
+  return (
+    <Box paddingTop={2} display={'flex'} flexDirection={'column'} rowGap={2}>
+      <Controller
+        key={`examCategories[${idx}].categories`}
+        name={`examCategories[${idx}].categories`}
+        control={control}
+        render={({ field: { ref, onChange, ...rest } }) => (
+          <Select
+            {...rest}
+            backgroundColor="blue"
+            options={categoryList}
+            placeholder={'Veldu prófflokka'}
+            isMulti
+            isSearchable={false}
+            label="Prófflokkar"
+            onChange={(value: MultiValue<Option>, action) => {
+              const chosenCategory =
+                action.option?.value || action.removedValue?.value
+              const includedCategories = externalExamCategories?.find(
+                (cat) => cat.categoryCode === chosenCategory,
+              )?.includedExamCategories
+
+              const mutableValue = [...value]
+              switch (action.action) {
+                case 'select-option':
+                  return handleSelectOption(
+                    mutableValue,
+                    includedCategories,
+                    onChange,
+                  )
+                case 'remove-value':
+                  return handleRemoveValue(
+                    mutableValue,
+                    includedCategories,
+                    action.removedValue,
+                    onChange,
+                  )
+                case 'clear':
+                  onChange(value)
+                  return handleClear()
+                default:
+                  onChange(value)
+              }
+            }}
+            icon="search"
+          />
+        )}
+      />
+
+      {chosenCategories.map((category, index) => (
+        <Controller
+          key={`examCategories[${idx}].instructor[${index}]`}
+          name={`examCategories[${idx}].instructor[${index}]`}
+          control={control}
+          render={({ field: { ref, ...rest }, fieldState }) => {
+            const filteredInstructor = instructors
+              .filter((instructor) => {
+                const instructorMayTeach =
+                  instructor.categoriesMayTeach?.split(',') || []
+                return instructorMayTeach.includes(category.value)
+              })
+              .map((instructor) => ({
+                value: instructor.nationalId.nationalId,
+                label: instructor.nationalId.name,
+              }))
+            return (
+              <Select
+                {...rest} // onChange, value, name
+                label={`${formatMessage(
+                  examCategories.labels.examCategoryLabel,
+                )} - ${category.value}`}
+                options={filteredInstructor}
+                errorMessage={fieldState.error?.message}
+                isSearchable={false}
+                isDisabled={filteredInstructor.length === 0}
+                placeholder={formatMessage(
+                  examCategories.labels.examCategoryPlaceholder,
+                )}
+              />
+            )
+          }}
+        />
+      ))}
+      {isLoading && (
+        <Box
+          width="full"
+          display={'flex'}
+          justifyContent={'center'}
+          marginY={2}
+        >
+          <LoadingDots large />
+        </Box>
+      )}
+      <FileUpload
+        showFileUpload={shouldShowUpload}
+        idx={idx}
+        chosenMedicalCategories={chosenMedicalCategories}
+        field={field}
+        application={application}
+      />
+      {isInvalidInput && (
+        <AlertMessage
+          type="warning"
+          title="Villa að vista prófflokka"
+          message="Vinsamlega sláðu inn leiðbeinanda fyrir hvern prófflokk, ef ekki er hægt að velja leiðbeinanda er engin leiðbeinandi gjaldgengur fyrir prófflokkin"
+        />
+      )}
+      {isInvalidValidation && (
+        <AlertMessage
+          type="warning"
+          title="Próftaki ekki gjaldgengur í valin verkleg próf"
+          message={validationError}
+        />
+      )}
+      {showInfo && (
+        <AlertMessage
+          type="info"
+          title="Eitthver info title"
+          message={'blablaba eitthva[ info'}
+        />
+      )}
+
+      <Box paddingTop={2} display={'flex'} justifyContent={'flexEnd'}>
+        <Button onClick={onSubmit} variant="ghost">
+          {formatMessage('Vista og skrá næsta')}
+        </Button>
+      </Box>
+    </Box>
+  )
+}

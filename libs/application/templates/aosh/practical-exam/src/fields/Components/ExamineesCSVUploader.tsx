@@ -19,10 +19,19 @@ import { parse } from 'csv-parse'
 import { useLocale } from '@island.is/localization'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
 import { formatPhoneNumber } from '../../utils'
-import { getValueViaPath } from '@island.is/application/core'
 import { useLazyAreExamineesEligible } from '../../hooks/useLazyAreExamineesEligible'
 import { CSVError, Examinee, ExamineeInput } from '../../utils/type'
 import { TrueOrFalse } from '../../utils/enums'
+import { isValidEmail, isValidPhoneNumber } from '../../utils/validation'
+import * as kennitala from 'kennitala'
+import { examinee } from '../../lib/messages'
+import {
+  ErrorIndexes,
+  ErrorMessageInvalidInput,
+  processErrors,
+  trackDuplicates,
+  validateExaminee,
+} from './examineeCSVUtils'
 
 const parseDataToExamineeList = (csvInput: string): ExamineeInput | null => {
   const values = csvInput.split(';')
@@ -96,7 +105,7 @@ export const ExamineesCSVUploader: FC<
       finishedValues !== examineesList &&
       unfinishedValues.length === 0
     ) {
-      trigger('examineesList')
+      trigger('examinees')
       // Avoid unnecessary setValue calls
       if (getValues('examineesValidityError') !== '') {
         setValue('examineesValidityError', '')
@@ -120,22 +129,23 @@ export const ExamineesCSVUploader: FC<
       setCsvIsLoading(true)
       parse(csvData, async (err, data) => {
         try {
-          if (err) {
-            rejectFile()
-            return
-          }
-          const headers = data.shift()
+          if (err) return rejectFile()
 
-          const validHeaders = checkHeaders(headers[0])
-          if (!validHeaders) {
-            rejectFile()
-            return
-          }
+          const headers = data.shift()
+          if (!checkHeaders(headers[0])) return rejectFile()
 
           const errorListFromAnswers: Array<CSVError> = []
+          const duplicateEmails: number[] = []
+          const duplicateNationalIds: number[] = []
 
-          //   const allEmails: Array<string> = []
-          //   const allEmailWarnings: Array<number> = []
+          const seenEmails = new Map<string, Set<number>>()
+          const seenNationalIds = new Map<string, Set<number>>()
+
+          const errors: ErrorIndexes = {
+            invalidSSNs: [],
+            invalidEmails: [],
+            invalidPhones: [],
+          }
 
           const answerValue: Array<ExamineeInput> = data.reduce(
             (
@@ -144,50 +154,66 @@ export const ExamineesCSVUploader: FC<
               index: number,
             ) => {
               const parsedExaminee = parseDataToExamineeList(value[0])
-              console.log(parsedExaminee)
+              if (!parsedExaminee) {
+                setValue('examineesCsvError', 'true')
+                return validExaminees
+              }
 
-              //       if (parsedParticipant === null) {
-              //         setValue('participantCsvError', 'true')
-              //         return validParticipants
-              //       }
+              // Validate fields
+              const validationErrors: ErrorIndexes = validateExaminee(
+                parsedExaminee,
+                index,
+              )
+              Object.keys(errors).forEach((key) => {
+                const errorKey = key as keyof ErrorIndexes
+                errors[errorKey].push(...validationErrors[errorKey])
+              })
 
-              //       // Check for duplicate email
-              //       const isEmailDuplicate =
-              //         parsedParticipant.email &&
-              //         allEmails.includes(parsedParticipant.email)
-              //       if (isEmailDuplicate) {
-              //         allEmailWarnings.push(index + 1)
-              //         return validParticipants
-              //       }
+              // Track duplicates
+              if (parsedExaminee.email)
+                trackDuplicates(
+                  seenEmails,
+                  parsedExaminee.email,
+                  index,
+                  duplicateEmails,
+                )
+              if (parsedExaminee.nationalId.nationalId)
+                trackDuplicates(
+                  seenNationalIds,
+                  parsedExaminee.nationalId.nationalId,
+                  index,
+                  duplicateNationalIds,
+                )
 
-              //       // Add email to tracking array
-              //       parsedParticipant.email && allEmails.push(parsedParticipant.email)
-
-              //       // Add valid participant to results
-              //       return [...validParticipants, parsedParticipant]
               return [...validExaminees, parsedExaminee]
             },
             [],
           )
 
-          // TODO(Balli) Validate duplicates etc..
+          // Process errors
+          processErrors(errorListFromAnswers, errors)
+          if (duplicateEmails.length)
+            errorListFromAnswers.push({
+              items: duplicateEmails,
+              error: examinee.tableRepeater.csvDuplicateEmailError,
+            })
+          if (duplicateNationalIds.length)
+            errorListFromAnswers.push({
+              items: duplicateNationalIds,
+              error: examinee.tableRepeater.csvDuplicateNationalId,
+            })
 
-          // setCsvInputError(errorListFromAnswers)
+          setCsvInputError(errorListFromAnswers)
 
           const nationalIdList: string[] = answerValue.flatMap(
             (item) => item.nationalId.nationalId ?? [],
           )
-
           const response = await getAreExamineesEligibleCallback(nationalIdList)
-          console.log('RESPONSE', response)
 
-          //validate that individiduals are allowed to take this seminar
           const disabledExaminees = response?.getExamineeEligibility?.find(
             (x) => x.isEligable === false,
           )
           if (disabledExaminees) {
-            console.log('THERE ARE DISABLED EXAMINEES')
-
             setValue(
               'examineesValidityError',
               locale === 'is'
@@ -203,44 +229,40 @@ export const ExamineesCSVUploader: FC<
               status: FileUploadStatus.done,
             })
 
-            const finalAnswerValue: Examinee[] = answerValue.map(
-              (x): Examinee => {
-                const examineesInRes = response?.getExamineeEligibility?.find(
-                  (z) => z.nationalId === x.nationalId.nationalId,
-                )
-                const disabled = !examineesInRes?.isEligable
+            const finalAnswerValue: Examinee[] = answerValue.map((x) => {
+              const examineesInRes = response?.getExamineeEligibility?.find(
+                (z) => z.nationalId === x.nationalId.nationalId,
+              )
+              return {
+                ...x,
+                disabled: examineesInRes?.isEligable
                   ? TrueOrFalse.false
-                  : TrueOrFalse.true
-                return {
-                  ...x,
-                  disabled: disabled,
-                }
-              },
-            )
-
-            console.log('Will set examinee list to', finalAnswerValue)
+                  : TrueOrFalse.true,
+              }
+            })
 
             setValue('examineesCsvError', 'false')
             setFileState([fileWithSuccessStatus])
             setExamineeList(finalAnswerValue)
-            setValue('examineeList', finalAnswerValue)
+            setValue('examinees', finalAnswerValue)
+          } else {
+            setFoundNotValid(false)
           }
         } finally {
           setCsvIsLoading(false)
         }
       })
     }
-    reader.readAsText(props[0] as unknown as Blob)
 
-    return
+    reader.readAsText(props[0] as unknown as Blob)
   }
 
   const removeFile = () => {
-    // setFileState([])
+    setFileState([])
   }
 
   const rejectFile = () => {
-    // setValue('participantCsvError', 'true')
+    setValue('examineesCsvError', 'true')
     return
   }
 
@@ -258,14 +280,14 @@ export const ExamineesCSVUploader: FC<
   }
 
   const removeInvalidParticipants = async () => {
-    // const validParticipants = participantList.filter(
-    //   (x) => x.disabled === 'false',
-    // )
-    // setValue('participantList', validParticipants)
-    // setParticipantList(validParticipants)
-    // setValue('participantValidityError', '')
-    // setFoundNotValid(false)
-    // trigger('participantList')
+    const validExaminees: Array<Examinee> = values?.filter(
+      (x: Examinee) => x.disabled === 'false',
+    )
+    setValue('examinees', validExaminees)
+    setExamineeList(validExaminees)
+    setValue('examineesValidityError', '')
+    setFoundNotValid(false)
+    trigger('examinees')
   }
 
   return (
@@ -280,7 +302,7 @@ export const ExamineesCSVUploader: FC<
             iconType="outline"
             colorScheme="destructive"
           >
-            {formatMessage('Fjarlægja ógjaldgenga þátttakendur')}
+            {formatMessage(examinee.labels.csvRemoveButton)}
           </Button>
         </Box>
       )}
@@ -290,8 +312,7 @@ export const ExamineesCSVUploader: FC<
           showFieldName: true,
           field: {
             id: 'title',
-            title:
-              'Ef þú ert að skrá marga einstaklinga í einu á námskeið geturðu hlaðið inn .csv skjali hér. Athugið að .csv skjal yfirskrifar þátttakendur í töflu',
+            title: formatMessage(examinee.labels.csvDescription),
             titleVariant: 'h5',
             type: FieldTypes.DESCRIPTION,
             component: FieldComponents.DESCRIPTION,
@@ -307,7 +328,7 @@ export const ExamineesCSVUploader: FC<
           icon="download"
           iconType="outline"
         >
-          {formatMessage('Sækja csv sniðmát')}
+          {formatMessage(examinee.labels.csvCopy)}
         </Button>
       </Box>
       {csvIsLoading && (
@@ -326,8 +347,8 @@ export const ExamineesCSVUploader: FC<
           <InputFileUpload
             applicationId={application.id}
             fileList={fileState}
-            header={formatMessage('Skrá marga þátttakendur í einu')}
-            buttonLabel={formatMessage('Hlaða inn .csv skjali')}
+            header={formatMessage(examinee.labels.csvHeader)}
+            buttonLabel={formatMessage(examinee.labels.csvUpload)}
             onChange={(e) => changeFile(e)}
             onRemove={() => removeFile()}
             onUploadRejection={rejectFile}
@@ -340,16 +361,16 @@ export const ExamineesCSVUploader: FC<
       />
 
       {csvInputError.length > 0 &&
-        csvInputError.map((csvError: CSVError) => {
+        csvInputError.map((csvError: CSVError, index) => {
           const messageString = `${formatMessage(
-            'Villa í CSV skjali fyrir línur:',
+            examinee.tableRepeater.csvLineError,
           )} ${csvError.items.join(', ')} - ${formatMessage(csvError.error)}`
-          return <AlertMessage type="error" message={messageString} />
+          return (
+            <Box paddingTop={1} key={index}>
+              <AlertMessage type="error" message={messageString} />
+            </Box>
+          )
         })}
-
-      {csvInputEmailWarning.length > 0 && (
-        <AlertMessage type="warning" message={'blalaldasldsa'} />
-      )}
     </Box>
   )
 }

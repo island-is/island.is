@@ -55,6 +55,12 @@ export const overview = {
       defaultMessage: 'Sjá færri',
       description: 'See less button label',
     },
+    agreementCheckbox: {
+      id: 'aosh.pe.application:overview.labels.agreementCheckbox#markdown',
+      defaultMessage:
+        'Ég hef kynnt mér [greiðslu- og viðskiptaskilmála](https://island.is/s/vinnueftirlitid/gjaldskra#greidslu-og-vidskiptaskilmalar) Vinnueftirlitsins',
+      description: 'Agreement checkbox label on conclusion screen',
+    },
   }),
   table: defineMessages({
     examinee: {
@@ -76,6 +82,84 @@ export const overview = {
       id: 'aosh.pe.application:overview.table.instructor',
       defaultMessage: 'Leiðbeinandi',
       description: 'Instructor table label',
+    },
+  }),
+  registrant: defineMessages({
+    name: {
+      id: 'aosh.pe.application:overview.registrant.name',
+      defaultMessage: 'Nafn: {value}',
+      description: 'Overview registrant name field',
+    },
+    title: {
+      id: 'aosh.pe.application:overview.registrant.title',
+      defaultMessage: 'Skráningaraðili',
+      description: 'Overview registrant title',
+    },
+    nationalId: {
+      id: 'aosh.pe.application:overview.registrant.nationalId',
+      defaultMessage: 'Kennitala: {value}',
+      description: 'Overview registrant nationalId field',
+    },
+    phone: {
+      id: 'aosh.pe.application:overview.registrant.phone',
+      defaultMessage: 'Símanúmer: {value}',
+      description: 'Overview registrant phone field',
+    },
+    email: {
+      id: 'aosh.pe.application:overview.registrant.email',
+      defaultMessage: 'Netfang: {value}',
+      description: 'Overview registrant email field',
+    },
+  }),
+  payment: defineMessages({
+    title: {
+      id: 'aosh.pe.application:overview.payment.title',
+      defaultMessage: 'Greiðslutilhögun',
+      description: 'Overview payment title',
+    },
+    cashOnDelivery: {
+      id: 'aosh.pe.application:overview.payment.cashOnDelivery',
+      defaultMessage: 'Staðgreiðsla',
+      description: 'Overview cash payment',
+    },
+    invoice: {
+      id: 'aosh.pe.application:overview.payment.invoice',
+      defaultMessage: 'Í reikning',
+      description: 'Overview invoice payment',
+    },
+    explanation: {
+      id: 'aosh.pe.application:overview.payment.explanation',
+      defaultMessage: 'Skýring: {value}',
+      description: 'Overview explanation',
+    },
+  }),
+  exam: defineMessages({
+    title: {
+      id: 'aosh.pe.application:overview.exam.title',
+      defaultMessage: 'Prófupplýsingar',
+      description: 'Overview exam info title',
+    },
+  }),
+  examLocation: defineMessages({
+    title: {
+      id: 'aosh.pe.application:overview.examLocation.title',
+      defaultMessage: 'Prófstaður',
+      description: 'Overview exam location title',
+    },
+    location: {
+      id: 'aosh.pe.application:overview.examLocation.location',
+      defaultMessage: '{address}, {postalCode}',
+      description: 'Overview exam location',
+    },
+    email: {
+      id: 'aosh.pe.application:overview.examLocation.email',
+      defaultMessage: 'Netfang tengiliðs: {value}',
+      description: 'Overview exam location email',
+    },
+    phone: {
+      id: 'aosh.pe.application:overview.examLocation.phone',
+      defaultMessage: 'Símanúmer tengiliðs: {value}',
+      description: 'Overview exam location phone',
     },
   }),
 }

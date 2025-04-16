@@ -14,6 +14,8 @@ import {
   WorkMachineExamineeValidationDto,
   ApiExamineeValidationPostRequest,
   ApiExamineeEligibilityGetRequest,
+  ExamRegistrationApi,
+  ApiExamRegistrationPostRequest,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -24,9 +26,13 @@ export class PracticalExamsClientService {
     private readonly instructorApi: InstructorApi,
     private readonly companyApi: CompanyApi,
     private readonly examineeEligibilityApi: ExamineeEligibilityApi,
+    private readonly examRegistrationApi: ExamRegistrationApi,
   ) {}
   private examCategoriesApiWithAuth = (user: User) =>
     this.examCategoriesApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private examRegistrationApiWithAuth = (user: User) =>
+    this.examRegistrationApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   private examineeEligibilityApiWithAuth = (user: User) =>
     this.examineeEligibilityApi.withMiddleware(new AuthMiddleware(user as Auth))
@@ -59,7 +65,6 @@ export class PracticalExamsClientService {
     auth: User,
     requestParameters: ApiExamineeEligibilityGetRequest,
   ) {
-    console.log('PracticalExam.service.ts client', requestParameters)
     return await this.examineeEligibilityApiWithAuth(
       auth,
     ).apiExamineeEligibilityGet(requestParameters)
@@ -72,6 +77,15 @@ export class PracticalExamsClientService {
     return await this.exameeValidationApiWithAuth(
       auth,
     ).apiExamineeValidationPost(requestParameters)
+  }
+
+  async submitPracticalExamApplication(
+    auth: User,
+    requestParameters: ApiExamRegistrationPostRequest,
+  ): Promise<void> {
+    return await this.examRegistrationApiWithAuth(auth).apiExamRegistrationPost(
+      requestParameters,
+    )
   }
 
   async validateInstructor(

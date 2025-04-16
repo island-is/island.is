@@ -105,11 +105,12 @@ export const informationSection = buildSection({
           format: '########',
           required: true,
           condition: (answers: FormValue) => {
-            const isForOthers = getValueViaPath<SelfOrOthers>(
+            const isForSelf = getValueViaPath<SelfOrOthers>(
               answers,
               'information.selfOrOthers',
             )
-            return isForOthers === SelfOrOthers.others ? true : false
+
+            return isForSelf === SelfOrOthers.self ? true : false
           },
         }),
         buildSelectField({
@@ -118,11 +119,11 @@ export const informationSection = buildSection({
           title: information.general.countryLabel,
           defaultValue: SelfOrOthers.self,
           condition: (answers: FormValue) => {
-            const isForOthers = getValueViaPath<SelfOrOthers>(
+            const isForSelf = getValueViaPath<SelfOrOthers>(
               answers,
               'information.selfOrOthers',
             )
-            return isForOthers === SelfOrOthers.others ? true : false
+            return isForSelf === SelfOrOthers.self ? true : false
           },
           options: () => {
             const iceland = {

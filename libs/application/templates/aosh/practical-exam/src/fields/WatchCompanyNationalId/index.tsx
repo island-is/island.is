@@ -5,8 +5,8 @@ import { useLazyIsCompanyValid } from '../../hooks/useLazyIsCompanyValid'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { paymentArrangement } from '../../lib/messages'
-import { isCompanyType } from '../../utils'
 import { IndividualOrCompany, PaymentOptions } from '../../utils/enums'
+import { isCompany } from '../../utils'
 
 export const WatchCompanyNationalId: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -28,15 +28,16 @@ export const WatchCompanyNationalId: FC<
 
   useEffect(() => {
     // To trigger the validation
-    if (isCompanyType(application.externalData)) {
+    if (isCompany(application.answers)) {
       setValue(
         'paymentArrangement.individualOrCompany',
         IndividualOrCompany.company,
       )
     }
-  }, [setValue, application.externalData])
+  }, [setValue, application.answers])
 
   setBeforeSubmitCallback?.(async () => {
+    return [true, null]
     setIsCompanyValid(true)
     const paymentOptions = getValues('paymentArrangement.paymentOptions')
     if (paymentOptions === PaymentOptions.cashOnDelivery) {
@@ -48,7 +49,6 @@ export const WatchCompanyNationalId: FC<
 
     if (companyNationalId) {
       const response = await getIsCompanyValidCallback(companyNationalId)
-      console.log('company', response)
 
       if (response?.practicalExamIsCompanyValid.mayPayReceiveInvoice) {
         return [true, null]

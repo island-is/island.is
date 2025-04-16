@@ -16,6 +16,8 @@ import { PracticalExamInstructor } from './models/practicalExamInstructor'
 import { CompanyValidationItem } from './models/companyValidation'
 import { ExamineeEligiblity } from './models/examineeEligibility'
 import { ExamineeEligibilityInput } from './dto/examineeEligibilityInput.input'
+import { WorkMachineExamineeValidation } from './models/examineeValidation'
+import { ExamineeValidationInput } from './dto/examineeValidationInput.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -42,6 +44,18 @@ export class PracticalExamsResolver {
     input: ExamineeEligibilityInput,
   ) {
     return this.practicalExamsService.getExamineeEligibility(auth, input)
+  }
+
+  @Query(() => WorkMachineExamineeValidation)
+  @Audit()
+  async getExamineeValidation(
+    @CurrentUser() auth: User,
+    @Args('input', {
+      type: () => ExamineeValidationInput,
+    })
+    input: ExamineeValidationInput,
+  ) {
+    return this.practicalExamsService.getExamineeValidation(auth, input)
   }
 
   @Scopes(ApiScope.vinnueftirlitid)

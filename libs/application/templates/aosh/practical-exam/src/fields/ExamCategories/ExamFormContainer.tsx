@@ -7,7 +7,7 @@ type ExamAssignmentFormProps = {
   onSaveAndNext: () => void
 }
 
-export const ExamAssignmentForm: FC<
+export const ExamFormContainer: FC<
   React.PropsWithChildren<FieldBaseProps & ExamAssignmentFormProps>
 > = (props) => {
   const [selectedExam, setSelectedExam] = useState<unknown>(null)

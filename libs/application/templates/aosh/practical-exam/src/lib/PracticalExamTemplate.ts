@@ -16,6 +16,7 @@ import {
   ApplicationConfigurations,
   Application,
   InstitutionNationalIds,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Roles, States, Events } from './constants'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -33,6 +34,7 @@ import { getChargeItems, isCompany } from '../utils'
 import { PaymentOptions } from '../utils/enums'
 import { CodeOwners } from '@island.is/shared/constants'
 import { Features } from '@island.is/feature-flags'
+import { ApiActions } from '../utils/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -45,14 +47,6 @@ const template: ApplicationTemplate<
   institution: shared.application.institutionName,
   translationNamespaces: ApplicationConfigurations.PracticalExam.translation,
   dataSchema: PracticalExamAnswersSchema,
-  allowedDelegations: [
-    {
-      type: AuthDelegationType.ProcurationHolder,
-    },
-    {
-      type: AuthDelegationType.Custom,
-    },
-  ],
   requiredScopes: [ApiScope.vinnueftirlitid],
   featureFlag: Features.PracticalExamEnabled,
   allowMultipleApplicationsInDraft: true,
@@ -172,26 +166,18 @@ const template: ApplicationTemplate<
         organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
         chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
-        // onExit: [
-        //   defineTemplateApi({
-        //     action: ApiActions.submitApplication,
-        //     triggerEvent: DefaultEvents.SUBMIT,
-        //   }),
-        // ],
       }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
           status: 'completed',
           lifecycle: pruneAfterDays(30),
-          // onEntry: defineTemplateApi({
-          //   action: ApiActions.submitApplication
-          // }),
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           actionCard: {
-            title: 'Akureyri 123',
-            description: 'Akureyri',
             tag: {
-              //label: shared.application.actionCardDone,
+              label: shared.application.actionCardDone,
               variant: 'blueberry',
             },
             pendingAction: {

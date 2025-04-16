@@ -21,6 +21,19 @@ export const EXAMINEE_ELIGIBILITY_QUERY = gql`
   }
 `
 
+export const EXAMINEE_VALIDATION_QUERY = gql`
+  query ExamineeValidation($input: ExamineeValidationInput!) {
+    getExamineeValidation(input: $input) {
+      nationalId
+      examCategories
+      doesntHaveToPayLicenseFee
+      isValid
+      errorMessage
+      errorMessageEn
+    }
+  }
+`
+
 export const IS_COMPANY_VALID_QUERY = gql`
   query IsCompanyValid($nationalId: String!) {
     practicalExamIsCompanyValid(nationalId: $nationalId) {

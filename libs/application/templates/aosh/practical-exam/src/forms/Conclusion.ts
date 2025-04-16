@@ -14,7 +14,7 @@ export const Conclusion: Form = buildForm({
     buildFormConclusionSection({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.pageTitle,
-      alertTitle: conclusion.default.alertTitle, // TODO: Add seminar name from answers
+      alertTitle: conclusion.default.alertTitle,
       alertMessage: '',
       expandableHeader: conclusion.default.accordionTitle,
       expandableIntro: '',

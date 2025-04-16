@@ -66,7 +66,67 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const answers = application.answers as unknown as PracticalExam
+    // const answers = application.answers as unknown as PracticalExam
+    const answers = application.answers
+    //
+
+    const response =
+      await this.practicalExamClientService.submitPracticalExamApplication(
+        auth,
+        {
+          xCorrelationID: application.id,
+          workMachineExamRegistrationCreateDto: {
+            examLocation: {
+              // TODO examLocation from answers
+              address: '',
+              postalCode: '',
+              city: '', // TODO We do not have this
+            },
+            examees: [
+              {
+                // examinees and from examCategories
+                name: '', // examinees
+                nationalId: '', // examinees
+                email: '', // examinees
+                phoneNumber: '', // examinees
+                drivingLicenseNumber: '', // examinees
+                drivingLicenseCountryOfOrigin: '', // examinees
+                medicalCertificate: {
+                  // examCategories.medicalCertificate
+                  content: '',
+                  fileName: '',
+                  fileType: '',
+                },
+                examCategories: [
+                  // examCategories.categories and examCategories.instructor
+                  {
+                    examCategory: '',
+                    instructorNationalId: '',
+                  },
+                ],
+              },
+            ],
+            instructors: [
+              // instructors
+              {
+                nationalId: '',
+                email: '',
+                phoneNumber: '',
+              },
+            ],
+            paymentInfo: {
+              payerNationalId: '', // ssn of company ?
+              payerName: '', // company name ?
+              directPaymentId: '', // ??
+              textToDisplayOnInvoice: '', // "skyring"
+            },
+            contact: {
+              phoneNumber: '',
+              email: '',
+            },
+          },
+        },
+      )
 
     return Promise.resolve()
   }

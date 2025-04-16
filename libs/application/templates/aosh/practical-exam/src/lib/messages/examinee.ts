@@ -35,6 +35,32 @@ export const examinee = {
       defaultMessage: 'Velja útgáfuland',
       description: `placeholder for the country that issued the license`,
     },
+    csvDescription: {
+      id: 'aosh.pe.application:examinee.labels.csvDescription',
+      defaultMessage:
+        'Ef þú ert að skrá marga próftaka í einu í verkleg próf geturðu hlaðið inn .csv skjali hér. Athugið að .csv skjal yfirskrifar próftaka í töflu',
+      description: 'CSV description',
+    },
+    csvCopy: {
+      id: 'aosh.pe.application:examinee.labels.csvCopy',
+      defaultMessage: 'Sækja csv sniðmát',
+      description: 'Fetch CSV copy',
+    },
+    csvUpload: {
+      id: 'aosh.pe.application:examinee.labels.csvUpload',
+      defaultMessage: 'Hlaða inn .csv skjali ',
+      description: 'Upload .csv file',
+    },
+    csvHeader: {
+      id: 'aosh.pe.application:examinee.labels.csvUpload',
+      defaultMessage: 'Skrá marga próftaka í einu',
+      description: 'csv header text',
+    },
+    csvRemoveButton: {
+      id: 'aosh.pe.application:examinee.labels.csvRemoveButton',
+      defaultMessage: 'Fjarlægja ógjaldgenga þátttakendur',
+      description: 'csv remove button',
+    },
   }),
   tableRepeater: defineMessages({
     addExamineeButton: {
@@ -75,10 +101,42 @@ export const examinee = {
       description:
         'Error message when there is a duplicate email, phone or national id',
     },
+    csvDuplicateEmailError: {
+      id: 'aosh.pe.application:examinee.tableRepeater.csvDuplicateEmailError',
+      defaultMessage:
+        'netfang sem er nú þegar skráð. Ekki er hægt að skrá tvo með sama netfangi. Þú getur eytt þátttakanda út og skráð aftur með öðru netfangi. ',
+      description: 'csv upload duplicate email error label',
+    },
+    csvDuplicateNationalId: {
+      id: 'aosh.pe.application:examinee.tableRepeater.csvDuplicateNationalId',
+      defaultMessage:
+        'kennitala sem er nú þegar skráð. Ekki er hægt að skrá tvo með sömu kennitölu. Þú getur eytt próftaka og skráð aðra kennitölu.',
+      description: 'csv upload duplicate email error label',
+    },
+    csvInvalidEmailError: {
+      id: 'aosh.pe.application:examinee.tableRepeater.csvInvalidEmailError',
+      defaultMessage: 'Ógilt netfang',
+      description: 'csv upload invalid email error label',
+    },
+    csvInvalidPhoneError: {
+      id: 'aosh.pe.application:examinee.tableRepeater.csvInvalidPhoneError',
+      defaultMessage: 'Ógilt símanúmer',
+      description: 'csv upload invalid phone error label',
+    },
+    csvInvalidNationalId: {
+      id: 'aosh.pe.application:examinee.tableRepeater.csvInvalidNationalId',
+      defaultMessage: 'Ógild kennitala',
+      description: 'csv upload invalid ssn error label',
+    },
     removeAllButton: {
       id: 'aosh.pe.application:examinee.tableRepeater.removeAllButton',
       defaultMessage: 'Fjarlægja ógjaldgenga leiðbeinendur',
       description: 'Button label for removing all invalid examinees',
+    },
+    csvLineError: {
+      id: 'aosh.pe.application:examinee.tableRepeater.csvLineError',
+      defaultMessage: 'Villa í CSV skjali fyrir línur:',
+      description: 'Beginning of csv line error',
     },
   }),
 }

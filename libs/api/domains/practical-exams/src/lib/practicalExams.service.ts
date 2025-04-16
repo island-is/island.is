@@ -6,10 +6,12 @@ import {
   CompanyDto,
   ExamineeEligibilityDto,
   PracticalExamsClientService,
+  WorkMachineExamineeValidationDto,
   WorkMachineInstructorDto,
 } from '@island.is/clients/practical-exams-ver'
 import { ValidateInstrutorInput } from './dto/validaInstructorInput.input'
 import { ExamineeEligibilityInput } from './dto/examineeEligibilityInput.input'
+import { ExamineeValidationInput } from './dto/examineeValidationInput.input'
 
 @Injectable()
 export class PracticalExamsService {
@@ -27,8 +29,15 @@ export class PracticalExamsService {
     auth: User,
     input: ExamineeEligibilityInput,
   ): Promise<ExamineeEligibilityDto[]> {
-    console.log('PracticalExam.service.ts domain', input)
     return this.practicalExamService.examineeEligibility(auth, input)
+  }
+
+  async getExamineeValidation(
+    auth: User,
+    input: ExamineeValidationInput,
+  ): Promise<WorkMachineExamineeValidationDto> {
+    console.log('getExamineeeeeValidationaanan')
+    return this.practicalExamService.validateExaminee(auth, input)
   }
 
   async validateInstructor(

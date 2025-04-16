@@ -1,8 +1,10 @@
 import {
   buildCustomField,
+  buildHiddenInput,
   buildMultiField,
   buildSection,
   buildStaticTableField,
+  buildTableRepeaterField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { examCategories } from '../../../lib/messages'
@@ -26,21 +28,11 @@ export const examCategoriesSectionOthers = buildSection({
       description: examCategories.general.pageDescription,
       id: 'examCategoriesMultiField',
       children: [
-        buildStaticTableField({
-          title: '',
-          header: [
-            'Nafn',
-            'Kennitala',
-            'Netfang',
-            'Símanúmer',
-            'Ökursk.nr.',
-            'Útgáfuland',
-          ],
-          rows: ({ answers, externalData }) =>
-            getExaminees(answers as unknown, externalData),
+        buildHiddenInput({
+          id: 'examCategoryTable',
         }),
         buildCustomField({
-          id: 'examCategory',
+          id: 'examCategories',
           title: '',
           component: 'ExamCategories',
         }),

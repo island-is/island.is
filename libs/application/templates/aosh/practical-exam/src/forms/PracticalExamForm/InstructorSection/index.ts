@@ -8,9 +8,9 @@ import {
 } from '@island.is/application/core'
 import { instructor, shared } from '../../../lib/messages'
 import { submitInstructor } from '../../../utils/submitInstructor'
-import { ExternalData, FormValue } from '@island.is/application/types'
 import { TrueOrFalse } from '../../../utils/enums'
 import { InstructorType } from '../../../lib/dataSchema'
+import { FormValue } from '@island.is/application/types'
 
 export const instructorSection = buildSection({
   id: 'instructorSection',
@@ -94,8 +94,9 @@ export const instructorSection = buildSection({
           message: instructor.tableRepeater.instructorsGraphQLError,
         }),
         buildCustomField({
-          id: '',
+          id: 'instructor.validation',
           title: '',
+          doesNotRequireAnswer: true,
           component: 'InstructorValidation',
         }),
       ],
