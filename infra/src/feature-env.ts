@@ -199,9 +199,7 @@ yargs(process.argv.slice(2))
   .command({
     command: 'downstream',
     describe: 'get downstream services',
-    builder: () => {
-      return yargs
-    },
+    builder: () => {},
     handler: async (argv) => {
       const typedArgv = (argv as unknown) as Arguments
       const { habitat, affectedServices, env, skipAppName, writeDest } = parseArguments(
