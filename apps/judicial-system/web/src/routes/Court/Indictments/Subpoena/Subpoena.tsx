@@ -67,16 +67,12 @@ const Subpoena: FC = () => {
     defendant.isAlternativeService &&
     (!isArraignmentScheduled || newAlternativeServices.includes(defendant.id))
 
-  const toggleNewAlternativeService = (defendant: Defendant) => {
-    return isArraignmentScheduled
-      ? () => {
-          setNewAlternativeServices((previous) =>
-            defendant.isAlternativeService
-              ? previous.filter((id) => id !== defendant.id)
-              : [...previous, defendant.id],
-          )
-        }
-      : undefined
+  const toggleNewAlternativeService = (defendant: Defendant) => () => {
+    setNewAlternativeServices((previous) =>
+      defendant.isAlternativeService
+        ? previous.filter((id) => id !== defendant.id)
+        : [...previous, defendant.id],
+    )
   }
 
   const handleNavigationTo = useCallback(
@@ -96,13 +92,17 @@ const Subpoena: FC = () => {
             updateDefendant({
               caseId: workingCase.id,
               defendantId: defendant.id,
-              ...(defendant.isAlternativeService
-                ? {
-                    isAlternativeService: defendant.isAlternativeService,
-                    alternativeServiceDescription:
-                      defendant.alternativeServiceDescription,
-                  }
-                : { subpoenaType: defendant.subpoenaType }),
+              isAlternativeService: defendant.isAlternativeService,
+              // Clear the alternative service description if the defendant
+              // is not being served by alternative means
+              alternativeServiceDescription: defendant.isAlternativeService
+                ? defendant.alternativeServiceDescription
+                : null,
+              // Only change the subpoena type if the defendant is not
+              // being served by alternative means
+              subpoenaType: defendant.isAlternativeService
+                ? undefined
+                : defendant.subpoenaType,
             }),
           )
         })
@@ -179,8 +179,9 @@ const Subpoena: FC = () => {
                   alternativeServiceDescriptionDisabled:
                     !isRegisteringAlternativeServiceForDefendant(defendant),
                   subpoenaDisabled: !isIssuingSubpoenaForDefendant(defendant),
-                  toggleNewAlternativeService:
-                    toggleNewAlternativeService(defendant),
+                  toggleNewAlternativeService: isArraignmentScheduled
+                    ? toggleNewAlternativeService(defendant)
+                    : undefined,
                   children: isArraignmentScheduled && (
                     <Button
                       variant="text"
@@ -191,6 +192,16 @@ const Subpoena: FC = () => {
                           ...previous,
                           defendant.id,
                         ])
+                        // Clear any alternative service for the defendant
+                        toggleNewAlternativeService(defendant)()
+                        updateDefendantState(
+                          {
+                            defendantId: defendant.id,
+                            caseId: workingCase.id,
+                            isAlternativeService: false,
+                          },
+                          setWorkingCase,
+                        )
                       }}
                     >
                       {formatMessage(strings.newSubpoenaButtonText)}

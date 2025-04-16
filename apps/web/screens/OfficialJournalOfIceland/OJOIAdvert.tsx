@@ -114,7 +114,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                   {formatMessage(m.advert.signatureDate)}
                 </Text>
                 <Text variant="small">
-                  {formatDate(advert.signatureDate, 'dd. MMMM yyyy')}
+                  {formatDate(advert.signatureDate, 'd. MMMM yyyy')}
                 </Text>
               </Box>
 
@@ -123,7 +123,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                   {formatMessage(m.advert.publicationDate)}
                 </Text>
                 <Text variant="small">
-                  {formatDate(advert.publicationDate, 'dd. MMMM yyyy')}
+                  {formatDate(advert.publicationDate, 'd. MMMM yyyy')}
                 </Text>
               </Box>
             </Stack>
@@ -174,16 +174,13 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                             {correction.legacyDate
                               ? formatDate(
                                   correction.legacyDate,
-                                  'dd. MMMM yyyy',
+                                  'd. MMMM yyyy',
                                 )
                               : ''}
                           </Text>
                         ) : (
                           <Text variant="small">
-                            {formatDate(
-                              correction.createdDate,
-                              'dd. MMMM yyyy',
-                            )}
+                            {formatDate(correction.createdDate, 'd. MMMM yyyy')}
                           </Text>
                         )}
                       </Box>
@@ -281,7 +278,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
     >
       <OJOIAdvertDisplay
         advertNumber={advert.publicationNumber.full}
-        signatureDate={formatDate(advert.signatureDate, 'dd. MMMM yyyy')}
+        signatureDate={formatDate(advert.signatureDate, 'd. MMMM yyyy')}
         advertType={advert.type.title}
         advertSubject={advert.subject}
         advertText={advert.document.html}
