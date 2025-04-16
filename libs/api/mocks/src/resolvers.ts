@@ -15,6 +15,7 @@ import { resolvers as vehicleResolvers } from './domains/vehicles'
 import { resolvers as healthDirectorateResolvers } from './domains/health-directorate'
 import { resolvers as documentResolvers } from './domains/documents'
 import { resolvers as nationalRegistryResolvers } from './domains/national-registry'
+import { resolvers as userProfileResolvers } from './domains/user-profile'
 
 export const resolvers = createResolvers<Resolvers>(
   merge(
@@ -33,5 +34,6 @@ export const resolvers = createResolvers<Resolvers>(
     healthDirectorateResolvers,
     documentResolvers,
     nationalRegistryResolvers,
+    userProfileResolvers,
   ),
 )
