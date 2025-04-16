@@ -12,7 +12,11 @@ export {
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
-export { InstitutionType, prosecutorsOfficeTypes } from './lib/institution'
+export {
+  InstitutionType,
+  prosecutorsOfficeTypes,
+  isProsecutorsOffice,
+} from './lib/institution'
 export {
   CaseNotificationType,
   SubpoenaNotificationType,

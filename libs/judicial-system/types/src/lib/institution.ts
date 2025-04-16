@@ -14,6 +14,10 @@ export const prosecutorsOfficeTypes = [
   InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
 ]
 
+export const isProsecutorsOffice = (
+  institutionType: InstitutionType | null | undefined,
+) => institutionType && prosecutorsOfficeTypes.includes(institutionType)
+
 export interface Institution {
   id: string
   created: string

@@ -14,8 +14,8 @@ import {
   isIndictmentCase,
   isInvestigationCase,
   isProsecutionUser,
+  isProsecutorsOffice,
   isRestrictionCase,
-  prosecutorsOfficeTypes,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
@@ -79,10 +79,7 @@ const useSections = (
         isRestrictionCase(type) &&
         !isCompletedCase(state) &&
         !parentCase,
-      children: !(
-        user?.institution?.type &&
-        prosecutorsOfficeTypes.includes(user.institution.type)
-      )
+      children: !isProsecutorsOffice(user?.institution?.type)
         ? []
         : [
             {
@@ -244,10 +241,7 @@ const useSections = (
         isInvestigationCase(type) &&
         !isCompletedCase(state) &&
         !parentCase,
-      children: !(
-        user?.institution?.type &&
-        prosecutorsOfficeTypes.includes(user.institution.type)
-      )
+      children: !isProsecutorsOffice(user?.institution?.type)
         ? []
         : [
             {
@@ -1031,10 +1025,8 @@ const useSections = (
         Boolean(parentCase) &&
         !isCompletedCase(state),
       children:
-        !(
-          user?.institution?.type &&
-          prosecutorsOfficeTypes.includes(user.institution.type)
-        ) || section.children.length === 0
+        !isProsecutorsOffice(user?.institution?.type) ||
+        section.children.length === 0
           ? []
           : [
               {
@@ -1122,10 +1114,7 @@ const useSections = (
         isInvestigationCase(type) &&
         Boolean(parentCase) &&
         !isCompletedCase(state),
-      children: !(
-        user?.institution?.type &&
-        prosecutorsOfficeTypes.includes(user.institution.type)
-      )
+      children: !isProsecutorsOffice(user?.institution?.type)
         ? []
         : [
             {

@@ -11,6 +11,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isCoreUser,
+  isProsecutorsOffice,
   prosecutorsOfficeTypes,
 } from '@island.is/judicial-system/types'
 import {
@@ -219,8 +220,7 @@ export const UserForm: FC<Props> = ({
             required
           />
         </Box>
-        {user.institution?.type &&
-        prosecutorsOfficeTypes.includes(user.institution.type) ? (
+        {isProsecutorsOffice(user.institution?.type) ? (
           <>
             <Box className={styles.roleRow}>
               <Box className={styles.roleColumn}>
@@ -252,7 +252,7 @@ export const UserForm: FC<Props> = ({
               </Box>
             </Box>
             <Box className={styles.roleRow}>
-              {user.institution.type ===
+              {user.institution?.type ===
               InstitutionType.PUBLIC_PROSECUTORS_OFFICE ? (
                 <>
                   <Box className={styles.roleColumn}>
@@ -453,8 +453,7 @@ export const UserForm: FC<Props> = ({
             </Box>
           </Box>
         ) : null}
-        {user.institution?.type &&
-          prosecutorsOfficeTypes.includes(user.institution.type) &&
+        {isProsecutorsOffice(user.institution?.type &&) &&
           user.role === UserRole.PROSECUTOR && (
             <Box marginBottom={2}>
               <Checkbox

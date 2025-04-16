@@ -84,7 +84,7 @@ describe('useSections getSections', () => {
     }
 
     const res = result.current.getSections(c, u)
-    console.log('res', res)
+
     expect(res).toStrictEqual([
       {
         children: generateSubsteps(6),
