@@ -1,5 +1,6 @@
 import faker from 'faker'
 
+import { FileUploadStatus } from '@island.is/island-ui/core'
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
@@ -7,7 +8,6 @@ import {
   ReorderableItem,
   sortedFilesInChapter,
 } from './IndictmentsCaseFilesAccordionItem'
-import { FileUploadStatus } from '@island.is/island-ui/core'
 
 const caseFiles = [
   {
