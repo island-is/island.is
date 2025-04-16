@@ -13,7 +13,7 @@ import { useFileUpload } from '../../lib/hooks/useFileUpload'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
 
 interface Props {
-  uploadFiles: UploadFile[]
+  uploadFiles: UploadFileDeprecated[]
   fileKey: UploadFileType
   folderId: string
   hasError?: boolean
