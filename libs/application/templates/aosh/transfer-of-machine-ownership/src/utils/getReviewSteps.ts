@@ -1,4 +1,4 @@
-import { Operator, ReviewSectionProps, UserInformation } from '../shared'
+import { ReviewSectionProps, UserInformation } from '../shared'
 import { Application } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { review } from '../lib/messages'

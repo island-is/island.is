@@ -106,7 +106,7 @@ describe('Feature-deployment support', () => {
   it('dynamic service name generation', () => {
     expect(values.services.api.env).toEqual({
       A: 'web-service-a',
-      B: 'feature-web-service-b.islandis.svc.cluster.local',
+      B: 'feature-web-service-b',
       DB_USER: 'feature_feature_A_api',
       DB_NAME: 'feature_feature_A_api',
       DB_HOST: 'a',

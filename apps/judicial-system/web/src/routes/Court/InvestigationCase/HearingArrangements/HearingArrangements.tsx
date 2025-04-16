@@ -2,8 +2,15 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { AlertMessage, Box, RadioButton, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  RadioButton,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -17,12 +24,16 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
   useCourtArrangements,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { LegalRightsProtectorInputFields } from '@island.is/judicial-system-web/src/components/VictimInfo/LegalRightsProtectorInputFields'
 import {
   NotificationType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
@@ -41,6 +52,8 @@ const HearingArrangements = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, sendNotification, isSendingNotification } =
     useCase()
@@ -316,6 +329,39 @@ const HearingArrangements = () => {
               />
             </Box>
           )}
+          {workingCase.sessionArrangements ===
+            SessionArrangements.ALL_PRESENT &&
+            isNonEmptyArray(workingCase.victims) && (
+              <>
+                <SectionHeading
+                  title={
+                    workingCase.victims && workingCase.victims.length > 1
+                      ? 'Réttargæslumenn'
+                      : 'Réttargæslumaður'
+                  }
+                  tooltip={
+                    isDistrictCourtUser(user) ? (
+                      <Tooltip
+                        text="Lögmaður sem er valinn hér verður skipaður réttargæslumaður brotaþola í þinghaldi og fær sendan úrskurð rafrænt."
+                        placement="right"
+                      />
+                    ) : null
+                  }
+                />
+                {workingCase.victims.map((victim) => (
+                  <Box key={victim.id} component="section" marginBottom={4}>
+                    <BlueBox>
+                      <LegalRightsProtectorInputFields
+                        victim={victim}
+                        workingCase={workingCase}
+                        setWorkingCase={setWorkingCase}
+                        useVictimNameAsTitle
+                      />
+                    </BlueBox>
+                  </Box>
+                ))}
+              </>
+            )}
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter

@@ -6,12 +6,14 @@ import {
   buildCustomField,
   hasYes,
   YES,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
-  APPLICATION_TYPES,
+  ApplicationTypes,
   Operation,
   OpeningHours,
+  OpeningHour,
 } from '../../lib/constants'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { displayOpeningHours, get24HFormatTime } from '../../lib/utils'
@@ -34,8 +36,8 @@ export const sectionOverview = buildMultiField({
       label: m.operationType,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL
+        getValueViaPath(application.answers, 'applicationInfo.operation') ===
+        ApplicationTypes.HOTEL
           ? m.operationHotel
           : m.operationResturant,
     }),
@@ -44,9 +46,9 @@ export const sectionOverview = buildMultiField({
       width: 'half',
       value: ({ answers }: Application) =>
         `Flokkur ${
-          (answers.applicationInfo as Operation)?.category === '2'
+          getValueViaPath(answers, 'applicationInfo.category') === '2'
             ? 'II'
-            : (answers.applicationInfo as Operation)?.category === '3'
+            : getValueViaPath(answers, 'applicationInfo.category') === '3'
             ? 'III'
             : 'IV'
         }`,
@@ -57,25 +59,29 @@ export const sectionOverview = buildMultiField({
     }),
     buildKeyValueField({
       label: ({ answers }: Application) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL
+        getValueViaPath(answers, 'applicationInfo.operation') ===
+        ApplicationTypes.HOTEL
           ? m.typeHotel
           : m.typeResturant,
       width: 'half',
       value: ({ answers }: Application) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL
-          ? (answers.applicationInfo as Operation)?.typeHotel?.substring(2)
-          : (answers.applicationInfo as Operation)?.typeResturant?.map((type) =>
-              type.substring(2),
-            ),
+        getValueViaPath(answers, 'applicationInfo.operation') ===
+        ApplicationTypes.HOTEL
+          ? getValueViaPath<string>(
+              answers,
+              'applicationInfo.typeHotel',
+            )?.substring(2)
+          : getValueViaPath<Array<string>>(
+              answers,
+              'applicationInfo.typeResturant',
+            )?.map((type) => type.substring(2)),
     }),
     buildKeyValueField({
       label: m.openingHoursOutside,
       width: 'half',
       condition: (answers) => displayOpeningHours(answers),
       value: ({ answers }: Application) =>
-        hasYes((answers.applicationInfo as Operation)?.willServe)
+        hasYes(getValueViaPath<boolean>(answers, 'applicationInfo.willServe'))
           ? 'Já'
           : 'Nei',
     }),
@@ -95,21 +101,13 @@ export const sectionOverview = buildMultiField({
       label: m.operationName,
       width: 'half',
       value: (application: Application) =>
-        (
-          application.answers.info as {
-            operationName?: string
-          }
-        )?.operationName,
+        getValueViaPath<string>(application.answers, 'info.operationName'),
     }),
     buildKeyValueField({
       label: m.vskNr,
       width: 'half',
       value: (application: Application) =>
-        (
-          application.answers.info as {
-            vskNr?: string
-          }
-        )?.vskNr,
+        getValueViaPath<string>(application.answers, 'info.vskNr'),
     }),
     buildDescriptionField({
       id: 'overview.space2',
@@ -119,23 +117,18 @@ export const sectionOverview = buildMultiField({
       label: m.email,
       width: 'half',
       value: (application: Application) =>
-        (
-          application.answers.info as {
-            email?: string
-          }
-        )?.email,
+        getValueViaPath<string>(application.answers, 'info.email'),
     }),
     buildKeyValueField({
       label: m.phoneNumber,
       width: 'half',
       value: (application: Application) => {
-        const phone = (
-          application.answers.info as {
-            phoneNumber?: string
-          }
-        )?.phoneNumber
+        const phone = getValueViaPath<string>(
+          application.answers,
+          'info.phoneNumber',
+        )
 
-        return formatPhoneNumber(phone as string)
+        return formatPhoneNumber(phone ?? '')
       },
     }),
     buildDescriptionField({
@@ -205,12 +198,14 @@ export const sectionOverview = buildMultiField({
       width: 'half',
       condition: (answers) => displayOpeningHours(answers),
       value: (application: Application) => {
-        const weekdays = (application.answers.openingHours as OpeningHours)
-          .alcohol.weekdays
+        const weekdays = getValueViaPath<OpeningHour>(
+          application.answers,
+          'openingHours.alcohol.weekdays',
+        )
         return (
-          get24HFormatTime(weekdays.from) +
+          get24HFormatTime(weekdays?.from ?? '') +
           ' - ' +
-          get24HFormatTime(weekdays.to)
+          get24HFormatTime(weekdays?.to ?? '')
         )
       },
     }),
@@ -219,12 +214,14 @@ export const sectionOverview = buildMultiField({
       width: 'half',
       condition: (answers) => displayOpeningHours(answers),
       value: (application: Application) => {
-        const weekdays = (application.answers.openingHours as OpeningHours)
-          .alcohol.weekends
+        const weekdays = getValueViaPath<OpeningHour>(
+          application.answers,
+          'openingHours.alcohol.weekends',
+        )
         return (
-          get24HFormatTime(weekdays.from) +
+          get24HFormatTime(weekdays?.from ?? '') +
           ' - ' +
-          get24HFormatTime(weekdays.to)
+          get24HFormatTime(weekdays?.to ?? '')
         )
       },
     }),
@@ -240,40 +237,47 @@ export const sectionOverview = buildMultiField({
       space: 'gutter',
       marginBottom: 'gutter',
       condition: (answers) =>
-        hasYes((answers.applicationInfo as Operation)?.willServe) &&
-        displayOpeningHours(answers),
+        hasYes(
+          getValueViaPath<boolean>(answers, 'applicationInfo.willServe'),
+        ) && displayOpeningHours(answers),
     }),
     buildKeyValueField({
       label: m.weekdays,
       width: 'half',
       value: (application: Application) => {
-        const weekdays = (application.answers.openingHours as OpeningHours)
-          .alcohol.weekdays
+        const weekdays = getValueViaPath<OpeningHour>(
+          application.answers,
+          'openingHours.outside.weekdays',
+        )
         return (
-          get24HFormatTime(weekdays.from) +
+          get24HFormatTime(weekdays?.from ?? '') +
           ' - ' +
-          get24HFormatTime(weekdays.to)
+          get24HFormatTime(weekdays?.to ?? '')
         )
       },
       condition: (answers) =>
-        hasYes((answers.applicationInfo as Operation)?.willServe) &&
-        displayOpeningHours(answers),
+        hasYes(
+          getValueViaPath<boolean>(answers, 'applicationInfo.willServe'),
+        ) && displayOpeningHours(answers),
     }),
     buildKeyValueField({
       label: m.holidays,
       width: 'half',
       value: (application: Application) => {
-        const weekdays = (application.answers.openingHours as OpeningHours)
-          .alcohol.weekends
+        const weekdays = getValueViaPath<OpeningHour>(
+          application.answers,
+          'openingHours.outside.weekends',
+        )
         return (
-          get24HFormatTime(weekdays.from) +
+          get24HFormatTime(weekdays?.from ?? '') +
           ' - ' +
-          get24HFormatTime(weekdays.to)
+          get24HFormatTime(weekdays?.to ?? '')
         )
       },
       condition: (answers) =>
-        hasYes((answers.applicationInfo as Operation)?.willServe) &&
-        displayOpeningHours(answers),
+        hasYes(
+          getValueViaPath<boolean>(answers, 'applicationInfo.willServe'),
+        ) && displayOpeningHours(answers),
     }),
     buildDividerField({}),
     buildDescriptionField({
@@ -287,7 +291,10 @@ export const sectionOverview = buildMultiField({
       label: m.temporaryLicense,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.temporaryLicense as string[]).includes(YES)
+        getValueViaPath<Array<string>>(
+          application.answers,
+          'temporaryLicense',
+        )?.includes(YES)
           ? 'Já'
           : 'Nei',
     }),
@@ -295,14 +302,17 @@ export const sectionOverview = buildMultiField({
       label: m.debtClaimTitle,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.debtClaim as string[]).includes(YES)
+        getValueViaPath<Array<string>>(
+          application.answers,
+          'debtClaim',
+        )?.includes(YES)
           ? 'Já'
           : 'Nei',
     }),
     buildKeyValueField({
       label: m.other,
       value: (application: Application) =>
-        application.answers.otherInfoText as string,
+        getValueViaPath<string>(application.answers, 'otherInfoText'),
       condition: (answers) => !!answers.otherInfoText,
     }),
     buildDescriptionField({
