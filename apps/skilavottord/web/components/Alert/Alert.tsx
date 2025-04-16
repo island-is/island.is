@@ -20,9 +20,6 @@ export const Alert = ({ type }: { type: AlertType }) => {
   const {
     t: { alerts: t },
   } = useI18n()
-  if (!t.notFound.title) {
-    return null
-  }
 
   const message =
     type === AlertType.NOT_FOUND
