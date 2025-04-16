@@ -1,85 +1,86 @@
 name: 'Dagger action'
-on: 
-    workflow_call:
-        inputs:
-            debug:
-                required: false
-                type: boolean
-                default: false
-            branch:
-                required: false
-                type: string
-            sha: 
-                required: false
-                type: string
-            version:
-                required: false
-                type: string
-                default: "0.18.2"
-            module:
-                required: false
-                default: "./scripts/ci/dagger"
-                type: string
-            function: 
-                required: true
-                type: string
-            args:
-                required: false
-                type: string
-                default: ""
-        outputs:
-            output: 
-                description: The result of the Dagger function call
-                value: ${{ jobs.run_action.outputs.output }}
+on:
+  workflow_call:
+    inputs:
+      debug:
+        required: false
+        type: boolean
+        default: false
+      branch:
+        required: false
+        type: string
+      sha:
+        required: false
+        type: string
+      version:
+        required: false
+        type: string
+        default: '0.18.2'
+      module:
+        required: false
+        default: './scripts/ci/dagger'
+        type: string
+      function:
+        required: true
+        type: string
+      args:
+        required: false
+        type: string
+        default: ''
+    outputs:
+      output:
+        description: The result of the Dagger function call
+        value: ${{ jobs.run_action.outputs.output }}
 
 env:
-    _EXPERIMENTAL_DAGGER_RUNNER_HOST: ${{ secrets._EXPERIMENTAL_DAGGER_RUNNER_HOST }}
-    NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  _EXPERIMENTAL_DAGGER_RUNNER_HOST: ${{ secrets._EXPERIMENTAL_DAGGER_RUNNER_HOST }}
+  _EXPERIMENTAL_DAGGER_CACHE_CONFIG: ${{ secrets._EXPERIMENTAL_DAGGER_CACHE_CONFIG }}
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
 jobs:
-    run_action:
-        outputs:
-            output: ${{ steps.dagger.outputs.output }}
-        runs-on: arc-shared
-        steps:
-            - name: Evaluate options
-              id: options
-              run: |
-                if [ -n "${{ inputs.branch }}" ]; then
-                    echo "options=--action=branch --branch=${{ inputs.branch }}" >> $GITHUB_OUTPUT
-                elif [ -n "${{ inputs.sha }}" ]; then
-                    echo "options=--action=sha --sha=${{ inputs.sha }}" >> $GITHUB_OUTPUT
-                else
-                    echo "Neither 'branch' nor 'sha' is set. Exiting with status 1."
-                    exit 1
-                fi
-                if [ "${{ inputs.debug }}" = "true" ]; then
-                    echo "debug_options=--debug" >> $GITHUB_OUTPUT
-                else
-                    echo "debug_options=" >> $GITHUB_OUTPUT
-                fi
-            - name: Get ECR password
-              id: ecr-login
-              run: |
-                ECR_PASSWORD=$(aws ecr get-login-password)
-                echo "::add-mask::$ECR_PASSWORD"
-                echo "password=$ECR_PASSWORD" >> $GITHUB_OUTPUT
-            - name: Checkout dagger code
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 1
-                clean: true
-                sparse-checkout: |
-                    ${{ inputs.module }}/                    
-        
-            - name: Call Dagger Function
-              uses: dagger/dagger-for-github@8.0.0
-              id: dagger
-              env:
-                AWS_ECR_PASSWORD: ${{ steps.ecr-login.outputs.password }}
-              with:
-                dagger-flags: ${{ steps.options.outputs.debug_options}} --progress plain
-                engine-stop: 'false'
-                version: ${{ inputs.version }}
-                module: ${{ inputs.module }}
-                args: ${{ inputs.function }} ${{ inputs.args }} ${{ steps.options.outputs.options }} --AWS_ECR_PASSWORD=env://AWS_ECR_PASSWORD --NX_CLOUD_ACCESS_TOKEN=env://NX_CLOUD_ACCESS_TOKEN
-                verb: call
+  run_action:
+    outputs:
+      output: ${{ steps.dagger.outputs.output }}
+    runs-on: arc-shared
+    steps:
+      - name: Evaluate options
+        id: options
+        run: |
+          if [ -n "${{ inputs.branch }}" ]; then
+              echo "options=--action=branch --branch=${{ inputs.branch }}" >> $GITHUB_OUTPUT
+          elif [ -n "${{ inputs.sha }}" ]; then
+              echo "options=--action=sha --sha=${{ inputs.sha }}" >> $GITHUB_OUTPUT
+          else
+              echo "Neither 'branch' nor 'sha' is set. Exiting with status 1."
+              exit 1
+          fi
+          if [ "${{ inputs.debug }}" = "true" ]; then
+              echo "debug_options=--debug" >> $GITHUB_OUTPUT
+          else
+              echo "debug_options=" >> $GITHUB_OUTPUT
+          fi
+      - name: Get ECR password
+        id: ecr-login
+        run: |
+          ECR_PASSWORD=$(aws ecr get-login-password)
+          echo "::add-mask::$ECR_PASSWORD"
+          echo "password=$ECR_PASSWORD" >> $GITHUB_OUTPUT
+      - name: Checkout dagger code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          clean: true
+          sparse-checkout: |
+            ${{ inputs.module }}/
+
+      - name: Call Dagger Function
+        uses: dagger/dagger-for-github@8.0.0
+        id: dagger
+        env:
+          AWS_ECR_PASSWORD: ${{ steps.ecr-login.outputs.password }}
+        with:
+          dagger-flags: ${{ steps.options.outputs.debug_options}} --progress plain
+          engine-stop: 'false'
+          version: ${{ inputs.version }}
+          module: ${{ inputs.module }}
+          args: ${{ inputs.function }} ${{ inputs.args }} ${{ steps.options.outputs.options }} --AWS_ECR_PASSWORD=env://AWS_ECR_PASSWORD --NX_CLOUD_ACCESS_TOKEN=env://NX_CLOUD_ACCESS_TOKEN
+          verb: call
