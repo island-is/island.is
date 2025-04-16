@@ -18,6 +18,8 @@ const mockedInitialState = isMockMode
     })
   : undefined
 
+// Deployme
+
 export const App = () => (
   <ApolloProvider client={client}>
     <LocaleProvider locale={defaultLanguage} messages={{}}>
