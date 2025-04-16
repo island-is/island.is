@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import {
   InputFileUploadDeprecated,
-  UploadFile,
+  UploadFileDeprecated,
 } from '@island.is/island-ui/core'
 
 import { useIntl } from 'react-intl'
@@ -32,7 +32,7 @@ const Files = ({ uploadFiles, fileKey, folderId, hasError = false }: Props) => {
     onUploadRejection,
   } = useFileUpload(uploadFiles, folderId)
 
-  const fileToObject = (file: UploadFile) => {
+  const fileToObject = (file: UploadFileDeprecated) => {
     return {
       key: file.key,
       name: file.name,

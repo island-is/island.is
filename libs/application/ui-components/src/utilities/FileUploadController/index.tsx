@@ -7,9 +7,8 @@ import { getValueViaPath, coreErrorMessages } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
   InputFileUploadDeprecated,
-  UploadFile,
-  fileToObject,
-  FileUploadStatus,
+  UploadFileDeprecated,
+  fileToObjectDeprecated,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -35,7 +34,10 @@ const transformToAnswer = ({ name, key }: UploadFile): UploadFileAnswer => {
 }
 
 // Transform an form answer to an uploaded file object to display.
-const answerToUploadFile = ({ name, key }: UploadFile): UploadFile => {
+const answerToUploadFile = ({
+  name,
+  key,
+}: UploadFileDeprecated): UploadFile => {
   return { name, key, status: 'done' }
 }
 
@@ -212,7 +214,7 @@ export const FileUploadController = ({
     setSumOfFileSizes(totalNewFileSize + sumOfFileSizes)
 
     const newUploadFiles = addedUniqueFiles.map((f) =>
-      fileToObject(f, 'uploading'),
+      fileToObjectDeprecated(f, 'uploading'),
     )
 
     // Add the files to the list so that the control presents them
