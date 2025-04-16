@@ -11,7 +11,10 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { hasMunicipalityRole } from '@island.is/skilavottord-web/auth/utils'
+import {
+  hasMunicipalityRole,
+  Page,
+} from '@island.is/skilavottord-web/auth/utils'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import {
@@ -42,6 +45,7 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   let title = t.title
   let info = t.info
   let empty = t.empty
+  let permission = 'recyclingCompanies' as Page
 
   if (router.route === routes.municipalities.baseRoute) {
     activeSection = 1
@@ -50,6 +54,7 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
     empty = mt.empty
     isMunicipalityPage = true
     buttonText = t.buttons.addMunicipality
+    permission = 'municipalities'
   }
 
   // Show only recycling companies for the municipality
@@ -100,7 +105,7 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <AuthGuard permission="recyclingCompanies" loading={loading}>
+    <AuthGuard permission={permission} loading={loading}>
       <PartnerPageLayout
         side={<NavigationLinks activeSection={activeSection} />}
       >

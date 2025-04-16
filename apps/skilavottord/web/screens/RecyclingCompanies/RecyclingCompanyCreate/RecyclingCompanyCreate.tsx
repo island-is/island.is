@@ -5,7 +5,10 @@ import React, { FC, useContext } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { Box, Breadcrumbs, Stack, toast } from '@island.is/island-ui/core'
-import { hasMunicipalityRole } from '@island.is/skilavottord-web/auth/utils'
+import {
+  hasMunicipalityRole,
+  Page,
+} from '@island.is/skilavottord-web/auth/utils'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -37,6 +40,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   let info = t.recyclingCompany.add.info
   let activeSection = 2
   let route = routes.recyclingCompanies.baseRoute
+  let permission = 'recyclingCompanies' as Page
 
   const isMunicipalityPage = router.route === routes.municipalities.add
 
@@ -53,6 +57,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
     title = mt.municipality.add.title
     info = mt.municipality.add.info
     route = routes.municipalities.baseRoute
+    permission = 'municipalities'
   }
 
   const methods = useForm<FormData>({
@@ -122,7 +127,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <AuthGuard permission="recyclingCompanies">
+    <AuthGuard permission={permission}>
       <PartnerPageLayout
         side={<NavigationLinks activeSection={activeSection} />}
       >

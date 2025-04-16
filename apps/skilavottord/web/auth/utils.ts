@@ -9,6 +9,7 @@ export type Page =
   | 'accessControl'
   | 'accessControlCompany'
   | 'companyInfo'
+  | 'municipalities'
 
 export const hasDeveloperRole = (role: Role | undefined) =>
   role === Role.developer

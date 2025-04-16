@@ -11,8 +11,11 @@ import {
   Stack,
   toast,
 } from '@island.is/island-ui/core'
-import { hasMunicipalityRole } from '@island.is/skilavottord-web/auth/utils'
-import { NotFound } from '@island.is/skilavottord-web/components'
+import {
+  hasMunicipalityRole,
+  Page,
+} from '@island.is/skilavottord-web/auth/utils'
+import { Alert, AlertType } from '@island.is/skilavottord-web/components'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { Query } from '@island.is/skilavottord-web/graphql/schema'
@@ -91,6 +94,7 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   let info = t.recyclingCompany.view.info
   let activeSection = 2
   let route = routes.recyclingCompanies.baseRoute
+  let permission = 'recyclingCompanies' as Page
 
   useEffect(() => {
     setValue('isMunicipality', isMunicipalityPage)
@@ -103,10 +107,11 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
     title = mt.municipality.view.title
     info = mt.municipality.view.info
     route = routes.municipalities.baseRoute
+    permission = 'municipalities'
   }
 
   if (!loading && (!data || error)) {
-    return <NotFound />
+    return <Alert type={AlertType.NOT_FOUND} />
   }
 
   const navigateToBaseRoute = () => {
@@ -141,7 +146,7 @@ const RecyclingCompanyUpdate: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <AuthGuard permission="recyclingCompanies" loading={loading}>
+    <AuthGuard permission={permission} loading={loading}>
       <PartnerPageLayout
         side={<NavigationLinks activeSection={activeSection} />}
       >

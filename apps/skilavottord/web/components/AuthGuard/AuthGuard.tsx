@@ -1,8 +1,8 @@
-import React, { FC, ReactNode, useContext } from 'react'
-import { UserContext } from '@island.is/skilavottord-web/context'
+import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { hasPermission, Page } from '@island.is/skilavottord-web/auth/utils'
-import { NotFound } from '@island.is/skilavottord-web/components'
-import { LoadingDots, Box } from '@island.is/island-ui/core'
+import { Alert, AlertType } from '@island.is/skilavottord-web/components'
+import { UserContext } from '@island.is/skilavottord-web/context'
+import { FC, ReactNode, useContext } from 'react'
 
 interface AuthGuardProps {
   permission: Page
@@ -26,7 +26,7 @@ const AuthGuard: FC<AuthGuardProps> = ({ permission, children, loading }) => {
   }
 
   if (!isAuthenticated || !hasPermission(permission, user?.role)) {
-    return <NotFound />
+    return <Alert type={AlertType.ACCEES_DENIED} />
   }
 
   return children
