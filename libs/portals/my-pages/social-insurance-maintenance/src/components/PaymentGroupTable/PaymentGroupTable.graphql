@@ -3,11 +3,6 @@ query getPaymentPlan {
     totalPayments
     totalPaymentsSubtraction
     totalPaymentsReceived
-    totalMonthlyPaymentHistory {
-      __typename
-      monthIndex
-      amount
-    }
     paymentGroups {
       __typename
       type
