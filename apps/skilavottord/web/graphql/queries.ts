@@ -156,3 +156,64 @@ export const SkilavottordRecyclingPartnersQuery = gql`
     }
   }
 `
+export const SkilavottordVehicleReadyToDeregisteredQuery = gql`
+  query skilavottordVehicleReadyToDeregisteredQuery($permno: String!) {
+    skilavottordVehicleReadyToDeregistered(permno: $permno) {
+      vehicleId
+      vehicleType
+      newregDate
+      vinNumber
+      mileage
+      recyclingRequests {
+        nameOfRequestor
+      }
+    }
+  }
+`
+
+export const SkilavottordTrafficQuery = gql`
+  query skilavottordTrafficQuery($permno: String!) {
+    skilavottordTraffic(permno: $permno) {
+      permno
+      outInStatus
+      useStatus
+      useStatusName
+    }
+  }
+`
+
+export const SkilavottordRecyclingRequestMutation = gql`
+  mutation skilavottordRecyclingRequestMutation(
+    $permno: String!
+    $requestType: RecyclingRequestTypes!
+  ) {
+    createSkilavottordRecyclingRequest(
+      permno: $permno
+      requestType: $requestType
+    ) {
+      ... on RequestErrors {
+        message
+        operation
+      }
+      ... on RequestStatus {
+        status
+      }
+    }
+  }
+`
+
+export const UpdateSkilavottordVehicleInfoMutation = gql`
+  mutation updateSkilavottordVehicleInfo(
+    $permno: String!
+    $mileage: Float!
+    $plateCount: Float!
+    $plateLost: Boolean!
+  ) {
+    updateSkilavottordVehicleInfo(
+      permno: $permno
+      mileage: $mileage
+      plateCount: $plateCount
+      plateLost: $plateLost
+    )
+  }
+`
