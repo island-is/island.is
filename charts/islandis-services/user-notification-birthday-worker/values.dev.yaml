@@ -98,7 +98,7 @@ resources:
   requests:
     cpu: '100m'
     memory: '128Mi'
-schedule: '@hourly'
+schedule: '@midnight'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
