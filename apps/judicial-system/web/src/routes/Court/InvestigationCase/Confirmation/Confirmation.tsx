@@ -68,9 +68,18 @@ const Confirmation: FC = () => {
   )
   const isAssignedJudge = user && workingCase.judge?.id === user.id
   const isAssignedRegistrar = user && workingCase.registrar?.id === user.id
-  const hideNextButton =
-    (!isCorrectingRuling && !isAssignedJudge) ||
-    (isCorrectingRuling && !isAssignedJudge && !isAssignedRegistrar)
+
+  const hideNextButton = () => {
+    if (workingCase.isCompletedWithoutRuling) {
+      return false
+    }
+
+    if (isCorrectingRuling) {
+      return !isAssignedJudge && !isAssignedRegistrar
+    }
+
+    return !isAssignedJudge
+  }
 
   const completeCase = async () => {
     if (isCompletedCase(workingCase.state)) {
@@ -210,9 +219,9 @@ const Confirmation: FC = () => {
               : 'destructive'
           }
           onNextButtonClick={handleNextButtonClick}
-          hideNextButton={hideNextButton}
+          hideNextButton={hideNextButton()}
           infoBoxText={
-            hideNextButton
+            hideNextButton()
               ? formatMessage(strings.onlyAssigendJudgeCanSign)
               : undefined
           }
