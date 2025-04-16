@@ -94,7 +94,7 @@ export * from './lib/Select/Select.types'
 export * from './lib/Input/Input'
 export {
   InputFileUploadDeprecated,
-  UploadFileStatusDeprecated,
+  type UploadFileStatusDeprecated,
   FileUploadStatusDeprecated,
   UploadFileDeprecated,
   fileToObjectDeprecated,
