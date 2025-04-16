@@ -1,13 +1,8 @@
 import {
   buildAsyncSelectField,
-  buildCheckboxField,
-  buildDateField,
   buildDescriptionField,
   buildDividerField,
   buildMultiField,
-  buildNationalIdWithNameField,
-  buildPhoneField,
-  buildRadioField,
   buildSelectField,
   buildSubSection,
   buildTextField,
@@ -25,13 +20,13 @@ export const setOnChangeSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'descriptionField',
-          description: `Set on change allows a field to set value in other fields when its value or selection changes. 
-            Below are some examples of fields that will set value in the bottom field when changed. 
+          description: `Set on change allows a field to set value in other fields when its value or selection changes.
+            Below are some examples of fields that will set value in the bottom field when changed.
             Note that the fields that are set can be anywhere in the application, not just on the same screen.`,
         }),
         buildDescriptionField({
           id: 'descriptionField2',
-          description: `To try it out simply enter some text in the bottom text field 
+          description: `To try it out simply enter some text in the bottom text field
           and change the selections in any of the other fields.`,
         }),
 
