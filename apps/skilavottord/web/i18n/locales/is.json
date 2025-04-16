@@ -329,7 +329,13 @@
         "primaryButton": "Reyna aftur",
         "secondaryButton": "Hætta við"
       },
-      "currentMileage": "Núverandi kílómetrastaða",
+      "currentMileage": {
+        "label": "Núverandi kílómetrastaða",
+        "rules": {
+          "validate": "Núverandi km staða er lægri en skráð km staða"
+        },
+        "info": "Móttökuaðila ber að skrá núverandi kílómetrastöðu við afskráningu"
+      },
       "numberplate": {
         "sectionTitle": "Upplýsingar um númeraplötur",
         "alert": {
