@@ -13,7 +13,7 @@ import { Model } from '../models/model.model'
 import { SubCategory } from '../models/subCategory.model'
 import { TechInfoItem } from '../models/techInfoItem'
 import { GetWorkMachineSubCategoryTechInfoItemsInput } from '../dto/getSubCategoriesTechItems.input'
-import { ModelSubCategory } from '../dto/modelCategory.dto'
+import { type ModelSubCategory } from '../dto/modelCategory.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver(() => SubCategory)

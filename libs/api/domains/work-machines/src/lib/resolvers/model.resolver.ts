@@ -11,7 +11,7 @@ import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { WorkMachinesService } from '../workMachines.service'
 import { Model } from '../models/model.model'
 import { Category } from '../models/category.model'
-import { ModelDto } from '../workMachines.types'
+import { type ModelDto } from '../workMachines.types'
 import { GetWorkMachineModelCategoriesInput } from '../dto/getModelCategories.input'
 import { ModelSubCategory } from '../dto/modelCategory.dto'
 
