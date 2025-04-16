@@ -19,7 +19,7 @@ module.exports = {
           Promise.all([
             queryInterface.bulkUpdate(
               'institution',
-              { type: 'DISCTRICT_PROSECUTORS_OFFICE' },
+              { type: 'DISTRICT_PROSECUTORS_OFFICE' },
               { id: 'fbbe0ebd-33f1-4a8f-84ba-8e4b8e8b16b1' },
               { transaction },
             ),
@@ -50,7 +50,7 @@ module.exports = {
           {
             type: [
               'POLICE_PROSECUTORS_OFFICE',
-              'DISCTRICT_PROSECUTORS_OFFICE',
+              'DISTRICT_PROSECUTORS_OFFICE',
               'PUBLIC_PROSECUTORS_OFFICE',
             ],
           },
