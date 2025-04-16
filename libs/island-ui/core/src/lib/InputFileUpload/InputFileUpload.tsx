@@ -312,7 +312,7 @@ export const InputFileUpload: FC<Props> = (props) => {
       textAlign="center"
       padding={4}
       className={cn(styles.container, { [styles.containerDisabled]: disabled })}
-      {...getRootProps({ getActiveStyle })}
+      {...getRootProps({ style: getActiveStyle })}
     >
       {title && (
         <Text variant="h4" as="h4">
