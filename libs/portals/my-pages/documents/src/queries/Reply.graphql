@@ -1,0 +1,6 @@
+mutation Reply($input: DocumentReplyInput!) {
+  documentsV2Reply(input: $input) {
+    id
+    email
+  }
+}

@@ -31,6 +31,7 @@ import { FavAndStash } from '../FavAndStash/FavAndStash'
 import UrgentTag from '../UrgentTag/UrgentTag'
 import AvatarImage from './AvatarImage'
 import * as styles from './DocumentLine.css'
+import { Reply } from '../../lib/types'
 
 interface Props {
   documentLine: DocumentV2
@@ -82,6 +83,11 @@ export const DocumentLine: FC<Props> = ({
     setDocumentDisplayError,
     setDocLoading,
     setLocalRead,
+    setReplyable,
+    setReplies,
+    setReplyOpen,
+    setReply,
+    setClosedForMoreReplies,
     categoriesAvailable,
     localRead,
   } = useDocumentContext()
@@ -174,6 +180,41 @@ export const DocumentLine: FC<Props> = ({
             displayPdf(docContent, actions, alert)
             setDocumentDisplayError(undefined)
             setLocalRead([...localRead, documentLine.id])
+            setReplyable(data?.documentV2?.replyable ?? false)
+            setReplyOpen(false)
+            setReply(undefined)
+            if (data?.documentV2?.ticket) {
+              setClosedForMoreReplies(
+                data?.documentV2?.closedForMoreReplies ?? undefined,
+              )
+              const reply: Reply = {
+                id: data.documentV2?.ticket?.id,
+                createdDate: data.documentV2?.ticket?.createdDate,
+                updatedDate: data.documentV2?.ticket?.updatedDate,
+                subject: data.documentV2?.ticket?.subject,
+                authorId: data.documentV2?.ticket?.authorId,
+                status: data.documentV2?.ticket?.status,
+                comments: data.documentV2?.ticket?.comments?.map(
+                  (item, index) => {
+                    if (
+                      index ===
+                      (data.documentV2?.ticket?.comments?.length ?? 0) - 1
+                    ) {
+                      return {
+                        ...item,
+                        hide: false,
+                      }
+                    } else
+                      return {
+                        ...item,
+                        hide: true,
+                      }
+                  },
+                ),
+              }
+
+              setReplies(reply)
+            }
           } else {
             setDocumentDisplayError(formatMessage(messages.documentErrorLoad))
           }
