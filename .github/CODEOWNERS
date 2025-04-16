@@ -248,7 +248,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/reference-template/                                                           @island-is/norda
 
 /libs/application/template-api-modules/src/lib/modules/templates/accident-notification/                   @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/child-residence-change-v2/               @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/children-residence-change-v2/               @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/complaints-to-althingi-ombudsman/        @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/               @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/document-provider-onboarding/            @island-is/norda
