@@ -8,6 +8,8 @@ import {
   isAcceptingCaseDecision,
   isDistrictCourtUser,
   isInvestigationCase,
+  isPrisonAdminUser,
+  isPrisonStaffUser,
   isPrisonSystemUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -81,6 +83,21 @@ const CaseDocuments: FC<Props> = ({
 
   const isRulingRequired = !workingCase.isCompletedWithoutRuling
 
+  const showRuling: () => boolean = () => {
+    if (isPrisonStaffUser(user)) {
+      return false
+    }
+
+    if (isPrisonAdminUser(user)) {
+      return (
+        isRestrictionCase(workingCase.type) ||
+        workingCase.type === CaseType.PAROLE_REVOCATION
+      )
+    }
+
+    return true
+  }
+
   return (
     <Box marginBottom={10}>
       <Text as="h3" variant="h3" marginBottom={1}>
@@ -141,7 +158,7 @@ const CaseDocuments: FC<Props> = ({
               ))}
           </PdfButton>
         </li>
-        {!isPrisonSystemUser(user) && (
+        {showRuling() && (
           <li>
             <PdfButton
               renderAs="row"
