@@ -13,7 +13,7 @@ import {
   CanSignInput,
   AddListsInput,
 } from './signature-collection.types'
-import { Collection } from './types/collection.dto'
+import { Collection, CollectionType } from './types/collection.dto'
 import { List, SignedList, getSlug, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { Signee } from './types/user.dto'
@@ -195,8 +195,8 @@ export class SignatureCollectionClientService {
     const {
       id,
       isActive,
-      isPresidential,
       areas: collectionAreas,
+      collectionType,
     } = await this.currentCollection()
 
     // check if collectionId is current collection and current collection is open
@@ -208,6 +208,7 @@ export class SignatureCollectionClientService {
     const { canCreate, canCreateInfo, name } = await this.getSignee(auth)
     if (!canCreate) {
       // allow parliamentary owners to add more areas to their collection
+      const isPresidential = collectionType === CollectionType.Presidential
       if (
         !isPresidential &&
         !(
@@ -297,7 +298,9 @@ export class SignatureCollectionClientService {
   }
 
   async unsignList(listId: string, auth: User): Promise<Success> {
-    const { isPresidential } = await this.currentCollection()
+    const { collectionType } = await this.currentCollection()
+    const isPresidential = collectionType === CollectionType.Presidential
+
     const { signatures } = await this.getSignee(auth)
     const activeSignature = signatures?.find((signature) =>
       isPresidential ? signature.valid : signature.listId === listId,
@@ -318,7 +321,7 @@ export class SignatureCollectionClientService {
     { collectionId, listIds }: { collectionId: string; listIds?: string[] },
     auth: User,
   ): Promise<Success> {
-    const { id, isPresidential, isActive } = await this.currentCollection()
+    const { id, collectionType, isActive } = await this.currentCollection()
     const { ownedLists, candidate } = await this.getSignee(auth)
     const { nationalId } = auth
     if (candidate?.nationalId !== nationalId || !candidate.id) {
@@ -329,7 +332,7 @@ export class SignatureCollectionClientService {
       return { success: false, reasons: [ReasonKey.CollectionNotOpen] }
     }
     // For presidentail elections remove all lists for owner, else remove selected lists
-    if (isPresidential) {
+    if (collectionType === CollectionType.Presidential) {
       await this.getApiWithAuth(this.candidateApi, auth).frambodIDDelete({
         iD: parseInt(candidate.id),
       })
@@ -370,7 +373,7 @@ export class SignatureCollectionClientService {
 
   async getSignedList(auth: User): Promise<SignedList[] | null> {
     const { signatures } = await this.getSignee(auth)
-    const { endTime, isPresidential } = await this.currentCollection()
+    const { endTime, collectionType } = await this.currentCollection()
     if (!signatures) {
       return null
     }
@@ -389,12 +392,14 @@ export class SignatureCollectionClientService {
           isDigital: signature.isDigital,
           pageNumber: signature.pageNumber,
           isValid: signature.valid,
-          canUnsign: isPresidential
-            ? signature.isDigital &&
-              signature.valid &&
-              list.active &&
-              signedThisPeriod
-            : !signature.locked,
+          // TODO: consider extracting this into a helper function, canUnsign(ctype: CollectionType) => bool
+          canUnsign:
+            collectionType === CollectionType.Presidential
+              ? signature.isDigital &&
+                signature.valid &&
+                list.active &&
+                signedThisPeriod
+              : !signature.locked,
           ...list,
         } as SignedList
       }),
@@ -424,7 +429,7 @@ export class SignatureCollectionClientService {
 
   async getSignee(auth: User, nationalId?: string): Promise<Signee> {
     const collection = await this.currentCollection()
-    const { id, isPresidential, isActive, areas } = collection
+    const { id, collectionType, isActive, areas } = collection
     try {
       const user = await this.getApiWithAuth(
         this.collectionsApi,
@@ -446,17 +451,15 @@ export class SignatureCollectionClientService {
           ? user.medmaelalistar?.map((list) => mapListBase(list))
           : []
 
-      const {
-        success: canCreate,
-        reasons: canCreateInfo,
-      } = this.sharedService.canCreate({
-        requirementsMet: user.maFrambod,
-        canCreateInfo: user.maFrambodInfo,
-        ownedLists,
-        isPresidential,
-        isActive,
-        areas,
-      })
+      const { success: canCreate, reasons: canCreateInfo } =
+        this.sharedService.canCreate({
+          requirementsMet: user.maFrambod,
+          canCreateInfo: user.maFrambodInfo,
+          ownedLists,
+          collectionType,
+          isActive,
+          areas,
+        })
 
       const { success: canSign, reasons: canSignInfo } = await this.canSign({
         requirementsMet: user.maKjosa,

@@ -35,5 +35,5 @@ export const ClearAnswers: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       return [true, null]
     })
 
-  return <></>
+  return null
 }

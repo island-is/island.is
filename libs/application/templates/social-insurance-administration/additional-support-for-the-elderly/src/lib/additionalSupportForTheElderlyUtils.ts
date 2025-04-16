@@ -4,7 +4,6 @@ import {
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
-  AdditionalInformation,
   Attachments,
   BankInfo,
   Eligible,
@@ -159,11 +158,9 @@ export const getAttachments = (application: Application) => {
   }
 
   const { answers } = application
-  
-  const {
-    additionalAttachments,
-    additionalAttachmentsRequired,
-  } = getApplicationAnswers(answers)
+
+  const { additionalAttachments, additionalAttachmentsRequired } =
+    getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
   const additionalDocuments = [
