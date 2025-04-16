@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { LoadingDots, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
@@ -9,12 +8,6 @@ import * as styles from './index.css'
 
 export default function ThreeDSecureSuccessPage() {
   const { formatMessage } = useLocale()
-
-  useEffect(() => {
-    setTimeout(() => {
-      window.close()
-    }, 5000)
-  })
 
   return (
     <div className={styles.container}>
