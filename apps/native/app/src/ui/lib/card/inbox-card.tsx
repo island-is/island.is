@@ -40,7 +40,7 @@ export function InboxCard({
     <PressableHighlight
       highlightColor={theme.shade.shade400}
       onPress={() => onPress(id)}
-      testID={testIDs.INBOX_ITEM}
+      testID={`${testIDs.INBOX_ITEM}_${id}`}
     >
       <ListItem
         title={senderName ?? ''}
