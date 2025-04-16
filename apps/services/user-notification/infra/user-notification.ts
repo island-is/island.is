@@ -222,7 +222,7 @@ export const userNotificationBirthdayWorkerSetup = (services: {
     })
     .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .extraAttributes({
-      dev: { schedule: '@midnight' },
+      dev: { schedule: '0 12 * * *' }, // 12 at noon every day
       staging: { schedule: '@midnight' },
       prod: { schedule: '@midnight' },
     })
