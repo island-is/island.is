@@ -22,38 +22,38 @@ export class UserNotificationBirthday18WorkerService {
   }
 
   async dispatchBirthdayNotifications() {
-    const birthdays = ['0101303019', '0101307789', '0101302399']
+    const birthdays = await this.nationalRegistryService.get18YearOlds()
     this.logger.info(
       `User-notifications-birthday-worker: About to send messages for ${birthdays.length} birthdays`,
     )
     await Promise.all(
-      birthdays.map(async (birthdaySsn) => {
-        const body: CreateHnippNotificationDto = {
-          senderId: InstitutionNationalIds.STAFRAENT_ISLAND,
-          recipient: birthdaySsn,
-          templateId: 'HNIPP.DIGITALICELAND.BIRTHDAYMESSAGE',
-          // This PR will not be merged until the national registry v3 applications client
-          // will be updated
-          args: [
-            {
-              key: 'name',
-              value: '',
-            },
-          ],
-        }
-        const id = await this.queue.add(body)
-        const flattenedArgs: Record<string, string> = {}
-        for (const arg of body.args) {
-          flattenedArgs[arg.key] = arg.value
-        }
-        this.logger.info('Message queued', {
-          messageId: id,
-          ...flattenedArgs,
-          ...body,
-          args: {}, // Remove args, since they're in a better format in `flattenedArgs`
-          queue: { url: this.queue.url, name: this.queue.queueName },
-        })
-      }),
+      birthdays
+        .filter((i) => i.ssn !== null && i.name !== null)
+        .map(async (birthdayIndividual) => {
+          const body: CreateHnippNotificationDto = {
+            senderId: InstitutionNationalIds.STAFRAENT_ISLAND,
+            recipient: birthdayIndividual.ssn ?? '', // Shouldn't be an issue since we've filtered the values above
+            templateId: 'HNIPP.DIGITALICELAND.BIRTHDAYMESSAGE',
+            args: [
+              {
+                key: 'name',
+                value: birthdayIndividual.name ?? '', // Shouldn't be an issue since we've filtered the values above
+              },
+            ],
+          }
+          const id = await this.queue.add(body)
+          const flattenedArgs: Record<string, string> = {}
+          for (const arg of body.args) {
+            flattenedArgs[arg.key] = arg.value
+          }
+          this.logger.info('Message queued', {
+            messageId: id,
+            ...flattenedArgs,
+            ...body,
+            args: {}, // Remove args, since they're in a better format in `flattenedArgs`
+            queue: { url: this.queue.url, name: this.queue.queueName },
+          })
+        }),
     ).catch((e) =>
       this.logger.warn(
         'User-notifications-birthday-worker error on notification',
