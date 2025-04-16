@@ -185,7 +185,7 @@ yargs(process.argv.slice(2))
             fs.writeFileSync(`${writeDest}/${svc.name()}/values.yaml`, svcString);
           } catch (error) {
             console.log(`Failed to write values file for ${svc.name()}:`, error)
-            throw new Error(`Failed to write values file for ${svc.name()}`);
+            throw new Error(error);
           }
         } else {
           writeToOutput(
@@ -194,34 +194,6 @@ yargs(process.argv.slice(2))
           )
         }
       })
-    },
-  })
-  .command({
-    command: 'downstream',
-    describe: 'get downstream services',
-    builder: () => {
-      return yargs
-    },
-    handler: async (argv) => {
-      const typedArgv = (argv as unknown) as Arguments
-      const { habitat, affectedServices, env, skipAppName, writeDest } = parseArguments(
-        typedArgv,
-      )
-      const { included: featureYaml } = await getFeatureAffectedServices(
-        habitat,
-        affectedServices.slice(),
-        ExcludedFeatureDeploymentServices,
-        env,
-      )
-      
-      const affectedServiceNames = affectedServices.map((svc) => svc.name())
-
-      const formattedStringList = featureYaml.map((svc) => svc.name()).filter((name) => !affectedServiceNames.includes(name)).toString()
-      
-      writeToOutput(
-        formattedStringList,
-        typedArgv.output,
-      )
     },
   })
   .command({
@@ -289,7 +261,7 @@ yargs(process.argv.slice(2))
         fs.writeFileSync(`${writeDest}/${affectedServices[0].name()}/bootstrap-fd-job.yaml`, svcString);
         } catch (error) {
           console.log(`Failed to write values file for ${affectedServices[0].name()}:`, error)
-          throw new Error(`Failed to write values for ${affectedServices[0].name()}`);
+          throw new Error(error);
         }
       } else {
         await writeToOutput(svcString, typedArgv.output)
