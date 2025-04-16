@@ -46,19 +46,19 @@ export type EntityOption = Option & {
   department?: OfficialJournalOfIcelandAdvertEntity
 }
 
+type Entity =
+  | OfficialJournalOfIcelandAdvertEntity
+  | OfficialJournalOfIcelandAdvertType
+  | OfficialJournalOfIcelandAdvertCategory
+  | OfficialJournalOfIcelandAdvertMainCategory
+
 export const mapEntityToOptions = (
-  entities?: Array<
-    | OfficialJournalOfIcelandAdvertEntity
-    | OfficialJournalOfIcelandAdvertType
-    | OfficialJournalOfIcelandAdvertCategory
-    | OfficialJournalOfIcelandAdvertMainCategory
-  >,
+  entities?: Array<Entity>,
 ): EntityOption[] => {
   if (!entities) {
     return []
   }
-  const sortedEntities = sortBy(entities, (d) => d.title.trim())
-
+  const sortedEntities = entities.sort(sortAlpha<Entity>('title'))
   return sortedEntities.map((e) => {
     if (e.__typename === 'OfficialJournalOfIcelandAdvertCategory') {
       return {
