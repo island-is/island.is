@@ -30,7 +30,7 @@ interface AppealInfo {
 }
 
 interface IndictmentInfo {
-  indictmentCompletedDate?: string
+  rulingDate?: string
   indictmentAppealDeadline?: string
   indictmentVerdictViewedByAll?: boolean
   indictmentVerdictAppealDeadlineExpired?: boolean
@@ -185,14 +185,11 @@ export const getIndictmentInfo = ({
   const [indictmentVerdictViewedByAll, indictmentVerdictAppealDeadlineExpired] =
     getIndictmentVerdictAppealDeadlineStatus(verdictInfo, isFine)
 
-  // TODO: Remove usages of this and replace with rulingDate - didn't want to increase size of current PR
-  const indictmentCompletedDate = new Date(rulingDate).toISOString()
-
   return {
     indictmentAppealDeadline,
     indictmentVerdictViewedByAll,
     indictmentVerdictAppealDeadlineExpired,
-    indictmentCompletedDate,
+    rulingDate: new Date(rulingDate).toISOString(),
   }
 }
 
