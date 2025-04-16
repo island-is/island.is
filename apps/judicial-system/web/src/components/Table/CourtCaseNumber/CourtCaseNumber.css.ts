@@ -5,3 +5,9 @@ export const blockColumn = style({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
 })
+
+export const policeCaseNumbers = style({
+  display: 'flex',
+  alignItems: 'center',
+  columnGap: '4px',
+})

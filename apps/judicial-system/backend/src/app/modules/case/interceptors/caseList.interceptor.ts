@@ -70,6 +70,8 @@ export class CaseListInterceptor implements NestInterceptor {
               theCase.eventLogs,
             )?.created,
             isCompletedWithoutRuling: theCase.isCompletedWithoutRuling,
+            publicProsecutorIsRegisteredInPoliceSystem:
+              theCase.publicProsecutorIsRegisteredInPoliceSystem,
           }
         }),
       ),
