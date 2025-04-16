@@ -181,7 +181,7 @@ export const UploadedFile: FC<UploadedFileProps> = (props) => {
       <Text fontWeight="semiBold">
         <Box component="span" className={{ [styles.fileName]: onOpenFile }}>
           {truncateMiddle(file.name)}
-          {file.size && (
+          {Number.isInteger(file.size) && (
             <Text as="span">{` ${formatFileSize(file.size)}`}</Text>
           )}
           {onOpenFile && (
