@@ -21,6 +21,7 @@ import {
   SectionWithImage,
   Slice,
   SubArticle,
+  Organization,
 } from '../../types'
 import { wysiwyg } from './richtext'
 import {
@@ -212,4 +213,23 @@ export const frontpage = factory<Frontpage>({
   featured: () => featured.list(3),
   slides: () => frontPageSlider.list(2),
   lifeEvents: () => lifeEventPage.list(6),
+})
+
+export const organization = factory<Organization>({
+  id: () => faker.datatype.uuid(),
+  title: () => title(),
+  shortTitle: () => faker.lorem.word(),
+  description: () => faker.lorem.sentence(),
+  slug: slugify('title'),
+  tag: () => [
+    {
+      id: faker.datatype.uuid(),
+      title: title(),
+    },
+  ],
+  email: () => faker.internet.email(),
+  phone: () => faker.phone.phoneNumber(),
+  footerItems: () => [{ id: faker.datatype.uuid(), title: title() }],
+  publishedMaterialSearchFilterGenericTags: () => [],
+  link: () => faker.internet.url(),
 })

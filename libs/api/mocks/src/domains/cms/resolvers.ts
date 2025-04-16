@@ -92,5 +92,9 @@ export const resolvers: Resolvers = {
         ) || null
       )
     },
+
+    getOrganizations: () => {
+      return store.organizations
+    },
   },
 }
