@@ -66,7 +66,6 @@
       "application": {
         "style": "scss",
         "linter": "eslint",
-        "bundler": "webpack",
         "pascalCaseFiles": true,
         "babel": true
       },
