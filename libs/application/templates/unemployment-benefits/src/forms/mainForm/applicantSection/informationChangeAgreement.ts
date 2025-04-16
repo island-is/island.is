@@ -1,21 +1,33 @@
 import {
-  buildDescriptionField,
+  buildCheckboxField,
   buildMultiField,
   buildSubSection,
+  YES,
 } from '@island.is/application/core'
-import { applicant as applicantMessages } from '../../../lib/messages'
+import {
+  applicant as applicantMessages,
+  application as applicationMessages,
+} from '../../../lib/messages'
 
-export const informationChangeAgreement = buildSubSection({
-  id: 'informationChangeAgreement',
+export const informationChangeAgreementSubSection = buildSubSection({
+  id: 'informationChangeAgreementSubSection',
   title: applicantMessages.informationChangeAgreement.sectionTitle,
   children: [
     buildMultiField({
-      id: 'informationChangeAgreement',
+      id: 'informationChangeAgreementSubSection',
       title: applicantMessages.informationChangeAgreement.pageTitle,
       description: applicantMessages.informationChangeAgreement.pageDescription,
       children: [
-        buildDescriptionField({
-          id: 'test',
+        buildCheckboxField({
+          id: 'informationChangeAgreement',
+          backgroundColor: 'blue',
+          large: true,
+          options: [
+            {
+              value: YES,
+              label: applicationMessages.agreeCheckbox,
+            },
+          ],
         }),
       ],
     }),

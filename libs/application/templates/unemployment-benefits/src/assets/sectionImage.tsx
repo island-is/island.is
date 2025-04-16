@@ -471,12 +471,12 @@ export const sectionImage = () => (
         y2="371.077"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF4C84" />
-        <stop offset="0.1615" stop-color="#C064AF" />
-        <stop offset="0.3382" stop-color="#827CDA" />
-        <stop offset="0.4679" stop-color="#5B8BF5" />
-        <stop offset="0.5355" stop-color="#4C90FF" />
-        <stop offset="1" stop-color="#FF4C84" />
+        <stop stopColor="#FF4C84" />
+        <stop offset="0.1615" stopColor="#C064AF" />
+        <stop offset="0.3382" stopColor="#827CDA" />
+        <stop offset="0.4679" stopColor="#5B8BF5" />
+        <stop offset="0.5355" stopColor="#4C90FF" />
+        <stop offset="1" stopColor="#FF4C84" />
       </linearGradient>
     </defs>
   </svg>

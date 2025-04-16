@@ -1,5 +1,5 @@
 import { buildSection } from '@island.is/application/core'
-import { applicant as applicantMessages } from '../../../lib/messages'
+import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
 import { jobWishesSubSection } from './jobWishes'
 import { educationHistorySubSection } from './educationHistory'
 import { interviewAndMeetingAgreementSubSection } from './interviewAndMeetingAgreement'
@@ -12,7 +12,7 @@ import { introductoryMeetingAgreementSubSection } from './introductoryMeetingAgr
 
 export const employmentSearchSection = buildSection({
   id: 'employmentSearchSection',
-  title: applicantMessages.general.sectionTitle,
+  title: employmentSearchMessages.general.sectionTitle,
   children: [
     jobWishesSubSection,
     interviewAndMeetingAgreementSubSection,

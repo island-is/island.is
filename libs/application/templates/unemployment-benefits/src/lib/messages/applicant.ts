@@ -8,7 +8,59 @@ export const applicant = {
       description: 'applicant section page title',
     },
   }),
-  labels: defineMessages({}),
+  labels: defineMessages({
+    name: {
+      id: 'vmst.ub.application:applicant.labels.name',
+      defaultMessage: 'Nafn',
+      description: 'applicant name label',
+    },
+    nationalId: {
+      id: 'vmst.ub.application:applicant.labels.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'applicant nationalId label',
+    },
+    address: {
+      id: 'vmst.ub.application:applicant.labels.address',
+      defaultMessage: 'Heimilisfang',
+      description: 'applicant address label',
+    },
+    postcode: {
+      id: 'vmst.ub.application:applicant.labels.postcode',
+      defaultMessage: 'Póstnúmer og staður',
+      description: 'applicant postcode label',
+    },
+    email: {
+      id: 'vmst.ub.application:applicant.labels.email',
+      defaultMessage: 'Netfang',
+      description: 'applicant email label',
+    },
+    phoneNumber: {
+      id: 'vmst.ub.application:applicant.labels.phoneNumber',
+      defaultMessage: 'Símanúmer',
+      description: 'applicant phoneNumber label',
+    },
+    passwordDescription: {
+      id: 'vmst.ub.application:applicant.labels.passwordDescription',
+      defaultMessage:
+        'Vinsamlegast veljið lykilorð vegna mögulegra símasamskipta. Leyniorð verður að vera minnst 4 stafir, tölustafir og/eða bókstafir.',
+      description: 'password label description',
+    },
+    passwordLabel: {
+      id: 'vmst.ub.application:applicant.labels.passwordLabel',
+      defaultMessage: 'Lykilorð',
+      description: 'password label',
+    },
+    otherAddressCheckboxLabel: {
+      id: 'vmst.ub.application:applicant.labels.otherAddressCheckboxLabel',
+      defaultMessage: 'Dvalarstaður ef annar en lögheimili',
+      description: 'other address checkbox label',
+    },
+    serviceOffice: {
+      id: 'vmst.ub.application:applicant.labels.serviceOffice',
+      defaultMessage: 'Þjónustuskrifstofa',
+      description: 'service office label',
+    },
+  }),
   personalInformation: defineMessages({
     sectionTitle: {
       id: 'vmst.ub.application:applicant.personalInformation.sectionTitle',
@@ -29,12 +81,12 @@ export const applicant = {
   informationChangeAgreement: defineMessages({
     sectionTitle: {
       id: 'vmst.ub.application:applicant.informationChangeAgreement.sectionTitle',
-      defaultMessage: 'Breytingar á högum',
+      defaultMessage: 'Tilkynna breytingar',
       description: 'applicant information agreement section title',
     },
     pageTitle: {
       id: 'vmst.ub.application:applicant.informationChangeAgreement.pageTitle',
-      defaultMessage: 'Breytingar á högum',
+      defaultMessage: 'Tilkynna þarf breytingar',
       description: 'information agreement page description',
     },
     pageDescription: {

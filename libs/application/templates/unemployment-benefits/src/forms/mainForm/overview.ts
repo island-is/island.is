@@ -5,14 +5,16 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { getOverviewItems } from '../../utils/getOverviewItems'
+import { overview as overviewMessages } from '../../lib/messages'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
-  title: 'Overview',
+  title: overviewMessages.general.sectionTitle,
   children: [
     buildMultiField({
       id: 'overviewSection',
-      title: 'Overview',
+      title: overviewMessages.general.pageTitle,
+      description: overviewMessages.general.pageDescription,
       children: [
         buildOverviewField({
           id: 'overview',

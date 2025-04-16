@@ -63,4 +63,9 @@ export const application = defineMessages({
       'Í fyrri hluta gafstu upp þær upplýsingar sem ákvarða bótarétt þinn. Til að halda atvinnuleysisbótum þarftu að vera virk/ur í atvinnuleit. Vinnumálastofnun getur aðstoðað þig í atvinnuleitinni. Framundan ert beðið um upplýsingar sem geta hjálpað okkur við að finna starf sem hentar þér. Gangi þér vel!',
     description: 'Description of second section page',
   },
+  agreeCheckbox: {
+    id: 'vmst.ub.application:agreeCheckbox',
+    defaultMessage: 'Ég skil',
+    description: 'Agree checkbox label',
+  },
 })

@@ -1,11 +1,98 @@
 import { z } from 'zod'
+import * as kennitala from 'kennitala'
+import { YES } from '@island.is/application/core'
 
-const dummySchema = z.object({
-  dummyTextField: z.string(),
+const applicantInformationSchema = z
+  .object({
+    nationalId: z
+      .string()
+      .refine(
+        (nationalId) =>
+          nationalId &&
+          nationalId.length !== 0 &&
+          kennitala.isValid(nationalId),
+      ),
+    name: z.string(),
+    address: z.string(),
+    postalCode: z.string(),
+    email: z.string(),
+    phoneNumber: z.string(),
+    password: z.string(),
+    otherAddressCheckbox: z.array(z.string()).optional(),
+    otherAddress: z.string().optional(),
+    otherPostcode: z.string().optional(),
+    serviceOffice: z.string().optional(),
+  })
+  .refine(
+    ({ otherAddressCheckbox, otherAddress }) => {
+      if (otherAddressCheckbox && otherAddressCheckbox[0] === YES) {
+        return !!otherAddress
+      }
+      return true
+    },
+    {
+      path: ['otherAddress'],
+    },
+  )
+  .refine(
+    ({ otherAddressCheckbox, otherPostcode }) => {
+      if (otherAddressCheckbox && otherAddressCheckbox[0] === YES) {
+        return !!otherPostcode
+      }
+      return true
+    },
+    {
+      path: ['otherPostcode'],
+    },
+  )
+
+const currentJobSchema = z.object({
+  employer: z
+    .object({
+      nationalId: z.string().optional(),
+      name: z.string().optional(),
+    })
+    .optional(),
+  percentage: z.string().optional(),
+  startDate: z.string().optional(),
+  workHours: z.string().optional(),
+  salary: z.string().optional(),
+  endDate: z.string().optional(),
+})
+
+const currentSituationSchema = z.object({
+  status: z.string().optional(),
+  reasonForUnemployment: z.string().optional(),
+  currentJob: currentJobSchema.optional(),
+  wantedJobPercentage: z.string().optional(),
+  jobTimelineStartDate: z.string().optional(),
 })
 
 export const dataSchema = z.object({
-  dummy: dummySchema,
+  approveExternalData: z.boolean().refine((v) => v),
+  applicant: applicantInformationSchema,
+  currentSituation: currentSituationSchema,
+  informationChangeAgreement: z
+    .array(z.string())
+    .refine((v) => v.includes(YES)),
+  concurrentWorkAgreement: z.array(z.string()).refine((v) => v.includes(YES)),
+  yourRightsAgreement: z.array(z.string()).refine((v) => v.includes(YES)),
+  lossOfRightsAgreement: z.array(z.string()).refine((v) => v.includes(YES)),
+  employmentSearchConfirmationAgreement: z
+    .array(z.string())
+    .refine((v) => v.includes(YES)),
+  interviewAndMeetingAgreement: z
+    .array(z.string())
+    .refine((v) => v.includes(YES)),
+  introductoryMeetingAgreement: z
+    .array(z.string())
+    .refine((v) => v.includes(YES)),
+  unemploymentBenefitsPayoutAgreement: z
+    .array(z.string())
+    .refine((v) => v.includes(YES)),
+  vacationsAndForeginWorkAgreement: z
+    .array(z.string())
+    .refine((v) => v.includes(YES)),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

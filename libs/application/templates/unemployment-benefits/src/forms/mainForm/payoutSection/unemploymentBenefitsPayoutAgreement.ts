@@ -1,9 +1,13 @@
 import {
-  buildDescriptionField,
+  buildCheckboxField,
   buildMultiField,
   buildSubSection,
+  YES,
 } from '@island.is/application/core'
-import { payout as payoutMessages } from '../../../lib/messages'
+import {
+  payout as payoutMessages,
+  application as applicationMessages,
+} from '../../../lib/messages'
 
 export const unemploymentBenefitsPayoutAgreementSubSection = buildSubSection({
   id: 'unemploymentBenefitsPayoutAgreementSubSection',
@@ -15,8 +19,16 @@ export const unemploymentBenefitsPayoutAgreementSubSection = buildSubSection({
       description:
         payoutMessages.unemploymentBenefitsPayoutAgreement.pageDescription,
       children: [
-        buildDescriptionField({
-          id: 'test',
+        buildCheckboxField({
+          id: 'unemploymentBenefitsPayoutAgreement',
+          backgroundColor: 'blue',
+          large: true,
+          options: [
+            {
+              value: YES,
+              label: applicationMessages.agreeCheckbox,
+            },
+          ],
         }),
       ],
     }),

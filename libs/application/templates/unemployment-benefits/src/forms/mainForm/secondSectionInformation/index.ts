@@ -8,7 +8,6 @@ import { sectionImage } from '../../../assets/sectionImage'
 import { application as applicationMessages } from '../../../lib/messages'
 export const secondSectionInformation = buildSection({
   id: 'secondSectionInformation',
-  title: 'Second section',
   children: [
     buildMultiField({
       id: 'secondSectionInformation',

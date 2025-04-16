@@ -1,9 +1,13 @@
 import {
-  buildDescriptionField,
+  buildCheckboxField,
   buildMultiField,
   buildSubSection,
+  YES,
 } from '@island.is/application/core'
-import { employment as employmentMessages } from '../../../lib/messages'
+import {
+  employment as employmentMessages,
+  application as applicationMessages,
+} from '../../../lib/messages'
 
 export const lossOfRightsAgreementSubSection = buildSubSection({
   id: 'lossOfRightsAgreementSubSection',
@@ -14,8 +18,16 @@ export const lossOfRightsAgreementSubSection = buildSubSection({
       title: employmentMessages.lossOfRightsAgreement.pageTitle,
       description: employmentMessages.lossOfRightsAgreement.pageDescription,
       children: [
-        buildDescriptionField({
-          id: 'test',
+        buildCheckboxField({
+          id: 'lossOfRightsAgreement',
+          backgroundColor: 'blue',
+          large: true,
+          options: [
+            {
+              value: YES,
+              label: applicationMessages.agreeCheckbox,
+            },
+          ],
         }),
       ],
     }),

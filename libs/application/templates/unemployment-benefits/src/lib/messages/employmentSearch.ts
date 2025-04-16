@@ -42,12 +42,12 @@ export const employmentSearch = {
   educationHistory: defineMessages({
     sectionTitle: {
       id: 'vmst.ub.application:employmentSearch.educationHistory.sectionTitle',
-      defaultMessage: 'Námsferlill',
+      defaultMessage: 'Námsferill',
       description: 'employment search education history section title',
     },
     pageTitle: {
       id: 'vmst.ub.application:employmentSearch.educationHistory.pageTitle',
-      defaultMessage: 'Námsferlill',
+      defaultMessage: 'Námsferill',
       description: 'Education history page description',
     },
   }),

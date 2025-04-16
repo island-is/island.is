@@ -4,8 +4,8 @@ export const payout = {
   general: defineMessages({
     sectionTitle: {
       id: 'vmst.ub.application:payout.general.sectionTitle',
-      defaultMessage: 'Umsækjandi',
-      description: 'applicant section page title',
+      defaultMessage: 'Greiðslur',
+      description: 'payout section page title',
     },
   }),
   labels: defineMessages({}),

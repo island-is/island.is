@@ -15,11 +15,13 @@ import {
   ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
 import { WorkMachineLicensesApi } from '../../dataProviders'
+import Logo from '../../assets/Logo'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
+  logo: Logo,
   children: [
     buildSection({
       id: 'conditions',

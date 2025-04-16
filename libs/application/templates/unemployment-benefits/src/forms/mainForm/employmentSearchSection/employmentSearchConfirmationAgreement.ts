@@ -1,9 +1,13 @@
 import {
-  buildDescriptionField,
+  buildCheckboxField,
   buildMultiField,
   buildSubSection,
+  YES,
 } from '@island.is/application/core'
-import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
+import {
+  employmentSearch as employmentSearchMessages,
+  application as applicationMessages,
+} from '../../../lib/messages'
 
 export const employmentSearchConfirmationAgreementSubSection = buildSubSection({
   id: 'employmentSearchConfirmationAgreementSubSection',
@@ -16,8 +20,16 @@ export const employmentSearchConfirmationAgreementSubSection = buildSubSection({
         employmentSearchMessages.employmentSearchConfirmationAgreement
           .pageTitle,
       children: [
-        buildDescriptionField({
-          id: 'test',
+        buildCheckboxField({
+          id: 'employmentSearchConfirmationAgreement',
+          backgroundColor: 'blue',
+          large: true,
+          options: [
+            {
+              value: YES,
+              label: applicationMessages.agreeCheckbox,
+            },
+          ],
         }),
       ],
     }),

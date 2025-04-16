@@ -1,9 +1,13 @@
 import {
-  buildDescriptionField,
+  buildCheckboxField,
   buildMultiField,
   buildSubSection,
+  YES,
 } from '@island.is/application/core'
-import { employment as employmentMessages } from '../../../lib/messages'
+import {
+  employment as employmentMessages,
+  application as applicationMessages,
+} from '../../../lib/messages'
 
 export const concurrentWorkAgreementSubSection = buildSubSection({
   id: 'concurrentWorkAgreementSubSection',
@@ -14,8 +18,16 @@ export const concurrentWorkAgreementSubSection = buildSubSection({
       title: employmentMessages.concurrentWorkAgreement.pageTitle,
       description: employmentMessages.concurrentWorkAgreement.pageDescription,
       children: [
-        buildDescriptionField({
-          id: 'test',
+        buildCheckboxField({
+          id: 'concurrentWorkAgreement',
+          backgroundColor: 'blue',
+          large: true,
+          options: [
+            {
+              value: YES,
+              label: applicationMessages.agreeCheckbox,
+            },
+          ],
         }),
       ],
     }),

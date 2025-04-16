@@ -8,8 +8,8 @@ import { workingAbilitySubSection } from './workingAbility'
 import { employmentHistorySubSection } from './employmentHistory'
 import { lossOfRightsAgreementSubSection } from './lossOfRightsAgreement'
 
-export const employmentSection = buildSection({
-  id: 'employmentSection',
+export const employmentInformationSection = buildSection({
+  id: 'employmentInformationSection',
   title: employmentMessages.general.sectionTitle,
   children: [
     reasonForJobSearchSubSection,
