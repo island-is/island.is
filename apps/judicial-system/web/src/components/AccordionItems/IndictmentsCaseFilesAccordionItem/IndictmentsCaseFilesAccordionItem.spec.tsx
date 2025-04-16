@@ -7,6 +7,7 @@ import {
   ReorderableItem,
   sortedFilesInChapter,
 } from './IndictmentsCaseFilesAccordionItem'
+import { FileUploadStatus } from '@island.is/island-ui/core'
 
 const caseFiles = [
   {
@@ -306,7 +307,7 @@ describe('sortedFilesInChapter', () => {
         canEdit: true,
         category: undefined,
         displayDate: undefined,
-        status: 'done',
+        status: FileUploadStatus.done,
         size: 1,
         userGeneratedFilename: undefined,
         displayText: caseFiles[1].name,
@@ -322,7 +323,7 @@ describe('sortedFilesInChapter', () => {
         canEdit: true,
         category: undefined,
         displayDate: undefined,
-        status: 'done',
+        status: FileUploadStatus.done,
         size: 1,
         userGeneratedFilename: undefined,
         displayText: caseFiles[0].name,
@@ -338,7 +339,7 @@ describe('sortedFilesInChapter', () => {
         canEdit: true,
         category: undefined,
         displayDate: undefined,
-        status: 'done',
+        status: FileUploadStatus.done,
         size: 1,
         userGeneratedFilename: undefined,
         displayText: caseFiles[2].name,
