@@ -166,11 +166,6 @@ jobs:
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
-      - name: Install infra modules
-        working-directory: infra
-        run: |
-          corepack enable && CI=true yarn install --immutable
-
       - name: load-deps
         uses: ./.github/actions/load-deps
 
@@ -207,10 +202,6 @@ jobs:
         id: build_map
         run: |
           set -euo pipefail
-          AFFECTED_TARGETS="$(yarn nx show projects --affected --base $BASE --head $HEAD --json | jq -r '. | join(",")')"
-          cd infra
-          ADDITIONAL_PROJECTS="$(yarn feature-env src/feature-env.ts downstream --feature tmp --images $AFFECTED_TARGETS --chart islandis)"
-          cd ..
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
