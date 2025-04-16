@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import { FC, useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
 
 import { Colors, theme } from '@island.is/island-ui/theme'
