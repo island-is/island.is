@@ -37,7 +37,7 @@ const transformToAnswer = ({ name, key }: UploadFile): UploadFileAnswer => {
 const answerToUploadFile = ({
   name,
   key,
-}: UploadFileDeprecated): UploadFile => {
+}: UploadFileDeprecated): UploadFileDeprecated => {
   return { name, key, status: 'done' }
 }
 
@@ -189,7 +189,7 @@ export const FileUploadController = ({
 
     const addedUniqueFiles = newFiles.filter((newFile: File) => {
       let isUnique = true
-      state.forEach((uploadedFile: UploadFile) => {
+      state.forEach((uploadedFile: UploadFileDeprecated) => {
         if (uploadedFile.name === newFile.name) isUnique = false
       })
       return isUnique
