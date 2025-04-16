@@ -1,4 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { isDefined } from '@island.is/shared/utils'
 import { Injectable } from '@nestjs/common'
 import {
   ApiLicenseGetRequest,
@@ -6,7 +7,6 @@ import {
   ApiMachineModelsGetRequest,
   ApiMachineOwnerChangeOwnerchangeIdDeleteRequest,
   ApiMachineParentCategoriesTypeModelGetRequest,
-  ApiMachineRequestInspectionPostRequest,
   ApiMachineStatusChangePostRequest,
   ApiMachineSubCategoriesGetRequest,
   ApiMachineTypesTypeByRegistrationNumberGetRequest,
@@ -55,6 +55,20 @@ import {
 } from './workMachines.utils'
 import { CustomMachineApi } from './providers'
 import { handle404 } from '@island.is/clients/middlewares'
+import { WorkMachineResponseDto } from './dtos/workMachinesResponse.dto'
+import {
+  WorkMachinesCollectionItem,
+  mapWorkMachine,
+  mapWorkMachinesCollectionItem,
+} from './dtos/workMachineItem.dto'
+import { mapLinkDto } from './dtos/link.dto'
+import { mapLabelDto } from './dtos/label.dto'
+import { mapPaginationDto } from './dtos/pagination.dto'
+import {
+  GetMachineByIdInput,
+  GetMachineByRegNumberInput,
+  isIdInput,
+} from './inputs/getWorkMachineInput.dto'
 
 @Injectable()
 export class WorkMachinesClientService {
@@ -146,20 +160,77 @@ export class WorkMachinesClientService {
   getWorkMachines = async (
     user: User,
     input: ApiMachinesGetRequest,
-  ): Promise<MachinesFriendlyHateaosDto | null> => {
-    return await this.machinesApiWithAuth(user)
+  ): Promise<WorkMachineResponseDto | null> => {
+    const data = await this.machinesApiWithAuth(user)
       .apiMachinesGet(input)
       .catch(handle404)
+
+    if (!data) {
+      return null
+    }
+
+    return {
+      machines:
+        data.value
+          ?.map((v) => mapWorkMachinesCollectionItem(v))
+          .filter(isDefined) ?? [],
+      links: data.links?.map((l) => mapLinkDto(l)).filter(isDefined) ?? [],
+      labels: data.labels?.map((l) => mapLabelDto(l)).filter(isDefined) ?? [],
+      pagination: mapPaginationDto(data.pagination) ?? undefined,
+    }
+  }
+
+  getWorkMachine = async (
+    user: User,
+    input: GetMachineByIdInput | GetMachineByRegNumberInput,
+  ): Promise<WorkMachinesCollectionItem | null> => {
+    if (isIdInput(input)) {
+      return this.getWorkMachineById(user, input)
+    }
+
+    const defaultOptions = {
+      onlyShowOwnedMachines: true,
+      searchQuery: input.regNumber,
+    }
+    const result = await this.machinesApiWithAuth(user).apiMachinesGet({
+      ...defaultOptions,
+      searchQuery: input.regNumber,
+    })
+
+    const machineId = result?.value?.[0]?.id ?? undefined
+
+    if (!machineId) {
+      return null
+    }
+
+    return this.getWorkMachineById(user, { id: machineId, ...input })
   }
 
   getWorkMachineById = async (
     user: User,
-    input: GetMachineRequest,
-  ): Promise<MachineHateoasDto | null> => {
-    return await this.machineApiWithAuth(user)
+    input: GetMachineByIdInput,
+  ): Promise<WorkMachinesCollectionItem | null> => {
+    const data = await this.machineApiWithAuth(user)
       .getMachine(input)
       .catch(handle404)
+
+    if (!data) {
+      return null
+    }
+
+    const workMachine = mapWorkMachine(data)
+
+    if (!workMachine) {
+      return null
+    }
+
+    return {
+      ...workMachine,
+      links: data.links?.map((l) => mapLinkDto(l)).filter(isDefined) ?? [],
+      labels: data.labels?.map((l) => mapLabelDto(l)).filter(isDefined) ?? [],
+    }
   }
+
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
 

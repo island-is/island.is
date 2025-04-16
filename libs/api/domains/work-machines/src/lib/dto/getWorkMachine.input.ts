@@ -1,13 +1,27 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 
 @InputType('WorkMachinesInput')
 export class GetWorkMachineInput {
-  @Field()
+  @Field({
+    nullable: true,
+    description:
+      'Work machine id, must pass in either this or the registration number',
+  })
   @IsString()
-  id!: string
+  @IsOptional()
+  id?: string
 
-  @Field(() => String)
+  @Field({
+    nullable: true,
+    description:
+      'Work machine registration number, must pass in either this or the id',
+  })
+  @IsString()
+  @IsOptional()
+  registrationNumber?: string
+
+  @Field()
   @IsString()
   locale!: string
 }

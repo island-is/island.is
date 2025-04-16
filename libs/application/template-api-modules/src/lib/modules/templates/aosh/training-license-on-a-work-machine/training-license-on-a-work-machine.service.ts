@@ -111,7 +111,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
         )
         .catch((e) => {
           this.logger.error(
-            `Error sending sms about initReview to 
+            `Error sending sms about initReview to
                     a phonenumber in application: ID: ${application.id}`,
             e,
           )
@@ -143,7 +143,7 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
         .sendSms((_) => generateApplicationDeleteSms(recipient), application)
         .catch((e) => {
           this.logger.error(
-            `Error sending sms about deleteApplication to 
+            `Error sending sms about deleteApplication to
                     a phonenumber in application: ID: ${application.id}`,
             e,
           )
@@ -183,14 +183,16 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
         xCorrelationID: application.id,
         machineLicenseTeachingApplicationCreateDto: {
           applicant,
-          company,
-          machineRegistrationNumber:
-            certificateOfTenure.machineRegistrationNumber,
-          licenseCategoryPrefix: certificateOfTenure.licenseCategoryPrefix,
-          machineType: certificateOfTenure.machineType,
-          dateWorkedOnMachineFrom: certificateOfTenure.dateWorkedOnMachineFrom,
-          dateWorkedOnMachineTo: certificateOfTenure.dateWorkedOnMachineTo,
-          hoursWorkedOnMachine: certificateOfTenure.hoursWorkedOnMachine,
+          companiesWorkedFor: [company],
+          teachingLicenseMachineWorkedOnDtos: [
+            {
+              machineType: certificateOfTenure.machineType,
+              dateWorkedOnMachineFrom:
+                certificateOfTenure.dateWorkedOnMachineFrom,
+              dateWorkedOnMachineTo: certificateOfTenure.dateWorkedOnMachineTo,
+              hoursWorkedOnMachine: certificateOfTenure.hoursWorkedOnMachine,
+            },
+          ],
         },
       })
       .catch((error) => {

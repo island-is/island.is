@@ -1,34 +1,44 @@
-import { ObjectType, Field } from '@nestjs/graphql'
+import { ObjectType, Field, Directive } from '@nestjs/graphql'
 
 @ObjectType('WorkMachinesTechInfoItem')
 export class TechInfoItem {
-  @Field(() => String, { nullable: true })
-  variableName?: string | null
+  @Field()
+  name!: string
 
-  @Field(() => String, { nullable: true })
-  label?: string | null
+  @Field({ nullable: true })
+  label?: string
 
-  @Field(() => String, { nullable: true })
-  labelEn?: string | null
+  @Field({
+    nullable: true,
+    deprecationReason: 'Use localized label instead',
+  })
+  labelEn?: string
 
-  @Field(() => String, { nullable: true })
-  type?: string | null
+  @Field({ nullable: true })
+  type?: string
 
-  @Field(() => Boolean, { nullable: true })
-  required?: boolean | null
+  @Field({ nullable: true })
+  required?: boolean
 
-  @Field(() => String, { nullable: true })
-  maxLength?: string | null
+  @Field({ nullable: true })
+  maxLength?: string
 
-  @Field(() => [TechInfoListItem], { nullable: true })
-  values?: Array<TechInfoListItem> | null
+  @Field(() => [String], { nullable: true })
+  itemValues?: Array<string>
+
+  @Field(() => [TechInfoListItem], {
+    nullable: true,
+    deprecationReason: 'Use localized itemValues instead',
+  })
+  values?: Array<TechInfoListItem>
 }
 
+@Directive('@deprecated(reason: "Up for removal")')
 @ObjectType('WorkMachinesTechInfoListItem')
 export class TechInfoListItem {
-  @Field(() => String, { nullable: true })
-  name?: string | null
+  @Field({ nullable: true })
+  name?: string
 
-  @Field(() => String, { nullable: true })
-  nameEn?: string | null
+  @Field({ nullable: true })
+  nameEn?: string
 }
