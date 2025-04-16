@@ -20,6 +20,6 @@ export const formatFamilyDto = (
     familyId: logheimilisTengslItar.logheimilisTengsl,
     individuals: logheimilisTengslItar.logheimiliseinstaklingar
       .map((individual) => formatIndividualDto(individual))
-      .filter((x) => !!x),
+      .filter((x): x is IndividualDto => x !== null),
   }
 }

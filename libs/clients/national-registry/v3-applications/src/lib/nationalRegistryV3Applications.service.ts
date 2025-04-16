@@ -168,14 +168,18 @@ export class NationalRegistryV3ApplicationsClientService {
     return formatResidenceEntryDto(res)
   }
 
-  async getResidenceHistory(nationalId: string): Promise<ResidenceEntryDto[]> {
+  async getResidenceHistory(
+    nationalId: string,
+  ): Promise<ResidenceEntryDto[] | null> {
     const res = await this.einstaklingarApi.einstaklingarKennitalaBusetusagaGet(
       {
         kennitala: nationalId,
       },
     )
 
-    return res.map((x) => formatResidenceEntryDto(x)).filter((x) => !!x) || []
+    return res
+      .map((x) => formatResidenceEntryDto(x))
+      .filter((x): x is ResidenceEntryDto => x !== null)
   }
 
   async getFamily(user: User): Promise<FamilyDto | null> {
