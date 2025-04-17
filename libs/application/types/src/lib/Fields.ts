@@ -377,8 +377,8 @@ export interface DateField extends InputField {
   readonly type: FieldTypes.DATE
   placeholder?: FormText
   component: FieldComponents.DATE
-  maxDate?: MaybeWithApplicationAndField<Date>
-  minDate?: MaybeWithApplicationAndField<Date>
+  maxDate?: MaybeWithApplicationAndField<Date | undefined>
+  minDate?: MaybeWithApplicationAndField<Date | undefined>
   minYear?: number
   maxYear?: number
   excludeDates?: MaybeWithApplicationAndField<Date[]>

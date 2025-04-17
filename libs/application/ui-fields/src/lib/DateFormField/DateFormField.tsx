@@ -59,7 +59,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
   )
 
   const computeMinDate = (
-    maybeMinDate: MaybeWithApplicationAndField<Date>,
+    maybeMinDate: MaybeWithApplicationAndField<Date | undefined>,
     memoApplication: Application,
     memoField: DateField,
   ) => {
@@ -71,7 +71,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   const computeMaxDate = (
-    maybeMaxDate: MaybeWithApplicationAndField<Date>,
+    maybeMaxDate: MaybeWithApplicationAndField<Date | undefined>,
     memoApplication: Application,
     memoField: DateField,
   ) => {
@@ -97,7 +97,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
   const finalMinDate = useMemo(
     () =>
       computeMinDate(
-        minDate as MaybeWithApplicationAndField<Date>,
+        minDate as MaybeWithApplicationAndField<Date | undefined>,
         updatedApplication,
         field,
       ),
@@ -107,7 +107,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
   const finalMaxDate = useMemo(
     () =>
       computeMaxDate(
-        maxDate as MaybeWithApplicationAndField<Date>,
+        maxDate as MaybeWithApplicationAndField<Date | undefined>,
         updatedApplication,
         field,
       ),

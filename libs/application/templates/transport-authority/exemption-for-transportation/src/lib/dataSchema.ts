@@ -2,6 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { YES } from '@island.is/application/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { ExemptionType } from '../shared'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -82,6 +83,11 @@ export const ExemptionForTransportationSchema = z.object({
   applicant: ApplicantSchema,
   transporter: TransporterSchema,
   responsiblePerson: ResponsiblePersonSchema,
+  exemptionPeriod: z.object({
+    type: z.nativeEnum(ExemptionType),
+    dateFrom: z.string().min(1),
+    dateTo: z.string().min(1),
+  }),
 })
 
 export type ExemptionForTransportation = z.TypeOf<
