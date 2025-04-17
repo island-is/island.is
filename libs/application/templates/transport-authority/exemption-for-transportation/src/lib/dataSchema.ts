@@ -5,7 +5,6 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
-  console.log('phone', phone)
   return phone && phone.isValid()
 }
 
