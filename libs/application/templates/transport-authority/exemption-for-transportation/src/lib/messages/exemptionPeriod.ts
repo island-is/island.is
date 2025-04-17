@@ -27,12 +27,12 @@ export const exemptionPeriod = {
     },
     shortTermOptionTitle: {
       id: 'ta.eft.application:exemptionPeriod.type.shortTermOptionTitle',
-      defaultMessage: 'Skammtímaumsókn',
+      defaultMessage: 'Skammtímaundanþága',
       description: 'Exemption type short term option title',
     },
     longTermOptionTitle: {
       id: 'ta.eft.application:exemptionPeriod.type.longTermOptionTitle',
-      defaultMessage: 'Langtímaumsókn',
+      defaultMessage: 'Langtímaundanþága',
       description: 'Exemption type long term option title',
     },
     alertTitle: {
