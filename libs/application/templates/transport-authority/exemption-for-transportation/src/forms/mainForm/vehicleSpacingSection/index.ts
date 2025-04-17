@@ -15,7 +15,7 @@ export const vehicleSpacingSection = buildSection({
       children: [
         buildDescriptionField({
           id: 'description',
-          title: 'TODOx lorem ipsum',
+          title: 'lorem ipsum',
         }),
       ],
     }),

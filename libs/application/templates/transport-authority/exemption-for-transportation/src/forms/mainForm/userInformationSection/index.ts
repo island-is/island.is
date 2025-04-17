@@ -1,9 +1,21 @@
 import {
+  buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
+  buildNationalIdWithNameField,
+  buildPhoneField,
   buildSection,
+  buildTextField,
+  getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { userInformation } from '../../../lib/messages'
+import { applicantInformationMultiField } from '@island.is/application/ui-forms'
+import {
+  isSameAsApplicant,
+  shouldIncludeResponsiblePerson,
+} from '../../../utils'
+import { Application } from '@island.is/api/schema'
 
 export const userInformationSection = buildSection({
   id: 'userInformationSection',
@@ -13,9 +25,283 @@ export const userInformationSection = buildSection({
       id: 'userInformationMultiField',
       title: userInformation.general.pageTitle,
       children: [
+        // Applicant
         buildDescriptionField({
-          id: 'description',
-          title: 'TODOx Lorem ipsum',
+          id: 'applicantInfo.subtitle',
+          title: userInformation.applicant.subtitle,
+          titleVariant: 'h5',
+        }),
+        ...applicantInformationMultiField({
+          baseInfoReadOnly: true,
+          hideLocationFields: true,
+          emailRequired: true,
+          phoneRequired: true,
+          phoneEnableCountrySelector: true,
+        }).children,
+
+        // Transporter
+        buildDescriptionField({
+          id: 'transporterInfo.subtitle',
+          title: userInformation.transporter.subtitle,
+          titleVariant: 'h5',
+          marginTop: 4,
+        }),
+        buildCheckboxField({
+          id: 'transporter.isSameAsApplicant',
+          large: false,
+          backgroundColor: 'white',
+          options: [
+            {
+              value: YES,
+              label: userInformation.transporter.isSameAsApplicant,
+            },
+          ],
+          defaultValue: [],
+          marginBottom: 0,
+        }),
+        // Transporter - editable
+        buildNationalIdWithNameField({
+          id: 'transporter',
+          required: true,
+          phoneRequired: true,
+          emailRequired: true,
+          showPhoneField: true,
+          showEmailField: true,
+          searchPersons: true,
+          searchCompanies: true,
+          customNationalIdLabel: userInformation.transporter.nationalId,
+          customNameLabel: userInformation.transporter.name,
+          phoneLabel: userInformation.transporter.phone,
+          emailLabel: userInformation.transporter.email,
+          clearOnChange: ['transporter.name'],
+          condition: (answers) => {
+            return !isSameAsApplicant(answers, 'transporter')
+          },
+        }),
+        buildTextField({
+          id: 'transporter.address',
+          title: userInformation.transporter.address,
+          backgroundColor: 'blue',
+          width: 'half',
+          required: true,
+          condition: (answers) => {
+            return !isSameAsApplicant(answers, 'transporter')
+          },
+        }),
+        buildTextField({
+          id: 'transporter.postalCodeAndCity',
+          title: userInformation.transporter.postalCodeAndCity,
+          backgroundColor: 'blue',
+          width: 'half',
+          required: true,
+          condition: (answers) => {
+            return !isSameAsApplicant(answers, 'transporter')
+          },
+        }),
+        // Transporter - read-only
+        buildTextField({
+          // id: 'transporterx.nationalId',
+          id: 'applicant.nationalId',
+          title: userInformation.transporter.nationalId,
+          width: 'half',
+          readOnly: true,
+          format: '######-####',
+          // defaultValue: (application: Application) => {
+          //   return application.applicant
+          // },
+          condition: (answers) => {
+            return isSameAsApplicant(answers, 'transporter')
+          },
+        }),
+        buildTextField({
+          // id: 'transporterx.name',
+          id: 'applicant.name',
+          title: userInformation.transporter.name,
+          width: 'half',
+          readOnly: true,
+          // defaultValue: (application: Application) => {
+          //   return application.externalData.nationalRegistry.data?.fullName
+          // },
+          condition: (answers) => {
+            return isSameAsApplicant(answers, 'transporter')
+          },
+        }),
+        buildPhoneField({
+          // id: 'transporterx.phone',
+          id: 'applicant.phoneNumber',
+          title: userInformation.transporter.phone,
+          width: 'half',
+          readOnly: true,
+          // defaultValue: (application: Application) => {
+          //   return getValueViaPath<string>(
+          //     application.answers,
+          //     'applicant.phoneNumber',
+          //   )
+          // },
+          condition: (answers) => {
+            return isSameAsApplicant(answers, 'transporter')
+          },
+        }),
+        buildTextField({
+          // id: 'transporterx.email',
+          id: 'applicant.email',
+          title: userInformation.transporter.email,
+          width: 'half',
+          readOnly: true,
+          // defaultValue: (application: Application) => {
+          //   return getValueViaPath<string>(
+          //     application.answers,
+          //     'applicant.email',
+          //   )
+          // },
+          condition: (answers) => {
+            return isSameAsApplicant(answers, 'transporter')
+          },
+        }),
+        buildTextField({
+          // id: 'transporterx.address',
+          id: 'applicant.address',
+          title: userInformation.transporter.address,
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            return application.externalData.nationalRegistry.data?.address
+              ?.streetAddress
+          },
+          condition: (answers) => {
+            return isSameAsApplicant(answers, 'transporter')
+          },
+        }),
+        buildTextField({
+          // id: 'transporterx.postalCodeAndCity',
+          id: 'applicant.postalCode',
+          title: userInformation.transporter.postalCodeAndCity,
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            return `${application.externalData.nationalRegistry?.data?.address?.postalCode} ${application.externalData.nationalRegistry?.data?.address?.locality}`
+          },
+          condition: (answers) => {
+            return isSameAsApplicant(answers, 'transporter')
+          },
+        }),
+
+        // Responsible person
+        buildDescriptionField({
+          id: 'responsiblePersonInfo.subtitle',
+          title: userInformation.responsiblePerson.subtitle,
+          titleVariant: 'h5',
+          marginTop: 4,
+          condition: (answers) => {
+            return shouldIncludeResponsiblePerson(answers)
+          },
+        }),
+        buildCheckboxField({
+          id: 'responsiblePerson.isSameAsApplicant',
+          large: false,
+          backgroundColor: 'white',
+          options: [
+            {
+              value: YES,
+              label: userInformation.responsiblePerson.isSameAsApplicant,
+            },
+          ],
+          defaultValue: [],
+          condition: (answers) => {
+            return shouldIncludeResponsiblePerson(answers)
+          },
+        }),
+        // Responsible person - editable
+        buildNationalIdWithNameField({
+          id: 'responsiblePerson',
+          required: true,
+          showPhoneField: true,
+          showEmailField: true,
+          phoneRequired: true,
+          emailRequired: true,
+          customNationalIdLabel: userInformation.responsiblePerson.nationalId,
+          customNameLabel: userInformation.responsiblePerson.name,
+          phoneLabel: userInformation.responsiblePerson.phone,
+          emailLabel: userInformation.responsiblePerson.email,
+          clearOnChange: ['responsiblePerson.name'],
+          condition: (answers) => {
+            return (
+              shouldIncludeResponsiblePerson(answers) &&
+              !isSameAsApplicant(answers, 'responsiblePerson')
+            )
+          },
+        }),
+        // Responsible person - read-only
+        buildTextField({
+          // id: 'responsiblePersonx.nationalId',
+          id: 'applicant.nationalId',
+          title: userInformation.responsiblePerson.nationalId,
+          width: 'half',
+          readOnly: true,
+          format: '######-####',
+          // defaultValue: (application: Application) => {
+          //   return application.applicant
+          // },
+          condition: (answers) => {
+            return (
+              shouldIncludeResponsiblePerson(answers) &&
+              isSameAsApplicant(answers, 'responsiblePerson')
+            )
+          },
+        }),
+        buildTextField({
+          // id: 'responsiblePersonx.name',
+          id: 'applicant.name',
+          title: userInformation.responsiblePerson.name,
+          width: 'half',
+          readOnly: true,
+          // defaultValue: (application: Application) => {
+          //   return application.externalData.nationalRegistry.data?.fullName
+          // },
+          condition: (answers) => {
+            return (
+              shouldIncludeResponsiblePerson(answers) &&
+              isSameAsApplicant(answers, 'responsiblePerson')
+            )
+          },
+        }),
+        buildPhoneField({
+          // id: 'responsiblePersonx.phone',
+          id: 'applicant.phoneNumber',
+          title: userInformation.responsiblePerson.phone,
+          width: 'half',
+          readOnly: true,
+          // defaultValue: (application: Application) => {
+          //   return getValueViaPath<string>(
+          //     application.answers,
+          //     'applicant.phoneNumber',
+          //   )
+          // },
+          condition: (answers) => {
+            return (
+              shouldIncludeResponsiblePerson(answers) &&
+              isSameAsApplicant(answers, 'responsiblePerson')
+            )
+          },
+        }),
+        buildTextField({
+          // id: 'responsiblePersonx.email',
+          id: 'applicant.email',
+          title: userInformation.responsiblePerson.email,
+          width: 'half',
+          readOnly: true,
+          // defaultValue: (application: Application) => {
+          //   return getValueViaPath<string>(
+          //     application.answers,
+          //     'applicant.email',
+          //   )
+          // },
+          condition: (answers) => {
+            return (
+              shouldIncludeResponsiblePerson(answers) &&
+              isSameAsApplicant(answers, 'responsiblePerson')
+            )
+          },
         }),
       ],
     }),

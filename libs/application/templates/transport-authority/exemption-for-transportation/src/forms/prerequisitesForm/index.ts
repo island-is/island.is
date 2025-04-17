@@ -9,7 +9,7 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { FormModes } from '@island.is/application/types'
 import { Logo } from '../../assets/Logo'
-import { IdentityApi, UserProfileApi } from '../../dataProviders'
+import { NationalRegistryUserApi, UserProfileApi } from '../../dataProviders'
 import { externalData } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
@@ -29,7 +29,7 @@ export const Prerequisites = buildForm({
           checkboxLabel: externalData.dataProvider.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: IdentityApi,
+              provider: NationalRegistryUserApi,
               title: externalData.nationalRegistry.title,
               subTitle: externalData.nationalRegistry.subTitle,
             }),

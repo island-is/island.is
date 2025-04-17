@@ -36,6 +36,9 @@ export interface ApplicantInformationInterface {
 }
 
 export type applicantInformationProps = {
+  baseInfoReadOnly?: boolean
+  applicantInformationDescription?: FormText
+  hideLocationFields?: boolean
   phoneCondition?: Condition
   phoneRequired?: boolean
   phoneDisabled?: boolean
@@ -43,7 +46,5 @@ export type applicantInformationProps = {
   emailCondition?: Condition
   emailRequired?: boolean
   emailDisabled?: boolean
-  applicantInformationDescription?: FormText
-  readOnly?: boolean
-  readOnlyEmailAndPhone?: boolean
+  emailAndPhoneReadOnly?: boolean
 }

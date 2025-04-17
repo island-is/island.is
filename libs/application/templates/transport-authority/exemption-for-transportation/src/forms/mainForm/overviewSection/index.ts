@@ -18,9 +18,8 @@ export const overviewSection = buildSection({
       children: [
         buildOverviewField({
           id: 'overview',
-          title: 'TODOx Overview',
-          description:
-            'TODOx This is an overview, should come from messages.ts',
+          title: 'Overview',
+          description: 'This is an overview, should come from messages.ts',
           backId: 'idToSomeField',
           bottomLine: false,
           items: getOverviewItems,

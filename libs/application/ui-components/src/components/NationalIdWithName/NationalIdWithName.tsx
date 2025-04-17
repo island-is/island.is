@@ -151,6 +151,7 @@ export const NationalIdWithName: FC<
           ) {
             setValue(nameField, '')
           } else if (
+            searchPersons &&
             searchCompanies &&
             companyData?.companyRegistryCompany === null
           ) {
@@ -185,8 +186,9 @@ export const NationalIdWithName: FC<
         ) {
           setValue(nameField, '')
         } else if (
+          searchPersons &&
           searchCompanies &&
-          companyData?.companyRegistryCompany === null
+          data?.identity === null
         ) {
           setValue(nameField, '')
         }
@@ -197,26 +199,16 @@ export const NationalIdWithName: FC<
   // fetch and update name when user has entered a valid national id
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
-      {
-        searchPersons &&
-          getIdentity({
-            variables: {
-              input: {
-                nationalId: nationalIdInput,
-              },
-            },
-          })
+      if (searchPersons) {
+        getIdentity({
+          variables: { input: { nationalId: nationalIdInput } },
+        })
       }
 
-      {
-        searchCompanies &&
-          getCompanyIdentity({
-            variables: {
-              input: {
-                nationalId: nationalIdInput,
-              },
-            },
-          })
+      if (searchCompanies) {
+        getCompanyIdentity({
+          variables: { input: { nationalId: nationalIdInput } },
+        })
       }
     }
   }, [
@@ -247,7 +239,13 @@ export const NationalIdWithName: FC<
               onNationalIdChange &&
                 onNationalIdChange(v.target.value.replace(/\W/g, ''))
             })}
-            loading={searchPersons ? queryLoading : companyQueryLoading}
+            loading={
+              searchPersons
+                ? queryLoading
+                : searchCompanies
+                ? companyQueryLoading
+                : undefined
+            }
             error={nationalIdFieldErrors}
             disabled={disabled}
             clearOnChange={clearOnChange}

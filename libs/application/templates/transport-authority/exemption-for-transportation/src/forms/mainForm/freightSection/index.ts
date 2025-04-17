@@ -20,7 +20,7 @@ export const freightSection = buildSection({
           children: [
             buildDescriptionField({
               id: 'description',
-              title: 'TODOx lorem ipsum',
+              title: 'lorem ipsum',
             }),
           ],
         }),
@@ -36,7 +36,7 @@ export const freightSection = buildSection({
           children: [
             buildDescriptionField({
               id: 'description',
-              title: 'TODOx lorem ipsum',
+              title: 'lorem ipsum',
             }),
           ],
         }),
