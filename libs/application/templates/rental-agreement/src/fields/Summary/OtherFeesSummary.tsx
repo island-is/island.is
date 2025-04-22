@@ -64,13 +64,18 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
             value={getOptionLabel(
               electricityCost || '',
               getOtherFeesPayeeOptions,
+              '',
             )}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
           <KeyValue
             label={summary.heatingCostLabel}
-            value={getOptionLabel(heatingCost || '', getOtherFeesPayeeOptions)}
+            value={getOptionLabel(
+              heatingCost || '',
+              getOtherFeesPayeeOptions,
+              '',
+            )}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
@@ -79,6 +84,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
             value={getOptionLabel(
               housingFund || '',
               getOtherFeesHousingFundPayeeOptions,
+              '',
             )}
           />
         </GridColumn>

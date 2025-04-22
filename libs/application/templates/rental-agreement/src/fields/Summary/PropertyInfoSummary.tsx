@@ -99,7 +99,11 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
           <KeyValue
             label={summary.propertyTypeLabel}
-            value={getOptionLabel(categoryType || '', getPropertyTypeOptions)}
+            value={getOptionLabel(
+              categoryType || '',
+              getPropertyTypeOptions,
+              '',
+            )}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '4/12']}>
@@ -116,6 +120,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
                 value={getOptionLabel(
                   categoryClassGroup || '',
                   getPropertyClassGroupOptions,
+                  '',
                 )}
               />
             </GridColumn>
@@ -149,7 +154,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12']}>
           <KeyValue
             label={summary.propertyDescriptionLabel}
-            value={descriptionInput || ''}
+            value={descriptionInput || '-'}
           />
         </GridColumn>
       </SummaryCardRow>
@@ -162,7 +167,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12']}>
           <KeyValue
             label={summary.PropertySpecialProvisionsLabel}
-            value={rulesInput || ''}
+            value={rulesInput || '-'}
           />
         </GridColumn>
       </SummaryCardRow>

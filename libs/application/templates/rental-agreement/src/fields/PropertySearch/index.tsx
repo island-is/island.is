@@ -113,6 +113,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     setCheckedUnits(restoreCheckedUnits(storedValue))
     setNumOfRoomsValue(restoreRoomsValue(storedValue))
     setUnitSizeChangedValue(restoreSizeValue(storedValue))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storedValue])
 
   useEffect(() => {

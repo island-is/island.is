@@ -13,7 +13,7 @@ import {
 export const getOptionLabel = (
   value: string,
   getOptions: () => SelectOption[],
-  defaultValue: string = '-',
+  defaultValue: '',
 ): string => {
   if (!value) {
     return defaultValue
