@@ -42,19 +42,6 @@ export class PaymentsResolver {
     }
   }
 
-  // TODO: Remove after testing on feature deployment
-  @Mutation(() => CreatePaymentFlowResponse, { name: 'paymentsCreateFlow' })
-  async createPaymentFlow(
-    @Args('input', { type: () => CreatePaymentFlowInput })
-    input: CreatePaymentFlowInput,
-  ): Promise<CreatePaymentFlowResponse> {
-    try {
-      return this.paymentsService.createPaymentFlow(input)
-    } catch (e) {
-      throw new ApolloError(e.message)
-    }
-  }
-
   @Query(() => GetPaymentVerificationStatusResponse, {
     name: 'paymentsGetVerificationStatus',
   })
