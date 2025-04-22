@@ -155,4 +155,10 @@ export class CaseListEntry {
 
   @Field(() => Boolean, { nullable: true })
   readonly isCompletedWithoutRuling?: boolean
+
+  // TEMP: This is a temporary solution to allow public prosecutor users to mark a case
+  // as registered in the police system. This will be removed once this can be done
+  // automatically.
+  @Field(() => Boolean, { nullable: true })
+  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
 }
