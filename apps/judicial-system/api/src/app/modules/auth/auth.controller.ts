@@ -347,6 +347,7 @@ export class AuthController {
 
     cookies.forEach((cookie) => clearCookie(cookie))
   }
+
   private async redirectAuthenticatedUser(
     nationalId: string,
     res: Response,
@@ -392,7 +393,7 @@ export class AuthController {
       this.clearCookies(res, [this.idToken])
     }
 
-    this.redirectAuthorizeUser(
+    return this.redirectAuthorizeUser(
       nationalId,
       res,
       currentUser,
