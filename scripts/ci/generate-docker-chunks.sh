@@ -47,7 +47,8 @@ for target in "$@"; do
 done
 
 if [[ -n "$ADDITIONAL_PROJECTS" ]] ; then
-  echo "Running additional projects: ${$(yarn nx show projects --withTarget="$target" -p "$ADDITIONAL_PROJECTS" --json)}"
+  TMP_PROJ=$(yarn nx show projects -p "$ADDITIONAL_PROJECTS" --json)
+  echo "Running additional projects: ${TMP_PROJ}"
   for target in "$@"; do
   echo "Target for additional projects: ${target}"
   processed_chunks=$(yarn nx show projects --withTarget="$target" -p "$ADDITIONAL_PROJECTS" --json |
