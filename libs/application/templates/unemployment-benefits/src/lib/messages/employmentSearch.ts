@@ -20,6 +20,27 @@ export const employmentSearch = {
       defaultMessage: 'Óskir um störf',
       description: 'Job wishes page description',
     },
+    employmentListQuestion: {
+      id: 'vmst.ub.application:employmentSearch.jobWishes.employmentListQuestion',
+      defaultMessage:
+        'Hvernig starfi ertu að leita eftir? Þú verður að velja minnst tvö störf.',
+      description: 'Employment list question',
+    },
+    employmentListLabel: {
+      id: 'vmst.ub.application:employmentSearch.jobWishes.employmentListLabel',
+      defaultMessage: 'Starfalisti',
+      description: 'Employment list label',
+    },
+    employmentLocationInterest: {
+      id: 'vmst.ub.application:employmentSearch.jobWishes.employmentLocationInterest',
+      defaultMessage: 'Hefurðu áhuga á starfi utan þíns svæðis?',
+      description: 'Employment location interest',
+    },
+    location: {
+      id: 'vmst.ub.application:employmentSearch.jobWishes.location',
+      defaultMessage: 'Svæði',
+      description: 'Location label',
+    },
   }),
   interviewAndMeetingAgreement: defineMessages({
     sectionTitle: {
