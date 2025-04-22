@@ -22,7 +22,7 @@ async function main() {
     )
   }
 
-  const namespacesToAdd = []
+  const namespacesToAdd = new Set()
   const directory = `charts/features/deployments/${featureName}`
 
   const files = await glob(`${directory}/**/values.yaml`)
@@ -41,14 +41,8 @@ async function main() {
         : null
 
     if (namespaceToAdd) {
-      namespacesToAdd.push(namespaceToAdd)
+      namespacesToAdd.add(namespaceToAdd)
     }
-    // if (namespaceToAdd) {
-    //   namespacesToAdd[applicationName] ??= []
-    //   namespacesToAdd[applicationName] = Array.from(
-    //     new Set([...namespacesToAdd[applicationName], namespaceToAdd]),
-    //   )
-    // }
   }
 
   console.log('Namespaces to add:', namespacesToAdd)
@@ -57,25 +51,11 @@ async function main() {
   mkdirSync(directoryPath, { recursive: true })
 
   const content = {
-    namespaces: namespacesToAdd,
+    namespaces: Array.from(namespacesToAdd),
   }
   writeFileSync(
     `${directoryPath}/values.bootstrap.yaml`,
     jsyaml.dump(content),
     { encoding: 'utf-8' },
   )
-
-
-  // for (const key of Object.keys(namespacesToAdd)) {
-  //   const directoryPath = path.join(directory, key)
-  //   mkdirSync(directory, { recursive: true })
-  //   const content = {
-  //     namespaces: namespacesToAdd[key],
-  //   }
-  //   writeFileSync(
-  //     `${directoryPath}/values.bootstrap.yaml`,
-  //     jsyaml.dump(content),
-  //     { encoding: 'utf-8' },
-  //   )
-  // }
 }
