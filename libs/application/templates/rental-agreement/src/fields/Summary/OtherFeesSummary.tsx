@@ -2,15 +2,15 @@ import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
-import { OtherFeesPayeeOptions, Routes, TRUE } from '../../lib/constants'
-import { CostField } from '../../lib/types'
+import { OtherFeesPayeeOptions, Routes, TRUE } from '../../utils/constants'
+import { CostField } from '../../utils/types'
 import {
   filterEmptyCostItems,
   formatCurrency,
   formatDate,
   getOtherFeesHousingFundPayeeOptions,
   getOtherFeesPayeeOptions,
-} from '../../lib/utils'
+} from '../../utils/utils'
 import { KeyValue } from './components/KeyValue'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { SummaryCard } from './components/SummaryCard'
@@ -76,7 +76,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
   const tenantPaysHouseFund = housingFund === OtherFeesPayeeOptions.TENANT
   const tenantPaysElectricity = electricityCost === OtherFeesPayeeOptions.TENANT
   const tenantPaysHeating = heatingCost === OtherFeesPayeeOptions.TENANT
-  const tenantPaysOtherFees = otherCosts?.includes(TRUE)
+  const tenantPaysOtherFees = !!otherCosts && otherCosts.length > 0
   const isOtherCostItems = Array.isArray(otherCostItems) ? otherCostItems : []
 
   return (
@@ -215,6 +215,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
       {tenantPaysOtherFees &&
         filterEmptyCostItems(isOtherCostItems).map((item, index) => (
           <SummaryCardRow
+            key={`${item.description}_${index}`}
             editAction={goToScreen}
             route={route}
             hasChangeButton={hasChangeButton}

@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react'
+import NumberFormat from 'react-number-format'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
@@ -9,11 +10,10 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { otherFees as tOtherFees } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
-import { isCostItemValid, parseCurrency } from '../../lib/utils'
-import NumberFormat from 'react-number-format'
-import { CostField } from '../../lib/types'
+import { isCostItemValid, parseCurrency } from '../../utils/utils'
+import { CostField } from '../../utils/types'
+import { otherFees as tOtherFees } from '../../lib/messages'
 
 const MAX_COST_ITEMS = 3
 

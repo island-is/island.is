@@ -18,13 +18,11 @@ export const intro = buildSection({
       children: [
         buildDescriptionField({
           id: 'prerequisitesIntroText',
-          title: '',
           description: messages.text,
           marginBottom: 3,
         }),
         buildDescriptionField({
           id: 'prerequisitesIntroBullets',
-          title: '',
           description: messages.bullets,
         }),
       ],

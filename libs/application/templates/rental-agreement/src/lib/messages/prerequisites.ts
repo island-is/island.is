@@ -38,8 +38,13 @@ export const application = defineMessages({
   },
   backToOverviewButton: {
     id: 'ra.application:application.backToOverviewButton',
-    defaultMessage: 'Til baka í yfirlit',
+    defaultMessage: 'Til baka/breyta samningi',
     description: `Button text for going back to overview`,
+  },
+  goToSigningButton: {
+    id: 'ra.application:application.goToSigningButton',
+    defaultMessage: 'Áfram í undirritun',
+    description: `Button text for going to signing`,
   },
 })
 

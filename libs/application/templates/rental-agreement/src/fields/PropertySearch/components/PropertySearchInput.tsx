@@ -1,12 +1,12 @@
+import { useEffect, useState } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
 import { Query, HmsSearchInput } from '@island.is/api/schema'
 import { AsyncSearch, AsyncSearchOption, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useEffect, useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { registerProperty } from '../../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { ADDRESS_SEARCH_QUERY } from '../../../graphql/queries'
 import { AddressProps } from '..'
+import { registerProperty } from '../../../lib/messages'
 
 interface PropertySearchInputProps {
   id: string

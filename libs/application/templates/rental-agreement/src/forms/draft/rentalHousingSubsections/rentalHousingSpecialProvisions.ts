@@ -7,7 +7,10 @@ import {
   getValueViaPath,
   buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
-import { Routes } from '../../../lib/constants'
+import {
+  Routes,
+  SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH,
+} from '../../../utils/constants'
 import { specialProvisions } from '../../../lib/messages'
 import { Unit } from '../../../fields/PropertySearch'
 import { Application } from '@island.is/application/types'
@@ -51,7 +54,7 @@ export const RentalHousingSpecialProvisions = buildSubSection({
         buildTextField({
           id: 'specialProvisions.descriptionInput',
           title: specialProvisions.housingInfo.inputLabel,
-          maxLength: 1500,
+          maxLength: SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH,
           placeholder: specialProvisions.housingInfo.inputPlaceholder,
           variant: 'textarea',
           rows: 8,

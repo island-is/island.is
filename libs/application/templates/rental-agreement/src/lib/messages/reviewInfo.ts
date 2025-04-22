@@ -4,24 +4,29 @@ export const inReview = {
   reviewInfo: defineMessages({
     sectionName: {
       id: 'ra.application:inReview.reviewInfo.sectionName',
-      defaultMessage: 'Rýni og yfirlestur',
+      defaultMessage: 'Yfirlestur',
       description: 'Name of the signature review section',
     },
     pageDescription: {
       id: 'ra.application:inReview.reviewInfo.reviewPageDescription',
       defaultMessage:
-        'Ef þú vilt gefa öðrum samningsgerðaraðilum færi á að lesa yfir samninginn áður en hann er sendur í rafræna undirritun þá getur þú deilt hlekknum hér að neðan með þeim.',
+        'Búið er að senda samantektina með tölvupósti á aðila samnings til yfirlestrar.',
       description: 'Description of the review page',
+    },
+    tableTitle: {
+      id: 'ra.application:inReview.reviewInfo.tableTitle',
+      defaultMessage: 'Aðilar samnings',
+      description: 'Title for the review table',
     },
     infoHeading: {
       id: 'ra.application:inReview.reviewInfo.pageInfoHeading',
-      defaultMessage: 'Mikilvæg atriði',
+      defaultMessage: 'Næsta skref',
       description: 'Heading for the review page info',
     },
     infoBullets: {
       id: 'ra.application:inReview.reviewInfo.pageInfoBullets#markdown',
       defaultMessage:
-        '- Ef þú ýtir á „Til baka“ á þessum skjá þá dettur samningurinn úr þessum rýniham og hlekkurinn virkar ekki lengur. \n- Þegar samningsgerðaraðilar hafa lokið við að fara yfir samninginn er þér óhætt að halda áfram í undirritunarferlið.',
+        '- Ef þú þarft að gera breytingar út frá athugasemdum samningsaðila getur þú farið til baka til að gera þær. \n- Ef samningsaðilar hafa engar athugasemdir er þér óhætt að halda áfram í undirritun.',
       description: 'Bullets for the review page info',
     },
   }),

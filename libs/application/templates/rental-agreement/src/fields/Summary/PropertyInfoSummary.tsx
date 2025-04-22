@@ -14,11 +14,11 @@ import {
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
   Routes,
-} from '../../lib/constants'
+} from '../../utils/constants'
 import {
   getPropertyTypeOptions,
   getPropertyClassGroupOptions,
-} from '../../lib/utils'
+} from '../../utils/utils'
 import { KeyValue } from './components/KeyValue'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { SummaryCard } from './components/SummaryCard'

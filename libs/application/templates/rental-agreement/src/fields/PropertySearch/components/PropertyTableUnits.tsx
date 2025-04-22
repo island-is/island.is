@@ -1,4 +1,5 @@
 import { Checkbox, Table as T } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
   hiddenTableRow,
   hiddenTableRowExpanded,
@@ -14,7 +15,6 @@ import {
   tableCellFastNum,
 } from '../propertySearch.css'
 import { registerProperty } from '../../../lib/messages'
-import { useLocale } from '@island.is/localization'
 
 interface PropertyUnitsProps {
   unitCode?: string

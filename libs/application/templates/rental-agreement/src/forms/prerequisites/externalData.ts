@@ -19,7 +19,6 @@ export const externalData = buildSection({
       checkboxLabel: prerequisites.externalData.checkboxLabel,
       submitField: buildSubmitField({
         id: 'toDraft',
-        title: '',
         refetchApplicationAfterSubmit: true,
         actions: [
           {

@@ -8,8 +8,8 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { RentalAgreement } from '../../lib/dataSchema'
-import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
-import { TRUE } from '../../lib/constants'
+import { formatNationalId, formatPhoneNumber } from '../../utils/utils'
+import { TRUE } from '../../utils/constants'
 import { inReview } from '../../lib/messages'
 
 export const PreSignatureInfoSection = buildSection({
@@ -20,7 +20,6 @@ export const PreSignatureInfoSection = buildSection({
       id: 'preSignatureInfo',
       title: inReview.preSignatureInfo.sectionName,
       description: inReview.preSignatureInfo.pageDescription,
-      nextButtonText: '',
       children: [
         buildDescriptionField({
           id: 'preSignatureInfo.info',

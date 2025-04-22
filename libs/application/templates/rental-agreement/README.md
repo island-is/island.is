@@ -8,7 +8,7 @@
 
 ## URLs
 
-- [Dev](https://beta.dev01.devland.is)
+- [Dev](https://rental-agreement-application-beta.dev01.devland.is/umsoknir/leigusamningur)
 - [Staging](https://beta.staging01.devland.is)
 - [Production](https://island.is)
 
@@ -38,8 +38,9 @@ yarn start web
 
 All localisation can be found on Contentful.
 
-- [Rental Agreement application translations](https://app.contentful.com/spaces/...)
-- [Application system translations](https://app.contentful.com/spaces/...)
+<!-- Todo: Add correct links to translations when ready -->
+<!-- - [Rental Agreement application translations](https://app.contentful.com/spaces/...) -->
+<!-- - [Application system translations](https://app.contentful.com/spaces/...) -->
 
 {% hint style="warning" %}
 When creating new text strings or making changes in the messages.ts file for the application, be sure to update Contentful by running this command:

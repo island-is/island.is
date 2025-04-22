@@ -6,32 +6,20 @@ import {
   buildDateField,
   buildDescriptionField,
   buildCheckboxField,
-  getValueViaPath,
   buildCustomField,
 } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
 import {
-  getApplicationAnswers,
   getOtherFeesHousingFundPayeeOptions,
   getOtherFeesPayeeOptions,
-} from '../../../lib/utils'
-import { OtherFeesPayeeOptions, Routes, TRUE } from '../../../lib/constants'
+} from '../../../utils/utils'
+import { Routes, TRUE } from '../../../utils/constants'
 import { otherFees } from '../../../lib/messages'
-
-const housingFundAmountPayedByTenant = (answers: FormValue) => {
-  const { otherFeesHousingFund } = getApplicationAnswers(answers)
-  return otherFeesHousingFund === OtherFeesPayeeOptions.TENANT
-}
-
-const electricityCostPayedByTenant = (answers: FormValue) => {
-  const { otherFeesElectricityCost } = getApplicationAnswers(answers)
-  return otherFeesElectricityCost === OtherFeesPayeeOptions.TENANT
-}
-
-const heatingCostPayedByTenant = (answers: FormValue) => {
-  const { otherFeesHeatingCost } = getApplicationAnswers(answers)
-  return otherFeesHeatingCost === OtherFeesPayeeOptions.TENANT
-}
+import {
+  electricityCostPayedByTenant,
+  heatingCostPayedByTenant,
+  housingFundAmountPayedByTenant,
+  otherFeesPayedByTenant,
+} from '../../../utils/rentalPeriodUtils'
 
 export const RentalPeriodOtherFees = buildSubSection({
   id: Routes.OTHERFEES,
@@ -142,7 +130,6 @@ export const RentalPeriodOtherFees = buildSubSection({
         }),
         buildCheckboxField({
           id: 'otherFees.otherCosts',
-          title: '',
           options: [
             {
               value: TRUE,
@@ -154,16 +141,8 @@ export const RentalPeriodOtherFees = buildSubSection({
         }),
         buildCustomField({
           id: 'otherFees.otherCostItems',
-          title: '',
           component: 'OtherCostItems',
-          condition: (answers) => {
-            const otherFeesOtherCosts = getValueViaPath(
-              answers,
-              'otherFees.otherCosts',
-              [],
-            ) as string[]
-            return otherFeesOtherCosts && otherFeesOtherCosts.includes(TRUE)
-          },
+          condition: otherFeesPayedByTenant,
         }),
       ],
     }),

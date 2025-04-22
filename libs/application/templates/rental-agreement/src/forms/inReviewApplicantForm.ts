@@ -3,6 +3,7 @@ import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { application } from '../lib/messages'
 import { PreSignatureInfoSection } from './inReview/preSignatureInfoSection'
+import { ReviewInfoSection } from './inReview/reviewInfoSection'
 
 export const inReviewApplicantForm: Form = buildForm({
   id: 'inReviewApplicantForm',
@@ -11,5 +12,5 @@ export const inReviewApplicantForm: Form = buildForm({
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [PreSignatureInfoSection],
+  children: [ReviewInfoSection, PreSignatureInfoSection],
 })

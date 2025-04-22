@@ -3,9 +3,8 @@ import {
   buildMultiField,
   buildTableRepeaterField,
 } from '@island.is/application/core'
-import { formatNationalId, formatPhoneNumber } from '../../../lib/utils'
-import { IS_REPRESENTATIVE } from '../../../lib/constants'
-import { Routes } from '../../../lib/constants'
+import { formatNationalId, formatPhoneNumber } from '../../../utils/utils'
+import { IS_REPRESENTATIVE, Routes } from '../../../utils/constants'
 import { landlordDetails } from '../../../lib/messages'
 
 export const RentalHousingLandlordInfo = buildSubSection({
@@ -19,7 +18,6 @@ export const RentalHousingLandlordInfo = buildSubSection({
       children: [
         buildTableRepeaterField({
           id: 'landlordInfo.table',
-          title: '',
           editField: true,
           marginTop: 1,
           maxRows: 10,

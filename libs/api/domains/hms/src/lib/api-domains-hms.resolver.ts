@@ -1,8 +1,9 @@
 import { Query, Resolver, Args } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 
-import type { User } from '@island.is/auth-nest-tools'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
+  type User,
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
@@ -18,7 +19,11 @@ import { PropertyInfos } from './models/hmsPropertyInfo.model'
 @Resolver()
 @Audit({ namespace: '@island.is/api/hms' })
 export class HmsResolver {
-  constructor(private hmsService: HmsService) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(HmsService)
+    private hmsService: HmsService,
+  ) {}
 
   @Query(() => Addresses, {
     name: 'hmsSearch',
@@ -29,10 +34,13 @@ export class HmsResolver {
     @CurrentUser() user: User,
     @Args('input') input: HmsSearchInput,
   ): Promise<Addresses> {
-    const addressesArray = await this.hmsService.hmsSearch(user, {
-      ...input,
-    })
-    return { addresses: addressesArray }
+    try {
+      const addressesArray = await this.hmsService.hmsSearch(user, { ...input })
+      return { addresses: addressesArray }
+    } catch (error) {
+      this.logger.error('Error fetching HMS address search:', error)
+      throw new Error('Failed to get addressses')
+    }
   }
 
   @Query(() => PropertyInfos, {
@@ -44,9 +52,14 @@ export class HmsResolver {
     @CurrentUser() user: User,
     @Args('input') input: HmsPropertyInfoInput,
   ): Promise<PropertyInfos> {
-    const propertyInfos = await this.hmsService.hmsPropertyInfo(user, {
-      ...input,
-    })
-    return { propertyInfos }
+    try {
+      const propertyInfos = await this.hmsService.hmsPropertyInfo(user, {
+        ...input,
+      })
+      return { propertyInfos }
+    } catch (error) {
+      this.logger.error('Error fetching HMS properties:', error)
+      throw new Error('Failed to fetch properties')
+    }
   }
 }

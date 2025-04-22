@@ -5,10 +5,8 @@ import {
   buildDescriptionField,
   buildCheckboxField,
   buildSelectField,
-  getValueViaPath,
   buildHiddenInput,
 } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
 import {
   AnswerOptions,
   RentalAmountIndexTypes,
@@ -16,22 +14,19 @@ import {
   RentalPaymentMethodOptions,
   Routes,
   TRUE,
-} from '../../../lib/constants'
+} from '../../../utils/constants'
 import {
   getPaymentMethodOptions,
   getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
-} from '../../../lib/utils'
+} from '../../../utils/utils'
 import { rentalAmount } from '../../../lib/messages'
-
-const rentalAmountConnectedToIndex = (answers: FormValue) => {
-  const isAmountConnectedToIndex = getValueViaPath(
-    answers,
-    'rentalAmount.isIndexConnected',
-    [],
-  ) as string[]
-  return isAmountConnectedToIndex && isAmountConnectedToIndex.includes(TRUE)
-}
+import {
+  rentalAmountConnectedToIndex,
+  rentalInsuranceRequired,
+  rentalPaymentIsBankTransfer,
+  rentalPaymentIsOther,
+} from '../../../utils/rentalPeriodUtils'
 
 export const RentalPeriodAmount = buildSubSection({
   id: Routes.RENTALAMOUNT,
@@ -67,7 +62,6 @@ export const RentalPeriodAmount = buildSubSection({
         }),
         buildCheckboxField({
           id: 'rentalAmount.isIndexConnected',
-          title: '',
           clearOnChange: ['rentalAmount.indexTypes'],
           options: [
             {
@@ -97,9 +91,7 @@ export const RentalPeriodAmount = buildSubSection({
           title: rentalAmount.paymentDateOtherOptionLabel,
           placeholder: rentalAmount.paymentDateOtherOptionPlaceholder,
           maxLength: 100,
-          condition: (answers) =>
-            getValueViaPath(answers, 'rentalAmount.paymentDateOptions') ===
-            RentalAmountPaymentDateOptions.OTHER,
+          condition: rentalPaymentIsOther,
         }),
 
         // Payment method
@@ -120,26 +112,20 @@ export const RentalPeriodAmount = buildSubSection({
           title: rentalAmount.paymentMethodNationalIdLabel,
           format: '######-####',
           width: 'half',
-          condition: (answers) =>
-            getValueViaPath(answers, 'rentalAmount.paymentMethodOptions') ===
-            RentalPaymentMethodOptions.BANK_TRANSFER,
+          condition: rentalPaymentIsBankTransfer,
         }),
         buildTextField({
           id: 'rentalAmount.paymentMethodBankAccountNumber',
           title: rentalAmount.paymentMethodBankAccountNumberLabel,
           format: '####-##-######',
           width: 'half',
-          condition: (answers) =>
-            getValueViaPath(answers, 'rentalAmount.paymentMethodOptions') ===
-            RentalPaymentMethodOptions.BANK_TRANSFER,
+          condition: rentalPaymentIsBankTransfer,
         }),
         buildTextField({
           id: 'rentalAmount.paymentMethodOtherTextField',
           title: rentalAmount.paymentMethodOtherTextFieldLabel,
           maxLength: 50,
-          condition: (answers) =>
-            getValueViaPath(answers, 'rentalAmount.paymentMethodOptions') ===
-            RentalPaymentMethodOptions.OTHER,
+          condition: rentalPaymentIsOther,
         }),
 
         // Payment insurance
@@ -151,7 +137,6 @@ export const RentalPeriodAmount = buildSubSection({
         }),
         buildCheckboxField({
           id: 'rentalAmount.isPaymentInsuranceRequired',
-          title: '',
           options: [
             {
               value: AnswerOptions.YES,
@@ -161,13 +146,7 @@ export const RentalPeriodAmount = buildSubSection({
         }),
         buildHiddenInput({
           id: 'rentalAmount.paymentInsuranceDetails',
-          condition: (answers) => {
-            const checkbox = getValueViaPath<Array<string>>(
-              answers,
-              'rentalAmount.isPaymentInsuranceRequired',
-            )
-            return checkbox?.includes(AnswerOptions.YES) || false
-          },
+          condition: rentalInsuranceRequired,
         }),
       ],
     }),

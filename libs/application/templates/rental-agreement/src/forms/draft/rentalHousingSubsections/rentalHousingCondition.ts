@@ -6,8 +6,14 @@ import {
   buildTextField,
   buildFileUploadField,
 } from '@island.is/application/core'
-import { getApplicationAnswers, getInspectorOptions } from '../../../lib/utils'
-import { RentalHousingConditionInspector, Routes } from '../../../lib/constants'
+import {
+  getApplicationAnswers,
+  getInspectorOptions,
+} from '../../../utils/utils'
+import {
+  RentalHousingConditionInspector,
+  Routes,
+} from '../../../utils/constants'
 import { housingCondition } from '../../../lib/messages'
 
 export const RentalHousingCondition = buildSubSection({
@@ -27,7 +33,6 @@ export const RentalHousingCondition = buildSubSection({
         }),
         buildRadioField({
           id: 'condition.inspector',
-          title: '',
           description: housingCondition.inspectorDescription,
           options: getInspectorOptions(),
           clearOnChange: ['condition.inspectorName'],

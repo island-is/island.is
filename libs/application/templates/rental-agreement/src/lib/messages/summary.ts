@@ -356,10 +356,10 @@ export const summary = defineMessages({
     defaultMessage: 'Deila samningsdrögum',
     description: 'Share link label',
   },
-  shareLinkTooltip: {
-    id: 'ra.application:summary.shareLinkTooltip',
+  shareLinkDescription: {
+    id: 'ra.application:summary.shareLinkDescription',
     defaultMessage:
-      'Hér getur þú deilt samningsdrögum með öðrum aðilum smnings til að fá álit þeirra.',
+      'Þú getur deilt samningsdrögum með öðrum aðilum samnings til að fá álit þeirra.',
     description: 'Share link tooltip',
   },
   shareLinkbuttonLabel: {

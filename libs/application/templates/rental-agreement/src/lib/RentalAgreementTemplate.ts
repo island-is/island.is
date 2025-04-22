@@ -19,12 +19,12 @@ import {
   ApplicationRole,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { States, Roles } from './constants'
-import { dataSchema } from './dataSchema'
+import { States, Roles } from '../utils/constants'
 import {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
 } from '../dataProviders'
+import { dataSchema } from './dataSchema'
 import { getAssigneesNationalIdList } from './getAssigneesNationalIdList'
 import { application } from './messages'
 

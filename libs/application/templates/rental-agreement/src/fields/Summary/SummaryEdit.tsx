@@ -8,8 +8,7 @@ import {
   BulletList,
   Button,
 } from '@island.is/island-ui/core'
-import { RentalAgreement } from '../../lib/dataSchema'
-import { Routes } from '../../lib/constants'
+import { Routes } from '../../utils/constants'
 import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSummary'
 import { ApplicantsSummary } from './ApplicantsSummary'
 import { OtherFeesSummary } from './OtherFeesSummary'
@@ -18,28 +17,47 @@ import { RentalInfoSummary } from './RentalInfoSummary'
 
 import { summaryWrap } from './summaryStyles.css'
 import { summary } from '../../lib/messages'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
 }) => {
   const { application, field, goToScreen, setSubmitButtonDisabled } = props
   const { formatMessage } = useLocale()
+  const { answers } = application
 
-  const answers = (application.answers as RentalAgreement) || {}
+  const smokeDetectors = getValueViaPath<string>(
+    answers,
+    'fireProtections.smokeDetectors',
+  )
+  const fireExtinguisher = getValueViaPath<string>(
+    answers,
+    'fireProtections.fireExtinguisher',
+  )
+  const emergencyExits = getValueViaPath<string>(
+    answers,
+    'fireProtections.emergencyExits',
+  )
+  const conditionDescription = getValueViaPath<string>(
+    answers,
+    'condition.resultsDescription',
+  )
+  const conditionFiles = getValueViaPath<string[]>(
+    answers,
+    'condition.resultsFiles',
+  )
+  const electricCost = getValueViaPath<string>(
+    answers,
+    'otherFees.electricityCost',
+  )
+  const heatingCost = getValueViaPath<string>(answers, 'otherFees.heatingCost')
+  const housingFund = getValueViaPath<string>(answers, 'otherFees.housingFund')
 
   const isFireProtectionsPresent =
-    answers.fireProtections.smokeDetectors &&
-    answers.fireProtections.fireExtinguisher &&
-    answers.fireProtections.emergencyExits
-
+    smokeDetectors && fireExtinguisher && emergencyExits
   const isConditionPresent =
-    answers.condition.resultsDescription ||
-    answers.condition.resultsFiles.length > 0
-
-  const isOtherFeesPresent =
-    answers.otherFees.electricityCost &&
-    answers.otherFees.heatingCost &&
-    answers.otherFees.housingFund
+    conditionDescription || (conditionFiles && conditionFiles.length > 0)
+  const isOtherFeesPresent = electricCost && heatingCost && housingFund
 
   const AlertMessageConditions = [
     {

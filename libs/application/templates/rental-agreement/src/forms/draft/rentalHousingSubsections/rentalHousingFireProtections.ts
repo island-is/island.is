@@ -5,7 +5,7 @@ import {
   buildTextField,
   buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
-import { Routes } from '../../../lib/constants'
+import { Routes } from '../../../utils/constants'
 import { housingFireProtections } from '../../../lib/messages'
 
 export const RentalHousingFireProtections = buildSubSection({
@@ -19,7 +19,6 @@ export const RentalHousingFireProtections = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'fireProtections.smokeDetectorsFireExtinguisherRequirements',
-          title: '',
           description:
             housingFireProtections.smokeDetectorsFireExtinguisherRequirements,
           space: 0,
@@ -40,7 +39,6 @@ export const RentalHousingFireProtections = buildSubSection({
         }),
         buildDescriptionField({
           id: 'fireProtections.exitFireBlanketRequirements',
-          title: '',
           description: housingFireProtections.exitFireBlanketRequirements,
           space: 4,
         }),

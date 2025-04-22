@@ -2,13 +2,13 @@ import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
+import { getValueViaPath } from '@island.is/application/core'
 import { summary } from '../../lib/messages'
-import { Routes } from '../../lib/constants'
-import { formatNationalId, formatPhoneNumber } from '../../lib/utils'
+import { Routes } from '../../utils/constants'
+import { formatNationalId, formatPhoneNumber } from '../../utils/utils'
 import { KeyValue } from './components/KeyValue'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { SummaryCard } from './components/SummaryCard'
-import { getValueViaPath } from '@island.is/application/core'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -63,13 +63,9 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
       tenantRep.isRepresentative && tenantRep.isRepresentative.length > 0,
   )
 
-  if (!landlordListHasRepresentatives && !tenantListHasRepresentatives) {
-    return null
-  }
-
   return (
     <>
-      {landlordListHasRepresentatives ? (
+      {landlordListHasRepresentatives && (
         <SummaryCard
           cardLabel={formatMessage(summary.landlordsRepresentativeLabel)}
         >
@@ -111,10 +107,8 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
             )
           })}
         </SummaryCard>
-      ) : (
-        ''
       )}
-      {tenantListHasRepresentatives ? (
+      {tenantListHasRepresentatives && (
         <SummaryCard
           cardLabel={formatMessage(summary.tenantsRepresentativeLabel)}
         >
@@ -155,8 +149,6 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
             )
           })}
         </SummaryCard>
-      ) : (
-        ''
       )}
     </>
   )

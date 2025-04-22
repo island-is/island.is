@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { IS_REPRESENTATIVE } from './constants'
+import { IS_REPRESENTATIVE } from '../utils/constants'
 
 export const getAssigneesNationalIdList = (application: Application) => {
   try {
@@ -47,5 +47,6 @@ export const getAssigneesNationalIdList = (application: Application) => {
     return assigneesNationalIdList
   } catch (error) {
     console.error(error)
+    return []
   }
 }

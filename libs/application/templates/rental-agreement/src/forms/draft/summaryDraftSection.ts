@@ -8,14 +8,14 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { summary, application } from '../../lib/messages'
+import { Routes } from '../../utils/constants'
 
 export const SummaryDraftSection = buildSection({
-  id: 'summary',
+  id: Routes.SUMMARY,
   title: summary.sectionName,
   children: [
     buildMultiField({
-      id: 'summary',
-      title: '',
+      id: Routes.SUMMARY,
       children: [
         buildDescriptionField({
           id: 'summaryTitle',
@@ -24,22 +24,19 @@ export const SummaryDraftSection = buildSection({
         }),
         buildDescriptionField({
           id: 'summaryFirstDescription',
-          title: '',
           description: summary.pageDescriptionFirstParagraph,
         }),
         buildDescriptionField({
           id: 'summarySecondDescription',
-          title: '',
           description: summary.pageDescriptionSecondparagraph,
         }),
         buildCustomField({
           id: 'summaryEditComponent',
-          title: 'Samantekt',
+          title: summary.pageTitle,
           component: 'SummaryEdit',
         }),
         buildSubmitField({
           id: 'toSummary',
-          title: 'í yfirlit',
           refetchApplicationAfterSubmit: true,
           actions: [
             {

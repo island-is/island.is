@@ -13,13 +13,13 @@ import {
   RentalHousingCategoryClass,
   RentalHousingCategoryTypes,
   Routes,
-} from '../../../lib/constants'
+} from '../../../utils/constants'
 import {
   getApplicationAnswers,
   getPropertyTypeOptions,
   getPropertyClassOptions,
   getPropertyClassGroupOptions,
-} from '../../../lib/utils'
+} from '../../../utils/utils'
 import { Unit } from '../../../fields/PropertySearch'
 import { registerProperty } from '../../../lib/messages'
 
@@ -38,7 +38,6 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
       children: [
         buildCustomField({
           id: Routes.PROPERTYSEARCH,
-          title: '',
           component: 'PropertySearch',
         }),
       ],
@@ -64,7 +63,6 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           condition: (answers) => Boolean(answers.registerProperty),
         }),
         buildStaticTableField({
-          title: '',
           condition: (answers) => Boolean(answers.registerProperty),
           marginBottom: 5,
           header: [
@@ -112,7 +110,6 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'registerProperty.categoryClass',
-          title: '',
           description: messagesCategory.classDescription,
           options: getPropertyClassOptions(),
           clearOnChange: ['registerProperty.categoryClassGroup'],

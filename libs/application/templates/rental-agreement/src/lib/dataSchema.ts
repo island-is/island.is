@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { CostField } from './types'
+import { CostField } from '../utils/types'
 import {
   maxChangedUnitSize,
   minChangedUnitSize,
@@ -15,7 +15,7 @@ import {
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
   TRUE,
-} from './constants'
+} from '../utils/constants'
 import * as m from './messages'
 
 const isValidMeterNumber = (value: string) => {

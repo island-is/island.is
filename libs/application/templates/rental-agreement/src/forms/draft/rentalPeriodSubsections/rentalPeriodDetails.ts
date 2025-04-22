@@ -4,20 +4,10 @@ import {
   buildDescriptionField,
   buildDateField,
   buildCheckboxField,
-  getValueViaPath,
 } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
-import { Routes, TRUE } from '../../../lib/constants'
+import { Routes, TRUE } from '../../../utils/constants'
 import { rentalPeriod } from '../../../lib/messages'
-
-const rentalPeriodIsDefinite = (answers: FormValue) => {
-  const rentalPeriodDefinite = getValueViaPath<string[]>(
-    answers,
-    'rentalPeriod.isDefinite',
-    [],
-  )
-  return !!rentalPeriodDefinite && rentalPeriodDefinite.includes(TRUE)
-}
+import { rentalPeriodIsDefinite } from '../../../utils/rentalPeriodUtils'
 
 export const RentalPeriodDetails = buildSubSection({
   id: Routes.RENTALPERIOD,
@@ -43,7 +33,6 @@ export const RentalPeriodDetails = buildSubSection({
         }),
         buildCheckboxField({
           id: 'rentalPeriod.isDefinite',
-          title: '',
           options: [
             {
               value: TRUE,

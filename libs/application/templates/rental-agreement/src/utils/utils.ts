@@ -18,7 +18,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
-import * as m from './messages'
+import * as m from '../lib/messages'
 
 export const validateEmail = (value: string) => {
   const regex =

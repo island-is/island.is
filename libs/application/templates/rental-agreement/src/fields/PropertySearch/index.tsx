@@ -58,7 +58,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const storedValue = getValues(id)
 
   const [searchTerm, setSearchTerm] = useState(storedValue?.value)
-  const [searchOptions, setSearchOptions] = useState<AsyncSearchOption[]>([])
+  const [searchOptions, setSearchOptions] = useState<AddressProps[]>([])
   const [tableExpanded, setTableExpanded] = useState<Record<string, boolean>>(
     {},
   )
@@ -308,7 +308,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     const selectedOption = searchOptions.find(
       (option) => option.value === selectedValue,
     )
-    setSelectedAddress(selectedOption as AddressProps)
+    setSelectedAddress(selectedOption)
     setValue(id, selection ? selection : undefined)
   }
 

@@ -3,6 +3,8 @@ import { DefaultEvents, StateLifeCycle } from '@island.is/application/types'
 export const TRUE = 'true'
 export const FALSE = 'false'
 
+export const SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH = 1500
+
 export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.EDIT }
 
 export enum States {
@@ -37,6 +39,7 @@ export enum Routes {
   RENTALAMOUNT = 'rentalAmount',
   SECURITYDEPOSIT = 'securityDeposit',
   OTHERFEES = 'otherFees',
+  SUMMARY = 'summary',
 }
 export const IS_REPRESENTATIVE = 'isRepresentative'
 

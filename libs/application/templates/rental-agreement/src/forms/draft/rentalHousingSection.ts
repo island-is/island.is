@@ -1,10 +1,10 @@
 import { buildSection } from '@island.is/application/core'
-import { RentalHousingPropertyInfo } from './rentalHousing/rentalHousingPropertyInfo'
-import { RentalHousingLandlordInfo } from './rentalHousing/rentalHousingLandlordInfo'
-import { RentalHousingTenantInfo } from './rentalHousing/rentalHousingTenantInfo'
-import { RentalHousingSpecialProvisions } from './rentalHousing/rentalHousingSpecialProvisions'
-import { RentalHousingCondition } from './rentalHousing/rentalHousingCondition'
-import { RentalHousingFireProtections } from './rentalHousing/rentalHousingFireProtections'
+import { RentalHousingPropertyInfo } from './rentalHousingSubsections/rentalHousingPropertyInfo'
+import { RentalHousingLandlordInfo } from './rentalHousingSubsections/rentalHousingLandlordInfo'
+import { RentalHousingTenantInfo } from './rentalHousingSubsections/rentalHousingTenantInfo'
+import { RentalHousingSpecialProvisions } from './rentalHousingSubsections/rentalHousingSpecialProvisions'
+import { RentalHousingCondition } from './rentalHousingSubsections/rentalHousingCondition'
+import { RentalHousingFireProtections } from './rentalHousingSubsections/rentalHousingFireProtections'
 
 import { application } from '../../lib/messages'
 

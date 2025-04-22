@@ -8,7 +8,7 @@ import {
   Routes,
   SecurityDepositTypeOptions,
   TRUE,
-} from '../../lib/constants'
+} from '../../utils/constants'
 import {
   formatBankInfo,
   formatCurrency,
@@ -18,7 +18,7 @@ import {
   getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
   getSecurityDepositTypeOptions,
-} from '../../lib/utils'
+} from '../../utils/utils'
 import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { KeyValue } from './components/KeyValue'
