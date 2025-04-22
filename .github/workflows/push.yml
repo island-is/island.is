@@ -2,9 +2,6 @@ name: Monorepo pipeline - build and deploy
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - pre-release/*
   pull_request:
     types:
       - opened
@@ -466,7 +463,6 @@ jobs:
     if: ${{ !cancelled()
       && needs.pre-checks.result == 'success'
       && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
-      && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
       && needs.helm-docker-build.result != 'failure'
       && needs.prepare.outputs.IMAGES != ''
       && needs.docker-build.result == 'success' }}
