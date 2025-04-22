@@ -3,6 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { general } from '../../lib/messages'
 import { OJOIApplication } from '../../lib/types'
+import { useOJOIUser } from '../../hooks/useOJOIUser'
 
 type Props = {
   application: OJOIApplication
@@ -22,21 +23,20 @@ export const ChannelList = ({
 }: Props) => {
   const { formatMessage } = useLocale()
 
-  const userInfo = useUserInfo()
+  const { user, loading } = useOJOIUser()
 
-  const defaultName = userInfo?.profile?.name
-  const defaultEmail = userInfo?.profile?.email
-  const defaultPhone = userInfo?.profile?.phone_number
+  const defaultName = `${user?.firstName} ${user?.lastName}`
+  const defaultEmail = user?.email
 
   const initalChannel = {
     name: defaultName,
     email: defaultEmail,
-    phone: defaultPhone,
+    phone: undefined,
   }
 
   const channels = application.answers.advert?.channels || [initalChannel]
 
-  if (channels.length === 0) {
+  if (channels.length === 0 || loading) {
     return null
   }
 
