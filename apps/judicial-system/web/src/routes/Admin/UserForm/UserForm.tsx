@@ -453,7 +453,7 @@ export const UserForm: FC<Props> = ({
             </Box>
           </Box>
         ) : null}
-        {isProsecutorsOffice(user.institution?.type &&) &&
+        {isProsecutorsOffice(user.institution?.type) &&
           user.role === UserRole.PROSECUTOR && (
             <Box marginBottom={2}>
               <Checkbox
