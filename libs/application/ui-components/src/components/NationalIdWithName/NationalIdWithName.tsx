@@ -149,7 +149,6 @@ export const NationalIdWithName: FC<
       {
         onCompleted: (data) => {
           onNameChange && onNameChange(data.identity?.name ?? '')
-          console.log('data', data)
           if (data.identity?.name) {
             setValue(nameField, data.identity?.name)
           } else if (
@@ -184,7 +183,6 @@ export const NationalIdWithName: FC<
       onCompleted: (companyData) => {
         onNameChange &&
           onNameChange(companyData.companyRegistryCompany?.name ?? '')
-        console.log('companyData', companyData)
         if (companyData.companyRegistryCompany?.name) {
           setValue(nameField, companyData.companyRegistryCompany?.name)
         } else if (
