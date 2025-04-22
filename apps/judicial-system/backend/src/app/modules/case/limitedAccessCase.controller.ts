@@ -55,7 +55,7 @@ import {
   defenderGeneratedPdfRule,
   defenderTransitionRule,
   defenderUpdateRule,
-  prisonSystemAdminRulingPDFRule,
+  prisonSystemAdminRulingPdfRule,
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
@@ -306,7 +306,7 @@ export class LimitedAccessCaseController {
     CaseReadGuard,
     CaseCompletedGuard,
   )
-  @RolesRules(defenderRule, prisonSystemAdminRulingPDFRule)
+  @RolesRules(defenderRule, prisonSystemAdminRulingPdfRule)
   @Get('case/:caseId/limitedAccess/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
