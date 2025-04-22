@@ -11,7 +11,7 @@ export { CaseTypeGuard } from './guards/caseType.guard'
 export { CaseCompletedGuard } from './guards/caseCompleted.guard'
 export {
   defenderGeneratedPdfRule,
-  prisonSystemAdminRulingPDFRule,
+  prisonSystemAdminRulingPdfRule,
 } from './guards/rolesRules'
 export { CurrentCase } from './guards/case.decorator'
 export { CaseOriginalAncestorInterceptor } from './interceptors/caseOriginalAncestor.interceptor'

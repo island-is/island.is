@@ -409,7 +409,7 @@ export const districtCourtJudgeSignRulingRule: RolesRule = {
 }
 
 // Allows prison system admins to access ruling PDFs in custody and parole revocation cases
-export const prisonSystemAdminRulingPDFRule: RolesRule = {
+export const prisonSystemAdminRulingPdfRule: RolesRule = {
   role: UserRole.PRISON_SYSTEM_STAFF,
   type: RulesType.BASIC,
   canActivate: (request) => {
