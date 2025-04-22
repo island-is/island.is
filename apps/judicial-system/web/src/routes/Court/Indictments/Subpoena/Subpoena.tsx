@@ -60,12 +60,9 @@ const Subpoena: FC = () => {
     newSubpoenas.length > 0 ||
     newAlternativeServices.length > 0
 
-  const isIssuingSubpoenaForDefendant = (defendant: Defendant) => {
-    return (
-      !defendant.isAlternativeService &&
-      (!isArraignmentScheduled || newSubpoenas.includes(defendant.id))
-    )
-  }
+  const isIssuingSubpoenaForDefendant = (defendant: Defendant) =>
+    !defendant.isAlternativeService &&
+    (!isArraignmentScheduled || newSubpoenas.includes(defendant.id))
 
   const isIssuingSubpoenas = workingCase.defendants?.some((defendant) =>
     isIssuingSubpoenaForDefendant(defendant),
