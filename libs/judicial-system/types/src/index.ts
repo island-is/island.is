@@ -12,7 +12,11 @@ export {
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
-export { InstitutionType } from './lib/institution'
+export {
+  InstitutionType,
+  prosecutorsOfficeTypes,
+  isProsecutorsOffice,
+} from './lib/institution'
 export {
   CaseNotificationType,
   SubpoenaNotificationType,
@@ -41,8 +45,8 @@ export {
   UserRole,
   prosecutionRoles,
   isProsecutionUser,
-  publicProsecutorRoles,
-  isPublicProsecutorUser,
+  publicProsecutionOfficeRoles,
+  isPublicProsecutionOfficeUser,
   districtCourtRoles,
   isDistrictCourtUser,
   courtOfAppealsRoles,
@@ -55,7 +59,7 @@ export {
   isAdminUser,
   isCoreUser,
   isPrisonAdminUser,
-  isPublicProsecutor,
+  isPublicProsecutionUser,
 } from './lib/user'
 export type { User } from './lib/user'
 
