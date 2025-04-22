@@ -30,7 +30,7 @@ import { environment } from '../../environments'
 import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
 import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeConfirmation.model'
-import { PaymentServiceCode } from '@island.is/shared/constants'
+import { FjsErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import {
   fjsErrorMessageToCode,
@@ -40,6 +40,7 @@ import {
 import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfirmation.model'
 import { ChargeResponse } from '../cardPayment/cardPayment.types'
 import { retry } from '@island.is/shared/utils/server'
+import { PaymentTrackingData } from '../../types/cardPayment'
 
 @Injectable()
 export class PaymentFlowService {
@@ -372,15 +373,18 @@ export class PaymentFlowService {
     paymentResult,
     paymentFlowId,
     totalPrice,
+    paymentTrackingData,
   }: {
     paymentResult: ChargeResponse
     paymentFlowId: string
     totalPrice: number
+    paymentTrackingData: PaymentTrackingData
   }) {
     try {
       return await retry(
         () =>
           this.paymentFlowConfirmationModel.create({
+            id: paymentTrackingData.correlationId,
             acquirerReferenceNumber: paymentResult.acquirerReferenceNumber,
             authorizationCode: paymentResult.authorizationCode,
             cardScheme: paymentResult.cardInformation.cardScheme,
@@ -388,12 +392,18 @@ export class PaymentFlowService {
             paymentFlowId,
             cardUsage: paymentResult.cardInformation.cardUsage,
             totalPrice,
+            merchantReferenceData: paymentTrackingData.merchantReferenceData,
           }),
         {
           maxRetries: 3,
           retryDelayMs: 1000,
           shouldRetryOnError: (error) => {
-            // TODO: Check if error is a unique constraint violation
+            const code = mapFjsErrorToCode(error, true)
+
+            if (code === FjsErrorCode.AlreadyCreatedCharge) {
+              return false
+            }
+
             return true
           },
           logger: this.logger,

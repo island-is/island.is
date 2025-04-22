@@ -148,6 +148,7 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=4096
       E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
@@ -164,7 +165,7 @@ jobs:
         uses: ./.github/actions/load-deps
 
       - name: Running e2e tests
-        run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
+        run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3
 
   linting-workspace:
     needs:
@@ -350,7 +351,6 @@ jobs:
           echo "::group::lintdiff"
           diff "${BASE_LINT_FILE}" "${HEAD_LINT_FILE}" || : # Ignore diff exit code
           echo "::endgroup::"
-          exit 1
 
   build:
     needs:
@@ -393,26 +393,26 @@ jobs:
       - build
       - unicorn-tests
     steps:
-      - name: Check prepare success
-        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Notify about deploy-feature label
         if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
           echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> $GITHUB_STEP_SUMMARY
           exit 1
-      - name: Check tests success
-        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
-      - name: Check e2e success
-        run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
-      - name: Check linting success
-        run: '[[ ${{ needs.linting.result }} != "failure" ]] || exit 1'
-      - name: Check run-shellcheck success
-        run: '[[ ${{ needs.run-shellcheck.result }} != "failure" ]] || exit 1'
-      - name: Check formatting success
-        run: '[[ ${{ needs.formatting.result }} != "failure" ]] || exit 1'
-      - name: Check build success
-        run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
-      - name: Check Unicorn test success
-        run: '[[ ${{ needs.unicorn-tests.result }} != "failure" ]] || exit 1'
+
+      - name: Collect
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          # "failed" here is everything that wasn't successful or skipped (e.g. "failuer", "cancelled")
+          failed_dependencies=$(jq -nr --argjson needs "$NEEDS" ' $needs | with_entries(select(.value.result != "success" and .value.result != "skipped")) ')
+          echo -n "Did any dependency fail? "
+          if jq -ne --argjson failures "$failed_dependencies" '$failures | length > 0'; then
+            failure_statuses=$(jq -nr --argjson failures "$failed_dependencies" '[ $failures | to_entries | .[] | "\(.key) (\(.value.result))" ] | join(", ")')
+            echo "::error title=NEEDS::Some dependencies failed: $failure_statuses"
+            exit 1
+          fi
+          echo "::info title=NEEDS::No failing dependencies 🎉"
+          exit 0
+
       - name: Announce success
         run: echo "Build is successful"
