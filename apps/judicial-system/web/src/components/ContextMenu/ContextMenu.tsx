@@ -40,6 +40,8 @@ interface ContextMenuProps {
   // Custom element to be used as the menu button
   disclosure?: ReactElement
 
+  render?: ReactElement
+
   // Space between menu and button
   offset?: [string | number, string | number]
 }
@@ -62,7 +64,7 @@ export const useContextMenu = () => {
 }
 
 export const ContextMenuV2: FC<ContextMenuProps> = (props) => {
-  const { title, items } = props
+  const { title, items, render } = props
   const router = useRouter()
 
   const menuItemBoxStyle = useBoxStyles({
@@ -93,12 +95,19 @@ export const ContextMenuV2: FC<ContextMenuProps> = (props) => {
 
     if (item.href) {
       router.push(item.href)
+      return
+    }
+
+    if (item.onClick) {
+      item.onClick()
+      return
     }
   }
+  console.log(items)
 
   return (
     <MenuProvider>
-      <MenuButton render={<Button icon="add" />}>{title}</MenuButton>
+      <MenuButton render={render || <Button icon="add" />}>{title}</MenuButton>
       <Menu render={<ul className={cn(styles.menu, menuBoxStyle)}></ul>}>
         {items?.map((item, index) => (
           <MenuItem
@@ -106,8 +115,9 @@ export const ContextMenuV2: FC<ContextMenuProps> = (props) => {
             render={
               <Box component="li" width="full">
                 {item.href && (
-                  <a
-                    href={item.href}
+                  <Box
+                    component={item.href ? 'a' : 'button'}
+                    href={item.href ?? undefined}
                     onClick={(evt) => handleClick(evt, item)}
                     className={cn(
                       menuItemBoxStyle,
@@ -116,7 +126,7 @@ export const ContextMenuV2: FC<ContextMenuProps> = (props) => {
                     )}
                   >
                     {item.title}
-                  </a>
+                  </Box>
                 )}
               </Box>
             }
