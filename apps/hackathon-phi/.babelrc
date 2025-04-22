@@ -1,4 +1,4 @@
 {
-  "presets": ["@nx/next/babel", "../../libs/shared/babel/web"],
+  "presets": ["@nx/next/babel"],
   "plugins": []
 }

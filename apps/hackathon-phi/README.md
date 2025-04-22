@@ -1,4 +1,4 @@
-# Hackathon
+# Hackathon Phi
 
 ## About
 
@@ -18,4 +18,4 @@ yarn start hackathon-phi
 
 ## Code owners and maintainers
 
-- [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
+- [Phi](link)
