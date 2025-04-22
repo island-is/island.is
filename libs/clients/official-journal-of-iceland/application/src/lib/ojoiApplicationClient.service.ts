@@ -230,6 +230,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
         error,
         category: LOG_CATEGORY,
       })
+      throw error
     }
   }
 
