@@ -9,16 +9,20 @@ export const NEW_MACHINE_TEST_QUERY = `
                   nameEn
                   registrationNumberPrefix
                   subCategoryName
+                  //deprecated
                   subCategoryNameEn
                   subCategories {
                       name
+                      //deprecated
                       nameEn
                       registrationNumberPrefix
                       parentCategoryName
+                      //deprecated
                       parentCategoryNameEn
                       techInfoItems {
                           name
                           label
+                          //deprecated
                           labelEn
                           type
                           required
