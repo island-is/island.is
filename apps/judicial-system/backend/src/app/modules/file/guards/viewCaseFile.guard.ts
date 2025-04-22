@@ -13,7 +13,7 @@ import {
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isProsecutionUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -40,7 +40,7 @@ export class ViewCaseFileGuard implements CanActivate {
       return true
     }
 
-    if (isPublicProsecutorUser(user) && isCompletedCase(theCase.state)) {
+    if (isPublicProsecutionOfficeUser(user) && isCompletedCase(theCase.state)) {
       return true
     }
 
