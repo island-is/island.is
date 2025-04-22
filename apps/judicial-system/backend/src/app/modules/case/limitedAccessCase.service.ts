@@ -211,6 +211,11 @@ export const include: Includeable[] = [
     separate: true,
   },
   {
+    model: Victim,
+    as: 'victims',
+    required: false,
+  },
+  {
     model: IndictmentCount,
     as: 'indictmentCounts',
     required: false,
