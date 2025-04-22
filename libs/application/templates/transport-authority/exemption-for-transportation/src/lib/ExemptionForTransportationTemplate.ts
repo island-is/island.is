@@ -44,7 +44,6 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
   ],
   dataSchema: ExemptionForTransportationSchema,
   featureFlag: Features.ExemptionForTransportation,
-  // TODOx delegation
   // allowedDelegations: [
   //   {
   //     type: AuthDelegationType.LegalGuardian,
@@ -53,7 +52,6 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
   //     type: AuthDelegationType.Custom,
   //   },
   // ],
-  // TODOx scopes
   // requiredScopes: [ApiScope.samgongustofa],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
