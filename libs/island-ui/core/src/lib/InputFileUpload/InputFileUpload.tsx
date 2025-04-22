@@ -100,7 +100,7 @@ export const UploadedFile = ({
       case 'error':
         return { background: 'red100', border: 'red200', icon: 'red600' }
       case 'done':
-        if (!file.size) {
+        if (file.size === 0) {
           return { background: 'red100', border: 'red200', icon: 'red600' }
         }
         return {

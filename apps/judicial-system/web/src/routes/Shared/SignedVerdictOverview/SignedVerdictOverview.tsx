@@ -187,6 +187,8 @@ export const SignedVerdictOverview: FC = () => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
+    victims,
+    showItem,
   } = useInfoCardItems()
 
   const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
@@ -524,6 +526,14 @@ export const SignedVerdictOverview: FC = () => {
                   id: 'defendants-section',
                   items: [defendants(workingCase.type)],
                 },
+                ...(showItem(victims)
+                  ? [
+                      {
+                        id: 'victims-section',
+                        items: [victims],
+                      },
+                    ]
+                  : []),
                 {
                   id: 'case-info-section',
                   items: [

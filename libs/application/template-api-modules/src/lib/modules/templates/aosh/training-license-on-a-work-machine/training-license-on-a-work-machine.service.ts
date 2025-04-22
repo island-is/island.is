@@ -15,7 +15,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import {
   getCleanApplicantInformation,
   getCleanCertificateOfTenure,
-  getCleanCompanyInformation,
+  getCleanCompanyInformationList,
   getRecipient,
 } from './training-license-on-a-work-machine.utils'
 import { generateRequestReviewEmail } from './emailGenerators/requestReviewEmail'
@@ -24,6 +24,7 @@ import { NotificationsService } from '../../../../notification/notifications.ser
 import { NotificationType } from '../../../../notification/notificationsTemplates'
 import { generateApplicationDeleteEmail } from './emailGenerators/applicationDeleteEmail'
 import { generateApplicationDeleteSms } from './smsGenerators/applicationDeleteSms'
+import { TrainingLicenseOnAWorkMachine } from '@island.is/application/templates/aosh/training-license-on-a-work-machine'
 @Injectable()
 export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateApiService {
   constructor(
@@ -86,68 +87,77 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
   async initReview({
     application,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // Send email and sms
-    const company = getCleanCompanyInformation(application)
-    const recipient = getRecipient(company)
-    if (company.contactEmail) {
-      await this.sharedTemplateAPIService
-        .sendEmail(
-          (props) => generateRequestReviewEmail(props, recipient),
-          application,
-        )
-        .catch((e) => {
+    const companyList = getCleanCompanyInformationList(application)
+
+    for (const [index, company] of companyList.entries()) {
+      const recipient = getRecipient(company)
+
+      if (company.contactEmail) {
+        try {
+          await this.sharedTemplateAPIService.sendEmail(
+            (props) => generateRequestReviewEmail(props, recipient),
+            application,
+          )
+        } catch (e) {
           this.logger.error(
-            `Error sending email about initReview in application: ID: ${application.id}`,
+            `Error sending email about initReview in application: ID: ${application.id}, assignee: ${index}`,
             e,
           )
-        })
-    }
-    if (company.contactPhoneNumber) {
-      await this.sharedTemplateAPIService
-        .sendSms(
-          (_, options) =>
-            generateRequestReviewSms(application, options, recipient),
-          application,
-        )
-        .catch((e) => {
+        }
+      }
+
+      if (company.contactPhoneNumber) {
+        try {
+          await this.sharedTemplateAPIService.sendSms(
+            (_, options) =>
+              generateRequestReviewSms(application, options, recipient),
+            application,
+          )
+        } catch (e) {
           this.logger.error(
-            `Error sending sms about initReview to 
-                    a phonenumber in application: ID: ${application.id}`,
+            `Error sending SMS about initReview to a phone number in application: ID: ${application.id}, assignee: ${index}`,
             e,
           )
-        })
+        }
+      }
     }
   }
 
   async deleteApplication({
     application,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // Send email and sms
-    const company = getCleanCompanyInformation(application)
-    const recipient = getRecipient(company)
-    if (company.contactEmail) {
-      await this.sharedTemplateAPIService
-        .sendEmail(
-          (props) => generateApplicationDeleteEmail(props, recipient),
-          application,
-        )
-        .catch((e) => {
+    const companyList = getCleanCompanyInformationList(application)
+
+    for (const [index, company] of companyList.entries()) {
+      const recipient = getRecipient(company)
+
+      if (company.contactEmail) {
+        try {
+          await this.sharedTemplateAPIService.sendEmail(
+            (props) => generateApplicationDeleteEmail(props, recipient),
+            application,
+          )
+        } catch (e) {
           this.logger.error(
-            `Error sending email about deleteApplication in application: ID: ${application.id}`,
+            `Error sending email about deleteApplication in application: ID: ${application.id} and assignee: ${index}`,
             e,
           )
-        })
-    }
-    if (company.contactPhoneNumber) {
-      await this.sharedTemplateAPIService
-        .sendSms((_) => generateApplicationDeleteSms(recipient), application)
-        .catch((e) => {
+        }
+      }
+
+      if (company.contactPhoneNumber) {
+        try {
+          await this.sharedTemplateAPIService.sendSms(
+            (_) => generateApplicationDeleteSms(recipient),
+            application,
+          )
+        } catch (e) {
           this.logger.error(
-            `Error sending sms about deleteApplication to 
-                    a phonenumber in application: ID: ${application.id}`,
+            `Error sending SMS about deleteApplication to a phone number in application: ID: ${application.id} and assignee: ${index}`,
             e,
           )
-        })
+        }
+      }
     }
   }
 
@@ -176,21 +186,21 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
   }: TemplateApiModuleActionProps): Promise<void> {
     // Submit application to AOSH
     const applicant = getCleanApplicantInformation(application)
-    const company = getCleanCompanyInformation(application)
-    const certificateOfTenure = getCleanCertificateOfTenure(application)
+    const companiesWorkedFor = getCleanCompanyInformationList(application)
+    const teachingLicenseMachineWorkedOnDtos =
+      getCleanCertificateOfTenure(application)
+    const certificateOfTenure = getValueViaPath<
+      TrainingLicenseOnAWorkMachine['certificateOfTenure']
+    >(application.answers, 'certificateOfTenure')
     await this.workMachineClientService
       .machineLicenseTeachingApplication(auth, {
         xCorrelationID: application.id,
         machineLicenseTeachingApplicationCreateDto: {
           applicant,
-          company,
-          machineRegistrationNumber:
-            certificateOfTenure.machineRegistrationNumber,
-          licenseCategoryPrefix: certificateOfTenure.licenseCategoryPrefix,
-          machineType: certificateOfTenure.machineType,
-          dateWorkedOnMachineFrom: certificateOfTenure.dateWorkedOnMachineFrom,
-          dateWorkedOnMachineTo: certificateOfTenure.dateWorkedOnMachineTo,
-          hoursWorkedOnMachine: certificateOfTenure.hoursWorkedOnMachine,
+          companiesWorkedFor,
+          licenseCategoryPrefix:
+            certificateOfTenure?.[0].licenseCategoryPrefix ?? '',
+          teachingLicenseMachineWorkedOnDtos,
         },
       })
       .catch((error) => {
@@ -207,12 +217,12 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
         )
       })
 
-    // Send Hnipp to applicant if they are not a contractor
-    const isContractor = getValueViaPath<string[]>(
-      application.answers,
-      'assigneeInformation.isContractor',
+    // Send Hnipp to applicant if they are not only a contractor
+
+    const isNotOnlyContractor = certificateOfTenure?.some(
+      ({ isContractor }) => !isContractor?.includes('yes'),
     )
-    if (!isContractor?.includes('yes')) {
+    if (isNotOnlyContractor) {
       const applicantNationalId = getValueViaPath<string>(
         application.externalData,
         'identity.data.nationalId',
