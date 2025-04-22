@@ -202,7 +202,7 @@ const Subpoena: FC = () => {
                           defendant.id,
                         ])
                         // Clear any alternative service for the defendant
-                        toggleNewAlternativeService(defendant)
+                        toggleNewAlternativeService(defendant)()
                         updateDefendantState(
                           {
                             defendantId: defendant.id,
