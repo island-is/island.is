@@ -130,6 +130,7 @@ export const SearchInput = ({
         <AsyncSearch
           ref={ref}
           id="my-pages-async-search"
+          ariaLabel={buttonAriaLabel}
           placeholder={placeholder}
           size={size === 'large' ? 'semi-large' : 'medium'}
           colored={!whiteMenuBackground}

@@ -154,6 +154,7 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
                             size="small"
                             type="span"
                             variant="utility"
+                            aria-label={formatMessage(m.openDocuments)}
                             unfocusable
                           />
                           <span className={helperStyles.srOnly}>
