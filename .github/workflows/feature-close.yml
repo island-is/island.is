@@ -6,13 +6,14 @@ on:
       - unlabeled
       - auto_merge_enabled
 
+concurrency:
+  group: push-${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   close_feature:
     runs-on: arc-runners
     if: ${{ github.event.label.name == 'deploy-feature' }}
-    concurrency:
-          group: feature-deploy
-          cancel-in-progress: true
     permissions:
       id-token: write
       contents: write
