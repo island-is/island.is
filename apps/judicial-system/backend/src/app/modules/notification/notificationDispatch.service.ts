@@ -12,8 +12,8 @@ import {
   EventNotificationType,
   IndictmentCaseNotificationType,
   InstitutionNotificationType,
-  InstitutionType,
   NotificationDispatchType,
+  prosecutorsOfficeTypes,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../case'
@@ -30,7 +30,7 @@ export class NotificationDispatchService {
 
   private async dispatchIndictmentsWaitingForConfirmationNotification(): Promise<void> {
     const prosecutorsOffices = await this.institutionService.getAll(
-      InstitutionType.PROSECUTORS_OFFICE,
+      prosecutorsOfficeTypes,
     )
 
     const messages = prosecutorsOffices.map(
