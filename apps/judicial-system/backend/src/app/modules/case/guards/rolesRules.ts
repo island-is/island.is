@@ -422,13 +422,9 @@ export const prisonSystemAdminRulingPDFRule: RolesRule = {
     }
 
     // Allow the case is a custody or parole revocation case
-    if (
+    return (
       theCase.type === CaseType.CUSTODY ||
       theCase.type === CaseType.PAROLE_REVOCATION
-    ) {
-      return true
-    }
-
-    return false
+    )
   },
 }
