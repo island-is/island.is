@@ -68,10 +68,17 @@ const currentSituationSchema = z.object({
   jobTimelineStartDate: z.string().optional(),
 })
 
+const jobWishesSchema = z.object({
+  jobList: z.array(z.string()).optional(),
+  outsideYourLocation: z.array(z.string()).optional(),
+  location: z.array(z.string()).optional(),
+})
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema,
   currentSituation: currentSituationSchema,
+  jobWishes: jobWishesSchema,
   informationChangeAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES)),
