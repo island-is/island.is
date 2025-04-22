@@ -47,20 +47,6 @@ const Properties = z
   )
   .array()
 
-const TimeRefine = z.object({
-  from: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {
-    params: error.invalidValue,
-  }),
-  to: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {
-    params: error.invalidValue,
-  }),
-})
-
-const OpeningHoursRefine = z.object({
-  weekdays: TimeRefine,
-  weekends: TimeRefine,
-})
-
 const Time = z.object({
   from: z.string().optional(),
   to: z.string().optional(),
@@ -75,15 +61,6 @@ const OpeningHours = z
 
 type OpeningHours = z.infer<typeof OpeningHours>
 type Time = z.infer<typeof Time>
-
-const refineOpeningHours = (oh: OpeningHours): boolean => {
-  try {
-    OpeningHoursRefine.parse(oh)
-    return true
-  } catch (e) {
-    return false
-  }
-}
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -167,23 +144,82 @@ export const dataSchema = z.object({
     })
     .partial()
     .refine(
-      ({ alcohol, willServe, outside }) => {
-        return (
-          (willServe?.includes(YES) &&
-            refineOpeningHours(alcohol) &&
-            refineOpeningHours(outside)) ||
-          (!willServe?.includes(YES) &&
-            refineOpeningHours(alcohol) &&
-            (outside
-              ? refineOpeningHours(outside) || !refineOpeningHours(outside)
-              : true))
-        )
+      ({ alcohol }) => isValid24HFormatTime(alcohol?.weekdays?.from ?? ''),
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['alcohol', 'weekdays', 'from'],
+      },
+    )
+    .refine(
+      ({ alcohol }) => isValid24HFormatTime(alcohol?.weekdays?.to ?? ''),
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['alcohol', 'weekdays', 'to'],
+      },
+    )
+    .refine(
+      ({ alcohol }) => isValid24HFormatTime(alcohol?.weekends?.from ?? ''),
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['alcohol', 'weekends', 'from'],
+      },
+    )
+    .refine(
+      ({ alcohol }) => isValid24HFormatTime(alcohol?.weekends?.to ?? ''),
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['alcohol', 'weekends', 'to'],
+      },
+    )
+    .refine(
+      ({ outside, willServe }) => {
+        if (willServe?.includes(YES)) {
+          return isValid24HFormatTime(outside?.weekdays?.from ?? '')
+        }
+        return true
       },
       {
-        message: error.openingHours.defaultMessage,
-        path: ['willServe'],
+        message: error.hoursFormat.defaultMessage,
+        path: ['outside', 'weekdays', 'from'],
+      },
+    )
+    .refine(
+      ({ outside, willServe }) => {
+        if (willServe?.includes(YES)) {
+          return isValid24HFormatTime(outside?.weekdays?.to ?? '')
+        }
+        return true
+      },
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['outside', 'weekdays', 'to'],
+      },
+    )
+    .refine(
+      ({ outside, willServe }) => {
+        if (willServe?.includes(YES)) {
+          return isValid24HFormatTime(outside?.weekends?.from ?? '')
+        }
+        return true
+      },
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['outside', 'weekends', 'from'],
+      },
+    )
+    .refine(
+      ({ outside, willServe }) => {
+        if (willServe?.includes(YES)) {
+          return isValid24HFormatTime(outside?.weekends?.to ?? '')
+        }
+        return true
+      },
+      {
+        message: error.hoursFormat.defaultMessage,
+        path: ['outside', 'weekends', 'to'],
       },
     ),
+
   temporaryLicense: z.array(z.enum([YES, NO])).optional(),
   debtClaim: z.array(z.enum([YES, NO])).optional(),
   otherInfoText: z.string().optional(),

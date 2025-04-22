@@ -46,6 +46,8 @@ const CourtOfAppealOverview = () => {
     judge,
     registrar,
     caseType,
+    victims,
+    showItem,
   } = useInfoCardItems()
 
   const handleNavigationTo = (destination: string) =>
@@ -88,6 +90,14 @@ const CourtOfAppealOverview = () => {
                   id: 'defendants-section',
                   items: [defendants(workingCase.type)],
                 },
+                ...(showItem(victims)
+                  ? [
+                      {
+                        id: 'victims-section',
+                        items: [victims],
+                      },
+                    ]
+                  : []),
                 {
                   id: 'case-info-section',
                   items: [
