@@ -22,7 +22,7 @@ async function main() {
     )
   }
 
-  const namespacesToAdd = {}
+  const namespacesToAdd = []
   const directory = `charts/features/deployments/${featureName}`
 
   const files = await glob(`${directory}/**/values.yaml`)
@@ -41,25 +41,41 @@ async function main() {
         : null
 
     if (namespaceToAdd) {
-      namespacesToAdd[applicationName] ??= []
-      namespacesToAdd[applicationName] = Array.from(
-        new Set([...namespacesToAdd[applicationName], namespaceToAdd]),
-      )
+      namespacesToAdd.push(namespaceToAdd)
     }
+    // if (namespaceToAdd) {
+    //   namespacesToAdd[applicationName] ??= []
+    //   namespacesToAdd[applicationName] = Array.from(
+    //     new Set([...namespacesToAdd[applicationName], namespaceToAdd]),
+    //   )
+    // }
   }
 
   console.log('Namespaces to add:', namespacesToAdd)
 
-  for (const key of Object.keys(namespacesToAdd)) {
-    const directoryPath = path.join(directory, key)
-    mkdirSync(directory, { recursive: true })
-    const content = {
-      namespaces: namespacesToAdd[key],
-    }
-    writeFileSync(
-      `${directoryPath}/values.bootstrap.yaml`,
-      jsyaml.dump(content),
-      { encoding: 'utf-8' },
-    )
+  const directoryPath =  path.join(directory, "bootstrap")
+  mkdirSync(directoryPath, { recursive: true })
+
+  const content = {
+    namespaces: namespacesToAdd,
   }
+  writeFileSync(
+    `${directoryPath}/values.bootstrap.yaml`,
+    jsyaml.dump(content),
+    { encoding: 'utf-8' },
+  )
+
+
+  // for (const key of Object.keys(namespacesToAdd)) {
+  //   const directoryPath = path.join(directory, key)
+  //   mkdirSync(directory, { recursive: true })
+  //   const content = {
+  //     namespaces: namespacesToAdd[key],
+  //   }
+  //   writeFileSync(
+  //     `${directoryPath}/values.bootstrap.yaml`,
+  //     jsyaml.dump(content),
+  //     { encoding: 'utf-8' },
+  //   )
+  // }
 }
