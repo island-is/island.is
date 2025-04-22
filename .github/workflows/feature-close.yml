@@ -6,9 +6,9 @@ on:
       - unlabeled
       - auto_merge_enabled
 
-concurrency:
-  group: push-${{ github.head_ref }}
-  cancel-in-progress: true
+# concurrency:
+#   group: push-${{ github.head_ref }}
+#   cancel-in-progress: true
 
 jobs:
   close_feature:
