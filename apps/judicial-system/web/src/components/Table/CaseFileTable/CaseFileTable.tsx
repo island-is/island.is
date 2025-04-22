@@ -99,7 +99,7 @@ const CaseFileTable: FC<Props> = ({
                   {`${getRoleTitleFromCaseFileCategory(
                     file.category ?? null,
                   )} ${initials ? `(${initials})` : ''} ${
-                    file.fileRepresentative ? 'sendi inn' : 'lagði fram'
+                    file.fileRepresentative ? 'lagði fram' : 'sendi inn' 
                   }`}
                 </Text>
               </Box>
