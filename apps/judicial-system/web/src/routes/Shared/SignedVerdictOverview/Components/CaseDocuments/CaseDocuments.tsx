@@ -84,6 +84,10 @@ const CaseDocuments: FC<Props> = ({
   const isRulingRequired = !workingCase.isCompletedWithoutRuling
 
   const showRuling: () => boolean = () => {
+    if (!user) {
+      return false
+    }
+
     if (isPrisonStaffUser(user)) {
       return false
     }
