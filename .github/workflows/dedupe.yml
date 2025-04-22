@@ -27,6 +27,9 @@ jobs:
     runs-on: arc-runners
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          fetch-depth: 0
       - name: Should dedupe?
         id: dedupe
         run: |
