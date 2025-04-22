@@ -321,6 +321,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
       )}
       {showFiles && (
         <>
+          <FileSection
+            title={formatMessage(strings.civilClaimsTitle)}
+            files={filteredFiles.civilClaims}
+            onOpenFile={onOpen}
+            shouldRender={permissions.canViewCivilClaims}
+          />
           {filteredFiles.courtRecords?.length ||
           filteredFiles.rulings?.length ? (
             <Box marginBottom={5}>
@@ -371,12 +377,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
               />
             )}
           </FileSection>
-          <FileSection
-            title={formatMessage(strings.civilClaimsTitle)}
-            files={filteredFiles.civilClaims}
-            onOpenFile={onOpen}
-            shouldRender={permissions.canViewCivilClaims}
-          />
           {filteredFiles.uploadedCaseFiles &&
             filteredFiles.uploadedCaseFiles.length > 0 && (
               <Box marginBottom={5}>
