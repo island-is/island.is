@@ -63,12 +63,7 @@ export const ChannelList = ({
                   <button
                     type="button"
                     onClick={() =>
-                      onOpenModal(
-                        i,
-                        channel.name,
-                        channel.email,
-                        channel.phone,
-                      )
+                      onOpenModal(i, channel.name, channel.email, channel.phone)
                     }
                   >
                     <Icon color="blue400" icon="pencil" />

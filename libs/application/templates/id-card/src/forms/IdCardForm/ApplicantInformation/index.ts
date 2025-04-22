@@ -9,20 +9,14 @@ import {
   getValueViaPath,
   YES,
 } from '@island.is/application/core'
-import {
-  Routes,
-} from '../../../lib/constants'
+import { Routes } from '../../../lib/constants'
 import { applicantInformation } from '../../../lib/messages'
 import {
   Application,
   NationalRegistryIndividual,
   UserProfile,
 } from '@island.is/application/types'
-import {
-  hasSecondGuardian,
-  getChildPassport,
-  isChild,
-} from '../../../utils'
+import { hasSecondGuardian, getChildPassport, isChild } from '../../../utils'
 import {} from '../../../utils/hasSecondGuardian'
 
 export const ApplicanInformationSubSection = buildSection({

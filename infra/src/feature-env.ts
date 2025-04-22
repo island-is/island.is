@@ -151,24 +151,24 @@ yargs(process.argv.slice(2))
         })
         .option('writeDest', {
           type: 'string',
-          description: 'Template location where to write files to for down stream apps',
-          default: ''
+          description:
+            'Template location where to write files to for down stream apps',
+          default: '',
         })
     },
     handler: async (argv) => {
-      const typedArgv = (argv as unknown) as Arguments
-      const { habitat, affectedServices, env, skipAppName, writeDest } = parseArguments(
-        typedArgv,
-      )
+      const typedArgv = argv as unknown as Arguments
+      const { habitat, affectedServices, env, skipAppName, writeDest } =
+        parseArguments(typedArgv)
       const { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
         env,
       )
-      
+
       featureYaml.map(async (svc) => {
-          const svcString = await renderHelmValueFileContent(
+        const svcString = await renderHelmValueFileContent(
           env,
           habitat,
           [svc],
@@ -177,21 +177,23 @@ yargs(process.argv.slice(2))
             : 'no-mocks',
           skipAppName,
         )
-        
+
         if (writeDest != '') {
           try {
             fs.mkdirSync(`${writeDest}/${svc.name()}`, { recursive: true })
-            console.log(`writing file to directory: ${writeDest}/${svc.name()}/values.yaml`)
-            fs.writeFileSync(`${writeDest}/${svc.name()}/values.yaml`, svcString);
+            console.log(
+              `writing file to directory: ${writeDest}/${svc.name()}/values.yaml`,
+            )
+            fs.writeFileSync(
+              `${writeDest}/${svc.name()}/values.yaml`,
+              svcString,
+            )
           } catch (error) {
             console.log(`Failed to write values file for ${svc.name()}:`, error)
-            throw new Error(`Failed to write values file for ${svc.name()}`);
+            throw new Error(`Failed to write values file for ${svc.name()}`)
           }
         } else {
-          writeToOutput(
-            svcString,
-            typedArgv.output,
-          )
+          writeToOutput(svcString, typedArgv.output)
         }
       })
     },
@@ -203,25 +205,24 @@ yargs(process.argv.slice(2))
       return yargs
     },
     handler: async (argv) => {
-      const typedArgv = (argv as unknown) as Arguments
-      const { habitat, affectedServices, env, skipAppName, writeDest } = parseArguments(
-        typedArgv,
-      )
+      const typedArgv = argv as unknown as Arguments
+      const { habitat, affectedServices, env, skipAppName, writeDest } =
+        parseArguments(typedArgv)
       const { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
         env,
       )
-      
+
       const affectedServiceNames = affectedServices.map((svc) => svc.name())
 
-      const formattedStringList = featureYaml.map((svc) => svc.name()).filter((name) => !affectedServiceNames.includes(name)).toString()
-      
-      writeToOutput(
-        formattedStringList,
-        typedArgv.output,
-      )
+      const formattedStringList = featureYaml
+        .map((svc) => svc.name())
+        .filter((name) => !affectedServiceNames.includes(name))
+        .toString()
+
+      writeToOutput(formattedStringList, typedArgv.output)
     },
   })
   .command({
@@ -229,17 +230,15 @@ yargs(process.argv.slice(2))
     describe: 'get helm values file',
     builder: (yargs) => yargs,
     handler: async (argv) => {
-      const typedArgv = (argv as unknown) as Arguments
+      const typedArgv = argv as unknown as Arguments
       const { habitat, affectedServices, env } = parseArguments(typedArgv)
-      const {
-        included: featureYaml,
-        excluded,
-      } = await getFeatureAffectedServices(
-        habitat,
-        affectedServices.slice(),
-        ExcludedFeatureDeploymentServices,
-        env,
-      )
+      const { included: featureYaml, excluded } =
+        await getFeatureAffectedServices(
+          habitat,
+          affectedServices.slice(),
+          ExcludedFeatureDeploymentServices,
+          env,
+        )
       const ingressComment = buildComment(
         (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
           .services,
@@ -256,19 +255,20 @@ yargs(process.argv.slice(2))
     describe: 'get kubernetes jobs to bootstrap feature environment',
     builder: (yargs) => {
       return yargs
-      .option('jobImage', {
-        type: 'string',
-        description: 'Image to run feature bootstrapping jobs',
-        demandOption: true,
-      })
-      .option('writeDest', {
-        type: 'string',
-        description: 'Template location where to write files to for down stream apps',
-        default: ''
-      })
+        .option('jobImage', {
+          type: 'string',
+          description: 'Image to run feature bootstrapping jobs',
+          demandOption: true,
+        })
+        .option('writeDest', {
+          type: 'string',
+          description:
+            'Template location where to write files to for down stream apps',
+          default: '',
+        })
     },
     handler: async (argv) => {
-      const typedArgv = (argv as unknown) as Arguments
+      const typedArgv = argv as unknown as Arguments
       const { affectedServices, env, writeDest } = parseArguments(typedArgv)
       const featureYaml = await renderHelmJobForFeature(
         env,
@@ -276,20 +276,35 @@ yargs(process.argv.slice(2))
         affectedServices,
       )
 
-      if (featureYaml.spec.template.spec.containers.length <= 0 || affectedServices.length <= 0) {
+      if (
+        featureYaml.spec.template.spec.containers.length <= 0 ||
+        affectedServices.length <= 0
+      ) {
         return
       }
-      
+
       const svcString = dumpJobYaml(featureYaml)
-  
+
       if (writeDest != '') {
         try {
-          fs.mkdirSync(`${writeDest}/${affectedServices[0].name()}`, { recursive: true })
-        console.log(`writing file to: ${writeDest}/${affectedServices[0].name()}/bootstrap-fd-job.yaml}`)
-        fs.writeFileSync(`${writeDest}/${affectedServices[0].name()}/bootstrap-fd-job.yaml`, svcString);
+          fs.mkdirSync(`${writeDest}/${affectedServices[0].name()}`, {
+            recursive: true,
+          })
+          console.log(
+            `writing file to: ${writeDest}/${affectedServices[0].name()}/bootstrap-fd-job.yaml}`,
+          )
+          fs.writeFileSync(
+            `${writeDest}/${affectedServices[0].name()}/bootstrap-fd-job.yaml`,
+            svcString,
+          )
         } catch (error) {
-          console.log(`Failed to write values file for ${affectedServices[0].name()}:`, error)
-          throw new Error(`Failed to write values for ${affectedServices[0].name()}`);
+          console.log(
+            `Failed to write values file for ${affectedServices[0].name()}:`,
+            error,
+          )
+          throw new Error(
+            `Failed to write values for ${affectedServices[0].name()}`,
+          )
         }
       } else {
         await writeToOutput(svcString, typedArgv.output)

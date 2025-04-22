@@ -112,7 +112,8 @@ export const attachments = {
         label: {
           id: 'ojoi.application:attachments.radio.attachments.labelRoman',
           defaultMessage: 'Fylgiskjal (I, II, III..)',
-          description: 'Label of the attachments radio button with roman numerals',
+          description:
+            'Label of the attachments radio button with roman numerals',
         },
       }),
     },

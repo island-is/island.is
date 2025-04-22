@@ -118,7 +118,7 @@ describe('Old Age Pension Template', () => {
       expect(newState).toBe('additionalDocumentsRequired')
     })
   })
-  
+
   describe('state transitions', () => {
     it('should transition from tryggingastofnunSubmitted to dismissed on dismissed', () => {
       const helper = new ApplicationTemplateHelper(

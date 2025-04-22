@@ -48,7 +48,11 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     _setFiles(files)
   }
 
-  const onChange = (newFiles: File[], uploadCount?: number, isRetry?: boolean) => {
+  const onChange = (
+    newFiles: File[],
+    uploadCount?: number,
+    isRetry?: boolean,
+  ) => {
     setUploadErrorMessage(undefined)
 
     const newUploadFiles = newFiles as UploadFile[]

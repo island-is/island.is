@@ -31,7 +31,7 @@ jobs:
           PRIVATE_KEY: ${{ secrets.HELM_VALUES_SSH_KEY }}
         run: |
           node scripts/ci/docker/get-github-token.mjs
-          
+
       - name: Prepare feature deployment tag
         uses: ./.github/actions/feature-checkout
         id: prepare-docker-tag

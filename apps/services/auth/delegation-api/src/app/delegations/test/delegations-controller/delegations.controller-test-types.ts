@@ -106,7 +106,9 @@ export const scopes: Record<string, Scope> = {
     personalRepresentativeRightTypePermissions: [
       personalRepresentativeRightTypeCodePostholf,
     ],
-    supportedDelegationTypes: [PersonalRepresentativeDelegationType.PersonalRepresentativePostholf],
+    supportedDelegationTypes: [
+      PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
+    ],
   },
   all: {
     name: '@all',

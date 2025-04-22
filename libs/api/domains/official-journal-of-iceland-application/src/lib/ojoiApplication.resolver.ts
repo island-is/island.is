@@ -23,7 +23,10 @@ import { GetApplicationAttachmentInput } from '../models/getApplicationAttachmen
 import { GetApplicationAttachmentsResponse } from '../models/getApplicationAttachments.response'
 import { DeleteApplicationAttachmentInput } from '../models/deleteApplicationAttachment.input'
 import type { User } from '@island.is/auth-nest-tools'
-import { GetMyUserInfoResponse, GetUserInvolvedPartiesResponse } from '../models/getUserInvolvedParties.response'
+import {
+  GetMyUserInfoResponse,
+  GetUserInvolvedPartiesResponse,
+} from '../models/getUserInvolvedParties.response'
 import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.input'
 import { OJOIAIdInput } from '../models/id.input'
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
