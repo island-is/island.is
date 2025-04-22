@@ -104,7 +104,7 @@ export const Statistics = () => {
         >
           <GridColumn
             span={['12/12', '12/12', '12/12', filter ? '8/12' : '12/12']}
-            paddingTop={[3, 3, 3, 5]}
+            paddingTop={5}
           >
             {loading ? (
               <SkeletonLoader height={320} borderRadius="standard" />

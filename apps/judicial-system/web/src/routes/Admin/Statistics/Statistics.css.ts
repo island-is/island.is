@@ -12,18 +12,22 @@ export const statisticsPageContainer = style({
 })
 
 export const statisticsContentBox = style({
+  width: '100%',
   background: theme.color.white,
   minHeight: '644px',
-  width: '100%',
-  maxWidth: '1200px',
-  padding: `${theme.spacing[4]}px`,
 
   '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md - 1}px)`]: {
+      padding: `${theme.spacing[4]}px `,
+    },
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       padding: `${theme.spacing[10]}px ${theme.spacing[6]}px`,
+      maxWidth: '1200px',
     },
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      borderRadius: theme.border.radius.large,
       padding: `${theme.spacing[10]}px ${theme.spacing[12]}px`,
+      maxWidth: '1200px',
     },
   },
 })
