@@ -321,7 +321,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
         } as Case
 
-        verifyReadAccess(theCase, user)
+        verifyFullAccess(theCase, user)
       })
     })
   })

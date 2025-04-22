@@ -8,7 +8,7 @@ import { format as formatKennitala } from 'kennitala'
 import { PaymentArrangementType, PaymentOptions } from '../shared/types'
 import { overview } from '../lib/messages'
 import { formatPhoneNumber } from './formatPhoneNumber'
-import { isApplyingForMultiple } from './isApplyingForMultiple'
+import * as kennitala from 'kennitala'
 
 export const getPaymentArrangementForOverviewMultiple = (
   answers: FormValue,
@@ -58,12 +58,10 @@ export const getPaymentArrangementForOverviewSingle = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const paymentArrangementAnswers = getValueViaPath<PaymentArrangementType>(
+  const applicantNationalId = getValueViaPath<string>(
     answers,
-    'paymentArrangement',
+    'applicant.nationalId',
   )
-  const userIsApplyingForMultiple = isApplyingForMultiple(answers)
-  const applicantEmail = getValueViaPath<string>(answers, 'applicant.email')
   const applicantPhone = getValueViaPath<string>(
     answers,
     'applicant.phoneNumber',
@@ -74,21 +72,15 @@ export const getPaymentArrangementForOverviewSingle = (
       valueText: [
         overview.paymentArrangement.cashOnDelivery,
         {
-          ...overview.paymentArrangement.email,
+          ...overview.paymentArrangement.nationalId,
           values: {
-            value: !userIsApplyingForMultiple
-              ? applicantEmail
-              : paymentArrangementAnswers?.individualInfo?.email,
+            value: applicantNationalId && kennitala.format(applicantNationalId),
           },
         },
         {
           ...overview.paymentArrangement.phonenumber,
           values: {
-            value: !userIsApplyingForMultiple
-              ? formatPhoneNumber(applicantPhone ?? '')
-              : formatPhoneNumber(
-                  paymentArrangementAnswers?.individualInfo?.phone ?? '',
-                ),
+            value: formatPhoneNumber(applicantPhone ?? ''),
           },
         },
       ],

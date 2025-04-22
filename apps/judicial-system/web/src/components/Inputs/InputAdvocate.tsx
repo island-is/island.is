@@ -98,7 +98,7 @@ const InputAdvocate: FC<Props> = ({
       })),
 
     [lawyers],
-  )
+)
 
   const handleAdvocateChange = useCallback(
     (selectedOption: SingleValue<ReactSelectOption>) => {

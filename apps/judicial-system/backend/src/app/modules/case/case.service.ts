@@ -76,9 +76,11 @@ import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User } from '../user'
+import { Victim } from '../victim'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { Case } from './models/case.model'
+import { MinimalCase } from './models/case.types'
 import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
@@ -315,6 +317,7 @@ export const include: Includeable[] = [
     order: [['created', 'ASC']],
     separate: true,
   },
+  { model: Victim, as: 'victims', required: false },
   {
     model: IndictmentCount,
     as: 'indictmentCounts',
@@ -406,6 +409,9 @@ export const include: Includeable[] = [
               CaseFileCategory.CRIMINAL_RECORD_UPDATE,
               CaseFileCategory.CASE_FILE,
               CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.DEFENDANT_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIM,
             ],
@@ -1694,6 +1700,23 @@ export class CaseService {
     return theCase
   }
 
+  async findMinimalById(id: string): Promise<MinimalCase> {
+    const minimalCase = await this.caseModel.findOne({
+      where: {
+        id,
+        isArchived: false,
+        state: { [Op.not]: CaseState.DELETED },
+      },
+      include: [],
+    })
+
+    if (!minimalCase) {
+      throw new NotFoundException(`Case ${id} not found`)
+    }
+
+    return minimalCase
+  }
+
   getAll(user: TUser): Promise<Case[]> {
     return this.caseModel.findAll({
       include: caseListInclude,
@@ -2010,15 +2033,17 @@ export class CaseService {
           theCase.defendants
         ) {
           await Promise.all(
-            theCase.defendants.map((defendant) =>
-              this.subpoenaService.createSubpoena(
-                defendant.id,
-                theCase.id,
-                transaction,
-                updatedArraignmentDate?.date,
-                updatedArraignmentDate?.location,
+            theCase.defendants
+              .filter((defendant) => !defendant.isAlternativeService)
+              .map((defendant) =>
+                this.subpoenaService.createSubpoena(
+                  defendant.id,
+                  theCase.id,
+                  transaction,
+                  updatedArraignmentDate?.date,
+                  updatedArraignmentDate?.location,
+                ),
               ),
-            ),
           )
         }
       })

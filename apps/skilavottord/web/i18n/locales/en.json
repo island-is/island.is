@@ -329,7 +329,13 @@
         "primaryButton": "Try again",
         "secondaryButton": "Cancel"
       },
-      "currentMileage": "Current mileage",
+      "currentMileage": {
+        "label": "Current mileage",
+        "rules": {
+          "validate": "Current mileage is lower then registered mileage"
+        },
+        "info": "Recycling companies are required to register the current mileage of the car when it is handed over for recycling."
+      },
       "numberplate": {
         "sectionTitle": "Number plates information",
         "alert": {

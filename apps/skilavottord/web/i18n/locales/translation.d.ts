@@ -275,8 +275,18 @@ export interface Deregister {
   buttons: DeregisterButtons
   success: string
   error: CompletedError
-  currentMileage: string
+  currentMileage: Milage
   numberplate: NumberPlate
+}
+
+export interface Milage {
+  label: string
+  rules: MilageRules
+  info: string
+}
+
+export interface MilageRules {
+  validate: string
 }
 
 export interface NumberPlate {

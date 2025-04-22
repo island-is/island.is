@@ -19,6 +19,16 @@ export const assigneeInformation = {
     },
   }),
   labels: defineMessages({
+    tableButtonText: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.tableButtonText',
+      defaultMessage: 'Skrá staðfestingaraðila',
+      description: `Assignee information table button text`,
+    },
+    company: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.company',
+      defaultMessage: 'Fyrirtæki',
+      description: `Assignee information company label`,
+    },
     companyName: {
       id: 'aosh.tlwm.application:assigneeInformation.labels.companyName',
       defaultMessage: 'Nafn fyrirtækis',
@@ -28,6 +38,11 @@ export const assigneeInformation = {
       id: 'aosh.tlwm.application:assigneeInformation.labels.companyNationalId',
       defaultMessage: 'Kennitala fyrirtækis',
       description: `Assignee information nationalId label`,
+    },
+    assignee: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.assignee',
+      defaultMessage: 'Staðfestingaraðili',
+      description: `Assignee information assignee label`,
     },
     assigneeName: {
       id: 'aosh.tlwm.application:assigneeInformation.labels.assigneeName',
@@ -49,9 +64,14 @@ export const assigneeInformation = {
       defaultMessage: 'Netfang staðfestingaraðila',
       description: `Assignee information email label`,
     },
+    workMachine: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.workMachine',
+      defaultMessage: 'Vinnuvél',
+      description: `Assignee information work machine label`,
+    },
     isContractor: {
       id: 'aosh.tlwm.application:assigneeInformation.labels.isContractor',
-      defaultMessage: 'Ég er verktaki/sjálfstætt starfandi',
+      defaultMessage: 'Ég starfaði sjálfstætt á þessa vél',
       description: `Assignee information contractor label`,
     },
     isContractorAlert: {
@@ -65,6 +85,18 @@ export const assigneeInformation = {
       defaultMessage:
         'Staðfestingaraðili má ekki vera sá sami og umsækjandi. Ef að þú ert verktaki/sjálfstætt starfandi þá biðjum við þig um að haka í reitin hér fyrir ofan.',
       description: `Assignee information same as applicant alert`,
+    },
+    missingWorkMachineAlert: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.missingWorkMachineAlert',
+      defaultMessage:
+        'Það vantar að velja staðfestingaraðila fyrir eftirfarandi vinnuvélar: {value}',
+      description: `Assignee information missing work machine alert`,
+    },
+    invalidWorkMachineAlert: {
+      id: 'aosh.tlwm.application:assigneeInformation.labels.invalidWorkMachineAlert',
+      defaultMessage:
+        'Búið er að fjarlægja eftirfarandi vinnuvélar og þarf því að uppfæra upplýsingar: {value}',
+      description: `Assignee information invalid work machine alert`,
     },
   }),
 }

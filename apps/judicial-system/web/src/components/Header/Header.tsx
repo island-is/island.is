@@ -2,6 +2,7 @@ import { FC, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import getConfig from 'next/config'
 import Link from 'next/link'
+import router from 'next/router'
 
 import {
   Box,
@@ -73,9 +74,10 @@ const Container: FC<PropsWithChildren> = ({ children }) => {
 
 const HeaderContainer = () => {
   const { formatMessage } = useIntl()
-  const { isAuthenticated, user } = useContext(UserContext)
+  const { isAuthenticated, user, eligibleUsers } = useContext(UserContext)
   const [lawyer, setLawyer] = useState<Lawyer>()
   const [isRobot, setIsRobot] = useState<boolean>()
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState<boolean>()
 
   const { countryCode } = useGeoLocation()
   const { lawyers } = useContext(LawyerRegistryContext)
@@ -109,6 +111,11 @@ const HeaderContainer = () => {
 
   const handleLogout = () => {
     api.logout()
+  }
+
+  const handleChangeInstitution = () => {
+    router.push('/')
+    setIsUserMenuOpen(false)
   }
 
   return (
@@ -157,6 +164,8 @@ const HeaderContainer = () => {
             language="is"
             authenticated={isAuthenticated}
             username={user.name ?? undefined}
+            isOpen={isUserMenuOpen}
+            onClick={() => setIsUserMenuOpen(undefined)}
             dropdownItems={
               <>
                 <div className={styles.dropdownItem}>
@@ -196,6 +205,18 @@ const HeaderContainer = () => {
                         {isLawyerInLawyersRegistry ? lawyer.email : user.email}
                       </Text>
                     </Box>
+                    {eligibleUsers && eligibleUsers.length > 1 && (
+                      <Box marginTop={2}>
+                        <Button
+                          variant="text"
+                          onClick={handleChangeInstitution}
+                          size="small"
+                          preTextIcon="swapHorizontal"
+                        >
+                          Skipta um embætti
+                        </Button>
+                      </Box>
+                    )}
                   </Box>
                 </div>
                 <div className={styles.dropdownItem}>
