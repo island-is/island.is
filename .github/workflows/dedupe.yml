@@ -1,15 +1,12 @@
 name: Deduplicate yarn dependencies
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
-      write:
-        default: false
-        type: boolean
-        description: Update the PR with deduplications
-      token:
-        type: string
-        description: Auth token to use for git actions
+      branch:
+        description: 'Branch to run deduplication on'
+        required: true
+        default: 'main'
 
 defaults:
   run:
