@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { displayFirstPlusRemaining } from '@island.is/judicial-system/formatters'
 
 import * as styles from './CourtCaseNumber.css'
@@ -9,12 +9,14 @@ interface Props {
   courtCaseNumber?: string | null
   policeCaseNumbers?: string[] | null
   appealCaseNumber?: string | null
+  publicProsecutorIsRegisteredInPoliceSystem?: boolean | null
 }
 
 const CourtCaseNumber: FC<Props> = ({
   courtCaseNumber,
   policeCaseNumbers,
   appealCaseNumber,
+  publicProsecutorIsRegisteredInPoliceSystem,
 }) => {
   if (appealCaseNumber) {
     return (
@@ -35,21 +37,19 @@ const CourtCaseNumber: FC<Props> = ({
   return courtCaseNumber ? (
     <>
       <Box component="span" className={styles.blockColumn}>
-        <Text as="span">{courtCaseNumber}</Text>
+        <Text>{courtCaseNumber}</Text>
       </Box>
-      <Text
-        as="span"
-        variant="small"
-        color="dark400"
-        title={policeCaseNumbers?.join(', ')}
-      >
-        {displayFirstPlusRemaining(policeCaseNumbers)}
-      </Text>
+      <Box component="span" className={styles.policeCaseNumbers}>
+        {publicProsecutorIsRegisteredInPoliceSystem && (
+          <Icon icon="checkmark" color="blue400" size="medium" />
+        )}
+        <Text variant="small">
+          {displayFirstPlusRemaining(policeCaseNumbers)}
+        </Text>
+      </Box>
     </>
   ) : (
-    <Text as="span" title={policeCaseNumbers?.join(', ')}>
-      {displayFirstPlusRemaining(policeCaseNumbers) || '-'}
-    </Text>
+    <Text>{displayFirstPlusRemaining(policeCaseNumbers) || '-'}</Text>
   )
 }
 
