@@ -167,7 +167,7 @@ export const DocumentsOverview = () => {
                 <Box className={styles.checkboxWrap} marginRight={3}>
                   <Checkbox
                     name="checkbox-select-all"
-                    aria-label={formatMessage(messages.selectAll)}
+                    ariaLabel={formatMessage(messages.selectAll)}
                     checked={selectedLines.length > 0}
                     onChange={(e) => {
                       if (e.target.checked) {
