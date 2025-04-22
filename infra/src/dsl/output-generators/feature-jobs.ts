@@ -77,19 +77,6 @@ export const generateJobsForFeature = async (
       })
       return result
     }, [])
-  if (containers.length === 0) {
-    containers.push({
-      name: 'noop',
-      securityContext,
-      image: 'public.ecr.aws/runecast/busybox:1.35.0',
-      command: [
-        'sh',
-        '-c',
-        'echo "This is a noop container to make sure we always have at least one container!"',
-      ],
-      env: [],
-    })
-  }
   return {
     apiVersion: 'batch/v1',
     kind: 'Job',

@@ -655,7 +655,8 @@ export const buildExpandableDescriptionField = (
 export const buildAlertMessageField = (
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField => {
-  const { message, alertType, links } = data
+  const { message, alertType, links, shouldBlockInSetBeforeSubmitCallback } =
+    data
   return {
     ...extractCommonFields(data),
     children: undefined,
@@ -664,6 +665,7 @@ export const buildAlertMessageField = (
     type: FieldTypes.ALERT_MESSAGE,
     component: FieldComponents.ALERT_MESSAGE,
     links,
+    shouldBlockInSetBeforeSubmitCallback,
   }
 }
 
@@ -900,6 +902,7 @@ export const buildTableRepeaterField = (
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
+    initActiveFieldIfEmpty,
   } = data
 
   return {
@@ -920,6 +923,7 @@ export const buildTableRepeaterField = (
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
+    initActiveFieldIfEmpty,
   }
 }
 

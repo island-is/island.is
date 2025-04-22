@@ -17,6 +17,7 @@ import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
 import debounce from 'lodash/debounce'
 import { COMPANY_IDENTITY_QUERY, IDENTITY_QUERY } from './graphql/queries'
+import { setInputsOnChange } from '@island.is/shared/utils'
 
 interface NationalIdWithNameProps {
   id: string
@@ -44,6 +45,9 @@ interface NationalIdWithNameProps {
   showEmailField?: boolean
   error?: string
   clearOnChange?: string[]
+  setOnChange?:
+    | { key: string; value: any }[]
+    | ((value: string | undefined) => Promise<{ key: string; value: any }[]>)
 }
 
 export const NationalIdWithName: FC<
@@ -74,6 +78,7 @@ export const NationalIdWithName: FC<
   showEmailField = false,
   error,
   clearOnChange,
+  setOnChange,
 }) => {
   const fieldId = customId.length > 0 ? customId : id
   const nameField = `${fieldId}.name`
@@ -242,10 +247,18 @@ export const NationalIdWithName: FC<
             format="######-####"
             required={required}
             backgroundColor="blue"
-            onChange={debounce((v) => {
+            onChange={debounce(async (v) => {
               setNationalIdInput(v.target.value.replace(/\W/g, ''))
               onNationalIdChange &&
                 onNationalIdChange(v.target.value.replace(/\W/g, ''))
+              if (setOnChange) {
+                setInputsOnChange(
+                  typeof setOnChange === 'function'
+                    ? await setOnChange(v.target.value.replace(/\W/g, ''))
+                    : setOnChange,
+                  setValue,
+                )
+              }
             })}
             loading={searchPersons ? queryLoading : companyQueryLoading}
             error={nationalIdFieldErrors}

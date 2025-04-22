@@ -1778,17 +1778,26 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
   ): Promise<DeliverResponse> {
-    const promises = [
-      this.sendCaseFilesUpdatedNotification(
-        theCase.courtCaseNumber,
-        theCase.court?.name,
-        `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
-        theCase.judge?.name,
-        theCase.judge?.email,
-      ),
-    ]
+    const isCurrentUserRecipient = (user: User, recipientEmail?: string) =>
+      user.email === recipientEmail
 
-    if (theCase.registrar) {
+    const promises = []
+    if (!isCurrentUserRecipient(user, theCase.judge?.email)) {
+      promises.push(
+        this.sendCaseFilesUpdatedNotification(
+          theCase.courtCaseNumber,
+          theCase.court?.name,
+          `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+          theCase.judge?.name,
+          theCase.judge?.email,
+        ),
+      )
+    }
+
+    if (
+      theCase.registrar &&
+      !isCurrentUserRecipient(user, theCase.registrar.email)
+    ) {
       promises.push(
         this.sendCaseFilesUpdatedNotification(
           theCase.courtCaseNumber,
@@ -1801,7 +1810,11 @@ export class CaseNotificationService extends BaseNotificationService {
     }
 
     const uniqueSpokespersons = _uniqBy(
-      theCase.civilClaimants?.filter((c) => c.hasSpokesperson) ?? [],
+      theCase.civilClaimants?.filter(
+        (c) =>
+          c.hasSpokesperson &&
+          !isCurrentUserRecipient(user, c.spokespersonEmail),
+      ) ?? [],
       (c: CivilClaimant) => c.spokespersonEmail,
     )
     uniqueSpokespersons.forEach((civilClaimant) => {

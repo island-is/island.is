@@ -31,10 +31,8 @@ export const prerequisitesFailed = (externalData: ExternalData) => {
 }
 
 export const isEUCountry = (countryCode: string) => {
-  const isInEFTA = !!EFTA.find(
-    (element: any) => element.alpha2Code === countryCode,
-  )
-  const isInEU = !!EU.find((element: any) => element.alpha2Code === countryCode)
+  const isInEFTA = !!EFTA.find((element) => element.alpha2Code === countryCode)
+  const isInEU = !!EU.find((element) => element.alpha2Code === countryCode)
   return isInEU || isInEFTA
 }
 
