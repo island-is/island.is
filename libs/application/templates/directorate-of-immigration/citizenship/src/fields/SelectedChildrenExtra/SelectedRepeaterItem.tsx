@@ -16,10 +16,7 @@ import {
   InputController,
   RadioController,
 } from '@island.is/shared/form-fields'
-import {
-  FieldBaseProps,
-  GenericFormField,
-} from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import { information, personal, selectChildren } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { HiddenTextInput } from '../HiddenTextInput'

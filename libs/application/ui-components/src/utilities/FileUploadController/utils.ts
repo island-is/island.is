@@ -25,11 +25,15 @@ export const uploadFileToS3 = (
       if (event.lengthComputable) {
         const percent = Math.round((event.loaded / event.total) * 100)
 
-        // Min between percent and 99 so that this update event doesnt stop rotating 
+        // Min between percent and 99 so that this update event doesnt stop rotating
         // the uploading icon until we assign the done status elsewhere
         dispatch({
           type: ActionTypes.UPDATE,
-          payload: { file, status: 'uploading', percent: Math.min(percent, 99) },
+          payload: {
+            file,
+            status: 'uploading',
+            percent: Math.min(percent, 99),
+          },
         })
       }
     })

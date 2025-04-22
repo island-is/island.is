@@ -18,9 +18,11 @@ export const CommunicationChannels = ({ application }: OJOIFieldBaseProps) => {
   const [name, setName] = useState<string>('')
   const [index, setIndex] = useState<number | null>(null)
   const [isVisible, setIsVisible] = useState(false)
-  const { updateApplication, application: fetchedApplication } = useApplication({
-    applicationId: application.id,
-  })
+  const { updateApplication, application: fetchedApplication } = useApplication(
+    {
+      applicationId: application.id,
+    },
+  )
 
   const handleReset = () => {
     setName('')

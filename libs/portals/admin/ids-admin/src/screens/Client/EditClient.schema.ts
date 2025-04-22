@@ -4,7 +4,8 @@ import { zfd } from 'zod-form-data'
 import {
   AuthAdminTranslatedValue,
   AuthAdminRefreshTokenExpiration,
-  AuthAdminClientClaim, AuthAdminClientSso,
+  AuthAdminClientClaim,
+  AuthAdminClientSso,
 } from '@island.is/api/schema'
 
 import { booleanCheckbox } from '../../utils/forms'
@@ -115,14 +116,13 @@ export const schema = {
         message: 'errorPositiveNumber',
         path: ['inactivityLifetime'],
       },
-    ).transform((data) => {
+    )
+    .transform((data) => {
       const { sso, ...rest } = data
 
       return {
         ...rest,
-        sso: sso
-          ? AuthAdminClientSso.enabled
-          : AuthAdminClientSso.disabled,
+        sso: sso ? AuthAdminClientSso.enabled : AuthAdminClientSso.disabled,
       }
     }),
   [ClientFormTypes.applicationUrls]: z
