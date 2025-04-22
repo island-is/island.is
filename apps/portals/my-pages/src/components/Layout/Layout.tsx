@@ -42,7 +42,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
-        Features.isMyPagesSearchEnabled,
+        'isMyPagesSearchEnabled',
         false,
       )
       if (ffEnabled) {

@@ -28,7 +28,7 @@ const Greeting = () => {
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
-        Features.isMyPagesSearchEnabled,
+        'isMyPagesSearchEnabled',
         false,
       )
       if (ffEnabled) {

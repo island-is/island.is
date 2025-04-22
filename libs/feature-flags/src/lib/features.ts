@@ -53,9 +53,6 @@ export enum Features {
 
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
 
-  //search enabled
-  isMyPagesSearchEnabled = 'isMyPagesSearchEnabled',
-
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
   pkPassV2 = 'isPkPassV2Enabled',
