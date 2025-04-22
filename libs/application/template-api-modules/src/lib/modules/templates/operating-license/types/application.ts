@@ -5,20 +5,20 @@ export type Info = {
   operationName: string
 }
 
-export enum OPERATION_CATEGORY {
+export enum OperationCategory {
   TWO = '2',
   THREE = '3',
   FOUR = '4',
 }
 
-export enum APPLICATION_TYPES {
+export enum ApplicationTypes {
   HOTEL = 'hotel',
   RESTURANT = 'resturant',
 }
 
 export type Operation = {
-  operation: APPLICATION_TYPES
-  category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
+  operation: ApplicationTypes
+  category: OperationCategory | OperationCategory[] | undefined
   typeHotel?: string
   typeResturant?: string[]
   willServe?: string

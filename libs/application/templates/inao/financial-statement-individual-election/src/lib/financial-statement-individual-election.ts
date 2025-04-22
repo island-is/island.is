@@ -98,6 +98,12 @@ const FinancialStatementIndividualElectionTemplate: ApplicationTemplate<
           },
           status: 'draft',
           lifecycle: pruneAfterDays(60),
+          onEntry: [
+            defineTemplateApi({
+              action: ApiActions.fetchElections,
+              order: 1,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,

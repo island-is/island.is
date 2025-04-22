@@ -34,11 +34,8 @@ import {
   useGetCustomerChargeTypeQuery,
   useGetCustomerRecordsLazyQuery,
 } from './FinanceTransactions.generated'
-import {
-  CustomerChargeType,
-  CustomerRecords,
-} from './FinanceTransactionsData.types'
 import { useFinanceSwapHook } from '../../utils/financeSwapHook'
+import { CustomerChargeType, CustomerRecords } from '../../lib/types'
 
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')

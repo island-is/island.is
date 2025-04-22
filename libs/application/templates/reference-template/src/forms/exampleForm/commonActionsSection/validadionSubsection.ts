@@ -6,7 +6,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
-import { radioValidationExampleEnum } from '../../../utils/types'
+import { RadioValidationExampleEnum } from '../../../utils/types'
 
 export const validationSubsection = buildSubSection({
   id: 'validationSubsection',
@@ -39,9 +39,9 @@ export const validationSubsection = buildSubSection({
         buildRadioField({
           id: 'validation.validationRadioField',
           options: [
-            { label: 'Option 1', value: radioValidationExampleEnum.OPTION_1 },
-            { label: 'Option 2', value: radioValidationExampleEnum.OPTION_2 },
-            { label: 'Option 3', value: radioValidationExampleEnum.OPTION_3 },
+            { label: 'Option 1', value: RadioValidationExampleEnum.OPTION_1 },
+            { label: 'Option 2', value: RadioValidationExampleEnum.OPTION_2 },
+            { label: 'Option 3', value: RadioValidationExampleEnum.OPTION_3 },
           ],
         }),
       ],
