@@ -1,7 +1,8 @@
-import { cloneElement, forwardRef, ReactElement } from 'react'
+import { cloneElement, FC, forwardRef, ReactElement } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import { Menu, MenuButton, MenuItem, useMenuState } from 'reakit/Menu'
+import { useRouter } from 'next/router'
+import { Menu, MenuButton, MenuItem, MenuProvider } from '@ariakit/react'
 
 import {
   Box,
@@ -28,10 +29,10 @@ export type MenuItems = ContextMenuItem[]
 
 interface ContextMenuProps {
   // Aria label for menu
-  menuLabel: string
+  menuLabel?: string
 
   // Menu items
-  items: ContextMenuItem[]
+  items?: ContextMenuItem[]
 
   // Text in the menu button
   title?: string
@@ -60,22 +61,74 @@ export const useContextMenu = () => {
   }
 }
 
+export const ContextMenuV2: FC<ContextMenuProps> = (props) => {
+  const { title, items } = props
+  const router = useRouter()
+
+  const menuItemBoxStyle = useBoxStyles({
+    component: 'button',
+    display: 'flex',
+    alignItems: 'center',
+    width: 'full',
+    padding: 2,
+    cursor: 'pointer',
+  })
+
+  const menuItemTextStyle = getTextStyles({
+    variant: 'default',
+  })
+
+  const menuBoxStyle = useBoxStyles({
+    component: 'div',
+    background: 'white',
+    display: 'flex',
+    flexDirection: 'column',
+    borderRadius: 'large',
+    zIndex: 10,
+    marginTop: 2,
+  })
+
+  const handleClick = (evt: React.MouseEvent, item: ContextMenuItem) => {
+    evt.preventDefault()
+
+    if (item.href) {
+      router.push(item.href)
+    }
+  }
+
+  return (
+    <MenuProvider>
+      <MenuButton render={<Button icon="add" />}>{title}</MenuButton>
+      <Menu render={<ul className={cn(styles.menu, menuBoxStyle)}></ul>}>
+        {items?.map((item, index) => (
+          <MenuItem
+            key={`${item.title}_${index}`}
+            render={
+              <Box component="li" width="full">
+                {item.href && (
+                  <a
+                    href={item.href}
+                    onClick={(evt) => handleClick(evt, item)}
+                    className={cn(
+                      menuItemBoxStyle,
+                      menuItemTextStyle,
+                      styles.menuItem,
+                    )}
+                  >
+                    {item.title}
+                  </a>
+                )}
+              </Box>
+            }
+          />
+        ))}
+      </Menu>
+    </MenuProvider>
+  )
+}
+
 const ContextMenu = forwardRef<HTMLElement, ContextMenuProps & TestSupport>(
   ({ disclosure, menuLabel, items, title, dataTestId, offset }, ref) => {
-    const menu = useMenuState({
-      placement: 'bottom-end',
-      unstable_offset: offset ?? [0, 4],
-    })
-
-    const menuBoxStyle = useBoxStyles({
-      component: 'div',
-      background: 'white',
-      display: 'flex',
-      flexDirection: 'column',
-      borderRadius: 'large',
-      zIndex: 10,
-    })
-
     const menuItemBoxStyle = useBoxStyles({
       component: 'button',
       display: 'flex',
@@ -91,14 +144,17 @@ const ContextMenu = forwardRef<HTMLElement, ContextMenuProps & TestSupport>(
 
     return (
       <>
-        {disclosure ? (
+        hekki
+        {/* {disclosure ? (
           <MenuButton
             ref={ref}
             {...menu}
             {...disclosure.props}
             dataTestId={dataTestId}
           >
-            {(disclosureProps) => cloneElement(disclosure, disclosureProps)}
+            {(disclosureProps: DisclosureProps) =>
+              cloneElement(disclosure, disclosureProps)
+            }
           </MenuButton>
         ) : (
           <MenuButton as={Button} icon="add" {...menu} dataTestId={dataTestId}>
@@ -145,7 +201,7 @@ const ContextMenu = forwardRef<HTMLElement, ContextMenuProps & TestSupport>(
               </MenuItem>
             )
           })}
-        </Menu>
+        </Menu> */}
       </>
     )
   },
