@@ -2,7 +2,7 @@
 
 # developer files
 scripts/ci/docker-build-local.sh
-
+charts/features
 # compiled output
 dist/
 tmp/

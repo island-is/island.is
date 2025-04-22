@@ -11,7 +11,7 @@ export const getFeatureAffectedServices = async (
   const feature = env.feature
   if (typeof feature !== 'undefined') {
     const excludedServiceNames = excludedServices.map((f) => f.serviceDef.name)
-
+    
     const affectedServices = (
       await getWithDownstreamServices(env, habitat, services)
     ).reduce(
