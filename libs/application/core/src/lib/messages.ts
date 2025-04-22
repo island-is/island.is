@@ -787,6 +787,16 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'National ID',
   },
+  nationalRegistryPhone: {
+    id: 'application.system:core.fetch.data.nationalRegistryPhone',
+    defaultMessage: 'Símanúmer',
+    description: 'Phone number',
+  },
+  nationalRegistryEmail: {
+    id: 'application.system:core.fetch.data.nationalRegistryEmail',
+    defaultMessage: 'Netfang',
+    description: 'Email',
+  },
   nationalRegistryNameNotFoundForNationalId: {
     id: 'application.system:core.fetch.data.nationalRegistryNameNotFoundForNationalId',
     defaultMessage: 'Tókst ekki að sækja nafn út frá þessari kennitölu.',

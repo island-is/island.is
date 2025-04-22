@@ -4,7 +4,6 @@ import {
   buildNationalIdWithNameField,
   buildSection,
   buildTableRepeaterField,
-  buildTextField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { simpleInputsSection } from './simpleInputsSection'
@@ -27,40 +26,47 @@ export const MainForm: Form = buildForm({
           id: 'multiField',
           title: 'Multi field',
           children: [
-            buildTextField({
-              id: 'textField',
-              title: 'Text field',
-              width: 'half',
-              variant: 'text',
-            }),
-            buildTextField({
-              condition: (_application) => false,
-              id: 'textField2',
-              title: 'Text field 2',
-              width: 'half',
-              variant: 'text',
-            }),
-            buildTextField({
-              id: 'textField3',
-              title: 'Text field 3',
-              width: 'half',
-              variant: 'text',
-            }),
-            buildTextField({
-              id: 'textField4',
-              title: 'Text field 4',
-              width: 'half',
-              variant: 'text',
-              marginBottom: 4,
-            }),
             buildNationalIdWithNameField({
               id: 'nationalIdWithNameField',
               title: 'Nafn og kt. númer',
+              showEmailField: true,
+              showPhoneField: true,
             }),
             buildTableRepeaterField({
               id: 'tableRepeaterField',
               title: 'Table repeater field',
               fields: {
+                nat1: {
+                  component: 'nationalIdWithName',
+                  showEmailField: true,
+                  showPhoneField: true,
+                },
+                inputX: {
+                  component: 'input',
+                  label: 'Regular input',
+                  width: 'half',
+                  required: true,
+                  type: 'text',
+                },
+                inputY: {
+                  component: 'input',
+                  label: 'Regular input',
+                  width: 'half',
+                  required: true,
+                  type: 'text',
+                },
+                inputZ: {
+                  component: 'input',
+                  label: 'Regular input',
+                  width: 'half',
+                  required: true,
+                  type: 'text',
+                },
+                nat2: {
+                  component: 'nationalIdWithName',
+                  showEmailField: true,
+                  showPhoneField: true,
+                },
                 input: {
                   component: 'input',
                   label: 'Regular input',

@@ -59,8 +59,8 @@ export const NationalIdWithName: FC<
   required,
   customId = '',
   customNationalIdLabel = '',
-  phoneLabel = '',
-  emailLabel = '',
+  phoneLabel = undefined,
+  emailLabel = undefined,
   phoneRequired = false,
   emailRequired = false,
   customNameLabel = '',
@@ -311,10 +311,14 @@ export const NationalIdWithName: FC<
       {(showPhoneField || showEmailField) && (
         <GridRow>
           {showPhoneField && (
-            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={3}>
               <PhoneInputController
                 id={phoneField}
-                label={formatMessage(phoneLabel)}
+                label={
+                  phoneLabel
+                    ? formatMessage(phoneLabel)
+                    : formatMessage(coreErrorMessages.nationalRegistryPhone)
+                }
                 defaultValue={defaultPhone}
                 required={phoneRequired}
                 backgroundColor="blue"
@@ -324,10 +328,14 @@ export const NationalIdWithName: FC<
             </GridColumn>
           )}
           {showEmailField && (
-            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={3}>
               <InputController
                 id={emailField}
-                label={formatMessage(emailLabel)}
+                label={
+                  emailLabel
+                    ? formatMessage(emailLabel)
+                    : formatMessage(coreErrorMessages.nationalRegistryEmail)
+                }
                 defaultValue={defaultEmail}
                 type="email"
                 required={emailRequired}
