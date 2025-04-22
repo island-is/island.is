@@ -48,12 +48,6 @@ jobs:
     with:
       main_branch: ${{ github.base_ref }}
 
-  dedupe:
-    uses: ./.github/workflows/dedupe.yml
-    secrets: inherit
-    with:
-      write: true
-
   tests:
     needs:
       - prepare
