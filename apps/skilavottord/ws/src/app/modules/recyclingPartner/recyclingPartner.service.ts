@@ -98,4 +98,23 @@ export class RecyclingPartnerService {
 
     return partner.municipalityId || partner.companyId
   }
+
+  /**
+   * Check if the recyclingPartner is de-active, if not then check if the municipality is de-active
+   * @param companyId
+   * @returns
+   */
+  async isRecyclingPartnerActive(companyId: string): Promise<boolean> {
+    const partner = await this.findOne(companyId)
+
+    if (partner.municipalityId) {
+      const municipality = await this.findOne(partner.municipalityId)
+
+      if (!municipality.active) {
+        return false
+      }
+    }
+
+    return !!partner.active
+  }
 }
