@@ -2415,7 +2415,7 @@ services-bff-portals-my-pages:
   enabled: true
   env:
     BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.island.is"]'
-    BFF_ALLOWED_REDIRECT_URIS: '["https://island.is/minarsidur","https://island.is/umsoknir"]'
+    BFF_ALLOWED_REDIRECT_URIS: '["https://island.is/minarsidur","https://island.is/umsoknir","https://island.is/form"]'
     BFF_CACHE_USER_PROFILE_TTL_MS: '3595000'
     BFF_CALLBACKS_BASE_PATH: 'https://island.is/bff/callbacks'
     BFF_CLIENT_BASE_PATH: '/minarsidur'
@@ -2590,6 +2590,7 @@ services-payments:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
     NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
