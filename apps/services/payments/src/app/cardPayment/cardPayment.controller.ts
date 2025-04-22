@@ -9,8 +9,9 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import type { Logger } from '@island.is/logging'
+import { v4 as uuid } from 'uuid'
 
+import type { Logger } from '@island.is/logging'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -36,6 +37,7 @@ import { ChargeCardResponse } from './dtos/chargeCard.response.dto'
 import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
 import { VerificationCallbackResponse } from './dtos/verificationCallback.response.dto'
 import { CardPaymentService } from './cardPayment.service'
+import { PaymentTrackingData } from '../../types/cardPayment'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -199,9 +201,25 @@ export class CardPaymentController {
         throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
       }
 
+      // Create a unique guid for the merchant reference data
+      const merchantReferenceData = uuid()
+
+      // Create a unique guid for the payment confirmation
+      const paymentConfirmationId = uuid()
+
+      const paymentTrackingData: PaymentTrackingData = {
+        merchantReferenceData,
+        correlationId: paymentConfirmationId,
+      }
+
+      this.logger.info(
+        `Starting card payment for payment flow ${chargeCardInput.paymentFlowId} with correlation id ${paymentConfirmationId}`,
+      )
+
       // Payment confirmation
       const paymentResult = await this.cardPaymentService.charge(
         chargeCardInput,
+        paymentTrackingData,
       )
 
       let persistedPaymentConfirmation = false
@@ -212,6 +230,7 @@ export class CardPaymentController {
           paymentResult,
           paymentFlowId: chargeCardInput.paymentFlowId,
           totalPrice,
+          paymentTrackingData,
         })
         persistedPaymentConfirmation = true
 
@@ -268,6 +287,7 @@ export class CardPaymentController {
               'Accepted payment but failed to persist payment confirmation and failed to refund',
             metadata: {
               payment: paymentResult,
+              paymentTrackingData,
             },
           })
         }
@@ -282,6 +302,7 @@ export class CardPaymentController {
             charges: catalogItems,
             chargeResponse: paymentResult,
             totalPrice,
+            merchantReferenceData,
           })
 
         // Create a paid charge and send to FJS
@@ -348,6 +369,7 @@ export class CardPaymentController {
                 'Accepted payment but failed to persist payment confirmation, to create FJS charge and failed to refund',
               metadata: {
                 payment: paymentResult,
+                paymentTrackingData,
               },
             })
           }

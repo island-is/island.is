@@ -7,14 +7,13 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { Box, Breadcrumbs, Stack, toast } from '@island.is/island-ui/core'
 import {
   hasMunicipalityRole,
-  hasPermission,
+  Page,
 } from '@island.is/skilavottord-web/auth/utils'
-import { NotFound } from '@island.is/skilavottord-web/components'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { Role } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 
+import AuthGuard from '@island.is/skilavottord-web/components/AuthGuard/AuthGuard'
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
 import {
@@ -41,6 +40,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   let info = t.recyclingCompany.add.info
   let activeSection = 2
   let route = routes.recyclingCompanies.baseRoute
+  let permission = 'recyclingCompanies' as Page
 
   const isMunicipalityPage = router.route === routes.municipalities.add
 
@@ -57,6 +57,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
     title = mt.municipality.add.title
     info = mt.municipality.add.info
     route = routes.municipalities.baseRoute
+    permission = 'municipalities'
   }
 
   const methods = useForm<FormData>({
@@ -89,12 +90,6 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
       ],
     },
   )
-
-  if (!user) {
-    return null
-  } else if (!hasPermission('recyclingCompanies', user?.role as Role)) {
-    return <NotFound />
-  }
 
   const handleCreateRecyclingPartner = handleSubmit(async (input: FormData) => {
     if (typeof input.municipalityId !== 'string') {
@@ -132,43 +127,47 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <PartnerPageLayout side={<NavigationLinks activeSection={activeSection} />}>
-      <Stack space={4}>
-        <Breadcrumbs
-          items={[
-            { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
-            {
-              title: breadcrumbTitle,
-              href: route,
-            },
-            {
-              title: t.recyclingCompany.add.breadcrumb,
-            },
-          ]}
-          renderLink={(link, item) => {
-            return item?.href ? (
-              <NextLink href={item?.href} legacyBehavior>
-                {link}
-              </NextLink>
-            ) : (
-              link
-            )
-          }}
-        />
-
-        <PageHeader title={title} info={info} />
-      </Stack>
-      <Box marginTop={7}>
-        <FormProvider {...methods}>
-          <RecyclingCompanyForm
-            onSubmit={handleCreateRecyclingPartner}
-            onCancel={handleCancel}
-            errors={errors}
-            isMunicipalityPage={isMunicipalityPage}
+    <AuthGuard permission={permission}>
+      <PartnerPageLayout
+        side={<NavigationLinks activeSection={activeSection} />}
+      >
+        <Stack space={4}>
+          <Breadcrumbs
+            items={[
+              { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
+              {
+                title: breadcrumbTitle,
+                href: route,
+              },
+              {
+                title: t.recyclingCompany.add.breadcrumb,
+              },
+            ]}
+            renderLink={(link, item) => {
+              return item?.href ? (
+                <NextLink href={item?.href} legacyBehavior>
+                  {link}
+                </NextLink>
+              ) : (
+                link
+              )
+            }}
           />
-        </FormProvider>
-      </Box>
-    </PartnerPageLayout>
+
+          <PageHeader title={title} info={info} />
+        </Stack>
+        <Box marginTop={7}>
+          <FormProvider {...methods}>
+            <RecyclingCompanyForm
+              onSubmit={handleCreateRecyclingPartner}
+              onCancel={handleCancel}
+              errors={errors}
+              isMunicipalityPage={isMunicipalityPage}
+            />
+          </FormProvider>
+        </Box>
+      </PartnerPageLayout>
+    </AuthGuard>
   )
 }
 export default RecyclingCompanyCreate

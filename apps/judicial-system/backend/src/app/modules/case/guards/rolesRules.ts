@@ -61,6 +61,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
 const publicProsecutorFields: (keyof UpdateCaseDto)[] = [
   'indictmentReviewerId',
   'indictmentReviewDecision',
+  'publicProsecutorIsRegisteredInPoliceSystem',
 ]
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
@@ -68,6 +69,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderNationalId',
   'defenderEmail',
   'defenderPhoneNumber',
+  'requestSharedWithDefender', // court users are only allowed to set "NOT_SHARED".
   'courtCaseNumber',
   'sessionArrangements',
   'arraignmentDate',
