@@ -1,0 +1,105 @@
+{
+  "name": "hackathon-phi",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/hackathon-phi",
+  "projectType": "application",
+  "tags": ["scope:react-next"],
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/hackathon-phi"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/hackathon-phi"
+        },
+        "production": {}
+      },
+      "dependsOn": ["build-custom-server"]
+    },
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/hackathon-phi",
+        "main": "apps/hackathon-phi/server.ts",
+        "tsConfig": "apps/hackathon-phi/tsconfig.server.json",
+        "maxWorkers": 2,
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node",
+        "webpackConfig": "apps/hackathon-phi/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "hackathon-phi:build",
+        "dev": true,
+        "customServerTarget": "hackathon-phi:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "hackathon-phi:build:development",
+          "dev": true,
+          "customServerTarget": "hackathon-phi:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "hackathon-phi:build:production",
+          "dev": false,
+          "customServerTarget": "hackathon-phi:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "hackathon-phi:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "hackathon-phi:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "hackathon-phi:build-custom-server:production"
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "hackathon-phi:build:production"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/hackathon-phi/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/hackathon-phi"]
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/hackathon-phi/{screens,pages,components}/*.{js,ts,tsx}'"
+      }
+    }
+  }
+}
