@@ -3,30 +3,27 @@ import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const statisticsPageContainer = style({
-  minHeight: 'calc(100vh - 112px)',
-  padding: '48px 0',
-  display: 'grid',
-  gridTemplateColumns: '.8fr auto',
+  minHeight: '100vh',
+  background: theme.color.purple100,
+  display: 'flex',
   justifyContent: 'center',
+  paddingTop: '48px',
+  paddingBottom: '48px',
 })
 
 export const statisticsContentBox = style({
-  minHeight: '644px',
-  paddingBottom: theme.spacing[5],
   background: theme.color.white,
+  minHeight: '644px',
+  width: '100%',
+  maxWidth: '1200px',
+  padding: `${theme.spacing[4]}px`,
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      borderRadius: theme.border.radius.large,
+      padding: `${theme.spacing[10]}px ${theme.spacing[6]}px`,
+    },
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      padding: `${theme.spacing[10]}px ${theme.spacing[12]}px`,
     },
   },
-})
-
-export const statisticsSidebarContainer = style({
-  padding: '80px 0 48px 0',
-  background: theme.color.white,
-})
-
-export const statisticsSectionDivider = style({
-  borderBottom: `2px solid ${theme.color.blue200}`,
 })

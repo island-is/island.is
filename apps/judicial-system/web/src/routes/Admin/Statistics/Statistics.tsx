@@ -70,19 +70,9 @@ export const Statistics = () => {
   const stats = data?.casesStatistics
 
   return (
-    <Box
-      paddingY={[0, 0, 3, 6]}
-      paddingX={[0, 0, 0, 8, 14]}
-      background="purple100"
-      className={styles.statisticsPageContainer}
-    >
+    <Box className={styles.statisticsPageContainer}>
       <PageHeader title="Tölfræði" />
-      <Box
-        background="white"
-        borderColor="white"
-        className={styles.statisticsContentBox}
-        padding={[4, 4, 6, 12]}
-      >
+      <Box className={styles.statisticsContentBox}>
         <Box
           display="flex"
           flexDirection={['row']}
@@ -147,7 +137,7 @@ export const Statistics = () => {
                         {
                           id: 'indictment-case-item',
                           title: (
-                            <Text variant="h3" marginBottom={1}>
+                            <Text variant="h3" marginBottom={2}>
                               Ákærur
                             </Text>
                           ),
@@ -175,36 +165,28 @@ export const Statistics = () => {
                             </Text>
                           ),
                           values: [
-                            <>
+                            <Box
+                              display="flex"
+                              flexDirection="column"
+                              rowGap={1}
+                            >
                               <LabelValue
                                 label="Heildarfjöldi"
                                 value={stats.indictmentCases.count}
                               />
-                              <Box marginTop={3}>
-                                <Box
-                                  display="flex"
-                                  flexDirection="column"
-                                  rowGap={1}
-                                >
-                                  {stats.subpoenas.serviceStatusStatistics.map(
-                                    (status) => (
-                                      <ServiceStatusItem
-                                        key={
-                                          status.serviceStatus ?? 'unserviced'
-                                        }
-                                        title={mapServiceStatusTitle(
-                                          status.serviceStatus,
-                                        )}
-                                        count={status.count}
-                                        averageDays={
-                                          status.averageServiceTimeDays
-                                        }
-                                      />
-                                    ),
-                                  )}
-                                </Box>
-                              </Box>
-                            </>,
+                              {stats.subpoenas.serviceStatusStatistics.map(
+                                (status) => (
+                                  <ServiceStatusItem
+                                    key={status.serviceStatus ?? 'unserviced'}
+                                    title={mapServiceStatusTitle(
+                                      status.serviceStatus,
+                                    )}
+                                    count={status.count}
+                                    averageDays={status.averageServiceTimeDays}
+                                  />
+                                ),
+                              )}
+                            </Box>,
                           ],
                         },
                       ],
