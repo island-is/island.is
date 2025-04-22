@@ -9,17 +9,18 @@ import {
   financeRoutesLoader,
 } from './screens/FinanceRoutes.loader'
 import { redirects } from './financeRedirects'
+import FinanceTransactionsVehicleMileage from './screens/FinanceTransactionsVehicleMileage'
 
 const FinanceStatus = lazy(() => import('./screens/FinanceStatus'))
 const FinanceBills = lazy(() => import('./screens/FinanceBills'))
-const FinanceTransactionsCategories = lazy(() =>
-  import('./screens/FinanceTransactions'),
+const FinanceTransactionsCategories = lazy(
+  () => import('./screens/FinanceTransactions'),
 )
-const FinanceTransactionPeriods = lazy(() =>
-  import('./screens/FinanceTransactionPeriods'),
+const FinanceTransactionPeriods = lazy(
+  () => import('./screens/FinanceTransactionPeriods'),
 )
-const FinanceEmployeeClaims = lazy(() =>
-  import('./screens/FinanceEmployeeClaims'),
+const FinanceEmployeeClaims = lazy(
+  () => import('./screens/FinanceEmployeeClaims'),
 )
 const FinanceLocalTax = lazy(() => import('./screens/FinanceLocalTax'))
 const FinanceSchedule = lazy(() => import('./screens/FinanceSchedule'))
@@ -58,6 +59,14 @@ export const financeModule: PortalModule = {
       name: m.financeTransactionsCategories,
       path: FinancePaths.FinanceTransactionCategories,
       element: <FinanceTransactionsCategories />,
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+      dynamic: true,
+      loader: financeRoutesLoader({ userInfo, ...rest }),
+    },
+    {
+      name: m.financeTransactionsVehiclesMileage,
+      path: FinancePaths.FinanceTransactionVehicleMileage,
+      element: <FinanceTransactionsVehicleMileage />,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
       loader: financeRoutesLoader({ userInfo, ...rest }),

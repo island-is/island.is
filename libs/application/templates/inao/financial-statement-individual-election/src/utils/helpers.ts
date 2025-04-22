@@ -1,7 +1,7 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { ExternalData, FormValue } from '@island.is/application/types'
-import { FSIUSERTYPE } from '../types/types'
+import { Application } from '@island.is/application/types'
 import { TOTAL } from './constants'
+import { getValueViaPath } from '@island.is/application/core'
+import { Election } from '../types/types'
 
 export const checkIfNegative = (inputNumber: string) => {
   if (Number(inputNumber) < 0) {
@@ -17,23 +17,6 @@ export const currencyStringToNumber = (str: string) => {
   }
   const cleanString = str.replace(/[,\s]+|[.\s]+/g, '')
   return parseInt(cleanString, 10)
-}
-
-export const getCurrentUserType = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => {
-  const fakeUserType: FSIUSERTYPE | undefined = getValueViaPath(
-    answers,
-    'fakeData.options',
-  )
-
-  const currentUserType: FSIUSERTYPE | undefined = getValueViaPath(
-    externalData,
-    'getUserType.data.value',
-  )
-
-  return fakeUserType ? fakeUserType : currentUserType
 }
 
 export const getTotal = (values: Record<string, string>, key: string) => {
@@ -52,3 +35,22 @@ export const formatCurrency = (answer: string) =>
   answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
 export const formatNumber = (num: number) => num.toLocaleString('de-DE')
+
+export const getFinancialLimit = (application: Application) => {
+  const { answers, externalData } = application
+
+  const selectedElectionId = getValueViaPath<string>(
+    answers,
+    'election.electionId',
+  )
+  const elections = getValueViaPath<Array<Election>>(
+    externalData,
+    'fetchElections.data',
+  )
+
+  const selectedElection = elections?.find(
+    (election) => election.electionId === selectedElectionId,
+  )
+
+  return selectedElection?.limit
+}

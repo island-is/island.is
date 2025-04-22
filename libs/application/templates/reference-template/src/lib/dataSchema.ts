@@ -14,19 +14,8 @@ import {
   CareerHistoryEnum,
   CareerIndustryEnum,
 } from '../utils/constants'
-import { radioValidationExampleEnum } from '../utils/types'
+import { RadioValidationExampleEnum } from '../utils/types'
 import { YesOrNoEnum } from '@island.is/application/core'
-
-const careerHistoryCompaniesValidation = (data: any) => {
-  // Applicant selected other but didnt supply the reason so we dont allow it
-  if (
-    data.careerHistoryCompanies?.includes('other') &&
-    !data.careerHistoryOther
-  ) {
-    return false
-  }
-  return true
-}
 
 const personSchema = z.object({
   name: z.string().min(1).max(256),
@@ -99,10 +88,6 @@ const careerHistoryDetailsSchema = z
     careerHistoryOther: z.string(),
   })
   .partial()
-  .refine((data) => careerHistoryCompaniesValidation(data), {
-    params: m.regularTextExample,
-    path: ['careerHistoryOther'],
-  })
 
 const deepNestedSchema = z.object({
   something: z.object({
@@ -131,8 +116,8 @@ const validationSchema = z.object({
     params: m.about,
   }),
   validationRadioField: z
-    .nativeEnum(radioValidationExampleEnum)
-    .refine((val) => Object.values(radioValidationExampleEnum).includes(val), {
+    .nativeEnum(RadioValidationExampleEnum)
+    .refine((val) => Object.values(RadioValidationExampleEnum).includes(val), {
       params: m.about,
     }),
 })

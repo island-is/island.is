@@ -14,8 +14,10 @@ import Logo from '../assets/Logo'
 import { otherParentApprovalFormMessages } from '../lib/messages'
 import {
   getApplicationAnswers,
-  getLastDayOfLastMonth,
+  getBeginningOfMonth3MonthsAgo,
+
 } from '../lib/parentalLeaveUtils'
+
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
@@ -97,12 +99,12 @@ export const OtherParentApproval: Form = buildForm({
               titleVariant: 'h4',
               description: otherParentApprovalFormMessages.startDateInThePast,
               condition: (answers) => {
-                const lastDateOfLastMonth = getLastDayOfLastMonth()
+                const beginningOfMonth3MonthsAgo = getBeginningOfMonth3MonthsAgo()
                 const startDateTime = new Date(
                   getApplicationAnswers(answers).periods[0].startDate,
                 ).getTime()
 
-                return startDateTime <= lastDateOfLastMonth.getTime()
+                return startDateTime < beginningOfMonth3MonthsAgo.getTime()
               },
             }),
             buildSubmitField({
@@ -120,12 +122,12 @@ export const OtherParentApproval: Form = buildForm({
                   type: 'primary',
                   event: 'APPROVE',
                   condition: (answers) => {
-                    const lastDateOfLastMonth = getLastDayOfLastMonth()
+                    const beginningOfMonth3MonthsAgo = getBeginningOfMonth3MonthsAgo()
                     const startDateTime = new Date(
                       getApplicationAnswers(answers).periods[0].startDate,
                     ).getTime()
 
-                    return startDateTime > lastDateOfLastMonth.getTime()
+                    return startDateTime >= beginningOfMonth3MonthsAgo.getTime()
                   },
                 },
               ],

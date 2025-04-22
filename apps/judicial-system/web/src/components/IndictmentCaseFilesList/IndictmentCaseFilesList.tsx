@@ -2,7 +2,7 @@ import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
-import { Box } from '@island.is/island-ui/core'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
@@ -195,6 +195,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
   const isCompletedWithRuling =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+  const hasNoFiles = !showFiles && !displayGeneratedPDFs
 
   return (
     <>
@@ -397,6 +398,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
           </AnimatePresence>
         </>
+      )}
+      {hasNoFiles && (
+        <Box marginTop={3}>
+          <AlertMessage type="info" message="Engin skjöl til að sýna" />
+        </Box>
       )}
     </>
   )
