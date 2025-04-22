@@ -47,7 +47,9 @@ for target in "$@"; do
 done
 
 if [[ -n "$ADDITIONAL_PROJECTS" ]] ; then
+  echo "Running additional projects: ${$(yarn nx show projects --withTarget="$target" -p "$ADDITIONAL_PROJECTS" --json)}"
   for target in "$@"; do
+  echo "Target for additional projects: ${target}"
   processed_chunks=$(yarn nx show projects --withTarget="$target" -p "$ADDITIONAL_PROJECTS" --json |
     jq -r '.[]' |
     xargs -I {} -P "${MAX_JOBS:-4}" bash -c "
