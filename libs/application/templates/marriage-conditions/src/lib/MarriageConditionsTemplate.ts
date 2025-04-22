@@ -17,7 +17,7 @@ import {
   InstitutionNationalIds,
   ApplicationConfigurations,
 } from '@island.is/application/types'
-import { assign, StateNodeConfig } from 'xstate'
+import { assign } from 'xstate'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   getApplicationFeatureFlags,
@@ -35,7 +35,6 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
-import { number } from 'zod'
 import { PaymentForm } from '@island.is/application/ui-forms'
 import { CodeOwners } from '@island.is/shared/constants'
 

@@ -18,8 +18,8 @@ describe('Financial statement individual election helpers', () => {
       }
 
       const answers = {
-        'election.incomeLimit': expectedResult.incomeLimit,
-        'election.selectElection': expectedResult.electionId,
+        'incomeLimit.limit': expectedResult.incomeLimit,
+        'election.electionId': expectedResult.electionId,
         'about.fullName': expectedResult.clientName,
         'about.phoneNumber': expectedResult.clientPhone,
         'about.email': expectedResult.clientEmail,
@@ -37,7 +37,7 @@ describe('Financial statement individual election helpers', () => {
       { input: FinancialElectionIncomeLimit.GREATER, expectedOutput: true },
     ])('should map correctly', (inputOutputCombo) => {
       const answers = {
-        'election.incomeLimit': inputOutputCombo.input,
+        'incomeLimit.limit': inputOutputCombo.input,
       }
 
       const result = financialHelper.getShouldGetFileName(answers)
@@ -46,41 +46,15 @@ describe('Financial statement individual election helpers', () => {
     })
   })
 
-  describe('getActorContact', () => {
-    it.each([true, false])('should map correctly', (shouldBeDefined) => {
-      const clientName = 'Fullname Fullname'
-      const nationalId = '1234564321'
-
-      const expectedResult = shouldBeDefined
-        ? {
-            nationalId: nationalId,
-            name: clientName,
-            contactType: ContactType.Actor,
-          }
-        : undefined
-
-      const actor = shouldBeDefined
-        ? { nationalId, scope: ['not', 'applicable?'] }
-        : undefined
-
-      const result = financialHelper.getActorContact(actor, clientName)
-
-      expect(result).toEqual(expectedResult)
-    })
-  })
-
   describe('getInput', () => {
     it('should return correct input and loggerInfo', () => {
       const result = financialHelper.getInput(
         answers,
-        actor,
         nationalIdClient,
         fileName,
       )
 
       expect(result.input).toEqual(expectedInputResult)
-
-      expect(result.loggerInfo.includes(nationalIdActor)).toBeTruthy()
       expect(result.loggerInfo.includes(nationalIdClient)).toBeTruthy()
       expect(result.loggerInfo.includes(electionId)).toBeTruthy()
       expect(result.loggerInfo.includes(clientName)).toBeTruthy()
@@ -94,12 +68,10 @@ describe('Financial statement individual election helpers', () => {
 
     const fileName = '98498465654849896546.pdf'
     const electionId = 'blegh'
-    const nationalIdActor = '1234564321'
     const nationalIdClient = '1234564322'
     const clientName = 'Fullname Fullname'
     const clientPhone = '1234567'
     const clientEmail = 'email@mockemail.com'
-    const actor = { nationalId: nationalIdActor, scope: ['not', 'relevant'] }
     const otherAnswersRaw = {
       'individualIncome.contributionsByLegalEntities': 100,
       'individualIncome.candidatesOwnContributions': 101,
@@ -120,7 +92,7 @@ describe('Financial statement individual election helpers', () => {
 
     const answers = {
       'election.incomeLimit': FinancialElectionIncomeLimit.GREATER,
-      'election.selectElection': electionId,
+      'election.electionId': electionId,
       'about.fullName': clientName,
       'about.phoneNumber': clientPhone,
       'about.email': clientEmail,
@@ -153,11 +125,6 @@ describe('Financial statement individual election helpers', () => {
         name: clientName,
         phone: clientPhone,
         email: clientEmail,
-      },
-      actor: {
-        nationalId: nationalIdActor,
-        name: clientName,
-        contactType: ContactType.Actor,
       },
       digitalSignee: {
         phone: clientPhone,
