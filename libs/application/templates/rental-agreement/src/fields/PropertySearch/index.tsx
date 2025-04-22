@@ -6,7 +6,6 @@ import { useLocale } from '@island.is/localization'
 import {
   AlertMessage,
   AsyncSearch,
-  AsyncSearchOption,
   Box,
   LoadingDots,
   Table as T,

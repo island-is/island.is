@@ -1,23 +1,19 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { IS_REPRESENTATIVE } from '../utils/constants'
+import { ApplicantsInfo } from './types'
 
 export const getAssigneesNationalIdList = (application: Application) => {
   try {
     const assigneesNationalIdList: string[] = []
 
-    type IdAndRep = {
-      nationalIdWithName: { nationalId: string }
-      isRepresentative: string[]
-    }
-
-    const landlords = getValueViaPath<Array<IdAndRep>>(
+    const landlords = getValueViaPath<Array<ApplicantsInfo>>(
       application.answers,
       'landlordInfo.table',
       [],
     )
 
-    const tenants = getValueViaPath<Array<IdAndRep>>(
+    const tenants = getValueViaPath<Array<ApplicantsInfo>>(
       application.answers,
       'tenantInfo.table',
       [],

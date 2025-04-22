@@ -81,11 +81,11 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
                   <KeyValue
                     labelVariant="h5"
                     labelAs="p"
-                    label={landlordRep.nationalIdWithName?.name as string}
+                    label={landlordRep.nationalIdWithName?.name ?? '-'}
                     value={`${formatMessage(
                       summary.nationalIdLabel,
                     )}${formatNationalId(
-                      landlordRep.nationalIdWithName?.nationalId || '-',
+                      landlordRep.nationalIdWithName?.nationalId ?? '-',
                     )}`}
                     gap={'smallGutter'}
                   />
@@ -124,11 +124,11 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
                   <KeyValue
                     labelVariant="h5"
                     labelAs="p"
-                    label={tenantRep.nationalIdWithName?.name as string}
+                    label={tenantRep.nationalIdWithName?.name}
                     value={`${formatMessage(
                       summary.nationalIdLabel,
                     )}${formatNationalId(
-                      tenantRep.nationalIdWithName?.nationalId || '-',
+                      tenantRep.nationalIdWithName?.nationalId,
                     )}`}
                     gap={'smallGutter'}
                   />

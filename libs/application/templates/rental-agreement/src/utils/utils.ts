@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { CostField } from './types'
+import { ApplicantsInfo, CostField } from './types'
 import {
   RentalAmountIndexTypes,
   RentalHousingCategoryClass,
@@ -49,6 +49,17 @@ export const formatBankInfo = (bankInfo: string) => {
     return formattedBankInfo
   }
   return bankInfo
+}
+
+export const filterRepresentativesFromApplicants = <T extends ApplicantsInfo>(
+  applicants?: T[],
+): T[] => {
+  return (
+    applicants?.filter(
+      (applicant) =>
+        !applicant.isRepresentative || applicant.isRepresentative.length === 0,
+    ) ?? []
+  )
 }
 
 export const isCostItemValid = (item: CostField) =>

@@ -4,11 +4,16 @@ import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { Routes } from '../../utils/constants'
-import { formatNationalId, formatPhoneNumber } from '../../utils/utils'
+import {
+  filterRepresentativesFromApplicants,
+  formatNationalId,
+  formatPhoneNumber,
+} from '../../utils/utils'
 import { KeyValue } from './components/KeyValue'
 import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { summary } from '../../lib/messages'
+import { ApplicantsInfo } from '../../utils/types'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -28,32 +33,21 @@ export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
   } = props
   const { answers } = application
 
-  const landlords = getValueViaPath(
+  const landlords = getValueViaPath<ApplicantsInfo[]>(
     answers,
     'landlordInfo.table',
     [],
-  ) as Array<{
-    isRepresentative: string[]
-    nationalIdWithName: { nationalId: string; name: string }
-    email?: string
-    phone?: string
-  }>
-  const tenants = getValueViaPath(answers, 'tenantInfo.table', []) as Array<{
-    isRepresentative: string[]
-    nationalIdWithName: { nationalId: string; name: string }
-    email?: string
-    phone?: string
-  }>
-
-  const landlordListWithoutRepresentatives = landlords.filter(
-    (landlord) =>
-      !landlord.isRepresentative || landlord.isRepresentative.length === 0,
+  )
+  const tenants = getValueViaPath<ApplicantsInfo[]>(
+    answers,
+    'tenantInfo.table',
+    [],
   )
 
-  const tenantListWithoutRepresentatives = tenants.filter(
-    (tenant) =>
-      !tenant.isRepresentative || tenant.isRepresentative.length === 0,
-  )
+  const landlordListWithoutRepresentatives =
+    filterRepresentativesFromApplicants(landlords)
+  const tenantListWithoutRepresentatives =
+    filterRepresentativesFromApplicants(tenants)
 
   return (
     <>
@@ -103,50 +97,52 @@ export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
         })}
       </SummaryCard>
 
-      <SummaryCard
-        cardLabel={
-          tenantListWithoutRepresentatives.length > 1
-            ? formatMessage(summary.tenantsHeaderPlural)
-            : formatMessage(summary.tenantsHeader)
-        }
-      >
-        {tenantListWithoutRepresentatives.map((tenant) => {
-          return (
-            <SummaryCardRow
-              key={tenant.nationalIdWithName?.nationalId}
-              editAction={goToScreen}
-              route={tenantsRoute}
-              hasChangeButton={hasChangeButton}
-            >
-              <GridColumn span={['12/12']}>
-                <KeyValue
-                  labelVariant="h5"
-                  labelAs="p"
-                  label={tenant.nationalIdWithName?.name ?? ''}
-                  value={`${formatMessage(
-                    summary.nationalIdLabel,
-                  )}${formatNationalId(
-                    tenant.nationalIdWithName?.nationalId || '-',
-                  )}`}
-                  gap={'smallGutter'}
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '8/12']}>
-                <KeyValue
-                  label={summary.emailLabel}
-                  value={tenant.email || '-'}
-                />
-              </GridColumn>
-              <GridColumn span={['12/12', '4/12']}>
-                <KeyValue
-                  label={summary.phoneNumberLabel}
-                  value={formatPhoneNumber(tenant.phone || '-')}
-                />
-              </GridColumn>
-            </SummaryCardRow>
-          )
-        })}
-      </SummaryCard>
+      {tenantListWithoutRepresentatives && (
+        <SummaryCard
+          cardLabel={
+            tenantListWithoutRepresentatives.length > 1
+              ? formatMessage(summary.tenantsHeaderPlural)
+              : formatMessage(summary.tenantsHeader)
+          }
+        >
+          {tenantListWithoutRepresentatives.map((tenant) => {
+            return (
+              <SummaryCardRow
+                key={tenant.nationalIdWithName?.nationalId}
+                editAction={goToScreen}
+                route={tenantsRoute}
+                hasChangeButton={hasChangeButton}
+              >
+                <GridColumn span={['12/12']}>
+                  <KeyValue
+                    labelVariant="h5"
+                    labelAs="p"
+                    label={tenant.nationalIdWithName?.name ?? ''}
+                    value={`${formatMessage(
+                      summary.nationalIdLabel,
+                    )}${formatNationalId(
+                      tenant.nationalIdWithName?.nationalId || '-',
+                    )}`}
+                    gap={'smallGutter'}
+                  />
+                </GridColumn>
+                <GridColumn span={['12/12', '8/12']}>
+                  <KeyValue
+                    label={summary.emailLabel}
+                    value={tenant.email || '-'}
+                  />
+                </GridColumn>
+                <GridColumn span={['12/12', '4/12']}>
+                  <KeyValue
+                    label={summary.phoneNumberLabel}
+                    value={formatPhoneNumber(tenant.phone || '-')}
+                  />
+                </GridColumn>
+              </SummaryCardRow>
+            )
+          })}
+        </SummaryCard>
+      )}
     </>
   )
 }

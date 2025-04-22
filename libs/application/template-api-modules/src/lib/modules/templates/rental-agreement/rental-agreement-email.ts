@@ -1,5 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { EmailTemplateGenerator } from '../../../types'
+import { ApplicantsInfo } from './types'
+import { filterNonRepresentativesAndMapInfo } from './utils'
 
 export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
   const { application } = props
@@ -16,42 +18,30 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
       '',
   }
 
-  const tenants = (
-    getValueViaPath(application.answers, 'tenantInfo.table', []) as Array<{
-      nationalIdWithName: { name: string }
-      isRepresentative: string[]
-      email: string
-    }>
+  const tenants = filterNonRepresentativesAndMapInfo(
+    getValueViaPath<Array<ApplicantsInfo>>(
+      application.answers,
+      'tenantInfo.table',
+      [],
+    ) ?? [],
   )
-    .filter(
-      ({ isRepresentative }) => !isRepresentative?.includes('isRepresentative'),
-    )
-    .map((tenant) => ({
-      name: tenant.nationalIdWithName.name,
-      address: tenant.email,
-    }))
 
-  const landlords = (
-    getValueViaPath(application.answers, 'landlordInfo.table', []) as Array<{
-      nationalIdWithName: { name: string }
-      isRepresentative: string[]
-      email: string
-    }>
+  const landlords = filterNonRepresentativesAndMapInfo(
+    getValueViaPath<Array<ApplicantsInfo>>(
+      application.answers,
+      'landlordInfo.table',
+      [],
+    ) ?? [],
   )
-    .filter(
-      ({ isRepresentative }) => !isRepresentative?.includes('isRepresentative'),
-    )
-    .map((landlord) => ({
-      name: landlord.nationalIdWithName.name,
-      address: landlord.email,
-    }))
 
-  const htmlSummaryForEmail = getValueViaPath(
+  const htmlSummaryForEmail = getValueViaPath<string>(
     application.answers,
     'htmlSummary',
-  ) as string
+    '',
+  )
 
-  const emailContent = JSON.parse(htmlSummaryForEmail).html
+  const emailContent =
+    htmlSummaryForEmail && JSON.parse(htmlSummaryForEmail).html
   const emailStyles = `<style type="text/css">
                   #email-summary-container > div {
                     border-bottom: 1px solid #CCDFFF;
@@ -68,7 +58,7 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
                     font-weight: 600;
                     margin-bottom: 24px;
                   }
-                  
+
                   #email-summary-container label {
                     font-size: 14px;
                     font-weight: 600;

@@ -2,8 +2,8 @@ import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
-import { OtherFeesPayeeOptions, Routes, TRUE } from '../../utils/constants'
-import { CostField } from '../../utils/types'
+import { OtherFeesPayeeOptions, Routes } from '../../utils/constants'
+import { ApplicationAnswers } from '../../utils/types'
 import {
   filterEmptyCostItems,
   formatCurrency,
@@ -15,7 +15,7 @@ import { KeyValue } from './components/KeyValue'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { SummaryCard } from './components/SummaryCard'
 import { summary } from '../../lib/messages'
-import { getValueViaPath } from '@island.is/application/core'
+import { extractOtherFeesData, getOptionLabel } from '../../utils/summaryUtils'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -28,50 +28,20 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
   const { application, goToScreen, route, hasChangeButton } = props
   const { answers } = application
 
-  const otherFeesPayee = (answer: string) => {
-    const options = getOtherFeesPayeeOptions()
-    const matchingOption = options.find((option) => option.value === answer)
-    return matchingOption ? matchingOption.label : '-'
-  }
-
-  const otherFeesHousingFundPayee = (answer: string) => {
-    const options = getOtherFeesHousingFundPayeeOptions()
-    const matchingOption = options.find((option) => option.value === answer)
-    return matchingOption ? matchingOption.label : '-'
-  }
-
-  const housingFund = getValueViaPath<OtherFeesPayeeOptions>(
-    answers,
-    'otherFees.housingFund',
-  )
-  const electricityCost = getValueViaPath<OtherFeesPayeeOptions>(
-    answers,
-    'otherFees.electricityCost',
-  )
-  const heatingCost = getValueViaPath<OtherFeesPayeeOptions>(
-    answers,
-    'otherFees.heatingCost',
-  )
-  const otherCosts = getValueViaPath<string>(
-    answers,
-    'otherFees.otherCostItems',
-  )
-  const otherCostItems = getValueViaPath<CostField[]>(
-    answers,
-    'otherFees.otherCostItems',
-  )
-  const electricityCostMeterStatusDate = getValueViaPath<string>(
-    answers,
-    'otherFees.electricityCostMeterStatusDate',
-  )
-  const heatingCostMeterStatusDate = getValueViaPath<string>(
-    answers,
-    'otherFees.heatingCostMeterStatusDate',
-  )
-  const housingFundAmount = getValueViaPath<string>(
-    answers,
-    'otherFees.housingFundAmount',
-  )
+  const {
+    housingFund,
+    electricityCost,
+    heatingCost,
+    otherCosts,
+    otherCostItems,
+    electricityCostMeterStatusDate,
+    heatingCostMeterStatusDate,
+    housingFundAmount,
+    electricityCostMeterNumber,
+    electricityCostMeterStatus,
+    heatingCostMeterNumber,
+    heatingCostMeterStatus,
+  } = extractOtherFeesData(answers as ApplicationAnswers)
 
   const tenantPaysHouseFund = housingFund === OtherFeesPayeeOptions.TENANT
   const tenantPaysElectricity = electricityCost === OtherFeesPayeeOptions.TENANT
@@ -92,19 +62,25 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
           <KeyValue
             label={summary.electricityCostLabel}
-            value={otherFeesPayee(electricityCost || '')}
+            value={getOptionLabel(
+              electricityCost || '',
+              getOtherFeesPayeeOptions,
+            )}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
           <KeyValue
             label={summary.heatingCostLabel}
-            value={otherFeesPayee(heatingCost || '')}
+            value={getOptionLabel(heatingCost || '', getOtherFeesPayeeOptions)}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
           <KeyValue
             label={summary.houseFundLabel}
-            value={otherFeesHousingFundPayee(housingFund || '')}
+            value={getOptionLabel(
+              housingFund || '',
+              getOtherFeesHousingFundPayeeOptions,
+            )}
           />
         </GridColumn>
       </SummaryCardRow>
@@ -119,25 +95,13 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
           <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
             <KeyValue
               label={summary.electricityMeterNumberLabel}
-              value={
-                getValueViaPath(
-                  answers,
-                  'otherFees.electricityCostMeterNumber',
-                  '-',
-                ) as string
-              }
+              value={electricityCostMeterNumber || '-'}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
             <KeyValue
               label={summary.meterStatusLabel}
-              value={
-                getValueViaPath(
-                  answers,
-                  'otherFees.electricityCostMeterStatus',
-                  '-',
-                ) as string
-              }
+              value={electricityCostMeterStatus || '-'}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
@@ -163,25 +127,13 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
           <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
             <KeyValue
               label={summary.heatingCostMeterNumberLabel}
-              value={
-                getValueViaPath(
-                  answers,
-                  'otherFees.heatingCostMeterNumber',
-                  '-',
-                ) as string
-              }
+              value={heatingCostMeterNumber || '-'}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>
             <KeyValue
               label={summary.meterStatusLabel}
-              value={
-                getValueViaPath(
-                  answers,
-                  'otherFees.heatingCostMeterStatus',
-                  '-',
-                ) as string
-              }
+              value={heatingCostMeterStatus || '-'}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12', '6/12', '4/12', '4/12']}>

@@ -25,7 +25,7 @@ import {
   NationalRegistrySpouseApi,
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
-import { getAssigneesNationalIdList } from './getAssigneesNationalIdList'
+import { getAssigneesNationalIdList } from '../utils/getAssigneesNationalIdList'
 import { application } from './messages'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }

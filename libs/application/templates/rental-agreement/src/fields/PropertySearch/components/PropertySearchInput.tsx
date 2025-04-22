@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Query, HmsSearchInput } from '@island.is/api/schema'
-import { AsyncSearch, AsyncSearchOption, Box } from '@island.is/island-ui/core'
+import { AsyncSearch, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useLazyQuery } from '@apollo/client'
 import { ADDRESS_SEARCH_QUERY } from '../../../graphql/queries'
@@ -19,7 +19,7 @@ export const PropertySearchInput: React.FC<PropertySearchInputProps> = ({
   const { clearErrors, setValue, getValues } = useFormContext()
   const storedValue = getValues(id)
   const [searchTerm, setSearchTerm] = useState(storedValue?.value)
-  const [searchOptions, setSearchOptions] = useState<AsyncSearchOption[]>([])
+  const [searchOptions, setSearchOptions] = useState<AddressProps[]>([])
   const [selectedAddress, setSelectedAddress] = useState<
     AddressProps | undefined
   >(storedValue)
@@ -50,14 +50,15 @@ export const PropertySearchInput: React.FC<PropertySearchInputProps> = ({
       console.error('Error fetching address', error)
     },
     onCompleted: (data) => {
-      if (data.hmsSearch) {
-        const searchOptions = data.hmsSearch.addresses.map((address) => ({
-          ...address,
-          label: `${address.address}, ${address.postalCode} ${address.municipalityName}`,
-          value: `${address.addressCode}`,
-        }))
-        setSearchOptions(searchOptions)
+      if (!data.hmsSearch) {
+        return
       }
+      const searchOptions = data.hmsSearch.addresses.map((address) => ({
+        ...address,
+        label: `${address.address}, ${address.postalCode} ${address.municipalityName}`,
+        value: `${address.addressCode}`,
+      }))
+      setSearchOptions(searchOptions)
     },
   })
 
@@ -69,7 +70,7 @@ export const PropertySearchInput: React.FC<PropertySearchInputProps> = ({
     const selectedOption = searchOptions.find(
       (option) => option.value === selectedValue,
     )
-    setSelectedAddress(selectedOption as AddressProps)
+    setSelectedAddress(selectedOption)
     setValue(id, selection ? selection : undefined)
   }
 
