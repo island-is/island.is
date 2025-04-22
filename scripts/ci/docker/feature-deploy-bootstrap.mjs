@@ -28,9 +28,6 @@ async function main() {
   const files = await glob(`${directory}/**/values.yaml`)
 
   for (const file of files) {
-    const applicationDirname = path.dirname(file)
-    let applicationName = applicationDirname.split('/').slice(-1)[0]
-
     const textContent = readFileSync(file, 'utf8')
     const yamlContent = await jsyaml.load(textContent)
     const namespaceToAdd =

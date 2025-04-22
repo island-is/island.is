@@ -466,6 +466,9 @@ jobs:
       && needs.helm-docker-build.result != 'failure'
       && needs.prepare.outputs.IMAGES != ''
       && needs.docker-build.result == 'success' }}
+    concurrency:
+      group: feature-deploy
+      cancel-in-progress: true
     permissions:
       id-token: write
       contents: write
