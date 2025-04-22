@@ -94,7 +94,7 @@ const CaseDocuments: FC<Props> = ({
 
     if (isPrisonAdminUser(user)) {
       return (
-        isRestrictionCase(workingCase.type) ||
+        workingCase.type === CaseType.CUSTODY ||
         workingCase.type === CaseType.PAROLE_REVOCATION
       )
     }
