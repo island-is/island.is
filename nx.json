@@ -66,6 +66,7 @@
       "application": {
         "style": "scss",
         "linter": "eslint",
+        "bundler": "webpack",
         "pascalCaseFiles": true,
         "babel": true
       },
@@ -109,21 +110,42 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production", "DevOps"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "production",
+        "^production",
+        "DevOps"
+      ]
     },
     "e2e": {
-      "inputs": ["default", "^production"]
+      "inputs": [
+        "default",
+        "^production"
+      ]
     },
     "lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.json"
+      ]
     },
     "test": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/jest.preset.js"
+      ]
     },
     "codegen/backend-client": {
-      "dependsOn": ["^codegen/backend-client", "^codegen/backend-schema"],
-      "inputs": ["schema-files"]
+      "dependsOn": [
+        "^codegen/backend-client",
+        "^codegen/backend-schema"
+      ],
+      "inputs": [
+        "schema-files"
+      ]
     },
     "codegen/backend-schema": {
       "dependsOn": [
@@ -131,11 +153,18 @@
         "^codegen/backend-client",
         "^codegen/backend-schema"
       ],
-      "inputs": ["default", "^production"]
+      "inputs": [
+        "default",
+        "^production"
+      ]
     },
     "codegen/frontend-client": {
-      "dependsOn": ["codegen/backend-schema"],
-      "inputs": ["graphql-files"],
+      "dependsOn": [
+        "codegen/backend-schema"
+      ],
+      "inputs": [
+        "graphql-files"
+      ],
       "outputs": [
         "{projectRoot}/**/schema.{ts,tsx}",
         "{projectRoot}/**/fragmentTypes.json",
@@ -144,7 +173,11 @@
     },
     "@nx/jest:jest": {
       "cache": true,
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/jest.preset.js"
+      ],
       "options": {
         "passWithNoTests": true
       },
@@ -156,22 +189,38 @@
       }
     },
     "@nx/eslint:lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.json"
+      ],
       "cache": true
     },
     "@nx/next:build": {
       "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "production",
+        "^production"
+      ]
     },
     "@nx/webpack:webpack": {
       "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "production",
+        "^production"
+      ]
     }
   },
   "namedInputs": {
-    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
     "forceRebuild": [
       {
         "runtime": "node .github/actions/force-build.mjs"
@@ -182,7 +231,11 @@
         "runtime": "node --version"
       }
     ],
-    "DevOps": ["CI", "Dockerfiles", "{workspaceRoot}/scripts/**/*"],
+    "DevOps": [
+      "CI",
+      "Dockerfiles",
+      "{workspaceRoot}/scripts/**/*"
+    ],
     "CI": [
       "{workspaceRoot}/.github/actions/",
       "{workspaceRoot}/.github/workflows/",
