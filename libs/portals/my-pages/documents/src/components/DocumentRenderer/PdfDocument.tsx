@@ -53,6 +53,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             icon="remove"
             variant="ghost"
             size="small"
+            aria-label={formatMessage(messages.zoomIn)}
             onClick={() => setScalePDF(scalePDF - 0.1)}
             disabled={0.6 > scalePDF}
           />
@@ -61,6 +62,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             display="flex"
             justifyContent="center"
             alignItems="center"
+            aria-label={formatMessage(messages.zoomLevel)}
           >
             <Text variant="small">
               {((scalePDF / initScale) * 100).toFixed(0) + '%'}
@@ -71,6 +73,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             icon="add"
             variant="ghost"
             size="small"
+            aria-label={formatMessage(messages.zoomIn)}
             onClick={() => {
               setScalePDF(scalePDF + 0.1)
             }}
@@ -83,6 +86,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             icon="expand"
             variant="ghost"
             size="small"
+            aria-label={formatMessage(messages.expand)}
             onClick={() => expandCallback(true)}
           />
         ) : onClose ? (
@@ -91,6 +95,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             icon="close"
             variant="ghost"
             size="small"
+            aria-label={formatMessage(messages.close)}
             onClick={onClose}
           />
         ) : undefined}

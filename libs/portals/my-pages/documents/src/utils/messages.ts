@@ -116,4 +116,24 @@ export const messages = defineMessages({
     id: 'sp.documents:search-label',
     defaultMessage: 'Leita',
   },
+  zoomIn: {
+    id: 'sp.documents:zoom-in',
+    defaultMessage: 'Þysja að',
+  },
+  zoomOut: {
+    id: 'sp.documents:zoom-out',
+    defaultMessage: 'Þysja frá',
+  },
+  zoomLevel: {
+    id: 'sp.documents:zoom-level',
+    defaultMessage: 'Þysjuhlutfall',
+  },
+  expand: {
+    id: 'sp.documents:expand',
+    defaultMessage: 'Stækka',
+  },
+  close: {
+    id: 'sp.documents:close',
+    defaultMessage: 'Loka',
+  },
 })

@@ -184,6 +184,7 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
                             ? setMenuOpen(undefined)
                             : setMenuOpen('side')
                         }}
+                        aria-label={formatMessage(m.overview)}
                         ref={ref}
                       >
                         <Hidden below="sm">{formatMessage(m.overview)}</Hidden>
