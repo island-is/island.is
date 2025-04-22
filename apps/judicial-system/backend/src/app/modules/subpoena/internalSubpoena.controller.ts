@@ -96,7 +96,7 @@ export class InternalSubpoenaController {
         deliveredToPolice: results.delivered,
         subpoenaId: subpoena.id,
         subpoenaCreated: subpoena.created,
-        policeSubpoenaId: currentSubpoena.subpoenaId,
+        policeSubpoenaId: currentSubpoena.policeSubpoenaId,
         subpoenaHash: currentSubpoena.hash,
         subpoenaDeliveredToPolice: new Date(),
         indictmentHash: theCase.indictmentHash,

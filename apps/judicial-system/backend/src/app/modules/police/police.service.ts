@@ -663,7 +663,7 @@ export class PoliceService {
 
       if (res.ok) {
         const subpoenaResponse = await res.json()
-        return { subpoenaId: subpoenaResponse.id }
+        return { policeSubpoenaId: subpoenaResponse.id }
       }
 
       throw await res.text()

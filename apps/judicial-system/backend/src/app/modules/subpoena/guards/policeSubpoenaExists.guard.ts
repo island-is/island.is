@@ -21,7 +21,9 @@ export class PoliceSubpoenaExistsGuard implements CanActivate {
     }
 
     // subpoenaId is the external police document id
-    request.subpoena = await this.subpoenaService.findBySubpoenaId(subpoenaId)
+    request.subpoena = await this.subpoenaService.findByPoliceSubpoenaId(
+      subpoenaId,
+    )
 
     return true
   }

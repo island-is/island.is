@@ -286,10 +286,10 @@ export class SubpoenaService {
     return subpoena
   }
 
-  async findBySubpoenaId(policeSubpoenaId?: string): Promise<Subpoena> {
+  async findByPoliceSubpoenaId(policeSubpoenaId?: string): Promise<Subpoena> {
     const subpoena = await this.subpoenaModel.findOne({
       include,
-      where: { subpoenaId: policeSubpoenaId },
+      where: { policeSubpoenaId: policeSubpoenaId },
     })
 
     if (!subpoena) {
@@ -353,7 +353,7 @@ export class SubpoenaService {
       }
 
       const [numberOfAffectedRows] = await this.subpoenaModel.update(
-        { subpoenaId: createdSubpoena.subpoenaId },
+        { policeSubpoenaId: createdSubpoena.policeSubpoenaId },
         { where: { id: subpoena.id } },
       )
 
@@ -364,7 +364,7 @@ export class SubpoenaService {
       }
 
       this.logger.info(
-        `Subpoena ${createdSubpoena.subpoenaId} delivered to the police centralized file service`,
+        `Subpoena with police subpoena id ${createdSubpoena.policeSubpoenaId} delivered to the police centralized file service`,
       )
 
       return { delivered: true }
@@ -486,7 +486,7 @@ export class SubpoenaService {
     subpoena: Subpoena,
     user: TUser,
   ): Promise<DeliverResponse> {
-    if (!subpoena.subpoenaId) {
+    if (!subpoena.policeSubpoenaId) {
       this.logger.warn(
         `Attempted to revoke a subpoena with id ${subpoena.id} that had not been delivered to the police`,
       )
@@ -495,13 +495,13 @@ export class SubpoenaService {
 
     const subpoenaRevoked = await this.policeService.revokeSubpoena(
       theCase,
-      subpoena.subpoenaId,
+      subpoena.policeSubpoenaId,
       user,
     )
 
     if (subpoenaRevoked) {
       this.logger.info(
-        `Subpoena ${subpoena.subpoenaId} successfully revoked from police`,
+        `Subpoena ${subpoena.policeSubpoenaId} successfully revoked from police`,
       )
       return { delivered: true }
     } else {
@@ -510,7 +510,7 @@ export class SubpoenaService {
   }
 
   async getSubpoena(subpoena: Subpoena, user?: TUser): Promise<Subpoena> {
-    if (!subpoena.subpoenaId) {
+    if (!subpoena.policeSubpoenaId) {
       // The subpoena has not been delivered to the police
       return subpoena
     }
@@ -523,7 +523,7 @@ export class SubpoenaService {
     // We don't know if the subpoena has been served to the defendant
     // so we need to check the police service
     const subpoenaInfo = await this.policeService.getSubpoenaStatus(
-      subpoena.subpoenaId,
+      subpoena.policeSubpoenaId,
       user,
     )
 
