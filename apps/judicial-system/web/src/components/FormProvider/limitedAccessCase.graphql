@@ -20,6 +20,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       userGeneratedFilename
       displayDate
       submittedBy
+      fileRepresentative
     }
     defendants {
       id
@@ -49,6 +50,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       sentToPrisonAdminDate
       openedByPrisonAdminDate
       punishmentType
+      isAlternativeService
+      alternativeServiceDescription
       subpoenas {
         id
         created
@@ -262,6 +265,19 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       spokespersonEmail
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
+      isSpokespersonConfirmed
+    }
+    victims {
+      id
+      name
+      hasNationalId
+      nationalId
+      hasLawyer
+      lawyerNationalId
+      lawyerName
+      lawyerEmail
+      lawyerPhoneNumber
+      lawyerAccessToRequest
     }
     isCompletedWithoutRuling
     caseSentToCourtDate

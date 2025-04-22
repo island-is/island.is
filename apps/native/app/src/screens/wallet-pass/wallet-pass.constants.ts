@@ -14,3 +14,10 @@ export const INCLUDED_LICENSE_TYPES = [
   GenericLicenseType.HuntingLicense,
   GenericLicenseType.Passport,
 ]
+
+export const SHOW_INFO_ALERT_TYPES = [
+  GenericLicenseType.PCard,
+  GenericLicenseType.Ehic,
+  GenericLicenseType.Passport,
+  GenericLicenseType.IdentityDocument,
+]

@@ -27,7 +27,7 @@ export const Comment = ({
                 socialInsuranceAdministrationMessage.additionalInfo
                   .commentSection,
               )}
-              value={comment}
+              value={comment ?? ''}
             />
           </GridColumn>
         </GridRow>

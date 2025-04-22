@@ -2,7 +2,7 @@ import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
@@ -10,8 +10,8 @@ import {
   isDistrictCourtUser,
   isPrisonAdminUser,
   isProsecutionUser,
-  isPublicProsecutor,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
@@ -116,8 +116,11 @@ const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
         CaseFileCategory.CRIMINAL_RECORD_UPDATE,
       ),
       uploadedCaseFiles: filterByCategories([
-        CaseFileCategory.PROSECUTOR_CASE_FILE,
-        CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_CASE_FILE, // sækjandi
+        CaseFileCategory.DEFENDANT_CASE_FILE, // verjandi
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE, // ákærði
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE, //réttargæslumaður
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE, // lögmaður
       ]),
       civilClaims: filterByCategories(CaseFileCategory.CIVIL_CLAIM),
       sentToPrisonAdminFiles: filterByCategories(
@@ -132,15 +135,15 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
     () => ({
       canViewCriminalRecordUpdate:
         isDistrictCourtUser(user) ||
-        isPublicProsecutor(user) ||
-        isPublicProsecutorUser(user),
+        isPublicProsecutionUser(user) ||
+        isPublicProsecutionOfficeUser(user),
       canViewCivilClaims:
         Boolean(workingCase.hasCivilClaims) &&
         (isDistrictCourtUser(user) ||
           isProsecutionUser(user) ||
           isDefenceUser(user)),
       canViewSentToPrisonAdminFiles:
-        isPrisonAdminUser(user) || isPublicProsecutorUser(user),
+        isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user),
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
     }),
@@ -189,6 +192,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
   const isCompletedWithRuling =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+  const hasNoFiles = !showFiles && !displayGeneratedPDFs
 
   return (
     <>
@@ -371,6 +375,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
           </AnimatePresence>
         </>
+      )}
+      {hasNoFiles && (
+        <Box marginTop={3}>
+          <AlertMessage type="info" message="Engin skjöl til að sýna" />
+        </Box>
       )}
     </>
   )

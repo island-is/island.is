@@ -51,6 +51,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     tooltip,
     onChange = () => undefined,
     clearOnChange,
+    setOnChange,
   } = field
   const { clearErrors, watch } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
@@ -128,6 +129,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           min={min}
           step={step}
           clearOnChange={clearOnChange}
+          setOnChange={setOnChange}
         />
       </Box>
     </Box>
