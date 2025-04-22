@@ -1,4 +1,15 @@
-export const EFTA = [
+export type TEfta = {
+  name: string
+  topLevelDomain: Array<string>
+  alpha2Code: string
+  alpha3Code: string
+  callingCodes: Array<string>
+  capital: string
+  altSpellings: Array<string>
+  region: string
+}
+
+export const EFTA: Array<TEfta> = [
   {
     name: 'Iceland',
     topLevelDomain: ['.is'],

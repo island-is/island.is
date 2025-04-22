@@ -18,7 +18,7 @@ import {
 } from '@island.is/application/types'
 import { m } from './messages/messages'
 import { dataSchema } from './dataSchema'
-import { API_MODULE } from '../utils/constants'
+import { ApiModule } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 
 type Events = { type: DefaultEvents.SUBMIT }
@@ -139,7 +139,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           status: 'completed',
           name: applicationName,
           onEntry: defineTemplateApi({
-            action: API_MODULE.sendApplyHealthInsuranceApplication,
+            action: ApiModule.sendApplyHealthInsuranceApplication,
           }),
           actionCard: {
             pendingAction: {

@@ -21,7 +21,11 @@ const election = z.object({
   selectElection: z.string().optional(),
   electionName: z.string().optional(),
   genitiveName: z.string().optional(),
-  incomeLimit: z.string().refine((x) => !!x, { params: m.required }),
+  electionId: z.string().optional(),
+})
+
+const incomeLimit = z.object({
+  limit: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const conditionalAbout = z.object({
@@ -142,6 +146,7 @@ export const dataSchema = z.object({
   conditionalAbout,
   about,
   election,
+  incomeLimit,
   individualIncome,
   individualExpense,
   capitalNumbers,

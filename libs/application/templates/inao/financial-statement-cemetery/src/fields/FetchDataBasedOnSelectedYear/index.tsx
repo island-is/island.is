@@ -96,7 +96,6 @@ export const FetchDataBasedOnSelectedYear = () => {
     burialRevenueFromAnswers,
     grantFromTheCemeteryFundFromAnswers,
     donationsToCemeteryFundFromAnswers,
-    CEMETERYOPERATIONIDS,
   ])
 
   if (loading || taxInfoLoading) {
