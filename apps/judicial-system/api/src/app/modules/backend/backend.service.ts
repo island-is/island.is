@@ -15,6 +15,7 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry } from '../case-list'
+import { CaseStatistics } from '../case-list/models/caseStatistics.model'
 import {
   CivilClaimant,
   Defendant,
@@ -189,6 +190,19 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getCase(id: string): Promise<Case> {
     return this.get<Case>(`case/${id}`, this.caseTransformer)
+  }
+  getCasesStatistics(
+    fromDate?: Date,
+    toDate?: Date,
+    institutionId?: string,
+  ): Promise<CaseStatistics> {
+    const params = new URLSearchParams()
+
+    if (fromDate) params.append('fromDate', fromDate.toISOString())
+    if (toDate) params.append('toDate', toDate.toISOString())
+    if (institutionId) params.append('institutionId', institutionId)
+
+    return this.get(`cases/statistics?${params.toString()}`)
   }
 
   getConnectedCases(id: string): Promise<Case[]> {

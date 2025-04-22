@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
 import { Includeable, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -81,6 +81,10 @@ import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { Case } from './models/case.model'
 import { MinimalCase } from './models/case.types'
+import {
+  CaseStatistics,
+  IndictmentCaseStatistics,
+} from './models/caseStatistics.response'
 import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
@@ -2341,5 +2345,97 @@ export class CaseService {
     )) as Case
 
     return updatedCase
+  }
+
+  async getCaseStatistics(
+    from?: Date,
+    to?: Date,
+    institutionId?: string,
+  ): Promise<CaseStatistics> {
+    const where: WhereOptions = {}
+
+    if (from || to) {
+      where.created = {}
+      if (from) {
+        where.created[Op.gte] = from
+      }
+      if (to) {
+        where.created[Op.lte] = to
+      }
+    }
+
+    if (institutionId) {
+      Object.assign(where, {
+        [Op.or]: [
+          { courtId: institutionId },
+          { prosecutorsOfficeId: institutionId },
+        ],
+      })
+    }
+
+    const cases = await this.caseModel.findAll({ where })
+
+    const subpoenas = await this.subpoenaService.getStatistics(
+      from,
+      to,
+      institutionId,
+    )
+
+    const indictmentCases = await this.getIndictmentStatistics(where)
+
+    const stats: CaseStatistics = {
+      count: cases.length,
+      indictmentCases,
+      subpoenas,
+    }
+
+    return stats
+  }
+
+  async getIndictmentStatistics(
+    where: WhereOptions,
+  ): Promise<IndictmentCaseStatistics> {
+    const indictmentCases = await this.caseModel.findAll({
+      where: {
+        ...where,
+        type: CaseType.INDICTMENT,
+        rulingDate: { [Op.not]: null },
+      },
+      include: [
+        {
+          model: EventLog,
+          required: true,
+          attributes: ['created'],
+          where: {
+            eventType: EventType.INDICTMENT_CONFIRMED,
+          },
+        },
+      ],
+    })
+
+    const caseDurations = indictmentCases
+      .map((caseItem) => {
+        const confirmedEvent = caseItem.eventLogs?.[0]
+        if (!confirmedEvent?.created || !caseItem.rulingDate) return null
+
+        const diff =
+          caseItem.rulingDate.getTime() - confirmedEvent.created.getTime()
+        return diff > 0 ? diff : null
+      })
+      .filter((ms): ms is number => ms !== null)
+
+    const averageIndictmentRulingTimeMs = caseDurations.length
+      ? Math.round(
+          caseDurations.reduce((sum, ms) => sum + ms, 0) / caseDurations.length,
+        )
+      : 0
+
+    return {
+      count: indictmentCases.length,
+      averageRulingTimeMs: averageIndictmentRulingTimeMs,
+      averageRulingTimeDays: Math.round(
+        averageIndictmentRulingTimeMs / (1000 * 60 * 60 * 24),
+      ),
+    }
   }
 }
