@@ -39,7 +39,11 @@ export const exemptionPeriodSection = buildSection({
             },
           ],
           width: 'half',
-          clearOnChange: ['exemptionPeriod.dateFrom', 'exemptionPeriod.dateTo'],
+          clearOnChange: [
+            'exemptionPeriod.dateFrom',
+            'exemptionPeriod.dateTo',
+            'location.exemptionPeriodType',
+          ],
         }),
         buildAlertMessageField({
           id: 'exemptionPeriodTypeAlertMessage',

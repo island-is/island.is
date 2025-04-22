@@ -59,7 +59,7 @@ export const TransporterSchema = z
   .intersection(
     ResponsiblePersonSchema,
     z.object({
-      address: z.string().optional(),
+      address: z.string().max(100).optional(),
       postalCodeAndCity: z.string().optional(),
     }),
   )
@@ -78,6 +78,81 @@ export const TransporterSchema = z
     { path: ['postalCodeAndCity'] },
   )
 
+const FileDocumentSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+})
+
+const LocationSchema = z
+  .object({
+    exemptionPeriodType: z.string(),
+    shortTerm: z
+      .object({
+        addressFrom: z.string().optional(),
+        postalCodeAndCityFrom: z.string().optional(),
+        addressTo: z.string().optional(),
+        postalCodeAndCityTo: z.string().optional(),
+        directions: z.string().optional(),
+      })
+      .optional(),
+    longTerm: z
+      .object({
+        regions: z.array(z.string()).optional().nullable(),
+        directions: z.string().optional(),
+        files: z.array(FileDocumentSchema).optional(),
+      })
+      .optional(),
+  })
+  .refine(
+    ({ exemptionPeriodType, shortTerm }) => {
+      if (exemptionPeriodType !== ExemptionType.SHORT_TERM) return true
+      return !!shortTerm?.addressFrom
+    },
+    { path: ['shortTerm', 'addressFrom'] },
+  )
+  .refine(
+    ({ exemptionPeriodType, shortTerm }) => {
+      if (exemptionPeriodType !== ExemptionType.SHORT_TERM) return true
+      return !!shortTerm?.postalCodeAndCityFrom
+    },
+    { path: ['shortTerm', 'postalCodeAndCityFrom'] },
+  )
+  .refine(
+    ({ exemptionPeriodType, shortTerm }) => {
+      if (exemptionPeriodType !== ExemptionType.SHORT_TERM) return true
+      return !!shortTerm?.addressTo
+    },
+    { path: ['shortTerm', 'addressTo'] },
+  )
+  .refine(
+    ({ exemptionPeriodType, shortTerm }) => {
+      if (exemptionPeriodType !== ExemptionType.SHORT_TERM) return true
+      return !!shortTerm?.postalCodeAndCityTo
+    },
+    { path: ['shortTerm', 'postalCodeAndCityTo'] },
+  )
+  .refine(
+    ({ exemptionPeriodType, shortTerm }) => {
+      if (exemptionPeriodType !== ExemptionType.SHORT_TERM) return true
+      return !!shortTerm?.directions
+    },
+    { path: ['shortTerm', 'directions'] },
+  )
+  .refine(
+    ({ exemptionPeriodType, longTerm }) => {
+      if (exemptionPeriodType !== ExemptionType.LONG_TERM) return true
+      return longTerm?.regions?.length || longTerm?.directions
+    },
+    { path: ['longTerm', 'regions'] },
+  )
+  .refine(
+    ({ exemptionPeriodType, longTerm }) => {
+      if (exemptionPeriodType !== ExemptionType.LONG_TERM) return true
+      return longTerm?.regions?.length || longTerm?.directions
+    },
+    { path: ['longTerm', 'directions'] },
+  )
+
 export const ExemptionForTransportationSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: ApplicantSchema,
@@ -87,6 +162,11 @@ export const ExemptionForTransportationSchema = z.object({
     type: z.nativeEnum(ExemptionType),
     dateFrom: z.string().min(1),
     dateTo: z.string().min(1),
+  }),
+  location: LocationSchema,
+  supportingDocuments: z.object({
+    files: z.array(FileDocumentSchema).optional(),
+    otherDescription: z.string().optional(),
   }),
 })
 

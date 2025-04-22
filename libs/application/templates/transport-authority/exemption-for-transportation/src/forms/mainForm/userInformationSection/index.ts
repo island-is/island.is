@@ -83,6 +83,7 @@ export const userInformationSection = buildSection({
           condition: (answers) => {
             return !isSameAsApplicant(answers, 'transporter')
           },
+          maxLength: 100,
         }),
         buildTextField({
           id: 'transporter.postalCodeAndCity',
