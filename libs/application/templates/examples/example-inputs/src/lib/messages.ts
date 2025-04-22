@@ -8,7 +8,7 @@ export const m = defineMessages({
     description: 'Rules for custom components',
   },
   customComponentNumberedList: {
-    id: 'exi.application:customComponentDescription#markdown',
+    id: 'exi.application:customComponentNumberedList#markdown',
     defaultMessage:
       '1. Try to use the shared components, such as `buildTextField`, `buildCheckboxField`, `buildSelectField`, `buildFileUploadField`, and others. This approach ensures a more consistent and uniform look and feel for the application.\\n\\n - If the shared components almost fulfill your needs but require slight adjustments, consult with the designer of the application to explore adapting the design to the built-in components.\\n\\n - If the design cannot be adjusted to the built-in components, consult Norda to determine if the shared components can be modified or expanded to meet your requirements.\\n\\n - Check if another application has created a similar custom component before. If so, it should be made into a shared component.\\n\\n - If you still need a new component, evaluate whether it is something that other applications might need in the future. If so, make the new component shared.\\n\\n - Create a custom component only if none of the above conditions apply.',
     description: 'Rules for custom components',
