@@ -1,0 +1,19 @@
+query CaseStatistics($input: CaseStatisticsInput) {
+  casesStatistics(input: $input) {
+    count
+    indictmentCases {
+      count
+      averageRulingTimeMs
+      averageRulingTimeDays
+    }
+    subpoenas {
+      count
+      serviceStatusStatistics {
+        serviceStatus
+        count
+        averageServiceTimeMs
+        averageServiceTimeDays
+      }
+    }
+  }
+}
