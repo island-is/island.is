@@ -6,7 +6,16 @@ on:
       branch:
         description: 'Branch to run deduplication on'
         required: true
+        type: string
         default: 'main'
+      write:
+        description: 'Run in write mode to apply deduplication'
+        required: true
+        type: boolean
+      token:
+        description: 'GitHub token to push changes if needed'
+        required: false
+        type: string
 
 defaults:
   run:
