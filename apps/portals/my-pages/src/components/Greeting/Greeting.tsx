@@ -12,6 +12,8 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import { m } from '@island.is/portals/my-pages/core'
 import * as styles from './Greeting.css'
 import { SearchInput } from '../SearchInput/SearchInput'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useEffect, useState } from 'react'
 
 const Greeting = () => {
   const { formatMessage } = useLocale()
@@ -19,6 +21,23 @@ const Greeting = () => {
   const currentHour = new Date().getHours()
 
   const isEveningGreeting = currentHour > 17 || currentHour < 4
+
+  const [showSearch, setShowSearch] = useState<boolean>(false)
+
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        'isMyPagesSearchEnabled',
+        false,
+      )
+      if (ffEnabled) {
+        setShowSearch(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <GridContainer>
@@ -44,14 +63,16 @@ const Greeting = () => {
             <Text paddingBottom={[2, 3, 4, 0]} marginBottom={2}>
               {formatMessage(m.greetingIntro)}
             </Text>
-            <Box marginY={3}>
-              <SearchInput
-                colorScheme="blue"
-                size="large"
-                placeholder={formatMessage(m.searchOnMyPages)}
-                buttonAriaLabel={formatMessage(m.searchOnMyPages)}
-              />
-            </Box>
+            {showSearch && (
+              <Box marginY={3}>
+                <SearchInput
+                  colorScheme="blue"
+                  size="large"
+                  placeholder={formatMessage(m.searchOnMyPages)}
+                  buttonAriaLabel={formatMessage(m.searchOnMyPages)}
+                />
+              </Box>
+            )}
           </Box>
         </GridColumn>
         <GridColumn span={'6/12'}>

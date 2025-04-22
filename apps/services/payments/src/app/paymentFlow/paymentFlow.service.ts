@@ -30,7 +30,7 @@ import { environment } from '../../environments'
 import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
 import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeConfirmation.model'
-import { PaymentServiceCode } from '@island.is/shared/constants'
+import { FjsErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import {
   fjsErrorMessageToCode,
@@ -398,7 +398,12 @@ export class PaymentFlowService {
           maxRetries: 3,
           retryDelayMs: 1000,
           shouldRetryOnError: (error) => {
-            // TODO: Check if error is a unique constraint violation
+            const code = mapFjsErrorToCode(error, true)
+
+            if (code === FjsErrorCode.AlreadyCreatedCharge) {
+              return false
+            }
+
             return true
           },
           logger: this.logger,
