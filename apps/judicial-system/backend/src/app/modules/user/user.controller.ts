@@ -95,6 +95,7 @@ export class UserController {
   @Get('user')
   @ApiOkResponse({
     type: User,
+    isArray: true,
     description: 'Gets an existing user by national id',
   })
   getByNationalId(@Query('nationalId') nationalId: string): Promise<User[]> {
