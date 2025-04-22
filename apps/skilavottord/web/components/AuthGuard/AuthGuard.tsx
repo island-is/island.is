@@ -21,12 +21,8 @@ const AuthGuard: FC<AuthGuardProps> = ({ permission, children, loading }) => {
     )
   }
 
-  if (!user) {
-    return null
-  }
-
-  if (!isAuthenticated || !hasPermission(permission, user?.role)) {
-    return <Alert type={AlertType.ACCEES_DENIED} />
+  if (!user || !isAuthenticated || !hasPermission(permission, user?.role)) {
+    return <Alert type={AlertType.ACCESS_DENIED} />
   }
 
   return children

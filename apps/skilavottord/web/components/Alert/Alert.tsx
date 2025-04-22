@@ -12,7 +12,7 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import Router from 'next/router'
 
 export enum AlertType {
-  ACCEES_DENIED = 0,
+  ACCESS_DENIED = 0,
   NOT_FOUND = 1,
 }
 
@@ -35,7 +35,7 @@ export const Alert = ({ type }: { type: AlertType }) => {
               type="info"
               title={message.title}
               message={message.message}
-            ></AlertMessage>
+            />
             <Button variant="text" onClick={() => Router.back()}>
               <Box alignItems="center" display="flex">
                 <Icon icon="arrowBack" size="medium" />
