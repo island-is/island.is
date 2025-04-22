@@ -3,7 +3,6 @@ import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import { OtherFeesPayeeOptions, Routes } from '../../utils/constants'
-import { ApplicationAnswers } from '../../utils/types'
 import {
   filterEmptyCostItems,
   formatCurrency,
@@ -41,7 +40,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
     electricityCostMeterStatus,
     heatingCostMeterNumber,
     heatingCostMeterStatus,
-  } = extractOtherFeesData(answers as ApplicationAnswers)
+  } = extractOtherFeesData(answers)
 
   const tenantPaysHouseFund = housingFund === OtherFeesPayeeOptions.TENANT
   const tenantPaysElectricity = electricityCost === OtherFeesPayeeOptions.TENANT

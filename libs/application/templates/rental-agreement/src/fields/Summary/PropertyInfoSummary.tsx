@@ -21,7 +21,6 @@ import {
   extractPropertyInfoData,
   getOptionLabel,
 } from '../../utils/summaryUtils'
-import { ApplicationAnswers } from '../../utils/types'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -73,7 +72,22 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
     fireExtinguishers,
     emergencyExits,
     fireBlanket,
-  } = extractPropertyInfoData(answers as ApplicationAnswers)
+  } = extractPropertyInfoData(answers)
+
+  const numOfRooms = searchResultUnits
+    ?.reduce((total, unit) => total + ((unit.numOfRooms as number) || 0), 0)
+    .toString()
+
+  const propertySize = searchResultUnits
+    ?.reduce(
+      (total, unit) =>
+        total +
+        (unit.changedSize && unit.changedSize !== 0
+          ? (unit.changedSize as number)
+          : (unit.size as number) || 0),
+      0,
+    )
+    .toString()
 
   return (
     <SummaryCard cardLabel={formatMessage(summary.propertyInfoHeader)}>
@@ -116,27 +130,13 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.PropertyNumOfRoomsLabel}
-            value={(
-              searchResultUnits?.reduce(
-                (total, unit) => total + ((unit.numOfRooms as number) || 0),
-                0,
-              ) || 0
-            ).toString()}
+            value={numOfRooms || '-'}
           />
         </GridColumn>
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.propertySizeLabel}
-            value={(
-              searchResultUnits?.reduce(
-                (total, unit) =>
-                  total +
-                  (unit.changedSize && unit.changedSize !== 0
-                    ? (unit.changedSize as number)
-                    : (unit.size as number) || 0),
-                0,
-              ) || 0
-            ).toString()}
+            value={propertySize || '-'}
           />
         </GridColumn>
       </SummaryCardRow>

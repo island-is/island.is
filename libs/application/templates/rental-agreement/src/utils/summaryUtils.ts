@@ -8,7 +8,6 @@ import {
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
 } from './constants'
-import { result } from 'lodash'
 
 // Utility function to get the label of a select option based on its value
 export const getOptionLabel = (
@@ -79,6 +78,7 @@ export const extractOtherFeesData = (answers: ApplicationAnswers) => {
   }
 }
 
+// Property info application answers
 export const extractPropertyInfoData = (answers: ApplicationAnswers) => {
   return {
     uploadedFiles: getValueViaPath<UploadFile[]>(
@@ -99,7 +99,7 @@ export const extractPropertyInfoData = (answers: ApplicationAnswers) => {
     ),
     searchResultUnits: getValueViaPath<FormValue[]>(
       answers,
-      'registerProperty.searchResultUnits',
+      'registerProperty.searchresults.units',
     ),
     inspector: getValueViaPath<RentalHousingConditionInspector>(
       answers,
