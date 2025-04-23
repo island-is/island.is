@@ -65,7 +65,12 @@ const Statistics = () => {
     <Box className={styles.statisticsPageContainer}>
       <PageHeader title="Tölfræði" />
       <Box className={styles.statisticsContentBox}>
-        <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          marginBottom={[2, 2, 4, 4, 6]}
+        >
           <Text as="h1" variant="h1">
             Tölfræði
           </Text>
@@ -78,11 +83,11 @@ const Statistics = () => {
         </Box>
 
         <GridRow
+          rowGap={3}
           direction={['columnReverse', 'columnReverse', 'columnReverse', 'row']}
         >
           <GridColumn
             span={['12/12', '12/12', '12/12', filter ? '8/12' : '12/12']}
-            paddingTop={5}
           >
             {loading && !stats ? (
               <SkeletonLoader height={800} />
@@ -226,12 +231,7 @@ const Statistics = () => {
 
           {filter && (
             <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
-              <Box
-                display="flex"
-                flexDirection="column"
-                rowGap={3}
-                marginTop={5}
-              >
+              <Box display="flex" flexDirection="column" rowGap={3}>
                 <FiltersPanel
                   districtCourts={districtCourts}
                   institution={institution}
