@@ -5,7 +5,7 @@ inputs:
   working-directory:
     description: 'Directory to run the action in'
     required: false
-    default: '.'
+    default: '/tmp/'
 
 runs:
   using: 'composite'
