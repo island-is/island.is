@@ -67,6 +67,7 @@ export {
   isPrisonAdminUser,
   isPublicProsecutionUser,
   getAdminUserInstitutionScope,
+  institutionUserRoles,
 } from './lib/user'
 export type { User } from './lib/user'
 
