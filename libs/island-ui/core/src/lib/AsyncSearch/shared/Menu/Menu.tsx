@@ -7,6 +7,7 @@ export interface MenuProps {
   comp?: React.ElementType
   isOpen: boolean
   shouldShowItems?: boolean
+  colorScheme?: 'default' | 'blue'
 }
 
 export const Menu = forwardRef<
@@ -14,20 +15,26 @@ export const Menu = forwardRef<
   React.PropsWithChildren<MenuProps>
 >(
   (
-    { comp: Comp = 'ul', isOpen, shouldShowItems = isOpen, children, ...props },
+    {
+      comp: Comp = 'ul',
+      isOpen,
+      shouldShowItems = isOpen,
+      children,
+      colorScheme = 'default',
+      ...props
+    },
     ref,
-  ) => {
-    return (
-      <Comp
-        ref={ref}
-        {...props}
-        className={cn(styles.menu, {
-          [styles.hidden]: !shouldShowItems,
-          [styles.open]: isOpen,
-        })}
-      >
-        {children}
-      </Comp>
-    )
-  },
+  ) => (
+    <Comp
+      ref={ref}
+      {...props}
+      className={cn(styles.menu, {
+        [styles.blueBackgroundColor]: colorScheme === 'blue',
+        [styles.hidden]: !shouldShowItems,
+        [styles.open]: isOpen,
+      })}
+    >
+      {children}
+    </Comp>
+  ),
 )

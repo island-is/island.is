@@ -52,7 +52,7 @@ type VisibleModal = {
 export const Overview = () => {
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
-  const { updateCase } = useCase()
+  const { updateCase, setAndSendCaseToServer } = useCase()
   const { setAndSendDefendantToServer, isUpdatingDefendant } = useDefendants()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -178,7 +178,38 @@ export const Overview = () => {
                   </BlueBox>
                 </Box>
               )}
-              <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
+              <Box
+                display="flex"
+                justifyContent="flexEnd"
+                marginBottom={5}
+                columnGap={2}
+              >
+                <Button
+                  size="small"
+                  onClick={() =>
+                    setAndSendCaseToServer(
+                      [
+                        {
+                          publicProsecutorIsRegisteredInPoliceSystem:
+                            !workingCase.publicProsecutorIsRegisteredInPoliceSystem,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                  variant="text"
+                  colorScheme={
+                    workingCase.publicProsecutorIsRegisteredInPoliceSystem
+                      ? 'destructive'
+                      : 'default'
+                  }
+                >
+                  {workingCase.publicProsecutorIsRegisteredInPoliceSystem
+                    ? 'Afskrá í LÖKE'
+                    : 'Skráð í LÖKE'}
+                </Button>
                 {defendant.verdictAppealDate ? (
                   <Button
                     variant="text"
@@ -209,7 +240,6 @@ export const Overview = () => {
                     size="small"
                     disabled={
                       !workingCase.indictmentReviewDecision ||
-                      !defendant.verdictAppealDecision ||
                       (!isFine && !defendant.verdictViewDate && serviceRequired)
                     }
                   >
@@ -235,31 +265,33 @@ export const Overview = () => {
         <Box component="section" marginBottom={5}>
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        {!workingCase.indictmentReviewDecision ? (
-          <IndictmentReviewerSelector
-            workingCase={workingCase}
-            selectedIndictmentReviewer={selectedIndictmentReviewer}
-            setSelectedIndictmentReviewer={setSelectedIndictmentReviewer}
-          />
-        ) : (
-          <ReviewDecision
-            caseId={workingCase.id}
-            currentDecision={workingCase.indictmentReviewDecision}
-            indictmentAppealDeadline={
-              workingCase.indictmentAppealDeadline ?? ''
-            }
-            indictmentAppealDeadlineIsInThePast={
-              workingCase.indictmentVerdictAppealDeadlineExpired ?? false
-            }
-            modalVisible={confirmationModal}
-            setModalVisible={setConfirmationModal}
-            isFine={
-              workingCase.indictmentRulingDecision ===
-              CaseIndictmentRulingDecision.FINE
-            }
-            onSelect={onSelect}
-          />
-        )}
+        <Box component="section" marginBottom={10}>
+          {!workingCase.indictmentReviewDecision ? (
+            <IndictmentReviewerSelector
+              workingCase={workingCase}
+              selectedIndictmentReviewer={selectedIndictmentReviewer}
+              setSelectedIndictmentReviewer={setSelectedIndictmentReviewer}
+            />
+          ) : (
+            <ReviewDecision
+              caseId={workingCase.id}
+              currentDecision={workingCase.indictmentReviewDecision}
+              indictmentAppealDeadline={
+                workingCase.indictmentAppealDeadline ?? ''
+              }
+              indictmentAppealDeadlineIsInThePast={
+                workingCase.indictmentVerdictAppealDeadlineExpired ?? false
+              }
+              modalVisible={confirmationModal}
+              setModalVisible={setConfirmationModal}
+              isFine={
+                workingCase.indictmentRulingDecision ===
+                CaseIndictmentRulingDecision.FINE
+              }
+              onSelect={onSelect}
+            />
+          )}
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         {!workingCase.indictmentReviewDecision ? (

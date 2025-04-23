@@ -163,6 +163,7 @@ export const sortedFilesInChapter = (
         canOpen: Boolean(file.key),
         status: 'done' as UploadFileStatus,
         canEdit: true,
+        size: file.size,
       }
     })
     .sort((a, b) => {
@@ -353,6 +354,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
             displayDate: caseFile.displayDate,
             canOpen: Boolean(caseFile.key),
             status: 'done' as UploadFileStatus,
+            size: caseFile.size,
             canEdit: true,
           }
         }),

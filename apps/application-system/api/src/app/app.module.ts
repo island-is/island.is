@@ -13,6 +13,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
@@ -53,7 +54,6 @@ import {
   UniversityOfIcelandCareerClientConfig,
 } from '@island.is/clients/university-careers'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
-import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
@@ -66,6 +66,7 @@ import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-regi
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { BankInfoClientConfig } from '@island.is/clients/fjs/bankinfo'
+import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 
 @Module({
   imports: [
@@ -83,6 +84,7 @@ import { BankInfoClientConfig } from '@island.is/clients/fjs/bankinfo'
         DrivingLicenseApiConfig,
         DrivingLicenseBookClientConfig,
         NationalRegistryClientConfig,
+        NationalRegistryV3ApplicationsClientConfig,
         FeatureFlagConfig,
         MunicipalitiesFinancialAidConfig,
         FishingLicenseClientConfig,
@@ -118,7 +120,6 @@ import { BankInfoClientConfig } from '@island.is/clients/fjs/bankinfo'
         HolarUniversityCareerClientConfig,
         IcelandUniversityOfTheArtsCareerClientConfig,
         DataProtectionComplaintClientConfig,
-        CriminalRecordClientConfig,
         HealthInsuranceV2ClientConfig,
         VmstClientConfig,
         RightsPortalClientConfig,
@@ -131,6 +132,7 @@ import { BankInfoClientConfig } from '@island.is/clients/fjs/bankinfo'
         SeminarsClientConfig,
         SecondarySchoolClientConfig,
         BankInfoClientConfig,
+        PaymentsApiClientConfig,
       ],
     }),
   ],

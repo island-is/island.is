@@ -47,11 +47,9 @@ export const Estimation = ({ application, municipality }: EstimationProps) => {
   return (
     <>
       <Box display="flex" alignItems="center" flexWrap="wrap">
-        <>
-          <Text as="h3" variant="h3" marginBottom={2}>
-            {formatMessage(aidAmountMessages.title)}
-          </Text>
-        </>
+        <Text as="h3" variant="h3" marginBottom={2}>
+          {formatMessage(aidAmountMessages.title)}
+        </Text>
       </Box>
 
       <DescriptionText
@@ -77,7 +75,7 @@ export const VeitaEstimation = ({
 
   const getAidType = () => {
     switch (true) {
-      case application.familyStatus != undefined:
+      case application.familyStatus !== undefined:
         return !showSpouseData[application.familyStatus]
       default:
         return application.spouseNationalId == null
@@ -98,11 +96,9 @@ export const VeitaEstimation = ({
   return (
     <>
       <Box display="flex" alignItems="center" flexWrap="wrap">
-        <>
-          <Text as="h3" variant="h3" marginBottom={2}>
-            {formatMessage(aidAmountMessages.title)}
-          </Text>
-        </>
+        <Text as="h3" variant="h3" marginBottom={2}>
+          {formatMessage(aidAmountMessages.title)}
+        </Text>
       </Box>
 
       <DescriptionText

@@ -34,6 +34,7 @@ export interface TEditableCaseFile {
   canOpen?: boolean
   canEdit?: boolean
   status?: UploadFileStatus
+  size?: number | null
 }
 
 interface Props {
@@ -102,11 +103,19 @@ const EditableCaseFile: FC<Props> = (props) => {
     return formatDate(caseFile.displayDate ?? caseFile.created)
   }, [caseFile.displayDate, caseFile.created])
 
+  const isEmpty = caseFile.size === 0
+  const hasError = caseFile.status === 'error' || isEmpty
+  const color = hasError ? 'red400' : 'blue400'
+  const styleIndex =
+    caseFile.status === 'done' && isEmpty
+      ? 'error'
+      : caseFile.status || 'uploading'
+
   return (
     <div
       className={cn(
         styles.caseFileWrapper,
-        styles.caseFileWrapperStates[caseFile.status || 'uploading'],
+        styles.caseFileWrapperStates[styleIndex],
       )}
     >
       {enableDrag && (
@@ -116,7 +125,7 @@ const EditableCaseFile: FC<Props> = (props) => {
           paddingX={3}
           paddingY={2}
         >
-          <Icon icon="menu" color="blue400" />
+          <Icon icon="menu" color={color} />
         </Box>
       )}
       <Box width="full" paddingLeft={enableDrag ? 0 : 2}>
@@ -167,14 +176,11 @@ const EditableCaseFile: FC<Props> = (props) => {
                     className={cn(styles.editCaseFileButton, {
                       [styles.background.primary]: caseFile.status !== 'error',
                       [styles.background.secondary]:
-                        caseFile.status === 'error',
+                        caseFile.status === 'error' || isEmpty,
                     })}
                     aria-label="Vista breytingar"
                   >
-                    <Icon
-                      icon="checkmark"
-                      color={caseFile.status === 'error' ? 'red400' : 'blue400'}
-                    />
+                    <Icon icon="checkmark" color={color} />
                   </button>
                   <Box marginLeft={1}>
                     <button
@@ -186,17 +192,11 @@ const EditableCaseFile: FC<Props> = (props) => {
                         [styles.background.primary]:
                           caseFile.status !== 'error',
                         [styles.background.secondary]:
-                          caseFile.status === 'error',
+                          caseFile.status === 'error' || isEmpty,
                       })}
                       aria-label="Eyða skrá"
                     >
-                      <Icon
-                        icon="trash"
-                        color={
-                          caseFile.status === 'error' ? 'red400' : 'blue400'
-                        }
-                        type="outline"
-                      />
+                      <Icon icon="trash" color={color} type="outline" />
                     </button>
                   </Box>
                 </Box>
@@ -254,7 +254,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                   <Box className={styles.editCaseFileButton}>
                     <LoadingDots single />
                   </Box>
-                ) : caseFile.status === 'error' && onRetry ? (
+                ) : (caseFile.status === 'error' || isEmpty) && onRetry ? (
                   <button
                     onClick={() => onRetry(caseFile as UploadFile)}
                     className={cn(
@@ -275,15 +275,12 @@ const EditableCaseFile: FC<Props> = (props) => {
                       [styles.background.primary]:
                         caseFile.canEdit && caseFile.status !== 'error',
                       [styles.background.secondary]:
-                        caseFile.status === 'error',
+                        caseFile.status === 'error' || isEmpty,
                     })}
                     disabled={!caseFile.canEdit}
                     aria-label="Breyta skrá"
                   >
-                    <Icon
-                      icon="pencil"
-                      color={caseFile.status === 'error' ? 'red400' : 'blue400'}
-                    />
+                    <Icon icon="pencil" color={color} />
                   </button>
                 )}
               </Box>

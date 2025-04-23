@@ -22,6 +22,7 @@ query DefenderCases($input: CaseListQueryInput) {
       name
       noNationalId
       defenderChoice
+      isAlternativeService
       subpoenas {
         id
         serviceStatus
