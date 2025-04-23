@@ -63,6 +63,7 @@ export const useContextMenu = () => {
 export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
   ({ render, items, title }, ref) => {
     const [open, setOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
     const menu = useMenuStore({ open, setOpen })
 
@@ -91,7 +92,10 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
 
     const handleClick = (evt: React.MouseEvent, item: ContextMenuItem) => {
       evt.stopPropagation()
+      evt.preventDefault()
+
       setOpen(false)
+      setIsLoading(true)
 
       if (item.href) {
         router.push(item.href)
@@ -107,7 +111,7 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
     return (
       <MenuProvider>
         <MenuButton
-          render={render ?? <Button icon="add" />}
+          render={render ?? <Button icon="add" loading={isLoading} />}
           store={menu}
           ref={ref}
         >
