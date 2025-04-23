@@ -18,6 +18,12 @@ export const SkilavottordRecyclingPartnerQuery = gql`
   }
 `
 
+export const SkilavottordRecyclingPartnerActive = gql`
+  query SkilavottordRecyclingPartnerActive($input: RecyclingPartnerInput!) {
+    skilavottordRecyclingPartnerActive(input: $input)
+  }
+`
+
 export const SkilavottordAllRecyclingPartnersQuery = gql`
   query skilavottordAllRecyclingPartnersQuery {
     skilavottordAllRecyclingPartners {
@@ -215,5 +221,37 @@ export const UpdateSkilavottordVehicleInfoMutation = gql`
       plateCount: $plateCount
       plateLost: $plateLost
     )
+  }
+`
+
+export const SkilavottordVehiclesQuery = gql`
+  query skilavottordVehiclesQuery($after: String!) {
+    skilavottordAllDeregisteredVehicles(first: 20, after: $after) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      count
+      items {
+        vehicleId
+        vehicleType
+        newregDate
+        createdAt
+        recyclingRequests {
+          id
+          recyclingPartnerId
+          nameOfRequestor
+          createdAt
+          recyclingPartner {
+            companyId
+            companyName
+            municipalityId
+            municipality {
+              companyName
+            }
+          }
+        }
+      }
+    }
   }
 `
