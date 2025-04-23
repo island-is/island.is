@@ -289,7 +289,7 @@ export class SubpoenaService {
   async findByPoliceSubpoenaId(policeSubpoenaId?: string): Promise<Subpoena> {
     const subpoena = await this.subpoenaModel.findOne({
       include,
-      where: { policeSubpoenaId: policeSubpoenaId },
+      where: { policeSubpoenaId },
     })
 
     if (!subpoena) {

@@ -14,15 +14,15 @@ export class PoliceSubpoenaExistsGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
 
-    const subpoenaId = request.params.subpoenaId
+    const policeSubpoenaId = request.params.policeSubpoenaId
 
-    if (!subpoenaId) {
+    if (!policeSubpoenaId) {
       throw new BadRequestException('Missing police subpoena id')
     }
 
-    // subpoenaId is the external police document id
+    // policeSubpoenaId is the external police document id
     request.subpoena = await this.subpoenaService.findByPoliceSubpoenaId(
-      subpoenaId,
+      policeSubpoenaId,
     )
 
     return true

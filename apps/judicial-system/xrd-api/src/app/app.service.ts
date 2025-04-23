@@ -81,19 +81,19 @@ export class AppService {
   }
 
   async updateSubpoena(
-    subpoenaId: string,
+    policeSubpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
     return await this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.UPDATE_SUBPOENA,
-      this.updateSubpoenaInfo(subpoenaId, updateSubpoena),
-      subpoenaId,
+      this.updateSubpoenaInfo(policeSubpoenaId, updateSubpoena),
+      policeSubpoenaId,
     )
   }
 
   private async updateSubpoenaInfo(
-    subpoenaId: string,
+    policeSubpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
     let defenderInfo: {
@@ -165,8 +165,9 @@ export class AppService {
     }
 
     try {
+      // TODO: this is now police subpoena id
       const res = await fetch(
-        `${this.config.backend.url}/api/internal/subpoena/${subpoenaId}`,
+        `${this.config.backend.url}/api/internal/subpoena/${policeSubpoenaId}`,
         {
           method: 'PATCH',
           headers: {
