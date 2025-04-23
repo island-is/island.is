@@ -23,6 +23,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CivilClaimant, Defendant } from '../../defendant'
+import { Victim } from '../../victim'
 import { Case } from '../models/case.model'
 import { MinimalCase } from '../models/case.types'
 import { DateLog } from '../models/dateLog.model'
@@ -367,13 +368,9 @@ const canDefenceUserAccessRequestCase = (
   }
 
   // VICTIM LAWYER
-  const victimWithLawyer = theCase.victims?.find(
-    (victim) =>
-      victim.lawyerNationalId &&
-      normalizeAndFormatNationalId(user.nationalId).includes(
-        victim.lawyerNationalId,
-      ) &&
-      victim.lawyerAccessToRequest !== RequestSharedWhen.OBLIGATED,
+  const victimWithLawyer = Victim.getVictimWithLawyer(
+    user.nationalId,
+    theCase.victims,
   )
 
   return Boolean(
