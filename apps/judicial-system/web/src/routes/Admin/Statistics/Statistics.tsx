@@ -6,8 +6,8 @@ import {
   DatePicker,
   GridColumn,
   GridRow,
+  LoadingDots,
   Select,
-  SkeletonLoader,
   Text,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
@@ -19,10 +19,7 @@ import {
 import { ServiceStatus } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import {
-  useCaseStatisticsLazyQuery,
-  useCaseStatisticsQuery,
-} from './getCaseStatistics.generated'
+import { useCaseStatisticsQuery } from './getCaseStatistics.generated'
 import ServiceStatusItem from './ServiceStatusItem'
 import * as styles from './Statistics.css'
 
@@ -69,6 +66,8 @@ export const Statistics = () => {
 
   const stats = data?.casesStatistics
 
+  const allServiceStatuses = [null, ...Object.values(ServiceStatus)]
+
   return (
     <Box className={styles.statisticsPageContainer}>
       <PageHeader title="Tölfræði" />
@@ -106,95 +105,107 @@ export const Statistics = () => {
             span={['12/12', '12/12', '12/12', filter ? '8/12' : '12/12']}
             paddingTop={5}
           >
-            {loading ? (
-              <SkeletonLoader height={320} borderRadius="standard" />
-            ) : (
-              stats && (
-                <InfoCard
-                  sections={[
-                    {
-                      id: 'all-cases',
-                      items: [
-                        {
-                          id: 'case-item',
-                          title: (
-                            <Text variant="h3" marginBottom={2}>
-                              Öll mál
-                            </Text>
-                          ),
-                          values: [
+            <AnimatePresence mode="wait">
+              <InfoCard
+                sections={[
+                  {
+                    id: 'all-cases',
+                    items: [
+                      {
+                        id: 'case-item',
+                        title: (
+                          <Text variant="h3" marginBottom={2}>
+                            Öll mál
+                          </Text>
+                        ),
+                        values: [
+                          <motion.div
+                            key="stats-count"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                          >
                             <LabelValue
                               label="Heildarfjöldi"
-                              value={stats.count}
-                            />,
-                          ],
-                        },
-                      ],
-                    },
-                    {
-                      id: 'indictment-cases',
-                      items: [
-                        {
-                          id: 'indictment-case-item',
-                          title: (
-                            <Text variant="h3" marginBottom={2}>
-                              Ákærur
-                            </Text>
-                          ),
-                          values: [
+                              value={loading ? '' : stats?.count}
+                            />
+                          </motion.div>,
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    id: 'indictment-cases',
+                    items: [
+                      {
+                        id: 'indictment-case-item',
+                        title: (
+                          <Text variant="h3" marginBottom={2}>
+                            Ákærur
+                          </Text>
+                        ),
+                        values: [
+                          <LabelValue
+                            label="Heildarfjöldi"
+                            value={loading ? '' : stats?.indictmentCases.count}
+                          />,
+                          <LabelValue
+                            label="Meðal afgreiðslutími"
+                            value={
+                              loading
+                                ? ''
+                                : `${stats?.indictmentCases.averageRulingTimeDays} dagar`
+                            }
+                          />,
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    id: 'subpoenas',
+                    items: [
+                      {
+                        id: 'case-stat-item',
+                        title: (
+                          <Text variant="h3" marginBottom={2}>
+                            Fyrirköll
+                          </Text>
+                        ),
+                        values: [
+                          <Box display="flex" flexDirection="column" rowGap={1}>
                             <LabelValue
                               label="Heildarfjöldi"
-                              value={stats.indictmentCases.count}
-                            />,
-                            <LabelValue
-                              label="Meðal afgreiðslutími"
-                              value={`${stats.indictmentCases.averageRulingTimeDays} dagar`}
-                            />,
-                          ],
-                        },
-                      ],
-                    },
-                    {
-                      id: 'subpoenas',
-                      items: [
-                        {
-                          id: 'case-stat-item',
-                          title: (
-                            <Text variant="h3" marginBottom={2}>
-                              Fyrirköll
-                            </Text>
-                          ),
-                          values: [
-                            <Box
-                              display="flex"
-                              flexDirection="column"
-                              rowGap={1}
-                            >
-                              <LabelValue
-                                label="Heildarfjöldi"
-                                value={stats.indictmentCases.count}
-                              />
-                              {stats.subpoenas.serviceStatusStatistics.map(
-                                (status) => (
-                                  <ServiceStatusItem
-                                    key={status.serviceStatus ?? 'unserviced'}
-                                    title={mapServiceStatusTitle(
-                                      status.serviceStatus,
-                                    )}
-                                    count={status.count}
-                                    averageDays={status.averageServiceTimeDays}
-                                  />
-                                ),
-                              )}
-                            </Box>,
-                          ],
-                        },
-                      ],
-                    },
-                  ]}
-                />
-              )
-            )}
+                              value={
+                                loading ? '' : stats?.indictmentCases.count
+                              }
+                            />
+
+                            {allServiceStatuses.map((status) => {
+                              const stat =
+                                stats?.subpoenas.serviceStatusStatistics.find(
+                                  (s) => s.serviceStatus === status,
+                                )
+
+                              return (
+                                <ServiceStatusItem
+                                  key={status ?? 'UNDEFINED'}
+                                  title={mapServiceStatusTitle(status)}
+                                  count={stat?.count ?? 0}
+                                  averageDays={
+                                    stat?.averageServiceTimeDays ?? 0
+                                  }
+                                />
+                              )
+                            })}
+                          </Box>,
+                        ],
+                      },
+                    ],
+                  },
+                ]}
+              />
+            </AnimatePresence>
           </GridColumn>
           {filter && (
             <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>

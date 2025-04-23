@@ -15,7 +15,7 @@ export const statisticsContentBox = style({
   width: '100%',
   background: theme.color.white,
   minHeight: '644px',
-
+  minWidth: '350px',
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md - 1}px)`]: {
       padding: `${theme.spacing[4]}px `,
@@ -27,7 +27,7 @@ export const statisticsContentBox = style({
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       borderRadius: theme.border.radius.large,
       padding: `${theme.spacing[10]}px ${theme.spacing[12]}px`,
-      maxWidth: '1200px',
+      maxWidth: '1000px',
     },
   },
 })
