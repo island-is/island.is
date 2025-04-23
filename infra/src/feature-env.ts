@@ -217,21 +217,24 @@ yargs(process.argv.slice(2))
 
       const affectedServiceNames = affectedServices.map((svc) => svc.name())
 
-      const formattedList = featureYaml.map((svc) => svc.name()).filter((name) => !affectedServiceNames.includes(name))
+      const formattedList = featureYaml
+        .map((svc) => svc.name())
+        .filter((name) => !affectedServiceNames.includes(name))
 
       // BFF hack since the service name is not equal to the nx app name
-      const correctedFormattedList = Array.from(new Set(formattedList.map((name) => {
-        if (name.includes("services-bff-portals")) {
-          return "services-bff"
-        } else {
-          return name
-        }
-      }))).toString()
-      
-      writeToOutput(
-        correctedFormattedList,
-        typedArgv.output,
-      )
+      const correctedFormattedList = Array.from(
+        new Set(
+          formattedList.map((name) => {
+            if (name.includes('services-bff-portals')) {
+              return 'services-bff'
+            } else {
+              return name
+            }
+          }),
+        ),
+      ).toString()
+
+      writeToOutput(correctedFormattedList, typedArgv.output)
     },
   })
   .command({

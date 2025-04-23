@@ -44,7 +44,7 @@ async function main() {
 
   console.log('Namespaces to add:', namespacesToAdd)
 
-  const directoryPath =  path.join(directory, "bootstrap")
+  const directoryPath = path.join(directory, 'bootstrap')
   mkdirSync(directoryPath, { recursive: true })
 
   const content = {
