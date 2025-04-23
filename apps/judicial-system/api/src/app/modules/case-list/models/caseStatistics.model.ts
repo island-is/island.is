@@ -8,6 +8,12 @@ export class IndictmentCaseStatistics {
   count!: number
 
   @Field(() => Number)
+  sentToCourtCount!: number
+
+  @Field(() => Number)
+  rulingCount!: number
+
+  @Field(() => Number)
   averageRulingTimeMs!: number
 
   @Field(() => Number)

@@ -1,20 +1,14 @@
-import React from 'react'
-
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { LabelValue } from '@island.is/judicial-system-web/src/components'
 
 interface Props {
-  title: string
-  count: number
-  averageDays?: number | null
+  label: string
+  count: number | null
+  days?: number | null
 }
 
-export const ServiceStatusItem: React.FC<Props> = ({
-  title,
-  count,
-  averageDays,
-}) => {
+export const CountAndDays = ({ label, count, days }: Props) => {
   return (
     <Box
       background="blue100"
@@ -23,9 +17,9 @@ export const ServiceStatusItem: React.FC<Props> = ({
       justifyContent="spaceBetween"
       alignItems="center"
     >
-      <LabelValue label={title} value={count} />
+      <LabelValue label={label} value={count} />
 
-      {!!averageDays && (
+      {!!days && (
         <>
           <Box flexGrow={1} marginX={2}>
             <div
@@ -37,7 +31,7 @@ export const ServiceStatusItem: React.FC<Props> = ({
             />
           </Box>
           <Text>
-            <b>{averageDays} dagar</b>
+            <b>{days} dagar</b>
           </Text>
         </>
       )}
@@ -45,4 +39,4 @@ export const ServiceStatusItem: React.FC<Props> = ({
   )
 }
 
-export default ServiceStatusItem
+export default CountAndDays

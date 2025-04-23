@@ -7,6 +7,12 @@ export class IndictmentCaseStatistics {
   count!: number
 
   @ApiProperty({ type: Number })
+  sentToCourtCount!: number
+
+  @ApiProperty({ type: Number })
+  rulingCount!: number
+
+  @ApiProperty({ type: Number })
   averageRulingTimeMs!: number
 
   @ApiProperty({ type: Number })
