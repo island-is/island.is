@@ -52,7 +52,7 @@ async function main() {
 
     if (nsGrantToAdd) {
       console.log(nsGrantToAdd)
-      nsGrantToAdd["grantNamespaces"].forEach((nsGrant) => nsGrantsToAdd.add(nsGrant))
+      nsGrantToAdd.forEach((nsGrant) => nsGrantsToAdd.add(nsGrant))
     }
   }
 
