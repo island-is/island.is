@@ -33,7 +33,7 @@ const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
       }
       onClick={(evt) => onClick && onClick(evt)}
       disabled={disabled}
-      aria-label="Opna valmöguleika fyrir mál"
+      aria-label="Valmynd"
     >
       <Icon
         icon={icon}

@@ -30,7 +30,6 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { ContextMenuV2 } from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
 import { contextMenu } from '../ContextMenu/ContextMenu.strings'
 import { strings } from './AppealCaseFilesOverview.strings'
@@ -157,8 +156,7 @@ const AppealCaseFilesOverview = () => {
                       )}
                   </Box>
                   <Box marginLeft={3}>
-                    <ContextMenuV2
-                      dataTestId="contextMenu"
+                    <ContextMenu
                       items={[
                         {
                           title: formatMessage(contextMenu.openFile),
@@ -180,7 +178,6 @@ const AppealCaseFilesOverview = () => {
                             ]
                           : []),
                       ]}
-                      menuLabel="Opna valmöguleika á skjali"
                       render={
                         <IconButton
                           icon="ellipsisVertical"
