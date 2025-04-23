@@ -166,8 +166,9 @@ export const ExemptionForTransportationSchema = z.object({
   location: LocationSchema,
   supportingDocuments: z.object({
     files: z.array(FileDocumentSchema).optional(),
-    otherDescription: z.string().optional(),
+    comments: z.string().optional(),
   }),
+  agreementCheckbox: z.array(z.string()).refine((v) => v.includes(YES)),
 })
 
 export type ExemptionForTransportation = z.TypeOf<

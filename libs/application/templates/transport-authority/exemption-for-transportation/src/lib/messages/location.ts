@@ -5,22 +5,22 @@ export const location = {
     sectionTitleShortTerm: {
       id: 'ta.eft.application:location.general.sectionTitleShortTerm',
       defaultMessage: 'Leið',
-      description: 'Title of location section for short term',
+      description: 'Title of location section for short-term',
     },
     sectionTitleLongTerm: {
       id: 'ta.eft.application:location.general.sectionTitleLongTerm',
       defaultMessage: 'Svæði',
-      description: 'Title of location section for long term',
+      description: 'Title of location section for long-term',
     },
     pageTitleShortTerm: {
       id: 'ta.eft.application:location.general.pageTitle',
       defaultMessage: 'Leið',
-      description: 'Title of location page for short term',
+      description: 'Title of location page for short-term',
     },
     pageTitleLongTerm: {
       id: 'ta.eft.application:location.general.pageTitleLongTerm',
       defaultMessage: 'Svæði',
-      description: 'Title of location page for long term',
+      description: 'Title of location page for long-term',
     },
   }),
   shortTerm: defineMessages({

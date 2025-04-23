@@ -16,6 +16,7 @@ export const MainForm = buildForm({
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     userInformationSection,
     exemptionPeriodSection,

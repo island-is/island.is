@@ -30,12 +30,12 @@ export const supportingDocumentsSection = buildSection({
           uploadButtonLabel: supportingDocuments.labels.fileUploadButtonLabel,
         }),
 
-        // Other description
+        // Comments
         buildTextField({
-          id: 'supportingDocuments.otherDescription',
+          id: 'supportingDocuments.comments',
           variant: 'textarea',
           rows: 5,
-          title: supportingDocuments.labels.otherDescription,
+          title: supportingDocuments.labels.comments,
         }),
       ],
     }),

@@ -1,12 +1,24 @@
 import {
+  buildCheckboxField,
   buildMultiField,
   buildOverviewField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
+  YES,
 } from '@island.is/application/core'
-import { getOverviewItems } from '../../../utils'
+import {
+  getExemptionPeriodOverviewItems,
+  getLongTermLocationOverviewAttachments,
+  getLongTermLocationOverviewItems,
+  getShortTermLocationOverviewItems,
+  getSupportingDocumentsOverviewAttachments,
+  getSupportingDocumentsOverviewItems,
+  getUserInformationOverviewItems,
+} from '../../../utils'
 import { overview } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
+import { ExemptionType } from '../../../shared'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -18,11 +30,67 @@ export const overviewSection = buildSection({
       children: [
         buildOverviewField({
           id: 'overview',
-          title: 'Overview',
-          description: 'This is an overview, should come from messages.ts',
-          backId: 'idToSomeField',
-          bottomLine: false,
-          items: getOverviewItems,
+          title: overview.userInformation.subtitle,
+          backId: 'userInformationMultiField',
+          bottomLine: true,
+          items: getUserInformationOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'overview',
+          title: overview.exemptionPeriod.subtitle,
+          backId: 'exemptionPeriodMultiField',
+          bottomLine: true,
+          items: getExemptionPeriodOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'overview',
+          title: overview.shortTermlocation.subtitle,
+          backId: 'locationMultiField',
+          bottomLine: true,
+          items: getShortTermLocationOverviewItems,
+          condition: (answers) => {
+            const exemptionPeriodType = getValueViaPath<ExemptionType>(
+              answers,
+              'exemptionPeriod.type',
+            )
+            return exemptionPeriodType === ExemptionType.SHORT_TERM
+          },
+        }),
+        buildOverviewField({
+          id: 'overview',
+          title: overview.longTermlocation.subtitle,
+          backId: 'locationMultiField',
+          bottomLine: true,
+          items: getLongTermLocationOverviewItems,
+          attachments: getLongTermLocationOverviewAttachments,
+          condition: (answers) => {
+            const exemptionPeriodType = getValueViaPath<ExemptionType>(
+              answers,
+              'exemptionPeriod.type',
+            )
+            return exemptionPeriodType === ExemptionType.LONG_TERM
+          },
+        }),
+        buildOverviewField({
+          id: 'overview',
+          title: overview.supportingDocuments.subtitle,
+          backId: 'supportingDocumentsMultiField',
+          bottomLine: true,
+          items: getSupportingDocumentsOverviewItems,
+          attachments: getSupportingDocumentsOverviewAttachments,
+          hideIfEmpty: true,
+        }),
+        buildCheckboxField({
+          id: 'agreementCheckbox',
+          large: true,
+          backgroundColor: 'blue',
+          marginTop: 3,
+          options: [
+            {
+              value: YES,
+              label: overview.buttons.confirm,
+            },
+          ],
         }),
         buildSubmitField({
           id: 'submit',

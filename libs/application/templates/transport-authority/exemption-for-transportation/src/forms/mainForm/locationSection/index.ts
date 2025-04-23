@@ -61,7 +61,7 @@ export const locationSection = buildSection({
           condition: (answers) => {
             const exemptionPeriodType = getValueViaPath<ExemptionType>(
               answers,
-              'location.exemptionPeriodType',
+              'exemptionPeriod.type',
             )
             return exemptionPeriodType === ExemptionType.SHORT_TERM
           },
@@ -74,7 +74,7 @@ export const locationSection = buildSection({
           condition: (answers) => {
             const exemptionPeriodType = getValueViaPath<ExemptionType>(
               answers,
-              'location.exemptionPeriodType',
+              'exemptionPeriod.type',
             )
             return exemptionPeriodType === ExemptionType.SHORT_TERM
           },
@@ -87,7 +87,7 @@ export const locationSection = buildSection({
           condition: (answers) => {
             const exemptionPeriodType = getValueViaPath<ExemptionType>(
               answers,
-              'location.exemptionPeriodType',
+              'exemptionPeriod.type',
             )
             return exemptionPeriodType === ExemptionType.SHORT_TERM
           },
@@ -101,7 +101,7 @@ export const locationSection = buildSection({
           condition: (answers) => {
             const exemptionPeriodType = getValueViaPath<ExemptionType>(
               answers,
-              'location.exemptionPeriodType',
+              'exemptionPeriod.type',
             )
             return exemptionPeriodType === ExemptionType.SHORT_TERM
           },
@@ -114,7 +114,7 @@ export const locationSection = buildSection({
           condition: (answers) => {
             const exemptionPeriodType = getValueViaPath<ExemptionType>(
               answers,
-              'location.exemptionPeriodType',
+              'exemptionPeriod.type',
             )
             return exemptionPeriodType === ExemptionType.SHORT_TERM
           },
@@ -127,7 +127,7 @@ export const locationSection = buildSection({
           condition: (answers) => {
             const exemptionPeriodType = getValueViaPath<ExemptionType>(
               answers,
-              'location.exemptionPeriodType',
+              'exemptionPeriod.type',
             )
             return exemptionPeriodType === ExemptionType.SHORT_TERM
           },
@@ -144,7 +144,7 @@ export const locationSection = buildSection({
           condition: (answers) => {
             const exemptionPeriodType = getValueViaPath<ExemptionType>(
               answers,
-              'location.exemptionPeriodType',
+              'exemptionPeriod.type',
             )
             return exemptionPeriodType === ExemptionType.SHORT_TERM
           },
@@ -159,7 +159,7 @@ export const locationSection = buildSection({
           condition: (answers) => {
             const exemptionPeriodType = getValueViaPath<ExemptionType>(
               answers,
-              'location.exemptionPeriodType',
+              'exemptionPeriod.type',
             )
             return exemptionPeriodType === ExemptionType.LONG_TERM
           },
@@ -176,7 +176,7 @@ export const locationSection = buildSection({
           condition: (answers) => {
             const exemptionPeriodType = getValueViaPath<ExemptionType>(
               answers,
-              'location.exemptionPeriodType',
+              'exemptionPeriod.type',
             )
             return exemptionPeriodType === ExemptionType.LONG_TERM
           },
@@ -192,7 +192,7 @@ export const locationSection = buildSection({
           condition: (answers) => {
             const exemptionPeriodType = getValueViaPath<ExemptionType>(
               answers,
-              'location.exemptionPeriodType',
+              'exemptionPeriod.type',
             )
             return exemptionPeriodType === ExemptionType.LONG_TERM
           },
@@ -214,7 +214,7 @@ export const locationSection = buildSection({
           condition: (answers) => {
             const exemptionPeriodType = getValueViaPath<ExemptionType>(
               answers,
-              'location.exemptionPeriodType',
+              'exemptionPeriod.type',
             )
             return exemptionPeriodType === ExemptionType.LONG_TERM
           },

@@ -23,6 +23,14 @@ export const OverviewFormField = ({
   goToScreen,
 }: Props) => {
   const items = field?.items?.(application.answers, application.externalData)
+  const filteredItems = items?.filter(
+    (item) =>
+      !(
+        item.hideIfEmpty &&
+        (!item.valueText ||
+          (Array.isArray(item.valueText) && item.valueText.length === 0))
+      ),
+  )
   const attachments = field?.attachments?.(
     application.answers,
     application.externalData,
@@ -36,6 +44,16 @@ export const OverviewFormField = ({
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
   }
+
+  if (
+    field.hideIfEmpty &&
+    !filteredItems?.length &&
+    !attachments?.length &&
+    !tableData?.rows?.length
+  ) {
+    return null
+  }
+
   return (
     <Box
       paddingTop={field.marginTop ? field.marginTop : 3}
@@ -80,8 +98,8 @@ export const OverviewFormField = ({
           )}
         </Box>
         <GridRow>
-          {items &&
-            items?.map((item, i) => {
+          {filteredItems &&
+            filteredItems?.map((item, i) => {
               const span: SpanType | undefined =
                 item.width === 'full'
                   ? field.title || field.description
@@ -112,14 +130,16 @@ export const OverviewFormField = ({
                       </Box>
                     )}
 
-                    <Text variant="h5">
-                      {formatTextWithLocale(
-                        item?.keyText ?? '',
-                        application,
-                        locale,
-                        formatMessage,
-                      )}
-                    </Text>
+                    {!item.inlineKeyText && (
+                      <Text variant="h5">
+                        {formatTextWithLocale(
+                          item?.keyText ?? '',
+                          application,
+                          locale,
+                          formatMessage,
+                        )}
+                      </Text>
+                    )}
                     {Array.isArray(item?.valueText) ? (
                       item?.valueText.map((value, index) => (
                         <Text
@@ -128,6 +148,14 @@ export const OverviewFormField = ({
                             item.boldValueText ? 'semiBold' : 'regular'
                           }
                         >
+                          {item.inlineKeyText &&
+                            Array.isArray(item?.keyText) &&
+                            `${formatTextWithLocale(
+                              item?.keyText?.[index] ?? '',
+                              application,
+                              locale,
+                              formatMessage,
+                            )}: `}
                           {formatTextWithLocale(
                             value,
                             application,
@@ -140,6 +168,14 @@ export const OverviewFormField = ({
                       <Text
                         fontWeight={item.boldValueText ? 'semiBold' : 'regular'}
                       >
+                        {item.inlineKeyText &&
+                          !Array.isArray(item?.keyText) &&
+                          `${formatTextWithLocale(
+                            item?.keyText ?? '',
+                            application,
+                            locale,
+                            formatMessage,
+                          )}: `}
                         {formatTextWithLocale(
                           item?.valueText ?? '',
                           application,

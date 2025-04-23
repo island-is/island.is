@@ -4,12 +4,12 @@ export const supportingDocuments = {
   general: defineMessages({
     sectionTitle: {
       id: 'ta.eft.application:supportingDocuments.general.sectionTitle',
-      defaultMessage: 'Fylgiskjöl',
+      defaultMessage: 'Fylgigögn',
       description: 'Title of supporting documents section',
     },
     pageTitle: {
       id: 'ta.eft.application:supportingDocuments.general.pageTitle',
-      defaultMessage: 'Fylgiskjöl',
+      defaultMessage: 'Fylgigögn',
       description: 'Title of supporting documents page',
     },
   }),
@@ -29,10 +29,10 @@ export const supportingDocuments = {
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Supporting documents file upload button label',
     },
-    otherDescription: {
-      id: 'ta.eft.application:supportingDocuments.labels.otherDescription',
+    comments: {
+      id: 'ta.eft.application:supportingDocuments.labels.comments',
       defaultMessage: 'Athugasemd',
-      description: 'Supporting documents other description label',
+      description: 'Supporting documents comments label',
     },
   }),
 }

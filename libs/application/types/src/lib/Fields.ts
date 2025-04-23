@@ -902,10 +902,12 @@ export interface DisplayField extends BaseField {
 
 export type KeyValueItem = {
   width?: 'full' | 'half' | 'snug'
-  keyText?: FormText
+  keyText?: FormText | FormTextArray
+  inlineKeyText?: boolean
   valueText?: FormText | FormTextArray
   boldValueText?: boolean
   lineAboveKeyText?: boolean
+  hideIfEmpty?: boolean
 }
 
 export type AttachmentItem = {
@@ -937,6 +939,7 @@ export interface OverviewField extends BaseField {
     externalData: ExternalData,
   ) => Array<AttachmentItem>
   tableData?: (answers: FormValue, externalData: ExternalData) => TableData
+  hideIfEmpty?: boolean
 }
 
 export interface CopyLinkField extends BaseField {
