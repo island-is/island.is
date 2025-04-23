@@ -4,6 +4,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import jsyaml from 'js-yaml'
 import { isMainModule } from './utils.mjs'
+import { exit } from 'node:process'
 
 if (isMainModule(import.meta.url)) {
   main().catch((error) => {
@@ -23,6 +24,7 @@ async function main() {
   }
 
   const namespacesToAdd = new Set()
+  const nsGrantsToAdd = new Set()
   const directory = `charts/features/deployments/${featureName}`
 
   const files = await glob(`${directory}/**/values.yaml`)
@@ -37,8 +39,19 @@ async function main() {
         ? yamlContent?.namespace
         : null
 
+    const nsGrantToAdd =
+      yamlContent &&
+      typeof yamlContent === 'object' &&
+      'grantNamespaces' in yamlContent
+        ? yamlContent?.grantNamespaces
+        : null
+
     if (namespaceToAdd) {
       namespacesToAdd.add(namespaceToAdd)
+    }
+    if (nsGrantToAdd) {
+      console.log(nsGrantToAdd)
+      nsGrantToAdd["grantNamespaces"].forEach(nsGrantsToAdd.add, nsGrantToAdd)
     }
   }
 
