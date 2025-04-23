@@ -106,10 +106,8 @@ export class VehiclesService {
     const res = await this.getVehiclesWithAuth(
       auth,
     ).currentvehicleswithmileageandinspGet({
-      showCoowned: true,
-      showOperated: true,
-      showOwned: true,
-      onlyMileageRequiredVehicles: input.filterOnlyRequiredMileageRegistration,
+      onlyMileageRegisterableVehicles:
+        input.filterOnlyVehiclesUserCanRegisterMileage,
       page: input.page,
       pageSize: input.pageSize,
       permno: input.query
@@ -156,10 +154,34 @@ export class VehiclesService {
             }
             return {
               vehicleId: d.permno,
-              registrationNumber: d.regno ?? undefined,
+              registration: d.regno
+                ? {
+                    number: d.regno ?? undefined,
+                    code: d.regTypeCode ?? undefined,
+                    name: d.regTypeName ?? undefined,
+                    subName: d.regTypeSubName ?? undefined,
+                  }
+                : undefined,
               userRole: d.role ?? undefined,
-              type: d.make ?? undefined,
-              color: d.colorName ?? undefined,
+              make: d.make ?? undefined,
+              color:
+                d.colorName && d.colorCode
+                  ? {
+                      name: d.colorName,
+                      code: d.colorCode,
+                    }
+                  : undefined,
+              nextInspection: d.nextMainInspection
+                ? d.nextMainInspection.toISOString()
+                : undefined,
+              isUserMainOperator:
+                typeof d.mainOperator === 'boolean'
+                  ? d.mainOperator
+                  : undefined,
+              isOwnerLegalEntity:
+                typeof d.ownerLegalEntity === 'boolean'
+                  ? d.ownerLegalEntity
+                  : undefined,
               mileageDetails: {
                 lastMileageRegistration,
                 canRegisterMileage: d.canRegisterMilage ?? undefined,

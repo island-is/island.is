@@ -9,7 +9,7 @@ export class VehiclesListInputV3 {
   page!: number
 
   @Field({ nullable: true })
-  filterOnlyRequiredMileageRegistration?: boolean
+  filterOnlyVehiclesUserCanRegisterMileage?: boolean
 
   @Field({ nullable: true })
   query?: string
