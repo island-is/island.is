@@ -33,8 +33,8 @@ export const signatureCollectionModule: PortalModule = {
         path: SignatureCollectionPaths.RootPath,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         element: (
-          /* Default path to general petitions since these are always ongoing */
-          <Navigate to={SignatureCollectionPaths.GeneralPetitions} replace />
+          /* Default path to municipal lists since these are next */
+          <Navigate to={SignatureCollectionPaths.SignatureCollectionMunicipalLists} replace />
         ),
       },
       // Parliamentary
