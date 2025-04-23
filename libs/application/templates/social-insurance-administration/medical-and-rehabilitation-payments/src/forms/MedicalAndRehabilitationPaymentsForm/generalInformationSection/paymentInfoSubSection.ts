@@ -79,6 +79,10 @@ export const paymentInfoSubSection = buildSubSection({
             socialInsuranceAdministrationMessage.payment.alertSpouseAllowance,
           doesNotRequireAnswer: true,
           alertType: 'info',
+          condition: (_, externalData) => {
+            const { hasSpouse } = getApplicationExternalData(externalData)
+            return !!hasSpouse
+          },
         }),
         buildRadioField({
           id: 'paymentInfo.taxLevel',
