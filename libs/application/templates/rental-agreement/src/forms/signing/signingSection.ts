@@ -10,7 +10,6 @@ import { DefaultEvents, Section } from '@island.is/application/types'
 import { signing } from '../../lib/messages/signing'
 
 import RA from '../../assets/RA'
-import { inReview } from '../../lib/messages'
 
 export const SigningSection: Section = buildSection({
   id: 'SigningSection',
