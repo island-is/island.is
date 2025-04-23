@@ -46,11 +46,18 @@ async function main() {
         ? yamlContent?.grantNamespaces
         : null
 
+    const nsGrantEnabled =
+      yamlContent &&
+      typeof yamlContent === 'object' &&
+      'grantNamespacesEnabled' in yamlContent
+        ? yamlContent?.grantNamespacesEnabled
+        : null
+
     if (namespaceToAdd) {
       namespacesToAdd.add(namespaceToAdd)
     }
 
-    if (nsGrantToAdd && Array.isArray(nsGrantToAdd)) {
+    if (nsGrantEnabled && nsGrantToAdd && Array.isArray(nsGrantToAdd)) {
       console.log(nsGrantToAdd)
       nsGrantToAdd.forEach((nsGrant) => nsGrantsToAdd.add(nsGrant))
     }
