@@ -13,6 +13,7 @@ import { useOfflineStore } from '../../../stores/offline-store'
 import closeIcon from '../../assets/icons/close.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
+import { testIDs } from '../../../utils/test-ids'
 
 const Header = styled.View`
   padding-top: 20px;
@@ -73,6 +74,7 @@ export function NavigationBarSheet({
   style,
   showLoading,
   closable = true,
+  testID,
 }: {
   title?: React.ReactNode
   componentId: string
@@ -80,6 +82,7 @@ export function NavigationBarSheet({
   style?: ViewStyle
   showLoading?: boolean
   closable?: boolean
+  testID?: string
 }) {
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const wd = useWindowDimensions()
@@ -93,7 +96,7 @@ export function NavigationBarSheet({
   return (
     <>
       {isHandle && closable && <Handle />}
-      <SafeAreaView>
+      <SafeAreaView testID={testID}>
         {(closable || title) && (
           <Header style={style}>
             {typeof title === 'string' ? (
@@ -108,7 +111,7 @@ export function NavigationBarSheet({
               {closable && (
                 <CloseButton
                   onPress={onClosePress}
-                  testID="NAVBAR_SHEET_CLOSE_BUTTON"
+                  testID={testIDs.NAVBAR_SHEET_CLOSE_BUTTON}
                   accessibilityLabel="Close"
                   hitSlop={{
                     top: 10,
