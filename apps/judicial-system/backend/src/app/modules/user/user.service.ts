@@ -5,7 +5,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { UserRole } from '@island.is/judicial-system/types'
+import {
+  adminInstitutionScope,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { Institution } from '../institution'
@@ -29,6 +32,19 @@ export class UserService {
         order: ['name'],
         include: [{ model: Institution, as: 'institution' }],
       })
+    }
+
+    if (user.role === UserRole.LOCAL_ADMIN) {
+      return user.institution
+        ? this.userModel.findAll({
+            order: ['name'],
+            include: [{ model: Institution, as: 'institution' }],
+            where: {
+              '$institution.type$':
+                adminInstitutionScope[user.institution.type],
+            },
+          })
+        : []
     }
 
     return this.userModel.findAll({

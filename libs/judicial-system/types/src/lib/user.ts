@@ -154,7 +154,7 @@ export const isDefenceUser = (user?: InstitutionUser): boolean => {
   return Boolean(user?.role && defenceRoles.includes(user.role))
 }
 
-const adminRoles: string[] = [UserRole.ADMIN]
+const adminRoles: string[] = [UserRole.LOCAL_ADMIN, UserRole.ADMIN]
 
 export const isAdminUser = (user?: InstitutionUser): boolean => {
   return Boolean(user?.role && adminRoles.includes(user.role))
