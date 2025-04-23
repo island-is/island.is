@@ -50,7 +50,7 @@ async function main() {
       namespacesToAdd.add(namespaceToAdd)
     }
 
-    if (nsGrantToAdd) {
+    if (nsGrantToAdd && Array.isArray(nsGrantToAdd)) {
       console.log(nsGrantToAdd)
       nsGrantToAdd.forEach((nsGrant) => nsGrantsToAdd.add(nsGrant))
     }
