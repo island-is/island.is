@@ -1,0 +1,16 @@
+appId: 'is.island.app.dev'
+---
+- tapOn:
+    id: 'TABBAR_TAB_MORE'
+- assertVisible:
+    id: 'MORE_CARD_FAMILY'
+- tapOn:
+    id: 'MORE_CARD_FAMILY'
+- assertVisible:
+    id: 'SCREEN_FAMILY_OVERVIEW'
+- assertVisible:
+    id: 'FAMILY_MEMBER_CARD'
+- tapOn:
+    id: 'FAMILY_MEMBER_CARD'
+- assertVisible:
+    id: 'SCREEN_FAMILY_DETAIL'
