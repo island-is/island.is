@@ -31,7 +31,7 @@ env:
   AWS_REGION: eu-west-1
 
 jobs:
-  debupe:
+  dedupe:
     name: Deduplicate
     runs-on: arc-runners
     steps:
