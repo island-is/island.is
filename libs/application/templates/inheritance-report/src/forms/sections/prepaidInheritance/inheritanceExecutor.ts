@@ -9,6 +9,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
+import { includeSpouse } from '../../../lib/utils/helpers'
 
 export const inheritanceExecutor = buildSection({
   id: 'inheritanceExecutor',
@@ -64,16 +65,12 @@ export const inheritanceExecutor = buildSection({
           title: m.grantor,
           titleVariant: 'h3',
           space: 'containerGutter',
-          condition: (answers) =>
-            !!((answers.executors as any)?.includeSpouse as Array<string>)
-              ?.length,
+          condition: includeSpouse,
         }),
         buildNationalIdWithNameField({
           id: 'executors.spouse',
           required: true,
-          condition: (answers) =>
-            !!((answers.executors as any)?.includeSpouse as Array<string>)
-              ?.length,
+          condition: includeSpouse,
         }),
         buildTextField({
           id: 'executors.spouse.email',
@@ -81,18 +78,14 @@ export const inheritanceExecutor = buildSection({
           width: 'half',
           variant: 'email',
           required: true,
-          condition: (answers) =>
-            !!((answers.executors as any)?.includeSpouse as Array<string>)
-              ?.length,
+          condition: includeSpouse,
         }),
         buildPhoneField({
           id: 'executors.spouse.phone',
           title: m.phone,
           width: 'half',
           required: true,
-          condition: (answers) =>
-            !!((answers.executors as any)?.includeSpouse as Array<string>)
-              ?.length,
+          condition: includeSpouse,
         }),
       ],
     }),
