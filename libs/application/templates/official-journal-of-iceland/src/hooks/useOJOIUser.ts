@@ -14,8 +14,6 @@ export const useOJOIUser = () => {
     },
   )
 
-  console.log('data', data)
-
   return {
     user: data?.officialJournalOfIcelandApplicationGetMyUserInfo,
     loading,
