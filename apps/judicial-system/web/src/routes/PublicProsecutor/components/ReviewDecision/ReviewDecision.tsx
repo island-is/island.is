@@ -6,8 +6,8 @@ import { RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  isPublicProsecutor,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -80,7 +80,7 @@ export const ReviewDecision: FC<Props> = (props) => {
     },
   ]
 
-  if (!(isPublicProsecutor(user) || isPublicProsecutorUser(user))) {
+  if (!(isPublicProsecutionUser(user) || isPublicProsecutionOfficeUser(user))) {
     return null
   }
 

@@ -367,6 +367,26 @@
         "security": [{ "bearer": [] }]
       }
     },
+    "/api/v1/applications/my-user-info": {
+      "get": {
+        "operationId": "getMyUserInfo",
+        "summary": "",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMyUserInfoResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }]
+      }
+    },
     "/api/v1/applications/{id}/case": {
       "get": {
         "operationId": "getApplicationCase",
@@ -1371,7 +1391,8 @@
         "properties": {
           "url": { "type": "string" },
           "cdn": { "type": "string" },
-          "key": { "type": "string" }
+          "key": { "type": "string" },
+          "attachmentId": { "type": "string" }
         },
         "required": ["url"]
       },
@@ -1501,6 +1522,15 @@
           }
         },
         "required": ["involvedParties"]
+      },
+      "GetMyUserInfoResponse": {
+        "type": "object",
+        "properties": {
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "email": { "type": "string" }
+        },
+        "required": ["firstName", "lastName", "email"]
       },
       "CategoryMainCategory": {
         "type": "object",

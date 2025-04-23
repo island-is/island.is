@@ -43,7 +43,7 @@ export const mockProsecutor = {
   title: 'saksóknari',
   institution: {
     id: '1337',
-    type: InstitutionType.PROSECUTORS_OFFICE,
+    type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
     name: 'Lögreglustjórinn á höfuðborgarsvæðinu',
   },
 } as User
@@ -194,7 +194,7 @@ export const mockUser = (userRole: UserRole): User => {
       type:
         // TODO: Add more institutions if we use more user roles
         userRole === UserRole.PROSECUTOR
-          ? InstitutionType.PROSECUTORS_OFFICE
+          ? InstitutionType.POLICE_PROSECUTORS_OFFICE
           : InstitutionType.DISTRICT_COURT,
       name: '',
       active: true,
