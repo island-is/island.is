@@ -1,3 +1,5 @@
+name: Monorepo pipeline - close and destroy
+
 on:
   workflow_dispatch:
   pull_request:
