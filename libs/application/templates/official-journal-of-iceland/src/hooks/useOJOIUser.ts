@@ -3,7 +3,7 @@ import { OfficialJournalOfIcelandApplicationGetMyUserInfoResponse } from '@islan
 import { MY_USER_INFO_QUERY } from '../graphql/queries'
 
 type OJOIUserResponse = {
-  user: OfficialJournalOfIcelandApplicationGetMyUserInfoResponse
+  officialJournalOfIcelandApplicationGetMyUserInfo: OfficialJournalOfIcelandApplicationGetMyUserInfoResponse
 }
 
 export const useOJOIUser = () => {
@@ -14,8 +14,10 @@ export const useOJOIUser = () => {
     },
   )
 
+  console.log('data', data)
+
   return {
-    user: data?.user,
+    user: data?.officialJournalOfIcelandApplicationGetMyUserInfo,
     loading,
     error,
   }
