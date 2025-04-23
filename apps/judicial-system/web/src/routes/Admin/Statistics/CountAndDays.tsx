@@ -4,11 +4,12 @@ import { LabelValue } from '@island.is/judicial-system-web/src/components'
 
 interface Props {
   label: string
-  count: number | null
-  days?: number | null
+  count?: number
+  days?: number
 }
 
 export const CountAndDays = ({ label, count, days }: Props) => {
+  console.log(label, count, days)
   return (
     <Box
       background="blue100"
@@ -17,9 +18,9 @@ export const CountAndDays = ({ label, count, days }: Props) => {
       justifyContent="spaceBetween"
       alignItems="center"
     >
-      <LabelValue label={label} value={count} />
+      <LabelValue label={label} value={count ?? 0} />
 
-      {!!days && (
+      {days !== undefined && (
         <>
           <Box flexGrow={1} marginX={2}>
             <div
@@ -31,7 +32,7 @@ export const CountAndDays = ({ label, count, days }: Props) => {
             />
           </Box>
           <Text>
-            <b>{days} dagar</b>
+            <b>{`${days} ${days === 1 ? 'dagur' : 'dagar'}`}</b>
           </Text>
         </>
       )}
