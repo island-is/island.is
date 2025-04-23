@@ -21,7 +21,7 @@ export class FixtureFactory {
 
   async createUserProfile({
     nationalId,
-    emails,
+    emails = [],
     mobilePhoneNumber = null,
     locale = null,
     mobilePhoneNumberVerified = false,
@@ -30,7 +30,7 @@ export class FixtureFactory {
     mobileStatus = DataStatus.NOT_DEFINED,
   }: {
     nationalId: string
-    emails: Array<{
+    emails?: Array<{
       email: string | null
       primary?: boolean
       emailStatus?: DataStatus
