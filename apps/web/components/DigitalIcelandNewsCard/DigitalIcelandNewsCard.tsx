@@ -22,7 +22,6 @@ interface ItemProps {
   tags: string[]
   href: string
   mini?: boolean
-  page: number
 }
 
 export const DigitalIcelandNewsCard = (item: ItemProps) => {
@@ -30,7 +29,7 @@ export const DigitalIcelandNewsCard = (item: ItemProps) => {
 
   const formattedDate = item.date && format(new Date(item.date), 'do MMMM yyyy')
 
-  if ((item.page === 1 && item.mini) || item.page > 1) {
+  if (item.mini) {
     return (
       <Box marginBottom={3}>
         <LinkV2

@@ -226,8 +226,7 @@ export const NewsList = ({
                   .map((tag) => tag.title)}
                 title={newsItem.title}
                 description={newsItem.intro}
-                mini={index > 2}
-                page={selectedPage}
+                mini={selectedPage > 1 || (selectedPage === 1 && index > 2)}
               />
             ))}
           </Box>

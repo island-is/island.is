@@ -12,7 +12,7 @@ import { BackgroundImage } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { shortenText } from '@island.is/web/utils/shortenText'
 
-import * as styles from './DigitialIcelandLatestNewsCard.css'
+import * as styles from './DigitalIcelandLatestNewsCard.css'
 
 interface ItemProps {
   imageSrc: string
