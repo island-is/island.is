@@ -122,4 +122,9 @@ export const strings = defineMessages({
     defaultMessage: 'ÁS',
     description: 'Notað fyrir "Áritað sektarboð" tagg',
   },
+  punishmentTypeOther: {
+    id: 'judicial.system.core:case_tag.punishment_type_other',
+    defaultMessage: 'Annað',
+    description: 'Notað fyrir "Annað" tagg',
+  },
 })

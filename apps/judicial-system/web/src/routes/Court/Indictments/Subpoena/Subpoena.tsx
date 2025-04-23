@@ -36,10 +36,16 @@ const Subpoena: FC = () => {
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
+  // Note: we keep the arraignment scheduled state in a subpoena specific state otherwise
+  // re-renders (when updating case and defendants) will cause unexpected states within the subpoena component
+  const [isArraignmentScheduled, _] = useState(
+    Boolean(workingCase.arraignmentDate),
+  )
   const [newAlternativeServices, setNewAlternativeServices] = useState<
     string[]
   >([])
   const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
+
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
   const {
@@ -49,7 +55,6 @@ const Subpoena: FC = () => {
     sendCourtDateToServer,
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
 
-  const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
   const isSchedulingArraignmentDate =
     !isArraignmentScheduled ||
     newSubpoenas.length > 0 ||
@@ -67,16 +72,12 @@ const Subpoena: FC = () => {
     defendant.isAlternativeService &&
     (!isArraignmentScheduled || newAlternativeServices.includes(defendant.id))
 
-  const toggleNewAlternativeService = (defendant: Defendant) => {
-    return isArraignmentScheduled
-      ? () => {
-          setNewAlternativeServices((previous) =>
-            defendant.isAlternativeService
-              ? previous.filter((id) => id !== defendant.id)
-              : [...previous, defendant.id],
-          )
-        }
-      : undefined
+  const toggleNewAlternativeService = (defendant: Defendant) => () => {
+    setNewAlternativeServices((previous) =>
+      defendant.isAlternativeService
+        ? previous.filter((id) => id !== defendant.id)
+        : [...previous, defendant.id],
+    )
   }
 
   const handleNavigationTo = useCallback(
@@ -86,75 +87,83 @@ const Subpoena: FC = () => {
         return
       }
 
-      setIsCreatingSubpoena(true)
+      setNavigateTo(destination)
+    },
+    [isSchedulingArraignmentDate, workingCase.id],
+  )
 
-      const promises: Promise<boolean>[] = []
+  const scheduleArraignmentDate = useCallback(async () => {
+    setIsCreatingSubpoena(true)
 
-      if (workingCase.defendants) {
-        workingCase.defendants.forEach((defendant) => {
-          promises.push(
-            updateDefendant({
-              caseId: workingCase.id,
-              defendantId: defendant.id,
-              ...(defendant.isAlternativeService
-                ? {
-                    isAlternativeService: defendant.isAlternativeService,
-                    alternativeServiceDescription:
-                      defendant.alternativeServiceDescription,
-                  }
-                : { subpoenaType: defendant.subpoenaType }),
-            }),
-          )
-        })
-      }
+    const promises: Promise<boolean>[] = []
 
-      // Make sure defendants are updated before submitting the court date
-      const allDefendantsUpdated = await Promise.all(promises)
+    if (workingCase.defendants) {
+      workingCase.defendants.forEach((defendant) => {
+        promises.push(
+          updateDefendant({
+            caseId: workingCase.id,
+            defendantId: defendant.id,
+            isAlternativeService: defendant.isAlternativeService,
+            // Clear the alternative service description if the defendant
+            // is not being served by alternative means
+            alternativeServiceDescription: defendant.isAlternativeService
+              ? defendant.alternativeServiceDescription
+              : null,
+            // Only change the subpoena type if the defendant is not
+            // being served by alternative means
+            subpoenaType: defendant.isAlternativeService
+              ? undefined
+              : defendant.subpoenaType,
+          }),
+        )
+      })
+    }
 
-      if (!allDefendantsUpdated.every((result) => result)) {
-        setIsCreatingSubpoena(false)
-        return
-      }
+    // Make sure defendants are updated before submitting the court date
+    const allDefendantsUpdated = await Promise.all(promises)
 
-      const additionalUpdates = [
-        {
-          // This should always be an arraignment type
-          courtSessionType: CourtSessionType.ARRAIGNMENT,
-          // if the case is being rescheduled after the court has met,
-          // then clear the current conclusion
-          ...(isArraignmentScheduled && workingCase.indictmentDecision
-            ? {
-                indictmentDecision: null,
-                courtDate: null,
-                postponedIndefinitelyExplanation: null,
-                indictmentRulingDecision: null,
-                mergeCaseId: null,
-                force: true,
-              }
-            : {}),
-        },
-      ]
+    if (!allDefendantsUpdated.every((result) => result)) {
+      setIsCreatingSubpoena(false)
+      return
+    }
 
-      const courtDateUpdated = await sendCourtDateToServer(additionalUpdates)
+    const additionalUpdates = [
+      {
+        // This should always be an arraignment type
+        courtSessionType: CourtSessionType.ARRAIGNMENT,
+        // if the case is being rescheduled after the court has met,
+        // then clear the current conclusion
+        ...(isArraignmentScheduled && workingCase.indictmentDecision
+          ? {
+              indictmentDecision: null,
+              courtDate: null,
+              postponedIndefinitelyExplanation: null,
+              indictmentRulingDecision: null,
+              mergeCaseId: null,
+              force: true,
+            }
+          : {}),
+      },
+    ]
 
+    const courtDateUpdated = await sendCourtDateToServer(additionalUpdates)
+
+    if (!courtDateUpdated) {
       setIsCreatingSubpoena(false)
 
-      if (!courtDateUpdated) {
-        return
-      }
+      return
+    }
 
-      router.push(`${destination}/${workingCase.id}`)
-    },
-    [
-      isSchedulingArraignmentDate,
-      workingCase.defendants,
-      workingCase.indictmentDecision,
-      workingCase.id,
-      isArraignmentScheduled,
-      sendCourtDateToServer,
-      updateDefendant,
-    ],
-  )
+    router.push(`${navigateTo}/${workingCase.id}`)
+  }, [
+    isArraignmentScheduled,
+    navigateTo,
+    sendCourtDateToServer,
+    updateDefendant,
+    workingCase.defendants,
+    workingCase.id,
+    workingCase.indictmentDecision,
+  ])
 
   const stepIsValid = isSubpoenaStepValid(workingCase, courtDate)
 
@@ -179,8 +188,9 @@ const Subpoena: FC = () => {
                   alternativeServiceDescriptionDisabled:
                     !isRegisteringAlternativeServiceForDefendant(defendant),
                   subpoenaDisabled: !isIssuingSubpoenaForDefendant(defendant),
-                  toggleNewAlternativeService:
-                    toggleNewAlternativeService(defendant),
+                  toggleNewAlternativeService: isArraignmentScheduled
+                    ? toggleNewAlternativeService(defendant)
+                    : undefined,
                   children: isArraignmentScheduled && (
                     <Button
                       variant="text"
@@ -191,6 +201,16 @@ const Subpoena: FC = () => {
                           ...previous,
                           defendant.id,
                         ])
+                        // Clear any alternative service for the defendant
+                        toggleNewAlternativeService(defendant)()
+                        updateDefendantState(
+                          {
+                            defendantId: defendant.id,
+                            caseId: workingCase.id,
+                            isAlternativeService: false,
+                          },
+                          setWorkingCase,
+                        )
                       }}
                     >
                       {formatMessage(strings.newSubpoenaButtonText)}
@@ -286,7 +306,9 @@ const Subpoena: FC = () => {
               router.push(
                 `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
               )
-            } else setNavigateTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+            } else {
+              setNavigateTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+            }
           }}
           nextButtonText={
             !isSchedulingArraignmentDate
@@ -309,7 +331,7 @@ const Subpoena: FC = () => {
               : strings.modalAlternativeServiceText
           }
           onPrimaryButtonClick={() => {
-            handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+            scheduleArraignmentDate()
           }}
           onSecondaryButtonClick={() => {
             setNavigateTo(undefined)

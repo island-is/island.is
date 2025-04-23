@@ -7,12 +7,7 @@ import {
   buildSubmitField,
   buildMultiField,
 } from '@island.is/application/core'
-import {
-  DefaultEvents,
-  Form,
-  FormModes,
-  FormValue,
-} from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import {
   applicantInformation,
   confirmation,

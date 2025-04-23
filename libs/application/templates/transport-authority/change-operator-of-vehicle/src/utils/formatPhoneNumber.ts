@@ -1,2 +1,7 @@
-export const formatPhoneNumber = (value: string): string =>
-  value.length === 7 ? value.substr(0, 3) + '-' + value.substr(3, 6) : value
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+
+export const formatPhoneNumber = (phoneNumber: string | undefined): string => {
+  if (!phoneNumber) return ''
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone?.formatNational() || phoneNumber
+}
