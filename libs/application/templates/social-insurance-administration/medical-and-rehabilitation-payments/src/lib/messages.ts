@@ -41,24 +41,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
   }),
 
   pre: defineMessages({
-    sectionTitle: {
-      id: 'marp.application:pre.section.title',
-      defaultMessage: 'Forsendur',
-      description: 'Prerequisites',
-    },
-
-    // Application type
-    applicationTypeSubSectionTitle: {
-      id: 'marp.application:pre.application.type.sub.section.title',
-      defaultMessage: 'Tegund umsóknar',
-      description: 'Type of application',
-    },
-    applicationTypeSubSectionDescription: {
-      id: 'marp.application:pre.application.type.sub.section.description',
-      defaultMessage: 'Vinsamlegast veldu tegund umsóknar',
-      description: 'Vinsamlegast veldu tegund umsóknar',
-    },
-
     // Data collection
   }),
 
@@ -79,14 +61,14 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     questionsIsSelfEmployedDescription: {
       id: 'marp.application:general.information.questions.is.self.employed.description',
       defaultMessage:
-        'Sjálfstætt starfandi einstaklingar þurfa að setja inn dagsetningu lækkunar á reiknuðu endurgjaldi.',
+        'Sjálfstætt starfandi einstaklingar þurfa að setja inn þá dagsetningu sem reiknað endurgjald var/verður fellt niður.',
       description:
-        'Self-employed individuals must enter the date of reduction in calculated remuneration',
+        'Self-employed individuals must enter the date on which the calculated remuneration was/will be cancelled.',
     },
     questionsCalculatedRemunerationDate: {
       id: 'marp.application:general.information.questions.calculated.remuneration.date',
-      defaultMessage: 'Hvenær var lækkun á reiknuðu endurgjaldi?',
-      description: 'When was the reduction in calculated remuneration?',
+      defaultMessage: 'Hvenær fellur niður reiknað endurgjald?',
+      description: 'When does the calculated remuneration expire?',
     },
     questionsIsPartTimeEmployed: {
       id: 'marp.application:general.information.questions.is.part.time.employed',
