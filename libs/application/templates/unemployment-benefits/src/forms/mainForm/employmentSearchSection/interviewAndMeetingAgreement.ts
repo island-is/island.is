@@ -1,5 +1,6 @@
 import {
   buildCheckboxField,
+  buildDescriptionField,
   buildMultiField,
   buildSubSection,
   YES,
@@ -16,6 +17,8 @@ export const interviewAndMeetingAgreementSubSection = buildSubSection({
     buildMultiField({
       id: 'interviewAndMeetingAgreementSubSection',
       title: employmentSearchMessages.interviewAndMeetingAgreement.pageTitle,
+      description:
+        employmentSearchMessages.interviewAndMeetingAgreement.pageDescription,
       children: [
         buildCheckboxField({
           id: 'interviewAndMeetingAgreement',

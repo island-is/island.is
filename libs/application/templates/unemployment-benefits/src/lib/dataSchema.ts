@@ -68,6 +68,7 @@ const currentSituationSchema = z.object({
   jobTimelineStartDate: z.string().optional(),
 })
 
+/**  Job search section  **/
 const jobWishesSchema = z.object({
   jobList: z.array(z.string()).optional(),
   outsideYourLocation: z.array(z.string()).optional(),

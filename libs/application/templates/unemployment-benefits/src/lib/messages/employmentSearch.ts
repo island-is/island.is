@@ -55,8 +55,11 @@ export const employmentSearch = {
     },
     pageDescription: {
       id: 'vmst.ub.application:employmentSearch.interviewAndMeetingAgreement.pageDescription#markdown',
-      defaultMessage:
-        'Vinnumálastofnun boðar í viðtöl, fundi og önnur úrræði með tölvupósti, sms sendingum eða tilkynningum á „Mínum síðum“',
+      defaultMessage: `Vinnumálastofnun boðar í viðtöl, fundi og önnur úrræði með tölvupósti, sms sendingum 
+        eða tilkynningum á „Mínum síðum“
+        \n* Það er skyldumæting í viðtöl og á fundi.
+        \n* Það er skyldumæting á námskeið og önnur úrræði sem þú ert boðaður/boðuð í.
+        \n* Það er skyldumæting í atvinnuviðtöl.`,
       description: 'Interview and meeting agreement page description',
     },
   }),
@@ -70,6 +73,61 @@ export const employmentSearch = {
       id: 'vmst.ub.application:employmentSearch.educationHistory.pageTitle',
       defaultMessage: 'Námsferill',
       description: 'Education history page description',
+    },
+    currentStudiesLabel: {
+      id: 'vmst.ub.application:employmentSearch.educationHistory.currentStudiesLabel',
+      defaultMessage: 'Núverandi nám',
+      description: 'Current studies label',
+    },
+    educationHistoryTitle: {
+      id: 'vmst.ub.application:employmentSearch.educationHistory.educationHistoryTitle',
+      defaultMessage: 'Nám {value}',
+      description: 'Education history title',
+    },
+    schoolNameLabel: {
+      id: 'vmst.ub.application:employmentSearch.educationHistory.schoolNameLabel',
+      defaultMessage: 'Skóli',
+      description: 'School name label',
+    },
+    courseSubjectLabel: {
+      id: 'vmst.ub.application:employmentSearch.educationHistory.courseSubjectLabel',
+      defaultMessage: 'Námsgrein',
+      description: 'Course subject label',
+    },
+    unitsLabel: {
+      id: 'vmst.ub.application:employmentSearch.educationHistory.unitsLabel',
+      defaultMessage: 'Einingar',
+      description: 'Units label',
+    },
+    expectedEndOfStudyLabel: {
+      id: 'vmst.ub.application:employmentSearch.educationHistory.expectedEndOfStudyLabel',
+      defaultMessage: 'Áætluð námslok',
+      description: 'Expected end of study label',
+    },
+    addItemButtonText: {
+      id: 'vmst.ub.application:employmentSearch.educationHistory.addItemButtonText',
+      defaultMessage: 'Bæta við námi',
+      description: 'Add item button text',
+    },
+    levelOfStudyLabel: {
+      id: 'vmst.ub.application:employmentSearch.educationHistory.levelOfStudyLabel',
+      defaultMessage: 'Námsstig',
+      description: 'Level of study label',
+    },
+    degreeLabel: {
+      id: 'vmst.ub.application:employmentSearch.educationHistory.degreeLabel',
+      defaultMessage: 'Prófgráða',
+      description: 'Degree label',
+    },
+    courseOfStudyLabel: {
+      id: 'vmst.ub.application:employmentSearch.educationHistory.courseOfStudyLabel',
+      defaultMessage: 'Námsbraut',
+      description: 'Course of study label',
+    },
+    studyNotCompletedLabel: {
+      id: 'vmst.ub.application:employmentSearch.educationHistory.studyNotCompletedLabel',
+      defaultMessage: 'Námi ólokið',
+      description: 'Study not completed label',
     },
   }),
   drivingLicense: defineMessages({
