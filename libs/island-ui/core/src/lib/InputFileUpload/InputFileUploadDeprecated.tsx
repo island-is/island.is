@@ -15,11 +15,6 @@ import { Icon as IconTypes } from '../IconRC/iconMap'
 import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 export type UploadFileStatusDeprecated = 'error' | 'done' | 'uploading'
-export enum FileUploadStatusDeprecated {
-  'error',
-  'done',
-  'uploading',
-}
 
 export interface UploadFileDeprecated {
   name: string

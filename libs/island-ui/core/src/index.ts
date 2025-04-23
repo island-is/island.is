@@ -95,7 +95,6 @@ export * from './lib/Input/Input'
 export {
   InputFileUploadDeprecated,
   type UploadFileStatusDeprecated,
-  FileUploadStatusDeprecated,
   type UploadFileDeprecated,
   fileToObjectDeprecated,
   type StatusColorDeprecated,
