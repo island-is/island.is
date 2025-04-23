@@ -2416,10 +2416,11 @@ export class CaseService {
       (caseItem) => caseItem.rulingDate !== null,
     ).length
 
-    const sentToCourtCount = indictmentCases.filter((caseItem) =>
-      caseItem.eventLogs?.some(
-        (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
-      ),
+    const sentToCourtCount = indictmentCases.filter(
+      (caseItem) =>
+        caseItem.eventLogs?.some(
+          (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
+        ) && caseItem.state !== CaseState.COMPLETED,
     ).length
 
     const totalCount = indictmentCases.length

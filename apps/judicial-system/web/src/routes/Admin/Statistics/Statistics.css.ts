@@ -21,11 +21,11 @@ export const statisticsContentBox = style({
       padding: `${theme.spacing[4]}px `,
     },
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      padding: `${theme.spacing[10]}px ${theme.spacing[6]}px`,
+      padding: `${theme.spacing[6]}px ${theme.spacing[8]}px`,
     },
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       borderRadius: theme.border.radius.large,
-      padding: `${theme.spacing[10]}px ${theme.spacing[12]}px`,
+      padding: `${theme.spacing[8]}px ${theme.spacing[10]}px`,
       maxWidth: '1100px',
     },
   },

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
@@ -25,19 +25,10 @@ import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import CountAndDays from './CountAndDays'
 import { FiltersPanel } from './FiltersPanel'
 import { useCaseStatisticsQuery } from './getCaseStatistics.generated'
+import { mapServiceStatusTitle } from './helpers'
+import { StatisticsCSVButton } from './StatisticsCSVButton'
 import { strings } from './Statistics.strings'
 import * as styles from './Statistics.css'
-
-const serviceStatusLabels: Record<ServiceStatus, string> = {
-  [ServiceStatus.DEFENDER]: 'Birt verjanda',
-  [ServiceStatus.ELECTRONICALLY]: 'Birt rafrænt',
-  [ServiceStatus.IN_PERSON]: 'Birt persónulega',
-  [ServiceStatus.EXPIRED]: 'Rann út á tíma',
-  [ServiceStatus.FAILED]: 'Árangurslaus birting',
-}
-
-const mapServiceStatusTitle = (status?: ServiceStatus | null): string =>
-  status ? serviceStatusLabels[status] ?? 'Óbirt' : 'Óbirt'
 
 const Statistics = () => {
   const [filter, setFilter] = useState(false)
@@ -152,7 +143,7 @@ const Statistics = () => {
                                 value={stats?.indictmentCases.count}
                               />
                               <LabelValue
-                                label="Í vinnslu"
+                                label="Sent til dómstóls"
                                 value={stats?.indictmentCases.sentToCourtCount}
                               />
                               <CountAndDays
@@ -221,20 +212,37 @@ const Statistics = () => {
                     },
                   ]}
                 />
+                <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+                  <StatisticsCSVButton
+                    stats={stats}
+                    fromDate={filter ? fromDate : undefined}
+                    toDate={filter ? toDate : undefined}
+                    institutionName={filter ? institution?.label : undefined}
+                  />
+                </Box>
               </AnimatePresence>
             )}
           </GridColumn>
 
           {filter && (
-            <FiltersPanel
-              districtCourts={districtCourts}
-              institution={institution}
-              fromDate={fromDate}
-              toDate={toDate}
-              setInstitution={setInstitution}
-              setFromDate={setFromDate}
-              setToDate={setToDate}
-            />
+            <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
+              <Box
+                display="flex"
+                flexDirection="column"
+                rowGap={3}
+                marginTop={5}
+              >
+                <FiltersPanel
+                  districtCourts={districtCourts}
+                  institution={institution}
+                  fromDate={fromDate}
+                  toDate={toDate}
+                  setInstitution={setInstitution}
+                  setFromDate={setFromDate}
+                  setToDate={setToDate}
+                />
+              </Box>
+            </GridColumn>
           )}
         </GridRow>
       </Box>
