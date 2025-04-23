@@ -18,6 +18,7 @@ export const indexModule: PortalModule = {
     {
       name: 'Leit',
       layout: 'full',
+      key: 'Search',
       path: '/leit',
       element: <Search />,
     },

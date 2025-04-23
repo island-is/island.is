@@ -16,7 +16,7 @@ import {
   isDistrictCourtUser,
   isInvestigationCase,
   isPrisonSystemUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
   isRequestCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -55,7 +55,7 @@ const useCaseList = () => {
         } else {
           routeTo = DEFENDER_INDICTMENT_ROUTE
         }
-      } else if (isPublicProsecutorUser(user)) {
+      } else if (isPublicProsecutionOfficeUser(user)) {
         // Public prosecutor users can only see completed indictments
         routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
