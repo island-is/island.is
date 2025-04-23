@@ -9,8 +9,8 @@ appId: 'is.island.app.dev'
 - assertVisible:
     id: 'SCREEN_FAMILY_OVERVIEW'
 - assertVisible:
-    id: 'FAMILY_MEMBER_CARD'
+    id: 'FAMILY_MEMBER_ITEM'
 - tapOn:
-    id: 'FAMILY_MEMBER_CARD'
+    id: 'FAMILY_MEMBER_ITEM'
 - assertVisible:
     id: 'SCREEN_FAMILY_DETAIL'

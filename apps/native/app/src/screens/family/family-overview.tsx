@@ -60,7 +60,7 @@ const FamilyMember = React.memo(
     return (
       <View
         style={{ paddingHorizontal: theme.spacing[2] }}
-        testID={testIDs.FAMILY_MEMBER_CARD}
+        testID={testIDs.FAMILY_MEMBER_ITEM}
       >
         <TouchableHighlight
           underlayColor={
