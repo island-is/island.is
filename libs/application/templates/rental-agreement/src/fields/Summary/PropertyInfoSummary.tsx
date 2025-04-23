@@ -231,7 +231,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
                       onClick={() => {
                         // TODO: Fix this
                         const fileUrl = new URL(
-                          file.key as string,
+                          file.key ?? '',
                           window.location.origin,
                         )
                         if (

@@ -1,18 +1,17 @@
 import {
-  buildCopyLinkField,
   buildDescriptionField,
   buildMultiField,
   buildSection,
   buildStaticTableField,
   buildSubmitField,
 } from '@island.is/application/core'
-import { RentalAgreement } from '../../lib/dataSchema'
-import { formatNationalId, formatPhoneNumber } from '../../utils/utils'
-import { application, inReview, summary } from '../../lib/messages'
 import {
-  ApplicationConfigurations,
-  DefaultEvents,
-} from '@island.is/application/types'
+  formatNationalId,
+  formatPhoneNumber,
+  getApplicationAnswers,
+} from '../../utils/utils'
+import { application, inReview } from '../../lib/messages'
+import { DefaultEvents } from '@island.is/application/types'
 
 export const ReviewInfoSection = buildSection({
   id: 'inReview',
@@ -33,18 +32,22 @@ export const ReviewInfoSection = buildSection({
             inReview.preSignatureInfo.tableHeaderEmail,
           ],
           rows: (application) => {
-            const { landlordInfo, tenantInfo } =
-              application.answers as RentalAgreement
+            const { landlords, tenants } = getApplicationAnswers(
+              application.answers,
+            )
 
-            const filterLandlords = landlordInfo.table.filter(
+            const filterLandlords = landlords?.filter(
               (landlord) => landlord.isRepresentative?.length === 0,
             )
 
-            const filterTenants = tenantInfo.table.filter(
+            const filterTenants = tenants?.filter(
               (tenant) => tenant.isRepresentative?.length === 0,
             )
 
-            const signees = [...filterLandlords, ...filterTenants]
+            const signees = [
+              ...(filterLandlords ?? []),
+              ...(filterTenants ?? []),
+            ]
 
             return signees.map((person) => [
               person.nationalIdWithName.name ?? '',
@@ -62,16 +65,6 @@ export const ReviewInfoSection = buildSection({
           titleVariant: 'h3',
           space: 6,
         }),
-        buildCopyLinkField({
-          id: 'reviewInfo.copyLink',
-          title: summary.shareLinkLabel,
-          description: summary.shareLinkDescription,
-          link: (application) => {
-            return `${document.location.origin}/umsoknir/${ApplicationConfigurations.RentalAgreement.slug}/${application.id}`
-          },
-          marginTop: 8,
-          marginBottom: 4,
-        }),
         buildSubmitField({
           id: 'reviewInfo.submit',
           refetchApplicationAfterSubmit: true,
@@ -81,11 +74,12 @@ export const ReviewInfoSection = buildSection({
               name: application.backToOverviewButton,
               type: 'subtle',
             },
-            {
-              event: DefaultEvents.SUBMIT,
-              name: application.goToSigningButton,
-              type: 'sign',
-            },
+            // TODO: Fix this, need to have a way to go to pre-signing page
+            // {
+            //   event: 'goToPreSigning',
+            //   name: application.goToPreSigningButton,
+            //   type: 'primary',
+            // },
           ],
         }),
       ],

@@ -37,7 +37,7 @@ export const rentalPaymentIsBankTransfer = (answers: FormValue) => {
 export const rentalInsuranceRequired = (answers: FormValue) => {
   const isInsuranceRequired = getValueViaPath<string[]>(
     answers,
-    'rentalAmount.isPaymentInsuranceRequired',
+    'rentalAmount.securityDepositRequired',
   )
   return isInsuranceRequired?.includes(AnswerOptions.YES) || false
 }
@@ -85,10 +85,10 @@ export const otherFeesPayedByTenant = (answers: FormValue) => {
 }
 
 // Security deposit utils
-export const isPaymentInsuranceRequired = (answers: FormValue) => {
+export const securityDepositRequired = (answers: FormValue) => {
   const isInsuranceRequired = getValueViaPath<string[]>(
     answers,
-    'rentalAmount.isPaymentInsuranceRequired',
+    'rentalAmount.securityDepositRequired',
   )
   return isInsuranceRequired?.includes(AnswerOptions.YES) || false
 }
@@ -99,7 +99,7 @@ const checkSecurityDepositType = (
 ): boolean => {
   const isInsuranceRequired = getValueViaPath<string[]>(
     answers,
-    'rentalAmount.isPaymentInsuranceRequired',
+    'rentalAmount.securityDepositRequired',
   )
   const securityType = getValueViaPath<SecurityDepositTypeOptions>(
     answers,

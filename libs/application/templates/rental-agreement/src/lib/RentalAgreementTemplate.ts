@@ -104,7 +104,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Áfram í yfirlit',
+                  name: application.goToOverviewButton,
                   type: 'primary',
                 },
               ],
@@ -125,7 +125,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
         entry: 'assignUsers',
         exit: 'clearAssignees',
         meta: {
-          name: 'Summary for review',
+          name: States.INREVIEW,
           status: 'inprogress',
           lifecycle: pruneAfterDays(30),
           roles: [
@@ -138,12 +138,12 @@ const RentalAgreementTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Áfram í undirritun',
+                  name: application.goToSigningButton,
                   type: 'primary',
                 },
                 {
                   event: DefaultEvents.EDIT,
-                  name: 'Breyta umsókn',
+                  name: application.backToOverviewButton,
                   type: 'signGhost',
                 },
               ],
@@ -151,15 +151,6 @@ const RentalAgreementTemplate: ApplicationTemplate<
               read: 'all',
               delete: true,
               api: [UserProfileApi, NationalRegistryUserApi],
-            },
-            {
-              id: Roles.ASSIGNEE,
-              formLoader: () =>
-                import('../forms/inReviewAssigneesForm').then((module) =>
-                  Promise.resolve(module.inReviewAssigneesForm),
-                ),
-              read: 'all',
-              api: [UserProfileApi],
             },
           ],
         },
@@ -225,7 +216,6 @@ const RentalAgreementTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     const { applicant, assignees } = application
-
     if (id === applicant) {
       return Roles.APPLICANT
     }

@@ -3,11 +3,15 @@ import { UploadFile } from '@island.is/island-ui/core'
 import { FormValue } from '@island.is/application/types'
 import { ApplicationAnswers, CostField, SelectOption } from './types'
 import {
+  AnswerOptions,
   OtherFeesPayeeOptions,
   RentalHousingCategoryClass,
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
+  RentalPaymentMethodOptions,
+  SecurityDepositTypeOptions,
 } from './constants'
+import { AddressProps } from '../fields/PropertySearch'
 
 // Utility function to get the label of a select option based on its value
 export const getOptionLabel = (
@@ -124,7 +128,7 @@ export const extractPropertyInfoData = (answers: ApplicationAnswers) => {
     ),
     fireExtinguishers: getValueViaPath<string>(
       answers,
-      'fireProtections.fireExtinguishers',
+      'fireProtections.fireExtinguisher',
     ),
     emergencyExits: getValueViaPath<string>(
       answers,
@@ -134,5 +138,85 @@ export const extractPropertyInfoData = (answers: ApplicationAnswers) => {
       answers,
       'fireProtections.fireBlanket',
     ),
+  }
+}
+
+// Rental info application answers
+export const extractRentalInfoData = (answers: ApplicationAnswers) => {
+  return {
+    securityDepositRequired: getValueViaPath<AnswerOptions>(
+      answers,
+      'rentalAmount.securityDepositRequired',
+    ),
+    isSecurityDepositType: getValueViaPath<SecurityDepositTypeOptions>(
+      answers,
+      'securityDeposit.securityType',
+    ),
+    searchResults: getValueViaPath<AddressProps>(
+      answers,
+      'registerProperty.searchresults',
+    ),
+    searchResultUnits: getValueViaPath<FormValue[]>(
+      answers,
+      'registerProperty.searchresults.units',
+    ),
+    startDate: getValueViaPath<string>(answers, 'rentalPeriod.startDate'),
+    endDate: getValueViaPath<string>(answers, 'rentalPeriod.endDate'),
+    isDefinite: getValueViaPath<string>(answers, 'rentalPeriod.isDefinite'),
+    rentalAmount: getValueViaPath<string>(answers, 'rentalAmount.amount'),
+    paymentDateOptions: getValueViaPath<string>(
+      answers,
+      'rentalAmount.paymentDateOptions',
+    ),
+    paymentMethodOptions: getValueViaPath<RentalPaymentMethodOptions>(
+      answers,
+      'rentalAmount.paymentMethodOptions',
+    ),
+    paymentMethodNationalId: getValueViaPath<string>(
+      answers,
+      'rentalAmount.paymentMethodNationalId',
+    ),
+    paymentMethodAccountNumber: getValueViaPath<string>(
+      answers,
+      'rentalAmount.paymentMethodBankAccountNumber',
+    ),
+    paymentMethodOtherTextField: getValueViaPath<string>(
+      answers,
+      'rentalAmount.paymentMethodOtherTextField',
+    ),
+    indexConnected: getValueViaPath<AnswerOptions>(
+      answers,
+      'rentalAmount.isIndexConnected',
+    ),
+    indexTypes: getValueViaPath<string>(answers, 'rentalAmount.indexTypes'),
+    securityAmountCalculated: getValueViaPath<string>(
+      answers,
+      'securityDeposit.securityAmountCalculated',
+    ),
+    securityAmountOther: getValueViaPath<string>(
+      answers,
+      'securityDeposit.securityAmountOther',
+    ),
+    securityType: getValueViaPath<SecurityDepositTypeOptions>(
+      answers,
+      'securityDeposit.securityType',
+    ),
+    bankGuaranteeInfo: getValueViaPath<string>(
+      answers,
+      'securityDeposit.bankGuaranteeInfo',
+    ),
+    thirdPartyGuaranteeInfo: getValueViaPath<string>(
+      answers,
+      'securityDeposit.thirdPartyGuaranteeInfo',
+    ),
+    insuranceCompanyInfo: getValueViaPath<string>(
+      answers,
+      'securityDeposit.insuranceCompanyInfo',
+    ),
+    mutualFundInfo: getValueViaPath<string>(
+      answers,
+      'securityDeposit.mutualFundInfo',
+    ),
+    otherInfo: getValueViaPath<string>(answers, 'securityDeposit.otherInfo'),
   }
 }

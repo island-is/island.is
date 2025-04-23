@@ -3,13 +3,17 @@ import {
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 import {
+  AnswerOptions,
   OtherFeesPayeeOptions,
   RentalHousingCategoryClass,
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
+  RentalPaymentMethodOptions,
+  SecurityDepositTypeOptions,
 } from './constants'
 import { UploadFile } from '@island.is/island-ui/core'
+import { AddressProps } from '../fields/PropertySearch'
 
 export interface ExternalData {
   nationalRegistry: {
@@ -39,7 +43,30 @@ export interface ApplicationAnswers {
     categoryClass?: RentalHousingCategoryClass
     categoryClassGroup?: RentalHousingCategoryClassGroup
     categoryType?: RentalHousingCategoryTypes
+    searchResults?: AddressProps
     searchResultUnits?: FormValue[]
+  }
+
+  rentalAmount?: {
+    securityDepositRequired?: AnswerOptions
+    amount?: string
+    paymentDateOptions?: string
+    paymentMethodOptions?: RentalPaymentMethodOptions
+    paymentMethodNationalId?: string
+    paymentMethodAccountNumber?: string
+    paymentMethodOtherTextField?: string
+    indexConnected?: AnswerOptions
+    indexTypes?: string
+  }
+  rentalPeriod?: {
+    startDate?: string
+    endDate?: string
+    isIndefinite?: string
+  }
+  securityDeposit?: {
+    securityAmountCalculated?: string
+    securityAmountOther?: string
+    securityType?: SecurityDepositTypeOptions
   }
   condition?: {
     inspector?: RentalHousingConditionInspector

@@ -7,8 +7,11 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { RentalAgreement } from '../../lib/dataSchema'
-import { formatNationalId, formatPhoneNumber } from '../../utils/utils'
+import {
+  formatNationalId,
+  formatPhoneNumber,
+  getApplicationAnswers,
+} from '../../utils/utils'
 import { TRUE } from '../../utils/constants'
 import { inReview } from '../../lib/messages'
 
@@ -38,18 +41,21 @@ export const PreSignatureInfoSection = buildSection({
             inReview.preSignatureInfo.tableHeaderEmail,
           ],
           rows: (application) => {
-            const { landlordInfo, tenantInfo } =
-              application.answers as RentalAgreement
-
-            const filterLandlords = landlordInfo.table.filter(
-              (landlord) => landlord.isRepresentative?.length === 0,
+            const { landlords, tenants } = getApplicationAnswers(
+              application.answers,
             )
 
-            const filterTenants = tenantInfo.table.filter(
+            const filterLandlords = landlords?.filter(
+              (landlord) => landlord.isRepresentative?.length === 0,
+            )
+            const filterTenants = tenants?.filter(
               (tenant) => tenant.isRepresentative?.length === 0,
             )
 
-            const signees = [...filterLandlords, ...filterTenants]
+            const signees = [
+              ...(filterLandlords ?? []),
+              ...(filterTenants ?? []),
+            ]
 
             return signees.map((person) => [
               person.nationalIdWithName.name ?? '',
@@ -76,11 +82,6 @@ export const PreSignatureInfoSection = buildSection({
           id: 'preSignatureInfo.buttons',
           refetchApplicationAfterSubmit: true,
           actions: [
-            {
-              event: DefaultEvents.EDIT,
-              name: inReview.preSignatureInfo.editButtonText,
-              type: 'subtle',
-            },
             {
               event: DefaultEvents.SUBMIT,
               name: inReview.preSignatureInfo.submitButtonText,

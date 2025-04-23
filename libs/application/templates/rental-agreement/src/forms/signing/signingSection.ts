@@ -4,11 +4,13 @@ import {
   buildImageField,
   buildMultiField,
   buildSection,
+  buildSubmitField,
 } from '@island.is/application/core'
-import { Section } from '@island.is/application/types'
+import { DefaultEvents, Section } from '@island.is/application/types'
 import { signing } from '../../lib/messages/signing'
 
 import RA from '../../assets/RA'
+import { inReview } from '../../lib/messages'
 
 export const SigningSection: Section = buildSection({
   id: 'SigningSection',
@@ -38,6 +40,17 @@ export const SigningSection: Section = buildSection({
           image: RA,
           imagePosition: 'center',
           alt: 'Undirritun',
+        }),
+        buildSubmitField({
+          id: 'preSignatureInfo.buttons',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.EDIT,
+              name: signing.backToReviewButton,
+              type: 'subtle',
+            },
+          ],
         }),
       ],
     }),

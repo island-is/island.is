@@ -53,20 +53,19 @@ export const SummaryDraftSection = buildSection({
             const element = document.getElementById('email-summary-container')
 
             // Remove buttons from summary
-            if (element) {
-              element
-                .querySelectorAll('button')
-                .forEach((button) => button.remove())
-
-              const jsonData = {
-                id: element.id,
-                className: element.className,
-                html: element.outerHTML,
-              }
-
-              return JSON.stringify(jsonData)
+            if (!element) {
+              return null
             }
-            return null
+            element
+              .querySelectorAll('button')
+              .forEach((button) => button.remove())
+
+            const jsonData = {
+              id: element.id,
+              className: element.className,
+              html: element.outerHTML,
+            }
+            return JSON.stringify(jsonData)
           },
         }),
       ],

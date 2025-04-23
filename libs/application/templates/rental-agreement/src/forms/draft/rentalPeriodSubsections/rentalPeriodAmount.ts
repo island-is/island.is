@@ -128,24 +128,26 @@ export const RentalPeriodAmount = buildSubSection({
           condition: rentalPaymentIsOther,
         }),
 
-        // Payment insurance
+        // SecurityDeposit
         buildDescriptionField({
-          id: 'rentalAmount.paymentInsuranceTitle',
-          title: rentalAmount.paymentInsuranceTitle,
+          id: 'rentalAmount.securityDepositTitle',
+          title: rentalAmount.securityDepositTitle,
           titleVariant: 'h4',
           space: 6,
         }),
         buildCheckboxField({
-          id: 'rentalAmount.isPaymentInsuranceRequired',
+          id: 'rentalAmount.securityDepositRequired',
           options: [
             {
               value: AnswerOptions.YES,
-              label: rentalAmount.paymentInsuranceRequiredLabel,
+              label: rentalAmount.securityDepositRequiredLabel,
             },
           ],
         }),
         buildHiddenInput({
-          id: 'rentalAmount.paymentInsuranceDetails',
+          // Hidden field to capture payment insurance details when insurance is required.
+          // Its value is populated by the insurance-details component at runtime.
+          id: 'rentalAmount.securityDepositDetails',
           condition: rentalInsuranceRequired,
         }),
       ],

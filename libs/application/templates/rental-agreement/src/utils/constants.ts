@@ -19,6 +19,7 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
+  INSTITUTION = 'institution',
 }
 
 export enum UserRole {

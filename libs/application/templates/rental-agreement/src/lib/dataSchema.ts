@@ -212,27 +212,10 @@ const searchResults = z
 const registerProperty = z
   .object({
     searchresults: searchResults,
-    categoryType: z
-      .enum([
-        RentalHousingCategoryTypes.ENTIRE_HOME,
-        RentalHousingCategoryTypes.ROOM,
-        RentalHousingCategoryTypes.COMMERCIAL,
-      ])
-      .optional(),
-    categoryClass: z
-      .enum([
-        RentalHousingCategoryClass.GENERAL_MARKET,
-        RentalHousingCategoryClass.SPECIAL_GROUPS,
-      ])
-      .optional(),
+    categoryType: z.nativeEnum(RentalHousingCategoryTypes).optional(),
+    categoryClass: z.nativeEnum(RentalHousingCategoryClass).optional(),
     categoryClassGroup: z
-      .enum([
-        RentalHousingCategoryClassGroup.STUDENT_HOUSING,
-        RentalHousingCategoryClassGroup.SENIOR_CITIZEN_HOUSING,
-        RentalHousingCategoryClassGroup.COMMUNE,
-        RentalHousingCategoryClassGroup.HALFWAY_HOUSE,
-        RentalHousingCategoryClassGroup.INCOME_BASED_HOUSING,
-      ])
+      .nativeEnum(RentalHousingCategoryClassGroup)
       .optional(),
   })
   .superRefine((data, ctx) => {
@@ -361,54 +344,39 @@ const rentalPeriod = z
     const start = data.startDate ? new Date(data.startDate) : ''
     const end = data.endDate ? new Date(data.endDate) : ''
     const isDefiniteChecked = data.isDefinite && data.isDefinite.includes(TRUE)
-    if (isDefiniteChecked) {
-      if (!data.endDate || !data.endDate.trim().length) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['endDate'],
-          params: m.rentalPeriod.errorAgreementEndDateNotFilled,
-        })
-      } else if (start >= end) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['endDate'],
-          params: m.rentalPeriod.errorEndDateBeforeStart,
-        })
-      }
+    if (!isDefiniteChecked) {
+      return
+    }
+    if (!data.endDate || !data.endDate.trim().length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['endDate'],
+        params: m.rentalPeriod.errorAgreementEndDateNotFilled,
+      })
+      return
+    }
+    if (start >= end) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['endDate'],
+        params: m.rentalPeriod.errorEndDateBeforeStart,
+      })
     }
   })
 
 const rentalAmount = z
   .object({
     amount: z.string().optional(),
-    indexTypes: z
-      .enum([
-        RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
-        RentalAmountIndexTypes.CONSTRUCTION_COST_INDEX,
-        RentalAmountIndexTypes.WAGE_INDEX,
-      ])
-      .optional(),
+    indexTypes: z.nativeEnum(RentalAmountIndexTypes).optional(),
     indexValue: z.string().optional(),
     isIndexConnected: z.string().array().optional(),
-    paymentDateOptions: z
-      .enum([
-        RentalAmountPaymentDateOptions.FIRST_DAY,
-        RentalAmountPaymentDateOptions.LAST_DAY,
-        RentalAmountPaymentDateOptions.OTHER,
-      ])
-      .optional(),
+    paymentDateOptions: z.nativeEnum(RentalAmountPaymentDateOptions).optional(),
     paymentDateOther: z.string().optional(),
-    paymentMethodOptions: z
-      .enum([
-        RentalPaymentMethodOptions.BANK_TRANSFER,
-        RentalPaymentMethodOptions.PAYMENT_SLIP,
-        RentalPaymentMethodOptions.OTHER,
-      ])
-      .optional(),
+    paymentMethodOptions: z.nativeEnum(RentalPaymentMethodOptions).optional(),
     paymentMethodNationalId: z.string().optional(),
     paymentMethodBankAccountNumber: z.string().optional(),
     paymentMethodOtherTextField: z.string().optional(),
-    isPaymentInsuranceRequired: z.string().array().optional(),
+    securityDepositRequired: z.string().array().optional(),
   })
   .superRefine((data, ctx) => {
     // Error message if amount is not filled and if it is negative
@@ -727,6 +695,7 @@ const otherFees = z
       }
     }
 
+    //
     if (data.electricityCost && tenantPaysElectricityCost) {
       if (!data.electricityCostMeterNumber) {
         ctx.addIssue({

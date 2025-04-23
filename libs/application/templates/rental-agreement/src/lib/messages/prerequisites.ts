@@ -32,18 +32,23 @@ export const application = defineMessages({
     description: `Name of signing section`,
   },
   goToOverviewButton: {
-    id: 'ra.application:application.goToOverviewButton',
-    defaultMessage: 'Áfram í yfirlit',
-    description: `Button text for going to overview`,
+    id: 'ra.application:application.sendToOverviewButton',
+    defaultMessage: 'Senda í yfirlestur',
+    description: `Button text for send overview`,
   },
   backToOverviewButton: {
     id: 'ra.application:application.backToOverviewButton',
     defaultMessage: 'Til baka/breyta samningi',
     description: `Button text for going back to overview`,
   },
+  goToPreSigningButton: {
+    id: 'ra.application:application.goToPreSigningButton',
+    defaultMessage: 'Áfram í undirritun',
+    description: `Button text for going to pre-signing`,
+  },
   goToSigningButton: {
     id: 'ra.application:application.goToSigningButton',
-    defaultMessage: 'Áfram í undirritun',
+    defaultMessage: 'Senda í undirritun',
     description: `Button text for going to signing`,
   },
 })
@@ -66,7 +71,7 @@ export const prerequisites = {
       description: 'Page title for intro',
     },
     text: {
-      id: 'ra.application:prerequisites.intro.text#markdown',
+      id: 'ra.application:prerequisites.intro.text',
       defaultMessage:
         'Mikilvægt er að hafa í huga að í samningnum þurfa að koma fram öll þau atriði sem aðilar samningsins eru sammála um og skipta máli við skilgreiningar og skýringar á því um hvað samningurinn snýst.',
       description: 'Introductory text about the application',

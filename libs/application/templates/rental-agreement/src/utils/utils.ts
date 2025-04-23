@@ -81,6 +81,16 @@ export const parseCurrency = (value: string): number | undefined => {
 }
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
+  const landlords = getValueViaPath<ApplicantsInfo[]>(
+    answers,
+    'landlordInfo.table',
+    [],
+  )
+  const tenants = getValueViaPath<ApplicantsInfo[]>(
+    answers,
+    'tenantInfo.table',
+    [],
+  )
   const propertyTypeOptions = getValueViaPath<RentalHousingCategoryTypes>(
     answers,
     'registerProperty.categoryType',
@@ -123,6 +133,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   )
 
   return {
+    landlords,
+    tenants,
     propertyTypeOptions,
     propertyClassOptions,
     inspectorOptions,

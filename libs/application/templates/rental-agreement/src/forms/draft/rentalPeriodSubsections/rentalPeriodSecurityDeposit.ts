@@ -22,7 +22,7 @@ import {
 import { securityDeposit } from '../../../lib/messages'
 import {
   calculateSecurityDepositAmount,
-  isPaymentInsuranceRequired,
+  securityDepositRequired,
   securityDepositIsBankGuarantee,
   securityDepositIsCapital,
   securityDepositIsInsuranceCompany,
@@ -34,12 +34,12 @@ import {
 } from '../../../utils/rentalPeriodUtils'
 
 export const RentalPeriodSecurityDeposit = buildSubSection({
-  condition: isPaymentInsuranceRequired,
+  condition: securityDepositRequired,
   id: Routes.SECURITYDEPOSIT,
   title: securityDeposit.subSectionName,
   children: [
     buildMultiField({
-      condition: isPaymentInsuranceRequired,
+      condition: securityDepositRequired,
       id: Routes.SECURITYDEPOSIT,
       title: securityDeposit.pageTitle,
       description: securityDeposit.pageDescription,
