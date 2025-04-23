@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import {
+  ApiResponse,
   BankAccountDT,
-  BankAccountsnationalIdGETResponse, BankAccountsnationalIdvalidatePOSTResponse,BankAccountsnationalIdPOSTResponse,
+  BankAccountsnationalIdGETResponse,
+  BankAccountsnationalIdPOSTResponse,
   DefaultApi,
 } from '../../gen/fetch'
 import { handle404 } from '@island.is/clients/middlewares'
@@ -22,28 +24,10 @@ export class BankinfoClientService {
   async createBankAccountForNationalId(
     nationalId: string,
     bankAccount: BankAccountDT,
-  ): Promise<any> {
-    console.log('Creating bank account', nationalId, bankAccount)
+  ): Promise<ApiResponse<BankAccountsnationalIdPOSTResponse> | null> {
     return this.api.bankAccountsnationalIdPOST1Raw({
       nationalId,
       bankAccount,
-    }).catch(e => {
-      console.log('Error creating bank account', e)
-      throw e
-    })
-  }
-
-  async validateBankAccountForNationalId(
-    nationalId: string,
-    bankAccount: BankAccountDT,
-  ): Promise<BankAccountsnationalIdvalidatePOSTResponse> {
-    console.log('Validating bank account', nationalId, bankAccount)
-    return this.api.bankAccountsnationalIdvalidatePOST2({
-      nationalId,
-      bankAccount,
-    }).catch(e => {
-      console.log('Error validating bank account', e)
-      throw e
-    })
+    }).catch(handle404)
   }
 }
