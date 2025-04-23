@@ -165,7 +165,6 @@ export class AppService {
     }
 
     try {
-      // TODO: this is now police subpoena id
       const res = await fetch(
         `${this.config.backend.url}/api/internal/subpoena/${policeSubpoenaId}`,
         {
