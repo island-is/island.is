@@ -15,7 +15,6 @@ export {
 
 export {
   InstitutionType,
-  adminInstitutionScope,
   prosecutorsOfficeTypes,
   isProsecutorsOffice,
 } from './lib/institution'
@@ -67,6 +66,7 @@ export {
   isCoreUser,
   isPrisonAdminUser,
   isPublicProsecutionUser,
+  getAdminUserInstitutionScope,
 } from './lib/user'
 export type { User } from './lib/user'
 

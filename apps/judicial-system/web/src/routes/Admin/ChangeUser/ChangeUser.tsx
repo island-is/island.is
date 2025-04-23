@@ -8,10 +8,7 @@ import {
   PageHeader,
   Skeleton,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  UpdateUserInput,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import UserForm from '../UserForm/UserForm'
@@ -51,13 +48,12 @@ export const ChangeUser = () => {
           input: {
             id: user.id,
             name: user.name,
-            role: user.role,
             title: user.title,
             mobileNumber: user.mobileNumber,
             email: user.email,
             active: user.active,
             canConfirmIndictment: user.canConfirmIndictment,
-          } as UpdateUserInput,
+          },
         },
       })
     }

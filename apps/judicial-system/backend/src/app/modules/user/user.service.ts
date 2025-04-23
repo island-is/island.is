@@ -6,7 +6,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
 import {
-  adminInstitutionScope,
+  getAdminUserInstitutionScope,
+  isAdminUser,
+  User as TUser,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -26,25 +28,13 @@ export class UserService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async getAll(user: User): Promise<User[]> {
-    if (user.role === UserRole.ADMIN) {
+  async getAll(user: TUser): Promise<User[]> {
+    if (isAdminUser(user)) {
       return this.userModel.findAll({
         order: ['name'],
         include: [{ model: Institution, as: 'institution' }],
+        where: { '$institution.type$': getAdminUserInstitutionScope(user) },
       })
-    }
-
-    if (user.role === UserRole.LOCAL_ADMIN) {
-      return user.institution
-        ? this.userModel.findAll({
-            order: ['name'],
-            include: [{ model: Institution, as: 'institution' }],
-            where: {
-              '$institution.type$':
-                adminInstitutionScope[user.institution.type],
-            },
-          })
-        : []
     }
 
     return this.userModel.findAll({

@@ -1,4 +1,5 @@
 import {
+  adminInstitutionScope,
   Institution,
   InstitutionType,
   prosecutorsOfficeTypes,
@@ -154,16 +155,22 @@ export const isDefenceUser = (user?: InstitutionUser): boolean => {
   return Boolean(user?.role && defenceRoles.includes(user.role))
 }
 
-const adminRoles: string[] = [UserRole.LOCAL_ADMIN, UserRole.ADMIN]
+const superAdminRoles: string[] = [UserRole.ADMIN]
 
-export const isAdminUser = (user?: InstitutionUser): boolean => {
-  return Boolean(user?.role && adminRoles.includes(user.role))
+const isSuperAdminUser = (user?: InstitutionUser): boolean => {
+  return Boolean(user?.role && superAdminRoles.includes(user.role))
 }
 
 const localAdminRoles: string[] = [UserRole.LOCAL_ADMIN]
 
-export const isLocalAdminUser = (user?: InstitutionUser): boolean => {
-  return Boolean(user?.role && localAdminRoles.includes(user.role))
+const isLocalAdminUser = (user?: InstitutionUser): boolean => {
+  return Boolean(
+    user?.role && localAdminRoles.includes(user.role) && user.institution,
+  )
+}
+
+export const isAdminUser = (user?: InstitutionUser): boolean => {
+  return isSuperAdminUser(user) || isLocalAdminUser(user)
 }
 
 export const isCoreUser = (user?: InstitutionUser): boolean => {
@@ -175,4 +182,18 @@ export const isCoreUser = (user?: InstitutionUser): boolean => {
     isPrisonSystemUser(user) ||
     isLocalAdminUser(user)
   )
+}
+
+export const getAdminUserInstitutionScope = (
+  user: InstitutionUser,
+): InstitutionType[] => {
+  if (isSuperAdminUser(user)) {
+    return Object.values(InstitutionType)
+  }
+
+  if (isLocalAdminUser(user)) {
+    return adminInstitutionScope[user.institution?.type as InstitutionType]
+  }
+
+  return []
 }

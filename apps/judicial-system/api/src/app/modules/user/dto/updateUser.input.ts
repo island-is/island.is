@@ -32,11 +32,6 @@ export class UpdateUserInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => UserRole, { nullable: true })
-  readonly role?: UserRole
-
-  @Allow()
-  @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly active?: boolean
 
