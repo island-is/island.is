@@ -30,7 +30,6 @@ interface AppealInfo {
 }
 
 interface IndictmentInfo {
-  rulingDate?: string
   indictmentAppealDeadline?: string
   indictmentVerdictViewedByAll?: boolean
   indictmentVerdictAppealDeadlineExpired?: boolean
@@ -189,7 +188,6 @@ export const getIndictmentInfo = ({
     indictmentAppealDeadline,
     indictmentVerdictViewedByAll,
     indictmentVerdictAppealDeadlineExpired,
-    rulingDate: new Date(rulingDate).toISOString(),
   }
 }
 
