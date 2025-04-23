@@ -1,0 +1,22 @@
+appId: 'is.island.app.dev'
+---
+- tapOn:
+    id: 'TABBAR_TAB_MORE'
+- assertVisible:
+    id: 'MORE_CARD_HEALTH'
+- tapOn:
+    id: 'MORE_CARD_HEALTH'
+- assertVisible:
+    id: 'SCREEN_HEALTH_OVERVIEW'
+- assertVisible:
+    id: 'HEALTH_CENTER'
+- tapOn:
+    id: 'BUTTON_VACCINATIONS'
+- assertVisible:
+    id: 'SCREEN_VACCINATIONS'
+- assertVisible:
+    id: 'VACCINATION_ITEM'
+- tapOn:
+    id: 'VACCINATION_ITEM'
+- assertVisible:
+    id: 'VACCINATION_ITEM_ROW'
