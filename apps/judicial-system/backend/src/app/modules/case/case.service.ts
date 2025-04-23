@@ -2352,7 +2352,7 @@ export class CaseService {
     to?: Date,
     institutionId?: string,
   ): Promise<CaseStatistics> {
-    const where: WhereOptions = {}
+    const where: WhereOptions = { state: { [Op.not]: CaseState.DELETED } }
 
     if (from || to) {
       where.created = {}
@@ -2399,19 +2399,30 @@ export class CaseService {
       where: {
         ...where,
         type: CaseType.INDICTMENT,
-        rulingDate: { [Op.not]: null },
       },
       include: [
         {
           model: EventLog,
-          required: true,
-          attributes: ['created'],
+          required: false,
+          attributes: ['created', 'eventType'],
           where: {
             eventType: EventType.INDICTMENT_CONFIRMED,
           },
         },
       ],
     })
+
+    const rulingCount = indictmentCases.filter(
+      (caseItem) => caseItem.rulingDate !== null,
+    ).length
+
+    const sentToCourtCount = indictmentCases.filter((caseItem) =>
+      caseItem.eventLogs?.some(
+        (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
+      ),
+    ).length
+
+    const totalCount = indictmentCases.length
 
     const caseDurations = indictmentCases
       .map((caseItem) => {
@@ -2424,17 +2435,19 @@ export class CaseService {
       })
       .filter((ms): ms is number => ms !== null)
 
-    const averageIndictmentRulingTimeMs = caseDurations.length
+    const averageRulingTimeMs = caseDurations.length
       ? Math.round(
           caseDurations.reduce((sum, ms) => sum + ms, 0) / caseDurations.length,
         )
       : 0
 
     return {
-      count: indictmentCases.length,
-      averageRulingTimeMs: averageIndictmentRulingTimeMs,
+      count: totalCount,
+      sentToCourtCount,
+      rulingCount,
+      averageRulingTimeMs,
       averageRulingTimeDays: Math.round(
-        averageIndictmentRulingTimeMs / (1000 * 60 * 60 * 24),
+        averageRulingTimeMs / (1000 * 60 * 60 * 24),
       ),
     }
   }
