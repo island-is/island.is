@@ -470,6 +470,11 @@ export const NationalRegistryB2C = new XroadConf({
       staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
       prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
     },
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1',
+    },
   },
 })
 

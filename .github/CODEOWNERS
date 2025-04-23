@@ -47,6 +47,7 @@
 /libs/clients/rsk/                                                                                        @island-is/juni
 /libs/clients/zendesk/                                                                                    @island-is/juni
 /libs/icelandic-names-registry/                                                                           @island-is/juni
+/libs/portals/my-pages/signature-collection/                                                              @island-is/juni
 /libs/portals/my-pages/petitions/                                                                         @island-is/juni
 /libs/portals/my-pages/education/                                                                         @island-is/juni @island-is/hugsmidjan
 /libs/portals/my-pages/education-career/                                                                  @island-is/juni @island-is/hugsmidjan
@@ -225,35 +226,47 @@ codemagic.yaml                                                                  
 /libs/clients/judicial-system-sp/                                                                         @island-is/hugsmidjan
 
 /libs/application/templates/accident-notification/                                                        @island-is/norda
+/libs/application/templates/alcohol-tax-redemption/                                                       @island-is/norda
 /libs/application/templates/complaints-to-althingi-ombudsman/                                             @island-is/norda
 /libs/application/templates/data-protection-complaint/                                                    @island-is/norda
+/libs/application/templates/document-provider-onboarding/                                                 @island-is/norda
 /libs/application/templates/family-matters/children-residence-change-v2                                   @island-is/norda
 /libs/application/templates/financial-aid/                                                                @island-is/norda
 /libs/application/templates/financial-statements-inao/                                                    @island-is/norda
 /libs/application/templates/funding-government-projects/                                                  @island-is/norda
 /libs/application/templates/general-fishing-license/                                                      @island-is/norda
+/libs/application/templates/grindavik-housing-buyout/                                                     @island-is/norda
 /libs/application/templates/health-insurance/                                                             @island-is/norda
+/libs/application/templates/health-insurance-declaration/                                                 @island-is/norda
+/libs/application/templates/home-support/                                                                 @island-is/norda
 /libs/application/templates/inao/financial-statement-cemetery/                                            @island-is/norda
 /libs/application/templates/inao/financial-statement-individual-election/                                 @island-is/norda
 /libs/application/templates/inao/financial-statement-political-party/                                     @island-is/norda
 /libs/application/templates/institution-collaboration/                                                    @island-is/norda @island-is/fuglar
 /libs/application/templates/login-service/                                                                @island-is/norda
 /libs/application/templates/public-debt-payment-plan/                                                     @island-is/norda
+/libs/application/templates/reference-template/                                                           @island-is/norda
 
 /libs/application/template-api-modules/src/lib/modules/templates/accident-notification/                   @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/children-residence-change-v2/            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/complaints-to-althingi-ombudsman/        @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/               @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/financial-aid                            @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/document-provider-onboarding/            @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/financial-aid/                           @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-cemetery/            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-individual-election/ @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-political-party/     @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statements-inao                @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/             @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/                 @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/               @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/grindavik-housing-buyout/                @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/health-insurance/                        @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/health-insurance-declaration/            @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/home-support/                            @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/               @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/                           @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/public-debt-payment-plan                 @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/public-debt-payment-plan/                @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/reference-template/                      @island-is/norda
 
 /libs/clients/althingi-ombudsman/                                                                         @island-is/norda
 /libs/clients/data-protection-complaint/                                                                  @island-is/norda
@@ -271,7 +284,6 @@ codemagic.yaml                                                                  
 
 /libs/shared/form-fields/                                                                                 @island-is/norda @island-is/island-ui
 
-/libs/portals/my-pages/signature-collection/                                                              @island-is/norda
 /libs/portals/my-pages/applications/                                                                      @island-is/norda
 /libs/portals/admin/application-system/                                                                   @island-is/norda
 /libs/api/domains/application/                                                                            @island-is/norda

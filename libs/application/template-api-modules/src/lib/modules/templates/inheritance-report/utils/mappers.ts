@@ -125,10 +125,10 @@ export const expandAnswers = (
         data: (answers.assets.bankAccounts?.data ?? []).map((account) => {
           return {
             assetNumber: account.assetNumber ?? '',
-            propertyValuation: account.propertyValuation ?? '',
+            propertyValuation: account.propertyValuation ?? '0',
             exchangeRateOrInterest: account.exchangeRateOrInterest ?? '',
             foreignBankAccount: account?.foreignBankAccount ?? [],
-            deceasedShare: account.deceasedShare ?? '',
+            deceasedShare: account.deceasedShare ?? '0',
             deceasedShareEnabled: account.deceasedShareEnabled ?? [],
             deceasedShareAmount: account.deceasedShareAmount ?? 0,
             enabled: account.enabled ?? true,
@@ -141,8 +141,8 @@ export const expandAnswers = (
           return {
             assetNumber: claim.assetNumber ?? '',
             description: claim.description ?? '',
-            propertyValuation: claim.propertyValuation ?? '',
-            deceasedShare: claim.deceasedShare ?? '',
+            propertyValuation: claim.propertyValuation ?? '0',
+            deceasedShare: claim.deceasedShare ?? '0',
             deceasedShareEnabled: claim.deceasedShareEnabled ?? [],
             deceasedShareAmount: claim.deceasedShareAmount ?? 0,
             enabled: claim.enabled ?? true,
@@ -155,8 +155,8 @@ export const expandAnswers = (
           return {
             assetNumber: gun.assetNumber ?? '',
             description: gun.description ?? '',
-            propertyValuation: gun.propertyValuation ?? '',
-            deceasedShare: gun.deceasedShare ?? '',
+            propertyValuation: gun.propertyValuation ?? '0',
+            deceasedShare: gun.deceasedShare ?? '0',
             deceasedShareEnabled: gun.deceasedShareEnabled ?? [],
             deceasedShareAmount: gun.deceasedShareAmount ?? 0,
             enabled: gun.enabled ?? true,
@@ -167,7 +167,7 @@ export const expandAnswers = (
       inventory: {
         info: answers.assets.inventory?.info ?? '',
         value: answers.assets.inventory?.value ?? '',
-        deceasedShare: answers.assets.inventory?.deceasedShare ?? '',
+        deceasedShare: answers.assets.inventory?.deceasedShare ?? '0',
         deceasedShareEnabled:
           answers.assets.inventory?.deceasedShareEnabled ?? [],
         deceasedShareAmount: answers.assets.inventory?.deceasedShareAmount ?? 0,
@@ -175,7 +175,7 @@ export const expandAnswers = (
       money: {
         info: answers.assets.money?.info ?? '',
         value: answers.assets.money?.value ?? '',
-        deceasedShare: answers.assets.money?.deceasedShare ?? '',
+        deceasedShare: answers.assets.money?.deceasedShare ?? '0',
         deceasedShareEnabled: answers.assets.money?.deceasedShareEnabled ?? [],
         deceasedShareAmount: answers.assets.money?.deceasedShareAmount ?? 0,
       },
@@ -184,7 +184,7 @@ export const expandAnswers = (
           return {
             info: otherAsset?.info ?? '',
             value: otherAsset?.value ?? '',
-            deceasedShare: otherAsset?.deceasedShare ?? '',
+            deceasedShare: otherAsset?.deceasedShare ?? '0',
             deceasedShareEnabled: otherAsset?.deceasedShareEnabled ?? [],
             deceasedShareAmount: otherAsset?.deceasedShareAmount ?? 0,
           }
@@ -215,7 +215,7 @@ export const expandAnswers = (
             description: stock.description ?? '',
             exchangeRateOrInterest: stock.exchangeRateOrInterest ?? '',
             value: stock.value ?? '',
-            deceasedShare: stock?.deceasedShare ?? '',
+            deceasedShare: stock?.deceasedShare ?? '0',
             deceasedShareEnabled: stock?.deceasedShareEnabled ?? [],
             deceasedShareAmount: stock?.deceasedShareAmount ?? 0,
             enabled: stock.enabled ?? true,
@@ -228,7 +228,7 @@ export const expandAnswers = (
           return {
             assetNumber: vehicle.assetNumber ?? '',
             description: vehicle.description ?? '',
-            propertyValuation: vehicle.propertyValuation ?? '',
+            propertyValuation: vehicle.propertyValuation ?? '0',
             deceasedShare: vehicle.deceasedShare ?? '0',
             deceasedShareEnabled: vehicle.deceasedShareEnabled ?? [],
             deceasedShareAmount: vehicle?.deceasedShareAmount ?? 0,

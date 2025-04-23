@@ -29,6 +29,7 @@ query Cases {
       verdictViewDate
       isSentToPrisonAdmin
       punishmentType
+      isAlternativeService
       openedByPrisonAdminDate
       subpoenas {
         id
@@ -38,6 +39,7 @@ query Cases {
       verdictAppealDate
     }
     defendantsPunishmentType
+    publicProsecutorIsRegisteredInPoliceSystem
     courtDate
     isValidToDateInThePast
     initialRulingDate

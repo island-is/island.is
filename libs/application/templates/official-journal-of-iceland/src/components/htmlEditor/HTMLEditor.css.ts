@@ -1,6 +1,6 @@
 import type { EditorClasses } from '@island.is/regulations-tools/Editor'
 import { style, globalStyle, keyframes, StyleRule } from '@vanilla-extract/css'
-import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
+import { spacing, theme } from '@island.is/island-ui/theme'
 import {
   diffStyling,
   regulationContentStyling,
@@ -12,7 +12,6 @@ import {
   readOnly,
 } from './EditorInput.css'
 import { recipe } from '@vanilla-extract/recipes'
-import { transform } from 'pdfkit'
 
 const { color, typography, border } = theme
 

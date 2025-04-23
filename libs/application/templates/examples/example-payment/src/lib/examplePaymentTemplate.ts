@@ -13,7 +13,6 @@ import {
   Application,
   VerifyPaymentApi,
   InstitutionNationalIds,
-  MockablePaymentCatalogApi,
   BasicChargeItem,
 } from '@island.is/application/types'
 import { MockPaymentCatalogWithTwoItems } from '../dataProviders'

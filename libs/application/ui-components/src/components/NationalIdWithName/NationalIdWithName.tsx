@@ -17,6 +17,7 @@ import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
 import debounce from 'lodash/debounce'
 import { COMPANY_IDENTITY_QUERY, IDENTITY_QUERY } from './graphql/queries'
+import { setInputsOnChange } from '@island.is/shared/utils'
 
 interface NationalIdWithNameProps {
   id: string
@@ -44,6 +45,9 @@ interface NationalIdWithNameProps {
   showEmailField?: boolean
   error?: string
   clearOnChange?: string[]
+  setOnChange?:
+    | { key: string; value: any }[]
+    | ((value: string | undefined) => Promise<{ key: string; value: any }[]>)
 }
 
 export const NationalIdWithName: FC<
@@ -55,8 +59,8 @@ export const NationalIdWithName: FC<
   required,
   customId = '',
   customNationalIdLabel = '',
-  phoneLabel = '',
-  emailLabel = '',
+  phoneLabel = undefined,
+  emailLabel = undefined,
   phoneRequired = false,
   emailRequired = false,
   customNameLabel = '',
@@ -74,7 +78,10 @@ export const NationalIdWithName: FC<
   showEmailField = false,
   error,
   clearOnChange,
+  setOnChange,
 }) => {
+  const [invalidNationalId, setInvalidNationalId] = useState(false)
+
   const fieldId = customId.length > 0 ? customId : id
   const nameField = `${fieldId}.name`
   const nationalIdField = `${fieldId}.nationalId`
@@ -184,10 +191,7 @@ export const NationalIdWithName: FC<
           companyData?.companyRegistryCompany === null
         ) {
           setValue(nameField, '')
-        } else if (
-          searchCompanies &&
-          companyData?.companyRegistryCompany === null
-        ) {
+        } else if (searchPersons && data?.identity === null) {
           setValue(nameField, '')
         }
       },
@@ -196,28 +200,32 @@ export const NationalIdWithName: FC<
 
   // fetch and update name when user has entered a valid national id
   useEffect(() => {
-    if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
-      {
-        searchPersons &&
-          getIdentity({
-            variables: {
-              input: {
-                nationalId: nationalIdInput,
-              },
-            },
-          })
-      }
+    if (nationalIdInput.length !== 10) {
+      return
+    }
 
-      {
-        searchCompanies &&
-          getCompanyIdentity({
-            variables: {
-              input: {
-                nationalId: nationalIdInput,
-              },
+    if (kennitala.isValid(nationalIdInput)) {
+      setInvalidNationalId(false)
+      searchPersons &&
+        getIdentity({
+          variables: {
+            input: {
+              nationalId: nationalIdInput,
             },
-          })
-      }
+          },
+        })
+
+      searchCompanies &&
+        getCompanyIdentity({
+          variables: {
+            input: {
+              nationalId: nationalIdInput,
+            },
+          },
+        })
+    } else {
+      setValue(nameField, '')
+      setInvalidNationalId(true)
     }
   }, [
     nationalIdInput,
@@ -225,6 +233,8 @@ export const NationalIdWithName: FC<
     getCompanyIdentity,
     searchPersons,
     searchCompanies,
+    setValue,
+    nameField,
   ])
 
   return (
@@ -242,10 +252,18 @@ export const NationalIdWithName: FC<
             format="######-####"
             required={required}
             backgroundColor="blue"
-            onChange={debounce((v) => {
+            onChange={debounce(async (v) => {
               setNationalIdInput(v.target.value.replace(/\W/g, ''))
               onNationalIdChange &&
                 onNationalIdChange(v.target.value.replace(/\W/g, ''))
+              if (setOnChange) {
+                setInputsOnChange(
+                  typeof setOnChange === 'function'
+                    ? await setOnChange(v.target.value.replace(/\W/g, ''))
+                    : setOnChange,
+                  setValue,
+                )
+              }
             })}
             loading={searchPersons ? queryLoading : companyQueryLoading}
             error={nationalIdFieldErrors}
@@ -265,7 +283,7 @@ export const NationalIdWithName: FC<
             required={disabled ? required : false}
             error={
               searchPersons
-                ? queryError || data?.identity === null
+                ? queryError || data?.identity === null || invalidNationalId
                   ? formatMessage(
                       coreErrorMessages.nationalRegistryNameNotFoundForNationalId,
                     )
@@ -291,10 +309,14 @@ export const NationalIdWithName: FC<
       {(showPhoneField || showEmailField) && (
         <GridRow>
           {showPhoneField && (
-            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={3}>
               <PhoneInputController
                 id={phoneField}
-                label={formatMessage(phoneLabel)}
+                label={
+                  phoneLabel
+                    ? formatMessage(phoneLabel)
+                    : formatMessage(coreErrorMessages.nationalRegistryPhone)
+                }
                 defaultValue={defaultPhone}
                 required={phoneRequired}
                 backgroundColor="blue"
@@ -304,10 +326,14 @@ export const NationalIdWithName: FC<
             </GridColumn>
           )}
           {showEmailField && (
-            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
+            <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={3}>
               <InputController
                 id={emailField}
-                label={formatMessage(emailLabel)}
+                label={
+                  emailLabel
+                    ? formatMessage(emailLabel)
+                    : formatMessage(coreErrorMessages.nationalRegistryEmail)
+                }
                 defaultValue={defaultEmail}
                 type="email"
                 required={emailRequired}

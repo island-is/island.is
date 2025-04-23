@@ -2,15 +2,9 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   /* Forsetakosningar */
-  pageTitle: {
+  pageTitlePresidential: {
     id: 'sp.signatureCollection:title',
-    defaultMessage: 'Meðmælasöfnun',
-    description: '',
-  },
-  pageDescription: {
-    id: 'sp.signatureCollection:description',
-    defaultMessage:
-      'Upplýsingar um það hvernig umboð er veitt - hvernig aðgangsstýringarnar virka. Linkur á aðgangsstýringu.',
+    defaultMessage: 'Forsetakosningar',
     description: '',
   },
   pageDescriptionSignee: {
@@ -26,22 +20,12 @@ export const m = defineMessages({
   },
   collectionTitle: {
     id: 'sp.signatureCollection:collectionTitle',
-    defaultMessage: 'Forsetakosningar 2024',
-    description: '',
-  },
-  collectionTitleParliamentary: {
-    id: 'sp.signatureCollection:collectionTitleParliamentary',
-    defaultMessage: 'Alþingiskosningar',
+    defaultMessage: 'Forsetakosningar',
     description: '',
   },
   myListsDescription: {
     id: 'sp.signatureCollection:myListsDescription',
     defaultMessage: 'Yfirlit safnana sem þú hefur stofnað',
-    description: '',
-  },
-  myListsInfo: {
-    id: 'sp.signatureCollection:myListsInfo#markdown',
-    defaultMessage: 'Norðvesturkjördæmi - 7 þingsæti. 210 - 280 meðmæli.',
     description: '',
   },
   copyLinkButton: {
@@ -67,16 +51,6 @@ export const m = defineMessages({
   endTime: {
     id: 'sp.signatureCollection:endTime',
     defaultMessage: 'Lokadagur:',
-    description: '',
-  },
-  signedTime: {
-    id: 'sp.signatureCollection:signedTime',
-    defaultMessage: 'Skrifað undir:',
-    description: '',
-  },
-  uploadedTime: {
-    id: 'sp.signatureCollection:uploadedTime',
-    defaultMessage: 'Lesið inn:',
     description: '',
   },
   viewList: {
@@ -255,6 +229,12 @@ export const m = defineMessages({
     defaultMessage: 'Sækja skýrslu',
     description: '',
   },
+  downloadPdfDescription: {
+    id: 'sp.signatureCollection:downloadPdfDescription',
+    defaultMessage:
+      '              Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
+    description: '',
+  },
   copyLink: {
     id: 'sp.signatureCollection:copyLink',
     defaultMessage: 'Afrita tengil',
@@ -295,20 +275,9 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: '',
   },
-  signeeAddress: {
-    id: 'sp.signatureCollection:signeeAddress',
-    defaultMessage: 'Heimilisfang',
-    description: '',
-  },
   paperSigneesHeader: {
     id: 'sp.signatureCollection:paperSigneesHeader',
     defaultMessage: 'Skrá meðmæli af blaði',
-    description: '',
-  },
-  paperSigneesTooltip: {
-    id: 'sp.signatureCollection:paperSigneesTooltip',
-    defaultMessage:
-      'Athugið að ógild meðmæli skrást inn en teljast ekki með í heildartölu meðmæla. Dæmi slegnar eru inn 10 kennitölur en kerfið telur aðeins 8 gildar.',
     description: '',
   },
   paperSigneesClearButton: {
@@ -383,8 +352,8 @@ export const m = defineMessages({
   },
 
   /* Parliamentary */
-  parliamentaryElectionsTitle: {
-    id: 'sp.signatureCollection:parliamentaryElectionsTitle',
+  collectionTitleParliamentary: {
+    id: 'sp.signatureCollection:collectionTitleParliamentary',
     defaultMessage: 'Alþingiskosningar',
     description: '',
   },
@@ -393,32 +362,10 @@ export const m = defineMessages({
     defaultMessage: 'Meðmælasöfnun fyrir Alþingiskosningar',
     description: '',
   },
-  pageDescriptionParliamentary: {
-    id: 'sp.signatureCollection:pageDescriptionParliamentary',
-    defaultMessage:
-      'Hægt er að gera einstaklinga að umsjónaraðilum hér að neðan. Fjöldi meðmælenda er margfeldi af þingsætatölu hvers kjördæmis og 30 að lágmarki og 40 að hámarki. Söfnun lýkur 16.10.2024.',
-    description: '',
-  },
   infoProviderTooltip: {
     id: 'sp.signatureCollection:infoProviderTooltip',
     defaultMessage:
       'Þjóðskrá Íslands hefur umsjón með gögnum um meðmælasöfnun.',
-  },
-  supervisors: {
-    id: 'sp.signatureCollection:supervisors',
-    defaultMessage: 'Umsjónaraðilar',
-    description: '',
-  },
-  noSupervisors: {
-    id: 'sp.signatureCollection:noSupervisors',
-    defaultMessage: 'Enginn umsjónaraðili skráður',
-    description: '',
-  },
-  supervisorsTooltip: {
-    id: 'sp.signatureCollection:supervisorsTooltip',
-    defaultMessage:
-      'Umsjónaraðilar hafa aðgang að öllum upplýsingum safnananna en geta ekki eytt söfnununum.',
-    description: '',
   },
   add: {
     id: 'sp.signatureCollection:add',
@@ -440,16 +387,6 @@ export const m = defineMessages({
     defaultMessage: 'Ógild kennitala',
     description: '',
   },
-  constituency: {
-    id: 'sp.signatureCollection:constituency',
-    defaultMessage: 'Kjördæmi',
-    description: '',
-  },
-  allConstituencies: {
-    id: 'sp.signatureCollection:allConstituencies',
-    defaultMessage: 'Öll kjördæmi',
-    description: '',
-  },
   addConstituency: {
     id: 'sp.signatureCollection:addConstituency',
     defaultMessage: 'Bæta við kjördæmi',
@@ -469,6 +406,62 @@ export const m = defineMessages({
   addConstituencyError: {
     id: 'sp.signatureCollection:addConstituencyError',
     defaultMessage: 'Ekki tókst að bæta við kjördæmi',
+    description: '',
+  },
+
+  /* Municipal */
+  pageTitleMunicipal: {
+    id: 'sp.signatureCollection:pageTitleMunicipal',
+    defaultMessage: 'Meðmælasafnanir fyrir sveitarstjórnarkosningar',
+    description: '',
+  },
+  pageIntro: {
+    id: 'sp.signatureCollection:pageIntro',
+    defaultMessage:
+      'Hér eru upplýsingar um hlekk á söfnunina, stöðuna og yfirlit yfir umsjónaraðila.',
+    description: '',
+  },
+  collectionIsActive: {
+    id: 'sp.signatureCollection:collectionIsActive',
+    defaultMessage: 'Söfnun í gangi',
+    description: '',
+  },
+  managers: {
+    id: 'sp.signatureCollection:managers',
+    defaultMessage: 'Umsjónaraðilar',
+    description: '',
+  },
+  managersDescription: {
+    id: 'sp.signatureCollection:managersDescription',
+    defaultMessage:
+      'Hægt er að bæta við umsjónaraðilum með því að veita þeim umboð hér. Umsjónaraðilar hafa sömu aðgangsheimildir og stofnandi söfnunar en geta ekki eytt söfnuninni.',
+    description: '',
+  },
+  noManagers: {
+    id: 'sp.signatureCollection:noManagers',
+    defaultMessage: 'Enginn umsjónaraðili skráður',
+    description: '',
+  },
+  listActions: {
+    id: 'sp.signatureCollection:listActions',
+    defaultMessage: 'Aðgerðir',
+    description: '',
+  },
+  listActionsDescription: {
+    id: 'sp.signatureCollection:listActionsDescription',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu justo interdum, pharetra enim vel, ultrices augue.',
+    description: '',
+  },
+  deleteCollection: {
+    id: 'sp.signatureCollection:deleteCollection',
+    defaultMessage: 'Eyða frambooði',
+    description: '',
+  },
+  deleteCollectionDescription: {
+    id: 'sp.signatureCollection:deleteCollectionDescription',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet. Vestibulum tincidunt cursus viverra.',
     description: '',
   },
 })
