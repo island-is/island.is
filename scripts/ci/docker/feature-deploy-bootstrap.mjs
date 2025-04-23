@@ -49,19 +49,23 @@ async function main() {
     if (namespaceToAdd) {
       namespacesToAdd.add(namespaceToAdd)
     }
+
     if (nsGrantToAdd) {
       console.log(nsGrantToAdd)
-      nsGrantToAdd["grantNamespaces"].forEach(nsGrantsToAdd.add, nsGrantToAdd)
+      nsGrantToAdd["grantNamespaces"].forEach((nsGrant) => nsGrantsToAdd.add(nsGrant))
     }
   }
 
   console.log('Namespaces to add:', namespacesToAdd)
+  console.log('NS grants to add:', nsGrantsToAdd)
 
   const directoryPath =  path.join(directory, "bootstrap")
   mkdirSync(directoryPath, { recursive: true })
 
   const content = {
     namespaces: Array.from(namespacesToAdd),
+    grantNamespacesEnabled: true,
+    grantNamespaces: Array.from(nsGrantsToAdd)
   }
   writeFileSync(
     `${directoryPath}/values.bootstrap.yaml`,
