@@ -995,12 +995,19 @@ const EnglishResultsLink: FC<
     QuerySearchResultsArgs
   >(GET_SEARCH_RESULTS_TOTAL)
 
+  const excludedType = SearchableContentTypes.WebQna
+
+  const types = Object.values(SearchableContentTypes).filter(
+    (type) => !excludedType.includes(type),
+  )
+
   useMemo(() => {
     getCount({
       variables: {
         query: {
           queryString: q,
           language: 'en' as ContentLanguage,
+          types,
         },
       },
     })
