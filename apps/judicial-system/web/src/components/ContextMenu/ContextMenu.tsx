@@ -1,4 +1,4 @@
-import { cloneElement, FC, forwardRef, ReactElement, useState } from 'react'
+import { forwardRef, ReactElement, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
@@ -18,7 +18,6 @@ import {
   IconMapIcon,
   useBoxStyles,
 } from '@island.is/island-ui/core'
-import { TestSupport } from '@island.is/island-ui/utils'
 
 import { useCaseList } from '../../utils/hooks'
 import { contextMenu as strings } from './ContextMenu.strings'
