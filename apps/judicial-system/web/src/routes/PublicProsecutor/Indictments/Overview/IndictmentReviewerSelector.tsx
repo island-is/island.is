@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Option, Select, Text } from '@island.is/island-ui/core'
+import { Option, Select, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   BlueBox,
@@ -55,7 +55,7 @@ export const IndictmentReviewerSelector = ({
   }, [data?.users, user])
 
   return (
-    <Box marginBottom={5}>
+    <>
       <SectionHeading
         title={fm(strings.reviewerTitle)}
         description={
@@ -96,6 +96,6 @@ export const IndictmentReviewerSelector = ({
           required
         />
       </BlueBox>
-    </Box>
+    </>
   )
 }

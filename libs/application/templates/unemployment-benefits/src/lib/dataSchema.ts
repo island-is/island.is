@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { YES } from '@island.is/application/core'
+import { education } from './messages'
 
 const applicantInformationSchema = z
   .object({
@@ -75,11 +76,34 @@ const jobWishesSchema = z.object({
   location: z.array(z.string()).optional(),
 })
 
+const educationHistorySchema = z.object({
+  currentStudies: z
+    .object({
+      schoolName: z.string().min(1),
+      courseSubject: z.string().min(1),
+      units: z.string().min(1),
+      degree: z.string().min(1),
+      expectedEndOfStudy: z.string().min(1),
+    })
+    .optional(),
+  olderEducation: z
+    .array(
+      z.object({
+        levelOfStudy: z.array(z.string()).refine((v) => v.length > 0),
+        degree: z.array(z.string()).refine((v) => v.length > 0),
+        courseOfStudy: z.array(z.string()).refine((v) => v.length > 0),
+        studyNotCompleted: z.array(z.string()).optional(),
+      }),
+    )
+    .optional(),
+})
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema,
   currentSituation: currentSituationSchema,
   jobWishes: jobWishesSchema,
+  educationHistory: educationHistorySchema,
   informationChangeAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES)),

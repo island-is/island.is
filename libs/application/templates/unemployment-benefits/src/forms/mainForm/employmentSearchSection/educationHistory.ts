@@ -127,6 +127,7 @@ export const educationHistorySubSection = buildSubSection({
             }
           },
           formTitleNumbering: 'none',
+          minRows: 0,
           addItemButtonText:
             employmentSearchMessages.educationHistory.addItemButtonText,
           fields: {

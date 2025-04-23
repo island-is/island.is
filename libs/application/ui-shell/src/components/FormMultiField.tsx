@@ -88,6 +88,10 @@ const FormMultiField: FC<
         const isLastChild = index === children.length - 1
         const paddingBottom = shouldHideField || isLastChild ? 0 : space
 
+        if (typedField.isNavigable === false) {
+          return null
+        }
+
         return (
           <GridColumn
             key={field.id || index}

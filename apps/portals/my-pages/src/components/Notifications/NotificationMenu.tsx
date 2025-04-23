@@ -14,7 +14,7 @@ import {
   InformationPaths,
 } from '@island.is/portals/my-pages/information'
 import { sharedMessages } from '@island.is/shared/translations'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import { m } from '@island.is/portals/my-pages/core'
@@ -35,7 +35,6 @@ const NotificationMenu = ({
   rightPosition,
   data,
 }: Props): ReactElement | null => {
-  useNamespaces(['service.portal'])
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
 

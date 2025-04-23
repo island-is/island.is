@@ -7,13 +7,7 @@ import {
   ReasonKey,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
-import {
-  getSlug,
-  List,
-  ListStatus,
-  mapList,
-  mapListBase,
-} from './types/list.dto'
+import { getSlug, List, ListStatus, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { CandidateLookup } from './types/user.dto'
 import {
@@ -50,7 +44,6 @@ export class SignatureCollectionAdminClientService {
   constructor(
     private listsApi: AdminListApi,
     private collectionsApi: AdminCollectionApi,
-    private signatureApi: AdminSignatureApi,
     private sharedService: SignatureCollectionSharedClientService,
     private candidateApi: AdminCandidateApi,
     private adminApi: AdminApi,
@@ -140,7 +133,7 @@ export class SignatureCollectionAdminClientService {
       sofnunID: parseInt(collectionId),
     })
 
-    const adminApi = await this.getApiWithAuth(this.adminApi, auth)
+    const adminApi = this.getApiWithAuth(this.adminApi, auth)
 
     const filteredAreas = areas
       ? collectionAreas.filter((area) =>
@@ -178,11 +171,13 @@ export class SignatureCollectionAdminClientService {
       })
     }
 
+    const collectionsApi = this.getApiWithAuth(this.collectionsApi, auth)
+    const votingType = await collectionsApi.medmaelasofnunIDGet({
+      iD: candidacy.medmaelasofnunID ?? -1,
+    })
+
     return {
-      slug: getSlug(
-        candidacy.id ?? '',
-        candidacy.medmaelasofnun?.kosningTegund ?? '',
-      ),
+      slug: getSlug(candidacy.id ?? '', votingType.kosningTegund),
     }
   }
 
@@ -202,7 +197,7 @@ export class SignatureCollectionAdminClientService {
     auth: Auth,
   ): Promise<CandidateLookup> {
     const collection = await this.currentCollection(auth)
-    const { id, isPresidential, areas } = collection
+    const { id, collectionType, areas } = collection
     const user = await this.getApiWithAuth(
       this.adminApi,
       auth,
@@ -218,11 +213,11 @@ export class SignatureCollectionAdminClientService {
         : []
 
     const { success: canCreate, reasons: canCreateInfo } =
-      await this.sharedService.canCreate({
+      this.sharedService.canCreate({
         requirementsMet: user.maFrambod,
         canCreateInfo: user.maFrambodInfo,
         ownedLists,
-        isPresidential,
+        collectionType,
         areas,
       })
 
@@ -330,10 +325,9 @@ export class SignatureCollectionAdminClientService {
 
   async removeCandidate(candidateId: string, auth: Auth): Promise<Success> {
     try {
-      const res = await this.getApiWithAuth(
-        this.adminApi,
-        auth,
-      ).adminFrambodIDDelete({ iD: parseInt(candidateId) })
+      await this.getApiWithAuth(this.adminApi, auth).adminFrambodIDDelete({
+        iD: parseInt(candidateId),
+      })
       return { success: true }
     } catch (error) {
       return { success: false, reasons: [ReasonKey.DeniedByService] }

@@ -1,7 +1,0 @@
-enabled: true
-
-annotations:
-  linkerd.io/inject: disabled
-labels: {}
-
-namespaces: []
