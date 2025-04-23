@@ -82,79 +82,83 @@ const Subpoena: FC = () => {
         return
       }
 
-      setIsCreatingSubpoena(true)
-
-      const promises: Promise<boolean>[] = []
-
-      if (workingCase.defendants) {
-        workingCase.defendants.forEach((defendant) => {
-          promises.push(
-            updateDefendant({
-              caseId: workingCase.id,
-              defendantId: defendant.id,
-              isAlternativeService: defendant.isAlternativeService,
-              // Clear the alternative service description if the defendant
-              // is not being served by alternative means
-              alternativeServiceDescription: defendant.isAlternativeService
-                ? defendant.alternativeServiceDescription
-                : null,
-              // Only change the subpoena type if the defendant is not
-              // being served by alternative means
-              subpoenaType: defendant.isAlternativeService
-                ? undefined
-                : defendant.subpoenaType,
-            }),
-          )
-        })
-      }
-
-      // Make sure defendants are updated before submitting the court date
-      const allDefendantsUpdated = await Promise.all(promises)
-
-      if (!allDefendantsUpdated.every((result) => result)) {
-        setIsCreatingSubpoena(false)
-        return
-      }
-
-      const additionalUpdates = [
-        {
-          // This should always be an arraignment type
-          courtSessionType: CourtSessionType.ARRAIGNMENT,
-          // if the case is being rescheduled after the court has met,
-          // then clear the current conclusion
-          ...(isArraignmentScheduled && workingCase.indictmentDecision
-            ? {
-                indictmentDecision: null,
-                courtDate: null,
-                postponedIndefinitelyExplanation: null,
-                indictmentRulingDecision: null,
-                mergeCaseId: null,
-                force: true,
-              }
-            : {}),
-        },
-      ]
-
-      const courtDateUpdated = await sendCourtDateToServer(additionalUpdates)
-
-      setIsCreatingSubpoena(false)
-
-      if (!courtDateUpdated) {
-        return
-      }
-
-      router.push(`${destination}/${workingCase.id}`)
+      setNavigateTo(destination)
     },
-    [
-      isSchedulingArraignmentDate,
-      workingCase.defendants,
-      workingCase.indictmentDecision,
-      workingCase.id,
-      isArraignmentScheduled,
-      sendCourtDateToServer,
-      updateDefendant,
-    ],
+    [isSchedulingArraignmentDate, workingCase.id],
   )
+
+  const scheduleArraignmentDate = useCallback(async () => {
+    setIsCreatingSubpoena(true)
+
+    const promises: Promise<boolean>[] = []
+
+    if (workingCase.defendants) {
+      workingCase.defendants.forEach((defendant) => {
+        promises.push(
+          updateDefendant({
+            caseId: workingCase.id,
+            defendantId: defendant.id,
+            isAlternativeService: defendant.isAlternativeService,
+            // Clear the alternative service description if the defendant
+            // is not being served by alternative means
+            alternativeServiceDescription: defendant.isAlternativeService
+              ? defendant.alternativeServiceDescription
+              : null,
+            // Only change the subpoena type if the defendant is not
+            // being served by alternative means
+            subpoenaType: defendant.isAlternativeService
+              ? undefined
+              : defendant.subpoenaType,
+          }),
+        )
+      })
+    }
+
+    // Make sure defendants are updated before submitting the court date
+    const allDefendantsUpdated = await Promise.all(promises)
+
+    if (!allDefendantsUpdated.every((result) => result)) {
+      setIsCreatingSubpoena(false)
+      return
+    }
+
+    const additionalUpdates = [
+      {
+        // This should always be an arraignment type
+        courtSessionType: CourtSessionType.ARRAIGNMENT,
+        // if the case is being rescheduled after the court has met,
+        // then clear the current conclusion
+        ...(isArraignmentScheduled && workingCase.indictmentDecision
+          ? {
+              indictmentDecision: null,
+              courtDate: null,
+              postponedIndefinitelyExplanation: null,
+              indictmentRulingDecision: null,
+              mergeCaseId: null,
+              force: true,
+            }
+          : {}),
+      },
+    ]
+
+    const courtDateUpdated = await sendCourtDateToServer(additionalUpdates)
+
+    setIsCreatingSubpoena(false)
+
+    if (!courtDateUpdated) {
+      return
+    }
+
+    router.push(`${navigateTo}/${workingCase.id}`)
+  }, [
+    isArraignmentScheduled,
+    navigateTo,
+    sendCourtDateToServer,
+    updateDefendant,
+    workingCase.defendants,
+    workingCase.id,
+    workingCase.indictmentDecision,
+  ])
 
   const stepIsValid = isSubpoenaStepValid(workingCase, courtDate)
 
@@ -320,7 +324,7 @@ const Subpoena: FC = () => {
               : strings.modalAlternativeServiceText
           }
           onPrimaryButtonClick={() => {
-            handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+            scheduleArraignmentDate()
           }}
           onSecondaryButtonClick={() => {
             setNavigateTo(undefined)
