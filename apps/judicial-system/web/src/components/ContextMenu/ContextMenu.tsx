@@ -1,8 +1,14 @@
-import { cloneElement, FC, forwardRef, ReactElement } from 'react'
+import { cloneElement, FC, forwardRef, ReactElement, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
-import { Menu, MenuButton, MenuItem, MenuProvider } from '@ariakit/react'
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuProvider,
+  useMenuStore,
+} from '@ariakit/react'
 
 import {
   Box,
@@ -63,9 +69,13 @@ export const useContextMenu = () => {
   }
 }
 
-export const ContextMenuV2: FC<ContextMenuProps> = (props) => {
-  const { title, items, render } = props
+export const ContextMenuV2 = forwardRef<
+  HTMLButtonElement,
+  ContextMenuProps & TestSupport
+>(({ render, menuLabel, items, title, dataTestId, offset }, ref) => {
+  const [open, setOpen] = useState(false)
   const router = useRouter()
+  const menu = useMenuStore({ open, setOpen })
 
   const menuItemBoxStyle = useBoxStyles({
     component: 'button',
@@ -91,7 +101,8 @@ export const ContextMenuV2: FC<ContextMenuProps> = (props) => {
   })
 
   const handleClick = (evt: React.MouseEvent, item: ContextMenuItem) => {
-    evt.preventDefault()
+    evt.stopPropagation()
+    setOpen(false)
 
     if (item.href) {
       router.push(item.href)
@@ -103,31 +114,43 @@ export const ContextMenuV2: FC<ContextMenuProps> = (props) => {
       return
     }
   }
-  console.log(items)
 
   return (
     <MenuProvider>
-      <MenuButton render={render || <Button icon="add" />}>{title}</MenuButton>
-      <Menu render={<ul className={cn(styles.menu, menuBoxStyle)}></ul>}>
+      <MenuButton
+        render={render ?? <Button icon="add" />}
+        store={menu}
+        ref={ref}
+      >
+        {title}
+      </MenuButton>
+      <Menu
+        render={<ul className={cn(styles.menu, menuBoxStyle)} />}
+        store={menu}
+        unmountOnHide
+      >
         {items?.map((item, index) => (
           <MenuItem
             key={`${item.title}_${index}`}
             render={
               <Box component="li" width="full">
-                {item.href && (
-                  <Box
-                    component={item.href ? 'a' : 'button'}
-                    href={item.href ?? undefined}
-                    onClick={(evt) => handleClick(evt, item)}
-                    className={cn(
-                      menuItemBoxStyle,
-                      menuItemTextStyle,
-                      styles.menuItem,
-                    )}
-                  >
-                    {item.title}
-                  </Box>
-                )}
+                <Box
+                  component={item.href ? 'a' : 'button'}
+                  href={item.href ?? undefined}
+                  onClick={(evt) => handleClick(evt, item)}
+                  className={cn(
+                    menuItemBoxStyle,
+                    menuItemTextStyle,
+                    styles.menuItem,
+                  )}
+                >
+                  {item.icon && (
+                    <Box display="flex" marginRight={2}>
+                      <Icon icon={item.icon} type="outline" color="blue400" />
+                    </Box>
+                  )}
+                  {item.title}
+                </Box>
               </Box>
             }
           />
@@ -135,7 +158,7 @@ export const ContextMenuV2: FC<ContextMenuProps> = (props) => {
       </Menu>
     </MenuProvider>
   )
-}
+})
 
 const ContextMenu = forwardRef<HTMLElement, ContextMenuProps & TestSupport>(
   ({ disclosure, menuLabel, items, title, dataTestId, offset }, ref) => {

@@ -344,7 +344,6 @@ const Table: FC<TableProps> = (props) => {
                             animate={{ opacity: 1, y: 1 }}
                             exit={{ opacity: 0, y: 5 }}
                             onClick={(evt) => {
-                              console.log('click')
                               evt.stopPropagation()
                             }}
                           >

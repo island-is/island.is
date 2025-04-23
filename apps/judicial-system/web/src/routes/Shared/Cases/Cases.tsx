@@ -263,7 +263,6 @@ export const Cases: FC = () => {
     setVisibleModal(undefined)
   }
 
-  console.log(user, isProsecutionUser(user))
   return (
     <>
       <SharedPageLayout>
