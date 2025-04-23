@@ -2,8 +2,6 @@ appId: 'is.island.app.dev'
 ---
 - tapOn:
     id: 'TABBAR_TAB_MORE'
-- assertVisible:
-    id: 'MORE_CARD_FAMILY'
 - tapOn:
     id: 'MORE_CARD_FAMILY'
 - assertVisible:
@@ -14,3 +12,5 @@ appId: 'is.island.app.dev'
     id: 'FAMILY_MEMBER_ITEM'
 - assertVisible:
     id: 'SCREEN_FAMILY_DETAIL'
+- tapOn:
+    id: 'NAVBAR_SHEET_CLOSE_BUTTON'

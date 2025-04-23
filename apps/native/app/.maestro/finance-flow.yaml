@@ -2,8 +2,6 @@ appId: 'is.island.app.dev'
 ---
 - tapOn:
     id: 'TABBAR_TAB_MORE'
-- assertVisible:
-    id: 'MORE_CARD_FINANCE'
 - tapOn:
     id: 'MORE_CARD_FINANCE'
 - assertVisible:
@@ -14,3 +12,5 @@ appId: 'is.island.app.dev'
     id: 'FINANCE_ITEM_ROW'
 - assertVisible:
     id: 'SCREEN_FINANCE_DETAIL'
+- tapOn:
+    id: 'NAVBAR_SHEET_CLOSE_BUTTON'

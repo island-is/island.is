@@ -2,8 +2,6 @@ appId: 'is.island.app.dev'
 ---
 - tapOn:
     id: 'TABBAR_TAB_MORE'
-- assertVisible:
-    id: 'MORE_CARD_HEALTH'
 - tapOn:
     id: 'MORE_CARD_HEALTH'
 - assertVisible:
@@ -20,3 +18,5 @@ appId: 'is.island.app.dev'
     id: 'VACCINATION_ITEM'
 - assertVisible:
     id: 'VACCINATION_ITEM_ROW'
+- tapOn:
+    text: 'Heilsa'

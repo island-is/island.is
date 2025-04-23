@@ -10,3 +10,5 @@ appId: 'is.island.app.dev'
     id: 'LICENSE_STATUS'
 - assertVisible:
     id: 'LICENSE_FIELDS'
+- tapOn:
+    text: 'Skírteini'
