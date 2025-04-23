@@ -4,6 +4,7 @@ import { AssetsPaths } from './paths'
 
 export const assetsNavigation: PortalNavigationItem = {
   name: m.assets,
+  description: m.assetsDescription,
   path: AssetsPaths.AssetsRoot,
   icon: {
     icon: 'homeWithCar',

@@ -234,6 +234,10 @@ export class OfficialJournalOfIcelandApplicationService {
     )
   }
 
+  async getMyUserInfo(user: User) {
+    return this.ojoiApplicationService.getMyUserInfo(user)
+  }
+
   async getApplicationCase(
     id: string,
     user: User,

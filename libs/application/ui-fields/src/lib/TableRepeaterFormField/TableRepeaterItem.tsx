@@ -8,9 +8,8 @@ import {
   HiddenInputField,
   RepeaterItem,
   RepeaterOptionValue,
-  StaticText,
 } from '@island.is/application/types'
-import { Box, GridColumn, Text } from '@island.is/island-ui/core'
+import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
