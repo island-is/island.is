@@ -1,4 +1,4 @@
-import { ReactDatePickerProps } from 'react-datepicker'
+import { DatePickerProps as ReactDatePickerProps } from 'react-datepicker'
 import { dateFormat } from '@island.is/shared/constants'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
@@ -34,11 +34,11 @@ export interface DatePickerProps {
   hasError?: boolean
   errorMessage?: string
   id?: string
-  handleChange?: (startDate: Date) => void
+  handleChange?: ReactDatePickerProps['onChange']
   onInputClick?: ReactDatePickerProps['onInputClick']
-  handleCloseCalendar?: (date: Date | null) => void
+  handleCloseCalendar?: ReactDatePickerProps['onCalendarClose']
   handleOpenCalendar?: () => void
-  required?: boolean
+  required?: ReactDatePickerProps['required']
   inputName?: string
   appearInline?: boolean
   size?: DatePickerSize
@@ -55,7 +55,7 @@ export interface DatePickerProps {
    */
   maxYear?: number
   readOnly?: boolean
-  calendarStartDay?: number
+  calendarStartDay?: ReactDatePickerProps['calendarStartDay']
 }
 
 export interface DatePickerCustomHeaderProps {

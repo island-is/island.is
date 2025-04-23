@@ -4,7 +4,7 @@ import cn from 'classnames'
 import {
   default as ReactDatePicker,
   registerLocale,
-  ReactDatePickerProps,
+  DatePickerProps as ReactDatePickerProps,
 } from 'react-datepicker'
 import getYear from 'date-fns/getYear'
 import is from 'date-fns/locale/is'
@@ -72,7 +72,9 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   readOnly = false,
   calendarStartDay = 0,
 }) => {
-  const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
+  const [startDate, setStartDate] = useState<Date | undefined>(
+    selected ?? undefined,
+  )
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
@@ -94,7 +96,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   }, [locale])
 
   useEffect(() => {
-    setStartDate(selected ?? null)
+    setStartDate(selected ?? undefined)
   }, [selected])
 
   return (
@@ -134,10 +136,10 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           }}
           onCalendarClose={() => {
             setDatePickerState('closed')
-            handleCloseCalendar && handleCloseCalendar(startDate)
+            handleCloseCalendar && handleCloseCalendar()
           }}
-          onChange={(date: Date) => {
-            setStartDate(date)
+          onChange={(date) => {
+            setStartDate(date ?? undefined)
             handleChange && handleChange(date)
           }}
           startDate={startDate}
