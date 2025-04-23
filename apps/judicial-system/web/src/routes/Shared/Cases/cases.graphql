@@ -39,6 +39,7 @@ query Cases {
       verdictAppealDate
     }
     defendantsPunishmentType
+    publicProsecutorIsRegisteredInPoliceSystem
     courtDate
     isValidToDateInThePast
     initialRulingDate
