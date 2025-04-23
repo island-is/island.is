@@ -38,7 +38,7 @@ export const error = defineMessages({
     description: 'Price not valid',
   },
   requiredValidVehicle: {
-    id: 'ta.ccov.application:error.requiredValidVehicle',
+    id: 'ef.application:error.requiredValidVehicle',
     defaultMessage: 'Ökutæki þarf að vera gilt',
     description: 'Error message if the vehicle chosen is invalid or not chosen',
   },

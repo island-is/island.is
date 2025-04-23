@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Header from '../Header/Header'
 import { ToastContainer } from '@island.is/island-ui/core'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
@@ -16,6 +16,7 @@ import { useActiveModule } from '@island.is/portals/core'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import FullWidthLayout from './FullWidthLayout'
 import { NarrowLayout } from './NarrowLayout'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   useNamespaces(['service.portal', 'global', 'portals', 'sp.search.tags'])
@@ -35,6 +36,23 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   )
   const isFullwidth = activeModule?.layout === 'full'
 
+  const [showSearch, setShowSearch] = useState<boolean>(false)
+
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        'isMyPagesSearchEnabled',
+        false,
+      )
+      if (ffEnabled) {
+        setShowSearch(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const disableSearch = [
     ...Object.values(ServicePortalPaths),
     ...Object.values(SearchPaths),
@@ -49,7 +67,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
       )}
       <Header
         position={height && globalBanners.length > 0 ? height : 0}
-        includeSearchInHeader={!disableSearch}
+        includeSearchInHeader={!disableSearch && showSearch}
       />
 
       {!isFullwidth && activeParent && (
