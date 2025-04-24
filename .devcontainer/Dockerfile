@@ -1,6 +1,6 @@
-ARG RUST_VERSION=1.78
+ARG RUST_VERSION=1.81
 ARG FEDORA_VERSION=39
-FROM docker.io/rust:${RUST_VERSION} as cargo-bins
+FROM docker.io/rust:${RUST_VERSION} AS cargo-bins
 
 # Build dependencies
 RUN --mount=type=cache,target=/var/cache/apt \
@@ -9,8 +9,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
   make=4.3-4.1 cmake=3.25.1-1 g++=4:12.2.0-3
 
 # Install cargo binaries
-RUN --mount=type=cache,target=/root/.cargo \
-  cargo install starship
+RUN rustc --version && cargo --version && \
+    cargo install starship --version 1.20.1 --verbose
 
 FROM docker.io/rust:${RUST_VERSION} as cargo-volta
 WORKDIR /build/volta

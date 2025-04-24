@@ -2,7 +2,7 @@ import { createLogger, format, LoggerOptions, transports } from 'winston'
 import { utilities } from 'nest-winston'
 import { includeContextFormatter } from './context'
 
-import { maskNationalIdFormatter } from './formatters'
+// import { maskNationalIdFormatter } from './formatters'
 
 // Default log settings for debug mode
 let logLevel = 'debug'
@@ -12,7 +12,7 @@ let logFormat = format.combine(
   // Disable locally to reduce noise. Can be reconsidered.
   // includeContextFormatter(),
   utilities.format.nestLike('App'),
-  maskNationalIdFormatter(),
+  // maskNationalIdFormatter(),
 )
 
 // Production overrides
@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === 'production') {
     format.timestamp(),
     includeContextFormatter(),
     format.json(),
-    maskNationalIdFormatter(),
+    // maskNationalIdFormatter(),
   )
 }
 

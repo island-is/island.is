@@ -1186,6 +1186,12 @@
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
       ],
+      "@island.is/api/domains/hackathon-phi": [
+        "libs/api/domains/hackathon-phi/src/index.ts"
+      ],
+      "@island.is/api/hackathon-phi": [
+        "libs/api/hackathon-phi/src/index.ts"
+      ],
       "application/templates/examples/example-no-inputs": [
         "libs/application/templates/examples/example-no-inputs/src/index.ts"
       ],

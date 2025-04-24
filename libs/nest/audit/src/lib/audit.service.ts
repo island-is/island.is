@@ -1,5 +1,5 @@
 import winston from 'winston'
-import WinstonCloudWatch from 'winston-cloudwatch'
+import WinstonCloudWatch, { LogObject } from 'winston-cloudwatch'
 import { TransformableInfo } from 'logform'
 import { createHash } from 'crypto'
 import { Inject, Injectable } from '@nestjs/common'
@@ -55,10 +55,9 @@ export class AuditService {
           new WinstonCloudWatch({
             name: 'CloudWatch',
             logGroupName: options.groupName,
-            messageFormatter: (info: TransformableInfo) => {
-              // Flatten message to avoid top level object with "level" and "message".
+            messageFormatter: ((info: TransformableInfo) => {
               return JSON.stringify(info.message)
-            },
+            }) as unknown as (logObject: LogObject) => string,
             logStreamName: function () {
               // Spread log streams across dates
               const date = new Date().toISOString().split('T')[0]

@@ -504,6 +504,7 @@
     "lodash": "4.17.21",
     "node-fetch": "2.6.7",
     "browserslist": "4.24.2",
+    "ioredis": "5.3.2",
     "ws": "8.8.0",
     "glob-parent": "5.1.2",
     "trim-newlines": "3.0.1",
