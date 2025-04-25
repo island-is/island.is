@@ -9,12 +9,12 @@ import {
 import { isDefined } from '@island.is/shared/utils'
 import { EducationPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
-import { useStudentInfoQuery } from './EducationGraduation.generated'
+import { useStudentInfoQuery } from './UniversityGraduation.generated'
 import { useMemo } from 'react'
 import { mapUniversityToSlug } from '../../utils/mapUniversitySlug'
 import { uniMessages } from '../../lib/messages'
 
-export const EducationGraduation = () => {
+export const UniversityGraduation = () => {
   useNamespaces('sp.education-graduation')
   const { lang, formatMessage } = useLocale()
 
@@ -118,4 +118,4 @@ export const EducationGraduation = () => {
   )
 }
 
-export default EducationGraduation
+export default UniversityGraduation
