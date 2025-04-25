@@ -1,6 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
 import { styleVariants } from '@vanilla-extract/css'
-import { recipe } from '@vanilla-extract/recipes'
 
 export const header = styleVariants({
   primary: {

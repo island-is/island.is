@@ -61,7 +61,7 @@ jobs:
         id: create_pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_BRANCH: ${{ github.head_ref}}/cherry-pick
+          PR_BRANCH: cherry-picks/${{ github.head_ref}}
           TARGET_BRANCH: release/${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
