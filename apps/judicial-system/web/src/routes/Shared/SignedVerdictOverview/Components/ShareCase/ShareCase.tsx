@@ -9,22 +9,27 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
+interface InstitutionSelectOption extends ReactSelectOption {
+  institution: Institution
+}
+
+export type InstitutionOption = SingleValue<InstitutionSelectOption>
+
 interface Props {
-  selectedSharingInstitutionId: SingleValue<ReactSelectOption>
-  setSelectedSharingInstitutionId: Dispatch<
-    SetStateAction<SingleValue<ReactSelectOption>>
+  selectedSharingInstitutionOption: InstitutionOption
+  setSelectedSharingInstitutionOption: Dispatch<
+    SetStateAction<InstitutionOption>
   >
-  shareCaseWithAnotherInstitution: (
-    institution?: SingleValue<ReactSelectOption>,
-  ) => void
+  shareCaseWithAnotherInstitution: (institution?: Institution) => void
 }
 
 const ShareCase: FC<Props> = ({
-  selectedSharingInstitutionId,
-  setSelectedSharingInstitutionId,
+  selectedSharingInstitutionOption,
+  setSelectedSharingInstitutionOption,
   shareCaseWithAnotherInstitution,
 }) => {
   const { formatMessage } = useIntl()
@@ -58,6 +63,7 @@ const ShareCase: FC<Props> = ({
                 .map((prosecutorsOffice) => ({
                   label: prosecutorsOffice.name ?? '',
                   value: prosecutorsOffice.id,
+                  institution: prosecutorsOffice,
                 }))
                 .filter((t) => t.value !== user?.institution?.id)}
               value={
@@ -66,27 +72,33 @@ const ShareCase: FC<Props> = ({
                       label: workingCase.sharedWithProsecutorsOffice.name ?? '',
                       value: workingCase.sharedWithProsecutorsOffice.id,
                     }
-                  : selectedSharingInstitutionId
+                  : selectedSharingInstitutionOption
                   ? {
-                      label: (selectedSharingInstitutionId as ReactSelectOption)
-                        .label,
-                      value: (selectedSharingInstitutionId as ReactSelectOption)
-                        .value as string,
+                      label: (
+                        selectedSharingInstitutionOption as InstitutionSelectOption
+                      ).label,
+                      value: (
+                        selectedSharingInstitutionOption as InstitutionSelectOption
+                      ).value as string,
                     }
                   : null
               }
-              onChange={(so) => setSelectedSharingInstitutionId(so)}
+              onChange={(so) =>
+                setSelectedSharingInstitutionOption(so as InstitutionOption)
+              }
               isDisabled={Boolean(workingCase.sharedWithProsecutorsOffice)}
             />
           </Box>
           <Button
             size="small"
             disabled={
-              !selectedSharingInstitutionId &&
+              !selectedSharingInstitutionOption &&
               !workingCase.sharedWithProsecutorsOffice
             }
             onClick={() =>
-              shareCaseWithAnotherInstitution(selectedSharingInstitutionId)
+              shareCaseWithAnotherInstitution(
+                selectedSharingInstitutionOption?.institution,
+              )
             }
           >
             {workingCase.sharedWithProsecutorsOffice

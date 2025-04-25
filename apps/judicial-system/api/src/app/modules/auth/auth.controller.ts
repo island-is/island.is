@@ -47,7 +47,7 @@ import {
   isDistrictCourtUser,
   isPrisonSystemUser,
   isProsecutionUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -482,7 +482,7 @@ export class AuthController {
       ])
     }
 
-    if (isPublicProsecutorUser(currentUser)) {
+    if (isPublicProsecutionOfficeUser(currentUser)) {
       return getRedirectRoute(CASES_ROUTE, [
         '/beinir',
         '/krafa/yfirlit',

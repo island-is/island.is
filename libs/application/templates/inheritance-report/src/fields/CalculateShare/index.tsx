@@ -36,7 +36,6 @@ type ShareItem = {
 
 export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
-  errors,
 }) => {
   const { answers } = application
   const [, updateState] = useState<unknown>()
@@ -455,10 +454,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     hasCustomSpouseSharePercentage,
     updateShareCalculations,
   ])
-
-  const inputError =
-    (errors?.customShare as { customSpouseSharePercentage: string })
-      ?.customSpouseSharePercentage ?? ''
 
   return (
     <Box>
