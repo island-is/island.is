@@ -223,7 +223,6 @@ const template: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     const { applicant, applicantActors } = application
-    console.log('Í template: ', application)
 
     if (id !== applicant) {
       return undefined
