@@ -21,7 +21,7 @@ import {
   isPrisonAdminUser,
   isPrisonStaffUser,
   isProsecutionUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
@@ -337,7 +337,7 @@ export const getCasesQueryFilter = (user: User): WhereOptions => {
     return getDefenceUserCasesQueryFilter(user)
   }
 
-  if (isPublicProsecutorUser(user)) {
+  if (isPublicProsecutionOfficeUser(user)) {
     return getPublicProsecutionUserCasesQueryFilter()
   }
 

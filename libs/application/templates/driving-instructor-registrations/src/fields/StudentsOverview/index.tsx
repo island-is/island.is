@@ -54,7 +54,7 @@ const StudentsOverview: FC<
   const [showStudentOverview, setShowStudentOverview] = useState(true)
   const [studentId, setStudentId] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
-  const [filteredStudents, setFilteredStudents] = useState<Array<Student>>()
+  const [filteredStudents, setFilteredStudents] = useState<Array<Student>>([])
 
   const teacherRights = getValueViaPath<string[]>(
     application.externalData,
@@ -226,9 +226,7 @@ const StudentsOverview: FC<
                 <Box
                   cursor="pointer"
                   className={className}
-                  onClick={() =>
-                    handlePagination(page, filteredStudents as any)
-                  }
+                  onClick={() => handlePagination(page, filteredStudents)}
                 >
                   {children}
                 </Box>

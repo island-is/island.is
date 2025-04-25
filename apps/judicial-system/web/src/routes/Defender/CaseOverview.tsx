@@ -68,6 +68,8 @@ export const CaseOverview = () => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
+    victims,
+    showItem,
   } = useInfoCardItems()
   const router = useRouter()
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
@@ -155,6 +157,14 @@ export const CaseOverview = () => {
                   id: 'defendants-section',
                   items: [defendants(workingCase.type)],
                 },
+                ...(showItem(victims)
+                  ? [
+                      {
+                        id: 'victims-section',
+                        items: [victims],
+                      },
+                    ]
+                  : []),
                 {
                   id: 'case-info-section',
                   items: [
