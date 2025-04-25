@@ -3,6 +3,7 @@ import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
 import faker from 'faker'
 import request, { SuperTest, Test } from 'supertest'
+import { v4 as uuid } from 'uuid'
 
 import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
 import { setupApp, TestApp } from '@island.is/testing/nest'
@@ -30,6 +31,7 @@ import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
 import { ActorProfile } from '../models/actor-profile.model'
 import { ClientType } from '../../types/ClientType'
 import { Emails } from '../models/emails.model'
+import { UUIDV4 } from 'sequelize'
 
 type StatusFieldType = 'emailStatus' | 'mobileStatus'
 
@@ -1357,6 +1359,7 @@ describe('MeUserProfileController', () => {
     let userProfileModel: typeof UserProfile
     let actorProfileModel: typeof ActorProfile
     let delegationsApi: DelegationsApi
+    const testEmailsId = uuid()
 
     beforeAll(async () => {
       app = await setupApp({
@@ -1423,6 +1426,7 @@ describe('MeUserProfileController', () => {
         toNationalId: testUserProfile.nationalId,
         fromNationalId: testNationalId1,
         emailNotifications: false,
+        emailsId: testEmailsId,
       })
 
       // Act
@@ -1433,6 +1437,7 @@ describe('MeUserProfileController', () => {
       expect(res.body.data[0]).toStrictEqual({
         fromNationalId: testNationalId1,
         emailNotifications: false,
+        emailsId: testEmailsId,
       })
       // Should default to true because we don't have a record for this delegation
       expect(res.body.data[1]).toStrictEqual({
@@ -1456,8 +1461,10 @@ describe('MeUserProfileController', () => {
     let fixtureFactory: FixtureFactory
     let userProfileModel: typeof UserProfile
     let delegationPreferenceModel: typeof ActorProfile
+    let emailsModel: typeof Emails
     let delegationsApi: DelegationsApi
     const testNationalId1 = createNationalId('person')
+    const testEmailsId = uuid()
 
     beforeAll(async () => {
       app = await setupApp({
@@ -1474,6 +1481,7 @@ describe('MeUserProfileController', () => {
       delegationsApi = app.get(DelegationsApi)
       userProfileModel = app.get(getModelToken(UserProfile))
       delegationPreferenceModel = app.get(getModelToken(ActorProfile))
+      emailsModel = app.get(getModelToken(Emails))
     })
 
     beforeEach(async () => {
@@ -1505,6 +1513,14 @@ describe('MeUserProfileController', () => {
         })
     })
 
+    afterEach(async () => {
+      await emailsModel.destroy({
+        truncate: true,
+        force: true,
+        cascade: true,
+      })
+    })
+
     afterAll(async () => {
       await app.cleanUp()
     })
@@ -1518,9 +1534,10 @@ describe('MeUserProfileController', () => {
 
       // Assert
       expect(res.status).toEqual(200)
-      expect(res.body).toStrictEqual({
+      expect(res.body).toMatchObject({
         fromNationalId: testNationalId1,
         emailNotifications: false,
+        emailsId: expect.any(String),
       })
 
       const actorProfile = await delegationPreferenceModel.findAll({
@@ -1543,24 +1560,27 @@ describe('MeUserProfileController', () => {
     })
 
     it('should update existing actor profile', async () => {
+      const testEmailsId2 = uuid()
       // Arrange
       await fixtureFactory.createActorProfile({
         toNationalId: testUserProfile.nationalId,
         fromNationalId: testNationalId1,
         emailNotifications: true,
+        emailsId: testEmailsId2,
       })
 
       // Act
       const res = await server
         .patch('/v2/me/actor-profiles/.from-national-id')
         .set('X-Param-From-National-Id', testNationalId1)
-        .send({ emailNotifications: false })
+        .send({ emailNotifications: false, emailsId: testEmailsId2 })
 
       // Assert
       expect(res.status).toEqual(200)
       expect(res.body).toStrictEqual({
         fromNationalId: testNationalId1,
         emailNotifications: false,
+        emailsId: testEmailsId2,
       })
 
       const actorProfile = await delegationPreferenceModel.findAll({
@@ -1573,6 +1593,75 @@ describe('MeUserProfileController', () => {
       expect(actorProfile).toHaveLength(1)
       expect(actorProfile[0]).not.toBeNull()
       expect(actorProfile[0].emailNotifications).toBe(false)
+      expect(actorProfile[0].emailsId).toBe(testEmailsId2)
+    })
+
+    it('should create new actor profile with emailsId', async () => {
+      // Act
+      const res = await server
+        .patch('/v2/me/actor-profiles/.from-national-id')
+        .set('X-Param-From-National-Id', testNationalId1)
+        .send({
+          emailNotifications: false,
+          emailsId: testEmailsId,
+        })
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toStrictEqual({
+        fromNationalId: testNationalId1,
+        emailNotifications: false,
+        emailsId: testEmailsId,
+      })
+
+      const actorProfile = await delegationPreferenceModel.findAll({
+        where: {
+          toNationalId: testUserProfile.nationalId,
+          fromNationalId: testNationalId1,
+        },
+      })
+
+      expect(actorProfile).toHaveLength(1)
+      expect(actorProfile[0]).not.toBeNull()
+      expect(actorProfile[0].emailNotifications).toBe(false)
+      expect(actorProfile[0].emailsId).toBe(testEmailsId)
+    })
+
+    it('should change emailsId', async () => {
+      // Arrange
+      await fixtureFactory.createActorProfile({
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId1,
+        emailNotifications: true,
+      })
+
+      // Act
+      const res = await server
+        .patch('/v2/me/actor-profiles/.from-national-id')
+        .set('X-Param-From-National-Id', testNationalId1)
+        .send({
+          emailsId: testEmailsId,
+        })
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toStrictEqual({
+        fromNationalId: testNationalId1,
+        emailNotifications: true,
+        emailsId: testEmailsId,
+      })
+
+      const actorProfile = await delegationPreferenceModel.findAll({
+        where: {
+          toNationalId: testUserProfile.nationalId,
+          fromNationalId: testNationalId1,
+        },
+      })
+
+      expect(actorProfile).toHaveLength(1)
+      expect(actorProfile[0]).not.toBeNull()
+      expect(actorProfile[0].emailNotifications).toBe(true)
+      expect(actorProfile[0].emailsId).toBe(testEmailsId)
     })
 
     it('should throw no content exception if delegation is not found', async () => {

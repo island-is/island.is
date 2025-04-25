@@ -169,10 +169,12 @@ export class FixtureFactory {
     toNationalId,
     fromNationalId,
     emailNotifications,
+    emailsId,
   }: {
     toNationalId: string
     fromNationalId: string
     emailNotifications: boolean
+    emailsId?: string
   }) {
     const actorProfileModel = this.get(ActorProfile)
 
@@ -180,6 +182,7 @@ export class FixtureFactory {
       toNationalId,
       fromNationalId,
       emailNotifications,
+      emailsId,
     })
   }
 }

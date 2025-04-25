@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator'
 import { PageInfoDto } from '@island.is/nest/pagination'
 import { Locale } from '../../user-profile/types/localeTypes'
@@ -18,6 +19,11 @@ export class MeActorProfileDto {
   @ApiProperty()
   @IsBoolean()
   emailNotifications!: boolean
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsUUID(4)
+  readonly emailsId?: string
 }
 
 export class ActorProfileDto {
@@ -49,12 +55,22 @@ export class ActorProfileDto {
   @IsOptional()
   @IsEnum(Locale)
   readonly locale?: Locale | null
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsUUID(4)
+  readonly emailsId?: string
 }
 
 export class PatchActorProfileDto {
   @ApiProperty()
   @IsBoolean()
   emailNotifications!: boolean
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsUUID(4)
+  emailsId?: string
 }
 
 export class PaginatedActorProfileDto {

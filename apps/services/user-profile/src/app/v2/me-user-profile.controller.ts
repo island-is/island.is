@@ -198,6 +198,7 @@ export class MeUserProfileController {
         toNationalId: user.nationalId,
         fromNationalId,
         emailNotifications: actorProfile.emailNotifications,
+        emailsId: actorProfile.emailsId,
       }),
     )
   }
