@@ -33,7 +33,6 @@ export const Prerequisites = buildForm({
               title: 'National registry',
               subTitle: 'National registry',
             }),
-            // Add more data providers as needed
           ],
           submitField: buildSubmitField({
             id: 'submit',

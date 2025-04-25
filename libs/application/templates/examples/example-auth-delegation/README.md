@@ -16,7 +16,7 @@ Delegations can be:
 ## Gervimenn to use
 
 This application works for every gervimaður and all delegations.
-You can for example use Gervimaður Færeyjar (010-2399) and they have delegations for the company 65° Arctic and Bína Maack
+You can for example use Gervimaður Færeyjar (010-2399) that has a lot of different auth delegations available.
 
 ## How to use
 

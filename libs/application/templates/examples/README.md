@@ -1,6 +1,6 @@
 # Example application templates
 
-This libraries serve as examples for how all application template libraries should be structured.
+Those templates serve as examples for how all application template libraries should be structured.
 
 ## Making a new application
 
@@ -20,13 +20,15 @@ Note: It also works to create nested applications by running:
 1. `yarn generate-application-template <folder-name>/<name-of-application>`
 2. `yarn generate-application-template-api-module <folder-name>/<name-of-application>`
 
+If a new folder is created for nested applications, make sure that Norda is set as the code owner in CODEOWNERS for the folder and then the team that created the application is set as the code owner for the nested application.
+
 ## Capabilities
 
-Each application template is an extension of the `ApplicationTemplate` interface. It can include as many custom fields as desired, and as many forms as well. All code for this application flow resides within the same library.
+Each application template is an extension of the `ApplicationTemplate` interface. It can include as many forms, roles and states as desired. All code for this application flow resides within the same library.
 
 ## Running unit tests
 
-Run `ng test application-templates-reference-template` to execute the unit tests via [Jest](https://jestjs.io).
+Run `ng test <name-of-application-as-in-project.json>` to execute the unit tests via [Jest](https://jestjs.io).
 
 ## Custom API functionality
 

@@ -33,7 +33,6 @@ export const Prerequisites = buildForm({
               title: 'Identity API',
               subTitle: 'Identity API',
             }),
-            // Add more data providers as needed
           ],
           submitField: buildSubmitField({
             id: 'submit',

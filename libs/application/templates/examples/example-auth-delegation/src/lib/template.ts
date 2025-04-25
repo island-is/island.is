@@ -1,3 +1,11 @@
+/*
+ ***
+ *** The state machine for this template is as follows:
+ ***
+ *** Prerequisites --> Draft --> Completed
+ ***
+ */
+
 import {
   ApplicationTemplate,
   ApplicationTypes,
