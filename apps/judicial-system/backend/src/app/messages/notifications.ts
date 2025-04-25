@@ -243,7 +243,7 @@ export const notifications = {
         'Notaður sem texti í pósti sem tilgreinir hvenær fyrirtaka fer fram',
     },
     subject: {
-      id: 'judicial.system.backend:notifications.prosecutor_court_date_email.subject',
+      id: 'judicial.system.backend:notifications.prosecutor_court_date_email.subject_v2',
       defaultMessage:
         '{isIndictment, select, true {Þingfesting} other {Fyrirtaka}} í máli: {courtCaseNumber}',
       description:
@@ -262,6 +262,34 @@ export const notifications = {
         '{scheduledCaseText}<br /><br />{courtDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}',
       description:
         'Notaður fyrir beinagrind á pósti til sækjanda þegar fyrirtökutími er staðfestur í ákærum',
+    },
+  }),
+  indictmentArraignmentDateEmail: defineMessages({
+    scheduledCase: {
+      id: 'judicial.system.backend:notifications.indictment_arraignment_date_email.scheduled_indictment_case',
+      defaultMessage:
+        '{court} boðar til þingfestingar í máli {courtCaseNumber}.',
+      description:
+        'Notaður sem texti í pósti sem tilgreinir að dómstóll boði til þingfestingar',
+    },
+    arraignmentDate: {
+      id: 'judicial.system.backend:notifications.indictment_arraignment_date_email.arraignmentDate',
+      defaultMessage: 'Þingfesting mun fara fram {arraignmentDate}.',
+      description:
+        'Notaður sem texti í pósti sem tilgreinir hvenær þingfesting fer fram',
+    },
+    subject: {
+      id: 'judicial.system.backend:notifications.indictment_arraignment_date_email.subject',
+      defaultMessage: 'Þingfesting í máli: {courtCaseNumber}',
+      description:
+        'Notaður sem titil á pósti þegar fyrirtökutími er staðfestur',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.indictment_arraignment_date_email.body_indictments',
+      defaultMessage:
+        '{scheduledCaseText}<br /><br />{arraignmentDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}',
+      description:
+        'Notaður fyrir beinagrind á pósti til aðila máls þegar fyrirtökutími er staðfestur í ákærum',
     },
   }),
   signedRuling: defineMessages({

@@ -16,6 +16,7 @@ export {
   formatPrisonCourtDateEmailNotification,
   formatPrisonRevokedEmailNotification,
   formatProsecutorCourtDateEmailNotification,
+  formatArraignmentDateEmailNotification,
   formatProsecutorReadyForCourtEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
   formatDefenderCourtDateLinkEmailNotification,

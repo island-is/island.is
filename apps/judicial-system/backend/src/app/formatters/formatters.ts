@@ -267,6 +267,56 @@ export const formatPostponedCourtDateEmailNotification = (
   return { subject, body }
 }
 
+export const formatArraignmentDateEmailNotification = ({
+  formatMessage,
+  theCase,
+  arraignmentDateLog,
+}: {
+  formatMessage: FormatMessage
+  theCase: Case
+  arraignmentDateLog: DateLog
+}) => {
+  const { court, courtCaseNumber, judge, registrar } = theCase
+  const { date: arraignmentDate, location: courtRoom } = arraignmentDateLog
+  const cf = notifications.indictmentArraignmentDateEmail
+
+  const scheduledCaseText = formatMessage(cf.scheduledCase, {
+    court: court?.name,
+    courtCaseNumber,
+  })
+
+  const arraignmentDateText = formatMessage(cf.arraignmentDate, {
+    arraignmentDate: formatDate(arraignmentDate, 'PPPp')?.replace(
+      ' kl.',
+      ', kl.',
+    ),
+  })
+
+  const courtRoomText = formatMessage(notifications.courtRoom, {
+    courtRoom: courtRoom || 'NONE',
+  })
+
+  const judgeText = formatMessage(notifications.judge, {
+    judgeName: judge?.name || 'NONE',
+  })
+  const registrarText = registrar
+    ? formatMessage(notifications.registrar, { registrarName: registrar.name })
+    : undefined
+
+  return {
+    body: formatMessage(cf.body, {
+      scheduledCaseText,
+      arraignmentDateText,
+      courtRoomText,
+      judgeText,
+      registrarText: registrarText || 'NONE',
+    }),
+    subject: formatMessage(cf.subject, {
+      courtCaseNumber: courtCaseNumber || '',
+    }),
+  }
+}
+
 export const formatProsecutorCourtDateEmailNotification = (
   formatMessage: FormatMessage,
   type: CaseType,
