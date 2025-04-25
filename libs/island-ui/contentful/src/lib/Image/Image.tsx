@@ -2,7 +2,7 @@ import * as styles from './Image.css'
 
 export interface ImageProps {
   url: string
-  description?: string
+  description?: string | null
   width: number
   height: number
 }
