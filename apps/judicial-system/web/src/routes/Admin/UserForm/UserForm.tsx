@@ -19,7 +19,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import {
   getAdminUserInstitutionScope,
-  institutionUserRoles,
+  getAdminUserInstitutionUserRoles,
   isCoreUser,
   isProsecutorsOffice,
 } from '@island.is/judicial-system/types'
@@ -332,7 +332,10 @@ export const UserForm: FC<Props> = ({
         </Box>
         {user.institution?.type && (
           <RolesRadioButtons
-            userRoles={institutionUserRoles[user.institution?.type]}
+            userRoles={getAdminUserInstitutionUserRoles(
+              admin,
+              user.institution?.type,
+            )}
             user={user}
             setUser={setUser}
             disabled={!isNewUser}

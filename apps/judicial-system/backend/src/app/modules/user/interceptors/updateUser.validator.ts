@@ -36,6 +36,7 @@ export class UpdateUserValidator implements NestInterceptor {
     const userToUpdate = await this.userService.findById(userId)
 
     if (
+      userToUpdate.role === user.role ||
       !userToUpdate.institution ||
       !getAdminUserInstitutionScope(user).includes(
         userToUpdate.institution.type,

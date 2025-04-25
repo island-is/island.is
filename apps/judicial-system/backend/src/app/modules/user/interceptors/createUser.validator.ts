@@ -35,6 +35,12 @@ export class CreateUserValidator implements NestInterceptor {
       throw new BadRequestException('Missing create user dto')
     }
 
+    if (createUser.role === user.role) {
+      throw new UnauthorizedException(
+        `User ${user.id} is not allowed to create a user with the same role`,
+      )
+    }
+
     const institution = await this.institutionService
       .getById(createUser.institutionId)
       .catch((error) => {

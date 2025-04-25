@@ -1,3 +1,5 @@
+import { Op } from 'sequelize'
+
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -33,7 +35,12 @@ export class UserService {
       return this.userModel.findAll({
         order: ['name'],
         include: [{ model: Institution, as: 'institution' }],
-        where: { '$institution.type$': getAdminUserInstitutionScope(user) },
+        // Local admins can only see users from a select list of institutions
+        // and they do not see local admins
+        where: {
+          role: { [Op.not]: user.role },
+          '$institution.type$': getAdminUserInstitutionScope(user),
+        },
       })
     }
 

@@ -211,25 +211,34 @@ export const getAdminUserInstitutionScope = (
   return []
 }
 
-export const institutionUserRoles: { [key in InstitutionType]: UserRole[] } = {
-  [InstitutionType.POLICE_PROSECUTORS_OFFICE]: [
-    ...prosecutionRoles,
-    ...localAdminRoles,
-  ],
-  [InstitutionType.DISTRICT_PROSECUTORS_OFFICE]: [
-    ...prosecutionRoles,
-    ...localAdminRoles,
-  ],
+const institutionUserRoles: { [key in InstitutionType]: UserRole[] } = {
+  [InstitutionType.POLICE_PROSECUTORS_OFFICE]: prosecutionRoles,
+  [InstitutionType.DISTRICT_PROSECUTORS_OFFICE]: prosecutionRoles,
   [InstitutionType.PUBLIC_PROSECUTORS_OFFICE]: [
     ...prosecutionRoles,
     ...publicProsecutionOfficeRoles,
-    ...localAdminRoles,
   ],
-  [InstitutionType.DISTRICT_COURT]: [...districtCourtRoles, ...localAdminRoles],
-  [InstitutionType.COURT_OF_APPEALS]: [
-    ...courtOfAppealsRoles,
-    ...localAdminRoles,
-  ],
-  [InstitutionType.PRISON]: [...prisonSystemRoles, ...localAdminRoles],
-  [InstitutionType.PRISON_ADMIN]: [...prisonSystemRoles, ...localAdminRoles],
+  [InstitutionType.DISTRICT_COURT]: districtCourtRoles,
+  [InstitutionType.COURT_OF_APPEALS]: courtOfAppealsRoles,
+  [InstitutionType.PRISON]: prisonSystemRoles,
+  [InstitutionType.PRISON_ADMIN]: prisonSystemRoles,
+}
+
+export const getAdminUserInstitutionUserRoles = (
+  user?: InstitutionUser,
+  institutionType?: InstitutionType,
+): UserRole[] => {
+  if (!user || !institutionType) {
+    return []
+  }
+
+  if (!getAdminUserInstitutionScope(user).includes(institutionType)) {
+    return []
+  }
+
+  if (isSuperAdminUser(user)) {
+    return institutionUserRoles[institutionType].concat(localAdminRoles)
+  }
+
+  return institutionUserRoles[institutionType]
 }
