@@ -4,14 +4,13 @@ This application is an example for how applications should handle different type
 
 Delegations can be:
 
-- Custom (Regular login)
+- General Mandate (Allsherjarumboð)
 - Procuration Holder (Prókúra)
 - Legal Guardian (Forsjá)
 - Legal Guardian Minor (Forsjá)
 - Personal Representative (Umboð)
 - Legal Representative (Umboð)
-- General Mandate (Umboð)
-- ... (allsherjarumboð)
+- Custom
 
 ## Gervimenn to use
 
