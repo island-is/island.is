@@ -266,4 +266,166 @@ describe('Me emails controller', () => {
       })
     })
   })
+
+  describe('DELETE /v2/me/emails/:emailId', () => {
+    beforeEach(() => {
+      jest.spyOn(kennitala, 'isValid').mockReturnValue(true)
+    })
+
+    it('should successfully delete an email', async () => {
+      // Create user profile with the test email
+      await fixtureFactory.createUserProfile({ ...testUserProfile, emails: [] })
+
+      // Create a non-primary email to delete
+      const emailToDelete = await fixtureFactory.createEmail({
+        nationalId: testUserProfile.nationalId,
+        email: 'delete-me@example.com',
+        primary: false,
+      })
+
+      // Verify email exists before deletion
+      const emailBeforeDeletion = await emailsModel.findOne({
+        where: {
+          id: emailToDelete.id,
+        },
+      })
+      expect(emailBeforeDeletion).not.toBeNull()
+
+      const res = await server.delete(`/v2/me/emails/${emailToDelete.id}`)
+
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({ success: true })
+
+      // Verify email was deleted from database
+      const emailInDb = await emailsModel.findOne({
+        where: {
+          id: emailToDelete.id,
+        },
+      })
+      expect(emailInDb).toBeNull()
+
+      // Also verify by count that the email is no longer in the database
+      const emailCount = await emailsModel.count({
+        where: {
+          nationalId: testUserProfile.nationalId,
+        },
+      })
+      expect(emailCount).toBe(0)
+    })
+
+    it('should not allow deletion of primary email', async () => {
+      // Create user profile with the test email
+      await fixtureFactory.createUserProfile({ ...testUserProfile, emails: [] })
+
+      // Create a primary email
+      const primaryEmail = await fixtureFactory.createEmail({
+        nationalId: testUserProfile.nationalId,
+        email: 'primary@example.com',
+        primary: true,
+      })
+
+      const res = await server.delete(`/v2/me/emails/${primaryEmail.id}`)
+
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        status: 400,
+        title: 'Bad Request',
+        detail: 'Cannot delete primary email',
+      })
+
+      // Verify email was not deleted from database
+      const emailInDb = await emailsModel.findOne({
+        where: {
+          id: primaryEmail.id,
+        },
+      })
+      expect(emailInDb).not.toBeNull()
+
+      // Also verify by count that the email is still in the database
+      const emailCount = await emailsModel.count({
+        where: {
+          nationalId: testUserProfile.nationalId,
+        },
+      })
+      expect(emailCount).toBe(1)
+    })
+
+    it('should return 400 when email does not exist', async () => {
+      // Create user profile
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        emails: [],
+      })
+
+      const nonExistentEmailId = '12345678-1234-1234-1234-123456789012'
+      const res = await server.delete(`/v2/me/emails/${nonExistentEmailId}`)
+
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        status: 400,
+        title: 'Bad Request',
+        detail: 'Email not found or does not belong to this user',
+      })
+
+      // Verify database state remains unchanged
+      const emailCount = await emailsModel.count({
+        where: {
+          nationalId: testUserProfile.nationalId,
+        },
+      })
+      expect(emailCount).toBe(0)
+    })
+
+    it("should not allow deletion of another user's email", async () => {
+      // Create two users
+      await fixtureFactory.createUserProfile({ ...testUserProfile, emails: [] })
+
+      const otherUserNationalId = createNationalId()
+      await fixtureFactory.createUserProfile({
+        nationalId: otherUserNationalId,
+        emails: [],
+        mobilePhoneNumber: formatPhoneNumber(createPhoneNumber()),
+      })
+
+      // Create an email for the other user
+      const otherUserEmail = await fixtureFactory.createEmail({
+        nationalId: otherUserNationalId,
+        email: 'other-user@example.com',
+        primary: false,
+      })
+
+      // Attempt to delete the other user's email
+      const res = await server.delete(`/v2/me/emails/${otherUserEmail.id}`)
+
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        status: 400,
+        title: 'Bad Request',
+        detail: 'Email not found or does not belong to this user',
+      })
+
+      // Verify email was not deleted from database
+      const emailInDb = await emailsModel.findOne({
+        where: {
+          id: otherUserEmail.id,
+        },
+      })
+      expect(emailInDb).not.toBeNull()
+
+      // Verify both users' email counts remain unchanged
+      const testUserEmailCount = await emailsModel.count({
+        where: {
+          nationalId: testUserProfile.nationalId,
+        },
+      })
+      expect(testUserEmailCount).toBe(0)
+
+      const otherUserEmailCount = await emailsModel.count({
+        where: {
+          nationalId: otherUserNationalId,
+        },
+      })
+      expect(otherUserEmailCount).toBe(1)
+    })
+  })
 })

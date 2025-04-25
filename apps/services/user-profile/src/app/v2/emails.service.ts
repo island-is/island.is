@@ -4,7 +4,6 @@ import { Emails } from './models/emails.model'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { EmailsDto } from './dto/emails.dto'
 import { VerificationService } from '../user-profile/verification.service'
-import { EmailStatus } from 'aws-sdk/clients/chime'
 import { AttemptFailed } from '@island.is/nest/problem'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { uuid } from 'uuidv4'
@@ -13,80 +12,48 @@ import { uuid } from 'uuidv4'
 export class EmailsService {
   constructor(
     @InjectModel(Emails)
-    private emailsModel: typeof Emails,
+    private readonly emailsModel: typeof Emails,
     private readonly verificationService: VerificationService,
   ) {}
 
+  /**
+   * Retrieves all emails for a given national ID
+   */
   async findAllByNationalId(nationalId: string): Promise<EmailsDto[]> {
-    if (!kennitala.isValid(nationalId)) {
-      throw new BadRequestException('Invalid nationalId')
-    }
+    this.validateNationalId(nationalId)
 
-    return this.emailsModel
-      .findAll({
-        where: {
-          nationalId,
-        },
-      })
-      .then((res) => {
-        return (
-          res?.map(
-            (email) =>
-              ({
-                id: email.id,
-                email: email.email,
-                primary: email.primary,
-                emailStatus: email.emailStatus,
-              } as EmailsDto),
-          ) ?? []
-        )
-      })
+    const emails = await this.emailsModel.findAll({
+      where: { nationalId },
+    })
+
+    return (
+      emails.map((email) => ({
+        id: email.id,
+        email: email.email ?? null,
+        primary: email.primary,
+        emailStatus: email.emailStatus,
+      })) || []
+    )
   }
 
+  /**
+   * Creates a new email for a user after verifying the code
+   */
   async createEmail(
     nationalId: string,
     email: string,
     code: string,
   ): Promise<EmailsDto> {
-    // Validate inputs
-    if (!nationalId || !email || !code) {
-      throw new BadRequestException('Missing required fields')
-    }
+    this.validateRequiredFields(nationalId, email, code)
+    this.validateNationalId(nationalId)
 
-    if (!kennitala.isValid(nationalId)) {
-      throw new BadRequestException('Invalid nationalId')
-    }
+    // Verify the email code
+    await this.verifyEmailCode(nationalId, email, code)
 
-    // Verify the code first
-    const { confirmed, message, remainingAttempts } =
-      await this.verificationService.confirmEmail(
-        { email, hash: code },
-        nationalId,
-      )
+    // Check for existing email
+    await this.checkEmailExists(nationalId, email)
 
-    if (!confirmed) {
-      // Check if we should throw a BadRequest or an AttemptFailed error
-      if (remainingAttempts && remainingAttempts >= 0) {
-        throw new AttemptFailed(remainingAttempts, {
-          emailVerificationCode: 'Verification code does not match.',
-        })
-      } else {
-        throw new BadRequestException(message)
-      }
-    }
-
-    // Check if email already exists for this user
-    const existingEmail = await this.emailsModel.findOne({
-      where: {
-        nationalId,
-        email,
-      },
-    })
-
-    if (existingEmail) {
-      throw new BadRequestException('Email already exists for this user')
-    }
-
+    // Create the email record
     const emailRecord = await this.emailsModel.create({
       id: uuid(),
       email,
@@ -101,5 +68,93 @@ export class EmailsService {
       primary: emailRecord.primary,
       emailStatus: emailRecord.emailStatus,
     }
+  }
+
+  /**
+   * Deletes an email for a user if it's not the primary email
+   */
+  async deleteEmail(
+    nationalId: string,
+    emailId: string,
+  ): Promise<{ success: boolean }> {
+    this.validateRequiredFields(nationalId, emailId)
+    this.validateNationalId(nationalId)
+
+    const emailRecord = await this.findEmailForUser(nationalId, emailId)
+
+    // Prevent deletion of primary email
+    if (emailRecord.primary) {
+      throw new BadRequestException('Cannot delete primary email')
+    }
+
+    await emailRecord.destroy()
+    return { success: true }
+  }
+
+  /**
+   * Helper methods
+   */
+  private validateNationalId(nationalId: string): void {
+    if (!kennitala.isValid(nationalId)) {
+      throw new BadRequestException('Invalid nationalId')
+    }
+  }
+
+  private validateRequiredFields(...fields: string[]): void {
+    if (fields.some((field) => !field)) {
+      throw new BadRequestException('Missing required fields')
+    }
+  }
+
+  private async verifyEmailCode(
+    nationalId: string,
+    email: string,
+    code: string,
+  ): Promise<void> {
+    const { confirmed, message, remainingAttempts } =
+      await this.verificationService.confirmEmail(
+        { email, hash: code },
+        nationalId,
+      )
+
+    if (!confirmed) {
+      if (remainingAttempts !== undefined && remainingAttempts >= 0) {
+        throw new AttemptFailed(remainingAttempts, {
+          emailVerificationCode: 'Verification code does not match.',
+        })
+      } else {
+        throw new BadRequestException(message)
+      }
+    }
+  }
+
+  private async checkEmailExists(
+    nationalId: string,
+    email: string,
+  ): Promise<void> {
+    const existingEmail = await this.emailsModel.findOne({
+      where: { nationalId, email },
+    })
+
+    if (existingEmail) {
+      throw new BadRequestException('Email already exists for this user')
+    }
+  }
+
+  private async findEmailForUser(
+    nationalId: string,
+    emailId: string,
+  ): Promise<Emails> {
+    const emailRecord = await this.emailsModel.findOne({
+      where: { id: emailId, nationalId },
+    })
+
+    if (!emailRecord) {
+      throw new BadRequestException(
+        'Email not found or does not belong to this user',
+      )
+    }
+
+    return emailRecord
   }
 }

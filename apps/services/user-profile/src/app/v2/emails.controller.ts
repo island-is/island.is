@@ -5,12 +5,14 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -38,6 +40,7 @@ export class EmailsController {
   constructor(
     private readonly emailsService: EmailsService,
     private readonly verificationService: VerificationService,
+    private readonly auditService: AuditService,
   ) {}
 
   @Get('/')
@@ -54,6 +57,9 @@ export class EmailsController {
       },
     },
   })
+  @Audit<EmailsDto[]>({
+    resources: (emails) => emails.map((email) => email.id),
+  })
   async findAllByNationalId(@CurrentUser() user: User): Promise<EmailsDto[]> {
     return this.emailsService.findAllByNationalId(user.nationalId)
   }
@@ -68,10 +74,50 @@ export class EmailsController {
     @CurrentUser() user: User,
     @Body() input: CreateEmailDto,
   ): Promise<EmailsDto> {
-    return this.emailsService.createEmail(
-      user.nationalId,
-      input.email,
-      input.code,
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'createEmail',
+        resources: user.nationalId,
+        meta: {
+          email: input.email,
+        },
+      },
+      this.emailsService.createEmail(user.nationalId, input.email, input.code),
+    )
+  }
+
+  @Delete('/:emailId')
+  @Scopes(UserProfileScope.write)
+  @Documentation({
+    description: "Remove an email from the user's emails list",
+    response: { status: 200, type: Boolean },
+    request: {
+      params: {
+        emailId: {
+          required: true,
+          type: 'string',
+          description: 'ID of the email to delete',
+        },
+      },
+    },
+  })
+  async deleteEmail(
+    @CurrentUser() user: User,
+    @Param('emailId') emailId: string,
+  ): Promise<{ success: boolean }> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'deleteEmail',
+        resources: [user.nationalId, emailId],
+        meta: {
+          emailId,
+        },
+      },
+      this.emailsService.deleteEmail(user.nationalId, emailId),
     )
   }
 }
