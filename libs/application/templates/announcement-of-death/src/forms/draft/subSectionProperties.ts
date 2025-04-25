@@ -1,8 +1,6 @@
 import {
-  buildDescriptionField,
   buildMultiField,
   buildSubSection,
-  buildCustomField,
   buildCheckboxField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'

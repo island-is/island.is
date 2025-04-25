@@ -74,11 +74,31 @@ const jobWishesSchema = z.object({
   location: z.array(z.string()).optional(),
 })
 
+const EmploymentHistorySchema = z.object({
+  lastJob: z.object({
+    title: z.string().optional(),
+    percentage: z.string().optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+  }),
+  previousJobs: z.array(
+    z.object({
+      company: z.string().optional(),
+      jobTitle: z.string().optional(),
+      jobPercentage: z.string().optional(),
+      jobStartDate: z.string().optional(),
+      jobEndDate: z.string().optional(),
+    }),
+  ),
+  hasWorkedEes: z.string(),
+})
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema,
   currentSituation: currentSituationSchema,
   jobWishes: jobWishesSchema,
+  employmentHistory: EmploymentHistorySchema,
   informationChangeAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES)),

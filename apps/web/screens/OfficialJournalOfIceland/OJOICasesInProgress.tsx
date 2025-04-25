@@ -24,8 +24,8 @@ import {
 } from '../CustomPage/CustomPageWrapper'
 import { GET_ORGANIZATION_QUERY } from '../queries'
 import { CASES_IN_PROGRESS_QUERY } from '../queries/OfficialJournalOfIceland'
-import { m } from './messages'
 import { ORGANIZATION_SLUG } from './constants'
+import { m } from './messages'
 
 const OJOICasesInProgressPage: CustomScreen<OJOICasesInProgressProps> = ({
   cases,

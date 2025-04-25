@@ -11,6 +11,7 @@ import {
   NationalRegistryParent,
   NationalRegistryMaritalTitle,
   BirthplaceParameters,
+  NationalRegistryCustodian,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -26,6 +27,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     private readonly nationalRegistryApi: NationalRegistryClientService,
     private readonly nationalRegistryApiV3: NationalRegistryV3ApplicationsClientService,
     private readonly assetsXRoadService: AssetsXRoadService,
+    private readonly nationalRegistryV3Api: NationalRegistryV3ApplicationsClientService,
   ) {
     super('NationalRegistry')
   }
@@ -633,5 +635,28 @@ export class NationalRegistryService extends BaseTemplateApiService {
     )
 
     return cohabitantsDetails
+  }
+
+  async getCustodians({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<NationalRegistryCustodian[]> {
+    const custodianNationalIds =
+      await this.nationalRegistryV3Api.getMyCustodians(auth)
+
+    const custodians: NationalRegistryCustodian[] = []
+
+    for (const nationalId of custodianNationalIds) {
+      const details = await this.nationalRegistryApi.getIndividual(nationalId)
+      if (details) {
+        custodians.push({
+          nationalId: details.nationalId,
+          givenName: details.givenName,
+          familyName: details.familyName,
+          legalDomicile: details.legalDomicile,
+        })
+      }
+    }
+
+    return custodians
   }
 }

@@ -47,128 +47,128 @@ export const employment = {
   currentSituation: {
     general: defineMessages({
       sectionTitle: {
-        id: 'vmst.ub.application:employment.currentSituation.sectionTitle',
+        id: 'vmst.ub.application:employment.currentSituation.general.sectionTitle',
         defaultMessage: 'Núverandi staða',
         description:
           'applicant current situation reason for job search section title',
       },
       pageTitle: {
-        id: 'vmst.ub.application:employment.currentSituation.pageTitle',
+        id: 'vmst.ub.application:employment.currentSituation.general.pageTitle',
         defaultMessage: 'Núverandi staða',
         description: 'Current situation page description',
       },
     }),
     labels: defineMessages({
       currentSituationDropdownDescription: {
-        id: 'vmst.ub.application:employment.labels.currentSituationDropdownDescription',
+        id: 'vmst.ub.application:employment.currentSituation.labels.currentSituationDropdownDescription',
         defaultMessage: 'Hver er núverandi staða hjá þér?',
         description: 'current situation dropdown description',
       },
       currentSituationDropdownLabel: {
-        id: 'vmst.ub.application:employment.labels.currentSituationDropdownLabel',
+        id: 'vmst.ub.application:employment.currentSituation.labels.currentSituationDropdownLabel',
         defaultMessage: 'Staða',
         description: 'current situation dropdown label',
       },
       statusOptionNoJob: {
-        id: 'vmst.ub.application:employment.labels.statusOptionNoJob',
+        id: 'vmst.ub.application:employment.currentSituation.labels.statusOptionNoJob',
         defaultMessage: 'Ég er ekki í starfi',
         description: 'status option unemployed label',
       },
       statusPartJob: {
-        id: 'vmst.ub.application:employment.labels.statusPartJob',
+        id: 'vmst.ub.application:employment.currentSituation.labels.statusPartJob',
         defaultMessage: 'Ég er í hlutastarfi',
         description: 'status option part time job label',
       },
       statusOccasionalJob: {
-        id: 'vmst.ub.application:employment.labels.statusOccasionalJob',
+        id: 'vmst.ub.application:employment.currentSituation.labels.statusOccasionalJob',
         defaultMessage: 'Ég er í tilfallandi vinnu',
         description: 'status option occasional job label',
       },
       statusCurrentlyEmployed: {
-        id: 'vmst.ub.application:employment.labels.statusCurrentlyEmployed',
+        id: 'vmst.ub.application:employment.currentSituation.labels.statusCurrentlyEmployed',
         defaultMessage: 'Ég er í starfi á uppsagnarfresti',
         description: 'status option employed label',
       },
       reasonForUnemploymentDescription: {
-        id: 'vmst.ub.application:employment.labels.reasonForUnemploymentDescription',
+        id: 'vmst.ub.application:employment.currentSituation.labels.reasonForUnemploymentDescription',
         defaultMessage:
           'Hér getur þú sett inn frekari skýringar um ástæður atvinnuleysis:',
         description: 'reason for unemployment dropdown description',
       },
       reasonForUnemploymentLabel: {
-        id: 'vmst.ub.application:employment.labels.reasonForUnemploymentLabel',
+        id: 'vmst.ub.application:employment.currentSituation.labels.reasonForUnemploymentLabel',
         defaultMessage: 'Aðrar ástæður',
         description: 'reason for unemployment dropdown label',
       },
       partTimeJobDescription: {
-        id: 'vmst.ub.application:employment.labels.partTimeJobDescription',
+        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobDescription',
         defaultMessage: 'Vinsamlegast fylltu út frekari upplýsingar um starfið',
         description: 'part time job description',
       },
       partTimeJobEmployerNationalId: {
-        id: 'vmst.ub.application:employment.labels.partTimeJobEmployerNationalId',
+        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobEmployerNationalId',
         defaultMessage: 'Kennitala fyrirtækis',
         description: 'part time job employer national id label',
       },
       partTimeJobEmployerName: {
-        id: 'vmst.ub.application:employment.labels.partTimeJobEmployerName',
+        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobEmployerName',
         defaultMessage: 'Nafn fyrirtækis',
         description: 'part time job employer name label',
       },
       partTimeJobPercentage: {
-        id: 'vmst.ub.application:employment.labels.partTimeJobPercentage',
+        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobPercentage',
         defaultMessage: 'Starfshlutfall',
         description: 'part time job percentage label',
       },
       partTimeJobStartDate: {
-        id: 'vmst.ub.application:employment.labels.partTimeJobStartDate',
+        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobStartDate',
         defaultMessage: 'Upphaf hlutastarfs',
         description: 'part time job start date label',
       },
       jobEndDate: {
-        id: 'vmst.ub.application:employment.labels.jobEndDate',
+        id: 'vmst.ub.application:employment.currentSituation.labels.jobEndDate',
         defaultMessage: 'Hvenær lýkur uppsagnarfresti þínum',
         description: 'Job end date label',
       },
       partTimeJobWorkHours: {
-        id: 'vmst.ub.application:employment.labels.partTimeJobWorkHours',
+        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobWorkHours',
         defaultMessage: 'Vinnutími',
         description: 'part time job work hours label',
       },
       partTimeJobSalary: {
-        id: 'vmst.ub.application:employment.labels.partTimeJobSalary',
+        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobSalary',
         defaultMessage: 'Laun á mánuði fyrir skatt',
         description: 'part time job salary label',
       },
       wantedJobDescription: {
-        id: 'vmst.ub.application:employment.labels.wantedJobDescription',
+        id: 'vmst.ub.application:employment.currentSituation.labels.wantedJobDescription',
         defaultMessage: 'Hve háu starfshlutfalli óskar þú eftir?',
         description: 'wanted job description',
       },
       wantedJobInfoBox: {
-        id: 'vmst.ub.application:employment.labels.wantedJobInfoBox',
+        id: 'vmst.ub.application:employment.currentSituation.labels.wantedJobInfoBox',
         defaultMessage:
           'Athugaðu að atvinnuleysisbætur miðast við það hlutastarf sem þú velur. Ef þú velur 50% hlutastarf áttu rétt á 50% atvinnuleysisbótum. geta aldrei verið hærri en það starfshlutfall sem þú ert tilbúinn að ráða þig í',
         description: 'wanted job info box description',
       },
       jobTimelineDescription: {
-        id: 'vmst.ub.application:employment.labels.jobTimelineDescription',
+        id: 'vmst.ub.application:employment.currentSituation.labels.jobTimelineDescription',
         defaultMessage: 'Hvenær getur þú hafið störf?',
         description: 'job timeline description',
       },
       jobTimelineDateLabel: {
-        id: 'vmst.ub.application:employment.labels.jobTimelineDateLabel',
+        id: 'vmst.ub.application:employment.currentSituation.labels.jobTimelineDateLabel',
         defaultMessage: 'Dagsetning',
         description: 'job timeline date label',
       },
       jobTimelineInfoBox: {
-        id: 'vmst.ub.application:employment.labels.jobTimelineInfoBox',
+        id: 'vmst.ub.application:employment.currentSituation.labels.jobTimelineInfoBox',
         defaultMessage:
           'Athugaðu að atvinnuleysisbætur eru greiddar frá þeim degi sem þú getur hafið störf en þó aldrei fyrr en í fyrsta lagi að loknum uppsagnarfresti. Þú getur ekki skráð lengra tímabil en einn mánuð fram í tímann.',
         description: 'job timeline info box description',
       },
       occasionalJobInfoBox: {
-        id: 'vmst.ub.application:employment.labels.occasionalJobInfoBox',
+        id: 'vmst.ub.application:employment.currentSituation.labels.occasionalJobInfoBox',
         defaultMessage:
           'Ef að þú ert í tilfallandi vinnu þarftu að tilkynna um vinnu fyrirfram í hvert skipti og skila upplýsingum um tekjur af tilfallandi vinnu á Mínum síðum. Þú gerir það með aðgerðinni „Tilkynna vinnu eða tekjur“.',
         description: 'occasional job info box description',
@@ -195,73 +195,139 @@ export const employment = {
   workingAbility: {
     general: defineMessages({
       sectionTitle: {
-        id: 'vmst.ub.application:employment.workingAbility.sectionTitle',
+        id: 'vmst.ub.application:employment.workingAbility.general.sectionTitle',
         defaultMessage: 'Vinnufærni',
         description: 'applicant working ability page section title',
       },
       pageTitle: {
-        id: 'vmst.ub.application:employment.workingAbility.pageTitle',
+        id: 'vmst.ub.application:employment.workingAbility.general.pageTitle',
         defaultMessage: 'Vinnufærni',
         description: 'Working ability page description',
       },
     }),
     labels: defineMessages({
       workingAbilityDescription: {
-        id: 'vmst.ub.application:employment.labels.workingAbilityDescription',
+        id: 'vmst.ub.application:employment.workingAbility.labels.workingAbilityDescription',
         defaultMessage: 'Hvernig metur þú þína vinnufærni?',
         description: 'Working ability dropdown description',
       },
       workingAbilityLabel: {
-        id: 'vmst.ub.application:employment.labels.workingAbilityLabel',
+        id: 'vmst.ub.application:employment.workingAbility.labels.workingAbilityLabel',
         defaultMessage: 'Staða',
         description: 'Working ability dropdown label',
       },
       optionFullTime: {
-        id: 'vmst.ub.application:employment.labels.optionFullTime',
+        id: 'vmst.ub.application:employment.workingAbility.labels.optionFullTime',
         defaultMessage: 'Ég er almennt vinnufær',
         description: 'Working ability option full time label',
       },
       optionPartTime: {
-        id: 'vmst.ub.application:employment.labels.optionPartTime',
+        id: 'vmst.ub.application:employment.workingAbility.labels.optionPartTime',
         defaultMessage: 'Ég er með skerta vinnufærni',
         description: 'Working ability option part time label',
       },
       optionDisability: {
-        id: 'vmst.ub.application:employment.labels.optionDisability',
+        id: 'vmst.ub.application:employment.workingAbility.labels.optionDisability',
         defaultMessage: 'Ég er með örorkumat',
         description: 'Working ability option disability label',
       },
       partTimeInfoBox: {
-        id: 'vmst.ub.application:employment.labels.partTimeInfoBox',
+        id: 'vmst.ub.application:employment.workingAbility.labels.partTimeInfoBox',
         defaultMessage:
           'Þú þarft að skila inn starfhæfnisvottorð því til staðfestingar. Engar áhyggjur þó þú sért ekki með læknisvæottorðið klárt. Þú getur vel klárað umsóknina og skilað vottorði á mínum síðum Vinnumálastofnunar síðar.',
         description: 'Working ability part time info box description',
       },
       partTimeFileUploadLabel: {
-        id: 'vmst.ub.application:employment.labels.partTimeFileUploadLabel',
+        id: 'vmst.ub.application:employment.workingAbility.labels.partTimeFileUploadLabel',
         defaultMessage: 'Læknisvottorð',
         description: 'Working ability part time file upload label',
       },
     }),
   },
-  employmentHistory: defineMessages({
-    sectionTitle: {
-      id: 'vmst.ub.application:employment.employmentHistory.sectionTitle',
-      defaultMessage: 'Atvinnusaga þín',
-      description: 'applicant employment history section title',
-    },
-    pageTitle: {
-      id: 'vmst.ub.application:employment.employmentHistory.pageTitle',
-      defaultMessage: 'Atvinnusaga þín',
-      description: 'Employment history page description',
-    },
-    pageDescription: {
-      id: 'vmst.ub.application:employment.employmentHistory.pageDescription',
-      defaultMessage:
-        'Greiðsla atvinnuleysisbóta miðast við áunninn rétt þinn. Því er mikilvægt að skila inn sem ítarlegustum upplýsingum um atvinnusögu þína. Til að fá fullar bætur þarftu að hafa unnið samtals í 12 mánuði í 100% starfi innan síðustu þriggja ára.',
-      description: 'Employment history page description',
-    },
-  }),
+  employmentHistory: {
+    general: defineMessages({
+      sectionTitle: {
+        id: 'vmst.ub.application:employment.employmentHistory.general.sectionTitle',
+        defaultMessage: 'Atvinnusaga þín',
+        description: 'applicant employment history section title',
+      },
+      pageTitle: {
+        id: 'vmst.ub.application:employment.employmentHistory.general.pageTitle',
+        defaultMessage: 'Atvinnusaga þín',
+        description: 'Employment history page description',
+      },
+      pageDescription: {
+        id: 'vmst.ub.application:employment.employmentHistory.general.pageDescription',
+        defaultMessage:
+          'Greiðsla atvinnuleysisbóta miðast við áunninn rétt þinn. Því er mikilvægt að skila inn sem ítarlegustum upplýsingum um atvinnusögu þína. Til að fá fullar bætur þarftu að hafa unnið samtals í 12 mánuði í 100% starfi innan síðustu þriggja ára.',
+        description: 'Employment history page description',
+      },
+    }),
+    labels: defineMessages({
+      independentCheckbox: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.independentCheckbox',
+        defaultMessage: 'Ertu eða varstu sjálfstætt starfandi ?',
+        description: 'Independent checkbox label',
+      },
+      lastJobLabel: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobLabel',
+        defaultMessage: 'Síðasta starf',
+        description: 'Last job label',
+      },
+      lastJobCompanyNationalId: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobCompanyNationalId',
+        defaultMessage: 'Kennitala fyrirtækis',
+        description: 'Last job company national id label',
+      },
+      lastJobCompanyName: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobCompanyName',
+        defaultMessage: 'Nafn fyrirtækis',
+        description: 'Last job company name label',
+      },
+      lastJobTitle: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobTitle',
+        defaultMessage: 'Starfsheiti',
+        description: 'Last job title label',
+      },
+      lastJobPercentage: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobPercentage',
+        defaultMessage: 'Starfshlutfall',
+        description: 'Last job percentage label',
+      },
+      lastJobStartDate: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobStartDate',
+        defaultMessage: 'Hóf störf',
+        description: 'Last job start date label',
+      },
+      lastJobEndDate: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobEndDate',
+        defaultMessage: 'Hvernig lýkur uppsagnafresti þínum',
+        description: 'Last job end date label',
+      },
+      lastJobAlertInformation: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobAlertInformation',
+        defaultMessage:
+          'Upplýsingarnar hér að ofan gefa ekki rétt á 100% bótahlutfalli. Til að hækka bótahlutfall geturðu bætt við starfi. Athugaðu að til að fá 100% bætur þarftu að hafa unnið 100% starf í samtals 12 mánuði innan síðustu þriggja ára.',
+        description: 'Last job alert information label',
+      },
+      addJob: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.addJob',
+        defaultMessage: 'Bæta við starfi',
+        description: 'Add job button label',
+      },
+      radioEesLabel: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.radioEesLabel',
+        defaultMessage: 'Hefurðu unnið á EES svæðinu síðastliðin 5 ár?',
+        description: 'EES country radio button label',
+      },
+      eesAlertInformation: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.eesAlertInformation',
+        defaultMessage:
+          'Þjónustufulltrúi Vinnumálastofnunar mun hafa samband við þig varðandi störf erlendis ef þörf er á.',
+        description: 'EES country alert information label',
+      },
+    }),
+  },
   lossOfRightsAgreement: defineMessages({
     sectionTitle: {
       id: 'vmst.ub.application:employment.lossOfRightsAgreement.sectionTitle',

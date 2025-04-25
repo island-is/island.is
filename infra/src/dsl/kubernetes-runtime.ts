@@ -24,17 +24,17 @@ export class Kubernetes implements ReferenceResolver {
       this.deps[to.name] = dependecies.add(from.name)
 
       // TODO: temp hack to exclude judicial system
-      if (this.releaseName === '' && !from.name.includes("judicial") && this.feature == undefined) {
-        return from.namespace === to.namespace
+      if (this.releaseName === '' && !from.name.includes("judicial")) {
+        return from.namespace === to.namespace || this.feature != undefined
           ? `${to.name}`
           : `${to.name}.${to.namespace}.svc.cluster.local`
       } else {
         if (this.releaseName === '') {
-          return from.namespace === to.namespace
+          return from.namespace === to.namespace || this.feature != undefined
             ? `web-${to.name}`
             : `web-${to.name}.${to.namespace}.svc.cluster.local`
         } else {
-          return from.namespace === to.namespace
+          return from.namespace === to.namespace || this.feature != undefined
             ? `${this.releaseName}-${to.name}`
             : `${this.releaseName}-${to.name}.${to.namespace}.svc.cluster.local`
         }

@@ -3,7 +3,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
-import { handle4xx } from '../../utils/errorHandler'
 import {
   ScreensApi,
   ScreensControllerCreateRequest,
@@ -25,7 +24,7 @@ export class ScreensService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private screensApi: ScreensApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -43,21 +42,23 @@ export class ScreensService {
   }
 
   async createScreen(auth: User, input: CreateScreenInput): Promise<Screen> {
-    const response = await this.screensApiWithAuth(auth)
-      .screensControllerCreate(input as ScreensControllerCreateRequest)
+    const response = await this.screensApiWithAuth(
+      auth,
+    ).screensControllerCreate(input as ScreensControllerCreateRequest)
 
     return response as Screen
   }
 
   async deleteScreen(auth: User, input: DeleteScreenInput): Promise<void> {
-    await this.screensApiWithAuth(auth)
-      .screensControllerDelete(input as ScreensControllerDeleteRequest)
-
+    await this.screensApiWithAuth(auth).screensControllerDelete(
+      input as ScreensControllerDeleteRequest,
+    )
   }
 
   async updateScreen(auth: User, input: UpdateScreenInput): Promise<Screen> {
-    const response = await this.screensApiWithAuth(auth)
-      .screensControllerUpdate(input as ScreensControllerUpdateRequest)
+    const response = await this.screensApiWithAuth(
+      auth,
+    ).screensControllerUpdate(input as ScreensControllerUpdateRequest)
 
     return response as unknown as Screen
   }
@@ -66,9 +67,8 @@ export class ScreensService {
     auth: User,
     input: UpdateScreensDisplayOrderInput,
   ): Promise<void> {
-    await this.screensApiWithAuth(auth)
-      .screensControllerUpdateDisplayOrder(
-        input as ScreensControllerUpdateDisplayOrderRequest,
-      )
+    await this.screensApiWithAuth(auth).screensControllerUpdateDisplayOrder(
+      input as ScreensControllerUpdateDisplayOrderRequest,
+    )
   }
 }

@@ -45,7 +45,7 @@ export const workingAbilitySubSection = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'workingAbilityAlertMessage',
-          title: employmentMessages.workingAbility.labels.partTimeInfoBox,
+          message: employmentMessages.workingAbility.labels.partTimeInfoBox,
           alertType: 'info',
           condition: needsMedicalReport,
         }),
