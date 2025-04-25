@@ -7,7 +7,6 @@ import {
 } from './dtos/mileageReading.dto'
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class VehiclesMileageClientService {

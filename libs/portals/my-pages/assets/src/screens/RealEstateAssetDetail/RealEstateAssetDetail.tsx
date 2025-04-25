@@ -8,7 +8,7 @@ import {
 import { useQuery, useLazyQuery, gql } from '@apollo/client'
 import { Query, PropertyOwner } from '@island.is/api/schema'
 import { useNamespaces, useLocale } from '@island.is/localization'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import {
   amountFormat,
   HMS_SLUG,
