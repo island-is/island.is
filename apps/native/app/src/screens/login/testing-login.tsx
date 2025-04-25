@@ -30,7 +30,6 @@ import {
 import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
-import { setupNativeMocking } from '@island.is/api/mocks/native'
 
 const Host = styled.View`
   flex: 1;
@@ -116,6 +115,7 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
   const onLoginPress = async () => {
     // Skip all login functionality if we are in mock environment
     if (environment.id === 'mock') {
+      const { setupNativeMocking } = await import('@island.is/api/mocks/native')
       await setupNativeMocking()
       // Skip onboarding steps when mocking
       preferencesStore.setState({
