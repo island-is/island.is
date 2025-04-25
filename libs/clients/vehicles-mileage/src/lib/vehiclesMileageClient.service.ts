@@ -31,7 +31,7 @@ export class VehiclesMileageClientService {
       permno: input.vehicleId,
     })
 
-    const samplePermno = res[0].permno
+    const samplePermno = res.length > 0 ? res[0].permno : undefined
 
     if (!samplePermno) {
       this.logger.warn('Mileage response has no vehicle id, invalid response')

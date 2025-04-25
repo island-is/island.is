@@ -121,7 +121,7 @@ export class VehiclesService {
 
     return {
       pageSize: res.pageSize,
-      pageNumber: res.pageSize,
+      pageNumber: res.pageNumber,
       totalPages: res.totalPages,
       totalRecords: res.totalRecords,
       data: res.vehicles.map((v) => ({
