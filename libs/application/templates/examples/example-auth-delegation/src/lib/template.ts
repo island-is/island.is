@@ -20,6 +20,7 @@ import {
 import { AuthDelegationType } from '@island.is/shared/types'
 import { NationalRegistryUserApi, IdentityApi } from '../dataProviders'
 import { isCompany } from 'kennitala'
+import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -34,6 +35,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.ExampleAuthDelegation.translation,
   ],
   dataSchema,
+  featureFlag: Features.exampleApplication,
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder, // Procure for a company or an entity
