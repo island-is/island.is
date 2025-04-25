@@ -330,20 +330,17 @@ export const formatProsecutorCourtDateEmailNotification = (
   sessionArrangements?: SessionArrangements,
 ): SubjectAndBody => {
   const cf = notifications.prosecutorCourtDateEmail
-  const scheduledCaseText = isIndictmentCase(type)
-    ? formatMessage(cf.sheduledIndictmentCase, { court, courtCaseNumber })
-    : formatMessage(cf.scheduledCase, {
-        court,
-        investigationPrefix:
-          type === CaseType.OTHER
-            ? 'onlyPrefix'
-            : isInvestigationCase(type)
-            ? 'withPrefix'
-            : 'noPrefix',
-        courtTypeName: formatCaseType(type),
-      })
+  const scheduledCaseText = formatMessage(cf.scheduledCase, {
+    court,
+    investigationPrefix:
+      type === CaseType.OTHER
+        ? 'onlyPrefix'
+        : isInvestigationCase(type)
+        ? 'withPrefix'
+        : 'noPrefix',
+    courtTypeName: formatCaseType(type),
+  })
   const courtDateText = formatMessage(cf.courtDate, {
-    isIndictment: isIndictmentCase(type),
     courtDate: courtDate
       ? formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
       : 'NONE',
@@ -363,99 +360,21 @@ export const formatProsecutorCourtDateEmailNotification = (
     sessionArrangements,
   })
 
-  const body = isIndictmentCase(type)
-    ? formatMessage(cf.bodyIndictments, {
-        scheduledCaseText,
-        courtDateText,
-        courtRoomText,
-        judgeText,
-        registrarText: registrarText || 'NONE',
-      })
-    : formatMessage(cf.body, {
-        scheduledCaseText,
-        courtDateText,
-        courtRoomText,
-        judgeText,
-        registrarText: registrarText || 'NONE',
-        defenderText,
-        sessionArrangements,
-      })
+  const body = formatMessage(cf.body, {
+    scheduledCaseText,
+    courtDateText,
+    courtRoomText,
+    judgeText,
+    registrarText: registrarText || 'NONE',
+    defenderText,
+    sessionArrangements,
+  })
 
   const subject = formatMessage(cf.subject, {
-    isIndictment: isIndictmentCase(type),
     courtCaseNumber: courtCaseNumber || '',
   })
 
   return { body, subject }
-}
-
-export const formatPrisonCourtDateEmailNotification = (
-  formatMessage: FormatMessage,
-  type: CaseType,
-  prosecutorOffice?: string,
-  court?: string,
-  courtDate?: Date,
-  accusedGender?: Gender,
-  requestedValidToDate?: Date,
-  isolation?: boolean,
-  defenderName?: string,
-  isExtension?: boolean,
-  sessionArrangements?: SessionArrangements,
-  courtCaseNumber?: string,
-): string => {
-  const courtText = formatMessage(
-    notifications.prisonCourtDateEmail.courtText,
-    { court: court || 'NONE' },
-  ).replace('dómur', 'dóms')
-  const courtDateText = formatMessage(
-    notifications.prisonCourtDateEmail.courtDateText,
-    {
-      courtDate: courtDate
-        ? formatDate(courtDate, 'PPPPp')
-            ?.replace('dagur,', 'daginn')
-            ?.replace(' kl.', ', kl.')
-        : 'NONE',
-    },
-  )
-  const requestedValidToDateText = formatMessage(
-    notifications.prisonCourtDateEmail.requestedValidToDateText,
-    {
-      requestedValidToDate: requestedValidToDate
-        ? formatDate(requestedValidToDate, 'PPPPp')
-            ?.replace('dagur,', 'dagsins')
-            ?.replace(' kl.', ', kl.')
-        : 'NONE',
-    },
-  )
-  const requestText = formatMessage(
-    notifications.prisonCourtDateEmail.requestText,
-    {
-      caseType: type,
-      gender: accusedGender,
-      requestedValidToDateText,
-    },
-  )
-  const isolationText = formatMessage(
-    notifications.prisonCourtDateEmail.isolationTextV2,
-    { isolation: Boolean(isolation) },
-  )
-  const defenderText = formatMessage(notifications.defender, {
-    defenderName: defenderName ?? 'NONE',
-    sessionArrangements,
-  })
-
-  return formatMessage(notifications.prisonCourtDateEmail.body, {
-    caseType: type,
-    prosecutorOffice: prosecutorOffice || 'NONE',
-    courtText,
-    isExtension,
-    courtDateText,
-    requestText,
-    isolationText,
-    defenderText,
-    sessionArrangements,
-    courtCaseNumber,
-  })
 }
 
 export const formatDefenderCourtDateEmailNotification = (

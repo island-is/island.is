@@ -623,7 +623,7 @@ export class CaseNotificationService extends BaseNotificationService {
     })
   }
 
-  // this is only relevant for non-indictment cases
+  // NOTE: this is only relevant for non-indictment cases
   private sendCourtDateEmailNotificationToProsecutor(
     theCase: Case,
     user: User,
@@ -639,7 +639,7 @@ export class CaseNotificationService extends BaseNotificationService {
       arraignmentDate?.location,
       theCase.judge?.name,
       theCase.registrar?.name,
-      theCase.defenderName, 
+      theCase.defenderName,
       theCase.sessionArrangements,
     )
 

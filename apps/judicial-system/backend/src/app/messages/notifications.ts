@@ -228,24 +228,16 @@ export const notifications = {
       description:
         'Notaður sem texti í pósti sem tilgreinir að dómstól hefur staðfest fyrirtökutíma',
     },
-    sheduledIndictmentCase: {
-      id: 'judicial.system.backend:notifications.prosecutor_court_date_email.scheduled_indictment_case',
-      defaultMessage:
-        '{court} boðar til þingfestingar í máli {courtCaseNumber}.',
-      description:
-        'Notaður sem texti í pósti sem tilgreinir að dómstóll boði til þingfestingar',
-    },
     courtDate: {
-      id: 'judicial.system.backend:notifications.prosecutor_court_date_email.court_date',
+      id: 'judicial.system.backend:notifications.prosecutor_court_date_email.court_date_vol2',
       defaultMessage:
-        '{isIndictment, select, true {Þingfesting} other {Fyrirtaka}} mun fara fram {courtDate, select, NONE {á ótilgreindum tíma} other {{courtDate}}}.',
+        'Fyrirtaka mun fara fram {courtDate, select, NONE {á ótilgreindum tíma} other {{courtDate}}}.',
       description:
         'Notaður sem texti í pósti sem tilgreinir hvenær fyrirtaka fer fram',
     },
     subject: {
       id: 'judicial.system.backend:notifications.prosecutor_court_date_email.subject_v2',
-      defaultMessage:
-        '{isIndictment, select, true {Þingfesting} other {Fyrirtaka}} í máli: {courtCaseNumber}',
+      defaultMessage: 'Fyrirtaka í máli: {courtCaseNumber}',
       description:
         'Notaður sem titil á  pósti til sækjanda þegar fyrirtökutími er staðfestur',
     },
@@ -255,13 +247,6 @@ export const notifications = {
         '{sessionArrangements, select, NONE_PRESENT {Krafan verður tekin fyrir án boðunar í þinghald.<br /><br />} other {}}{scheduledCaseText}<br /><br />{courtDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}{sessionArrangements, select, PROSECUTOR_PRESENT {} NONE_PRESENT {} other {<br /><br />{defenderText}.}}',
       description:
         'Notaður fyrir beinagrind á pósti til sækjanda þegar fyrirtökutími er staðfestur',
-    },
-    bodyIndictments: {
-      id: 'judicial.system.backend:notifications.prosecutor_court_date_email.body_indictments',
-      defaultMessage:
-        '{scheduledCaseText}<br /><br />{courtDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}',
-      description:
-        'Notaður fyrir beinagrind á pósti til sækjanda þegar fyrirtökutími er staðfestur í ákærum',
     },
   }),
   indictmentArraignmentDateEmail: defineMessages({
