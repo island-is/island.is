@@ -27,3 +27,8 @@ export const predefinedHeaders: IndexableObject = {
   4: ['okuskirteini', 'licenseNumber'],
   5: ['utgafuland', 'countryOfIssuer'],
 }
+
+export enum ApiActions {
+  getExamCategories = 'getExamCategories',
+  submitApplication = 'submitApplication',
+}

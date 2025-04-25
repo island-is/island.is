@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildPhoneField,
@@ -149,6 +150,17 @@ export const informationSection = buildSection({
           },
           required: true,
           isClearable: true,
+        }),
+        buildCustomField({
+          id: '',
+          component: 'InformationValidation',
+          condition: (answers: FormValue) => {
+            const selfOrOthers = getValueViaPath<SelfOrOthers>(
+              answers,
+              'information.selfOrOthers',
+            )
+            return selfOrOthers === SelfOrOthers.self ? true : false
+          },
         }),
       ],
     }),

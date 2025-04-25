@@ -1,0 +1,76 @@
+import { FieldBaseProps } from '@island.is/application/types'
+import { FC, useEffect, useState } from 'react'
+import { ExamineeInfo } from '../Components/ExamineeInfo'
+import { ExamInputs } from '../Components/ExamInputs'
+import { getValueViaPath } from '@island.is/application/core'
+import { ExamineeType, InstructorType } from '../../lib/dataSchema'
+import { Box } from '@island.is/island-ui/core'
+import { useFormContext, useWatch } from 'react-hook-form'
+
+export const ExamCategoriesSelf: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
+  const { application, setSubmitButtonDisabled } = props
+  const { answers } = application
+  const { trigger } = useFormContext()
+  const instructors =
+    getValueViaPath<InstructorType>(answers, 'instructors') ?? []
+  const examineesFromAnswers = getValueViaPath<ExamineeType>(
+    answers,
+    'examinees',
+  )
+
+  const examCategoryTable = getValueViaPath<string[][]>(
+    answers,
+    'examCategoryTable',
+  )
+  const [tableData, setTableData] = useState<string[][]>(
+    examCategoryTable || [],
+  )
+
+  const watchedTable: string[][] = useWatch({
+    name: 'examCategoryTable',
+    defaultValue: [],
+  })
+
+  const watchedCategories: string[][] = useWatch({
+    name: 'examCategories',
+  })
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const isNextEnabled = await trigger('examCategories')
+        setSubmitButtonDisabled && setSubmitButtonDisabled(!isNextEnabled)
+      } catch (error) {
+        setSubmitButtonDisabled && setSubmitButtonDisabled(true)
+      }
+    })()
+  }, [watchedCategories, trigger, setSubmitButtonDisabled])
+
+  useEffect(() => {
+    setTableData(watchedTable)
+  }, [watchedTable])
+
+  if (!examineesFromAnswers) return null // TODO This shouldn't happen
+  return (
+    <Box>
+      <>
+        <ExamineeInfo
+          {...props}
+          name={examineesFromAnswers[0].nationalId.name}
+          nationalId={examineesFromAnswers[0].nationalId.nationalId}
+        />
+        {/* Need to loop here for each examinee */}
+        <ExamInputs
+          {...props}
+          tableData={tableData}
+          setTable={setTableData}
+          instructors={instructors}
+          idx={0}
+          onSave={() => null}
+        />
+      </>
+    </Box>
+  )
+}

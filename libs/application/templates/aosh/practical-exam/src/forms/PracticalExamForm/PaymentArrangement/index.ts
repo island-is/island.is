@@ -25,7 +25,7 @@ export const paymentArrangementSection = buildSection({
   title: paymentArrangement.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'paymentArrangementMultiField',
+      id: 'paymentArrangement',
       title: paymentArrangement.general.title,
       children: [
         buildDescriptionField({
@@ -49,7 +49,13 @@ export const paymentArrangementSection = buildSection({
             },
           ],
           condition: isPersonType,
-          clearOnChange: ['paymentArrangement.explanation'],
+          clearOnChange: [
+            'paymentArrangement.explanation, paymentArrengement.paymentOptionsDescription',
+            'paymentArrengement.paymentOptions',
+            'paymentArrangement.companyInfo',
+            'paymentArrangement.contactInfo.email',
+            'paymentArrangement.contactInfo.phone',
+          ],
         }),
 
         /* INDIVIDUAL */

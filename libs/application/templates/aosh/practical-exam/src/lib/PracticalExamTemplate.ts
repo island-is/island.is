@@ -27,14 +27,13 @@ import {
   MockableVinnueftirlitidPaymentCatalogApi,
   VinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
-import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { shared } from './messages/shared'
 import { getChargeItems, isCompany } from '../utils'
 import { PaymentOptions } from '../utils/enums'
 import { CodeOwners } from '@island.is/shared/constants'
 import { Features } from '@island.is/feature-flags'
-import { ApiActions } from '../utils/constants'
+import { ApiActions } from './constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,

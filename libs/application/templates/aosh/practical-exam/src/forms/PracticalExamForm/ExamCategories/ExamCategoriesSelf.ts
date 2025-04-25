@@ -1,9 +1,8 @@
 import {
   buildCustomField,
+  buildHiddenInput,
   buildMultiField,
   buildSection,
-  buildSelectField,
-  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { examCategories } from '../../../lib/messages'
@@ -26,9 +25,36 @@ export const examCategoriesSectionSelf = buildSection({
       description: examCategories.general.pageDescription,
       id: 'examCategoriesMultiField',
       children: [
-        buildTextField({
-          id: '',
+        buildHiddenInput({
+          id: 'examCategoryTable',
         }),
+        buildCustomField({
+          id: 'examCategories',
+          title: '',
+          component: 'ExamCategoriesSelf',
+        }),
+        // buildFileUploadField({
+        //   id: 'field.id',
+        //   introduction: 'Field introduction',
+        //   maxSize: 10000000, // 10 MB
+        //   uploadAccept: '.pdf',
+        //   uploadHeader: 'Field upload header',
+        //   uploadDescription: 'Field upload description',
+        //   uploadButtonLabel: 'Field upload button label',
+        //   condition: (answers: FormValue, externalData: ExternalData) => {
+        //     const externalExamCategories = getValueViaPath<Array<ExamCategoryDto>>(
+        //       externalData,
+        //       'examCategories.data',
+        //     )
+        //     const examCategoriesRequireMedicalCertificate =
+        //     externalExamCategories
+        //       ?.filter((category) => category.requiresMedicalCertificate)
+        //       .map((i) => i.categoryCode) || []
+
+        //     const chosenCategories = getValueViaPath<>(answers, )
+        //     return true
+        //   }
+        // })
       ],
     }),
   ],

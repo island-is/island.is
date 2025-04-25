@@ -3,13 +3,10 @@ import {
   buildHiddenInput,
   buildMultiField,
   buildSection,
-  buildStaticTableField,
-  buildTableRepeaterField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { examCategories } from '../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
-import { getExaminees } from '../../../utils'
 import { SelfOrOthers } from '../../../utils/enums'
 
 export const examCategoriesSectionOthers = buildSection({
@@ -34,7 +31,7 @@ export const examCategoriesSectionOthers = buildSection({
         buildCustomField({
           id: 'examCategories',
           title: '',
-          component: 'ExamCategories',
+          component: 'ExamCategoriesOthers',
         }),
       ],
     }),

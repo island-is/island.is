@@ -36,6 +36,11 @@ export const examCategories = {
         'Eingöngu er tekið við skjölum með endingunum: .pdf., jpg., jpeg., png. ',
       description: `Title for downloading medical certificate`,
     },
+    error: {
+      id: 'aosh.pe.application:examCategories.fileUpload.error',
+      defaultMessage: 'Eitthvað fór úrskeiðis að hlaða inn skjali',
+      description: `Warning when there is an error uploading a file`,
+    },
   }),
   labels: defineMessages({
     examCategoryLabel: {
@@ -52,6 +57,32 @@ export const examCategories = {
       id: 'aosh.pe.application:examCategories.labels.categoryTableColumn',
       defaultMessage: 'Prófflokkar',
       description: `exam catagory label for table`,
+    },
+    saveButton: {
+      id: 'aosh.pe.application:examCategories.labels.saveButton',
+      defaultMessage: 'Vista og skrá næsta',
+      description: `Save button on examCategories screen`,
+    },
+    includedCategoriesAlertInfoTitle: {
+      id: 'aosh.pe.application:examCategories.labels.includedCategoriesAlertInfoTitle',
+      defaultMessage: 'Prófflokkar',
+      description: `Title for the alert info for included categories`,
+    },
+    includedCategoriesAlertInfoMessage: {
+      id: 'aosh.pe.application:examCategories.labels.includedCategoriesAlertInfoMessage',
+      defaultMessage: 'Útskýring á flokkum sem innihalda aðra flokka',
+      description: `included categories info message`,
+    },
+    inputErrorTitle: {
+      id: 'aosh.pe.application:examCategories.labels.inputErrorTitle',
+      defaultMessage: 'Villa að vista prófflokka',
+      description: `Error saving exam categories (no input for example) title`,
+    },
+    inputErrorMessage: {
+      id: 'aosh.pe.application:examCategories.labels.inputErrorMessage',
+      defaultMessage:
+        'Vinsamlega sláðu inn leiðbeinanda fyrir hvern prófflokk, ef ekki er hægt að velja leiðbeinanda er engin leiðbeinandi gjaldgengur fyrir prófflokki',
+      description: `Error saving exam categories (no input for example) message`,
     },
   }),
 }

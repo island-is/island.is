@@ -43,69 +43,73 @@ const InformationSchema = z
 
 const PaymentArrangementSchema = z
   .object({
-    individualOrCompany: z.enum([
-      IndividualOrCompany.individual,
-      IndividualOrCompany.company,
-    ]),
+    individualOrCompany: z
+      .enum([IndividualOrCompany.individual, IndividualOrCompany.company])
+      .nullish(),
     paymentOptions: z
       .enum([PaymentOptions.cashOnDelivery, PaymentOptions.putIntoAccount])
-      .optional(),
+      .nullish(),
     companyInfo: z
       .object({
-        nationalId: z.string().optional(),
-        label: z.string().optional(),
+        nationalId: z.string().nullish(),
+        name: z.string().nullish(),
       })
-      .optional(),
+      .nullish(),
     individualInfo: z
       .object({
-        email: z.string().optional(),
-        phone: z.string().optional(),
+        email: z.string().nullish(),
+        phone: z.string().nullish(),
       })
-      .optional(),
+      .nullish(),
+
     contactInfo: z
       .object({
-        email: z.string().optional(),
-        phone: z.string().optional(),
+        email: z.string().nullish(),
+        phone: z.string().nullish(),
       })
-      .optional(),
-    explanation: z.string().max(40).optional(),
+      .nullish(),
+    explanation: z.string().max(40).optional().or(z.literal('')),
   })
-  .refine(
-    ({ individualInfo, individualOrCompany }) => {
-      if (individualOrCompany === IndividualOrCompany.company) return true
-      return (
-        individualOrCompany === IndividualOrCompany.individual &&
-        individualInfo &&
-        individualInfo.email &&
-        individualInfo.email.length > 0 &&
-        isValidEmail(individualInfo.email)
-      )
-    },
-    {
-      path: ['individualInfo', 'email'],
-    },
-  )
-  .refine(
-    ({ individualInfo, individualOrCompany }) => {
-      if (individualOrCompany === IndividualOrCompany.company) return true
-      return (
-        individualOrCompany === IndividualOrCompany.individual &&
-        individualInfo &&
-        individualInfo.phone &&
-        isValidPhoneNumber(individualInfo?.phone)
-      )
-    },
-    {
-      path: ['individualInfo', 'phone'],
-    },
-  )
+  // .refine(
+  //   ({ individualInfo, individualOrCompany }) => {
+  //     if (individualOrCompany === IndividualOrCompany.company) return true
+  //     return (
+  //       individualOrCompany === IndividualOrCompany.individual &&
+  //       individualInfo &&
+  //       individualInfo.email &&
+  //       individualInfo.email.length > 0 &&
+  //       isValidEmail(individualInfo.email)
+  //     )
+  //   },
+  //   {
+  //     path: ['individualInfo', 'email'],
+  //   },
+  // )
+  // .refine(
+  //   ({ individualInfo, individualOrCompany }) => {
+  //     if (individualOrCompany === IndividualOrCompany.company) return true
+  //     return (
+  //       individualOrCompany === IndividualOrCompany.individual &&
+  //       individualInfo &&
+  //       individualInfo.phone &&
+  //       isValidPhoneNumber(individualInfo?.phone)
+  //     )
+  //   },
+  //   {
+  //     path: ['individualInfo', 'phone'],
+  //   },
+  // )
   .refine(
     ({ companyInfo, individualOrCompany }) => {
-      if (individualOrCompany === IndividualOrCompany.individual) return true
+      console.log(companyInfo)
+      if (individualOrCompany === IndividualOrCompany.individual) {
+        return true
+      }
+
       return (
         individualOrCompany === IndividualOrCompany.company &&
         companyInfo &&
-        companyInfo.label &&
+        companyInfo.name &&
         companyInfo.nationalId &&
         companyInfo.nationalId.length > 0 &&
         kennitala.isCompany(companyInfo.nationalId)
@@ -163,8 +167,9 @@ const PaymentArrangementSchema = z
       if (
         individualOrCompany === IndividualOrCompany.individual ||
         paymentOptions === PaymentOptions.cashOnDelivery
-      )
+      ) {
         return true
+      }
       return explanation && explanation.length < 41 && explanation.length > 0
     },
     {
@@ -270,31 +275,37 @@ const ExamCategorySchema = z.object({
     }),
   ),
   isValid: z.boolean(),
+  nationalId: z.string().optional(),
+  medicalCertificate: z
+    .object({
+      content: z.string(),
+      name: z.string(),
+      type: z.string(),
+    })
+    .optional(),
 })
 
 const ExamLocationSchema = z.object({
   address: z.string().min(1).max(128),
-  phone: z.string().refine((v) => isValidPhoneNumber(v)),
-  email: z.string().email(),
+  phone: z.string(), //.refine((v) => isValidPhoneNumber(v)),
+  email: z.string(), //.email(),
   postalCode: z.string().min(3).max(3),
 })
 
 const OverviewSchema = z.object({
   agreementCheckbox: z.array(z.string().min(1)).nonempty(),
 })
+
 export const PracticalExamAnswersSchema = z.object({
   information: InformationSchema,
   examinees: ExamineeSchema,
   instructors: InstructorSchema,
   examLocation: ExamLocationSchema,
   paymentArrangement: PaymentArrangementSchema,
-  examCategories: z.array(ExamCategorySchema).refine(
-    (data) => {
-      if (data.every((cat) => cat.isValid)) return true
-      return false
-    },
-    { path: ['examCategories'], message: 'testing' },
-  ),
+  examCategories: z.array(ExamCategorySchema).refine((data) => {
+    if (data.every((cat) => cat.isValid)) return true
+    return false
+  }),
   examCategoryTable: z.array(z.array(z.string())),
   overview: OverviewSchema,
 })

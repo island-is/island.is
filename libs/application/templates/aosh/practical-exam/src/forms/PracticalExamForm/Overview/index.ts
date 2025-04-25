@@ -54,7 +54,7 @@ export const overviewSection = buildSection({
           items: getPaymentArrangementForOverview,
         }),
         buildCheckboxField({
-          id: 'paymentArrangement.agreementCheckbox',
+          id: 'overview.agreementCheckbox',
           large: false,
           backgroundColor: 'white',
           marginTop: 3,

@@ -3,7 +3,6 @@ import {
   AlertMessage,
   Box,
   Button,
-  InputFileUpload,
   LoadingDots,
   Select,
 } from '@island.is/island-ui/core'
@@ -49,7 +48,6 @@ const hasValidCategoryCode = (
 export const ExamInputs: FC<
   React.PropsWithChildren<FieldBaseProps & ExamInputProps>
 > = ({ instructors, application, idx, onSave, tableData, setTable, field }) => {
-  // TODO Fetch exam categories from externalData
   const { externalData, answers } = application
   const { lang, formatMessage } = useLocale()
   const [categoryList, setCategoryList] = useState<Array<Option>>([])
@@ -153,6 +151,7 @@ export const ExamInputs: FC<
     setIsInvalidValidation(false)
     setValidationError('')
     setValue(`examCategories[${idx}].isValid`, false)
+
     const instructors: Option[] = getValues(`examCategories[${idx}].instructor`)
 
     const isUndefinedInstr = instructors.some(
@@ -166,11 +165,11 @@ export const ExamInputs: FC<
     setIsInvalidInput(false)
 
     const examinees = getValueViaPath<ExamineeType>(answers, 'examinees')
-    if (!examinees) return null // TODO Deal with this case
+    if (!examinees) return null
 
     const { nationalId, email, phone, countryIssuer, licenseNumber } =
       examinees[idx]
-    // Trigger validation on empty categories etc .. ?
+    setValue(`examCategories[${idx}].nationalId`, nationalId.nationalId)
     const payload: WorkMachineExamineeInput = {
       nationalId: nationalId.nationalId,
       email: email,
@@ -398,8 +397,8 @@ export const ExamInputs: FC<
       {isInvalidInput && (
         <AlertMessage
           type="warning"
-          title="Villa að vista prófflokka"
-          message="Vinsamlega sláðu inn leiðbeinanda fyrir hvern prófflokk, ef ekki er hægt að velja leiðbeinanda er engin leiðbeinandi gjaldgengur fyrir prófflokkin"
+          title={formatMessage(examCategories.labels.inputErrorTitle)}
+          message={formatMessage(examCategories.labels.inputErrorMessage)}
         />
       )}
       {isInvalidValidation && (
@@ -412,14 +411,18 @@ export const ExamInputs: FC<
       {showInfo && (
         <AlertMessage
           type="info"
-          title="Eitthver info title"
-          message={'blablaba eitthva[ info'}
+          title={formatMessage(
+            examCategories.labels.includedCategoriesAlertInfoTitle,
+          )}
+          message={formatMessage(
+            examCategories.labels.includedCategoriesAlertInfoMessage,
+          )}
         />
       )}
 
       <Box paddingTop={2} display={'flex'} justifyContent={'flexEnd'}>
         <Button onClick={onSubmit} variant="ghost">
-          {formatMessage('Vista og skrá næsta')}
+          {formatMessage(examCategories.labels.saveButton)}
         </Button>
       </Box>
     </Box>

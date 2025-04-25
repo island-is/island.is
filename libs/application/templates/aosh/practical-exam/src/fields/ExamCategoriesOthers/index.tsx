@@ -1,7 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC, useEffect, useState } from 'react'
-import { ExamineeInfo } from './ExamineeInfo'
-import { ExamInputs } from './ExamInputs'
+import { ExamineeInfo } from '../Components/ExamineeInfo'
+import { ExamInputs } from '../Components/ExamInputs'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   ExamCategoryType,
@@ -9,12 +9,12 @@ import {
   InstructorType,
 } from '../../lib/dataSchema'
 import { Box, Text } from '@island.is/island-ui/core'
-import { ExamCategoryTable } from './ExamCategoryTable'
+import { ExamCategoryTable } from '../Components/ExamCategoryTable'
 import { useFormContext, useWatch } from 'react-hook-form'
 
-export const ExamCategories: FC<React.PropsWithChildren<FieldBaseProps>> = (
-  props,
-) => {
+export const ExamCategoriesOthers: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = (props) => {
   const { application, setSubmitButtonDisabled } = props
   const { answers } = application
   const { trigger, getValues, setValue } = useFormContext()
@@ -58,7 +58,7 @@ export const ExamCategories: FC<React.PropsWithChildren<FieldBaseProps>> = (
         setSubmitButtonDisabled && setSubmitButtonDisabled(true)
       }
     })()
-  }, [watchedCategories, trigger])
+  }, [watchedCategories, trigger, setSubmitButtonDisabled])
 
   useEffect(() => {
     setTableData(watchedTable)
@@ -73,29 +73,20 @@ export const ExamCategories: FC<React.PropsWithChildren<FieldBaseProps>> = (
       examineeIndex >= examCategoriesValue.length ||
       examineeIndex >= examineesValue.length
     ) {
-      console.error('Invalid index')
       return
     }
 
-    // Update arrays
-    setValue(
-      'examCategories',
-      examCategoriesValue.filter((_, i) => i !== examineeIndex),
-    )
+    const filterOutIndex = (arr: any[]) =>
+      arr.filter((_, i) => i !== examineeIndex)
 
-    setValue(
-      'examinees',
-      examineesValue.filter((_, i) => i !== examineeIndex),
-    )
+    setValue('examCategories', filterOutIndex(examCategoriesValue))
+    setValue('examinees', filterOutIndex(examineesValue))
 
-    // Optional: Update examCategoryTable if it exists
+    // Update examCategoryTable if it exists
     if (tableData) {
-      setValue(
-        'examCategoryTable',
-        tableData.filter((_, i) => i !== examineeIndex),
-      )
+      setValue('examCategoryTable', filterOutIndex(tableData))
     }
-    setExaminees(examineesValue.filter((_, i) => i !== examineeIndex))
+    setExaminees(filterOutIndex(examineesValue))
     setExamineeIndex((prev) => {
       if (prev < 1) return prev
       return prev - 1
@@ -106,12 +97,14 @@ export const ExamCategories: FC<React.PropsWithChildren<FieldBaseProps>> = (
   if (!examinees) return null
   return (
     <Box>
-      <ExamCategoryTable
-        {...props}
-        rows={tableData}
-        onEdit={setExamineeIndex}
-        onDelete={onDeleteFromTable}
-      />
+      {tableData && (
+        <ExamCategoryTable
+          {...props}
+          rows={tableData}
+          onEdit={setExamineeIndex}
+          onDelete={onDeleteFromTable}
+        />
+      )}
       {examineeIndex !== maxExaminees && (
         <>
           <Text variant="h5" paddingY={4}>{`Próftaki ${

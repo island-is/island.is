@@ -4,7 +4,7 @@ import {
   MockablePaymentCatalogApi,
   PaymentCatalogApi,
 } from '@island.is/application/types'
-import { ApiActions } from '../utils/constants'
+import { ApiActions } from '../lib/constants'
 
 export { IdentityApi, UserProfileApi } from '@island.is/application/types'
 
