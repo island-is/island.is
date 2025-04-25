@@ -4,7 +4,8 @@ import { FinancePaths } from './paths'
 
 export const financeNavigation: PortalNavigationItem = {
   name: m.finance,
-  description: m.financeHeading,
+  description: m.financeTooltip,
+  intro: m.financeHeading,
   path: FinancePaths.FinanceRoot,
   children: [
     {
@@ -26,6 +27,11 @@ export const financeNavigation: PortalNavigationItem = {
           name: m.financeTransactionsCategories,
           description: m.financeTransactionsDescription,
           path: FinancePaths.FinanceTransactionCategories,
+        },
+        {
+          name: m.financeTransactionsVehiclesMileage,
+          description: m.financeTransactionsVehicleMileageDescription,
+          path: FinancePaths.FinanceTransactionVehicleMileage,
         },
         {
           name: m.financeTransactionPeriods,

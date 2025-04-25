@@ -12,12 +12,7 @@ import format from 'date-fns/format'
 
 import * as m from './messages'
 import { Routes } from './constants'
-import {
-  ApproveOptions,
-  ExternalData,
-  OverrideAnswerSchema,
-  SchoolType,
-} from './types'
+import { ApproveOptions, ExternalData, OverrideAnswerSchema } from './types'
 import { findFamilyStatus } from './utils'
 import { NationalRegistryIndividual } from '@island.is/application/types'
 
