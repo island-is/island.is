@@ -21,6 +21,18 @@ export class IndictmentCaseStatistics {
 }
 
 @ObjectType()
+export class RequestCaseStatistics {
+  @Field(() => Number)
+  count!: number
+
+  @Field(() => Number)
+  inProgressCount!: number
+
+  @Field(() => Number)
+  completedCount!: number
+}
+
+@ObjectType()
 export class ServiceStatusStatistics {
   @Field(() => ServiceStatus, { nullable: true })
   serviceStatus!: ServiceStatus | null
@@ -48,6 +60,9 @@ export class SubpoenaStatistics {
 export class CaseStatistics {
   @Field(() => Number)
   count!: number
+
+  @Field(() => RequestCaseStatistics)
+  requestCases!: RequestCaseStatistics
 
   @Field(() => IndictmentCaseStatistics)
   indictmentCases!: IndictmentCaseStatistics

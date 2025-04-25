@@ -125,13 +125,55 @@ const Statistics = () => {
                       ],
                     },
                     {
+                      id: 'request-cases',
+                      items: [
+                        {
+                          id: 'request-case-item',
+                          title: (
+                            <Text variant="h3" marginBottom={2}>
+                              {'R mál '}
+                              <Tooltip
+                                placement="right"
+                                text={formatMessage(
+                                  strings.requestCaseStatisticsTooltip,
+                                )}
+                              />
+                            </Text>
+                          ),
+                          values: [
+                            <Box
+                              key="request-cases-statistics-values"
+                              display="flex"
+                              flexDirection="column"
+                              rowGap={1}
+                            >
+                              <LabelValue
+                                label="Heildarfjöldi"
+                                value={stats?.requestCases.count}
+                              />
+
+                              <LabelValue
+                                label="Í vinnslu"
+                                value={stats?.requestCases.inProgressCount}
+                              />
+
+                              <LabelValue
+                                label="Lokið"
+                                value={stats?.requestCases.completedCount}
+                              />
+                            </Box>,
+                          ],
+                        },
+                      ],
+                    },
+                    {
                       id: 'indictment-cases',
                       items: [
                         {
                           id: 'indictment-case-item',
                           title: (
                             <Text variant="h3" marginBottom={2}>
-                              {'Ákærur '}
+                              {'S mál '}
                               <Tooltip
                                 placement="right"
                                 text={formatMessage(

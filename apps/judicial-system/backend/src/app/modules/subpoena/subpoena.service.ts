@@ -552,7 +552,11 @@ export class SubpoenaService {
     to?: Date,
     institutionId?: string,
   ): Promise<SubpoenaStatistics> {
-    const where: WhereOptions = {}
+    const where: WhereOptions = {
+      policeSubpoenaId: {
+        [Op.ne]: null,
+      },
+    }
 
     if (from || to) {
       where.created = {}

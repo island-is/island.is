@@ -1,6 +1,11 @@
 query CaseStatistics($input: CaseStatisticsInput) {
   casesStatistics(input: $input) {
     count
+    requestCases {
+      count
+      inProgressCount
+      completedCount
+    }
     indictmentCases {
       count
       inProgressCount

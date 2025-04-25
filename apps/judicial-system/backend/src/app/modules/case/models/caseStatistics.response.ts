@@ -19,9 +19,23 @@ export class IndictmentCaseStatistics {
   averageRulingTimeDays!: number
 }
 
+export class RequestCaseStatistics {
+  @ApiProperty({ type: Number })
+  count!: number
+
+  @ApiProperty({ type: Number })
+  inProgressCount!: number
+
+  @ApiProperty({ type: Number})
+  completedCount!: number
+}
+
 export class CaseStatistics {
   @ApiProperty({ type: Number })
   count!: number
+
+  @ApiProperty({ type: RequestCaseStatistics })
+  requestCases!: RequestCaseStatistics
 
   @ApiProperty({ type: IndictmentCaseStatistics })
   indictmentCases!: IndictmentCaseStatistics

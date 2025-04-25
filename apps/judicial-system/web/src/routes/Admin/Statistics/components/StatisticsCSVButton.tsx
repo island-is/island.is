@@ -54,8 +54,15 @@ export const StatisticsCSVButton: FC<StatisticsCSVButtonProps> = ({
     return parts.filter(Boolean).join('_') || 'case_statistics'
   }
 
+  const buildRequestSection = (s: CaseStatistics) => [
+    { Tegund: 'R mál' },
+    { Titill: 'Heildarfjöldi', Samtals: s.requestCases.count },
+    { Titill: 'Í vinnslu', Samtals: s.requestCases.inProgressCount },
+    { Titill: 'Lokið', Samtals: s.requestCases.completedCount },
+  ]
+
   const buildIndictmentSection = (s: CaseStatistics) => [
-    { Tegund: 'Ákærur' },
+    { Tegund: 'S mál' },
     { Titill: 'Heildarfjöldi', Samtals: s.indictmentCases.count },
     {
       Titill: 'Í vinnslu',
@@ -111,6 +118,7 @@ export const StatisticsCSVButton: FC<StatisticsCSVButtonProps> = ({
     const csvData = [
       { Tegund: 'Öll mál' },
       { Titill: 'Heildarfjöldi', Samtals: stats.count },
+      ...buildRequestSection(stats),
       ...buildIndictmentSection(stats),
       ...buildSubpoenaSection(stats),
     ]

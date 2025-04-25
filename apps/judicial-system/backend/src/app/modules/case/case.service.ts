@@ -84,6 +84,7 @@ import { MinimalCase } from './models/case.types'
 import {
   CaseStatistics,
   IndictmentCaseStatistics,
+  RequestCaseStatistics,
 } from './models/caseStatistics.response'
 import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
@@ -2352,7 +2353,16 @@ export class CaseService {
     to?: Date,
     institutionId?: string,
   ): Promise<CaseStatistics> {
-    const where: WhereOptions = { state: { [Op.not]: CaseState.DELETED } }
+    const where: WhereOptions = {
+      state: {
+        [Op.not]: [
+          CaseState.DELETED,
+          CaseState.DRAFT,
+          CaseState.NEW,
+          CaseState.WAITING_FOR_CONFIRMATION,
+        ],
+      },
+    }
 
     if (from || to) {
       where.created = {}
@@ -2374,6 +2384,8 @@ export class CaseService {
     }
 
     const cases = await this.caseModel.findAll({ where })
+    const requestCases = await this.getRequestCaseStatistics(cases)
+    const indictmentCases = await this.getIndictmentStatistics(where)
 
     const subpoenas = await this.subpoenaService.getStatistics(
       from,
@@ -2381,10 +2393,9 @@ export class CaseService {
       institutionId,
     )
 
-    const indictmentCases = await this.getIndictmentStatistics(where)
-
     const stats: CaseStatistics = {
       count: cases.length,
+      requestCases,
       indictmentCases,
       subpoenas,
     }
@@ -2395,7 +2406,6 @@ export class CaseService {
   async getIndictmentStatistics(
     where: WhereOptions,
   ): Promise<IndictmentCaseStatistics> {
-    // All indictments that have been sent to the court
     const indictmentCases = await this.caseModel.findAll({
       where: {
         ...where,
@@ -2448,6 +2458,26 @@ export class CaseService {
       averageRulingTimeDays: Math.round(
         averageRulingTimeMs / (1000 * 60 * 60 * 24),
       ),
+    }
+  }
+
+  async getRequestCaseStatistics(
+    cases: Case[],
+  ): Promise<RequestCaseStatistics> {
+    const requestCases = cases.filter((c) => c.type !== CaseType.INDICTMENT)
+
+    const inProgressCount = requestCases.filter(
+      (c) => !isCompletedCase(c.state),
+    ).length
+
+    const completedCount = requestCases.filter((c) =>
+      isCompletedCase(c.state),
+    ).length
+
+    return {
+      count: requestCases.length,
+      inProgressCount,
+      completedCount,
     }
   }
 }
