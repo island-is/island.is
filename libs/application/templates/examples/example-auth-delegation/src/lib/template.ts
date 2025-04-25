@@ -72,6 +72,7 @@ const template: ApplicationTemplate<
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
+            // Load the correct form for the role
             {
               id: Roles.APPLICANT,
               formLoader: () =>
@@ -129,6 +130,7 @@ const template: ApplicationTemplate<
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
           roles: [
+            // Load the correct form for the role
             {
               id: Roles.APPLICANT,
               formLoader: () =>
@@ -183,8 +185,27 @@ const template: ApplicationTemplate<
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
           roles: [
+            // Here the same form is loaded for all roles
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/completedForm').then((module) =>
+                  Promise.resolve(module.completedForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.PROCURER,
+              formLoader: () =>
+                import('../forms/completedForm').then((module) =>
+                  Promise.resolve(module.completedForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.POWER_OF_ATTORNEY,
               formLoader: () =>
                 import('../forms/completedForm').then((module) =>
                   Promise.resolve(module.completedForm),
