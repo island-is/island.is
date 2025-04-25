@@ -57,7 +57,7 @@ export const mapEntityToOptions = (
   if (!entities) {
     return []
   }
-  const sortedEntities = entities.sort(sortAlpha<Entity>('title'))
+  const sortedEntities = [...entities].sort(sortAlpha<Entity>('title'))
   return sortedEntities.map((e) => {
     if (e.__typename === 'OfficialJournalOfIcelandAdvertCategory') {
       return {
@@ -75,7 +75,7 @@ export const mapEntityToOptions = (
 }
 
 export const sortCategories = (cats: EntityOption[]) => {
-  return cats.sort(sortAlpha('label'))
+  return [...cats].sort(sortAlpha('label'))
 }
 
 export const formatDate = (date?: string, df = 'dd.MM.yyyy') => {
