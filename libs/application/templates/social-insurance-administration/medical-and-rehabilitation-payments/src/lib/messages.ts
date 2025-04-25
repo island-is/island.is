@@ -42,6 +42,67 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
 
   pre: defineMessages({
     // Data collection
+    skraInformationTitle: {
+      id: 'marp.application:pre.skra.information.title',
+      defaultMessage: 'Upplýsingar frá Þjóðskrá, RSK og Útlendingarstofnun',
+      description:
+        'Information from National Registry, RSK and Directorate of Immigration',
+    },
+    skraInformationDescription: {
+      id: 'marp.application:pre.skra.information.description',
+      defaultMessage:
+        'Upplýsingar um þig, maka og börn. Upplýsingar um búsetu.',
+      description:
+        'Information about you, spouse and children. Information about residence.',
+    },
+    contactInfoTitle: {
+      id: 'marp.application:pre.contact.info.title',
+      defaultMessage: 'Upplýsingar af mínum síðum Ísland.is',
+      description: 'Information from my pages on Ísland.is',
+    },
+    contactInfoDescription: {
+      id: 'marp.application:pre.contact.info.description',
+      defaultMessage:
+        'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar á mínar síður á Ísland.is.',
+      description:
+        'Information about email, phone number and bank account is retrieved from my pages on Ísland.is.',
+    },
+    healthInstitutionTitle: {
+      id: 'marp.application:pre.health.institution.title',
+      defaultMessage: 'Upplýsingar frá heilbrigðisstofnun',
+      description: 'Information from health institution',
+    },
+    healthInstitutionDescription: {
+      id: 'marp.application:pre.health.institution.description',
+      defaultMessage: 'Upplýsingar um læknisvottorð.',
+      description: 'Information about medical certificate.',
+    },
+    unionHealthFundTitle: {
+      id: 'marp.application:pre.union.health.fund.title',
+      defaultMessage: 'Upplýsingar frá sjúkrasjóði stéttarfélags',
+      description: 'Information from union health fund',
+    },
+    unionHealthFundDescription: {
+      id: 'marp.application:pre.union.health.fund.description',
+      defaultMessage:
+        'Upplýsingar um hvenær þú lýkur/laukst áunnum sjúkrasjóðsrétti.',
+      description:
+        'Information about when you end/ended your acquired health fund rights.',
+    },
+    serviceRehabilitationTreatmentProviderTitle: {
+      id: 'marp.application:pre.service.rehabilitation.treatment.provider.title',
+      defaultMessage:
+        'Upplýsingar frá þjónustuaðila, endurhæfingar- eða meðferðaraðila',
+      description:
+        'Information from service provider, rehabilitation or treatment provider',
+    },
+    serviceRehabilitationTreatmentProviderDescription: {
+      id: 'marp.application:pre.service.rehabilitation.treatment.provider.description',
+      defaultMessage:
+        'Tryggingastofnun sækir endurhæfingaráætlun til þjónustuaðila sem sér um endurhæfingu eða meðferð.',
+      description:
+        'The Social Insurance Administration retrieves the rehabilitation plan from the service provider responsible for rehabilitation or treatment.',
+    },
   }),
 
   generalInformation: defineMessages({

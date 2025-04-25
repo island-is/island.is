@@ -13,7 +13,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { SocialInsuranceAdministrationApplicantApi } from '../../dataProviders'
+import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
 
 export const externalDataSubSection = buildSubSection({
   id: 'externalDataSubSection',
@@ -40,39 +40,50 @@ export const externalDataSubSection = buildSubSection({
       }),
       dataProviders: [
         buildDataProviderItem({
-          // TODO: Update text!
           provider: NationalRegistryUserApi,
-          title: socialInsuranceAdministrationMessage.pre.skraInformationTitle,
-          subTitle: '',
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .skraInformationTitle,
+          subTitle:
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .skraInformationDescription,
         }),
         buildDataProviderItem({
-          // TODO: Update text?
           provider: NationalRegistrySpouseApi,
           title: '',
         }),
         buildDataProviderItem({
           provider: UserProfileApi,
-          title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.pre.contactInfoTitle,
           subTitle:
-            socialInsuranceAdministrationMessage.pre.contactInfoDescription,
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .contactInfoDescription,
         }),
         buildDataProviderItem({
-          provider: SocialInsuranceAdministrationApplicantApi,
           title:
-            socialInsuranceAdministrationMessage.pre
-              .socialInsuranceAdministrationTitle,
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .healthInstitutionTitle,
           subTitle:
-            socialInsuranceAdministrationMessage.pre
-              .socialInsuranceAdministrationDescription,
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .healthInstitutionDescription,
+        }),
+        buildDataProviderItem({
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .unionHealthFundTitle,
+          subTitle:
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .unionHealthFundDescription,
         }),
         buildDataProviderItem({
           id: 'sia.data',
           title:
-            socialInsuranceAdministrationMessage.pre
-              .socialInsuranceAdministrationInformationTitle,
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .serviceRehabilitationTreatmentProviderTitle,
           subTitle:
-            socialInsuranceAdministrationMessage.pre
-              .socialInsuranceAdministrationDataDescription,
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .serviceRehabilitationTreatmentProviderDescription,
         }),
         buildDataProviderItem({
           id: 'sia.privacy',
