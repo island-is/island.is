@@ -209,8 +209,8 @@ export const NewsList = ({
           </Stack>
         )}
         {variant === 'digital-iceland' && (
-          <Box className={styles.digitalIcelandNewsCardVariantContainer}>
-            {newsList.map((newsItem) => (
+          <Box>
+            {newsList.map((newsItem, index) => (
               <DigitalIcelandNewsCard
                 key={newsItem.id}
                 date={newsItem.date}
@@ -226,6 +226,7 @@ export const NewsList = ({
                   .map((tag) => tag.title)}
                 title={newsItem.title}
                 description={newsItem.intro}
+                mini={selectedPage > 1 || (selectedPage === 1 && index > 2)}
               />
             ))}
           </Box>

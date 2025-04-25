@@ -1,6 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { PaymentGroup } from './paymentGroup.model'
-import { PaymentMonth } from './paymentMonth.model'
 
 @ObjectType('SocialInsurancePaymentPlan')
 export class PaymentPlan {
@@ -12,9 +11,6 @@ export class PaymentPlan {
 
   @Field(() => Int, { nullable: true })
   totalPaymentsReceived?: number
-
-  @Field(() => [PaymentMonth], { nullable: true })
-  totalMonthlyPaymentHistory?: Array<PaymentMonth>
 
   @Field(() => [PaymentGroup], { nullable: true })
   paymentGroups?: Array<PaymentGroup>
