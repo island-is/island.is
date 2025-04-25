@@ -172,7 +172,7 @@ export const FieldsRepeaterFormField = ({
                       {formTitle &&
                         formatTextWithLocale(
                           typeof formTitle === 'function'
-                            ? formTitle(i)
+                            ? formTitle(i, application)
                             : formTitle,
                           application,
                           locale as Locale,

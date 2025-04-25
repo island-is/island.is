@@ -8,7 +8,6 @@ import {
   YES,
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
-import { application } from 'express'
 import { Application } from '@island.is/application/types'
 
 export const educationHistorySubSection = buildSubSection({
@@ -38,7 +37,7 @@ export const educationHistorySubSection = buildSubSection({
             return schoolName ?? 'Háskóli Íslands'
           },
           condition: (_answers, _externalData) => {
-            // Get info from externalData if available
+            // TODO: Get info from externalData if available
             return true
           },
         }),
@@ -56,7 +55,7 @@ export const educationHistorySubSection = buildSubSection({
             return courseSubject ?? 'Verkfræði'
           },
           condition: (_answers, _externalData) => {
-            // Get info from externalData if available
+            // TODO: Get info from externalData if available
             return true
           },
         }),
@@ -74,7 +73,7 @@ export const educationHistorySubSection = buildSubSection({
             return units ?? '20'
           },
           condition: (_answers, _externalData) => {
-            // Get info from externalData if available
+            // TODO: Get info from externalData if available
             return true
           },
         }),
@@ -92,7 +91,7 @@ export const educationHistorySubSection = buildSubSection({
             return degree ?? 'BS'
           },
           condition: (_answers, _externalData) => {
-            // Get info from externalData if available
+            // TODO: Get info from externalData if available
             return true
           },
         }),
@@ -111,18 +110,19 @@ export const educationHistorySubSection = buildSubSection({
             return expectedEndOfStudy ?? '01.06.2024'
           },
           condition: (_answers, _externalData) => {
-            // Get info from externalData if available
+            // TODO: Get info from externalData if available
             return true
           },
         }),
         buildFieldsRepeaterField({
           id: 'educationHistory',
-          formTitle: (index) => {
+          formTitle: (index, _application) => {
+            // TODO: Get info from externalData about currentStudies
             return {
               ...employmentSearchMessages.educationHistory
                 .educationHistoryTitle,
               values: {
-                value: index + 2,
+                value: index + 2, // TODO: If no current studies then do + 1
               },
             }
           },
