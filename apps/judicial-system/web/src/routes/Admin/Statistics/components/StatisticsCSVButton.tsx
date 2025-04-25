@@ -4,7 +4,7 @@ import { Button } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { CaseStatistics } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { mapServiceStatusTitle } from './helpers'
+import { mapServiceStatusTitle } from '../helpers'
 
 const convertToCSV = (rows: Record<string, unknown>[]): string => {
   if (!rows.length) return ''
@@ -58,8 +58,8 @@ export const StatisticsCSVButton: FC<StatisticsCSVButtonProps> = ({
     { Tegund: 'Ákærur' },
     { Titill: 'Heildarfjöldi', Samtals: s.indictmentCases.count },
     {
-      Titill: 'Sent til dómstóls',
-      Samtals: s.indictmentCases.sentToCourtCount,
+      Titill: 'Í vinnslu',
+      Samtals: s.indictmentCases.inProgressCount,
     },
     {
       Titill: 'Lokið með dómi',

@@ -17,6 +17,7 @@ type FiltersPanelProps = {
   setInstitution: (institution?: { label: string; value: string }) => void
   setFromDate: (date?: Date) => void
   setToDate: (date?: Date) => void
+  onClear: () => void
 }
 
 export const FiltersPanel: FC<FiltersPanelProps> = ({
@@ -27,6 +28,7 @@ export const FiltersPanel: FC<FiltersPanelProps> = ({
   setInstitution,
   setFromDate,
   setToDate,
+  onClear,
 }) => (
   <AnimatePresence mode="wait">
     <motion.div
@@ -78,11 +80,7 @@ export const FiltersPanel: FC<FiltersPanelProps> = ({
           size="small"
           variant="text"
           colorScheme="destructive"
-          onClick={() => {
-            setFromDate(undefined)
-            setToDate(undefined)
-            setInstitution(undefined)
-          }}
+          onClick={onClear}
         >
           Hreinsa
         </Button>

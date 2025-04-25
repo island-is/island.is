@@ -7,7 +7,7 @@ export class IndictmentCaseStatistics {
   count!: number
 
   @ApiProperty({ type: Number })
-  sentToCourtCount!: number
+  inProgressCount!: number
 
   @ApiProperty({ type: Number })
   rulingCount!: number

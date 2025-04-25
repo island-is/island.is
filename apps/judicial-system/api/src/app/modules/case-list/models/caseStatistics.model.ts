@@ -8,7 +8,7 @@ export class IndictmentCaseStatistics {
   count!: number
 
   @Field(() => Number)
-  sentToCourtCount!: number
+  inProgressCount!: number
 
   @Field(() => Number)
   rulingCount!: number

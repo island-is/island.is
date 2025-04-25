@@ -10,12 +10,12 @@ export const strings = defineMessages({
   indictmentStatisticsTooltip: {
     id: 'judicial.system.core:admin.statistics.indictment_tooltip',
     defaultMessage:
-      'Meðal afgreiðslutími: Fyrir ákærur sem er lokið með dómi. Tímabil er frá því að ákæra er send til dómstóls þar til henni er lokið með dómi.',
+      'Ákærur sem voru stofnaðar á völdu tímabili. Í vinnslu: hjá dómstóli. Lokið með dómi og meðaltími frá því að mál barst dómstólum þar til búið var að dæma í málinu.',
     description: 'Tooltip texti fyrir ákæru hluta á tölfræði skjá.',
   },
   allCasesStatisticsTooltip: {
     id: 'judicial.system.core:admin.statistics.all_cases_tooltip',
-    defaultMessage: 'Öll mál (R og S) á völdu tímabili',
+    defaultMessage: 'Öll mál (R og S) sem voru stofnuð á völdu tímabili',
     description: 'Tooltip texti fyrir ákæru hluta á tölfræði skjá.',
   },
 })

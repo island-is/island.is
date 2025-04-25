@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
@@ -22,35 +22,39 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import CountAndDays from './CountAndDays'
-import { FiltersPanel } from './FiltersPanel'
+import CountAndDays from './components/CountAndDays'
+import { FiltersPanel } from './components/FiltersPanel'
+import { StatisticsCSVButton } from './components/StatisticsCSVButton'
 import { useCaseStatisticsQuery } from './getCaseStatistics.generated'
 import { mapServiceStatusTitle } from './helpers'
-import { StatisticsCSVButton } from './StatisticsCSVButton'
 import { strings } from './Statistics.strings'
 import * as styles from './Statistics.css'
 
 const Statistics = () => {
   const [filter, setFilter] = useState(false)
   const [stats, setStats] = useState<CaseStatistics | undefined>()
-  const [fromDate, setFromDate] = useState<Date | undefined>()
-  const [toDate, setToDate] = useState<Date | undefined>()
-  const [institution, setInstitution] = useState<{
-    label: string
-    value: string
-  }>()
+  const [filters, setFilters] = useState<{
+    fromDate?: Date
+    toDate?: Date
+    institution?: { label: string; value: string }
+  }>({})
+
   const { formatMessage } = useIntl()
   const { districtCourts } = useInstitution()
 
+  const queryVariables = useMemo(() => {
+    return filter
+      ? {
+          fromDate: filters.fromDate,
+          toDate: filters.toDate,
+          institutionId: filters.institution?.value,
+        }
+      : {}
+  }, [filter, filters])
+
   const { data, loading } = useCaseStatisticsQuery({
     variables: {
-      input: filter
-        ? {
-            fromDate,
-            toDate,
-            institutionId: institution?.value,
-          }
-        : {},
+      input: queryVariables,
     },
     fetchPolicy: 'cache-and-network',
   })
@@ -148,8 +152,8 @@ const Statistics = () => {
                                 value={stats?.indictmentCases.count}
                               />
                               <LabelValue
-                                label="Sent til dómstóls"
-                                value={stats?.indictmentCases.sentToCourtCount}
+                                label="Í vinnslu"
+                                value={stats?.indictmentCases.inProgressCount}
                               />
                               <CountAndDays
                                 label="Lokið með dómi"
@@ -220,9 +224,11 @@ const Statistics = () => {
                 <Box display="flex" justifyContent="flexEnd" marginTop={2}>
                   <StatisticsCSVButton
                     stats={stats}
-                    fromDate={filter ? fromDate : undefined}
-                    toDate={filter ? toDate : undefined}
-                    institutionName={filter ? institution?.label : undefined}
+                    fromDate={filter ? filters.fromDate : undefined}
+                    toDate={filter ? filters.toDate : undefined}
+                    institutionName={
+                      filter ? filters.institution?.label : undefined
+                    }
                   />
                 </Box>
               </AnimatePresence>
@@ -234,12 +240,19 @@ const Statistics = () => {
               <Box display="flex" flexDirection="column" rowGap={3}>
                 <FiltersPanel
                   districtCourts={districtCourts}
-                  institution={institution}
-                  fromDate={fromDate}
-                  toDate={toDate}
-                  setInstitution={setInstitution}
-                  setFromDate={setFromDate}
-                  setToDate={setToDate}
+                  institution={filters.institution}
+                  fromDate={filters.fromDate}
+                  toDate={filters.toDate}
+                  setInstitution={(institution) =>
+                    setFilters((prev) => ({ ...prev, institution }))
+                  }
+                  setFromDate={(fromDate) =>
+                    setFilters((prev) => ({ ...prev, fromDate }))
+                  }
+                  setToDate={(toDate) =>
+                    setFilters((prev) => ({ ...prev, toDate }))
+                  }
+                  onClear={() => setFilters({})}
                 />
               </Box>
             </GridColumn>

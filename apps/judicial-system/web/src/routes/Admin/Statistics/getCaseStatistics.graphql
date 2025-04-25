@@ -3,7 +3,7 @@ query CaseStatistics($input: CaseStatisticsInput) {
     count
     indictmentCases {
       count
-      sentToCourtCount
+      inProgressCount
       rulingCount
       averageRulingTimeMs
       averageRulingTimeDays

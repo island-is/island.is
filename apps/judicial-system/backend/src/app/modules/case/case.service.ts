@@ -2395,6 +2395,7 @@ export class CaseService {
   async getIndictmentStatistics(
     where: WhereOptions,
   ): Promise<IndictmentCaseStatistics> {
+    // All indictments that have been sent to the court
     const indictmentCases = await this.caseModel.findAll({
       where: {
         ...where,
@@ -2412,15 +2413,12 @@ export class CaseService {
       ],
     })
 
-    const rulingCount = indictmentCases.filter(
-      (caseItem) => caseItem.rulingDate !== null,
+    const inProgressCount = indictmentCases.filter(
+      (caseItem) => caseItem.state !== CaseState.COMPLETED,
     ).length
 
-    const sentToCourtCount = indictmentCases.filter(
-      (caseItem) =>
-        caseItem.eventLogs?.some(
-          (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
-        ) && caseItem.state !== CaseState.COMPLETED,
+    const rulingCount = indictmentCases.filter(
+      (caseItem) => caseItem.rulingDate !== null,
     ).length
 
     const totalCount = indictmentCases.length
@@ -2444,7 +2442,7 @@ export class CaseService {
 
     return {
       count: totalCount,
-      sentToCourtCount,
+      inProgressCount,
       rulingCount,
       averageRulingTimeMs,
       averageRulingTimeDays: Math.round(
