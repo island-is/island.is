@@ -182,6 +182,10 @@ export const getLongTermLocationOverviewItems = (
   ]
 }
 
+const getFileType = (fileName: string): string | undefined => {
+  return fileName.split('.').pop()?.toUpperCase()
+}
+
 export const getLongTermLocationOverviewAttachments = (
   answers: FormValue,
   _externalData: ExternalData,
@@ -195,7 +199,7 @@ export const getLongTermLocationOverviewAttachments = (
     files?.map((x) => ({
       width: 'full',
       fileName: x.name,
-      fileType: x.name.split('.').pop(),
+      fileType: getFileType(x.name),
     })) || []
   )
 }
@@ -230,7 +234,7 @@ export const getSupportingDocumentsOverviewAttachments = (
     files?.map((x) => ({
       width: 'full',
       fileName: x.name,
-      fileType: x.name.split('.').pop(),
+      fileType: getFileType(x.name),
     })) || []
   )
 }
