@@ -68,6 +68,7 @@ const currentSituationSchema = z.object({
   jobTimelineStartDate: z.string().optional(),
 })
 
+/**  Job search section  **/
 const jobWishesSchema = z.object({
   jobList: z.array(z.string()).optional(),
   outsideYourLocation: z.array(z.string()).optional(),
@@ -93,11 +94,32 @@ const EmploymentHistorySchema = z.object({
   hasWorkedEes: z.string(),
 })
 
+const currentStudiesSchema = z
+  .object({
+    schoolName: z.string(),
+    courseSubject: z.string(),
+    units: z.string(),
+    degree: z.string(),
+    expectedEndOfStudy: z.string(),
+  })
+  .optional()
+
+const educationHistorySchema = z
+  .object({
+    levelOfStudy: z.string(),
+    degree: z.string(),
+    courseOfStudy: z.string(),
+    studyNotCompleted: z.array(z.string()).optional(),
+  })
+  .optional()
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema,
   currentSituation: currentSituationSchema,
   jobWishes: jobWishesSchema,
+  currentStudies: currentStudiesSchema,
+  educationHistory: z.array(educationHistorySchema),
   employmentHistory: EmploymentHistorySchema,
   informationChangeAgreement: z
     .array(z.string())

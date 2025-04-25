@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common'
 
 import { BirthdayIndividual, mapBirthdayIndividual } from './mappers'
-import { EinstaklingarApi, IslandIsApi } from '../../gen/fetch'
+import { EinstaklingarApi, IslandIsApi, HjuskapurDTO } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { HjuskapurDTO } from '../../gen/fetch'
 @Injectable()
 export class NationalRegistryV3ApplicationsClientService {
   constructor(

@@ -25,7 +25,6 @@ import { EES } from './EES'
 export class NationalRegistryService extends BaseTemplateApiService {
   constructor(
     private readonly nationalRegistryApi: NationalRegistryClientService,
-    private readonly nationalRegistryApiV3: NationalRegistryV3ApplicationsClientService,
     private readonly assetsXRoadService: AssetsXRoadService,
     private readonly nationalRegistryV3Api: NationalRegistryV3ApplicationsClientService,
   ) {
