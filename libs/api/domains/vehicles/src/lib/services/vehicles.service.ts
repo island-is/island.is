@@ -11,6 +11,7 @@ import {
   VehicleDtoListPagedResponse,
   PersidnoLookupResultDto,
   CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
+  VehiclesClientService,
 } from '@island.is/clients/vehicles'
 import {
   CanregistermileagePermnoGetRequest,
@@ -20,6 +21,7 @@ import {
   RequiresmileageregistrationPermnoGetRequest,
   RootPostRequest,
   RootPutRequest,
+  VehiclesMileageClientService,
 } from '@island.is/clients/vehicles-mileage'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
@@ -66,6 +68,8 @@ const isReadDateToday = (d?: Date) => {
 @Injectable()
 export class VehiclesService {
   constructor(
+    private vehicleClientService: VehiclesClientService,
+    private vehicleMileageClientService: VehiclesMileageClientService,
     private vehiclesApi: VehicleSearchApi,
     private mileageReadingApi: MileageReadingApi,
     @Inject(PublicVehicleSearchApi)
@@ -103,94 +107,39 @@ export class VehiclesService {
     auth: User,
     input: VehiclesListInputV3,
   ): Promise<VehiclesCurrentListResponse | null> {
-    const res = await this.getVehiclesWithAuth(
-      auth,
-    ).currentvehicleswithmileageandinspGet({
+    const res = await this.vehicleClientService.getVehicles(auth, {
+      pageSize: input.pageSize,
+      page: input.page,
       onlyMileageRegisterableVehicles:
         input.filterOnlyVehiclesUserCanRegisterMileage,
-      page: input.page,
-      pageSize: input.pageSize,
-      permno: input.query
-        ? input.query.length < 5
-          ? `${input.query}*`
-          : `${input.query}`
-        : undefined,
+      query: input.query,
     })
 
-    if (
-      !res.pageNumber ||
-      !res.pageSize ||
-      !res.totalPages ||
-      !res.totalRecords
-    ) {
+    if (!res) {
       return null
     }
 
     return {
-      pageNumber: res.pageNumber,
       pageSize: res.pageSize,
+      pageNumber: res.pageSize,
       totalPages: res.totalPages,
       totalRecords: res.totalRecords,
-      data:
-        res.data
-          ?.map((d) => {
-            if (!d.permno) {
-              return null
-            }
-
-            let lastMileageRegistration: MileageRegistration | undefined
-
-            if (
-              d.latestOriginCode &&
-              d.latestMileage &&
-              d.latestMileageReadDate
-            ) {
-              lastMileageRegistration = {
-                originCode: d.latestOriginCode,
-                mileage: d.latestMileage,
-                date: d.latestMileageReadDate,
-                internalId: d.latestMileageInternalId ?? undefined,
+      data: res.vehicles.map((v) => ({
+        ...v,
+        nextInspection: v.nextInspection
+          ? v.nextInspection.toISOString()
+          : undefined,
+        mileageDetails: {
+          canRegisterMileage: v.canRegisterMileage,
+          requiresMileageRegistration: v.requiresMileageRegistration,
+          lastMileageRegistration: v.lastMileageRegistration
+            ? {
+                ...v.lastMileageRegistration,
+                date: v.lastMileageRegistration.date.toISOString(),
               }
-            }
-            return {
-              vehicleId: d.permno,
-              registration: d.regno
-                ? {
-                    number: d.regno ?? undefined,
-                    code: d.regTypeCode ?? undefined,
-                    name: d.regTypeName ?? undefined,
-                    subName: d.regTypeSubName ?? undefined,
-                  }
-                : undefined,
-              userRole: d.role ?? undefined,
-              make: d.make ?? undefined,
-              color:
-                d.colorName && d.colorCode
-                  ? {
-                      name: d.colorName,
-                      code: d.colorCode,
-                    }
-                  : undefined,
-              nextInspection: d.nextMainInspection
-                ? d.nextMainInspection.toISOString()
-                : undefined,
-              isUserMainOperator:
-                typeof d.mainOperator === 'boolean'
-                  ? d.mainOperator
-                  : undefined,
-              isOwnerLegalEntity:
-                typeof d.ownerLegalEntity === 'boolean'
-                  ? d.ownerLegalEntity
-                  : undefined,
-              mileageDetails: {
-                lastMileageRegistration,
-                canRegisterMileage: d.canRegisterMilage ?? undefined,
-                requiresMileageRegistration:
-                  d.requiresMileageRegistration ?? undefined,
-              },
-            }
-          })
-          .filter(isDefined) ?? [],
+            : undefined,
+        },
+      })),
     }
   }
 
@@ -400,35 +349,29 @@ export class VehiclesService {
     auth: User,
     input: GetVehicleMileageInput,
   ): Promise<MileageRegistrationHistory | null> {
-    const res = await this.getMileageWithAuth(auth).getMileageReading({
-      permno: input.permno,
-    })
+    const data = await this.vehicleMileageClientService.getMileageHistory(
+      auth,
+      {
+        vehicleId: input.permno,
+      },
+    )
 
-    const samplePermno = res[0].permno
-
-    if (!samplePermno) {
+    if (!data) {
       return null
     }
 
     return {
-      vehicleId: samplePermno,
-      mileageRegistrationHistory: res?.length
-        ? res
-            .map((h) => {
-              if (h.permno !== samplePermno) {
-                return null
-              }
-              if (!h.originCode || !h.mileage || !h.readDate) {
-                return null
-              }
-              return {
-                originCode: h.originCode,
-                mileage: h.mileage,
-                date: h.readDate,
-              }
-            })
-            .filter(isDefined)
-        : undefined,
+      vehicleId: data.vehicleId,
+      mileageRegistrationHistory: data.registrationHistory.map((r) => ({
+        originCode: r.originCode,
+        mileage: r.mileage,
+        date: r.readDate.toISOString(),
+        internalId: r.internalId,
+        operation: r.operation,
+        transactionDate: r.transactionDate
+          ? r.transactionDate.toISOString()
+          : undefined,
+      })),
     }
   }
 
