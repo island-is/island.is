@@ -12,10 +12,8 @@ export class ExampleAuthDelegationService extends BaseTemplateApiService {
   ) {
     super(ApplicationTypes.EXAMPLE_AUTH_DELEGATION)
   }
-  // TODO: Implement functions as needed
 
   async createApplication() {
-    // TODO: Implement this
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     return {
@@ -24,7 +22,6 @@ export class ExampleAuthDelegationService extends BaseTemplateApiService {
   }
 
   async completeApplication() {
-    // TODO: Implement this
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     return {
