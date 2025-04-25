@@ -15,7 +15,7 @@ export const strings = defineMessages({
   },
   allCasesStatisticsTooltip: {
     id: 'judicial.system.core:admin.statistics.all_cases_tooltip',
-    defaultMessage: 'Öll mál (R og S) sem voru stofnuð á völdu tímabili',
+    defaultMessage: 'Öll mál (R og S) sem voru  á völdu tímabili',
     description: 'Tooltip texti fyrir ákæru hluta á tölfræði skjá.',
   },
   requestCaseStatisticsTooltip: {

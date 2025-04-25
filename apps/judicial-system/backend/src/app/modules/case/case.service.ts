@@ -2383,15 +2383,25 @@ export class CaseService {
       })
     }
 
-    const cases = await this.caseModel.findAll({ where })
-    const requestCases = await this.getRequestCaseStatistics(cases)
-    const indictmentCases = await this.getIndictmentStatistics(where)
+    const cases = await this.caseModel.findAll({
+      where,
+      include: [
+        {
+          model: EventLog,
+          required: false,
+          attributes: ['created', 'eventType'],
+          where: {
+            eventType: EventType.INDICTMENT_CONFIRMED,
+          },
+        },
+      ],
+    })
 
-    const subpoenas = await this.subpoenaService.getStatistics(
-      from,
-      to,
-      institutionId,
-    )
+    const [requestCases, indictmentCases, subpoenas] = await Promise.all([
+      this.getRequestCaseStatistics(cases),
+      this.getIndictmentStatistics(cases),
+      this.subpoenaService.getStatistics(from, to, institutionId),
+    ])
 
     const stats: CaseStatistics = {
       count: cases.length,
@@ -2404,24 +2414,9 @@ export class CaseService {
   }
 
   async getIndictmentStatistics(
-    where: WhereOptions,
+    cases: Case[],
   ): Promise<IndictmentCaseStatistics> {
-    const indictmentCases = await this.caseModel.findAll({
-      where: {
-        ...where,
-        type: CaseType.INDICTMENT,
-      },
-      include: [
-        {
-          model: EventLog,
-          required: false,
-          attributes: ['created', 'eventType'],
-          where: {
-            eventType: EventType.INDICTMENT_CONFIRMED,
-          },
-        },
-      ],
-    })
+    const indictmentCases = cases.filter((c) => isIndictmentCase(c.type))
 
     const inProgressCount = indictmentCases.filter(
       (caseItem) => caseItem.state !== CaseState.COMPLETED,
@@ -2464,7 +2459,7 @@ export class CaseService {
   async getRequestCaseStatistics(
     cases: Case[],
   ): Promise<RequestCaseStatistics> {
-    const requestCases = cases.filter((c) => c.type !== CaseType.INDICTMENT)
+    const requestCases = cases.filter((c) => isRequestCase(c.type))
 
     const inProgressCount = requestCases.filter(
       (c) => !isCompletedCase(c.state),
