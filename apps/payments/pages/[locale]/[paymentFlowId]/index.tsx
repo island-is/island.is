@@ -328,7 +328,6 @@ export default function PaymentPage({
   const payWithCard = async (data: Record<string, string>) => {
     const { card, cardExpiry, cardCVC } = data
 
-    // TODO Verify fields or let API?
     if (!card || !cardExpiry || typeof cardExpiry !== 'string' || !cardCVC) {
       return
     }
