@@ -146,6 +146,16 @@ export const employmentSearch = {
       defaultMessage: 'Vinsamlegast skráðu réttindi ef einhver eru.',
       description: 'Driving licence page description',
     },
+    drivingLicenseTypeLabel: {
+      id: 'vmst.ub.application:employmentSearch.drivingLicense.drivingLicenseTypeLabel',
+      defaultMessage: 'Tegund ökuréttinda',
+      description: 'Driving licence type label',
+    },
+    workMachineRights: {
+      id: 'vmst.ub.application:employmentSearch.drivingLicense.workMachineRights',
+      defaultMessage: 'Vinnuvélaréttindi',
+      description: 'Work Machine rights label',
+    },
   }),
   languageSkills: defineMessages({
     sectionTitle: {
@@ -157,6 +167,21 @@ export const employmentSearch = {
       id: 'vmst.ub.application:employmentSearch.languageSkills.pageTitle',
       defaultMessage: 'Tungumálafærni',
       description: 'Language skills page description',
+    },
+    language: {
+      id: 'vmst.ub.application:employmentSearch.languageSkills.language',
+      defaultMessage: 'Tungumál',
+      description: 'Language label',
+    },
+    skill: {
+      id: 'vmst.ub.application:employmentSearch.languageSkills.skill',
+      defaultMessage: 'Tungumálafærni',
+      description: 'Skill label',
+    },
+    addItemButtonText: {
+      id: 'vmst.ub.application:employmentSearch.languageSkills.addItemButtonText',
+      defaultMessage: 'Bæta við tungumáli',
+      description: 'Add item button text',
     },
   }),
   euresJobSearch: defineMessages({
@@ -172,9 +197,21 @@ export const employmentSearch = {
     },
     pageDescription: {
       id: 'vmst.ub.application:employmentSearch.euresJobSearch.pageDescription#markdown',
-      defaultMessage: `EURES er samstarfsvettvangur milli landa á Evrópska efnahagssvæðinu sem styður við frjálsa för vinnuafls á svæðinu. EURES vefgáttin birtir upplýsingar um laus störf og atvinnuleitendur geta tengst vefgáttinni um leið og sótt er um atvinnuleysisbætur. Nánari upplýsingar um EURES og starfsemi hjá Vinnumálastofnun má finna á vefnum okkar hér.\n
-Vilt þú að upplýsingar sem skráðar eru hjá Vinnumálastofnun um starfsreynslu þína, hæfni (nám, ökuréttindi og tungumálakunnáttu) verði sendar á EURES vefgáttina og gerðar aðgengilegar atvinnurekendum innan EES sem leita að starfsfólki með aðstoð EURES?`,
+      defaultMessage: `EURES er samstarfsvettvangur milli landa á Evrópska efnahagssvæðinu 
+      sem styður við frjálsa för vinnuafls á svæðinu. [EURES vefgáttin](https://eures.europa.eu/index_is) birtir upplýsingar 
+      um laus störf og atvinnuleitendur geta tengst vefgáttinni um leið og sótt er um 
+      atvinnuleysisbætur. Nánari upplýsingar um EURES og starfsemi hjá Vinnumálastofnun 
+      má finna á vefnum okkar [hér](https://island.is/s/vinnumalastofnun/storf-i-evropu). \n
+Vilt þú að upplýsingar sem skráðar eru hjá Vinnumálastofnun um starfsreynslu þína, 
+hæfni (nám, ökuréttindi og tungumálakunnáttu) verði sendar á EURES vefgáttina og 
+gerðar aðgengilegar atvinnurekendum innan EES sem leita að starfsfólki með aðstoð EURES?`,
       description: 'Eures job search page description',
+    },
+    agreementAlert: {
+      id: 'vmst.ub.application:employmentSearch.euresJobSearch.agreementAlert',
+      defaultMessage:
+        'Með samþykki gefur þú leyfi fyrir miðlun þessarra upplýsinga frá Vinnumálastofnun yfir í EURES vefgáttina.',
+      description: 'Eures job search agreement alert',
     },
   }),
   resume: defineMessages({
@@ -187,6 +224,34 @@ Vilt þú að upplýsingar sem skráðar eru hjá Vinnumálastofnun um starfsrey
       id: 'vmst.ub.application:employmentSearch.resume.pageTitle',
       defaultMessage: 'Ferilskrá',
       description: 'Resume page description',
+    },
+    ownResumeLabel: {
+      id: 'vmst.ub.application:employmentSearch.resume.ownResumeLabel',
+      defaultMessage: 'Áttu ferilskrá?',
+      description: 'Own resume label',
+    },
+    ownResumeAlert: {
+      id: 'vmst.ub.application:employmentSearch.resume.ownResumeAlert',
+      defaultMessage:
+        'Ef þú vilt gefa þér tíma í uppfæra ferilskrána og senda hana okkur seinna, þá ekkert mál. Þú getur alltaf hlaðið henni inn eftir að umsókn þín hefur verið samþykkt.',
+      description: 'Own resume alert',
+    },
+    doesNotOwnResumeAlert: {
+      id: 'vmst.ub.application:employmentSearch.resume.doesNotOwnResumeAlert',
+      defaultMessage:
+        'Við getum aðstoðað þig við að gera ferilskrá. Ef þú vilt getur ráðgjafi verið í sambandi við þig eftir að umsókn þín hefur verið samþykkt og aðstoðað við ferilskrárgerðina.',
+      description: 'Does not own resume alert',
+    },
+    uploadHeader: {
+      id: 'vmst.ub.application:employmentSearch.resume.uploadHeader',
+      defaultMessage: 'Ferilskrá',
+      description: 'Ferilskrá upload header',
+    },
+    uploadDescription: {
+      id: 'vmst.ub.application:employmentSearch.resume.uploadDescription',
+      defaultMessage:
+        'Tekið er við skjölum með endingu: .pdf, .png, .jpg, .jpeg',
+      description: 'Ferilskrá upload description',
     },
   }),
   employmentSearchConfirmationAgreement: defineMessages({
@@ -202,8 +267,15 @@ Vilt þú að upplýsingar sem skráðar eru hjá Vinnumálastofnun um starfsrey
     },
     pageDescription: {
       id: 'vmst.ub.application:employmentSearch.employmentSearchConfirmationAgreement.pageDescription#markdown',
-      defaultMessage: `Til að fá atvinnuleysistryggingar þarftu að vera að virk/ur í að leita þér að vinnu. Þú verður alltaf að staðfesta atvinnuleit milli 20. og 25. dags hvers mánaðar. \n
-Það gerir þú með því að fara inn á mínar síður Vinnumálastofnunar.`,
+      defaultMessage: `Til að fá atvinnuleysistryggingar þarftu að vera að virk/ur í að 
+      leita þér að vinnu. Þú verður alltaf að staðfesta atvinnuleit milli 20. og 25. dags 
+      hvers mánaðar. 
+      \nÞað gerir þú með því að fara inn á mínar síður Vinnumálastofnunar. 
+      \n**Þú þarft að staðfesta atvinnuleit, þrátt fyrir að:** 
+      \n* Ekki sé búið að afgreiða eða staðfesta umsókn þína
+      \n* Þú sért á biðtíma
+      \n* Þú sért með námssamning
+      \n* Þú sért í úrræðum á vegum Vinnumálastofnunar að undanskildum ráðningartengdum vinnumarkaðsúrræðum `,
       description: 'Employment search confirmation agreement page description',
     },
   }),
@@ -222,6 +294,22 @@ Vilt þú að upplýsingar sem skráðar eru hjá Vinnumálastofnun um starfsrey
       id: 'vmst.ub.application:employmentSearch.introductoryMeetingAgreement.pageDescription#markdown',
       defaultMessage: `Þegar umsókn hefur verið samþykkt þá færðu boð á kynningarfund. Á fundinum er farið yfir réttindi og skyldur atvinnuleitenda. Það er skyldumæting og Vinnumálastofnun sendir þér boðun í gegnum Mínar síður.`,
       description: 'Intoductory meeting agreement page description',
+    },
+    languageQuestion: {
+      id: 'vmst.ub.application:employmentSearch.introductoryMeetingAgreement.languageQuestion',
+      defaultMessage:
+        'Á hvaða tungumáli hentar þér best að hlusta á kynninguna?',
+      description: 'Language question label',
+    },
+    languageLabel: {
+      id: 'vmst.ub.application:employmentSearch.introductoryMeetingAgreement.languageLabel',
+      defaultMessage: 'Tungumál',
+      description: 'Language label',
+    },
+    languagePlaceholder: {
+      id: 'vmst.ub.application:employmentSearch.introductoryMeetingAgreement.languagePlaceholder',
+      defaultMessage: 'Veldu tungumál',
+      description: 'Language placeholder',
     },
   }),
 }

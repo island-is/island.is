@@ -1,6 +1,12 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { YES } from '@island.is/application/core'
+import { NO, YES, YesOrNoEnum } from '@island.is/application/core'
+
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
 
 const applicantInformationSchema = z
   .object({
@@ -94,6 +100,33 @@ const educationHistorySchema = z
   })
   .optional()
 
+const drivingLicenseSchema = z.object({
+  drivingLicenseType: z.array(z.string()).optional(),
+  workMachineRights: z.array(z.string()).optional(),
+})
+
+const languageSkillsSchema = z.object({
+  language: z.string(),
+  skill: z.string(),
+})
+
+const euresSchema = z.object({
+  agreement: z
+    .nativeEnum(YesOrNoEnum)
+    .refine((v) => Object.values(YesOrNoEnum).includes(v)),
+})
+
+const resumeSchema = z.object({
+  doesOwnResume: z
+    .nativeEnum(YesOrNoEnum)
+    .refine((v) => Object.values(YesOrNoEnum).includes(v)),
+  resumeFile: z.object({ file: z.array(FileSchema) }).optional(),
+})
+
+const introductoryMeetingSchema = z.object({
+  language: z.string(),
+})
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema,
@@ -101,9 +134,14 @@ export const dataSchema = z.object({
   jobWishes: jobWishesSchema,
   currentStudies: currentStudiesSchema,
   educationHistory: z.array(educationHistorySchema),
+  drivingLicense: drivingLicenseSchema,
+  languageSkills: z.array(languageSkillsSchema),
+  euresJobSearch: euresSchema,
+  resume: resumeSchema,
   informationChangeAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES)),
+  introductoryMeeting: introductoryMeetingSchema,
   concurrentWorkAgreement: z.array(z.string()).refine((v) => v.includes(YES)),
   yourRightsAgreement: z.array(z.string()).refine((v) => v.includes(YES)),
   lossOfRightsAgreement: z.array(z.string()).refine((v) => v.includes(YES)),

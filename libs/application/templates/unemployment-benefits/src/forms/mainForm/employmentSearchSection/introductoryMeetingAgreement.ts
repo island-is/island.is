@@ -1,7 +1,10 @@
 import {
   buildCheckboxField,
+  buildDescriptionField,
   buildMultiField,
+  buildSelectField,
   buildSubSection,
+  getValueViaPath,
   YES,
 } from '@island.is/application/core'
 import {
@@ -16,17 +19,43 @@ export const introductoryMeetingAgreementSubSection = buildSubSection({
     buildMultiField({
       id: 'introductoryMeetingAgreementSubSection',
       title: employmentSearchMessages.introductoryMeetingAgreement.pageTitle,
+      description:
+        employmentSearchMessages.introductoryMeetingAgreement.pageDescription,
       children: [
-        buildCheckboxField({
-          id: 'introductoryMeetingAgreement',
-          backgroundColor: 'blue',
-          large: true,
-          options: [
-            {
-              value: YES,
-              label: applicationMessages.agreeCheckbox,
-            },
-          ],
+        buildDescriptionField({
+          id: 'introductoryMeetingAgreement.description',
+          title:
+            employmentSearchMessages.introductoryMeetingAgreement
+              .languageQuestion,
+          titleVariant: 'h5',
+        }),
+        buildSelectField({
+          id: 'introductoryMeeting.language',
+          title:
+            employmentSearchMessages.introductoryMeetingAgreement.languageLabel,
+          options: (application) => {
+            const languages = getValueViaPath<{ name: string }[]>(
+              application.externalData,
+              'languages',
+            ) ?? [
+              {
+                name: 'Íslenska',
+              },
+              {
+                name: 'Enska',
+              },
+              {
+                name: 'Danska',
+              },
+            ]
+            return languages.map((language) => ({
+              value: language.name,
+              label: language.name,
+            }))
+          },
+          placeholder:
+            employmentSearchMessages.introductoryMeetingAgreement
+              .languagePlaceholder,
         }),
       ],
     }),

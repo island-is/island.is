@@ -15,3 +15,7 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
 }
+
+export const UPLOAD_ACCEPT = '.pdf, .jpg, .jpeg, .png'
+
+export const FILE_SIZE_LIMIT = 10000000 // 10MB
