@@ -19,5 +19,31 @@ export const education = {
       description: 'education section page description',
     },
   }),
-  labels: defineMessages({}),
+  labels: defineMessages({
+    lastTvelveMonthsLabel: {
+      id: 'vmst.ub.application:education.labels.lastTvelveMonthsLabel',
+      defaultMessage: 'Hefur þú verið í námi á síðastliðnum 12 mánuðum?',
+      description: 'Has been in school for the last 12 months',
+    },
+    typeOfEducationLabel: {
+      id: 'vmst.ub.application:education.labels.typeOfEducationLabel',
+      defaultMessage: 'Merktu við það sem á við',
+      description: 'type of education label',
+    },
+    currentlyEducationLabel: {
+      id: 'vmst.ub.application:education.labels.currentEducationLabel',
+      defaultMessage: 'Ég er skráð/ur í nám núna',
+      description: 'Currently education label',
+    },
+    lastSemesterEducationLabel: {
+      id: 'vmst.ub.application:education.labels.lastSemesterEducationLabel',
+      defaultMessage: 'Ég var skráð/ur í nám á síðustu námsönn',
+      description: 'Last semester education label',
+    },
+    lastTvelveMonthsEducationLabel: {
+      id: 'vmst.ub.application:education.labels.lastTvelveMonthsEducationLabel',
+      defaultMessage: 'Ég lauk námi á síðustu 12 mánuðum',
+      description: 'Last twelve months education label',
+    },
+  }),
 }

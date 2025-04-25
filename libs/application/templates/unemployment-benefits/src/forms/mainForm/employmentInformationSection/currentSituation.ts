@@ -133,7 +133,6 @@ export const currentSituationSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'currentSituation.wantedJobPercentage',
-          width: 'half',
           title:
             employmentMessages.currentSituation.labels.partTimeJobPercentage,
           condition: isEmployedAtAll,

@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common'
 import { BirthdayIndividual, mapBirthdayIndividual } from './mappers'
 import { EinstaklingarApi, IslandIsApi, HjuskapurDTO } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-
 @Injectable()
 export class NationalRegistryV3ApplicationsClientService {
   constructor(

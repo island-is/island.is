@@ -81,6 +81,25 @@ const jobWishesSchema = z.object({
   location: z.array(z.string()).optional(),
 })
 
+const EmploymentHistorySchema = z.object({
+  lastJob: z.object({
+    title: z.string().optional(),
+    percentage: z.string().optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+  }),
+  previousJobs: z.array(
+    z.object({
+      company: z.string().optional(),
+      jobTitle: z.string().optional(),
+      jobPercentage: z.string().optional(),
+      jobStartDate: z.string().optional(),
+      jobEndDate: z.string().optional(),
+    }),
+  ),
+  hasWorkedEes: z.string(),
+})
+
 const currentStudiesSchema = z
   .object({
     schoolName: z.string(),
@@ -138,6 +157,7 @@ export const dataSchema = z.object({
   languageSkills: z.array(languageSkillsSchema),
   euresJobSearch: euresSchema,
   resume: resumeSchema,
+  employmentHistory: EmploymentHistorySchema,
   informationChangeAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES)),
