@@ -104,4 +104,8 @@ export const uniMessages = defineMessages({
     id: 'sp.education-graduation:education-grad-detail-instutution',
     defaultMessage: 'Stofnun',
   },
+  graduationFiles: {
+    id: 'sp.education-graduation:graduation-files',
+    defaultMessage: 'Brautskráningargögn',
+  },
 })

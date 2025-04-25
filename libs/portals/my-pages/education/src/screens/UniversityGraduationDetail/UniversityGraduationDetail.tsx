@@ -2,7 +2,7 @@ import { UniversityCareersUniversityId } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
-  Button,
+  DropdownMenu,
   GridColumn,
   GridRow,
   Text,
@@ -13,7 +13,6 @@ import { Problem } from '@island.is/react-spa/shared'
 import {
   InfoLineStack,
   InfoLine,
-  formSubmit,
   formatDate,
   m,
   IntroWrapper,
@@ -23,7 +22,7 @@ import {
   mapSlugToContentfulSlug,
   mapSlugToUniversity,
 } from '../../utils/mapUniversitySlug'
-import { useStudentTrackQuery } from './EducationGraduationDetail.generated'
+import { useStudentTrackQuery } from './UniversityGraduationDetail.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { uniMessages } from '../../lib/messages'
 
@@ -32,7 +31,7 @@ type UseParams = {
   uni: string
 }
 
-export const EducationGraduationDetail = () => {
+export const UniversityGraduationDetail = () => {
   useNamespaces('sp.education-graduation')
   const { id, uni } = useParams() as UseParams
   const { formatMessage, lang } = useLocale()
@@ -80,33 +79,26 @@ export const EducationGraduationDetail = () => {
             justifyContent="flexStart"
             printHidden
           >
-            {files &&
-              filesAvailable &&
-              files
-                .map((item, index) => {
-                  const downloadServiceUrl = item.downloadServiceURL
-                  if (!downloadServiceUrl) {
-                    return null
-                  }
-                  return (
-                    <Box
-                      key={`education-graduation-button-${index}`}
-                      paddingRight={2}
-                      marginBottom={2}
-                    >
-                      <Button
-                        variant="utility"
-                        size="small"
-                        icon="document"
-                        iconType="outline"
-                        onClick={() => formSubmit(downloadServiceUrl)}
-                      >
-                        {item.displayName}
-                      </Button>
-                    </Box>
-                  )
-                })
-                .filter(isDefined)}
+            {files && filesAvailable && (
+              <DropdownMenu
+                icon="download"
+                iconType="outline"
+                menuLabel={formatMessage(m.moreOptions)}
+                items={files
+                  .map((item) => {
+                    const downloadServiceUrl = item.downloadServiceURL
+                    if (!downloadServiceUrl) {
+                      return null
+                    }
+                    return {
+                      href: downloadServiceUrl,
+                      title: item.displayName,
+                    }
+                  })
+                  .filter(isDefined)}
+                title={formatMessage(uniMessages.graduationFiles)}
+              />
+            )}
             {!filesAvailable && !loading && (
               <Box width="full">
                 <AlertMessage
@@ -187,4 +179,4 @@ export const EducationGraduationDetail = () => {
   )
 }
 
-export default EducationGraduationDetail
+export default UniversityGraduationDetail
