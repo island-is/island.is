@@ -3,7 +3,7 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { FormModes } from '@island.is/application/types'
 
 export const completedForm = buildForm({
-  id: 'completedForm',
+  id: 'CompletedForm',
   mode: FormModes.COMPLETED,
   children: [
     buildFormConclusionSection({
