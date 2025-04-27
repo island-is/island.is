@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { EMAIL_REGEX, getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { ApplicantsInfo, CostField } from './types'
 import {
@@ -22,9 +22,7 @@ import is from 'date-fns/locale/is'
 import * as m from '../lib/messages'
 
 export const validateEmail = (value: string) => {
-  const regex =
-    /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-  return regex.test(value)
+  return EMAIL_REGEX.test(value)
 }
 
 export const insertAt = (str: string, sub: string, pos: number) =>
