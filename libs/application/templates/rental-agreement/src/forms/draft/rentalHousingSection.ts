@@ -7,6 +7,7 @@ import { RentalHousingCondition } from './rentalHousingSubsections/rentalHousing
 import { RentalHousingFireProtections } from './rentalHousingSubsections/rentalHousingFireProtections'
 
 import { application } from '../../lib/messages'
+import { RentalHousingPropertySearch } from './rentalHousingSubsections/rentalHousingPropertySearch'
 
 export const RentalHousingSection = buildSection({
   id: 'rentalHousingSection',
@@ -14,6 +15,7 @@ export const RentalHousingSection = buildSection({
   children: [
     RentalHousingLandlordInfo,
     RentalHousingTenantInfo,
+    RentalHousingPropertySearch,
     RentalHousingPropertyInfo,
     RentalHousingSpecialProvisions,
     RentalHousingCondition,

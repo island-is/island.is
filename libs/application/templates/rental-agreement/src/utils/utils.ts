@@ -13,6 +13,7 @@ import {
   SecurityDepositAmountOptions,
   UserRole,
   RentalPaymentMethodOptions,
+  NextStepInReviewOptions,
 } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import format from 'date-fns/format'
@@ -80,69 +81,47 @@ export const parseCurrency = (value: string): number | undefined => {
   return numeric ? Number(numeric) : undefined
 }
 
-export const getApplicationAnswers = (answers: Application['answers']) => {
-  const landlords = getValueViaPath<ApplicantsInfo[]>(
-    answers,
-    'landlordInfo.table',
-    [],
-  )
-  const tenants = getValueViaPath<ApplicantsInfo[]>(
-    answers,
-    'tenantInfo.table',
-    [],
-  )
-  const propertyTypeOptions = getValueViaPath<RentalHousingCategoryTypes>(
-    answers,
-    'registerProperty.categoryType',
-  )
-
-  const propertyClassOptions = getValueViaPath<RentalHousingCategoryClass>(
-    answers,
-    'registerProperty.categoryClass',
-  )
-
-  const inspectorOptions = getValueViaPath<RentalHousingConditionInspector>(
-    answers,
-    'condition.inspector',
-  )
-
-  const rentalAmountIndexTypesOptions = getValueViaPath<RentalAmountIndexTypes>(
-    answers,
-    'rentalAmount.indexTypes',
-  )
-
-  const rentalAmountPaymentDateOptions =
-    getValueViaPath<RentalAmountPaymentDateOptions>(
-      answers,
-      'rentalAmount.paymentDateOptions',
-    )
-
-  const otherFeesHousingFund = getValueViaPath<OtherFeesPayeeOptions>(
-    answers,
-    'otherFees.housingFund',
-  )
-
-  const otherFeesElectricityCost = getValueViaPath<OtherFeesPayeeOptions>(
-    answers,
-    'otherFees.electricityCost',
-  )
-
-  const otherFeesHeatingCost = getValueViaPath<OtherFeesPayeeOptions>(
-    answers,
-    'otherFees.heatingCost',
-  )
-
+export const extractApplicationAnswers = (answers: Application['answers']) => {
   return {
-    landlords,
-    tenants,
-    propertyTypeOptions,
-    propertyClassOptions,
-    inspectorOptions,
-    rentalAmountIndexTypesOptions,
-    rentalAmountPaymentDateOptions,
-    otherFeesElectricityCost,
-    otherFeesHeatingCost,
-    otherFeesHousingFund,
+    landlords: getValueViaPath<ApplicantsInfo[]>(answers, 'landlordInfo.table'),
+    tenants: getValueViaPath<ApplicantsInfo[]>(answers, 'tenantInfo.table'),
+    propertyTypeOptions: getValueViaPath<RentalHousingCategoryTypes>(
+      answers,
+      'registerProperty.categoryType',
+    ),
+    propertyClassOptions: getValueViaPath<RentalHousingCategoryClass>(
+      answers,
+      'registerProperty.categoryClass',
+    ),
+    inspectorOptions: getValueViaPath<RentalHousingConditionInspector>(
+      answers,
+      'condition.inspector',
+    ),
+    rentalAmountIndexTypesOptions: getValueViaPath<RentalAmountIndexTypes>(
+      answers,
+      'rentalAmount.indexTypes',
+    ),
+    rentalAmountPaymentDateOptions:
+      getValueViaPath<RentalAmountPaymentDateOptions>(
+        answers,
+        'rentalAmount.paymentDateOptions',
+      ),
+    otherFeesHousingFund: getValueViaPath<OtherFeesPayeeOptions>(
+      answers,
+      'otherFees.housingFund',
+    ),
+    otherFeesElectricityCost: getValueViaPath<OtherFeesPayeeOptions>(
+      answers,
+      'otherFees.electricityCost',
+    ),
+    otherFeesHeatingCost: getValueViaPath<OtherFeesPayeeOptions>(
+      answers,
+      'otherFees.heatingCost',
+    ),
+    nextStepInReviewOptions: getValueViaPath<NextStepInReviewOptions>(
+      answers,
+      'reviewInfo.applicationReview.nextStepOptions',
+    ),
   }
 }
 
@@ -194,11 +173,6 @@ export const getPropertyClassGroupOptions = () => [
     value: RentalHousingCategoryClassGroup.INCOME_BASED_HOUSING,
     label: m.registerProperty.category.classGroupSelectLabelIncomeBasedHousing,
   },
-  // TODO: Add this option if decision is made to use
-  // {
-  //   value: RentalHousingCategoryClassGroup.EMPLOYEE_HOUSING,
-  //   label: m.registerProperty.category.classGroupSelectLabelEmployeeHousing,
-  // },
 ]
 
 export const getInspectorOptions = () => [
@@ -322,6 +296,17 @@ export const getPaymentMethodOptions = () => [
   {
     value: RentalPaymentMethodOptions.OTHER,
     label: m.rentalAmount.paymentMethodOtherLabel,
+  },
+]
+
+export const getNextStepInReviewOptions = () => [
+  {
+    value: NextStepInReviewOptions.GO_TO_SIGNING,
+    label: m.inReview.reviewInfo.nextStepToSigningButtonText,
+  },
+  {
+    value: NextStepInReviewOptions.EDIT_APPLICATION,
+    label: m.inReview.reviewInfo.nextStepToEditButtonText,
   },
 ]
 

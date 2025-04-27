@@ -1,9 +1,8 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import { UploadFile } from '@island.is/island-ui/core'
 import { FormValue } from '@island.is/application/types'
-import { ApplicationAnswers, CostField, SelectOption } from './types'
+import { CostField, SelectOption, Unit } from './types'
 import {
-  AnswerOptions,
   OtherFeesPayeeOptions,
   RentalHousingCategoryClass,
   RentalHousingCategoryTypes,
@@ -12,6 +11,7 @@ import {
   SecurityDepositTypeOptions,
 } from './constants'
 import { AddressProps } from '../fields/PropertySearch'
+import { Application } from '@island.is/api/schema'
 
 // Utility function to get the label of a select option based on its value
 export const getOptionLabel = (
@@ -28,7 +28,7 @@ export const getOptionLabel = (
 }
 
 // Other Fees application answers
-export const extractOtherFeesData = (answers: ApplicationAnswers) => {
+export const extractOtherFeesData = (answers: Application['answers']) => {
   return {
     housingFund: getValueViaPath<OtherFeesPayeeOptions>(
       answers,
@@ -83,7 +83,7 @@ export const extractOtherFeesData = (answers: ApplicationAnswers) => {
 }
 
 // Property info application answers
-export const extractPropertyInfoData = (answers: ApplicationAnswers) => {
+export const extractPropertyInfoData = (answers: Application['answers']) => {
   return {
     uploadedFiles: getValueViaPath<UploadFile[]>(
       answers,
@@ -101,7 +101,7 @@ export const extractPropertyInfoData = (answers: ApplicationAnswers) => {
       answers,
       'registerProperty.categoryType',
     ),
-    searchResultUnits: getValueViaPath<FormValue[]>(
+    searchResultUnits: getValueViaPath<Unit[]>(
       answers,
       'registerProperty.searchresults.units',
     ),
@@ -126,7 +126,7 @@ export const extractPropertyInfoData = (answers: ApplicationAnswers) => {
       answers,
       'fireProtections.smokeDetectors',
     ),
-    fireExtinguishers: getValueViaPath<string>(
+    fireExtinguisher: getValueViaPath<string>(
       answers,
       'fireProtections.fireExtinguisher',
     ),
@@ -142,9 +142,9 @@ export const extractPropertyInfoData = (answers: ApplicationAnswers) => {
 }
 
 // Rental info application answers
-export const extractRentalInfoData = (answers: ApplicationAnswers) => {
+export const extractRentalInfoData = (answers: Application['answers']) => {
   return {
-    securityDepositRequired: getValueViaPath<AnswerOptions>(
+    securityDepositRequired: getValueViaPath<YesOrNoEnum>(
       answers,
       'rentalAmount.securityDepositRequired',
     ),
@@ -184,7 +184,7 @@ export const extractRentalInfoData = (answers: ApplicationAnswers) => {
       answers,
       'rentalAmount.paymentMethodOtherTextField',
     ),
-    indexConnected: getValueViaPath<AnswerOptions>(
+    indexConnected: getValueViaPath<YesOrNoEnum>(
       answers,
       'rentalAmount.isIndexConnected',
     ),

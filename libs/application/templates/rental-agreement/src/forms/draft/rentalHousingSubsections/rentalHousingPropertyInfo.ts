@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
@@ -9,21 +8,20 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { SubSection } from '@island.is/application/types'
+import { Unit } from '../../../utils/types'
 import {
   RentalHousingCategoryClass,
   RentalHousingCategoryTypes,
   Routes,
 } from '../../../utils/constants'
 import {
-  getApplicationAnswers,
   getPropertyTypeOptions,
   getPropertyClassOptions,
   getPropertyClassGroupOptions,
+  extractApplicationAnswers,
 } from '../../../utils/utils'
-import { Unit } from '../../../fields/PropertySearch'
 import { registerProperty } from '../../../lib/messages'
 
-const messagesSearch = registerProperty.search
 const messagesInfo = registerProperty.info
 const messagesCategory = registerProperty.category
 
@@ -31,17 +29,6 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
   id: Routes.PROPERTYINFORMATION,
   title: messagesInfo.subsectionName,
   children: [
-    buildMultiField({
-      id: Routes.PROPERTYSEARCH,
-      title: messagesSearch.pageTitle,
-      description: messagesSearch.pageDescription,
-      children: [
-        buildCustomField({
-          id: Routes.PROPERTYSEARCH,
-          component: 'PropertySearch',
-        }),
-      ],
-    }),
     buildMultiField({
       id: Routes.PROPERTYCATEGORY,
       title: messagesCategory.pageTitle,
@@ -123,7 +110,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           title: messagesCategory.classGroupLabel,
           placeholder: messagesCategory.classGroupPlaceholder,
           condition: (answers) => {
-            const { propertyClassOptions } = getApplicationAnswers(answers)
+            const { propertyClassOptions } = extractApplicationAnswers(answers)
             return (
               propertyClassOptions === RentalHousingCategoryClass.SPECIAL_GROUPS
             )

@@ -7,7 +7,7 @@ import {
   buildFileUploadField,
 } from '@island.is/application/core'
 import {
-  getApplicationAnswers,
+  extractApplicationAnswers,
   getInspectorOptions,
 } from '../../../utils/utils'
 import {
@@ -44,7 +44,7 @@ export const RentalHousingCondition = buildSubSection({
           title: housingCondition.independentInspectorNameLabel,
           placeholder: housingCondition.independentInspectorNamePlaceholder,
           condition: (answers) => {
-            const { inspectorOptions } = getApplicationAnswers(answers)
+            const { inspectorOptions } = extractApplicationAnswers(answers)
             return (
               inspectorOptions ===
               RentalHousingConditionInspector.INDEPENDENT_PARTY

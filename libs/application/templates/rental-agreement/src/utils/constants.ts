@@ -47,11 +47,6 @@ export const IS_REPRESENTATIVE = 'isRepresentative'
 export const minChangedUnitSize = 3
 export const maxChangedUnitSize = 500
 
-export enum AnswerOptions {
-  YES = 'yes',
-  NO = 'no',
-}
-
 export enum RentalHousingCategoryTypes {
   ENTIRE_HOME = 'entireHome',
   ROOM = 'room',
@@ -114,6 +109,11 @@ export enum OtherFeesPayeeOptions {
   LANDLORD_OR_NOT_APPLICABLE = 'landlordPaysOrNotApplicable',
   LANDLORD = 'landlordPays',
   TENANT = 'tenantPays',
+}
+
+export enum NextStepInReviewOptions {
+  GO_TO_SIGNING = 'goToSigning',
+  EDIT_APPLICATION = 'editApplication',
 }
 
 export const pruneAfterDays = (Days: number): StateLifeCycle => {

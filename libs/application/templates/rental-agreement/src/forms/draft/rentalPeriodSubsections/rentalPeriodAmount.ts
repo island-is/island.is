@@ -6,9 +6,9 @@ import {
   buildCheckboxField,
   buildSelectField,
   buildHiddenInput,
+  YesOrNoEnum,
 } from '@island.is/application/core'
 import {
-  AnswerOptions,
   RentalAmountIndexTypes,
   RentalAmountPaymentDateOptions,
   RentalPaymentMethodOptions,
@@ -139,7 +139,7 @@ export const RentalPeriodAmount = buildSubSection({
           id: 'rentalAmount.securityDepositRequired',
           options: [
             {
-              value: AnswerOptions.YES,
+              value: YesOrNoEnum.YES,
               label: rentalAmount.securityDepositRequiredLabel,
             },
           ],

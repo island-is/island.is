@@ -40,7 +40,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.RENTAL_AGREEMENT,
-  codeOwner: CodeOwners.KolibriKotid,
+  codeOwner: CodeOwners.NordaApplications,
   name: application.name,
   institution: application.institutionName,
   translationNamespaces: [

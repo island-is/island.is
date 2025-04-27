@@ -29,6 +29,17 @@ export const inReview = {
         '- Ef þú þarft að gera breytingar út frá athugasemdum samningsaðila getur þú farið til baka til að gera þær. \n- Ef samningsaðilar hafa engar athugasemdir er þér óhætt að halda áfram í undirritun.',
       description: 'Bullets for the review page info',
     },
+    nextStepToEditButtonText: {
+      id: 'ra.application:inReview.reviewInfo.nextStepToEditButtonText',
+      defaultMessage:
+        'Ég vil fara til baka til að gera breytingar á samningnum',
+      description: 'Text on the edit button',
+    },
+    nextStepToSigningButtonText: {
+      id: 'ra.application:inReview.reviewInfo.nextStepToSigningButtonText',
+      defaultMessage: 'Ég vil halda áfram í undirritun',
+      description: 'Text on the go to signing button',
+    },
   }),
   preSignatureInfo: defineMessages({
     sectionName: {

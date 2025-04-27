@@ -12,8 +12,8 @@ import {
   SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH,
 } from '../../../utils/constants'
 import { specialProvisions } from '../../../lib/messages'
-import { Unit } from '../../../fields/PropertySearch'
 import { Application } from '@island.is/application/types'
+import { Unit } from '../../../utils/types'
 
 export const RentalHousingSpecialProvisions = buildSubSection({
   id: Routes.SPECIALPROVISIONS,

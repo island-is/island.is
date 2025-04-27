@@ -10,7 +10,7 @@ import { DefaultEvents } from '@island.is/application/types'
 import {
   formatNationalId,
   formatPhoneNumber,
-  getApplicationAnswers,
+  extractApplicationAnswers,
 } from '../../utils/utils'
 import { TRUE } from '../../utils/constants'
 import { inReview } from '../../lib/messages'
@@ -41,7 +41,7 @@ export const PreSignatureInfoSection = buildSection({
             inReview.preSignatureInfo.tableHeaderEmail,
           ],
           rows: (application) => {
-            const { landlords, tenants } = getApplicationAnswers(
+            const { landlords, tenants } = extractApplicationAnswers(
               application.answers,
             )
 

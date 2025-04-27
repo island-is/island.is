@@ -1,7 +1,6 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import {
-  AnswerOptions,
   OtherFeesPayeeOptions,
   RentalPaymentMethodOptions,
   SecurityDepositAmountOptions,
@@ -39,7 +38,7 @@ export const rentalInsuranceRequired = (answers: FormValue) => {
     answers,
     'rentalAmount.securityDepositRequired',
   )
-  return isInsuranceRequired?.includes(AnswerOptions.YES) || false
+  return isInsuranceRequired?.includes(YesOrNoEnum.YES) || false
 }
 
 // Details utils
@@ -90,7 +89,7 @@ export const securityDepositRequired = (answers: FormValue) => {
     answers,
     'rentalAmount.securityDepositRequired',
   )
-  return isInsuranceRequired?.includes(AnswerOptions.YES) || false
+  return isInsuranceRequired?.includes(YesOrNoEnum.YES) || false
 }
 
 const checkSecurityDepositType = (
@@ -106,7 +105,7 @@ const checkSecurityDepositType = (
     'securityDeposit.securityType',
   )
   return (
-    Boolean(isInsuranceRequired?.includes(AnswerOptions.YES)) &&
+    Boolean(isInsuranceRequired?.includes(YesOrNoEnum.YES)) &&
     Boolean(securityType) &&
     securityType === typeToCheck
   )

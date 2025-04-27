@@ -20,18 +20,12 @@ import {
   HmsSearchAddress,
   HmsPropertyInfo,
   HmsPropertyInfoInput,
-  Unit as OriginalUnit,
 } from '@island.is/api/schema'
 import { PropertyTableHeader } from './components/PropertyTableHeader'
 import { PropertyTableRow } from './components/PropertyTableRow'
 import { PropertyTableUnits } from './components/PropertyTableUnits'
 import { registerProperty } from '../../lib/messages'
-
-export interface Unit extends OriginalUnit {
-  checked?: boolean
-  changedSize?: number
-  numOfRooms?: number
-}
+import { Unit } from '../../utils/types'
 
 export interface AddressProps extends HmsSearchAddress {
   label: string

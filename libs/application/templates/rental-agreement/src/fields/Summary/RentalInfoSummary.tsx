@@ -3,7 +3,6 @@ import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
-  AnswerOptions,
   RentalPaymentMethodOptions,
   Routes,
   SecurityDepositTypeOptions,
@@ -24,6 +23,7 @@ import { SummaryCardRow } from './components/SummaryCardRow'
 import { KeyValue } from './components/KeyValue'
 import { extractRentalInfoData, getOptionLabel } from '../../utils/summaryUtils'
 import { summary } from '../../lib/messages'
+import { YesOrNoEnum } from '@island.is/application/core'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -160,7 +160,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
         )}
       </SummaryCardRow>
       {/* Security deposit */}
-      {securityDepositRequired?.includes(AnswerOptions.YES) && (
+      {securityDepositRequired?.includes(YesOrNoEnum.YES) && (
         <SummaryCardRow
           editAction={goToScreen}
           route={securityDepositRoute}

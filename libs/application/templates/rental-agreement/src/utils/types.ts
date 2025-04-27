@@ -3,7 +3,6 @@ import {
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 import {
-  AnswerOptions,
   OtherFeesPayeeOptions,
   RentalHousingCategoryClass,
   RentalHousingCategoryClassGroup,
@@ -12,8 +11,10 @@ import {
   RentalPaymentMethodOptions,
   SecurityDepositTypeOptions,
 } from './constants'
+import { Unit as OriginalUnit } from '@island.is/api/schema'
 import { UploadFile } from '@island.is/island-ui/core'
 import { AddressProps } from '../fields/PropertySearch'
+import { YesOrNoEnum } from '@island.is/application/core'
 
 export interface ExternalData {
   nationalRegistry: {
@@ -21,6 +22,12 @@ export interface ExternalData {
     date: string
     status: StatusProvider
   }
+}
+
+export interface Unit extends OriginalUnit {
+  checked?: boolean
+  changedSize?: number
+  numOfRooms?: number
 }
 
 export type StatusProvider = 'failure' | 'success'
@@ -48,14 +55,14 @@ export interface ApplicationAnswers {
   }
 
   rentalAmount?: {
-    securityDepositRequired?: AnswerOptions
+    securityDepositRequired?: YesOrNoEnum
     amount?: string
     paymentDateOptions?: string
     paymentMethodOptions?: RentalPaymentMethodOptions
     paymentMethodNationalId?: string
     paymentMethodAccountNumber?: string
     paymentMethodOtherTextField?: string
-    indexConnected?: AnswerOptions
+    indexConnected?: YesOrNoEnum
     indexTypes?: string
   }
   rentalPeriod?: {
@@ -80,7 +87,7 @@ export interface ApplicationAnswers {
   }
   fireProtections?: {
     smokeDetectors?: string
-    fireExtinguishers?: string
+    fireExtinguisher?: string
     emergencyExits?: string
     fireBlanket?: string
   }

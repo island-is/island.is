@@ -8,16 +8,18 @@ import {
   BulletList,
   Button,
 } from '@island.is/island-ui/core'
+import {
+  extractOtherFeesData,
+  extractPropertyInfoData,
+} from '../../utils/summaryUtils'
 import { Routes } from '../../utils/constants'
 import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSummary'
 import { ApplicantsSummary } from './ApplicantsSummary'
 import { OtherFeesSummary } from './OtherFeesSummary'
 import { PropertyInfoSummary } from './PropertyInfoSummary'
 import { RentalInfoSummary } from './RentalInfoSummary'
-
 import { summaryWrap } from './summaryStyles.css'
 import { summary } from '../../lib/messages'
-import { getValueViaPath } from '@island.is/application/core'
 
 export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
@@ -26,38 +28,22 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { formatMessage } = useLocale()
   const { answers } = application
 
-  const smokeDetectors = getValueViaPath<string>(
-    answers,
-    'fireProtections.smokeDetectors',
-  )
-  const fireExtinguisher = getValueViaPath<string>(
-    answers,
-    'fireProtections.fireExtinguisher',
-  )
-  const emergencyExits = getValueViaPath<string>(
-    answers,
-    'fireProtections.emergencyExits',
-  )
-  const conditionDescription = getValueViaPath<string>(
-    answers,
-    'condition.resultsDescription',
-  )
-  const conditionFiles = getValueViaPath<string[]>(
-    answers,
-    'condition.resultsFiles',
-  )
-  const electricCost = getValueViaPath<string>(
-    answers,
-    'otherFees.electricityCost',
-  )
-  const heatingCost = getValueViaPath<string>(answers, 'otherFees.heatingCost')
-  const housingFund = getValueViaPath<string>(answers, 'otherFees.housingFund')
+  const {
+    smokeDetectors,
+    fireExtinguisher,
+    emergencyExits,
+    resultsDescription,
+    uploadedFiles,
+  } = extractPropertyInfoData(answers)
+
+  const { electricityCost, heatingCost, housingFund } =
+    extractOtherFeesData(answers)
 
   const isFireProtectionsPresent =
     smokeDetectors && fireExtinguisher && emergencyExits
   const isConditionPresent =
-    conditionDescription || (conditionFiles && conditionFiles.length > 0)
-  const isOtherFeesPresent = electricCost && heatingCost && housingFund
+    resultsDescription || (uploadedFiles && uploadedFiles.length > 0)
+  const isOtherFeesPresent = electricityCost && heatingCost && housingFund
 
   const AlertMessageConditions = [
     {

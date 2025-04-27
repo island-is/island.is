@@ -52,18 +52,22 @@ export const SummaryDraftSection = buildSection({
             // Get email summary html
             const element = document.getElementById('email-summary-container')
 
-            // Remove buttons from summary
             if (!element) {
               return null
             }
-            element
+
+            // Create a clone of the element to avoid modifying the visible DOM
+            const elementClone = element.cloneNode(true) as HTMLElement
+
+            // Remove buttons from the cloned element only
+            elementClone
               .querySelectorAll('button')
               .forEach((button) => button.remove())
 
             const jsonData = {
               id: element.id,
               className: element.className,
-              html: element.outerHTML,
+              html: elementClone.outerHTML,
             }
             return JSON.stringify(jsonData)
           },

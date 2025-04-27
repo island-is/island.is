@@ -1,6 +1,7 @@
 import {
   buildDescriptionField,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildStaticTableField,
   buildSubmitField,
@@ -8,10 +9,12 @@ import {
 import {
   formatNationalId,
   formatPhoneNumber,
-  getApplicationAnswers,
+  extractApplicationAnswers,
+  getNextStepInReviewOptions,
 } from '../../utils/utils'
 import { application, inReview } from '../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
+import { NextStepInReviewOptions } from '../../utils/constants'
 
 export const ReviewInfoSection = buildSection({
   id: 'inReview',
@@ -32,7 +35,7 @@ export const ReviewInfoSection = buildSection({
             inReview.preSignatureInfo.tableHeaderEmail,
           ],
           rows: (application) => {
-            const { landlords, tenants } = getApplicationAnswers(
+            const { landlords, tenants } = extractApplicationAnswers(
               application.answers,
             )
 
@@ -65,6 +68,13 @@ export const ReviewInfoSection = buildSection({
           titleVariant: 'h3',
           space: 6,
         }),
+        buildRadioField({
+          id: 'reviewInfo.applicationReview.nextStepOptions',
+          options: getNextStepInReviewOptions(),
+          defaultValue: NextStepInReviewOptions.EDIT_APPLICATION,
+          space: 2,
+          marginTop: 6,
+        }),
         buildSubmitField({
           id: 'reviewInfo.submit',
           refetchApplicationAfterSubmit: true,
@@ -74,13 +84,15 @@ export const ReviewInfoSection = buildSection({
               name: application.backToOverviewButton,
               type: 'subtle',
             },
-            // TODO: Fix this, need to have a way to go to pre-signing page
-            // {
-            //   event: 'goToPreSigning',
-            //   name: application.goToPreSigningButton,
-            //   type: 'primary',
-            // },
           ],
+          condition: (answers) => {
+            const { nextStepInReviewOptions } =
+              extractApplicationAnswers(answers)
+            return (
+              nextStepInReviewOptions ===
+              NextStepInReviewOptions.EDIT_APPLICATION
+            )
+          },
         }),
       ],
     }),

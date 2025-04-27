@@ -69,13 +69,13 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
     descriptionInput,
     rulesInput,
     smokeDetectors,
-    fireExtinguishers,
+    fireExtinguisher,
     emergencyExits,
     fireBlanket,
   } = extractPropertyInfoData(answers)
 
   const numOfRooms = searchResultUnits
-    ?.reduce((total, unit) => total + ((unit.numOfRooms as number) || 0), 0)
+    ?.reduce((total, unit) => total + (unit.numOfRooms || 0), 0)
     .toString()
 
   const propertySize = searchResultUnits
@@ -83,8 +83,8 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
       (total, unit) =>
         total +
         (unit.changedSize && unit.changedSize !== 0
-          ? (unit.changedSize as number)
-          : (unit.size as number) || 0),
+          ? unit.changedSize
+          : unit.size || 0),
       0,
     )
     .toString()
@@ -278,7 +278,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
             label={summary.fireProtectionsFireExtinguisherLabel}
-            value={fireExtinguishers || '-'}
+            value={fireExtinguisher || '-'}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
