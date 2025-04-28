@@ -1,10 +1,10 @@
 import {
   Box,
-  InputFileUpload,
+  InputFileUploadDeprecated,
   Text,
   Button,
   Table as T,
-  UploadFile,
+  UploadFileDeprecated,
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -23,7 +23,7 @@ const { Table, Row, Head, HeadData, Body, Data } = T
 const CompareLists = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  const [fileList, setFileList] = useState<Array<UploadFile>>([])
+  const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
   const [uploadResults, setUploadResults] = useState<Array<any>>()
   const [compareMutation, { loading }] = useBulkCompareMutation()
   const [unSignMutation] = useUnsignAdminMutation()
@@ -119,8 +119,8 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
         label={''}
       >
         <Text>{formatMessage(m.compareListsModalDescription)}</Text>
-        <Box paddingY={5}>
-          <InputFileUpload
+        <Box paddingTop={5} paddingBottom={5}>
+          <InputFileUploadDeprecated
             fileList={fileList}
             header={formatMessage(m.uploadHeader)}
             description={formatMessage(m.uploadText)}
