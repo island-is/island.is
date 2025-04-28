@@ -135,6 +135,9 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                         }${row.courtCaseNumber ?? ''}`}
                         policeCaseNumbers={row.policeCaseNumbers ?? []}
                         appealCaseNumber={row.appealCaseNumber ?? ''}
+                        publicProsecutorIsRegisteredInPoliceSystem={
+                          row.publicProsecutorIsRegisteredInPoliceSystem
+                        }
                       />
                     )
                   },

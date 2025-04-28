@@ -7,7 +7,8 @@ const useSubpoena = (subpoena: Subpoena) => {
   // Skip if the subpoena has not been sent to the police
   // or if the subpoena already has a service status
   const skip =
-    !subpoena.subpoenaId || isSuccessfulServiceStatus(subpoena.serviceStatus)
+    !subpoena.policeSubpoenaId ||
+    isSuccessfulServiceStatus(subpoena.serviceStatus)
 
   const { data, loading, error } = useSubpoenaQuery({
     skip,

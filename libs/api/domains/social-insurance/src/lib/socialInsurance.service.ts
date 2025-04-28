@@ -28,7 +28,6 @@ import { IncomePlan } from './models/income/incomePlan.model'
 import { IncomePlanStatus, LOG_CATEGORY } from './socialInsurance.type'
 import { IncomePlanEligbility } from './models/income/incomePlanEligibility.model'
 import { TemporaryCalculationInput } from './dtos/temporaryCalculation.input'
-import { PaymentMonth } from './models/payments/paymentMonth.model'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -67,27 +66,6 @@ export class SocialInsuranceService {
       return undefined
     }
 
-    const totalMonthlyPayments: Array<PaymentMonth> = []
-
-    const updateTotalMonthlyPayments = (month: number, amount = 0) => {
-      const indexOfMonth = totalMonthlyPayments.findIndex(
-        (p) => p.monthIndex === month,
-      )
-
-      if (indexOfMonth < 0) {
-        totalMonthlyPayments.push({
-          monthIndex: month,
-          amount,
-        })
-      } else {
-        const data = totalMonthlyPayments[indexOfMonth]
-        totalMonthlyPayments[indexOfMonth] = {
-          ...data,
-          amount: (data.amount ?? 0) + amount,
-        }
-      }
-    }
-
     const paymentGroups: Array<PaymentGroup> =
       paymentPlan?.groups
         ?.map((g) => {
@@ -105,9 +83,6 @@ export class SocialInsuranceService {
                   if (!mt.month) {
                     return null
                   }
-
-                  updateTotalMonthlyPayments(mt.month, mt.amount ?? undefined)
-
                   return {
                     monthIndex: mt.month,
                     amount: mt.amount ?? 0,
