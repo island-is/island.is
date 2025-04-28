@@ -39,7 +39,7 @@ const ListActions = () => {
           <ActionLockList listId={list?.id} />
           <ActionReviewComplete listId={list?.id} listStatus={listStatus} />
           <ActionExtendDeadline listId={list?.id} endTime={list?.endTime} />
-          <RemoveCandidate listId={list?.id} />
+          <RemoveCandidate />
         </Stack>
       </Drawer>
     </Box>

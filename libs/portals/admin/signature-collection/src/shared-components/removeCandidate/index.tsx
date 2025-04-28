@@ -15,7 +15,7 @@ import { m } from '../../lib/messages'
 const RemoveCandidate = () => {
   const { formatMessage } = useLocale()
 
-  const [modalRemoveCandidateIsOpen, setModalLockListIsOpen] = useState(false)
+  const [modalRemoveCandidateIsOpen, setModalRemoveCandidateIsOpen] = useState(false)
   return (
     <Box>
       <GridRow>
@@ -35,7 +35,7 @@ const RemoveCandidate = () => {
                 variant="text"
                 size="small"
                 colorScheme="destructive"
-                onClick={() => setModalLockListIsOpen(true)}
+                onClick={() => setModalRemoveCandidateIsOpen(true)}
               >
                 {formatMessage('Eyða söfnun')}
               </Button>
@@ -47,7 +47,7 @@ const RemoveCandidate = () => {
         id="toggleLockList"
         isVisible={modalRemoveCandidateIsOpen}
         title={formatMessage(m.lockList)}
-        onClose={() => setModalLockListIsOpen(false)}
+        onClose={() => setModalRemoveCandidateIsOpen(false)}
         label={''}
         closeButtonLabel={''}
       >
