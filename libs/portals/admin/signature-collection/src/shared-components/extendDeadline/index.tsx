@@ -32,7 +32,7 @@ const ActionExtendDeadline = ({
 
   useEffect(() => {
     setEndDate(endDate)
-  }, [endTime])
+  }, [endDate, endTime])
 
   const extendDeadline = async (newEndDate: string) => {
     try {
