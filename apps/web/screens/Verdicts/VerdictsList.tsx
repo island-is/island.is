@@ -469,7 +469,6 @@ const Filters = ({
                   variant="text"
                   icon="reload"
                   size="small"
-                  disabled={!queryState[QueryParam.CASE_NUMBER]}
                   onClick={() => {
                     updateQueryState(QueryParam.CASE_NUMBER, '')
                     updateRenderKey()
@@ -508,7 +507,6 @@ const Filters = ({
                   variant="text"
                   icon="reload"
                   size="small"
-                  disabled={!queryState[QueryParam.LAWS]}
                   onClick={() => {
                     updateQueryState(QueryParam.LAWS, '')
                     updateRenderKey()
@@ -547,7 +545,6 @@ const Filters = ({
                   variant="text"
                   icon="reload"
                   size="small"
-                  disabled={!queryState[QueryParam.KEYWORD]}
                   onClick={() => {
                     updateQueryState(QueryParam.KEYWORD, '')
                     updateRenderKey()
@@ -619,7 +616,6 @@ const Filters = ({
                   variant="text"
                   icon="reload"
                   size="small"
-                  disabled={!queryState[QueryParam.CASE_CATEGORIES]?.length}
                   onClick={() => {
                     updateQueryState(QueryParam.CASE_CATEGORIES, [])
                     updateRenderKey()
@@ -687,7 +683,6 @@ const Filters = ({
                   variant="text"
                   icon="reload"
                   size="small"
-                  disabled={!queryState[QueryParam.CASE_TYPES]?.length}
                   onClick={() => {
                     updateQueryState(QueryParam.CASE_TYPES, [])
                     updateRenderKey()
@@ -743,10 +738,6 @@ const Filters = ({
                   variant="text"
                   icon="reload"
                   size="small"
-                  disabled={
-                    !queryState[QueryParam.DATE_TO] &&
-                    !queryState[QueryParam.DATE_FROM]
-                  }
                   onClick={() => {
                     updateQueryState(QueryParam.DATE_FROM, null)
                     updateQueryState(QueryParam.DATE_TO, null)
