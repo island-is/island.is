@@ -272,7 +272,7 @@ export const notifications = {
     body: {
       id: 'judicial.system.backend:notifications.indictment_arraignment_date_email.body_indictments',
       defaultMessage:
-        '{scheduledCaseText}<br /><br />{arraignmentDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}',
+        '{scheduledCaseText}<br /><br />{arraignmentDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}<br /><br />{registrarText, select, NONE {} other {<br /><br />{registrarText}}}',
       description:
         'Notaður fyrir beinagrind á pósti til aðila máls þegar fyrirtökutími er staðfestur í ákærum',
     },
