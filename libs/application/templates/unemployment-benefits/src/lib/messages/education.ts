@@ -45,5 +45,41 @@ export const education = {
       defaultMessage: 'Ég lauk námi á síðustu 12 mánuðum',
       description: 'Last twelve months education label',
     },
+    schoolNameLabel: {
+      id: 'vmst.ub.application:education.labels.schoolNameLabel',
+      defaultMessage: 'Skóli',
+      description: 'School name label',
+    },
+    schoolProgramLabel: {
+      id: 'vmst.ub.application:education.labels.schoolProgramLabel',
+      defaultMessage: 'Námsbraut',
+      description: 'School program label',
+    },
+    schoolProgramUnitsLabel: {
+      id: 'vmst.ub.application:education.labels.schoolProgramUnitsLabel',
+      defaultMessage: 'Einingafjöldi',
+      description: 'School program units label',
+    },
+    schoolDegreeLabel: {
+      id: 'vmst.ub.application:education.labels.schoolDegreeLabel',
+      defaultMessage: 'Námsgráða',
+      description: 'School degree label',
+    },
+    currentSchoolEndDateLabel: {
+      id: 'vmst.ub.application:education.labels.schoolEndDateLabel',
+      defaultMessage: 'Áætluð námslok',
+      description: 'School end date label',
+    },
+    currentSchoolDegreeFileLabel: {
+      id: 'vmst.ub.application:education.labels.schoolDegreeFileLabel',
+      defaultMessage:
+        'Þú þarft alltaf að skila inn staðfestingu á námi og/eða prófgráðu. Þú getur hlaðið því inn hér að neðan.',
+      description: 'School degree file label',
+    },
+    currentSchoolDegreeFileNameLabel: {
+      id: 'vmst.ub.application:education.labels.schoolDegreeFileNameLabel',
+      defaultMessage: 'Staðfesting á námi/prófgráðu',
+      description: 'School degree file name label',
+    },
   }),
 }

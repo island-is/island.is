@@ -1,13 +1,19 @@
 import {
   buildCheckboxField,
+  buildDescriptionField,
+  buildFileUploadField,
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildTextField,
+  coreMessages,
   NO,
   YES,
 } from '@island.is/application/core'
 import { education as educationMessages } from '../../../lib/messages'
 import { EducationType } from '../../../shared'
+import { isCurrentlyStudying } from '../../../utils/educationInformation'
+import { FormValue } from '@island.is/application/types'
 
 export const educationSection = buildSection({
   id: 'educationSection',
@@ -20,14 +26,15 @@ export const educationSection = buildSection({
         buildRadioField({
           id: 'education.lastTwelveMonths',
           title: educationMessages.labels.lastTvelveMonthsLabel,
+          width: 'half',
           options: [
             {
               value: YES,
-              label: educationMessages.labels.currentlyEducationLabel,
+              label: coreMessages.radioYes,
             },
             {
               value: NO,
-              label: educationMessages.labels.lastSemesterEducationLabel,
+              label: coreMessages.radioNo,
             },
           ],
         }),
@@ -48,6 +55,48 @@ export const educationSection = buildSection({
               label: educationMessages.labels.lastTvelveMonthsEducationLabel,
             },
           ],
+        }),
+        buildTextField({
+          id: 'education.currentEducation.schoolName',
+          title: educationMessages.labels.schoolNameLabel,
+          condition: isCurrentlyStudying,
+        }),
+        buildTextField({
+          id: 'education.currentEducation.programName',
+          title: educationMessages.labels.schoolProgramLabel,
+          width: 'half',
+          condition: isCurrentlyStudying,
+        }),
+        buildTextField({
+          id: 'education.currentEducation.programUnits',
+          title: educationMessages.labels.schoolProgramUnitsLabel,
+          width: 'half',
+          condition: isCurrentlyStudying,
+        }),
+        buildTextField({
+          id: 'education.currentEducation.programDegree',
+          title: educationMessages.labels.schoolDegreeLabel,
+          width: 'half',
+          condition: isCurrentlyStudying,
+        }),
+        buildTextField({
+          id: 'education.currentEducation.programEnd',
+          title: educationMessages.labels.currentSchoolEndDateLabel,
+          width: 'half',
+          condition: isCurrentlyStudying,
+        }),
+        buildDescriptionField({
+          id: 'education.currentEducation.description',
+          title: educationMessages.labels.currentSchoolDegreeFileLabel,
+          titleVariant: 'h5',
+          condition: isCurrentlyStudying,
+        }),
+        buildFileUploadField({
+          id: 'education.currentEducation.degreeFile',
+          title: educationMessages.labels.currentSchoolDegreeFileNameLabel,
+          uploadHeader:
+            educationMessages.labels.currentSchoolDegreeFileNameLabel,
+          condition: isCurrentlyStudying,
         }),
       ],
     }),
