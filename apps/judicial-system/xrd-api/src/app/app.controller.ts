@@ -71,15 +71,16 @@ export class AppController {
     }
   }
 
-  @Patch('subpoena/:subpoenaId')
+  // update by police subpoena id
+  @Patch('subpoena/:policeSubpoenaId')
   @ApiResponse({ status: 400, description: 'Invalid input' })
   @ApiResponse({ status: 502, description: 'Failed to update subpoena' })
   async updateSubpoena(
-    @Param('subpoenaId', new ParseUUIDPipe()) subpoenaId: string,
+    @Param('policeSubpoenaId', new ParseUUIDPipe()) policeSubpoenaId: string,
     @Body() updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
-    this.logger.info(`Updating subpoena ${subpoenaId}`)
+    this.logger.info(`Updating subpoena ${policeSubpoenaId}`)
 
-    return this.appService.updateSubpoena(subpoenaId, updateSubpoena)
+    return this.appService.updateSubpoena(policeSubpoenaId, updateSubpoena)
   }
 }

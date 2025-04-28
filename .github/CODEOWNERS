@@ -20,6 +20,15 @@
 /libs/shared/connected/                                                                                   @island-is/stefna
 /libs/shared/types/src/lib/api-cms-domain.ts                                                              @island-is/stefna
 
+# Subfolders containing application templates
+/libs/application/templates/aosh/                                                                         @island-is/norda
+/libs/application/templates/examples/                                                                     @island-is/norda
+/libs/application/templates/family-matters/                                                               @island-is/norda
+/libs/application/templates/inao/                                                                         @island-is/norda
+/libs/application/templates/signature-collection                                                          @island-is/norda
+/libs/application/templates/social-insurance-administration/                                              @island-is/norda
+/libs/application/templates/transport-authority/                                                          @island-is/norda
+
 /*                                                                                                        @island-is/core
 /libs/api/domains/identity/                                                                               @island-is/core
 # Edge case escaping the /infra/ and **/infra/ devops patterns below
@@ -215,15 +224,6 @@ codemagic.yaml                                                                  
 /libs/application/templates/official-journal-of-iceland/                                                  @island-is/hugsmidjan
 /libs/application/template-api-modules/src/lib/modules/templates/official-journal-of-iceland/             @island-is/hugsmidjan
 /libs/clients/judicial-system-sp/                                                                         @island-is/hugsmidjan
-
-# Subfolders containing application templates
-/libs/application/templates/aosh/                                                                         @island-is/norda
-/libs/application/templates/examples/                                                                     @island-is/norda
-/libs/application/templates/family-matters/                                                               @island-is/norda
-/libs/application/templates/inao/                                                                         @island-is/norda
-/libs/application/templates/signature-collection                                                          @island-is/norda
-/libs/application/templates/social-insurance-administration/                                              @island-is/norda
-/libs/application/templates/transport-authority/                                                          @island-is/norda
 
 /libs/application/templates/accident-notification/                                                        @island-is/norda
 /libs/application/templates/alcohol-tax-redemption/                                                       @island-is/norda
