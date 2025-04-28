@@ -3,6 +3,8 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 
 import { applicantInfoSubSection } from './applicantInfoSubSection'
 import { employeeSickPaySubSection } from './employeeSickPaySubSection'
+import { incomePlanInstructionsSubSection } from './incomePlanInstructionsSubSection'
+import { incomePlanSubSection } from './incomePlanSubSection'
 import { paymentInfoSubSection } from './paymentInfoSubSection'
 import { questionsSubSection } from './questionsSubSection'
 import { unionSickPaySubSection } from './unionSickPaySubSection'
@@ -13,6 +15,8 @@ export const generalInformationSection = buildSection({
   children: [
     applicantInfoSubSection,
     paymentInfoSubSection,
+    incomePlanInstructionsSubSection,
+    incomePlanSubSection,
     questionsSubSection,
     employeeSickPaySubSection,
     unionSickPaySubSection,

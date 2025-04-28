@@ -13,7 +13,12 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { SocialInsuranceAdministrationApplicantApi } from '../../dataProviders'
+import {
+  SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+  SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationIncomePlanConditionsApi,
+} from '../../dataProviders'
 
 export const externalDataSubSection = buildSubSection({
   id: 'externalDataSubSection',
@@ -43,12 +48,10 @@ export const externalDataSubSection = buildSubSection({
           // TODO: Update text!
           provider: NationalRegistryUserApi,
           title: socialInsuranceAdministrationMessage.pre.skraInformationTitle,
-          subTitle: '',
         }),
         buildDataProviderItem({
           // TODO: Update text?
           provider: NationalRegistrySpouseApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: UserProfileApi,
@@ -75,6 +78,15 @@ export const externalDataSubSection = buildSubSection({
               .socialInsuranceAdministrationDataDescription,
         }),
         buildDataProviderItem({
+          provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+        }),
+        buildDataProviderItem({
+          provider: SocialInsuranceAdministrationCurrenciesApi,
+        }),
+        buildDataProviderItem({
+          provider: SocialInsuranceAdministrationIncomePlanConditionsApi,
+        }),
+        buildDataProviderItem({
           id: 'sia.privacy',
           title:
             socialInsuranceAdministrationMessage.pre
@@ -86,7 +98,6 @@ export const externalDataSubSection = buildSubSection({
         // // TODO: Put this back in when isEligible is ready
         // buildDataProviderItem({
         //   provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
-        //   title: '',
         // }),
       ],
     }),
