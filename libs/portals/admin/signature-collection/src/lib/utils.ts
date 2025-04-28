@@ -16,17 +16,6 @@ export const allowedScopes: string[] = [
   AdminPortalScope.signatureCollectionProcess,
 ]
 
-export enum LandAreas {
-  Hofudborgarsvaedi = 'Höfuðborgarsvæði',
-  Sudurnes = 'Suðurnes',
-  Vesturland = 'Vesturland',
-  Vestfirdir = 'Vestfirðir',
-  NordurlandVestra = 'Norðurland vestra',
-  NordurlandEystra = 'Norðurland eystra',
-  Austurland = 'Austurland',
-  Sudurland = 'Suðurland',
-}
-
 export const countryAreas = [
   { value: 'Sunnlendingafjórðungur', label: 'Sunnlendingafjórðungur' },
   { value: 'Vestfirðingafjórðungur', label: 'Vestfirðingafjórðungur' },

@@ -95,8 +95,7 @@ export const Municipality = () => {
                           replaceParams({
                             href: SignatureCollectionPaths.MunicipalList,
                             params: {
-                              landAreaName: 'hofudborgarsvaedi',
-                              municipalityName: 'reykjavik',
+                              municipality: 'borgarbyggd',
                               listId: list.id,
                             },
                           }),

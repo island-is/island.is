@@ -83,8 +83,7 @@ const LandAreas = () => {
                       replaceParams({
                         href: SignatureCollectionPaths.LandAreaSingleMunicipality,
                         params: {
-                          landAreaName: 'hofudborgarsvaedi',
-                          municipalityName: 'reykjavik',
+                          municipality: 'borgarbyggd',
                         },
                       }),
                     )

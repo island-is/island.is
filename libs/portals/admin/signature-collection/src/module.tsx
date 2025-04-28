@@ -100,55 +100,9 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.municipalCollectionTitle,
       path: SignatureCollectionPaths.MunicipalRoot,
-      element: (
-        <Navigate to={SignatureCollectionPaths.LandAreaHofudborgarsvaedi} />
-      ),
-      loader: listsLoader(props),
-    },
-    // side bar navigation (land areas)
-    {
-      name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.LandAreaHofudborgarsvaedi,
       element: <LandAreas />,
       loader: listsLoader(props),
     },
-    {
-      name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.LandAreaSudurnes,
-      element: <LandAreas />,
-      loader: listsLoader(props),
-    },
-    {
-      name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.LandAreaVesturland,
-      element: <LandAreas />,
-      loader: listsLoader(props),
-    },
-    {
-      name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.LandAreaNordurlandVestra,
-      element: <LandAreas />,
-      loader: listsLoader(props),
-    },
-    {
-      name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.LandAreaNordurlandEystra,
-      element: <LandAreas />,
-      loader: listsLoader(props),
-    },
-    {
-      name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.LandAreaAusturland,
-      element: <LandAreas />,
-      loader: listsLoader(props),
-    },
-    {
-      name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.LandAreaSudurland,
-      element: <LandAreas />,
-      loader: listsLoader(props),
-    },
-    // ----------------------------------------------------- //
     {
       name: m.municipalCollectionTitle,
       path: SignatureCollectionPaths.LandAreaSingleMunicipality,
