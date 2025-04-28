@@ -2,7 +2,7 @@ import { OJOIFieldBaseProps } from '../lib/types'
 import { ALLOWED_FILE_TYPES, ApplicationAttachmentType } from '../lib/constants'
 import { original } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { InputFileUpload, Box } from '@island.is/island-ui/core'
+import { InputFileUploadDeprecated, Box } from '@island.is/island-ui/core'
 
 import { useFileUpload } from '../hooks/useFileUpload'
 
@@ -14,7 +14,7 @@ export const Original = ({ application }: OJOIFieldBaseProps) => {
   })
   return (
     <Box>
-      <InputFileUpload
+      <InputFileUploadDeprecated
         header={f(original.fileUpload.header)}
         description={f(original.fileUpload.description)}
         buttonLabel={f(original.fileUpload.buttonLabel)}

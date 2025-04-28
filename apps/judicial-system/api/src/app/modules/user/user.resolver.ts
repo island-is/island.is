@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
-  EligibleGraphQlUsers,
+  CurrentGraphQlUserNationalId,
   JwtGraphQlAuthGuard,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
@@ -59,7 +59,7 @@ export class UserResolver {
 
   @UseGuards(JwtGraphQlAuthUserGuard)
   @Query(() => User, { nullable: true })
-  async user(
+  user(
     @Args('input', { type: () => UserQueryInput })
     input: UserQueryInput,
     @CurrentGraphQlUser() user: TUser,
@@ -79,10 +79,26 @@ export class UserResolver {
   @UseGuards(JwtGraphQlAuthGuard)
   @Query(() => CurrentUserResponse, { nullable: true })
   async currentUser(
-    @CurrentGraphQlUser() user: TUser,
-    @EligibleGraphQlUsers() eligibleUsers: TUser[],
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+    @CurrentGraphQlUserNationalId() nationalId: string,
+    @CurrentGraphQlUser() user?: TUser,
   ): Promise<CurrentUserResponse | undefined> {
     this.logger.debug('Getting current user')
+
+    let eligibleUsers: User[]
+
+    try {
+      eligibleUsers = await backendService.findUsersByNationalId(nationalId)
+    } catch (error) {
+      if (!(error?.problem?.status === 404 && user)) {
+        this.logger.error('No eligible users', { error })
+
+        throw error
+      }
+
+      eligibleUsers = [user]
+    }
 
     return { user, eligibleUsers }
   }

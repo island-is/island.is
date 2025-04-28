@@ -23,6 +23,7 @@ const useEventLog = () => {
         return Boolean(data?.createEventLog)
       } catch (error) {
         toast.error(formatMessage(errors.createEventLog))
+
         return false
       }
     },

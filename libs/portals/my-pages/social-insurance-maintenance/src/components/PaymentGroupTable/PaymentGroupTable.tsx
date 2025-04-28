@@ -12,6 +12,7 @@ import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { useRef } from 'react'
 import * as styles from './PaymentGroupTable.css'
 import { PaymentGroupTableRow } from './PaymentGroupTableRow'
+import { SocialInsurancePaymentGroupType } from '@island.is/api/schema'
 
 export const PaymentGroupTable = () => {
   useNamespaces('sp.social-insurance-maintenance')
@@ -26,7 +27,16 @@ export const PaymentGroupTable = () => {
 
   const paymentPlan = data?.socialInsurancePaymentPlan
 
-  if (!error && !paymentPlan) {
+  const paymentGroups =
+    paymentPlan?.paymentGroups?.filter(
+      (p) => p.type !== SocialInsurancePaymentGroupType.PAID,
+    ) ?? []
+
+  const paidOut = paymentPlan?.paymentGroups?.find(
+    (pg) => pg.type === SocialInsurancePaymentGroupType.PAID,
+  )
+
+  if (!error && !paidOut) {
     return (
       <EmptyTable
         loading={loading}
@@ -34,8 +44,6 @@ export const PaymentGroupTable = () => {
       />
     )
   }
-
-  const paymentGroups = paymentPlan?.paymentGroups ?? []
 
   return (
     <Box ref={tableRef}>
@@ -106,7 +114,7 @@ export const PaymentGroupTable = () => {
               </Box>
             </T.HeadData>
             {MONTHS.map((month) => {
-              const amount = paymentPlan?.totalMonthlyPaymentHistory?.find(
+              const amount = paidOut?.monthlyPaymentHistory?.find(
                 (mph) => mph.monthIndex === MONTHS.indexOf(month) + 1,
               )?.amount
               return (
