@@ -15,11 +15,7 @@ import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { useSignatureCollectionLockListMutation } from './lockList.generated'
 
-const ActionLockList = ({
-  listId,
-}: {
-  listId: string
-}) => {
+const ActionLockList = ({ listId }: { listId: string }) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
 
@@ -53,17 +49,16 @@ const ActionLockList = ({
               </Box>
             </Tag>
             <Box marginLeft={5}>
-              <Text variant="h4">Læsa framboði</Text>
+              <Text variant="h4">{formatMessage(m.lockList)}</Text>
               <Text marginBottom={2}>
-                Ef framboð skilar inn framboði áður en framboðsfrestur rennur út
-                er söfnuninni lokað hér.
+                {formatMessage(m.lockListDescription)}
               </Text>
               <Button
                 variant="text"
                 size="small"
                 onClick={() => setModalLockListIsOpen(true)}
               >
-                {formatMessage('Læsa framboði')}
+                {formatMessage(m.lockList)}
               </Button>
             </Box>
           </Box>

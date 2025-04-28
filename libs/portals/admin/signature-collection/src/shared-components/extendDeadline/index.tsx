@@ -4,7 +4,6 @@ import {
   Button,
   DatePicker,
   Icon,
-  Input,
   Tag,
   toast,
   Text,
@@ -13,7 +12,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
-import format from 'date-fns/format'
 import { useExtendDeadlineMutation } from './extendDeadline.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
@@ -68,21 +66,19 @@ const ActionExtendDeadline = ({
               </Box>
             </Tag>
             <Box marginLeft={5}>
-              <Text variant="h4">Breyta lokadegi</Text>
+              <Text variant="h4">{formatMessage(m.updateListEndTime)}</Text>
               <Text color="blue600" variant="eyebrow" marginY={1}>
                 25.06.2026 - 12:00
               </Text>
               <Text marginBottom={2}>
-                Ef framboð hefur fengið auka frest til að safna meðmælum, eftir
-                að framboðsfrestur er liðinn, er hægt að framlengja frestinn
-                hér.
+                {formatMessage(m.updateListEndTimeDescription)}
               </Text>
               <Button
                 variant="text"
                 size="small"
                 onClick={() => setModalChangeDateIsOpen(true)}
               >
-                {formatMessage('Breyta lokadegi')}
+                {formatMessage(m.updateListEndTime)}
               </Button>
             </Box>
           </Box>

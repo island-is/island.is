@@ -27,7 +27,7 @@ const RemoveCandidate = () => {
               </Box>
             </Tag>
             <Box marginLeft={5}>
-              <Text variant="h4">Eyða söfnun</Text>
+              <Text variant="h4">{formatMessage(m.cancelCollectionButton)}</Text>
               <Text marginBottom={2}>
                 Texti sem útskýrir þessa aðgerð betur kemur hér.
               </Text>
@@ -37,7 +37,7 @@ const RemoveCandidate = () => {
                 colorScheme="destructive"
                 onClick={() => setModalRemoveCandidateIsOpen(true)}
               >
-                {formatMessage('Eyða söfnun')}
+                {formatMessage(m.cancelCollectionButton)}
               </Button>
             </Box>
           </Box>

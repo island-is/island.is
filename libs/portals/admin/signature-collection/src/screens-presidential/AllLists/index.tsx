@@ -32,7 +32,6 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import ListInfo from '../../shared-components/listInfoAlert'
 import EmptyState from '../../shared-components/emptyState'
 import ReviewCandidates from './reviewCandidates'
 import CompareLists from '../../shared-components/compareLists'

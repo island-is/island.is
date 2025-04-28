@@ -65,7 +65,7 @@ const CompleteListReview = ({
               </Box>
             </Tag>
             <Box marginLeft={5}>
-              <Text variant="h4">Úrvinnslu lokið</Text>
+              <Text variant="h4">{formatMessage(m.confirmListReviewed)}</Text>
               <Text marginBottom={2}>
                 Þegar búið er að fara yfir meðmæli er hakað við hér.
               </Text>
@@ -74,7 +74,7 @@ const CompleteListReview = ({
                 size="small"
                 onClick={() => setModalSubmitReviewIsOpen(true)}
               >
-                {formatMessage('Úrvinnslu lokið')}
+                {formatMessage(m.confirmListReviewed)}
               </Button>
             </Box>
           </Box>

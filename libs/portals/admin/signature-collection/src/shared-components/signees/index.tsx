@@ -6,6 +6,7 @@ import {
   FilterInput,
   GridRow,
   GridColumn,
+  Tag,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
@@ -18,7 +19,6 @@ import { FiltersSigneeType, pageSize } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import EditPage from './editPage'
 import FilterSignees from './filterSignees'
-import ListInfo from '../listInfoAlert'
 
 const { Table, Head, Row, HeadData, Body, Data } = T
 
@@ -61,7 +61,7 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
     <Box>
       <Box display="flex" justifyContent="spaceBetween">
         <Text variant="h4">{formatMessage(m.listSigneesHeader)}</Text>
-        <ListInfo />
+        <Tag variant="blue">{formatMessage(m.listOpen)}</Tag>
       </Box>
 
       <GridRow marginTop={2} marginBottom={2}>

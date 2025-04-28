@@ -234,7 +234,7 @@ export const m = defineMessages({
   /* Hætta við söfnun modal */
   cancelCollectionButton: {
     id: 'admin-portal.signature-collection:cancelCollectionButton',
-    defaultMessage: 'Eyða lista',
+    defaultMessage: 'Eyða söfnun',
     description: '',
   },
   cancelCollectionModalMessage: {
@@ -438,6 +438,12 @@ export const m = defineMessages({
     defaultMessage: 'Framlengja lokadag',
     description: '',
   },
+  updateListEndTimeDescription: {
+    id: 'admin-portal.signature-collection:updateListEndTimeDescription',
+    defaultMessage:
+      'Ef framboð hefur fengið auka frest til að safna meðmælum, eftir að framboðsfrestur er liðinn, er hægt að framlengja frestinn hér.',
+    description: '',
+  },
   updateListEndTimeSuccess: {
     id: 'admin-portal.signature-collection:updateListEndTimeSuccess',
     defaultMessage: 'Tókst að framlengja lokadag',
@@ -540,7 +546,7 @@ export const m = defineMessages({
   lockListDescription: {
     id: 'admin-portal.signature-collection:lockListDescription',
     defaultMessage:
-      'Ýtið hér ef framboð hefur skilað inn framboðsgögnum fyrir lok framboðsfrest',
+      'Ef framboð skilar inn framboði áður en framboðsfrestur rennur út er söfnuninni lokað hér.',
     description: '',
   },
   lockListSuccess: {
