@@ -73,46 +73,52 @@ export const ApplicantList: FC<React.PropsWithChildren<ApplicantListProps>> = ({
     fetchPdfData()
   }, [])
 
-  return (
-    <Box marginY={3} width="full" flexGrow={1}>
-      {!loading ? (
-        pdfData?.status === 'success' ? (
-          pdfData?.data?.map((applicant) => {
-            return (
-              <Box key={applicant.nationalId}>
-                <Box marginY={2}>
-                  <Button
-                    aria-label={m.conclution.downloadButtonAriaLabel}
-                    preTextIconType="outline"
-                    preTextIcon="download"
-                    variant="ghost"
-                    fluid
-                    disabled={!applicant.approved}
-                    onClick={() => onClickDownload(applicant.pdfData)}
-                  >
-                    {applicant.applicantName}
-                  </Button>
-                </Box>
-                {!applicant.approved && (
-                  <AlertMessage
-                    type="error"
-                    message={applicant.comment && applicant.comment}
-                  />
-                )}
-              </Box>
-            )
-          })
-        ) : (
-          <Box flexGrow={1}>
-            <AlertMessage
-              type="error"
-              message={formatMessage(m.errors.submitted.externalError)}
-            />
-          </Box>
-        )
-      ) : (
+  console.log(pdfData)
+
+  if (loading) {
+    return (
+      <Box marginY={3} width="full" flexGrow={1}>
         <Box display="flex" justifyContent="center">
           <LoadingDots />
+        </Box>
+      </Box>
+    )
+  }
+
+  return (
+    <Box marginY={3} width="full" flexGrow={1}>
+      {pdfData?.status === 'success' ? (
+        pdfData?.data?.map((applicant) => {
+          return (
+            <Box key={applicant.nationalId}>
+              <Box marginY={2}>
+                <Button
+                  aria-label={m.conclution.downloadButtonAriaLabel}
+                  preTextIconType="outline"
+                  preTextIcon="download"
+                  variant="ghost"
+                  fluid
+                  disabled={!applicant.approved}
+                  onClick={() => onClickDownload(applicant.pdfData)}
+                >
+                  {applicant.applicantName}
+                </Button>
+              </Box>
+              {!applicant.approved && (
+                <AlertMessage
+                  type="error"
+                  message={applicant.comment && applicant.comment}
+                />
+              )}
+            </Box>
+          )
+        })
+      ) : (
+        <Box flexGrow={1}>
+          <AlertMessage
+            type="error"
+            message={formatMessage(m.errors.submitted.externalError)}
+          />
         </Box>
       )}
     </Box>

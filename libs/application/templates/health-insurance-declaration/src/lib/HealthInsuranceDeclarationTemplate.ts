@@ -112,7 +112,7 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/HealthInsuranceDeclarationForm').then(
+                import('../forms/healthInsuranceDeclarationForm/index').then(
                   (module) =>
                     Promise.resolve(module.HealthInsuranceDeclarationForm),
                 ),

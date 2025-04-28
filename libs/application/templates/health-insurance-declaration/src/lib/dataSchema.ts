@@ -62,11 +62,11 @@ export const HealthInsuranceDeclarationSchema = z.object({
     .refine((v) => v.length > 0),
   period: z
     .object({
-      dateFieldTo: z
+      dateFieldFrom: z
         .string()
         .min(1)
         .refine((v) => !!v && v.trim().length > 0),
-      dateFieldFrom: z
+      dateFieldTo: z
         .string()
         .min(1)
         .refine((v) => !!v && v.trim().length > 0),
