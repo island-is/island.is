@@ -54,7 +54,9 @@ export class InternalSubpoenaController {
     @CurrentSubpoena() subpoena: Subpoena,
     @Body() update: UpdateSubpoenaDto,
   ): Promise<Subpoena> {
-    this.logger.debug(`Updating subpoena by police subpoena id ${policeSubpoenaId}`)
+    this.logger.debug(
+      `Updating subpoena by police subpoena id ${policeSubpoenaId}`,
+    )
 
     return this.subpoenaService.update(subpoena, update)
   }
