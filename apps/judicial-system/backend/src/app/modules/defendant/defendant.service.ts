@@ -164,11 +164,18 @@ export class DefendantService {
       ) {
         // Defender was just confirmed by judge
         if (!oldDefendant.isDefenderChoiceConfirmed) {
-          // TODO: If there is an court date in the future send court date invite to defender
+          // send general defender assignment email
           messages.push({
             type: MessageType.DEFENDANT_NOTIFICATION,
             caseId: theCase.id,
             body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
+            elementId: updatedDefendant.id,
+          })
+          // send a notification to follow-up on scheduled court date
+          messages.push({
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId: theCase.id,
+            body: { type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP },
             elementId: updatedDefendant.id,
           })
         }
