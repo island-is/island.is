@@ -34,11 +34,7 @@ export interface AddressProps extends HmsSearchAddress {
 
 interface Props extends FieldBaseProps {
   field: CustomField
-  errors?: {
-    registerProperty?: {
-      [key: string]: string
-    }
-  }
+  errors?: Record<string, Record<string, string>>
 }
 
 export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
@@ -74,7 +70,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   >(storedValue?.propertiesByAddressCode || [])
 
   useEffect(() => {
-    if (selectedAddress && selectedAddress.addressCode) {
+    if (selectedAddress?.addressCode) {
       hmsPropertyInfo({
         variables: {
           input: {
@@ -351,7 +347,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
           ) : (
             propertiesByAddressCode &&
             propertiesByAddressCode.length > 0 && (
-              <T.Table id="searchResults.table">
+              <T.Table id="searchresults.table">
                 <PropertyTableHeader />
                 <T.Body>
                   {propertiesByAddressCode.map((property) => {
@@ -379,65 +375,63 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                               {property.appraisalUnits.map((appraisalUnit) => {
                                 return (
                                   <Fragment key={appraisalUnit.unitCode}>
-                                    {appraisalUnit.units &&
-                                      appraisalUnit.units.map((unit) => {
-                                        const unitKey = `${unit.propertyCode}_${unit.unitCode}`
-                                        return (
-                                          <PropertyTableUnits
-                                            key={unitKey}
-                                            unitCode={unit.unitCode ?? ''}
-                                            propertyUsageDescription={
-                                              unit.propertyUsageDescription ??
-                                              ''
-                                            }
-                                            sizeUnit={unit.sizeUnit ?? ''}
-                                            checkedUnits={
-                                              checkedUnits[unitKey] || false
-                                            }
-                                            isTableExpanded={
-                                              tableExpanded[
-                                                unit.propertyCode ?? 0
-                                              ] || false
-                                            }
-                                            unitSizeValue={
-                                              unitSizeChangedValue[unitKey] ??
-                                              unit.size
-                                            }
-                                            numOfRoomsValue={
-                                              numOfRoomsValue[unitKey]
-                                            }
-                                            isUnitSizeDisabled={
-                                              !checkedUnits[unitKey]
-                                            }
-                                            isNumOfRoomsDisabled={
-                                              !checkedUnits[unitKey]
-                                            }
-                                            onCheckboxChange={(e) =>
-                                              handleCheckboxChange(
-                                                unit,
-                                                e.currentTarget.checked,
-                                              )
-                                            }
-                                            onUnitSizeChange={(e) =>
-                                              handleUnitSizeChange(
-                                                unit,
-                                                Number(e.target.value),
-                                              )
-                                            }
-                                            onUnitRoomsChange={(e) =>
-                                              handleUnitRoomsChange(
-                                                unit,
-                                                Number(e.target.value),
-                                              )
-                                            }
-                                            unitInputErrorMessage={
-                                              errors?.registerProperty?.[
-                                                `searchResults.units`
-                                              ]
-                                            }
-                                          />
-                                        )
-                                      })}
+                                    {appraisalUnit.units?.map((unit) => {
+                                      const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+                                      return (
+                                        <PropertyTableUnits
+                                          key={unitKey}
+                                          unitCode={unit.unitCode ?? ''}
+                                          propertyUsageDescription={
+                                            unit.propertyUsageDescription ?? ''
+                                          }
+                                          sizeUnit={unit.sizeUnit ?? ''}
+                                          checkedUnits={
+                                            checkedUnits[unitKey] || false
+                                          }
+                                          isTableExpanded={
+                                            tableExpanded[
+                                              unit.propertyCode ?? 0
+                                            ] || false
+                                          }
+                                          unitSizeValue={
+                                            unitSizeChangedValue[unitKey] ??
+                                            unit.size
+                                          }
+                                          numOfRoomsValue={
+                                            numOfRoomsValue[unitKey]
+                                          }
+                                          isUnitSizeDisabled={
+                                            !checkedUnits[unitKey]
+                                          }
+                                          isNumOfRoomsDisabled={
+                                            !checkedUnits[unitKey]
+                                          }
+                                          onCheckboxChange={(e) =>
+                                            handleCheckboxChange(
+                                              unit,
+                                              e.currentTarget.checked,
+                                            )
+                                          }
+                                          onUnitSizeChange={(e) =>
+                                            handleUnitSizeChange(
+                                              unit,
+                                              Number(e.target.value),
+                                            )
+                                          }
+                                          onUnitRoomsChange={(e) =>
+                                            handleUnitRoomsChange(
+                                              unit,
+                                              Number(e.target.value),
+                                            )
+                                          }
+                                          unitInputErrorMessage={
+                                            errors?.registerProperty?.[
+                                              `searchresults.units`
+                                            ]
+                                          }
+                                        />
+                                      )
+                                    })}
                                   </Fragment>
                                 )
                               })}
@@ -452,16 +446,16 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
           )}
           {hasValidationErrors && (
             <Box marginTop={8}>
-              {errors?.registerProperty?.['searchResults'] && (
+              {errors?.registerProperty?.['searchresults'] && (
                 <AlertMessage
                   type="error"
-                  title={errors?.registerProperty?.['searchResults']}
+                  title={errors?.registerProperty?.['searchresults']}
                 />
               )}
-              {errors?.registerProperty?.['searchResults.units'] && (
+              {errors?.registerProperty?.['searchresults.units'] && (
                 <AlertMessage
                   type="error"
-                  message={errors?.registerProperty?.['searchResults.units']}
+                  message={errors?.registerProperty?.['searchresults.units']}
                   title={formatMessage(
                     registerProperty.search.searchResultsErrorBannerTitle,
                   )}

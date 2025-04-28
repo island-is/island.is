@@ -101,10 +101,15 @@ export const extractPropertyInfoData = (answers: Application['answers']) => {
       answers,
       'registerProperty.categoryType',
     ),
-    searchResultUnits: getValueViaPath<Unit[]>(
+    searchResultLabel: getValueViaPath<string>(
       answers,
-      'registerProperty.searchresults.units',
+      'registerProperty.searchresults.label',
     ),
+    searchResultUnits:
+      getValueViaPath<Unit[]>(
+        answers,
+        'registerProperty.searchresults.units',
+      ) || [],
     inspector: getValueViaPath<RentalHousingConditionInspector>(
       answers,
       'condition.inspector',

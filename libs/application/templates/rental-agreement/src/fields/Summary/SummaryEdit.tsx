@@ -127,8 +127,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   <Bullet key={`${index}_${condition.route}`}>
                     <Button
                       onClick={() => {
-                        setSubmitButtonDisabled &&
-                          setSubmitButtonDisabled(false)
+                        setSubmitButtonDisabled?.(false)
                         goToScreen?.(condition.route)
                       }}
                       variant="text"

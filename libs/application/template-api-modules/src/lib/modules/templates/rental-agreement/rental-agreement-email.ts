@@ -4,19 +4,23 @@ import { ApplicantsInfo } from './types'
 import { filterNonRepresentativesAndMapInfo } from './utils'
 
 export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
-  const { application } = props
+  const {
+    application,
+    options: { email },
+  } = props
 
-  const applicationCreator = {
-    name:
-      getValueViaPath(
-        application.externalData,
-        'nationalRegistry.fullName',
-        '',
-      ) || '',
-    email:
-      getValueViaPath(application.externalData, 'userProfile.data.email', '') ||
-      '',
-  }
+  // TODO: Get email of application creator from user profile, user profile datta seems to be empty as of now
+  // const applicationCreator = {
+  //   name:
+  //     getValueViaPath(
+  //       application.externalData,
+  //       'nationalRegistry.fullName',
+  //       '',
+  //     ) || '',
+  //   email:
+  //     getValueViaPath(application.externalData, 'userProfile.data.email', '') ||
+  //     '',
+  // }
 
   const tenants = filterNonRepresentativesAndMapInfo(
     getValueViaPath<Array<ApplicantsInfo>>(
@@ -72,13 +76,14 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
 
   return {
     from: {
-      name: applicationCreator.name,
-      address: applicationCreator.email,
+      name: email.sender,
+      address: email.address,
     },
-    replyTo: {
-      name: applicationCreator.name,
-      address: applicationCreator.email,
-    },
+    // TODO: Get email of application creator from user profile, user profile datta seems to be empty as of now
+    // replyTo: {
+    //   name: applicationCreator.name,
+    //   address: applicationCreator.email,
+    // },
     to: allRecipients,
     subject: 'Drög að húsaleigusamningi',
     template: {

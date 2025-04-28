@@ -5,10 +5,8 @@ import {
   buildSelectField,
   buildStaticTableField,
   buildSubSection,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { SubSection } from '@island.is/application/types'
-import { Unit } from '../../../utils/types'
 import {
   RentalHousingCategoryClass,
   RentalHousingCategoryTypes,
@@ -21,6 +19,7 @@ import {
   extractApplicationAnswers,
 } from '../../../utils/utils'
 import { registerProperty } from '../../../lib/messages'
+import { extractPropertyInfoData } from '../../../utils/summaryUtils'
 
 const messagesInfo = registerProperty.info
 const messagesCategory = registerProperty.category
@@ -37,13 +36,10 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
         buildDescriptionField({
           id: 'registerProperty.propertyInfoAddress',
           title: ({ answers }) => {
-            const value = getValueViaPath<string>(
-              answers,
-              'registerProperty.searchresults.label',
-            )
+            const { searchResultLabel } = extractPropertyInfoData(answers)
             return {
               ...messagesInfo.propertyAddressAnswer,
-              values: { propertyAddress: value },
+              values: { propertyAddress: searchResultLabel },
             }
           },
           titleVariant: 'h3',
@@ -59,13 +55,8 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
             messagesInfo.tableHeaderNumberOfRooms,
           ],
           rows({ answers }) {
-            const selectedPropertyUnits =
-              getValueViaPath<Unit[]>(
-                answers,
-                'registerProperty.searchresults.units',
-              ) || []
-
-            return selectedPropertyUnits?.map((unit) => [
+            const { searchResultUnits } = extractPropertyInfoData(answers)
+            return searchResultUnits?.map((unit) => [
               unit.propertyUsageDescription || '',
               unit.unitCode || '',
               unit.changedSize

@@ -32,14 +32,6 @@ const isValidMeterStatus = (value: string) => {
 const hasInvalidCostItems = (items: CostField[]) =>
   items.some((i) => i.hasError)
 
-const checkIfNegative = (inputNumber: string) => {
-  if (Number(inputNumber) < 0) {
-    return false
-  } else {
-    return true
-  }
-}
-
 const approveExternalData = z.boolean().refine((v) => v)
 
 const applicant = z.object({
@@ -225,7 +217,7 @@ const registerProperty = z
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
         params: m.registerProperty.search.searchResultsNoUnitChosenError,
-        path: ['searchResults'],
+        path: ['searchresults'],
       })
     }
     if (data?.searchresults?.units && data.searchresults.units.length > 0) {
@@ -236,28 +228,32 @@ const registerProperty = z
       if (totalRooms < 1) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Custom error message too few rooms',
+          message: 'Custom error message',
           params: m.registerProperty.search.numOfRoomsMinimumError,
-          path: ['searchResults.units'],
+          path: ['searchresults.units'],
         })
       }
-      data.searchresults.units.forEach((unit) => {
-        if (unit.changedSize && unit.changedSize > maxChangedUnitSize) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Custom error message size too large',
-            params: m.registerProperty.search.changedSizeTooLargeError,
-            path: ['searchResults.units'],
-          })
-        } else if (unit.changedSize && unit.changedSize < minChangedUnitSize) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Custom error message size too small',
-            params: m.registerProperty.search.changedSizeTooSmallError,
-            path: ['searchResults.units'],
-          })
-        }
-      })
+
+      const totalChangedSize = data.searchresults.units.reduce(
+        (sum, unit) => sum + (unit.changedSize || 0),
+        0,
+      )
+      if (totalChangedSize > maxChangedUnitSize) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.registerProperty.search.changedSizeTooLargeError,
+          path: ['searchresults.units'],
+        })
+      }
+      if (totalChangedSize < minChangedUnitSize) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.registerProperty.search.changedSizeTooSmallError,
+          path: ['searchresults.units'],
+        })
+      }
     }
     if (
       data.categoryClass === RentalHousingCategoryClass.SPECIAL_GROUPS &&
@@ -344,7 +340,7 @@ const rentalPeriod = z
   .superRefine((data, ctx) => {
     const start = data.startDate ? new Date(data.startDate) : ''
     const end = data.endDate ? new Date(data.endDate) : ''
-    const isDefiniteChecked = data.isDefinite && data.isDefinite.includes(TRUE)
+    const isDefiniteChecked = data.isDefinite?.includes(TRUE)
     if (!isDefiniteChecked) {
       return
     }
@@ -408,15 +404,14 @@ const rentalAmount = z
       })
     }
     if (
-      data.paymentDateOptions &&
-      data.paymentDateOptions.includes(RentalAmountPaymentDateOptions.OTHER) &&
+      data.paymentDateOptions?.includes(RentalAmountPaymentDateOptions.OTHER) &&
       !data.paymentDateOther?.trim().length
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
         params: m.rentalAmount.paymentDateOtherOptionRequiredError,
-        path: ['rentalAmount.paymentDateOther'],
+        path: ['paymentDateOther'],
       })
     }
 
@@ -452,7 +447,6 @@ const rentalAmount = z
         })
       }
       if (
-        data.paymentMethodBankAccountNumber &&
         data.paymentMethodBankAccountNumber?.trim().length &&
         data.paymentMethodBankAccountNumber.length < 7
       ) {
@@ -714,7 +708,7 @@ const otherFees = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
-          params: m.otherFees.errorMeterStatusRegex,
+          params: m.otherFees.errorMeterNumberRegex,
           path: ['electricityCostMeterNumber'],
         })
       }
