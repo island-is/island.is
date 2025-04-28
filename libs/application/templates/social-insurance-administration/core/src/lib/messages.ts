@@ -46,7 +46,7 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage:
         'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
       description:
-        'I understand that the above information will be obtained in the application process',
+        'I understand that the above information will be collected during the application process',
     },
     skraInformationTitle: {
       id: 'sia.application:prerequisites.national.registry.title',

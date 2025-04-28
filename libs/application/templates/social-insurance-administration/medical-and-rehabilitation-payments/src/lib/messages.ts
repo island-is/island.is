@@ -46,7 +46,7 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:pre.skra.information.title',
       defaultMessage: 'Upplýsingar frá Þjóðskrá, RSK og Útlendingarstofnun',
       description:
-        'Information from National Registry, RSK and Directorate of Immigration',
+        'Information from Registers Iceland, RSK and Directorate of Immigration',
     },
     skraInformationDescription: {
       id: 'marp.application:pre.skra.information.description',
@@ -54,18 +54,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
         'Upplýsingar um þig, maka og börn. Upplýsingar um búsetu.',
       description:
         'Information about you, spouse and children. Information about residence.',
-    },
-    contactInfoTitle: {
-      id: 'marp.application:pre.contact.info.title',
-      defaultMessage: 'Upplýsingar af mínum síðum Ísland.is',
-      description: 'Information from my pages on Ísland.is',
-    },
-    contactInfoDescription: {
-      id: 'marp.application:pre.contact.info.description',
-      defaultMessage:
-        'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar á mínar síður á Ísland.is.',
-      description:
-        'Information about email, phone number and bank account is retrieved from my pages on Ísland.is.',
     },
     healthInstitutionTitle: {
       id: 'marp.application:pre.health.institution.title',

@@ -14,6 +14,7 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
+import { SocialInsuranceAdministrationApplicantApi } from '../../dataProviders'
 
 export const externalDataSubSection = buildSubSection({
   id: 'externalDataSubSection',
@@ -50,15 +51,21 @@ export const externalDataSubSection = buildSubSection({
         }),
         buildDataProviderItem({
           provider: NationalRegistrySpouseApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: UserProfileApi,
-          title:
-            medicalAndRehabilitationPaymentsFormMessage.pre.contactInfoTitle,
+          title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
           subTitle:
-            medicalAndRehabilitationPaymentsFormMessage.pre
-              .contactInfoDescription,
+            socialInsuranceAdministrationMessage.pre.contactInfoDescription,
+        }),
+        buildDataProviderItem({
+          provider: SocialInsuranceAdministrationApplicantApi,
+          title:
+            socialInsuranceAdministrationMessage.pre
+              .socialInsuranceAdministrationTitle,
+          subTitle:
+            socialInsuranceAdministrationMessage.pre
+              .socialInsuranceAdministrationDescription,
         }),
         buildDataProviderItem({
           title:
@@ -77,7 +84,6 @@ export const externalDataSubSection = buildSubSection({
               .unionHealthFundDescription,
         }),
         buildDataProviderItem({
-          id: 'sia.data',
           title:
             medicalAndRehabilitationPaymentsFormMessage.pre
               .serviceRehabilitationTreatmentProviderTitle,
@@ -86,7 +92,6 @@ export const externalDataSubSection = buildSubSection({
               .serviceRehabilitationTreatmentProviderDescription,
         }),
         buildDataProviderItem({
-          id: 'sia.privacy',
           title:
             socialInsuranceAdministrationMessage.pre
               .socialInsuranceAdministrationPrivacyTitle,
@@ -103,7 +108,7 @@ export const externalDataSubSection = buildSubSection({
     }),
     buildMultiField({
       id: 'isNotEligible',
-      title: '',
+
       // condition: (_, externalData) => {
       //   // Show if applicant is not eligible
       //   return !isEligible(externalData)
