@@ -175,7 +175,6 @@ yargs(process.argv.slice(2))
       featureYaml.map(async (svc) => {
         if (disableNsGrants) {
           svc.serviceDef.grantNamespacesEnabled = false
-          svc.serviceDef.grantNamespaces = []
         }
 
         const svcString = await renderHelmValueFileContent(
