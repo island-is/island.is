@@ -18,9 +18,15 @@ import {
 import {
   DefendantNotificationType,
   isIndictmentCase,
+  User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../../case'
+import {
+  formatArraignmentDateEmailNotification,
+  formatCourtCalendarInvitation,
+} from '../../../../formatters'
+import { Case, DateLog } from '../../../case'
+import { CourtService } from '../../../court'
 import { Defendant } from '../../../defendant'
 import { EventService } from '../../../event'
 import { BaseNotificationService } from '../../baseNotification.service'
@@ -40,6 +46,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
+    private readonly courtService: CourtService,
   ) {
     super(
       notificationModel,
@@ -173,32 +180,111 @@ export class DefendantNotificationService extends BaseNotificationService {
     return false
   }
 
-  // TODO: FINISH
-  private async sendDefenderAssignedCourtDateEmailNotification(
+  // TEMP-FIX: redundant in other services
+  private getCourtDateCalendarInvite = (
+    theCase: Case,
+    targetDateLog: DateLog,
+  ) => {
+    const { date: scheduledDate, location: courtRoom } = targetDateLog
+    const { title, location, eventOrganizer } = formatCourtCalendarInvitation(
+      theCase,
+      courtRoom,
+    )
+    const calendarInvite = this.createICalAttachment({
+      eventOrganizer,
+      scheduledDate,
+      title,
+      location,
+    })
+    return calendarInvite
+  }
+
+  // TEMP-FIX: redundant in other services
+  private async uploadEmailToCourt(
+    theCase: Case,
+    user: User,
+    subject: string,
+    body: string,
+    recipients?: string,
+  ): Promise<void> {
+    try {
+      await this.courtService.createEmail(
+        user,
+        theCase.id,
+        theCase.courtId ?? '',
+        theCase.courtCaseNumber ?? '',
+        subject,
+        body,
+        recipients ?? '',
+        this.config.email.fromEmail,
+        this.config.email.fromName,
+      )
+    } catch (error) {
+      // Tolerate failure, but log warning - use warning instead of error to avoid monitoring alerts
+      this.logger.warn(
+        `Failed to upload email to court for indictment case ${theCase.id}`,
+        { error },
+      )
+    }
+  }
+
+  private async sendDefenderCourtDateEmailNotification(
     theCase: Case,
     defendant: Defendant,
+    user?: User,
   ): Promise<DeliverResponse> {
     const shouldSendCourtDateFollowUp = this.shouldSendDefendantNotification(
       theCase,
       defendant,
       DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
     )
-    if (!shouldSendCourtDateFollowUp) {
+    const arraignmentDateLog = DateLog.arraignmentDate(theCase.dateLogs)
+    if (!shouldSendCourtDateFollowUp || !arraignmentDateLog || !user) {
       // Nothing should be sent so we return a successful response
       return { delivered: true }
     }
-    return { delivered: true }
 
-    // get latest court date or arraignment date
+    // This is identical to defenderNotification.service.sendArraignmentDateEmailNotification
+    // TODO: Re-use these notifications across types
+    const { subject, body } = formatArraignmentDateEmailNotification({
+      formatMessage: this.formatMessage,
+      theCase,
+      arraignmentDateLog,
+    })
 
-    // TODO: Can I use CaseNotification serve here?
-    // this.sendArraignmentDateEmailNotification({
-    //   theCase,
-    //   user,
-    //   arraignmentDateLog: arraignmentDate,
-    //   recipientName: defenderName,
-    //   recipientEmail: defenderEmail,
-    // }),
+    const calendarInvite = this.getCourtDateCalendarInvite(
+      theCase,
+      arraignmentDateLog,
+    )
+
+    const promise = this.sendEmail({
+      subject,
+      html: body,
+      recipientName: defendant.defenderName,
+      recipientEmail: defendant.defenderEmail,
+      attachments: calendarInvite ? [calendarInvite] : undefined,
+    }).then((recipient) => {
+      if (recipient.success) {
+        // No need to wait
+        this.uploadEmailToCourt(
+          theCase,
+          user,
+          subject,
+          body,
+          defendant.defenderEmail,
+        )
+      }
+      return recipient
+    })
+
+    const recipients = await Promise.all([promise])
+    const result = await this.recordNotification(
+      theCase.id,
+      DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
+      recipients,
+    )
+
+    return result
   }
 
   private async sendDefenderAssignedNotification(
@@ -321,6 +407,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     notificationType: DefendantNotificationType,
     theCase: Case,
     defendant: Defendant,
+    user?: User,
   ): Promise<DeliverResponse> {
     switch (notificationType) {
       case DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER:
@@ -334,9 +421,10 @@ export class DefendantNotificationService extends BaseNotificationService {
       case DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN:
         return this.sendIndictmentWithdrawnFromPrisonAdminNotification(theCase)
       case DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP:
-        return this.sendDefenderAssignedCourtDateEmailNotification(
+        return this.sendDefenderCourtDateEmailNotification(
           theCase,
           defendant,
+          user,
         )
       default:
         throw new InternalServerErrorException(
@@ -349,10 +437,11 @@ export class DefendantNotificationService extends BaseNotificationService {
     type: DefendantNotificationType,
     theCase: Case,
     defendant: Defendant,
+    user?: User,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
     try {
-      return await this.sendNotification(type, theCase, defendant)
+      return await this.sendNotification(type, theCase, defendant, user)
     } catch (error) {
       this.logger.error('Failed to send notification', error)
 

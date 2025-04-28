@@ -175,7 +175,10 @@ export class DefendantService {
           messages.push({
             type: MessageType.DEFENDANT_NOTIFICATION,
             caseId: theCase.id,
-            body: { type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP },
+            body: {
+              type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
+              user,
+            },
             elementId: updatedDefendant.id,
           })
         }

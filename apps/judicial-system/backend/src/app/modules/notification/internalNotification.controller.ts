@@ -161,6 +161,7 @@ export class InternalNotificationController {
       notificationDto.type,
       theCase,
       defendant,
+      notificationDto.user,
     )
   }
 

@@ -218,7 +218,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     )
   }
 
-  // Note: identical to CaseNotification.service.getCourtDateCalendarInvite
+  // Note: redundant in other services 
   private getCourtDateCalendarInvite = (
     theCase: Case,
     targetDateLog: DateLog,
