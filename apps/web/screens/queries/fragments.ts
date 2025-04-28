@@ -521,10 +521,7 @@ export const slices = gql`
       }
       leftImage
       image {
-        title
-        url
-        width
-        height
+        ...ImageFields
       }
       openLinkInNewTab
     }
@@ -545,10 +542,7 @@ export const slices = gql`
       url
     }
     backgroundImage {
-      title
-      url
-      width
-      height
+      ...ImageFields
     }
   }
 
@@ -608,12 +602,7 @@ export const slices = gql`
     type
     displayAsCard
     organizationLogo {
-      id
-      url
-      title
-      contentType
-      width
-      height
+      ...ImageFields
     }
   }
 
@@ -644,10 +633,7 @@ export const slices = gql`
     contentString
     type
     image {
-      url
-      title
-      width
-      height
+      ...ImageFields
     }
     link {
       text
@@ -730,10 +716,7 @@ export const slices = gql`
           freeText
         }
         thumbnailImage {
-          url
-          title
-          width
-          height
+          ...ImageFields
         }
         organization {
           slug
@@ -882,10 +865,7 @@ export const slices = gql`
         useFreeText
       }
       thumbnailImage {
-        url
-        title
-        width
-        height
+        ...ImageFields
       }
     }
   }
@@ -972,10 +952,7 @@ export const slices = gql`
     }
     leftImage
     image {
-      title
-      url
-      width
-      height
+      ...ImageFields
     }
     openLinkInNewTab
   }
@@ -1012,10 +989,7 @@ export const slices = gql`
         slug
         assetUrl
         image {
-          url
-          title
-          width
-          height
+          ...ImageFields
         }
       }
     }
