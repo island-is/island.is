@@ -18,7 +18,6 @@ import Signees from '../../shared-components/signees'
 import ActionReviewComplete from '../../shared-components/completeListReview'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import ListInfo from '../../shared-components/listInfoAlert'
 
 const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
