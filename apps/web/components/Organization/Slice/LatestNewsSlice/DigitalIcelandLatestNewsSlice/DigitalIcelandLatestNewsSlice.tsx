@@ -9,7 +9,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { DigitalIcelandNewsCard } from '@island.is/web/components'
+import { DigitalIcelandLatestNewsCard } from '@island.is/web/components'
 import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
 import { LatestNewsSlice as LatestNewsSliceSchema } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
@@ -68,7 +68,7 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
           </Box>
           <Box className={styles.itemListContainer}>
             {slice.news.slice(0, 3).map((news) => (
-              <DigitalIcelandNewsCard
+              <DigitalIcelandLatestNewsCard
                 key={news.id}
                 href={linkResolver('organizationnews', [slug, news.slug]).href}
                 date={news.date}
