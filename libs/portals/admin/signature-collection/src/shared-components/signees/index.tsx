@@ -65,7 +65,7 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
       </Box>
 
       <GridRow marginTop={2} marginBottom={2}>
-        <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '7/12']}>
           <FilterInput
             name="searchSignee"
             value={searchTerm}
@@ -74,7 +74,7 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
             backgroundColor="blue"
           />
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <Box
             display="flex"
             justifyContent="flexEnd"

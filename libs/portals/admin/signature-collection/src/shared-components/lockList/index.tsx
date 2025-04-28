@@ -19,7 +19,6 @@ const ActionLockList = ({
   listId,
 }: {
   listId: string
-  listStatus?: string
 }) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()

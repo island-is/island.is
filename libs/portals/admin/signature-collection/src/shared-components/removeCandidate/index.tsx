@@ -12,12 +12,7 @@ import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { m } from '../../lib/messages'
 
-const RemoveCandidate = ({
-  listId,
-}: {
-  listId: string
-  listStatus?: string
-}) => {
+const RemoveCandidate = () => {
   const { formatMessage } = useLocale()
 
   const [modalRemoveCandidateIsOpen, setModalLockListIsOpen] = useState(false)
