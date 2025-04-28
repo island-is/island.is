@@ -118,22 +118,22 @@ export const messages = defineMessages({
   },
   zoomIn: {
     id: 'sp.documents:zoom-in',
-    defaultMessage: 'Þysja að',
+    defaultMessage: 'Auka þysjunarstig í {arg} ',
   },
   zoomOut: {
     id: 'sp.documents:zoom-out',
-    defaultMessage: 'Þysja frá',
+    defaultMessage: 'Minnka þysjunarstig í {arg} ',
   },
-  zoomLevel: {
-    id: 'sp.documents:zoom-level',
-    defaultMessage: 'Þysjuhlutfall',
+  currentZoomLevel: {
+    id: 'sp.documents:current-zoom-level',
+    defaultMessage: 'Núverandi þysjustig',
   },
-  expand: {
-    id: 'sp.documents:expand',
-    defaultMessage: 'Stækka',
+  openExpandedModal: {
+    id: 'sp.documents:expand-expanded-modal',
+    defaultMessage: 'Opna módal með stækkuðu skjali ',
   },
-  close: {
+  closeExpandedModal: {
     id: 'sp.documents:close',
-    defaultMessage: 'Loka',
+    defaultMessage: 'Loka módal með stækkuðu skjali',
   },
 })

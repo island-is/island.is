@@ -2,7 +2,7 @@ import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { DOMSMAL_DOC_ID, Modal, m } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ActiveDocumentType2 } from '../../lib/types'
 import { downloadFile } from '../../utils/downloadDocument'
 import { messages } from '../../utils/messages'
@@ -38,6 +38,9 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
 
   const isCourtCase = document.categoryId === DOMSMAL_DOC_ID
 
+  const formatZoomLevel = (scale: number) =>
+    ((scale / initScale) * 100).toFixed(0) + '%'
+
   return (
     <>
       <Box
@@ -53,7 +56,9 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             icon="remove"
             variant="ghost"
             size="small"
-            aria-label={formatMessage(messages.zoomIn)}
+            aria-label={formatMessage(messages.zoomOut, {
+              arg: formatZoomLevel(scalePDF - 0.1),
+            })}
             onClick={() => setScalePDF(scalePDF - 0.1)}
             disabled={0.6 > scalePDF}
           />
@@ -62,18 +67,18 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             display="flex"
             justifyContent="center"
             alignItems="center"
-            aria-label={formatMessage(messages.zoomLevel)}
+            aria-label={formatMessage(messages.currentZoomLevel)}
           >
-            <Text variant="small">
-              {((scalePDF / initScale) * 100).toFixed(0) + '%'}
-            </Text>
+            <Text variant="small">{formatZoomLevel(scalePDF)}</Text>
           </Box>
           <Button
             circle
             icon="add"
             variant="ghost"
             size="small"
-            aria-label={formatMessage(messages.zoomOut)}
+            aria-label={formatMessage(messages.zoomIn, {
+              arg: formatZoomLevel(scalePDF + 0.1),
+            })}
             onClick={() => {
               setScalePDF(scalePDF + 0.1)
             }}
@@ -86,7 +91,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             icon="expand"
             variant="ghost"
             size="small"
-            aria-label={formatMessage(messages.expand)}
+            aria-label={formatMessage(messages.openExpandedModal)}
             onClick={() => expandCallback(true)}
           />
         ) : onClose ? (
@@ -95,7 +100,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             icon="close"
             variant="ghost"
             size="small"
-            aria-label={formatMessage(messages.close)}
+            aria-label={formatMessage(messages.closeExpandedModal)}
             onClick={onClose}
           />
         ) : undefined}
