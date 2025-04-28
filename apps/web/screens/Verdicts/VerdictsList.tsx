@@ -420,12 +420,9 @@ const Filters = ({
             icon={openFiltersToggle ? 'add' : 'remove'}
             size="small"
             onClick={() => {
-              if (!openFiltersToggle) {
-                setExpandedItemIds([])
-              } else {
-                setExpandedItemIds(FILTER_ACCORDION_ITEM_IDS)
-              }
-
+              setExpandedItemIds(
+                !openFiltersToggle ? [] : FILTER_ACCORDION_ITEM_IDS,
+              )
               setOpenFiltersToggle(!openFiltersToggle)
             }}
           >
