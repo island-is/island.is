@@ -7,26 +7,26 @@ export const statisticsPageContainer = style({
   background: theme.color.purple100,
   display: 'flex',
   justifyContent: 'center',
-  paddingTop: '48px',
-  paddingBottom: '48px',
+  paddingTop: theme.spacing[6],
+  paddingBottom: theme.spacing[6],
 })
 
 export const statisticsContentBox = style({
   width: '100%',
   background: theme.color.white,
-  minHeight: '644px',
-  minWidth: '350px',
+  minHeight: 644,
+  minWidth: 350,
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md - 1}px)`]: {
-      padding: `${theme.spacing[4]}px `,
+      padding: theme.spacing[4],
     },
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       padding: `${theme.spacing[4]}px ${theme.spacing[6]}px`,
     },
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      borderRadius: theme.border.radius.large,
       padding: `${theme.spacing[8]}px ${theme.spacing[10]}px`,
-      maxWidth: '1100px',
+      maxWidth: 1100,
+      borderRadius: theme.border.radius.large,
     },
   },
 })

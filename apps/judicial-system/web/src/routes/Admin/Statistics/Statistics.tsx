@@ -73,7 +73,7 @@ const Statistics = () => {
           display="flex"
           justifyContent="spaceBetween"
           alignItems="center"
-          marginBottom={[2, 2, 4, 4, 6]}
+          marginBottom={[2, 2, 4, 6, 6]}
         >
           <Text as="h1" variant="h1">
             Tölfræði
