@@ -62,7 +62,7 @@ export class CaseListResolver {
   }
 
   @Query(() => CaseStatistics, { nullable: true })
-  casesStatistics(
+  caseStatistics(
     @Args('input', { type: () => CaseStatisticsInput, nullable: true })
     input: CaseStatisticsInput,
     @CurrentGraphQlUser()
@@ -75,7 +75,7 @@ export class CaseListResolver {
     const result = this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASES,
-      backendService.getCasesStatistics(
+      backendService.getCaseStatistics(
         input.fromDate,
         input.toDate,
         input.institutionId,

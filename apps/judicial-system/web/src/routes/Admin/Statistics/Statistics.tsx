@@ -60,8 +60,8 @@ const Statistics = () => {
   })
 
   useEffect(() => {
-    if (data?.casesStatistics) {
-      setStats(data.casesStatistics)
+    if (data?.caseStatistics) {
+      setStats(data.caseStatistics)
     }
   }, [data])
 

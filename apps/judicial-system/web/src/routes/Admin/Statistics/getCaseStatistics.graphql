@@ -1,5 +1,5 @@
 query CaseStatistics($input: CaseStatisticsInput) {
-  casesStatistics(input: $input) {
+  caseStatistics(input: $input) {
     count
     requestCases {
       count
