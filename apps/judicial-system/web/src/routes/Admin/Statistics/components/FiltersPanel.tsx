@@ -1,13 +1,7 @@
 import { FC } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 
-import {
-  Box,
-  Button,
-  DatePicker,
-  GridColumn,
-  Select,
-} from '@island.is/island-ui/core'
+import { Box, Button, DatePicker, Select } from '@island.is/island-ui/core'
 
 type FiltersPanelProps = {
   districtCourts: { name?: string | null; id?: string | undefined }[]
