@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { EmploymentStatus } from '../shared'
 
@@ -34,4 +34,9 @@ export const hasEmployer = (answers: FormValue) => {
   return (
     status === EmploymentStatus.EMPLOYED || status === EmploymentStatus.PARTJOB
   )
+}
+
+export const doesOwnResume = (answers: FormValue) => {
+  const doesOwnResume = getValueViaPath<string>(answers, 'resume.doesOwnResume')
+  return doesOwnResume === YES
 }

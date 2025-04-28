@@ -19,6 +19,9 @@ export const employmentSearchConfirmationAgreementSubSection = buildSubSection({
       title:
         employmentSearchMessages.employmentSearchConfirmationAgreement
           .pageTitle,
+      description:
+        employmentSearchMessages.employmentSearchConfirmationAgreement
+          .pageDescription,
       children: [
         buildCheckboxField({
           id: 'employmentSearchConfirmationAgreement',
