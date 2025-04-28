@@ -197,6 +197,12 @@ export class CardPaymentController {
           this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
         ])
 
+      if (totalPrice !== chargeCardInput.amount) {
+        throw new BadRequestException(
+          PaymentServiceCode.PaymentFlowAmountMismatch,
+        )
+      }
+
       if (paymentStatus === 'paid') {
         throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
       }
