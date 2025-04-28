@@ -97,182 +97,185 @@ const Statistics = () => {
               <SkeletonLoader height={800} />
             ) : (
               <AnimatePresence mode="wait">
-                <InfoCard
-                  sections={[
-                    {
-                      id: 'all-cases',
-                      items: [
-                        {
-                          id: 'case-item',
-                          title: (
-                            <Text variant="h3" marginBottom={2}>
-                              {'Öll mál '}
-                              <Tooltip
-                                placement="right"
-                                text={formatMessage(
-                                  strings.allCasesStatisticsTooltip,
-                                )}
-                              />
-                            </Text>
-                          ),
-                          values: [
-                            <LabelValue
-                              label="Heildarfjöldi"
-                              value={stats?.count}
-                            />,
-                          ],
-                        },
-                      ],
-                    },
-                    {
-                      id: 'request-cases',
-                      items: [
-                        {
-                          id: 'request-case-item',
-                          title: (
-                            <Text variant="h3" marginBottom={2}>
-                              {'R mál '}
-                              <Tooltip
-                                placement="right"
-                                text={formatMessage(
-                                  strings.requestCaseStatisticsTooltip,
-                                )}
-                              />
-                            </Text>
-                          ),
-                          values: [
-                            <Box
-                              key="request-cases-statistics-values"
-                              display="flex"
-                              flexDirection="column"
-                              rowGap={1}
-                            >
+                <>
+                  {' '}
+                  <InfoCard
+                    sections={[
+                      {
+                        id: 'all-cases',
+                        items: [
+                          {
+                            id: 'case-item',
+                            title: (
+                              <Text variant="h3" marginBottom={2}>
+                                {'Öll mál '}
+                                <Tooltip
+                                  placement="right"
+                                  text={formatMessage(
+                                    strings.allCasesStatisticsTooltip,
+                                  )}
+                                />
+                              </Text>
+                            ),
+                            values: [
                               <LabelValue
                                 label="Heildarfjöldi"
-                                value={stats?.requestCases.count}
-                              />
+                                value={stats?.count}
+                              />,
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        id: 'request-cases',
+                        items: [
+                          {
+                            id: 'request-case-item',
+                            title: (
+                              <Text variant="h3" marginBottom={2}>
+                                {'R mál '}
+                                <Tooltip
+                                  placement="right"
+                                  text={formatMessage(
+                                    strings.requestCaseStatisticsTooltip,
+                                  )}
+                                />
+                              </Text>
+                            ),
+                            values: [
+                              <Box
+                                key="request-cases-statistics-values"
+                                display="flex"
+                                flexDirection="column"
+                                rowGap={1}
+                              >
+                                <LabelValue
+                                  label="Heildarfjöldi"
+                                  value={stats?.requestCases.count}
+                                />
 
-                              <LabelValue
-                                label="Í vinnslu"
-                                value={stats?.requestCases.inProgressCount}
-                              />
+                                <LabelValue
+                                  label="Í vinnslu"
+                                  value={stats?.requestCases.inProgressCount}
+                                />
 
-                              <LabelValue
-                                label="Lokið"
-                                value={stats?.requestCases.completedCount}
-                              />
-                            </Box>,
-                          ],
-                        },
-                      ],
-                    },
-                    {
-                      id: 'indictment-cases',
-                      items: [
-                        {
-                          id: 'indictment-case-item',
-                          title: (
-                            <Text variant="h3" marginBottom={2}>
-                              {'S mál '}
-                              <Tooltip
-                                placement="right"
-                                text={formatMessage(
-                                  strings.indictmentStatisticsTooltip,
-                                )}
-                              />
-                            </Text>
-                          ),
-                          values: [
-                            <Box
-                              key="indictment-statistics-values"
-                              display="flex"
-                              flexDirection="column"
-                              rowGap={1}
-                            >
-                              <LabelValue
-                                label="Heildarfjöldi"
-                                value={stats?.indictmentCases.count}
-                              />
-                              <LabelValue
-                                label="Í vinnslu"
-                                value={stats?.indictmentCases.inProgressCount}
-                              />
-                              <CountAndDays
-                                label="Lokið með dómi"
-                                count={stats?.indictmentCases.rulingCount}
-                                days={
-                                  stats?.indictmentCases.averageRulingTimeDays
-                                }
-                              />
-                            </Box>,
-                          ],
-                        },
-                      ],
-                    },
-                    {
-                      id: 'subpoenas',
-                      items: [
-                        {
-                          id: 'case-stat-item',
-                          title: (
-                            <Text variant="h3" marginBottom={2}>
-                              {'Fyrirköll '}
-                              <Tooltip
-                                placement="right"
-                                text={formatMessage(
-                                  strings.subpoenaStatisticsTooltip,
-                                )}
-                              />
-                            </Text>
-                          ),
-                          values: [
-                            <Box
-                              key="subpoena-statistics-values"
-                              display="flex"
-                              flexDirection="column"
-                              rowGap={1}
-                            >
-                              <LabelValue
-                                label="Heildarfjöldi"
-                                value={stats?.subpoenas.count}
-                              />
-                              {[null, ...Object.values(ServiceStatus)].map(
-                                (status) => {
-                                  const stat =
-                                    stats?.subpoenas.serviceStatusStatistics.find(
-                                      (s) => s.serviceStatus === status,
+                                <LabelValue
+                                  label="Lokið"
+                                  value={stats?.requestCases.completedCount}
+                                />
+                              </Box>,
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        id: 'indictment-cases',
+                        items: [
+                          {
+                            id: 'indictment-case-item',
+                            title: (
+                              <Text variant="h3" marginBottom={2}>
+                                {'S mál '}
+                                <Tooltip
+                                  placement="right"
+                                  text={formatMessage(
+                                    strings.indictmentStatisticsTooltip,
+                                  )}
+                                />
+                              </Text>
+                            ),
+                            values: [
+                              <Box
+                                key="indictment-statistics-values"
+                                display="flex"
+                                flexDirection="column"
+                                rowGap={1}
+                              >
+                                <LabelValue
+                                  label="Heildarfjöldi"
+                                  value={stats?.indictmentCases.count}
+                                />
+                                <LabelValue
+                                  label="Í vinnslu"
+                                  value={stats?.indictmentCases.inProgressCount}
+                                />
+                                <CountAndDays
+                                  label="Lokið með dómi"
+                                  count={stats?.indictmentCases.rulingCount}
+                                  days={
+                                    stats?.indictmentCases.averageRulingTimeDays
+                                  }
+                                />
+                              </Box>,
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        id: 'subpoenas',
+                        items: [
+                          {
+                            id: 'case-stat-item',
+                            title: (
+                              <Text variant="h3" marginBottom={2}>
+                                {'Fyrirköll '}
+                                <Tooltip
+                                  placement="right"
+                                  text={formatMessage(
+                                    strings.subpoenaStatisticsTooltip,
+                                  )}
+                                />
+                              </Text>
+                            ),
+                            values: [
+                              <Box
+                                key="subpoena-statistics-values"
+                                display="flex"
+                                flexDirection="column"
+                                rowGap={1}
+                              >
+                                <LabelValue
+                                  label="Heildarfjöldi"
+                                  value={stats?.subpoenas.count}
+                                />
+                                {[null, ...Object.values(ServiceStatus)].map(
+                                  (status) => {
+                                    const stat =
+                                      stats?.subpoenas.serviceStatusStatistics.find(
+                                        (s) => s.serviceStatus === status,
+                                      )
+                                    return (
+                                      <CountAndDays
+                                        key={status ?? 'unserviced'}
+                                        label={mapServiceStatusTitle(status)}
+                                        count={stat?.count}
+                                        days={
+                                          status
+                                            ? stat?.averageServiceTimeDays
+                                            : undefined
+                                        }
+                                      />
                                     )
-                                  return (
-                                    <CountAndDays
-                                      key={status ?? 'unserviced'}
-                                      label={mapServiceStatusTitle(status)}
-                                      count={stat?.count}
-                                      days={
-                                        status
-                                          ? stat?.averageServiceTimeDays
-                                          : undefined
-                                      }
-                                    />
-                                  )
-                                },
-                              )}
-                            </Box>,
-                          ],
-                        },
-                      ],
-                    },
-                  ]}
-                />
-                <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-                  <StatisticsCSVButton
-                    stats={stats}
-                    fromDate={filter ? filters.fromDate : undefined}
-                    toDate={filter ? filters.toDate : undefined}
-                    institutionName={
-                      filter ? filters.institution?.label : undefined
-                    }
+                                  },
+                                )}
+                              </Box>,
+                            ],
+                          },
+                        ],
+                      },
+                    ]}
                   />
-                </Box>
+                  <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+                    <StatisticsCSVButton
+                      stats={stats}
+                      fromDate={filter ? filters.fromDate : undefined}
+                      toDate={filter ? filters.toDate : undefined}
+                      institutionName={
+                        filter ? filters.institution?.label : undefined
+                      }
+                    />
+                  </Box>
+                </>
               </AnimatePresence>
             )}
           </GridColumn>

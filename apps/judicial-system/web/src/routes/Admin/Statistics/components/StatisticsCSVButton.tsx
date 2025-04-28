@@ -8,25 +8,26 @@ import { mapServiceStatusTitle } from '../helpers'
 
 const convertToCSV = (rows: Record<string, unknown>[]): string => {
   if (!rows.length) return ''
-
   const headers = Array.from(new Set(rows.flatMap((row) => Object.keys(row))))
-
-  const escape = (val: unknown): string => {
+  const escapeCSVValue = (val: unknown): string => {
     if (typeof val === 'string') {
       return val.includes(',') || val.includes('"')
-        ? `"${val.replace(/"/g, '""')}`
+        ? `"${val.replace(/"/g, '""')}"`
         : val
     }
     return val != null ? String(val) : ''
   }
-
   const csv = [
     headers.join(','),
-    ...rows.map((row) => headers.map((key) => escape(row[key])).join(',')),
+    ...rows.map((row) =>
+      headers.map((key) => escapeCSVValue(row[key])).join(','),
+    ),
   ]
-
   return csv.join('\n')
 }
+
+const millisecondsToHours = (ms: number): string =>
+  (ms / (1000 * 60 * 60)).toFixed(2)
 
 interface StatisticsCSVButtonProps {
   stats?: CaseStatistics
@@ -72,10 +73,9 @@ export const StatisticsCSVButton: FC<StatisticsCSVButtonProps> = ({
       Titill: 'Lokið með dómi',
       Samtals: s.indictmentCases.rulingCount,
       'Meðaltími (dagar)': s.indictmentCases.averageRulingTimeDays,
-      'Meðaltími (klst)': (
-        s.indictmentCases.averageRulingTimeMs /
-        (1000 * 60 * 60)
-      ).toFixed(2),
+      'Meðaltími (klst)': millisecondsToHours(
+        s.indictmentCases.averageRulingTimeMs,
+      ),
     },
   ]
 
@@ -89,7 +89,7 @@ export const StatisticsCSVButton: FC<StatisticsCSVButtonProps> = ({
         ? status.averageServiceTimeDays
         : '',
       'Meðaltími (klst)': status.serviceStatus
-        ? (status.averageServiceTimeMs / (1000 * 60 * 60)).toFixed(2)
+        ? millisecondsToHours(status.averageServiceTimeMs)
         : '',
     })),
   ]

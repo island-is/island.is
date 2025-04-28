@@ -74,7 +74,7 @@ export class CaseListResolver {
 
     const result = this.auditTrailService.audit(
       user.id,
-      AuditedAction.GET_CASES,
+      AuditedAction.GET_CASES_STATISTICS,
       backendService.getCaseStatistics(
         input.fromDate,
         input.toDate,
