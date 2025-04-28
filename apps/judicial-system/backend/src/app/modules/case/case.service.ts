@@ -79,6 +79,7 @@ import { User } from '../user'
 import { Victim } from '../victim'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
+import { partition } from './filters/filterHelpers'
 import { Case } from './models/case.model'
 import { MinimalCase } from './models/case.types'
 import {
@@ -2353,7 +2354,7 @@ export class CaseService {
     to?: Date,
     institutionId?: string,
   ): Promise<CaseStatistics> {
-    const where: WhereOptions = {
+    let where: WhereOptions = {
       state: {
         [Op.not]: [
           CaseState.DELETED,
@@ -2375,12 +2376,13 @@ export class CaseService {
     }
 
     if (institutionId) {
-      Object.assign(where, {
+      where = {
+        ...where,
         [Op.or]: [
           { courtId: institutionId },
           { prosecutorsOfficeId: institutionId },
         ],
-      })
+      }
     }
 
     const cases = await this.caseModel.findAll({
@@ -2397,11 +2399,17 @@ export class CaseService {
       ],
     })
 
-    const [requestCases, indictmentCases, subpoenas] = await Promise.all([
-      this.getRequestCaseStatistics(cases),
-      this.getIndictmentStatistics(cases),
-      this.subpoenaService.getStatistics(from, to, institutionId),
-    ])
+    const [indictments, requests] = partition(cases, (c) =>
+      isIndictmentCase(c.type),
+    )
+
+    const requestCases = this.getRequestCaseStatistics(requests)
+    const indictmentCases = this.getIndictmentStatistics(indictments)
+    const subpoenas = await this.subpoenaService.getStatistics(
+      from,
+      to,
+      institutionId,
+    )
 
     const stats: CaseStatistics = {
       count: cases.length,
@@ -2413,22 +2421,18 @@ export class CaseService {
     return stats
   }
 
-  async getIndictmentStatistics(
-    cases: Case[],
-  ): Promise<IndictmentCaseStatistics> {
-    const indictmentCases = cases.filter((c) => isIndictmentCase(c.type))
-
-    const inProgressCount = indictmentCases.filter(
+  getIndictmentStatistics(cases: Case[]): IndictmentCaseStatistics {
+    const inProgressCount = cases.filter(
       (caseItem) => caseItem.state !== CaseState.COMPLETED,
     ).length
 
-    const rulingCount = indictmentCases.filter(
+    const rulingCount = cases.filter(
       (caseItem) => caseItem.rulingDate !== null,
     ).length
 
-    const totalCount = indictmentCases.length
+    const totalCount = cases.length
 
-    const caseDurations = indictmentCases
+    const caseDurations = cases
       .map((caseItem) => {
         const confirmedEvent = caseItem.eventLogs?.[0]
         if (!confirmedEvent?.created || !caseItem.rulingDate) return null
@@ -2456,21 +2460,15 @@ export class CaseService {
     }
   }
 
-  async getRequestCaseStatistics(
-    cases: Case[],
-  ): Promise<RequestCaseStatistics> {
-    const requestCases = cases.filter((c) => isRequestCase(c.type))
-
-    const inProgressCount = requestCases.filter(
+  getRequestCaseStatistics(cases: Case[]): RequestCaseStatistics {
+    const inProgressCount = cases.filter(
       (c) => !isCompletedCase(c.state),
     ).length
 
-    const completedCount = requestCases.filter((c) =>
-      isCompletedCase(c.state),
-    ).length
+    const completedCount = cases.filter((c) => isCompletedCase(c.state)).length
 
     return {
-      count: requestCases.length,
+      count: cases.length,
       inProgressCount,
       completedCount,
     }

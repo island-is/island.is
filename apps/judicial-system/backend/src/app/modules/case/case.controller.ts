@@ -906,7 +906,7 @@ export class CaseController {
   @Get('cases/statistics')
   @ApiOkResponse({
     type: CaseStatistics,
-    description: 'Gets statistics for all existing cases',
+    description: 'Gets court centered statistics for cases',
   })
   @ApiQuery({ name: 'fromDate', required: false, type: String })
   @ApiQuery({ name: 'toDate', required: false, type: String })
