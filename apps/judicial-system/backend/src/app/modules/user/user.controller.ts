@@ -22,7 +22,7 @@ import {
   RolesRules,
   TokenGuard,
 } from '@island.is/judicial-system/auth'
-import { User as TUser } from '@island.is/judicial-system/types'
+import { type User as TUser } from '@island.is/judicial-system/types'
 
 import { adminRule, localAdminRule } from '../../guards'
 import { CreateUserDto } from './dto/createUser.dto'
