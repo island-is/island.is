@@ -34,7 +34,7 @@ query Cases {
       subpoenas {
         id
         serviceStatus
-        subpoenaId
+        policeSubpoenaId
       }
       verdictAppealDate
     }

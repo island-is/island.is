@@ -34,6 +34,7 @@ export const imageFields = gql`
     __typename
     id
     title
+    description
     url
     contentType
     width

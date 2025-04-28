@@ -50,7 +50,7 @@ query Case($input: CaseQueryInput!) {
         defenderNationalId
         caseId
         defendantId
-        subpoenaId
+        policeSubpoenaId
       }
     }
     defenderName
@@ -368,7 +368,7 @@ query Case($input: CaseQueryInput!) {
           comment
           defenderNationalId
           caseId
-          subpoenaId
+          policeSubpoenaId
         }
       }
       caseFiles {
