@@ -6,17 +6,10 @@ import {
   Text,
   Table as T,
 } from '@island.is/island-ui/core'
-import { useLoaderData } from 'react-router-dom'
-import { SignatureCollectionList } from '@island.is/api/schema'
 
 const { Table, Row, Head, HeadData, Body, Data } = T
 
 const ListManagers = () => {
-  const { list, listStatus } = useLoaderData() as {
-    list: SignatureCollectionList
-    listStatus: string
-  }
-
   return (
     <Box>
       <Drawer

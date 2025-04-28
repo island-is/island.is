@@ -5,7 +5,6 @@ import {
   Drawer,
   Stack,
   Text,
-  Table as T,
 } from '@island.is/island-ui/core'
 import { useLoaderData } from 'react-router-dom'
 import { SignatureCollectionList } from '@island.is/api/schema'
