@@ -4,7 +4,6 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import jsyaml from 'js-yaml'
 import { isMainModule } from './utils.mjs'
-import { exit } from 'node:process'
 
 if (isMainModule(import.meta.url)) {
   main().catch((error) => {
