@@ -9,10 +9,8 @@ const StartAreaCollection = () => {
         title="Opna fyrir meðmælasöfnun"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit?"
         disclosureElement={
-          <Tag outlined variant="blue">
-            <Box display="flex" alignItems="center">
-              <Icon icon="lockClosed" size="small" type="outline" />
-            </Box>
+          <Tag variant="blue">
+            <Icon icon="lockOpened" size="small" />
           </Tag>
         }
         onConfirm={() => console.log('opened')}

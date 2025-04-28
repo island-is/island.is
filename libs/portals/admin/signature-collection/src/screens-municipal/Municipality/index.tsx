@@ -5,9 +5,6 @@ import { m } from '../../lib/messages'
 import {
   ActionCard,
   Box,
-  DialogPrompt,
-  Icon,
-  Tag,
   GridColumn,
   GridContainer,
   GridRow,
@@ -18,10 +15,11 @@ import {
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
-import CreateCollection from '../../shared-components/createCollection'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { getTagConfig } from '../../lib/utils'
+import ActionDrawer from '../List/ActionDrawer'
+import CompareLists from '../../shared-components/compareLists'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
@@ -52,6 +50,9 @@ export const Municipality = () => {
                 {
                   title: formatMessage(m.municipalCollectionTitle),
                 },
+                {
+                  title: 'Borgarbyggð',
+                },
               ]}
             />
           </Box>
@@ -61,19 +62,18 @@ export const Municipality = () => {
             imgPosition="right"
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
+            buttonGroup={<ActionDrawer />}
           />
           <GridRow>
             <GridColumn span="12/12">
               <Box
-                marginBottom={3}
                 display="flex"
-                justifyContent="spaceBetween"
-                alignItems="flexEnd"
+                justifyContent="flexEnd"
+                marginBottom={3}
               >
                 <Text variant="eyebrow">
                   {formatMessage(m.totalListResults) + ': ' + allLists.length}
                 </Text>
-                <CreateCollection collectionId={collection?.id} areaId={''} />
               </Box>
               <Stack space={3}>
                 {allLists.map((list) => (
@@ -81,12 +81,7 @@ export const Municipality = () => {
                     key={list.id}
                     eyebrow="Höfuðborgarsvæði"
                     heading={list.candidate.name}
-                    text={'Ábyrgðaraðili: ' + list.candidate.name}
-                    progressMeter={{
-                      currentProgress: list.numberOfSignatures ?? 0,
-                      maxProgress: list.area.min,
-                      withLabel: true,
-                    }}
+                    text={'Fjöldi framboða: 11'}
                     cta={{
                       label: formatMessage(m.viewList),
                       variant: 'text',
@@ -103,50 +98,14 @@ export const Municipality = () => {
                       },
                     }}
                     tag={{
-                      ...getTagConfig(list),
-                      renderTag: (cld) => (
-                        <Box display="flex" alignItems="center" columnGap={1}>
-                          {cld}
-                          <DialogPrompt
-                            baseId="cancel_collection_dialog"
-                            title={
-                              formatMessage(m.cancelCollectionButton) +
-                              ' - ' +
-                              list.area?.name
-                            }
-                            description={formatMessage(
-                              m.cancelCollectionModalMessage,
-                            )}
-                            ariaLabel="delete"
-                            disclosureElement={
-                              <Tag outlined variant="red">
-                                <Box display="flex" alignItems="center">
-                                  <Icon
-                                    icon="trash"
-                                    size="small"
-                                    type="outline"
-                                  />
-                                </Box>
-                              </Tag>
-                            }
-                            onConfirm={() => console.log('cancelled')}
-                            buttonTextConfirm={'Já, eyða'}
-                            buttonPropsConfirm={{
-                              variant: 'primary',
-                              colorScheme: 'destructive',
-                            }}
-                            buttonTextCancel={formatMessage(
-                              m.cancelCollectionModalCancelButton,
-                            )}
-                          />
-                        </Box>
-                      ),
+                      ...getTagConfig(list)
                     }}
                   />
                 ))}
               </Stack>
             </GridColumn>
           </GridRow>
+          <CompareLists collectionId={collection?.id} />
         </GridColumn>
       </GridRow>
     </GridContainer>

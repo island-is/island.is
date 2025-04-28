@@ -7,64 +7,42 @@ import {
   Icon,
   Tag,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
-import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
-import { useSignatureCollectionLockListMutation } from './lockList.generated'
 
-const ActionLockList = ({
+const RemoveCandidate = ({
   listId,
 }: {
   listId: string
   listStatus?: string
 }) => {
   const { formatMessage } = useLocale()
-  const { revalidate } = useRevalidator()
 
-  const [modalLockListIsOpen, setModalLockListIsOpen] = useState(false)
-
-  const [lockList, { loading: loadingLockList }] =
-    useSignatureCollectionLockListMutation({
-      variables: {
-        input: {
-          listId,
-        },
-      },
-      onCompleted: () => {
-        setModalLockListIsOpen(false)
-        revalidate()
-        toast.success(formatMessage(m.lockListSuccess))
-      },
-      onError: () => {
-        toast.error(formatMessage(m.lockListError))
-      },
-    })
-
+  const [modalRemoveCandidateIsOpen, setModalLockListIsOpen] = useState(false)
   return (
     <Box>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
           <Box display="flex">
-            <Tag>
+            <Tag variant="red">
               <Box display="flex" justifyContent="center">
-                <Icon icon="lockClosed" type="outline" color="blue600" />
+                <Icon icon="trash" type="outline" color="red600" />
               </Box>
             </Tag>
             <Box marginLeft={5}>
-              <Text variant="h4">Læsa framboði</Text>
+              <Text variant="h4">Eyða söfnun</Text>
               <Text marginBottom={2}>
-                Ef framboð skilar inn framboði áður en framboðsfrestur rennur út
-                er söfnuninni lokað hér.
+                Texti sem útskýrir þessa aðgerð betur kemur hér.
               </Text>
               <Button
                 variant="text"
                 size="small"
+                colorScheme="destructive"
                 onClick={() => setModalLockListIsOpen(true)}
               >
-                {formatMessage('Læsa framboði')}
+                {formatMessage('Eyða söfnun')}
               </Button>
             </Box>
           </Box>
@@ -72,7 +50,7 @@ const ActionLockList = ({
       </GridRow>
       <Modal
         id="toggleLockList"
-        isVisible={modalLockListIsOpen}
+        isVisible={modalRemoveCandidateIsOpen}
         title={formatMessage(m.lockList)}
         onClose={() => setModalLockListIsOpen(false)}
         label={''}
@@ -84,8 +62,7 @@ const ActionLockList = ({
             <Button
               iconType="outline"
               variant="ghost"
-              onClick={() => lockList()}
-              loading={loadingLockList}
+              onClick={() => console.log('Todo: add remove action')}
               icon="lockClosed"
               colorScheme="destructive"
             >
@@ -98,4 +75,4 @@ const ActionLockList = ({
   )
 }
 
-export default ActionLockList
+export default RemoveCandidate

@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   Drawer,
   Stack,
   Text,
@@ -11,6 +10,8 @@ import { SignatureCollectionList } from '@island.is/api/schema'
 import ActionExtendDeadline from '../../../shared-components/extendDeadline'
 import ActionLockList from '../../../shared-components/lockList'
 import ActionReviewComplete from '../../../shared-components/completeListReview'
+import DownloadReports from '../../../shared-components/downloadReports'
+import RemoveCandidate from '../../../shared-components/removeCandidate'
 
 const ListActions = () => {
   const { list, listStatus } = useLoaderData() as {
@@ -29,20 +30,16 @@ const ListActions = () => {
           </Button>
         }
       >
-        <Text variant="h2" color="backgroundBrand" marginY={3}>
+        <Text variant="h2" marginTop={2} marginBottom={8}>
           Aðgerðir
         </Text>
-        <Divider />
-        <Text marginY={6}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu
-          justo interdum, pharetra enim vel, ultrices augue. Vestibulum
-          tincidunt cursus viverra.
-        </Text>
 
-        <Stack space={7}>
-          <ActionExtendDeadline listId={list?.id} endTime={list?.endTime} />
+        <Stack space={8}>
+          <DownloadReports areas={[]} collectionId={''} />
           <ActionLockList listId={list?.id} listStatus={listStatus} />
           <ActionReviewComplete listId={list?.id} listStatus={listStatus} />
+          <ActionExtendDeadline listId={list?.id} endTime={list?.endTime} />
+          <RemoveCandidate listId={list?.id} />
         </Stack>
       </Drawer>
     </Box>

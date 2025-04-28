@@ -74,6 +74,28 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
             backgroundColor="blue"
           />
         </GridColumn>
+        <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            marginTop={[2, 2, 2, 0]}
+          >
+            <SortSignees
+              signees={signees}
+              setSignees={setSignees}
+              setPage={setPage}
+            />
+            <Box marginLeft={1}>
+              <FilterSignees
+                signees={signees}
+                filters={filters}
+                onSetFilters={setFilters}
+              />
+            </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
+      <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <Box
             display="flex"
@@ -83,24 +105,6 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
             marginTop={[1, 1, 1]}
             flexDirection={['rowReverse', 'rowReverse', 'rowReverse', 'row']}
           >
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              marginTop={[2, 2, 2, 0]}
-            >
-              <SortSignees
-                signees={signees}
-                setSignees={setSignees}
-                setPage={setPage}
-              />
-              <Box marginLeft={1}>
-                <FilterSignees
-                  signees={signees}
-                  filters={filters}
-                  onSetFilters={setFilters}
-                />
-              </Box>
-            </Box>
             {searchTerm?.length > 0 && signees.length > 0
               ? signees.length > 0 && (
                   <Text variant="eyebrow" textAlign="right">

@@ -17,12 +17,10 @@ import { useLoaderData, useNavigate } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { replaceParams } from '@island.is/react-spa/shared'
-import DownloadReports from '../../shared-components/downloadReports'
-import CompareLists from '../../shared-components/compareLists'
 import StartAreaCollection from './StartAreaCollection'
 
-const LandAreas = () => {
-  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+const AllMunicipalities = () => {
+  const { allLists } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
@@ -59,21 +57,15 @@ const LandAreas = () => {
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
           />
-          <Box
-            marginBottom={3}
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="flexEnd"
-          >
+          <Box marginBottom={3} display="flex" justifyContent="flexEnd">
             <Text variant="eyebrow">Samtals fjöldi: {allLists.length}</Text>
-            <DownloadReports areas={[]} collectionId={''} />
           </Box>
           <Stack space={3}>
             {allLists.map((list) => (
               <ActionCard
                 key={list.id}
-                eyebrow={'Höfuðborgarsvæði (3000)'}
-                heading={'Reykjavík'}
+                eyebrow={'Höfuðborgarsvæði'}
+                heading={'Borgarbyggð'}
                 text={'Fjöldi framboða: 12'}
                 cta={{
                   label: 'Skoða sveitarfélag',
@@ -81,7 +73,7 @@ const LandAreas = () => {
                   onClick: () => {
                     navigate(
                       replaceParams({
-                        href: SignatureCollectionPaths.LandAreaSingleMunicipality,
+                        href: SignatureCollectionPaths.SingleMunicipality,
                         params: {
                           municipality: 'borgarbyggd',
                         },
@@ -97,11 +89,10 @@ const LandAreas = () => {
               />
             ))}
           </Stack>
-          <CompareLists collectionId={collection?.id} />
         </GridColumn>
       </GridRow>
     </GridContainer>
   )
 }
 
-export default LandAreas
+export default AllMunicipalities

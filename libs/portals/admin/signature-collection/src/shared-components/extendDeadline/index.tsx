@@ -3,8 +3,13 @@ import {
   Box,
   Button,
   DatePicker,
+  Icon,
   Input,
+  Tag,
   toast,
+  Text,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
@@ -16,7 +21,6 @@ import { m } from '../../lib/messages'
 const ActionExtendDeadline = ({
   listId,
   endTime,
-  allowedToProcess,
 }: {
   listId: string
   endTime: string
@@ -55,34 +59,35 @@ const ActionExtendDeadline = ({
 
   return (
     <Box>
-      <Box
-        display="flex"
-        alignItems="flexEnd"
-        width="full"
-        justifyContent={'spaceBetween'}
-      >
-        <Input
-          name="endTime"
-          size="sm"
-          label={formatMessage(m.listEndTime)}
-          readOnly
-          value={
-            endDate
-              ? format(new Date(endDate), 'dd.MM.yyyy HH:mm')
-              : format(new Date(new Date()), 'dd.MM.yyyy HH:mm')
-          }
-        />
-        <Box marginLeft={3}>
-          <Button
-            icon="calendar"
-            iconType="outline"
-            variant="ghost"
-            onClick={() => setModalChangeDateIsOpen(true)}
-          >
-            Breyta lokadegi
-          </Button>
-        </Box>
-      </Box>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          <Box display="flex">
+            <Tag>
+              <Box display="flex" justifyContent="center">
+                <Icon icon="calendar" type="outline" color="blue600" />
+              </Box>
+            </Tag>
+            <Box marginLeft={5}>
+              <Text variant="h4">Breyta lokadegi</Text>
+              <Text color="blue600" variant="eyebrow" marginY={1}>
+                25.06.2026 - 12:00
+              </Text>
+              <Text marginBottom={2}>
+                Ef framboð hefur fengið auka frest til að safna meðmælum, eftir
+                að framboðsfrestur er liðinn, er hægt að framlengja frestinn
+                hér.
+              </Text>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => setModalChangeDateIsOpen(true)}
+              >
+                {formatMessage('Breyta lokadegi')}
+              </Button>
+            </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <Modal
         id="extendDeadline"
         isVisible={modalChangeDateIsOpen}

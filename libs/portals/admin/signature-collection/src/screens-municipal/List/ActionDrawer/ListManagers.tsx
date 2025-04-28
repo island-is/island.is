@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   Drawer,
   Text,
   Table as T,
@@ -23,15 +22,9 @@ const ListManagers = () => {
           </Box>
         }
       >
-        <Text variant="h2" color="backgroundBrand" marginY={3}>
+        <Text variant="h2" marginTop={2} marginBottom={7}>
           Aðilar
         </Text>
-        <Divider />
-        <Text marginY={6}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu
-          justo interdum, pharetra enim vel, ultrices augue.
-        </Text>
-
         <Text variant="h4" marginBottom={3}>
           Ábyrgðaraðilar
         </Text>

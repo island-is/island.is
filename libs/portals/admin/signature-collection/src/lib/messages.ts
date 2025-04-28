@@ -174,7 +174,7 @@ export const m = defineMessages({
   municipalCollectionIntro: {
     id: 'admin-portal.signature-collection:municipalCollectionIntro',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum varius, nisi id consequat ornare, ante sem semper sapien.',
+      'Hér er yfirlit yfir öll sveitarfélög á landinu. Hægt er að skoða öll þau sveitarfélög sem opnað hafa fyrir rafræna söfnun meðmæla.',
     description: '',
   },
   parliamentaryCollectionTitle: {

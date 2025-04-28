@@ -50,10 +50,6 @@ const List = () => {
                   href: `/stjornbord${SignatureCollectionPaths.MunicipalRoot}`,
                 },
                 {
-                  title: 'Höfuðborgarsvæði',
-                  href: `/stjornbord${SignatureCollectionPaths.LandAreaSingleMunicipality}`,
-                },
-                {
                   title: 'Sveitarfélag',
                 },
                 { title: list.title },

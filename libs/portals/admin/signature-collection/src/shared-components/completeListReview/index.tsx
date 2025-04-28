@@ -1,5 +1,14 @@
 import { useLocale } from '@island.is/localization'
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Icon,
+  Tag,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useToggleListReviewMutation } from './toggleListReview.generated'
@@ -47,21 +56,30 @@ const CompleteListReview = ({
 
   return (
     <Box>
-      <Box display="flex" justifyContent="spaceBetween">
-        <Box>
-          <Text variant="h5">Úrvinnslu lokið</Text>
-          <Text>Lorem ipsum dolor sit amet</Text>
-        </Box>
-        <Button
-          size="default"
-          iconType="outline"
-          variant="ghost"
-          icon={listReviewed ? 'reload' : 'checkmark'}
-          onClick={() => setModalSubmitReviewIsOpen(true)}
-        >
-          {modalText}
-        </Button>
-      </Box>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          <Box display="flex">
+            <Tag>
+              <Box display="flex" justifyContent="center">
+                <Icon icon="checkmark" type="outline" color="blue600" />
+              </Box>
+            </Tag>
+            <Box marginLeft={5}>
+              <Text variant="h4">Úrvinnslu lokið</Text>
+              <Text marginBottom={2}>
+                Þegar búið er að fara yfir meðmæli er hakað við hér.
+              </Text>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => setModalSubmitReviewIsOpen(true)}
+              >
+                {formatMessage('Úrvinnslu lokið')}
+              </Button>
+            </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <Modal
         id="toggleReviewComplete"
         isVisible={modalSubmitReviewIsOpen}

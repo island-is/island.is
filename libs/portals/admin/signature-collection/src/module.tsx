@@ -6,7 +6,6 @@ import { listsLoader } from './loaders/AllLists.loader'
 import { listLoader } from './loaders/List.loader'
 import { allowedScopes } from './lib/utils'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { Navigate } from 'react-router-dom'
 
 /* parliamentary */
 const ParliamentaryRoot = lazy(() =>
@@ -22,7 +21,7 @@ const AllLists = lazy(() => import('./screens-presidential/AllLists'))
 const List = lazy(() => import('./screens-presidential/List'))
 
 /* municipal */
-const LandAreas = lazy(() => import('./screens-municipal/LandAreas'))
+const AllMunicipalities = lazy(() => import('./screens-municipal/AllMunicipalities'))
 const Municipality = lazy(() => import('./screens-municipal/Municipality'))
 const MunicipalList = lazy(() => import('./screens-municipal/List'))
 
@@ -100,12 +99,12 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.municipalCollectionTitle,
       path: SignatureCollectionPaths.MunicipalRoot,
-      element: <LandAreas />,
+      element: <AllMunicipalities />,
       loader: listsLoader(props),
     },
     {
       name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.LandAreaSingleMunicipality,
+      path: SignatureCollectionPaths.SingleMunicipality,
       element: <Municipality />,
       loader: listsLoader(props),
     },
