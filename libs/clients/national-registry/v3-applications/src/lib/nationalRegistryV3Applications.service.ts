@@ -47,8 +47,13 @@ export class NationalRegistryV3ApplicationsClientService {
     )
   }
 
-  async getIndividual(nationalId: string): Promise<IndividualDto | null> {
-    const res = await this.einstaklingarApi.einstaklingarKennitalaGet({
+  async getIndividual(
+    nationalId: string,
+    auth: User,
+  ): Promise<IndividualDto | null> {
+    const res = await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaGet({
       kennitala: nationalId,
     })
 
@@ -127,8 +132,11 @@ export class NationalRegistryV3ApplicationsClientService {
 
   async getCohabitationInfo(
     nationalId: string,
+    auth: User,
   ): Promise<CohabitationDto | null> {
-    const res = await this.einstaklingarApi.einstaklingarKennitalaHjuskapurGet({
+    const res = await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaHjuskapurGet({
       kennitala: nationalId,
     })
 
@@ -141,11 +149,12 @@ export class NationalRegistryV3ApplicationsClientService {
     }
   }
 
-  async getCohabitants(nationalId: string): Promise<string[]> {
-    const res =
-      await this.einstaklingarApi.einstaklingarKennitalaLogheimilistengslGet({
-        kennitala: nationalId,
-      })
+  async getCohabitants(nationalId: string, auth: User): Promise<string[]> {
+    const res = await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaLogheimilistengslGet({
+      kennitala: nationalId,
+    })
 
     return (
       res.logheimilistengslmedlimir
@@ -156,24 +165,26 @@ export class NationalRegistryV3ApplicationsClientService {
 
   async getCurrentResidence(
     nationalId: string,
+    auth: User,
   ): Promise<ResidenceEntryDto | null> {
-    const res = await this.einstaklingarApi.einstaklingarKennitalaLogheimiliGet(
-      {
-        kennitala: nationalId,
-      },
-    )
+    const res = await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaLogheimiliGet({
+      kennitala: nationalId,
+    })
 
     return formatResidenceEntryDto(res)
   }
 
   async getResidenceHistory(
     nationalId: string,
+    auth: User,
   ): Promise<ResidenceEntryDto[] | null> {
-    const res = await this.einstaklingarApi.einstaklingarKennitalaBusetusagaGet(
-      {
-        kennitala: nationalId,
-      },
-    )
+    const res = await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaBusetusagaGet({
+      kennitala: nationalId,
+    })
 
     return res
       .map((x) => formatResidenceEntryDto(x))
@@ -181,27 +192,35 @@ export class NationalRegistryV3ApplicationsClientService {
   }
 
   async getFamily(user: User): Promise<FamilyDto | null> {
-    const homeInfo =
-      await this.einstaklingarApi.einstaklingarKennitalaLogheimilistengslItarGet(
-        {
-          kennitala: user.nationalId,
-        },
-      )
+    const homeInfo = await this.einstaklingarApiWithAuth(
+      user,
+    ).einstaklingarKennitalaLogheimilistengslItarGet({
+      kennitala: user.nationalId,
+    })
 
     return formatFamilyDto(homeInfo)
   }
 
-  async getBirthplace(nationalId: string): Promise<BirthplaceDto | null> {
-    const res =
-      await this.einstaklingarApi.einstaklingarKennitalaFaedingarstadurGet({
-        kennitala: nationalId,
-      })
+  async getBirthplace(
+    nationalId: string,
+    auth: User,
+  ): Promise<BirthplaceDto | null> {
+    const res = await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaFaedingarstadurGet({
+      kennitala: nationalId,
+    })
 
     return formatBirthplaceDto(res)
   }
 
-  async getCitizenship(nationalId: string): Promise<CitizenshipDto | null> {
-    const res = await this.einstaklingarApi.einstaklingarKennitalaRikisfangGet({
+  async getCitizenship(
+    nationalId: string,
+    auth: User,
+  ): Promise<CitizenshipDto | null> {
+    const res = await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaRikisfangGet({
       kennitala: nationalId,
     })
 
