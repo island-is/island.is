@@ -1,7 +1,6 @@
 import {
   buildCustomField,
   buildDescriptionField,
-  buildHiddenInput,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -46,32 +45,34 @@ export const SummaryDraftSection = buildSection({
             },
           ],
         }),
-        buildHiddenInput({
-          id: 'htmlSummary',
-          defaultValue: () => {
-            // Get email summary html
-            const element = document.getElementById('email-summary-container')
+        // TODO: Uncomment when sending email error is fixed
 
-            if (!element) {
-              return null
-            }
+        // buildHiddenInput({
+        //   id: 'htmlSummary',
+        //   defaultValue: () => {
+        //     // Get email summary html
+        //     const element = document.getElementById('email-summary-container')
 
-            // Create a clone of the element to avoid modifying the visible DOM
-            const elementClone = element.cloneNode(true) as HTMLElement
+        //     if (!element) {
+        //       return null
+        //     }
 
-            // Remove buttons from the cloned element only
-            elementClone
-              .querySelectorAll('button')
-              .forEach((button) => button.remove())
+        //     // Create a clone of the element to avoid modifying the visible DOM
+        //     const elementClone = element.cloneNode(true) as HTMLElement
 
-            const jsonData = {
-              id: element.id,
-              className: element.className,
-              html: elementClone.outerHTML,
-            }
-            return JSON.stringify(jsonData)
-          },
-        }),
+        //     // Remove buttons from the cloned element only
+        //     elementClone
+        //       .querySelectorAll('button')
+        //       .forEach((button) => button.remove())
+
+        //     const jsonData = {
+        //       id: element.id,
+        //       className: element.className,
+        //       html: elementClone.outerHTML,
+        //     }
+        //     return JSON.stringify(jsonData)
+        //   },
+        // }),
       ],
     }),
   ],

@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { CostField } from '../utils/types'
+import { parseCurrency } from '../utils/utils'
 import {
   maxChangedUnitSize,
   minChangedUnitSize,
@@ -379,7 +380,6 @@ const rentalAmount = z
     securityDepositRequired: z.string().array().optional(),
   })
   .superRefine((data, ctx) => {
-    // Error message if amount is not filled and if it is negative
     if (!data.amount || !data.amount.trim().length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -388,7 +388,9 @@ const rentalAmount = z
         path: ['amount'],
       })
     }
-    if (data.amount && !checkIfNegative(data.amount)) {
+
+    const numericAmount = parseCurrency(data.amount ?? '')
+    if (numericAmount !== undefined && numericAmount < 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
