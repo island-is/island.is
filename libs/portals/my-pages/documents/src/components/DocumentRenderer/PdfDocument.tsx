@@ -196,6 +196,9 @@ export const PdfDocWithModal = (
         onCloseModal={() => setModalIsOpen(false)}
         isVisible={modalIsOpen}
         initialVisibility={false}
+        label={formatMessage(m.activeDocumentOpenEnlargedAriaLabel, {
+          subject: props.document.subject,
+        })}
         id="pdf-doc-modal"
         skeleton
       >

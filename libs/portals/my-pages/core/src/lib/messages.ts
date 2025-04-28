@@ -1685,6 +1685,10 @@ export const m = defineMessages({
     id: 'service.portal:active-document-open',
     defaultMessage: '{subject} opið',
   },
+  activeDocumentOpenEnlargedAriaLabel: {
+    id: 'service.portal:active-document-open',
+    defaultMessage: '{subject} stækkað',
+  },
   closeActiveDocument: {
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',
