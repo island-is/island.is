@@ -1,8 +1,8 @@
 import {
-  InputFileUpload,
+  InputFileUploadDeprecated,
   Box,
   Text,
-  fileToObject,
+  fileToObjectDeprecated,
   AlertMessage,
   Stack,
 } from '@island.is/island-ui/core'
@@ -119,7 +119,7 @@ const VehicleBulkMileageUpload = () => {
     if (requestGuid) {
       setRequestGuid(null)
     }
-    const file = fileToObject(files[0])
+    const file = fileToObjectDeprecated(files[0])
 
     if (file.status === 'done' && file.originalFileObj instanceof File) {
       //use value of file extension as key
@@ -230,7 +230,7 @@ const VehicleBulkMileageUpload = () => {
               }
             />
           )}
-        <InputFileUpload
+        <InputFileUploadDeprecated
           fileList={uploadedFile ? [uploadedFile] : []}
           showFileSize
           header={formatMessage(vehicleMessage.dragFileToUpload)}
