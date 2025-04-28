@@ -63,9 +63,10 @@ export class ActorProfileDto {
 }
 
 export class PatchActorProfileDto {
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsBoolean()
-  emailNotifications!: boolean
+  emailNotifications?: boolean
 
   @ApiPropertyOptional()
   @IsOptional()

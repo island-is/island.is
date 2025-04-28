@@ -573,7 +573,7 @@ export class UserProfileService {
   }: {
     toNationalId: string
     fromNationalId: string
-    emailNotifications: boolean
+    emailNotifications?: boolean
     emailsId?: string
   }): Promise<MeActorProfileDto> {
     const incomingDelegations = await this.getIncomingDelegations(toNationalId)
@@ -584,14 +584,12 @@ export class UserProfileService {
     ) {
       throw new NoContentException()
     }
-    console.log('emailsId', emailsId)
     const [profile] = await this.delegationPreference.upsert({
       toNationalId,
       fromNationalId,
       emailNotifications,
       emailsId,
     })
-    console.log('profile', profile)
 
     return profile.toDto()
   }
