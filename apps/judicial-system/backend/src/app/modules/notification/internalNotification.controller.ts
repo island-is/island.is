@@ -104,6 +104,7 @@ export class InternalNotificationController {
     return this.indictmentCaseNotificationService.sendIndictmentCaseNotification(
       notificationDto.type,
       theCase,
+      notificationDto.user,
     )
   }
 

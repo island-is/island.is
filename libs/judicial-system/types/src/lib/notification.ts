@@ -23,6 +23,7 @@ export enum CaseNotificationType {
 }
 
 export enum IndictmentCaseNotificationType {
+  INDICTMENT_COURT_DATE = 'INDICTMENT_COURT_DATE',
   INDICTMENT_VERDICT_INFO = 'INDICTMENT_VERDICT_INFO',
   CRIMINAL_RECORD_FILES_UPLOADED = 'CRIMINAL_RECORD_FILES_UPLOADED',
 }
@@ -63,7 +64,7 @@ export enum NotificationType {
   APPEAL_TO_COURT_OF_APPEALS = CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
   APPEAL_WITHDRAWN = CaseNotificationType.APPEAL_WITHDRAWN,
   CASE_FILES_UPDATED = CaseNotificationType.CASE_FILES_UPDATED,
-  COURT_DATE = CaseNotificationType.COURT_DATE,
+  COURT_DATE = CaseNotificationType.COURT_DATE, // Note: only use for non-indictment cases
   DEFENDANT_SELECTED_DEFENDER = DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER,
   DEFENDANTS_NOT_UPDATED_AT_COURT = CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
   DEFENDER_ASSIGNED = DefendantNotificationType.DEFENDER_ASSIGNED,

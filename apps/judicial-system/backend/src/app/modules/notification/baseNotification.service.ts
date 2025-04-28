@@ -1,3 +1,4 @@
+import { ICalendar } from 'datebook'
 import _uniqBy from 'lodash/uniqBy'
 
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
@@ -199,5 +200,37 @@ export abstract class BaseNotificationService {
         )
       )
     })
+  }
+
+  protected createICalAttachment({
+    scheduledDate,
+    eventOrganizer,
+    location,
+    title,
+  }: {
+    scheduledDate: Date
+    eventOrganizer: { name: string; email: string }
+    location: string
+    title: string
+  }): Attachment | undefined {
+    const start = new Date(scheduledDate.toString().split('.')[0])
+    const end = new Date(scheduledDate.getTime() + 30 * 60000)
+
+    const icalendar = new ICalendar({
+      title,
+      location,
+      start,
+      end,
+    })
+
+    return {
+      filename: 'court-date.ics',
+      content: icalendar
+        .addProperty(
+          `ORGANIZER;CN=${eventOrganizer.name}`,
+          `MAILTO:${eventOrganizer.email}`,
+        )
+        .render(),
+    }
   }
 }

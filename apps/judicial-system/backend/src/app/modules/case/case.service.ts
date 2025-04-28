@@ -43,6 +43,7 @@ import {
   defendantEventTypes,
   EventType,
   eventTypes,
+  IndictmentCaseNotificationType,
   isCompletedCase,
   isIndictmentCase,
   isInvestigationCase,
@@ -1363,7 +1364,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: CaseNotificationType.COURT_DATE },
+        body: { type: IndictmentCaseNotificationType.INDICTMENT_COURT_DATE },
       },
     ])
   }

@@ -57,6 +57,7 @@ export class NotificationService {
           })
         }
         break
+      // is this non indictment specific?
       case CaseNotificationType.COURT_DATE:
         if (eventOnly) {
           this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase, true)
