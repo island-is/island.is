@@ -153,9 +153,10 @@ export class DefendantNotificationService extends BaseNotificationService {
     )
   }
 
-  private shouldSendDefenderAssignedNotification(
+  private shouldSendDefendantNotification(
     theCase: Case,
     defendant: Defendant,
+    notificationType: DefendantNotificationType,
   ): boolean {
     if (!defendant.defenderEmail || !defendant.isDefenderChoiceConfirmed) {
       return false
@@ -163,25 +164,51 @@ export class DefendantNotificationService extends BaseNotificationService {
 
     if (isIndictmentCase(theCase.type)) {
       const hasSentNotificationBefore = this.hasReceivedNotification(
-        DefendantNotificationType.DEFENDER_ASSIGNED,
+        notificationType,
         defendant.defenderEmail,
         theCase.notifications,
       )
-
-      if (!hasSentNotificationBefore) {
-        return true
-      }
+      return !hasSentNotificationBefore
     }
     return false
+  }
+
+  // TODO: FINISH
+  private async sendDefenderAssignedCourtDateEmailNotification(
+    theCase: Case,
+    defendant: Defendant,
+  ): Promise<DeliverResponse> {
+    const shouldSendCourtDateFollowUp = this.shouldSendDefendantNotification(
+      theCase,
+      defendant,
+      DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
+    )
+    if (!shouldSendCourtDateFollowUp) {
+      // Nothing should be sent so we return a successful response
+      return { delivered: true }
+    }
+    return { delivered: true }
+
+    // get latest court date or arraignment date
+
+    // TODO: Can I use CaseNotification serve here?
+    // this.sendArraignmentDateEmailNotification({
+    //   theCase,
+    //   user,
+    //   arraignmentDateLog: arraignmentDate,
+    //   recipientName: defenderName,
+    //   recipientEmail: defenderEmail,
+    // }),
   }
 
   private async sendDefenderAssignedNotification(
     theCase: Case,
     defendant: Defendant,
   ): Promise<DeliverResponse> {
-    const shouldSend = this.shouldSendDefenderAssignedNotification(
+    const shouldSend = this.shouldSendDefendantNotification(
       theCase,
       defendant,
+      DefendantNotificationType.DEFENDER_ASSIGNED,
     )
 
     if (shouldSend) {
@@ -306,6 +333,11 @@ export class DefendantNotificationService extends BaseNotificationService {
         return this.sendIndictmentSentToPrisonAdminNotification(theCase)
       case DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN:
         return this.sendIndictmentWithdrawnFromPrisonAdminNotification(theCase)
+      case DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP:
+        return this.sendDefenderAssignedCourtDateEmailNotification(
+          theCase,
+          defendant,
+        )
       default:
         throw new InternalServerErrorException(
           `Invalid notification type: ${notificationType}`,

@@ -33,6 +33,7 @@ export enum DefendantNotificationType {
   DEFENDER_ASSIGNED = 'DEFENDER_ASSIGNED',
   INDICTMENT_SENT_TO_PRISON_ADMIN = 'INDICTMENT_SENT_TO_PRISON_ADMIN',
   INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN = 'INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN',
+  DEFENDER_COURT_DATE_FOLLOW_UP = 'DEFENDER_COURT_DATE_FOLLOW_UP', // court date is sometimes scheduled before defender is assigned, thus we sent them notification to follow-up with court date session
 }
 
 export enum SubpoenaNotificationType {
