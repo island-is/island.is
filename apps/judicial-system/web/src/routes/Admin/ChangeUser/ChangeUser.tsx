@@ -57,8 +57,6 @@ export const ChangeUser = () => {
         },
       })
     }
-
-    router.push(constants.USERS_ROUTE)
   }
 
   return institutionsLoading || userLoading ? (
