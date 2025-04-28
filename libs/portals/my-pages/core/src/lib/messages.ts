@@ -1693,6 +1693,10 @@ export const m = defineMessages({
     id: 'service.portal:back-to-list',
     defaultMessage: 'Aftur í lista',
   },
+  backToDocumentsList: {
+    id: 'service.portal:back-to-documents-list',
+    defaultMessage: 'Aftur í skjalalista',
+  },
   month: {
     id: 'service.portal:month',
     defaultMessage: 'Mánuður',

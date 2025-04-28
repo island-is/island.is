@@ -73,7 +73,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
             icon="add"
             variant="ghost"
             size="small"
-            aria-label={formatMessage(messages.zoomIn)}
+            aria-label={formatMessage(messages.zoomOut)}
             onClick={() => {
               setScalePDF(scalePDF + 0.1)
             }}
@@ -182,6 +182,8 @@ export const PdfDocWithModal = (
   props: PdfDocumentProps & { modalCallback?: () => void },
 ) => {
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  const { formatMessage } = useLocale()
+
   return (
     <>
       <PdfDocument expandCallback={(v) => setModalIsOpen(v)} {...props} />
@@ -193,11 +195,24 @@ export const PdfDocWithModal = (
         skeleton
       >
         {modalIsOpen ? (
-          <PdfDocument
-            initScale={1.3}
-            onClose={() => setModalIsOpen(false)}
-            {...props}
-          />
+          <>
+            <PdfDocument
+              initScale={1.3}
+              onClose={() => setModalIsOpen(false)}
+              {...props}
+            />
+            <Box className={styles.reveal}>
+              <button
+                onClick={() => {
+                  document
+                    .getElementById(`button-${props.document.id}`)
+                    ?.focus()
+                }}
+              >
+                {formatMessage(m.backToList)}
+              </button>
+            </Box>
+          </>
         ) : undefined}
       </Modal>
     </>
