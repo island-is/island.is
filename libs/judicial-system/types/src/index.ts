@@ -46,6 +46,7 @@ export {
   DefenderSubRole,
   prosecutionRoles,
   isProsecutionUser,
+  getContactInformation,
   publicProsecutionOfficeRoles,
   isPublicProsecutionOfficeUser,
   districtCourtRoles,

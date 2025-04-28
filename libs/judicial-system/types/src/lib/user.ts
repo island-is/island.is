@@ -62,6 +62,14 @@ export const isProsecutionUser = (user?: InstitutionUser): boolean => {
   )
 }
 
+export const getContactInformation = (user: {
+  name: string
+  email: string
+}) => ({
+  name: user.name,
+  email: user.email,
+})
+
 const publicProsecutionRoles: string[] = [UserRole.PROSECUTOR]
 
 export const isPublicProsecutionUser = (user?: InstitutionUser): boolean => {
