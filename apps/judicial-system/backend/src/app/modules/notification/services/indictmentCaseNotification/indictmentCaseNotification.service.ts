@@ -218,7 +218,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     )
   }
 
-  // Note: redundant in other services 
+  // Note: redundant in other services
   private getCourtDateCalendarInvite = (
     theCase: Case,
     targetDateLog: DateLog,
@@ -252,7 +252,10 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   }): Promise<Recipient> {
     const { subject, body } = formatArraignmentDateEmailNotification({
       formatMessage: this.formatMessage,
-      theCase,
+      courtName: theCase.court?.name,
+      courtCaseNumber: theCase.courtCaseNumber,
+      judgeName: theCase.judge?.name,
+      registrarName: theCase.registrar?.name,
       arraignmentDateLog,
     })
 

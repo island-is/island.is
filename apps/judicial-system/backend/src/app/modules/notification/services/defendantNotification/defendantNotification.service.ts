@@ -239,7 +239,9 @@ export class DefendantNotificationService extends BaseNotificationService {
       DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
     )
     const arraignmentDateLog = DateLog.arraignmentDate(theCase.dateLogs)
-    if (!shouldSendCourtDateFollowUp || !arraignmentDateLog || !user) {
+    const hasFutureArraignmentDate =
+      arraignmentDateLog && arraignmentDateLog.date.getTime() > Date.now()
+    if (!shouldSendCourtDateFollowUp || !hasFutureArraignmentDate || !user) {
       // Nothing should be sent so we return a successful response
       return { delivered: true }
     }
@@ -248,7 +250,10 @@ export class DefendantNotificationService extends BaseNotificationService {
     // TODO: Re-use these notifications across types
     const { subject, body } = formatArraignmentDateEmailNotification({
       formatMessage: this.formatMessage,
-      theCase,
+      courtName: theCase.court?.name,
+      courtCaseNumber: theCase.courtCaseNumber,
+      judgeName: theCase.judge?.name,
+      registrarName: theCase.registrar?.name,
       arraignmentDateLog,
     })
 

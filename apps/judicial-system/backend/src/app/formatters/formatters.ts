@@ -270,20 +270,25 @@ export const formatPostponedCourtDateEmailNotification = (
 
 export const formatArraignmentDateEmailNotification = ({
   formatMessage,
-  theCase,
+  courtName,
+  courtCaseNumber,
+  judgeName,
+  registrarName,
   arraignmentDateLog,
 }: {
   formatMessage: FormatMessage
-  theCase: Case
+  courtName?: string
+  courtCaseNumber?: string
+  judgeName?: string
+  registrarName?: string
   arraignmentDateLog: DateLog
 }) => {
-  const { court, courtCaseNumber, judge, registrar } = theCase
   const { date: arraignmentDate, location: courtRoom } = arraignmentDateLog
   const cf = notifications.indictmentArraignmentDateEmail
 
   const scheduledCaseText = formatMessage(cf.scheduledCase, {
-    court: court?.name,
-    courtCaseNumber,
+    court: courtName,
+    courtCaseNumber: courtCaseNumber ?? '',
   })
 
   const arraignmentDateText = formatMessage(cf.arraignmentDate, {
@@ -298,10 +303,10 @@ export const formatArraignmentDateEmailNotification = ({
   })
 
   const judgeText = formatMessage(notifications.judge, {
-    judgeName: judge?.name || 'NONE',
+    judgeName: judgeName || 'NONE',
   })
-  const registrarText = registrar
-    ? formatMessage(notifications.registrar, { registrarName: registrar.name })
+  const registrarText = registrarName
+    ? formatMessage(notifications.registrar, { registrarName: registrarName })
     : undefined
 
   return {
