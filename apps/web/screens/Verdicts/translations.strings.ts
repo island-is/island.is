@@ -133,7 +133,7 @@ export const m = {
       description: 'Label á "Loka öllum síum" takka',
     },
     openAllFiltersLabel: {
-      id: 'web.verdicts:listPage.closeAllFiltersLabel',
+      id: 'web.verdicts:listPage.openAllFiltersLabel',
       defaultMessage: 'Opna allar síur',
       description: 'Label á "Opna allar síur" takka',
     },
