@@ -5,23 +5,33 @@ inputs:
   working-directory:
     description: 'Directory to run the action in'
     required: false
-    default: '.'
+    default: './'
+  cache-path:
+    description: 'Cache path'
+    required: false
+    default: ${{ runner.temp }}
 
 runs:
   using: 'composite'
   steps:
+    - name: Set env
+      shell: bash
+      run: |
+        export GENERATED_FILES_PATH=${{ inputs.cache-path }}/${{ env.GENERATED_FILES }}
+        echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_ENV"
+
     - name: INFO
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        echo "generated files: ${{ env.GENERATED_FILES }}"
+        echo "generated files: ${{ env.GENERATED_FILES_PATH }}"
 
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
       id: restore-codegen-cache
       with:
         path: |
-          ${{ inputs.working-directory }}/${{ env.GENERATED_FILES }}
+          ${{ env.GENERATED_FILES_PATH }}
         key: generated-files-${{ github.sha }}
 
     - name: Prepare generated files
@@ -29,19 +39,19 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
+        node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES_PATH }}
 
     - name: Extract generated files
       if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        tar -xzvf ${{ env.GENERATED_FILES }}
+        tar -xzvf ${{ env.GENERATED_FILES_PATH }}
 
     - name: Cache Generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       uses: runs-on/cache/save@v4
       with:
         path: |
-          ${{ inputs.working-directory }}/${{ env.GENERATED_FILES }}
+          ${{ env.GENERATED_FILES_PATH }}
         key: generated-files-${{ github.sha }}
