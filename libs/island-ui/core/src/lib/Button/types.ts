@@ -65,5 +65,6 @@ export interface ButtonProps {
   name?: string
   value?: string
   as?: As
+  role?: string
   truncate?: boolean
 }
