@@ -46,7 +46,7 @@ export const Button = forwardRef<
       <Box
         component={ReaButton}
         as={as ? (as as string) : variant === 'text' ? 'span' : 'button'}
-        role={role ? role : 'button'}
+        role={role}
         ref={ref}
         value={value}
         name={name}
