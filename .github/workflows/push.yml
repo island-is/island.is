@@ -301,18 +301,6 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
-
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/docker-login-ecr.sh
