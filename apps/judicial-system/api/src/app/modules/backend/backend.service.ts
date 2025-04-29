@@ -14,8 +14,7 @@ import {
   SendNotificationResponse,
   SignatureConfirmationResponse,
 } from '../case'
-import { CaseListEntry } from '../case-list'
-import { CaseStatistics } from '../case-list/models/caseStatistics.model'
+import { CaseListEntry, CaseStatistics } from '../case-list'
 import {
   CivilClaimant,
   Defendant,
