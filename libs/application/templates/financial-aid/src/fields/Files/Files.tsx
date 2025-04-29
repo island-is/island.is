@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react'
-import { InputFileUpload, UploadFile } from '@island.is/island-ui/core'
+import {
+  InputFileUploadDeprecated,
+  UploadFileDeprecated,
+} from '@island.is/island-ui/core'
 
 import { useIntl } from 'react-intl'
 import { filesText } from '../../lib/messages'
@@ -10,7 +13,7 @@ import { useFileUpload } from '../../lib/hooks/useFileUpload'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
 
 interface Props {
-  uploadFiles: UploadFile[]
+  uploadFiles: UploadFileDeprecated[]
   fileKey: UploadFileType
   folderId: string
   hasError?: boolean
@@ -29,7 +32,7 @@ const Files = ({ uploadFiles, fileKey, folderId, hasError = false }: Props) => {
     onUploadRejection,
   } = useFileUpload(uploadFiles, folderId)
 
-  const fileToObject = (file: UploadFile) => {
+  const fileToObject = (file: UploadFileDeprecated) => {
     return {
       key: file.key,
       name: file.name,
@@ -50,7 +53,7 @@ const Files = ({ uploadFiles, fileKey, folderId, hasError = false }: Props) => {
 
   return (
     <FileUploadContainer hasError={hasError}>
-      <InputFileUpload
+      <InputFileUploadDeprecated
         fileList={files}
         header={formatMessage(filesText.header)}
         description={formatMessage(filesText.description)}

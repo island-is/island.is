@@ -7,7 +7,7 @@ import {
   Columns,
   Inline,
   Input,
-  InputFileUpload,
+  InputFileUploadDeprecated,
   Text,
   Divider,
 } from '@island.is/island-ui/core'
@@ -89,7 +89,7 @@ export const EditSignature = () => {
         <DownloadDraftButton draftId={draft.id} />
       </Box>
       <Box marginBottom={4}>
-        <InputFileUpload
+        <InputFileUploadDeprecated
           fileList={[]}
           header={t(msg.signedDocumentUploadDragPrompt)}
           description={

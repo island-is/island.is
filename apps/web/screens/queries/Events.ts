@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-import { slices } from './fragments'
+import { imageFields, slices } from './fragments'
 
 export const GET_SINGLE_EVENT_QUERY = gql`
   query GetSingleEvent($input: GetSingleEventInput!) {
@@ -21,26 +21,17 @@ export const GET_SINGLE_EVENT_QUERY = gql`
         freeText
       }
       contentImage {
-        url
-        title
-        width
-        height
+        ...ImageFields
       }
       thumbnailImage {
-        url
-        title
-        width
-        height
+        ...ImageFields
       }
       fullWidthImageInContent
       content {
         ...AllSlices
       }
       featuredImage {
-        url
-        title
-        width
-        height
+        ...ImageFields
       }
       video {
         ...EmbeddedVideoFields
@@ -72,12 +63,10 @@ export const GET_EVENTS_QUERY = gql`
           freeText
         }
         thumbnailImage {
-          url
-          title
-          width
-          height
+          ...ImageFields
         }
       }
     }
   }
+  ${imageFields}
 `
