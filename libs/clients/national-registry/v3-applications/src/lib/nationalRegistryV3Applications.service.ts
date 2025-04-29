@@ -142,7 +142,7 @@ export class NationalRegistryV3ApplicationsClientService {
 
     if (res.sambud?.sambud) {
       return formatCohabitationDtoV3FromSam(res.sambud, res.hjuskapur)
-    } else if (res.hjuskapur) {
+    } else if (res.hjuskapur && res.hjuskapur.kennitalaMaka) {
       return formatCohabitationDtoV3FromHju(res.hjuskapur)
     } else {
       return null
@@ -205,6 +205,10 @@ export class NationalRegistryV3ApplicationsClientService {
     nationalId: string,
     auth: User,
   ): Promise<BirthplaceDto | null> {
+    console.log('--------------------------------')
+    console.log('getBirthplace nationalId', nationalId)
+    console.dir(auth, { depth: null })
+    console.log('--------------------------------')
     const res = await this.einstaklingarApiWithAuth(
       auth,
     ).einstaklingarKennitalaFaedingarstadurGet({
