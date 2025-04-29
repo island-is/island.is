@@ -1043,6 +1043,28 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 cards={data.visibleVerdicts
                   .filter((verdict) => Boolean(verdict.id))
                   .map((verdict) => {
+                    const detailLines = [
+                      {
+                        icon: 'calendar',
+                        text: verdict.verdictDate
+                          ? format(
+                              new Date(verdict.verdictDate),
+                              'd. MMMM yyyy',
+                            )
+                          : '',
+                      },
+                      { icon: 'hammer', text: verdict.court ?? '' },
+                    ]
+
+                    if (verdict.presidentJudge?.name) {
+                      detailLines.push({
+                        icon: 'person',
+                        text: `${verdict.presidentJudge?.name ?? ''} ${
+                          verdict.presidentJudge?.title ?? ''
+                        }`,
+                      })
+                    }
+
                     return {
                       description: verdict.title,
                       eyebrow: '',
@@ -1050,24 +1072,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       link: { href: `/domar/${verdict.id}`, label: '' },
                       title: verdict.caseNumber,
                       borderColor: 'blue200',
-                      detailLines: [
-                        {
-                          icon: 'calendar',
-                          text: verdict.verdictDate
-                            ? format(
-                                new Date(verdict.verdictDate),
-                                'd. MMMM yyyy',
-                              )
-                            : '',
-                        },
-                        { icon: 'hammer', text: verdict.court ?? '' },
-                        {
-                          icon: 'person',
-                          text: `${verdict.presidentJudge?.name ?? ''} ${
-                            verdict.presidentJudge?.title ?? ''
-                          }`,
-                        },
-                      ],
+                      detailLines,
                     }
                   })}
               />
