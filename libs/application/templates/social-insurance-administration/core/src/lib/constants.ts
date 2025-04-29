@@ -119,6 +119,23 @@ export const fileUploadSharedProps = {
   uploadMultiple: true,
 }
 
+const married = 'Gift/ur'
+
+export const maritalStatuses: {
+  [key: string]: string
+} = {
+  '1': 'Ógift/ur',
+  '3': married,
+  '4': 'Ekkja/Ekkill',
+  '5': 'Skilin/nn/ð að borði og sæng',
+  '6': 'Fráskilin/nn/ð',
+  '7': married,
+  '8': married,
+  '9': 'Óupplýst',
+  '0': married,
+  L: married,
+}
+
 export const FOREIGN_BASIC_PENSION = 'Erlendur grunnlífeyrir'
 export const FOREIGN_PENSION = 'Erlendur lífeyrir'
 export const FOREIGN_INCOME = 'Erlendar tekjur'
