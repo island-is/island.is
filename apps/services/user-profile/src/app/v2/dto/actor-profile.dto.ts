@@ -10,6 +10,7 @@ import {
 } from 'class-validator'
 import { PageInfoDto } from '@island.is/nest/pagination'
 import { Locale } from '../../user-profile/types/localeTypes'
+import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 export class MeActorProfileDto {
   @ApiProperty()
@@ -60,6 +61,33 @@ export class ActorProfileDto {
   @IsOptional()
   @IsUUID(4)
   readonly emailsId?: string
+}
+
+export class SingleActorProfileDto {
+  @ApiProperty({ type: () => String, nullable: true })
+  @IsOptional()
+  @IsEmail()
+  readonly email?: string | null
+
+  @ApiProperty({ enum: DataStatus })
+  @IsEnum(DataStatus)
+  readonly emailStatus!: DataStatus
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly needsNudge!: boolean | null
+
+  @ApiProperty()
+  @IsString()
+  readonly actorNationalId!: string
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly emailNotifications!: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly emailVerified!: boolean
 }
 
 export class PatchActorProfileDto {

@@ -29,6 +29,7 @@ import {
   ActorProfileDto,
   MeActorProfileDto,
   PaginatedActorProfileDto,
+  SingleActorProfileDto,
 } from './dto/actor-profile.dto'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import { Emails } from './models/emails.model'
@@ -53,6 +54,8 @@ export class UserProfileService {
     private readonly delegationsApi: DelegationsApi,
     @InjectModel(Emails)
     private readonly emailModel: typeof Emails,
+    @InjectModel(ActorProfile)
+    private readonly actorProfileModel: typeof ActorProfile,
   ) {}
 
   async findAllBySearchTerm(search: string): Promise<PaginatedUserProfileDto> {
@@ -594,6 +597,68 @@ export class UserProfileService {
     return profile.toDto()
   }
 
+  /* Fetch single actor profile with additional details for the specified delegation */
+  async getSingleActorProfile({
+    toNationalId,
+    fromNationalId,
+  }: {
+    toNationalId: string
+    fromNationalId: string
+  }): Promise<SingleActorProfileDto> {
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    // Check if this delegation exists
+    const delegation = incomingDelegations.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('Delegation does not exist')
+    }
+
+    // Get actor profile (delegation preferences)
+    const actorProfile = await this.actorProfileModel.findOne({
+      where: {
+        toNationalId,
+        fromNationalId,
+      },
+    })
+
+    if (!actorProfile) {
+      throw new BadRequestException('Actor profile does not exist')
+    }
+
+    let email = null
+    let emailStatus = DataStatus.NOT_DEFINED
+
+    if (actorProfile.emailsId) {
+      const emailByActorId = await this.emailModel.findOne({
+        where: { id: actorProfile.emailsId },
+      })
+
+      if (emailByActorId) {
+        email = emailByActorId.email
+        emailStatus = emailByActorId.emailStatus
+      }
+    }
+
+    // Get the user name for the actor by using the national id
+
+    return {
+      email,
+      emailStatus,
+      emailVerified: emailStatus === DataStatus.VERIFIED,
+      needsNudge: this.checkNeedsNudge({
+        email,
+        emailStatus,
+        nextNudge: actorProfile.nextNudge,
+        shouldValidatePhoneNumber: false,
+      }),
+      actorNationalId: fromNationalId,
+      emailNotifications: actorProfile.emailNotifications,
+    }
+  }
+
   /* Private methods */
 
   private async getIncomingDelegations(nationalId: string) {
@@ -605,26 +670,58 @@ export class UserProfileService {
     })
   }
 
-  private checkNeedsNudge(userProfile: UserProfile): boolean | null {
-    const isEmailVerified =
-      userProfile.emails?.[0]?.emailStatus === DataStatus.VERIFIED
+  /**
+   * Determines if a user needs to be nudged based on contact information and timing.
+   *
+   * This function evaluates whether a user should receive a notification (nudge) based on:
+   * 1. The presence and verification status of their contact information (email and/or phone)
+   * 2. The timing of the next scheduled nudge (if specified)
+   *
+   * The logic works as follows:
+   * - If nextNudge date is provided:
+   *   - If no contact info exists (no email and no phone), return true if nextNudge is in the past
+   *   - If verified contact info exists (verified email or valid phone), return true if nextNudge is in the past
+   * - If no nextNudge date is provided:
+   *   - If verified contact info exists (verified email or valid phone), return true (immediate nudge)
+   *   - Otherwise, return null (no nudge needed)
+   * - In all other cases, return null (no nudge needed)
+   *
+   * Phone validation depends on the shouldValidatePhoneNumber flag:
+   * - When true: requires both phone number existence and verification
+   * - When false: only requires phone number existence
+   *
+   * @returns boolean | null - true if nudge is needed, null if not needed or cannot be determined
+   */
+  private checkNeedsNudge({
+    email,
+    emailStatus,
+    nextNudge,
+    mobilePhoneNumber,
+    mobilePhoneNumberVerified,
+    shouldValidatePhoneNumber = true,
+  }: {
+    email: string | null | undefined
+    emailStatus: DataStatus | null | undefined
+    nextNudge: Date | null | undefined
+    mobilePhoneNumber?: string | null
+    mobilePhoneNumberVerified?: boolean
+    shouldValidatePhoneNumber?: boolean
+  }): boolean | null {
+    const isEmailVerified = emailStatus === DataStatus.VERIFIED
+    const isPhoneValid = shouldValidatePhoneNumber
+      ? mobilePhoneNumber && mobilePhoneNumberVerified
+      : mobilePhoneNumber !== null && mobilePhoneNumber !== undefined
 
-    if (userProfile.nextNudge) {
-      if (!userProfile.emails?.[0]?.email && !userProfile.mobilePhoneNumber) {
-        return userProfile.nextNudge < new Date()
+    if (nextNudge) {
+      if (!email && !mobilePhoneNumber) {
+        return nextNudge < new Date()
       }
 
-      if (
-        (userProfile.emails?.[0]?.email && isEmailVerified) ||
-        (userProfile.mobilePhoneNumber && userProfile.mobilePhoneNumberVerified)
-      ) {
-        return userProfile.nextNudge < new Date()
+      if ((email && isEmailVerified) || isPhoneValid) {
+        return nextNudge < new Date()
       }
     } else {
-      if (
-        (userProfile.emails?.[0]?.email && isEmailVerified) ||
-        (userProfile.mobilePhoneNumber && userProfile.mobilePhoneNumberVerified)
-      ) {
+      if ((email && isEmailVerified) || isPhoneValid) {
         return true
       }
     }
@@ -696,7 +793,13 @@ export class UserProfileService {
       emailVerified:
         userProfile.emails?.[0].emailStatus === DataStatus.VERIFIED,
       documentNotifications: userProfile.documentNotifications,
-      needsNudge: this.checkNeedsNudge(userProfile),
+      needsNudge: this.checkNeedsNudge({
+        email: userProfile.emails?.[0].email,
+        emailStatus: userProfile.emails?.[0].emailStatus,
+        nextNudge: userProfile.nextNudge,
+        mobilePhoneNumber: userProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+      }),
       emailNotifications: userProfile.emailNotifications,
       lastNudge: userProfile.lastNudge,
       nextNudge: userProfile.nextNudge,

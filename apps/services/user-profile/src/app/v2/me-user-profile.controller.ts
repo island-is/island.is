@@ -5,6 +5,7 @@ import {
   Controller,
   Get,
   Headers,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -31,6 +32,7 @@ import {
   MeActorProfileDto,
   PaginatedActorProfileDto,
   PatchActorProfileDto,
+  SingleActorProfileDto,
 } from './dto/actor-profile.dto'
 
 const namespace = '@island.is/user-profile/v2/me'
@@ -162,6 +164,38 @@ export class MeUserProfileController {
     @CurrentUser() user: User,
   ): Promise<PaginatedActorProfileDto> {
     return this.userProfileService.getActorProfiles(user.nationalId)
+  }
+
+  @Get('/actor-profile')
+  @Scopes(ApiScope.internal)
+  @Documentation({
+    description:
+      'Get a single actor profile with detailed information for the current user and specified fromNationalId.',
+    response: { status: 200, type: SingleActorProfileDto },
+  })
+  @Audit<SingleActorProfileDto>({
+    resources: (profile) => profile.actorNationalId,
+  })
+  getSingleActorProfile(
+    @CurrentUser() user: User,
+    @Param('fromNationalId') fromNationalId: string,
+  ): Promise<SingleActorProfileDto> {
+    if (!user.actor?.nationalId) {
+      throw new BadRequestException('User has no actor profile')
+    }
+
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'getSingleActorProfile',
+        resources: `${user.nationalId}:${fromNationalId}`,
+      },
+      this.userProfileService.getSingleActorProfile({
+        toNationalId: user.actor?.nationalId,
+        fromNationalId: user.nationalId,
+      }),
+    )
   }
 
   @Patch('/actor-profiles/.from-national-id')

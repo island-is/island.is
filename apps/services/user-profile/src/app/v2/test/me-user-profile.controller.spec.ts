@@ -1669,7 +1669,7 @@ describe('MeUserProfileController', () => {
       jest
         .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
         .mockResolvedValue({
-          data: [],
+          data: [], // No delegations
           pageInfo: {
             hasNextPage: false,
             hasPreviousPage: false,
@@ -1687,6 +1687,286 @@ describe('MeUserProfileController', () => {
 
       // Assert
       expect(res.status).toEqual(204)
+    })
+  })
+
+  describe('GET v2/me/actor-profile', () => {
+    let app: TestApp
+    let server: SuperTest<Test>
+    let fixtureFactory: FixtureFactory
+    let userProfileModel: typeof UserProfile
+    let actorProfileModel: typeof ActorProfile
+    let delegationsApi: DelegationsApi
+    let emailsModel: typeof Emails
+    const testEmailsId = uuid()
+    const testNationalId1 = createNationalId('person')
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          nationalId: testUserProfile.nationalId,
+          scope: [ApiScope.internal],
+          actor: {
+            nationalId: testNationalId1,
+          },
+        }),
+      })
+
+      server = request(app.getHttpServer())
+      fixtureFactory = new FixtureFactory(app)
+      delegationsApi = app.get(DelegationsApi)
+      userProfileModel = app.get(getModelToken(UserProfile))
+      actorProfileModel = app.get(getModelToken(ActorProfile))
+      emailsModel = app.get(getModelToken(Emails))
+    })
+
+    beforeEach(async () => {
+      await userProfileModel.destroy({
+        truncate: true,
+      })
+      await actorProfileModel.destroy({
+        truncate: true,
+      })
+      await emailsModel.destroy({
+        truncate: true,
+        force: true,
+        cascade: true,
+      })
+
+      // Mock delegations API to return a delegation between the test user and testNationalId1
+      jest
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValue({
+          data: [
+            {
+              toNationalId: testNationalId1,
+              fromNationalId: testUserProfile.nationalId,
+              subjectId: null,
+              type: 'delegation',
+            },
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
+          },
+          totalCount: 1,
+        })
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    it('should return actor profile with all required fields', async () => {
+      // Arrange
+      // Create a user profile for the actor with a verified email
+      try {
+        const userProfile = await fixtureFactory.createUserProfile({
+          nationalId: testNationalId1,
+          emails: [
+            {
+              email: 'test@example.com',
+              primary: true,
+              emailStatus: DataStatus.VERIFIED,
+            },
+          ],
+        })
+
+        const nextNudgeDate = subMonths(new Date(), 1) // 1 month ago, to test needsNudge=true
+
+        // Create the actor profile for the relationship
+        await actorProfileModel.create({
+          id: uuid(),
+          toNationalId: testNationalId1,
+          fromNationalId: testUserProfile.nationalId,
+          emailNotifications: true,
+          emailsId: userProfile.emails?.[0].id,
+          nextNudge: nextNudgeDate,
+        })
+      } catch (error) {
+        console.error('Error creating actor profile:', error)
+      }
+
+      // Act
+      const res = await server.get('/v2/me/actor-profile')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        email: 'test@example.com',
+        emailStatus: DataStatus.VERIFIED,
+        emailVerified: true,
+        needsNudge: true, // Should be true because nextNudge is in the past
+        actorNationalId: testUserProfile.nationalId,
+        emailNotifications: true,
+      })
+    })
+
+    it('should return actor profile with unverified email', async () => {
+      // Arrange
+      try {
+        // Create a user profile for the actor with an unverified email
+        const userProfile = await fixtureFactory.createUserProfile({
+          nationalId: testNationalId1,
+          emails: [
+            {
+              email: 'unverified@example.com',
+              primary: true,
+              emailStatus: DataStatus.NOT_VERIFIED,
+            },
+          ],
+        })
+
+        const nextNudgeDate = addMonths(new Date(), 1) // 1 month in future, to test needsNudge=false
+
+        // Create the actor profile for the relationship
+        await actorProfileModel.create({
+          id: uuid(),
+          toNationalId: testNationalId1,
+          fromNationalId: testUserProfile.nationalId,
+          emailNotifications: false,
+          emailsId: userProfile.emails?.[0].id,
+          nextNudge: nextNudgeDate,
+        })
+      } catch (error) {
+        console.error('Error creating actor profile:', error)
+      }
+
+      // Act
+      const res = await server.get('/v2/me/actor-profile')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        email: 'unverified@example.com',
+        emailStatus: DataStatus.NOT_VERIFIED,
+        emailVerified: false,
+        needsNudge: null, // nextNudge is in the future and there is no verified contact info
+        actorNationalId: testUserProfile.nationalId,
+        emailNotifications: false,
+      })
+    })
+
+    it('should handle actor profile with no email connected', async () => {
+      // Arrange
+      // Create an actor profile without an emailsId
+      await actorProfileModel.create({
+        id: uuid(),
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+        emailNotifications: true,
+      })
+
+      // Act
+      const res = await server.get('/v2/me/actor-profile')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        email: null,
+        emailStatus: DataStatus.NOT_DEFINED,
+        emailVerified: false,
+        needsNudge: null, // No nextNudge, no email, no phone, so result should be null
+        actorNationalId: testUserProfile.nationalId,
+        emailNotifications: true,
+      })
+    })
+
+    it('should return 400 when actor profile does not exist', async () => {
+      // No actor profile in the database
+
+      // Act
+      const res = await server.get('/v2/me/actor-profile')
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        title: 'Bad Request',
+        status: 400,
+        detail: 'Actor profile does not exist',
+      })
+    })
+
+    it('should return 400 when delegation does not exist', async () => {
+      // Mock delegations API to return empty result
+      jest
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValueOnce({
+          data: [], // No delegations
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
+          },
+          totalCount: 0,
+        })
+
+      try {
+        // Create the actor profile directly without creating a user profile first
+        // This reduces the number of database operations
+        await actorProfileModel.create({
+          id: uuid(),
+          toNationalId: testNationalId1,
+          fromNationalId: testUserProfile.nationalId,
+          emailNotifications: true,
+        })
+      } catch (error) {
+        console.error('Error creating actor profile:', error)
+        // You might want to fail the test if this creation fails
+        // throw error;
+      }
+
+      // Act
+      const res = await server.get('/v2/me/actor-profile')
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        title: 'Bad Request',
+        status: 400,
+        detail: 'Delegation does not exist',
+      })
+    })
+  })
+
+  describe('GET v2/me/actor-profile - user without actor', () => {
+    let appWithNoActor: TestApp
+    let serverWithNoActor: SuperTest<Test>
+
+    beforeAll(async () => {
+      appWithNoActor = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          nationalId: testUserProfile.nationalId,
+          scope: [ApiScope.internal],
+          // No actor property
+        }),
+      })
+
+      serverWithNoActor = request(appWithNoActor.getHttpServer())
+    })
+
+    afterAll(async () => {
+      await appWithNoActor.cleanUp()
+    })
+
+    it('should return 400 when user does not have an actor property', async () => {
+      // Act
+      const res = await serverWithNoActor.get('/v2/me/actor-profile')
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        title: 'Bad Request',
+        status: 400,
+        detail: 'User has no actor profile',
+      })
     })
   })
 })

@@ -77,6 +77,20 @@ export class ActorProfile extends Model {
   @ApiProperty()
   emailsId?: string | null
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  nextNudge?: Date | null
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  lastNudge?: Date | null
+
   toDto(): MeActorProfileDto {
     return {
       fromNationalId: this.fromNationalId,
