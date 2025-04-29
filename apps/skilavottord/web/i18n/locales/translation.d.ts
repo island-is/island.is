@@ -27,10 +27,10 @@ export interface Translation {
   recyclingFundSidenav: RecyclingFundSidenav
   recyclingCompanies: RecyclingCompanies
   accessControl: AccessControl
-  notFound: NotFound
   errorBoundary: ErrorBoundary
   routes: Routes
   municipalities: Municipalities
+  alerts: Alerts
 }
 
 export interface AccessControl {
@@ -275,8 +275,18 @@ export interface Deregister {
   buttons: DeregisterButtons
   success: string
   error: CompletedError
-  currentMileage: string
+  currentMileage: Milage
   numberplate: NumberPlate
+}
+
+export interface Milage {
+  label: string
+  rules: MilageRules
+  info: string
+}
+
+export interface MilageRules {
+  validate: string
 }
 
 export interface NumberPlate {
@@ -431,7 +441,7 @@ export interface Tooltip {
 
 export interface NotFound {
   title: string
-  content: string
+  message: string
   button: string
 }
 
@@ -604,6 +614,11 @@ export interface RecycleVehicle {
   confirm: string
   handover: string
   completed: string
+}
+
+export interface Alerts {
+  accessDenied: Message
+  notFound: NotFound
 }
 
 // Converts JSON strings to/from your types

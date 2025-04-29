@@ -164,7 +164,7 @@ interface AlternativeServiceAnnouncementProps {
   defendantName: string | null | undefined
 }
 
-const AlternativeServiceAnnouncement: FC<
+export const AlternativeServiceAnnouncement: FC<
   AlternativeServiceAnnouncementProps
 > = (props) => {
   const { alternativeServiceDescription, defendantName } = props
@@ -198,6 +198,7 @@ const ServiceAnnouncements: FC<ServiceAnnouncementsProps> = (props) => {
       <>
         {defendant.alternativeServiceDescription && (
           <AlternativeServiceAnnouncement
+            key={defendant.id}
             alternativeServiceDescription={
               defendant.alternativeServiceDescription
             }

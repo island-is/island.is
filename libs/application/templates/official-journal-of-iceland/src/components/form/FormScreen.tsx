@@ -2,8 +2,6 @@ import {
   AlertMessage,
   AlertMessageProps,
   Box,
-  Bullet,
-  BulletList,
   Button,
   Inline,
   LinkV2,

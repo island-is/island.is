@@ -613,18 +613,21 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionLists',
     defaultMessage: 'Meðmælasöfnun',
   },
+  signatureCollectionMunicipalLists: {
+    id: 'service.portal:signatureCollectionMunicipalLists',
+    defaultMessage: 'Sveitarstjórnarkosningar',
+  },
   signatureCollectionParliamentaryLists: {
     id: 'service.portal:signatureCollectionParliamentaryLists',
-    defaultMessage: 'Alþingiskosningar - Meðmælasöfnun',
+    defaultMessage: 'Alþingiskosningar',
   },
   signatureCollectionParliamentaryListsCompany: {
     id: 'service.portal:signatureCollectionParliamentaryListsCompany',
-    defaultMessage:
-      'Alþingiskosningar - Meðmælasöfnun (Aðeins fyrir stjórnmálasamtök)',
+    defaultMessage: 'Alþingiskosningar - Aðeins fyrir stjórnmálasamtök',
   },
   signatureCollectionPresidentialLists: {
     id: 'service.portal:signatureCollectionPresidentialLists',
-    defaultMessage: 'Forsetakosningar - Meðmælasöfnun',
+    defaultMessage: 'Forsetakosningar',
   },
   notifications: {
     id: 'service.portal:notifications',
@@ -778,6 +781,10 @@ export const m = defineMessages({
     defaultMessage:
       'Hér sérð þú hreyfingar gjaldflokka fyrir valin skilyrði. Opnaðu síu og veldu gjaldflokka og tímabil. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
   },
+  financeTransactionsVehicleMileageDescription: {
+    id: 'service.portal:finance-transactions-vehicle-mileage-description',
+    defaultMessage: 'Kílómetragjaldslýsing',
+  },
   financeTransactionPeriodsDescription: {
     id: 'service.portal:finance-transaction-periods-description',
     defaultMessage:
@@ -786,6 +793,10 @@ export const m = defineMessages({
   financeTransactionsCategories: {
     id: 'service.portal:finance-transactions-categories',
     defaultMessage: 'Gjaldflokkar',
+  },
+  financeTransactionsVehiclesMileage: {
+    id: 'service.portal:finance-transactions-vehicles-mileage',
+    defaultMessage: 'Kílómetragjald',
   },
   financeTransactionPeriods: {
     id: 'service.portal:finance-transaction-periods',
