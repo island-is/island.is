@@ -25,6 +25,7 @@ yarn feature-env \
 yarn feature-env \
   values \
   --skipAppName true \
+  --disableNsGrants true \
   --chart islandis \
   --feature "$FEATURE_NAME" \
   --images "$IMAGE" \

@@ -20,7 +20,7 @@ describe('InternalSubpoenaController - Deliver subpoena revocation to police', (
   const policeSubpoenaId = uuid()
   const defendantId = uuid()
 
-  const subpoena = { id: subpoenaId, subpoenaId: policeSubpoenaId } as Subpoena
+  const subpoena = { id: subpoenaId, policeSubpoenaId } as Subpoena
   const theCase = { id: caseId } as Case
 
   const userId = uuid()
