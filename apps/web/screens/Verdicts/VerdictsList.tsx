@@ -724,7 +724,7 @@ const Filters = ({
                 />
                 <DebouncedDatePicker
                   debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-                  name="from"
+                  name="to"
                   label={formatMessage(m.listPage.dateToLabel)}
                   handleChange={(date) => {
                     updateQueryState(QueryParam.DATE_TO, date)
