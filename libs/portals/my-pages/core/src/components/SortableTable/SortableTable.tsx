@@ -248,6 +248,7 @@ export const SortableTable = (props: SortableTableProps) => {
                   <EmptyTable
                     message={props.emptyTableMessage}
                     background="white"
+                    loading={props.tableLoading}
                   />
                 </Box>
               </Box>

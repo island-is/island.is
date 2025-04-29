@@ -50,6 +50,7 @@ export class Dispensation {
   @Field()
   count!: number
 
-  @Field(() => [DispensedItem])
-  items!: DispensedItem[]
+  // TODO: Check if this should be nullable when service fixes
+  @Field(() => [DispensedItem], { nullable: true })
+  items?: DispensedItem[]
 }

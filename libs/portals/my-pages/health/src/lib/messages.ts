@@ -1287,7 +1287,7 @@ export const messages = defineMessages({
   },
   regularMedicine: {
     id: 'sp.health:regular-medicine',
-    defaultMessage: 'Föst lyf',
+    defaultMessage: 'Lyf notuð reglulega (föst lyf)',
   },
   temporaryMedicine: {
     id: 'sp.health:temporary-medicine',
@@ -1509,5 +1509,9 @@ export const messages = defineMessages({
   notRegistered: {
     id: 'sp.health:not-registered',
     defaultMessage: 'Ekki skráð',
+  },
+  noSearchResults: {
+    id: 'sp.health:no-search-results',
+    defaultMessage: 'Engar niðurstöður fundust',
   },
 })
