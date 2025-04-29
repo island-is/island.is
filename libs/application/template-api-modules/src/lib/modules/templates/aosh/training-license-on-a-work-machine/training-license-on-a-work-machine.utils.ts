@@ -43,65 +43,58 @@ export const getCleanApplicantInformation = (
   const applicantInformation = getValueViaPath<
     TrainingLicenseOnAWorkMachine['information']
   >(application.answers, 'information')
-  const isContractor = getValueViaPath<string[]>(
-    application.answers,
-    'assigneeInformation.isContractor',
-  )
-
   return {
     nationalId: applicantInformation?.nationalId ?? '',
     name: applicantInformation?.name ?? '',
     phoneNumber: applicantInformation?.phone ?? '',
     email: applicantInformation?.email ?? '',
     postalCode: parseInt(applicantInformation?.postCode ?? '0', 10),
-    isSelfEmployed: isContractor?.includes('yes') ?? false,
+    drivingLicenseNumber: applicantInformation?.driversLicenseNumber ?? '',
   }
 }
 
-export const getCleanCompanyInformation = (
+export const getCleanCompanyInformationList = (
   application: Application,
-): Company => {
+): Company[] => {
   const companyInformation = getValueViaPath<
     TrainingLicenseOnAWorkMachine['assigneeInformation']
   >(application.answers, 'assigneeInformation')
-  const isContractor =
-    companyInformation?.isContractor?.includes('yes') ?? false
+  const assigneeInformation = companyInformation ?? []
 
-  return {
-    companyName: isContractor ? '' : companyInformation?.company.name ?? '',
-    companyNationalId: isContractor
-      ? ''
-      : companyInformation?.company.nationalId ?? '',
-    contactNationalId: isContractor
-      ? ''
-      : companyInformation?.assignee.nationalId ?? '',
-    contactName: isContractor ? '' : companyInformation?.assignee.name ?? '',
-    contactPhoneNumber: isContractor
-      ? ''
-      : companyInformation?.assignee.phone ?? '',
-    contactEmail: isContractor ? '' : companyInformation?.assignee.email ?? '',
-  }
+  return assigneeInformation.map((info) => ({
+    companyName: info?.company.name ?? '',
+    companyNationalId: info?.company.nationalId ?? '',
+    contactNationalId: info?.assignee.nationalId ?? '',
+    contactName: info?.assignee.name ?? '',
+    contactPhoneNumber: info?.assignee.phone ?? '',
+    contactEmail: info?.assignee.email ?? '',
+    machineRegistrationNumbers: info?.workMachine ?? [],
+  }))
 }
 
 export const getCleanCertificateOfTenure = (
   application: Application,
-): CertificateOfTenure => {
+): CertificateOfTenure[] => {
   const certificateOfTenure = getValueViaPath<
     TrainingLicenseOnAWorkMachine['certificateOfTenure']
   >(application.answers, 'certificateOfTenure')
-  return {
-    machineRegistrationNumber: certificateOfTenure?.machineNumber ?? '',
-    licenseCategoryPrefix: certificateOfTenure?.licenseCategoryPrefix ?? '',
-    machineType: certificateOfTenure?.machineType ?? '',
-    dateWorkedOnMachineFrom: certificateOfTenure?.dateFrom
-      ? new Date(certificateOfTenure.dateFrom)
-      : new Date(),
-    dateWorkedOnMachineTo: certificateOfTenure?.dateTo
-      ? new Date(certificateOfTenure.dateTo)
-      : new Date(),
-    hoursWorkedOnMachine: parseInt(
-      certificateOfTenure?.tenureInHours ?? '0',
-      10,
-    ),
-  }
+  return (
+    certificateOfTenure?.map(
+      ({
+        machineNumber,
+        machineType,
+        dateFrom,
+        dateTo,
+        tenureInHours,
+        isContractor,
+      }) => ({
+        machineRegistrationNumber: machineNumber,
+        machineType: machineType,
+        dateWorkedOnMachineFrom: new Date(dateFrom),
+        dateWorkedOnMachineTo: new Date(dateTo),
+        hoursWorkedOnMachine: parseInt(tenureInHours, 10),
+        wasSelfEmployed: isContractor?.includes('yes') ?? false,
+      }),
+    ) ?? []
+  )
 }

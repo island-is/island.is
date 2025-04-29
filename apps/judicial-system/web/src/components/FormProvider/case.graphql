@@ -50,7 +50,7 @@ query Case($input: CaseQueryInput!) {
         defenderNationalId
         caseId
         defendantId
-        subpoenaId
+        policeSubpoenaId
       }
     }
     defenderName
@@ -211,6 +211,7 @@ query Case($input: CaseQueryInput!) {
     defendantWaivesRightToCounsel
     crimeScenes
     indictmentIntroduction
+    publicProsecutorIsRegisteredInPoliceSystem
     indictmentCounts {
       id
       caseId
@@ -304,7 +305,6 @@ query Case($input: CaseQueryInput!) {
     indictmentVerdictAppealDeadlineExpired
     indictmentDecision
     indictmentReviewDecision
-    indictmentCompletedDate
     courtSessionType
     mergeCase {
       id
@@ -368,7 +368,7 @@ query Case($input: CaseQueryInput!) {
           comment
           defenderNationalId
           caseId
-          subpoenaId
+          policeSubpoenaId
         }
       }
       caseFiles {

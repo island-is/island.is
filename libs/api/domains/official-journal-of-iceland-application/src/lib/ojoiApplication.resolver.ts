@@ -23,7 +23,7 @@ import { GetApplicationAttachmentInput } from '../models/getApplicationAttachmen
 import { GetApplicationAttachmentsResponse } from '../models/getApplicationAttachments.response'
 import { DeleteApplicationAttachmentInput } from '../models/deleteApplicationAttachment.input'
 import type { User } from '@island.is/auth-nest-tools'
-import { GetUserInvolvedPartiesResponse } from '../models/getUserInvolvedParties.response'
+import { GetMyUserInfoResponse, GetUserInvolvedPartiesResponse } from '../models/getUserInvolvedParties.response'
 import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.input'
 import { OJOIAIdInput } from '../models/id.input'
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
@@ -159,6 +159,13 @@ export class OfficialJournalOfIcelandApplicationResolver {
     @CurrentUser() user: User,
   ) {
     return this.ojoiApplicationService.getUserInvolvedParties(input, user)
+  }
+
+  @Query(() => GetMyUserInfoResponse, {
+    name: 'officialJournalOfIcelandApplicationGetMyUserInfo',
+  })
+  getMyUserInfo(@CurrentUser() user: User) {
+    return this.ojoiApplicationService.getMyUserInfo(user)
   }
 
   @Query(() => OJOIAApplicationCaseResponse, {

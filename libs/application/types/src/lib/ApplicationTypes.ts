@@ -98,7 +98,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.EXAMPLE_INPUTS]: {
     slug: 'example-inputs',
-    translation: 'ef.application',
+    translation: 'exi.application',
   },
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: {
     slug: 'example-no-inputs',

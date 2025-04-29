@@ -10,8 +10,8 @@ import {
 } from '@island.is/portals/my-pages/core'
 import sortBy from 'lodash/sortBy'
 import { ExpandRow, ExpandHeader } from '@island.is/portals/my-pages/core'
-import { CustomerRecordsDetails } from '../../screens/FinanceTransactions/FinanceTransactionsData.types'
 import { m as messages } from '../../lib/messages'
+import { CustomerRecordsDetails } from '../../lib/types'
 
 const ITEMS_ON_PAGE = 20
 

@@ -49,7 +49,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
         ]),
         prod: json([
-          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
     })
@@ -73,7 +73,41 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
       PAYMENTS_GATEWAY_SYSTEM_CALLING:
         '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING',
     })
+    .ingress({
+      primary: {
+        host: {
+          dev: `${serviceName}-xrd`,
+          staging: `${serviceName}-xrd`,
+          prod: `${serviceName}-xrd`,
+        },
+        paths: ['/'],
+        public: false,
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
+      },
+      internal: {
+        host: {
+          dev: serviceName,
+          staging: serviceName,
+          prod: serviceName,
+        },
+        paths: ['/'],
+        public: false,
+      },
+    })
     .xroad(Base, Client, ChargeFjsV2, RskCompanyInfo, NationalRegistryB2C)
     .readiness('/liveness')
     .liveness('/liveness')
-    .grantNamespaces('nginx-ingress-internal', 'islandis')
+    .grantNamespaces('application-system', 'nginx-ingress-internal', 'islandis')

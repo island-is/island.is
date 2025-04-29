@@ -15,7 +15,7 @@ import {
   isDistrictCourtUser,
   isPrisonSystemUser,
   isProsecutionUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 import {
   FormContext,
@@ -70,7 +70,7 @@ const getRoute = (caseToOpen?: Case, user?: User): string => {
 
   const userType: UserType | null = isProsecutionUser(user)
     ? 'prosecution'
-    : isPublicProsecutorUser(user)
+    : isPublicProsecutionOfficeUser(user)
     ? 'publicProsecutor'
     : isDistrictCourtUser(user)
     ? 'districtCourt'
