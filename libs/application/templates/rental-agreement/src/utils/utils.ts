@@ -1,7 +1,12 @@
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
+import is from 'date-fns/locale/is'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { EMAIL_REGEX, getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, StateLifeCycle } from '@island.is/application/types'
 import { ApplicantsInfo, CostField } from './types'
 import {
+  UserRole,
   RentalAmountIndexTypes,
   RentalHousingCategoryClass,
   RentalHousingCategoryClassGroup,
@@ -11,15 +16,23 @@ import {
   OtherFeesPayeeOptions,
   SecurityDepositTypeOptions,
   SecurityDepositAmountOptions,
-  UserRole,
   RentalPaymentMethodOptions,
   NextStepInReviewOptions,
-} from './constants'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
-import is from 'date-fns/locale/is'
+} from './enums'
 import * as m from '../lib/messages'
+
+export const IS_REPRESENTATIVE = 'isRepresentative'
+export const SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH = 1500
+export const minChangedUnitSize = 3
+export const maxChangedUnitSize = 500
+
+export const pruneAfterDays = (Days: number): StateLifeCycle => {
+  return {
+    shouldBeListed: false,
+    shouldBePruned: true,
+    whenToPrune: Days * 24 * 3600 * 1000,
+  }
+}
 
 export const validateEmail = (value: string) => {
   return EMAIL_REGEX.test(value)
@@ -36,6 +49,19 @@ export const formatDate = (date: string) => {
     locale: is,
   })
 }
+
+export const isValidMeterNumber = (value: string) => {
+  const meterNumberRegex = /^[0-9]{1,20}$/
+  return meterNumberRegex.test(value)
+}
+
+export const isValidMeterStatus = (value: string) => {
+  const meterStatusRegex = /^[0-9]{1,10}(,[0-9])?$/
+  return meterStatusRegex.test(value)
+}
+
+export const hasInvalidCostItems = (items: CostField[]) =>
+  items.some((i) => i.hasError)
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')

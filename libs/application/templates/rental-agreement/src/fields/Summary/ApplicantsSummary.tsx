@@ -3,7 +3,7 @@ import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { Routes } from '../../utils/constants'
+import { Routes } from '../../utils/enums'
 import {
   filterRepresentativesFromApplicants,
   formatNationalId,

@@ -7,13 +7,11 @@ import {
   getValueViaPath,
   buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
-import {
-  Routes,
-  SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH,
-} from '../../../utils/constants'
-import { specialProvisions } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
+import { SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH } from '../../../utils/utils'
+import { Routes } from '../../../utils/enums'
 import { Unit } from '../../../utils/types'
+import { specialProvisions } from '../../../lib/messages'
 
 export const RentalHousingSpecialProvisions = buildSubSection({
   id: Routes.SPECIALPROVISIONS,

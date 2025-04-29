@@ -36,12 +36,6 @@ yarn start web
 
 ### Localisation
 
-All localisation can be found on Contentful.
-
-<!-- Todo: Add correct links to translations when ready -->
-<!-- - [Rental Agreement application translations](https://app.contentful.com/spaces/...) -->
-<!-- - [Application system translations](https://app.contentful.com/spaces/...) -->
-
 {% hint style="warning" %}
 When creating new text strings or making changes in the messages.ts file for the application, be sure to update Contentful by running this command:
 `yarn nx run application-templates-rental-agreement:extract-strings`

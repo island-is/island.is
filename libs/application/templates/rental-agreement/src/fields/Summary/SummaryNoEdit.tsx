@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
-import { Routes } from '../../utils/constants'
+import { Routes } from '../../utils/enums'
 import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSummary'
 import { ApplicantsSummary } from './ApplicantsSummary'
 import { OtherFeesSummary } from './OtherFeesSummary'

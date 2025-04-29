@@ -1,7 +1,7 @@
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
+import { Application } from '@island.is/api/schema'
 import { UploadFile } from '@island.is/island-ui/core'
 import { FormValue } from '@island.is/application/types'
-import { CostField, SelectOption, Unit } from './types'
 import {
   OtherFeesPayeeOptions,
   RentalHousingCategoryClass,
@@ -9,9 +9,9 @@ import {
   RentalHousingConditionInspector,
   RentalPaymentMethodOptions,
   SecurityDepositTypeOptions,
-} from './constants'
+} from './enums'
+import { CostField, SelectOption, Unit } from './types'
 import { AddressProps } from '../fields/PropertySearch'
-import { Application } from '@island.is/api/schema'
 
 // Utility function to get the label of a select option based on its value
 export const getOptionLabel = (

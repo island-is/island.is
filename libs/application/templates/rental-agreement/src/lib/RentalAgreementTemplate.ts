@@ -19,16 +19,15 @@ import {
   ApplicationRole,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { States, Roles } from '../utils/constants'
+import { Events } from '../utils/types'
+import { States, Roles } from '../utils/enums'
+import { getAssigneesNationalIdList } from '../utils/getAssigneesNationalIdList'
 import {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
-import { getAssigneesNationalIdList } from '../utils/getAssigneesNationalIdList'
 import { application } from './messages'
-
-type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
 enum TemplateApiActions {
   sendApplicationSummary = 'sendApplicationSummary',

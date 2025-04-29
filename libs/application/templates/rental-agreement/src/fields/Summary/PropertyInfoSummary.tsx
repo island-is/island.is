@@ -1,26 +1,25 @@
 import { FC } from 'react'
 import { Box, Button, GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  RentalHousingCategoryClass,
-  RentalHousingConditionInspector,
-  Routes,
-} from '../../utils/constants'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   getPropertyTypeOptions,
   getPropertyClassGroupOptions,
 } from '../../utils/utils'
-import { KeyValue } from './components/KeyValue'
-import { SummaryCardRow } from './components/SummaryCardRow'
-import { SummaryCard } from './components/SummaryCard'
-
-import { fileLink, fileLinksList } from './summaryStyles.css'
-import { summary } from '../../lib/messages'
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  Routes,
+  RentalHousingCategoryClass,
+  RentalHousingConditionInspector,
+} from '../../utils/enums'
 import {
   extractPropertyInfoData,
   getOptionLabel,
 } from '../../utils/summaryUtils'
+import { KeyValue } from './components/KeyValue'
+import { SummaryCardRow } from './components/SummaryCardRow'
+import { SummaryCard } from './components/SummaryCard'
+import { fileLink, fileLinksList } from './summaryStyles.css'
+import { summary } from '../../lib/messages'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void

@@ -5,6 +5,7 @@ import {
   buildSection,
   buildStaticTableField,
   buildSubmitField,
+  YesOrNoEnum,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import {
@@ -12,7 +13,6 @@ import {
   formatPhoneNumber,
   extractApplicationAnswers,
 } from '../../utils/utils'
-import { TRUE } from '../../utils/constants'
 import { inReview } from '../../lib/messages'
 
 export const PreSignatureInfoSection = buildSection({
@@ -71,7 +71,7 @@ export const PreSignatureInfoSection = buildSection({
           required: true,
           options: [
             {
-              value: TRUE,
+              value: YesOrNoEnum.YES,
               label: inReview.preSignatureInfo.statementLabel,
             },
           ],

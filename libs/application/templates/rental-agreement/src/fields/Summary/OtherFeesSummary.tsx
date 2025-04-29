@@ -2,7 +2,8 @@ import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
-import { OtherFeesPayeeOptions, Routes } from '../../utils/constants'
+import { Routes, OtherFeesPayeeOptions } from '../../utils/enums'
+import { extractOtherFeesData, getOptionLabel } from '../../utils/summaryUtils'
 import {
   filterEmptyCostItems,
   formatCurrency,
@@ -14,7 +15,6 @@ import { KeyValue } from './components/KeyValue'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { SummaryCard } from './components/SummaryCard'
 import { summary } from '../../lib/messages'
-import { extractOtherFeesData, getOptionLabel } from '../../utils/summaryUtils'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void

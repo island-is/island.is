@@ -9,24 +9,23 @@ import {
   YesOrNoEnum,
 } from '@island.is/application/core'
 import {
-  RentalAmountIndexTypes,
-  RentalAmountPaymentDateOptions,
-  RentalPaymentMethodOptions,
-  Routes,
-  TRUE,
-} from '../../../utils/constants'
-import {
   getPaymentMethodOptions,
   getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
 } from '../../../utils/utils'
-import { rentalAmount } from '../../../lib/messages'
+import {
+  Routes,
+  RentalAmountIndexTypes,
+  RentalAmountPaymentDateOptions,
+  RentalPaymentMethodOptions,
+} from '../../../utils/enums'
 import {
   rentalAmountConnectedToIndex,
   rentalInsuranceRequired,
   rentalPaymentIsBankTransfer,
   rentalPaymentIsOther,
 } from '../../../utils/rentalPeriodUtils'
+import { rentalAmount } from '../../../lib/messages'
 
 export const RentalPeriodAmount = buildSubSection({
   id: Routes.RENTALAMOUNT,
@@ -65,7 +64,7 @@ export const RentalPeriodAmount = buildSubSection({
           clearOnChange: ['rentalAmount.indexTypes'],
           options: [
             {
-              value: TRUE,
+              value: YesOrNoEnum.YES,
               label: rentalAmount.priceIndexLabel,
             },
           ],

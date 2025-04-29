@@ -12,7 +12,7 @@ import {
   extractOtherFeesData,
   extractPropertyInfoData,
 } from '../../utils/summaryUtils'
-import { Routes } from '../../utils/constants'
+import { Routes } from '../../utils/enums'
 import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSummary'
 import { ApplicantsSummary } from './ApplicantsSummary'
 import { OtherFeesSummary } from './OtherFeesSummary'

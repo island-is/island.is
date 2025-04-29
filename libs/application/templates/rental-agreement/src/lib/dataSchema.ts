@@ -1,10 +1,16 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { YesOrNoEnum } from '@island.is/application/core'
 import { CostField } from '../utils/types'
-import { parseCurrency } from '../utils/utils'
 import {
   maxChangedUnitSize,
   minChangedUnitSize,
+  hasInvalidCostItems,
+  isValidMeterNumber,
+  isValidMeterStatus,
+  parseCurrency,
+} from '../utils/utils'
+import {
   OtherFeesPayeeOptions,
   RentalAmountIndexTypes,
   RentalAmountPaymentDateOptions,
@@ -15,22 +21,8 @@ import {
   RentalPaymentMethodOptions,
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
-  TRUE,
-} from '../utils/constants'
+} from '../utils/enums'
 import * as m from './messages'
-
-const isValidMeterNumber = (value: string) => {
-  const meterNumberRegex = /^[0-9]{1,20}$/
-  return meterNumberRegex.test(value)
-}
-
-const isValidMeterStatus = (value: string) => {
-  const meterStatusRegex = /^[0-9]{1,10}(,[0-9])?$/
-  return meterStatusRegex.test(value)
-}
-
-const hasInvalidCostItems = (items: CostField[]) =>
-  items.some((i) => i.hasError)
 
 const approveExternalData = z.boolean().refine((v) => v)
 
@@ -340,7 +332,7 @@ const rentalPeriod = z
   .superRefine((data, ctx) => {
     const start = data.startDate ? new Date(data.startDate) : ''
     const end = data.endDate ? new Date(data.endDate) : ''
-    const isDefiniteChecked = data.isDefinite?.includes(TRUE)
+    const isDefiniteChecked = data.isDefinite?.includes(YesOrNoEnum.YES)
     if (!isDefiniteChecked) {
       return
     }
@@ -395,7 +387,7 @@ const rentalAmount = z
       })
     }
 
-    if (data.isIndexConnected?.includes(TRUE) && !data.indexTypes) {
+    if (data.isIndexConnected?.includes(YesOrNoEnum.YES) && !data.indexTypes) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
@@ -678,7 +670,7 @@ const otherFees = z
       data.electricityCost === OtherFeesPayeeOptions.TENANT
     const tenantPaysHeatingCost =
       data.heatingCost === OtherFeesPayeeOptions.TENANT
-    const hasOtherCosts = data.otherCosts?.includes(TRUE)
+    const hasOtherCosts = data.otherCosts?.includes(YesOrNoEnum.YES)
 
     if (data.housingFund && tenantPaysHousingFund) {
       if (!data.housingFundAmount) {
@@ -809,7 +801,7 @@ const preSignatureInfo = z.object({
   statement: z
     .string()
     .array()
-    .refine((x) => x.includes(TRUE), {
+    .refine((x) => x.includes(YesOrNoEnum.YES), {
       params: m.inReview.preSignatureInfo.statementError,
     }),
 })

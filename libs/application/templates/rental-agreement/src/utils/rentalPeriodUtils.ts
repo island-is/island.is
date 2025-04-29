@@ -5,8 +5,7 @@ import {
   RentalPaymentMethodOptions,
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
-  TRUE,
-} from './constants'
+} from './enums'
 
 // Amount utils
 export const rentalAmountConnectedToIndex = (answers: FormValue) => {
@@ -14,7 +13,7 @@ export const rentalAmountConnectedToIndex = (answers: FormValue) => {
     answers,
     'rentalAmount.isIndexConnected',
   )
-  return isAmountConnectedToIndex?.includes(TRUE) || false
+  return isAmountConnectedToIndex?.includes(YesOrNoEnum.YES) || false
 }
 
 export const rentalPaymentIsOther = (answers: FormValue) => {
@@ -47,7 +46,7 @@ export const rentalPeriodIsDefinite = (answers: FormValue) => {
     answers,
     'rentalPeriod.isDefinite',
   )
-  return rentalPeriodDefinite?.includes(TRUE) || false
+  return rentalPeriodDefinite?.includes(YesOrNoEnum.YES) || false
 }
 
 // Other fees utils
@@ -80,7 +79,7 @@ export const otherFeesPayedByTenant = (answers: FormValue) => {
     answers,
     'otherFees.otherCosts',
   )
-  return otherFeesOtherCosts?.includes(TRUE) || false
+  return otherFeesOtherCosts?.includes(YesOrNoEnum.YES) || false
 }
 
 // Security deposit utils

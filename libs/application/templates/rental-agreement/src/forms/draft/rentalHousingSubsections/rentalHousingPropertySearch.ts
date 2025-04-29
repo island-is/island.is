@@ -4,7 +4,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { SubSection } from '@island.is/application/types'
-import { Routes } from '../../../utils/constants'
+import { Routes } from '../../../utils/enums'
 import { registerProperty } from '../../../lib/messages'
 
 export const RentalHousingPropertySearch: SubSection = buildSubSection({

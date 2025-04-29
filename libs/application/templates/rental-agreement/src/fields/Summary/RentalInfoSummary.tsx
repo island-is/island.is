@@ -2,12 +2,7 @@ import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  RentalPaymentMethodOptions,
-  Routes,
-  SecurityDepositTypeOptions,
-  TRUE,
-} from '../../utils/constants'
+import { YesOrNoEnum } from '@island.is/application/core'
 import {
   formatBankInfo,
   formatCurrency,
@@ -18,12 +13,16 @@ import {
   getRentalAmountPaymentDateOptions,
   getSecurityDepositTypeOptions,
 } from '../../utils/utils'
+import {
+  Routes,
+  RentalPaymentMethodOptions,
+  SecurityDepositTypeOptions,
+} from '../../utils/enums'
+import { extractRentalInfoData, getOptionLabel } from '../../utils/summaryUtils'
 import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { KeyValue } from './components/KeyValue'
-import { extractRentalInfoData, getOptionLabel } from '../../utils/summaryUtils'
 import { summary } from '../../lib/messages'
-import { YesOrNoEnum } from '@island.is/application/core'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -112,12 +111,12 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={
-              isDefinite?.includes(TRUE)
+              isDefinite?.includes(YesOrNoEnum.YES)
                 ? summary.rentalPeriodEndDateLabel
                 : summary.rentalPeriodDefiniteLabel
             }
             value={
-              isDefinite?.includes(TRUE) && endDate
+              isDefinite?.includes(YesOrNoEnum.YES) && endDate
                 ? formatDate(endDate.toString())
                 : summary.rentalPeriodDefiniteValue
             }
@@ -146,7 +145,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
             )}
           />
         </GridColumn>
-        {indexConnected?.includes(TRUE) && indexTypes && (
+        {indexConnected?.includes(YesOrNoEnum.YES) && indexTypes && (
           <GridColumn span={['12/12', '4/12']}>
             <KeyValue
               label={summary.indexTypeLabel}

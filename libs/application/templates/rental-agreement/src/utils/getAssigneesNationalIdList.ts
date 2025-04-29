@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { IS_REPRESENTATIVE } from '../utils/constants'
+import { IS_REPRESENTATIVE } from '../utils/utils'
 import { ApplicantsInfo } from './types'
 
 export const getAssigneesNationalIdList = (application: Application) => {

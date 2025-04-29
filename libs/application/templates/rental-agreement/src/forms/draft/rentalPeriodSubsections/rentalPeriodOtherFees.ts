@@ -7,19 +7,20 @@ import {
   buildDescriptionField,
   buildCheckboxField,
   buildCustomField,
+  YesOrNoEnum,
 } from '@island.is/application/core'
 import {
   getOtherFeesHousingFundPayeeOptions,
   getOtherFeesPayeeOptions,
 } from '../../../utils/utils'
-import { Routes, TRUE } from '../../../utils/constants'
-import { otherFees } from '../../../lib/messages'
+import { Routes } from '../../../utils/enums'
 import {
   electricityCostPayedByTenant,
   heatingCostPayedByTenant,
   housingFundAmountPayedByTenant,
   otherFeesPayedByTenant,
 } from '../../../utils/rentalPeriodUtils'
+import { otherFees } from '../../../lib/messages'
 
 export const RentalPeriodOtherFees = buildSubSection({
   id: Routes.OTHERFEES,
@@ -132,7 +133,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           id: 'otherFees.otherCosts',
           options: [
             {
-              value: TRUE,
+              value: YesOrNoEnum.YES,
               label: otherFees.otherCostsLabel,
             },
           ],

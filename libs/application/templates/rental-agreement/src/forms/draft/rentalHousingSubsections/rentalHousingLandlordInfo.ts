@@ -3,8 +3,12 @@ import {
   buildMultiField,
   buildTableRepeaterField,
 } from '@island.is/application/core'
-import { formatNationalId, formatPhoneNumber } from '../../../utils/utils'
-import { IS_REPRESENTATIVE, Routes } from '../../../utils/constants'
+import {
+  formatNationalId,
+  formatPhoneNumber,
+  IS_REPRESENTATIVE,
+} from '../../../utils/utils'
+import { Routes } from '../../../utils/enums'
 import { landlordDetails } from '../../../lib/messages'
 
 export const RentalHousingLandlordInfo = buildSubSection({

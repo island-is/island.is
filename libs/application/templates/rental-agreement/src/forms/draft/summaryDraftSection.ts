@@ -7,8 +7,8 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
+import { Routes } from '../../utils/enums'
 import { summary, application } from '../../lib/messages'
-import { Routes } from '../../utils/constants'
 
 export const SummaryDraftSection = buildSection({
   id: Routes.SUMMARY,

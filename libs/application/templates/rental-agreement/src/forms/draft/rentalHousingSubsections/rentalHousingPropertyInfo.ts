@@ -8,18 +8,18 @@ import {
 } from '@island.is/application/core'
 import { SubSection } from '@island.is/application/types'
 import {
-  RentalHousingCategoryClass,
-  RentalHousingCategoryTypes,
-  Routes,
-} from '../../../utils/constants'
-import {
   getPropertyTypeOptions,
   getPropertyClassOptions,
   getPropertyClassGroupOptions,
   extractApplicationAnswers,
 } from '../../../utils/utils'
-import { registerProperty } from '../../../lib/messages'
+import {
+  Routes,
+  RentalHousingCategoryClass,
+  RentalHousingCategoryTypes,
+} from '../../../utils/enums'
 import { extractPropertyInfoData } from '../../../utils/summaryUtils'
+import { registerProperty } from '../../../lib/messages'
 
 const messagesInfo = registerProperty.info
 const messagesCategory = registerProperty.category

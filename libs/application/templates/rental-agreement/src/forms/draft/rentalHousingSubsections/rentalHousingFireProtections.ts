@@ -5,7 +5,7 @@ import {
   buildTextField,
   buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
-import { Routes } from '../../../utils/constants'
+import { Routes } from '../../../utils/enums'
 import { housingFireProtections } from '../../../lib/messages'
 
 export const RentalHousingFireProtections = buildSubSection({

@@ -1,14 +1,14 @@
 import { ReactNode } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Button, GridRow } from '@island.is/island-ui/core'
-import { summary } from '../../../lib/messages'
-import { Routes } from '../../../utils/constants'
+import { Routes } from '../../../utils/enums'
 import { Divider } from './Divider'
 import {
   gridRow,
   changeButton,
   gridRowChangeButton,
 } from '../summaryStyles.css'
+import { summary } from '../../../lib/messages'
 
 interface SummaryCardProps {
   children: ReactNode

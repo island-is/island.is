@@ -6,15 +6,15 @@ import {
   buildStaticTableField,
   buildSubmitField,
 } from '@island.is/application/core'
+import { DefaultEvents } from '@island.is/application/types'
 import {
   formatNationalId,
   formatPhoneNumber,
   extractApplicationAnswers,
   getNextStepInReviewOptions,
 } from '../../utils/utils'
+import { NextStepInReviewOptions } from '../../utils/enums'
 import { application, inReview } from '../../lib/messages'
-import { DefaultEvents } from '@island.is/application/types'
-import { NextStepInReviewOptions } from '../../utils/constants'
 
 export const ReviewInfoSection = buildSection({
   id: 'inReview',

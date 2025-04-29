@@ -10,10 +10,7 @@ import {
   extractApplicationAnswers,
   getInspectorOptions,
 } from '../../../utils/utils'
-import {
-  RentalHousingConditionInspector,
-  Routes,
-} from '../../../utils/constants'
+import { Routes, RentalHousingConditionInspector } from '../../../utils/enums'
 import { housingCondition } from '../../../lib/messages'
 
 export const RentalHousingCondition = buildSubSection({

@@ -1,12 +1,3 @@
-import { DefaultEvents, StateLifeCycle } from '@island.is/application/types'
-
-export const TRUE = 'true'
-export const FALSE = 'false'
-
-export const SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH = 1500
-
-export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.EDIT }
-
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
@@ -42,10 +33,6 @@ export enum Routes {
   OTHERFEES = 'otherFees',
   SUMMARY = 'summary',
 }
-export const IS_REPRESENTATIVE = 'isRepresentative'
-
-export const minChangedUnitSize = 3
-export const maxChangedUnitSize = 500
 
 export enum RentalHousingCategoryTypes {
   ENTIRE_HOME = 'entireHome',
@@ -114,12 +101,4 @@ export enum OtherFeesPayeeOptions {
 export enum NextStepInReviewOptions {
   GO_TO_SIGNING = 'goToSigning',
   EDIT_APPLICATION = 'editApplication',
-}
-
-export const pruneAfterDays = (Days: number): StateLifeCycle => {
-  return {
-    shouldBeListed: false,
-    shouldBePruned: true,
-    whenToPrune: Days * 24 * 3600 * 1000,
-  }
 }

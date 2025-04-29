@@ -1,4 +1,8 @@
+import { UploadFile } from '@island.is/island-ui/core'
+import { YesOrNoEnum } from '@island.is/application/core'
+import { Unit as OriginalUnit } from '@island.is/api/schema'
 import {
+  DefaultEvents,
   FormValue,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
@@ -10,25 +14,10 @@ import {
   RentalHousingConditionInspector,
   RentalPaymentMethodOptions,
   SecurityDepositTypeOptions,
-} from './constants'
-import { Unit as OriginalUnit } from '@island.is/api/schema'
-import { UploadFile } from '@island.is/island-ui/core'
+} from './enums'
 import { AddressProps } from '../fields/PropertySearch'
-import { YesOrNoEnum } from '@island.is/application/core'
 
-export interface ExternalData {
-  nationalRegistry: {
-    data: NationalRegistryIndividual
-    date: string
-    status: StatusProvider
-  }
-}
-
-export interface Unit extends OriginalUnit {
-  checked?: boolean
-  changedSize?: number
-  numOfRooms?: number
-}
+export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.EDIT }
 
 export type StatusProvider = 'failure' | 'success'
 
@@ -43,6 +32,29 @@ export type ApplicantsInfo = {
   email: string
   phone: string
   isRepresentative: string[]
+}
+
+export type SelectOption = {
+  value: string
+  label: {
+    id: string
+    defaultMessage: string
+    description: string
+  }
+}
+
+export interface ExternalData {
+  nationalRegistry: {
+    data: NationalRegistryIndividual
+    date: string
+    status: StatusProvider
+  }
+}
+
+export interface Unit extends OriginalUnit {
+  checked?: boolean
+  changedSize?: number
+  numOfRooms?: number
 }
 
 export interface ApplicationAnswers {
@@ -105,13 +117,4 @@ export interface ApplicationAnswers {
     heatingCostMeterStatus?: string
   }
   [key: string]: unknown
-}
-
-export type SelectOption = {
-  value: string
-  label: {
-    id: string
-    defaultMessage: string
-    description: string
-  }
 }

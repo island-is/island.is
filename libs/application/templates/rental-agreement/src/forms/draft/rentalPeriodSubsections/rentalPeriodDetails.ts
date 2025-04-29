@@ -4,10 +4,11 @@ import {
   buildDescriptionField,
   buildDateField,
   buildCheckboxField,
+  YesOrNoEnum,
 } from '@island.is/application/core'
-import { Routes, TRUE } from '../../../utils/constants'
-import { rentalPeriod } from '../../../lib/messages'
+import { Routes } from '../../../utils/enums'
 import { rentalPeriodIsDefinite } from '../../../utils/rentalPeriodUtils'
+import { rentalPeriod } from '../../../lib/messages'
 
 export const RentalPeriodDetails = buildSubSection({
   id: Routes.RENTALPERIOD,
@@ -35,7 +36,7 @@ export const RentalPeriodDetails = buildSubSection({
           id: 'rentalPeriod.isDefinite',
           options: [
             {
-              value: TRUE,
+              value: YesOrNoEnum.YES,
               label: rentalPeriod.rentalPeriodDefiniteLabel,
             },
           ],
