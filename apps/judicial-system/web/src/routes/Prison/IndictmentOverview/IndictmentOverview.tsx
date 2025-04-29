@@ -106,10 +106,10 @@ const IndictmentOverview = () => {
               </Text>
             </Box>
           )}
-          {workingCase.indictmentCompletedDate && (
+          {workingCase.rulingDate && (
             <Text variant="h4" as="h3">
               {formatMessage(strings.indictmentCompletedTitle, {
-                date: formatDate(workingCase.indictmentCompletedDate, 'PPP'),
+                date: formatDate(workingCase.rulingDate, 'PPP'),
               })}
             </Text>
           )}
