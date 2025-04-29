@@ -94,6 +94,14 @@ export const externalDataSubSection = buildSubSection({
         buildDataProviderItem({
           title:
             socialInsuranceAdministrationMessage.pre
+              .socialInsuranceAdministrationInformationTitle,
+          subTitle:
+            socialInsuranceAdministrationMessage.pre
+              .socialInsuranceAdministrationDataDescription,
+        }),
+        buildDataProviderItem({
+          title:
+            socialInsuranceAdministrationMessage.pre
               .socialInsuranceAdministrationPrivacyTitle,
           subTitle:
             socialInsuranceAdministrationMessage.pre
@@ -108,7 +116,6 @@ export const externalDataSubSection = buildSubSection({
     }),
     buildMultiField({
       id: 'isNotEligible',
-
       // condition: (_, externalData) => {
       //   // Show if applicant is not eligible
       //   return !isEligible(externalData)
