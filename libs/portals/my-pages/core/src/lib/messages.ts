@@ -1686,7 +1686,7 @@ export const m = defineMessages({
     defaultMessage: '{subject} opið',
   },
   activeDocumentOpenEnlargedAriaLabel: {
-    id: 'service.portal:active-document-open',
+    id: 'service.portal:active-document-open-enlarged-aria-label',
     defaultMessage: '{subject} stækkað',
   },
   closeActiveDocument: {
