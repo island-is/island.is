@@ -303,16 +303,19 @@ interface KeywordSelectProps {
   }[]
   value: { label: string; value: string } | undefined
   onChange: (_: { label: string; value: string } | undefined) => void
+  clearStateButtonText?: string
 }
 
 const KeywordSelect = ({
   keywordOptions,
   value,
   onChange,
+  clearStateButtonText,
 }: KeywordSelectProps) => {
   const { formatMessage } = useIntl()
   const [state, setState] = useState(value)
   const initialRender = useRef(true)
+  const [renderKey, setRenderKey] = useState(0)
 
   useDebounce(
     () => {
@@ -326,15 +329,33 @@ const KeywordSelect = ({
     [state],
   )
   return (
-    <Select
-      size="sm"
-      options={keywordOptions}
-      value={state}
-      onChange={(option) => {
-        if (option) setState(option)
-      }}
-      placeholder={formatMessage(m.listPage.keywordSelectPlaceholder)}
-    />
+    <Stack space={2}>
+      <Select
+        key={renderKey}
+        size="sm"
+        options={keywordOptions}
+        value={state}
+        onChange={(option) => {
+          if (option) setState(option)
+        }}
+        placeholder={formatMessage(m.listPage.keywordSelectPlaceholder)}
+      />
+      {Boolean(clearStateButtonText) && (
+        <Box display="flex" justifyContent="flexEnd">
+          <Button
+            variant="text"
+            icon="reload"
+            size="small"
+            onClick={() => {
+              setState(undefined)
+              setRenderKey((key) => key + 1)
+            }}
+          >
+            {formatMessage(m.listPage.clearFilter)}
+          </Button>
+        </Box>
+      )}
+    </Stack>
   )
 }
 
@@ -453,31 +474,17 @@ const Filters = ({
               queryState[QueryParam.CASE_NUMBER] ? 'blue400' : undefined
             }
           >
-            <Stack space={2}>
-              <DebouncedInput
-                key={renderKey}
-                value={queryState[QueryParam.CASE_NUMBER]}
-                onChange={(value) => {
-                  updateQueryState(QueryParam.CASE_NUMBER, value)
-                }}
-                label={formatMessage(m.listPage.caseNumberInputLabel)}
-                name="casenumber-input"
-                debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
-              />
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  variant="text"
-                  icon="reload"
-                  size="small"
-                  onClick={() => {
-                    updateQueryState(QueryParam.CASE_NUMBER, '')
-                    updateRenderKey()
-                  }}
-                >
-                  {formatMessage(m.listPage.clearFilter)}
-                </Button>
-              </Box>
-            </Stack>
+            <DebouncedInput
+              key={renderKey}
+              value={queryState[QueryParam.CASE_NUMBER]}
+              onChange={(value) => {
+                updateQueryState(QueryParam.CASE_NUMBER, value)
+              }}
+              label={formatMessage(m.listPage.caseNumberInputLabel)}
+              name="casenumber-input"
+              debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
+              clearStateButtonText={formatMessage(m.listPage.clearFilter)}
+            />
           </AccordionItem>
 
           <AccordionItem
@@ -501,20 +508,8 @@ const Filters = ({
                 }}
                 value={queryState[QueryParam.LAWS]}
                 debounceTimeInMs={DEBOUNCE_TIME_IN_MS}
+                clearStateButtonText={formatMessage(m.listPage.clearFilter)}
               />
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  variant="text"
-                  icon="reload"
-                  size="small"
-                  onClick={() => {
-                    updateQueryState(QueryParam.LAWS, '')
-                    updateRenderKey()
-                  }}
-                >
-                  {formatMessage(m.listPage.clearFilter)}
-                </Button>
-              </Box>
             </Stack>
           </AccordionItem>
 
@@ -529,31 +524,17 @@ const Filters = ({
             labelVariant="h5"
             labelColor={queryState[QueryParam.KEYWORD] ? 'blue400' : undefined}
           >
-            <Stack space={2}>
-              <KeywordSelect
-                key={renderKey}
-                keywordOptions={keywordOptions}
-                value={keywordOptions.find(
-                  (option) => option.value === queryState[QueryParam.KEYWORD],
-                )}
-                onChange={(option) => {
-                  updateQueryState(QueryParam.KEYWORD, option?.value ?? null)
-                }}
-              />
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  variant="text"
-                  icon="reload"
-                  size="small"
-                  onClick={() => {
-                    updateQueryState(QueryParam.KEYWORD, '')
-                    updateRenderKey()
-                  }}
-                >
-                  {formatMessage(m.listPage.clearFilter)}
-                </Button>
-              </Box>
-            </Stack>
+            <KeywordSelect
+              key={renderKey}
+              keywordOptions={keywordOptions}
+              value={keywordOptions.find(
+                (option) => option.value === queryState[QueryParam.KEYWORD],
+              )}
+              onChange={(option) => {
+                updateQueryState(QueryParam.KEYWORD, option?.value ?? null)
+              }}
+              clearStateButtonText={formatMessage(m.listPage.clearFilter)}
+            />
           </AccordionItem>
 
           <AccordionItem
