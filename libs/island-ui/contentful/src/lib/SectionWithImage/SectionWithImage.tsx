@@ -26,7 +26,7 @@ export const SectionWithImage: FC<
   contain = false,
   reverse = false,
 }) => {
-  if (!image && content.length) {
+  if (!image && content.length > 0) {
     return (
       <>
         {title && (
@@ -79,7 +79,7 @@ export const SectionWithImage: FC<
               {title}
             </Text>
           )}
-          {content.length && richText(content as SliceType[], undefined)}
+          {content.length > 0 && richText(content as SliceType[], undefined)}
         </GridColumn>
       </GridRow>
     </Box>
