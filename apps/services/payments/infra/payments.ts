@@ -49,7 +49,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
         ]),
         prod: json([
-          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
     })
