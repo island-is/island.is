@@ -166,7 +166,14 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
             eventList={eventList?.items}
             parentPageSlug={organizationPage.slug}
             variant={
-              organizationPage.slug === 'landspitali' ? 'InfoCard' : 'NewsCard'
+              organizationPage.slug === 'landspitali' ||
+              Boolean(
+                (
+                  namespace?.organizationsWithInfoCardEventListVariant ?? []
+                )?.includes(organizationPage.slug),
+              )
+                ? 'InfoCard'
+                : 'NewsCard'
             }
             noEventsFoundFallback={
               <Text variant="h4">
