@@ -7,6 +7,7 @@ import {
 } from '@island.is/application/core'
 import {
   Actions,
+  defaultIncomeTypes,
   Events,
   INCOME,
   RatioType,
@@ -17,7 +18,6 @@ import {
   statesMessages as coreSIAStatesMessages,
   socialInsuranceAdministrationMessage,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { defaultIncomeTypes } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   Application,
   ApplicationConfigurations,
