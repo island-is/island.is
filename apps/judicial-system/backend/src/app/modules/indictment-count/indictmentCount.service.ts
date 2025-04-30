@@ -5,6 +5,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
@@ -30,6 +31,20 @@ export class IndictmentCountService {
     @InjectModel(Offense) private readonly offenseModel: typeof Offense,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  async findById(indictmentCountId: string): Promise<IndictmentCount> {
+    const indictmentCount = await this.indictmentCountModel.findByPk(
+      indictmentCountId,
+    )
+
+    if (!indictmentCount) {
+      throw new NotFoundException(
+        `IndictmentCount ${indictmentCountId} not found`,
+      )
+    }
+
+    return indictmentCount
+  }
 
   async create(caseId: string): Promise<IndictmentCount> {
     return this.indictmentCountModel.create({ caseId })
