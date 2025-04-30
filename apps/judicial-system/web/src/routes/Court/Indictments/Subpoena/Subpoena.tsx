@@ -36,10 +36,16 @@ const Subpoena: FC = () => {
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
+  // Note: we keep the arraignment scheduled state in a subpoena specific state otherwise
+  // re-renders (when updating case and defendants) will cause unexpected states within the subpoena component
+  const [isArraignmentScheduled, _] = useState(
+    Boolean(workingCase.arraignmentDate),
+  )
   const [newAlternativeServices, setNewAlternativeServices] = useState<
     string[]
   >([])
   const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
+
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
   const {
@@ -49,7 +55,6 @@ const Subpoena: FC = () => {
     sendCourtDateToServer,
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
 
-  const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
   const isSchedulingArraignmentDate =
     !isArraignmentScheduled ||
     newSubpoenas.length > 0 ||
@@ -143,9 +148,9 @@ const Subpoena: FC = () => {
 
     const courtDateUpdated = await sendCourtDateToServer(additionalUpdates)
 
-    setIsCreatingSubpoena(false)
-
     if (!courtDateUpdated) {
+      setIsCreatingSubpoena(false)
+
       return
     }
 
@@ -301,7 +306,9 @@ const Subpoena: FC = () => {
               router.push(
                 `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
               )
-            } else setNavigateTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+            } else {
+              setNavigateTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+            }
           }}
           nextButtonText={
             !isSchedulingArraignmentDate
