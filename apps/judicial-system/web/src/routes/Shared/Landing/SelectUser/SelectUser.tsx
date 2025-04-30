@@ -10,9 +10,9 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { api } from '@island.is/judicial-system-web/src/services'
 
-import * as styles from './MultipleInstitutions.css'
+import * as styles from './SelectUser.css'
 
-const Login = () => {
+const SelectUser = () => {
   const [userId, setUserId] = useState<string>()
 
   const { eligibleUsers } = useContext(UserContext)
@@ -53,4 +53,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default SelectUser
