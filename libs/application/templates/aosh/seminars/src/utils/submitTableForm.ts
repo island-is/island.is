@@ -87,7 +87,7 @@ export const submitTableForm = async (
     dictionaryOfItems.push({
       path: 'participantValidityError',
       value:
-        'netfang sem er nú þegar skráð. Ekki er hægt að skrá tvo með sama netfangi. Þú getur eytt þátttakanda út og skráð aftur með öðru netfangi.',
+        'Netfang er nú þegar skráð. Ekki er hægt að skrá tvo með sama netfangi. Þú getur eytt þátttakanda út og skráð aftur með öðru netfangi.',
     })
   }
 
