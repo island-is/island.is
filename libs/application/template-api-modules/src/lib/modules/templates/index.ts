@@ -1,3 +1,6 @@
+
+import { CarRentalFeeCategoryModule } from './car-rental-fee-category/car-rental-fee-category.module'
+import { CarRentalFeeCategoryService } from './car-rental-fee-category/car-rental-fee-category.service'
 import { ReferenceTemplateModule } from './reference-template/reference-template.module'
 import { ReferenceTemplateService } from './reference-template/reference-template.service'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
@@ -237,7 +240,8 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
-]
+  CarRentalFeeCategoryModule,
+            ]
 
 export const services = [
   ReferenceTemplateService,
@@ -318,4 +322,5 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
-]
+  CarRentalFeeCategoryService,
+            ]
