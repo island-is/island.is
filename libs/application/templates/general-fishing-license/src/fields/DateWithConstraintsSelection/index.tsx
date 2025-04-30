@@ -32,11 +32,11 @@ export const DateWithContraintsSelection: FC<
   // Constructs the upper limit for date picker
   // Depending on which select option is currently selected
   const getMaxDate = () => {
-    const maxDate = dateConstraints?.dateTo || null
+    const maxDate = dateConstraints?.dateTo || undefined
     if (maxDate) {
       return new Date(maxDate)
     }
-    return null
+    return undefined
   }
 
   return (

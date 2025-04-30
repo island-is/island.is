@@ -30,7 +30,7 @@ interface Props {
   onChange?: (_: string) => void
   required?: boolean
   readOnly?: boolean
-  calendarStartDay?: number
+  calendarStartDay?: DatePickerProps['calendarStartDay']
   clearOnChange?: string[]
 }
 
