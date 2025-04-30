@@ -1,5 +1,4 @@
 import { buildMultiField } from '@island.is/application/core'
-
 import { buildSection } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { ApplicantType } from '../../shared/constants'

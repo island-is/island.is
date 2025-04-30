@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import {
@@ -8,7 +9,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as m from '../lib/messages'
-import { FC, useEffect, useState } from 'react'
 
 type ApplicantListProps = {
   application: {
@@ -34,9 +34,7 @@ type PdfDataForApplicantsExternalData = {
   status: 'success' | 'failiure'
 }
 
-export const ApplicantList: FC<React.PropsWithChildren<ApplicantListProps>> = ({
-  application,
-}) => {
+export const ApplicantList = ({ application }: ApplicantListProps) => {
   const [updateApplicationExternalData, { loading }] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
@@ -71,9 +69,8 @@ export const ApplicantList: FC<React.PropsWithChildren<ApplicantListProps>> = ({
   const [pdfData, setPdfData] = useState<PdfDataForApplicantsExternalData>()
   useEffect(() => {
     fetchPdfData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  console.log(pdfData)
 
   if (loading) {
     return (
