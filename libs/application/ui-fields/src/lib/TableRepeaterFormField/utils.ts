@@ -6,11 +6,6 @@ type Item = {
   id: string
 } & RepeaterItem
 
-type NationalIdWithName = {
-  nationalId: string
-  name: string
-}
-
 export type Value<T> = { [key: string]: T }
 
 export const handleCustomMappedValues = <T>(
