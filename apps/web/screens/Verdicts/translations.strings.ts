@@ -72,6 +72,11 @@ export const m = {
       defaultMessage: 'Hæstiréttur',
       description: 'Hæstiréttur',
     },
+    showRetrialCourt: {
+      id: 'web.verdicts:listPage.showRetrialCourt',
+      defaultMessage: 'Enduruppökudómur',
+      description: 'Enduruppökudómur',
+    },
     searchInputPlaceholder: {
       id: 'web.verdicts:listPage.searchInputPlaceholder',
       defaultMessage: 'Sláðu inn orð, málsnúmer, málsaðila',

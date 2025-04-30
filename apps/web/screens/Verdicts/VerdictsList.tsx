@@ -775,6 +775,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
         label: formatMessage(m.listPage.showSupremeCourt),
         value: 'Hæstiréttur',
       },
+      {
+        label: formatMessage(m.listPage.showRetrialCourt),
+        value: 'Endurupptökudómur',
+      },
     ]
   }, [formatMessage])
   const districtCourtTags = useMemo(() => {
