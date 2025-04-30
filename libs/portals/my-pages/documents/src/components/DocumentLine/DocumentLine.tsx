@@ -367,9 +367,29 @@ export const DocumentLine: FC<Props> = ({
         >
           {active && <div className={styles.fakeBorder} />}
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <Text variant="medium" truncate>
-              {documentLine.sender?.name ?? ''}
-            </Text>
+            <Box display="inlineFlex">
+              <Text variant="medium" truncate>
+                {documentLine.sender?.name ?? ''}
+              </Text>
+              {
+                <Box
+                  background="backgroundBrandLighter"
+                  borderRadius="standard"
+                  paddingX="smallGutter"
+                  marginLeft={1}
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Icon
+                    icon="undo"
+                    color="blue600"
+                    size="small"
+                    type="outline"
+                  />
+                </Box>
+              }
+            </Box>
             <Text variant="medium">{date}</Text>
           </Box>
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">

@@ -2,9 +2,12 @@ import {
   Box,
   BoxProps,
   Button,
+  Divider,
   DropdownMenu,
+  DropdownMenuProps,
   Icon,
   LoadingDots,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Tooltip, m } from '@island.is/portals/my-pages/core'
@@ -58,6 +61,53 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
         : `data:application/pdf;base64,${document.document.value ?? ''}`
     return encodeURI(uri)
   }
+
+  const downloadDocument =
+    activeDocument?.document.type === 'HTML'
+      ? {
+          href: getDocumentLink(activeDocument, 'html'),
+          render: () => (
+            <a
+              download={`${activeDocument.subject}.html`}
+              href={getDocumentLink(activeDocument, 'html')}
+              aria-label={formatMessage(m.getDocument)}
+            >
+              <Box
+                display="flex"
+                alignItems="center"
+                width="full"
+                paddingY={2}
+                paddingX={1}
+                borderBottomWidth="standard"
+                borderColor="blue100"
+              >
+                <Box
+                  marginLeft={[1, 1, 1, 2]}
+                  marginRight={2}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Icon
+                    icon="download"
+                    type="outline"
+                    size="small"
+                    color="blue400"
+                  />
+                </Box>
+                <Text variant="small" fontWeight="semiBold">
+                  {formatMessage(m.download)}
+                </Text>
+              </Box>
+              {/* <Divider thickness="standard" /> */}
+            </a>
+          ),
+        }
+      : {
+          onClick: () =>
+            activeDocument &&
+            downloadFile({ doc: activeDocument, query: 'download' }),
+        }
 
   return (
     <>
@@ -133,40 +183,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
             <LoadingDots />
           </Box>
         )}
-        {activeDocument && activeDocument.document.value ? (
-          activeDocument.document.type === 'HTML' ? (
-            <Tooltip as="span" text={formatMessage(m.download)}>
-              <a
-                download={`${activeDocument.subject}.html`}
-                href={getDocumentLink(activeDocument, 'html')}
-                aria-label={formatMessage(m.getDocument)}
-              >
-                <Button
-                  as="span"
-                  unfocusable
-                  circle
-                  icon="download"
-                  iconType="outline"
-                  size="medium"
-                  colorScheme="light"
-                />
-              </a>
-            </Tooltip>
-          ) : (
-            <Tooltip text={formatMessage(m.download)}>
-              <Button
-                circle
-                icon="download"
-                iconType={'outline'}
-                onClick={() =>
-                  downloadFile({ doc: activeDocument, query: 'download' })
-                }
-                size="medium"
-                colorScheme="light"
-              />
-            </Tooltip>
-          )
-        ) : undefined}
+
         {activeDocument && (
           <Tooltip text={formatMessage(m.print)}>
             <Button
@@ -183,37 +200,65 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
             />
           </Tooltip>
         )}
-        <Tooltip text={formatMessage(m.print)}>
-          <DropdownMenu
-            items={[
-              {
-                title: formatMessage(m.print),
-                onClick: activeDocument
-                  ? () =>
-                      downloadFile({
-                        doc: activeDocument,
-                      })
-                  : undefined,
-                render: () => (
-                  <Button icon="print" variant="utility">
-                    {formatMessage(m.print)}
-                  </Button>
-                ),
-              },
-            ]}
-            disclosure={
-              <Button
-                circle
-                icon="ellipsisVertical"
-                iconType="filled"
-                onClick={() => console.log('open')}
-                size="medium"
-                colorScheme="light"
-              />
-            }
-          ></DropdownMenu>
-        </Tooltip>
       </Box>
+      <Tooltip text={formatMessage(m.actions)}>
+        <DropdownMenu
+          icon="ellipsisVertical"
+          iconType="filled"
+          items={[
+            {
+              title: formatMessage(m.replyDocument),
+              icon: 'undo',
+              iconType: 'outline',
+              onClick: () => onReply?.(),
+            },
+            {
+              title: isBookmarked
+                ? formatMessage(m.removeFavorite)
+                : formatMessage(m.addFavorite),
+              icon: 'star',
+              iconType: isBookmarked ? 'filled' : 'outline',
+              onClick: async () => {
+                await submitMailAction(
+                  isBookmarked ? 'unbookmark' : 'bookmark',
+                  activeDocument?.id ?? '',
+                )
+                refetch(fetchObject)
+              },
+            },
+            {
+              title: formatMessage(m.print),
+              icon: 'print',
+              iconType: 'outline',
+              onClick: activeDocument
+                ? () =>
+                    downloadFile({
+                      doc: activeDocument,
+                    })
+                : undefined,
+            },
+            {
+              title: formatMessage(m.download),
+              icon: 'download',
+              iconType: 'outline',
+              ...downloadDocument,
+            },
+          ]}
+          disclosure={
+            <span className={styles.actionsButton}>
+              <Tooltip text={formatMessage(m.actions)}>
+                <Button
+                  icon="ellipsisVertical"
+                  iconType="filled"
+                  size="small"
+                  variant="text"
+                  loading={loading}
+                />
+              </Tooltip>
+            </span>
+          }
+        ></DropdownMenu>
+      </Tooltip>
     </>
   )
 }
