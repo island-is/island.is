@@ -6,12 +6,6 @@ import {
 } from '@island.is/application/core'
 import { buildAlertMessageField } from '@island.is/application/core'
 import { ApplicantType } from '../../shared/constants'
-import sub from 'date-fns/sub'
-import startOfMonth from 'date-fns/startOfMonth'
-import endOfMonth from 'date-fns/endOfMonth'
-import addMonths from 'date-fns/addMonths'
-import addYears from 'date-fns/addYears'
-import parseISO from 'date-fns/parseISO'
 
 import * as m from '../../lib/messages'
 import { dateFromMinDate, dateToMaxDate, dateToMinDate } from '../../utils'

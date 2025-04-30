@@ -1,6 +1,10 @@
 import { FormValue } from '@island.is/application/types'
 import { getCommentFromExternalData } from '../../utils'
-import { buildMultiField, buildSection } from '@island.is/application/core'
+import {
+  buildMultiField,
+  buildSection,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { buildDescriptionField } from '@island.is/application/core'
 import { buildAlertMessageField } from '@island.is/application/core'
 import { getFullNameFromExternalData } from '../../utils'
@@ -26,7 +30,9 @@ export const noHealthInsuranceSection = buildSection({
           message: ({ externalData }) =>
             getCommentFromExternalData(externalData),
           condition: (answers) => {
-            return (answers?.isHealthInsuredComment as string)?.length > 0
+            const isHealthInsuredComment =
+              getValueViaPath<string>(answers, 'isHealthInsuredComment') ?? ''
+            return isHealthInsuredComment?.length > 0
           },
         }),
         buildCheckboxField({
@@ -44,7 +50,7 @@ export const noHealthInsuranceSection = buildSection({
     }),
   ],
   condition: (answers: FormValue) => {
-    return (answers.isHealthInsured !== undefined &&
-      !answers.isHealthInsured) as boolean
+    const isHealthInsured = getValueViaPath<boolean>(answers, 'isHealthInsured')
+    return isHealthInsured !== undefined && !isHealthInsured
   },
 })

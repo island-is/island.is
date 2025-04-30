@@ -5,6 +5,7 @@ import {
   buildMultiField,
   buildCheckboxField,
   buildHiddenInput,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { HealthInsuranceDeclarationApplication } from '../../types'
 import { getChildrenAsOptions } from '../../utils'
@@ -32,7 +33,7 @@ export const registerPersonsSection = buildSection({
           title: m.application.registerPersons.spousetitle,
           options: ({ externalData }) => getSpouseAsOptions(externalData),
           condition: (answers) => {
-            return answers?.hasSpouse as boolean
+            return getValueViaPath<boolean>(answers, 'hasSpouse') ?? false
           },
         }),
         buildCheckboxField({
@@ -40,7 +41,7 @@ export const registerPersonsSection = buildSection({
           title: m.application.registerPersons.childrenTitle,
           options: ({ externalData }) => getChildrenAsOptions(externalData),
           condition: (answers) => {
-            return answers?.hasChildren as boolean
+            return getValueViaPath<boolean>(answers, 'hasChildren') ?? false
           },
         }),
         buildHiddenInput({

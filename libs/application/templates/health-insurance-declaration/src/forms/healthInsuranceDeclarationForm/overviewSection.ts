@@ -4,6 +4,7 @@ import {
   buildMultiField,
   buildSection,
   buildStaticTableField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { buildKeyValueField } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
@@ -57,41 +58,41 @@ export const overviewSection = buildSection({
           label: applicantInformationMessages.labels.name,
           colSpan: '6/12',
           value: ({ answers }) =>
-            (answers as HealthInsuranceDeclaration).applicant.name,
+            getValueViaPath<string>(answers, 'applicant.name'),
         }),
         buildKeyValueField({
           label: applicantInformationMessages.labels.nationalId,
           colSpan: '6/12',
           value: ({ answers }) =>
-            (answers as HealthInsuranceDeclaration).applicant.nationalId,
+            getValueViaPath<string>(answers, 'applicant.nationalId'),
         }),
         buildKeyValueField({
           label: applicantInformationMessages.labels.address,
           colSpan: '6/12',
           value: ({ answers }) =>
-            (answers as HealthInsuranceDeclaration).applicant.address,
+            getValueViaPath<string>(answers, 'applicant.address'),
         }),
         buildKeyValueField({
           label: applicantInformationMessages.labels.postalCode,
           colSpan: '6/12',
           value: ({ answers }) =>
-            (answers as HealthInsuranceDeclaration).applicant.postalCode,
+            getValueViaPath<string>(answers, 'applicant.postalCode'),
         }),
         buildKeyValueField({
           label: applicantInformationMessages.labels.email,
           colSpan: '6/12',
           value: ({ answers }) =>
-            (answers as HealthInsuranceDeclaration).applicant.email,
+            getValueViaPath<string>(answers, 'applicant.email'),
         }),
         buildKeyValueField({
           label: applicantInformationMessages.labels.tel,
           colSpan: '6/12',
           condition: (answers) =>
-            !!(answers as HealthInsuranceDeclaration)?.applicant?.phoneNumber,
+            !!getValueViaPath<string>(answers, 'applicant.phoneNumber'),
           value: ({ answers }) =>
             formatPhoneNumber(
               removeCountryCode(
-                (answers as HealthInsuranceDeclaration).applicant.phoneNumber,
+                getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
               ),
             ),
         }),
@@ -100,10 +101,7 @@ export const overviewSection = buildSection({
         buildStaticTableField({
           title: m.application.overview.applicantsTableTitle,
           rows: ({ answers, externalData }) =>
-            getSelectedApplicants(
-              answers as HealthInsuranceDeclaration,
-              externalData,
-            ),
+            getSelectedApplicants(answers, externalData),
           header: [
             applicantInformationMessages.labels.name,
             applicantInformationMessages.labels.nationalId,
@@ -111,8 +109,7 @@ export const overviewSection = buildSection({
           ],
         }),
         buildDividerField({
-          condition: (answers) =>
-            hasFamilySelected(answers as HealthInsuranceDeclaration),
+          condition: (answers) => hasFamilySelected(answers),
         }),
         // Date period
         buildDescriptionField({
@@ -125,31 +122,35 @@ export const overviewSection = buildSection({
           value: ({ answers }) =>
             `${format(
               new Date(
-                (answers as HealthInsuranceDeclaration).period.dateFieldFrom,
+                getValueViaPath<string>(answers, 'period.dateFieldFrom') ?? '',
               ),
               'dd.MM.yyyy',
             )} - ${format(
               new Date(
-                (answers as HealthInsuranceDeclaration).period.dateFieldTo,
+                getValueViaPath<string>(answers, 'period.dateFieldTo') ?? '',
               ),
               'dd.MM.yyyy',
             )} `,
         }),
         buildDividerField({
           condition: (answers) =>
-            (answers as HealthInsuranceDeclaration)
-              ?.studentOrTouristRadioFieldTourist === ApplicantType.STUDENT,
+            getValueViaPath<ApplicantType>(
+              answers,
+              'studentOrTouristRadioFieldTourist',
+            ) === ApplicantType.STUDENT,
         }),
         buildKeyValueField({
           label: m.application.overview.residencyTitle,
           colSpan: '9/12',
           condition: (answers) =>
-            (answers as HealthInsuranceDeclaration)
-              ?.studentOrTouristRadioFieldTourist === ApplicantType.STUDENT,
+            getValueViaPath<ApplicantType>(
+              answers,
+              'studentOrTouristRadioFieldTourist',
+            ) === ApplicantType.STUDENT,
           value: ({ answers, externalData }) =>
             getCountryNameFromCode(
-              (answers as HealthInsuranceDeclaration)
-                .residencyStudentSelectField || '',
+              getValueViaPath<string>(answers, 'residencyStudentSelectField') ??
+                '',
               externalData,
             ),
         }),
@@ -157,12 +158,14 @@ export const overviewSection = buildSection({
           label: m.application.overview.residencyTitle,
           colSpan: '9/12',
           condition: (answers) =>
-            (answers as HealthInsuranceDeclaration)
-              ?.studentOrTouristRadioFieldTourist === ApplicantType.TOURIST,
+            getValueViaPath<ApplicantType>(
+              answers,
+              'studentOrTouristRadioFieldTourist',
+            ) === ApplicantType.TOURIST,
           value: ({ answers, externalData }) =>
             getContinentNameFromCode(
-              (answers as HealthInsuranceDeclaration)
-                .residencyTouristRadioField || '',
+              getValueViaPath<string>(answers, 'residencyTouristRadioField') ??
+                '',
               externalData,
             ),
         }),
@@ -171,12 +174,15 @@ export const overviewSection = buildSection({
           label: m.application.overview.fileUploadListTitle,
           colSpan: '9/12',
           condition: (answers) =>
-            (answers as HealthInsuranceDeclaration)
-              ?.studentOrTouristRadioFieldTourist === ApplicantType.STUDENT,
+            getValueViaPath<ApplicantType>(
+              answers,
+              'studentOrTouristRadioFieldTourist',
+            ) === ApplicantType.STUDENT,
           value: ({ answers }) =>
-            (
-              answers as HealthInsuranceDeclaration
-            ).educationConfirmationFileUploadField.map((file) => file.name),
+            getValueViaPath<File[]>(
+              answers,
+              'educationConfirmationFileUploadField',
+            )?.map((file) => file.name),
         }),
         buildSubmitField({
           id: 'submit',

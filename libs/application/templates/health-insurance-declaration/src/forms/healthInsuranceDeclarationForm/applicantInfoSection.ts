@@ -58,14 +58,9 @@ export const applicantInfoSection = buildSection({
           format: '###',
           backgroundColor: 'white',
           disabled: true,
-          defaultValue: (
-            application: HealthInsuranceDeclarationApplication,
-          ) => {
-            return (
-              application.externalData?.nationalRegistry?.data?.address
-                ?.postalCode ?? ''
-            )
-          },
+          defaultValue: (application: HealthInsuranceDeclarationApplication) =>
+            application.externalData?.nationalRegistry?.data?.address
+              ?.postalCode ?? '',
         }),
         buildTextField({
           id: 'applicant.city',
