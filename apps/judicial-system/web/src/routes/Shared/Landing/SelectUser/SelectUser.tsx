@@ -26,11 +26,11 @@ const SelectUser = () => {
     <>
       <FormContentContainer>
         <Box className={styles.titleContainer}>
-          <PageTitle marginBottom={0}>Veldu embætti</PageTitle>
+          <PageTitle marginBottom={0}>Veldu embætti og hlutverk</PageTitle>
         </Box>
         <Box className={styles.subTitleContainer} marginBottom={4}>
           <Text as="h2" variant="h2">
-            Þú hefur aðgang að eftirfarandi embættum
+            Þú hefur aðgang að eftirfarandi hlutverkum
           </Text>
         </Box>
         <Select
