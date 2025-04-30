@@ -26,7 +26,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 
 import Login from './Login/Login'
-import MultipleInstitutions from './MultipleInstitutions/MultipleInstitutions'
+import MultipleInstitutions from './SelectUser/SelectUser'
 import * as styles from './Landing.css'
 
 const Landing = () => {
