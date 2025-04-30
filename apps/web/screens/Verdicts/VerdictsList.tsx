@@ -834,6 +834,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
         }`,
         onClick: () => {
           updateQueryState(QueryParam.CASE_NUMBER, '')
+          updateRenderKey()
         },
       })
     }
@@ -845,6 +846,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
         }`,
         onClick: () => {
           updateQueryState(QueryParam.LAWS, '')
+          updateRenderKey()
         },
       })
     }
