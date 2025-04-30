@@ -44,11 +44,11 @@ export const AreaWithDateSelection: FC<
   const getMaxDate = () => {
     const maxDate =
       licenseAreas?.find((o) => o.key === selectedArea)?.dateRestriction
-        ?.dateTo || null
+        ?.dateTo || undefined
     if (maxDate) {
       return new Date(maxDate)
     }
-    return null
+    return undefined
   }
 
   // Resets datepicker when new area is selected due to
