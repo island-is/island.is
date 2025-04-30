@@ -421,6 +421,10 @@ export class NationalRegistryService extends BaseTemplateApiService {
     const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
       auth.nationalId,
     )
+
+    const newCohabitationInfo = await this.nationalRegistryV3Api.getSpouse(auth)
+    console.log('newCohabitationInfo', newCohabitationInfo)
+
     const spouseBirthPlace = cohabitationInfo
       ? await this.nationalRegistryApi.getBirthplace(
           cohabitationInfo.spouseNationalId,

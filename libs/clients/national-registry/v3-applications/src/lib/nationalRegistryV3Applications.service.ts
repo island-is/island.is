@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import { BirthdayIndividual, mapBirthdayIndividual } from './mappers'
-import { EinstaklingarApi, IslandIsApi } from '../../gen/fetch'
+import { EinstaklingarApi, HjuskapurDTO, IslandIsApi } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 @Injectable()
@@ -31,5 +31,13 @@ export class NationalRegistryV3ApplicationsClientService {
       res.forsjaAdilarList?.map((x) => x.forsjaKt || '')?.filter((x) => !!x) ||
       []
     )
+  }
+
+  async getSpouse(auth: User): Promise<HjuskapurDTO> {
+    return await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaHjuskapurGet({
+      kennitala: auth.nationalId,
+    })
   }
 }
