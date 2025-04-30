@@ -30,3 +30,31 @@ export const DocumentsClientV2Provider: Provider<CustomersApi> = {
     ),
   inject: [DocumentsClientV2Config.KEY],
 }
+
+export class DocumentListApi extends CustomersApi {}
+
+export const DocumentsClientListV2Provider: Provider<DocumentListApi> = {
+  provide: DocumentListApi,
+  scope: LazyDuringDevScope,
+  useFactory: (config: ConfigType<typeof DocumentsClientV2Config>) =>
+    new CustomersApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-documents-v2',
+          autoAuth: {
+            mode: 'token',
+            clientId: config.clientId,
+            clientSecret: config.clientSecret,
+            scope: [config.scope],
+            issuer: '',
+            tokenEndpoint: config.tokenUrl,
+          },
+        }),
+        basePath: config.basePath,
+        headers: {
+          Accept: 'application/json',
+        },
+      }),
+    ),
+  inject: [DocumentsClientV2Config.KEY],
+}
