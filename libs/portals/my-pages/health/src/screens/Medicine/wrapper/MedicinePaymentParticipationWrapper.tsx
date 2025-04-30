@@ -23,8 +23,6 @@ export const MedicinePaymentParticipationWrapper = ({
     (itm) => itm.name === coreMessages.medicine,
   )
 
-  console.log(medicineChildren)
-
   const paymentParticipationChildren =
     medicineChildren?.children?.find(
       (item) => item.name === coreMessages.medicinePaymentParticipation,
