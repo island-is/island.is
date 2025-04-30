@@ -74,8 +74,8 @@ export const m = {
     },
     showRetrialCourt: {
       id: 'web.verdicts:listPage.showRetrialCourt',
-      defaultMessage: 'Enduruppökudómur',
-      description: 'Enduruppökudómur',
+      defaultMessage: 'Endurupptökudómur',
+      description: 'Endurupptökudómur',
     },
     searchInputPlaceholder: {
       id: 'web.verdicts:listPage.searchInputPlaceholder',
