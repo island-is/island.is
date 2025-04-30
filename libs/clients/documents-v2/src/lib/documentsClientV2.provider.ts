@@ -40,7 +40,7 @@ export const DocumentsClientListV2Provider: Provider<DocumentListApi> = {
     new CustomersApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
-          name: 'clients-documents-v2',
+          name: 'clients-documents-list-v2',
           autoAuth: {
             mode: 'token',
             clientId: config.clientId,
