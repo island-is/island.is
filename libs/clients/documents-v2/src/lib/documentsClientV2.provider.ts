@@ -13,6 +13,7 @@ export const DocumentsClientV2Provider: Provider<CustomersApi> = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-documents-v2',
+          circuitBreaker: false,
           autoAuth: {
             mode: 'token',
             clientId: config.clientId,
