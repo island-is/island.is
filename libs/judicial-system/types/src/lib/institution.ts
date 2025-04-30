@@ -6,6 +6,8 @@ export enum InstitutionType {
   COURT_OF_APPEALS = 'COURT_OF_APPEALS',
   PRISON = 'PRISON',
   PRISON_ADMIN = 'PRISON_ADMIN',
+  NATIONAL_COMMISSIONERS_OFFICE = 'NATIONAL_COMMISSIONERS_OFFICE',
+  COURT_ADMINISTRATION_OFFICE = 'COURT_ADMINISTRATION_OFFICE',
 }
 
 export const adminInstitutionScope: {
@@ -24,6 +26,15 @@ export const adminInstitutionScope: {
   ],
   PRISON: [InstitutionType.PRISON, InstitutionType.PRISON_ADMIN],
   PRISON_ADMIN: [InstitutionType.PRISON, InstitutionType.PRISON_ADMIN],
+  NATIONAL_COMMISSIONERS_OFFICE: [
+    InstitutionType.POLICE_PROSECUTORS_OFFICE,
+    InstitutionType.DISTRICT_PROSECUTORS_OFFICE,
+    InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+  ],
+  COURT_ADMINISTRATION_OFFICE: [
+    InstitutionType.DISTRICT_COURT,
+    InstitutionType.COURT_OF_APPEALS,
+  ],
 }
 
 export const prosecutorsOfficeTypes = [
