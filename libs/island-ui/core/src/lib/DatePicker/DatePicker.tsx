@@ -72,9 +72,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   readOnly = false,
   calendarStartDay = 0,
 }) => {
-  const [startDate, setStartDate] = useState<Date | undefined>(
-    selected ?? undefined,
-  )
+  const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
@@ -96,7 +94,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   }, [locale])
 
   useEffect(() => {
-    setStartDate(selected ?? undefined)
+    setStartDate(selected ?? null)
   }, [selected])
 
   return (
@@ -139,8 +137,8 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             handleCloseCalendar && handleCloseCalendar()
           }}
           onChange={(date) => {
-            setStartDate(date ?? undefined)
-            handleChange && handleChange(date)
+            setStartDate(date)
+            handleChange && date && handleChange(date)
           }}
           startDate={startDate}
           required={required}
