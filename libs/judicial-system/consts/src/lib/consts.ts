@@ -209,6 +209,8 @@ export const INDICTMENTS_ADD_FILES_ROUTE = '/akaera/gogn'
 export const USERS_ROUTE = '/notendur'
 export const CREATE_USER_ROUTE = '/notendur/nyr'
 export const CHANGE_USER_ROUTE = '/notendur/breyta'
+export const STATISTICS_ROUTE = '/notendur/tolfraedi'
+
 //#endregion Admin user routes
 
 //#region Shared routes
