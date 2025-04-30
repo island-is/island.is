@@ -1,7 +1,7 @@
 import { forwardRef, ReactElement, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import { useRouter } from 'next/router'
+import router from 'next/router'
 import {
   Menu,
   MenuButton,
@@ -64,7 +64,6 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
   ({ render, items, title }, ref) => {
     const [open, setOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const router = useRouter()
     const menu = useMenuStore({ open, setOpen })
 
     const menuItemBoxStyle = useBoxStyles({
