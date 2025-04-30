@@ -71,10 +71,10 @@ jobs:
           git checkout $TARGET_BRANCH
           git checkout -b $PR_BRANCH
           git cherry-pick -x ${{ github.event.pull_request.merge_commit_sha }}
-          git commit --allow-empty -am "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
+          git commit --allow-empty -am "chore: automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
           git push --set-upstream origin $PR_BRANCH
           echo "new branch created"
-          PR=$(gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
+          PR=$(gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "chore: automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
           echo "$PR created"
           echo PR=$PR >> "$GITHUB_OUTPUT"
 
