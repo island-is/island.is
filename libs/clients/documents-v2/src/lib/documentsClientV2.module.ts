@@ -9,6 +9,7 @@ import { DocumentsListClientV2Service } from './documentsListClientV2.service'
   providers: [
     DocumentsClientV2Provider,
     DocumentsClientListV2Provider,
+    DocumentsListClientV2Service,
     DocumentsClientV2Service,
   ],
   exports: [DocumentsClientV2Service, DocumentsListClientV2Service],
