@@ -491,6 +491,88 @@ export class UserProfileService {
     })
   }
 
+  /**
+   * Sets the specified email as the primary email for the user.
+   * Also updates the lastNudge and nextNudge dates on the user profile.
+   * @param nationalId The national ID of the user.
+   * @param emailId The ID of the email to set as primary.
+   * @returns The updated UserProfileDto.
+   */
+  async setEmailAsPrimary(
+    nationalId: string,
+    emailId: string,
+  ): Promise<UserProfileDto> {
+    await this.sequelize.transaction(async (transaction) => {
+      // 1. Find the current primary email and set primary=false
+      const currentPrimary = await this.emailModel.findOne({
+        where: { nationalId, primary: true },
+        transaction,
+        useMaster: true, // Ensure we read the latest data
+      })
+      if (currentPrimary && currentPrimary.id !== emailId) {
+        await currentPrimary.update({ primary: false }, { transaction })
+      }
+
+      // 2. Find the target email and set primary=true
+      const newPrimary = await this.emailModel.findOne({
+        where: { id: emailId, nationalId },
+        transaction,
+        useMaster: true,
+      })
+      if (!newPrimary) {
+        throw new BadRequestException(
+          `Email with id ${emailId} not found for user.`,
+        )
+      }
+      if (!newPrimary.primary) {
+        await newPrimary.update({ primary: true }, { transaction })
+      }
+
+      // 3. Update UserProfile nudge dates
+      const userProfile = await this.userProfileModel.findOne({
+        where: { nationalId },
+        transaction,
+        useMaster: true,
+      })
+
+      if (!userProfile) {
+        // This case should ideally not happen if an email exists for the user,
+        // but handle defensively.
+        // If no profile exists, setting a primary email implies creating one
+        // or assuming one should exist. Let's throw for now.
+        throw new Error(
+          `UserProfile not found for nationalId ${nationalId} during primary email update.`,
+        )
+      }
+
+      const emailStatus = newPrimary.emailStatus as DataStatus
+      const mobileStatus = userProfile?.mobileStatus as DataStatus
+
+      const hasUnverified = this.hasUnverifiedOrNotDefinedData({
+        email: newPrimary.email,
+        emailStatus: emailStatus,
+        emailVerified: emailStatus === DataStatus.VERIFIED,
+        mobilePhoneNumber: userProfile.mobilePhoneNumber,
+        mobileStatus: mobileStatus,
+        mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+      })
+
+      await userProfile.update(
+        {
+          lastNudge: new Date(),
+          nextNudge: addMonths(
+            new Date(),
+            hasUnverified ? SKIP_INTERVAL : NUDGE_INTERVAL,
+          ),
+        },
+        { transaction },
+      )
+    })
+
+    // Return the updated profile
+    return this.findById(nationalId, true, ClientType.FIRST_PARTY)
+  }
+
   /* fetch actor profiles (delegation preferences) for each delegation */
   async getActorProfiles(
     toNationalId: string,
@@ -743,14 +825,26 @@ export class UserProfileService {
     mobileStatus: DataStatus
     emailStatus: DataStatus
   }): boolean {
+    console.log('email', email)
+    console.log('emailVerified', emailVerified)
+    console.log('emailStatus', emailStatus)
+    console.log('mobilePhoneNumber', mobilePhoneNumber)
+    console.log('mobilePhoneNumberVerified', mobilePhoneNumberVerified)
+    console.log('mobileStatus', mobileStatus)
+
     if ((email && !emailVerified) || emailStatus === DataStatus.NOT_DEFINED) {
+      console.log('true')
+      // If email exists but isn't verified OR email status is explicitly NOT_DEFINED
       return true
     } else if (
-      (mobilePhoneNumber && !mobilePhoneNumberVerified) ||
-      mobileStatus === DataStatus.NOT_DEFINED
+      (mobilePhoneNumber && !mobilePhoneNumberVerified) || // Mobile exists but isn't verified
+      mobileStatus === DataStatus.NOT_DEFINED // OR mobile status is explicitly NOT_DEFINED
     ) {
+      console.log('true')
       return true
     } else {
+      console.log('false')
+      // Otherwise (email/mobile are verified OR status is EMPTY)
       return false
     }
   }

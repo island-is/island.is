@@ -236,4 +236,29 @@ export class MeUserProfileController {
       }),
     )
   }
+
+  @Patch('emails/:emailId/primary')
+  @Scopes(UserProfileScope.write)
+  @Documentation({
+    description:
+      'Sets the email associated with the provided emailId as the primary email.',
+    response: { status: 200, type: UserProfileDto },
+  })
+  setEmailAsPrimary(
+    @CurrentUser() user: User,
+    @Param('emailId') emailId: string,
+  ): Promise<UserProfileDto> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'setEmailAsPrimary',
+        resources: user.nationalId,
+        meta: {
+          emailId,
+        },
+      },
+      this.userProfileService.setEmailAsPrimary(user.nationalId, emailId),
+    )
+  }
 }

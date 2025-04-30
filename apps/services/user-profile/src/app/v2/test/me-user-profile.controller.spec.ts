@@ -1969,4 +1969,343 @@ describe('MeUserProfileController', () => {
       })
     })
   })
+
+  describe('PATCH v2/me/emails/:emailId/primary', () => {
+    let app: TestApp
+    let server: SuperTest<Test>
+    let fixtureFactory: FixtureFactory
+    let userProfileModel: typeof UserProfile
+    let emailsModel: typeof Emails
+    let originalPrimaryEmail: Emails
+    let secondaryEmail: Emails
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          nationalId: testUserProfile.nationalId,
+          scope: [UserProfileScope.read, UserProfileScope.write], // Need write scope
+        }),
+        dbType: 'postgres', // Use postgres for consistency if needed
+      })
+
+      server = request(app.getHttpServer())
+      fixtureFactory = new FixtureFactory(app)
+      userProfileModel = app.get(getModelToken(UserProfile))
+      emailsModel = app.get(getModelToken(Emails))
+    })
+
+    beforeEach(async () => {
+      // Clear previous data
+      await emailsModel.destroy({ where: {}, truncate: true, cascade: true })
+      await userProfileModel.destroy({
+        where: {},
+        truncate: true,
+        cascade: true,
+      })
+
+      // Create user profile with two emails: one primary, one secondary
+      const profile = await fixtureFactory.createUserProfile({
+        nationalId: testUserProfile.nationalId,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: true, // Assume verified phone for simpler nudge logic initially
+        mobileStatus: DataStatus.VERIFIED,
+        lastNudge: subMonths(new Date(), 2), // Set nudge dates in the past
+        nextNudge: subMonths(new Date(), 1),
+        emails: [
+          {
+            email: 'primary@test.com',
+            primary: true,
+            emailStatus: DataStatus.VERIFIED,
+          },
+          {
+            email: 'secondary@test.com',
+            primary: false,
+            emailStatus: DataStatus.VERIFIED,
+          },
+        ],
+      })
+      // Add checks for profile and emails
+      if (!profile || !profile.emails) {
+        throw new Error(
+          'Test setup failed: Could not create profile with emails.',
+        )
+      }
+      originalPrimaryEmail = profile.emails.find((e) => e.primary)!
+      secondaryEmail = profile.emails.find((e) => !e.primary)!
+      // Add check for found emails
+      if (!originalPrimaryEmail || !secondaryEmail) {
+        throw new Error(
+          'Test setup failed: Could not find primary/secondary emails.',
+        )
+      }
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    it('should set secondary email as primary and return 200', async () => {
+      const initialProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      // Act
+      const res = await server.patch(
+        `/v2/me/emails/${secondaryEmail.id}/primary`,
+      )
+
+      // Assert Response
+      expect(res.status).toEqual(200)
+      expect(res.body.email).toBe(secondaryEmail.email) // Check if the returned profile reflects the change
+      expect(res.body.emailVerified).toBe(true) // Assuming secondary was verified
+
+      // Assert DB - New Primary Email
+      const updatedSecondaryEmail = await emailsModel.findByPk(
+        secondaryEmail.id,
+      )
+      expect(updatedSecondaryEmail?.primary).toBe(true)
+
+      // Assert DB - Old Primary Email
+      const updatedOriginalPrimaryEmail = await emailsModel.findByPk(
+        originalPrimaryEmail.id,
+      )
+      expect(updatedOriginalPrimaryEmail?.primary).toBe(false)
+
+      // Assert DB - Nudge Dates Updated
+      const updatedProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+      expect(updatedProfile?.lastNudge).toBeDefined() // Check definition
+      expect(updatedProfile?.lastNudge).not.toEqual(initialProfile?.lastNudge) // Should be updated
+      // Assuming phone and new primary email are verified, nextNudge should be NUDGE_INTERVAL months away
+      if (updatedProfile?.lastNudge) {
+        // Add check before using lastNudge
+        const expectedNextNudge = addMonths(
+          updatedProfile.lastNudge,
+          NUDGE_INTERVAL,
+        )
+        // Compare dates ignoring milliseconds for potential minor discrepancies
+        expect(
+          updatedProfile?.nextNudge?.toISOString().substring(0, 22),
+        ).toEqual(expectedNextNudge.toISOString().substring(0, 22))
+      }
+    })
+
+    it('should return 400 if emailId does not exist', async () => {
+      const nonExistentId = uuid()
+      // Act
+      const res = await server.patch(`/v2/me/emails/${nonExistentId}/primary`)
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body.detail).toContain('not found for user')
+    })
+
+    it('should return 400 if emailId belongs to another user', async () => {
+      // Arrange: Create another user and email
+      const otherUserNationalId = createNationalId()
+      const otherUserProfile = await fixtureFactory.createUserProfile({
+        nationalId: otherUserNationalId,
+        emails: [
+          {
+            email: 'other@test.com',
+            primary: true,
+            emailStatus: DataStatus.VERIFIED,
+          },
+        ],
+      })
+
+      const otherUserEmail = otherUserProfile.emails?.[0]
+
+      if (!otherUserEmail) {
+        throw new Error(
+          'Test setup failed: Could not find email for other user.',
+        )
+      }
+
+      // Act: Try to set the other user's email as primary for the current user
+      const res = await server.patch(
+        `/v2/me/emails/${otherUserEmail.id}/primary`,
+      )
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body.detail).toContain('not found for user')
+    })
+
+    it('should recalculate nextNudge to SKIP_INTERVAL if new primary email is unverified', async () => {
+      // Arrange: Update secondary email to be unverified
+      await emailsModel.update(
+        { emailStatus: DataStatus.NOT_VERIFIED },
+        { where: { id: secondaryEmail.id } },
+      )
+
+      const initialProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      // Act
+      const res = await server.patch(
+        `/v2/me/emails/${secondaryEmail.id}/primary`,
+      )
+
+      // Assert Response
+      expect(res.status).toEqual(200)
+      expect(res.body.emailVerified).toBe(false)
+
+      // Assert DB - Nudge Dates Updated for SKIP_INTERVAL
+      const updatedProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+      expect(updatedProfile?.lastNudge).toBeDefined() // Check definition
+      expect(updatedProfile?.lastNudge).not.toEqual(initialProfile?.lastNudge)
+      if (updatedProfile?.lastNudge) {
+        // Add check before using lastNudge
+        const expectedNextNudge = addMonths(
+          updatedProfile.lastNudge,
+          SKIP_INTERVAL,
+        ) // Expect skip interval
+        expect(
+          updatedProfile?.nextNudge?.toISOString().substring(0, 22),
+        ).toEqual(expectedNextNudge.toISOString().substring(0, 22))
+      }
+    })
+
+    it('should recalculate nextNudge to NUDGE_INTERVAL if new primary email and mobile are verified', async () => {
+      // Arrange: Ensure secondary email is verified and mobile is verified
+      await emailsModel.update(
+        { emailStatus: DataStatus.VERIFIED },
+        { where: { id: secondaryEmail.id } },
+      )
+      await userProfileModel.update(
+        {
+          mobilePhoneNumber: '1234567',
+          mobilePhoneNumberVerified: true,
+          mobileStatus: DataStatus.VERIFIED,
+        },
+        { where: { nationalId: testUserProfile.nationalId } },
+      )
+
+      const initialProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      // Act
+      const res = await server.patch(
+        `/v2/me/emails/${secondaryEmail.id}/primary`,
+      )
+
+      // Assert Response
+      expect(res.status).toEqual(200)
+      expect(res.body.emailVerified).toBe(true)
+
+      // Assert DB - Nudge Dates Updated for NUDGE_INTERVAL
+      const updatedProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+      expect(updatedProfile?.lastNudge).toBeDefined()
+      expect(updatedProfile?.lastNudge).not.toEqual(initialProfile?.lastNudge)
+      if (updatedProfile?.lastNudge) {
+        const expectedNextNudge = addMonths(
+          updatedProfile.lastNudge,
+          NUDGE_INTERVAL,
+        ) // Expect nudge interval
+        expect(
+          updatedProfile?.nextNudge?.toISOString().substring(0, 22),
+        ).toEqual(expectedNextNudge.toISOString().substring(0, 22))
+      }
+    })
+
+    it('should recalculate nextNudge to SKIP_INTERVAL if new primary email is verified but mobile is unverified', async () => {
+      // Arrange: Ensure secondary email is verified, but mobile is not
+      await emailsModel.update(
+        { emailStatus: DataStatus.VERIFIED },
+        { where: { id: secondaryEmail.id } },
+      )
+      await userProfileModel.update(
+        {
+          mobilePhoneNumber: '1234567',
+          mobilePhoneNumberVerified: false,
+          mobileStatus: DataStatus.NOT_VERIFIED,
+        },
+        { where: { nationalId: testUserProfile.nationalId } },
+      )
+
+      const initialProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      // Act
+      const res = await server.patch(
+        `/v2/me/emails/${secondaryEmail.id}/primary`,
+      )
+
+      // Assert Response
+      expect(res.status).toEqual(200)
+      expect(res.body.emailVerified).toBe(true) // Email itself is verified
+
+      // Assert DB - Nudge Dates Updated for SKIP_INTERVAL
+      const updatedProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+      expect(updatedProfile?.lastNudge).toBeDefined()
+      expect(updatedProfile?.lastNudge).not.toEqual(initialProfile?.lastNudge)
+      if (updatedProfile?.lastNudge) {
+        const expectedNextNudge = addMonths(
+          updatedProfile.lastNudge,
+          SKIP_INTERVAL,
+        ) // Expect skip interval
+        expect(
+          updatedProfile?.nextNudge?.toISOString().substring(0, 22),
+        ).toEqual(expectedNextNudge.toISOString().substring(0, 22))
+      }
+    })
+
+    it('should recalculate nextNudge to SKIP_INTERVAL if new primary email is verified but mobile status is NOT_VERIFIED', async () => {
+      // Arrange: Ensure secondary email is verified, but mobile status is EMPTY
+      await emailsModel.update(
+        { emailStatus: DataStatus.VERIFIED },
+        { where: { id: secondaryEmail.id } },
+      )
+      await userProfileModel.update(
+        {
+          mobilePhoneNumber: '1234567',
+          mobilePhoneNumberVerified: false,
+          mobileStatus: DataStatus.NOT_VERIFIED,
+        },
+        { where: { nationalId: testUserProfile.nationalId } },
+      )
+
+      const initialProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      // Act
+      const res = await server.patch(
+        `/v2/me/emails/${secondaryEmail.id}/primary`,
+      )
+
+      // Assert Response
+      expect(res.status).toEqual(200)
+      expect(res.body.emailVerified).toBe(true) // Email itself is verified
+
+      // Assert DB - Nudge Dates Updated for SKIP_INTERVAL
+      const updatedProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+      expect(updatedProfile?.lastNudge).toBeDefined()
+      expect(updatedProfile?.lastNudge).not.toEqual(initialProfile?.lastNudge)
+      if (updatedProfile?.lastNudge) {
+        const expectedNextNudge = addMonths(
+          updatedProfile.lastNudge,
+          SKIP_INTERVAL,
+        ) // Expect skip interval
+        expect(
+          updatedProfile?.nextNudge?.toISOString().substring(0, 22),
+        ).toEqual(expectedNextNudge.toISOString().substring(0, 22))
+      }
+    })
+  })
 })
