@@ -151,6 +151,10 @@ export const dataSchema = z.object({
   rehabilitationPlanConfirmation: z
     .array(z.string())
     .refine((v) => v.includes(YES)),
+  selfAssessment: z.object({
+    gotAssistance: z.enum([YES, NO]),
+    highestLevelOfEducation: z.string(),
+  }),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
