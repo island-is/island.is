@@ -199,6 +199,15 @@ describe('DefendantController - Update', () => {
               body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
               elementId: defendantId,
             },
+            {
+              type: MessageType.DEFENDANT_NOTIFICATION,
+              caseId,
+              body: {
+                type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
+                user,
+              },
+              elementId: defendantId,
+            },
           ])
         })
       } else {
