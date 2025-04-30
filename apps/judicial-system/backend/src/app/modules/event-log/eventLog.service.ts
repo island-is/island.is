@@ -65,7 +65,7 @@ export class EventLogService {
   async create(
     event: CreateEventLogDto,
     transaction?: Transaction,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const { eventType, caseId, userRole, nationalId, institutionName } = event
 
     if (!allowMultiple.includes(event.eventType)) {
@@ -83,19 +83,23 @@ export class EventLogService {
       const eventExists = await this.eventLogModel.findOne({ where })
 
       if (eventExists) {
-        return
+        return true
       }
     }
 
     try {
       await this.eventLogModel.create({ ...event }, { transaction })
+
+      return true
     } catch (error) {
       // Tolerate failure but log error
       this.logger.error('Failed to create event log', error)
-    }
 
-    if (caseId) {
-      this.addEventNotificationToQueue(eventType, caseId)
+      return false
+    } finally {
+      if (caseId) {
+        this.addEventNotificationToQueue(eventType, caseId)
+      }
     }
   }
 
@@ -104,9 +108,10 @@ export class EventLogService {
   ): Promise<Map<string, { latest: Date; count: number }>> {
     return this.eventLogModel
       .count({
-        group: ['nationalId', 'institutionName'],
+        group: ['nationalId', 'userRole', 'institutionName'],
         attributes: [
           'nationalId',
+          'userRole',
           'institutionName',
           [Sequelize.fn('max', Sequelize.col('created')), 'latest'],
           [Sequelize.fn('count', Sequelize.col('national_id')), 'count'],
@@ -120,7 +125,7 @@ export class EventLogService {
         (logs) =>
           new Map(
             logs.map((log) => [
-              `${log.nationalId}-${log.institutionName}`,
+              `${log.nationalId}-${log.userRole}-${log.institutionName}`,
               { latest: log.latest as Date, count: log.count },
             ]),
           ),
