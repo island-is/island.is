@@ -20,6 +20,8 @@ const ZENDESK_CUSTOM_FIELDS = {
   Link: 24596286118546,
 }
 
+const ZENDESK_AUTHOR_ID = 372464383959
+
 @Injectable()
 export class IdentityConfirmationService {
   constructor(
@@ -69,6 +71,7 @@ export class IdentityConfirmationService {
     try {
       await this.zendeskService.updateTicket(id, {
         comment: {
+          author_id: ZENDESK_AUTHOR_ID,
           html_body: `Vinsamlegast opnaðu <a href="${link}">þennan hlekk</a> til að staðfesta þína auðkenningu`,
           public: true,
         },
@@ -150,6 +153,7 @@ export class IdentityConfirmationService {
 
     await this.zendeskService.updateTicket(identityConfirmation.ticketId, {
       comment: {
+        author_id: ZENDESK_AUTHOR_ID,
         html_body: `
           <b>Auðkenning hefur verið staðfest</b>
           <p>Umsækjandi: ${person.nafn}, kennitala: ${user.nationalId}</p>
