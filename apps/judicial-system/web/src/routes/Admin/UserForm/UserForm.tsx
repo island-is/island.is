@@ -12,7 +12,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   isCoreUser,
   isProsecutorsOffice,
-  prosecutorsOfficeTypes,
 } from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
