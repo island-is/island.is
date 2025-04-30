@@ -109,6 +109,48 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
             downloadFile({ doc: activeDocument, query: 'download' }),
         }
 
+  const actions: DropdownMenuProps['items'] = [
+    {
+      title: formatMessage(m.print),
+      icon: 'print',
+      iconType: 'outline',
+      onClick: activeDocument
+        ? () =>
+            downloadFile({
+              doc: activeDocument,
+            })
+        : undefined,
+    },
+    {
+      title: formatMessage(m.download),
+      icon: 'download',
+      iconType: 'outline',
+      ...downloadDocument,
+    },
+    {
+      title: isBookmarked
+        ? formatMessage(m.removeFavorite)
+        : formatMessage(m.addFavorite),
+      icon: 'star',
+      iconType: isBookmarked ? 'filled' : 'outline',
+      onClick: async () => {
+        await submitMailAction(
+          isBookmarked ? 'unbookmark' : 'bookmark',
+          activeDocument?.id ?? '',
+        )
+        refetch(fetchObject)
+      },
+    },
+  ]
+
+  if (isReplyable) {
+    actions.push({
+      title: formatMessage(m.replyDocument),
+      icon: 'undo',
+      iconType: 'outline',
+      onClick: () => onReply?.(),
+    })
+  }
   return (
     <>
       {onGoBack && (
@@ -183,67 +225,12 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
             <LoadingDots />
           </Box>
         )}
-
-        {activeDocument && (
-          <Tooltip text={formatMessage(m.print)}>
-            <Button
-              circle
-              icon="print"
-              iconType={'outline'}
-              onClick={() =>
-                downloadFile({
-                  doc: activeDocument,
-                })
-              }
-              size="medium"
-              colorScheme="light"
-            />
-          </Tooltip>
-        )}
       </Box>
       <Tooltip text={formatMessage(m.actions)}>
         <DropdownMenu
           icon="ellipsisVertical"
           iconType="filled"
-          items={[
-            {
-              title: formatMessage(m.replyDocument),
-              icon: 'undo',
-              iconType: 'outline',
-              onClick: () => onReply?.(),
-            },
-            {
-              title: isBookmarked
-                ? formatMessage(m.removeFavorite)
-                : formatMessage(m.addFavorite),
-              icon: 'star',
-              iconType: isBookmarked ? 'filled' : 'outline',
-              onClick: async () => {
-                await submitMailAction(
-                  isBookmarked ? 'unbookmark' : 'bookmark',
-                  activeDocument?.id ?? '',
-                )
-                refetch(fetchObject)
-              },
-            },
-            {
-              title: formatMessage(m.print),
-              icon: 'print',
-              iconType: 'outline',
-              onClick: activeDocument
-                ? () =>
-                    downloadFile({
-                      doc: activeDocument,
-                    })
-                : undefined,
-            },
-            {
-              title: formatMessage(m.download),
-              icon: 'download',
-              iconType: 'outline',
-              ...downloadDocument,
-            },
-          ]}
+          items={actions.reverse()}
           disclosure={
             <span className={styles.actionsButton}>
               <Tooltip text={formatMessage(m.actions)}>
