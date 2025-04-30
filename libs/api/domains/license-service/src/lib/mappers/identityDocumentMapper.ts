@@ -32,6 +32,17 @@ const isChildDocument = (
   return (passport as IdentityDocumentChild).childNationalId !== undefined
 }
 
+const mapLicenseTitle = (subType: string, formatMessage: FormatMessage) => {
+  if (subType === 'D') {
+    return formatMessage(m.identityDocumentTravelLicense)
+  }
+  if (subType === 'I') {
+    return formatMessage(m.identityDocumentNotTravelLicense)
+  }
+
+  return formatMessage(m.identityDocument)
+}
+
 @Injectable()
 export class IdentityDocumentMapper implements GenericLicenseMapper {
   constructor(private readonly intlService: IntlService) {}
@@ -66,7 +77,9 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
               payload: this.mapDocument(
                 t,
                 formatMessage,
-                formatMessage(m.identityDocument),
+                t.subType
+                  ? mapLicenseTitle(t.subType ?? undefined, formatMessage)
+                  : formatMessage(m.identityDocument),
               ),
             }
           }
@@ -219,7 +232,9 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
         expireDate: document.expirationDate?.toISOString() ?? undefined,
         displayTag,
         name: licenseName ?? document.verboseType ?? undefined,
-        title: formatMessage(m.identityDocument) ?? undefined,
+        title: document.subType
+          ? mapLicenseTitle(document.subType, formatMessage)
+          : undefined,
         subtitle: formatMessage(m.identityDocumentNumberDisplay, {
           arg: licenseNumber ?? formatMessage(m.unknown),
         }),
