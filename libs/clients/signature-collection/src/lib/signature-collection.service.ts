@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import {
   FrambodApi,
   FrambodDTO,
+  KosningApi,
   MedmaelalistarApi,
   MedmaelasofnunApi,
   MedmaeliApi,
@@ -30,6 +31,7 @@ export class SignatureCollectionClientService {
   constructor(
     private listsApi: MedmaelalistarApi,
     private collectionsApi: MedmaelasofnunApi,
+    private electionsApi: KosningApi,
     private signatureApi: MedmaeliApi,
     private candidateApi: FrambodApi,
     private sharedService: SignatureCollectionSharedClientService,
@@ -39,8 +41,17 @@ export class SignatureCollectionClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(): Promise<Collection> {
-    return await this.sharedService.currentCollection(this.collectionsApi)
+  async currentCollection(): Promise<Collection[]> {
+    return await this.sharedService.currentCollection(this.electionsApi)
+  }
+
+  async getLatestCollectionForType(
+    collectionType: CollectionType,
+  ): Promise<Collection> {
+    return await this.sharedService.getLatestCollectionForType(
+      this.electionsApi,
+      collectionType,
+    )
   }
 
   async getLists(input: GetListInput, auth?: Auth): Promise<List[]> {
@@ -55,6 +66,7 @@ export class SignatureCollectionClientService {
       listId,
       this.getApiWithAuth(this.listsApi, auth),
       this.getApiWithAuth(this.candidateApi, auth),
+      this.getApiWithAuth(this.collectionsApi, auth),
     )
     if (!list.active) {
       throw new Error('List is not active')
@@ -69,9 +81,9 @@ export class SignatureCollectionClientService {
     )
   }
 
-  async getAreas(collectionId?: string) {
+  async getAreas(collectionType: CollectionType, collectionId?: string) {
     if (!collectionId) {
-      const { id } = await this.currentCollection()
+      const { id } = await this.getLatestCollectionForType(collectionType)
       collectionId = id
     }
     const areas = await this.collectionsApi.medmaelasofnunIDSvaediGet({
@@ -427,9 +439,13 @@ export class SignatureCollectionClientService {
     }
   }
 
-  async getSignee(auth: User, nationalId?: string): Promise<Signee> {
-    const collection = await this.currentCollection()
-    const { id, collectionType, isActive, areas } = collection
+  async getSignee(
+    auth: User,
+    collectionType: CollectionType,
+    nationalId?: string,
+  ): Promise<Signee> {
+    const collection = await this.getLatestCollectionForType(collectionType)
+    const { id, isActive, areas } = collection
     try {
       const user = await this.getApiWithAuth(
         this.collectionsApi,
@@ -451,15 +467,17 @@ export class SignatureCollectionClientService {
           ? user.medmaelalistar?.map((list) => mapListBase(list))
           : []
 
-      const { success: canCreate, reasons: canCreateInfo } =
-        this.sharedService.canCreate({
-          requirementsMet: user.maFrambod,
-          canCreateInfo: user.maFrambodInfo,
-          ownedLists,
-          collectionType,
-          isActive,
-          areas,
-        })
+      const {
+        success: canCreate,
+        reasons: canCreateInfo,
+      } = this.sharedService.canCreate({
+        requirementsMet: user.maFrambod,
+        canCreateInfo: user.maFrambodInfo,
+        ownedLists,
+        collectionType,
+        isActive,
+        areas,
+      })
 
       const { success: canSign, reasons: canSignInfo } = await this.canSign({
         requirementsMet: user.maKjosa,

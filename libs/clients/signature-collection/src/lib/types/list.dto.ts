@@ -7,6 +7,7 @@ import {
 } from '../../../gen/fetch'
 import { Candidate, mapCandidate } from './candidate.dto'
 import { logger } from '@island.is/logging'
+import { CollectionType } from './collection.dto'
 
 export enum ListStatus {
   Active = 'active',
@@ -43,6 +44,7 @@ export interface List {
   maxReached: boolean
   reviewed: boolean
   isExtended: boolean
+  collectionType: CollectionType
 }
 
 export interface SignedList extends List {
@@ -83,6 +85,7 @@ export const mapListBase = (list: MedmaelalistiBaseDTO): ListBase => {
 
 export const mapList = (
   list: MedmaelalistiDTO,
+  collectionType?: CollectionType,
   collectors?: UmbodBaseDTO[],
 ): List => {
   const {
@@ -135,5 +138,6 @@ export const mapList = (
     maxReached: area.max <= numberOfSignatures,
     reviewed,
     isExtended,
+    collectionType: collectionType ?? CollectionType.OtherUnknown,
   }
 }

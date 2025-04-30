@@ -61,14 +61,14 @@ export class SignatureCollectionAdminResolver {
     )
   }
 
-  @Query(() => SignatureCollection)
+  @Query(() => [SignatureCollection])
   @Scopes(
     AdminPortalScope.signatureCollectionManage,
     AdminPortalScope.signatureCollectionProcess,
   )
   async signatureCollectionAdminCurrent(
     @CurrentUser() user: User,
-  ): Promise<SignatureCollection> {
+  ): Promise<SignatureCollection[]> {
     const isManager = user.scope.includes(
       AdminPortalScope.signatureCollectionManage,
     )

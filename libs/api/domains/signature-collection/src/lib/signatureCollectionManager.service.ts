@@ -13,7 +13,7 @@ export class SignatureCollectionManagerService {
     private signatureCollectionClientService: SignatureCollectionManagerClientService,
   ) {}
 
-  async currentCollection(user: User): Promise<SignatureCollection> {
+  async currentCollection(user: User): Promise<SignatureCollection[]> {
     return await this.signatureCollectionClientService.currentCollection(user)
   }
 
