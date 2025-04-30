@@ -30,6 +30,7 @@ export class DocumentsListClientV2Service {
      * @returns List object sanitized of unnecessary values. Example: { nationalId: '123' }
      */
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sanitizeObject = function <T extends { [key: string]: any }>(
       obj: T,
     ): T {
