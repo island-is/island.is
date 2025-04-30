@@ -1135,7 +1135,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
           >
             <Stack space={3}>
               {filterTags.length > 0 && (
-                <Inline alignY="center" space={2}>
+                <Inline alignY="center" space={1}>
                   {filterTags.map((tag) => (
                     <FilterTag
                       key={tag.label}
