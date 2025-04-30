@@ -784,6 +784,7 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
   ): Promise<DeliverResponse> {
+    // TODO: remove
     if (isIndictmentCase(theCase.type)) {
       // TEMP: Backwards compatibility - We have moved the indictment court date notification to a new indictment specific service.
       // There is still some client logic present that adds NotificationType.CourtDate for all case types which needs
@@ -793,7 +794,7 @@ export class CaseNotificationService extends BaseNotificationService {
           type: MessageType.NOTIFICATION,
           user,
           caseId: theCase.id,
-          body: { type: IndictmentCaseNotificationType.INDICTMENT_COURT_DATE },
+          body: { type: IndictmentCaseNotificationType.COURT_DATE },
         },
       ])
     }

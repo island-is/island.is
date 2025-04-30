@@ -33,11 +33,7 @@ export class EventLogResolver {
 
     const res = await backendService.createEventLog({
       ...input,
-      nationalId: user.nationalId,
-      userRole: user.role,
-      userName: user.name,
-      userTitle: user.title,
-      institutionName: user.institution?.name,
+      user,
     })
 
     return res.ok

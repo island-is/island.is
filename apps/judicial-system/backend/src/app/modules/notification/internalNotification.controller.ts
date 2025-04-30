@@ -230,6 +230,7 @@ export class InternalNotificationController {
     return this.notificationDispatchService.dispatchEventNotification(
       notificationDto.type,
       theCase,
+      notificationDto.user,
     )
   }
 

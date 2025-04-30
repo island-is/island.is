@@ -431,7 +431,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const recipients = await Promise.all(promises)
     const result = await this.recordNotification(
       theCase.id,
-      IndictmentCaseNotificationType.INDICTMENT_COURT_DATE,
+      IndictmentCaseNotificationType.COURT_DATE,
       recipients,
     )
 
@@ -444,7 +444,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     user?: User,
   ): Promise<DeliverResponse> {
     switch (notificationType) {
-      case IndictmentCaseNotificationType.INDICTMENT_COURT_DATE:
+      case IndictmentCaseNotificationType.COURT_DATE:
         return this.sendCourtDateNotifications(theCase, user)
       case IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO:
         return this.sendVerdictInfoNotification(theCase)

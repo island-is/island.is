@@ -2,7 +2,7 @@ export enum CaseNotificationType {
   HEADS_UP = 'HEADS_UP',
   READY_FOR_COURT = 'READY_FOR_COURT',
   RECEIVED_BY_COURT = 'RECEIVED_BY_COURT',
-  COURT_DATE = 'COURT_DATE',
+  COURT_DATE = 'COURT_DATE', // only for non-indictment cases
   DISTRICT_COURT_JUDGE_ASSIGNED = 'DISTRICT_COURT_JUDGE_ASSIGNED',
   DISTRICT_COURT_REGISTRAR_ASSIGNED = 'DISTRICT_COURT_REGISTRAR_ASSIGNED',
   RULING = 'RULING',
@@ -23,8 +23,7 @@ export enum CaseNotificationType {
 }
 
 export enum IndictmentCaseNotificationType {
-  // TODO: Rename?
-  INDICTMENT_COURT_DATE = 'INDICTMENT_COURT_DATE',
+  COURT_DATE = 'COURT_DATE',
   INDICTMENT_VERDICT_INFO = 'INDICTMENT_VERDICT_INFO',
   CRIMINAL_RECORD_FILES_UPLOADED = 'CRIMINAL_RECORD_FILES_UPLOADED',
 }
@@ -52,6 +51,7 @@ export enum InstitutionNotificationType {
 }
 
 export enum EventNotificationType {
+  COURT_DATE_SCHEDULED = 'COURT_DATE_SCHEDULED',
   INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR = 'INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR',
 }
 
@@ -89,6 +89,7 @@ export enum NotificationType {
 
 export const notificationTypes = Object.values(NotificationType)
 
+// TODO: COURT DATE, which is then split to their relevant type
 export enum NotificationDispatchType {
   INDICTMENTS_WAITING_FOR_CONFIRMATION = InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
 }

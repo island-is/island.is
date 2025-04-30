@@ -1355,20 +1355,6 @@ export class CaseService {
     )
   }
 
-  private addMessagesForNewCourtDateToQueue(
-    theCase: Case,
-    user: TUser,
-  ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
-      {
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: IndictmentCaseNotificationType.INDICTMENT_COURT_DATE },
-      },
-    ])
-  }
-
   private addMessagesForNewSubpoenasToQueue(
     theCase: Case,
     updatedCase: Case,
@@ -1656,7 +1642,16 @@ export class CaseService {
 
       if (hasUpdatedArraignmentDate || hasUpdatedCourtDate) {
         // New arraignment date or new court date
-        await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
+        // await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
+
+        // NOTE: here we are creating an event + writing to queue instead of writing directly to the queue
+        console.log('TESTING1')
+        console.log({ user })
+        await this.eventLogService.createWithUser(
+          EventType.COURT_DATE_SCHEDULED,
+          theCase.id,
+          user,
+        )
       }
 
       if (hasUpdatedArraignmentDate) {
