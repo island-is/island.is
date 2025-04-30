@@ -213,7 +213,7 @@ const HeaderContainer = () => {
                           size="small"
                           preTextIcon="swapHorizontal"
                         >
-                          Skipta um embætti
+                          Skipta um embætti / hlutverk
                         </Button>
                       </Box>
                     )}
