@@ -39,7 +39,7 @@ import { dataSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
 import { needAssignment } from './utils'
 import { CodeOwners } from '@island.is/shared/constants'
-
+import { getChargeCode } from './utils'
 const pruneAfter = (time: number) => {
   return {
     shouldBeListed: true,
@@ -47,10 +47,11 @@ const pruneAfter = (time: number) => {
     whenToPrune: time,
   }
 }
+
 const getCode = (application: Application): BasicChargeItem[] => {
-  const chargeItemCode = getValueViaPath<string>(
+  const chargeItemCode = getChargeCode(
     application.answers,
-    'chargeItemCode',
+    application.externalData,
   )
   if (!chargeItemCode) {
     throw new Error('chargeItemCode missing in request')

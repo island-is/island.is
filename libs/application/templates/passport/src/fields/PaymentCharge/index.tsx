@@ -11,16 +11,12 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
   const serviceTypeRegular =
     (application.answers.service as Service).type === Services.REGULAR
   const { answers, externalData } = application
   const chargeCode = getChargeCode(answers, externalData)
 
   const charge = getPrice(externalData, chargeCode)
-  useEffect(() => {
-    setValue('chargeItemCode', chargeCode)
-  }, [chargeCode, setValue])
 
   return (
     <Box paddingTop="smallGutter">
