@@ -22,7 +22,7 @@ export class EventLogResolver {
   ) {}
 
   @Mutation(() => Boolean, { nullable: true })
-  async createEventLog(
+  createEventLog(
     @Args('input', { type: () => CreateEventLogInput })
     input: CreateEventLogInput,
     @CurrentGraphQlUser() user: User,
@@ -31,11 +31,9 @@ export class EventLogResolver {
   ): Promise<boolean> {
     this.logger.debug(`Creating event log for case ${input.caseId}`)
 
-    const res = await backendService.createEventLog({
+    return backendService.createEventLog({
       ...input,
       user,
     })
-
-    return res.ok
   }
 }

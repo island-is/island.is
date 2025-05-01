@@ -617,8 +617,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
       if (details) {
         custodians.push({
           nationalId: details.nationalId,
-          givenName: details.givenName,
-          familyName: details.familyName,
+          name: details.name,
           legalDomicile: details.legalDomicile,
         })
       }

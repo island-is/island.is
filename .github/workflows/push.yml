@@ -301,18 +301,6 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
-
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/docker-login-ecr.sh
@@ -463,7 +451,6 @@ jobs:
     if: ${{ !cancelled()
       && needs.pre-checks.result == 'success'
       && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
-      && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
       && needs.helm-docker-build.result != 'failure'
       && needs.prepare.outputs.IMAGES != ''
       && needs.docker-build.result == 'success' }}

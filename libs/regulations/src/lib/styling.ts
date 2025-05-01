@@ -76,6 +76,11 @@ export const regulationContentStyling = (wrapper: string) => {
     },
   })
 
+  styleRegulation('.indented', {
+    position: 'relative',
+    marginLeft: '2em',
+  })
+
   styleRegulation('p,ul,ol,pre,table,blockquote', {
     fontFamily: 'inherit',
     marginBottom: typography.baseLineHeight + 'em',

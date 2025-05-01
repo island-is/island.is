@@ -4,12 +4,12 @@ export const personal = {
   general: defineMessages({
     pageTitle: {
       id: 'aosh.sem.application:personal.general.pageTitle',
-      defaultMessage: 'Persónuupplýsingar',
+      defaultMessage: 'Skráningaraðili',
       description: `personal page title `,
     },
     sectionTitle: {
       id: 'aosh.sem.application:personal.general.sectionTitle',
-      defaultMessage: 'Persónuupplýsingar',
+      defaultMessage: 'Skráningaraðili',
       description: `personal section title `,
     },
     pageDescription: {

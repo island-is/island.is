@@ -9,13 +9,13 @@ import { AnimatePresence, motion } from 'motion/react'
 
 import {
   Box,
+  FileUploadStatus,
   Icon,
   Input,
   LoadingDots,
   Text,
   toast,
   UploadFile,
-  UploadFileStatus,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
@@ -33,7 +33,7 @@ export interface TEditableCaseFile {
   displayDate?: string | null
   canOpen?: boolean
   canEdit?: boolean
-  status?: UploadFileStatus
+  status?: FileUploadStatus
   size?: number | null
 }
 
@@ -104,19 +104,20 @@ const EditableCaseFile: FC<Props> = (props) => {
   }, [caseFile.displayDate, caseFile.created])
 
   const isEmpty = caseFile.size === 0
-  const hasError = caseFile.status === 'error' || isEmpty
+  const hasError = caseFile.status === FileUploadStatus.error || isEmpty
   const color = hasError ? 'red400' : 'blue400'
   const styleIndex =
-    caseFile.status === 'done' && isEmpty
-      ? 'error'
-      : caseFile.status || 'uploading'
+    caseFile.status === FileUploadStatus.done && isEmpty
+      ? FileUploadStatus.error
+      : caseFile.status || FileUploadStatus.uploading
 
   return (
     <div
-      className={cn(
-        styles.caseFileWrapper,
-        styles.caseFileWrapperStates[styleIndex],
-      )}
+      className={cn(styles.caseFileWrapper, {
+        [styles.error]: styleIndex === FileUploadStatus.error,
+        [styles.done]: styleIndex === FileUploadStatus.done,
+        [styles.uploading]: styleIndex === FileUploadStatus.uploading,
+      })}
     >
       {enableDrag && (
         <Box
@@ -174,9 +175,10 @@ const EditableCaseFile: FC<Props> = (props) => {
                   <button
                     onClick={handleEditFileButtonClick}
                     className={cn(styles.editCaseFileButton, {
-                      [styles.background.primary]: caseFile.status !== 'error',
+                      [styles.background.primary]:
+                        caseFile.status !== FileUploadStatus.error,
                       [styles.background.secondary]:
-                        caseFile.status === 'error' || isEmpty,
+                        caseFile.status === FileUploadStatus.error || isEmpty,
                     })}
                     aria-label="Vista breytingar"
                   >
@@ -190,9 +192,9 @@ const EditableCaseFile: FC<Props> = (props) => {
                       }}
                       className={cn(styles.editCaseFileButton, {
                         [styles.background.primary]:
-                          caseFile.status !== 'error',
+                          caseFile.status !== FileUploadStatus.error,
                         [styles.background.secondary]:
-                          caseFile.status === 'error' || isEmpty,
+                          caseFile.status === FileUploadStatus.error || isEmpty,
                       })}
                       aria-label="Eyða skrá"
                     >
@@ -250,11 +252,12 @@ const EditableCaseFile: FC<Props> = (props) => {
                   <Text variant="small">{displayDate}</Text>
                 </Box>
 
-                {caseFile.status === 'uploading' ? (
+                {caseFile.status === FileUploadStatus.uploading ? (
                   <Box className={styles.editCaseFileButton}>
                     <LoadingDots single />
                   </Box>
-                ) : (caseFile.status === 'error' || isEmpty) && onRetry ? (
+                ) : (caseFile.status === FileUploadStatus.error || isEmpty) &&
+                  onRetry ? (
                   <button
                     onClick={() => onRetry(caseFile as UploadFile)}
                     className={cn(
@@ -273,9 +276,10 @@ const EditableCaseFile: FC<Props> = (props) => {
                     }}
                     className={cn(styles.editCaseFileButton, {
                       [styles.background.primary]:
-                        caseFile.canEdit && caseFile.status !== 'error',
+                        caseFile.canEdit &&
+                        caseFile.status !== FileUploadStatus.error,
                       [styles.background.secondary]:
-                        caseFile.status === 'error' || isEmpty,
+                        caseFile.status === FileUploadStatus.error || isEmpty,
                     })}
                     disabled={!caseFile.canEdit}
                     aria-label="Breyta skrá"
