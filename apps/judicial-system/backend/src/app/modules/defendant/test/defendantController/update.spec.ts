@@ -202,9 +202,9 @@ describe('DefendantController - Update', () => {
             {
               type: MessageType.DEFENDANT_NOTIFICATION,
               caseId,
+              user,
               body: {
                 type: DefendantNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
-                user,
               },
               elementId: defendantId,
             },
