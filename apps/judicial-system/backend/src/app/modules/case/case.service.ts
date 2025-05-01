@@ -43,7 +43,6 @@ import {
   defendantEventTypes,
   EventType,
   eventTypes,
-  IndictmentCaseNotificationType,
   isCompletedCase,
   isIndictmentCase,
   isInvestigationCase,

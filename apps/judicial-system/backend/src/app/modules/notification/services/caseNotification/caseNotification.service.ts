@@ -30,7 +30,7 @@ import {
   getHumanReadableCaseIndictmentRulingDecision,
   lowercase,
 } from '@island.is/judicial-system/formatters'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { MessageService } from '@island.is/judicial-system/message'
 import {
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
@@ -40,7 +40,6 @@ import {
   CaseType,
   DefenderSubRole,
   getStatementDeadline,
-  IndictmentCaseNotificationType,
   isDefenceUser,
   isIndictmentCase,
   isInvestigationCase,
