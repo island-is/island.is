@@ -5,7 +5,6 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseNotificationType,
   CaseType,
-  DateType,
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
