@@ -19,7 +19,7 @@ import {
 } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
@@ -27,8 +27,6 @@ import {
   FormContext,
   FormFooter,
   InputAdvocate,
-  InputName,
-  InputNationalId,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -58,6 +56,7 @@ import {
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { SelectCourt } from '../../components'
+import { CivilClaimantFields } from './CivilClaimantFields'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
@@ -455,7 +454,26 @@ const Processing: FC = () => {
                 <Fragment key={civilClaimant.id}>
                   <Box marginBottom={3}>
                     <BlueBox>
-                      {index > 0 && (
+                      <CivilClaimantFields
+                        civilClaimant={civilClaimant}
+                        civilClaimantIndex={index}
+                        removeCivilClaimantById={removeCivilClaimantById}
+                        handleSetAndSendCivilClaimantToServer={
+                          handleSetAndSendCivilClaimantToServer
+                        }
+                        nationalIdNotFound={nationalIdNotFound}
+                        setNationalIdNotFound={setNationalIdNotFound}
+                        handleCivilClaimantNationalIdBlur={
+                          handleCivilClaimantNationalIdBlur
+                        }
+                        handleUpdateCivilClaimantState={
+                          handleUpdateCivilClaimantState
+                        }
+                        handleCivilClaimantNameBlur={
+                          handleCivilClaimantNameBlur
+                        }
+                      />
+                      {/* {index > 0 && (
                         <Box
                           display="flex"
                           justifyContent="flexEnd"
@@ -577,7 +595,7 @@ const Processing: FC = () => {
                               : strings.addDefender,
                           )}
                         </Button>
-                      </Box>
+                      </Box> */}
                       {civilClaimant.hasSpokesperson && (
                         <>
                           <Box display="flex" marginY={2}>
