@@ -101,6 +101,12 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
     organizationPage.slug,
   ]).href
 
+  const isInfoCardVariant = Boolean(
+    namespace?.organizationsWithInfoCardEventListVariant?.includes(
+      organizationPage.slug,
+    ),
+  )
+
   return (
     <OrganizationWrapper
       pageTitle={eventsHeading}
@@ -165,9 +171,7 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
             namespace={namespace}
             eventList={eventList?.items}
             parentPageSlug={organizationPage.slug}
-            variant={
-              organizationPage.slug === 'landspitali' ? 'InfoCard' : 'NewsCard'
-            }
+            variant={isInfoCardVariant ? 'InfoCard' : 'NewsCard'}
             noEventsFoundFallback={
               <Text variant="h4">
                 {!onlyIncludePastEvents
