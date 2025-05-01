@@ -34,7 +34,8 @@ export enum DefendantNotificationType {
   DEFENDER_ASSIGNED = 'DEFENDER_ASSIGNED',
   INDICTMENT_SENT_TO_PRISON_ADMIN = 'INDICTMENT_SENT_TO_PRISON_ADMIN',
   INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN = 'INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN',
-  DEFENDER_COURT_DATE_FOLLOW_UP = 'DEFENDER_COURT_DATE_FOLLOW_UP', // court date is sometimes scheduled before defender is assigned, thus we sent them notification to follow-up with court date session
+  // court date is sometimes scheduled before defender is assigned, thus we send them notification to follow-up with court date session
+  DEFENDER_COURT_DATE_FOLLOW_UP = 'DEFENDER_COURT_DATE_FOLLOW_UP',
 }
 
 export enum SubpoenaNotificationType {
@@ -65,7 +66,7 @@ export enum NotificationType {
   APPEAL_TO_COURT_OF_APPEALS = CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
   APPEAL_WITHDRAWN = CaseNotificationType.APPEAL_WITHDRAWN,
   CASE_FILES_UPDATED = CaseNotificationType.CASE_FILES_UPDATED,
-  COURT_DATE = CaseNotificationType.COURT_DATE, // Note: only use for non-indictment cases
+  COURT_DATE = CaseNotificationType.COURT_DATE, // only use for non-indictment cases
   DEFENDANT_SELECTED_DEFENDER = DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER,
   DEFENDANTS_NOT_UPDATED_AT_COURT = CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
   DEFENDER_ASSIGNED = DefendantNotificationType.DEFENDER_ASSIGNED,
@@ -89,7 +90,6 @@ export enum NotificationType {
 
 export const notificationTypes = Object.values(NotificationType)
 
-// TODO: COURT DATE, which is then split to their relevant type
 export enum NotificationDispatchType {
   INDICTMENTS_WAITING_FOR_CONFIRMATION = InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
 }

@@ -8,7 +8,8 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { EventType, User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
+import { EventType } from '@island.is/judicial-system/types'
 
 export class CreateEventLogDto {
   @IsNotEmpty()

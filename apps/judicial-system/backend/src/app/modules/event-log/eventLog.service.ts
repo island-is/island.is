@@ -157,8 +157,6 @@ export class EventLogService {
     const notificationType = eventToNotificationMap[eventType]
 
     if (notificationType) {
-      console.log('TESTING3')
-      console.log({ eventType, caseId, user })
       try {
         this.messageService.sendMessagesToQueue([
           {

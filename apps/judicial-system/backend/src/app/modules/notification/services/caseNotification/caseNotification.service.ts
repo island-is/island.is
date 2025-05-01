@@ -784,20 +784,6 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
   ): Promise<DeliverResponse> {
-    // TODO: remove
-    if (isIndictmentCase(theCase.type)) {
-      // TEMP: Backwards compatibility - We have moved the indictment court date notification to a new indictment specific service.
-      // There is still some client logic present that adds NotificationType.CourtDate for all case types which needs
-      // to be adapted to the event model
-      this.messageService.sendMessagesToQueue([
-        {
-          type: MessageType.NOTIFICATION,
-          user,
-          caseId: theCase.id,
-          body: { type: IndictmentCaseNotificationType.COURT_DATE },
-        },
-      ])
-    }
     this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase)
 
     const promises: Promise<Recipient>[] = []

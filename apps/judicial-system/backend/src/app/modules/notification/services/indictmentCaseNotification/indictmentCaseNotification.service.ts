@@ -98,7 +98,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     return this.recordNotification(theCase.id, notificationType, recipients)
   }
 
-  // Note: identical to CaseNotification.service.uploadEmailToCourt
+  // TODO-FIX: redundant in other services - defendant, case, indictmentCase notifications
   private async uploadEmailToCourt(
     theCase: Case,
     user: User,
@@ -218,7 +218,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     )
   }
 
-  // Note: redundant in other services
+  // TODO-FIX: redundant in other services - defendant, case, indictmentCase notifications
   private getCourtDateCalendarInvite = (
     theCase: Case,
     targetDateLog: DateLog,

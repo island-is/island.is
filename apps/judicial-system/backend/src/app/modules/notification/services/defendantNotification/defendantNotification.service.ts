@@ -180,7 +180,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     return false
   }
 
-  // TEMP-FIX: redundant in other services
+  // TODO-FIX: redundant in other services - defendant, case, indictmentCase notifications
   private getCourtDateCalendarInvite = (
     theCase: Case,
     targetDateLog: DateLog,
@@ -199,7 +199,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     return calendarInvite
   }
 
-  // TEMP-FIX: redundant in other services
+  // TODO-FIX: redundant in other services - defendant, case, indictmentCase notifications
   private async uploadEmailToCourt(
     theCase: Case,
     user: User,
@@ -246,8 +246,7 @@ export class DefendantNotificationService extends BaseNotificationService {
       return { delivered: true }
     }
 
-    // This is identical to defenderNotification.service.sendArraignmentDateEmailNotification
-    // TODO: Re-use these notifications across types
+    // TODO-FIX: redundant in other services - defendant, indictmentCase notifications
     const { subject, body } = formatArraignmentDateEmailNotification({
       formatMessage: this.formatMessage,
       courtName: theCase.court?.name,

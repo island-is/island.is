@@ -939,11 +939,6 @@ describe('formatArraignmentDateEmailNotification', () => {
     }).formatMessage
   })
 
-  // courtName: theCase.court?.name,
-  // courtCaseNumber: theCase.courtCaseNumber,
-  // judgeName: theCase.judge?.name,
-  // registrarName: theCase.registrar?.name,
-  // TODO
   const fn = (
     arraignmentDateLog: DateLog,
     courtName?: string,

@@ -47,7 +47,6 @@ export class InternalDeliveryService {
       .catch((reason) => {
         this.logger.info(`Failed to post ${what} - attempting retry`, {
           reason,
-          body,
         })
 
         return false
