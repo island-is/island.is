@@ -1,8 +1,9 @@
 import { examinee } from '../../lib/messages'
 import { isValidEmail, isValidPhoneNumber } from '../../utils/validation'
 import * as kennitala from 'kennitala'
-import { CSVError, ExamineeInput } from '../../utils/type'
+import { ExamineeInput } from '../../utils/types'
 import { MessageDescriptor } from 'react-intl'
+import { CSVError } from '../../utils/interfaces'
 
 export type ErrorMessageInvalidInput = {
   invalidSSNs: MessageDescriptor

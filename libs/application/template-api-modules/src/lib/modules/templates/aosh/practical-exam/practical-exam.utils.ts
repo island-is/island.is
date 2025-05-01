@@ -5,12 +5,22 @@ import {
   ExamLocation,
   Instructors,
   PaymentArrangement,
+  Information,
 } from '@island.is/application/templates/aosh/practical-exam'
 import { FormValue } from '@island.is/application/types'
 
 export type CategoryAndInstructorRequest = {
   instructorNationalId: string
   examCategory: string
+}
+
+export type CategoryInstructorAndMedicalCertRequest = {
+  categoriesAndInstructors: CategoryAndInstructorRequest[]
+  medicalCertificate: {
+    content: string
+    fileName: string
+    fileType: string
+  }
 }
 
 enum IndividualOrCompany {
@@ -22,11 +32,13 @@ export type InstructorRequest = {
   nationalId: string
   email: string
   name: string
+  phoneNumber: string
 }
 
 export type PaymentInfoRequest = {
   payerNationalId: string
   payerName: string
+  payerEmail: string
   directPaymentId: string
   textToDisplayOnInvoice: string
 }
@@ -82,16 +94,32 @@ export const getPaymentArrangement = (
   return getValueViaPath<PaymentArrangement>(answers, 'paymentArrangement')
 }
 
+export const getInformation = (answers: FormValue): Information | undefined => {
+  return getValueViaPath<Information>(answers, 'information')
+}
+
 export const mapCategoriesWithInstructor = (
   examCategories: ExamCategoriesAndInstructors[],
-): CategoryAndInstructorRequest[][] => {
+): CategoryInstructorAndMedicalCertRequest[] => {
   return examCategories.map((object, index) => {
-    return object.categories.map((category, idx) => {
+    const catAndInstructor = object.categories.map((category, idx) => {
       return {
         examCategory: category.value,
         instructorNationalId: object.instructor[idx].value,
       }
     })
+
+    const type = examCategories[index]?.medicalCertificate?.type || ''
+    const name = examCategories[index]?.medicalCertificate?.name || ''
+    const content = examCategories[index]?.medicalCertificate?.content || ''
+    return {
+      categoriesAndInstructors: catAndInstructor || [],
+      medicalCertificate: {
+        fileType: type || '',
+        fileName: name || '',
+        content: content || '',
+      },
+    }
   })
 }
 
@@ -103,30 +131,37 @@ export const mapInstructors = (
       nationalId: instructor.nationalId.nationalId,
       email: instructor.email,
       name: instructor.nationalId.name,
+      phoneNumber: instructor.phone,
     }
   })
 }
 
 export const mapPaymentArrangement = (
   paymentArrengement: PaymentArrangement,
+  information: Information,
+  applicationId: string,
 ): PaymentInfoRequest | undefined => {
-  if (
-    paymentArrengement.individualOrCompany === IndividualOrCompany.individual ||
-    paymentArrengement.paymentOptions === PaymentOptions.putIntoAccount
-  )
-    return undefined
+  if (paymentArrengement.individualOrCompany === IndividualOrCompany.individual)
+    return {
+      payerNationalId: information.nationalId || '',
+      payerName: information.name || '',
+      directPaymentId: applicationId, // TODO ??
+      payerEmail: information.email || '',
+      textToDisplayOnInvoice: '',
+    }
 
   return {
     payerNationalId: paymentArrengement.companyInfo?.nationalId || '',
     payerName: paymentArrengement.companyInfo?.name || '',
-    directPaymentId: '', // TODO ??
+    payerEmail: paymentArrengement.contactInfo?.email || '',
+    directPaymentId: applicationId, // TODO ??
     textToDisplayOnInvoice: paymentArrengement.explanation || '',
   }
 }
 
 export const mapExaminees = (
   examinees: Examinees,
-  examCategories: CategoryAndInstructorRequest[][],
+  examCategories: CategoryInstructorAndMedicalCertRequest[],
 ): ExamineesRequest[] | undefined => {
   return examinees.map((examinee, index) => {
     const { nationalId, email, phone, countryIssuer, licenseNumber } = examinee
@@ -135,14 +170,10 @@ export const mapExaminees = (
       nationalId: nationalId.nationalId,
       drivingLicenseNumber: licenseNumber || '',
       drivingLicenseCountryOfOrigin: countryIssuer,
-      medicalCertificate: {
-        content: '',
-        fileName: '',
-        fileType: '',
-      },
+      medicalCertificate: examCategories[index].medicalCertificate,
       email: email,
       phoneNumber: phone,
-      examCategories: examCategories[index],
+      examCategories: examCategories[index].categoriesAndInstructors,
     }
   })
 }

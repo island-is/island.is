@@ -1,5 +1,5 @@
-import { MessageDescriptor } from 'react-intl'
 import { TrueOrFalse } from './enums'
+import { DefaultEvents } from '@island.is/application/types'
 
 export type InstructorInformationInput = {
   email: string
@@ -35,11 +35,6 @@ export type Examinee = {
 
 export type PathAndValue = { path: string; value: string }
 
-export interface IndexableObject {
-  [index: number]: Array<string>
-}
-
-export interface CSVError {
-  items: Array<number>
-  error: MessageDescriptor
+export type Events = {
+  type: DefaultEvents.SUBMIT | DefaultEvents.ABORT
 }

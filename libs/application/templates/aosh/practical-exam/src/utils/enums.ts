@@ -17,3 +17,20 @@ export enum PaymentOptions {
   cashOnDelivery = 'cashOnDelivery',
   putIntoAccount = 'putIntoAccount',
 }
+
+export enum States {
+  PREREQUISITES = 'prerequisites',
+  DRAFT = 'draft',
+  SUBMIT = 'submit',
+  PAYMENT = 'payment',
+  COMPLETED = 'completed',
+}
+
+export enum Roles {
+  APPLICANT = 'applicant',
+}
+
+export enum ApiActions {
+  getExamCategories = 'getExamCategories',
+  submitApplication = 'submitApplication',
+}

@@ -7,9 +7,11 @@ import {
 } from '@island.is/application/core'
 import { overview } from '../../../lib/messages'
 import { getRegistrantInformationForOverview } from '../../../utils/getRegistrantInformationForOverview'
-import { getPaymentArrangementForOverview, isCompany } from '../../../utils'
-import { FormValue } from '@island.is/application/types'
+import { getPaymentArrangementForOverview } from '../../../utils'
 import { getExamLocatioForOverview } from '../../../utils/getExamLocationForOverview'
+import { getExamInformationOthersForOverview } from '../../../utils/getExamInformationOthersForOverview'
+import { getExamInformationSelfForOverview } from '../../../utils/getExamInformationSelfForOverview'
+import { isOthersPath, isSelfPath } from '../../../utils/isForSelfOrOthers'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -29,17 +31,18 @@ export const overviewSection = buildSection({
           items: getRegistrantInformationForOverview,
         }),
         buildOverviewField({
-          id: 'overview.examOthers',
-          title: overview.exam.title,
-          titleVariant: 'h4',
-          // Add einstakling flow
-          condition: (answers: FormValue) => !isCompany(answers),
-        }),
-        buildOverviewField({
           id: 'overview.examSelf',
           title: overview.exam.title,
           titleVariant: 'h4',
-          condition: isCompany,
+          items: getExamInformationSelfForOverview,
+          condition: isSelfPath,
+        }),
+        buildOverviewField({
+          id: 'overview.examOthers',
+          title: overview.exam.title,
+          titleVariant: 'h4',
+          tableData: getExamInformationOthersForOverview,
+          condition: isOthersPath,
         }),
         buildOverviewField({
           id: 'overview.examLocation',

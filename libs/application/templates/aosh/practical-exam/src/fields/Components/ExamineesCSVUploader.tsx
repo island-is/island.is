@@ -20,18 +20,16 @@ import { useLocale } from '@island.is/localization'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
 import { formatPhoneNumber } from '../../utils'
 import { useLazyAreExamineesEligible } from '../../hooks/useLazyAreExamineesEligible'
-import { CSVError, Examinee, ExamineeInput } from '../../utils/type'
+import { Examinee, ExamineeInput } from '../../utils/types'
 import { TrueOrFalse } from '../../utils/enums'
-import { isValidEmail, isValidPhoneNumber } from '../../utils/validation'
-import * as kennitala from 'kennitala'
 import { examinee } from '../../lib/messages'
 import {
   ErrorIndexes,
-  ErrorMessageInvalidInput,
   processErrors,
   trackDuplicates,
   validateExaminee,
 } from './examineeCSVUtils'
+import { CSVError } from '../../utils/interfaces'
 
 const parseDataToExamineeList = (csvInput: string): ExamineeInput | null => {
   const values = csvInput.split(';')

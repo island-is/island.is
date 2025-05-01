@@ -15,6 +15,7 @@ import {
   getExamcategories,
   getExaminees,
   getExamLocation,
+  getInformation,
   getInstructors,
   getPaymentArrangement,
   mapCategoriesWithInstructor,
@@ -78,6 +79,7 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     // const answers = application.answers as unknown as PracticalExam
     const answers = application.answers
     const examinees = getExaminees(answers)
+    const information = getInformation(answers)
     const paymentArrangement = getPaymentArrangement(answers)
     const instructors = getInstructors(answers)
     const examCategoriesAndInstructors = getExamcategories(answers)
@@ -88,7 +90,8 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
       !paymentArrangement ||
       !instructors ||
       !examCategoriesAndInstructors ||
-      !examLocation
+      !examLocation ||
+      !information
     ) {
       throw Error('Values from answers are undefined')
     }
@@ -98,7 +101,11 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
       examCategoriesAndInstructors,
     )
     const instructorsRequest = mapInstructors(instructors)
-    const paymentInfoRequest = mapPaymentArrangement(paymentArrangement)
+    const paymentInfoRequest = mapPaymentArrangement(
+      paymentArrangement,
+      information,
+      application.id,
+    )
     const examineesRequest = mapExaminees(examinees, examCategories)
 
     const payload = {
@@ -119,6 +126,7 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
         },
       },
     }
+    console.log('PAYLOOOOAD', payload)
 
     try {
       const response =
@@ -129,10 +137,7 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
       console.log('Response', response)
     } catch (e) {
       console.log('ERRROR', e)
+      throw new Error(e)
     }
-
-    throw new Error('error')
-
-    return Promise.resolve()
   }
 }

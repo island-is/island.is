@@ -5,7 +5,7 @@ import {
   PracticalExamInstructor,
   QueryValidateInstructorArgs,
 } from '@island.is/api/schema'
-import { InstructorInformationInput } from './type'
+import { InstructorInformationInput } from './types'
 
 export const submitInstructor = async (
   apolloClient: ApolloClient<object>,
@@ -28,7 +28,6 @@ export const submitInstructor = async (
         },
       },
     })
-    console.log('BLARG', data)
 
     if (
       !Array.isArray(data.validateInstructor.categoriesMayTeach) ||
@@ -41,7 +40,6 @@ export const submitInstructor = async (
     }
     const categoriesMayTeachJoined =
       data.validateInstructor.categoriesMayTeach?.join() || ''
-    console.log(categoriesMayTeachJoined)
     return [
       { path: `instructors[${index}].disabled`, value: 'false' },
       {

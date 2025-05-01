@@ -37,7 +37,7 @@ export const WatchCompanyNationalId: FC<
   }, [setValue, application.answers])
 
   setBeforeSubmitCallback?.(async () => {
-    //return [true, null]
+    return [true, null]
     setIsCompanyValid(true)
     const paymentOptions = getValues('paymentArrangement.paymentOptions')
     if (paymentOptions !== PaymentOptions.putIntoAccount) {
@@ -63,7 +63,7 @@ export const WatchCompanyNationalId: FC<
     !isCompanyValid && (
       <Box marginTop={5}>
         <AlertMessage
-          type="error"
+          type="warning"
           title=""
           message={formatMessage(
             paymentArrangement.labels.contactOrganizationAlert,

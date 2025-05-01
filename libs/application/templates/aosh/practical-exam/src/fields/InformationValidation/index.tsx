@@ -2,10 +2,13 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { FC, useCallback, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useLazyAreExamineesEligible } from '../../hooks/useLazyAreExamineesEligible'
-import { TrueOrFalse } from '../../utils/enums'
+import { SelfOrOthers, TrueOrFalse } from '../../utils/enums'
 import { InformationType } from '../../lib/dataSchema'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useMutation } from '@apollo/client'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const InformationValidation: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -13,7 +16,8 @@ export const InformationValidation: FC<
   const { setBeforeSubmitCallback, application } = props
   const [validationError, setValidationError] = useState<string>()
   const { lang } = useLocale()
-  const { getValues, setValue } = useFormContext()
+  const { getValues } = useFormContext()
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const getAreExamineesEligible = useLazyAreExamineesEligible()
   const getAreExamineesEligibleCallback = useCallback(
     async (nationalIds: Array<string>) => {
@@ -27,6 +31,7 @@ export const InformationValidation: FC<
 
   setBeforeSubmitCallback?.(async () => {
     const infoSelf: InformationType = getValues('information')
+    if (infoSelf.selfOrOthers === SelfOrOthers.others) return [true, null]
     const response = await getAreExamineesEligibleCallback([
       infoSelf.nationalId,
     ])
@@ -36,16 +41,28 @@ export const InformationValidation: FC<
         infoSelf
       setValidationError('')
 
-      setValue('examinees[0]', {
-        nationalId: {
-          nationalId: nationalId,
-          name: name,
+      await updateApplication({
+        variables: {
+          input: {
+            id: application.id,
+            answers: {
+              examinees: [
+                {
+                  nationalId: {
+                    nationalId: nationalId,
+                    name: name,
+                  },
+                  email: 'test@bla.is',
+                  phone: '7781779',
+                  countryIssuer: countryOfIssue,
+                  licenseNumber: licenseNumber,
+                  disabled: TrueOrFalse.false,
+                },
+              ],
+            },
+          },
+          locale: lang,
         },
-        email: email,
-        phone: phone,
-        countryIssuer: countryOfIssue,
-        licenseNumber: licenseNumber,
-        disabled: TrueOrFalse.false,
       })
       return [true, null]
     }

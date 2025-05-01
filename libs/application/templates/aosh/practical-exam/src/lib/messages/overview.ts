@@ -162,4 +162,21 @@ export const overview = {
       description: 'Overview exam location phone',
     },
   }),
+  examInfoSelf: defineMessages({
+    examinee: {
+      id: 'aosh.pe.application:overview.examInfoSelf.examinee',
+      defaultMessage: 'Próftaki: {value}',
+      description: 'Overview exam info for self path, name of examinee label',
+    },
+    categories: {
+      id: 'aosh.pe.application:overview.examInfoSelf.categories',
+      defaultMessage: 'Prófflokkar: {value}',
+      description: 'Overview exam info for self path, exam categories label',
+    },
+    instructor: {
+      id: 'aosh.pe.application:overview.examInfoSelf.instructor',
+      defaultMessage: 'Leiðbeinandi: {category}-flokks: {instructor}',
+      description: 'Overview exam info for self path, instructor label',
+    },
+  }),
 }

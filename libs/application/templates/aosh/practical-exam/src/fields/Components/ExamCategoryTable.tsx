@@ -24,7 +24,7 @@ export const ExamCategoryTable: FC<
   const { formatMessage } = useLocale()
 
   return (
-    <Box marginTop={0}>
+    <Box marginTop={0} marginBottom={4}>
       <T.Table>
         <T.Head>
           <T.Row>

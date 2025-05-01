@@ -1,21 +1,4 @@
-import { DefaultEvents } from '@island.is/application/types'
-import { IndexableObject } from '../utils/type'
-
-export type Events = {
-  type: DefaultEvents.SUBMIT | DefaultEvents.ABORT
-}
-
-export enum States {
-  PREREQUISITES = 'prerequisites',
-  DRAFT = 'draft',
-  SUBMIT = 'submit',
-  PAYMENT = 'payment',
-  COMPLETED = 'completed',
-}
-
-export enum Roles {
-  APPLICANT = 'applicant',
-}
+import { IndexableObject } from '../utils/interfaces'
 
 export const FILE_SIZE_LIMIT = 10000000
 
@@ -26,9 +9,4 @@ export const predefinedHeaders: IndexableObject = {
   3: ['simi', 'phone'],
   4: ['okuskirteini', 'licenseNumber'],
   5: ['utgafuland', 'countryOfIssuer'],
-}
-
-export enum ApiActions {
-  getExamCategories = 'getExamCategories',
-  submitApplication = 'submitApplication',
 }

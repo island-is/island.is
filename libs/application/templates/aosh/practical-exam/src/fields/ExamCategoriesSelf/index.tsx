@@ -6,6 +6,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { ExamineeType, InstructorType } from '../../lib/dataSchema'
 import { Box } from '@island.is/island-ui/core'
 import { useFormContext, useWatch } from 'react-hook-form'
+import { ExamCategoryTable } from '../Components/ExamCategoryTable'
 
 export const ExamCategoriesSelf: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -56,6 +57,14 @@ export const ExamCategoriesSelf: FC<React.PropsWithChildren<FieldBaseProps>> = (
   return (
     <Box>
       <>
+        {tableData && tableData.length > 0 && (
+          <ExamCategoryTable
+            {...props}
+            rows={tableData}
+            onEdit={() => null}
+            onDelete={() => null}
+          />
+        )}
         <ExamineeInfo
           {...props}
           name={examineesFromAnswers[0].nationalId.name}

@@ -97,7 +97,7 @@ export const ExamCategoriesOthers: FC<
   if (!examinees) return null
   return (
     <Box>
-      {tableData && (
+      {tableData && tableData.length > 0 && (
         <ExamCategoryTable
           {...props}
           rows={tableData}
@@ -115,7 +115,6 @@ export const ExamCategoriesOthers: FC<
             name={examinees[examineeIndex].nationalId.name}
             nationalId={examinees[examineeIndex].nationalId.nationalId}
           />
-          {/* Need to loop here for each examinee */}
           <ExamInputs
             {...props}
             tableData={tableData}

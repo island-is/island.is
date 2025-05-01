@@ -17,7 +17,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { ExamCategoryDto } from '@island.is/clients/practical-exams-ver'
 import { useLocale } from '@island.is/localization'
 import { examCategories } from '../../lib/messages'
-import { InstructorInformationInput } from '../../utils/type'
+import { InstructorInformationInput } from '../../utils/types'
 import { useLazyValidateExaminee } from '../../hooks/useLazyValidateExaminee'
 import { WorkMachineExamineeInput } from '@island.is/api/schema'
 import { MultiValue } from 'react-select'
@@ -146,6 +146,12 @@ export const ExamInputs: FC<
     examCategoriesRequireMedicalCertificate.includes(category.value),
   )
 
+  useEffect(() => {
+    if (!shouldShowUpload) {
+      setValue(`examCategories[${idx}].medicalCertificate`, undefined)
+    }
+  }, [shouldShowUpload])
+
   const onSubmit = async () => {
     // Reset Validation error
     setIsInvalidValidation(false)
@@ -165,15 +171,28 @@ export const ExamInputs: FC<
     setIsInvalidInput(false)
 
     const examinees = getValueViaPath<ExamineeType>(answers, 'examinees')
+    const medicalCert: ExamCategoryType = getValues(`examCategories[${idx}]`)
     if (!examinees) return null
+    if (
+      shouldShowUpload &&
+      (!medicalCert ||
+        !medicalCert.medicalCertificate ||
+        !medicalCert.medicalCertificate.content ||
+        !medicalCert.medicalCertificate.name ||
+        !medicalCert.medicalCertificate.type)
+    ) {
+      // No MedicalCertificate uploader
+
+      return null
+    }
 
     const { nationalId, email, phone, countryIssuer, licenseNumber } =
       examinees[idx]
     setValue(`examCategories[${idx}].nationalId`, nationalId.nationalId)
     const payload: WorkMachineExamineeInput = {
       nationalId: nationalId.nationalId,
-      email: email,
-      phoneNumber: phone,
+      email: 'bla@bla.is', // TODO Add email back
+      phoneNumber: '7781778', // TODO Add phone back
       drivingLicenseNumber: licenseNumber,
       drivingLicenseCountryOfOrigin: countryIssuer,
       examCategories: chosenCategories.map((category) => category.value),
@@ -185,7 +204,10 @@ export const ExamInputs: FC<
     setIsLoading(false)
     if (response.getExamineeValidation.isValid) {
       setValue(`examCategories[${idx}].isValid`, true)
-
+      setValue(
+        `examCategories[${idx}].doesntHaveToPayLicenseFee`,
+        response.getExamineeValidation.doesntHaveToPayLicenseFee,
+      )
       let updatedTable: string[][] = []
       // Find if this person (by SSN) already exists in the table
       const existingIndex = tableData.findIndex(
@@ -196,7 +218,7 @@ export const ExamInputs: FC<
       const updatedEntry: string[] = [
         nationalId.name, // string (name)
         nationalId.nationalId, // string (SSN)
-        chosenCategories.map((i) => i.label).join(', '), // Ensure all categories are strings
+        chosenCategories.map((i) => i.label).join(', '),
       ]
 
       // Create a new array with either the updated or new entry
@@ -404,7 +426,7 @@ export const ExamInputs: FC<
       {isInvalidValidation && (
         <AlertMessage
           type="warning"
-          title="Próftaki ekki gjaldgengur í valin verkleg próf"
+          title={formatMessage(examCategories.labels.invalidValidationTitle)}
           message={validationError}
         />
       )}

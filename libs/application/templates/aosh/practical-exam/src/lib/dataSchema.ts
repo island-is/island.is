@@ -54,21 +54,22 @@ const PaymentArrangementSchema = z
         nationalId: z.string().nullish(),
         name: z.string().nullish(),
       })
-      .nullish(),
+      .nullish()
+      .or(z.literal('')) // Explicitly allow empty strings since clearing this field turns it to an empty string
+      .transform((val) => (val === '' ? undefined : val)), // Convert "" to undefined
     individualInfo: z
       .object({
         email: z.string().nullish(),
         phone: z.string().nullish(),
       })
       .nullish(),
-
     contactInfo: z
       .object({
         email: z.string().nullish(),
         phone: z.string().nullish(),
       })
       .nullish(),
-    explanation: z.string().max(40).optional().or(z.literal('')),
+    explanation: z.string().max(40).nullish(),
   })
   // .refine(
   //   ({ individualInfo, individualOrCompany }) => {
@@ -101,7 +102,6 @@ const PaymentArrangementSchema = z
   // )
   .refine(
     ({ companyInfo, individualOrCompany }) => {
-      console.log(companyInfo)
       if (individualOrCompany === IndividualOrCompany.individual) {
         return true
       }
@@ -275,6 +275,7 @@ const ExamCategorySchema = z.object({
     }),
   ),
   isValid: z.boolean(),
+  doesntHaveToPayLicenseFee: z.boolean(),
   nationalId: z.string().optional(),
   medicalCertificate: z
     .object({

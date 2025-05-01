@@ -60,7 +60,7 @@ export const examCategories = {
     },
     saveButton: {
       id: 'aosh.pe.application:examCategories.labels.saveButton',
-      defaultMessage: 'Vista og skrá næsta',
+      defaultMessage: 'Vista og skrá',
       description: `Save button on examCategories screen`,
     },
     includedCategoriesAlertInfoTitle: {
@@ -83,6 +83,11 @@ export const examCategories = {
       defaultMessage:
         'Vinsamlega sláðu inn leiðbeinanda fyrir hvern prófflokk, ef ekki er hægt að velja leiðbeinanda er engin leiðbeinandi gjaldgengur fyrir prófflokki',
       description: `Error saving exam categories (no input for example) message`,
+    },
+    invalidValidationTitle: {
+      id: 'aosh.pe.application:examCategories.labels.invalidValidationTitle',
+      defaultMessage: 'Próftaki ekki gjaldgengur í valin verkleg próf',
+      description: `Error validating exam categories for examinee`,
     },
   }),
 }

@@ -5,7 +5,7 @@ import {
   ExamineeEligibility,
   QueryGetExamineeEligibilityArgs,
 } from '@island.is/api/schema'
-import { ExamineeInput, PathAndValue } from './type'
+import { ExamineeInput, PathAndValue } from './types'
 
 export const submitExaminees = async (
   apolloClient: ApolloClient<object>,

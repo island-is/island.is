@@ -6,6 +6,7 @@ import {
   InstructorType,
   PaymentArrangementType,
   PracticalExamAnswers,
+  InformationType,
 } from './lib/dataSchema'
 
 export const getFields = () => import('./fields/')
@@ -16,5 +17,6 @@ export type Examinees = ExamineeType
 export type ExamCategoriesAndInstructors = ExamCategoryType
 export type Instructors = InstructorType
 export type PaymentArrangement = PaymentArrangementType
+export type Information = InformationType
 
 export default template
