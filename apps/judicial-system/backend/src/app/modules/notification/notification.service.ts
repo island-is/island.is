@@ -57,13 +57,13 @@ export class NotificationService {
           })
         }
         break
-      // is this non indictment specific?
       case CaseNotificationType.COURT_DATE:
         if (eventOnly) {
           this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase, true)
 
           // We still want to send the defender a link to the case even if
           // the judge chooses not to send a calendar invitation
+          // Note: This is only relevant for non-indictment cases
           messages = [
             this.getNotificationMessage(
               CaseNotificationType.ADVOCATE_ASSIGNED,

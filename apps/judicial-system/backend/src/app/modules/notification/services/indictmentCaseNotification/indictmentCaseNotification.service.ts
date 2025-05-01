@@ -317,7 +317,10 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient>[] {
+    // check both regular court dates and arraignment date
+    const courtDate = DateLog.courtDate(theCase.dateLogs)
     const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
+
     const promises: Promise<Recipient>[] = []
 
     // get only confirmed defenders
@@ -340,7 +343,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       )
       .filter(({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed)
 
-    if (arraignmentDate) {
+    if (!courtDate && arraignmentDate) {
       if (theCase.prosecutor) {
         // PROSECUTOR
         promises.push(
@@ -369,7 +372,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       })
       return promises
     }
-    const courtDate = DateLog.courtDate(theCase.dateLogs)
     if (!courtDate) {
       return []
     }

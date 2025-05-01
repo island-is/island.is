@@ -34,10 +34,7 @@ export const districtCourtJudgeNotificationRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_JUDGE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [
-    CaseNotificationType.COURT_DATE,
-    IndictmentCaseNotificationType.COURT_DATE,
-  ],
+  dtoFieldValues: [CaseNotificationType.COURT_DATE],
 }
 
 // Allows district court registrars to send notifications
@@ -45,10 +42,7 @@ export const districtCourtRegistrarNotificationRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_REGISTRAR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [
-    CaseNotificationType.COURT_DATE,
-    IndictmentCaseNotificationType.COURT_DATE,
-  ],
+  dtoFieldValues: [CaseNotificationType.COURT_DATE],
 }
 
 // Allows district court assistants to send notifications
@@ -56,10 +50,7 @@ export const districtCourtAssistantNotificationRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_ASSISTANT,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [
-    CaseNotificationType.COURT_DATE,
-    IndictmentCaseNotificationType.COURT_DATE,
-  ],
+  dtoFieldValues: [CaseNotificationType.COURT_DATE],
 }
 
 // Allows court of appeals judges to send notifiications

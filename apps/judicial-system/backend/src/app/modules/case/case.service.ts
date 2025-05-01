@@ -1641,12 +1641,6 @@ export class CaseService {
         updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
 
       if (hasUpdatedArraignmentDate || hasUpdatedCourtDate) {
-        // New arraignment date or new court date
-        // await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
-
-        // NOTE: here we are creating an event + writing to queue instead of writing directly to the queue
-        console.log('TESTING1')
-        console.log({ user })
         await this.eventLogService.createWithUser(
           EventType.COURT_DATE_SCHEDULED,
           theCase.id,
