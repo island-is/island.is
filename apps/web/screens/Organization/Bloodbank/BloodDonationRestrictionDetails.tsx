@@ -100,7 +100,7 @@ const BloodDonationRestrictionDetails: CustomScreen<
               width="full"
             >
               <Text variant="h3" as="h2">
-                {formatMessage(m.listPage.cardSubheading)}
+                {formatMessage(m.detailsPage.cardSubheading)}
               </Text>
               <Text as="div">{webRichText(item.cardText)}</Text>
             </Box>

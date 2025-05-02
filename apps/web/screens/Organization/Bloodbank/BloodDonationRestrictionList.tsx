@@ -305,6 +305,11 @@ const BloodDonationRestrictionList: CustomScreen<
                   <Text variant="h4" color="blue400">
                     {item.title}
                   </Text>
+                  {Boolean(item.description) && (
+                    <Text variant="medium">
+                      {highlightMatch(item.description, trimmedQueryString)}
+                    </Text>
+                  )}
                   {item.hasCardText && (
                     <Box
                       background="dark100"
@@ -329,11 +334,6 @@ const BloodDonationRestrictionList: CustomScreen<
                         </Button>
                       )}
                     </Box>
-                  )}
-                  {Boolean(item.description) && (
-                    <Text variant="medium">
-                      {highlightMatch(item.description, trimmedQueryString)}
-                    </Text>
                   )}
                   {Boolean(item.keywordsText) && (
                     <Text variant="small">
