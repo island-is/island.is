@@ -33,7 +33,7 @@ env:
 jobs:
   dedupe:
     name: Deduplicate
-    runs-on: arc-runners
+    runs-on: arc-shared
     steps:
       - uses: actions/checkout@v4
         with:
