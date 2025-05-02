@@ -196,7 +196,7 @@ export const Cases: FC = () => {
         }
       }
 
-      // This componenet is only used for prosecution and district court users
+      // This component is only used for prosecution and district court users
       return false
     })
 
