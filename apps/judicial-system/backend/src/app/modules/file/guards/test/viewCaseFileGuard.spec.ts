@@ -12,7 +12,7 @@ import {
   districtCourtRoles,
   InstitutionType,
   prosecutionRoles,
-  publicProsecutorRoles,
+  publicProsecutionOfficeRoles,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -58,7 +58,9 @@ describe('View Case File Guard', () => {
             user: {
               currentUser: {
                 role,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+                institution: {
+                  type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+                },
               },
             },
             case: { state },
@@ -229,7 +231,7 @@ describe('View Case File Guard', () => {
     })
   })
 
-  describe.each(publicProsecutorRoles)('role %s', (role) => {
+  describe.each(publicProsecutionOfficeRoles)('role %s', (role) => {
     describe.each(completedCaseStates)('%s cases', (state) => {
       let then: Then
 
@@ -239,8 +241,7 @@ describe('View Case File Guard', () => {
             currentUser: {
               role,
               institution: {
-                type: InstitutionType.PROSECUTORS_OFFICE,
-                id: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
+                type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
               },
             },
           },
@@ -268,8 +269,7 @@ describe('View Case File Guard', () => {
             currentUser: {
               role,
               institution: {
-                type: InstitutionType.PROSECUTORS_OFFICE,
-                id: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
+                type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
               },
             },
           },

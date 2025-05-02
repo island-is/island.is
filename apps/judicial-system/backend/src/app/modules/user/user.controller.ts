@@ -26,8 +26,9 @@ import {
 import { adminRule } from '../../guards'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
+import { CreateUserValidator } from './interceptors/createUser.validator'
+import { UpdateUserValidator } from './interceptors/updateUser.validator'
 import { UserInterceptor } from './interceptors/user.interceptor'
-import { UserValidator } from './interceptors/user.validator'
 import { User } from './user.model'
 import { UserService } from './user.service'
 
@@ -41,7 +42,7 @@ export class UserController {
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(adminRule)
-  @UseInterceptors(UserValidator)
+  @UseInterceptors(CreateUserValidator)
   @Post('user')
   @ApiCreatedResponse({ type: User, description: 'Creates a new user' })
   create(@Body() userToCreate: CreateUserDto): Promise<User> {
@@ -52,7 +53,7 @@ export class UserController {
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(adminRule)
-  @UseInterceptors(UserValidator)
+  @UseInterceptors(UpdateUserValidator)
   @Put('user/:userId')
   @ApiOkResponse({ type: User, description: 'Updates an existing user' })
   update(
@@ -94,7 +95,8 @@ export class UserController {
   @Get('user')
   @ApiOkResponse({
     type: User,
-    description: 'Gets an existing user by national id',
+    isArray: true,
+    description: 'Gets existing users by national id',
   })
   getByNationalId(@Query('nationalId') nationalId: string): Promise<User[]> {
     this.logger.debug('Getting a user by national id')

@@ -22,7 +22,7 @@ describe('shouldHideNextButton', () => {
   const prosecutor = {
     id: uuid(),
     role: UserRole.PROSECUTOR,
-    institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+    institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
   } as User
 
   it.each`
@@ -106,7 +106,7 @@ describe('getExtensionInfoText', () => {
 
   const prosecutor = {
     role: UserRole.PROSECUTOR,
-    institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+    institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
   } as User
 
   const fn = (theCase: Case, user?: User) =>

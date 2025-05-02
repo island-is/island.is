@@ -12,7 +12,7 @@ import {
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isProsecutionUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -71,14 +71,14 @@ export const UserProvider: FC<PropsWithChildren<Props>> = ({
     <UserContext.Provider
       value={{
         isAuthenticated,
-        user: user,
-        eligibleUsers: eligibleUsers,
+        user,
+        eligibleUsers,
         limitedAccess:
           user && // Needed for e2e tests as they do not have a logged in user
           !isProsecutionUser(user) &&
           !isDistrictCourtUser(user) &&
           !isCourtOfAppealsUser(user) &&
-          !isPublicProsecutorUser(user),
+          !isPublicProsecutionOfficeUser(user),
       }}
     >
       {children}

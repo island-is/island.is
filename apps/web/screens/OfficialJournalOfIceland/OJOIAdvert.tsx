@@ -114,7 +114,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                   {formatMessage(m.advert.signatureDate)}
                 </Text>
                 <Text variant="small">
-                  {formatDate(advert.signatureDate, 'dd. MMMM yyyy')}
+                  {formatDate(advert.signatureDate, 'd. MMMM yyyy')}
                 </Text>
               </Box>
 
@@ -123,7 +123,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                   {formatMessage(m.advert.publicationDate)}
                 </Text>
                 <Text variant="small">
-                  {formatDate(advert.publicationDate, 'dd. MMMM yyyy')}
+                  {formatDate(advert.publicationDate, 'd. MMMM yyyy')}
                 </Text>
               </Box>
             </Stack>
@@ -156,21 +156,35 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                   background="purple100"
                   padding={[2, 2, 3]}
                   borderRadius="large"
-                  key={correction.id ?? correction.title}
+                  key={correction.id}
                 >
                   <Stack space={[1, 1, 2]}>
                     <Text variant="h4">
                       {formatMessage(m.advert.sidebarCorrectionTitle)}
                     </Text>
 
-                    <Box>
-                      <Text variant="h5">
-                        {formatMessage(m.advert.correctedDate)}
-                      </Text>
-                      <Text variant="small">
-                        {formatDate(correction.createdDate, 'dd. MMMM yyyy')}
-                      </Text>
-                    </Box>
+                    {correction.legacyDate ||
+                    (correction.createdDate && !correction.isLegacy) ? (
+                      <Box>
+                        <Text variant="h5">
+                          {formatMessage(m.advert.correctedDate)}
+                        </Text>
+                        {correction.isLegacy ? (
+                          <Text variant="small">
+                            {correction.legacyDate
+                              ? formatDate(
+                                  correction.legacyDate,
+                                  'd. MMMM yyyy',
+                                )
+                              : ''}
+                          </Text>
+                        ) : (
+                          <Text variant="small">
+                            {formatDate(correction.createdDate, 'd. MMMM yyyy')}
+                          </Text>
+                        )}
+                      </Box>
+                    ) : undefined}
 
                     <Box>
                       <Text variant="h5">
@@ -264,7 +278,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
     >
       <OJOIAdvertDisplay
         advertNumber={advert.publicationNumber.full}
-        signatureDate={formatDate(advert.signatureDate, 'dd. MMMM yyyy')}
+        signatureDate={formatDate(advert.signatureDate, 'd. MMMM yyyy')}
         advertType={advert.type.title}
         advertSubject={advert.subject}
         advertText={advert.document.html}
