@@ -192,7 +192,6 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
     const certificateOfTenure = getValueViaPath<
       TrainingLicenseOnAWorkMachine['certificateOfTenure']
     >(application.answers, 'certificateOfTenure')
-
     await this.workMachineClientService
       .machineLicenseTeachingApplication(auth, {
         xCorrelationID: application.id,
