@@ -44,7 +44,7 @@ export const getCleanApplicantInformation = (
     TrainingLicenseOnAWorkMachine['information']
   >(application.answers, 'information')
   return {
-    nationalId: '', // applicantInformation?.nationalId ?? '',
+    nationalId: applicantInformation?.nationalId ?? '',
     name: applicantInformation?.name ?? '',
     phoneNumber: applicantInformation?.phone ?? '',
     email: applicantInformation?.email ?? '',
