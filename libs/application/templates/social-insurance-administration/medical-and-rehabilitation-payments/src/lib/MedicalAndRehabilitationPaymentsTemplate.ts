@@ -37,6 +37,7 @@ import {
   medicalAndRehabilitationPaymentsFormMessage,
   statesMessages,
 } from './messages'
+import { Features } from '@island.is/feature-flags'
 
 const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -51,6 +52,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
     ApplicationConfigurations.MedicalAndRehabilitationPayments.translation,
   dataSchema,
   // allowMultipleApplicationsInDraft: false,
+  featureFlag: Features.medicalAndRehabilitationPayments,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
