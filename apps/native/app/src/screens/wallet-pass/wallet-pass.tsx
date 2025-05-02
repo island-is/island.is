@@ -136,7 +136,7 @@ const getInfoAlertMessageIds = (
 ) => {
   const isTravelIdentityDocument =
     licenseType === GenericLicenseType.IdentityDocument &&
-    licenseNumber?.startsWith('II')
+    licenseNumber?.startsWith('ID')
   switch (licenseType) {
     case GenericLicenseType.PCard:
       return {
