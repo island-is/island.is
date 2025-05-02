@@ -25,6 +25,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useVehiclesListLazyQuery } from './VehicleBulkMileage.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
+import { FinancePaths } from '@island.is/portals/my-pages/finance'
 import { Problem } from '@island.is/react-spa/shared'
 
 interface FormData {
@@ -148,8 +149,15 @@ const VehicleBulkMileage = () => {
           }
           serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-          buttonGroup={
-            displayFilters
+          buttonGroup={[
+            <LinkButton
+              key="finance"
+              to={FinancePaths.FinanceTransactionVehicleMileage}
+              text={formatMessage(vehicleMessage.financeMileageLink)}
+              icon="bank"
+              variant="utility"
+            />,
+            ...(displayFilters
               ? [
                   <LinkButton
                     key="upload"
@@ -166,8 +174,8 @@ const VehicleBulkMileage = () => {
                     variant="utility"
                   />,
                 ]
-              : undefined
-          }
+              : []),
+          ]}
         >
           {displayFilters && (
             <Box marginBottom={2}>
