@@ -111,6 +111,7 @@ const FinanceTransactions = () => {
         <LinkButton
           to={formatMessage(messages.mileageFeeLink)}
           text={formatMessage(messages.mileageFeeLinkLabel)}
+          variant="text"
         />
       </Box>
       <DynamicWrapper>

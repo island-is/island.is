@@ -148,15 +148,8 @@ const VehicleBulkMileage = () => {
           }
           serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-          buttonGroup={[
-            <LinkButton
-              key="finance"
-              to={AssetsPaths.LinkFinanceTransactionVehicleMileage}
-              text={formatMessage(vehicleMessage.financeMileageLink)}
-              icon="bank"
-              variant="utility"
-            />,
-            ...(displayFilters
+          buttonGroup={
+            displayFilters
               ? [
                   <LinkButton
                     key="upload"
@@ -173,8 +166,8 @@ const VehicleBulkMileage = () => {
                     variant="utility"
                   />,
                 ]
-              : []),
-          ]}
+              : undefined
+          }
         >
           {displayFilters && (
             <Box marginBottom={2}>
