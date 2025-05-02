@@ -1,5 +1,4 @@
 import {
-  CustomersApi,
   CustomersListDocumentsOrderEnum,
   CustomersListDocumentsSortByEnum,
   CustomersWantsPaperMailRequest,
