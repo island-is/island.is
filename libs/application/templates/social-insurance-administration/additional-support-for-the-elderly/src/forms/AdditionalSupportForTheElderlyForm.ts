@@ -2,6 +2,7 @@ import {
   buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
+  buildDescriptionField,
   buildForm,
   buildHiddenInputWithWatchedValue,
   buildMultiField,
@@ -191,6 +192,53 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
               // Needed to trigger an update on options in the select above
               id: 'period.hiddenInput',
               watchValue: 'period.year',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'higherPayments',
+      title: additionalSupportForTheElderyFormMessage.info.higherPaymentsCohabTitle,
+      children: [
+        buildMultiField({
+          id: 'higherPayments',
+          title: (application: Application) => {
+            const { cohabitants } = getApplicationExternalData(
+              application.externalData,
+            )
+            return cohabitants.length === 0
+              ? additionalSupportForTheElderyFormMessage.info.higherPaymentsTitle
+              : additionalSupportForTheElderyFormMessage.info.higherPaymentsCohabTitle
+          },
+          description: (application: Application) => {
+            const { cohabitants } = getApplicationExternalData(
+              application.externalData,
+            )
+            return cohabitants.length === 0
+              ? additionalSupportForTheElderyFormMessage.info.higherPaymentsDescription
+              : additionalSupportForTheElderyFormMessage.info.higherPaymentsCohabDescription
+          },
+          children: [
+            buildRadioField({
+              id: 'higherPayments.question',
+              options: getYesNoOptions(),
+              width: 'half',
+              condition: (_, externalData) => {
+                const { cohabitants } = getApplicationExternalData(
+                  externalData,
+                )
+                return cohabitants.length === 0
+              },
+            }),
+            buildDescriptionField({
+              id: 'higherPayments.text',
+              condition: (_, externalData) => {
+                const { cohabitants } = getApplicationExternalData(
+                  externalData,
+                )
+                return cohabitants.length > 0
+              },
             }),
           ],
         }),
