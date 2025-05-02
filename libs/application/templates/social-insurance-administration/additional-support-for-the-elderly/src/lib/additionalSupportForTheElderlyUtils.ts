@@ -65,6 +65,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'paymentInfo.taxLevel',
   ) as TaxLevelOptions
 
+  const higherPayments = getValueViaPath(
+    answers,
+    'higherPayments.question',
+  ) as YesOrNo
+
   return {
     applicantPhonenumber,
     selectedYear,
@@ -79,6 +84,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
+    higherPayments,
   }
 }
 
@@ -132,6 +138,12 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIsApplicantEligible.data',
   ) as Eligible
 
+  const cohabitants = getValueViaPath(
+    externalData,
+    'nationalRegistryCohabitants.data',
+    [],
+  ) as string[]
+
   return {
     applicantName,
     applicantNationalId,
@@ -141,6 +153,7 @@ export const getApplicationExternalData = (
     userProfileEmail,
     bankInfo,
     isEligible,
+    cohabitants,
   }
 }
 
