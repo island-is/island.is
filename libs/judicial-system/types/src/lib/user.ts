@@ -222,6 +222,8 @@ const institutionUserRoles: { [key in InstitutionType]: UserRole[] } = {
   [InstitutionType.COURT_OF_APPEALS]: courtOfAppealsRoles,
   [InstitutionType.PRISON]: prisonSystemRoles,
   [InstitutionType.PRISON_ADMIN]: prisonSystemRoles,
+  [InstitutionType.NATIONAL_COMMISSIONERS_OFFICE]: [],
+  [InstitutionType.COURT_ADMINISTRATION_OFFICE]: [],
 }
 
 export const getAdminUserInstitutionUserRoles = (
