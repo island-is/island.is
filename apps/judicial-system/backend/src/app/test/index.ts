@@ -4,3 +4,5 @@ export {
   randomEnum,
   randomEnumSplit as randomListSplit,
 } from './random'
+
+export { verifyGuards, verifyRolesRules } from './testHelpers'

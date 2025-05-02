@@ -30,7 +30,7 @@ env:
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
-  GENERATED_FILES: ${{ github.workspace }}/${{ github.sha }}.tar.gz
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
@@ -337,7 +337,7 @@ jobs:
           for f in "${BASE_LINT_FILE}" "${HEAD_LINT_FILE}"; do
             # Make "Remote cache..." and "Local cache" be the same
             sed -i -E 's/\s*\[[^[]*cache[^]]*\]\s*//g' "${f}" || echo "No cached targets found in $f"
-            grep -oP "(?<=$PWD/).*" "${f}" | sort -n | uniq -c | awk '{print($2 " #lints: " $1)}' > "${f}_files.out" || { echo "No lints found in $f"; exit 1; }
+            grep -oP "(?<=$PWD/).*" "${f}" | sort -n | uniq -c | awk '{print($2 " #lints: " $1)}' > "${f}_files.out" || { echo "No lints found in $f"; }
           done
           NEW_LINTS=$(comm -13 "${BASE_LINT_FILE}_files.out" "${HEAD_LINT_FILE}_files.out" | wc -l) || { echo "Failed comparing output files"; exit 1; }
           COUNT_DIFF=$(( HEAD_LINT_COUNT - BASE_LINT_COUNT )) || :
