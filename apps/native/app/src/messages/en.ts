@@ -739,10 +739,11 @@ export const en: TranslatedMessages = {
   'health.prescriptions.indication': 'Lyf er notað við',
   'health.prescriptions.quantity': 'Ávísað magn',
   'health.prescriptions.dosageInstructions': 'Notkunarleiðbeiningar',
-  'health.prescriptions.amountRemaining': '{amountRemaining} eftir',
   'health.prescriptions.quantityUnit': '{quantity} stk',
-  'health.prescriptions.fullyUsed': 'Fullafgreitt',
   'health.prescriptions.issueDate': 'Útgáfudagur',
   'health.prescriptions.expiresAt': 'Gildir til',
   'health.prescriptions.doctor': 'Læknir',
+  'health.prescriptions.issueInformation': 'Útgáfa',
+  'health.prescriptions.dispensations': 'Afgreiðslusaga',
+  'health.prescriptions.dispensationNumber': '{number}. afgreiðsla:',
 }
