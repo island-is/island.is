@@ -22,4 +22,7 @@ export enum AssetsPaths {
   AssetsIntellectualPropertiesTrademark = '/eignir/hugverkarettindi/vorumerki/:id',
   AssetsIntellectualPropertiesPatent = '/eignir/hugverkarettindi/einkaleyfi/:id',
   AssetsIntellectualPropertiesDesign = '/eignir/hugverkarettindi/honnun/:id',
+
+  //LINKS
+  LinkFinanceTransactionVehicleMileage = '/fjarmal/faerslur/kilometragjald',
 }

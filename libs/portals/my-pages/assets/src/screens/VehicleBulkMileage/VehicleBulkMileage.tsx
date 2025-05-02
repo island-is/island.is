@@ -25,7 +25,6 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useVehiclesListLazyQuery } from './VehicleBulkMileage.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
-import { FinancePaths } from '@island.is/portals/my-pages/finance'
 import { Problem } from '@island.is/react-spa/shared'
 
 interface FormData {
@@ -41,7 +40,7 @@ const VehicleBulkMileage = () => {
   const [search, setSearch] = useState<string>()
   const [displayFilters, setDisplayFilters] = useState<boolean>(false)
 
-  const [vehicleListQuery, { data, loading, error, called }] =
+  const [vehicleListQuery, { data, loading, error }] =
     useVehiclesListLazyQuery()
 
   useEffect(() => {
@@ -152,7 +151,7 @@ const VehicleBulkMileage = () => {
           buttonGroup={[
             <LinkButton
               key="finance"
-              to={FinancePaths.FinanceTransactionVehicleMileage}
+              to={AssetsPaths.LinkFinanceTransactionVehicleMileage}
               text={formatMessage(vehicleMessage.financeMileageLink)}
               icon="bank"
               variant="utility"

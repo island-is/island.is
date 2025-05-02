@@ -14,6 +14,9 @@ export enum FinancePaths {
   FinancePaymentsSchedule = '/fjarmal/greidslur/greidsluaetlanir',
   FinancePaymentsHousingBenefits = '/fjarmal/greidslur/husnaedisbaetur',
 
+  // LINKS
+  LinkAssetsVehiclesBulkMileage = '/eignir/okutaeki/skra-kilometrastodu',
+
   // Deprecated with redirects
   FinanceBills = '/fjarmal/greidslusedlar-og-greidslukvittanir',
   FinanceSchedule = '/fjarmal/greidsluaetlanir',
