@@ -48,7 +48,7 @@ export const getRecipients = (
   custodiansExternalData.forEach((custodian, index) => {
     recipientList.push({
       nationalId: custodian.nationalId,
-      name: `${custodian.givenName || ''} ${custodian.familyName || ''}`,
+      name: custodian.name || '',
       email: custodiansAnswers[index]?.person?.email || '',
     })
   })
@@ -76,7 +76,7 @@ export const getCleanContacts = (
   custodiansExternalData.forEach((custodian, index) => {
     result.push({
       nationalId: custodian.nationalId,
-      name: `${custodian.givenName || ''} ${custodian.familyName || ''}`,
+      name: custodian.name || '',
       phone: custodiansAnswers[index]?.person?.phone || '',
       email: custodiansAnswers[index]?.person?.email || '',
       address: custodian.legalDomicile?.streetAddress,

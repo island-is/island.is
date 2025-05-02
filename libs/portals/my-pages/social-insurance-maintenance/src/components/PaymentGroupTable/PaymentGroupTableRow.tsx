@@ -124,14 +124,11 @@ export const PaymentGroupTableRow = ({ paymentGroup }: Props) => {
                 <Box
                   className={styles.nestedCell}
                   background={idx % 2 === 0 ? 'white' : 'blue100'}
-                  marginLeft={3}
                   paddingLeft={2}
-                  paddingY={2}
+                  marginLeft={2}
                   marginBottom={last ? 3 : 0}
                 >
-                  <Text marginTop="auto" variant="small">
-                    {pg.name}
-                  </Text>
+                  <Text variant="small">{pg.name}</Text>
                 </Box>
               </AnimateHeight>
             </T.HeadData>

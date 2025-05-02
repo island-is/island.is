@@ -34,6 +34,9 @@ export const courtOfAppealsAssistantRule: RolesRule =
 // Allows prison system staff to perform any action
 export const prisonSystemStaffRule: RolesRule = UserRole.PRISON_SYSTEM_STAFF
 
+// Allows local admins to perform any action
+export const localAdminRule: RolesRule = UserRole.LOCAL_ADMIN
+
 // Allows admins to perform any action
 export const adminRule: RolesRule = UserRole.ADMIN
 
