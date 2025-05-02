@@ -50,7 +50,7 @@ jobs:
     secrets: inherit
 
   prepare:
-    runs-on: arc-runners
+    runs-on: arc-shared
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -250,7 +250,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: arc-docker
+    runs-on: arc-shared
     timeout-minutes: 45
     if: needs.prepare.outputs.BUILD_CHUNKS
     permissions:
@@ -397,7 +397,7 @@ jobs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: arc-docker
+    runs-on: arc-shared
     timeout-minutes: 30
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
@@ -447,7 +447,7 @@ jobs:
             const { COMMENT } = process.env
             await updateComment({github, context, comment: COMMENT})
   deploy-feature:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: ${{ !cancelled()
       && needs.pre-checks.result == 'success'
       && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
@@ -572,7 +572,7 @@ jobs:
           "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
           -d "{\"event_type\":\"deploy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}}"
   push-success:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs:
       - pre-checks
@@ -587,7 +587,7 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
@@ -607,7 +607,7 @@ jobs:
 
   scanflags:
     if: github.ref == 'ref/heads/main'
-    runs-on: arc-runners
+    runs-on: arc-shared
     steps:
       - name: Checkout
         uses: actions/checkout@v4
