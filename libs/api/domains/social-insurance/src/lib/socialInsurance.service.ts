@@ -252,4 +252,8 @@ export class SocialInsuranceService {
         return IncomePlanStatus.UNKNOWN
     }
   }
+
+  getUnions(user: User): Promise<{ id: string; name: string }[]> {
+    return this.socialInsuranceApi.getUnions(user)
+  }
 }

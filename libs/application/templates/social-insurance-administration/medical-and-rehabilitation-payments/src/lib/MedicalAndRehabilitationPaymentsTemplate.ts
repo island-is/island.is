@@ -31,6 +31,7 @@ import { assign } from 'xstate'
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationUnionsApi,
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import {
@@ -80,11 +81,12 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 NationalRegistrySpouseApi,
                 UserProfileApi.configure({
                   params: {
-                    validateEmail: true,
+                    validateEmail: false,
                   },
                 }),
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
+                SocialInsuranceAdministrationUnionsApi,
               ],
               delete: true,
             },

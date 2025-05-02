@@ -21,6 +21,7 @@ import {
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
+  // TrWebApiServicesDomainUnionsModelsUnionDto,
 } from '../../gen/fetch'
 import { handle404 } from '@island.is/clients/middlewares'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
@@ -37,6 +38,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly pensionCalculatorApi: PensionCalculatorApi,
     private readonly deathBenefitsApi: DeathBenefitsApi,
     private readonly incomePlanApi: IncomePlanApi,
+    private readonly generalApi: GeneralApi,
   ) {}
 
   private applicationApiWithAuth = (user: User) =>
@@ -59,6 +61,9 @@ export class SocialInsuranceAdministrationClientService {
 
   private incomePlanApiWithAuth = (user: User) =>
     this.incomePlanApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private genaralApiWithAuth = (user: User) =>
+    this.generalApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   getPaymentPlan(
     user: User,
@@ -188,5 +193,18 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1IncomePlanTemporaryCalculationsPost({
       trWebApiServicesDomainFinanceModelsIslandIsIncomePlanDto: parameters,
     })
+  }
+
+  // async getUnions(
+  //   user: User,
+  // ): Promise<Array<TrWebApiServicesDomainUnionsModelsUnionDto>> {
+  //   reportErroreturn this.genaralApiWithAuth(user).apiProtectedV1GeneralUnionsGet()
+  // }
+
+  async getUnions(user: User): Promise<Array<{ id: string; name: string }>> {
+    return [
+      { id: 'VR', name: 'VR' },
+      { id: 'Efling', name: 'Efling' },
+    ]
   }
 }
