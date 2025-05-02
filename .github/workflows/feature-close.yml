@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   close_feature:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: ${{ github.event.label.name == 'deploy-feature' }}
     permissions:
       id-token: write

@@ -1,5 +1,6 @@
 import { RepeaterItem } from '@island.is/application/types'
 import { coreMessages } from '@island.is/application/core'
+import * as kennitala from 'kennitala'
 
 type Item = {
   id: string
@@ -34,7 +35,14 @@ const handleNationalIdWithNameItem = <T>(
   const newValues = values.map((value) => {
     if (!!value[item.id] && typeof value[item.id] === 'object') {
       const { [item.id]: nestedObject, ...rest } = value
-      return { ...nestedObject, ...rest }
+      const formattedNationalId = kennitala.format(
+        (nestedObject as { nationalId: string })?.nationalId,
+      )
+      return {
+        ...nestedObject,
+        nationalId: formattedNationalId as T,
+        ...rest,
+      }
     }
     return value
   })

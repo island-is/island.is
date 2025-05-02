@@ -2,8 +2,6 @@ import { Allow, IsOptional } from 'class-validator'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
 
-import { UserRole } from '@island.is/judicial-system/types'
-
 @InputType()
 export class UpdateUserInput {
   @Allow()
@@ -29,11 +27,6 @@ export class UpdateUserInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly email?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => UserRole, { nullable: true })
-  readonly role?: UserRole
 
   @Allow()
   @IsOptional()
