@@ -25,6 +25,9 @@ export class Address {
 
   @Field(() => Number, { nullable: true })
   readonly streetNumber?: number
+
+  @Field(() => Number, { nullable: true })
+  readonly numOfConnectedProperties?: number
 }
 
 @ObjectType()

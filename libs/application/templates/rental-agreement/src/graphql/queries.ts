@@ -12,6 +12,7 @@ export const ADDRESS_SEARCH_QUERY = gql`
         postalCode
         streetName
         streetNumber
+        numOfConnectedProperties
       }
     }
   }

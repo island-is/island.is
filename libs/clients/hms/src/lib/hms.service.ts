@@ -42,38 +42,43 @@ export class HmsService {
           landCode: item.landeignNr,
           streetName: item.stadvisir ?? undefined,
           streetNumber: item.stadgreinirNr,
+          numOfConnectedProperties: item.fjoldiTengdraFasteigna,
         }
       })
     } catch (error) {
-      throw new Error(`Failed to search HMS data: ${error.message}`)
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Unknown error'
+      throw new Error(
+        `Failed to retrieve data for searched adresses: ${errorMessage}`,
+      )
     }
   }
 
   async hmsPropertyInfo(user: User, input: ApiFasteignByStadfangNrGetRequest) {
-    const fasteignir = await this.apiWithAuth(
-      this.fasteignApi,
-      user,
-    ).apiFasteignByStadfangNrGet(input)
-
-    const adalmatseiningarPromise = fasteignir.reduce((acc, fasteign) => {
-      if (fasteign.fasteignNr) {
-        acc.push(
-          this.apiWithAuth(
-            this.adalmatseiningApi,
-            user,
-          ).apiAdalmatseiningByFasteignNrGet({
-            fasteignNr: fasteign.fasteignNr,
-          }),
-        )
-      }
-
-      return acc
-    }, [] as Promise<Adalmatseining[]>[])
-
-    const adalMatseiningar = await Promise.all(adalmatseiningarPromise).then(
-      (res) => res.flat(),
-    )
     try {
+      const fasteignir = await this.apiWithAuth(
+        this.fasteignApi,
+        user,
+      ).apiFasteignByStadfangNrGet(input)
+
+      const adalmatseiningarPromise = fasteignir.reduce((acc, fasteign) => {
+        if (fasteign.fasteignNr) {
+          acc.push(
+            this.apiWithAuth(
+              this.adalmatseiningApi,
+              user,
+            ).apiAdalmatseiningByFasteignNrGet({
+              fasteignNr: fasteign.fasteignNr,
+            }),
+          )
+        }
+
+        return acc
+      }, [] as Promise<Adalmatseining[]>[])
+
+      const adalMatseiningar = await Promise.all(adalmatseiningarPromise).then(
+        (res) => res.flat(),
+      )
       return fasteignir.map((fasteign) => {
         const adalmatseining = adalMatseiningar.filter(
           (a) => a.fasteignNr === fasteign.fasteignNr,
@@ -122,8 +127,10 @@ export class HmsService {
         }
       })
     } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Unknown error'
       throw new Error(
-        `Failed to retrieve property information: ${error.message}`,
+        `Failed to retrieve property information: ${errorMessage}`,
       )
     }
   }

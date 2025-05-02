@@ -71,7 +71,7 @@ export const ReviewInfoSection = buildSection({
         buildRadioField({
           id: 'reviewInfo.applicationReview.nextStepOptions',
           options: getNextStepInReviewOptions(),
-          defaultValue: NextStepInReviewOptions.EDIT_APPLICATION,
+          defaultValue: NextStepInReviewOptions.GO_TO_SIGNING,
           space: 2,
           marginTop: 6,
         }),

@@ -46,6 +46,12 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const { id } = field
   const storedValue = getValues(id)
 
+  const [addressSearchError, setAddressSearchError] = useState<string | null>(
+    null,
+  )
+  const [propertyInfoError, setPropertyInfoError] = useState<string | null>(
+    null,
+  )
   const [searchTerm, setSearchTerm] = useState(storedValue?.value)
   const [searchOptions, setSearchOptions] = useState<AddressProps[]>([])
   const [tableExpanded, setTableExpanded] = useState<Record<string, boolean>>(
@@ -83,7 +89,10 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   }, [selectedAddress])
 
   useEffect(() => {
-    if (searchTerm?.length) {
+    const isInitialRender =
+      selectedAddress && searchTerm === selectedAddress.value
+
+    if (searchTerm?.length && !isInitialRender) {
       hmsSearch({
         variables: {
           input: {
@@ -99,6 +108,42 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
 
   useEffect(() => {
     if (!storedValue) return
+
+    // Handle when page loads with a stored value
+    if (storedValue && storedValue.addressCode && !selectedAddress) {
+      // Create address object from stored data
+      const address: AddressProps = {
+        addressCode: storedValue.addressCode,
+        address: storedValue.address,
+        municipalityName: storedValue.municipalityName,
+        municipalityCode: storedValue.municipalityCode,
+        postalCode: storedValue.postalCode,
+        landCode: storedValue.landCode,
+        streetName: storedValue.streetName,
+        streetNumber: storedValue.streetNumber,
+        label:
+          storedValue.label ||
+          `${storedValue.address}, ${storedValue.postalCode} ${storedValue.municipalityName}`,
+        value: `${storedValue.addressCode}`,
+      }
+
+      setSelectedAddress(address)
+
+      // No need to trigger search if we already have the address
+      if (storedValue.propertiesByAddressCode?.length) {
+        setPropertiesByAddressCode(storedValue.propertiesByAddressCode)
+      } else if (address.addressCode) {
+        // If we don't have property data, fetch it
+        hmsPropertyInfo({
+          variables: {
+            input: {
+              stadfangNr: address.addressCode,
+            },
+          },
+        })
+      }
+    }
+
     setTableExpanded(restoreTableExpanded(storedValue))
     setCheckedUnits(restoreCheckedUnits(storedValue))
     setNumOfRoomsValue(restoreRoomsValue(storedValue))
@@ -120,8 +165,13 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   >(ADDRESS_SEARCH_QUERY, {
     onError: (error) => {
       console.error('Error fetching address', error)
+      setAddressSearchError(
+        formatMessage(registerProperty.search.addressSearchError) ||
+          'Failed to search addresses',
+      )
     },
     onCompleted: (data) => {
+      setAddressSearchError(null)
       if (data.hmsSearch) {
         const searchOptions = data.hmsSearch.addresses.map((address) => ({
           ...address,
@@ -142,8 +192,13 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   >(PROPERTY_INFO_QUERY, {
     onError: (error) => {
       console.error('Error fetching properties', error)
+      setPropertyInfoError(
+        formatMessage(registerProperty.search.propertyInfoError) ||
+          'Failed to fetch properties',
+      )
     },
     onCompleted: (data) => {
+      setPropertyInfoError(null)
       if (data.hmsPropertyInfo) {
         setPropertiesByAddressCode(data.hmsPropertyInfo.propertyInfos)
       }
@@ -299,7 +354,19 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       (option) => option.value === selectedValue,
     )
     setSelectedAddress(selectedOption)
-    setValue(id, selection ? selection : undefined)
+    setValue(
+      id,
+      selectedOption
+        ? {
+            ...selectedOption,
+            propertiesByAddressCode: propertiesByAddressCode || [],
+            units: storedValue?.units || [],
+            checkedUnits: checkedUnits,
+            numOfRooms: numOfRoomsValue,
+            changedValueOfUnitSize: unitSizeChangedValue,
+          }
+        : undefined,
+    )
   }
 
   const hasValidationErrors = errors ? Object.keys(errors).length > 0 : false
@@ -336,10 +403,20 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
             )
           }}
         />
+        {addressSearchError && (
+          <Box marginTop={2}>
+            <AlertMessage type="error" message={addressSearchError} />
+          </Box>
+        )}
       </Box>
 
       {selectedAddress && (
         <Box marginTop={6}>
+          {propertyInfoError && (
+            <Box marginBottom={4}>
+              <AlertMessage type="error" message={propertyInfoError} />
+            </Box>
+          )}
           {propertiesLoading ? (
             <div style={{ textAlign: 'center' }}>
               <LoadingDots large />

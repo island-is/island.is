@@ -1,51 +1,79 @@
-# Rental Agreement
-
-(application-templates-rental-agreement)
+# Rental Agreement application
 
 ## About
 
-[Introduction about the project and its purpose]
+This application allows individuals to create a rental agreement between one or more landlords and tenants that ends in a signature of all required parties and is then registered with the rental registry (leiguskrá Húsnæðis- og Mannvirkjastofnunar).
 
 ## URLs
 
+> [!NOTE]
+> Project is still only on DEV.
+
 - [Dev](https://rental-agreement-application-beta.dev01.devland.is/umsoknir/leigusamningur)
-- [Staging](https://beta.staging01.devland.is)
-- [Production](https://island.is)
+- [Staging](https://beta.staging01.devland.is/umsoknir/leigusamningur)
+- [Production](https://island.is/umsoknir/leigusamningur)
 
-## API
+## Setup
 
-To run the api
+Follow [this guide](https://docs.devland.is/development/getting-started) to set up the application system startup environment
 
-```bash
-yarn start api
-```
+## Running locally
 
-To build the production bundle
+### AWS secrets
 
-```bash
-yarn build api --prod
-```
+Get the AWS environment variables from https://island-is.awsapps.com/start to be able to upload documents while running locally
 
-## Web
-
-To run the dev server
+- Choose island-is-development01 --> Access Keys
+- Copy AWS environment variables under "Option 1: Set AWS environment variables"
+- Paste in terminal before running each of:
 
 ```bash
-yarn start web
+kubectl -n socat port-forward svc/socat-xroad 8080:80
 ```
+
+```bash
+kubectl -n socat port-forward svc/socat-xroad 8081:80
+```
+
+```bash
+kubectl port-forward svc/socat-soffia 8443:443 -n socat
+```
+
+### Docker containers:
+
+- islandis-shared --> redis_cluster
+- islandis-application-system --> db_application_system
+- user-profile --> db_user_profile
+
+### Start dev services:
+
+In terminal log in to AWS:
+
+```bash
+aws sso login
+```
+
+then run the server:
+
+```bash
+yarn start application-system-form
+```
+
+and visit `http://localhost:4242/umsoknir/leigusamningur`
+
+## Test users
+
+You can use any gervimaður to go through the appplication on DEV
 
 ### Localisation
 
-{% hint style="warning" %}
-When creating new text strings or making changes in the messages.ts file for the application, be sure to update Contentful by running this command:
-`yarn nx run application-templates-rental-agreement:extract-strings`
+When creating new text strings or making changes in the messages.ts file for the application, be sure to update Contentful by running:
+
+```bash
+yarn nx run application-templates-rental-agreement:extract-strings
+```
 
 For more info see [message extraction](../../../localization/README.md#message-extraction).
-{% endhint %}
-
-## Running unit tests
-
-Run `nx test application-templates-rental-agreement` to execute the unit tests via [Vitest](https://vitest.dev/).
 
 ## Project owner
 

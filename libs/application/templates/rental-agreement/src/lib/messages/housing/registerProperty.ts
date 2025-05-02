@@ -56,6 +56,17 @@ export const registerProperty = {
       defaultMessage: 'Ekki tókst að sækja staðföng',
       description: 'Error message when search fails',
     },
+    addressSearchError: {
+      id: 'ra.application:registerProperty.search.addressSearchError',
+      defaultMessage: 'Ekki tókst að sækja heimilisföng',
+      description: 'Error message when address search fails',
+    },
+    propertyInfoError: {
+      id: 'ra.application:registerProperty.search.propertyInfoError',
+      defaultMessage:
+        'Ekki tókst að sækja fasteignir út frá völdu heimilisfangi',
+      description: 'Error message when property info search fails',
+    },
     searchResultsEmptyError: {
       id: 'ra.application:registerProperty.search.searchResultsEmptyError',
       defaultMessage:

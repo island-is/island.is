@@ -406,6 +406,10 @@
           "stadgreinir_serheiti": {
             "type": "string",
             "nullable": true
+          },
+          "fjoldi_tengdra_fasteigna": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
