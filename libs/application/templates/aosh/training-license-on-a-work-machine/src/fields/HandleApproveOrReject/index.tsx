@@ -8,7 +8,7 @@ import {
   SUBMIT_APPLICATION,
 } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
-import { Box, Button, Divider } from '@island.is/island-ui/core'
+import { Box, Button, Divider, toast } from '@island.is/island-ui/core'
 import { RejectConfirmationModal } from '../Components/RejectConfirmationModal'
 import { overview } from '../../lib/messages'
 import { isLastApprovee } from '../../utils/isLastApprovee'
@@ -72,7 +72,10 @@ export const HandleApproveOrReject: FC<FieldBaseProps> = ({
         },
       },
     })
-    if (res?.data) {
+
+    if (!res?.data) {
+      toast.error(formatMessage(overview.general.submitError))
+    } else if (res?.data) {
       refetch?.()
     }
   }
@@ -99,6 +102,7 @@ export const HandleApproveOrReject: FC<FieldBaseProps> = ({
               <Button
                 icon="checkmark"
                 loading={loading}
+                type="submit"
                 onClick={onApproveButtonClick}
               >
                 {formatMessage(overview.general.approveButton)}

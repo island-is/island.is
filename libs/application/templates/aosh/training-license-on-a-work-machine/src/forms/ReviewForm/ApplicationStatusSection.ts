@@ -39,7 +39,11 @@ export const applicationStatusSection = buildSection({
                 text: {
                   ...applicationStatus.labels.actionCardMessageAssignee,
                   values: {
-                    value: userInfo ? userInfo.workMachine.join(', ') : '',
+                    value: userInfo
+                      ? userInfo.workMachine
+                          ?.map((x) => x.split(' ')[0])
+                          .join(', ')
+                      : '',
                   },
                 },
               },
