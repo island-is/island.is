@@ -2309,3 +2309,418 @@ describe('MeUserProfileController', () => {
     })
   })
 })
+
+describe('POST /v2/me/actor-profile/nudge', () => {
+  let app: TestApp
+  let server: SuperTest<Test>
+  let fixtureFactory: FixtureFactory
+  let userProfileModel: typeof UserProfile
+  let actorProfileModel: typeof ActorProfile
+  let delegationsApi: DelegationsApi
+  let emailsModel: typeof Emails
+  const testNationalId1 = createNationalId('person')
+
+  beforeAll(async () => {
+    app = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user: createCurrentUser({
+        nationalId: testUserProfile.nationalId,
+        scope: [ApiScope.internal],
+        actor: {
+          nationalId: testNationalId1,
+        },
+      }),
+    })
+
+    server = request(app.getHttpServer())
+    fixtureFactory = new FixtureFactory(app)
+    delegationsApi = app.get(DelegationsApi)
+    userProfileModel = app.get(getModelToken(UserProfile))
+    actorProfileModel = app.get(getModelToken(ActorProfile))
+    emailsModel = app.get(getModelToken(Emails))
+  })
+
+  beforeEach(async () => {
+    await userProfileModel.destroy({
+      truncate: true,
+    })
+    await actorProfileModel.destroy({
+      truncate: true,
+    })
+    await emailsModel.destroy({
+      truncate: true,
+      force: true,
+      cascade: true,
+    })
+
+    // Mock delegations API to return a delegation between the test user and testNationalId1
+    jest
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [
+          {
+            toNationalId: testNationalId1,
+            fromNationalId: testUserProfile.nationalId,
+            subjectId: null,
+            type: 'delegation',
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+        totalCount: 1,
+      })
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  it('should update lastNudge and set nextNudge to 6 months for NUDGE type', async () => {
+    // Arrange
+    const actorProfile = await actorProfileModel.create({
+      id: uuid(),
+      toNationalId: testNationalId1,
+      fromNationalId: testUserProfile.nationalId,
+      emailNotifications: true,
+    })
+
+    // Act
+    const res = await server
+      .post('/v2/me/actor-profile/nudge')
+      .set('X-Param-From-National-Id', testUserProfile.nationalId)
+      .send({
+        nudgeType: NudgeType.NUDGE,
+      })
+
+    // Assert
+    expect(res.status).toEqual(200)
+
+    // Verify actor profile was updated correctly
+    const updatedActorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+
+    expect(updatedActorProfile).not.toBeNull()
+    if (!updatedActorProfile) return // Type guard for TypeScript
+    expect(updatedActorProfile.lastNudge).not.toBeNull()
+
+    // Verify that nextNudge is set to 6 months after lastNudge
+    if (!updatedActorProfile.lastNudge) return
+    const expectedNextNudge = addMonths(
+      updatedActorProfile.lastNudge,
+      NUDGE_INTERVAL,
+    )
+    // Compare dates ignoring milliseconds for potential minor discrepancies
+    expect(updatedActorProfile.nextNudge).not.toBeNull()
+    if (!updatedActorProfile.nextNudge) return
+    expect(
+      updatedActorProfile.nextNudge.toISOString().substring(0, 22),
+    ).toEqual(expectedNextNudge.toISOString().substring(0, 22))
+  })
+
+  it('should update lastNudge and set nextNudge to 1 month for SKIP_EMAIL type', async () => {
+    // Arrange
+    const actorProfile = await actorProfileModel.create({
+      id: uuid(),
+      toNationalId: testNationalId1,
+      fromNationalId: testUserProfile.nationalId,
+      emailNotifications: true,
+    })
+
+    // Act
+    const res = await server
+      .post('/v2/me/actor-profile/nudge')
+      .set('X-Param-From-National-Id', testUserProfile.nationalId)
+      .send({
+        nudgeType: NudgeType.SKIP_EMAIL,
+      })
+
+    // Assert
+    expect(res.status).toEqual(200)
+
+    // Verify actor profile was updated correctly
+    const updatedActorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+
+    expect(updatedActorProfile).not.toBeNull()
+    if (!updatedActorProfile) return // Type guard for TypeScript
+    expect(updatedActorProfile.lastNudge).not.toBeNull()
+
+    // Verify that nextNudge is set to 1 month after lastNudge
+    if (!updatedActorProfile.lastNudge) return
+    const expectedNextNudge = addMonths(
+      updatedActorProfile.lastNudge,
+      SKIP_INTERVAL,
+    )
+    // Compare dates ignoring milliseconds for potential minor discrepancies
+    expect(updatedActorProfile.nextNudge).not.toBeNull()
+    if (!updatedActorProfile.nextNudge) return
+    expect(
+      updatedActorProfile.nextNudge.toISOString().substring(0, 22),
+    ).toEqual(expectedNextNudge.toISOString().substring(0, 22))
+  })
+
+  it('should update lastNudge and set nextNudge to 1 month for SKIP_PHONE type', async () => {
+    // Arrange
+    const actorProfile = await actorProfileModel.create({
+      id: uuid(),
+      toNationalId: testNationalId1,
+      fromNationalId: testUserProfile.nationalId,
+      emailNotifications: true,
+    })
+
+    // Act
+    const res = await server
+      .post('/v2/me/actor-profile/nudge')
+      .set('X-Param-From-National-Id', testUserProfile.nationalId)
+      .send({
+        nudgeType: NudgeType.SKIP_PHONE,
+      })
+
+    // Assert
+    expect(res.status).toEqual(200)
+
+    // Verify actor profile was updated correctly
+    const updatedActorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+
+    expect(updatedActorProfile).not.toBeNull()
+    if (!updatedActorProfile) return // Type guard for TypeScript
+    expect(updatedActorProfile.lastNudge).not.toBeNull()
+
+    // Verify that nextNudge is set to 1 month after lastNudge
+    if (!updatedActorProfile.lastNudge) return
+    const expectedNextNudge = addMonths(
+      updatedActorProfile.lastNudge,
+      SKIP_INTERVAL,
+    )
+    // Compare dates ignoring milliseconds for potential minor discrepancies
+    expect(updatedActorProfile.nextNudge).not.toBeNull()
+    if (!updatedActorProfile.nextNudge) return
+    expect(
+      updatedActorProfile.nextNudge.toISOString().substring(0, 22),
+    ).toEqual(expectedNextNudge.toISOString().substring(0, 22))
+  })
+
+  it('should update existing nudge dates when actor profile already has them', async () => {
+    // Arrange
+    const existingLastNudge = subMonths(new Date(), 2) // 2 months ago
+    const existingNextNudge = addMonths(new Date(), 4) // 4 months in future
+
+    const actorProfile = await actorProfileModel.create({
+      id: uuid(),
+      toNationalId: testNationalId1,
+      fromNationalId: testUserProfile.nationalId,
+      emailNotifications: true,
+      lastNudge: existingLastNudge,
+      nextNudge: existingNextNudge,
+    })
+
+    // Act
+    const res = await server
+      .post('/v2/me/actor-profile/nudge')
+      .set('X-Param-From-National-Id', testUserProfile.nationalId)
+      .send({
+        nudgeType: NudgeType.NUDGE,
+      })
+
+    // Assert
+    expect(res.status).toEqual(200)
+
+    // Verify actor profile was updated correctly
+    const updatedActorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+
+    expect(updatedActorProfile).not.toBeNull()
+    if (!updatedActorProfile) return // Type guard for TypeScript
+    expect(updatedActorProfile.lastNudge).not.toBeNull()
+
+    if (!updatedActorProfile.lastNudge) return
+
+    // Verify dates were updated
+    expect(updatedActorProfile.lastNudge.getTime()).not.toEqual(
+      existingLastNudge.getTime(),
+    )
+    expect(updatedActorProfile.nextNudge).not.toBeNull()
+
+    if (!updatedActorProfile.nextNudge) return
+    expect(updatedActorProfile.nextNudge.getTime()).not.toEqual(
+      existingNextNudge.getTime(),
+    )
+
+    // Verify that nextNudge is set to 6 months after lastNudge
+    const expectedNextNudge = addMonths(
+      updatedActorProfile.lastNudge,
+      NUDGE_INTERVAL,
+    )
+    // Compare dates ignoring milliseconds for potential minor discrepancies
+    expect(
+      updatedActorProfile.nextNudge.toISOString().substring(0, 22),
+    ).toEqual(expectedNextNudge.toISOString().substring(0, 22))
+  })
+
+  it('should handle nudge update for profile with very old dates', async () => {
+    // Arrange
+    const oldDate = new Date('2000-01-01')
+
+    const actorProfile = await actorProfileModel.create({
+      id: uuid(),
+      toNationalId: testNationalId1,
+      fromNationalId: testUserProfile.nationalId,
+      emailNotifications: false, // Testing with different flag value
+      lastNudge: oldDate,
+      nextNudge: oldDate,
+    })
+
+    // Act
+    const res = await server
+      .post('/v2/me/actor-profile/nudge')
+      .set('X-Param-From-National-Id', testUserProfile.nationalId)
+      .send({
+        nudgeType: NudgeType.SKIP_EMAIL,
+      })
+
+    // Assert
+    expect(res.status).toEqual(200)
+
+    // Verify actor profile was updated correctly
+    const updatedActorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+
+    expect(updatedActorProfile).not.toBeNull()
+    if (!updatedActorProfile) return // Type guard for TypeScript
+
+    // Verify lastNudge was updated to a recent time
+    expect(updatedActorProfile.lastNudge).not.toBeNull()
+    if (!updatedActorProfile.lastNudge) return
+
+    // Verify old dates were updated
+    const currentYear = new Date().getFullYear()
+    expect(updatedActorProfile.lastNudge.getFullYear()).toEqual(currentYear)
+
+    // Verify emailNotifications was preserved
+    expect(updatedActorProfile.emailNotifications).toEqual(false)
+
+    // Verify that nextNudge is set to 1 month after lastNudge (SKIP_INTERVAL)
+    expect(updatedActorProfile.nextNudge).not.toBeNull()
+    if (!updatedActorProfile.nextNudge) return
+
+    const expectedNextNudge = addMonths(
+      updatedActorProfile.lastNudge,
+      SKIP_INTERVAL,
+    )
+    // Compare dates ignoring milliseconds for potential minor discrepancies
+    expect(
+      updatedActorProfile.nextNudge.toISOString().substring(0, 22),
+    ).toEqual(expectedNextNudge.toISOString().substring(0, 22))
+  })
+
+  it('should return 400 when delegation does not exist', async () => {
+    // Arrange
+    // Mock delegations API to return empty result
+    jest
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValueOnce({
+        data: [], // No delegations
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+        totalCount: 0,
+      })
+
+    // Act
+    const res = await server
+      .post('/v2/me/actor-profile/nudge')
+      .set('X-Param-From-National-Id', testUserProfile.nationalId)
+      .send({
+        nudgeType: NudgeType.NUDGE,
+      })
+
+    // Assert
+    expect(res.status).toEqual(400)
+    expect(res.body).toMatchObject({
+      title: 'Bad Request',
+      status: 400,
+      detail: 'Delegation does not exist',
+    })
+  })
+
+  it('should return 400 when actor profile does not exist', async () => {
+    // Arrange - No actor profile in database
+
+    // Act
+    const res = await server
+      .post('/v2/me/actor-profile/nudge')
+      .set('X-Param-From-National-Id', testUserProfile.nationalId)
+      .send({
+        nudgeType: NudgeType.NUDGE,
+      })
+
+    // Assert
+    expect(res.status).toEqual(400)
+    expect(res.body).toMatchObject({
+      title: 'Bad Request',
+      status: 400,
+      detail: 'Actor profile does not exist',
+    })
+  })
+
+  it('should return 400 when user does not have an actor property', async () => {
+    // Arrange
+    const appWithNoActor = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user: createCurrentUser({
+        nationalId: testUserProfile.nationalId,
+        scope: [ApiScope.internal],
+        // No actor property
+      }),
+    })
+    const serverWithNoActor = request(appWithNoActor.getHttpServer())
+
+    // Act
+    const res = await serverWithNoActor
+      .post('/v2/me/actor-profile/nudge')
+      .set('X-Param-From-National-Id', testUserProfile.nationalId)
+      .send({
+        nudgeType: NudgeType.NUDGE,
+      })
+
+    // Assert
+    expect(res.status).toEqual(400)
+    expect(res.body).toMatchObject({
+      title: 'Bad Request',
+      status: 400,
+      detail: 'User has no actor profile',
+    })
+
+    await appWithNoActor.cleanUp()
+  })
+})

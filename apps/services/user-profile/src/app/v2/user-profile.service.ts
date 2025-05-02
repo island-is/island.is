@@ -679,6 +679,58 @@ export class UserProfileService {
     return profile.toDto()
   }
 
+  /**
+   * Confirms the nudge for an actor profile
+   * Moves the next nudge date to 6 months from now if the actor has seen the nudge (NUDGE)
+   * Moves the next nudge date to 1 month from now if the actor has skipped the nudge (SKIP_EMAIL)
+   * @param toNationalId The National ID of the delegation recipient
+   * @param fromNationalId The National ID of the delegation sender
+   * @param nudgeType The type of nudge (NUDGE or SKIP_EMAIL)
+   */
+  async confirmActorProfileNudge({
+    toNationalId,
+    fromNationalId,
+    nudgeType,
+  }: {
+    toNationalId: string
+    fromNationalId: string
+    nudgeType: NudgeType
+  }): Promise<void> {
+    const date = new Date()
+
+    // Verify the delegation exists
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    const delegation = incomingDelegations.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('Delegation does not exist')
+    }
+
+    // Get the actor profile
+    const actorProfile = await this.actorProfileModel.findOne({
+      where: {
+        toNationalId,
+        fromNationalId,
+      },
+    })
+
+    if (!actorProfile) {
+      throw new BadRequestException('Actor profile does not exist')
+    }
+
+    // Update the nextNudge date based on nudge type
+    await actorProfile.update({
+      lastNudge: date,
+      nextNudge: addMonths(
+        date,
+        nudgeType === NudgeType.NUDGE ? NUDGE_INTERVAL : SKIP_INTERVAL,
+      ),
+    })
+  }
+
   /* Fetch single actor profile with additional details for the specified delegation */
   async getSingleActorProfile({
     toNationalId,

@@ -150,6 +150,36 @@ export class MeUserProfileController {
     )
   }
 
+  @Post('/actor-profile/nudge')
+  @Scopes(ApiScope.internal)
+  @Documentation({
+    description:
+      'Confirms that the actor has seen the nudge. Updates the nextNudge date for the actor profile.',
+    response: { status: 200 },
+  })
+  confirmActorProfileNudge(
+    @CurrentUser() user: User,
+    @Body() input: PostNudgeDto,
+  ) {
+    if (!user.actor?.nationalId) {
+      throw new BadRequestException('User has no actor profile')
+    }
+
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'actorProfileNudge',
+        resources: `${user.nationalId}:${user.actor?.nationalId}`,
+      },
+      this.userProfileService.confirmActorProfileNudge({
+        toNationalId: user.actor?.nationalId,
+        fromNationalId: user.nationalId,
+        nudgeType: input.nudgeType,
+      }),
+    )
+  }
+
   @Get('/actor-profiles')
   @Scopes(ApiScope.internal)
   @Documentation({
