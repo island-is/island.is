@@ -9,6 +9,7 @@ import { assigneeInformation } from '../../lib/messages'
 import {
   getInvalidWorkMachines,
   getMissingWorkMachines,
+  isContractor,
   isSameAsApplicant,
 } from '../../utils'
 import { TrainingLicenseOnAWorkMachineAnswers } from '../../lib/dataSchema'
@@ -18,6 +19,7 @@ import { Application } from '@island.is/application/types'
 export const assigneeInformationSection = buildSection({
   id: 'assigneeInformationSection',
   title: assigneeInformation.general.sectionTitle,
+  condition: (answers) => !isContractor(answers),
   children: [
     buildMultiField({
       id: 'assigneeInformationMultiField',
@@ -93,10 +95,22 @@ export const assigneeInformationSection = buildSection({
                 return (
                   certificateOfTenure
                     ?.filter((item) => !item.isContractor.includes('yes'))
-                    .map((item) => ({
-                      value: item.machineNumber,
-                      label: item.machineNumber,
-                    })) ?? []
+                    .map((item, index) => {
+                      return {
+                        value:
+                          certificateOfTenure
+                            ?.filter(
+                              (item) => !item.isContractor.includes('yes'),
+                            )
+                            .filter(
+                              (newItem) =>
+                                newItem.machineNumber === item.machineNumber,
+                            ).length > 1
+                            ? `${item.machineNumber} ${index}`
+                            : item.machineNumber,
+                        label: item.machineNumber,
+                      }
+                    }) ?? []
                 )
               },
               filterOptions: (options, answers, index) =>

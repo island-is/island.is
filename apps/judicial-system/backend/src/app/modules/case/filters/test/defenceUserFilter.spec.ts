@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../models/case.model'
-import { verifyFullAccess, verifyNoAccess, verifyReadAccess } from './verify'
+import { verifyFullAccess, verifyNoAccess } from './verify'
 
 // TODO: Fix defender indictment tests
 //       Add spokesperson tests
