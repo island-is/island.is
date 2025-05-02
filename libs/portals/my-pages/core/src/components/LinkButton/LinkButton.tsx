@@ -50,7 +50,6 @@ export const LinkButton = (props: LinkButtonProps) => {
       </LinkResolver>
     )
   }
-  console.log(props.variant)
   return disabled ? (
     <Button
       icon={icon}
