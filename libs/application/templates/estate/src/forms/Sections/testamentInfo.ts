@@ -23,7 +23,7 @@ export const testamentInfo = buildSection({
         buildRadioField({
           id: 'estate.testament.agreement',
           title: m.doesAgreementExist,
-          largeButtons: false,
+          largeButtons: true,
           width: 'half',
           options: [
             { value: YES, label: JA },
@@ -33,7 +33,7 @@ export const testamentInfo = buildSection({
         buildRadioField({
           id: 'estate.testament.wills',
           title: m.doesWillExist,
-          largeButtons: false,
+          largeButtons: true,
           width: 'half',
           space: 2,
           options: [
@@ -44,7 +44,7 @@ export const testamentInfo = buildSection({
         buildRadioField({
           id: 'estate.testament.dividedEstate',
           title: m.doesPermissionToPostponeExist,
-          largeButtons: false,
+          largeButtons: true,
           width: 'half',
           space: 2,
           options: [
@@ -59,7 +59,6 @@ export const testamentInfo = buildSection({
         }),
         buildDescriptionField({
           id: 'spaceTestamentInfo',
-          title: '',
           marginBottom: 2,
         }),
         buildTextField({
@@ -67,7 +66,7 @@ export const testamentInfo = buildSection({
           title: m.additionalInfo,
           placeholder: m.additionalInfoPlaceholder,
           variant: 'textarea',
-          rows: 7,
+          rows: 5,
         }),
       ],
     }),

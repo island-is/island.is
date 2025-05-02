@@ -1,5 +1,3 @@
-import CryptoJS from 'crypto-js'
-
 import {
   forwardRef,
   Inject,
@@ -24,8 +22,10 @@ import {
   Confirmation,
   createCaseFilesRecord,
   createIndictment,
+  createRulingSentToPrisonAdminPdf,
   createServiceCertificate,
   createSubpoena,
+  getCaseFileHash,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
   getRequestPdfAsBuffer,
@@ -221,15 +221,15 @@ export class PdfService {
         (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
       )
 
-      if (confirmationEvent && confirmationEvent.nationalId) {
-        const actor = await this.userService.findByNationalId(
-          confirmationEvent.nationalId,
-        )
-
+      if (
+        confirmationEvent &&
+        confirmationEvent.userName &&
+        confirmationEvent.institutionName
+      ) {
         confirmation = {
-          actor: actor.name,
-          title: actor.title,
-          institution: actor.institution?.name ?? '',
+          actor: confirmationEvent.userName,
+          title: confirmationEvent.userTitle,
+          institution: confirmationEvent.institutionName,
           date: confirmationEvent.created,
         }
       }
@@ -244,13 +244,14 @@ export class PdfService {
     )
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state) && confirmation) {
-      const indictmentHash = CryptoJS.MD5(
-        generatedPdf.toString('binary'),
-      ).toString(CryptoJS.enc.Hex)
+      const { hash, hashAlgorithm } = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
       this.caseModel
-        .update({ indictmentHash }, { where: { id: theCase.id } })
+        .update(
+          { indictmentHash: hash, indictmentHashAlgorithm: hashAlgorithm },
+          { where: { id: theCase.id } },
+        )
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,
@@ -330,13 +331,11 @@ export class PdfService {
     )
 
     if (subpoena) {
-      const subpoenaHash = CryptoJS.MD5(
-        generatedPdf.toString('binary'),
-      ).toString(CryptoJS.enc.Hex)
+      const subpoenaHash = getCaseFileHash(generatedPdf)
 
       // No need to wait for this to finish
       this.subpoenaService
-        .setHash(subpoena.id, subpoenaHash)
+        .setHash(subpoena.id, subpoenaHash.hash, subpoenaHash.hashAlgorithm)
         .then(() =>
           this.tryUploadPdfToS3(
             theCase,
@@ -364,5 +363,9 @@ export class PdfService {
     )
 
     return generatedPdf
+  }
+
+  async getRulingSentToPrisonAdminPdf(theCase: Case): Promise<Buffer> {
+    return await createRulingSentToPrisonAdminPdf(theCase)
   }
 }

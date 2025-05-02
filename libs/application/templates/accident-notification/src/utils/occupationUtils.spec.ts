@@ -1,10 +1,4 @@
-import { FormValue, NO, YES } from '@island.is/application/types'
-import {
-  AccidentTypeEnum,
-  FishermanWorkplaceAccidentLocationEnum,
-  StudiesAccidentTypeEnum,
-  WorkAccidentTypeEnum,
-} from '../types'
+import { FormValue } from '@island.is/application/types'
 import {
   getWorkplaceData,
   isAboardShip,
@@ -16,6 +10,13 @@ import {
   isProfessionalAthleteAccident,
   isSportAccidentAndEmployee,
 } from './occupationUtils'
+import { NO, YES } from '@island.is/application/core'
+import {
+  AccidentTypeEnum,
+  FishermanWorkplaceAccidentLocationEnum,
+  StudiesAccidentTypeEnum,
+  WorkAccidentTypeEnum,
+} from './enums'
 
 describe('isAboardShip', () => {
   const onTheShipLocation: FormValue = {

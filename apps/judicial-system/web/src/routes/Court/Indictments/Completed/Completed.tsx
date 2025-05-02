@@ -1,10 +1,12 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
 
 import {
   Accordion,
   Box,
+  FileUploadStatus,
   InputFileUpload,
   RadioButton,
   UploadFile,
@@ -28,6 +30,7 @@ import {
   SectionHeading,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
+import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -42,6 +45,7 @@ import {
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 
 import strings from './Completed.strings'
+import * as styles from './Completed.css'
 
 const Completed: FC = () => {
   const { formatMessage } = useIntl()
@@ -52,11 +56,12 @@ const Completed: FC = () => {
     useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
+
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const [modalVisible, setModalVisible] =
     useState<'SENT_TO_PUBLIC_PROSECUTOR'>()
 
-  const sentToPublicProsecutor = workingCase.eventLogs?.some(
+  const isSentToPublicProsecutor = workingCase.eventLogs?.some(
     (log) => log.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
   )
 
@@ -99,12 +104,26 @@ const Completed: FC = () => {
 
   const handleCriminalRecordUpdateUpload = useCallback(
     (files: File[]) => {
-      addUploadFiles(files, {
-        category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-        status: 'done',
-      })
+      // If the case has been sent to the public prosecutor
+      // we want to complete these uploads straight away
+      if (isSentToPublicProsecutor) {
+        handleUpload(
+          addUploadFiles(files, {
+            category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+          }),
+          updateUploadFile,
+        )
+      }
+      // Otherwise we don't complete uploads until
+      // we handle the next button click
+      else {
+        addUploadFiles(files, {
+          category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+          status: FileUploadStatus.done,
+        })
+      }
     },
-    [addUploadFiles],
+    [addUploadFiles, handleUpload, isSentToPublicProsecutor, updateUploadFile],
   )
 
   const handleNavigationTo = useCallback(
@@ -124,10 +143,10 @@ const Completed: FC = () => {
 
   const stepIsValid = () =>
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
-      ? workingCase.defendants?.every(
-          (defendant) =>
-            defendant.serviceRequirement !== undefined &&
-            defendant.serviceRequirement !== null,
+      ? workingCase.defendants?.every((defendant) =>
+          defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+            ? Boolean(defendant.verdictAppealDecision)
+            : Boolean(defendant.serviceRequirement),
         )
       : true
 
@@ -175,18 +194,19 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        {!sentToPublicProsecutor && isRulingOrFine && (
+        {isRulingOrFine && (
           <Box marginBottom={isRuling ? 5 : 10} component="section">
             <SectionHeading
               title={formatMessage(strings.criminalRecordUpdateTitle)}
             />
             <InputFileUpload
-              fileList={uploadFiles.filter(
+              name="criminalRecordUpdate"
+              files={uploadFiles.filter(
                 (file) =>
                   file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
               )}
               accept="application/pdf"
-              header={formatMessage(core.uploadBoxTitle)}
+              title={formatMessage(core.uploadBoxTitle)}
               buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
               description={formatMessage(core.uploadBoxDescription, {
                 fileEndings: '.pdf',
@@ -227,7 +247,6 @@ const Completed: FC = () => {
                         defendant.serviceRequirement ===
                         ServiceRequirement.NOT_APPLICABLE
                       }
-                      disabled={sentToPublicProsecutor}
                       onChange={() => {
                         setAndSendDefendantToServer(
                           {
@@ -254,13 +273,13 @@ const Completed: FC = () => {
                         defendant.serviceRequirement ===
                         ServiceRequirement.REQUIRED
                       }
-                      disabled={sentToPublicProsecutor}
                       onChange={() => {
                         setAndSendDefendantToServer(
                           {
                             defendantId: defendant.id,
                             caseId: workingCase.id,
                             serviceRequirement: ServiceRequirement.REQUIRED,
+                            verdictAppealDecision: null,
                           },
                           setWorkingCase,
                         )
@@ -277,13 +296,13 @@ const Completed: FC = () => {
                       defendant.serviceRequirement ===
                       ServiceRequirement.NOT_REQUIRED
                     }
-                    disabled={sentToPublicProsecutor}
                     onChange={() => {
                       setAndSendDefendantToServer(
                         {
                           defendantId: defendant.id,
                           caseId: workingCase.id,
                           serviceRequirement: ServiceRequirement.NOT_REQUIRED,
+                          verdictAppealDecision: null,
                         },
                         setWorkingCase,
                       )
@@ -295,6 +314,41 @@ const Completed: FC = () => {
                       strings.serviceRequirementNotRequiredTooltip,
                     )}
                   />
+                  <AnimatePresence>
+                    {defendant.serviceRequirement ===
+                      ServiceRequirement.NOT_APPLICABLE && (
+                      <motion.div
+                        key="verdict-appeal-decision"
+                        className={styles.motionBox}
+                        initial={{
+                          opacity: 0,
+                          height: 0,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          height: 'auto',
+                          transition: {
+                            opacity: { delay: 0.2 },
+                          },
+                        }}
+                        exit={{
+                          opacity: 0,
+                          height: 0,
+                          transition: {
+                            height: { delay: 0.2 },
+                          },
+                        }}
+                      >
+                        <SectionHeading
+                          heading="h4"
+                          title="Afstaða dómfellda til dóms"
+                          marginBottom={2}
+                          required
+                        />
+                        <VerdictAppealDecisionChoice defendant={defendant} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </BlueBox>
               </Box>
             ))}
@@ -304,7 +358,7 @@ const Completed: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
-          hideNextButton={!isRulingOrFine || sentToPublicProsecutor}
+          hideNextButton={!isRulingOrFine || isSentToPublicProsecutor}
           nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
           nextIsDisabled={!stepIsValid()}
           onNextButtonClick={handleNextButtonClick}

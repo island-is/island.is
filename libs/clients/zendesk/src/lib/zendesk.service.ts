@@ -14,6 +14,24 @@ export enum TicketStatus {
   OnHold = 'on-hold',
 }
 
+export type UpdateTicketBody = {
+  status?: TicketStatus
+  comment?: Comment
+  custom_fields?: Array<UpdateCustomField>
+}
+
+export type Comment = {
+  body?: string
+  public?: boolean
+  html_body?: string
+  author_id?: number
+}
+
+export type UpdateCustomField = {
+  id: number
+  value: string | boolean
+}
+
 export type SubmitTicketInput = {
   subject?: string
   message: string
@@ -180,5 +198,33 @@ export class ZendeskService {
 
       throw new Error(`${errMsg}: ${description}`)
     }
+  }
+
+  async updateTicket(
+    ticketId: string,
+    values: UpdateTicketBody,
+  ): Promise<boolean> {
+    const updatedTicket = JSON.stringify({
+      ticket: values,
+    })
+
+    try {
+      await axios.put(
+        `${this.api}/tickets/${ticketId}.json`,
+        updatedTicket,
+        this.params,
+      )
+    } catch (e) {
+      const errMsg = 'Failed to update Zendesk ticket'
+      const description = e.response.data.description
+
+      this.logger.error(errMsg, {
+        message: description,
+      })
+
+      throw new Error(`${errMsg}: ${description}`)
+    }
+
+    return true
   }
 }

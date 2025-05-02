@@ -4,11 +4,11 @@ import { parseAsBoolean, useQueryState } from 'next-usequerystate'
 import {
   Box,
   BreadCrumbItem,
+  Button,
   LinkV2,
   Pagination,
   Stack,
   Text,
-  ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
 import type { Locale } from '@island.is/shared/types'
 import {
@@ -41,7 +41,7 @@ import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_EVENTS_QUERY } from '../../queries/Events'
 
 const PAGE_SIZE = 10
-const INCLUDE_PAST_EVENTS_KEY = 'includePastEvents'
+const ONLY_INCLUDE_PAST_EVENTS_KEY = 'onlyIncludePastEvents'
 
 export interface OrganizationEventListProps {
   organizationPage: OrganizationPage
@@ -78,21 +78,33 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
     },
   ]
 
+  const [onlyIncludePastEvents] = useQueryState(
+    ONLY_INCLUDE_PAST_EVENTS_KEY,
+    parseAsBoolean.withDefault(false).withOptions({
+      clearOnDefault: true,
+      shallow: false,
+    }),
+  )
+
   const eventsHeading = n(
     'eventListPageTitle',
-    activeLocale === 'is' ? 'Viðburðir' : 'Events',
+    activeLocale === 'is'
+      ? onlyIncludePastEvents && Boolean(organizationPage.showPastEventsOption)
+        ? 'Liðnir viðburðir'
+        : 'Viðburðir framundan'
+      : onlyIncludePastEvents
+      ? 'Past events'
+      : 'Upcoming events',
   )
 
   const eventOverviewHref = linkResolver('organizationeventoverview', [
     organizationPage.slug,
   ]).href
 
-  const [includePastEvents, setIncludePastEvents] = useQueryState(
-    INCLUDE_PAST_EVENTS_KEY,
-    parseAsBoolean.withDefault(false).withOptions({
-      clearOnDefault: true,
-      shallow: false,
-    }),
+  const isInfoCardVariant = Boolean(
+    namespace?.organizationsWithInfoCardEventListVariant?.includes(
+      organizationPage.slug,
+    ),
   )
 
   return (
@@ -123,21 +135,54 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
             readId={undefined}
             readClass="rs_read"
           />
+
           {organizationPage.showPastEventsOption && (
             <Box display="flex" justifyContent="flexEnd">
-              <ToggleSwitchCheckbox
-                label={
-                  activeLocale === 'is' ? 'Liðnir viðburðir' : 'Past events'
-                }
-                checked={includePastEvents}
-                onChange={setIncludePastEvents}
-              />
+              <LinkV2
+                href={{
+                  pathname: eventOverviewHref,
+                  query: {
+                    ...(!onlyIncludePastEvents
+                      ? { [ONLY_INCLUDE_PAST_EVENTS_KEY]: true }
+                      : {}),
+                  },
+                }}
+              >
+                <Button
+                  variant="ghost"
+                  as="span"
+                  unfocusable={true}
+                  icon="arrowForward"
+                  size="small"
+                  key={String(onlyIncludePastEvents)}
+                >
+                  {onlyIncludePastEvents
+                    ? activeLocale === 'is'
+                      ? 'Sjá viðburði framundan'
+                      : 'See upcoming events'
+                    : activeLocale === 'is'
+                    ? 'Sjá liðna viðburði'
+                    : 'See past events'}
+                </Button>
+              </LinkV2>
             </Box>
           )}
           <EventList
             namespace={namespace}
             eventList={eventList?.items}
             parentPageSlug={organizationPage.slug}
+            variant={isInfoCardVariant ? 'InfoCard' : 'NewsCard'}
+            noEventsFoundFallback={
+              <Text variant="h4">
+                {!onlyIncludePastEvents
+                  ? activeLocale === 'is'
+                    ? 'Engir viðburðir framundan fundust'
+                    : 'No upcoming events found'
+                  : activeLocale === 'is'
+                  ? 'Engir liðnir viðburðir fundust'
+                  : 'No past events found'}
+              </Text>
+            }
           />
         </Stack>
 
@@ -150,7 +195,10 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
                 <LinkV2
                   href={{
                     pathname: eventOverviewHref,
-                    query: { page, includePastEvents },
+                    query: {
+                      page,
+                      [ONLY_INCLUDE_PAST_EVENTS_KEY]: onlyIncludePastEvents,
+                    },
                   }}
                 >
                   <span className={className}>{children}</span>
@@ -198,10 +246,10 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
     )
   }
 
-  const includePastEvents =
+  const onlyIncludePastEvents =
     parseAsBoolean
       .withDefault(false)
-      .parseServerSide(query[INCLUDE_PAST_EVENTS_KEY]) &&
+      .parseServerSide(query[ONLY_INCLUDE_PAST_EVENTS_KEY]) &&
     Boolean(organizationPage.showPastEventsOption)
 
   const selectedPage = extractPageNumberQueryParameter(query)
@@ -215,8 +263,8 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
           lang: locale as Locale,
           page: selectedPage,
           size: PAGE_SIZE,
-          order: includePastEvents ? 'desc' : 'asc',
-          includePastEvents,
+          order: onlyIncludePastEvents ? 'desc' : 'asc',
+          onlyIncludePastEvents,
         },
       },
     }),
@@ -239,7 +287,7 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
   ])
 
   const organizationNamespace = extractNamespaceFromOrganization(
-    organizationPage.organization,
+    organizationPage?.organization,
   )
 
   return {

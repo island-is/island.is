@@ -1,6 +1,6 @@
 import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Box, Select } from '@island.is/island-ui/core'
@@ -119,6 +119,10 @@ const AppealCase: FC = () => {
         [coaJudgeProperty]: coaJudgeId,
       })
 
+      if (!updatedCase) {
+        return
+      }
+
       const coaJudge =
         coaJudgeProperty === 'appealJudge1Id'
           ? { appealJudge1: updatedCase?.appealJudge1 }
@@ -138,6 +142,10 @@ const AppealCase: FC = () => {
       const updatedCase = await updateCase(workingCase.id, {
         appealAssistantId,
       })
+
+      if (!updatedCase) {
+        return
+      }
 
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,

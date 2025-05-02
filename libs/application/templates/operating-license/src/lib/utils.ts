@@ -1,34 +1,28 @@
-import {
-  APPLICATION_TYPES,
-  Operation,
-  OPERATION_CATEGORY,
-  YES,
-} from './constants'
+import { ApplicationTypes, Operation, OperationCategory } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { getValueViaPath } from '@island.is/application/core'
+import { EMAIL_REGEX, getValueViaPath, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 
 type ValidationOperation = {
-  operation?: APPLICATION_TYPES
+  operation?: ApplicationTypes
 
   type?: string
-  category?: OPERATION_CATEGORY | '' | undefined
+  category?: OperationCategory | '' | undefined
 }
 
 export const validateApplicationInfoCategory = ({
   operation,
   category,
 }: ValidationOperation) => {
-  if (operation === APPLICATION_TYPES.RESTURANT) {
+  if (operation === ApplicationTypes.RESTURANT) {
     return (
-      category === OPERATION_CATEGORY.TWO ||
-      category === OPERATION_CATEGORY.THREE
+      category === OperationCategory.TWO || category === OperationCategory.THREE
     )
   } else {
     return (
-      category === OPERATION_CATEGORY.TWO ||
-      category === OPERATION_CATEGORY.THREE ||
-      category === OPERATION_CATEGORY.FOUR
+      category === OperationCategory.TWO ||
+      category === OperationCategory.THREE ||
+      category === OperationCategory.FOUR
     )
   }
 }
@@ -61,13 +55,11 @@ export const get24HFormatTime = (value: string) => {
 }
 
 const vskNrRegex = /([0-9]){6}/
-const emailRegex =
-  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const timeRegex = /^$|^(([01][0-9])|(2[0-3])):[0-5][0-9]$/
 
 export const getCurrencyString = (n: number) =>
   n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-export const isValidEmail = (value: string) => emailRegex.test(value)
+export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 export const isValidVskNr = (value: string) => vskNrRegex.test(value)
 export const isValidTime = (value: string) => timeRegex.test(value)
 export const isValidPhoneNumber = (phoneNumber: string) => {
@@ -75,29 +67,30 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
-export const displayOpeningHours = (answers: any) => {
+export const displayOpeningHours = (answers: FormValue) => {
+  const operation = getValueViaPath<ApplicationTypes>(
+    answers,
+    'applicationInfo.operation',
+  )
+  const category = getValueViaPath<
+    OperationCategory | Array<OperationCategory>
+  >(answers, 'applicationInfo.category')
   return (
-    (answers.applicationInfo as Operation)?.operation ===
-      APPLICATION_TYPES.RESTURANT ||
-    (answers.applicationInfo as Operation)?.category?.includes(
-      OPERATION_CATEGORY.FOUR,
-    ) ||
+    operation === ApplicationTypes.RESTURANT ||
+    category?.includes(OperationCategory.FOUR) ||
     false
   )
 }
 
 export const getChargeItemCode = (answers: FormValue) => {
-  const applicationInfo = getValueViaPath(
-    answers,
-    'applicationInfo',
-  ) as Operation
-  const isHotel = applicationInfo.operation === APPLICATION_TYPES.HOTEL
-  switch (applicationInfo.category) {
-    case OPERATION_CATEGORY.TWO:
+  const applicationInfo = getValueViaPath<Operation>(answers, 'applicationInfo')
+  const isHotel = applicationInfo?.operation === ApplicationTypes.HOTEL
+  switch (applicationInfo?.category) {
+    case OperationCategory.TWO:
       return isHotel ? 'AY121' : 'AY124'
-    case OPERATION_CATEGORY.THREE:
+    case OperationCategory.THREE:
       return isHotel ? 'AY122' : 'AY125'
-    case OPERATION_CATEGORY.FOUR:
+    case OperationCategory.FOUR:
       return 'AY123'
     default:
       break

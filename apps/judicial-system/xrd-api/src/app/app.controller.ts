@@ -17,12 +17,14 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { LawyersService, LawyerType } from '@island.is/judicial-system/lawyers'
 
+import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
+import { Case } from './models/case.model'
+import { Defender } from './models/defender.model'
 import { SubpoenaResponse } from './models/subpoena.response'
-import { CreateCaseDto } from './app.dto'
 import { EventInterceptor } from './app.interceptor'
-import { Case, Defender } from './app.model'
 import { AppService } from './app.service'
+
 @Controller('api/v1')
 export class AppController {
   constructor(
@@ -69,15 +71,16 @@ export class AppController {
     }
   }
 
-  @Patch('subpoena/:subpoenaId')
+  // update by police subpoena id
+  @Patch('subpoena/:policeSubpoenaId')
   @ApiResponse({ status: 400, description: 'Invalid input' })
   @ApiResponse({ status: 502, description: 'Failed to update subpoena' })
   async updateSubpoena(
-    @Param('subpoenaId', new ParseUUIDPipe()) subpoenaId: string,
+    @Param('policeSubpoenaId', new ParseUUIDPipe()) policeSubpoenaId: string,
     @Body() updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
-    this.logger.info(`Updating subpoena ${subpoenaId}`)
+    this.logger.info(`Updating subpoena ${policeSubpoenaId}`)
 
-    return this.appService.updateSubpoena(subpoenaId, updateSubpoena)
+    return this.appService.updateSubpoena(policeSubpoenaId, updateSubpoena)
   }
 }

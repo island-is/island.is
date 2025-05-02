@@ -1,15 +1,6 @@
-import { getValueViaPath, YES } from '@island.is/application/core'
+import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import {
-  AccidentTypeEnum,
-  CompanyInfo,
-  FishermanWorkplaceAccidentLocationEnum,
-  RepresentativeInfo,
-  StudiesAccidentTypeEnum,
-  WorkAccidentTypeEnum,
-  WorkplaceData,
-  YesOrNo,
-} from '../types'
+import { CompanyInfo, RepresentativeInfo, WorkplaceData } from './types'
 import {
   isHomeActivitiesAccident,
   isRescueWorkAccident,
@@ -25,6 +16,12 @@ import {
   sportsClubInfo,
 } from '../lib/messages'
 import { AccidentNotificationAnswers } from '..'
+import {
+  AccidentTypeEnum,
+  FishermanWorkplaceAccidentLocationEnum,
+  StudiesAccidentTypeEnum,
+  WorkAccidentTypeEnum,
+} from './enums'
 
 // As this is a third question the user is asked there is a case where he could go back
 // and select home activities and keep the workaccident type or go back and change where the

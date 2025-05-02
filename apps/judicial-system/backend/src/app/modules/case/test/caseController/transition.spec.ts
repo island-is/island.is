@@ -55,7 +55,7 @@ describe('CaseController - Transition', () => {
     id: userId,
     role: UserRole.PROSECUTOR,
     canConfirmIndictment: false,
-    institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+    institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
   } as User
 
   let mockMessageService: MessageService
@@ -375,7 +375,9 @@ describe('CaseController - Transition', () => {
                   ? null
                   : undefined,
               rulingDate:
-                transition === CaseTransition.COMPLETE ? date : undefined,
+                transition === CaseTransition.COMPLETE
+                  ? courtEndTime
+                  : undefined,
               indictmentDeniedExplanation:
                 transition === CaseTransition.SUBMIT ? null : undefined,
               indictmentReturnedExplanation:

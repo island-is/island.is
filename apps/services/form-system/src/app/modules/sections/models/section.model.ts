@@ -10,7 +10,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { SectionTypes } from '../../../enums/sectionTypes'
+import { SectionTypes } from '@island.is/form-system/shared'
 import { Form } from '../../forms/models/form.model'
 import { Screen } from '../../screens/models/screen.model'
 
@@ -41,7 +41,7 @@ export class Section extends Model<Section> {
     type: DataTypes.ENUM,
     allowNull: false,
     values: Object.values(SectionTypes),
-    defaultValue: 'input',
+    defaultValue: SectionTypes.INPUT,
   })
   sectionType!: string
 
@@ -64,17 +64,10 @@ export class Section extends Model<Section> {
     allowNull: false,
     defaultValue: false,
   })
-  isHidden!: boolean
-
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  })
   isCompleted!: boolean
 
   @HasMany(() => Screen)
-  screens?: Screen[]
+  screens!: Screen[]
 
   @ForeignKey(() => Form)
   @Column({ type: DataType.STRING, allowNull: false, field: 'form_id' })

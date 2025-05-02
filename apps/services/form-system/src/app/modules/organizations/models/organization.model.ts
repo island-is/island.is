@@ -1,6 +1,5 @@
-import { CreationOptional, NonAttribute } from 'sequelize'
+import { CreationOptional } from 'sequelize'
 import {
-  BelongsToMany,
   Column,
   CreatedAt,
   DataType,
@@ -10,11 +9,9 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { ApplicantTypeNameSuggestion } from '../../applicants/models/applicantTypeNameSuggestion.model'
 import { Form } from '../../forms/models/form.model'
-import { FieldType } from '../../fields/models/fieldType.model'
-import { ListType } from '../../lists/models/listType.model'
-import { CertificationType } from '../../certifications/models/certificationType.model'
+import { OrganizationUrl } from '../../organizationUrls/models/organizationUrl.model'
+import { OrganizationPermission } from '../../organizationPermissions/models/organizationPermission.model'
 
 @Table({ tableName: 'organization' })
 export class Organization extends Model<Organization> {
@@ -49,27 +46,9 @@ export class Organization extends Model<Organization> {
   @HasMany(() => Form)
   forms?: Form[]
 
-  @HasMany(() => ApplicantTypeNameSuggestion)
-  applicantTypeNameSuggestions?: ApplicantTypeNameSuggestion[]
+  @HasMany(() => OrganizationPermission)
+  organizationPermissions?: OrganizationPermission[]
 
-  @BelongsToMany(() => FieldType, {
-    through: 'organization_field_type',
-    foreignKey: 'organization_id',
-    otherKey: 'field_type_id',
-  })
-  organizationFieldTypes?: NonAttribute<FieldType[]>
-
-  @BelongsToMany(() => CertificationType, {
-    through: 'organization_certification_type',
-    foreignKey: 'organization_id',
-    otherKey: 'certification_type_id',
-  })
-  organizationCertificationTypes?: NonAttribute<CertificationType[]>
-
-  @BelongsToMany(() => ListType, {
-    through: 'organization_list_type',
-    foreignKey: 'organization_id',
-    otherKey: 'list_type_id',
-  })
-  organizationListTypes?: NonAttribute<ListType[]>
+  @HasMany(() => OrganizationUrl)
+  organizationUrls?: OrganizationUrl[]
 }

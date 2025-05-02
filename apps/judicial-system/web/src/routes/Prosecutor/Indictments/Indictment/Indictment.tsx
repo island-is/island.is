@@ -1,12 +1,15 @@
 import { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase } from 'beygla/strict'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
 
 import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  applyDativeCaseToCourtName,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -23,12 +26,13 @@ import {
 import {
   CaseOrigin,
   Defendant,
+  IndictmentCount as TIndictmentCount,
   IndictmentCountOffense,
   Institution,
   Maybe,
+  Offense,
   PoliceCaseInfo,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -40,11 +44,12 @@ import {
   useIndictmentCounts,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 import { isIndictmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { usePoliceCaseInfoQuery } from '../Defendant/policeCaseInfo.generated'
 import { IndictmentCount } from './IndictmentCount'
-import { indictment as strings } from './Indictment.strings'
+import { strings } from './Indictment.strings'
 
 export const getIndictmentIntroductionAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -57,7 +62,7 @@ export const getIndictmentIntroductionAutofill = (
         prosecutorsOffice?.name?.toUpperCase(),
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillAnnounces)}`,
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
-          court: court?.name?.replace('dómur', 'dómi'),
+          court: applyDativeCaseToCourtName(court?.name || 'héraðsdómi'),
         })}`,
         `\n\n${defendants.map((defendant) => {
           return `\n          ${formatMessage(
@@ -70,11 +75,32 @@ export const getIndictmentIntroductionAutofill = (
                 ? formatNationalId(defendant.nationalId)
                 : 'Ekki skráð',
             },
-          )}\n          ${defendant.address}`
+          )}\n          ${defendant.address},`
         })}
     `,
       ]
     : []
+}
+
+const suspensionOffenses = [
+  IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE,
+  IndictmentCountOffense.DRUNK_DRIVING,
+  IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
+  IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
+]
+
+const getSuspensionOffenses = (
+  indictmentCounts?: TIndictmentCount[] | null,
+) => {
+  const offenses =
+    indictmentCounts?.flatMap(
+      (indictmentCount) =>
+        indictmentCount.offenses
+          ?.filter((offense) => suspensionOffenses.includes(offense.offense))
+          .map((offense) => offense.offense) ?? [],
+    ) ?? []
+
+  return new Set(offenses)
 }
 
 const Indictment = () => {
@@ -85,6 +111,7 @@ const Indictment = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+
   const { formatMessage } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
   const {
@@ -99,6 +126,8 @@ const Indictment = () => {
   ] = useState<string>('')
   const [demandsErrorMessage, setDemandsErrorMessage] = useState('')
   const [civilDemandsErrorMessage, setCivilDemandsErrorMessage] = useState('')
+
+  const gender = getDefaultDefendantGender(workingCase.defendants)
 
   const { data: policeCaseData } = usePoliceCaseInfoQuery({
     variables: {
@@ -124,41 +153,87 @@ const Indictment = () => {
 
   useDeb(workingCase, ['indictmentIntroduction', 'demands'])
 
-  const setDriversLicenseSuspensionRequest = useCallback(
-    (indictmentCounts?: TIndictmentCount[]) => {
-      // If the case has:
-      // at least one count with the offense driving under the influence of alcohol, illegal drugs or prescription drugs
-      // then by default the prosecutor requests a suspension of the driver's licence.
-      const requestDriversLicenseSuspension = indictmentCounts?.some((count) =>
-        count.deprecatedOffenses?.some((offense) =>
-          [
-            IndictmentCountOffense.DRUNK_DRIVING,
-            IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
-            IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
-          ].includes(offense),
-        ),
+  const getDemands = useCallback(
+    (
+      trafficViolationOffenses: Set<IndictmentCountOffense>,
+      requestDriversLicenseSuspension?: boolean | null,
+    ) => {
+      // If suspension is not requested, then use the default demands
+      if (!requestDriversLicenseSuspension) {
+        return strings.demandsAutofill[gender]
+      }
+
+      // Suspension is requested
+
+      // If driving without ever having license, then use the future-suspension demands
+      if (
+        trafficViolationOffenses.has(
+          IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE,
+        )
+      ) {
+        return strings.demandsAutofillWithFutureLicenseSuspension[gender]
+      }
+
+      // If any other suspension offense is present, then use the under-the-influence-suspension demands
+      if (trafficViolationOffenses.size > 0) {
+        return strings.demandsAutofillWithUnderTheInfluenceLicenseSuspension[
+          gender
+        ]
+      }
+
+      // Otherwise, use the speeding-suspension demands
+      return strings.demandsAutofillWithSpeedingLicenseSuspension[gender]
+    },
+    [gender],
+  )
+
+  const setSuspensionRequest = useCallback(
+    (
+      prevSuspensionOffenses: Set<IndictmentCountOffense>,
+      newSuspensionOffenses: Set<IndictmentCountOffense>,
+      prevRequestDriversLicenseSuspension?: boolean | null,
+    ) => {
+      // If the user manually deselected suspension, then we have nothing to do
+      if (
+        prevSuspensionOffenses.size > 0 &&
+        !prevRequestDriversLicenseSuspension
+      ) {
+        return
+      }
+
+      // If the user manually selected suspension and a suspension offense is not being added,
+      // then we have nothing to do
+      // Note that adding a suspension offense changes the demand text
+      if (
+        prevSuspensionOffenses.size === 0 &&
+        prevRequestDriversLicenseSuspension &&
+        newSuspensionOffenses.size === 0
+      ) {
+        return
+      }
+
+      // If we have any suspension offenses,
+      // then by default the prosecutor requests a suspension
+      const requestDriversLicenseSuspension = newSuspensionOffenses.size > 0
+
+      const demands = getDemands(
+        newSuspensionOffenses,
+        requestDriversLicenseSuspension,
       )
 
       if (
         requestDriversLicenseSuspension !==
-        workingCase.requestDriversLicenseSuspension
+          workingCase.requestDriversLicenseSuspension ||
+        workingCase.demands !== demands
       ) {
         setAndSendCaseToServer(
-          [
-            {
-              requestDriversLicenseSuspension,
-              demands: requestDriversLicenseSuspension
-                ? formatMessage(strings.demandsAutofillWithSuspension)
-                : formatMessage(strings.demandsAutofill),
-              force: true,
-            },
-          ],
+          [{ requestDriversLicenseSuspension, demands, force: true }],
           workingCase,
           setWorkingCase,
         )
       }
     },
-    [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase],
+    [getDemands, setAndSendCaseToServer, setWorkingCase, workingCase],
   )
 
   const handleCreateIndictmentCount = useCallback(async () => {
@@ -173,15 +248,12 @@ const Indictment = () => {
       indictmentCount,
     ]
 
-    setDriversLicenseSuspensionRequest(indictmentCounts)
-
     setWorkingCase((prevWorkingCase) => ({
       ...prevWorkingCase,
       indictmentCounts,
     }))
   }, [
     createIndictmentCount,
-    setDriversLicenseSuspensionRequest,
     setWorkingCase,
     workingCase.id,
     workingCase.indictmentCounts,
@@ -191,6 +263,7 @@ const Indictment = () => {
     async (
       indictmentCountId: string,
       updatedIndictmentCount: UpdateIndictmentCount,
+      updatedOffenses?: Offense[],
     ) => {
       if (
         updatedIndictmentCount.policeCaseNumber &&
@@ -216,26 +289,42 @@ const Indictment = () => {
         return
       }
 
-      setDriversLicenseSuspensionRequest(
+      const prevSuspensionOffenses = getSuspensionOffenses(
+        workingCase.indictmentCounts,
+      )
+      const newSuspensionOffeenses = getSuspensionOffenses(
         workingCase.indictmentCounts?.map((count) =>
-          count.id === indictmentCountId ? returnedIndictmentCount : count,
+          count.id === indictmentCountId
+            ? {
+                ...returnedIndictmentCount,
+                offenses: updatedOffenses ?? count.offenses,
+              }
+            : count,
         ),
+      )
+
+      setSuspensionRequest(
+        prevSuspensionOffenses,
+        newSuspensionOffeenses,
+        workingCase.requestDriversLicenseSuspension,
       )
 
       updateIndictmentCountState(
         indictmentCountId,
         returnedIndictmentCount,
         setWorkingCase,
+        updatedOffenses,
       )
     },
     [
-      policeCaseData,
-      setDriversLicenseSuspensionRequest,
+      policeCaseData?.policeCaseInfo,
+      setSuspensionRequest,
       setWorkingCase,
       updateIndictmentCount,
       updateIndictmentCountState,
       workingCase.id,
       workingCase.indictmentCounts,
+      workingCase.requestDriversLicenseSuspension,
     ],
   )
 
@@ -251,7 +340,16 @@ const Indictment = () => {
           (count) => count.id !== indictmentCountId,
         )
 
-        setDriversLicenseSuspensionRequest(indictmentCounts)
+        const prevSuspensionOffenses = getSuspensionOffenses(
+          workingCase.indictmentCounts,
+        )
+        const newSuspensionOffenses = getSuspensionOffenses(indictmentCounts)
+
+        setSuspensionRequest(
+          prevSuspensionOffenses,
+          newSuspensionOffenses,
+          workingCase.requestDriversLicenseSuspension,
+        )
 
         setWorkingCase((prevWorkingCase) => ({
           ...prevWorkingCase,
@@ -261,15 +359,18 @@ const Indictment = () => {
     },
     [
       deleteIndictmentCount,
-      setDriversLicenseSuspensionRequest,
+      setSuspensionRequest,
       setWorkingCase,
       workingCase.id,
       workingCase.indictmentCounts,
+      workingCase.requestDriversLicenseSuspension,
     ],
   )
 
   const initialize = useCallback(() => {
-    if (workingCase.indictmentCounts?.length === 0) {
+    const indictmentCounts = workingCase.indictmentCounts || []
+
+    if (indictmentCounts.length === 0) {
       handleCreateIndictmentCount()
     }
 
@@ -282,9 +383,10 @@ const Indictment = () => {
             workingCase.court,
             workingCase.defendants,
           )?.join(''),
-          demands: workingCase.requestDriversLicenseSuspension
-            ? formatMessage(strings.demandsAutofillWithSuspension)
-            : formatMessage(strings.demandsAutofill),
+          demands: getDemands(
+            getSuspensionOffenses(indictmentCounts),
+            workingCase.requestDriversLicenseSuspension,
+          ),
         },
       ],
       workingCase,
@@ -294,6 +396,7 @@ const Indictment = () => {
     workingCase,
     setAndSendCaseToServer,
     formatMessage,
+    getDemands,
     setWorkingCase,
     handleCreateIndictmentCount,
   ])
@@ -409,9 +512,10 @@ const Indictment = () => {
                       {
                         requestDriversLicenseSuspension:
                           !workingCase.requestDriversLicenseSuspension,
-                        demands: !workingCase.requestDriversLicenseSuspension
-                          ? formatMessage(strings.demandsAutofillWithSuspension)
-                          : formatMessage(strings.demandsAutofill),
+                        demands: getDemands(
+                          getSuspensionOffenses(workingCase.indictmentCounts),
+                          !workingCase.requestDriversLicenseSuspension,
+                        ),
                         force: true,
                       },
                     ],
@@ -503,6 +607,7 @@ const Indictment = () => {
             caseId={workingCase.id}
             title={formatMessage(strings.pdfButtonIndictment)}
             pdfType="indictment"
+            elementId="Ákæra"
           />
         </Box>
       </FormContentContainer>
@@ -511,7 +616,7 @@ const Indictment = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}

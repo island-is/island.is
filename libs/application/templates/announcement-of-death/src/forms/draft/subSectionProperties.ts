@@ -1,8 +1,6 @@
 import {
-  buildDescriptionField,
   buildMultiField,
   buildSubSection,
-  buildCustomField,
   buildCheckboxField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
@@ -20,7 +18,6 @@ export const subSectionProperties = buildSubSection({
       children: [
         buildCheckboxField({
           id: 'otherProperties',
-          title: '',
           large: false,
           backgroundColor: 'white',
           doesNotRequireAnswer: true,

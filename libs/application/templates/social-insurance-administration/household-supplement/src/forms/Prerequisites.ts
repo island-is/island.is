@@ -19,11 +19,10 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
-  SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { isEligible } from '../lib/householdSupplementUtils'
+import { eligible } from '../lib/householdSupplementUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'HousholdSupplementPrerequisites',
@@ -107,10 +106,6 @@ export const PrerequisitesForm: Form = buildForm({
                   .socialInsuranceAdministrationPrivacyDescription,
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationCurrenciesApi,
-              title: '',
-            }),
-            buildDataProviderItem({
               provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
               title: '',
             }),
@@ -121,19 +116,17 @@ export const PrerequisitesForm: Form = buildForm({
           title: householdSupplementFormMessage.pre.isNotEligibleLabel,
           condition: (_, externalData) => {
             // Show if applicant is not eligible
-            return !isEligible(externalData)
+            return !eligible(externalData)
           },
           children: [
             buildDescriptionField({
               id: 'isNotEligible',
-              title: '',
               description:
                 householdSupplementFormMessage.pre.isNotEligibleDescription,
             }),
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({
               id: '',
-              title: '',
               actions: [],
             }),
           ],

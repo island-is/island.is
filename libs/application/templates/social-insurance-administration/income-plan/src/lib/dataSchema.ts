@@ -1,6 +1,11 @@
+import { YES } from '@island.is/application/core'
+import {
+  INCOME,
+  ISK,
+  RatioType,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { z } from 'zod'
-import { INCOME, ISK, RatioType, YES } from './constants'
-import { errorMessages } from './messages'
+import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -102,12 +107,12 @@ export const dataSchema = z.object({
               : true,
           {
             path: ['incomePerYear'],
-            params: errorMessages.monthsRequired,
+            params: coreSIAErrorMessages.incomePlanMonthsRequired,
           },
         ),
     )
     .refine((i) => i === undefined || i.length > 0, {
-      params: errorMessages.incomePlanRequired,
+      params: coreSIAErrorMessages.incomePlanRequired,
     }),
 })
 

@@ -15,16 +15,16 @@ import {
   Reorder,
   useDragControls,
   useMotionValue,
-} from 'framer-motion'
+} from 'motion/react'
 import { uuid } from 'uuidv4'
 
 import {
   AccordionItem,
   AlertMessage,
   Box,
+  FileUploadStatus,
   Text,
   toast,
-  UploadFileStatus,
 } from '@island.is/island-ui/core'
 import {
   CrimeSceneMap,
@@ -161,8 +161,9 @@ export const sortedFilesInChapter = (
         userGeneratedFilename: file.userGeneratedFilename,
         displayDate: file.displayDate,
         canOpen: Boolean(file.key),
-        status: 'done' as UploadFileStatus,
+        status: FileUploadStatus.done,
         canEdit: true,
+        size: file.size,
       }
     })
     .sort((a, b) => {
@@ -352,7 +353,8 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
             userGeneratedFilename: caseFile.userGeneratedFilename,
             displayDate: caseFile.displayDate,
             canOpen: Boolean(caseFile.key),
-            status: 'done' as UploadFileStatus,
+            status: FileUploadStatus.done,
+            size: caseFile.size,
             canEdit: true,
           }
         }),

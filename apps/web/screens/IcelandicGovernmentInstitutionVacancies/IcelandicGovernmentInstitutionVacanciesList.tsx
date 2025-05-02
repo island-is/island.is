@@ -3,6 +3,7 @@ import isEqual from 'lodash/isEqual'
 import { useRouter } from 'next/router'
 
 import {
+  AlertMessage,
   Box,
   Breadcrumbs,
   Filter,
@@ -97,11 +98,12 @@ const mapVacanciesField = (
 interface IcelandicGovernmentInstitutionVacanciesListProps {
   vacancies: Vacancy[]
   namespace: Record<string, string>
+  fetchErrorOccurred?: boolean | null
 }
 
 const IcelandicGovernmentInstitutionVacanciesList: Screen<
   IcelandicGovernmentInstitutionVacanciesListProps
-> = ({ vacancies, namespace }) => {
+> = ({ vacancies, namespace, fetchErrorOccurred }) => {
   const { query, replace, isReady } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -267,7 +269,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
   useEffect(() => {
     const updatedQuery = { ...query }
 
-    const shouldScroll = updatedQuery.page !== selectedPage.toString()
+    const shouldScroll = (updatedQuery.page ?? '1') !== selectedPage.toString()
 
     if (selectedPage === 1) {
       if ('page' in updatedQuery) delete updatedQuery['page']
@@ -336,6 +338,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
 
   const mainTitle = n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')
   const ogTitle = n('ogTitle', 'Starfatorg - laus störf hjá ríkinu | Ísland.is')
+  const displayFetchErrorIfPresent = n('displayFetchErrorIfPresent', true)
 
   return (
     <Box paddingTop={[0, 0, 8]}>
@@ -390,6 +393,11 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                 )}
                 name="filterInput"
                 value={searchTerm}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    ;(e.target as { blur?: () => void })?.blur?.()
+                  }
+                }}
                 onChange={(value) => {
                   setSelectedPage(1)
                   setSearchTerm(value)
@@ -470,6 +478,18 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
               </Inline>
             </GridColumn>
           </GridRow>
+          {fetchErrorOccurred && displayFetchErrorIfPresent && (
+            <Box paddingBottom={5}>
+              <AlertMessage
+                type="warning"
+                title={n('fetchErrorTitle', 'Ekki tókst að sækja öll störf')}
+                message={n(
+                  'fetchErrorMessage',
+                  'Villa kom upp við að sækja störf frá ytri kerfum og því er möguleiki að ekki öll auglýst störf séu sýnileg',
+                )}
+              />
+            </Box>
+          )}
         </Box>
       </GridContainer>
       <Box paddingTop={3} paddingBottom={6} background="blue100">
@@ -684,12 +704,13 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
     },
   })
 
-  const vacancies =
-    vacanciesResponse.data.icelandicGovernmentInstitutionVacancies.vacancies
+  const { vacancies, fetchErrorOccurred } =
+    vacanciesResponse.data.icelandicGovernmentInstitutionVacancies
 
   return {
     vacancies,
     namespace,
+    fetchErrorOccurred,
   }
 }
 

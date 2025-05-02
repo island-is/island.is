@@ -1,13 +1,12 @@
 import { FC } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Tag, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   districtCourtAbbreviation,
 } from '@island.is/judicial-system/formatters'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   CaseTag,
@@ -24,6 +23,7 @@ import Table, {
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
 import {
+  CaseIndictmentRulingDecision,
   CaseListEntry,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -135,6 +135,9 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                         }${row.courtCaseNumber ?? ''}`}
                         policeCaseNumbers={row.policeCaseNumbers ?? []}
                         appealCaseNumber={row.appealCaseNumber ?? ''}
+                        publicProsecutorIsRegisteredInPoliceSystem={
+                          row.publicProsecutorIsRegisteredInPoliceSystem
+                        }
                       />
                     )
                   },

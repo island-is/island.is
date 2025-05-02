@@ -20,6 +20,34 @@
     }
   ],
   "paths": {
+    "/api/License": {
+      "get": {
+        "tags": ["License"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineLicenseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/MachineCategory": {
       "get": {
         "tags": ["MachineCategory"],
@@ -71,6 +99,36 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/MachineLicenseTeachingApplication": {
+      "post": {
+        "tags": ["MachineLicenseTeachingApplication"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MachineLicenseTeachingApplicationCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -1433,6 +1491,61 @@
         }
       }
     },
+    "/api/MachineTypes/TypeByRegistrationNumber": {
+      "get": {
+        "tags": ["MachineTypes"],
+        "parameters": [
+          {
+            "name": "RegistrationNumber",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineTypeDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/TechnicalInfo/Inputs": {
       "get": {
         "tags": ["TechnicalInfo"],
@@ -2007,6 +2120,74 @@
         },
         "additionalProperties": false
       },
+      "MachineLicenseCategoryDto": {
+        "type": "object",
+        "properties": {
+          "categoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "categoryNameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "categoryPrefix": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasInstructorLicense": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": ""
+      },
+      "MachineLicenseDto": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseCategories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MachineLicenseCategoryDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineLicenseTeachingApplicationCreateDto": {
+        "type": "object",
+        "properties": {
+          "licenseCategoryPrefix": {
+            "type": "string",
+            "description": "The letter code of the category of the category of machines the applicant is applying for a teaching license for.",
+            "nullable": true
+          },
+          "applicant": {
+            "$ref": "#/components/schemas/TeachingLicenseApplicantDto"
+          },
+          "companiesWorkedFor": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeachingLicenseCompanyDto"
+            },
+            "nullable": true
+          },
+          "teachingLicenseMachineWorkedOnDtos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeachingLicenseMachineWorkedOnDto"
+            },
+            "description": "The registration number of the Work machine the applicant has worked on.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MachineModelDto": {
         "type": "object",
         "properties": {
@@ -2519,6 +2700,119 @@
           "instance": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TeachingLicenseApplicantDto": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "description": "The national id of the applicant.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the applicant.",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "The phone number of the applicant.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the applicant.",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "integer",
+            "description": "The postal code of the applicant.",
+            "format": "int32"
+          },
+          "drivingLicenseNumber": {
+            "type": "string",
+            "description": "The",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TeachingLicenseCompanyDto": {
+        "type": "object",
+        "properties": {
+          "companyName": {
+            "type": "string",
+            "description": "The name of the company.",
+            "nullable": true
+          },
+          "companyNationalId": {
+            "type": "string",
+            "description": "The national id of the company.",
+            "nullable": true
+          },
+          "contactNationalId": {
+            "type": "string",
+            "description": "The national id of the company contact.",
+            "nullable": true
+          },
+          "contactName": {
+            "type": "string",
+            "description": "The name of the company contact.",
+            "nullable": true
+          },
+          "contactPhoneNumber": {
+            "type": "string",
+            "description": "The phone number of the company contact.",
+            "nullable": true
+          },
+          "contactEmail": {
+            "type": "string",
+            "description": "The email of the company contact.",
+            "nullable": true
+          },
+          "machineRegistrationNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of machines the applicant has worked on",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TeachingLicenseMachineWorkedOnDto": {
+        "type": "object",
+        "properties": {
+          "machineRegistrationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "machineType": {
+            "type": "string",
+            "description": "The type of the work machine the applicant has worked on.",
+            "nullable": true
+          },
+          "dateWorkedOnMachineFrom": {
+            "type": "string",
+            "description": "The date the applicant started working on the machine.",
+            "format": "date-time"
+          },
+          "dateWorkedOnMachineTo": {
+            "type": "string",
+            "description": "The date the applicant has worked on the machine to.",
+            "format": "date-time"
+          },
+          "hoursWorkedOnMachine": {
+            "type": "integer",
+            "description": "The number of hours the applicant has worked on the machine.",
+            "format": "int32"
+          },
+          "wasSelfEmployed": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

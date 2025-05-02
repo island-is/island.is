@@ -1,4 +1,4 @@
-import { FormText } from '@island.is/application/types'
+import { Condition, FormText } from '@island.is/application/types'
 export interface ApplicantInformationInterface {
   externalData: {
     // new dataprovider
@@ -36,9 +36,14 @@ export interface ApplicantInformationInterface {
 }
 
 export type applicantInformationProps = {
+  phoneCondition?: Condition
   phoneRequired?: boolean
+  phoneDisabled?: boolean
+  phoneEnableCountrySelector?: boolean
+  emailCondition?: Condition
   emailRequired?: boolean
   emailDisabled?: boolean
   applicantInformationDescription?: FormText
   readOnly?: boolean
+  readOnlyEmailAndPhone?: boolean
 }

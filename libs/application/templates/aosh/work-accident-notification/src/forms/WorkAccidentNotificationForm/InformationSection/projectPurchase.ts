@@ -5,9 +5,11 @@ import {
   buildRadioField,
   buildSubSection,
   getValueViaPath,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { information, shared } from '../../../lib/messages'
-import { FormValue, NO, YES } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 
 export const projectPurchaseSection = buildSubSection({
   id: 'projectPurchaseSection',
@@ -20,7 +22,6 @@ export const projectPurchaseSection = buildSubSection({
       children: [
         buildAlertMessageField({
           id: 'projectPurchase.alertMessage',
-          title: '',
           message: information.labels.projectPurchase.alertMessage,
           alertType: 'info',
           doesNotRequireAnswer: true,
@@ -40,7 +41,10 @@ export const projectPurchaseSection = buildSubSection({
               label: shared.options.no,
             },
           ],
-          clearOnChange: ['projectPurchase.contractor.name', 'projectPurchase.contractor.nationalId'],
+          clearOnChange: [
+            'projectPurchase.contractor.name',
+            'projectPurchase.contractor.nationalId',
+          ],
         }),
         buildNationalIdWithNameField({
           id: 'projectPurchase.contractor',
@@ -48,7 +52,7 @@ export const projectPurchaseSection = buildSubSection({
           required: true,
           searchCompanies: true,
           searchPersons: false,
-            condition: (answer: FormValue) =>
+          condition: (answer: FormValue) =>
             getValueViaPath(answer, 'projectPurchase.radio') === YES,
         }),
       ],

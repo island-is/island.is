@@ -10,7 +10,10 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import type { SubstanceMap } from '@island.is/judicial-system/types'
+import {
+  IndictmentCountOffense,
+  type SubstanceMap,
+} from '@island.is/judicial-system/types'
 
 import { IndictmentCount } from './indictmentCount.model'
 
@@ -41,9 +44,13 @@ export class Offense extends Model {
   @ApiProperty({ type: String })
   indictmentCountId!: string
 
-  @Column({ type: DataType.STRING, allowNull: false })
-  @ApiProperty({ type: String })
-  offense!: string
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(IndictmentCountOffense),
+  })
+  @ApiProperty({ enum: IndictmentCountOffense })
+  offense!: IndictmentCountOffense
 
   @Column({ type: DataType.JSONB, allowNull: true })
   @ApiPropertyOptional({ type: Object })

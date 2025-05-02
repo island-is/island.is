@@ -110,14 +110,6 @@ const MyPages: CustomScreen<MyPagesProps> = ({
                     alt=""
                     autoStack={true}
                   />
-                  <CategoryCard
-                    heading={formatMessage(m.parentalLeaveLabel)}
-                    text={formatMessage(m.parentalLeaveDescription)}
-                    href={formatMessage(m.parentalLeaveHref)}
-                    src={formatMessage(m.parentalLeaveImageSrc)}
-                    alt=""
-                    autoStack={true}
-                  />
                 </Stack>
               </GridColumn>
             </GridRow>
@@ -175,6 +167,10 @@ MyPages.getProps = async ({ apolloClient, locale }) => {
   const organizationNamespace = extractNamespaceFromOrganization(
     getOrganizationPage.organization,
   )
+
+  if (organizationNamespace?.myPagesJumpPageIsDisabled) {
+    throw new CustomNextError(404, 'VMST my pages link page has been disabled')
+  }
 
   return {
     organizationPage: getOrganizationPage,

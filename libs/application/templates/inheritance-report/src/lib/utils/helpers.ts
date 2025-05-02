@@ -1,5 +1,5 @@
 import { NationalRegistrySpouse } from '@island.is/api/schema'
-import { YES, getValueViaPath } from '@island.is/application/core'
+import { EMAIL_REGEX, YES, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
@@ -112,10 +112,7 @@ export const customZodError = (
   return zodValidation
 }
 
-const emailRegex =
-  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-
-export const isValidEmail = (value: string) => emailRegex.test(value)
+export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 
 export const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -188,9 +185,6 @@ export const getDeceasedWasInCohabitation = (
   application?.answers &&
   getValueViaPath(application.answers, 'customShare.deceasedWasMarried') === YES
 
-export const hasYes = (arr?: string[]) =>
-  Array.isArray(arr) && arr.includes(YES)
-
 export const shouldShowDeceasedShareField = (answers: FormValue) =>
   getValueViaPath(answers, 'customShare.deceasedHadAssets') === YES &&
   getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES
@@ -208,3 +202,8 @@ export const showTaxFreeInOverview = (answers: FormValue) => {
   )
   return !!total && total > 0
 }
+
+export const includeSpouse = (answers: FormValue) =>
+  Boolean(
+    getValueViaPath<Array<string>>(answers, 'executors.includeSpouse')?.length,
+  )

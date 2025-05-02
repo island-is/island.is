@@ -9,7 +9,6 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import {
-  HealthInsuranceApi,
   NationalRegistryUserApi,
   NationalRegistryCohabitantsApi,
   UserProfileApi,
@@ -48,7 +47,6 @@ export const Prerequisites: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: '',
             refetchApplicationAfterSubmit: true,
             actions: [
               {

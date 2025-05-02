@@ -13,20 +13,9 @@ import {
   ApprovedByReviewerEnum,
   CareerHistoryEnum,
   CareerIndustryEnum,
-  YesNoEnum,
 } from '../utils/constants'
-import { radioValidationExampleEnum } from '../utils/types'
-
-const careerHistoryCompaniesValidation = (data: any) => {
-  // Applicant selected other but didnt supply the reason so we dont allow it
-  if (
-    data.careerHistoryCompanies?.includes('other') &&
-    !data.careerHistoryOther
-  ) {
-    return false
-  }
-  return true
-}
+import { RadioValidationExampleEnum } from '../utils/types'
+import { YesOrNoEnum } from '@island.is/application/core'
 
 const personSchema = z.object({
   name: z.string().min(1).max(256),
@@ -99,10 +88,6 @@ const careerHistoryDetailsSchema = z
     careerHistoryOther: z.string(),
   })
   .partial()
-  .refine((data) => careerHistoryCompaniesValidation(data), {
-    params: m.regularTextExample,
-    path: ['careerHistoryOther'],
-  })
 
 const deepNestedSchema = z.object({
   something: z.object({
@@ -127,17 +112,21 @@ const deepNestedSchema = z.object({
 })
 
 const validationSchema = z.object({
-  validationTextField: z.string().min(3, {
-    message: 'Custom validation message',
+  validationTextField: z.string().refine((val) => val.length >= 3, {
+    params: m.about,
   }),
-  validationRadioField: z.nativeEnum(radioValidationExampleEnum),
+  validationRadioField: z
+    .nativeEnum(RadioValidationExampleEnum)
+    .refine((val) => Object.values(RadioValidationExampleEnum).includes(val), {
+      params: m.about,
+    }),
 })
 
 // The exported dataSchema should be as flat and easy to read as possible.
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   person: personSchema,
-  careerHistory: z.nativeEnum(YesNoEnum).optional(),
+  careerHistory: z.nativeEnum(YesOrNoEnum).optional(),
   careerIndustry: z.nativeEnum(CareerIndustryEnum),
   careerHistoryDetails: careerHistoryDetailsSchema,
   deepNestedValues: deepNestedSchema,

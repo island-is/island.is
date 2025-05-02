@@ -9,8 +9,8 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Length,
   MaxLength,
-  MinLength,
   ValidateNested,
 } from 'class-validator'
 
@@ -86,8 +86,7 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
-  @MinLength(10)
-  @MaxLength(10)
+  @Length(10, 10)
   @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
@@ -551,4 +550,9 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly isCompletedWithoutRuling?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
 }

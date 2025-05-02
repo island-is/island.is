@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { UploadFile } from '@island.is/island-ui/core'
+import { UploadFileDeprecated } from '@island.is/island-ui/core'
 import {
   CreateSignedUrlMutation,
   ApplicationFilesMutation,
@@ -12,10 +12,10 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
-export const useFileUpload = (formFiles: UploadFile[]) => {
+export const useFileUpload = (formFiles: UploadFileDeprecated[]) => {
   const { form } = useContext(FormContext)
-  const [files, _setFiles] = useState<UploadFile[]>([])
-  const filesRef = useRef<UploadFile[]>(files)
+  const [files, _setFiles] = useState<UploadFileDeprecated[]>([])
+  const filesRef = useRef<UploadFileDeprecated[]>(files)
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
   const [createApplicationFiles] = useMutation(ApplicationFilesMutation)
@@ -33,7 +33,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
    * Sets ref and state value
    * @param files Files to set to state.
    */
-  const setFiles = (files: UploadFile[]) => {
+  const setFiles = (files: UploadFileDeprecated[]) => {
     /**
      * Use the filesRef value instead of the files state value because
      *
@@ -48,10 +48,14 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     _setFiles(files)
   }
 
-  const onChange = (newFiles: File[], isRetry?: boolean) => {
+  const onChange = (
+    newFiles: File[],
+    uploadCount?: number,
+    isRetry?: boolean,
+  ) => {
     setUploadErrorMessage(undefined)
 
-    const newUploadFiles = newFiles as UploadFile[]
+    const newUploadFiles = newFiles as UploadFileDeprecated[]
 
     if (!isRetry) {
       setFiles([...newUploadFiles, ...files])
@@ -98,7 +102,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   }
 
   const formatFiles = (
-    allFiles: UploadFile[],
+    allFiles: UploadFileDeprecated[],
     applicationId: string,
     type: FileType,
   ) => {
@@ -125,7 +129,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   const uploadFiles = async (
     applicationId: string,
     type: FileType,
-    uploadFile: UploadFile[],
+    uploadFile: UploadFileDeprecated[],
   ) => {
     return createApplicationFiles({
       variables: {
@@ -134,7 +138,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     })
   }
 
-  const uploadToCloudFront = (file: UploadFile, url: string) => {
+  const uploadToCloudFront = (file: UploadFileDeprecated, url: string) => {
     const request = new XMLHttpRequest()
     request.withCredentials = true
     request.responseType = 'json'
@@ -189,7 +193,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     })
   }
 
-  const updateFile = (file: UploadFile) => {
+  const updateFile = (file: UploadFileDeprecated) => {
     const newFiles = [...filesRef.current]
     const updatedFiles = newFiles.map((newFile) => {
       return newFile.key === file.key ? file : newFile
@@ -205,7 +209,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     }
   }
 
-  const onRemove = async (file: UploadFile) => {
+  const onRemove = async (file: UploadFileDeprecated) => {
     setUploadErrorMessage(undefined)
 
     if (file.key && file.key in requests) {
@@ -224,9 +228,9 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     setFiles([...files].filter((f) => f !== file))
   }
 
-  const onRetry = (file: UploadFile) => {
+  const onRetry = (file: UploadFileDeprecated) => {
     setUploadErrorMessage(undefined)
-    onChange([file as File], true)
+    onChange([file as File], 1, true)
   }
 
   return {

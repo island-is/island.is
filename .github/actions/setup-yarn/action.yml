@@ -1,0 +1,71 @@
+name: 'Setup yarn'
+description: 'Yarn setup and install dependencies'
+inputs:
+  RUNS_ON_S3_BUCKET_CACHE:
+    description: ''
+    required: true
+  working-directory:
+    description: 'Directory to run the action in'
+    required: false
+    default: '.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Corepack
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        corepack enable
+
+    - name: Check node version
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        node -v
+        yarn --version
+        ls -l "$(which node)"
+
+    - name: Set cache key
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      id: set-cache-key
+      run: |
+        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
+
+    - name: Get Yarn Cache Directory Path
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      id: yarn-cache-dir-path
+      run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+    - name: Restore Dependencies Cache
+      uses: runs-on/cache/restore@v4
+      id: restore-cache
+      with:
+        path: |
+          ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          ${{ env.CYPRESS_CACHE_FOLDER }}
+        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+      env:
+        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE }}
+        CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
+
+    - name: Yarn install
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        yarn install --immutable
+
+    - name: Cache Dependencies
+      uses: runs-on/cache/save@v4
+      if: steps.restore-cache.outputs.cache-hit != 'true'
+      with:
+        path: |
+          ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          ${{ env.CYPRESS_CACHE_FOLDER }}
+        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+      env:
+        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE }}
+        CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache

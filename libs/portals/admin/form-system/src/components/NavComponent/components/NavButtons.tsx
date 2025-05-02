@@ -1,69 +1,90 @@
-import { Box, Icon } from '@island.is/island-ui/core'
+import { Box, DialogPrompt, Icon, Tooltip } from '@island.is/island-ui/core'
 import { useContext } from 'react'
-import { FormSystemGroup, FormSystemInput } from '@island.is/api/schema'
-import {
-  useFormSystemCreateGroupMutation,
-  useFormSystemDeleteGroupMutation,
-} from './Group.generated'
-import {
-  useFormSystemCreateInputMutation,
-  useFormSystemDeleteInputMutation,
-} from './Input.generated'
-import { useFormSystemDeleteStepMutation } from './Step.generated'
+import { FormSystemScreen, FormSystemField } from '@island.is/api/schema'
 import { ControlContext } from '../../../context/ControlContext'
 import { removeTypename } from '../../../lib/utils/removeTypename'
+import { useIntl } from 'react-intl'
+import { useMutation } from '@apollo/client'
+import {
+  CREATE_FIELD,
+  CREATE_SCREEN,
+  DELETE_FIELD,
+  DELETE_SCREEN,
+  DELETE_SECTION,
+} from '@island.is/form-system/graphql'
+import { m } from '@island.is/form-system/ui'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 
 export const NavButtons = () => {
   const { control, controlDispatch } = useContext(ControlContext)
   const { activeItem, form } = control
-  const { groupsList: groups, inputsList: inputs } = form
+  const { screens, fields } = form
+  const { formatMessage } = useIntl()
+  const hoverText =
+    activeItem.type === 'Section'
+      ? formatMessage(m.addScreenHover)
+      : formatMessage(m.addFieldHover)
 
-  const [addGroup] = useFormSystemCreateGroupMutation()
-  const [addInput] = useFormSystemCreateInputMutation()
-  const [removeStep, removeStepStatus] = useFormSystemDeleteStepMutation()
-  const [removeGroup, removeGroupStatus] = useFormSystemDeleteGroupMutation()
-  const [removeInput, removeInputStatus] = useFormSystemDeleteInputMutation()
+  const containsGroupOrInput = (): boolean | undefined => {
+    const { type } = activeItem
+    if (type === 'Section') {
+      return screens?.some(
+        (screen) => screen?.sectionId === activeItem?.data?.id,
+      )
+    }
+    if (type === 'Screen') {
+      return fields?.some((field) => field?.screenId === activeItem?.data?.id)
+    }
+    return false
+  }
+
+  const createScreen = useMutation(CREATE_SCREEN)
+  const createField = useMutation(CREATE_FIELD)
+  const deleteScreen = useMutation(DELETE_SCREEN)
+  const deleteField = useMutation(DELETE_FIELD)
+  const deleteSection = useMutation(DELETE_SECTION)
 
   const addItem = async () => {
-    if (activeItem.type === 'Step') {
-      const newGroup = await addGroup({
+    if (activeItem.type === 'Section') {
+      const newScreen = await createScreen[0]({
         variables: {
           input: {
-            groupCreationDto: {
-              stepId: activeItem?.data?.id,
-              displayOrder: groups?.length,
+            createScreenDto: {
+              sectionId: activeItem?.data?.id,
+              displayOrder: screens?.length,
             },
           },
         },
       })
-      if (newGroup) {
+      if (newScreen && !createScreen[1].loading) {
         controlDispatch({
-          type: 'ADD_GROUP',
+          type: 'ADD_SCREEN',
           payload: {
-            group: removeTypename(
-              newGroup.data?.formSystemCreateGroup,
-            ) as FormSystemGroup,
+            screen: removeTypename(
+              newScreen.data?.createFormSystemScreen,
+            ) as FormSystemScreen,
           },
         })
       }
-    } else if (activeItem.type === 'Group') {
-      const newInput = await addInput({
+    } else if (activeItem.type === 'Screen') {
+      const newField = await createField[0]({
         variables: {
           input: {
-            inputCreationDto: {
-              groupId: activeItem?.data?.id,
-              displayOrder: inputs?.length,
+            createFieldDto: {
+              screenId: activeItem?.data?.id,
+              fieldType: FieldTypesEnum.TEXTBOX,
+              displayOrder: fields?.length ?? 0,
             },
           },
         },
       })
-      if (newInput) {
+      if (newField) {
         controlDispatch({
-          type: 'ADD_INPUT',
+          type: 'ADD_FIELD',
           payload: {
-            input: removeTypename(
-              newInput.data?.formSystemCreateInput,
-            ) as FormSystemInput,
+            field: removeTypename(
+              newField.data?.createFormSystemField,
+            ) as FormSystemField,
           },
         })
       }
@@ -71,57 +92,80 @@ export const NavButtons = () => {
   }
 
   const remove = async () => {
-    const id = activeItem?.data?.id as number
-    if (activeItem.type === 'Step') {
-      await removeStep({
+    const id = activeItem?.data?.id as string
+    if (activeItem.type === 'Section') {
+      await deleteSection[0]({
         variables: {
           input: {
-            stepId: id,
+            id: id,
           },
         },
       })
-      if (!removeStepStatus.loading) {
-        controlDispatch({ type: 'REMOVE_STEP', payload: { stepId: id } })
-      }
-    } else if (activeItem.type === 'Group') {
-      await removeGroup({
+      controlDispatch({ type: 'REMOVE_SECTION', payload: { id: id } })
+    } else if (activeItem.type === 'Screen') {
+      await deleteScreen[0]({
         variables: {
           input: {
-            groupId: id,
+            id: id,
           },
         },
       })
-      if (!removeGroupStatus.loading) {
-        controlDispatch({ type: 'REMOVE_GROUP', payload: { groupId: id } })
-      }
-    } else if (activeItem.type === 'Input') {
-      await removeInput({
+      controlDispatch({ type: 'REMOVE_SCREEN', payload: { id: id } })
+    } else if (activeItem.type === 'Field') {
+      await deleteField[0]({
         variables: {
           input: {
-            inputId: id,
+            id: id,
           },
         },
       })
-      if (!removeInputStatus.loading) {
-        controlDispatch({ type: 'REMOVE_INPUT', payload: { inputId: id } })
-      }
+      controlDispatch({ type: 'REMOVE_FIELD', payload: { id: id } })
     }
   }
 
   return (
     <Box display="flex" flexDirection="row">
-      {activeItem.type !== 'Input' && (
+      {activeItem.type !== 'Field' && (
         <Box
           style={{ paddingTop: '5px', cursor: 'pointer' }}
           marginRight={1}
           onClick={addItem}
         >
-          <Icon icon="add" color="blue400" size="medium" />
+          <Tooltip text={hoverText} color="yellow200">
+            <span>
+              <Icon icon="add" color="blue400" size="medium" />
+            </span>
+          </Tooltip>
         </Box>
       )}
-      <Box style={{ paddingTop: '5px', cursor: 'pointer' }} onClick={remove}>
-        <Icon icon="trash" size="medium" />
-      </Box>
+      {containsGroupOrInput() ? (
+        <DialogPrompt
+          baseId="remove"
+          title={formatMessage(m.areYouSure)}
+          description={formatMessage(m.completelySure)}
+          ariaLabel="Remove item"
+          buttonTextConfirm={formatMessage(m.confirm)}
+          buttonTextCancel={formatMessage(m.cancel)}
+          onConfirm={remove}
+          disclosureElement={
+            <Box style={{ paddingTop: '5px', cursor: 'pointer' }}>
+              <Tooltip text={formatMessage(m.delete)}>
+                <span>
+                  <Icon icon="trash" size="medium" />
+                </span>
+              </Tooltip>
+            </Box>
+          }
+        />
+      ) : (
+        <Box style={{ paddingTop: '5px', cursor: 'pointer' }} onClick={remove}>
+          <Tooltip text={formatMessage(m.delete)}>
+            <span>
+              <Icon icon="trash" size="medium" />
+            </span>
+          </Tooltip>
+        </Box>
+      )}
     </Box>
   )
 }

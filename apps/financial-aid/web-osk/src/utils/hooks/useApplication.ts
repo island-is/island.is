@@ -9,7 +9,7 @@ import {
   FileType,
 } from '@island.is/financial-aid/shared/lib'
 import { Form } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { UploadFile } from '@island.is/island-ui/core'
+import { UploadFileDeprecated } from '@island.is/island-ui/core'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const useApplication = () => {
@@ -18,7 +18,7 @@ const useApplication = () => {
 
   const { nationalRegistryData, municipality } = useContext(AppContext)
 
-  const formatFiles = (files: UploadFile[], type: FileType) => {
+  const formatFiles = (files: UploadFileDeprecated[], type: FileType) => {
     return files.map((f) => {
       return {
         name: f.name ?? '',

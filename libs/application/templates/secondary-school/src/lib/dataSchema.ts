@@ -1,8 +1,10 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
-import { ApplicationType } from '../utils'
-import { YES } from '@island.is/application/types'
+import { ApplicationType } from '../shared'
+import { hasDuplicates } from '../utils'
+import { YES } from '@island.is/application/core'
 import { error } from './messages'
+import * as kennitala from 'kennitala'
 
 const FileDocumentSchema = z.object({
   name: z.string(),
@@ -11,25 +13,21 @@ const FileDocumentSchema = z.object({
 
 const CustodianSchema = z.object({
   person: z.object({
-    nationalId: z.string().min(1),
-    name: z.string().min(1),
     email: z.string().min(1),
     phone: z.string().min(1),
-  }),
-  legalDomicile: z.object({
-    streetAddress: z.string().min(1),
-    postalCode: z.string().min(1),
-    city: z.string().optional(),
   }),
 })
 
 const MainOtherContactSchema = z
   .object({
     applicantNationalId: z.string(),
-    required: z.boolean(),
+    include: z.boolean(),
     person: z
       .object({
-        nationalId: z.string().optional(),
+        nationalId: z
+          .string()
+          .optional()
+          .refine((nationalId) => !nationalId || kennitala.isValid(nationalId)),
         name: z.string().optional(),
         email: z.string().optional(),
         phone: z.string().optional(),
@@ -37,29 +35,33 @@ const MainOtherContactSchema = z
       .optional(),
   })
   .refine(
-    ({ required, person }) => {
-      if (!required) return true
-      return !!person?.nationalId
+    ({ include, person }) => {
+      if (!include) return true
+      if (!person?.nationalId && !person?.email && !person?.phone) return true
+      return !!person.nationalId && kennitala.isValid(person.nationalId)
     },
     { path: ['person', 'nationalId'] },
   )
   .refine(
-    ({ required, person }) => {
-      if (!required) return true
+    ({ include, person }) => {
+      if (!include) return true
+      if (!person?.nationalId && !person?.email && !person?.phone) return true
       return !!person?.name
     },
     { path: ['person', 'name'] },
   )
   .refine(
-    ({ required, person }) => {
-      if (!required) return true
+    ({ include, person }) => {
+      if (!include) return true
+      if (!person?.nationalId && !person?.email && !person?.phone) return true
       return !!person?.email
     },
     { path: ['person', 'email'] },
   )
   .refine(
-    ({ required, person }) => {
-      if (!required) return true
+    ({ include, person }) => {
+      if (!include) return true
+      if (!person?.nationalId && !person?.email && !person?.phone) return true
       return !!person?.phone
     },
     { path: ['person', 'phone'] },
@@ -72,18 +74,29 @@ const MainOtherContactSchema = z
     { path: ['person', 'nationalId'], params: error.errorSameAsApplicant },
   )
 
-const OtherContactSchema = z.object({
-  person: z.object({
-    nationalId: z.string().min(1),
-    name: z.string().min(1),
-    email: z.string().min(1),
-    phone: z.string().min(1),
-  }),
-})
+const OtherContactSchema = z
+  .object({
+    person: z.object({
+      nationalId: z
+        .string()
+        .min(1)
+        .refine((nationalId) => kennitala.isValid(nationalId)),
+      name: z.string().min(1),
+      email: z.string().min(1),
+      phone: z.string().min(1),
+    }),
+    applicantNationalId: z.string().optional(),
+  })
+  .refine(
+    ({ person, applicantNationalId }) => {
+      if (person?.nationalId === applicantNationalId) return false
+      return true
+    },
+    { path: ['person', 'nationalId'], params: error.errorSameAsApplicant },
+  )
 
 const SelectionSchema = z
   .object({
-    include: z.boolean().optional(),
     school: z
       .object({
         id: z.string().optional().nullable(),
@@ -101,13 +114,15 @@ const SelectionSchema = z
       .optional(),
     secondProgram: z
       .object({
-        // Note: this include is only used for zod validation if there is only one program available, but a freshman should pick two
+        // Note: is true if more than one program is available (this is only used for zod validation)
         include: z.boolean().optional(),
+        // Note: is true if freshman and firstProgram is not special needs program
         require: z.boolean().optional(),
         id: z.string().optional().nullable(),
         nameIs: z.string().optional(),
         nameEn: z.string().optional(),
         registrationEndDate: z.string().optional(),
+        isSpecialNeedsProgram: z.boolean().optional(),
       })
       .optional(),
     thirdLanguage: z
@@ -125,26 +140,33 @@ const SelectionSchema = z
     requestDormitory: z.array(z.enum([YES])).optional(),
   })
   .refine(
-    ({ include, school }) => {
-      if (!include) return true
+    ({ school }) => {
       return !!school?.id
     },
     { path: ['school', 'id'] },
   )
   .refine(
-    ({ include, firstProgram }) => {
-      if (!include) return true
+    ({ firstProgram }) => {
       return !!firstProgram?.id
     },
     { path: ['firstProgram', 'id'] },
   )
   .refine(
-    ({ include, secondProgram }) => {
-      if (!include) return true
+    ({ secondProgram }) => {
       if (!secondProgram?.include || !secondProgram?.require) return true
       return !!secondProgram?.id
     },
     { path: ['secondProgram', 'id'] },
+  )
+  .refine(
+    ({ firstProgram, secondProgram }) => {
+      return (
+        !firstProgram?.id ||
+        !secondProgram?.id ||
+        firstProgram?.id !== secondProgram?.id
+      )
+    },
+    { path: ['secondProgram', 'id'], params: error.errorProgramDuplicate },
   )
 
 export const SecondarySchoolSchema = z.object({
@@ -152,7 +174,7 @@ export const SecondarySchoolSchema = z.object({
   applicant: applicantInformationSchema({
     phoneRequired: true,
     emailRequired: true,
-  }),
+  }).refine(({ nationalId }) => kennitala.isValid(nationalId)),
   applicationType: z
     .object({
       value: z.nativeEnum(ApplicationType),
@@ -171,7 +193,22 @@ export const SecondarySchoolSchema = z.object({
   custodians: z.array(CustodianSchema).max(2),
   mainOtherContact: MainOtherContactSchema,
   otherContacts: z.array(OtherContactSchema).max(1),
-  selection: z.array(SelectionSchema),
+  selection: z
+    .array(SelectionSchema)
+    .refine(
+      (arr) => {
+        const schoolIds = [arr[0]?.school?.id || '', arr[1]?.school?.id || '']
+        return !hasDuplicates(schoolIds.filter((x) => !!x))
+      },
+      { path: ['1', 'school', 'id'], params: error.errorSchoolDuplicate },
+    )
+    .refine(
+      (arr) => {
+        const schoolIds = arr.map((x) => x?.school?.id || '')
+        return !hasDuplicates(schoolIds.filter((x) => !!x))
+      },
+      { path: ['2', 'school', 'id'], params: error.errorSchoolDuplicate },
+    ),
   extraInformation: z.object({
     nativeLanguageCode: z.string().optional().nullable(),
     otherDescription: z.string().optional(),

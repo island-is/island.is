@@ -192,13 +192,11 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'notHealthInsuredDescriptionField',
-              title: '',
               description:
                 m.application.notHealthInusred.descriptionFieldDescription,
             }),
             buildAlertMessageField({
               id: 'notHealthInsuredAlertMessage',
-              title: '',
               alertType: 'warning',
               message: ({ externalData }) =>
                 getCommentFromExternalData(externalData),
@@ -208,7 +206,6 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
             }),
             buildCheckboxField({
               id: 'notHealthInsuredCheckboxField',
-              title: '',
               disabled: true,
               options: () => [
                 {
@@ -236,7 +233,6 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           children: [
             buildRadioField({
               id: 'studentOrTouristRadioFieldTourist',
-              title: '',
               required: true,
               options: [
                 {
@@ -272,9 +268,9 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
             buildCheckboxField({
               id: 'selectedApplicants.registerPersonsApplicantCheckboxField',
               title: m.application.registerPersons.applicantTitle,
-              defaultValue: (application: any) => [
-                getApplicantAsOption(application.externalData)[0]?.value,
-              ],
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) => [getApplicantAsOption(application.externalData)[0]?.value],
               options: ({ externalData }) => getApplicantAsOption(externalData),
             }),
             buildCheckboxField({
@@ -313,7 +309,6 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           children: [
             buildRadioField({
               id: 'residencyTouristRadioField',
-              title: '',
               required: true,
               options: ({ externalData }) =>
                 getContinentsAsOption(externalData),
@@ -358,7 +353,6 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'educationConfirmationDescriptionField',
-              title: '',
               description:
                 m.application.educationConfirmation.SectionDescription,
             }),
@@ -582,7 +576,6 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'submit',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

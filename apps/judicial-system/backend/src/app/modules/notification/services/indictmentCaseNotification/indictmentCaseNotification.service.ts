@@ -105,6 +105,10 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       strings.indictmentCompletedWithRuling.body,
       {
         courtCaseNumber: theCase.courtCaseNumber,
+        policeCaseNumber:
+          theCase.policeCaseNumbers.length > 0
+            ? theCase.policeCaseNumbers[0]
+            : '',
         courtName: applyDativeCaseToCourtName(theCase.court?.name || ''),
         serviceRequirement:
           theCase.defendants && theCase.defendants[0].serviceRequirement,
@@ -135,12 +139,14 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
+    const courtName =
+      theCase.court && theCase.court.name ? theCase.court.name : undefined
 
     const formattedBody = this.formatMessage(
       strings.criminalRecordFilesUploadedEmail.body,
       {
         courtCaseNumber: theCase.courtCaseNumber,
-        courtName: theCase.court?.name.replace('dómur', 'dómi'),
+        courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
         linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       },

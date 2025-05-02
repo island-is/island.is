@@ -10,10 +10,11 @@ import {
 import { StaticTableFormField } from '@island.is/application/ui-fields'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { NO, PARENTAL_LEAVE, States, YES } from '../../../constants'
+import { PARENTAL_LEAVE, States } from '../../../constants'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
 import { ReviewGroupProps } from './props'
+import { NO, YES } from '@island.is/application/core'
 
 export const Employment = ({
   application,
@@ -79,7 +80,7 @@ export const Employment = ({
                   label={formatMessage(
                     parentalLeaveFormMessages.reviewScreen.benefits,
                   )}
-                  value={unemploymentBenefits}
+                  value={unemploymentBenefits ?? ''}
                 />
               </GridColumn>
             </GridRow>

@@ -47,7 +47,6 @@ export const ApplicationForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'submitApplication',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

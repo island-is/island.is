@@ -16,7 +16,6 @@ import {
   Application,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { Roles, States, Events } from './constants'
 import { WorkAccidentNotificationAnswersSchema } from './dataSchema'
 import { getAoshInputOptionsApi, IdentityApi } from '../dataProviders'
@@ -48,7 +47,6 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.vinnueftirlitidAccident],
-  featureFlag: Features.WorkAccidentNotificationEnabled,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -56,7 +54,6 @@ const template: ApplicationTemplate<
       [States.PREREQUISITES]: {
         meta: {
           name: 'Skilyrði',
-          progress: 0,
           status: 'draft',
           actionCard: {
             tag: {
@@ -111,7 +108,11 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

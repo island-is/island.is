@@ -61,7 +61,6 @@ export const EmployerApproveEdits: Form = buildForm({
                 ),
                 buildCustomField({
                   id: 'unionAndPensionInfo',
-                  title: '',
                   component: 'EmployerApprovalExtraInformation',
                 }),
                 // buildDescriptionField({

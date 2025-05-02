@@ -6,7 +6,7 @@ import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
 import { RadioController } from '@island.is/shared/form-fields'
 import { TransferOverview } from '../components'
-import { ApproveContract } from '../../lib/dataSchema'
+import { YesOrNoEnum } from '@island.is/application/core'
 
 const ParentBIntro = ({ application, field, errors }: CRCFieldBaseProps) => {
   const { externalData } = application
@@ -44,11 +44,11 @@ const ParentBIntro = ({ application, field, errors }: CRCFieldBaseProps) => {
           backgroundColor="white"
           options={[
             {
-              value: ApproveContract.Yes,
+              value: YesOrNoEnum.YES,
               label: formatMessage(parentBIntro.contract.accept),
             },
             {
-              value: ApproveContract.No,
+              value: YesOrNoEnum.NO,
               label: formatMessage(parentBIntro.contract.reject),
             },
           ]}

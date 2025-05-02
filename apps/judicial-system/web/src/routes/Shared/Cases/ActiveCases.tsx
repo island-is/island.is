@@ -35,6 +35,8 @@ const ActiveCases: FC<Props> = (props) => {
       thead={[
         {
           title: formatMessage(tables.caseNumber),
+          sortBy: 'policeCaseNumbers',
+          sortFn: 'number',
         },
         {
           title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
@@ -47,7 +49,7 @@ const ActiveCases: FC<Props> = (props) => {
           title: capitalize(formatMessage(tables.sentToCourtDate)),
           sortBy: 'caseSentToCourtDate',
         },
-        { title: formatMessage(tables.state) },
+        { title: formatMessage(tables.state), sortBy: 'state' },
         {
           title: formatMessage(tables.hearingArrangementDate),
           sortBy: 'courtDate',

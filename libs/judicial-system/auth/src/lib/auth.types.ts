@@ -1,8 +1,14 @@
 import type { User, UserRole } from '@island.is/judicial-system/types'
 
 export type Credentials = {
-  user: User
-  csrfToken: string
+  currentUserNationalId: string
+  currentUser?: User
+  csrfToken?: string
+}
+
+export type AuthUser = {
+  currentUserNationalId: string
+  currentUser?: User
 }
 
 export enum RulesType {

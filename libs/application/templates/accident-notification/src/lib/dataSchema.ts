@@ -18,11 +18,10 @@ import {
   ReviewApprovalEnum,
   OnBehalf,
   Status,
-  YesOrNo,
-} from '../types'
+} from '../utils/enums'
 import { error } from './messages/error'
 import { isValid24HFormatTime } from '../utils/dateUtils'
-import { YES } from '@island.is/application/types'
+import { YES, YesOrNoEnum } from '@island.is/application/core'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -99,7 +98,7 @@ const accidentDetails = z.object({
   dateOfAccident: z.string().refine((x) => x.trim().length > 0, {
     params: error.invalidValue,
   }),
-  isHealthInsured: z.nativeEnum(YesOrNo).optional(),
+  isHealthInsured: z.nativeEnum(YesOrNoEnum).optional(),
   timeOfAccident: z
     .string()
     .refine((x) => (x ? isValid24HFormatTime(x) : false), {
@@ -193,8 +192,8 @@ export const AccidentNotificationSchema = z.object({
   info: z.object({
     onBehalf: z.nativeEnum(OnBehalf),
   }),
-  timePassedHindrance: z.nativeEnum(YesOrNo),
-  carAccidentHindrance: z.nativeEnum(YesOrNo),
+  timePassedHindrance: z.nativeEnum(YesOrNoEnum),
+  carAccidentHindrance: z.nativeEnum(YesOrNoEnum),
   applicant: applicantInformationSchema(),
   whoIsTheNotificationFor: z.object({
     answer: z.nativeEnum(WhoIsTheNotificationForEnum),
@@ -213,13 +212,13 @@ export const AccidentNotificationSchema = z.object({
     ]),
   }),
   attachments,
-  wasTheAccidentFatal: z.nativeEnum(YesOrNo),
-  fatalAccidentUploadDeathCertificateNow: z.nativeEnum(YesOrNo),
+  wasTheAccidentFatal: z.nativeEnum(YesOrNoEnum),
+  fatalAccidentUploadDeathCertificateNow: z.nativeEnum(YesOrNoEnum),
   accidentDetails,
   isRepresentativeOfCompanyOrInstitue: z.array(z.string()).optional(),
   fishingShipInfo,
   onPayRoll: z.object({
-    answer: z.nativeEnum(YesOrNo),
+    answer: z.nativeEnum(YesOrNoEnum),
   }),
   locationAndPurpose: z.object({
     location: z.string().refine((x) => x.trim().length > 0, {
@@ -240,7 +239,7 @@ export const AccidentNotificationSchema = z.object({
   shipLocation: z.object({
     answer: z.nativeEnum(FishermanWorkplaceAccidentShipLocationEnum),
   }),
-  workMachineRadio: z.nativeEnum(YesOrNo),
+  workMachineRadio: z.nativeEnum(YesOrNoEnum),
   workMachine: z.object({
     descriptionOfMachine: z.string().refine((x) => x.trim().length > 0, {
       params: error.invalidValue,

@@ -1,5 +1,4 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
 import {
   Animated,
   Image,
@@ -11,7 +10,6 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { GenericLicenseType } from '../../../graphql/types/schema'
 import { isString } from '../../../utils/is-string'
-import { prefixBase64 } from '../../../utils/prefix-base-64'
 import BackgroundADR from '../../assets/card/adr-bg.png'
 import LogoCoatOfArms from '../../assets/card/agency-logo.png'
 import CoatOfArms from '../../assets/card/logo-coat-of-arms.png'
@@ -19,11 +17,12 @@ import BackgroundDriversLicense from '../../assets/card/okuskirteini.png'
 import DisabilityLicenseBg from '../../assets/card/ororka_bg.png'
 import BackgroundPCardLicense from '../../assets/card/p-card.png'
 import BackgroundPassport from '../../assets/card/passport-bg.png'
+import BackgroundIdentityDocument from '../../assets/card/nafnskirteini-bg.png'
 import LogoEhic from '../../assets/card/sjukratryggingar.png'
 import BackgroundWeaponLicense from '../../assets/card/skotvopnaleyfi.png'
 import LogoRegistersIceland from '../../assets/card/thjodskra-logo.png'
 import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
-import LogoEnvironmentAgency from '../../assets/card/ust-logo.png'
+import LogoNatureConservationAgency from '../../assets/card/nvs-logo.png'
 import BackgroundHuntingCard from '../../assets/card/veidikort-bg.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
@@ -33,7 +32,7 @@ import { Typography } from '../typography/typography'
 
 export const LICENSE_CARD_ROW_GAP = theme.spacing.p2
 
-const Host = styled(Animated.View)`
+const Host = styled(Animated.View)<{ emptyState?: boolean }>`
   position: relative;
   min-height: 80px;
   padding-vertical: ${({ theme }) => theme.spacing[2]}px;
@@ -41,6 +40,8 @@ const Host = styled(Animated.View)`
   padding-right: ${({ theme }) => theme.spacing[1]}px;
   row-gap: ${LICENSE_CARD_ROW_GAP}px;
   border-radius: ${({ theme }) => theme.border.radius.extraLarge};
+  border-width: ${({ emptyState }) => (emptyState ? 1 : 0)}px;
+  border-color: ${({ theme }) => theme.color.blue200};
   overflow: hidden;
   justify-content: center;
 `
@@ -90,7 +91,7 @@ const ImgWrap = styled.View`
   width: 42px;
 `
 
-export const LicenseCardPresets: Record<LicenseType, CardPreset> = {
+export const LicenseCardPresets: Record<GenericLicenseType, CardPreset> = {
   DriversLicense: {
     title: 'Ökuskírteini (IS)',
     logo: LogoCoatOfArms,
@@ -133,7 +134,7 @@ export const LicenseCardPresets: Record<LicenseType, CardPreset> = {
   },
   HuntingLicense: {
     title: 'Veiðikort',
-    logo: LogoEnvironmentAgency,
+    logo: LogoNatureConservationAgency,
     backgroundImage: BackgroundHuntingCard,
     backgroundColor: '#E2EDFF',
     barcode: {
@@ -145,7 +146,7 @@ export const LicenseCardPresets: Record<LicenseType, CardPreset> = {
     title: 'Evrópska sjúkratryggingakortið',
     logo: LogoEhic,
     backgroundImage: BackgroundPassport,
-    backgroundColor: '#E2EDFF',
+    backgroundColor: '#B9C1E6',
   },
   DisabilityLicense: {
     title: 'Örorkuskírteini',
@@ -164,18 +165,18 @@ export const LicenseCardPresets: Record<LicenseType, CardPreset> = {
     backgroundColor: '#F2F7FF',
   },
   Passport: {
-    title: 'Almennt vegabréf',
+    title: 'Vegabréf: Almennt',
     logo: LogoRegistersIceland,
     backgroundImage: BackgroundPassport,
-    backgroundColor: '#fff',
+    backgroundColor: '#CACFE4',
+  },
+  IdentityDocument: {
+    title: 'Nafnskírteini',
+    logo: LogoRegistersIceland,
+    backgroundImage: BackgroundIdentityDocument,
+    backgroundColor: '#C5E3F2',
   },
 }
-
-export enum CustomLicenseType {
-  Passport = 'Passport',
-}
-
-type LicenseType = GenericLicenseType | CustomLicenseType
 
 type CardPreset = {
   title: string
@@ -192,23 +193,25 @@ interface LicenseCardProps {
   title?: string | null
   nativeID?: string
   style?: StyleProp<ViewStyle>
-  type?: LicenseType
+  type?: GenericLicenseType
   logo?: ImageSourcePropType | string
   backgroundImage?: ImageSourcePropType
   backgroundColor?: string
-  licenseNumber?: string | null
+  subtitle?: string | null
+  emptyState?: boolean
+  link?: React.ReactNode
+  childName?: string | null
 }
 
 export function LicenseListCard({
   nativeID,
   style,
   type,
-  licenseNumber,
+  subtitle,
   ...props
 }: LicenseCardProps) {
   const theme = useTheme()
 
-  const intl = useIntl()
   const preset = type
     ? LicenseCardPresets[type]
     : LicenseCardPresets.DriversLicense
@@ -219,18 +222,20 @@ export function LicenseListCard({
   const textColor = theme.shades.light.foreground
 
   return (
-    <Host>
-      <BackgroundImage
-        source={backgroundImage}
-        color={backgroundColor}
-        resizeMode="cover"
-      />
+    <Host emptyState={props.emptyState}>
+      {!props.emptyState && (
+        <BackgroundImage
+          source={backgroundImage}
+          color={backgroundColor}
+          resizeMode="cover"
+        />
+      )}
       <ContentContainer>
         <TextContent>
           {logo && (
             <ImgWrap>
               {isString(logo) ? (
-                <Base64Image source={{ uri: prefixBase64(logo) }} />
+                <Base64Image source={{ uri: logo }} />
               ) : (
                 <Image source={logo} style={{ height: 42, width: 42 }} />
               )}
@@ -245,30 +250,31 @@ export function LicenseListCard({
             >
               {title}
             </Title>
-            {licenseNumber && (
+            {props.childName && (
+              <Typography variant="eyebrow" style={{ marginBottom: 2 }}>
+                {props.childName}
+              </Typography>
+            )}
+            {subtitle && (
               <Typography variant="body3" color={textColor}>
-                {type === CustomLicenseType.Passport
-                  ? intl.formatMessage(
-                      { id: 'walletPass.passportNumber' },
-                      { licenseNumber: licenseNumber },
-                    )
-                  : intl.formatMessage(
-                      { id: 'walletPass.licenseNumber' },
-                      { licenseNumber: licenseNumber },
-                    )}
+                {subtitle}
               </Typography>
             )}
           </Content>
         </TextContent>
-        <Image
-          source={chevronForward}
-          style={{
-            height: 24,
-            width: 24,
-            tintColor: theme.color.dark400,
-            opacity: 0.3,
-          }}
-        />
+        {props.link ? (
+          props.link
+        ) : (
+          <Image
+            source={chevronForward}
+            style={{
+              height: 24,
+              width: 24,
+              tintColor: theme.color.dark400,
+              opacity: 0.3,
+            }}
+          />
+        )}
       </ContentContainer>
     </Host>
   )

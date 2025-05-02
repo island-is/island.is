@@ -1,4 +1,11 @@
-import { ChangeEvent, FC, useCallback, useMemo, useState } from 'react'
+import {
+  ChangeEvent,
+  FC,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
@@ -11,8 +18,8 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useGetLawyers } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import {
   emailLabelStrings,
   nameLabelStrings,
@@ -77,20 +84,21 @@ const InputAdvocate: FC<Props> = ({
   disabled,
 }) => {
   const { formatMessage } = useIntl()
-  const lawyers = useGetLawyers()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
     useState<string>('')
 
+  const { lawyers } = useContext(LawyerRegistryContext)
+
   const options = useMemo(
     () =>
-      lawyers.map((l: Lawyer) => ({
+      lawyers?.map((l: Lawyer) => ({
         label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
         value: l.email,
       })),
 
     [lawyers],
-  )
+)
 
   const handleAdvocateChange = useCallback(
     (selectedOption: SingleValue<ReactSelectOption>) => {
@@ -104,7 +112,7 @@ const InputAdvocate: FC<Props> = ({
 
         onAdvocateNotFound && onAdvocateNotFound(defenderNotFound || false)
 
-        const lawyer = lawyers.find(
+        const lawyer = lawyers?.find(
           (l: Lawyer) => l.email === (value as string),
         )
 
@@ -192,7 +200,7 @@ const InputAdvocate: FC<Props> = ({
             lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
           }
           onChange={handleAdvocateChange}
-          filterConfig={{ matchFrom: 'start' }}
+          noOptionsMessage="Ekki náðist samband við lögmannaskrá LMFÍ."
           isDisabled={Boolean(disabled)}
           isCreatable
           isClearable

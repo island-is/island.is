@@ -13,7 +13,6 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
-  PdfButton,
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
@@ -63,13 +62,15 @@ const CaseFiles = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.criminalRecordSection)}
+            heading="h2"
           />
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            name="criminalRecord"
+            files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            title={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
@@ -86,13 +87,15 @@ const CaseFiles = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.costBreakdownSection)}
+            heading="h2"
           />
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            name="costBreakdown"
+            files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            title={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
@@ -106,19 +109,18 @@ const CaseFiles = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
-        <Box
-          component="section"
-          marginBottom={workingCase.hasCivilClaims ? 5 : 10}
-        >
+        <Box component="section" marginBottom={10}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.otherDocumentsSection)}
+            heading="h2"
           />
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            name="caseFiles"
+            files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.CASE_FILE,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            title={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
@@ -130,45 +132,13 @@ const CaseFiles = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
-        {workingCase.hasCivilClaims && (
-          <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(strings.caseFiles.civilClaimSection)}
-            />
-            <InputFileUpload
-              fileList={uploadFiles.filter(
-                (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
-              )}
-              accept={Object.values(fileExtensionWhitelist)}
-              header={formatMessage(strings.caseFiles.inputFieldLabel)}
-              buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
-              onChange={(files) =>
-                handleUpload(
-                  addUploadFiles(files, {
-                    category: CaseFileCategory.CIVIL_CLAIM,
-                  }),
-                  updateUploadFile,
-                )
-              }
-              onRemove={(file) => handleRemove(file, removeUploadFile)}
-              onRetry={(file) => handleRetry(file, updateUploadFile)}
-            />
-          </Box>
-        )}
-        <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(strings.caseFiles.pdfButtonIndictment)}
-            pdfType="indictment"
-          />
-        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_PROCESSING_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isLoadingWorkingCase}

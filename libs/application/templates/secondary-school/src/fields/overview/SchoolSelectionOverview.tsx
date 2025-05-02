@@ -1,12 +1,17 @@
-import { FieldBaseProps, YES } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
-import { getTranslatedProgram, Routes, checkIsEditable } from '../../utils'
+import {
+  getTranslatedProgram,
+  Routes,
+  checkIsEditable,
+  checkUseAnswersCopy,
+} from '../../utils'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 
 export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
   application,
@@ -14,9 +19,12 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage, lang } = useLocale()
 
+  const useAnswersCopy = checkUseAnswersCopy(application)
+  const copyPrefix = useAnswersCopy ? 'copy.' : ''
+
   const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
     application.answers,
-    'selection',
+    copyPrefix + 'selection',
   )
 
   const onClick = (page: string) => {
@@ -35,8 +43,8 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
       <Box>
         <GridRow>
           {/* First selection */}
-          <GridColumn span={selection?.[1]?.include ? '1/2' : '1/1'}>
-            {selection?.[1]?.include && (
+          <GridColumn span={selection?.[1]?.school?.id ? '1/2' : '1/1'}>
+            {!!selection?.[1]?.school?.id && (
               <Text variant="h5">
                 {formatMessage(overview.selection.firstSubtitle)}
               </Text>
@@ -73,7 +81,7 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
           </GridColumn>
 
           {/* Second selection */}
-          {selection?.[1]?.include && (
+          {!!selection?.[1]?.school?.id && (
             <GridColumn span="1/2">
               <Text variant="h5">
                 {formatMessage(overview.selection.secondSubtitle)}
@@ -111,7 +119,7 @@ export const SchoolSelectionOverview: FC<FieldBaseProps> = ({
           )}
 
           {/* Third selection */}
-          {selection?.[2]?.include && (
+          {!!selection?.[2]?.school?.id && (
             <Box marginTop={2}>
               <GridColumn span="1/2">
                 <Text variant="h5">

@@ -1,6 +1,5 @@
 import {
   buildCustomField,
-  buildDateField,
   buildDescriptionField,
   buildFileUploadField,
   buildMultiField,
@@ -55,14 +54,12 @@ export const fishingLicenseFurtherInfoSection = buildSection({
   children: [
     buildMultiField({
       id: 'fishingLicenseFurtherInformation',
-      title: '',
       description: '',
       children: [
         // Custom field to replace section title
         // i.e. to make it dynamic
         buildCustomField({
           id: 'fishingLicenseFurtherInformation.customTitle',
-          title: '',
           doesNotRequireAnswer: true,
           component: 'FishingLicenseFurtherInfoTitleSection',
         }),
@@ -77,7 +74,6 @@ export const fishingLicenseFurtherInfoSection = buildSection({
         }),
         buildCustomField({
           id: 'fishingLicenseFurtherInformation.areaWithDate',
-          title: '',
           component: 'AreaWithDateSelection',
           condition: hasAreaSelection,
         }),
@@ -108,7 +104,6 @@ export const fishingLicenseFurtherInfoSection = buildSection({
         // depending on which license user is currenty applying for
         buildCustomField({
           id: 'fishingLicenseFurtherInformation.customAttachmentsTitle',
-          title: '',
           doesNotRequireAnswer: true,
           description:
             fishingLicenseFurtherInformation.fieldInformation.attachments,
@@ -133,7 +128,6 @@ export const fishingLicenseFurtherInfoSection = buildSection({
         // Roe net and rail net information fields - only for selected license(s)
         buildCustomField({
           id: 'fishingLicenseFurtherInformation.railAndRoeNet',
-          title: '',
           component: 'RailNetAndRoeNetCalculations',
           condition: hasRailNetAndRoeNetField,
         }),

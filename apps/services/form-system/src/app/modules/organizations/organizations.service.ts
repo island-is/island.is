@@ -9,6 +9,18 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { FormDto } from '../forms/models/dto/form.dto'
+import { OrganizationAdminDto } from './models/dto/organizationAdmin.dto'
+import { CertificationTypes } from '../../dataTypes/certificationTypes/certificationType.model'
+import { Option } from '../../dataTypes/option.model'
+import { User } from '@island.is/auth-nest-tools'
+import { jwtDecode } from 'jwt-decode'
+import { ListTypes } from '../../dataTypes/listTypes/listType.model'
+import { FieldTypes } from '../../dataTypes/fieldTypes/fieldType.model'
+import {
+  CertificationTypesEnum,
+  ListTypesEnum,
+  FieldTypesEnum,
+} from '@island.is/form-system/shared'
 
 @Injectable()
 export class OrganizationsService {
@@ -37,6 +49,76 @@ export class OrganizationsService {
     organizationsResponse.organizations = organizationsDto
 
     return organizationsResponse
+  }
+
+  async findAdmin(
+    user: User,
+    nationalId: string,
+  ): Promise<OrganizationAdminDto> {
+    const token = jwtDecode<{ name: string; nationalId: string }>(
+      user.authorization,
+    )
+
+    // the loader is not sending the nationalId
+    if (nationalId === '0') {
+      nationalId = token.nationalId
+    }
+
+    const organization = await this.organizationModel.findOne({
+      where: { nationalId },
+      include: ['organizationPermissions'],
+    })
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with nationalId ${nationalId} not found`,
+      )
+    }
+
+    const organizationAdminDto: OrganizationAdminDto =
+      new OrganizationAdminDto()
+
+    organizationAdminDto.organizationId = organization.id
+
+    if (organization.organizationPermissions) {
+      organization.organizationPermissions.forEach((permission) => {
+        if (
+          Object.values(CertificationTypesEnum).includes(permission.permission)
+        ) {
+          organizationAdminDto.selectedCertificationTypes.push(
+            permission.permission,
+          )
+        } else if (
+          Object.values(ListTypesEnum).includes(permission.permission)
+        ) {
+          organizationAdminDto.selectedListTypes.push(permission.permission)
+        } else if (
+          Object.values(FieldTypesEnum).includes(permission.permission)
+        ) {
+          organizationAdminDto.selectedFieldTypes.push(permission.permission)
+        }
+      })
+    }
+
+    organizationAdminDto.certificationTypes = CertificationTypes
+    organizationAdminDto.ListTypes = ListTypes
+    organizationAdminDto.FieldTypes = FieldTypes
+
+    organizationAdminDto.organizations = await this.organizationModel
+      .findAll({
+        attributes: ['name', 'nationalId'],
+      })
+      .then((organizations) => {
+        return organizations.map((organization) => {
+          return {
+            label: organization.name.is,
+            value: organization.nationalId,
+            isSelected: organization.nationalId === nationalId,
+          } as Option
+        })
+      })
+
+    return organizationAdminDto
   }
 
   async findOne(id: string): Promise<OrganizationDto> {

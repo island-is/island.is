@@ -1,5 +1,4 @@
-import CryptoJS from 'crypto-js'
-import Base64 from 'js-base64'
+import { Base64 } from 'js-base64'
 import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
@@ -32,7 +31,7 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { createConfirmedPdf } from '../../formatters'
+import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { Case } from '../case/models/case.model'
@@ -137,6 +136,9 @@ export class FileService {
       case CaseFileCategory.CASE_FILE:
       case CaseFileCategory.PROSECUTOR_CASE_FILE:
       case CaseFileCategory.DEFENDANT_CASE_FILE:
+      case CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE:
+      case CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE:
+      case CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE:
       case CaseFileCategory.CRIMINAL_RECORD:
       case CaseFileCategory.COST_BREAKDOWN:
       case CaseFileCategory.CIVIL_CLAIM:
@@ -168,23 +170,19 @@ export class FileService {
       (file.category !== CaseFileCategory.RULING &&
         file.category !== CaseFileCategory.COURT_RECORD)
     ) {
-      return undefined
+      return undefined // This should never happen
     }
 
-    const confirmationEvent = theCase.eventLogs?.find(
-      (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
+    const completedEvent = theCase.eventLogs?.find(
+      (event) => event.eventType === EventType.INDICTMENT_COMPLETED,
     )
-
-    if (!confirmationEvent || !confirmationEvent.nationalId) {
-      return undefined
-    }
 
     return createConfirmedPdf(
       {
         actor: theCase.judge?.name ?? '',
         title: theCase.judge?.title,
         institution: theCase.judge?.institution?.name ?? '',
-        date: theCase.rulingDate,
+        date: completedEvent?.created || theCase.rulingDate,
       },
       pdf,
       file.category,
@@ -194,11 +192,13 @@ export class FileService {
           throw new Error('Failed to create confirmed PDF')
         }
 
-        const binaryPdf = confirmedPdf.toString('binary')
-        const hash = CryptoJS.MD5(binaryPdf).toString(CryptoJS.enc.Hex)
+        const { hash, hashAlgorithm, binaryPdf } = getCaseFileHash(confirmedPdf)
 
         // No need to wait for the update to finish
-        this.fileModel.update({ hash }, { where: { id: file.id } })
+        this.fileModel.update(
+          { hash, hashAlgorithm },
+          { where: { id: file.id } },
+        )
 
         return binaryPdf
       })
@@ -462,6 +462,14 @@ export class FileService {
     }
 
     await this.verifyCaseFile(file, theCase)
+
+    if (file.size === 0) {
+      this.logger.warn(
+        `Ignoring upload for empty file ${file.id} of case ${theCase.id}`,
+      )
+
+      return { success: true }
+    }
 
     this.throttle = this.throttleUpload(file, theCase, user)
 

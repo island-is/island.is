@@ -1,0 +1,6 @@
+export const TimeIntervals = {
+  MINUTELY: 'MINUTELY',
+  QUARTERLY: 'QUARTERLY',
+  HALF_HOURLY: 'HALF_HOURLY',
+  HOURLY: 'HOURLY',
+}

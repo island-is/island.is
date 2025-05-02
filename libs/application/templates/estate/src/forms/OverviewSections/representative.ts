@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildDividerField,
   buildKeyValueField,
@@ -38,7 +37,6 @@ export const representativeOverview = [
   }),
   buildDescriptionField({
     id: 'spaceRepresentative',
-    title: '',
     space: 'gutter',
     condition: (answers) =>
       !!getValueViaPath<string>(answers, 'representative.nationalId'),
@@ -65,7 +63,6 @@ export const representativeOverview = [
   }),
   buildDescriptionField({
     id: 'representativeNotFilledOut',
-    title: '',
     description: m.notFilledOutItalic,
     condition: (answers) =>
       !getValueViaPath<string>(answers, 'representative.nationalId'),

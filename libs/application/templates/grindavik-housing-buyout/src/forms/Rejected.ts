@@ -27,12 +27,10 @@ export const Rejected: Form = buildForm({
             buildDescriptionField({
               id: 'applicationRejectedIntro',
               marginBottom: 3,
-              title: '',
               description: m.rejected.text,
             }),
             buildMessageWithLinkButtonField({
               id: 'applicationRejectedLink',
-              title: '',
               url: '/minarsidur/umsoknir',
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,

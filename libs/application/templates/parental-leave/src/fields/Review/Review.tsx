@@ -19,14 +19,12 @@ import { useLocale } from '@island.is/localization'
 import {
   Languages,
   MANUAL,
-  NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   ParentalRelations,
   SINGLE,
   States,
-  YES,
 } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { SummaryRights } from '../Rights/SummaryRights'
@@ -39,6 +37,7 @@ import { Periods } from './review-groups/Periods'
 import { PersonalAllowance } from './review-groups/PersonalAllowance'
 import { SpousePersonalAllowance } from './review-groups/SpousePersonalAllowance'
 import { Comment } from './review-groups/Comment'
+import { NO, YES } from '@island.is/application/core'
 
 interface ReviewScreenProps {
   application: Application
@@ -138,11 +137,13 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
               label={formatMessage(
                 parentalLeaveFormMessages.reviewScreen.language,
               )}
-              value={formatMessage(
-                language === Languages.EN
-                  ? parentalLeaveFormMessages.applicant.english
-                  : parentalLeaveFormMessages.applicant.icelandic,
-              )}
+              value={
+                formatMessage(
+                  language === Languages.EN
+                    ? parentalLeaveFormMessages.applicant.english
+                    : parentalLeaveFormMessages.applicant.icelandic,
+                ) ?? ''
+              }
             />
           </GridColumn>
         </GridRow>

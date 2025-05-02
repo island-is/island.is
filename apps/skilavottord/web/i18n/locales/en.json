@@ -329,7 +329,13 @@
         "primaryButton": "Try again",
         "secondaryButton": "Cancel"
       },
-      "currentMileage": "Current mileage",
+      "currentMileage": {
+        "label": "Current mileage",
+        "rules": {
+          "validate": "Current mileage is lower then registered mileage"
+        },
+        "info": "Recycling companies are required to register the current mileage of the car when it is handed over for recycling."
+      },
       "numberplate": {
         "sectionTitle": "Number plates information",
         "alert": {
@@ -599,7 +605,8 @@
           "rules": {
             "required": "Municipality is required"
           }
-        }
+        },
+        "recyclingCompanyOther": "Others"
       },
       "buttons": {
         "cancel": "Cancel",
@@ -608,17 +615,23 @@
       }
     }
   },
-  "notFound": {
-    "title": "Page not found",
-    "content": "We can't seem to find the page you're looking for. Something has gone wrong or you've entered a wrong URL.",
-    "button": "Back"
-  },
   "errorBoundary": {
     "title": "An error occurred",
     "contents": [
       "Something went wrong.",
       "Please <a href='https://island.is/s/stafraent-island/hafa-samband/'>contact</a> for further help"
     ]
+  },
+  "alerts": {
+    "accessDenied": {
+      "title": "Access Denied ",
+      "message": "You do not have the required permissions to view this page. Please contact the website administrator for further assistance."
+    },
+    "notFound": {
+      "title": "Page not found",
+      "message": "We can't seem to find the page you're looking for. Something has gone wrong or you've entered a wrong URL.",
+      "button": "Back"
+    }
   },
   "routes": {
     "home": {
