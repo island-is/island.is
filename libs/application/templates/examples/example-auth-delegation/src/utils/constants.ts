@@ -12,6 +12,7 @@ export enum States {
   REVIEW = 'review',
 }
 
+//
 export enum Roles {
   APPLICANT = 'applicant',
   PROCURER = 'procurer',
