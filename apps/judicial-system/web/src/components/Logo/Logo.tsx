@@ -14,6 +14,10 @@ interface Props {
 
 const Logo: FC<Props> = ({ defaultInstitution = '' }) => {
   const { user } = useContext(UserContext)
+  if (!user) {
+    return null
+  }
+
   const institutionName = user?.institution?.name ?? defaultInstitution ?? ''
   const institutionNameArr = institutionName.split(' ')
   const institutionNameFirstHalf = institutionNameArr.slice(
