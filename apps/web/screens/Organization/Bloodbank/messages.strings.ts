@@ -47,7 +47,7 @@ export const m = {
       description: 'Nánar um áhrif (heading fyrir ofan texta á details síðu)',
     },
     cardSubheading: {
-      id: 'web.bloodbank.bloodDonationRestrictions:listPage.cardSubheading',
+      id: 'web.bloodbank.bloodDonationRestrictions:detailsPage.cardSubheading',
       defaultMessage: 'Undantekningar og athugasemdir',
       description: 'Texti undirtitil í spjaldi',
     },
