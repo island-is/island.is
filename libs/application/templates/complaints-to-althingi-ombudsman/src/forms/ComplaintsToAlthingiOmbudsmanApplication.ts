@@ -166,7 +166,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 },
                 {
                   label: 'Karl/Karlkyns',
-                  value: GenderAnswerOptions.MAlE,
+                  value: GenderAnswerOptions.MALE,
                 },
                 {
                   label: 'Kvár/Kynsegin',
