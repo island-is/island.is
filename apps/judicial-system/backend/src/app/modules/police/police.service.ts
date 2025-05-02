@@ -345,11 +345,11 @@ export class PoliceService {
   }
 
   async getSubpoenaStatus(
-    subpoenaId: string,
+    policeSubpoenaId: string,
     user?: User,
   ): Promise<SubpoenaInfo> {
     return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
+      `${this.xRoadPath}/GetSubpoenaStatus?id=${policeSubpoenaId}`,
     )
       .then(async (res: Response) => {
         if (res.ok) {
@@ -383,7 +383,7 @@ export class PoliceService {
         // The police system does not provide a structured error response.
         // When a subpoena does not exist, a stack trace is returned.
         throw new NotFoundException({
-          message: `Subpoena with id ${subpoenaId} does not exist`,
+          message: `Subpoena with police subpoena id ${policeSubpoenaId} does not exist`,
           detail: reason,
         })
       })
@@ -396,7 +396,7 @@ export class PoliceService {
           // Act as if the subpoena does not exist
           throw new NotFoundException({
             ...reason,
-            message: `Subpoena ${subpoenaId} does not exist`,
+            message: `Subpoena ${policeSubpoenaId} does not exist`,
             detail: reason.message,
           })
         }
@@ -404,7 +404,7 @@ export class PoliceService {
         this.eventService.postErrorEvent(
           'Failed to get subpoena',
           {
-            subpoenaId,
+            policeSubpoenaId,
             actor: user?.name || 'Digital-mailbox',
             institution: user?.institution?.name,
           },
@@ -413,7 +413,7 @@ export class PoliceService {
 
         throw new BadGatewayException({
           ...reason,
-          message: `Failed to get subpoena ${subpoenaId}`,
+          message: `Failed to get subpoena ${policeSubpoenaId}`,
           detail: reason.message,
         })
       })
@@ -663,7 +663,7 @@ export class PoliceService {
 
       if (res.ok) {
         const subpoenaResponse = await res.json()
-        return { subpoenaId: subpoenaResponse.id }
+        return { policeSubpoenaId: subpoenaResponse.id }
       }
 
       throw await res.text()
@@ -688,14 +688,14 @@ export class PoliceService {
 
   async revokeSubpoena(
     theCase: Case,
-    subpoenaId: string,
+    policeSubpoenaId: string,
     user: User,
   ): Promise<boolean> {
     const { name: actor } = user
 
     try {
       const res = await this.fetchPoliceCaseApi(
-        `${this.xRoadPath}/InvalidateCourtSummon?sekGuid=${subpoenaId}`,
+        `${this.xRoadPath}/InvalidateCourtSummon?sekGuid=${policeSubpoenaId}`,
         {
           method: 'POST',
           headers: {
@@ -714,7 +714,7 @@ export class PoliceService {
       throw await res.text()
     } catch (error) {
       this.logger.error(
-        `Failed revoke subpoena with id ${subpoenaId} for case ${theCase.id} from police`,
+        `Failed revoke subpoena with police subpoena id ${policeSubpoenaId} for case ${theCase.id} from police`,
         {
           error,
         },
@@ -724,7 +724,7 @@ export class PoliceService {
         'Failed to revoke subpoena from police',
         {
           caseId: theCase.id,
-          subpoenaId,
+          policeSubpoenaId,
           actor,
         },
         error,

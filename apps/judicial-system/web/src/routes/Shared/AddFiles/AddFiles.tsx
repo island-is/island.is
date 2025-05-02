@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import isEmpty from 'lodash/isEmpty'
 import { useRouter } from 'next/router'
 
+import { FileUploadStatus } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isDefenceUser,
@@ -35,6 +36,11 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  isCaseCivilClaimantLegalSpokesperson,
+  isCaseCivilClaimantSpokesperson,
+  isCaseDefendantDefender,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import {
   RepresentativeSelectOption,
@@ -42,13 +48,20 @@ import {
 } from './SelectCaseFileRepresentative'
 import { strings } from './AddFiles.strings'
 
-const getUserProps = (user: User | undefined) => {
+const getUserProps = (user: User | undefined, workingCase: Case) => {
   const getCaseInfoNode = (workingCase: Case) => (
     <ProsecutorCaseInfo workingCase={workingCase} />
   )
   if (isDefenceUser(user)) {
+    const caseFileCategory = isCaseDefendantDefender(user, workingCase)
+      ? CaseFileCategory.DEFENDANT_CASE_FILE
+      : isCaseCivilClaimantLegalSpokesperson(user, workingCase)
+      ? CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE
+      : isCaseCivilClaimantSpokesperson(user, workingCase)
+      ? CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE
+      : CaseFileCategory.CASE_FILE // should never happen
     return {
-      caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
+      caseFileCategory: caseFileCategory,
       previousRoute: constants.DEFENDER_INDICTMENT_ROUTE,
       getCaseInfoNode,
       hasFileRepresentativeSelection: false,
@@ -83,7 +96,7 @@ const AddFiles: FC = () => {
     caseFileCategory,
     getCaseInfoNode,
     hasFileRepresentativeSelection,
-  } = getUserProps(user)
+  } = getUserProps(user, workingCase)
 
   const previousRoute = `${previousRouteType}/${workingCase.id}`
 
@@ -110,7 +123,7 @@ const AddFiles: FC = () => {
     addUploadFiles(
       files,
       {
-        status: 'done',
+        status: FileUploadStatus.done,
         submissionDate: formatDateForServer(submissionDate),
         fileRepresentative: selectedCaseRepresentative?.name,
         category: !isEmpty(selectedCaseRepresentative)

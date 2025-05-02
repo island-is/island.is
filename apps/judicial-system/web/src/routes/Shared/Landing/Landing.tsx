@@ -26,7 +26,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 
 import Login from './Login/Login'
-import MultipleInstitutions from './MultipleInstitutions/MultipleInstitutions'
+import SelectUser from './SelectUser/SelectUser'
 import * as styles from './Landing.css'
 
 const Landing = () => {
@@ -34,7 +34,7 @@ const Landing = () => {
   const { user, eligibleUsers } = useContext(UserContext)
 
   useEffect(() => {
-    if (eligibleUsers && eligibleUsers.length === 1) {
+    if (user && eligibleUsers && eligibleUsers.length === 1) {
       const redirectRoute = isDefenceUser(user)
         ? DEFENDER_CASES_ROUTE
         : isPrisonStaffUser(user)
@@ -71,7 +71,7 @@ const Landing = () => {
                 className={styles.processContent}
               >
                 {eligibleUsers && eligibleUsers.length > 1 ? (
-                  <MultipleInstitutions />
+                  <SelectUser />
                 ) : (
                   <Login />
                 )}

@@ -19,6 +19,7 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
 } from '../../dataProviders'
+import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
 
 export const externalDataSubSection = buildSubSection({
   id: 'externalDataSubSection',
@@ -45,12 +46,15 @@ export const externalDataSubSection = buildSubSection({
       }),
       dataProviders: [
         buildDataProviderItem({
-          // TODO: Update text!
           provider: NationalRegistryUserApi,
-          title: socialInsuranceAdministrationMessage.pre.skraInformationTitle,
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .skraInformationTitle,
+          subTitle:
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .skraInformationDescription,
         }),
         buildDataProviderItem({
-          // TODO: Update text?
           provider: NationalRegistrySpouseApi,
         }),
         buildDataProviderItem({
@@ -69,7 +73,30 @@ export const externalDataSubSection = buildSubSection({
               .socialInsuranceAdministrationDescription,
         }),
         buildDataProviderItem({
-          id: 'sia.data',
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .healthInstitutionTitle,
+          subTitle:
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .healthInstitutionDescription,
+        }),
+        buildDataProviderItem({
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .unionHealthFundTitle,
+          subTitle:
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .unionHealthFundDescription,
+        }),
+        buildDataProviderItem({
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .serviceRehabilitationTreatmentProviderTitle,
+          subTitle:
+            medicalAndRehabilitationPaymentsFormMessage.pre
+              .serviceRehabilitationTreatmentProviderDescription,
+        }),
+        buildDataProviderItem({
           title:
             socialInsuranceAdministrationMessage.pre
               .socialInsuranceAdministrationInformationTitle,
@@ -87,7 +114,6 @@ export const externalDataSubSection = buildSubSection({
           provider: SocialInsuranceAdministrationIncomePlanConditionsApi,
         }),
         buildDataProviderItem({
-          id: 'sia.privacy',
           title:
             socialInsuranceAdministrationMessage.pre
               .socialInsuranceAdministrationPrivacyTitle,
@@ -103,7 +129,6 @@ export const externalDataSubSection = buildSubSection({
     }),
     buildMultiField({
       id: 'isNotEligible',
-      title: '',
       // condition: (_, externalData) => {
       //   // Show if applicant is not eligible
       //   return !isEligible(externalData)

@@ -7,78 +7,80 @@ import {
 import { overview } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { formatPhoneNumber } from './formatPhoneNumber'
+import { TrainingLicenseOnAWorkMachineAnswers } from '../lib/dataSchema'
+import { getUserInfo } from './getUserInfo'
 
 export const getAssigneeOverviewInformation = (
   answers: FormValue,
   _externalData: ExternalData,
+  userNationalId: string,
+  isAssignee?: boolean,
 ): Array<KeyValueItem> => {
-  const companyName = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.company.name',
-  )
-  const companyNationalId = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.company.nationalId',
-  )
-  const assigneeNationalId = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.assignee.nationalId',
-  )
-  const assigneeName = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.assignee.name',
-  )
-  const assigneeEmail = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.assignee.email',
-  )
-  const assigneePhone = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.assignee.phone',
-  )
+  const assigneeInformation = getValueViaPath<
+    TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
+  >(answers, 'assigneeInformation')
+  const userInfo = getUserInfo(answers, userNationalId)
 
-  return [
-    {
-      width: 'full',
-      keyText: overview.labels.assignee,
-      valueText: [
-        {
-          ...overview.assignee.companyName,
+  return (
+    assigneeInformation
+      ?.filter(({ assignee }) =>
+        isAssignee
+          ? userInfo?.assignee?.nationalId &&
+            assignee.nationalId === userInfo.assignee.nationalId
+          : true,
+      )
+      .map(({ company, assignee, workMachine }, index) => ({
+        width: 'full',
+        keyText: {
+          ...overview.labels.assignee,
           values: {
-            value: companyName,
+            value: isAssignee ? '' : index + 1,
           },
         },
-        {
-          ...overview.assignee.companyNationalId,
-          values: {
-            value: formatKennitala(companyNationalId ?? ''),
+        valueText: [
+          {
+            ...overview.assignee.companyName,
+            values: {
+              value: company.name,
+            },
           },
-        },
-        {
-          ...overview.assignee.assigneeName,
-          values: {
-            value: assigneeName,
+          {
+            ...overview.assignee.companyNationalId,
+            values: {
+              value: formatKennitala(company.nationalId ?? ''),
+            },
           },
-        },
-        {
-          ...overview.assignee.assigneeNationalId,
-          values: {
-            value: formatKennitala(assigneeNationalId ?? ''),
+          {
+            ...overview.assignee.assigneeName,
+            values: {
+              value: assignee.name,
+            },
           },
-        },
-        {
-          ...overview.assignee.assigneeEmail,
-          values: {
-            value: assigneeEmail,
+          {
+            ...overview.assignee.assigneeNationalId,
+            values: {
+              value: formatKennitala(assignee.nationalId ?? ''),
+            },
           },
-        },
-        {
-          ...overview.assignee.assigneePhone,
-          values: {
-            value: formatPhoneNumber(assigneePhone ?? ''),
+          {
+            ...overview.assignee.assigneeEmail,
+            values: {
+              value: assignee.email,
+            },
           },
-        },
-      ],
-    },
-  ]
+          {
+            ...overview.assignee.assigneePhone,
+            values: {
+              value: formatPhoneNumber(assignee.phone ?? ''),
+            },
+          },
+          !isAssignee && {
+            ...overview.assignee.workMachines,
+            values: {
+              value: workMachine?.map((x) => x.split(' ')[0]).join(', '),
+            },
+          },
+        ],
+      })) ?? []
+  )
 }
