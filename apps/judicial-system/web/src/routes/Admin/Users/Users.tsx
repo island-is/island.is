@@ -30,6 +30,7 @@ import * as styles from './Users.css'
 export const Users = () => {
   const router = useRouter()
   const [selectedInstitution, setSelectedInstitution] = useState<string>()
+
   const { formatMessage } = useIntl()
   const {
     allInstitutions,
@@ -58,7 +59,7 @@ export const Users = () => {
   return (
     <div className={styles.userControlContainer}>
       <PageHeader title={formatMessage(titles.admin.users)} />
-      <Box display="flex" marginBottom={9}>
+      <Box display="flex" marginBottom={9} justifyContent="spaceBetween">
         <Button
           icon="add"
           onClick={() => {
@@ -67,7 +68,17 @@ export const Users = () => {
         >
           Nýr notandi
         </Button>
+        <Button
+          variant="ghost"
+          icon="calculator"
+          onClick={() => {
+            router.push(constants.STATISTICS_ROUTE)
+          }}
+        >
+          Tölfræði
+        </Button>
       </Box>
+
       <Box
         marginBottom={8}
         display="flex"
