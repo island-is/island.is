@@ -96,6 +96,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
   generalInformation: defineMessages({
     // Payment information
 
+    // Income Plan - Instructions
+    incomePlanInstructionsSubSectionTitle: {
+      id: 'marp.application:general.information.income.plan.instructions.sub.section.title',
+      defaultMessage: 'Tekjuáætlun - Leiðbeiningar',
+      description: 'Income Plan - Instructions',
+    },
+
     // Questions
     questionsSubSectionTitle: {
       id: 'marp.application:general.information.questions.sub.section.title',

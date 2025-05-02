@@ -11,7 +11,7 @@ export const Attachments = ({ application }: ReviewGroupProps) => {
 
   return (
     attachments.length > 0 && (
-      <ReviewGroup isLast={true}>
+      <ReviewGroup isLast>
         {attachments.map((attach, index) => {
           return (
             <Box key={index} marginBottom={2}>
