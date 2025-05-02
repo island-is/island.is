@@ -24,6 +24,7 @@ export const docWrap = style({
   ...themeUtils.responsiveStyle({
     md: {
       minHeight: `67%`,
+      width: '100%',
     },
   }),
 })

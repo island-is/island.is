@@ -93,18 +93,21 @@ export const DesktopOverview: FC<Props> = ({
       marginLeft={8}
       marginTop={3}
       padding={5}
+      paddingTop={0}
       borderRadius="large"
       background="white"
       className={styles.docWrap}
+      width="full"
     >
       <DocumentHeader
         avatar={activeDocument.img}
         sender={activeDocument.sender}
         date={activeDocument.date}
         category={category}
-        subject={formatMessage(m.activeDocumentOpenAriaLabel, {
+        subjectAriaLabel={formatMessage(m.activeDocumentOpenAriaLabel, {
           subject: activeDocument.subject,
         })}
+        subject={activeDocument.subject}
         actionBar={{
           archived: activeArchive,
           bookmarked: activeBookmark,

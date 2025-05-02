@@ -1,13 +1,13 @@
-import { useEffect, useRef } from 'react'
 import { DocumentV2Action, DocumentsV2Category } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { helperStyles } from '@island.is/island-ui/theme'
-import AvatarImage from '../DocumentLine/AvatarImage'
+import { useEffect, useRef, useState } from 'react'
 import {
   DocumentActionBar,
   DocumentActionBarProps,
 } from '../DocumentActionBar/DocumentActionBar'
 import DocumentActions from '../DocumentActions/DocumentActions'
+import AvatarImage from '../DocumentLine/AvatarImage'
 import * as styles from './DocumentHeader.css'
 
 type DocumentHeaderProps = {
@@ -18,6 +18,7 @@ type DocumentHeaderProps = {
   actionBar?: DocumentActionBarProps
   actions?: DocumentV2Action[]
   subject?: string
+  subjectAriaLabel?: string
 }
 
 export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
@@ -28,53 +29,91 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
   actionBar,
   actions,
   subject,
+  subjectAriaLabel,
 }) => {
   const wrapper = useRef<HTMLDivElement>(null)
+  const [docHeaderWidth, setDocHeaderWidth] = useState(400)
 
   useEffect(() => {
     if (wrapper.current) {
       wrapper.current.focus()
+      setDocHeaderWidth(wrapper.current.offsetWidth)
     }
   }, [wrapper])
 
   return (
     <>
-      <Box tabIndex={0} outline="none" ref={wrapper} display="flex">
-        <p className={helperStyles.srOnly} aria-live="assertive">
-          {subject}
-        </p>
-        {avatar && <AvatarImage large img={avatar} background="blue100" />}
+      <Box
+        tabIndex={0}
+        outline="none"
+        ref={wrapper}
+        display="flex"
+        flexDirection="column"
+        background="white"
+        paddingBottom={5}
+        position="relative"
+      >
         <Box
           display="flex"
-          flexDirection="column"
+          flexDirection="row"
           justifyContent="spaceBetween"
-          marginBottom={4}
-          marginLeft={2}
+          marginBottom={3}
+          position="fixed"
+          background="white"
+          //paddingX={3}
+          //paddingTop={3}
+          style={{
+            top: 188,
+            width: docHeaderWidth,
+            zIndex: 100,
+          }}
         >
-          {sender && (
-            <Text variant="medium" fontWeight="semiBold">
-              {sender}
-            </Text>
+          <Text variant="h3" as="h2">
+            {subject}
+          </Text>
+          {actionBar && (
+            <Box className={styles.actionBarWrapper}>
+              <DocumentActionBar spacing={1} {...actionBar} />
+            </Box>
           )}
+        </Box>
+        <p className={helperStyles.srOnly} aria-live="assertive">
+          {subjectAriaLabel}
+        </p>
+        <Box
+          display="flex"
+          flexDirection="row"
+          justifyContent="flexStart"
+          width="full"
+          paddingTop={13}
+        >
+          {avatar && <AvatarImage large img={avatar} background="blue100" />}
           <Box
-            className={styles.titleText}
             display="flex"
-            justifyContent="flexStart"
-            alignItems="center"
+            flexDirection="column"
+            justifyContent="spaceBetween"
+            marginLeft={2}
           >
-            {date && <Text variant="medium">{date}</Text>}
-            {category && (
-              <Box className={styles.categoryDivider}>
-                <Text variant="medium">{category.name ?? ''}</Text>
-              </Box>
+            {sender && (
+              <Text variant="medium" fontWeight="semiBold">
+                {sender}
+              </Text>
             )}
+            <Box
+              className={styles.titleText}
+              display="flex"
+              justifyContent="flexStart"
+              alignItems="center"
+            >
+              {date && <Text variant="medium">{date}</Text>}
+              {category && (
+                <Box className={styles.categoryDivider}>
+                  <Text variant="medium">{category.name ?? ''}</Text>
+                </Box>
+              )}
+            </Box>
           </Box>
         </Box>
-        {actionBar && (
-          <Box className={styles.actionBarWrapper}>
-            <DocumentActionBar spacing={1} {...actionBar} />
-          </Box>
-        )}
       </Box>
       {actions && (
         <Box>
