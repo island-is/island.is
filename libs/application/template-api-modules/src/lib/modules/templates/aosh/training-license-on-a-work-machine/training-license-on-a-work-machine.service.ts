@@ -192,6 +192,14 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
     const certificateOfTenure = getValueViaPath<
       TrainingLicenseOnAWorkMachine['certificateOfTenure']
     >(application.answers, 'certificateOfTenure')
+
+    throw new TemplateApiError(
+      {
+        title: coreErrorMessages.defaultTemplateApiError,
+        summary: coreErrorMessages.cantConnectToVer,
+      },
+      500,
+    )
     await this.workMachineClientService
       .machineLicenseTeachingApplication(auth, {
         xCorrelationID: application.id,
@@ -228,13 +236,13 @@ export class TrainingLicenseOnAWorkMachineTemplateService extends BaseTemplateAp
         'identity.data.nationalId',
       )
       if (applicantNationalId) {
-        await this.notificationsService.sendNotification({
-          type: NotificationType.TrainingLicenseOnWorkMachineApproved,
-          messageParties: {
-            recipient: applicantNationalId,
-          },
-          applicationId: application.id,
-        })
+        // await this.notificationsService.sendNotification({
+        //   type: NotificationType.TrainingLicenseOnWorkMachineApproved,
+        //   messageParties: {
+        //     recipient: applicantNationalId,
+        //   },
+        //   applicationId: application.id,
+        // })
       }
     }
   }

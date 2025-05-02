@@ -44,7 +44,7 @@ export const getCleanApplicantInformation = (
     TrainingLicenseOnAWorkMachine['information']
   >(application.answers, 'information')
   return {
-    nationalId: applicantInformation?.nationalId ?? '',
+    nationalId: '', // applicantInformation?.nationalId ?? '',
     name: applicantInformation?.name ?? '',
     phoneNumber: applicantInformation?.phone ?? '',
     email: applicantInformation?.email ?? '',
@@ -68,7 +68,8 @@ export const getCleanCompanyInformationList = (
     contactName: info?.assignee.name ?? '',
     contactPhoneNumber: info?.assignee.phone ?? '',
     contactEmail: info?.assignee.email ?? '',
-    machineRegistrationNumbers: info?.workMachine ?? [],
+    machineRegistrationNumbers:
+      info?.workMachine?.map((x) => x.split(' ')[0]) ?? [],
   }))
 }
 

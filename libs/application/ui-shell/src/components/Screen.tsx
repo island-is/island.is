@@ -208,6 +208,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     setBeforeSubmitError({})
 
     let event: string | undefined
+    console.log(submitField)
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
       if (submitField.placement === 'screen') {
@@ -233,6 +234,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
         setIsSubmitting(false)
 
         if (typeof possibleError === 'string' && screen && screen.id) {
+          console.log(possibleError)
           setBeforeSubmitError({ [screen.id]: possibleError })
         }
         return

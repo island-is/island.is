@@ -55,6 +55,12 @@ export const overview = {
       defaultMessage: 'Til baka',
       description: 'Overview backButton label',
     },
+    submitError: {
+      id: 'aosh.tlwm.application:overview.general.submitError',
+      defaultMessage:
+        'Ekki tókst að senda skráningu. Vinsamlegast reynið aftur eða hafið samband við þjónustuver.',
+      description: 'Overview submitError',
+    },
   }),
   labels: defineMessages({
     editMessage: {
