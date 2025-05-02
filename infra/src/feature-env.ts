@@ -20,7 +20,6 @@ import {
 import { ServiceBuilder } from './dsl/dsl'
 import { logger } from './logging'
 import fs from 'fs'
-import path from 'path'
 
 type ChartName = 'islandis' | 'identity-server'
 
@@ -103,6 +102,7 @@ const parseArguments = (argv: Arguments) => {
     env,
     skipAppName: argv.skipAppName as boolean,
     writeDest: argv.writeDest as string,
+    disableNsGrants: argv.disableNsGrants as boolean
   }
 }
 
@@ -154,21 +154,30 @@ yargs(process.argv.slice(2))
           description: 'Template location where to write files to for down stream apps',
           default: ''
         })
+        .option('disableNsGrants', {
+          type: 'boolean',
+          description: 'Disable namespace grants in rendered output',
+          default: false,
+        })
     },
     handler: async (argv) => {
       const typedArgv = (argv as unknown) as Arguments
-      const { habitat, affectedServices, env, skipAppName, writeDest } = parseArguments(
+      const { habitat, affectedServices, env, skipAppName, writeDest, disableNsGrants } = parseArguments(
         typedArgv,
       )
-      const { included: featureYaml } = await getFeatureAffectedServices(
+      let { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
         env,
       )
-      
+
       featureYaml.map(async (svc) => {
-          const svcString = await renderHelmValueFileContent(
+        if (disableNsGrants) {
+          svc.serviceDef.grantNamespacesEnabled = false
+        }
+
+        const svcString = await renderHelmValueFileContent(
           env,
           habitat,
           [svc],
@@ -185,7 +194,7 @@ yargs(process.argv.slice(2))
             fs.writeFileSync(`${writeDest}/${svc.name()}/values.yaml`, svcString);
           } catch (error) {
             console.log(`Failed to write values file for ${svc.name()}:`, error)
-            throw new Error(error);
+            throw new Error(`Failed to write values file for ${svc.name()}`);
           }
         } else {
           writeToOutput(
@@ -194,6 +203,43 @@ yargs(process.argv.slice(2))
           )
         }
       })
+    },
+  })
+  .command({
+    command: 'downstream',
+    describe: 'get downstream services',
+    builder: () => {
+      return yargs
+    },
+    handler: async (argv) => {
+      const typedArgv = (argv as unknown) as Arguments
+      const { habitat, affectedServices, env, skipAppName, writeDest, disableNsGrants } = parseArguments(
+        typedArgv,
+      )
+      const { included: featureYaml } = await getFeatureAffectedServices(
+        habitat,
+        affectedServices.slice(),
+        ExcludedFeatureDeploymentServices,
+        env,
+      )
+      
+      const affectedServiceNames = affectedServices.map((svc) => svc.name())
+
+      const formattedList = featureYaml.map((svc) => svc.name()).filter((name) => !affectedServiceNames.includes(name))
+
+      // BFF hack since the service name is not equal to the nx app name
+      const correctedFormattedList = Array.from(new Set(formattedList.map((name) => {
+        if (name.includes("services-bff-portals")) {
+          return "services-bff"
+        } else {
+          return name
+        }
+      }))).toString()
+      
+      writeToOutput(
+        correctedFormattedList,
+        typedArgv.output,
+      )
     },
   })
   .command({
@@ -261,7 +307,7 @@ yargs(process.argv.slice(2))
         fs.writeFileSync(`${writeDest}/${affectedServices[0].name()}/bootstrap-fd-job.yaml`, svcString);
         } catch (error) {
           console.log(`Failed to write values file for ${affectedServices[0].name()}:`, error)
-          throw new Error(error);
+          throw new Error(`Failed to write values for ${affectedServices[0].name()}`);
         }
       } else {
         await writeToOutput(svcString, typedArgv.output)

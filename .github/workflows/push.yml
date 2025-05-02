@@ -166,6 +166,11 @@ jobs:
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
+      - name: Install infra modules
+        working-directory: infra
+        run: |
+          corepack enable && CI=true yarn install --immutable
+
       - name: load-deps
         uses: ./.github/actions/load-deps
 
@@ -202,7 +207,13 @@ jobs:
         id: build_map
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
+          AFFECTED_TARGETS="$(yarn nx show projects --affected --base $BASE --head $HEAD --json | jq -r '. | join(",")')"
+          cd infra
+          ADDITIONAL_PROJECTS="$(yarn feature-env downstream --feature tmp --images $AFFECTED_TARGETS --chart islandis)"
+          cd ..
+          export ADDITIONAL_PROJECTS
+          echo "Additional Projects: $ADDITIONAL_PROJECTS"
+          CHUNKS="$(ADDITIONAL_PROJECTS="$ADDITIONAL_PROJECTS" ./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
@@ -289,18 +300,6 @@ jobs:
 
       - name: load-deps
         uses: ./.github/actions/load-deps
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
@@ -452,7 +451,6 @@ jobs:
     if: ${{ !cancelled()
       && needs.pre-checks.result == 'success'
       && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
-      && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
       && needs.helm-docker-build.result != 'failure'
       && needs.prepare.outputs.IMAGES != ''
       && needs.docker-build.result == 'success' }}

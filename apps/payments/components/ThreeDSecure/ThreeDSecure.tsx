@@ -102,7 +102,7 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
                 }}
                 style={{
                   width: '100%',
-                  height: iframeContainerRef.current?.offsetWidth ?? '500px',
+                  height: '100%',
                   border: 'none',
                   zIndex: 2,
                 }}

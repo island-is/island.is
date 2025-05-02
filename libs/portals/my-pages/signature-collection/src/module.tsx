@@ -8,7 +8,9 @@ import { Navigate } from 'react-router-dom'
 const SignatureCollectionParliamentary = lazy(() =>
   import('./screens/Parliamentary/'),
 )
-const SignatureCollectionPresidential = lazy(() => import('./screens/Presidential'))
+const SignatureCollectionPresidential = lazy(() =>
+  import('./screens/Presidential'),
+)
 const SignatureCollectionMunicipal = lazy(() => import('./screens/Municipal'))
 
 const ViewListPresidential = lazy(() =>

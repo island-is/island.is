@@ -3,16 +3,14 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import copyToClipboard from 'copy-to-clipboard'
 
-const ShareLink = (slug: {
-  slug: string
-}) => {
+const ShareLink = (slug: { slug: string }) => {
   const { formatMessage } = useLocale()
 
   return (
     <Box
       background="blue100"
       borderRadius="large"
-      display={["block", "flex", "flex"]}
+      display={['block', 'flex', 'flex']}
       justifyContent="spaceBetween"
       alignItems="center"
       padding={3}
@@ -24,9 +22,7 @@ const ShareLink = (slug: {
       <Box>
         <Button
           onClick={() => {
-            const copied = copyToClipboard(
-              `${document.location.origin}${slug}`,
-            )
+            const copied = copyToClipboard(`${document.location.origin}${slug}`)
             if (!copied) {
               return toast.error(formatMessage(m.copyLinkError))
             }

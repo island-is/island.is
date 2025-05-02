@@ -14,7 +14,7 @@ import {
   SendNotificationResponse,
   SignatureConfirmationResponse,
 } from '../case'
-import { CaseListEntry } from '../case-list'
+import { CaseListEntry, CaseStatistics } from '../case-list'
 import {
   CivilClaimant,
   Defendant,
@@ -54,12 +54,17 @@ import { backendModuleConfig } from './backend.config'
 @Injectable()
 export class BackendService extends DataSource<{ req: Request }> {
   private headers!: { [key: string]: string }
+  private secretTokenHeaders!: { [key: string]: string }
 
   constructor(
     @Inject(backendModuleConfig.KEY)
     private readonly config: ConfigType<typeof backendModuleConfig>,
   ) {
     super()
+    this.secretTokenHeaders = {
+      'Content-Type': 'application/json',
+      authorization: `Bearer ${this.config.secretToken}`,
+    }
   }
 
   initialize(config: DataSourceConfig<{ req: Request }>): void {
@@ -189,6 +194,19 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getCase(id: string): Promise<Case> {
     return this.get<Case>(`case/${id}`, this.caseTransformer)
+  }
+  getCaseStatistics(
+    fromDate?: Date,
+    toDate?: Date,
+    institutionId?: string,
+  ): Promise<CaseStatistics> {
+    const params = new URLSearchParams()
+
+    if (fromDate) params.append('fromDate', fromDate.toISOString())
+    if (toDate) params.append('toDate', toDate.toISOString())
+    if (institutionId) params.append('institutionId', institutionId)
+
+    return this.get(`cases/statistics?${params.toString()}`)
   }
 
   getConnectedCases(id: string): Promise<Case[]> {
@@ -565,15 +583,27 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
   }
 
-  createEventLog(createEventLog: unknown) {
-    return fetch(`${this.config.backendUrl}/api/eventLog/event`, {
+  createEventLog(eventLog: unknown): Promise<boolean> {
+    return this.callBackend<boolean>('eventLog/event', {
       method: 'POST',
-      headers: {
-        authorization: `Bearer ${this.config.secretToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(createEventLog),
+      body: JSON.stringify(eventLog),
+      headers: this.secretTokenHeaders,
     })
+  }
+
+  findUsersByNationalId(nationalId: string): Promise<User[]> {
+    return this.callBackend<User[]>(`user/?nationalId=${nationalId}`, {
+      headers: this.secretTokenHeaders,
+    })
+  }
+
+  findDefenderByNationalId(nationalId: string): Promise<User> {
+    return this.callBackend<User>(
+      `cases/limitedAccess/defender?nationalId=${nationalId}`,
+      {
+        headers: this.secretTokenHeaders,
+      },
+    )
   }
 }
 
