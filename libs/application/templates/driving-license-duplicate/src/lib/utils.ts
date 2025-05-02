@@ -2,7 +2,6 @@ import {
   Application,
   ExternalData,
   BasicChargeItem,
-  PaymentCatalogItem,
 } from '@island.is/application/types'
 import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
@@ -14,7 +13,6 @@ import {
   Delivery,
 } from './constants'
 import { DriversLicense } from '@island.is/clients/driving-license'
-import { info } from 'kennitala'
 
 export const getCurrencyString = (n: number) =>
   n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'

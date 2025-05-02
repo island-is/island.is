@@ -15,7 +15,6 @@ import {
   JurisdictionApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
-  BasicChargeItem,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -31,10 +30,7 @@ import {
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
-import {
-  coreHistoryMessages,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { coreHistoryMessages } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
 import { getCodes } from './utils'

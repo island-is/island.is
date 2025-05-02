@@ -16,7 +16,6 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
 
   // Ökuskírteini / Driving License
   let chargeCode = 'AY116'
@@ -72,10 +71,6 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const deliveryFee = chargeItems?.find(
     (item) => item.chargeItemCode === 'AY145',
   )
-
-  useEffect(() => {
-    setValue('chargeItemCode', chargeCode)
-  }, [chargeCode, setValue])
 
   return (
     <Box>
