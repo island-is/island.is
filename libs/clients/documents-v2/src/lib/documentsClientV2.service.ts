@@ -33,11 +33,11 @@ export class DocumentsClientV2Service {
      * @param input List input object. Example: { dateFrom: undefined, nationalId: '123' }
      * @returns List object sanitized of unnecessary values. Example: { nationalId: '123' }
      */
-
     const sanitizeObject = function <T extends { [key: string]: any }>(
       obj: T,
     ): T {
       const sanitizedObj = {} as T
+
       for (const key in obj) {
         if (obj[key]) {
           if (Array.isArray(obj[key]) && obj[key].length === 0) {
@@ -46,6 +46,7 @@ export class DocumentsClientV2Service {
           sanitizedObj[key] = obj[key]
         }
       }
+
       return sanitizedObj
     }
 
@@ -80,7 +81,6 @@ export class DocumentsClientV2Service {
     })
 
     const documents = await this.api.customersListDocuments(inputObject)
-
     if (!documents.totalCount) {
       return null
     }
