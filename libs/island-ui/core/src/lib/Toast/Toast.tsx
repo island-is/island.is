@@ -73,7 +73,7 @@ export const ToastContainer: FC<ToastProps> = ({
         draggable
         pauseOnHover
         transition={Slide}
-        icon={false}
+        //icon={false}
       />
     </div>
   )

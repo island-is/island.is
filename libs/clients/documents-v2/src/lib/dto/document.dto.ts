@@ -4,6 +4,7 @@ import { svgAttr, svgTags } from '../../utils/htmlConfig'
 
 const customDocument = {
   senderName: 'Ríkisskattstjóri',
+  // eslint-disable-next-line local-rules/disallow-kennitalas
   senderNatReg: '5402696029',
   subjectContains: 'Niðurstaða álagningar',
   url: 'https://thjonustusidur.rsk.is/alagningarsedill',
