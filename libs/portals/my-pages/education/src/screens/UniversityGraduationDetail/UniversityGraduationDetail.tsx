@@ -81,7 +81,7 @@ export const UniversityGraduationDetail = () => {
           >
             {files && filesAvailable && (
               <DropdownMenu
-                icon="download"
+                icon="ellipsisHorizontal"
                 iconType="outline"
                 menuLabel={formatMessage(m.moreOptions)}
                 items={files
