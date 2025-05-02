@@ -51,7 +51,6 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { BackendService } from '../backend'
 import { authModuleConfig } from './auth.config'
 import { AuthService } from './auth.service'
 import { Cookie } from './auth.types'
