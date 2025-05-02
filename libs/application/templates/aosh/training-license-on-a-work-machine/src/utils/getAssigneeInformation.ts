@@ -74,10 +74,10 @@ export const getAssigneeOverviewInformation = (
               value: formatPhoneNumber(assignee.phone ?? ''),
             },
           },
-          {
+          !isAssignee && {
             ...overview.assignee.workMachines,
             values: {
-              value: workMachine.join(', '),
+              value: workMachine?.map((x) => x.split(' ')[0]).join(', '),
             },
           },
         ],
