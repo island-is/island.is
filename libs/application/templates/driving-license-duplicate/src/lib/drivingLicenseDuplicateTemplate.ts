@@ -37,6 +37,7 @@ import {
 } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
+import { getCodes } from './utils'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -47,26 +48,6 @@ const pruneAfter = (time: number) => {
     shouldBePruned: true,
     whenToPrune: time,
   }
-}
-
-const getCodes = (application: Application): BasicChargeItem[] => {
-  const codes: BasicChargeItem[] = []
-
-  const chargeItemCode = getValueViaPath<string>(
-    application.answers,
-    'chargeItemCode',
-  )
-
-  codes.push({ code: chargeItemCode as string })
-
-  const withDeliveryFee =
-    getValueViaPath<number>(application.answers, 'deliveryMethod') === 1
-
-  if (withDeliveryFee) {
-    codes.push({ code: 'AY145' })
-  }
-
-  return codes
 }
 
 const configuration =
