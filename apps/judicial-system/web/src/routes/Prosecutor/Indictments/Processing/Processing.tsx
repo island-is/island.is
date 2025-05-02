@@ -739,11 +739,12 @@ const Processing: FC = () => {
             <Box component="section" marginBottom={10}>
               <SectionHeading title="Bótakrafa" heading="h2" />
               <InputFileUpload
-                fileList={uploadFiles.filter(
+                name="civilClaim"
+                files={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
                 )}
                 accept={Object.values(fileExtensionWhitelist)}
-                header="Dragðu gögn hingað til að hlaða upp"
+                title="Dragðu gögn hingað til að hlaða upp"
                 buttonLabel="Velja gögn til að hlaða upp"
                 onChange={(files) =>
                   handleUpload(

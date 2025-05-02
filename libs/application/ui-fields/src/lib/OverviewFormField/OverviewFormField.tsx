@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FileItem } from './FileItem'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { SpanType } from '@island.is/island-ui/core/types'
 
 interface Props extends FieldBaseProps {
@@ -22,7 +23,12 @@ export const OverviewFormField = ({
   application,
   goToScreen,
 }: Props) => {
-  const items = field?.items?.(application.answers, application.externalData)
+  const userInfo = useUserInfo()
+  const items = field?.items?.(
+    application.answers,
+    application.externalData,
+    userInfo?.profile?.nationalId,
+  )
   const attachments = field?.attachments?.(
     application.answers,
     application.externalData,

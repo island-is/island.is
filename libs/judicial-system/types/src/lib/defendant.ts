@@ -42,6 +42,7 @@ export enum PunishmentType {
   FINE = 'FINE',
   INDICTMENT_RULING_DECISION_FINE = 'INDICTMENT_RULING_DECISION_FINE',
   SIGNED_FINE_INVITATION = 'SIGNED_FINE_INVITATION',
+  OTHER = 'OTHER',
 }
 
 // We could possibly also have an APPEAL option here if we want,

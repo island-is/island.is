@@ -25,12 +25,14 @@ export const GET_SINGLE_EVENT_QUERY = gql`
         title
         width
         height
+        description
       }
       thumbnailImage {
         url
         title
         width
         height
+        description
       }
       fullWidthImageInContent
       content {
@@ -41,6 +43,7 @@ export const GET_SINGLE_EVENT_QUERY = gql`
         title
         width
         height
+        description
       }
       video {
         ...EmbeddedVideoFields
@@ -76,6 +79,7 @@ export const GET_EVENTS_QUERY = gql`
           title
           width
           height
+          description
         }
       }
     }

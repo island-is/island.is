@@ -4,10 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  formatDate,
-  normalizeAndFormatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDefenceUser,
@@ -15,6 +12,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  AlternativeServiceAnnouncement,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
@@ -42,7 +40,11 @@ import {
   Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { shouldDisplayGeneratedPdfFiles } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  isCaseCivilClaimantSpokesperson,
+  isCaseDefendantDefender,
+  shouldDisplayGeneratedPdfFiles,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import {
@@ -130,13 +132,8 @@ const IndictmentOverview: FC = () => {
   const canAddFiles =
     !isCompletedCase(workingCase.state) &&
     isDefenceUser(user) &&
-    workingCase.defendants?.some(
-      (defendant) =>
-        defendant?.defenderNationalId &&
-        normalizeAndFormatNationalId(user?.nationalId).includes(
-          defendant.defenderNationalId,
-        ),
-    ) &&
+    (isCaseDefendantDefender(user, workingCase) ||
+      isCaseCivilClaimantSpokesperson(user, workingCase)) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT
 
@@ -171,20 +168,31 @@ const IndictmentOverview: FC = () => {
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
           {isDefenceUser(user) &&
-            workingCase.defendants?.map((defendant) =>
-              (defendant.subpoenas ?? [])
-                .filter((subpoena) =>
-                  isSuccessfulServiceStatus(subpoena.serviceStatus),
-                )
-                .map((subpoena) => (
-                  <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
-                    <ServiceAnnouncement
-                      defendant={defendant}
-                      subpoena={subpoena}
-                    />
-                  </Box>
-                )),
-            )}
+            workingCase.defendants?.map((defendant) => (
+              <>
+                {defendant.alternativeServiceDescription && (
+                  <AlternativeServiceAnnouncement
+                    key={defendant.id}
+                    alternativeServiceDescription={
+                      defendant.alternativeServiceDescription
+                    }
+                    defendantName={defendant.name}
+                  />
+                )}
+                {defendant.subpoenas
+                  ?.filter((subpoena) =>
+                    isSuccessfulServiceStatus(subpoena.serviceStatus),
+                  )
+                  .map((subpoena) => (
+                    <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
+                      <ServiceAnnouncement
+                        defendant={defendant}
+                        subpoena={subpoena}
+                      />
+                    </Box>
+                  ))}
+              </>
+            ))}
           {caseHasBeenReceivedByCourt &&
             workingCase.court &&
             latestDate?.date &&
@@ -265,22 +273,24 @@ const IndictmentOverview: FC = () => {
             </Box>
           )}
           {shouldDisplayReviewDecision && (
-            <ReviewDecision
-              caseId={workingCase.id}
-              indictmentAppealDeadline={
-                workingCase.indictmentAppealDeadline ?? ''
-              }
-              indictmentAppealDeadlineIsInThePast={
-                workingCase.indictmentVerdictAppealDeadlineExpired ?? false
-              }
-              modalVisible={modalVisible}
-              setModalVisible={setModalVisible}
-              isFine={
-                workingCase.indictmentRulingDecision ===
-                CaseIndictmentRulingDecision.FINE
-              }
-              onSelect={() => setIsReviewDecisionSelected(true)}
-            />
+            <Box component="section" marginBottom={10}>
+              <ReviewDecision
+                caseId={workingCase.id}
+                indictmentAppealDeadline={
+                  workingCase.indictmentAppealDeadline ?? ''
+                }
+                indictmentAppealDeadlineIsInThePast={
+                  workingCase.indictmentVerdictAppealDeadlineExpired ?? false
+                }
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                isFine={
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.FINE
+                }
+                onSelect={() => setIsReviewDecisionSelected(true)}
+              />
+            </Box>
           )}
           {isDefenceUser(user) && isCompletedCase(workingCase.state) && (
             <Box marginTop={7}>

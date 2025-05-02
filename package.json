@@ -65,7 +65,8 @@
     "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts",
     "mock": "nx mock",
     "generate-application-template": "node scripts/application-generators/generateTemplate.js",
-    "generate-application-template-api-module": "node scripts/application-generators/generateTemplateApiModule.js"
+    "generate-application-template-api-module": "node scripts/application-generators/generateTemplateApiModule.js",
+    "test:helm-values": "npx -p jest -p @actions/github -p @actions/core -- node --experimental-vm-modules node_modules/jest/bin/jest.js --config=scripts/ci/docker/jest.config.mjs scripts/ci/docker/"
   },
   "dependencies": {
     "@actions/core": "1.11.1",
@@ -272,7 +273,7 @@
     "react-router-dom": "6.11.2",
     "react-select": "5.8.2",
     "react-table": "7.7.0",
-    "react-toastify": "6.0.8",
+    "react-toastify": "11.0.0",
     "react-top-loading-bar": "2.3.1",
     "react-use": "15.3.3",
     "reakit": "1.3.11",

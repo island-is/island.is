@@ -48,9 +48,9 @@ describe('Police Subpoena Exists Guard', () => {
 
   describe('subpoena exists', () => {
     const policeSubpoenaId = uuid()
-    const subpoena = { id: uuid(), subpoenaId: policeSubpoenaId }
+    const subpoena = { id: uuid(), policeSubpoenaId }
     const request = {
-      params: { subpoenaId: policeSubpoenaId },
+      params: { policeSubpoenaId },
       subpoena: undefined,
     }
     let then: Then
@@ -66,7 +66,7 @@ describe('Police Subpoena Exists Guard', () => {
     it('should activate', () => {
       expect(mockSubpoenaModel.findOne).toHaveBeenCalledWith({
         include,
-        where: { subpoenaId: policeSubpoenaId },
+        where: { policeSubpoenaId },
       })
       expect(then.result).toBe(true)
       expect(request.subpoena).toBe(subpoena)
@@ -79,7 +79,7 @@ describe('Police Subpoena Exists Guard', () => {
 
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce({
-        params: { subpoenaId: policeSubpoenaId },
+        params: { policeSubpoenaId },
       })
 
       then = await givenWhenThen()

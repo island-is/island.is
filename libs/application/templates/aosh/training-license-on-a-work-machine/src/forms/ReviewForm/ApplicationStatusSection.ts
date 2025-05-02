@@ -2,12 +2,14 @@ import {
   buildActionCardListField,
   buildMultiField,
   buildSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { applicationStatus } from '../../lib/messages'
+import { getUserInfo } from '../../utils/getUserInfo'
 
 export const applicationStatusSection = buildSection({
   id: 'applicationStatusSection',
-  title: applicationStatus.general.sectionTitle,
+  title: '',
   children: [
     buildMultiField({
       id: 'applicationStatusSection.multiField',
@@ -19,17 +21,34 @@ export const applicationStatusSection = buildSection({
           doesNotRequireAnswer: true,
           marginTop: 2,
           title: '',
-          items: () => [
-            {
-              heading: applicationStatus.labels.actionCardTitle,
-              tag: {
-                label: applicationStatus.labels.actionCardTag,
-                outlined: false,
-                variant: 'purple',
+          items: (application, _lang, userNationalId) => {
+            const userInfo = getUserInfo(application.answers, userNationalId)
+            const approved =
+              getValueViaPath<string[]>(application.answers, 'approved') ?? []
+            const isApproved = approved.includes(userNationalId)
+            return [
+              {
+                heading: applicationStatus.labels.actionCardTitleAssignee,
+                tag: {
+                  label: isApproved
+                    ? applicationStatus.labels.actionCardTagApproved
+                    : applicationStatus.labels.actionCardTag,
+                  outlined: false,
+                  variant: isApproved ? 'mint' : 'purple',
+                },
+                text: {
+                  ...applicationStatus.labels.actionCardMessageAssignee,
+                  values: {
+                    value: userInfo
+                      ? userInfo.workMachine
+                          ?.map((x) => x.split(' ')[0])
+                          .join(', ')
+                      : '',
+                  },
+                },
               },
-              text: applicationStatus.labels.actionCardMessage,
-            },
-          ],
+            ]
+          },
         }),
       ],
     }),
