@@ -14,7 +14,10 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
-import { SocialInsuranceAdministrationApplicantApi } from '../../dataProviders'
+import {
+  SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationUnionsApi,
+} from '../../dataProviders'
 
 export const externalDataSubSection = buildSubSection({
   id: 'externalDataSubSection',
@@ -107,6 +110,10 @@ export const externalDataSubSection = buildSubSection({
             socialInsuranceAdministrationMessage.pre
               .socialInsuranceAdministrationPrivacyDescription,
         }),
+        buildDataProviderItem({
+          provider: SocialInsuranceAdministrationUnionsApi,
+        }),
+
         // // TODO: Put this back in when isEligible is ready
         // buildDataProviderItem({
         //   provider: SocialInsuranceAdministrationIsApplicantEligibleApi,

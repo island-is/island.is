@@ -20,6 +20,7 @@ export type Scope =
   | '@tr.is/almennt:read'
   | '@tr.is/fylgiskjol:write'
   | '@tr.is/danarbaetur:read'
+  | '@tr.is/sjukraogendurhaefingargreidslur:read'
 
 export type Api =
   | typeof ApplicationApi
