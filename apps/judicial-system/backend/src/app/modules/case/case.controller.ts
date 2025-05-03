@@ -18,7 +18,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import {
-  ApiAcceptedResponse,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiQuery,

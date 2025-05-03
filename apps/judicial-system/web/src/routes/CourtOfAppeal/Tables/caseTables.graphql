@@ -1,0 +1,12 @@
+query CourtOfAppealsCaseTables {
+  caseTables {
+    groups {
+      title
+      tables {
+        type
+        title
+        description
+      }
+    }
+  }
+}

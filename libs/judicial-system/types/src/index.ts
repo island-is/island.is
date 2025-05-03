@@ -142,3 +142,5 @@ export { Substance } from './lib/substances'
 export { type Lawyer, mapToLawyer } from './lib/lawyer'
 
 export type { CourtDocument } from './lib/courtDocument'
+
+export { CaseTableType, CaseTableColumnType } from './lib/caseTable'
