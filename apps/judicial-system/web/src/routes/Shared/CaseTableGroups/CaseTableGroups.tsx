@@ -26,21 +26,20 @@ const CaseTableGroups = () => {
       <div className={logoContainer}>
         <Logo />
       </div>
-      {groups.map((group) => (
-        <>
+      {groups.map((group, index) => (
+        <Box key={index}>
           <SectionHeading title={group.title} />
-          {group.tables.map((table) => (
+          {group.tables.map((table, index) => (
             <Box
+              key={index}
               marginBottom={2}
-              onClick={() =>
-                router.push(`/landsrettur/malalistar/${table.type}`)
-              }
+              onClick={() => router.push(`${router.asPath}/${table.route}`)}
             >
               <Text variant="h4">{table.title}</Text>
               <Text>{table.description}</Text>
             </Box>
           ))}
-        </>
+        </Box>
       ))}
     </SharedPageLayout>
   )

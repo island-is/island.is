@@ -1,8 +1,8 @@
-query CourtOfAppealsCasesInProgress($input: CaseTableQueryInput!) {
+query CaseTable($input: CaseTableQueryInput!) {
   caseTable(input: $input) {
     rowCount
     rows {
-      caseId
+      id
       cells {
         value
       }

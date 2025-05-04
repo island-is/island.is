@@ -3,6 +3,7 @@ import { CaseTableType } from './caseTable'
 
 interface CaseTableDesctiptor {
   type: CaseTableType
+  route: string
   title: string
   description: string
 }
@@ -18,11 +19,13 @@ const courtOfAppealsTableGroups: CaseTableGroup[] = [
     tables: [
       {
         type: CaseTableType.COURT_OF_APPEALS_IN_PROGRESS,
+        route: 'mal-i-vinnslu',
         title: 'Mál í vinnslu',
         description: 'Kærð sakamál sem eru til meðferðar.',
       },
       {
         type: CaseTableType.COURT_OF_APPEALS_COMPLETED,
+        route: 'afgreidd-mal',
         title: 'Afgreidd mál',
         description: 'Mál sem búið er að ljúka.',
       },

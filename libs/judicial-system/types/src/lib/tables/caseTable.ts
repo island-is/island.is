@@ -1,3 +1,4 @@
+import { InstitutionUser, isCourtOfAppealsUser } from '../user'
 import {
   caseNumber,
   caseState,
@@ -11,6 +12,20 @@ import {
 export enum CaseTableType {
   COURT_OF_APPEALS_IN_PROGRESS = 'COURT_OF_APPEALS_IN_PROGRESS',
   COURT_OF_APPEALS_COMPLETED = 'COURT_OF_APPEALS_COMPLETED',
+}
+
+export const getCaseTableType = (
+  user: InstitutionUser | undefined,
+  route: string | undefined,
+): CaseTableType | undefined => {
+  if (isCourtOfAppealsUser(user)) {
+    switch (route) {
+      case 'mal-i-vinnslu':
+        return CaseTableType.COURT_OF_APPEALS_IN_PROGRESS
+      case 'afgreidd-mal':
+        return CaseTableType.COURT_OF_APPEALS_COMPLETED
+    }
+  }
 }
 
 interface CaseTable {

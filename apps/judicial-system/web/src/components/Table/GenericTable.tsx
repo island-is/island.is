@@ -14,7 +14,7 @@ interface GenericTableProps {
     type: CaseTableColumnType
   }[]
   rows: {
-    caseId: string
+    id: string
     cells: {
       value: string[]
     }[]
@@ -93,13 +93,13 @@ const GenericTable: FC<GenericTableProps> = ({
       <tbody>
         {rows.map((row) => (
           <tr
-            key={row.caseId}
+            key={row.id}
             role="button"
             aria-label="Opna kröfu"
             className={styles.tableRowContainer}
             onClick={() => {
               if (onClick) {
-                onClick(row.caseId)
+                onClick(row.id)
               }
             }}
           >
