@@ -1,23 +1,45 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 import { SERVICE_PORTAL_HEADER_HEIGHT_SM as hheight } from '@island.is/portals/my-pages/constants'
+import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 export const modalBase = style({
   width: '100%',
   height: `calc(100vh - ${hheight}px)`,
   background: theme.color.white,
   position: 'relative',
-  top: 'calc(-0.5rem + 1px)',
+  top: -theme.spacing[1],
   zIndex: 100,
 })
 
+const modalHeaderSidesBase: StyleWithSelectors = {
+  content: '""',
+  position: 'absolute',
+  top: -1,
+  height: '3.5rem',
+  width: 16,
+  backgroundColor: theme.color.blue100,
+  borderBlock: `0.0625rem solid ${theme.color.blue200}`,
+}
 export const modalHeader = style({
   height: '3.5rem',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  padding: '0 1rem',
   borderBlock: `0.0625rem solid ${theme.color.blue200}`,
+  backgroundColor: theme.color.blue100,
+  position: 'sticky',
+  top: 0,
+  zIndex: 1500,
+
+  '::before': {
+    ...modalHeaderSidesBase,
+    left: -16,
+  },
+  '::after': {
+    ...modalHeaderSidesBase,
+    right: -16,
+  },
 })
 
 export const docWrap = style({
@@ -34,13 +56,17 @@ export const modalContent = style({
 })
 
 globalStyle(`${modalHeader} > div`, {
-  display: 'flex',
+  marginLeft: 'auto',
 })
 
 globalStyle(`${modalHeader} button`, {
   padding: '0.5rem',
   height: 40,
   width: 40,
+})
+
+globalStyle(`${modalHeader} > div:first-child`, {
+  margin: 'unset',
 })
 
 export const reveal = style({

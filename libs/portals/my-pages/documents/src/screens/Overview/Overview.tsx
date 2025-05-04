@@ -102,7 +102,7 @@ export const DocumentsOverview = () => {
           hiddenBelow={activeDocument?.document ? 'lg' : undefined}
           span={['12/12', '12/12', '12/12', '5/12']}
         >
-          <Box marginBottom={2} printHidden marginY={3}>
+          <Box marginY={2} printHidden>
             <Box
               className={styles.btn}
               display={'inlineFlex'}

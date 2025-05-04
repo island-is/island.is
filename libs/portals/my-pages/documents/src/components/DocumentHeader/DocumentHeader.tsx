@@ -1,7 +1,8 @@
 import { DocumentV2Action, DocumentsV2Category } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { helperStyles } from '@island.is/island-ui/theme'
-import { useEffect, useRef, useState } from 'react'
+import { useIsMobile } from '@island.is/portals/my-pages/core'
+import { useEffect, useRef } from 'react'
 import {
   DocumentActionBar,
   DocumentActionBarProps,
@@ -9,7 +10,6 @@ import {
 import DocumentActions from '../DocumentActions/DocumentActions'
 import AvatarImage from '../DocumentLine/AvatarImage'
 import * as styles from './DocumentHeader.css'
-
 type DocumentHeaderProps = {
   avatar?: string
   sender?: string
@@ -32,89 +32,78 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
   subjectAriaLabel,
 }) => {
   const wrapper = useRef<HTMLDivElement>(null)
-  const [docHeaderWidth, setDocHeaderWidth] = useState(400)
+  const { isMobile } = useIsMobile()
 
   useEffect(() => {
     if (wrapper.current) {
       wrapper.current.focus()
-      setDocHeaderWidth(wrapper.current.offsetWidth)
     }
   }, [wrapper])
 
   return (
     <>
       <Box
-        tabIndex={0}
-        outline="none"
-        ref={wrapper}
         display="flex"
-        flexDirection="column"
+        flexDirection="row"
+        justifyContent="spaceBetween"
+        position={isMobile ? 'static' : 'sticky'}
         background="white"
-        paddingBottom={5}
-        position="relative"
+        paddingTop={3}
+        ref={wrapper}
+        paddingBottom={3}
+        style={{
+          top: 112,
+          width: '100%',
+          zIndex: 100,
+        }}
       >
+        <Text variant="h3" as="h2">
+          {subject}
+        </Text>
+        {actionBar && (
+          <Box className={styles.actionBarWrapper}>
+            <DocumentActionBar spacing={1} {...actionBar} />
+          </Box>
+        )}
+      </Box>
+      <p className={helperStyles.srOnly} aria-live="assertive">
+        {subjectAriaLabel}
+      </p>
+      <Box
+        display="flex"
+        flexDirection="row"
+        justifyContent="flexStart"
+        width="full"
+        marginBottom={3}
+      >
+        {avatar && <AvatarImage large img={avatar} background="blue100" />}
         <Box
           display="flex"
-          flexDirection="row"
+          flexDirection="column"
           justifyContent="spaceBetween"
-          marginBottom={3}
-          position="fixed"
-          background="white"
-          //paddingX={3}
-          //paddingTop={3}
-          style={{
-            top: 188,
-            width: docHeaderWidth,
-            zIndex: 100,
-          }}
+          marginLeft={2}
         >
-          <Text variant="h3" as="h2">
-            {subject}
-          </Text>
-          {actionBar && (
-            <Box className={styles.actionBarWrapper}>
-              <DocumentActionBar spacing={1} {...actionBar} />
-            </Box>
+          {sender && (
+            <Text variant="medium" fontWeight="semiBold">
+              {sender}
+            </Text>
           )}
-        </Box>
-        <p className={helperStyles.srOnly} aria-live="assertive">
-          {subjectAriaLabel}
-        </p>
-        <Box
-          display="flex"
-          flexDirection="row"
-          justifyContent="flexStart"
-          width="full"
-          paddingTop={13}
-        >
-          {avatar && <AvatarImage large img={avatar} background="blue100" />}
           <Box
+            className={styles.titleText}
             display="flex"
-            flexDirection="column"
-            justifyContent="spaceBetween"
-            marginLeft={2}
+            justifyContent="flexStart"
+            alignItems="center"
           >
-            {sender && (
-              <Text variant="medium" fontWeight="semiBold">
-                {sender}
-              </Text>
+            {date && <Text variant="medium">{date}</Text>}
+            {category && (
+              <Box className={styles.categoryDivider}>
+                <Text variant="medium">{category.name ?? ''}</Text>
+              </Box>
             )}
-            <Box
-              className={styles.titleText}
-              display="flex"
-              justifyContent="flexStart"
-              alignItems="center"
-            >
-              {date && <Text variant="medium">{date}</Text>}
-              {category && (
-                <Box className={styles.categoryDivider}>
-                  <Text variant="medium">{category.name ?? ''}</Text>
-                </Box>
-              )}
-            </Box>
           </Box>
         </Box>
       </Box>
+
       {actions && (
         <Box>
           <DocumentActions />

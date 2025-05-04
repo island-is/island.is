@@ -1,7 +1,9 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
-export const filterBtns = style({})
+export const filterBtns = style({
+  marginRight: theme.spacing[1],
+})
 
 export const actionsButton = style({
   ':hover': {
@@ -28,6 +30,11 @@ globalStyle(`${filterBtns} button, ${filterBtns} a > span`, {
   backgroundColor: theme.color.white,
   width: 40,
   height: 40,
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
+      backgroundColor: theme.color.blue100,
+    },
+  },
 })
 
 globalStyle(`${filterBtns} button svg, ${filterBtns} a > span svg`, {
