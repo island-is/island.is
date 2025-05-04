@@ -5,7 +5,10 @@ query CaseTable($input: CaseTableQueryInput!) {
       caseId
       cells {
         value {
-          s
+          __typename
+          ... on StringGroup {
+            s
+          }
         }
       }
     }

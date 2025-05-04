@@ -1,14 +1,10 @@
-import { FC, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useLocalStorage } from 'react-use'
 
 import SortButton from './SortButton/SortButton'
 import * as styles from './Table.css'
 
-interface Cell {
-  value: string[]
-}
-
-interface GenericTableProps {
+interface GenericTableProps<Cell> {
   tableId: string
   columns: {
     title: string
@@ -23,12 +19,12 @@ interface GenericTableProps {
   onClick?: (id: string) => boolean
 }
 
-const GenericTable: FC<GenericTableProps> = ({
+const GenericTable = <Cell,>({
   tableId,
   rows,
   columns,
   onClick,
-}) => {
+}: GenericTableProps<Cell>) => {
   const [sortConfig, setSortConfig] = useLocalStorage<{
     column: number
     direction: 'ascending' | 'descending'
