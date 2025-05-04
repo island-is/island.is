@@ -1,3 +1,3 @@
-import Table from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/Table/Table'
+import CaseTable from '@island.is/judicial-system-web/src/routes/Shared/CaseTable/CaseTable'
 
-export default Table
+export default CaseTable

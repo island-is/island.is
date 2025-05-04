@@ -11,9 +11,9 @@ import { GenericTable } from '@island.is/judicial-system-web/src/components/Tabl
 import { CaseTableType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCourtOfAppealsCasesInProgressQuery } from './caseTable.generated'
-import { logoContainer } from '../../Shared/Cases/Cases.css'
+import { logoContainer } from '../Cases/Cases.css'
 
-const Tables = () => {
+const CaseTable = () => {
   const router = useRouter()
 
   const { data, loading } = useCourtOfAppealsCasesInProgressQuery({
@@ -31,7 +31,7 @@ const Tables = () => {
 
   return (
     <SharedPageLayout>
-      <PageHeader title="Titillinn minn" />
+      <PageHeader title="Málatafla" />
       <div className={logoContainer}>
         <Logo />
       </div>
@@ -47,4 +47,4 @@ const Tables = () => {
   )
 }
 
-export default Tables
+export default CaseTable

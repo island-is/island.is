@@ -22,7 +22,7 @@ const CaseTableGroups = () => {
 
   return (
     <SharedPageLayout>
-      <PageHeader title="Titillinn minn" />
+      <PageHeader title="Málatöfluflokkar" />
       <div className={logoContainer}>
         <Logo />
       </div>
