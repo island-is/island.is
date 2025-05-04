@@ -1,20 +1,22 @@
 import { FC, useMemo } from 'react'
 import { useLocalStorage } from 'react-use'
 
-import { compareLocaleIS } from '../../utils/sortHelper'
 import SortButton from './SortButton/SortButton'
 import * as styles from './Table.css'
+
+interface Cell {
+  value: string[]
+}
 
 interface GenericTableProps {
   tableId: string
   columns: {
     title: string
+    compare: (a: Cell, b: Cell) => number
   }[]
   rows: {
     id: string
-    cells: {
-      value: string[]
-    }[]
+    cells: Cell[]
   }[]
   // generateContextMenuItems?: (row: CaseListEntry) => ContextMenuItem[]
   onClick?: (id: string) => boolean
@@ -34,25 +36,17 @@ const GenericTable: FC<GenericTableProps> = ({
   useMemo(() => {
     if (sortConfig) {
       rows.sort((a, b) => {
-        const aValue = a.cells[sortConfig.column].value
-        const bValue = b.cells[sortConfig.column].value
+        const aValue = a.cells[sortConfig.column]
+        const bValue = b.cells[sortConfig.column]
 
-        for (let i = 0; i < aValue.length; i++) {
-          if (aValue[i] === bValue[i]) {
-            continue
-          }
-
-          if (sortConfig.direction === 'ascending') {
-            return compareLocaleIS(aValue[i], bValue[i])
-          } else {
-            return compareLocaleIS(bValue[i], aValue[i])
-          }
+        if (sortConfig.direction === 'ascending') {
+          return columns[sortConfig.column].compare(aValue, bValue)
         }
 
-        return 0
+        return columns[sortConfig.column].compare(bValue, aValue)
       })
     }
-  }, [rows, sortConfig])
+  }, [columns, rows, sortConfig])
 
   return (
     <table className={styles.table}>

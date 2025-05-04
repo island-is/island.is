@@ -10,7 +10,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { GenericTable } from '@island.is/judicial-system-web/src/components/Table'
-import { CaseTableType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseTableCell } from '@island.is/judicial-system-web/src/graphql/schema'
+import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import { useCaseTableQuery } from './caseTable.generated'
 import { logoContainer } from '../Cases/Cases.css'
@@ -29,8 +30,24 @@ const CaseTable = () => {
     errorPolicy: 'all',
   })
 
-  const table = caseTables[CaseTableType.COURT_OF_APPEALS_IN_PROGRESS]
+  const table = type && caseTables[type]
+
   const caseTableData = data?.caseTable
+
+  const compare = (a: CaseTableCell, b: CaseTableCell) => {
+    const aValue = a.value
+    const bValue = b.value
+
+    for (let i = 0; i < aValue.length; i++) {
+      if (aValue[i] === bValue[i]) {
+        continue
+      }
+
+      return compareLocaleIS(aValue[i], bValue[i])
+    }
+
+    return 0
+  }
 
   return (
     <SharedPageLayout>
@@ -38,16 +55,23 @@ const CaseTable = () => {
       <div className={logoContainer}>
         <Logo />
       </div>
-      <SectionHeading title={table.title} />
-      {user && type && !loading && caseTableData && (
-        <GenericTable
-          tableId={type}
-          columns={table.columns}
-          rows={caseTableData.rows.map((row) => ({
-            id: row.caseId,
-            cells: row.cells,
-          }))}
-        />
+      {table && (
+        <>
+          <SectionHeading title={table.title} />
+          {!loading && caseTableData && (
+            <GenericTable
+              tableId={type}
+              columns={table.columns.map((column) => ({
+                title: column.title,
+                compare,
+              }))}
+              rows={caseTableData.rows.map((row) => ({
+                id: row.caseId,
+                cells: row.cells,
+              }))}
+            />
+          )}
+        </>
       )}
     </SharedPageLayout>
   )
