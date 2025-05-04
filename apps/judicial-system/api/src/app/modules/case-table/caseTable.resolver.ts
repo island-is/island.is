@@ -16,7 +16,6 @@ import { User } from '@island.is/judicial-system/types'
 import { BackendService } from '../backend'
 import { CaseTableQueryInput } from './dto/caseTable.input'
 import { CaseTableResponse } from './dto/caseTable.response'
-import { CaseTablesResponse } from './dto/caseTables.response'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver(() => CaseTableResponse)
@@ -26,18 +25,6 @@ export class CaseTableResolver {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
-
-  @Query(() => CaseTablesResponse)
-  async caseTables(
-    @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
-  ): Promise<CaseTablesResponse> {
-    this.logger.debug(`Getting all available case tables for user ${user.id}`)
-
-    // No need to audit this query since it does not return any sensitive data
-    return backendService.getCaseTables()
-  }
 
   @Query(() => CaseTableResponse)
   async caseTable(

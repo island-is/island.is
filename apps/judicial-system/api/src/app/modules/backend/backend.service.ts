@@ -19,7 +19,7 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry, CaseStatistics } from '../case-list'
-import { CaseTableResponse, CaseTablesResponse } from '../case-table'
+import { CaseTableResponse } from '../case-table'
 import {
   CivilClaimant,
   Defendant,
@@ -198,10 +198,6 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getCase(id: string): Promise<Case> {
     return this.get<Case>(`case/${id}`, this.caseTransformer)
-  }
-
-  getCaseTables(): Promise<CaseTablesResponse> {
-    return this.get<CaseTablesResponse>('case-tables')
   }
 
   getCaseTable(type: CaseTableType): Promise<CaseTableResponse> {
