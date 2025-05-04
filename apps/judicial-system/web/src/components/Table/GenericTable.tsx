@@ -54,7 +54,7 @@ const GenericTable: FC<GenericTableProps> = ({
       <thead className={styles.thead}>
         <tr>
           {columns.map((column, index) => (
-            <th key={column.title} className={styles.th}>
+            <th key={index} className={styles.th}>
               <SortButton
                 title={column.title}
                 onClick={() => {

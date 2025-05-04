@@ -1,7 +1,7 @@
 import { ReactNode, useContext } from 'react'
 import { useRouter } from 'next/router'
 
-import { Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { caseTables, getCaseTableType } from '@island.is/judicial-system/types'
 import {
   Logo,
@@ -50,9 +50,24 @@ const CaseTable = () => {
     return 0
   }
 
-  const render = (cell: CaseTableCell): ReactNode => (
-    <Text>{cell.value.join(', ')}</Text>
-  )
+  const render = (cell: CaseTableCell): ReactNode => {
+    const value = cell.value.filter((v) => v !== '')
+    const length = value.length
+
+    return (
+      <Box display="flex" flexDirection="column">
+        {value.map((value, index) =>
+          length < 3 && index === 0 ? (
+            <Text key={index}>{value}</Text>
+          ) : (
+            <Text key={index} as="span" variant="small">
+              {value}
+            </Text>
+          ),
+        )}
+      </Box>
+    )
+  }
 
   return (
     <SharedPageLayout>
