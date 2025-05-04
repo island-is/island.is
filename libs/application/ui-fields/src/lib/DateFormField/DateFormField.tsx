@@ -12,6 +12,7 @@ import {
   MaybeWithApplicationAndField,
   Application,
   FormValue,
+  BaseField,
 } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -50,6 +51,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    tempDisabled,
   } = field
   const { formatMessage, lang } = useLocale()
   const allValues = useWatch({ defaultValue: application.answers }) as FormValue
@@ -57,6 +59,13 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     () => ({ ...application, answers: allValues }),
     [application, allValues],
   )
+
+  const isDisabled = useMemo(() => {
+    if (tempDisabled) {
+      return tempDisabled(updatedApplication)
+    }
+    return disabled
+  }, [disabled, tempDisabled, updatedApplication])
 
   const computeMinDate = (
     maybeMinDate: MaybeWithApplicationAndField<Date>,
@@ -139,10 +148,10 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
 
       <Box paddingTop={2}>
         <DatePickerController
-          disabled={disabled}
+          disabled={isDisabled}
           defaultValue={
             (getValueViaPath(application.answers, id) as string) ??
-            getDefaultValue(field, application)
+            getDefaultValue(field as BaseField, application)
           }
           id={id}
           name={id}
