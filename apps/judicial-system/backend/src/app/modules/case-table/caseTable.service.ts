@@ -7,7 +7,6 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseAppealState,
-  CaseTableColumnType,
   CaseTableType,
   completedRequestCaseStates,
   investigationCases,
@@ -61,23 +60,14 @@ export class CaseTableService {
     })
 
     return {
-      type,
-      columnCount: 5,
       rowCount: cases.length,
-      columns: [
-        { title: 'Málsnrúmer', type: CaseTableColumnType.STRING },
-        { title: 'Varnaraðili', type: CaseTableColumnType.STRING },
-        { title: 'Tegund', type: CaseTableColumnType.STRING },
-        { title: 'Staða', type: CaseTableColumnType.STRING },
-        { title: 'Dómsformaður', type: CaseTableColumnType.STRING },
-      ],
       rows: cases.map((c) => ({
         caseId: c.id,
         cells: [
           {
             value: [
-              ...(c.appealCaseNumber ? [c.appealCaseNumber] : []),
-              c.courtCaseNumber as string,
+              c.appealCaseNumber ?? '',
+              c.courtCaseNumber ?? '',
               ...[
                 c.policeCaseNumbers.length > 1
                   ? `${c.policeCaseNumbers[0]} +${

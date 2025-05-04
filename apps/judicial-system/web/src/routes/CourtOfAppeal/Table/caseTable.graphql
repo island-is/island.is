@@ -1,12 +1,6 @@
 query CourtOfAppealsCasesInProgress($input: CaseTableQueryInput!) {
   caseTable(input: $input) {
-    type
-    columnCount
     rowCount
-    columns {
-      title
-      type
-    }
     rows {
       caseId
       cells {

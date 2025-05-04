@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 
+import { caseTables } from '@island.is/judicial-system/types'
 import {
   Logo,
   PageHeader,
@@ -25,7 +26,8 @@ const Tables = () => {
     errorPolicy: 'all',
   })
 
-  const table = data?.caseTable
+  const table = caseTables[CaseTableType.COURT_OF_APPEALS_IN_PROGRESS]
+  const caseTableData = data?.caseTable
 
   return (
     <SharedPageLayout>
@@ -33,8 +35,14 @@ const Tables = () => {
       <div className={logoContainer}>
         <Logo />
       </div>
-      <SectionHeading title="Mál í vinnslu" />
-      {table && <GenericTable columns={table?.columns} rows={table.rows} />}
+      <SectionHeading title={table.title} />
+      {caseTableData && (
+        <GenericTable
+          tableId={CaseTableType.COURT_OF_APPEALS_IN_PROGRESS}
+          columns={table.columns}
+          rows={caseTableData.rows}
+        />
+      )}
     </SharedPageLayout>
   )
 }

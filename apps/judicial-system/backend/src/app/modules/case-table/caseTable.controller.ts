@@ -47,11 +47,6 @@ export class CaseTableController {
       `Getting a case table of type ${type} for user ${user.id}`,
     )
 
-    switch (type) {
-      case CaseTableType.COURT_OF_APPEALS_IN_PROGRESS:
-        return this.caseTableService.getCaseTableRows(type)
-    }
-
-    throw new BadRequestException(`Case table of type ${type} is not supported`)
+    return this.caseTableService.getCaseTableRows(type)
   }
 }
