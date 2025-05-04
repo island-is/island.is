@@ -65,22 +65,24 @@ export class CaseTableService {
         caseId: c.id,
         cells: [
           {
-            value: [
-              c.appealCaseNumber ?? '',
-              c.courtCaseNumber ?? '',
-              ...[
-                c.policeCaseNumbers.length > 1
-                  ? `${c.policeCaseNumbers[0]} +${
-                      c.policeCaseNumbers.length - 1
-                    }`
-                  : c.policeCaseNumbers[0],
+            value: {
+              s: [
+                c.appealCaseNumber ?? '',
+                c.courtCaseNumber ?? '',
+                ...[
+                  c.policeCaseNumbers.length > 1
+                    ? `${c.policeCaseNumbers[0]} +${
+                        c.policeCaseNumbers.length - 1
+                      }`
+                    : c.policeCaseNumbers[0],
+                ],
               ],
-            ],
+            },
           },
-          { value: ['1234'] },
-          { value: ['1234'] },
-          { value: ['1234'] },
-          { value: ['1234'] },
+          { value: { s: ['1234'] } },
+          { value: { s: ['1234'] } },
+          { value: { s: ['1234'] } },
+          { value: { s: ['1234'] } },
         ],
       })),
     }

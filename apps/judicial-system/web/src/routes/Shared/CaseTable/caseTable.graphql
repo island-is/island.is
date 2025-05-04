@@ -4,7 +4,9 @@ query CaseTable($input: CaseTableQueryInput!) {
     rows {
       caseId
       cells {
-        value
+        value {
+          s
+        }
       }
     }
   }

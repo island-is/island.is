@@ -26,17 +26,17 @@ const CaseTableGroups = () => {
       <div className={logoContainer}>
         <Logo />
       </div>
-      {groups.map((group, index) => (
-        <Box key={index}>
+      {groups.map((group, idx) => (
+        <Box key={idx}>
           <SectionHeading title={group.title} />
-          {group.tables.map((table, index) => (
+          {group.tables.map((t, idx) => (
             <Box
-              key={index}
+              key={idx}
               marginBottom={2}
-              onClick={() => router.push(`${router.asPath}/${table.route}`)}
+              onClick={() => router.push(`${router.asPath}/${t.route}`)}
             >
-              <Text variant="h4">{table.title}</Text>
-              <Text>{table.description}</Text>
+              <Text variant="h4">{t.title}</Text>
+              <Text>{t.description}</Text>
             </Box>
           ))}
         </Box>

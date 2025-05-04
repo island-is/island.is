@@ -36,8 +36,8 @@ const CaseTable = () => {
   const caseTableData = data?.caseTable
 
   const compare = (a: CaseTableCell, b: CaseTableCell): number => {
-    const aValue = a.value
-    const bValue = b.value
+    const aValue = a.value.s
+    const bValue = b.value.s
 
     for (let i = 0; i < aValue.length; i++) {
       if (aValue[i] === bValue[i]) {
@@ -51,17 +51,17 @@ const CaseTable = () => {
   }
 
   const render = (cell: CaseTableCell): ReactNode => {
-    const value = cell.value.filter((v) => v !== '')
-    const length = value.length
+    const strings = cell.value.s.filter((v) => v !== '')
+    const length = strings.length
 
     return (
       <Box display="flex" flexDirection="column">
-        {value.map((value, index) =>
-          length < 3 && index === 0 ? (
-            <Text key={index}>{value}</Text>
+        {strings.map((s, idx) =>
+          length < 3 && idx === 0 ? (
+            <Text key={idx}>{s}</Text>
           ) : (
-            <Text key={index} as="span" variant="small">
-              {value}
+            <Text key={idx} as="span" variant="small">
+              {s}
             </Text>
           ),
         )}

@@ -8,9 +8,15 @@ registerEnumType(CaseTableType, {
 })
 
 @ObjectType()
+class StringGroup {
+  @Field(() => [String], { description: 'The string values' })
+  readonly s!: string[]
+}
+
+@ObjectType()
 class CaseTableCell {
-  @Field(() => [String], { description: 'The cell value' })
-  readonly value!: string[]
+  @Field(() => StringGroup, { description: 'The cell value' })
+  readonly value!: StringGroup
 }
 
 @ObjectType()

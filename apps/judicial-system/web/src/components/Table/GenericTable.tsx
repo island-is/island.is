@@ -53,50 +53,50 @@ const GenericTable: FC<GenericTableProps> = ({
     <table className={styles.table}>
       <thead className={styles.thead}>
         <tr>
-          {columns.map((column, index) => (
-            <th key={index} className={styles.th}>
+          {columns.map((c, idx) => (
+            <th key={idx} className={styles.th}>
               <SortButton
-                title={column.title}
+                title={c.title}
                 onClick={() => {
                   setSortConfig({
-                    column: index,
+                    column: idx,
                     direction:
                       sortConfig &&
-                      sortConfig.column === index &&
+                      sortConfig.column === idx &&
                       sortConfig.direction === 'ascending'
                         ? 'descending'
                         : 'ascending',
                   })
                 }}
                 sortAsc={
-                  sortConfig?.column === index &&
+                  sortConfig?.column === idx &&
                   sortConfig?.direction === 'ascending'
                 }
                 sortDes={
-                  sortConfig?.column === index &&
+                  sortConfig?.column === idx &&
                   sortConfig?.direction === 'descending'
                 }
-                isActive={sortConfig?.column === index}
+                isActive={sortConfig?.column === idx}
               />
             </th>
           ))}
         </tr>
       </thead>
       <tbody>
-        {rows.map((row) => (
+        {rows.map((r, idx) => (
           <tr
-            key={row.id}
+            key={idx}
             role="button"
             aria-label="Opna kröfu"
             className={styles.tableRowContainer}
             onClick={() => {
               if (onClick) {
-                onClick(row.id)
+                onClick(r.id)
               }
             }}
           >
-            {row.cells.map((cell, index) => (
-              <td key={index}>{columns[index].render(cell)}</td>
+            {r.cells.map((cell, idx) => (
+              <td key={idx}>{columns[idx].render(cell)}</td>
             ))}
           </tr>
         ))}

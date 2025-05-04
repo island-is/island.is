@@ -1,8 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger'
 
+class StringGroup {
+  @ApiProperty({ type: [String], description: 'The string values' })
+  readonly s!: string[]
+}
+
 class CaseTableCell {
-  @ApiProperty({ type: [String], description: 'The cell value' })
-  readonly value!: string[]
+  @ApiProperty({ type: StringGroup, description: 'The cell value' })
+  readonly value!: StringGroup
 }
 
 class CaseTableRow {
