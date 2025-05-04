@@ -1,13 +1,5 @@
 import { InstitutionUser, isCourtOfAppealsUser } from '../user'
-import {
-  caseNumber,
-  caseState,
-  CaseTableColumn,
-  caseType,
-  courtOfAppealsHead,
-  defendants,
-  validFromTo,
-} from './caseTableColumn'
+import { CaseTableColumn, caseTableColumns } from './caseTableColumn'
 
 export enum CaseTableType {
   COURT_OF_APPEALS_IN_PROGRESS = 'COURT_OF_APPEALS_IN_PROGRESS',
@@ -33,13 +25,32 @@ interface CaseTable {
   columns: CaseTableColumn[]
 }
 
+type M = typeof caseTableColumns
+type K = keyof M
+
+const pickColumns = (keys: K[]): M[K][] => {
+  return keys.map((key) => caseTableColumns[key])
+}
+
 const courtOfAppearlInProgress: CaseTable = {
   title: 'Mál í vinnslu',
-  columns: [caseNumber, defendants, caseType, caseState, courtOfAppealsHead],
+  columns: pickColumns([
+    'caseNumber',
+    'defendants',
+    'caseType',
+    'caseState',
+    'courtOfAppealsHead',
+  ]),
 }
 const courtOfAppearlCompleted: CaseTable = {
   title: 'Afgreidd mál',
-  columns: [caseNumber, defendants, caseType, caseState, validFromTo],
+  columns: pickColumns([
+    'caseNumber',
+    'defendants',
+    'caseType',
+    'caseState',
+    'validFromTo',
+  ]),
 }
 
 export const caseTables: { [key in CaseTableType]: CaseTable } = {

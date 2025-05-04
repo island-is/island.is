@@ -7,27 +7,36 @@ export interface CaseTableColumn {
   type: CaseTableColumnType
 }
 
-export const caseNumber: CaseTableColumn = {
+const caseNumber: CaseTableColumn = {
   title: 'Málsnrúmer',
   type: CaseTableColumnType.STRING_LIST,
 }
-export const defendants: CaseTableColumn = {
+const defendants: CaseTableColumn = {
   title: 'Varnaraðili',
   type: CaseTableColumnType.STRING_LIST,
 }
-export const caseType: CaseTableColumn = {
+const caseType: CaseTableColumn = {
   title: 'Tegund',
   type: CaseTableColumnType.STRING_LIST,
 }
-export const caseState: CaseTableColumn = {
+const caseState: CaseTableColumn = {
   title: 'Staða',
   type: CaseTableColumnType.STRING_LIST,
 }
-export const courtOfAppealsHead: CaseTableColumn = {
+const courtOfAppealsHead: CaseTableColumn = {
   title: 'Dómsformaður',
   type: CaseTableColumnType.STRING_LIST,
 }
-export const validFromTo: CaseTableColumn = {
+const validFromTo: CaseTableColumn = {
   title: 'Gildistími',
   type: CaseTableColumnType.STRING_LIST,
+}
+
+export const caseTableColumns = {
+  caseNumber,
+  defendants,
+  caseType,
+  caseState,
+  courtOfAppealsHead,
+  validFromTo,
 }
