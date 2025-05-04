@@ -13,6 +13,7 @@ interface GenericTableProps {
   columns: {
     title: string
     compare: (a: Cell, b: Cell) => number
+    render: (cell: Cell) => React.ReactNode
   }[]
   rows: {
     id: string
@@ -95,7 +96,7 @@ const GenericTable: FC<GenericTableProps> = ({
             }}
           >
             {row.cells.map((cell, index) => (
-              <td key={index}>{cell.value.join(', ')}</td>
+              <td key={index}>{columns[index].render(cell)}</td>
             ))}
           </tr>
         ))}

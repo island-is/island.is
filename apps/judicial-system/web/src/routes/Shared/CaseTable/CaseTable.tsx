@@ -1,6 +1,7 @@
-import { useContext } from 'react'
+import { ReactNode, useContext } from 'react'
 import { useRouter } from 'next/router'
 
+import { Text } from '@island.is/island-ui/core'
 import { caseTables, getCaseTableType } from '@island.is/judicial-system/types'
 import {
   Logo,
@@ -34,7 +35,7 @@ const CaseTable = () => {
 
   const caseTableData = data?.caseTable
 
-  const compare = (a: CaseTableCell, b: CaseTableCell) => {
+  const compare = (a: CaseTableCell, b: CaseTableCell): number => {
     const aValue = a.value
     const bValue = b.value
 
@@ -48,6 +49,10 @@ const CaseTable = () => {
 
     return 0
   }
+
+  const render = (cell: CaseTableCell): ReactNode => (
+    <Text>{cell.value.join(', ')}</Text>
+  )
 
   return (
     <SharedPageLayout>
@@ -64,6 +69,7 @@ const CaseTable = () => {
               columns={table.columns.map((column) => ({
                 title: column.title,
                 compare,
+                render,
               }))}
               rows={caseTableData.rows.map((row) => ({
                 id: row.caseId,
