@@ -1,8 +1,6 @@
 import { FC, useMemo } from 'react'
 import { useLocalStorage } from 'react-use'
 
-import { CaseTableColumnType } from '@island.is/judicial-system/types'
-
 import { compareLocaleIS } from '../../utils/sortHelper'
 import SortButton from './SortButton/SortButton'
 import * as styles from './Table.css'
@@ -11,7 +9,6 @@ interface GenericTableProps {
   tableId: string
   columns: {
     title: string
-    type: CaseTableColumnType
   }[]
   rows: {
     id: string

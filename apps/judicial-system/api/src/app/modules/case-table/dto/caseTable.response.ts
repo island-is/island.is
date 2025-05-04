@@ -16,7 +16,7 @@ class CaseTableCell {
 @ObjectType()
 class CaseTableRow {
   @Field(() => String, { description: 'The row case id' })
-  readonly id!: string
+  readonly caseId!: string
 
   @Field(() => [CaseTableCell], { description: 'The row cells' })
   readonly cells!: CaseTableCell[]

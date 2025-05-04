@@ -2,7 +2,7 @@ query CaseTable($input: CaseTableQueryInput!) {
   caseTable(input: $input) {
     rowCount
     rows {
-      id
+      caseId
       cells {
         value
       }

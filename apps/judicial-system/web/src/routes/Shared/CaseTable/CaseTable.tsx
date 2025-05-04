@@ -43,7 +43,10 @@ const CaseTable = () => {
         <GenericTable
           tableId={type}
           columns={table.columns}
-          rows={caseTableData.rows}
+          rows={caseTableData.rows.map((row) => ({
+            id: row.caseId,
+            cells: row.cells,
+          }))}
         />
       )}
     </SharedPageLayout>

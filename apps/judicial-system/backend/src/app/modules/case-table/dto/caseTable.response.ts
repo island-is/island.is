@@ -7,7 +7,7 @@ class CaseTableCell {
 
 class CaseTableRow {
   @ApiProperty({ type: String, description: 'The row case id' })
-  readonly id!: string
+  readonly caseId!: string
 
   @ApiProperty({ type: [CaseTableCell], description: 'The row cells' })
   readonly cells!: CaseTableCell[]

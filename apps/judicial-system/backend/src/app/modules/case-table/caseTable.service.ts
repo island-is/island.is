@@ -62,7 +62,7 @@ export class CaseTableService {
     return {
       rowCount: cases.length,
       rows: cases.map((c) => ({
-        id: c.id,
+        caseId: c.id,
         cells: [
           {
             value: [
