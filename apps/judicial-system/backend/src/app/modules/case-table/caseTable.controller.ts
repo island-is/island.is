@@ -14,20 +14,20 @@ import {
   CurrentHttpUser,
   JwtAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import {
-  CaseTableColumnType,
-  CaseTableType,
-  User,
-} from '@island.is/judicial-system/types'
+import { CaseTableType, User } from '@island.is/judicial-system/types'
 
 import { CaseTableResponse } from './dto/caseTable.response'
 import { CaseTablesResponse } from './dto/caseTables.response'
+import { CaseTableService } from './caseTable.service'
 
 @Controller('api/')
 @ApiTags('case-tables')
 @UseGuards(JwtAuthUserGuard)
 export class CaseTableController {
-  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
+  constructor(
+    private readonly caseTableService: CaseTableService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @Get('case-tables')
   @ApiOkResponse({
@@ -69,35 +69,14 @@ export class CaseTableController {
     type: CaseTableResponse,
     description: 'Gets a case table of a specific type',
   })
-  getCaseTable(@Query('type') type: CaseTableType): CaseTableResponse {
+  async getCaseTable(
+    @Query('type') type: CaseTableType,
+  ): Promise<CaseTableResponse> {
     this.logger.debug(`Getting a case table of type ${type}`)
 
     switch (type) {
       case CaseTableType.COURT_OF_APPEALS_IN_PROGRESS:
-        return {
-          type,
-          columnCount: 0,
-          rowCount: 0,
-          columns: [
-            { title: 'Málsnrúmer', type: CaseTableColumnType.STRING },
-            { title: 'Varnaraðili', type: CaseTableColumnType.STRING },
-            { title: 'Tegund', type: CaseTableColumnType.STRING },
-            { title: 'Staða', type: CaseTableColumnType.STRING },
-            { title: 'Dómsformaður', type: CaseTableColumnType.STRING },
-          ],
-          rows: [
-            {
-              caseId: '1234',
-              cells: [
-                { value: ['1234'] },
-                { value: ['1234'] },
-                { value: ['1234'] },
-                { value: ['1234'] },
-                { value: ['1234'] },
-              ],
-            },
-          ],
-        }
+        return this.caseTableService.getCaseTableRows(type)
     }
 
     throw new BadRequestException(`Case table of type ${type} is not supported`)
