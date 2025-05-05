@@ -1,4 +1,4 @@
-import { AllHTMLAttributes, ReactNode } from 'react'
+import { AllHTMLAttributes, AriaRole, ReactNode } from 'react'
 import { As } from 'reakit-utils/types'
 import * as styles from './Button.css'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
@@ -65,5 +65,6 @@ export interface ButtonProps {
   name?: string
   value?: string
   as?: As
+  role?: AriaRole
   truncate?: boolean
 }
