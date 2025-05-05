@@ -14,11 +14,11 @@ export enum ComplainedForTypes {
 }
 
 export enum GenderAnswerOptions {
-  MALE = 'male',
-  FEMALE = 'female',
-  NONBINARY = 'nonBinary',
-  OTHER = 'other',
-  DECLINED = 'declinedToAnswer'
+  MALE = 'Karl/Karlkyns',
+  FEMALE = 'Kona/Kvenkyns',
+  NONBINARY = 'Kvár/Kynsegin',
+  OTHER = 'Annað',
+  DECLINED = 'Vil ekki svara'
 }
 
 export enum ApiActions {

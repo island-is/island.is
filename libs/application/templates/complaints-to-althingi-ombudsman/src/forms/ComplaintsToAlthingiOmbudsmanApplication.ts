@@ -161,23 +161,23 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               title: information.aboutTheComplainer.gender,
               options: [
                 {
-                  label: 'Kona/Kvenkyns',
+                  label: information.aboutTheComplainer.genderOptionFemale,
                   value: GenderAnswerOptions.FEMALE,
                 },
                 {
-                  label: 'Karl/Karlkyns',
+                  label: information.aboutTheComplainer.genderOptionMale,
                   value: GenderAnswerOptions.MALE,
                 },
                 {
-                  label: 'Kvár/Kynsegin',
+                  label: information.aboutTheComplainer.genderOptionNonbinary,
                   value: GenderAnswerOptions.NONBINARY,
                 },
                 {
-                  label: 'Annað',
+                  label: information.aboutTheComplainer.genderOptionOther,
                   value: GenderAnswerOptions.OTHER,
                 },
                 {
-                  label: 'Vil ekki svara',
+                  label: information.aboutTheComplainer.genderOptionDeclinedToAnswer,
                   value: GenderAnswerOptions.DECLINED,
                 },
               ],
