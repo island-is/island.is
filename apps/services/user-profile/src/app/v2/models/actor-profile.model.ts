@@ -72,7 +72,7 @@ export class ActorProfile extends Model {
   @Column({
     type: DataType.UUID,
     allowNull: true,
-    defaultValue: DataType.UUIDV4,
+    defaultValue: null,
   })
   @ApiProperty()
   emailsId?: string | null

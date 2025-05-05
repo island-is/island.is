@@ -34,6 +34,10 @@ import {
   PatchActorProfileDto,
   SingleActorProfileDto,
 } from './dto/actor-profile.dto'
+import {
+  UpdateActorProfileEmailDto,
+  ActorProfileEmailDto,
+} from './dto/actor-profile-email.dto'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -289,6 +293,42 @@ export class MeUserProfileController {
         },
       },
       this.userProfileService.setEmailAsPrimary(user.nationalId, emailId),
+    )
+  }
+
+  @Patch('/actor-profile')
+  @Scopes(ApiScope.internal)
+  @Documentation({
+    description:
+      'Update or create an actor profile with email information for the current user',
+    response: {
+      status: 200,
+      type: ActorProfileEmailDto,
+    },
+  })
+  updateActorProfileEmail(
+    @CurrentUser() user: User,
+    @Body() actorProfile: UpdateActorProfileEmailDto,
+  ): Promise<ActorProfileEmailDto> {
+    if (!user.actor?.nationalId) {
+      throw new BadRequestException('User has no actor profile')
+    }
+
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'updateActorProfileEmail',
+        resources: `${user.nationalId}:${user.actor.nationalId}`,
+        meta: {
+          fields: Object.keys(actorProfile),
+        },
+      },
+      this.userProfileService.updateActorProfileEmail({
+        toNationalId: user.actor.nationalId,
+        fromNationalId: user.nationalId,
+        ...actorProfile,
+      }),
     )
   }
 }

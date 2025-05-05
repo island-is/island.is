@@ -1487,9 +1487,13 @@ describe('MeUserProfileController', () => {
     beforeEach(async () => {
       await userProfileModel.destroy({
         truncate: true,
+        force: true,
+        cascade: true,
       })
       await delegationPreferenceModel.destroy({
         truncate: true,
+        force: true,
+        cascade: true,
       })
 
       jest
@@ -2712,6 +2716,447 @@ describe('POST /v2/me/actor-profile/nudge', () => {
       .send({
         nudgeType: NudgeType.NUDGE,
       })
+
+    // Assert
+    expect(res.status).toEqual(400)
+    expect(res.body).toMatchObject({
+      title: 'Bad Request',
+      status: 400,
+      detail: 'User has no actor profile',
+    })
+
+    await appWithNoActor.cleanUp()
+  })
+})
+
+describe('PATCH /v2/me/actor-profile', () => {
+  let app: TestApp
+  let server: SuperTest<Test>
+  let fixtureFactory: FixtureFactory
+  let userProfileModel: typeof UserProfile
+  let actorProfileModel: typeof ActorProfile
+  let delegationsApi: DelegationsApi
+  let emailsModel: typeof Emails
+  let verificationService: VerificationService
+  const testNationalId1 = createNationalId('person')
+  const testEmail = faker.internet.email()
+  const testVerificationCode = createVerificationCode()
+
+  beforeAll(async () => {
+    app = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user: createCurrentUser({
+        nationalId: testUserProfile.nationalId,
+        scope: [ApiScope.internal],
+        actor: {
+          nationalId: testNationalId1,
+        },
+      }),
+      dbType: 'postgres', // Using postgres for verification attempt handling
+    })
+
+    server = request(app.getHttpServer())
+    fixtureFactory = new FixtureFactory(app)
+    delegationsApi = app.get(DelegationsApi)
+    userProfileModel = app.get(getModelToken(UserProfile))
+    actorProfileModel = app.get(getModelToken(ActorProfile))
+    emailsModel = app.get(getModelToken(Emails))
+    verificationService = app.get(VerificationService)
+  })
+
+  beforeEach(async () => {
+    await userProfileModel.destroy({
+      truncate: true,
+      force: true,
+      cascade: true,
+    })
+    await actorProfileModel.destroy({
+      truncate: true,
+      force: true,
+      cascade: true,
+    })
+    await emailsModel.destroy({
+      truncate: true,
+      force: true,
+      cascade: true,
+    })
+
+    // Create user profile first to satisfy foreign key constraints for all tests
+    await fixtureFactory.createUserProfile({
+      nationalId: testUserProfile.nationalId,
+    })
+
+    // Mock delegations API to return a delegation between the test user and testNationalId1
+    jest
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [
+          {
+            toNationalId: testNationalId1,
+            fromNationalId: testUserProfile.nationalId,
+            subjectId: null,
+            type: 'delegation',
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+        totalCount: 1,
+      })
+
+    // Mock email verification
+    jest
+      .spyOn(verificationService, 'confirmEmail')
+      .mockImplementation(({ email, hash }, nationalId, options) => {
+        if (hash === testVerificationCode) {
+          return Promise.resolve({
+            confirmed: true,
+            message: 'Verified',
+            remainingAttempts: 3,
+          })
+        } else {
+          return Promise.resolve({
+            confirmed: false,
+            message: 'Verification code does not match.',
+            remainingAttempts: 2,
+          })
+        }
+      })
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  it('should create new email and actor profile when email does not exist and verification code is correct', async () => {
+    // Act
+    const res = await server.patch('/v2/me/actor-profile').send({
+      email: testEmail,
+      emailVerificationCode: testVerificationCode,
+      emailNotifications: true,
+    })
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toMatchObject({
+      email: testEmail,
+      emailStatus: DataStatus.VERIFIED,
+      needsNudge: false,
+      actorNationalId: testNationalId1,
+      emailNotifications: true,
+    })
+
+    // Verify email record created
+    const email = await emailsModel.findOne({
+      where: {
+        email: testEmail,
+      },
+    })
+    expect(email).not.toBeNull()
+    expect(email?.emailStatus).toBe(DataStatus.VERIFIED)
+
+    // Verify actor profile created
+    const actorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+    expect(actorProfile).not.toBeNull()
+    expect(actorProfile?.emailsId).toBe(email?.id)
+    expect(actorProfile?.emailNotifications).toBe(true)
+  })
+
+  it('should update existing email when email exists and verification code is correct', async () => {
+    // Arrange
+    const existingEmail = await emailsModel.create({
+      id: uuid(),
+      email: testEmail,
+      nationalId: testUserProfile.nationalId,
+      primary: false,
+      emailStatus: DataStatus.NOT_VERIFIED,
+    })
+
+    // Act
+    const res = await server.patch('/v2/me/actor-profile').send({
+      email: testEmail,
+      emailVerificationCode: testVerificationCode,
+      emailNotifications: true,
+    })
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toMatchObject({
+      email: testEmail,
+      emailStatus: DataStatus.VERIFIED,
+      needsNudge: false,
+      actorNationalId: testNationalId1,
+      emailNotifications: true,
+    })
+
+    // Verify email record updated
+    const updatedEmail = await emailsModel.findByPk(existingEmail.id)
+    expect(updatedEmail).not.toBeNull()
+    expect(updatedEmail?.emailStatus).toBe(DataStatus.VERIFIED)
+
+    // Verify actor profile created with reference to email
+    const actorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+    expect(actorProfile).not.toBeNull()
+    expect(actorProfile?.emailsId).toBe(existingEmail.id)
+    expect(actorProfile?.emailNotifications).toBe(true)
+  })
+
+  it('should update existing actor profile with new email', async () => {
+    // Arrange - Create actor profile
+    await actorProfileModel.create({
+      id: uuid(),
+      toNationalId: testNationalId1,
+      fromNationalId: testUserProfile.nationalId,
+      emailNotifications: false,
+    })
+
+    // Act
+    const res = await server.patch('/v2/me/actor-profile').send({
+      email: testEmail,
+      emailVerificationCode: testVerificationCode,
+      emailNotifications: true,
+    })
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toMatchObject({
+      email: testEmail,
+      emailStatus: DataStatus.VERIFIED,
+      needsNudge: false,
+      actorNationalId: testNationalId1,
+      emailNotifications: true,
+    })
+
+    // Verify email record created
+    const email = await emailsModel.findOne({
+      where: {
+        email: testEmail,
+      },
+    })
+    expect(email).not.toBeNull()
+    expect(email?.emailStatus).toBe(DataStatus.VERIFIED)
+
+    // Verify actor profile updated
+    const actorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+    expect(actorProfile).not.toBeNull()
+    expect(actorProfile?.emailsId).toBe(email?.id)
+    expect(actorProfile?.emailNotifications).toBe(true)
+  })
+
+  it('should update only emailNotifications when only that field is provided', async () => {
+    // Arrange - Create actor profile first
+    await actorProfileModel.create({
+      id: uuid(),
+      toNationalId: testNationalId1,
+      fromNationalId: testUserProfile.nationalId,
+      emailNotifications: false,
+    })
+
+    // Check if email_id is null
+    const actorProfileWithNullEmailId = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+
+    console.log('actorProfileWithNullEmailId', actorProfileWithNullEmailId)
+
+    // Act
+    const res = await server.patch('/v2/me/actor-profile').send({
+      emailNotifications: true,
+    })
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toMatchObject({
+      email: '', // Should be empty since no email is provided
+      emailStatus: DataStatus.NOT_DEFINED,
+      needsNudge: false,
+      actorNationalId: testNationalId1,
+      emailNotifications: true,
+    })
+
+    // Verify actor profile updated
+    const actorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+    expect(actorProfile).not.toBeNull()
+    expect(actorProfile?.emailNotifications).toBe(true)
+    expect(actorProfile?.emailsId).toBeNull() // No email attached
+  })
+
+  it('should return 400 when email is provided without verification code', async () => {
+    // Act
+    const res = await server.patch('/v2/me/actor-profile').send({
+      email: testEmail,
+    })
+
+    // Assert
+    expect(res.status).toEqual(400)
+    expect(res.body).toMatchObject({
+      title: 'Bad Request',
+      status: 400,
+      detail: 'Email verification code is required',
+    })
+  })
+
+  it('should return 400 when verification code is invalid', async () => {
+    // Act
+    const res = await server.patch('/v2/me/actor-profile').send({
+      email: testEmail,
+      emailVerificationCode: 'invalid-code',
+    })
+
+    // Assert
+    expect(res.status).toEqual(400)
+    expect(res.body).toMatchObject({
+      title: 'Attempt Failed',
+      status: 400,
+      detail:
+        '2 attempts remaining. Validation issues found in field: emailVerificationCode',
+      remainingAttempts: 2,
+      type: 'https://docs.devland.is/reference/problems/attempt-failed',
+    })
+  })
+
+  it('should update the actor profile next nudge date', async () => {
+    // Arrange - Create actor profile with specific nudge dates
+    const initialLastNudge = subMonths(new Date(), 1)
+    const initialNextNudge = addMonths(new Date(), 5)
+
+    await actorProfileModel.create({
+      id: uuid(),
+      toNationalId: testNationalId1,
+      fromNationalId: testUserProfile.nationalId,
+      emailNotifications: true,
+      lastNudge: initialLastNudge,
+      nextNudge: initialNextNudge,
+    })
+
+    // Act
+    const res = await server.patch('/v2/me/actor-profile').send({
+      emailNotifications: false,
+    })
+
+    // Assert
+    expect(res.status).toEqual(200)
+
+    // Verify nudge dates were updated
+    const actorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+    expect(actorProfile).not.toBeNull()
+    expect(actorProfile?.lastNudge).not.toEqual(initialLastNudge)
+    expect(actorProfile?.nextNudge).not.toEqual(initialNextNudge)
+
+    // Verify nextNudge is set to NUDGE_INTERVAL months after lastNudge
+    if (actorProfile?.lastNudge) {
+      const expectedNextNudge = addMonths(
+        actorProfile.lastNudge,
+        NUDGE_INTERVAL,
+      )
+      expect(actorProfile?.nextNudge?.toISOString().substring(0, 22)).toEqual(
+        expectedNextNudge.toISOString().substring(0, 22),
+      )
+    }
+  })
+
+  it('should allow updating only email without changing emailNotifications', async () => {
+    // Arrange - Create actor profile first with specific emailNotifications value
+    await actorProfileModel.create({
+      id: uuid(),
+      toNationalId: testNationalId1,
+      fromNationalId: testUserProfile.nationalId,
+      emailNotifications: false, // Set to false initially
+    })
+
+    // Act
+    const res = await server.patch('/v2/me/actor-profile').send({
+      email: testEmail,
+      emailVerificationCode: testVerificationCode,
+      // No emailNotifications field
+    })
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toMatchObject({
+      email: testEmail,
+      emailStatus: DataStatus.VERIFIED,
+      needsNudge: false,
+      actorNationalId: testNationalId1,
+      emailNotifications: false, // Should maintain the original value
+    })
+
+    // Verify actor profile updated
+    const actorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+    expect(actorProfile).not.toBeNull()
+    expect(actorProfile?.emailNotifications).toBe(false) // Should maintain original value
+  })
+
+  it('should return 400 when email is an empty string', async () => {
+    // Act
+    const res = await server.patch('/v2/me/actor-profile').send({
+      email: '',
+      emailNotifications: true,
+    })
+
+    // Assert
+    expect(res.status).toEqual(400)
+    expect(res.body).toMatchObject({
+      title: 'Bad Request',
+      status: 400,
+      detail: ['Email must be a valid email address'],
+    })
+  })
+
+  it('should return 400 when user has no actor profile', async () => {
+    // Arrange
+    const appWithNoActor = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user: createCurrentUser({
+        nationalId: testUserProfile.nationalId,
+        scope: [ApiScope.internal],
+        // No actor property
+      }),
+    })
+    const serverWithNoActor = request(appWithNoActor.getHttpServer())
+
+    // Act
+    const res = await serverWithNoActor.patch('/v2/me/actor-profile').send({
+      emailNotifications: true,
+    })
 
     // Assert
     expect(res.status).toEqual(400)
