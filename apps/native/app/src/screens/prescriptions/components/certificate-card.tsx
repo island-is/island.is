@@ -3,33 +3,10 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import {
-  Badge,
-  ExpandableCard,
-  Skeleton,
-  Typography,
-  dynamicColor,
-} from '../../../ui'
+import { Badge, ExpandableCard, Typography, dynamicColor } from '../../../ui'
 import chevronDown from '../../../assets/icons/chevron-down.png'
 import clockIcon from '../../../assets/icons/clock.png'
 import { RightsPortalDrugCertificate } from '../../../graphql/types/schema'
-
-const Row = styled.View<{ border?: boolean }>`
-  flex-direction: row;
-  flex-wrap: wrap;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue100,
-    dark: theme.shades.dark.shade300,
-  }))};
-  border-bottom-width: ${({ border }) => (border ? 1 : 0)}px;
-`
-
-const Cell = styled.View`
-  margin-right: ${({ theme }) => theme.spacing[1]}px;
-  margin-left: ${({ theme }) => theme.spacing[1]}px;
-  margin-top: ${({ theme }) => theme.spacing.smallGutter}px;
-  margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
-`
 
 const TableRow = styled.View`
   flex-direction: row;
@@ -55,10 +32,8 @@ const TableHeader = styled.View`
 
 export function CertificateCard({
   certificate,
-  loading,
 }: {
   certificate: RightsPortalDrugCertificate
-  loading: boolean
 }) {
   const intl = useIntl()
   const theme = useTheme()
@@ -162,45 +137,35 @@ export function CertificateCard({
       open={open}
     >
       <View style={{ width: '100%', padding: theme.spacing[2] }}>
-        {loading ? (
-          Array.from({ length: 3 }).map((_, index) => (
-            <Row key={index}>
-              <Cell style={{ flex: 1 }}>
-                <Skeleton height={18} />
-              </Cell>
-            </Row>
-          ))
-        ) : (
-          <View>
-            <TableHeader>
-              <Typography variant="eyebrow">
-                <FormattedMessage id="health.prescriptionsAndCertificates.furtherInformation" />
-              </Typography>
-            </TableHeader>
-            {certificateData
-              .filter((item) => item.data)
-              .map((item, visibleIndex) => (
-                <TableRow
-                  key={visibleIndex}
-                  style={{
-                    backgroundColor:
-                      visibleIndex % 2 === 0
-                        ? theme.color.blue100
-                        : theme.color.white,
-                  }}
-                >
-                  <RowItem>
-                    <Typography variant="eyebrow">
-                      <FormattedMessage id={item.label} />
-                    </Typography>
-                  </RowItem>
-                  <RowItem>
-                    <Typography variant="body3">{item.data}</Typography>
-                  </RowItem>
-                </TableRow>
-              ))}
-          </View>
-        )}
+        <View>
+          <TableHeader>
+            <Typography variant="eyebrow">
+              <FormattedMessage id="health.prescriptionsAndCertificates.furtherInformation" />
+            </Typography>
+          </TableHeader>
+          {certificateData
+            .filter((item) => item.data)
+            .map((item, visibleIndex) => (
+              <TableRow
+                key={visibleIndex}
+                style={{
+                  backgroundColor:
+                    visibleIndex % 2 === 0
+                      ? theme.color.blue100
+                      : theme.color.white,
+                }}
+              >
+                <RowItem>
+                  <Typography variant="eyebrow">
+                    <FormattedMessage id={item.label} />
+                  </Typography>
+                </RowItem>
+                <RowItem>
+                  <Typography variant="body3">{item.data}</Typography>
+                </RowItem>
+              </TableRow>
+            ))}
+        </View>
       </View>
     </ExpandableCard>
   )

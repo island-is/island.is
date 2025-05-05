@@ -3,29 +3,12 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { View, Image } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { ExpandableCard, Skeleton, Typography, dynamicColor } from '../../../ui'
+import { ExpandableCard, Typography, dynamicColor } from '../../../ui'
 import checkmarkIcon from '../../../ui/assets/icons/check.png'
 import chevronDown from '../../../assets/icons/chevron-down.png'
 import clockIcon from '../../../assets/icons/clock.png'
 import { HealthDirectoratePrescription } from '../../../graphql/types/schema'
 import { capitalizeEveryWord } from '../../../utils/capitalize'
-
-const Row = styled.View<{ border?: boolean }>`
-  flex-direction: row;
-  flex-wrap: wrap;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue100,
-    dark: theme.shades.dark.shade300,
-  }))};
-  border-bottom-width: ${({ border }) => (border ? 1 : 0)}px;
-`
-
-const Cell = styled.View`
-  margin-right: ${({ theme }) => theme.spacing[1]}px;
-  margin-left: ${({ theme }) => theme.spacing[1]}px;
-  margin-top: ${({ theme }) => theme.spacing.smallGutter}px;
-  margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
-`
 
 const TableRow = styled.View`
   flex-direction: row;
@@ -64,10 +47,8 @@ const DispensationCheckmark = styled.View`
 
 export function PrescriptionCard({
   prescription,
-  loading,
 }: {
   prescription: HealthDirectoratePrescription
-  loading: boolean
 }) {
   const intl = useIntl()
   const theme = useTheme()
@@ -154,82 +135,44 @@ export function PrescriptionCard({
       open={open}
     >
       <View style={{ width: '100%', padding: theme.spacing[2] }}>
-        {loading ? (
-          Array.from({ length: 3 }).map((_, index) => (
-            <Row key={index}>
-              <Cell style={{ flex: 1 }}>
-                <Skeleton height={18} />
-              </Cell>
-            </Row>
-          ))
-        ) : (
-          <View>
-            <TableHeader>
-              <Typography variant="eyebrow">
-                <FormattedMessage id="health.prescriptionsAndCertificates.furtherInformation" />
-              </Typography>
-            </TableHeader>
-            {prescriptionDataInformation
-              .filter((item) => item.data)
-              .map((item, visibleIndex) => (
-                <TableRow
-                  key={visibleIndex}
-                  style={{
-                    backgroundColor:
-                      visibleIndex % 2 === 0
-                        ? theme.color.blue100
-                        : theme.color.white,
-                  }}
-                >
-                  <RowItem>
-                    <Typography variant="eyebrow">
-                      <FormattedMessage id={item.label} />
-                    </Typography>
-                  </RowItem>
-                  <RowItem>
-                    <Typography variant="body3">{item.data}</Typography>
-                  </RowItem>
-                </TableRow>
-              ))}
-            {prescriptionDataIssuedBy.length ? (
-              <>
-                <TableHeader style={{ marginTop: theme.spacing[3] }}>
+        <View>
+          <TableHeader>
+            <Typography variant="eyebrow">
+              <FormattedMessage id="health.prescriptionsAndCertificates.furtherInformation" />
+            </Typography>
+          </TableHeader>
+          {prescriptionDataInformation
+            .filter((item) => item.data)
+            .map((item, visibleIndex) => (
+              <TableRow
+                key={visibleIndex}
+                style={{
+                  backgroundColor:
+                    visibleIndex % 2 === 0
+                      ? theme.color.blue100
+                      : theme.color.white,
+                }}
+              >
+                <RowItem>
                   <Typography variant="eyebrow">
-                    <FormattedMessage id="health.prescriptions.issueInformation" />
+                    <FormattedMessage id={item.label} />
                   </Typography>
-                </TableHeader>
-                {prescriptionDataIssuedBy
-                  .filter((item) => item.data)
-                  .map((item, visibleIndex) => (
-                    <TableRow
-                      key={visibleIndex}
-                      style={{
-                        backgroundColor:
-                          visibleIndex % 2 === 0
-                            ? theme.color.blue100
-                            : theme.color.white,
-                      }}
-                    >
-                      <RowItem>
-                        <Typography variant="eyebrow">
-                          <FormattedMessage id={item.label} />
-                        </Typography>
-                      </RowItem>
-                      <RowItem>
-                        <Typography variant="body3">{item.data}</Typography>
-                      </RowItem>
-                    </TableRow>
-                  ))}
-              </>
-            ) : null}
-            {prescription?.dispensations?.length ? (
-              <>
-                <TableHeader style={{ marginTop: theme.spacing[3] }}>
-                  <Typography variant="eyebrow">
-                    <FormattedMessage id="health.prescriptions.dispensations" />
-                  </Typography>
-                </TableHeader>
-                {prescription.dispensations.map((item, visibleIndex) => (
+                </RowItem>
+                <RowItem>
+                  <Typography variant="body3">{item.data}</Typography>
+                </RowItem>
+              </TableRow>
+            ))}
+          {prescriptionDataIssuedBy.length ? (
+            <>
+              <TableHeader style={{ marginTop: theme.spacing[3] }}>
+                <Typography variant="eyebrow">
+                  <FormattedMessage id="health.prescriptions.issueInformation" />
+                </Typography>
+              </TableHeader>
+              {prescriptionDataIssuedBy
+                .filter((item) => item.data)
+                .map((item, visibleIndex) => (
                   <TableRow
                     key={visibleIndex}
                     style={{
@@ -237,36 +180,64 @@ export function PrescriptionCard({
                         visibleIndex % 2 === 0
                           ? theme.color.blue100
                           : theme.color.white,
-                      paddingTop: theme.spacing[1],
-                      paddingBottom: theme.spacing[1],
                     }}
                   >
-                    <DispensationRowItem>
-                      <DispensationCheckmark>
-                        <Image source={checkmarkIcon} />
-                      </DispensationCheckmark>
-                      <View>
-                        <Typography variant="eyebrow">
-                          {intl.formatMessage(
-                            {
-                              id: 'health.prescriptions.dispensationNumber',
-                            },
-                            { number: visibleIndex + 1 },
-                          )}
-                        </Typography>
-                        <Typography variant="body3">
-                          {`${intl.formatDate(item.date)} - ${
-                            item.agentName
-                          } - ${item.items?.[0]?.amount}`}
-                        </Typography>
-                      </View>
-                    </DispensationRowItem>
+                    <RowItem>
+                      <Typography variant="eyebrow">
+                        <FormattedMessage id={item.label} />
+                      </Typography>
+                    </RowItem>
+                    <RowItem>
+                      <Typography variant="body3">{item.data}</Typography>
+                    </RowItem>
                   </TableRow>
                 ))}
-              </>
-            ) : null}
-          </View>
-        )}
+            </>
+          ) : null}
+          {prescription?.dispensations?.length ? (
+            <>
+              <TableHeader style={{ marginTop: theme.spacing[3] }}>
+                <Typography variant="eyebrow">
+                  <FormattedMessage id="health.prescriptions.dispensations" />
+                </Typography>
+              </TableHeader>
+              {prescription.dispensations.map((item, visibleIndex) => (
+                <TableRow
+                  key={visibleIndex}
+                  style={{
+                    backgroundColor:
+                      visibleIndex % 2 === 0
+                        ? theme.color.blue100
+                        : theme.color.white,
+                    paddingTop: theme.spacing[1],
+                    paddingBottom: theme.spacing[1],
+                  }}
+                >
+                  <DispensationRowItem>
+                    <DispensationCheckmark>
+                      <Image source={checkmarkIcon} />
+                    </DispensationCheckmark>
+                    <View>
+                      <Typography variant="eyebrow">
+                        {intl.formatMessage(
+                          {
+                            id: 'health.prescriptions.dispensationNumber',
+                          },
+                          { number: visibleIndex + 1 },
+                        )}
+                      </Typography>
+                      <Typography variant="body3">
+                        {`${intl.formatDate(item.date)} - ${item.agentName} - ${
+                          item.items?.[0]?.amount
+                        }`}
+                      </Typography>
+                    </View>
+                  </DispensationRowItem>
+                </TableRow>
+              ))}
+            </>
+          ) : null}
+        </View>
       </View>
     </ExpandableCard>
   )

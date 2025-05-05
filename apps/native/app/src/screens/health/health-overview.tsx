@@ -254,19 +254,19 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 onPress={() => navigateTo('/vaccinations', componentId)}
               />
             )}
-            <Button
-              title={intl.formatMessage({
-                id: isPrescriptionsEnabled
-                  ? 'health.overview.prescriptions'
-                  : 'health.overview.drugCertificates',
-              })}
-              isOutlined
-              isUtilityButton
-              iconStyle={{ tintColor: theme.color.dark300 }}
-              style={buttonStyle}
-              ellipsis
-              onPress={() => navigateTo('/prescriptions', componentId)}
-            />
+            {isPrescriptionsEnabled && (
+              <Button
+                title={intl.formatMessage({
+                  id: 'health.overview.prescriptions',
+                })}
+                isOutlined
+                isUtilityButton
+                iconStyle={{ tintColor: theme.color.dark300 }}
+                style={buttonStyle}
+                ellipsis
+                onPress={() => navigateTo('/prescriptions', componentId)}
+              />
+            )}
             <Button
               title={intl.formatMessage({ id: 'health.overview.therapy' })}
               isOutlined

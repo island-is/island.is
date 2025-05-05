@@ -675,7 +675,6 @@ export const is = {
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'Nýtt greiðslutímabil hefst við næstu lyfjakaup',
   'health.overview.prescriptions': 'Lyfjaávísanir',
-  'health.overview.drugCertificates': 'Lyfjaskírteini',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Bólusetningar',
@@ -718,10 +717,7 @@ export const is = {
     'Nánari upplýsingar',
   'health.prescriptionsAndCertificates.status': 'Staða',
 
-  'health.drugCertificates.screenTitle': 'Lyfjaskírteini',
   'health.drugCertificates.title': 'Lyfjaskírteini',
-  'health.drugCertificates.description':
-    'Læknir sækir um lyfjaskírteini fyrir einstakling sem gefin eru út af Sjúkratryggingum að uppfylltum ákveðnum skilyrðum samkvæmt vinnureglum.',
   'health.drugCertificates.drugName': 'Lyfjaheiti',
   'health.drugCertificates.atcCode': 'ATC flokkur',
   'health.drugCertificates.ingredients': 'Innihaldsefni',

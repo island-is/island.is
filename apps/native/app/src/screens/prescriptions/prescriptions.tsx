@@ -1,10 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
-import {
-  Navigation,
-  NavigationFunctionComponent,
-} from 'react-native-navigation'
+import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 
 import { GeneralCardSkeleton, Problem, TabButtons, Typography } from '../../ui'
@@ -17,7 +14,6 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { useLocale } from '../../hooks/use-locale'
 import { CertificateCard } from './components/certificate-card'
 import { PrescriptionCard } from './components/prescription-card'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -62,9 +58,8 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const [refetching, setRefetching] = useState(false)
   const [selectedTab, setSelectedTab] = useState(0)
-  const isPrescriptionsEnabled = useFeatureFlag('isPrescriptionsEnabled', false)
 
-  const showPrescriptions = isPrescriptionsEnabled && selectedTab === 0
+  const showPrescriptions = selectedTab === 0
 
   const prescriptionsRes = useGetDrugPrescriptionsQuery({
     variables: { locale: useLocale() },
@@ -96,20 +91,6 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
     queryResult: [prescriptionsRes, certificatesRes],
   })
 
-  useEffect(() => {
-    Navigation.mergeOptions(componentId, {
-      topBar: {
-        title: {
-          text: intl.formatMessage({
-            id: isPrescriptionsEnabled
-              ? 'health.prescriptionsAndCertificates.screenTitle'
-              : 'health.drugCertificates.screenTitle',
-          }),
-        },
-      },
-    })
-  }, [isPrescriptionsEnabled, intl, componentId])
-
   const onRefresh = useCallback(async () => {
     setRefetching(true)
 
@@ -134,39 +115,31 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
         <Host>
           <Top>
             <FormattedMessage
-              id={
-                isPrescriptionsEnabled
-                  ? 'health.prescriptions.description'
-                  : 'health.drugCertificates.description'
-              }
+              id={'health.prescriptions.description'}
               defaultMessage={
-                isPrescriptionsEnabled
-                  ? 'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.'
-                  : 'Læknir sækir um lyfjaskírteini fyrir einstakling sem gefin eru út af Sjúkratryggingum að uppfylltum ákveðnum skilyrðum samkvæmt vinnureglum.'
+                'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.'
               }
             />
           </Top>
-          {!(prescriptionsRes.error && certificatesRes.error) &&
-            isPrescriptionsEnabled && (
-              <Tabs>
-                <TabButtons
-                  buttons={[
-                    {
-                      title: intl.formatMessage({
-                        id: 'health.prescriptions.title',
-                      }),
-                    },
-                    {
-                      title: intl.formatMessage({
-                        id: 'health.drugCertificates.title',
-                      }),
-                    },
-                  ]}
-                  selectedTab={selectedTab}
-                  setSelectedTab={setSelectedTab}
-                />
-              </Tabs>
-            )}
+
+          <Tabs>
+            <TabButtons
+              buttons={[
+                {
+                  title: intl.formatMessage({
+                    id: 'health.prescriptions.title',
+                  }),
+                },
+                {
+                  title: intl.formatMessage({
+                    id: 'health.drugCertificates.title',
+                  }),
+                },
+              ]}
+              selectedTab={selectedTab}
+              setSelectedTab={setSelectedTab}
+            />
+          </Tabs>
           {!showPrescriptions &&
           (drugCertificates?.length || certificatesRes.loading) ? (
             <Prescriptions>
@@ -178,13 +151,12 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
                     <CertificateCard
                       key={`${certificate?.id}-${index}`}
                       certificate={certificate}
-                      loading={certificatesRes.loading && !certificatesRes.data}
                     />
                   ))}
             </Prescriptions>
           ) : null}
-          {(prescriptions?.length || prescriptionsRes.loading) &&
-          showPrescriptions ? (
+          {showPrescriptions &&
+          (prescriptions?.length || prescriptionsRes.loading) ? (
             <Prescriptions>
               {prescriptionsRes.loading && !prescriptionsRes.data
                 ? Array.from({ length: 5 }).map((_, index) => (
@@ -194,9 +166,6 @@ export const PrescriptionsScreen: NavigationFunctionComponent = ({
                     <PrescriptionCard
                       key={`${prescription?.id}-${index}`}
                       prescription={prescription}
-                      loading={
-                        prescriptionsRes.loading && !prescriptionsRes.data
-                      }
                     />
                   ))}
             </Prescriptions>
