@@ -30,6 +30,7 @@ import {
   CustomPageUniqueIdentifier,
   GenericTag,
   GetGrantsInputAvailabilityStatusEnum,
+  GetGrantsInputSortByEnum,
   Grant,
   GrantList,
   Query,
@@ -450,6 +451,7 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
+          sort: GetGrantsInputSortByEnum.RecentlyUpdated,
           page: parseAsInteger.withDefault(1).parseServerSide(query?.page),
           search: parseAsString.parseServerSide(query?.query) ?? undefined,
           categories: filterArray<string>(

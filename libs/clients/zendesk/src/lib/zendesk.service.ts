@@ -24,6 +24,7 @@ export type Comment = {
   body?: string
   public?: boolean
   html_body?: string
+  author_id?: number
 }
 
 export type UpdateCustomField = {

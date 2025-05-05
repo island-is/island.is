@@ -8,7 +8,7 @@ on:
 jobs:
     mq:
         if: github.event.created
-        runs-on: arc-runners
+        runs-on: arc-shared
         steps:
         - run: |
             export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"

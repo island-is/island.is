@@ -22,8 +22,9 @@ import {
   RolesRules,
   TokenGuard,
 } from '@island.is/judicial-system/auth'
+import { type User as TUser } from '@island.is/judicial-system/types'
 
-import { adminRule } from '../../guards'
+import { adminRule, localAdminRule } from '../../guards'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
 import { CreateUserValidator } from './interceptors/createUser.validator'
@@ -41,7 +42,7 @@ export class UserController {
   ) {}
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(adminRule)
+  @RolesRules(localAdminRule, adminRule)
   @UseInterceptors(CreateUserValidator)
   @Post('user')
   @ApiCreatedResponse({ type: User, description: 'Creates a new user' })
@@ -52,7 +53,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(adminRule)
+  @RolesRules(localAdminRule, adminRule)
   @UseInterceptors(UpdateUserValidator)
   @Put('user/:userId')
   @ApiOkResponse({ type: User, description: 'Updates an existing user' })
@@ -73,7 +74,7 @@ export class UserController {
     isArray: true,
     description: 'Gets all existing users',
   })
-  getAll(@CurrentHttpUser() user: User): Promise<User[]> {
+  getAll(@CurrentHttpUser() user: TUser): Promise<User[]> {
     this.logger.debug('Getting all users')
 
     return this.userService.getAll(user)

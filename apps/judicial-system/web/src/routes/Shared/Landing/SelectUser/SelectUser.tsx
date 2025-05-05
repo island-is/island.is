@@ -10,9 +10,9 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { api } from '@island.is/judicial-system-web/src/services'
 
-import * as styles from './MultipleInstitutions.css'
+import * as styles from './SelectUser.css'
 
-const Login = () => {
+const SelectUser = () => {
   const [userId, setUserId] = useState<string>()
 
   const { eligibleUsers } = useContext(UserContext)
@@ -26,11 +26,11 @@ const Login = () => {
     <>
       <FormContentContainer>
         <Box className={styles.titleContainer}>
-          <PageTitle marginBottom={0}>Veldu embætti</PageTitle>
+          <PageTitle marginBottom={0}>Veldu embætti og hlutverk</PageTitle>
         </Box>
         <Box className={styles.subTitleContainer} marginBottom={4}>
           <Text as="h2" variant="h2">
-            Þú hefur aðgang að eftirfarandi embættum
+            Þú hefur aðgang að eftirfarandi hlutverkum
           </Text>
         </Box>
         <Select
@@ -53,4 +53,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default SelectUser

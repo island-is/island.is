@@ -839,15 +839,14 @@ export class CmsElasticsearchService {
       sortRules = [
         { dateUpdated: { order: SortDirection.DESC } },
         { 'title.sort': { order: SortDirection.ASC } },
-        { dateCreated: { order: SortDirection.DESC } },
       ]
     } else if (sort === GrantsSortBy.ALPHABETICAL) {
       sortRules = [
         { 'title.sort': { order: SortDirection.ASC } },
         { dateUpdated: { order: SortDirection.DESC } },
-        { dateCreated: { order: SortDirection.DESC } },
       ]
     }
+
     if (queryString.length > 0 && queryString !== '*') {
       sortRules.unshift('_score')
     }
@@ -1101,7 +1100,7 @@ export class CmsElasticsearchService {
             must,
           },
         },
-        sort,
+        sort: sortRules,
         size,
         from: (page - 1) * size,
       })
