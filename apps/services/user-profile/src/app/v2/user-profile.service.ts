@@ -34,6 +34,7 @@ import {
 import { DocumentsScope } from '@island.is/auth/scopes'
 import { Emails } from './models/emails.model'
 import { uuid } from 'uuidv4'
+import { ActorProfileEmailDto } from './dto/actor-profile-email.dto'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
@@ -791,6 +792,162 @@ export class UserProfileService {
       actorNationalId: fromNationalId,
       emailNotifications: actorProfile.emailNotifications,
     }
+  }
+
+  /**
+   * Updates or creates an actor profile with email information
+   * If the email exists in the emails table and emailVerificationCode is valid,
+   * it updates the existing emails table row, otherwise creates a new Emails row.
+   * Always updates actor profiles email_id and nudge.
+   */
+  async updateActorProfileEmail({
+    toNationalId,
+    fromNationalId,
+    email,
+    emailVerificationCode,
+    emailNotifications,
+  }: {
+    toNationalId: string
+    fromNationalId: string
+    email?: string
+    emailVerificationCode?: string
+    emailNotifications?: boolean
+  }): Promise<ActorProfileEmailDto> {
+    let emailRecord: Emails | null = null
+    let emailStatus = DataStatus.NOT_DEFINED
+
+    await this.sequelize.transaction(async (transaction) => {
+      // Look for existing email
+      if (isDefined(email)) {
+        // Empty email strings should be rejected
+        if (email === '') {
+          throw new BadRequestException('Email cannot be empty string')
+        }
+
+        // Check if email and verification code are both provided
+        const shouldVerifyEmail = email !== ''
+
+        if (shouldVerifyEmail && !isDefined(emailVerificationCode)) {
+          throw new BadRequestException('Email verification code is required')
+        }
+
+        // If verifying email, validate the code
+        if (shouldVerifyEmail) {
+          const { confirmed, message, remainingAttempts } =
+            await this.verificationService.confirmEmail(
+              {
+                email,
+                hash: emailVerificationCode!,
+              },
+              fromNationalId,
+              { transaction, maxTries: 3 },
+            )
+
+          if (!confirmed) {
+            // Check if we should throw a BadRequest or an AttemptFailed error
+            if (remainingAttempts && remainingAttempts >= 0) {
+              throw new AttemptFailed(remainingAttempts, {
+                emailVerificationCode: 'Verification code does not match.',
+              })
+            } else {
+              throw new BadRequestException(message)
+            }
+          }
+
+          emailStatus = DataStatus.VERIFIED
+        }
+
+        // Check if the email exists in the emails table
+        emailRecord = await this.emailModel.findOne({
+          where: {
+            email,
+          },
+          transaction,
+          useMaster: true,
+        })
+
+        if (emailRecord) {
+          // Update existing email record if verification was successful
+          if (shouldVerifyEmail) {
+            await emailRecord.update(
+              { emailStatus: DataStatus.VERIFIED },
+              { transaction },
+            )
+          }
+        } else {
+          // Create new email record if it doesn't exist
+          emailRecord = await this.emailModel.create(
+            {
+              id: uuid(),
+              email,
+              primary: false,
+              nationalId: fromNationalId,
+              emailStatus: shouldVerifyEmail
+                ? DataStatus.VERIFIED
+                : DataStatus.NOT_VERIFIED,
+            },
+            { transaction, useMaster: true },
+          )
+        }
+      }
+
+      // Get or create the actor profile
+      const [actorProfile] = await this.actorProfileModel.findOrCreate({
+        where: {
+          toNationalId,
+          fromNationalId,
+        },
+        defaults: {
+          toNationalId,
+          fromNationalId,
+          emailNotifications: emailNotifications ?? true,
+          lastNudge: new Date(),
+          nextNudge: addMonths(new Date(), NUDGE_INTERVAL),
+          emailsId: emailRecord?.id,
+        },
+        transaction,
+        useMaster: true,
+      })
+
+      // Update actor profile if it exists
+      if (actorProfile) {
+        const updateData: Partial<ActorProfile> = {
+          lastNudge: new Date(),
+          nextNudge: addMonths(new Date(), NUDGE_INTERVAL),
+        }
+
+        if (isDefined(emailNotifications)) {
+          updateData.emailNotifications = emailNotifications
+        }
+
+        if (emailRecord) {
+          updateData.emailsId = emailRecord.id
+        }
+
+        await actorProfile.update(updateData, { transaction })
+      }
+    })
+
+    // Return the updated actor profile
+    const actorProfile = await this.actorProfileModel.findOne({
+      where: {
+        toNationalId,
+        fromNationalId,
+      },
+    })
+
+    // Use type assertion for emailRecord
+    const typedEmailRecord = emailRecord as unknown as { email?: string | null }
+    const emailStr = typedEmailRecord?.email || ''
+
+    const result = {
+      email: emailStr,
+      emailStatus,
+      needsNudge: false, // Reset nudge status since we just updated
+      actorNationalId: toNationalId,
+      emailNotifications: actorProfile?.emailNotifications ?? true,
+    }
+    return result
   }
 
   /* Private methods */
