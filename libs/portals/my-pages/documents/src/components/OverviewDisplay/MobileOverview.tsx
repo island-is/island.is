@@ -1,7 +1,19 @@
 import { FC } from 'react'
 import FocusLock from 'react-focus-lock'
-import { LoadModal, m } from '@island.is/portals/my-pages/core'
-import { Box, Text, GridColumn, GridRow } from '@island.is/island-ui/core'
+import {
+  formatDate,
+  getInitials,
+  LoadModal,
+  m,
+} from '@island.is/portals/my-pages/core'
+import {
+  Box,
+  Text,
+  GridColumn,
+  GridRow,
+  Divider,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
@@ -9,6 +21,13 @@ import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
 import { DocumentActionBar } from '../DocumentActionBar/DocumentActionBar'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import * as styles from './OverviewDisplay.css'
+import { Reply } from '../../lib/types'
+import ReplyHeader from '../Reply/ReplyHeader'
+import { isDefined } from '@island.is/shared/utils'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import ReplySent from '../Reply/ReplySent'
+import ReplyContainer from '../Reply/ReplyContainer'
+import { dateFormatWithTime } from '@island.is/shared/constants'
 
 interface Props {
   onPressBack: () => void
@@ -25,7 +44,17 @@ export const MobileOverview: FC<Props> = ({
 }) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
-  const { activeDocument } = useDocumentContext()
+  const {
+    activeDocument,
+    replyable,
+    replies,
+    setReplies,
+    setReplyOpen,
+    hideDocument,
+    setHideDocument,
+    closedForMoreReplies,
+  } = useDocumentContext()
+  const { profile } = useUserInfo()
 
   if (loading) {
     return <LoadModal />
@@ -35,6 +64,17 @@ export const MobileOverview: FC<Props> = ({
     return null
   }
 
+  const toggleReply = (id?: string | null) => {
+    const updatedReplies: Reply = {
+      ...replies,
+      comments:
+        replies?.comments?.map((reply) =>
+          reply.id === id ? { ...reply, hide: !reply.hide } : reply,
+        ) || [],
+    }
+    setReplies(updatedReplies)
+  }
+
   return (
     <FocusLock autoFocus={false}>
       <Box className={styles.modalBase}>
@@ -42,6 +82,8 @@ export const MobileOverview: FC<Props> = ({
           <DocumentActionBar
             onGoBack={onPressBack}
             bookmarked={activeBookmark}
+            isReplyable={replyable}
+            onReply={() => setReplyOpen(true)}
           />
         </Box>
         <Box className={styles.modalContent}>
@@ -56,8 +98,9 @@ export const MobileOverview: FC<Props> = ({
             subject={activeDocument.subject}
             actions={activeDocument.actions}
           />
-          {<DocumentRenderer doc={activeDocument} />}
+          {!hideDocument && <DocumentRenderer doc={activeDocument} />}
         </Box>
+        <ReplyContainer />
       </Box>
     </FocusLock>
   )

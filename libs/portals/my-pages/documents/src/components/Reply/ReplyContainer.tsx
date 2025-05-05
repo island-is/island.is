@@ -1,6 +1,6 @@
 import { AlertMessage, Box, Button, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { getInitials } from '@island.is/portals/my-pages/core'
+import { formatDate, getInitials } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import React, { useState } from 'react'
 import { useGetDocumentTicketLazyQuery } from '../../queries/Overview.generated'
@@ -10,15 +10,15 @@ import ReplyForm from './ReplyForm'
 import ReplyHeader from './ReplyHeader'
 import ReplySent from './ReplySent'
 import { Reply } from '../../lib/types'
+import { isDefined } from '@island.is/shared/utils'
+import NoPDF from '../NoPDF/NoPDF'
+import { dateFormatWithTime } from '@island.is/shared/constants'
 
-interface Props {
-  sender: string
-}
-
-const ReplyContainer: React.FC<Props> = ({ sender }) => {
+const ReplyContainer = () => {
   const { profile } = useUserInfo()
   const { formatMessage } = useLocale()
   const {
+    replies,
     replyable,
     replyOpen,
     setReplyOpen,
@@ -87,47 +87,105 @@ const ReplyContainer: React.FC<Props> = ({ sender }) => {
     </Box>
   )
 
-  if (!replyOpen && !reply) {
-    return button
+  const toggleReply = (id?: string | null) => {
+    const updatedReplies: Reply = {
+      ...replies,
+      comments:
+        replies?.comments?.map((reply) =>
+          reply.id === id ? { ...reply, hide: !reply.hide } : reply,
+        ) || [],
+    }
+    setReplies(updatedReplies)
+  }
+
+  if (!activeDocument) {
+    return <NoPDF />
   }
 
   return (
-    <Box marginTop={3}>
-      <Divider />
-      <ReplyHeader
-        initials={getInitials(profile.name)}
-        title={sent ? profile.name : formatMessage(messages.titleWord)}
-        subTitle={formatMessage(messages.toWithArgs, {
-          receiverName: sender,
-        })}
-        secondSubTitle={
-          !sent && hasEmail
-            ? formatMessage(messages.fromWithArgs, {
-                senderName: profile.email,
-              })
-            : undefined
-        }
-        displayEmail
-        hasEmail={hasEmail}
-        displayCloseButton={!sent}
-        onClose={() => setReplyOpen(false)}
-      />
+    <>
+      <Box>
+        {replies?.comments?.map((reply) => (
+          <Box
+            onClick={() => toggleReply(reply.id)}
+            key={reply.id}
+            cursor="pointer"
+          >
+            <Box paddingY={1}>
+              <Divider />
+            </Box>
+            <ReplyHeader
+              initials={getInitials(reply.author ?? '')}
+              title={reply.author ?? activeDocument.subject}
+              hasEmail={isDefined(profile.email)}
+              subTitle={formatDate(reply?.createdDate, dateFormatWithTime.is)}
+              displayEmail={false}
+            />
+            {!reply.hide && (
+              <ReplySent
+                date={reply.createdDate}
+                id={reply.id}
+                body={reply.body}
+              />
+            )}
+          </Box>
+        ))}
 
-      {reply && (
-        <ReplySent
-          id={reply?.id}
-          body={reply.body}
-          intro={
-            'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang. '
-          }
-        />
+        {/* {If document is marked replyable, we render the reply form} */}
+        {closedForMoreReplies && (
+          <AlertMessage
+            type="info"
+            message={
+              'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.'
+            }
+          />
+        )}
+      </Box>
+
+      {/* ---------------------- */}
+      {/* {!replyOpen && !reply && button} */}
+      {replyable && (
+        <Box marginY={3}>
+          <Divider />
+          <ReplyHeader
+            initials={getInitials(profile.name)}
+            title={sent ? profile.name : formatMessage(messages.titleWord)}
+            subTitle={formatMessage(messages.toWithArgs, {
+              receiverName: activeDocument.sender,
+            })}
+            secondSubTitle={
+              !sent && hasEmail
+                ? formatMessage(messages.fromWithArgs, {
+                    senderName: profile.email,
+                  })
+                : undefined
+            }
+            displayEmail
+            hasEmail={hasEmail}
+            displayCloseButton={!sent}
+            onClose={() => setReplyOpen(false)}
+          />
+
+          {reply && (
+            <ReplySent
+              id={reply?.id}
+              body={reply.body}
+              intro={
+                'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang. '
+              }
+            />
+          )}
+          {/* Form  */}
+          {replyOpen && (
+            <ReplyForm
+              hasEmail={hasEmail}
+              successfulSubmit={successfulSubmit}
+            />
+          )}
+          {replyable && !replyOpen && button}
+        </Box>
       )}
-      {/* Form  */}
-      {replyOpen && (
-        <ReplyForm hasEmail={hasEmail} successfulSubmit={successfulSubmit} />
-      )}
-      {replyable && !replyOpen && button}
-    </Box>
+    </>
   )
 }
 

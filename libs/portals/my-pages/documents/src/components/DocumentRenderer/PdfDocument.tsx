@@ -95,13 +95,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
           />
         ) : undefined}
       </Box>
-      <Box
-        className={styles.pdfPage}
-        height="full"
-        overflow="auto"
-        boxShadow="subtle"
-        ref={ref}
-      >
+      <Box className={styles.pdfPage} height="full" overflow="auto" ref={ref}>
         <PdfViewer
           file={`data:application/pdf;base64,${document.document.value}`}
           scale={scalePDF}

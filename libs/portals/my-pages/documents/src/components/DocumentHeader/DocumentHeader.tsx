@@ -48,7 +48,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
         justifyContent="spaceBetween"
         position={isMobile ? 'static' : 'sticky'}
         background="white"
-        paddingTop={3}
+        paddingTop={[2, 2, 2, 3]}
         ref={wrapper}
         paddingBottom={3}
         style={{
@@ -60,7 +60,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
         <Text variant="h3" as="h2">
           {subject}
         </Text>
-        {actionBar && (
+        {!isMobile && actionBar && (
           <Box className={styles.actionBarWrapper}>
             <DocumentActionBar spacing={1} {...actionBar} />
           </Box>

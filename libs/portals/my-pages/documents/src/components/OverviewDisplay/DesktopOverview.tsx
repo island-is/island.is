@@ -116,44 +116,11 @@ export const DesktopOverview: FC<Props> = ({
         }}
         actions={activeDocument.actions}
       />
-      <Box>
-        {!hideDocument && <DocumentRenderer doc={activeDocument} />}
-        {replies?.comments?.map((reply) => (
-          <Box
-            onClick={() => toggleReply(reply.id)}
-            key={reply.id}
-            cursor="pointer"
-          >
-            <Box paddingY={1}>
-              <Divider />
-            </Box>
-            <ReplyHeader
-              initials={getInitials(reply.author ?? '')}
-              title={reply.author ?? activeDocument.subject}
-              hasEmail={isDefined(profile.email)}
-              subTitle={formatDate(reply?.createdDate, dateFormatWithTime.is)}
-              displayEmail={false}
-            />
-            {!reply.hide && (
-              <ReplySent
-                date={reply.createdDate}
-                id={reply.id}
-                body={reply.body}
-              />
-            )}
-          </Box>
-        ))}
-        {/* {If document is marked replyable, we render the reply form} */}
-        {replyable && <ReplyContainer sender={activeDocument.sender} />}
-        {closedForMoreReplies && (
-          <AlertMessage
-            type="info"
-            message={
-              'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.'
-            }
-          />
-        )}
-      </Box>
+
+      {!hideDocument && <DocumentRenderer doc={activeDocument} />}
+
+      <ReplyContainer />
+
       {activeDocument?.id && (
         <Box className={styles.reveal}>
           <button

@@ -129,9 +129,7 @@ export class DocumentServiceV2 {
       alert: alert,
       replyable: document.replyable,
       closedForMoreReplies:
-        !document.replyable && ticket.status?.toLowerCase() === 'closed'
-          ? true
-          : false,
+        ticket.status?.toLowerCase() === 'closed' ? true : false,
       ticket: ticket,
     }
   }

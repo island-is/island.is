@@ -5,7 +5,7 @@ import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/t
 
 export const modalBase = style({
   width: '100%',
-  height: `calc(100vh - ${hheight}px)`,
+  height: '100%',
   background: theme.color.white,
   position: 'relative',
   top: -theme.spacing[1],
@@ -52,7 +52,12 @@ export const docWrap = style({
 })
 
 export const modalContent = style({
-  padding: '1.5rem 1rem',
+  paddingBottom: theme.spacing[2],
+  ...themeUtils.responsiveStyle({
+    md: {
+      padding: '1.5rem 1rem',
+    },
+  }),
 })
 
 globalStyle(`${modalHeader} > div`, {
