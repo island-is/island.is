@@ -5,7 +5,7 @@ class StringGroup {
   readonly s!: string[]
 }
 
-class CaseTableCell {
+export class CaseTableCell {
   @ApiProperty({ type: StringGroup, description: 'The cell value' })
   readonly value!: StringGroup
 }

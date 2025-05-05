@@ -1,5 +1,10 @@
 import { InstitutionUser, isCourtOfAppealsUser } from '../user'
-import { CaseTableColumn, caseTableColumns } from './caseTableColumn'
+import {
+  CaseTableColumn,
+  CaseTableColumnKey,
+  CaseTableColumnMap,
+  caseTableColumns,
+} from './caseTableColumn'
 
 export enum CaseTableType {
   COURT_OF_APPEALS_IN_PROGRESS = 'COURT_OF_APPEALS_IN_PROGRESS',
@@ -22,38 +27,43 @@ export const getCaseTableType = (
 
 interface CaseTable {
   title: string
+  columnKeys: CaseTableColumnKey[]
   columns: CaseTableColumn[]
 }
 
-type M = typeof caseTableColumns
-type K = keyof M
-
-const pickColumns = (keys: K[]): M[K][] => {
+const pickColumns = (
+  keys: CaseTableColumnKey[],
+): CaseTableColumnMap[CaseTableColumnKey][] => {
   return keys.map((key) => caseTableColumns[key])
 }
 
-const courtOfAppearlInProgress: CaseTable = {
+const courtOfAppealsInProgressColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'caseState',
+  'courtOfAppealsHead',
+]
+const courtOfAppealsInProgress: CaseTable = {
   title: 'Mál í vinnslu',
-  columns: pickColumns([
-    'caseNumber',
-    'defendants',
-    'caseType',
-    'caseState',
-    'courtOfAppealsHead',
-  ]),
+  columnKeys: courtOfAppealsInProgressColumnKeys,
+  columns: pickColumns(courtOfAppealsInProgressColumnKeys),
 }
-const courtOfAppearlCompleted: CaseTable = {
+
+const courtOfAppealsCompletedColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'caseState',
+  'validFromTo',
+]
+const courtOfAppealsCompleted: CaseTable = {
   title: 'Afgreidd mál',
-  columns: pickColumns([
-    'caseNumber',
-    'defendants',
-    'caseType',
-    'caseState',
-    'validFromTo',
-  ]),
+  columnKeys: courtOfAppealsCompletedColumnKeys,
+  columns: pickColumns(courtOfAppealsCompletedColumnKeys),
 }
 
 export const caseTables: { [key in CaseTableType]: CaseTable } = {
-  COURT_OF_APPEALS_IN_PROGRESS: courtOfAppearlInProgress,
-  COURT_OF_APPEALS_COMPLETED: courtOfAppearlCompleted,
+  COURT_OF_APPEALS_IN_PROGRESS: courtOfAppealsInProgress,
+  COURT_OF_APPEALS_COMPLETED: courtOfAppealsCompleted,
 }

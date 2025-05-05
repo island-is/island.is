@@ -40,3 +40,6 @@ export const caseTableColumns = {
   courtOfAppealsHead,
   validFromTo,
 }
+
+export type CaseTableColumnMap = typeof caseTableColumns
+export type CaseTableColumnKey = keyof CaseTableColumnMap
