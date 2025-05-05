@@ -42,6 +42,7 @@ import {
   ADVERTS_QUERY,
   MAIN_CATEGORIES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
+import { getTodayParams } from './lib/getTodayParams'
 import { ORGANIZATION_SLUG } from './constants'
 import { m } from './messages'
 
@@ -229,6 +230,7 @@ const OJOIHome: CustomScreen<OJOIHomeProps> = ({
 }
 
 OJOIHome.getProps = async ({ apolloClient, locale }) => {
+  const adverts: OfficialJournalOfIcelandAdvert[] = []
   const [
     {
       data: { officialJournalOfIcelandAdverts },
@@ -245,7 +247,8 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
       variables: {
         input: {
           page: 1,
-          pageSize: 5,
+          pageSize: 200,
+          ...getTodayParams(),
         },
       },
     }),
@@ -267,12 +270,33 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
     }),
   ])
 
+  if (officialJournalOfIcelandAdverts.adverts.length) {
+    adverts.push(...officialJournalOfIcelandAdverts.adverts)
+  } else {
+    // If there are no adverts from "today", we will fetch the latest 5 adverts.
+    const {
+      data: { officialJournalOfIcelandAdverts },
+    } = await apolloClient.query<
+      Query,
+      QueryOfficialJournalOfIcelandAdvertsArgs
+    >({
+      query: ADVERTS_QUERY,
+      variables: {
+        input: {
+          page: 1,
+          pageSize: 5,
+        },
+      },
+    })
+    adverts.push(...officialJournalOfIcelandAdverts.adverts)
+  }
+
   if (!getOrganization?.hasALandingPage) {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
   return {
-    adverts: officialJournalOfIcelandAdverts.adverts,
+    adverts,
     mainCategories: officialJournalOfIcelandMainCategories.mainCategories,
     organization: getOrganization,
     locale: locale as Locale,
