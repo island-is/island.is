@@ -586,5 +586,15 @@ export const webMessages = defineMessages({
     id: 'form-system:full-name',
     defaultMessage: 'Fullt nafn',
     description: 'Full name'
+  },
+  open: {
+    id: 'form-system:open',
+    defaultMessage: 'Opna',
+    description: 'Open',
+  },
+  yourProperties: {
+    id: 'form-system:your-properties',
+    defaultMessage: 'Þínar eignir',
+    description: 'Your properties',
   }
 })

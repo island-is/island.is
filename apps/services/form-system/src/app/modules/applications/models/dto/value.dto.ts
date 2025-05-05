@@ -12,6 +12,6 @@ export class ValueDto {
   @ApiPropertyOptional({ type: ValueType })
   json?: ValueType
 
-  @ApiProperty({ type: [ApplicationEventDto] })
+  @ApiPropertyOptional({ type: [ApplicationEventDto] })
   events?: ApplicationEventDto[]
 }

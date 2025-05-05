@@ -81,3 +81,48 @@ export class ApplicationListDto {
   @Field(() => Int, { nullable: true })
   total?: number
 }
+
+@ObjectType('FormSystemSubmitScreenResponseValue')
+export class SubmitScreenResponseValue {
+  @Field(() => Boolean, { nullable: true })
+  isValid?: boolean
+
+  @Field(() => String, { nullable: true })
+  valueId?: string
+
+  @Field(() => LanguageType, { nullable: true })
+  message?: LanguageType
+}
+
+@ObjectType('FormSystemSubmitScreenResponseField')
+export class SubmitScreenResponseField {
+  @Field(() => Boolean, { nullable: true })
+  isValid?: boolean
+
+  @Field(() => String, { nullable: true })
+  fieldId?: string
+
+  @Field(() => LanguageType, { nullable: true })
+  message?: LanguageType
+
+  @Field(() => [SubmitScreenResponseValue], { nullable: 'itemsAndList' })
+  values?: SubmitScreenResponseValue[]
+}
+
+@ObjectType('FormSystemSubmitScreenResponse')
+export class SubmitScreenResponse {
+  @Field(() => Boolean, { nullable: true })
+  isValid?: boolean
+
+  @Field(() => String, { nullable: true })
+  screenId?: string
+
+  @Field(() => String, { nullable: true })
+  applicationId?: string
+
+  @Field(() => LanguageType, { nullable: true })
+  message?: LanguageType
+
+  @Field(() => [SubmitScreenResponseField], { nullable: 'itemsAndList' })
+  fields?: SubmitScreenResponseField[]
+}

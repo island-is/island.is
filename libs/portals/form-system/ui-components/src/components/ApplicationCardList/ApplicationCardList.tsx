@@ -1,36 +1,23 @@
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import {
   Box,
   Pagination,
   Stack,
   ToastContainer,
 } from '@island.is/island-ui/core'
-import {
-  Application,
-  ApplicationTypes,
-  institutionMapper,
-} from '@island.is/application/types'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import { Organization } from '@island.is/shared/types'
 import { ApplicationCard } from '../ApplicationCard/ApplicationCard'
+import { FormSystemApplication } from '@island.is/api/schema'
 
 const pageSize = 5
 
-type ApplicationFields = Pick<
-  Application,
-  'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
->
-
 interface Props {
-  applications: ApplicationFields[]
-  organizations?: Organization[]
+  applications: FormSystemApplication[]
   onClick?: (id: string) => void
   refetch?: (() => void) | undefined
   focus?: boolean
 }
 
 export const ApplicationList = ({
-  organizations,
   applications,
   onClick,
   refetch,
@@ -43,18 +30,6 @@ export const ApplicationList = ({
     from: (page - 1) * pageSize,
     to: pageSize * page,
     totalPages: Math.ceil(applications.length / pageSize),
-  }
-
-  const getLogo = (typeId: ApplicationTypes): string => {
-    if (!organizations) {
-      return ''
-    }
-    const institutionSlug = institutionMapper[typeId].slug
-    const institution = organizations.find((x) => x.slug === institutionSlug)
-    return getOrganizationLogoUrl(
-      institution?.title ?? 'stafraent-island',
-      organizations,
-    )
   }
 
   const onApplicationDelete = () => {
@@ -76,11 +51,9 @@ export const ApplicationList = ({
               key={application.id}
               application={application}
               focused={focus}
-              logo={getLogo(application.typeId)}
-              onDelete={onApplicationDelete}
-              onClick={onClick}
             />
-          ))}
+          ))
+        }
       </Stack>
       {applications.length > pageSize ? (
         <Box marginTop={4}>
@@ -104,5 +77,3 @@ export const ApplicationList = ({
     </>
   )
 }
-
-export default ApplicationList

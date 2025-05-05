@@ -43,8 +43,7 @@ const hasError = (
       return !value?.iskNumber || value?.iskNumber.length === 0
     }
     case FieldTypesEnum.PROPERTY_NUMBER: {
-      //return !validatePropertyNumber(value)
-      return false
+      return !validatePropertyNumber(value)
     }
     case FieldTypesEnum.RADIO_BUTTONS: {
       console.log(value.listValue)

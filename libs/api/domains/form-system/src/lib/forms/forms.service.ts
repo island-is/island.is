@@ -13,8 +13,10 @@ import {
   FormsControllerUpdateFormRequest,
 } from '@island.is/clients/form-system'
 import {
+  CreateFormInput,
   DeleteFormInput,
   GetFormInput,
+  GetFormsInput,
   UpdateFormInput,
 } from '../../dto/form.input'
 import { UpdateFormResponse } from '@island.is/form-system/shared'

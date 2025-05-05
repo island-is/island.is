@@ -7,15 +7,17 @@ import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
   ApplicationsControllerGetApplicationRequest,
+  ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
-  ApplicationsControllerSubmitScreenRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
   CreateApplicationInput,
   GetApplicationInput,
   SubmitScreenInput,
+  UpdateApplicationInput,
 } from '../../dto/application.input'
+import { Screen } from '../../models/screen.model'
 import { Application } from '../../models/applications.model'
 import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 
@@ -83,9 +85,27 @@ export class ApplicationsService {
     )
   }
 
-  async submitScreen(auth: User, input: SubmitScreenInput): Promise<void> {
-    await this.applicationsApiWithAuth(auth).applicationsControllerSubmitScreen(
-      input as ApplicationsControllerSubmitScreenRequest,
+  // async submitScreen(auth: User, input: SubmitScreenInput): Promise<SubmitScreenResponse> {
+  //   const response = await this.applicationsApiWithAuth(auth).applicationsControllerSubmitScreen(
+  //     input as ApplicationsControllerSubmitScreenRequest,
+  //   )
+
+  //   return response as SubmitScreenResponse
+  // }
+
+  async updateApplication(
+    auth: User,
+    input: UpdateApplicationInput,
+  ): Promise<void> {
+    await this.applicationsApiWithAuth(auth).applicationsControllerUpdate(
+      input as ApplicationsControllerUpdateRequest,
     )
+  }
+
+  async saveScreen(auth: User, input: SubmitScreenInput): Promise<Screen> {
+    const response = await this.applicationsApiWithAuth(auth).applicationsControllerSaveScreen(
+      input as ApplicationsControllerSaveScreenRequest,
+    )
+    return response
   }
 }

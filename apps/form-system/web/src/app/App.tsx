@@ -25,7 +25,6 @@ export const App = () => (
       >
         <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
           <Router />
-          {/* <div>test</div> */}
         </FeatureFlagProvider>
       </BffProvider>
     </LocaleProvider>

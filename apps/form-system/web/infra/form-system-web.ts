@@ -1,8 +1,10 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { CodeOwners, ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'form-system-web'> =>
-  service('form-system-web')
-    .namespace('form-system-web')
+const serviceName = 'form-system-web'
+export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
+  service(serviceName)
+    .codeOwner(CodeOwners.Advania)
+    .namespace(serviceName)
     .liveness('/liveness')
     .readiness('/readiness')
     .replicaCount({

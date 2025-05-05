@@ -50,6 +50,16 @@ type FieldTypeMapping = {
   [FieldTypesEnum.NUMBERBOX]: {
     number?: FormSystemValue['number']
   },
+  [FieldTypesEnum.ISK_SUMBOX]: {
+    iskNumber?: FormSystemValue['iskNumber']
+  }
+  [FieldTypesEnum.PAYER]: {
+    name?: FormSystemValue['name'],
+    nationalId?: FormSystemValue['nationalId']
+  }
+  [FieldTypesEnum.PAYMENT]: {
+    paymentCode?: FormSystemValue['paymentCode']
+  }
 }
 
 const getInitialJsonForField = <T extends keyof FieldTypeMapping>(fieldType: T): FieldTypeMapping[T] => {
@@ -84,6 +94,12 @@ const getInitialJsonForField = <T extends keyof FieldTypeMapping>(fieldType: T):
       return { s3Key: undefined, s3Url: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.NUMBERBOX:
       return { number: undefined } as FieldTypeMapping[T]
+    case FieldTypesEnum.PAYER:
+      return { name: undefined, nationalId: undefined } as FieldTypeMapping[T]
+    case FieldTypesEnum.PAYMENT:
+      return { paymentCode: undefined } as FieldTypeMapping[T]
+    case FieldTypesEnum.ISK_SUMBOX:
+      return { iskNumber: undefined } as FieldTypeMapping[T]
     default:
       throw new Error(`Field type ${fieldType} not supported`)
   }

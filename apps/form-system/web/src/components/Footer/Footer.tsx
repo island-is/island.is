@@ -3,7 +3,7 @@ import * as styles from './Footer.css'
 import { useApplicationContext } from "../../context/ApplicationProvider"
 import { useIntl } from "react-intl"
 import { webMessages } from "@island.is/form-system/ui"
-import { SUBMIT_SCREEN } from "@island.is/form-system/graphql"
+import { SAVE_SCREEN, SUBMIT_SCREEN } from "@island.is/form-system/graphql"
 import { useMutation } from '@apollo/client'
 
 interface Props {
@@ -23,10 +23,16 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       ? externalDataAgreement
       : state.currentSection.index !== state.sections.length - 1
 
-  const handleIncrement = () => dispatch({ type: "INCREMENT" })
+  const submitScreen = useMutation(SAVE_SCREEN)
+
+  const handleIncrement = () => dispatch({
+    type: "INCREMENT",
+    payload: {
+      submitScreen
+    }
+  })
   const handleDecrement = () => dispatch({ type: "DECREMENT" })
 
-  const [submitScreen, { loading, error }] = useMutation(SUBMIT_SCREEN)
 
 
   return (
@@ -52,7 +58,6 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               {continueButtonText}
             </Button>
           </Box>
-          {/* <Box display={['inlineFlex', 'none']} padding={2} paddingLeft="none"> */}
           {
             state.currentSection.index > 1 && (
               <Box display="inlineFlex" padding={2} paddingLeft="none">

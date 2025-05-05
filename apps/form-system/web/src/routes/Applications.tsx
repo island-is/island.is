@@ -1,10 +1,18 @@
 import { useNavigate, useParams } from "react-router-dom"
 import { CREATE_APPLICATION, GET_APPLICATIONS } from "@island.is/form-system/graphql"
 import { useMutation, useQuery, useLazyQuery } from "@apollo/client"
-import { Box, Button, Inline, Stack } from "@island.is/island-ui/core"
 import { useEffect, useState } from "react"
 import { FormSystemApplication } from "@island.is/api/schema"
-import { ApplicationCard } from "@island.is/application/ui-components"
+import {
+  Text,
+  Box,
+  Page,
+  Button,
+  GridContainer,
+  Inline,
+  Stack
+} from '@island.is/island-ui/core'
+import { ApplicationList } from "@island.is/form-system/ui"
 
 interface Params {
   slug: string
@@ -80,12 +88,15 @@ export const Applications = () => {
         <Button onClick={getApplications}>Get</Button>
       </Inline>
       <Box marginTop={4}>
-        {/* {applications.length > 0 && 
-        <Stack space={2}>
-          {applications.map((application) => (
-            <ApplicationCard
-          ))}
-        </Stack>} */}
+        <Page>
+          <GridContainer>
+            {applications.length > 0 &&
+              <ApplicationList
+                applications={applications}
+              />
+            }
+          </GridContainer>
+        </Page>
       </Box>
     </>
   )

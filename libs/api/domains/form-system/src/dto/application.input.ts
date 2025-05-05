@@ -1,7 +1,11 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 import { LanguageTypeInput } from './languageType.input'
 import { SectionInput } from './section.input'
 import { DependencyInput } from './form.input'
+import { FormCertificationTypeDtoInput } from './certification.input'
+import { FormApplicantTypeDtoInput } from './applicant.input'
+import { ValueInput } from './value.input'
+import { ScreenInput } from './screen.input'
 
 @InputType('CreateFormSystemApplicationDtoInput')
 export class CreateApplicationDtoInput {
@@ -24,12 +28,6 @@ export class GetApplicationInput {
   id?: string
 }
 
-@InputType('SubmitFormSystemScreenInput')
-export class SubmitScreenInput {
-  @Field(() => String, { nullable: true })
-  screenId?: string
-}
-
 @InputType('FormSystemApplicationEventDtoInput')
 export class ApplicationEventDtoInput {
   @Field(() => Date, { nullable: true })
@@ -42,7 +40,7 @@ export class ApplicationEventDtoInput {
   isFileEvent?: boolean
 }
 
-@InputType('FormSystemApplicationInput')
+@InputType('FormSystemApplicationDtoInput')
 export class ApplicationInput {
   @Field(() => String, { nullable: true })
   id?: string
@@ -85,6 +83,15 @@ export class ApplicationInput {
 
   @Field(() => [SectionInput], { nullable: 'itemsAndList' })
   sections?: SectionInput[]
+
+  @Field(() => [ValueInput], { nullable: 'itemsAndList' })
+  files?: ValueInput[]
+
+  @Field(() => [FormCertificationTypeDtoInput], { nullable: 'itemsAndList' })
+  certificationTypes?: FormCertificationTypeDtoInput[]
+
+  @Field(() => [FormApplicantTypeDtoInput], { nullable: 'itemsAndList' })
+  applicantTypes?: FormApplicantTypeDtoInput[]
 }
 
 @InputType('UpdateFormSystemApplicationDependenciesInput')
@@ -94,4 +101,47 @@ export class UpdateApplicationDependenciesInput {
 
   @Field(() => [String], { nullable: 'itemsAndList' })
   completed?: string[]
+}
+
+
+@InputType('UpdateFormSystemApplicationDtoInput')
+export class UpdateApplicationDtoInput {
+  @Field(() => [DependencyInput], { nullable: true })
+  dependencies?: DependencyInput[]
+
+  @Field(() => [String], { nullable: true })
+  completed?: string[]
+}
+
+@InputType('UpdateFormSystemApplicationInput')
+export class UpdateApplicationInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => UpdateApplicationDtoInput, { nullable: true })
+  updateApplicationDto?: UpdateApplicationDtoInput
+}
+
+@InputType('SaveFormSystemScreenInput')
+export class SubmitScreenDtoInput {
+  @Field(() => String, { nullable: true })
+  applicationId?: string
+
+  @Field(() => ScreenInput, { nullable: true })
+  screenDto?: ScreenInput
+}
+
+
+@InputType('SubmitFormSystemScreenInput')
+export class SubmitScreenInput {
+  // @Field(() => String, { nullable: true })
+  // screenId?: string
+
+  // @Field(() => ApplicationInput, { nullable: true })
+  // applicationDto?: ApplicationInput
+  @Field(() => String, { nullable: true })
+  screenId?: string
+
+  @Field(() => SubmitScreenDtoInput, { nullable: true })
+  submitScreenDto?: SubmitScreenDtoInput
 }

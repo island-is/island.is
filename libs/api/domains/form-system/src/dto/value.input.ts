@@ -97,18 +97,6 @@ export class ValueInput {
   paymentCode?: string
 }
 
-@InputType('FormSystemApplicationEventDtoInput')
-export class ApplicationEventDtoInput {
-  @Field(() => Date, { nullable: true })
-  created?: Date
-
-  @Field(() => String, { nullable: true })
-  eventType?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isFileEvent?: boolean
-}
-
 @InputType('FormSystemValueDtoInput')
 export class ValueDtoInput {
   @Field(() => String, { nullable: true })

@@ -1,6 +1,7 @@
-import { FormSystemScreen, FormSystemSection } from "@island.is/api/schema"
+import { FormSystemApplication, FormSystemScreen, FormSystemSection } from "@island.is/api/schema"
 import { ApplicationState } from '@island.is/form-system/ui'
 import { validateScreen } from "../utils/validation"
+import { ApolloCache, DefaultContext, MutationTuple, OperationVariables, useMutation } from "@apollo/client"
 
 export const hasScreens = (section: FormSystemSection): boolean => {
   return Boolean(section.screens && section.screens.length > 0)
@@ -34,11 +35,17 @@ export const incrementWithScreens = (
   state: ApplicationState,
   currentSectionData: FormSystemSection,
   maxSectionIndex: number,
-  currentScreenIndex: number
+  currentScreenIndex: number,
+  submitScreenMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >
 ): ApplicationState => {
   const screens = currentSectionData.screens ?? []
   const maxScreenIndex = screens.length - 1
-
+  const [submitScreen] = submitScreenMutation
   const errors = validateScreen(state)
   if (errors.length > 0) {
     return {
@@ -46,6 +53,18 @@ export const incrementWithScreens = (
       errors
     }
   }
+
+  submitScreen({
+    variables: {
+      input: {
+        screenId: state.currentScreen?.data?.id,
+        submitScreenDto: {
+          applicationId: state.application.id,
+          screenDto: state.currentScreen?.data,
+        }
+      }
+    }
+  })
 
   if (currentScreenIndex === maxScreenIndex) {
     if (state.currentSection.index === maxSectionIndex) {

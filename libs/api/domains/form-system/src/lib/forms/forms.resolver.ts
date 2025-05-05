@@ -18,8 +18,10 @@ import {
 } from '@nestjs/graphql'
 import { FormsService } from './forms.service'
 import {
+  CreateFormInput,
   DeleteFormInput,
   GetFormInput,
+  GetFormsInput,
   UpdateFormInput,
 } from '../../dto/form.input'
 import { UpdateFormResponse } from '@island.is/form-system/shared'
@@ -42,6 +44,7 @@ export class FormsResolver {
     name: 'createFormSystemForm',
   })
   async createForm(
+    @Args('input', { type: () => CreateFormInput }) input: CreateFormInput,
     @CurrentUser() user: User,
   ): Promise<FormResponse> {
     return this.formsService.createForm(user, input)
@@ -78,7 +81,7 @@ export class FormsResolver {
     return this.formsService.getAllForms(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => UpdateFormResponse, {
     name: 'updateFormSystemForm',
     nullable: true,
   })

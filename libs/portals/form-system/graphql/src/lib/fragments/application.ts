@@ -26,6 +26,8 @@ export const ApplicationFragment = gql`
     applicantTypes {
       ...ApplicantTypeDto
     }
+    modified
+    submittedAt
   }
   ${ApplicantTypeDtoFragment}
   ${LanguageFields}
