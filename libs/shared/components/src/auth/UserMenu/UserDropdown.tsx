@@ -15,7 +15,7 @@ import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { checkDelegation } from '@island.is/shared/utils'
 import cn from 'classnames'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 import { useWindowSize } from 'react-use'
 import { UserDelegations } from './UserDelegations'
 import { UserDropdownItem } from './UserDropdownItem'
@@ -58,15 +58,8 @@ export const UserDropdown = ({
     AuthDelegationType.ProcurationHolder,
   )
 
-  const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
-
-  useEffect(() => {
-    if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width])
+  const isMobile = width < theme.breakpoints.md
 
   const closeButton = (
     <button
@@ -167,7 +160,7 @@ export const UserDropdown = ({
       isVisible={isVisible}
       hideOnClickOutside={true}
       hideOnEsc={true}
-      modalLabel={formatMessage(userMessages.userButtonAria)}
+      modalLabel={formatMessage(userMessages.userButtonAriaModalLabel)}
       removeOnClose={true}
       preventBodyScroll={false}
       onVisibilityChange={(visibility: boolean) => {

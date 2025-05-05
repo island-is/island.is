@@ -12,6 +12,7 @@ import { LinkResolver, SearchPaths } from '@island.is/portals/my-pages/core'
 import cn from 'classnames'
 
 import * as styles from './SearchInput.css'
+
 import { useNavigate } from 'react-router-dom'
 import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
 
@@ -130,6 +131,7 @@ export const SearchInput = ({
         <AsyncSearch
           ref={ref}
           id="my-pages-async-search"
+          ariaLabel={buttonAriaLabel}
           placeholder={placeholder}
           size={size === 'large' ? 'semi-large' : 'medium'}
           colored={!whiteMenuBackground}
