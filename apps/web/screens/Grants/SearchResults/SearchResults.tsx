@@ -120,6 +120,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           lang: locale,
           organizations: organizations ? [...organizations] : null,
           page,
+          sort: GetGrantsInputSortByEnum.RecentlyUpdated,
           search: searchString,
           size: PAGE_SIZE,
           types: types ? [...types] : null,
