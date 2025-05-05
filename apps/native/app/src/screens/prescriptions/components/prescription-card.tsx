@@ -227,8 +227,12 @@ export function PrescriptionCard({
                         )}
                       </Typography>
                       <Typography variant="body3">
-                        {`${intl.formatDate(item.date)} - ${item.agentName} - ${
+                        {`${intl.formatDate(item.date)}${
+                          item.agentName ? ' - ' + item.agentName : ''
+                        }${
                           item.items?.[0]?.amount
+                            ? ' - ' + item.items[0].amount
+                            : ''
                         }`}
                       </Typography>
                     </View>
