@@ -34,7 +34,7 @@ export class IndictmentCountExistsGuard implements CanActivate {
       indictmentCountId,
     )
 
-    if (!indictmentCount) {
+    if (!indictmentCount || indictmentCount.caseId !== theCase.id) {
       throw new NotFoundException(
         `Indictment count ${indictmentCountId} of case ${theCase.id} does not exist`,
       )
