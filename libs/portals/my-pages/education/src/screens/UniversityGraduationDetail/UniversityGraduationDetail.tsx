@@ -2,10 +2,12 @@ import { UniversityCareersUniversityId } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
+  Button,
   DropdownMenu,
   GridColumn,
   GridRow,
   Text,
+  Inline,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
@@ -16,6 +18,7 @@ import {
   formatDate,
   m,
   IntroWrapper,
+  formSubmit,
 } from '@island.is/portals/my-pages/core'
 import { useParams } from 'react-router-dom'
 import {
@@ -62,7 +65,9 @@ export const UniversityGraduationDetail = () => {
     ? formatDate(studentInfo?.graduationDate)
     : undefined
 
-  const filesAvailable = (files?.length ?? 0) > 0
+  const downloadCount = files?.length ?? 0
+  const fileDownloadDisplay: 'dropdown' | 'inline' | undefined =
+    downloadCount > 2 ? 'dropdown' : downloadCount > 0 ? 'inline' : undefined
 
   return (
     <IntroWrapper
@@ -79,7 +84,7 @@ export const UniversityGraduationDetail = () => {
             justifyContent="flexStart"
             printHidden
           >
-            {files && filesAvailable && (
+            {files && fileDownloadDisplay === 'dropdown' && (
               <DropdownMenu
                 icon="ellipsisHorizontal"
                 iconType="outline"
@@ -99,7 +104,28 @@ export const UniversityGraduationDetail = () => {
                 title={formatMessage(uniMessages.graduationFiles)}
               />
             )}
-            {!filesAvailable && !loading && (
+            {fileDownloadDisplay === 'inline' && (
+              <Inline space={2}>
+                {files?.map((item) => {
+                  if (!item.downloadServiceURL) {
+                    return null
+                  }
+                  return (
+                    <Button
+                      key={`download-${item.displayName}`}
+                      variant="utility"
+                      size="small"
+                      icon="document"
+                      iconType="outline"
+                      onClick={() => formSubmit(`${item.downloadServiceURL}`)}
+                    >
+                      {item.displayName}
+                    </Button>
+                  )
+                })}
+              </Inline>
+            )}
+            {!fileDownloadDisplay && !loading && (
               <Box width="full">
                 <AlertMessage
                   type="warning"
