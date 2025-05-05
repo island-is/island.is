@@ -115,6 +115,7 @@ export const DesktopOverview: FC<Props> = ({
           onReply: () => setReplyOpen(true),
         }}
         actions={activeDocument.actions}
+        onClick={toggleDocument}
       />
 
       {!hideDocument && <DocumentRenderer doc={activeDocument} />}

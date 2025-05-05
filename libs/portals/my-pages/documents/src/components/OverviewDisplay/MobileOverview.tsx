@@ -75,6 +75,10 @@ export const MobileOverview: FC<Props> = ({
     setReplies(updatedReplies)
   }
 
+  const toggleDocument = () => {
+    setHideDocument(!hideDocument)
+  }
+
   return (
     <FocusLock autoFocus={false}>
       <Box className={styles.modalBase}>
@@ -86,7 +90,7 @@ export const MobileOverview: FC<Props> = ({
             onReply={() => setReplyOpen(true)}
           />
         </Box>
-        <Box className={styles.modalContent}>
+        <Box className={styles.modalContent} onClick={toggleDocument}>
           <DocumentHeader
             avatar={activeDocument.img}
             sender={activeDocument.sender}

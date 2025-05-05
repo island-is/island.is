@@ -19,6 +19,7 @@ type DocumentHeaderProps = {
   actions?: DocumentV2Action[]
   subject?: string
   subjectAriaLabel?: string
+  onClick?: () => void
 }
 
 export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
@@ -30,6 +31,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
   actions,
   subject,
   subjectAriaLabel,
+  onClick,
 }) => {
   const wrapper = useRef<HTMLDivElement>(null)
   const { isMobile } = useIsMobile()
@@ -75,6 +77,8 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
         justifyContent="flexStart"
         width="full"
         marginBottom={3}
+        onClick={onClick}
+        className={styles.actionContainer}
       >
         {avatar && <AvatarImage large img={avatar} background="blue100" />}
         <Box

@@ -29,6 +29,7 @@ const ReplyContainer = () => {
   } = useDocumentContext()
   const hasEmail = true //isDefined(userProfile?.email)
   const [sent, setSent] = useState<boolean>()
+  const [showAllReplies, setShowAllReplies] = useState(false)
   const [getTicketQuery] = useGetDocumentTicketLazyQuery({
     variables: {
       input: {
@@ -98,38 +99,83 @@ const ReplyContainer = () => {
     setReplies(updatedReplies)
   }
 
+  const toggleShowAllReplies = () => {
+    setShowAllReplies(!showAllReplies)
+  }
+
   if (!activeDocument) {
     return <NoPDF />
   }
 
+  const repliesLength = replies?.comments?.length ?? 0
+  const lastReply = replies?.comments?.[repliesLength - 1] ?? null
   return (
     <>
       <Box>
-        {replies?.comments?.map((reply) => (
-          <Box
-            onClick={() => toggleReply(reply.id)}
-            key={reply.id}
-            cursor="pointer"
-          >
-            <Box paddingY={1}>
+        {!showAllReplies && repliesLength > 4 ? (
+          <>
+            <Box paddingY={3}>
               <Divider />
             </Box>
-            <ReplyHeader
-              initials={getInitials(reply.author ?? '')}
-              title={reply.author ?? activeDocument.subject}
-              hasEmail={isDefined(profile.email)}
-              subTitle={formatDate(reply?.createdDate, dateFormatWithTime.is)}
-              displayEmail={false}
-            />
-            {!reply.hide && (
-              <ReplySent
-                date={reply.createdDate}
-                id={reply.id}
-                body={reply.body}
+            <Box display="flex" justifyContent="center" width="full">
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => toggleShowAllReplies()}
+              >
+                {formatMessage(messages.showAllRepliesWithArgs, {
+                  repliesLength: repliesLength,
+                })}
+              </Button>
+            </Box>
+            <Box>
+              <Box paddingY={3}>
+                <Divider />
+              </Box>
+              <ReplyHeader
+                initials={getInitials(lastReply?.author ?? '')}
+                title={lastReply?.author ?? activeDocument.subject}
+                hasEmail={isDefined(profile.email)}
+                subTitle={formatDate(
+                  lastReply?.createdDate,
+                  dateFormatWithTime.is,
+                )}
+                displayEmail={false}
               />
-            )}
-          </Box>
-        ))}
+              <ReplySent
+                date={lastReply?.createdDate}
+                id={lastReply?.id}
+                body={lastReply?.body}
+              />
+            </Box>
+          </>
+        ) : (
+          replies?.comments?.map((reply) => (
+            <Box
+              onClick={() => toggleReply(reply.id)}
+              key={reply.id}
+              cursor="pointer"
+            >
+              <Box paddingY={1}>
+                <Divider />
+              </Box>
+              <ReplyHeader
+                initials={getInitials(reply.author ?? '')}
+                title={reply.author ?? activeDocument.subject}
+                hasEmail={isDefined(profile.email)}
+                subTitle={formatDate(reply?.createdDate, dateFormatWithTime.is)}
+                displayEmail={false}
+              />
+              {!reply.hide && (
+                <ReplySent
+                  date={reply.createdDate}
+                  id={reply.id}
+                  body={reply.body}
+                />
+              )}
+            </Box>
+          ))
+        )}
 
         {/* {If document is marked replyable, we render the reply form} */}
         {closedForMoreReplies && (
@@ -143,8 +189,7 @@ const ReplyContainer = () => {
       </Box>
 
       {/* ---------------------- */}
-      {/* {!replyOpen && !reply && button} */}
-      {replyable && (
+      {replyable && replyOpen && (
         <Box marginY={3}>
           <Divider />
           <ReplyHeader
@@ -182,9 +227,9 @@ const ReplyContainer = () => {
               successfulSubmit={successfulSubmit}
             />
           )}
-          {replyable && !replyOpen && button}
         </Box>
       )}
+      {replyable && !replyOpen && button}
     </>
   )
 }

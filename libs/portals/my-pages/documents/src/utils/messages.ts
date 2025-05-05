@@ -144,4 +144,8 @@ export const messages = defineMessages({
     id: 'sp.documents:please-register-email',
     defaultMessage: 'Vinsamlegast skráðu tölvupóstfang',
   },
+  showAllRepliesWithArgs: {
+    id: 'sp.documents:show-all-replies-with-args',
+    defaultMessage: 'Sýna öll samskipti ({repliesLength})',
+  },
 })
