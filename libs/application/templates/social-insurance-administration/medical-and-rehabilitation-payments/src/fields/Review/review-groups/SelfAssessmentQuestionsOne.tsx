@@ -9,12 +9,12 @@ import { getApplicationAnswers } from '../../../lib/medicalAndRehabilitationPaym
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 
-export const SelfAssessment = ({
+export const SelfAssessmentQuestionsOne = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const { gotAssistance, highestLevelOfEducation } = getApplicationAnswers(
+  const { hadAssistance, highestLevelOfEducation } = getApplicationAnswers(
     application.answers,
   )
 
@@ -24,7 +24,7 @@ export const SelfAssessment = ({
     <ReviewGroup
       isLast
       isEditable={editable}
-      editAction={() => goToScreen?.('selfAssessmentQuestions1')}
+      editAction={() => goToScreen?.('selfAssessmentQuestionsOne')}
     >
       <Stack space={3}>
         <GridRow>
@@ -32,13 +32,13 @@ export const SelfAssessment = ({
             <RadioValue
               label={formatMessage(
                 medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-                  .gotAssistance,
+                  .hadAssistance,
               )}
-              value={gotAssistance}
+              value={hadAssistance}
             />
           </GridColumn>
         </GridRow>
-        <GridRow rowGap={3}>
+        <GridRow>
           <GridColumn span="12/12">
             <DataValue
               label={formatMessage(

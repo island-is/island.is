@@ -689,10 +689,10 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'This self-assessment list is intended to assess your own experience of the ability to perform daily activities and participate in rehabilitation/recognized treatment. The goal is to gain better insight into how you assess your ability and whether rehabilitation/recognized treatment is achieving the desired results.\n\nThe list consists of questions about physical, mental and social skills as well as participation in daily life, work or leisure activities.\n\nPlease answer to the best of your ability and in accordance with your current status. If you need help answering, it is okay to get help, preferably from someone who knows you well.',
     },
-    gotAssistance: {
-      id: 'marp.application:self.assessment.got.assistance',
-      defaultMessage: 'Ég fékk aðstoð við að svara sjálfsmatinu',
-      description: 'I got assistance to answer the self-assessment',
+    hadAssistance: {
+      id: 'marp.application:self.assessment.had.assistance',
+      defaultMessage: 'Ég fæ aðstoð við að svara sjálfsmatinu',
+      description: 'I get an assistance to answer the self-assessment',
     },
     highestlevelOfEducationDescription: {
       id: 'marp.application:self.assessment.highest.level.of.education.description',

@@ -152,7 +152,7 @@ export const dataSchema = z.object({
     .array(z.string())
     .refine((v) => v.includes(YES)),
   selfAssessment: z.object({
-    gotAssistance: z.enum([YES, NO]),
+    hadAssistance: z.enum([YES, NO]),
     highestLevelOfEducation: z.string(),
   }),
 })
