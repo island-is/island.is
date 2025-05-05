@@ -8,20 +8,20 @@ import {
   PhoneInput,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  FeatureFlagClient,
-  Features,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
 import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
 import {
   useDeleteIslykillValue,
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
+import {
+  FeatureFlagClient,
+  useFeatureFlagClient,
+} from '@island.is/react/feature-flags'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { msg } from '../../../../lib/messages'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
+import { ProfileFormEmail } from './ProfileFormEmail'
 import { DropModal } from './components/DropModal'
 import { InputSection } from './components/InputSection'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
@@ -168,6 +168,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             showIntroTitle={showIntroTitle}
             showIntroText={showIntroText}
           />
+          <ProfileFormEmail />
           <InputSection
             title={formatMessage(m.email)}
             text={formatMessage(msg.editEmailText)}

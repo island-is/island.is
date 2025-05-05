@@ -317,6 +317,27 @@ export const msg = defineMessages({
     id: 'sp.settings:confirm-contact',
     defaultMessage: 'Staðfesta {contactType}',
   },
+  registerEmail: {
+    id: 'sp.settings:register-email',
+    defaultMessage: 'Skrá netfang',
+  },
+  verificationCodeButtonAria: {
+    id: 'sp.settings:verification-code-button-aria',
+    defaultMessage: 'Valmynd fyrir staðfestingarkóða',
+  },
+  emails: {
+    id: 'sp.settings:emails',
+    defaultMessage: 'Netföng',
+  },
+  emailListText: {
+    id: 'sp.settings:email-list-text',
+    defaultMessage:
+      'Hér er listi yfir netföng sem eru skráð hjá þér og umboðum tengt þér.Þú getur stillt {link}',
+  },
+  emailListTextLink: {
+    id: 'sp.settings:email-list-text-link',
+    defaultMessage: 'tilkynningar hér.',
+  },
 })
 
 export const urls = defineMessages({
@@ -432,5 +453,77 @@ export const mNotifications = defineMessages({
   noDelegationsDescriptions: {
     id: 'sp.notifications:no-delegations-description',
     defaultMessage: 'Stillingar fyrir umboð munu birtast hér.',
+  },
+})
+
+export const mVerify = defineMessages({
+  close: {
+    id: 'sp.settings:close',
+    defaultMessage: 'Loka',
+  },
+  confirmEmail: {
+    id: 'sp.settings:confirm-email',
+    defaultMessage: 'Staðfesta netfang',
+  },
+  cancel: {
+    id: 'sp.settings:cancel',
+    defaultMessage: 'Hætta við',
+  },
+  noCodeReceived: {
+    id: 'sp.settings:no-code-received',
+    defaultMessage: 'Fékk ekki kóða',
+  },
+  codeSentSuccess: {
+    id: 'sp.settings:code-sent-success',
+    defaultMessage: 'Kóði hefur verið sendur',
+  },
+  securityCode: {
+    id: 'ids:security-code',
+    defaultMessage: 'Öryggiskóði',
+  },
+  securityCodeSpecialIS: {
+    id: 'sp.settings:security-code-special-is',
+    defaultMessage: 'Öryggiskóði',
+  },
+  wrongCodeTitle: {
+    id: 'sp.settings:wrong-code-title',
+    defaultMessage: 'Rangur kóði',
+  },
+  confirm: {
+    id: 'sp.settings:confirm',
+    defaultMessage: 'Staðfesta',
+  },
+  ariaLabelVerifyingCode: {
+    id: 'sp.settings:aria-label-verifying-code',
+    defaultMessage: 'Staðfesta kóða',
+  },
+  ariaSubmitButtonDisabled: {
+    id: 'sp.settings:aria-submit-button-disabled',
+    defaultMessage: 'Staðfesta hnappur óvirkur, {label} vantar',
+  },
+  ariaLabelTwoFactorDigit: {
+    id: 'ids:aria-label-two-factor-digit',
+    defaultMessage:
+      'Vinsamlega sláðu inn staðfestingarkóðann fyrir tölu {num}.',
+  },
+  ariaLabelTwoFactorDigitSimple: {
+    id: 'ids:aria-label-two-factor-digit-simple',
+    defaultMessage: 'Tala {num}',
+  },
+  securityCodeEmailIntro: {
+    id: 'ids:security-code-email-intro',
+    defaultMessage: 'Sláðu inn kóðann sem við sendum þér á {br}{email}',
+  },
+  errorOccured: {
+    id: 'ids:error-occured',
+    defaultMessage: 'Villa kom upp',
+  },
+  errorOccuredDescription: {
+    id: 'ids:error-occured-description',
+    defaultMessage: 'Ekki tókst að senda kóðann',
+  },
+  validateTwoFactorError: {
+    id: 'ids:validate-two-factor-error',
+    defaultMessage: 'Kóði er ekki á réttu formi',
   },
 })
