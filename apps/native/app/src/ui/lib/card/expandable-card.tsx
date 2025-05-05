@@ -179,7 +179,9 @@ export const ExpandableCard = ({
                   {title}
                 </TitleText>
               </Title>
-              <Typography variant="body3">{topRightValue}</Typography>
+              {topRightValue && (
+                <Typography variant="body3">{topRightValue}</Typography>
+              )}
             </Row>
           )}
           <Row>
