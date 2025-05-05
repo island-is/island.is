@@ -54,7 +54,7 @@ export const custodianSubSection = buildSubSection({
           condition: (_, externalData) => getHasCustodian(externalData, 0),
           defaultValue: (application: Application) => {
             const parent = getCustodian(application.externalData, 0)
-            return `${parent?.givenName} ${parent?.familyName}`
+            return `${parent?.name}`
           },
         }),
         buildTextField({
@@ -128,7 +128,7 @@ export const custodianSubSection = buildSubSection({
           condition: (_, externalData) => getHasCustodian(externalData, 1),
           defaultValue: (application: Application) => {
             const parent = getCustodian(application.externalData, 1)
-            return `${parent?.givenName} ${parent?.familyName}`
+            return `${parent?.name}`
           },
         }),
         buildTextField({

@@ -119,7 +119,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
                 ) ?? []
 
               const hasFullCustody =
-                selectedChildrenExtraData[index].hasFullCustody
+                selectedChildrenExtraData[index]?.hasFullCustody
 
               return hasFullCustody === NO
             },
@@ -147,7 +147,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
                   'selectedChildrenExtraData',
                 ) ?? []
               const hasFullCustody =
-                selectedChildrenExtraData[index].hasFullCustody
+                selectedChildrenExtraData[index]?.hasFullCustody
 
               return hasFullCustody === NO
             },
@@ -162,7 +162,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
                 ) ?? []
 
               const hasFullCustody =
-                selectedChildrenExtraData[index].hasFullCustody
+                selectedChildrenExtraData[index]?.hasFullCustody
 
               return hasFullCustody === NO
             },

@@ -28,7 +28,7 @@ export class UserInterceptor implements NestInterceptor {
               .then((map) =>
                 users.map((user: User) => {
                   const log = map.get(
-                    `${user.nationalId}-${user.institution?.name}`,
+                    `${user.nationalId}-${user.role}-${user.institution?.name}`,
                   )
 
                   return {

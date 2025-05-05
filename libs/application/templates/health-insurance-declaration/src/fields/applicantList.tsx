@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import {
@@ -8,7 +9,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as m from '../lib/messages'
-import { FC, useEffect, useState } from 'react'
 
 type ApplicantListProps = {
   application: {
@@ -34,9 +34,7 @@ type PdfDataForApplicantsExternalData = {
   status: 'success' | 'failiure'
 }
 
-export const ApplicantList: FC<React.PropsWithChildren<ApplicantListProps>> = ({
-  application,
-}) => {
+export const ApplicantList = ({ application }: ApplicantListProps) => {
   const [updateApplicationExternalData, { loading }] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
@@ -71,48 +69,53 @@ export const ApplicantList: FC<React.PropsWithChildren<ApplicantListProps>> = ({
   const [pdfData, setPdfData] = useState<PdfDataForApplicantsExternalData>()
   useEffect(() => {
     fetchPdfData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  if (loading) {
+    return (
+      <Box marginY={3} width="full" flexGrow={1}>
+        <Box display="flex" justifyContent="center">
+          <LoadingDots />
+        </Box>
+      </Box>
+    )
+  }
 
   return (
     <Box marginY={3} width="full" flexGrow={1}>
-      {!loading ? (
-        pdfData?.status === 'success' ? (
-          pdfData?.data?.map((applicant) => {
-            return (
-              <Box key={applicant.nationalId}>
-                <Box marginY={2}>
-                  <Button
-                    aria-label={m.conclution.downloadButtonAriaLabel}
-                    preTextIconType="outline"
-                    preTextIcon="download"
-                    variant="ghost"
-                    fluid
-                    disabled={!applicant.approved}
-                    onClick={() => onClickDownload(applicant.pdfData)}
-                  >
-                    {applicant.applicantName}
-                  </Button>
-                </Box>
-                {!applicant.approved && (
-                  <AlertMessage
-                    type="error"
-                    message={applicant.comment && applicant.comment}
-                  />
-                )}
+      {pdfData?.status === 'success' ? (
+        pdfData?.data?.map((applicant) => {
+          return (
+            <Box key={applicant.nationalId}>
+              <Box marginY={2}>
+                <Button
+                  aria-label={m.conclution.downloadButtonAriaLabel}
+                  preTextIconType="outline"
+                  preTextIcon="download"
+                  variant="ghost"
+                  fluid
+                  disabled={!applicant.approved}
+                  onClick={() => onClickDownload(applicant.pdfData)}
+                >
+                  {applicant.applicantName}
+                </Button>
               </Box>
-            )
-          })
-        ) : (
-          <Box flexGrow={1}>
-            <AlertMessage
-              type="error"
-              message={formatMessage(m.errors.submitted.externalError)}
-            />
-          </Box>
-        )
+              {!applicant.approved && (
+                <AlertMessage
+                  type="error"
+                  message={applicant.comment && applicant.comment}
+                />
+              )}
+            </Box>
+          )
+        })
       ) : (
-        <Box display="flex" justifyContent="center">
-          <LoadingDots />
+        <Box flexGrow={1}>
+          <AlertMessage
+            type="error"
+            message={formatMessage(m.errors.submitted.externalError)}
+          />
         </Box>
       )}
     </Box>
