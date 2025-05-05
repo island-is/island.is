@@ -41,7 +41,7 @@ export const UserLicenses: FC<React.PropsWithChildren<Props>> = ({
   const currentDate = new Date()
 
   //DUMMY
-  const k = 8
+  const k = 88
 
   const getLabel = (
     type: GenericLicenseType | 'Passport',
