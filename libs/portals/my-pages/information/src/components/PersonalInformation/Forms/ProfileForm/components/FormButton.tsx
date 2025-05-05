@@ -5,13 +5,12 @@ import { useWindowSize } from 'react-use'
 
 type NativeButtonProps = AllHTMLAttributes<HTMLButtonElement>
 
-interface FormButtonProps {
+type FormButtonProps = {
   children?: ReactNode
   onClick?: NativeButtonProps['onClick']
   submit?: boolean
   disabled?: boolean
-  icon?: ButtonBaseProps['icon']
-}
+} & Pick<ButtonBaseProps, 'icon' | 'loading'>
 
 export const FormButton = ({
   children,

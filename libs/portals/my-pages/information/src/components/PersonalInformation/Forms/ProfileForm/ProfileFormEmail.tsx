@@ -1,6 +1,9 @@
 import { Link, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useUserProfile } from '@island.is/portals/my-pages/graphql'
+import {
+  useUserProfile,
+  useVerifyEmail,
+} from '@island.is/portals/my-pages/graphql'
 
 import { useCallback, useMemo, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
@@ -14,15 +17,7 @@ import { VerifyTemplate } from './components/verify/VerifyTemplate/VerifyTemplat
 export const ProfileFormEmail = () => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { data: userProfile } = useUserProfile()
-  const [openModal, setOpenModal] = useState(true)
-  const email = userProfile?.email ?? 'snaer@testeser.com'
-
-  const onSubmit = ({ email }: EmailFormValues) => {
-    if (email) {
-      setOpenModal(true)
-    }
-  }
+  const [openModal, setOpenModal] = useState(false)
 
   const onNoCodeReceivedCallback = useCallback(async () => {
     console.log('onNoCodeReceivedCallback')
@@ -57,6 +52,11 @@ export const ProfileFormEmail = () => {
     [],
   )
 
+  const onVerifySuccess = () => {
+    console.log('onVerifySuccess')
+    setOpenModal(true)
+  }
+
   return (
     <>
       <InputSection
@@ -79,7 +79,7 @@ export const ProfileFormEmail = () => {
           />
         }
       >
-        <AddEmail email={userProfile?.email || ''} onSubmit={onSubmit} />
+        <AddEmail onVerifySuccess={onVerifySuccess} />
       </InputSection>
       <Modal isVisible={openModal} onClose={() => setOpenModal(false)}>
         <VerifyTemplate

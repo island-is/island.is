@@ -54,7 +54,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
   const { formatMessage } = useLocale()
-  const { createEmailVerification, createLoading } = useVerifyEmail()
+  const { createEmailVerification, loading: createLoading } = useVerifyEmail()
   const { refetch, loading: fetchLoading } = useUserProfile()
   const [emailInternal, setEmailInternal] = useState(email)
   const [emailToVerify, setEmailToVerify] = useState(email)

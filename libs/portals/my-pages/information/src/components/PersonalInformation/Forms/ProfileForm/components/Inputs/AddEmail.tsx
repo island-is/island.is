@@ -10,9 +10,12 @@ import { m } from '@island.is/portals/my-pages/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { msg } from '../../../../../../lib/messages'
+import { mVerify, msg } from '../../../../../../lib/messages'
 import { FormButton } from '../FormButton'
 import * as styles from './AddEmail.css'
+import { useVerifyEmail } from '@island.is/portals/my-pages/graphql'
+import { Problem } from '@island.is/react-spa/shared'
+import { useEffect } from 'react'
 
 const createEmailFormSchema = (formatMessage: FormatMessage) =>
   z.object({
@@ -24,28 +27,40 @@ const createEmailFormSchema = (formatMessage: FormatMessage) =>
     }),
   })
 
-export type EmailFormValues = z.infer<ReturnType<typeof createEmailFormSchema>>
+type EmailFormValues = z.infer<ReturnType<typeof createEmailFormSchema>>
 
 type AddEmailProps = {
-  email: string
-  onSubmit(values: EmailFormValues): void
+  onVerifySuccess(): void
 }
 
-export const AddEmail = ({ email, onSubmit }: AddEmailProps) => {
+export const AddEmail = ({ onVerifySuccess }: AddEmailProps) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
+  const { createEmailVerification, data, loading, error } = useVerifyEmail()
 
   const methods = useForm<EmailFormValues>({
     resolver: zodResolver(createEmailFormSchema(formatMessage)),
-    defaultValues: {
-      email,
-    },
   })
+
   const {
     handleSubmit,
     control,
+    getValues,
     formState: { errors },
   } = methods
+
+  const onSubmit = ({ email }: EmailFormValues) => {
+    if (email) {
+      createEmailVerification({ email })
+    }
+  }
+
+  useEffect(() => {
+    if (data?.createEmailVerification?.created) {
+      onVerifySuccess()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.createEmailVerification])
 
   return (
     <FormProvider {...methods}>
@@ -57,6 +72,10 @@ export const AddEmail = ({ email, onSubmit }: AddEmailProps) => {
           columnGap={2}
           className={styles.contentContainer}
         >
+          {error && (
+            <Problem size="small" title={formatMessage(mVerify.errorOccured)} />
+          )}
+
           <Box flexGrow={1}>
             <InputController
               control={control}
@@ -70,9 +89,9 @@ export const AddEmail = ({ email, onSubmit }: AddEmailProps) => {
               placeholder="nafn@island.is"
               error={errors?.email?.message}
               size="xs"
-              defaultValue={email}
             />
           </Box>
+
           <div
             className={
               errors?.email?.message
@@ -80,7 +99,7 @@ export const AddEmail = ({ email, onSubmit }: AddEmailProps) => {
                 : styles.defaultEmailButtonContainer
             }
           >
-            <FormButton submit icon="add">
+            <FormButton submit icon="add" loading={loading}>
               {formatMessage(msg.registerEmail)}
             </FormButton>
           </div>
