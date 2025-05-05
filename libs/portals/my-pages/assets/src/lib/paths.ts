@@ -6,7 +6,10 @@ export enum AssetsPaths {
   AssetsMyVehicles = '/eignir/okutaeki/min-okutaeki',
   AssetsVehiclesDetail = '/eignir/okutaeki/min-okutaeki/:id',
   AssetsVehiclesDetailMileage = '/eignir/okutaeki/min-okutaeki/:id/kilometrastada',
+
+  // If updated, also update `LinkAssetsVehiclesBulkMileage` in the finance paths file (libs/portals/my-pages/finance/src/lib/paths.ts)
   AssetsVehiclesBulkMileage = '/eignir/okutaeki/skra-kilometrastodu',
+
   AssetsVehiclesBulkMileageUpload = '/eignir/okutaeki/skra-kilometrastodu/hlada-upp',
   AssetsVehiclesBulkMileageJobOverview = '/eignir/okutaeki/skra-kilometrastodu/runuverk',
   AssetsVehiclesBulkMileageJobDetail = '/eignir/okutaeki/skra-kilometrastodu/runuverk/:id',
@@ -22,4 +25,8 @@ export enum AssetsPaths {
   AssetsIntellectualPropertiesTrademark = '/eignir/hugverkarettindi/vorumerki/:id',
   AssetsIntellectualPropertiesPatent = '/eignir/hugverkarettindi/einkaleyfi/:id',
   AssetsIntellectualPropertiesDesign = '/eignir/hugverkarettindi/honnun/:id',
+
+  //LINKS
+  //If updated, also update `FinanceTransactionVehicleMileage` in the finance paths file (libs/portals/my-pages/finance/src/lib/paths.ts)
+  LinkFinanceTransactionVehicleMileage = '/fjarmal/faerslur/kilometragjald',
 }

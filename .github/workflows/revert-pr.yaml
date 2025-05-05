@@ -25,7 +25,7 @@ jobs:
   detect-failure:
     name: Determine Failure
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    runs-on: arc-runners
+    runs-on: arc-shared
     outputs:
       PR_NUMBER: ${{ steps.fetch-pr.outputs.PR_NUMBER }}
     steps:
@@ -69,7 +69,7 @@ jobs:
     name: Automated PR revert
     needs: detect-failure
     if: ${{ needs.detect-failure.outputs.PR_NUMBER && github.event.workflow_run.conclusion == 'failure' }}
-    runs-on: arc-runners
+    runs-on: arc-shared
     steps:
       - name: Debug
         run: |
@@ -84,7 +84,7 @@ jobs:
 
   manual-revert-pr:
     name: Manual PR revert
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'revert') && (github.event.pull_request.merged == true || github.event.pull_request.draft == true) && github.actor != 'github-actions' }}
     steps:
       - name: Debug

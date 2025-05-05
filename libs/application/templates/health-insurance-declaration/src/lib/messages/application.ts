@@ -65,8 +65,8 @@ export const application = {
       id: 'hid.application:studentOrTourist.section.tourist.alert.text#markdown',
       defaultMessage: `Trygginaryfirlýsing gildir í þeim löndum þar sem Evrópska sjúkratryggingarkortið (ES kortið)
       gildir ekki, Ef ferðinni er heitið til landa innan EES landa eða Sviss skal sækja um ES kortið.
-      Athugið að ríkisborgarar utan EES eiga ekki rétt á ES korti og sækja því ávalt um tryggingaryfirlýsingu vegna 
-      ferða bæði innan og utan EES, sjá nánar hér. Fyrir frekari upplýsingar er hægt að senda tölvupóst á netfangið 
+      Athugið að ríkisborgarar utan EES eiga ekki rétt á ES korti og sækja því ávalt um tryggingaryfirlýsingu vegna
+      ferða bæði innan og utan EES, sjá nánar hér. Fyrir frekari upplýsingar er hægt að senda tölvupóst á netfangið
       es.kort@sjukra.is eða hringja í síma 515-0000`,
       description: 'Student radio field text',
     },
@@ -184,11 +184,21 @@ export const application = {
       defaultMessage: 'Athugið',
       description: 'Student minimum date warning title',
     },
-    studentMinDateWarning: {
-      id: 'hid.application:date.section.student.minDateWarning',
+    dateAlertTitle: {
+      id: 'hid.application:date.section.vacation.alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Vacation alert title',
+    },
+    touristAlertMessage: {
+      id: 'hid.application:date.section.tourist.alert.message',
+      defaultMessage: `Athugið að hámarkstímabil almennrar tryggingaryfirlýsingar eru þrír mánuðir í senn.`,
+      description: 'Tourist alert message',
+    },
+    studentAlertMessage: {
+      id: 'hid.application:date.section.student.alert.message',
       defaultMessage: `Athugið að hámarkstímabil fyrir tryggingaryfirlýsingar námsmanna er eitt ár í senn. Sækja þarf um nýja
         tryggingaryfirlýsingu á hverju ári með nýrri/uppfærðri námsstaðfestingu á meðan nemandi er erlendis í námi.`,
-      description: 'Student minimum date warning',
+      description: 'Student alert message',
     },
   }),
   overview: defineMessages({
