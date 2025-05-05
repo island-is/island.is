@@ -39,10 +39,12 @@ env:
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
+  PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
+  PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
   SERVERSIDE_FEATURES_ON: ''
-  USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
+  USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
   XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
   XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
   XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
@@ -55,6 +57,7 @@ env:
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token'
 grantNamespaces:
+  - 'services-payments'
   - 'nginx-ingress-internal'
   - 'islandis'
 grantNamespacesEnabled: true

@@ -89,10 +89,16 @@ export type Icon =
   | 'signLanguage'
   | 'listView'
   | 'gridView'
+  | 'swapHorizontal'
   | 'swapVertical'
   | 'thumbsUp'
   | 'thumbsDown'
   | 'leaf'
+  | 'card'
+  | 'bank'
+  | 'grid'
+  | 'list'
+  | 'hammer'
 
 export default {
   filled: {
@@ -105,11 +111,13 @@ export default {
     arrowDown: 'ArrowDown',
     arrowUp: 'ArrowUp',
     attach: 'Attach',
+    bank: 'Bank',
     business: 'Business',
     calculator: 'Calculator',
     calendar: 'Calendar',
     call: 'Call',
     car: 'Car',
+    card: 'Card',
     cardWithCheckmark: 'CardWithCheckmark',
     caretDown: 'CaretDown',
     caretUp: 'CaretUp',
@@ -185,10 +193,14 @@ export default {
     signLanguage: 'SignLanguage',
     listView: 'ListView',
     gridView: 'GridView',
+    swapHorizontal: 'SwapHorizontal',
     swapVertical: 'SwapVertical',
     thumbsUp: 'ThumbsUp',
     thumbsDown: 'ThumbsDown',
     leaf: 'Leaf',
+    grid: 'Grid',
+    list: 'List',
+    hammer: 'HammerOutline',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -200,11 +212,13 @@ export default {
     arrowDown: 'ArrowDown',
     arrowUp: 'ArrowUp',
     attach: 'AttachOutline',
+    bank: 'BankOutline',
     business: 'BusinessOutline',
     calculator: 'CalculatorOutline',
     calendar: 'CalendarOutline',
     call: 'CallOutline',
     car: 'CarOutline',
+    card: 'CardOutline',
     cardWithCheckmark: 'CardWithCheckmarkOutline',
     caretDown: 'CaretDownOutline',
     caretUp: 'CaretUpOutline',
@@ -280,9 +294,13 @@ export default {
     signLanguage: 'SignLanguage',
     listView: 'ListView',
     gridView: 'GridView',
+    swapHorizontal: 'SwapHorizontal',
     swapVertical: 'SwapVertical',
     thumbsUp: 'ThumbsUpOutline',
     thumbsDown: 'ThumbsDownOutline',
     leaf: 'LeafOutline',
+    grid: 'GridOutline',
+    list: 'ListOutline',
+    hammer: 'HammerOutline',
   },
 }

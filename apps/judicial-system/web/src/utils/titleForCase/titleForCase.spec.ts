@@ -1,10 +1,10 @@
 import { createIntl } from 'react-intl'
 
 import {
+  Case,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { titleForCase } from './titleForCase'
 

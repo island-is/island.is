@@ -9,7 +9,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
@@ -69,9 +69,16 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
       }
     }
 
+    const pickUpLicense =
+      getValueViaPath(answers, 'delivery.deliveryMethod') === 'pickup'
+
+    const districtId =
+      getValueViaPath<string>(answers, 'delivery.district') ?? ''
+
     await this.drivingLicenseService
       .drivingLicenseDuplicateSubmission({
-        districtId: parseInt(answers.district.toString(), 10),
+        pickUpLicense: Boolean(pickUpLicense),
+        districtId: pickUpLicense ? parseInt(districtId) : 37,
         token: auth.authorization,
         // Always true since submission doesn't happen before
         // user checks the required field which states

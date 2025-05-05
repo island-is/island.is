@@ -284,6 +284,16 @@ export const INVOLVED_PARTIES_QUERY = gql`
   }
 `
 
+export const MY_USER_INFO_QUERY = gql`
+  query MyUserInfo {
+    officialJournalOfIcelandApplicationGetMyUserInfo {
+      firstName
+      lastName
+      email
+    }
+  }
+`
+
 export const CATEGORIES_QUERY = gql`
   query AdvertCategories($params: OfficialJournalOfIcelandQueryInput!) {
     officialJournalOfIcelandCategories(params: $params) {
@@ -320,6 +330,8 @@ export const GET_PRESIGNED_URL_MUTATION = gql`
   ) {
     officialJournalOfIcelandApplicationGetPresignedUrl(input: $input) {
       url
+      key
+      cdn
     }
   }
 `

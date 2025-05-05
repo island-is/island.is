@@ -470,10 +470,7 @@ const Results = ({
                 let variables = item.slug?.split('/')
 
                 if (typename === 'organizationsubpage') {
-                  variables = [
-                    (item as OrganizationSubpage)?.organizationPage?.slug,
-                    item.slug,
-                  ]
+                  variables = (item as OrganizationSubpage).url
                 }
 
                 const { onClick, ...itemProps } = getItemProps({
@@ -482,6 +479,9 @@ const Results = ({
                     string: linkResolver(
                       typename === 'anchorpage'
                         ? extractAnchorPageLinkType(item as AnchorPage)
+                        : typename === 'organizationsubpage' &&
+                          (item as OrganizationSubpage)?.url?.length === 3
+                        ? 'organizationparentsubpagechild'
                         : typename,
                       variables,
                     )?.href,

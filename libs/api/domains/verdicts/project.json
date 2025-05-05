@@ -1,0 +1,19 @@
+{
+  "name": "api-domains-verdicts",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/verdicts/src",
+  "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/api/domains/verdicts/jest.config.ts"
+      }
+    }
+  }
+}

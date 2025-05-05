@@ -4,7 +4,7 @@ import * as styles from './ModalTypes.css'
 import cn from 'classnames'
 
 import { getState, ApplicationState } from '@island.is/financial-aid/shared/lib'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 interface Props {
   isModalVisable: boolean

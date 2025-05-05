@@ -22,12 +22,14 @@ import {
   RolesRules,
   TokenGuard,
 } from '@island.is/judicial-system/auth'
+import { type User as TUser } from '@island.is/judicial-system/types'
 
-import { adminRule } from '../../guards'
+import { adminRule, localAdminRule } from '../../guards'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
+import { CreateUserValidator } from './interceptors/createUser.validator'
+import { UpdateUserValidator } from './interceptors/updateUser.validator'
 import { UserInterceptor } from './interceptors/user.interceptor'
-import { UserValidator } from './interceptors/user.validator'
 import { User } from './user.model'
 import { UserService } from './user.service'
 
@@ -40,8 +42,8 @@ export class UserController {
   ) {}
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(adminRule)
-  @UseInterceptors(UserValidator)
+  @RolesRules(localAdminRule, adminRule)
+  @UseInterceptors(CreateUserValidator)
   @Post('user')
   @ApiCreatedResponse({ type: User, description: 'Creates a new user' })
   create(@Body() userToCreate: CreateUserDto): Promise<User> {
@@ -51,8 +53,8 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(adminRule)
-  @UseInterceptors(UserValidator)
+  @RolesRules(localAdminRule, adminRule)
+  @UseInterceptors(UpdateUserValidator)
   @Put('user/:userId')
   @ApiOkResponse({ type: User, description: 'Updates an existing user' })
   update(
@@ -72,7 +74,7 @@ export class UserController {
     isArray: true,
     description: 'Gets all existing users',
   })
-  getAll(@CurrentHttpUser() user: User): Promise<User[]> {
+  getAll(@CurrentHttpUser() user: TUser): Promise<User[]> {
     this.logger.debug('Getting all users')
 
     return this.userService.getAll(user)
@@ -94,7 +96,8 @@ export class UserController {
   @Get('user')
   @ApiOkResponse({
     type: User,
-    description: 'Gets an existing user by national id',
+    isArray: true,
+    description: 'Gets existing users by national id',
   })
   getByNationalId(@Query('nationalId') nationalId: string): Promise<User[]> {
     this.logger.debug('Getting a user by national id')

@@ -30,10 +30,10 @@ env:
   BACKEND_URL: 'http://web-judicial-system-backend'
   CONTENTFUL_ENVIRONMENT: 'master'
   CONTENTFUL_HOST: 'cdn.contentful.com'
-  HIDDEN_FEATURES: ''
+  HIDDEN_FEATURES: 'VICTIMS'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
   - 'nginx-ingress-external'

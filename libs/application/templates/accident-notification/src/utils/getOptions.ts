@@ -1,12 +1,11 @@
-import { WhoIsTheNotificationForEnum } from '../types'
 import { whoIsTheNotificationFor } from '../lib/messages'
 import { FormValue } from '@island.is/application/types'
 import { accidentType } from '../lib/messages'
-import { AccidentTypeEnum } from '../types'
 import {
   isReportingOnBehalfOfChild,
   isReportingOnBehalfOfEmployee,
 } from './reportingUtils'
+import { AccidentTypeEnum, WhoIsTheNotificationForEnum } from './enums'
 
 export const getAccidentTypeOptions = (answers: FormValue) => {
   const options = [

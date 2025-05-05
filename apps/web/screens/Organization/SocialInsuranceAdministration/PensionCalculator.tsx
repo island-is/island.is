@@ -745,9 +745,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
 
                             {startYearOptions?.length > 0 && (
                               <Box className={styles.textMaxWidth}>
-                                <Text>
+                                <MarkdownText>
                                   {formatMessage(
-                                    translationStrings.startMonthAndYearDescription,
+                                    translationStrings.startMonthAndYearDescriptionMarkdown,
                                     {
                                       month:
                                         activeLocale !== 'en'
@@ -758,7 +758,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                       year: startYearOptions?.[2]?.label,
                                     },
                                   )}
-                                </Text>
+                                </MarkdownText>
                               </Box>
                             )}
 
@@ -1421,6 +1421,7 @@ PensionCalculator.getProps = async ({
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     defaultValues,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     dateOfCalculationsOptions,
     ...getThemeConfig(
       getOrganizationPage?.theme,

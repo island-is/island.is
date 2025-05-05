@@ -1,8 +1,10 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildDescriptionField,
   buildHiddenInput,
   buildMultiField,
+  buildPhoneField,
   buildRadioField,
   buildSubSection,
   buildTextField,
@@ -10,8 +12,8 @@ import {
 } from '@island.is/application/core'
 import { error, userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
+import { ApplicationType } from '../../../shared'
 import {
-  ApplicationType,
   checkIsActor,
   checkIsFreshman,
   Routes,
@@ -64,12 +66,10 @@ export const personalSubSection = buildSubSection({
             return userProfile?.email
           },
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'applicant.phoneNumber',
           title: userInformation.applicant.phone,
           width: 'half',
-          variant: 'tel',
-          format: '###-####',
           condition: (_1, _2, user) => {
             return !checkIsActor(user)
           },
@@ -163,6 +163,10 @@ export const personalSubSection = buildSubSection({
         }),
 
         // Validation for whether there are any schools open for admission depending on the application type selected above
+        buildCustomField({
+          component: 'UpdateExternalDataSchools',
+          id: 'updateExternalDataSchools',
+        }),
         buildHiddenInput({
           id: 'applicationType.isOpenForAdmissionFreshman',
           condition: (_, externalData) => {

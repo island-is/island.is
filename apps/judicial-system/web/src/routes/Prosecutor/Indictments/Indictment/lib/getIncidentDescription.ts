@@ -1,49 +1,45 @@
 import { IntlShape } from 'react-intl'
+import { applyCase } from 'beygla/addresses'
 
 import {
   formatDate,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { CrimeScene, IndictmentSubtype } from '@island.is/judicial-system/types'
+import { CrimeScene } from '@island.is/judicial-system/types'
 import {
+  Gender,
+  IndictmentCount,
   IndictmentCountOffense,
-  Maybe,
+  IndictmentSubtype,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'
-import { indictmentCount as strings } from '../IndictmentCount.strings'
+import { strings } from './getIncidentDescription.strings'
 
-const getIncidentDescriptionProps = ({
-  offenses,
-  formatMessage,
-}: {
-  offenses?: Maybe<Offense[]>
-  formatMessage: IntlShape['formatMessage']
-}) => {
-  if (!offenses || offenses.length === 0) {
+const getIncidentDescriptionProps = (
+  offenses: Offense[] = [],
+  gender: Gender,
+  formatMessage: IntlShape['formatMessage'],
+) => {
+  if (offenses.length === 0) {
     return undefined
   }
-  const reason = getIncidentDescriptionReason(offenses || [], formatMessage)
-  const isSpeeding = offenses?.some(
+  const reason = getIncidentDescriptionReason(offenses, gender, formatMessage)
+  const isSpeeding = offenses.some(
     (o) => o.offense === IndictmentCountOffense.SPEEDING,
   )
   return { reason, isSpeeding }
 }
 
-export const getIncidentDescription = ({
-  indictmentCount,
-  formatMessage,
-  crimeScene,
-  subtypesRecord,
-}: {
-  indictmentCount: TempIndictmentCount
-  formatMessage: IntlShape['formatMessage']
-  crimeScene?: CrimeScene
-  subtypesRecord?: Record<string, IndictmentSubtype[]>
-}) => {
+export const getIncidentDescription = (
+  indictmentCount: IndictmentCount,
+  gender: Gender,
+  crimeScene: CrimeScene,
+  formatMessage: IntlShape['formatMessage'],
+  subtypesRecord?: Record<string, IndictmentSubtype[]>,
+) => {
   const {
     offenses,
     vehicleRegistrationNumber,
@@ -51,9 +47,20 @@ export const getIncidentDescription = ({
     policeCaseNumber,
   } = indictmentCount
 
-  const incidentLocation = crimeScene?.place || '[Vettvangur]'
+  // The place where a crime was committed is not fully standardized.
+  // However, a common pattern is to have a street name followed by a town name, separated by a comma.
+  // The implementation below will apply the correct case to the street name and town name.
+  // It also handles a longer list of comma seperated values, such as "Eyrarvegur, Selfoss, Suðurland, Ísland".
+  // If applyCase cannot convert a substring to the correct case, it will return the original substring,
+  // leaving that part of the place unchanged.
+  const incidentLocation = crimeScene?.place
+    ? crimeScene.place
+        .split(',')
+        .map((str, idx) => applyCase(idx > 0 ? 'þgf' : 'þf', str))
+        .join(', ')
+    : '[Vettvangur]'
   const incidentDate = crimeScene?.date
-    ? formatDate(crimeScene.date, 'PPPP')?.replace('dagur,', 'daginn') || ''
+    ? formatDate(crimeScene.date, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
     : '[Dagsetning]'
 
   const vehicleRegistration =
@@ -79,17 +86,18 @@ export const getIncidentDescription = ({
     const hasOnlyOtherOffense =
       offenses?.length === 1 &&
       offenses[0].offense === IndictmentCountOffense.OTHER
-    
+
     if (hasOnlyOtherOffense) {
       return formatMessage(strings.incidentDescriptionShortAutofill, {
         incidentDate,
       })
     }
 
-    const incidentDescriptionProps = getIncidentDescriptionProps({
-      offenses,
+    const incidentDescriptionProps = getIncidentDescriptionProps(
+      offenses ?? undefined,
+      gender,
       formatMessage,
-    })
+    )
     if (!incidentDescriptionProps) {
       return ''
     }

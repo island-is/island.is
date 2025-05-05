@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
@@ -23,13 +24,20 @@ describe('IndictmentCountController - Update', () => {
   const indictmentCountToUpdate = { policeCaseNumber }
 
   let mockIndictmentCountModel: typeof IndictmentCount
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { indictmentCountModel, indictmentCountController } =
+    const { indictmentCountModel, indictmentCountController, sequelize } =
       await createTestingIndictmentCountModule()
 
     mockIndictmentCountModel = indictmentCountModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     givenWhenThen = async (
       caseId: string,
@@ -64,6 +72,9 @@ describe('IndictmentCountController - Update', () => {
       const mockUpdate = mockIndictmentCountModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1, [updatedIndictmentCount]])
 
+      const mockFindOne = mockIndictmentCountModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedIndictmentCount)
+
       then = await givenWhenThen(
         caseId,
         indictmentCountId,
@@ -77,6 +88,7 @@ describe('IndictmentCountController - Update', () => {
         {
           where: { id: indictmentCountId, caseId },
           returning: true,
+          transaction,
         },
       )
       expect(then.result).toBe(updatedIndictmentCount)

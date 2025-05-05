@@ -7,7 +7,6 @@ import {
 } from '../../../gen/fetch'
 import { Candidate, mapCandidate } from './candidate.dto'
 import { logger } from '@island.is/logging'
-import { getCollectionTypeFromNumber } from './collection.dto'
 
 export enum ListStatus {
   Active = 'active',
@@ -20,6 +19,7 @@ export enum ListStatus {
 export enum ListType {
   Parliamentary = 'alþingiskosning',
   Presidential = 'forsetakosning',
+  Municipal = 'sveitarstjornarkosning',
 }
 
 export interface ListBase {
@@ -57,6 +57,8 @@ export const getSlug = (id: number | string, type: string): string => {
   switch (type.toLowerCase()) {
     case ListType.Parliamentary:
       return `/umsoknir/maela-med-althingisframbodi?candidate=${id}`
+    case ListType.Municipal:
+      return `/umsoknir/maela-med-sveitarstjornarframbodi?candidate=${id}`
     default:
       return `/umsoknir/maela-med-frambodi?candidate=${id}`
   }

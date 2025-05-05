@@ -54,4 +54,14 @@ export const error = defineMessages({
     defaultMessage: 'Má ekki vera sá sami og umsækjandi',
     description: 'Error same as applicant',
   },
+  errorSchoolDuplicate: {
+    id: 'ss.application:error.errorSchoolDuplicate',
+    defaultMessage: 'Ekki má velja sama skóla',
+    description: 'Error school duplicate',
+  },
+  errorProgramDuplicate: {
+    id: 'ss.application:error.errorProgramDuplicate',
+    defaultMessage: 'Ekki má velja sömu braut',
+    description: 'Error program duplicate',
+  },
 })

@@ -29,7 +29,7 @@ export type TableRepeaterAnswers = {
   relation: string
 }
 
-export enum radioValidationExampleEnum {
+export enum RadioValidationExampleEnum {
   OPTION_1 = 'option1',
   OPTION_2 = 'option2',
   OPTION_3 = 'option3',

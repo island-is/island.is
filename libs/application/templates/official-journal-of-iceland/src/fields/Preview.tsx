@@ -4,6 +4,7 @@ import {
   Bullet,
   BulletList,
   Button,
+  DropdownMenu,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -36,6 +37,13 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
         ? 'committee'
         : 'regular',
   })
+
+  const parsedHtml = Buffer.from(
+    currentApplication.answers.advert?.html ?? '',
+    'base64',
+  ).toString('utf-8')
+
+  const fullHtml = `${parsedHtml}${signatureHtml}`
 
   const {
     fetchPdf,
@@ -100,15 +108,40 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   return (
     <Stack space={4}>
       <Box>
-        <Button
-          loading={pdfLoading}
-          icon="download"
-          iconType="outline"
-          variant="utility"
-          onClick={() => fetchPdf()}
-        >
-          {f(preview.buttons.fetchPdf)}
-        </Button>
+        <DropdownMenu
+          disclosure={
+            <Button
+              iconType="outline"
+              icon="download"
+              variant="utility"
+              loading={pdfLoading}
+              disabled={pdfLoading}
+            >
+              {f(preview.buttons.fetchPdf)}
+            </Button>
+          }
+          items={[
+            {
+              onClick: (e) => {
+                e.preventDefault()
+                fetchPdf()
+              },
+              title: f(preview.buttons.fetchPdf),
+            },
+            {
+              onClick: (e) => {
+                e.preventDefault()
+                fetchPdf({
+                  variables: {
+                    input: { showDate: false, id: application.id },
+                  },
+                })
+              },
+              title: f(preview.buttons.fetchPdfNoDate),
+            },
+          ]}
+          title={f(preview.buttons.fetchPdf)}
+        />
       </Box>
       <Box hidden={!hasError}>
         <Stack space={2}>
@@ -200,9 +233,7 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
         <AdvertPreview
           advertSubject={currentApplication.answers.advert?.title}
           advertType={currentApplication.answers.advert?.type?.title}
-          advertText={`${
-            currentApplication.answers.advert?.html ?? ''
-          }${signatureHtml}`}
+          advertText={fullHtml}
         />
       </Box>
     </Stack>

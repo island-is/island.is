@@ -45,6 +45,7 @@ TODO
 *.code-workspace
 
 # misc
+/.*-cache
 /.sass-cache
 /connect.lock
 /coverage
@@ -174,4 +175,4 @@ service-account.json
 
 # testing
 /coverage
-
+charts/bootstrap

@@ -1,5 +1,9 @@
 {
-  "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
+  "extends": [
+    "plugin:playwright/recommended",
+    "plugin:@nx/react",
+    "../../.eslintrc.json"
+  ],
   "ignorePatterns": ["!**/*"],
   "rules": {
     "@nx/enforce-module-boundaries": [
@@ -49,6 +53,10 @@
     },
     {
       "files": ["*.js", "*.jsx"],
+      "rules": {}
+    },
+    {
+      "files": ["e2e/**/*.{ts,js,tsx,jsx}"],
       "rules": {}
     }
   ]

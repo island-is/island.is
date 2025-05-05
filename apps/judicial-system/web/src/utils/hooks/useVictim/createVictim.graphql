@@ -1,0 +1,5 @@
+mutation CreateVictim($input: CreateVictimInput!) {
+  createVictim(input: $input) {
+    id
+  }
+}

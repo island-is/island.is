@@ -191,6 +191,7 @@ const OrganizationHomePage = ({
                   marginBottom={
                     index === organizationPage.slices.length - 1 ? 5 : 0
                   }
+                  params={{ isFrontpage: true }}
                 />
               )
             })}
@@ -344,6 +345,7 @@ Home.getProps = async ({ apolloClient, locale, query, organizationPage }) => {
     organization: getOrganization,
     namespace,
     showSearchInHeader: false,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(
       getOrganizationPage?.theme ?? 'landing_page',
       getOrganization ?? getOrganizationPage?.organization,

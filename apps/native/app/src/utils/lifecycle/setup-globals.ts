@@ -106,6 +106,7 @@ if (__DEV__) {
   ddconfig.nativeCrashReportEnabled = true
   ddconfig.site = 'EU'
   ddconfig.serviceName = 'mobile-app'
+  ddconfig.sessionSamplingRate = 10
 
   // initialize datadog rum
   DdSdkReactNative.initialize(ddconfig)

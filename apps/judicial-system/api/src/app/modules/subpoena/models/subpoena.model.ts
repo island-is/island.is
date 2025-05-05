@@ -16,7 +16,7 @@ export class Subpoena {
   modified?: string
 
   @Field(() => String, { nullable: true })
-  subpoenaId?: string
+  policeSubpoenaId?: string
 
   @Field(() => String, { nullable: true })
   defendantId?: string

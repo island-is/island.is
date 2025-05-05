@@ -11,7 +11,10 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { IndictmentCountOffense } from '@island.is/judicial-system/types'
+import {
+  hasTrafficViolationSubtype,
+  IndictmentCountOffense,
+} from '@island.is/judicial-system/types'
 
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
 import { UpdateOffenseDto } from './dto/updateOffense.dto'
@@ -38,18 +41,64 @@ export class IndictmentCountService {
     update: UpdateIndictmentCountDto,
     transaction?: Transaction,
   ): Promise<IndictmentCount> {
-    const promisedUpdate = transaction
-      ? this.indictmentCountModel.update(update, {
+    const updateWithTransaction = async (transaction: Transaction) => {
+      const policeCaseNumberSubtypes = update.policeCaseNumberSubtypes
+      const updatedSubtypes = update.indictmentCountSubtypes
+      if (!policeCaseNumberSubtypes || !updatedSubtypes) {
+        return this.indictmentCountModel.update(update, {
           where: { id: indictmentCountId, caseId },
           returning: true,
           transaction,
         })
-      : this.indictmentCountModel.update(update, {
-          where: { id: indictmentCountId, caseId },
-          returning: true,
-        })
+      }
 
-    const [numberOfAffectedRows, indictmentCounts] = await promisedUpdate
+      const isTrafficViolationSubtypePresent =
+        hasTrafficViolationSubtype(updatedSubtypes) ||
+        (policeCaseNumberSubtypes.length === 1 &&
+          hasTrafficViolationSubtype(policeCaseNumberSubtypes))
+
+      // if traffic violation subtype is not present we need to handle a cascading update
+      // for indictment count and offenses
+      const updatedIndictmentCount = !isTrafficViolationSubtypePresent
+        ? {
+            ...update,
+            vehicleRegistrationNumber: null,
+            recordedSpeed: null,
+            speedLimit: null,
+            lawsBroken: [], // currently we only support traffic violation laws broken
+            legalArguments: '', // currently we set traffic violation legal arguments based on laws broken
+          }
+        : update
+
+      const hasOffense = await this.offenseModel.findOne({
+        where: { indictmentCountId },
+      })
+      if (!isTrafficViolationSubtypePresent && hasOffense) {
+        // currently offenses only exist for traffic violation indictment subtype.
+        // if we support other offenses per subtype in the future we have to take the subtype into account
+        await this.offenseModel.destroy({
+          where: { indictmentCountId },
+          transaction,
+        })
+      }
+
+      return this.indictmentCountModel.update(updatedIndictmentCount, {
+        where: { id: indictmentCountId, caseId },
+        returning: true,
+        transaction,
+      })
+    }
+
+    const updateWithInternalTransaction = () =>
+      this.sequelize.transaction(async (transaction) =>
+        updateWithTransaction(transaction),
+      )
+
+    const promisedUpdate = transaction
+      ? updateWithTransaction(transaction)
+      : updateWithInternalTransaction()
+
+    const [numberOfAffectedRows] = await promisedUpdate
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
@@ -62,7 +111,27 @@ export class IndictmentCountService {
       )
     }
 
-    return indictmentCounts[0]
+    const indictmentCount = await this.indictmentCountModel.findOne({
+      where: { id: indictmentCountId, caseId },
+      include: [
+        {
+          model: Offense,
+          as: 'offenses',
+          required: false,
+          order: [['created', 'ASC']],
+          separate: true,
+        },
+      ],
+      transaction,
+    })
+
+    if (!indictmentCount) {
+      throw new InternalServerErrorException(
+        `Could not find indictment count ${indictmentCountId} of case ${caseId}`,
+      )
+    }
+
+    return indictmentCount
   }
 
   async delete(caseId: string, indictmentCountId: string): Promise<boolean> {

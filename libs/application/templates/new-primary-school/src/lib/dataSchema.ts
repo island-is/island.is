@@ -127,7 +127,32 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.siblingsRequired,
     }),
-  expectedStartDate: z.string(),
+  startingSchool: z
+    .object({
+      expectedStartDate: z.string(),
+      temporaryStay: z.string().min(1).optional(),
+      expectedEndDate: z.string().optional(),
+    })
+    .refine(
+      ({ expectedStartDate, expectedEndDate, temporaryStay }) =>
+        !(
+          temporaryStay === YES &&
+          expectedEndDate &&
+          new Date(expectedStartDate) > new Date(expectedEndDate)
+        ),
+      {
+        path: ['expectedEndDate'],
+        params: errorMessages.expectedEndDateMessage,
+      },
+    )
+    .refine(
+      ({ expectedEndDate, temporaryStay }) =>
+        !(temporaryStay === YES && !expectedEndDate),
+      {
+        path: ['expectedEndDate'],
+        params: errorMessages.expectedEndDateRequired,
+      },
+    ),
   languages: z
     .object({
       languageEnvironment: z.string(),
@@ -199,30 +224,6 @@ export const dataSchema = z.object({
       },
       {
         path: ['guardianRequiresInterpreter'],
-      },
-    ),
-  freeSchoolMeal: z
-    .object({
-      acceptFreeSchoolLunch: z.enum([YES, NO]),
-      hasSpecialNeeds: z.string().optional(),
-      specialNeedsType: z.string().optional().nullable(),
-    })
-    .refine(
-      ({ acceptFreeSchoolLunch, hasSpecialNeeds }) =>
-        acceptFreeSchoolLunch === YES
-          ? !!hasSpecialNeeds && hasSpecialNeeds.length > 0
-          : true,
-      {
-        path: ['hasSpecialNeeds'],
-      },
-    )
-    .refine(
-      ({ acceptFreeSchoolLunch, hasSpecialNeeds, specialNeedsType }) =>
-        acceptFreeSchoolLunch === YES && hasSpecialNeeds === YES
-          ? !!specialNeedsType && specialNeedsType.length > 0
-          : true,
-      {
-        path: ['specialNeedsType'],
       },
     ),
   allergiesAndIntolerances: z

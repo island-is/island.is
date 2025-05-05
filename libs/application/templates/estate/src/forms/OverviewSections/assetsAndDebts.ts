@@ -15,7 +15,7 @@ import {
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
 import { EstateTypes } from '../../lib/constants'
-import { customCurrencyFormat } from '../../lib/utils'
+import { customCurrencyFormat, valueToNumber } from '../../lib/utils'
 import { getSumFromAnswers } from '../../utils/getSumFromAnswers'
 import { getMarketValueShare } from '../../utils/getMarketValueShare'
 type EstateSchema = zinfer<typeof estateSchema>
@@ -29,7 +29,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'estateAssetsCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -57,7 +56,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateAssetsTotal',
     title: m.total,
-    description: ({ answers }: Application) => {
+    description: ({ answers }) => {
       const total = getMarketValueShare(answers)
       return total
     },
@@ -80,23 +79,19 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'overviewInventory',
     title: m.inventoryTextField,
-    description: (application: Application) =>
-      getValueViaPath<string>(application.answers, 'inventory.info'),
+    description: ({ answers }) => getValueViaPath(answers, 'inventory.info'),
     titleVariant: 'h4',
     space: 'gutter',
-    condition: (answers) =>
-      getValueViaPath<string>(answers, 'inventory.info') !== '',
+    condition: (answers) => getValueViaPath(answers, 'inventory.info') !== '',
   }),
   buildDescriptionField({
     id: 'overviewInventoryValue',
     title: m.inventoryValueTitle,
-    description: (application: Application) => {
-      const value =
-        getValueViaPath<string>(application.answers, 'inventory.value') ?? '0'
-      return formatCurrency(value)
+    description: ({ answers }) => {
+      const value = getValueViaPath<string>(answers, 'inventory.value')
+      return formatCurrency(value ?? '0')
     },
-    condition: (answers) =>
-      getValueViaPath<string>(answers, 'inventory.value') !== '',
+    condition: (answers) => getValueViaPath(answers, 'inventory.value') !== '',
     titleVariant: 'h4',
     marginBottom: 'gutter',
     space: 'gutter',
@@ -106,8 +101,7 @@ export const overviewAssetsAndDebts = [
     description: m.notFilledOutItalic,
     marginTop: [3],
     marginBottom: [3],
-    condition: (answers) =>
-      getValueViaPath<string>(answers, 'inventory.value') === '',
+    condition: (answers) => getValueViaPath(answers, 'inventory.value') === '',
   }),
   buildDividerField({}),
   buildDescriptionField({
@@ -118,7 +112,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'estateVehicleCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -145,7 +138,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateVehicleTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateAsset>(
         answers,
         'estate.vehicles',
@@ -170,7 +163,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'estateGunsCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -195,7 +187,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateGunsTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateAsset>(
         answers,
         'estate.guns',
@@ -220,7 +212,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'bankAccountsCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -232,7 +223,10 @@ export const overviewAssetsAndDebts = [
             title: formatBankInfo(account.accountNumber ?? ''),
             description: [
               `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
-                account.balance ?? '0',
+                (
+                  valueToNumber(account.balance) +
+                  valueToNumber(account.exchangeRateOrInterest)
+                ).toString() ?? '0',
               )}`,
             ],
           }),
@@ -242,17 +236,17 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'bankAccountsTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateSchema['bankAccounts']>(
         answers,
         'bankAccounts',
-        'balance',
+        'accountTotal',
       ),
     condition: (answers) =>
       !!getSumFromAnswers<EstateSchema['bankAccounts']>(
         answers,
         'bankAccounts',
-        'balance',
+        'accountTotal',
       ),
     titleVariant: 'h4',
   }),
@@ -276,7 +270,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'claimsCards',
       condition: (answers) =>
         getValueViaPath(answers, 'selectedEstate') ===
@@ -301,7 +294,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'claimsTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
     condition: (answers) =>
       !!getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
@@ -327,7 +320,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'stocksCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -363,7 +355,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'stocksTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateSchema['stocks']>(answers, 'stocks', 'value'),
     condition: (answers) =>
       !!getSumFromAnswers<EstateSchema['stocks']>(answers, 'stocks', 'value'),
@@ -378,7 +370,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'otherAssetsCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -402,7 +393,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'otherAssetsTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateSchema['otherAssets']>(
         answers,
         'otherAssets',
@@ -426,8 +417,8 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'overviewMoneyAndDeposit',
     title: m.moneyAndDepositText,
-    description: (application: Application) =>
-      getValueViaPath<string>(application.answers, 'moneyAndDeposit.info'),
+    description: ({ answers }) =>
+      getValueViaPath<string>(answers, 'moneyAndDeposit.info'),
     titleVariant: 'h4',
     space: 'gutter',
     condition: (answers) =>
@@ -436,10 +427,9 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'overviewMoneyAndDepositValue',
     title: m.moneyAndDepositValue,
-    description: (application: Application) => {
+    description: ({ answers }) => {
       const value =
-        getValueViaPath<string>(application.answers, 'moneyAndDeposit.value') ??
-        '0'
+        getValueViaPath<string>(answers, 'moneyAndDeposit.value') ?? '0'
 
       return formatCurrency(value)
     },
@@ -467,7 +457,6 @@ export const overviewAssetsAndDebts = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'debtsCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -491,7 +480,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'debtsTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
+    description: ({ answers }) =>
       getSumFromAnswers<EstateSchema['debts']>(answers, 'debts', 'balance'),
     condition: (answers) =>
       !!getSumFromAnswers<EstateSchema['debts']>(answers, 'debts', 'balance'),

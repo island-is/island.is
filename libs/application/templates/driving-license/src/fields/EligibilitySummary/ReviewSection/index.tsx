@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
-import { formatText, coreMessages } from '@island.is/application/core'
+import { coreMessages } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
@@ -32,7 +32,6 @@ type ReviewSectionProps = {
 }
 
 const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
-  application,
   step: { state, description, title, daysOfResidency },
 }) => {
   const { formatMessage } = useLocale()
@@ -78,14 +77,12 @@ const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
         flexDirection={'row'}
         justifyContent="spaceBetween"
       >
-        <Text variant="h3">
-          {formatText(title, application, formatMessage)}
-        </Text>
+        <Text variant="h3">{formatMessage(title)}</Text>
         {state === ReviewSectionState.complete && (
           <Box pointerEvents="none">
             <button type="button" className={styles.container}>
               <Text variant="eyebrow" as="span">
-                {formatText(m.externalDataComplete, application, formatMessage)}
+                {formatMessage(m.externalDataComplete)}
               </Text>
             </button>
           </Box>
@@ -93,18 +90,14 @@ const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
         {state === ReviewSectionState.requiresAction && (
           <Box pointerEvents="none" style={{ whiteSpace: 'nowrap' }}>
             <Tag variant="red">
-              {formatText(
-                coreMessages.tagsRequiresAction,
-                application,
-                formatMessage,
-              )}
+              {formatMessage(coreMessages.tagsRequiresAction)}
             </Tag>
           </Box>
         )}
       </Box>
       <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
         <Text marginTop={1} variant="default">
-          {formatText(description, application, formatMessage)}
+          {formatMessage(description)}
         </Text>
         {showLocalRequirementDays && (
           <Text

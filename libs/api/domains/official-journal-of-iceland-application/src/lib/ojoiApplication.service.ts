@@ -1,5 +1,6 @@
 import {
   CaseActionEnum,
+  GetApplicationAdvertTemplateAdvertTypeEnum,
   OfficialJournalOfIcelandApplicationClientService,
 } from '@island.is/clients/official-journal-of-iceland/application'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
@@ -233,6 +234,10 @@ export class OfficialJournalOfIcelandApplicationService {
     )
   }
 
+  async getMyUserInfo(user: User) {
+    return this.ojoiApplicationService.getMyUserInfo(user)
+  }
+
   async getApplicationCase(
     id: string,
     user: User,
@@ -268,6 +273,7 @@ export class OfficialJournalOfIcelandApplicationService {
       const data = await this.ojoiApplicationService.getPdf(
         {
           id: input.id,
+          showDate: input.showDate,
         },
         user,
       )
@@ -290,7 +296,9 @@ export class OfficialJournalOfIcelandApplicationService {
     input: GetAdvertTemplateInput,
     user: User,
   ): Promise<OJOIApplicationAdvertTemplateResponse> {
-    const advertType = mapTemplateTypeEnumToLiteral(input.type)
+    const advertType = mapTemplateTypeEnumToLiteral(
+      input.type,
+    ) as GetApplicationAdvertTemplateAdvertTypeEnum
 
     if (!advertType) {
       //Shouldn't happen

@@ -9,42 +9,19 @@ import {
   GridRow,
   Button,
   Text,
-  InputBackgroundColor,
   Input,
 } from '@island.is/island-ui/core'
-import { Answers } from '../../types'
 import { m } from '../../lib/messages'
 import * as styles from '../styles.css'
-import { MessageDescriptor } from 'react-intl'
 import { useLocale } from '@island.is/localization'
+import { Field, Props } from './utils'
+import { ErrorValue } from '../../types'
 
-type Field = {
-  id: string
-  title: MessageDescriptor | string
-  placeholder?: string
-  format?: string
-  backgroundColor?: InputBackgroundColor
-  currency?: boolean
-  readOnly?: boolean
-  type?: 'text' | 'email' | 'number' | 'tel'
-}
-
-type Props = {
-  field: {
-    props: {
-      fields: Field[]
-      repeaterButtonText: string
-      repeaterHeaderText: string
-      sumField: string
-      currency: boolean
-    }
-  }
-}
-
-const valueKeys = ['rateOfExchange', 'faceValue']
+const stocksValueKeys = ['rateOfExchange', 'faceValue']
+const bankAccountsValueKeys = ['balance', 'exchangeRateOrInterest']
 
 export const TextFieldsRepeater: FC<
-  React.PropsWithChildren<FieldBaseProps<Answers> & Props>
+  React.PropsWithChildren<FieldBaseProps & Props>
 > = ({ field, errors }) => {
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
@@ -103,26 +80,24 @@ export const TextFieldsRepeater: FC<
     }
   }, [fields.length, handleAddRepeaterFields])
 
-  const updateValue = (fieldIndex: string) => {
+  const updateStocksValue = (fieldIndex: string) => {
     const stockValues: { faceValue?: string; rateOfExchange?: string } =
       getValues(fieldIndex)
 
-    const faceValue = stockValues?.faceValue
-    const rateOfExchange = stockValues?.rateOfExchange
+    const faceValue = parseFloat(
+      stockValues?.faceValue?.replace(/[^\d.]/g, '') || '0',
+    )
+    const rateOfExchange = parseFloat(
+      stockValues?.rateOfExchange?.replace(/[^\d.]/g, '') || '0',
+    )
 
-    const a = faceValue?.replace(/[^\d.]/g, '') || '0'
-    const b = rateOfExchange?.replace(/[^\d.]/g, '') || '0'
-
-    const aVal = parseFloat(a)
-    const bVal = parseFloat(b)
-
-    if (!aVal || !bVal) {
+    if (!faceValue || !rateOfExchange) {
       setValue(`${fieldIndex}.value`, '')
       forceUpdate()
       return
     }
 
-    const total = aVal * bVal
+    const total = faceValue * rateOfExchange
     const totalString = total.toFixed(0)
 
     setValue(`${fieldIndex}.value`, totalString)
@@ -134,8 +109,22 @@ export const TextFieldsRepeater: FC<
     forceUpdate()
   }
 
+  const updateBankAccountTotalValue = (fieldIndex: string) => {
+    const bankAccountValues = getValues(fieldIndex)
+    const balance = bankAccountValues?.balance.replace(/[^\d.]/g, '') || '0'
+    const exchangeRateOrInterest =
+      bankAccountValues?.exchangeRateOrInterest.replace(/[^\d.]/g, '') || '0'
+
+    const accountTotal =
+      parseFloat(balance) + parseFloat(exchangeRateOrInterest)
+    setValue(`${fieldIndex}.accountTotal`, accountTotal ?? '0')
+    forceUpdate()
+    calculateTotal()
+  }
+
   return (
     <Box>
+      {/* All types of fields */}
       {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`
 
@@ -146,6 +135,7 @@ export const TextFieldsRepeater: FC<
             marginTop={2}
             hidden={repeaterField.initial}
           >
+            {/* Remove field button */}
             {fields.length > 1 && (
               <>
                 <Text variant="h4" marginBottom={2}>
@@ -219,13 +209,18 @@ export const TextFieldsRepeater: FC<
                       readOnly={field.readOnly}
                       type={field.type}
                       error={
-                        !!errors && errors[id] && (errors[id] as any)[index]
-                          ? (errors[id] as any)[index][field.id]
+                        !!errors &&
+                        errors[id] &&
+                        (errors[id] as ErrorValue)[index]
+                          ? (errors[id] as ErrorValue)[index][field.id]
                           : undefined
                       }
                       onChange={() => {
-                        if (valueKeys.includes(field.id)) {
-                          updateValue(fieldIndex)
+                        if (stocksValueKeys.includes(field.id)) {
+                          updateStocksValue(fieldIndex)
+                        }
+                        if (bankAccountsValueKeys.includes(field.id)) {
+                          updateBankAccountTotalValue(fieldIndex)
                         }
                         if (props.sumField === field.id) {
                           calculateTotal()
@@ -239,6 +234,8 @@ export const TextFieldsRepeater: FC<
           </Box>
         )
       })}
+
+      {/* Total field */}
       {!!fields.length && props.sumField && (
         <Box marginTop={5} marginBottom={3}>
           <GridRow>
@@ -270,6 +267,8 @@ export const TextFieldsRepeater: FC<
           </GridRow>
         </Box>
       )}
+
+      {/* Add field button */}
       <Box marginTop={1}>
         <Button
           variant="text"

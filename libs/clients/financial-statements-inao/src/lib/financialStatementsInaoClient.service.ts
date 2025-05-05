@@ -32,6 +32,11 @@ import {
 } from './utils/filenames'
 import { lookup, LookupType } from './utils/lookup'
 
+type FinancialLimit = {
+  year: number
+  limit: number
+}
+
 @Injectable()
 export class FinancialStatementsInaoClientService {
   constructor(
@@ -84,11 +89,11 @@ export class FinancialStatementsInaoClientService {
   }
 
   async getUserClientType(nationalId: string): Promise<ClientType | null> {
-    const select = '$select=accountnumber,name,star_type'
-    const filter = `$filter=accountnumber eq '${encodeURIComponent(
+    const select = '$select=star_nationalid,star_name,star_type'
+    const filter = `$filter=star_nationalid eq '${encodeURIComponent(
       nationalId,
     )}'`
-    const url = `${this.basePath}/accounts?${select}&${filter}`
+    const url = `${this.basePath}/star_clients?${select}&${filter}`
     const data = await this.getData(url)
 
     if (!data || !data.value) return null
@@ -112,11 +117,11 @@ export class FinancialStatementsInaoClientService {
   }
 
   async getClientIdByNationalId(nationalId: string): Promise<string | null> {
-    const select = '$select=accountnumber,name,star_type'
-    const filter = `$filter=accountnumber eq '${encodeURIComponent(
+    const select = '$select=star_nationalid,star_name,star_type'
+    const filter = `$filter=star_nationalid eq '${encodeURIComponent(
       nationalId,
     )}'`
-    const url = `${this.basePath}/accounts?${select}&${filter}`
+    const url = `${this.basePath}/star_clients?${select}&${filter}`
     const data = await this.getData(url)
 
     if (!data || !data.value) return null
@@ -133,12 +138,14 @@ export class FinancialStatementsInaoClientService {
   }
 
   async createClient(client: Client, clientType: ClientTypes) {
-    const url = `${this.basePath}/accounts`
+    const url = `${this.basePath}/star_clients`
 
     const body = {
-      accountnumber: client.nationalId,
+      star_nationalid: client.nationalId,
       star_type: clientType,
-      name: client.name,
+      star_name: client.name,
+      star_phone: client.phone,
+      star_email: client.email,
     }
 
     await this.fetch(url, {
@@ -216,6 +223,26 @@ export class FinancialStatementsInaoClientService {
     return null
   }
 
+  async getAllClientFinancialLimits(
+    clientType: number,
+  ): Promise<Array<FinancialLimit> | null> {
+    const select = '$select=star_value,star_year'
+    const filter = `$filter=star_client_type eq ${clientType}`
+    const url = `${this.basePath}/star_clientfinanciallimits?${select}&${filter}`
+    const data = await this.getData(url)
+
+    if (!data || !data.value) return null
+
+    const financialLimits: FinancialLimit[] = data.value.map((x: any) => {
+      return {
+        year: x.star_year,
+        limit: x.star_value,
+      }
+    })
+
+    return financialLimits
+  }
+
   async getFinancialTypes(): Promise<FinancialType[] | null> {
     const select =
       '$select=star_name,star_code,star_numeric,star_istaxinformation,star_supertype'
@@ -238,15 +265,12 @@ export class FinancialStatementsInaoClientService {
     input: PersonalElectionSubmitInput,
   ): Promise<boolean> {
     const financialValues: LookupType[] = []
-
     if (!input.noValueStatement && input.values) {
       const financialTypes = await this.getFinancialTypes()
-
       if (!financialTypes) {
         this.logger.error('Failed to get financial types')
         return false
       }
-
       const list: KeyValue[] = []
       list.push({ key: 100, value: input.values.contributionsByLegalEntities })
       list.push({ key: 101, value: input.values.individualContributions })

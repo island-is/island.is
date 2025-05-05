@@ -12,6 +12,10 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import {
+  AuditedAction,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 import {
   messageEndpoint,
@@ -39,17 +43,18 @@ import { SubpoenaService } from './subpoena.service'
 export class InternalSubpoenaController {
   constructor(
     private readonly subpoenaService: SubpoenaService,
+    private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @UseGuards(PoliceSubpoenaExistsGuard)
-  @Patch('subpoena/:subpoenaId')
+  @Patch('subpoena/:policeSubpoenaId')
   updateSubpoena(
-    @Param('subpoenaId') subpoenaId: string,
+    @Param('policeSubpoenaId') policeSubpoenaId: string,
     @CurrentSubpoena() subpoena: Subpoena,
     @Body() update: UpdateSubpoenaDto,
   ): Promise<Subpoena> {
-    this.logger.debug(`Updating subpoena by subpoena id ${subpoenaId}`)
+    this.logger.debug(`Updating subpoena by police subpoena id ${policeSubpoenaId}`)
 
     return this.subpoenaService.update(subpoena, update)
   }
@@ -82,11 +87,33 @@ export class InternalSubpoenaController {
       `Delivering subpoena ${subpoenaId} pdf to the police centralized file service for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return this.subpoenaService.deliverSubpoenaToPolice(
-      theCase,
-      defendant,
-      subpoena,
-      deliverDto.user,
+    // callback function to fetch the updated subpoena fields after delivering subpoena to police
+    const getDeliveredSubpoenaFileToPoliceLogDetails = async (
+      results: DeliverResponse,
+    ) => {
+      const currentSubpoena = await this.subpoenaService.findById(subpoena.id)
+      return {
+        deliveredToPolice: results.delivered,
+        subpoenaId: subpoena.id,
+        subpoenaCreated: subpoena.created,
+        policeSubpoenaId: currentSubpoena.policeSubpoenaId,
+        subpoenaHash: currentSubpoena.hash,
+        subpoenaDeliveredToPolice: new Date(),
+        indictmentHash: theCase.indictmentHash,
+      }
+    }
+
+    return this.auditTrailService.audit(
+      deliverDto.user.id,
+      AuditedAction.DELIVER_SUBPOENA_TO_POLICE,
+      this.subpoenaService.deliverSubpoenaToPolice(
+        theCase,
+        defendant,
+        subpoena,
+        deliverDto.user,
+      ),
+      caseId,
+      getDeliveredSubpoenaFileToPoliceLogDetails,
     )
   }
 

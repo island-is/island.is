@@ -17,7 +17,13 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiAcceptedResponse,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger'
 
 import {
   DokobitError,
@@ -39,6 +45,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseOrigin,
   CaseState,
   CaseType,
   indictmentCases,
@@ -49,6 +56,7 @@ import {
 
 import { nowFactory } from '../../factories'
 import {
+  adminRule,
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
@@ -101,6 +109,7 @@ import {
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { Case } from './models/case.model'
+import { CaseStatistics } from './models/caseStatistics.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
@@ -269,6 +278,22 @@ export class CaseController {
       throw new BadRequestException(
         'Cannot merge case that is not in a received state',
       )
+    }
+
+    // If the case comes from LOKE then we don't want to allow the removal or
+    // moving around of the first police case number as that coupled with the
+    // case id is the identifier used to update the case in LOKE.
+    if (theCase.origin === CaseOrigin.LOKE && update.policeCaseNumbers) {
+      const mainPoliceCaseNumber = theCase.policeCaseNumbers[0]
+
+      if (
+        mainPoliceCaseNumber &&
+        update.policeCaseNumbers?.indexOf(mainPoliceCaseNumber) !== 0
+      ) {
+        throw new BadRequestException(
+          `Cannot remove or move main police case number ${mainPoliceCaseNumber}`,
+        )
+      }
     }
 
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
@@ -636,6 +661,51 @@ export class CaseController {
     JwtAuthUserGuard,
     RolesGuard,
     CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+  )
+  @RolesRules(publicProsecutorStaffRule)
+  @Get('case/:caseId/rulingSentToPrisonAdmin')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      'Gets the ruling sent to prison admin file for an existing case as a pdf document',
+  })
+  async getRulingSentToPrisonAdminPdf(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the ruling sent to prison admin pdf for indictment case ${caseId} as a pdf document`,
+    )
+
+    // TODO: Clarity on if/when we should prevent this PDF from being created
+    // Like if certain defendants aren't in the right state in terms of
+    // being sent to prison admin. To start with lets assume we surely
+    // don't want to make this PDF if none of the defendants have been
+    // sent to the prison admin.
+    const isSentToPrisonAdmin = theCase.defendants?.some(
+      (defendant) => defendant.isSentToPrisonAdmin,
+    )
+
+    if (!isSentToPrisonAdmin) {
+      throw new BadRequestException(
+        `Cannot generate a ruling sent to prison admin pdf for case ${caseId} as none of the defendants have been sent to prison admin
+        `,
+      )
+    }
+
+    const pdf = await this.pdfService.getRulingSentToPrisonAdminPdf(theCase)
+
+    res.end(pdf)
+  }
+
+  @UseGuards(
+    JwtAuthUserGuard,
+    RolesGuard,
+    CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
@@ -830,5 +900,25 @@ export class CaseController {
     this.logger.debug(`Creating a court case for case ${caseId}`)
 
     return this.caseService.createCourtCase(theCase, user)
+  }
+
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @RolesRules(adminRule)
+  @Get('cases/statistics')
+  @ApiOkResponse({
+    type: CaseStatistics,
+    description: 'Gets court centered statistics for cases',
+  })
+  @ApiQuery({ name: 'fromDate', required: false, type: String })
+  @ApiQuery({ name: 'toDate', required: false, type: String })
+  @ApiQuery({ name: 'institutionId', required: false, type: String })
+  getStatistics(
+    @Query('fromDate') fromDate?: Date,
+    @Query('toDate') toDate?: Date,
+    @Query('institutionId') institutionId?: string,
+  ): Promise<CaseStatistics> {
+    this.logger.debug('Getting statistics for all cases')
+
+    return this.caseService.getCaseStatistics(fromDate, toDate, institutionId)
   }
 }

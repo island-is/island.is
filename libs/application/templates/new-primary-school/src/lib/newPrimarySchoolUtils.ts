@@ -20,8 +20,8 @@ import {
   ApplicationType,
   LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
+  SchoolType,
 } from './constants'
-
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -83,21 +83,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'languages.guardianRequiresInterpreter',
   ) as YesOrNo
-
-  const acceptFreeSchoolLunch = getValueViaPath(
-    answers,
-    'freeSchoolMeal.acceptFreeSchoolLunch',
-  ) as YesOrNo
-
-  const hasSpecialNeeds = getValueViaPath(
-    answers,
-    'freeSchoolMeal.hasSpecialNeeds',
-  ) as YesOrNo
-
-  const specialNeedsType = getValueViaPath(
-    answers,
-    'freeSchoolMeal.specialNeedsType',
-  ) as string
 
   const hasFoodAllergiesOrIntolerances = getValueViaPath(
     answers,
@@ -172,7 +157,23 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const expectedStartDate = getValueViaPath(
     answers,
-    'expectedStartDate',
+    'startingSchool.expectedStartDate',
+  ) as string
+
+  const expectedStartDateHiddenInput = getValueViaPath(
+    answers,
+    'startingSchool.expectedStartDateHiddenInput',
+  )
+
+  const temporaryStay = getValueViaPath(
+    answers,
+    'startingSchool.temporaryStay',
+    NO,
+  ) as YesOrNo
+
+  const expectedEndDate = getValueViaPath(
+    answers,
+    'startingSchool.expectedEndDate',
   ) as string
 
   const schoolMunicipality = getValueViaPath(
@@ -180,7 +181,20 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'newSchool.municipality',
   ) as string
 
-  const selectedSchool = getValueViaPath(answers, 'newSchool.school') as string
+  const selectedSchoolIdAndType = getValueViaPath(
+    answers,
+    'newSchool.school',
+  ) as string
+
+  // School type is piggybacked on the value like 'id::type'
+  const selectedSchool = selectedSchoolIdAndType
+    ? selectedSchoolIdAndType.split('::')[0]
+    : ''
+
+  const selectedSchoolType = getValueViaPath(
+    answers,
+    'newSchool.type',
+  ) as SchoolType
 
   const currentNurseryMunicipality = getValueViaPath(
     answers,
@@ -212,9 +226,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     preferredLanguage,
     signLanguage,
     guardianRequiresInterpreter,
-    acceptFreeSchoolLunch,
-    hasSpecialNeeds,
-    specialNeedsType,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,
@@ -230,8 +241,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     caseManagerEmail,
     requestingMeeting,
     expectedStartDate,
+    expectedStartDateHiddenInput,
+    temporaryStay,
+    expectedEndDate,
     schoolMunicipality,
     selectedSchool,
+    selectedSchoolType,
     currentNurseryMunicipality,
     currentNursery,
     applyForNeighbourhoodSchool,
@@ -273,6 +288,12 @@ export const getApplicationExternalData = (
     '',
   ) as string
 
+  const applicantMunicipalityCode = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.address.municipalityCode',
+    '',
+  ) as string
+
   const childInformation = getValueViaPath(
     externalData,
     'childInformation.data',
@@ -303,6 +324,7 @@ export const getApplicationExternalData = (
     applicantAddress,
     applicantPostalCode,
     applicantCity,
+    applicantMunicipalityCode,
     childInformation,
     childGradeLevel,
     primaryOrgId,
@@ -471,4 +493,63 @@ export const getGenderMessage = (application: Application) => {
   const selectedChild = getSelectedChild(application)
   const gender = formatGender(selectedChild?.genderCode)
   return gender
+}
+
+/*
+ This function is used to get the municipality code based on the school unit id for private owned shcools.
+ This should be removed when Frigg starts to return the private owned in the same way as the public schools, under the municipality.
+*/
+export const getMunicipalityCodeBySchoolUnitId = (schoolUnitId: string) => {
+  const municipalities = [
+    {
+      // Kopavogur
+      municipalityCode: '1000',
+      schools: [
+        'G-2297-A', // Arnarskóli
+        'G-2396-A', // Waldorfskólinn Lækjarbotnum
+      ],
+    },
+    {
+      // Hafnarfjordur
+      municipalityCode: '1400',
+      schools: [
+        'G-2235-A', // Barnaskóli Hjallastefnunnar
+        'G-2236-A', // NÚ - Framsýn menntun
+      ],
+    },
+    {
+      // Reykjavik
+      municipalityCode: '0000',
+      schools: [
+        'G-1170-A', // Barnaskóli Hjallastefnunnar
+        'G-1425-A', // Waldorfskólinn Sólstafir
+        'G-1157-B', // Landakotsskóli - Grunnskólastig-IBprogram
+        'G-1157-A', // Landakotsskóli - Grunnskólastig-íslenskubraut
+        'G-1189-A', // Tjarnarskóli
+        'G-1249-A', // Skóli Ísaks Jónssonar
+      ],
+    },
+    {
+      // Gardabaer
+      municipalityCode: '1300',
+      schools: [
+        'G-2247-A', // Barnaskóli Hjallastefnunnar
+        'G-2250-B', // Alþjóðaskólinn á Íslandi - Bilingual-program
+        'G-2250-A', // Alþjóðaskólinn á Íslandi - IB-program
+      ],
+    },
+    {
+      // Akureyri
+      municipalityCode: '6000',
+      schools: [
+        'G-5120-A', // Ásgarður - skóli í skýjunum
+      ],
+    },
+  ]
+
+  const municipalityCode = municipalities.find((municipality) =>
+    municipality.schools.includes(schoolUnitId),
+  )?.municipalityCode
+
+  return municipalityCode
 }

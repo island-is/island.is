@@ -2,10 +2,9 @@ import {
   AlertMessage,
   AlertMessageProps,
   Box,
-  Bullet,
-  BulletList,
   Button,
   Inline,
+  LinkV2,
   SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
@@ -46,6 +45,11 @@ export const FormScreen = ({
     : formatMessage(general.warningTitle)
 
   if (!title && !intro && !children) return null
+
+  const path = window.location.origin
+  const helpHref = path.includes('localhost')
+    ? `http://localhost:4200/stjornartidindi/leidbeiningar`
+    : `${path}/stjornartidindi/leidbeiningar`
 
   return (
     <>
@@ -127,7 +131,14 @@ export const FormScreen = ({
           space={2}
         />
       ) : (
-        <Box className={styles.childrenWrapper}>{children}</Box>
+        <Box>
+          <Box className={styles.childrenWrapper}>{children}</Box>
+          <LinkV2 href={helpHref}>
+            <Button variant="text" size="small" icon="arrowForward">
+              Skoða hjálparsíðu
+            </Button>
+          </LinkV2>
+        </Box>
       )}
     </>
   )

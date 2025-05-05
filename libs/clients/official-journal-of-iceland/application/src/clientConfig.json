@@ -1,9 +1,72 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/api/v1/applications/adverts": {
+      "get": {
+        "operationId": "getAdvertCopies",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "example": 1,
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "example": 10,
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/applications/my-user-info": {
+      "get": {
+        "operationId": "getMyUserInfo",
+        "summary": "",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMyUserInfoResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }]
+      }
+    },
     "/api/v1/applications/{id}/price": {
       "get": {
         "operationId": "getPrice",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -21,12 +84,14 @@
               }
             }
           }
-        }
+        },
+        "security": [{ "bearer": [] }]
       }
     },
     "/api/v1/applications/{id}": {
       "get": {
         "operationId": "getApplication",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -46,12 +111,14 @@
               }
             }
           }
-        }
+        },
+        "security": [{ "bearer": [] }]
       }
     },
     "/api/v1/applications/{id}/post": {
       "post": {
         "operationId": "postApplication",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -60,12 +127,14 @@
             "schema": { "type": "string" }
           }
         ],
-        "responses": { "201": { "description": "" } }
+        "responses": { "200": { "description": "" } },
+        "security": [{ "bearer": [] }]
       }
     },
     "/api/v1/applications/{id}/comments": {
       "get": {
         "operationId": "getComments",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -75,7 +144,7 @@
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -83,10 +152,12 @@
               }
             }
           }
-        }
+        },
+        "security": [{ "bearer": [] }]
       },
       "post": {
         "operationId": "postComment",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -105,7 +176,8 @@
             }
           }
         },
-        "responses": { "201": { "description": "" } }
+        "responses": { "204": { "description": "" } },
+        "security": [{ "bearer": [] }]
       }
     },
     "/api/v1/applications/{id}/upload": {
@@ -140,7 +212,7 @@
         },
         "responses": {
           "200": {
-            "description": "The attachments were uploaded successfully.",
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -149,12 +221,14 @@
               }
             }
           }
-        }
+        },
+        "security": [{ "bearer": [] }]
       }
     },
     "/api/v1/applications/{id}/presigned-url/{type}": {
       "post": {
         "operationId": "getPresignedUrl",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -166,7 +240,10 @@
             "name": "type",
             "required": true,
             "in": "path",
-            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+            "schema": {
+              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -188,12 +265,14 @@
               }
             }
           }
-        }
+        },
+        "security": [{ "bearer": [] }]
       }
     },
     "/api/v1/applications/{id}/attachments/{type}": {
       "post": {
         "operationId": "addApplicationAttachment",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -205,7 +284,10 @@
             "name": "type",
             "required": true,
             "in": "path",
-            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+            "schema": {
+              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -218,10 +300,12 @@
             }
           }
         },
-        "responses": { "201": { "description": "" } }
+        "responses": { "204": { "description": "" } },
+        "security": [{ "bearer": [] }]
       },
       "get": {
         "operationId": "getApplicationAttachments",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -233,7 +317,10 @@
             "name": "type",
             "required": true,
             "in": "path",
-            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+            "schema": {
+              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -247,12 +334,14 @@
               }
             }
           }
-        }
+        },
+        "security": [{ "bearer": [] }]
       }
     },
-    "/api/v1/applications/{id}/attachments": {
+    "/api/v1/applications/{id}/attachments/delete": {
       "delete": {
         "operationId": "deleteApplicationAttachment",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -267,12 +356,14 @@
             "schema": { "type": "string" }
           }
         ],
-        "responses": { "204": { "description": "" } }
+        "responses": { "204": { "description": "" } },
+        "security": [{ "bearer": [] }]
       }
     },
     "/api/v1/applications/{id}/involved-parties": {
       "get": {
         "operationId": "getInvolvedParties",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -287,17 +378,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApplicationUserInvolvedPartiesResponse"
+                  "$ref": "#/components/schemas/GetInvoledPartiesByUserResponse"
                 }
               }
             }
           }
-        }
+        },
+        "security": [{ "bearer": [] }]
       }
     },
     "/api/v1/applications/{id}/case": {
       "get": {
         "operationId": "getApplicationCase",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -317,12 +410,14 @@
               }
             }
           }
-        }
+        },
+        "security": [{ "bearer": [] }]
       }
     },
     "/api/v1/applications/advert/templates": {
       "get": {
         "operationId": "getApplicationAdvertTemplates",
+        "summary": "",
         "parameters": [],
         "responses": {
           "default": {
@@ -338,18 +433,23 @@
               }
             }
           }
-        }
+        },
+        "security": [{ "bearer": [] }]
       }
     },
     "/api/v1/applications/advert/templates/{advertType}": {
       "get": {
         "operationId": "getApplicationAdvertTemplate",
+        "summary": "",
         "parameters": [
           {
             "name": "advertType",
             "required": true,
             "in": "path",
-            "schema": { "type": "string" }
+            "schema": {
+              "enum": ["auglysing", "reglugerd", "gjaldskra"],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -363,12 +463,14 @@
               }
             }
           }
-        }
+        },
+        "security": [{ "bearer": [] }]
       }
     },
     "/api/v1/applications/involved-party/{involvedPartyId}": {
       "get": {
         "operationId": "getSignaturesForInvolvedParty",
+        "summary": "",
         "parameters": [
           {
             "name": "involvedPartyId",
@@ -379,23 +481,16 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful signature get.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/GetSignature" }
-              }
-            }
-          },
-          "404": { "description": "Signature not found" },
-          "default": {
             "description": "",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/GetSignature" }
               }
             }
-          }
-        }
+          },
+          "404": { "description": "" }
+        },
+        "security": [{ "bearer": [] }]
       }
     },
     "/api/v1/advert-types/types": {
@@ -404,59 +499,59 @@
         "summary": "",
         "parameters": [
           {
-            "required": false,
-            "description": "Search by id",
             "name": "id",
+            "required": false,
             "in": "query",
+            "description": "Search by id",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Filter by unassigned",
             "name": "unassigned",
+            "required": false,
             "in": "query",
+            "description": "Filter by unassigned",
             "schema": { "type": "boolean" }
           },
           {
-            "required": false,
-            "description": "Search by main type id",
             "name": "mainType",
+            "required": false,
             "in": "query",
+            "description": "Search by main type id",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Search by title",
             "name": "search",
+            "required": false,
             "in": "query",
+            "description": "Search by title",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Search by slug",
             "name": "slug",
+            "required": false,
             "in": "query",
+            "description": "Search by slug",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Search by department slug, title or id",
             "name": "department",
+            "required": false,
             "in": "query",
+            "description": "Search by department slug, title or id",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "The page number",
             "name": "page",
+            "required": false,
             "in": "query",
+            "description": "The page number",
             "schema": { "type": "number" }
           },
           {
-            "required": false,
-            "description": "The page size",
             "name": "pageSize",
+            "required": false,
             "in": "query",
+            "description": "The page size",
             "schema": { "type": "number" }
           }
         ],
@@ -494,59 +589,59 @@
         "summary": "",
         "parameters": [
           {
-            "required": false,
-            "description": "Search by id",
             "name": "id",
+            "required": false,
             "in": "query",
+            "description": "Search by id",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Filter by unassigned",
             "name": "unassigned",
+            "required": false,
             "in": "query",
+            "description": "Filter by unassigned",
             "schema": { "type": "boolean" }
           },
           {
-            "required": false,
-            "description": "Search by main type id",
             "name": "mainType",
+            "required": false,
             "in": "query",
+            "description": "Search by main type id",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Search by title",
             "name": "search",
+            "required": false,
             "in": "query",
+            "description": "Search by title",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Search by slug",
             "name": "slug",
+            "required": false,
             "in": "query",
+            "description": "Search by slug",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Search by department slug, title or id",
             "name": "department",
+            "required": false,
             "in": "query",
+            "description": "Search by department slug, title or id",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "The page number",
             "name": "page",
+            "required": false,
             "in": "query",
+            "description": "The page number",
             "schema": { "type": "number" }
           },
           {
-            "required": false,
-            "description": "The page size",
             "name": "pageSize",
+            "required": false,
             "in": "query",
+            "description": "The page size",
             "schema": { "type": "number" }
           }
         ],
@@ -677,6 +772,7 @@
     "/api/v1/pdf/case/{id}": {
       "get": {
         "operationId": "getPdfByCaseId",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -686,7 +782,7 @@
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -700,16 +796,24 @@
     "/api/v1/pdf/application/{id}": {
       "get": {
         "operationId": "getPdfByApplicationId",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "showDate",
+            "required": false,
+            "in": "query",
+            "description": "Show date in PDF",
+            "schema": { "default": true, "type": "boolean" }
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -723,6 +827,7 @@
     "/api/v1/pdf/case/{id}/url": {
       "get": {
         "operationId": "getPdfUrlByCaseId",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -732,7 +837,7 @@
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -746,6 +851,7 @@
     "/api/v1/pdf/application/{id}/url": {
       "get": {
         "operationId": "getPdfUrlByApplicationId",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -755,7 +861,7 @@
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -784,13 +890,6 @@
   "servers": [],
   "components": {
     "schemas": {
-      "CasePriceResponse": {
-        "type": "object",
-        "properties": {
-          "price": { "type": "number", "description": "The price of the case" }
-        },
-        "required": ["price"]
-      },
       "BaseEntity": {
         "type": "object",
         "properties": {
@@ -803,6 +902,7 @@
       "ApplicationCommunicationChannel": {
         "type": "object",
         "properties": {
+          "name": { "type": "string" },
           "email": {
             "type": "string",
             "example": "test@test.is",
@@ -814,7 +914,7 @@
             "description": "Phone number of the communication channel"
           }
         },
-        "required": ["email", "phone"]
+        "required": ["name", "email", "phone"]
       },
       "ApplicationAddition": {
         "type": "object",
@@ -911,28 +1011,10 @@
         },
         "required": ["signatureType"]
       },
-      "AdditionalSignature": {
-        "type": "object",
-        "properties": {
-          "regular": {
-            "type": "string",
-            "description": "Message to the regular"
-          },
-          "committee": {
-            "type": "string",
-            "description": "Message to the committee"
-          }
-        },
-        "required": ["regular", "committee"]
-      },
       "ApplicationSignatureMember": {
         "type": "object",
         "properties": {
           "name": { "type": "string", "description": "Name of the member" },
-          "before": {
-            "type": "string",
-            "description": "Text before the name member"
-          },
           "below": {
             "type": "string",
             "description": "Text below the name member"
@@ -946,85 +1028,75 @@
             "description": "Text after the name member"
           }
         },
-        "required": ["name", "before", "below", "above", "after"]
+        "required": ["name", "below", "above", "after"]
       },
-      "ApplicationSignature": {
+      "ApplicationSignatureRecord": {
         "type": "object",
         "properties": {
           "institution": {
             "type": "string",
             "description": "Institution of the signature"
           },
-          "date": {
+          "signatureDate": {
             "type": "string",
             "description": "Date when the signature was signed"
           },
-          "members": {
-            "description": "Members of the signature",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationSignatureMember"
-            }
-          },
-          "html": {
+          "additional": {
             "type": "string",
-            "description": "The html contents of the signature"
-          }
-        },
-        "required": ["institution", "date", "members", "html"]
-      },
-      "ApplicationCommitteeSignature": {
-        "type": "object",
-        "properties": {
-          "institution": {
-            "type": "string",
-            "description": "Institution of the signature"
-          },
-          "date": {
-            "type": "string",
-            "description": "Date when the signature was signed"
-          },
-          "members": {
-            "description": "Members of the signature",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationSignatureMember"
-            }
-          },
-          "html": {
-            "type": "string",
-            "description": "The html contents of the signature"
+            "description": "Additional signature name"
           },
           "chairman": {
-            "description": "The title of the committee",
+            "description": "Chairman of the signature",
             "allOf": [
               { "$ref": "#/components/schemas/ApplicationSignatureMember" }
             ]
+          },
+          "members": {
+            "description": "Members of the signature",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationSignatureMember"
+            }
           }
         },
-        "required": ["institution", "date", "members", "html", "chairman"]
+        "required": [
+          "institution",
+          "signatureDate",
+          "additional",
+          "chairman",
+          "members"
+        ]
+      },
+      "ApplicationSignatureRecords": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "description": "Regular signature",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationSignatureRecord"
+            }
+          }
+        },
+        "required": ["records"]
       },
       "ApplicationSignatures": {
         "type": "object",
         "properties": {
-          "additionalSignature": {
-            "example": "Some message to the applicant",
-            "description": "Message to the applicant",
-            "allOf": [{ "$ref": "#/components/schemas/AdditionalSignature" }]
-          },
           "regular": {
             "description": "Regular signature",
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/ApplicationSignature" }
+            "allOf": [
+              { "$ref": "#/components/schemas/ApplicationSignatureRecords" }
+            ]
           },
           "committee": {
             "description": "Committee signature",
             "allOf": [
-              { "$ref": "#/components/schemas/ApplicationCommitteeSignature" }
+              { "$ref": "#/components/schemas/ApplicationSignatureRecords" }
             ]
           }
         },
-        "required": ["additionalSignature", "regular", "committee"]
+        "required": ["regular", "committee"]
       },
       "ApplicationAnswers": {
         "type": "object",
@@ -1037,12 +1109,12 @@
             "description": "Misc answers",
             "allOf": [{ "$ref": "#/components/schemas/ApplicationMisc" }]
           },
-          "signatures": {
+          "signature": {
             "description": "Signature answers",
             "allOf": [{ "$ref": "#/components/schemas/ApplicationSignatures" }]
           }
         },
-        "required": ["advert", "misc", "signatures"]
+        "required": ["advert", "misc", "signature"]
       },
       "Application": {
         "type": "object",
@@ -1150,6 +1222,22 @@
           "application": { "$ref": "#/components/schemas/Application" }
         },
         "required": ["application"]
+      },
+      "GetMyUserInfoResponse": {
+        "type": "object",
+        "properties": {
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "email": { "type": "string" }
+        },
+        "required": ["firstName", "lastName", "email"]
+      },
+      "CasePriceResponse": {
+        "type": "object",
+        "properties": {
+          "price": { "type": "number", "description": "The price of the case" }
+        },
+        "required": ["price"]
       },
       "CaseActionEnum": {
         "type": "string",
@@ -1309,7 +1397,12 @@
       },
       "PresignedUrlResponse": {
         "type": "object",
-        "properties": { "url": { "type": "string" } },
+        "properties": {
+          "url": { "type": "string" },
+          "cdn": { "type": "string" },
+          "key": { "type": "string" },
+          "attachmentId": { "type": "string" }
+        },
         "required": ["url"]
       },
       "PostApplicationAttachmentBody": {
@@ -1420,11 +1513,16 @@
             "type": "string",
             "description": "Slug of the institution, used in URLs and API requests.",
             "example": "domsmalaraduneytid"
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "National ID of the institution",
+            "example": "650376-2949"
           }
         },
-        "required": ["id", "title", "slug"]
+        "required": ["id", "title", "slug", "nationalId"]
       },
-      "ApplicationUserInvolvedPartiesResponse": {
+      "GetInvoledPartiesByUserResponse": {
         "type": "object",
         "properties": {
           "involvedParties": {
@@ -1433,6 +1531,33 @@
           }
         },
         "required": ["involvedParties"]
+      },
+      "CategoryMainCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the main category, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the main category.",
+            "example": "Dómstólar og réttarfar"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the main category, used in URLs and API requests.",
+            "example": "domstolar-og-rettarfar"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the main category, used on front page.",
+            "example": "Hæstiréttur, lögmenn, lögreglumál, dómsmál og landsdómur."
+          }
+        },
+        "required": ["id", "title", "slug", "description"]
       },
       "Category": {
         "type": "object",
@@ -1452,6 +1577,12 @@
             "type": "string",
             "description": "Slug of the advert category, used in URLs and API requests.",
             "example": "evropska-efnahagssvaedid"
+          },
+          "mainCategories": {
+            "description": "The main category this category belongs to.",
+            "example": "Dómstólar og réttarfar",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CategoryMainCategory" }
           }
         },
         "required": ["id", "title", "slug"]

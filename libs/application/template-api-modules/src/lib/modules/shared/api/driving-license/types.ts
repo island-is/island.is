@@ -1,4 +1,4 @@
-import { YesOrNo } from "@island.is/application/core"
+import { YesOrNo } from '@island.is/application/core'
 
 export type HasQualityPhoto = {
   hasQualityPhoto: boolean
@@ -7,7 +7,7 @@ export type HasQualitySignature = {
   hasQualitySignature: boolean
 }
 
-type FakeCurrentLicense = 'none' | 'temp'
+type FakeCurrentLicense = 'none' | 'temp' | 'B' | 'C' | 'C1' | 'D' | 'D1'
 
 export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo

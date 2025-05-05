@@ -6,14 +6,14 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CreateEventLogInput } from './dto/createEventLog.input'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver()
 export class EventLogResolver {
   constructor(
@@ -22,7 +22,7 @@ export class EventLogResolver {
   ) {}
 
   @Mutation(() => Boolean, { nullable: true })
-  async createEventLog(
+  createEventLog(
     @Args('input', { type: () => CreateEventLogInput })
     input: CreateEventLogInput,
     @CurrentGraphQlUser() user: User,
@@ -31,7 +31,7 @@ export class EventLogResolver {
   ): Promise<boolean> {
     this.logger.debug(`Creating event log for case ${input.caseId}`)
 
-    const res = await backendService.createEventLog({
+    return backendService.createEventLog({
       ...input,
       nationalId: user.nationalId,
       userRole: user.role,
@@ -39,7 +39,5 @@ export class EventLogResolver {
       userTitle: user.title,
       institutionName: user.institution?.name,
     })
-
-    return res.ok
   }
 }

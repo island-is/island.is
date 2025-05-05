@@ -11,6 +11,7 @@ export const usePrice = ({ applicationId }: Props) => {
     officialJournalOfIcelandApplicationGetPrice: OfficialJournalOfIcelandApplicationGetPriceResponse
   }>(GET_PRICE_QUERY, {
     skip: !applicationId,
+    fetchPolicy: 'no-cache',
     variables: {
       id: applicationId,
     },

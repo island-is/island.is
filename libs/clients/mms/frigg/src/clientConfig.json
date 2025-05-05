@@ -123,11 +123,7 @@
             "required": false,
             "in": "query",
             "description": "The form of ordering for response to the sorted request i.e. ascending (asc) or descending (desc). The sort order should follow the [UNICODE, 16] standard.",
-            "schema": {
-              "default": "asc",
-              "type": "string",
-              "enum": ["asc", "desc"]
-            }
+            "schema": { "type": "string", "enum": ["asc", "desc"] }
           },
           {
             "name": "limit",
@@ -194,112 +190,6 @@
         },
         "security": [{ "bearer": [] }],
         "summary": "Get user by nationalId",
-        "tags": ["Frigg"]
-      }
-    },
-    "/registrations/{orgId}": {
-      "get": {
-        "description": "Get registration",
-        "operationId": "getRegistration",
-        "parameters": [
-          {
-            "name": "orgId",
-            "required": true,
-            "in": "path",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "sort",
-            "required": false,
-            "in": "query",
-            "description": "Identifies the sort criteria to be used for the records in the response message. Use with the orderBy parameter. The sort order should follow the [UNICODE, 16] standard.",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "orderBy",
-            "required": false,
-            "in": "query",
-            "description": "The form of ordering for response to the sorted request i.e. ascending (asc) or descending (desc). The sort order should follow the [UNICODE, 16] standard.",
-            "schema": {
-              "default": "asc",
-              "type": "string",
-              "enum": ["asc", "desc"]
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "description": "To define the download segmentation value i.e. the maximum number of records to be contained in the response.",
-            "schema": { "default": 100, "type": "number", "minimum": 1 }
-          },
-          {
-            "name": "offset",
-            "required": false,
-            "in": "query",
-            "description": "The number of the first record to be supplied in the segmented response message.",
-            "schema": { "default": 0, "type": "number", "minimum": 0 }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/RegistrationModel" }
-                }
-              }
-            }
-          },
-          "default": {
-            "headers": {
-              "x-total-count": {
-                "description": "The total number of resources that are available to be returned",
-                "schema": { "type": "integer" }
-              }
-            },
-            "description": ""
-          }
-        },
-        "security": [{ "bearer": [] }],
-        "summary": "Registration",
-        "tags": ["Frigg"]
-      }
-    },
-    "/registrations/{id}/{orgId}": {
-      "get": {
-        "description": "Get registration by ID",
-        "operationId": "getRegistrationById",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "orgId",
-            "required": true,
-            "in": "path",
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegistrationDetailModel"
-                }
-              }
-            }
-          }
-        },
-        "security": [{ "bearer": [] }],
-        "summary": "Registration by ID",
         "tags": ["Frigg"]
       }
     }
@@ -380,7 +270,7 @@
           "reason": { "type": "string" },
           "newDomicile": { "$ref": "#/components/schemas/AddressDto" }
         },
-        "required": ["defaultOrg"]
+        "required": ["defaultOrg", "selectedOrg", "expectedStartDate"]
       },
       "HealthDto": {
         "type": "object",
@@ -435,7 +325,6 @@
           "languageEnvironment",
           "preferredLanguage",
           "signLanguage",
-          "guardianRequiresInterpreter",
           "firstLanguage"
         ]
       },
@@ -542,7 +431,13 @@
           "name": { "type": "string" },
           "type": {
             "type": "string",
-            "enum": ["municipality", "national", "school"]
+            "enum": [
+              "childCare",
+              "municipality",
+              "national",
+              "privateOwner",
+              "school"
+            ]
           },
           "gradeLevels": { "type": "array", "items": { "type": "string" } },
           "address": {
@@ -559,7 +454,11 @@
             "default": [],
             "type": "array",
             "items": { "$ref": "#/components/schemas/OrganizationModel" }
-          }
+          },
+          "unitId": { "type": "object" },
+          "email": { "type": "object" },
+          "phone": { "type": "object" },
+          "website": { "type": "object" }
         },
         "required": [
           "id",
@@ -569,7 +468,11 @@
           "gradeLevels",
           "address",
           "parent",
-          "children"
+          "children",
+          "unitId",
+          "email",
+          "phone",
+          "website"
         ]
       },
       "MembershipOrganizationModel": {
@@ -580,7 +483,13 @@
           "name": { "type": "string" },
           "type": {
             "type": "string",
-            "enum": ["municipality", "national", "school"]
+            "enum": [
+              "childCare",
+              "municipality",
+              "national",
+              "privateOwner",
+              "school"
+            ]
           }
         },
         "required": ["id", "nationalId", "name", "type"]
@@ -668,7 +577,9 @@
             "nullable": true,
             "type": "array",
             "items": { "$ref": "#/components/schemas/AgentModel" }
-          }
+          },
+          "phone": { "type": "object" },
+          "mobile": { "type": "object" }
         },
         "required": [
           "id",
@@ -682,161 +593,9 @@
           "residence",
           "primaryOrgId",
           "memberships",
-          "agents"
-        ]
-      },
-      "RegistrationModel": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "nameOfChild": { "type": "string" },
-          "nationalId": { "type": "string" },
-          "defaultOrganization": {
-            "$ref": "#/components/schemas/MembershipOrganizationModel"
-          },
-          "selectedOrganization": {
-            "$ref": "#/components/schemas/MembershipOrganizationModel"
-          },
-          "requestingMeeting": { "type": "boolean" },
-          "expectedStartDate": { "format": "date-time", "type": "string" },
-          "expectedEndDate": { "format": "date-time", "type": "string" },
-          "reason": { "type": "string" }
-        },
-        "required": [
-          "id",
-          "nameOfChild",
-          "nationalId",
-          "defaultOrganization",
-          "selectedOrganization",
-          "requestingMeeting",
-          "expectedStartDate",
-          "reason"
-        ]
-      },
-      "ReviewActionModel": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "action": {
-            "type": "string",
-            "enum": ["pending", "approved", "rejected"]
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "pendingAction",
-              "pendingActionBefore",
-              "pendingActionAfter",
-              "pending",
-              "approvedAction",
-              "approved",
-              "rejectedAction",
-              "rejected"
-            ]
-          },
-          "order": { "type": "number" },
-          "organization": {
-            "$ref": "#/components/schemas/MembershipOrganizationModel"
-          },
-          "actionAt": {
-            "format": "date-time",
-            "type": "string",
-            "nullable": true
-          },
-          "nextActionId": { "type": "object" }
-        },
-        "required": [
-          "id",
-          "action",
-          "status",
-          "order",
-          "organization",
-          "actionAt",
-          "nextActionId"
-        ]
-      },
-      "ReviewModel": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "state": {
-            "type": "string",
-            "enum": ["pending", "approved", "rejected"]
-          },
-          "displayStatus": { "type": "string" },
-          "actions": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/ReviewActionModel" }
-          },
-          "createdAt": { "format": "date-time", "type": "string" },
-          "updatedAt": { "format": "date-time", "type": "string" }
-        },
-        "required": [
-          "id",
-          "state",
-          "displayStatus",
-          "actions",
-          "createdAt",
-          "updatedAt"
-        ]
-      },
-      "LanguageModel": {
-        "type": "object",
-        "properties": {
-          "languageEnvironment": { "type": "string" },
-          "preferredLanguage": { "type": "string" },
-          "signLanguage": { "type": "boolean" },
-          "guardianRequiresInterpreter": { "type": "boolean" },
-          "firstLanguage": { "type": "string" },
-          "secondLanguage": { "type": "string" },
-          "thirdLanguage": { "type": "string" },
-          "fourthLanguage": { "type": "string" }
-        },
-        "required": [
-          "languageEnvironment",
-          "preferredLanguage",
-          "signLanguage",
-          "guardianRequiresInterpreter",
-          "firstLanguage"
-        ]
-      },
-      "RegistrationDetailModel": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "nameOfChild": { "type": "string" },
-          "nationalId": { "type": "string" },
-          "defaultOrganization": {
-            "$ref": "#/components/schemas/MembershipOrganizationModel"
-          },
-          "selectedOrganization": {
-            "$ref": "#/components/schemas/MembershipOrganizationModel"
-          },
-          "requestingMeeting": { "type": "boolean" },
-          "expectedStartDate": { "format": "date-time", "type": "string" },
-          "expectedEndDate": { "format": "date-time", "type": "string" },
-          "reason": { "type": "string" },
-          "review": { "$ref": "#/components/schemas/ReviewModel" },
-          "user": { "$ref": "#/components/schemas/UserModel" },
-          "agents": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/AgentModel" }
-          },
-          "language": { "$ref": "#/components/schemas/LanguageModel" }
-        },
-        "required": [
-          "id",
-          "nameOfChild",
-          "nationalId",
-          "defaultOrganization",
-          "selectedOrganization",
-          "requestingMeeting",
-          "expectedStartDate",
-          "reason",
-          "review",
-          "user",
           "agents",
-          "language"
+          "phone",
+          "mobile"
         ]
       }
     }

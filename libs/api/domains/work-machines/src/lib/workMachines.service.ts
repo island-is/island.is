@@ -2,6 +2,7 @@ import {
   MachineModelDto,
   MachineParentCategoryDetailsDto,
   MachineSubCategoryDto,
+  MachineTypeDto,
   TechInfoItemDto,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
@@ -208,6 +209,17 @@ export class WorkMachinesService {
     return this.machineService.getTechnicalInfoInputs(auth, {
       parentCategory,
       subCategory,
+    })
+  }
+
+  async getTypeByRegistrationNumber(
+    auth: User,
+    registrationNumber: string,
+    applicationId: string,
+  ): Promise<MachineTypeDto> {
+    return this.machineService.getTypeByRegistrationNumber(auth, {
+      registrationNumber,
+      xCorrelationID: applicationId,
     })
   }
 }

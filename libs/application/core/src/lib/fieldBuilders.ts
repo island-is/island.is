@@ -43,6 +43,7 @@ import {
   SliderField,
   MaybeWithApplication,
   MaybeWithApplicationAndFieldAndLocale,
+  InformationCardField,
   DisplayField,
   FieldsRepeaterField,
   AccordionField,
@@ -50,6 +51,7 @@ import {
   TitleField,
   TitleVariants,
   OverviewField,
+  CopyLinkField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -78,6 +80,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    setOnChange,
   } = data
 
   return {
@@ -94,6 +97,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    setOnChange,
   }
 }
 
@@ -135,6 +139,7 @@ export const buildDateField = (
     backgroundColor = 'blue',
     required,
     readOnly,
+    tempDisabled,
   } = data
   return {
     ...extractCommonFields(data),
@@ -150,6 +155,7 @@ export const buildDateField = (
     backgroundColor,
     required,
     readOnly,
+    tempDisabled,
   }
 }
 
@@ -297,6 +303,7 @@ export const buildTextField = (
     rows,
     required,
     maxLength,
+    showMaxLength,
     max,
     min,
     readOnly,
@@ -315,6 +322,7 @@ export const buildTextField = (
     rows,
     required,
     maxLength,
+    showMaxLength,
     readOnly,
     rightAlign,
     max,
@@ -465,6 +473,7 @@ export const buildKeyValueField = (data: {
   paddingBottom?: BoxProps['padding']
   marginTop?: BoxProps['marginTop']
   marginBottom?: BoxProps['marginBottom']
+  tooltip?: FormText
 }): KeyValueField => {
   const {
     label,
@@ -479,6 +488,7 @@ export const buildKeyValueField = (data: {
     paddingBottom,
     marginTop,
     marginBottom,
+    tooltip,
   } = data
 
   return {
@@ -500,6 +510,7 @@ export const buildKeyValueField = (data: {
     paddingBottom,
     marginTop,
     marginBottom,
+    tooltip,
   }
 }
 
@@ -511,12 +522,14 @@ export const buildSubmitField = (data: {
   marginTop?: BoxProps['marginTop']
   refetchApplicationAfterSubmit?: boolean | ((event?: string) => boolean)
   actions: CallToAction[]
+  condition?: Condition
 }): SubmitField => {
   const {
     id,
     placement = 'footer',
     title = '',
     actions,
+    condition,
     refetchApplicationAfterSubmit,
     marginTop,
     marginBottom,
@@ -527,6 +540,7 @@ export const buildSubmitField = (data: {
     title,
     actions,
     placement,
+    condition,
     doesNotRequireAnswer: true,
     refetchApplicationAfterSubmit:
       typeof refetchApplicationAfterSubmit !== 'undefined'
@@ -537,6 +551,20 @@ export const buildSubmitField = (data: {
     type: FieldTypes.SUBMIT,
     component: FieldComponents.SUBMIT,
   }
+}
+
+export const buildFieldItems = (
+  maybeItems: MaybeWithApplicationAndFieldAndLocale<
+    Array<{ label: FormText; value: FormText | FormTextArray }>
+  >,
+  application: Application,
+  field: Field,
+  locale: Locale,
+): Array<{ label: FormText; value: FormText | FormTextArray }> => {
+  if (typeof maybeItems === 'function') {
+    return maybeItems(application, field, locale)
+  }
+  return maybeItems
 }
 
 export const buildFieldOptions = (
@@ -596,13 +624,14 @@ export const buildPaymentPendingField = (data: {
 export const buildMessageWithLinkButtonField = (
   data: Omit<MessageWithLinkButtonField, 'type' | 'component' | 'children'>,
 ): MessageWithLinkButtonField => {
-  const { id, url, message, buttonTitle } = data
+  const { id, url, message, messageColor, buttonTitle } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     id,
     url,
     message,
+    messageColor,
     buttonTitle,
     type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
     component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
@@ -628,7 +657,8 @@ export const buildExpandableDescriptionField = (
 export const buildAlertMessageField = (
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField => {
-  const { message, alertType, links } = data
+  const { message, alertType, links, shouldBlockInSetBeforeSubmitCallback } =
+    data
   return {
     ...extractCommonFields(data),
     children: undefined,
@@ -637,18 +667,27 @@ export const buildAlertMessageField = (
     type: FieldTypes.ALERT_MESSAGE,
     component: FieldComponents.ALERT_MESSAGE,
     links,
+    shouldBlockInSetBeforeSubmitCallback,
   }
 }
 
 export const buildLinkField = (
   data: Omit<LinkField, 'type' | 'component' | 'children'>,
 ): LinkField => {
-  const { s3key, link, iconProps } = data
+  const {
+    s3key,
+    link,
+    iconProps,
+    variant = 'ghost',
+    justifyContent = 'flexStart',
+  } = data
   return {
     ...extractCommonFields(data),
     s3key,
     link,
     iconProps,
+    variant,
+    justifyContent,
     children: undefined,
     type: FieldTypes.LINK,
     component: FieldComponents.LINK,
@@ -863,6 +902,9 @@ export const buildTableRepeaterField = (
     editField,
     getStaticTableData,
     maxRows,
+    onSubmitLoad,
+    loadErrorMessage,
+    initActiveFieldIfEmpty,
   } = data
 
   return {
@@ -881,6 +923,9 @@ export const buildTableRepeaterField = (
     editField,
     getStaticTableData,
     maxRows,
+    onSubmitLoad,
+    loadErrorMessage,
+    initActiveFieldIfEmpty,
   }
 }
 
@@ -1029,6 +1074,33 @@ export const buildSliderField = (
   }
 }
 
+export const buildInformationFormField = (data: {
+  width?: FieldWidth
+  colSpan?: SpanType
+  condition?: Condition
+  items: MaybeWithApplicationAndFieldAndLocale<
+    Array<{ label: FormText; value: FormText | FormTextArray }>
+  >
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
+}): InformationCardField => {
+  const { condition, width = 'full', colSpan, paddingX, paddingY, items } = data
+
+  return {
+    id: '',
+    title: '',
+    children: undefined,
+    doesNotRequireAnswer: true,
+    condition,
+    width,
+    colSpan,
+    type: FieldTypes.INFORMATION_CARD,
+    component: FieldComponents.INFORMATION_CARD,
+    items,
+    paddingX,
+    paddingY,
+  }
+}
 export const buildDisplayField = (
   data: Omit<DisplayField, 'type' | 'component' | 'children'>,
 ): DisplayField => {
@@ -1100,11 +1172,21 @@ export const buildBankAccountField = (
 export const buildOverviewField = (
   data: Omit<OverviewField, 'type' | 'component' | 'children'>,
 ): OverviewField => {
-  const { id, title, description, backId, items, attachments, tableData } = data
+  const {
+    id,
+    title,
+    titleVariant,
+    description,
+    backId,
+    items,
+    attachments,
+    tableData,
+  } = data
   return {
     ...extractCommonFields(data),
     id,
     title,
+    titleVariant,
     description,
     backId,
     items,
@@ -1112,6 +1194,23 @@ export const buildOverviewField = (
     tableData,
     type: FieldTypes.OVERVIEW,
     component: FieldComponents.OVERVIEW,
+    children: undefined,
+  }
+}
+
+export const buildCopyLinkField = (
+  data: Omit<CopyLinkField, 'type' | 'component' | 'children'>,
+): CopyLinkField => {
+  const { id, title, link, buttonTitle, semiBoldLink } = data
+  return {
+    ...extractCommonFields(data),
+    id,
+    title,
+    link,
+    buttonTitle,
+    semiBoldLink,
+    type: FieldTypes.COPY_LINK,
+    component: FieldComponents.COPY_LINK,
     children: undefined,
   }
 }

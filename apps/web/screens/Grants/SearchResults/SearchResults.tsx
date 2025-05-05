@@ -18,18 +18,19 @@ import {
   Breadcrumbs,
   FilterInput,
   Pagination,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { Problem } from '@island.is/react-spa/shared'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
-import { GrantHeaderWithImage, GrantWrapper } from '@island.is/web/components'
+import { GrantsHeader, GrantWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
   GenericTag,
   GetGrantsInputAvailabilityStatusEnum,
+  GetGrantsInputSortByEnum,
   Grant,
   GrantList,
   Query,
@@ -50,6 +51,7 @@ import { m } from '../messages'
 import { Availability } from '../types'
 import { SearchResultsContent } from './SearchResultsContent'
 import { GrantsSearchResultsFilter } from './SearchResultsFilter'
+import * as styles from './SearchResults.css'
 
 const PAGE_SIZE = 8
 
@@ -57,6 +59,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   locale,
   initialGrantList,
   tags,
+  customPageData,
 }) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
@@ -91,9 +94,9 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const [initialRender, setInitialRender] = useState<boolean>(true)
 
   const { width } = useWindowSize()
-  const isMobile = width <= theme.breakpoints.md
+  const isTablet = width <= theme.breakpoints.lg
 
-  const [getGrants, { error, loading }] = useLazyQuery<
+  const [getGrants] = useLazyQuery<
     { getGrants: GrantList },
     QueryGetGrantsArgs
   >(GET_GRANTS_QUERY)
@@ -246,12 +249,13 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       pageDescription={formatMessage(m.search.description)}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
     >
-      <GrantHeaderWithImage
+      <GrantsHeader
         title={formatMessage(m.home.title)}
         description={formatMessage(m.home.description)}
-        featuredImage={formatMessage(m.home.featuredImage)}
+        featuredImage={
+          customPageData?.ogImage?.url ?? formatMessage(m.home.featuredImage)
+        }
         featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
-        imageLayout="left"
         breadcrumbs={
           breadcrumbItems && (
             <Breadcrumbs
@@ -269,25 +273,21 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           )
         }
       />
-      <Box background="blue100">
-        {!isMobile && (
+      <Box background="blue100" marginY={isTablet ? 6 : 8}>
+        {!isTablet && (
           <SidebarLayout
             fullWidthContent={true}
             sidebarContent={
-              <Box marginBottom={[1, 1, 2]}>
-                <Box marginBottom={3}>
-                  <Text fontWeight="semiBold">
-                    {formatMessage(m.search.search)}
-                  </Text>
-                </Box>
-                <Box marginBottom={[1, 1, 2]}>
-                  <FilterInput
-                    name="query"
-                    placeholder={formatMessage(m.search.inputPlaceholder)}
-                    value={query ?? ''}
-                    onChange={(option) => setQuery(option)}
-                  />
-                </Box>
+              <Stack space={3}>
+                <Text variant="h4" as="h4" paddingY={1}>
+                  {formatMessage(m.search.search)}
+                </Text>
+                <FilterInput
+                  name="query"
+                  placeholder={formatMessage(m.search.inputPlaceholder)}
+                  value={query ?? ''}
+                  onChange={(option) => setQuery(option)}
+                />
                 <GrantsSearchResultsFilter
                   searchState={{
                     category: categories ?? undefined,
@@ -302,10 +302,10 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                   variant={'default'}
                   hits={totalHits}
                 />
-              </Box>
+              </Stack>
             }
           >
-            <Box marginLeft={3}>
+            <Box marginLeft={2}>
               <SearchResultsContent
                 grants={grants}
                 subheader={hitsMessage}
@@ -335,14 +335,10 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
             </Box>
           </SidebarLayout>
         )}
-        {isMobile && (
-          <Box padding={[1, 1, 2]} margin={[1, 1, 2]} paddingBottom={3}>
-            <Box marginBottom={3}>
-              <Text fontWeight="semiBold">
-                {formatMessage(m.search.search)}
-              </Text>
-            </Box>
-            <Box marginBottom={[1, 1, 2]}>
+        {isTablet && (
+          <Box margin={3} paddingTop={3}>
+            <Text fontWeight="semiBold">{formatMessage(m.search.search)}</Text>
+            <Box marginTop={2} className={styles.searchInput}>
               <FilterInput
                 name="query"
                 placeholder={formatMessage(m.search.inputPlaceholder)}
@@ -351,7 +347,15 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 backgroundColor={'white'}
               />
             </Box>
-            <Box marginY={2}>
+            <Box
+              marginTop={2}
+              display="flex"
+              justifyContent="spaceBetween"
+              height="full"
+              alignItems={'center'}
+            >
+              <Text>{hitsMessage}</Text>
+
               <GrantsSearchResultsFilter
                 searchState={{
                   category: categories ?? undefined,
@@ -367,12 +371,10 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 hits={totalHits}
               />
             </Box>
-            <Box marginY={3}>
-              <Text>{hitsMessage}</Text>
+            <Box marginTop={2}>
+              <SearchResultsContent grants={grants} locale={locale} />
             </Box>
-
-            <SearchResultsContent grants={grants} locale={locale} />
-            <Box marginTop={2} marginBottom={0} hidden={(totalPages ?? 0) < 1}>
+            <Box marginTop={2} paddingBottom={2} hidden={(totalPages ?? 0) < 1}>
               <Pagination
                 variant="purple"
                 page={page}
@@ -449,6 +451,7 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
+          sort: GetGrantsInputSortByEnum.RecentlyUpdated,
           page: parseAsInteger.withDefault(1).parseServerSide(query?.page),
           search: parseAsString.parseServerSide(query?.query) ?? undefined,
           categories: filterArray<string>(

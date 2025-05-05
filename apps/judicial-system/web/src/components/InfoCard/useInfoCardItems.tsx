@@ -26,6 +26,7 @@ import { FormContext } from '../FormProvider/FormProvider'
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
+import { VictimInfo } from './VictimInfo/VictimInfo'
 import { Item } from './InfoCard'
 import { strings } from './useInfoCardItems.strings'
 import * as styles from './InfoCard.css'
@@ -174,21 +175,6 @@ const useInfoCardItems = () => {
         workingCase.registrar?.name,
         workingCase.registrar?.email,
       ),
-    ],
-  }
-
-  const offense: Item = {
-    id: 'offense-item',
-    title: formatMessage(strings.offense),
-    values: [
-      <>
-        {readableIndictmentSubtypes(
-          workingCase.policeCaseNumbers,
-          workingCase.indictmentSubtypes,
-        ).map((subtype) => (
-          <Text key={subtype}>{capitalize(subtype)}</Text>
-        ))}
-      </>,
     ],
   }
 
@@ -379,6 +365,40 @@ const useInfoCardItems = () => {
       : [],
   }
 
+  const victims: Item = {
+    id: 'victim-item',
+    title: (
+      <Text
+        variant="h4"
+        as="h4"
+        marginBottom={
+          workingCase.victims && workingCase.victims.length > 1 ? 3 : 2
+        }
+      >
+        {workingCase.victims && workingCase.victims.length > 1
+          ? 'Brotaþolar'
+          : 'Brotaþoli'}
+      </Text>
+    ),
+    values: workingCase.victims
+      ? workingCase.victims.map((victim, index) => (
+          <div
+            key={victim.id}
+            className={cn(
+              workingCase.victims && workingCase.victims.length > 1
+                ? styles.renderDivider
+                : undefined,
+              workingCase.victims && index === workingCase.victims.length - 1
+                ? styles.last
+                : undefined,
+            )}
+          >
+            <VictimInfo victim={victim} />
+          </div>
+        ))
+      : [],
+  }
+
   return {
     showItem,
     defendants,
@@ -392,7 +412,6 @@ const useInfoCardItems = () => {
     judge,
     caseType,
     registrar,
-    offense,
     requestedCourtDate,
     mergeCase,
     mergedCasePoliceCaseNumbers,
@@ -408,6 +427,7 @@ const useInfoCardItems = () => {
     indictmentReviewedDate,
     parentCaseValidToDate,
     civilClaimants,
+    victims,
   }
 }
 

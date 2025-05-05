@@ -16,6 +16,8 @@ ACTION=${3:-docker_build}
 PLAYWRIGHT_VERSION="$(yarn info --json @playwright/test | jq -r '.children.Version')"
 CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
 DOCKER_LOCAL_CACHE="${DOCKER_LOCAL_CACHE:-true}"
+UPLOAD_ARTIFACT_DOCKER="${UPLOAD_ARTIFACT_DOCKER:-false}"
+
 
 BUILD_ARGS=()
 
@@ -68,5 +70,16 @@ main() {
   eval "${ACTION}"
 }
 
+_upload_artifact() {
+  case $UPLOAD_ARTIFACT_DOCKER in
+  true)
+    IMAGE_NAME="$APP" APP_NAME="$APP" TARGET="$TARGET"  node "$DIR/docker/write-build-data.mjs"
+    ;;
+  false)
+    ;;
+  esac
+}
+
 _set_publish
 main "$@"
+_upload_artifact

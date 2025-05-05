@@ -24,6 +24,7 @@ import {
 } from '../CustomPage/CustomPageWrapper'
 import { GET_ORGANIZATION_QUERY } from '../queries'
 import { CASES_IN_PROGRESS_QUERY } from '../queries/OfficialJournalOfIceland'
+import { ORGANIZATION_SLUG } from './constants'
 import { m } from './messages'
 
 const OJOICasesInProgressPage: CustomScreen<OJOICasesInProgressProps> = ({
@@ -120,8 +121,6 @@ const OJOICasesInProgress: CustomScreen<OJOICasesInProgressProps> = ({
 }
 
 OJOICasesInProgress.getProps = async ({ apolloClient, locale }) => {
-  const organizationSlug = 'stjornartidindi'
-
   const [
     {
       data: { officialJournalOfIcelandCasesInProgress },
@@ -144,7 +143,7 @@ OJOICasesInProgress.getProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: organizationSlug,
+          slug: ORGANIZATION_SLUG,
           lang: locale as ContentLanguage,
         },
       },

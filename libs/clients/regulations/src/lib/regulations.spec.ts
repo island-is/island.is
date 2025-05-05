@@ -61,7 +61,9 @@ const handlers = [
     regulationsUrl('/regulation/:condition/original'),
     (req, res, ctx) => {
       const { params } = req
-      const response = createRegulationResponse(params.condition)
+      const response = createRegulationResponse(
+        params.condition as ExpectedResult,
+      )
       return res(ctx.status(response.status), ctx.json(response?.body ?? ''))
     },
   ),

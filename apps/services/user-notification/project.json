@@ -90,7 +90,10 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose up -d --build",
+        "commands": [
+          "docker compose up -d --build",
+          "docker compose -f ../../../scripts/docker-compose/redis-cluster.yml up -d"
+        ],
         "cwd": "apps/services/user-notification"
       }
     },

@@ -1,5 +1,7 @@
 import {
+  ArrowLink,
   Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
@@ -20,6 +22,8 @@ export type OJOIHomeIntroProps = {
   quickLinks: Array<{ title: string; href: string; variant?: TagVariant }>
   searchUrl: string
   shortcutsTitle: string
+  buttonTitle?: string
+  buttonUrl?: string
   featuredImage?: string
 }
 
@@ -48,8 +52,14 @@ export const OJOIHomeIntro = (props: OJOIHomeIntroProps) => {
           {organization?.description && (
             <Text variant="default">{organization?.description}</Text>
           )}
-
-          <Box paddingTop={6} component="form" action={props.searchUrl}>
+          {props.buttonUrl && (
+            <Box marginTop={1} alignSelf={'flexEnd'}>
+              <ArrowLink href={props.buttonUrl}>
+                {props.buttonTitle ?? 'Lesa meira'}
+              </ArrowLink>
+            </Box>
+          )}
+          <Box paddingTop={4} component="form" action={props.searchUrl}>
             <Input
               id="q"
               name="q"
@@ -57,6 +67,7 @@ export const OJOIHomeIntro = (props: OJOIHomeIntroProps) => {
               backgroundColor={['blue']}
               size="md"
               icon={{ name: 'search', type: 'outline' }}
+              className={s.searchBox}
             />
           </Box>
 

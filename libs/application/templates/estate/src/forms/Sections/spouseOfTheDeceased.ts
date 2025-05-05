@@ -48,7 +48,6 @@ export const spouseOfTheDeceased = buildSection({
         buildCustomField(
           {
             id: 'deceasedWithUndividedEstate.spouse',
-            title: '',
             component: 'LookupPerson',
             condition: (answers) =>
               getValueViaPath(

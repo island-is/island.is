@@ -6,7 +6,7 @@ export const getDataProviders = () => import('./dataProviders/')
 
 export type SecondarySchoolAnswers = SecondarySchool
 
-export * from './utils'
+export * from './shared'
 export * from './lib/messages/error'
 
 export default template

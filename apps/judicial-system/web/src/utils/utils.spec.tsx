@@ -2,6 +2,7 @@ import faker from 'faker'
 
 import {
   Case,
+  Defendant,
   Gender,
   Notification,
   NotificationType,
@@ -9,7 +10,11 @@ import {
 
 import * as formatters from './formatters'
 import { validateAndSendToServer } from './formHelper'
-import { getShortGender, hasSentNotification } from './utils'
+import {
+  getDefaultDefendantGender,
+  getShortGender,
+  hasSentNotification,
+} from './utils'
 
 describe('Utils', () => {
   describe('removeTabs', () => {
@@ -286,6 +291,101 @@ describe('Utils', () => {
 
       // Assert
       expect(spy).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('getDefaultDefendantGender', () => {
+    test('should return MALE for a sole male defendant', () => {
+      // Arrange
+      const defendants = [{ gender: Gender.MALE } as Defendant]
+
+      // Act
+      const gender = getDefaultDefendantGender(defendants)
+
+      // Assert
+      expect(gender).toBe(Gender.MALE)
+    })
+  })
+
+  describe('getDefaultDefendantGender', () => {
+    test('should return FEMALE for a sole female defendant', () => {
+      // Arrange
+      const defendants = [{ gender: Gender.FEMALE } as Defendant]
+
+      // Act
+      const gender = getDefaultDefendantGender(defendants)
+
+      // Assert
+      expect(gender).toBe(Gender.FEMALE)
+    })
+  })
+
+  describe('getDefaultDefendantGender', () => {
+    test('should return OTHER for a sole defendant with other gender', () => {
+      // Arrange
+      const defendants = [{ gender: Gender.OTHER } as Defendant]
+
+      // Act
+      const gender = getDefaultDefendantGender(defendants)
+
+      // Assert
+      expect(gender).toBe(Gender.OTHER)
+    })
+  })
+
+  describe('getDefaultDefendantGender', () => {
+    test('should return MALE for a sole defendant with undefined gender', () => {
+      // Arrange
+      const defendants = [{} as Defendant]
+
+      // Act
+      const gender = getDefaultDefendantGender(defendants)
+
+      // Assert
+      expect(gender).toBe(Gender.MALE)
+    })
+  })
+
+  describe('getDefaultDefendantGender', () => {
+    test('should return MALE for no defendant', () => {
+      // Arrange
+      const defendants: Defendant[] = []
+
+      // Act
+      const gender = getDefaultDefendantGender(defendants)
+
+      // Assert
+      expect(gender).toBe(Gender.MALE)
+    })
+  })
+
+  describe('getDefaultDefendantGender', () => {
+    test('should return MALE for undefined defendants', () => {
+      // Arrange
+      const defendants = undefined
+
+      // Act
+      const gender = getDefaultDefendantGender(defendants)
+
+      // Assert
+      expect(gender).toBe(Gender.MALE)
+    })
+  })
+
+  describe('getDefaultDefendantGender', () => {
+    test('should return MALE for multiple defendants', () => {
+      // Arrange
+      const defendants = [
+        { gender: Gender.FEMALE } as Defendant,
+        { gender: Gender.OTHER } as Defendant,
+        { gender: Gender.MALE } as Defendant,
+      ]
+
+      // Act
+      const gender = getDefaultDefendantGender(defendants)
+
+      // Assert
+      expect(gender).toBe(Gender.MALE)
     })
   })
 })

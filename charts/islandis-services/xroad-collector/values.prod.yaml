@@ -26,7 +26,7 @@ enabled: true
 env:
   ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   NODE_TLS_REJECT_UNAUTHORIZED: '0'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   XROAD_BASE_PATH: 'http://securityserver.island.is'

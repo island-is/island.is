@@ -13,7 +13,7 @@ export const ConfigFactory = (
 ) => ({
   fetchApi: createEnhancedFetch({
     name: 'clients-mms-frigg',
-    organizationSlug: 'menntamalastofnun',
+    organizationSlug: 'midstod-menntunar-og-skolathjonustu',
     autoAuth: idsClientConfig.isConfigured
       ? {
           mode: 'tokenExchange',

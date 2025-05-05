@@ -13,7 +13,7 @@ export class CaseReadGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
-    const user = request.user
+    const user = request.user?.currentUser
 
     if (!user) {
       throw new InternalServerErrorException('Missing user')

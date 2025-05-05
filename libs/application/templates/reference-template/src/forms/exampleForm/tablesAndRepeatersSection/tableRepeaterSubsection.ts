@@ -1,8 +1,10 @@
 import {
+  buildAlertMessageField,
   buildDescriptionField,
   buildMultiField,
   buildSubSection,
   buildTableRepeaterField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { FriggSchoolsByMunicipality } from '../../../utils/types'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/sampleQuery'
@@ -112,10 +114,16 @@ export const tableRepeaterSubsection = buildSubSection({
               label: 'Phone',
               width: 'half',
             },
+            uniqueInput: {
+              component: 'input',
+              label: 'Unique input',
+              width: 'half',
+              type: 'text',
+            },
             selectAsyncPrimary: {
               component: 'selectAsync',
               label: 'Primary Select Async',
-              loadOptions: async ({ apolloClient, selectedValue }) => {
+              loadOptions: async ({ apolloClient }) => {
                 const { data } =
                   await apolloClient.query<FriggSchoolsByMunicipality>({
                     query: friggSchoolsByMunicipalityQuery,
@@ -132,8 +140,8 @@ export const tableRepeaterSubsection = buildSubSection({
             selectAsyncReliant: {
               component: 'selectAsync',
               label: 'Reliant Select Async',
-              updateOnSelect: 'selectAsyncPrimary',
-              loadOptions: async ({ apolloClient, selectedValue }) => {
+              updateOnSelect: ['selectAsyncPrimary'],
+              loadOptions: async ({ apolloClient, selectedValues }) => {
                 const { data } =
                   await apolloClient.query<FriggSchoolsByMunicipality>({
                     query: friggSchoolsByMunicipalityQuery,
@@ -141,8 +149,8 @@ export const tableRepeaterSubsection = buildSubSection({
 
                 return (
                   data?.friggSchoolsByMunicipality?.map((municipality) => ({
-                    value: `${municipality.name} ${selectedValue || ''}`,
-                    label: `${municipality.name} ${selectedValue || ''}`,
+                    value: `${municipality.name} ${selectedValues?.[0] || ''}`,
+                    label: `${municipality.name} ${selectedValues?.[0] || ''}`,
                   })) ?? []
                 )
               },
@@ -166,7 +174,28 @@ export const tableRepeaterSubsection = buildSubSection({
               'Name',
               'NationalId',
               'Phone',
+              'Unique input',
             ],
+          },
+        }),
+        buildAlertMessageField({
+          id: 'alertMessageError',
+          title: 'Error Alert message',
+          message:
+            'Cannot enter duplicate values in unique input field.\nIf you need to validate using external data or answers from another step, then you can use alertMessage with shouldBlockInSetBeforeSubmitCallback=true.\nNote: can use max one alertMessage like this per screen and no other custom component that uses setBeforeSubmitCallback.',
+          alertType: 'error',
+          shouldBlockInSetBeforeSubmitCallback: true,
+          condition: (answers, _externalData) => {
+            const tableData =
+              getValueViaPath<{ uniqueInput?: string }[]>(
+                answers,
+                'tableRepeater',
+              ) || []
+            const values = tableData
+              .map((item) => item.uniqueInput?.trim())
+              .filter((val): val is string => !!val)
+            const hasDuplicates = new Set(values).size !== values.length
+            return hasDuplicates
           },
         }),
       ],

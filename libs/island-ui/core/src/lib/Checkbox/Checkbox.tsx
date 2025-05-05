@@ -12,6 +12,7 @@ export interface CheckboxProps {
   name?: string
   id?: string
   label?: React.ReactNode
+  ariaLabel?: string
   checked?: boolean
   disabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
@@ -38,6 +39,7 @@ interface AriaError {
 export const Checkbox = ({
   label,
   subLabel,
+  ariaLabel,
   labelVariant = 'default',
   name,
   id = name,
@@ -103,6 +105,7 @@ export const Checkbox = ({
         onChange={onChangeHandler}
         value={value}
         checked={checked}
+        aria-label={ariaLabel}
         {...(ariaError as AriaError)}
       />
       <label
@@ -126,13 +129,15 @@ export const Checkbox = ({
           />
         </div>
         <span className={styles.labelText}>
-          <Text
-            as="span"
-            variant={labelVariant}
-            fontWeight={checked || strong ? 'semiBold' : 'light'}
+          <div
+            className={cn({
+              [styles.labelChildrenFontWeightToggle]: checked || strong,
+            })}
           >
-            {label}
-          </Text>
+            <Text as="span" variant={labelVariant}>
+              {label}
+            </Text>
+          </div>
           <div
             aria-hidden="true"
             className={styles.fixJumpingContentFromFontWeightToggle}

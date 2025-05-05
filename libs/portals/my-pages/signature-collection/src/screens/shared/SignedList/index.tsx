@@ -8,9 +8,9 @@ import format from 'date-fns/format'
 import { useMutation } from '@apollo/client'
 import { unSignList } from '../../../hooks/graphql/mutations'
 import {
+  Mutation,
   SignatureCollection,
-  SignatureCollectionSignedList,
-  SignatureCollectionSuccess,
+  SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 
 const SignedList = ({
@@ -29,7 +29,9 @@ const SignedList = ({
   const { signedLists, loadingSignedLists, refetchSignedLists } =
     useGetSignedList()
 
-  const [unSign, { loading }] = useMutation(unSignList, {
+  const [unSign, { loading }] = useMutation<{
+    signatureCollectionUnsign: Mutation['signatureCollectionUnsign']
+  }>(unSignList, {
     variables: {
       input: {
         listId: listIdToUnsign,
@@ -39,21 +41,15 @@ const SignedList = ({
 
   const onUnSignList = async () => {
     try {
-      await unSign().then(({ data }) => {
-        if (
-          (
-            data as unknown as {
-              signatureCollectionUnsign: SignatureCollectionSuccess
-            }
-          ).signatureCollectionUnsign.success
-        ) {
-          toast.success(formatMessage(m.unSignSuccess))
-          setModalIsOpen(false)
-          refetchSignedLists()
-        } else {
-          setModalIsOpen(false)
-        }
-      })
+      const { data } = await unSign()
+      const success = data?.signatureCollectionUnsign?.success
+      if (success) {
+        toast.success(formatMessage(m.unSignSuccess))
+        setModalIsOpen(false)
+        refetchSignedLists()
+      } else {
+        setModalIsOpen(false)
+      }
     } catch (e) {
       toast.error(formatMessage(m.unSignError))
     }
@@ -66,14 +62,15 @@ const SignedList = ({
           <Text marginBottom={2} variant="h4">
             {formatMessage(m.mySigneeListsHeader)}
           </Text>
-          {signedLists?.map((list: SignatureCollectionSignedList) => {
+          {signedLists?.map((list) => {
             return (
               <Box marginBottom={3} key={list.id}>
                 <ActionCard
                   heading={list.title.split(' - ')[0]}
                   eyebrow={list.area?.name}
                   text={
-                    currentCollection.isPresidential
+                    currentCollection.collectionType ===
+                    SignatureCollectionCollectionType.Presidential
                       ? formatMessage(m.collectionTitle)
                       : formatMessage(m.collectionTitleParliamentary)
                   }

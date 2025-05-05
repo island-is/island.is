@@ -301,6 +301,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Það verður að setja inn kílómetrastöðu',
     description: 'Mileage as a mandatory',
   },
+  mileageLowerThanLast: {
+    id: 'rf.cr.application:error.mileage.lower.than.last',
+    defaultMessage: 'Kílómetrastaðan verður að vera hærri en síðasta skráning',
+    description: 'Mileage must be greater than last registration',
+  },
 })
 
 export const inReviewFormMessages = defineMessages({

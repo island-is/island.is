@@ -4,6 +4,8 @@ export default {
   rootDir: '../../..',
   roots: [__dirname],
   testEnvironment: 'jest-environment-jsdom',
+  detectOpenHandles: false,
+  detectLeaks: false,
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': [

@@ -1,6 +1,6 @@
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
-import { m } from '../lib/utils/messages'
+import { m } from '../lib/messages'
 
 export const Logo = () => {
   const { formatMessage } = useLocale()

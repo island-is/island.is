@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
@@ -37,7 +37,7 @@ const CasesAwaitingAssignmentTable: FC<CasesAwaitingAssignmentTableProps> = (
 
   const { loading, isFiltering, cases } = props
   return (
-    <>
+    <section>
       <SectionHeading title={formatMessage(strings.title)} />
       <AnimatePresence initial={false}>
         <TableWrapper loading={loading || isFiltering}>
@@ -100,7 +100,7 @@ const CasesAwaitingAssignmentTable: FC<CasesAwaitingAssignmentTableProps> = (
           )}
         </TableWrapper>
       </AnimatePresence>
-    </>
+    </section>
   )
 }
 

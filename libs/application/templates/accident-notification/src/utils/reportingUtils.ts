@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { WhoIsTheNotificationForEnum } from '../types'
+import { WhoIsTheNotificationForEnum } from './enums'
 
 export const isReportingOnBehalfOfInjured = (formValue: FormValue) => {
   const whoIsTheNotificationFor = getValueViaPath<WhoIsTheNotificationForEnum>(

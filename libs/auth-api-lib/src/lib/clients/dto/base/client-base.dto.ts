@@ -4,9 +4,10 @@ import {
   IsNumber,
   IsOptional,
   IsNotEmpty,
-  IsArray,
+  IsArray, IsEnum,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
+import { ClientSso, ClientType } from '../../../types'
 
 export class ClientBaseDTO {
   @IsString()
@@ -338,4 +339,12 @@ export class ClientBaseDTO {
     example: true,
   })
   readonly requireApiScopes!: boolean
+
+  @IsEnum(ClientSso)
+  @ApiProperty({
+    example: 'disabled',
+    enum: ClientSso,
+    enumName: 'ClientSso',
+  })
+  readonly sso!: string
 }

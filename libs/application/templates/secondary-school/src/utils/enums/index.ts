@@ -1,14 +1,16 @@
 import { DefaultEvents } from '@island.is/application/types'
 
 export enum ApplicationEvents {
-  RECEIVED = 'RECEIVED',
+  REVIEW_STARTED = 'REVIEW_STARTED',
+  REVIEW_COMPLETED = 'REVIEW_COMPLETED',
 }
 export type Events = {
   type:
     | DefaultEvents.SUBMIT
     | DefaultEvents.ABORT
     | DefaultEvents.EDIT
-    | ApplicationEvents.RECEIVED
+    | ApplicationEvents.REVIEW_STARTED
+    | ApplicationEvents.REVIEW_COMPLETED
 }
 
 export enum States {
@@ -35,11 +37,6 @@ export enum Routes {
   CUSTODIAN = 'custodianMultiField',
   EXTRA_INFORMATION = 'extraInformationMultiField',
   SCHOOL = 'schoolMultiField',
-}
-
-export enum ApplicationType {
-  FRESHMAN = 'FRESHMAN',
-  GENERAL_APPLICATION = 'GENERAL_APPLICATION',
 }
 
 export enum ConclusionView {

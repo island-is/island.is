@@ -17,7 +17,6 @@ import { GenericUserLicense } from '../dto/GenericUserLicense.dto'
 import { GetGenericLicenseInput } from '../dto/GetGenericLicense.input'
 import { LicenseService } from '../licenseService.service'
 import { GenericLicenseError } from '../dto/GenericLicenseError.dto'
-import { logger } from '@island.is/logging'
 import { ParsedUserAgent, type UserAgent } from '@island.is/nest/core'
 
 @UseGuards(IdsUserGuard, ScopesGuard)

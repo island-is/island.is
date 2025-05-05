@@ -30,7 +30,6 @@ export const commonOverviewFields = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'estateMembersCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -63,6 +62,19 @@ export const commonOverviewFields = [
                       member.advocate?.name,
                     formatPhoneNumber(member.advocate.phone || ''),
                     member.advocate.email,
+                  ],
+                ]
+              : '',
+
+            /* Advocate 2 */
+            member.advocate2
+              ? [
+                  [
+                    m.inheritanceAdvocateLabel.defaultMessage +
+                      ': ' +
+                      member.advocate2?.name,
+                    formatPhoneNumber(member.advocate2.phone || ''),
+                    member.advocate2.email,
                   ],
                 ]
               : '',

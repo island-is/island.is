@@ -1,3 +1,5 @@
+import { YesOrNo } from '@island.is/application/core'
+
 export interface Address {
   streetAddress: string
   postalCode: string
@@ -25,4 +27,12 @@ export interface DrivingLicense {
 export interface QualityPhotoAndSignature {
   photoDataUri: string
   signatureDataUri: string
+}
+
+export interface DigitalTachographFakeData {
+  useFakeDataDriversCard?: YesOrNo
+  hasNewestDriversCard?: YesOrNo
+  newestDriversCardIsExpired?: YesOrNo
+  newestDriversCardExpiresInMonths?: number
+  newestDriversCardIsValid?: YesOrNo
 }

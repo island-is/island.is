@@ -9,7 +9,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
+  JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -20,7 +20,7 @@ import { UpdateCivilClaimantInput } from './dto/updateCivilClaimant.input'
 import { CivilClaimant } from './models/civilClaimant.model'
 import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
 
-@UseGuards(JwtGraphQlAuthGuard)
+@UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver(() => CivilClaimant)
 export class CivilClaimantResolver {
   constructor(

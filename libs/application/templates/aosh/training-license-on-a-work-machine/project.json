@@ -1,0 +1,25 @@
+{
+  "name": "application-templates-aosh-training-license-on-a-work-machine",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/aosh/training-license-on-a-work-machine/src",
+  "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/aosh/training-license-on-a-work-machine/src/**/*.{js,ts,tsx}'"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/application/templates/aosh/training-license-on-a-work-machine/jest.config.ts"
+      }
+    }
+  }
+}

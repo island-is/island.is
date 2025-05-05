@@ -27,6 +27,7 @@ export const InputFields = {
     signatureType: 'misc.signatureType',
     selectedTemplate: 'misc.selectedTemplate',
     asDocument: 'misc.asDocument',
+    titlePrefix: 'misc.titlePrefix',
     asRoman: 'misc.asRoman',
   },
 }

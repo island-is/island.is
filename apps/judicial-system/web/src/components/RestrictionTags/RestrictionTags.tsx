@@ -4,10 +4,10 @@ import { Box, Tag } from '@island.is/island-ui/core'
 import { getShortRestrictionByValue } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
+  Case,
   CaseCustodyRestrictions,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/utils'
 
 interface Props {

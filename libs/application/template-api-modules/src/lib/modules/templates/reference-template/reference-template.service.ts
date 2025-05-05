@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
@@ -11,7 +10,6 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { NotificationsService } from '../../../notification/notifications.service'
-import { NotificationType } from '../../../notification/notificationsTemplates'
 
 const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
@@ -23,13 +21,13 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
     super(ApplicationTypes.EXAMPLE)
   }
 
-  async getReferenceData({ application, auth }: TemplateApiModuleActionProps) {
+  async getReferenceData({ application }: TemplateApiModuleActionProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    const applicantName = getValueViaPath(
+    const applicantName = getValueViaPath<string>(
       application.externalData,
       'nationalRegistry.data.fullName',
-    ) as string
+    )
 
     return {
       referenceData: {
@@ -40,7 +38,7 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
     }
   }
 
-  async getAnotherReferenceData({ application }: TemplateApiModuleActionProps) {
+  async getAnotherReferenceData() {
     return {
       anotherData: {
         stuff: 'someDataString',

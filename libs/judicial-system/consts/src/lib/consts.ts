@@ -156,9 +156,11 @@ export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/akaera/mottaka'
 export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
 export const INDICTMENTS_DEFENDER_ROUTE = '/domur/akaera/malflytjendur'
-export const INDICTMENTS_CONCLUSION_ROUTE = '/domur/akaera/nidurstada'
+export const INDICTMENTS_CONCLUSION_ROUTE = '/domur/akaera/stada-og-lyktir'
 export const INDICTMENTS_SUMMARY_ROUTE = '/domur/akaera/samantekt'
 export const INDICTMENTS_COMPLETED_ROUTE = '/domur/akaera/lokid'
+export const INDICTMENTS_ADD_FILES_IN_COURT_ROUTE = '/domur/akaera/gogn'
+
 //#endregion District court user routes
 
 //#region Prosecutor user routes
@@ -195,9 +197,9 @@ export const STATEMENT_ROUTE = '/greinargerd'
 export const INDICTMENTS_DEFENDANT_ROUTE = '/akaera/akaerdi'
 export const INDICTMENTS_POLICE_CASE_FILES_ROUTE = '/akaera/malsgogn'
 export const INDICTMENTS_CASE_FILE_ROUTE = '/akaera/skjalaskra'
+export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_PROCESSING_ROUTE = '/akaera/malsmedferd'
 export const INDICTMENTS_INDICTMENT_ROUTE = '/akaera/akaera'
-export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
 export const INDICTMENTS_ADD_FILES_ROUTE = '/akaera/gogn'
@@ -207,6 +209,8 @@ export const INDICTMENTS_ADD_FILES_ROUTE = '/akaera/gogn'
 export const USERS_ROUTE = '/notendur'
 export const CREATE_USER_ROUTE = '/notendur/nyr'
 export const CHANGE_USER_ROUTE = '/notendur/breyta'
+export const STATISTICS_ROUTE = '/notendur/tolfraedi'
+
 //#endregion Admin user routes
 
 //#region Shared routes

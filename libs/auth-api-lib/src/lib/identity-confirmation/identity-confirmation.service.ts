@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { IdentityConfirmationInputDto } from './dto/IdentityConfirmationInput.dto'
 import { InjectModel } from '@nestjs/sequelize'
 import { IdentityConfirmation } from './models/Identity-Confirmation.model'
@@ -13,11 +9,18 @@ import { SmsService } from '@island.is/nova-sms'
 import { IdentityConfirmationDTO } from './dto/identity-confirmation-dto.dto'
 import type { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { NoContentException } from '@island.is/nest/problem'
+import { Op } from 'sequelize'
 
-const TWO_DAYS = 2 * 24 * 60 * 60 * 1000
+export const LIFE_TIME_DAYS = 28
+const LIFE_TIME = LIFE_TIME_DAYS * 24 * 60 * 60 * 1000
+export const EXPIRATION = 2 * LIFE_TIME
+
 const ZENDESK_CUSTOM_FIELDS = {
-  Link: 24598388531474,
+  Link: 24596286118546,
 }
+
+const ZENDESK_AUTHOR_ID = 372464383959
 
 @Injectable()
 export class IdentityConfirmationService {
@@ -35,13 +38,7 @@ export class IdentityConfirmationService {
     number,
   }: IdentityConfirmationInputDto): Promise<string> {
     if (type === IdentityConfirmationType.PHONE && !number) {
-      throw new Error('Phone number is required')
-    }
-
-    const zendeskCase = await this.zendeskService.getTicket(id)
-
-    if (!zendeskCase) {
-      throw new Error('Ticket not found')
+      throw new BadRequestException('Phone number is required')
     }
 
     const identityConfirmation = await this.identityConfirmationModel.create({
@@ -74,6 +71,7 @@ export class IdentityConfirmationService {
     try {
       await this.zendeskService.updateTicket(id, {
         comment: {
+          author_id: ZENDESK_AUTHOR_ID,
           html_body: `Vinsamlegast opnaðu <a href="${link}">þennan hlekk</a> til að staðfesta þína auðkenningu`,
           public: true,
         },
@@ -132,12 +130,12 @@ export class IdentityConfirmationService {
     })
 
     if (!identityConfirmation) {
-      throw new Error('Identity confirmation not found')
+      throw new NoContentException()
     }
 
-    // Throw error if identity is older than 2 days
+    // Throw error if identity confirmation is expired
     if (
-      new Date(identityConfirmation.createdAt).getTime() + TWO_DAYS <
+      new Date(identityConfirmation.created).getTime() + LIFE_TIME <
       Date.now()
     ) {
       throw new Error('Identity confirmation expired')
@@ -155,12 +153,13 @@ export class IdentityConfirmationService {
 
     await this.zendeskService.updateTicket(identityConfirmation.ticketId, {
       comment: {
+        author_id: ZENDESK_AUTHOR_ID,
         html_body: `
           <b>Auðkenning hefur verið staðfest</b>
           <p>Umsækjandi: ${person.nafn}, kennitala: ${user.nationalId}</p>
           <p>${
             person.heimilisfang?.husHeiti
-              ? 'Heimilisfang:' + person.heimilisfang.husHeiti + ', '
+              ? 'Heimilisfang:' + person.heimilisfang.husHeiti
               : ''
           }</p>
           `,
@@ -179,7 +178,7 @@ export class IdentityConfirmationService {
     })
 
     if (!identityConfirmation) {
-      throw new NotFoundException('Identity confirmation not found')
+      throw new NoContentException()
     }
 
     return {
@@ -188,8 +187,18 @@ export class IdentityConfirmationService {
       type: identityConfirmation.type,
       // Check if time now is 2 days older than created at time
       isExpired:
-        new Date(identityConfirmation.createdAt).getTime() + TWO_DAYS <
+        new Date(identityConfirmation.created).getTime() + LIFE_TIME <
         Date.now(),
     }
+  }
+
+  async deleteExpiredIdentityConfirmations(): Promise<number> {
+    return this.identityConfirmationModel.destroy({
+      where: {
+        created: {
+          [Op.lt]: new Date(Date.now() - EXPIRATION),
+        },
+      },
+    })
   }
 }

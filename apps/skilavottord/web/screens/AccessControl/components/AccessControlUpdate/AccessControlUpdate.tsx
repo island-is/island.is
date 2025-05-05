@@ -5,6 +5,7 @@ import { Option } from '@island.is/island-ui/core'
 import { ModalProps } from '@island.is/skilavottord-web/components'
 import {
   AccessControl,
+  AccessControlRole,
   Role,
   UpdateAccessControlInput,
 } from '@island.is/skilavottord-web/graphql/schema'
@@ -51,13 +52,30 @@ export const AccessControlUpdate: FC<
   const { user } = useContext(UserContext)
 
   useEffect(() => {
+    let recyclingPartner = null
+
+    // recyclingCompany && recyclingCompanyAdmin can be added directly under municipality so we need to find the municipality if set
+    if (
+      currentPartner?.role === AccessControlRole.recyclingCompany ||
+      currentPartner?.role === AccessControlRole.recyclingCompanyAdmin
+    ) {
+      recyclingPartner = recyclingPartners.find(
+        (option) =>
+          option.value === currentPartner?.recyclingPartner?.companyId,
+      )
+
+      if (!recyclingPartner) {
+        recyclingPartner = municipalities.find(
+          (option) =>
+            option.value === currentPartner?.recyclingPartner?.companyId,
+        )
+      }
+    }
+
     reset({
       ...currentPartner,
       role: roles.find((option) => option.value === currentPartner?.role),
-      partnerId: recyclingPartners.find(
-        (option) =>
-          option.value === currentPartner?.recyclingPartner?.companyId,
-      ),
+      partnerId: recyclingPartner,
       municipalityId: municipalities.find(
         (option) =>
           option.value === currentPartner?.recyclingPartner?.companyId,

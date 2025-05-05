@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
@@ -116,8 +116,11 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           defaultValue: '',
           options: [
             {
-              label: (application.externalData.nationalRegistry.data as any)
-                ?.fullName,
+              label:
+                getValueViaPath<string>(
+                  application.externalData,
+                  'nationalRegistry.data.fullName',
+                ) ?? '',
               value: '1',
               subLabel: identityDocumentData.userPassport
                 ? formatMessage(m.passportNumber) +

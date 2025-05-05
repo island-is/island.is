@@ -17,16 +17,17 @@ import {
 
 import { m } from '../lib/messages'
 import { CurrentCollectionApi, OwnerRequirementsApi } from '../dataProviders'
+import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
+  logo: Logo,
   children: [
     buildSection({
       id: 'intro',
-      title: m.intro,
       children: [
         buildMultiField({
           id: 'intro',
@@ -42,7 +43,6 @@ export const Prerequisites: Form = buildForm({
     }),
     buildSection({
       id: 'approveExternalData',
-      title: m.dataCollection,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
@@ -74,32 +74,13 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: OwnerRequirementsApi,
-              title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
               provider: CurrentCollectionApi,
-              title: '',
-              subTitle: '',
             }),
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'screen3',
-      title: m.information,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen4',
-      title: m.overview,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen5',
-      title: m.listCreated,
-      children: [],
     }),
   ],
 })

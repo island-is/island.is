@@ -40,6 +40,15 @@ const estateMemberMapper = (element: EstateMember) => {
       : info(element?.nationalId).age < 18
       ? { nationalId: '', name: '', phone: '', email: '' }
       : undefined,
+    advocate2: element.advocate2
+      ? {
+          ...element.advocate2,
+          phone: '',
+          email: '',
+        }
+      : info(element?.nationalId).age < 18
+      ? { nationalId: '', name: '', phone: '', email: '' }
+      : undefined,
   }
 }
 
@@ -151,6 +160,8 @@ export const expandBankAccounts = (
     expandedBankAccounts.push({
       accountNumber: bankAccount.accountNumber ?? '',
       balance: bankAccount.balance ?? '',
+      exchangeRateOrInterest: bankAccount.exchangeRateOrInterest ?? '',
+      accountTotal: bankAccount.accountTotal ?? '',
     })
   })
 

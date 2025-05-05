@@ -65,5 +65,11 @@ export const overview = {
         'Áður en að Sjúkratryggingar Íslands fara yfir umsókn og taka afstöðu til bótaskyldu þurfa að minnsta kosti eftirtalin fylgiskjöl að berast: ',
       description: 'Description of alert message that appears on overview page',
     },
+    descriptionWithFiles: {
+      id: 'an.application:overview.alertMessage.descriptionWithFiles#markdown',
+      defaultMessage:
+        'Áður en að Sjúkratryggingar Íslands fara yfir umsókn og taka afstöðu til bótaskyldu þurfa að minnsta kosti eftirtalin fylgiskjöl að berast: **{missingFiles}**',
+      description: 'Description of alert message that appears on overview page',
+    },
   }),
 }

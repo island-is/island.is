@@ -103,7 +103,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode getMyVersionCode(143)
-        versionName "1.5.1"
+        versionName "1.5.5"
         manifestPlaceholders = [
             appAuthRedirectScheme: "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
         ]
@@ -163,6 +163,8 @@ android.buildTypes.each { buildType ->
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+
+    implementation project(':react-native-fs')
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

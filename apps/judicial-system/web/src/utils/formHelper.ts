@@ -2,11 +2,11 @@ import { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import * as constants from '@island.is/judicial-system/consts'
+import { IndictmentSubtypeMap } from '@island.is/judicial-system/types'
 import {
+  Case,
   IndictmentSubtype,
-  IndictmentSubtypeMap,
-} from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { replaceTabs } from './formatters'
 import { UpdateCase } from './hooks'
@@ -172,9 +172,9 @@ export type stepValidationsType = {
   [constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE]: () => boolean
   [constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE]: () => boolean
   [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => boolean
+  [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_INDICTMENT_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
   ) => boolean
@@ -253,11 +253,11 @@ export const stepValidations = (): stepValidationsType => {
       validations.isDefendantStepValidIndictments(theCase),
     [constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE]: () => true,
     [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => true,
+    [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
     [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) =>
       validations.isProcessingStepValidIndictments(theCase),
     [constants.INDICTMENTS_INDICTMENT_ROUTE]: (theCase: Case) =>
       validations.isIndictmentStepValid(theCase),
-    [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
     [constants.INDICTMENTS_SUMMARY_ROUTE]: () => true,
     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,

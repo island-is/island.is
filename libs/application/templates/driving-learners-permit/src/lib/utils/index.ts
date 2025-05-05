@@ -7,9 +7,9 @@ export const allowFakeCondition =
   (answers: FormValue) =>
     getValueViaPath(answers, 'fakeData.useFakeData') === result
 
-export async function truthyFeatureFromClient(
+export const truthyFeatureFromClient = async (
   featureFlagClient: FeatureFlagClient,
   key: string,
-): Promise<boolean> {
+): Promise<boolean> => {
   return !!(await featureFlagClient.getValue(key, false))
 }

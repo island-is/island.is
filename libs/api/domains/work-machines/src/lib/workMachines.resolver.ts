@@ -33,6 +33,7 @@ import { GetMachineParentCategoryByTypeAndModelInput } from './dto/getMachinePar
 import { Category } from './models/category'
 import { SubCategory } from './models/subCategory'
 import { TechInfoItem } from './models/techInfoItem'
+import { MachineType } from './models/machineType'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -179,6 +180,21 @@ export class WorkMachinesResolver {
       auth,
       parentCategory,
       subCategory,
+    )
+  }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => MachineType)
+  @Audit()
+  async getTypeByRegistrationNumber(
+    @CurrentUser() auth: User,
+    @Args('registrationNumber') registrationNumber: string,
+    @Args('applicationId') applicationId: string,
+  ) {
+    return this.workMachinesService.getTypeByRegistrationNumber(
+      auth,
+      registrationNumber,
+      applicationId,
     )
   }
 }

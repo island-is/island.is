@@ -9,7 +9,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'pls.application:error.age.summary',
-      defaultMessage: '18 ára aldursmark er ekki náð',
+      defaultMessage: '18 ára aldursmarki er ekki náð',
       description: '',
     },
   }),
@@ -82,7 +82,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'pls.application:error.signer.summary#markdown',
-      defaultMessage: 'Hægt er að draga meðmæli tilbaka inni á Mínum Síðum.',
+      defaultMessage: 'Hægt er að draga meðmæli til baka inni á Mínum Síðum.',
       description: '',
     },
   }),
