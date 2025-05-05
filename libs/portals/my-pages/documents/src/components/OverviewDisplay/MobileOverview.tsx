@@ -61,6 +61,12 @@ export const MobileOverview: FC<Props> = ({
                 {activeDocument?.subject}
               </Text>
               {<DocumentRenderer doc={activeDocument} />}
+
+              <Box className={styles.reveal}>
+                <button onClick={onPressBack}>
+                  {formatMessage(m.backToDocumentsList)}
+                </button>
+              </Box>
             </Box>
           </Box>
         </FocusLock>

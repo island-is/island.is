@@ -18,7 +18,7 @@ import {
 import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import debounce from 'lodash/debounce'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import DocumentsFilter from '../../components/DocumentFilter/DocumentsFilter'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
@@ -64,6 +64,8 @@ export const DocumentsOverview = () => {
     totalCount,
   } = useDocumentList()
 
+  const [focusId, setFocusId] = useState<string>()
+
   const { handlePageChange, handleSearchChange } = useDocumentFilters()
 
   const { submitBatchAction, loading: batchActionLoading } = useMailAction()
@@ -74,7 +76,7 @@ export const DocumentsOverview = () => {
     if (location?.state?.doc) {
       setActiveDocument(location.state.doc)
     }
-  }, [location?.state?.doc])
+  }, [location?.state?.doc, setActiveDocument])
 
   useEffect(() => {
     return () => {
@@ -92,6 +94,16 @@ export const DocumentsOverview = () => {
   const debouncedResults = useMemo(() => {
     return debounce(handleSearchChange, 500)
   }, [])
+
+  useEffect(() => {
+    if (focusId) {
+      const element = document.getElementById(`button-${focusId}`)
+      if (element) {
+        element.focus()
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusId])
 
   const rowDirection = error ? 'column' : 'columnReverse'
 
@@ -167,7 +179,7 @@ export const DocumentsOverview = () => {
                 <Box className={styles.checkboxWrap} marginRight={3}>
                   <Checkbox
                     name="checkbox-select-all"
-                    aria-label={formatMessage(messages.selectAll)}
+                    ariaLabel={formatMessage(messages.selectAll)}
                     checked={selectedLines.length > 0}
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -230,6 +242,7 @@ export const DocumentsOverview = () => {
                         : undefined
                     }
                     documentLine={doc}
+                    hasInitialFocus={doc.id === focusId}
                     active={doc.id === activeDocument?.id}
                     bookmarked={!!doc.bookmarked}
                     selected={selectedLines.includes(doc.id)}
@@ -285,10 +298,10 @@ export const DocumentsOverview = () => {
               (i) => i.id === activeDocument?.categoryId,
             )}
             onPressBack={() => {
+              if (activeDocument?.id) {
+                setFocusId(activeDocument.id)
+              }
               setActiveDocument(null)
-              navigate(DocumentsPaths.ElectronicDocumentsRoot, {
-                replace: true,
-              })
             }}
             error={{
               message: error

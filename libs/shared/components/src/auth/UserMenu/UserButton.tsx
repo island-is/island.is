@@ -29,6 +29,15 @@ export const UserButton = ({
   const { profile } = user
   const { formatMessage } = useLocale()
 
+  const userButtonAriaLabel = isDelegation
+    ? formatMessage(userMessages.userButtonDelegationAriaLabel, {
+        arg: profile?.actor?.name,
+        delegationArg: profile.name,
+      })
+    : formatMessage(userMessages.userButtonAriaLabel, {
+        arg: profile.name,
+      })
+
   return (
     <>
       <Hidden above="sm">
@@ -38,7 +47,9 @@ export const UserButton = ({
               isDelegation={isDelegation}
               username={iconOnlyMobile ? undefined : profile.name}
               onClick={onClick}
-              aria-label={formatMessage(userMessages.userButtonAria)}
+              aria-label={formatMessage(userMessages.userButtonAriaLabel, {
+                arg: profile.name,
+              })}
               dataTestid="user-menu"
             />
           </Box>
@@ -49,7 +60,7 @@ export const UserButton = ({
             onClick={onClick}
             icon={userMenuOpen ? 'close' : isDelegation ? 'people' : 'person'}
             iconType="outline"
-            aria-label={formatMessage(userMessages.userButtonAria)}
+            aria-label={userButtonAriaLabel}
             data-testid="user-menu"
           >
             {!iconOnlyMobile && (
@@ -68,7 +79,7 @@ export const UserButton = ({
           colorScheme={isDelegation ? 'primary' : 'white'}
           onClick={onClick}
           icon="chevronDown"
-          aria-label={formatMessage(userMessages.userButtonAria)}
+          aria-label={userButtonAriaLabel}
           data-testid="user-menu"
         >
           <div translate="no" className={styles.resetButtonPadding}>
