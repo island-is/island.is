@@ -139,6 +139,7 @@ export const buildDateField = (
     backgroundColor = 'blue',
     required,
     readOnly,
+    tempDisabled,
   } = data
   return {
     ...extractCommonFields(data),
@@ -154,6 +155,7 @@ export const buildDateField = (
     backgroundColor,
     required,
     readOnly,
+    tempDisabled,
   }
 }
 

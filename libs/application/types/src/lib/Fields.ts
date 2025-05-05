@@ -400,6 +400,7 @@ export interface DateField extends InputField {
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
   readOnly?: boolean
+  tempDisabled?: (application: Application) => boolean
 }
 
 export interface DescriptionField extends BaseField {
