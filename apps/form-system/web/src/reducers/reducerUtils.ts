@@ -54,17 +54,17 @@ export const incrementWithScreens = (
     }
   }
 
-  submitScreen({
-    variables: {
-      input: {
-        screenId: state.currentScreen?.data?.id,
-        submitScreenDto: {
-          applicationId: state.application.id,
-          screenDto: state.currentScreen?.data,
-        }
-      }
-    }
-  })
+  // submitScreen({
+  //   variables: {
+  //     input: {
+  //       screenId: state.currentScreen?.data?.id,
+  //       submitScreenDto: {
+  //         applicationId: state.application.id,
+  //         screenDto: state.currentScreen?.data,
+  //       }
+  //     }
+  //   }
+  // })
 
   if (currentScreenIndex === maxScreenIndex) {
     if (state.currentSection.index === maxSectionIndex) {
