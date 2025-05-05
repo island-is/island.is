@@ -46,5 +46,10 @@ export const m = {
       defaultMessage: 'Nánar um áhrif',
       description: 'Nánar um áhrif (heading fyrir ofan texta á details síðu)',
     },
+    cardSubheading: {
+      id: 'web.bloodbank.bloodDonationRestrictions:detailsPage.cardSubheading',
+      defaultMessage: 'Undantekningar og athugasemdir',
+      description: 'Texti undirtitil í spjaldi',
+    },
   }),
 }
