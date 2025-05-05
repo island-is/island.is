@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Column, Columns, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
