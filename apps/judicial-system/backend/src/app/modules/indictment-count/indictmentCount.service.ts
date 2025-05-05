@@ -35,6 +35,17 @@ export class IndictmentCountService {
   async findById(indictmentCountId: string): Promise<IndictmentCount> {
     const indictmentCount = await this.indictmentCountModel.findByPk(
       indictmentCountId,
+      {
+        include: [
+          {
+            model: Offense,
+            as: 'offenses',
+            required: false,
+            separate: true,
+            order: [['created', 'ASC']],
+          },
+        ],
+      },
     )
 
     if (!indictmentCount) {
