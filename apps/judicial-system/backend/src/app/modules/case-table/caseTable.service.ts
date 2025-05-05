@@ -60,7 +60,7 @@ const cellGenerators: Record<CaseTableColumnKey, CaseTableCellGenerator> = {
                 : c.type,
             ),
           ),
-          ...(c.parentCaseId ? ['Framlenging'] : []),
+          c.parentCaseId ? 'Framlenging' : '',
         ],
       },
     }),

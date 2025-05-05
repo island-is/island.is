@@ -11,11 +11,29 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { GenericTable } from '@island.is/judicial-system-web/src/components/Table'
-import { CaseTableCell } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseTableCell,
+  StringGroup,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import { useCaseTableQuery } from './caseTable.generated'
 import { logoContainer } from '../Cases/Cases.css'
+
+const compareStringGroup = (a: StringGroup, b: StringGroup) => {
+  const aValue = a.s
+  const bValue = b.s
+
+  for (let i = 0; i < aValue.length; i++) {
+    if (aValue[i] === bValue[i]) {
+      continue
+    }
+
+    return compareLocaleIS(aValue[i], bValue[i])
+  }
+
+  return 0
+}
 
 const CaseTable = () => {
   const router = useRouter()
@@ -36,18 +54,12 @@ const CaseTable = () => {
   const caseTableData = data?.caseTable
 
   const compare = (a: CaseTableCell, b: CaseTableCell): number => {
-    const aValue = a.value.s
-    const bValue = b.value.s
-
-    for (let i = 0; i < aValue.length; i++) {
-      if (aValue[i] === bValue[i]) {
-        continue
-      }
-
-      return compareLocaleIS(aValue[i], bValue[i])
+    switch (a.value.__typename) {
+      case 'StringGroup':
+        return compareStringGroup(a.value, b.value)
+      default:
+        return 0
     }
-
-    return 0
   }
 
   const render = (cell: CaseTableCell): ReactNode => {
