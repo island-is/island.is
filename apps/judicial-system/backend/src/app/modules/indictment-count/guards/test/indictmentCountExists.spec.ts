@@ -1,11 +1,13 @@
+import { uuid } from 'uuidv4'
+
 import {
   BadRequestException,
-  NotFoundException,
   ExecutionContext,
+  NotFoundException,
 } from '@nestjs/common'
-import { uuid } from 'uuidv4'
-import { IndictmentCountExistsGuard } from '../indictmentCountExists.guard'
+
 import { IndictmentCountService } from '../../indictmentCount.service'
+import { IndictmentCountExistsGuard } from '../indictmentCountExists.guard'
 
 interface Then {
   result?: boolean
