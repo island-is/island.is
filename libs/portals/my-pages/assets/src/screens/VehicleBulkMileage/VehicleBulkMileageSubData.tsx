@@ -4,8 +4,9 @@ import {
   SimpleBarChart,
   formatDate,
   numberFormat,
+  LinkButton,
 } from '@island.is/portals/my-pages/core'
-import { Box, Text, Button } from '@island.is/island-ui/core'
+import { Box, Text, Button, Inline } from '@island.is/island-ui/core'
 import { AssetsPaths } from '../../lib/paths'
 import { vehicleMessage } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -143,22 +144,32 @@ export const VehicleBulkMileageSubData = ({
         />
       ) : undefined}
       <Box marginTop={2}>
-        <LinkResolver
-          href={AssetsPaths.AssetsVehiclesDetailMileage.replace(
-            ':id',
-            vehicleId.toString(),
-          )}
-        >
-          <Button
-            colorScheme="white"
-            icon="arrowForward"
-            iconType="outline"
-            size="small"
-            variant="utility"
+        <Inline space={1}>
+          <LinkResolver
+            href={AssetsPaths.AssetsVehiclesDetailMileage.replace(
+              ':id',
+              vehicleId.toString(),
+            )}
           >
-            {formatMessage(vehicleMessage.viewRegistrationHistory)}
-          </Button>
-        </LinkResolver>
+            <Button
+              icon="arrowForward"
+              iconType="outline"
+              size="small"
+              variant="utility"
+              colorScheme="white"
+            >
+              {formatMessage(vehicleMessage.viewRegistrationHistory)}
+            </Button>
+          </LinkResolver>
+          <LinkButton
+            key="finance"
+            to={AssetsPaths.LinkFinanceTransactionVehicleMileage}
+            text={formatMessage(vehicleMessage.financeMileageLink)}
+            icon="arrowForward"
+            variant="utility"
+            colorScheme="white"
+          />
+        </Inline>
       </Box>
     </Box>
   )

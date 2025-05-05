@@ -12,11 +12,9 @@ export const conclution = {
       defaultMessage: 'Umsókn er móttekin og afgreidd',
       description: 'Conclution section description field title',
     },
-    descriptionFieldMessage: {
-      id: 'hid.application:conclution.descriptionFieldMessage#markdown',
-      defaultMessage: `* Tryggingaryfirlýsingin hefur verið send í stafrænt pósthólf hér.
-* Tryggingaryfirlýsingar barna fara í pósthólf umsækjanda.
-* Þú getur einnig hlaðið niður skjölunum hér`,
+    descriptionFieldMessage2: {
+      id: 'hid.application:conclution.descriptionFieldMessage2#markdown',
+      defaultMessage: `* Tryggingaryfirlýsingin hefur verið send í stafrænt pósthólf hér\n\n* Tryggingaryfirlýsingar barna fara í pósthólf umsækjanda.\n\n* Þú getur einnig hlaðið niður skjölunum hér`,
       description: 'Conclution section description field message',
     },
   }),
