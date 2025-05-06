@@ -95,6 +95,15 @@ definitions:
         fi
         cd android
         ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
+    - &maestro-tests
+      name: Run Maestro end to end tests
+      scripts:
+        - name: Run launch app flow
+          script: maestro test apps/native/app/.maestro/launch-app-flow.yaml
+        - name: Run try signing in flow
+          script: maestro test apps/native/app/.maestro/try-signing-in-flow.yaml
+        - name: Run inbox flow
+          script: maestro test apps/native/app/.maestro/inbox-flow.yaml
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
@@ -171,6 +180,7 @@ workflows:
         XCODE_SCHEME: 'Ísland.dev'
         APP_STORE_APPLE_ID: 1570427360
     scripts:
+      - *maestro-tests
       - *check_changes
       - *pip_install
       - *npm_install
