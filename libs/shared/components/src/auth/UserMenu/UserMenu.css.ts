@@ -58,8 +58,6 @@ export const fullScreen = style({
 
 export const wrapper = style({
   maxHeight: `calc(100vh - ${spacing[12]}px)`,
-  overflowY: 'auto',
-  overflowX: 'hidden',
 })
 
 export const closeButton = style({
@@ -140,6 +138,9 @@ export const delegationName = style({
       fontSize: '16px',
     },
   }),
+  ':hover': {
+    textDecoration: 'none',
+  },
 })
 
 export const actorName = style({
@@ -153,8 +154,10 @@ export const breakWord = style({
 })
 
 export const dropdownItem = style({
+  zIndex: theme.zIndex.above,
+  width: 'fit-content',
   ':hover': {
-    textDecoration: 'underline',
+    color: theme.color.blue400,
   },
 })
 
@@ -177,4 +180,8 @@ export const userDelegationsText = style({
 export const userTopicCardBox = style({
   height: 64,
   textAlign: 'left',
+})
+
+globalStyle(`${userTopicCardBox}:hover > ${userDelegationsText}`, {
+  color: theme.color.blue400,
 })

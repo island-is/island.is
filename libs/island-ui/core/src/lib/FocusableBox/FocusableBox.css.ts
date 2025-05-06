@@ -23,13 +23,13 @@ export const focusable = style({
     transition: 'border-color 150ms ease, opacity 150ms ease',
   },
 
-  ':focus': {
+  ':focus-visible': {
     borderColor: 'transparent',
     outline: 0,
   },
 
   selectors: {
-    [`&:focus::before`]: {
+    [`&:focus-visible::before`]: {
       borderWidth: 3,
       borderStyle: 'solid',
       borderColor: theme.color.mint400,
@@ -46,7 +46,7 @@ export const colorSchemes = styleVariants({
         ':hover': {
           borderColor: theme.color.purple400,
         },
-        ':focus': {
+        ':focus-visible': {
           borderColor: 'transparent',
         },
       },
@@ -58,7 +58,7 @@ export const colorSchemes = styleVariants({
         ':hover': {
           borderColor: theme.color.blue400,
         },
-        ':focus': {
+        ':focus-visible': {
           borderColor: 'transparent',
         },
       },
@@ -70,7 +70,7 @@ export const colorSchemes = styleVariants({
         ':hover': {
           borderColor: theme.color.red400,
         },
-        ':focus': {
+        ':focus-visible': {
           borderColor: 'transparent',
         },
       },
@@ -82,7 +82,7 @@ export const colorSchemes = styleVariants({
         ':hover': {
           borderColor: theme.color.white,
         },
-        ':focus': {
+        ':focus-visible': {
           borderColor: 'transparent',
         },
       },
@@ -94,7 +94,7 @@ export const colorSchemes = styleVariants({
         ':hover': {
           borderColor: theme.color.blueberry600,
         },
-        ':focus': {
+        ':focus-visible': {
           borderColor: 'transparent',
         },
       },
@@ -106,7 +106,7 @@ export const colorSchemes = styleVariants({
         ':hover': {
           borderColor: theme.color.dark400,
         },
-        ':focus': {
+        ':focus-visible': {
           borderColor: 'transparent',
         },
       },
