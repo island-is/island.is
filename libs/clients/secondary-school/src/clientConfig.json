@@ -44,7 +44,7 @@
       },
       "put": {
         "tags": ["Applications"],
-        "summary": "[GET] Overwrites an existing application",
+        "summary": "[PUT] Overwrites an existing application",
         "parameters": [
           {
             "name": "islandIsApplicationId",
@@ -135,7 +135,7 @@
         "tags": ["Applications"],
         "summary": "[POST] Creates a new application.",
         "requestBody": {
-          "description": "(required) Application  MMS.Core.Domain.Dtos.Application.ApplicationBaseDto.",
+          "description": "(required) Application MMS.Core.Domain.Dtos.Application.ApplicationBaseDto.",
           "content": {
             "application/json-patch+json": {
               "schema": { "$ref": "#/components/schemas/ApplicationBaseDto" }
@@ -469,6 +469,11 @@
             "description": "Applicant name",
             "nullable": true
           },
+          "applicantGender": {
+            "type": "string",
+            "description": "Applicant gender",
+            "nullable": true
+          },
           "attachments": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/AttachmentDto" },
@@ -532,6 +537,18 @@
         "additionalProperties": false,
         "description": "Base properties for creating an application"
       },
+      "ApplicationChoiceStatus": {
+        "enum": [
+          "NewApplication",
+          "Processing",
+          "AcceptedWaiting",
+          "Accepted",
+          "AcceptedInOtherSchool",
+          "Rejected"
+        ],
+        "type": "string",
+        "description": "Enum for describing Application Status"
+      },
       "ApplicationChoicesBaseDto": {
         "type": "object",
         "properties": {
@@ -577,9 +594,11 @@
             "format": "int32"
           },
           "school": { "$ref": "#/components/schemas/SchoolSimpleDto" },
-          "programmeChoice": {
+          "programmeChoices": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/ProgrammeChoiceDto" },
+            "items": {
+              "$ref": "#/components/schemas/ProgrammeChoiceReturnDto"
+            },
             "description": "Programme choice",
             "nullable": true
           },
@@ -588,7 +607,13 @@
           "requestDormitory": {
             "type": "boolean",
             "description": "Is the student requesting dormitory."
-          }
+          },
+          "rank": {
+            "type": "integer",
+            "description": "The ranking of the application choice",
+            "format": "int32"
+          },
+          "status": { "$ref": "#/components/schemas/ApplicationChoiceStatus" }
         },
         "additionalProperties": false
       },
@@ -661,6 +686,11 @@
             "description": "Applicant name",
             "nullable": true
           },
+          "applicantGender": {
+            "type": "string",
+            "description": "Applicant gender",
+            "nullable": true
+          },
           "isFreshman": {
             "type": "boolean",
             "description": "Is the applicant a freshman"
@@ -705,7 +735,7 @@
         "additionalProperties": false
       },
       "ApplicationStatus": {
-        "enum": ["NewApplication", "Rejected", "Accepted", "PaymentPending"],
+        "enum": ["NewApplication", "Accepted", "AcceptedWaiting", "Rejected"],
         "type": "string",
         "description": "Enum for describing Application Status"
       },
@@ -743,7 +773,8 @@
             "type": "string",
             "description": "Content type (e.g., \"pdf\").\r\nNot contstrained to a specific set of values.",
             "nullable": true
-          }
+          },
+          "id": { "type": "string", "format": "uuid" }
         },
         "additionalProperties": false
       },
@@ -852,6 +883,11 @@
       "ProgrammeChoiceDto": {
         "type": "object",
         "properties": {
+          "applicationChoiceId": {
+            "type": "string",
+            "description": "Reference to the application choice",
+            "format": "uuid"
+          },
           "programmeId": {
             "type": "string",
             "description": "Reference to the programme being selected",
@@ -864,6 +900,48 @@
           }
         },
         "additionalProperties": false
+      },
+      "ProgrammeChoiceReturnDto": {
+        "type": "object",
+        "properties": {
+          "programmeId": {
+            "type": "string",
+            "description": "Reference to the programme being selected",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the programme",
+            "nullable": true
+          },
+          "priority": {
+            "type": "integer",
+            "description": "Priority of the programme\r\n1 highest priority, 2 second highest priority, etc.",
+            "format": "int32"
+          },
+          "isSpecialNeedsProgramme": {
+            "type": "boolean",
+            "description": "Boolean value indicating if the programme is a special needs programme"
+          },
+          "rank": {
+            "type": "integer",
+            "description": "The ranking of the programme choice",
+            "format": "int32"
+          },
+          "status": { "$ref": "#/components/schemas/ProgrammeChoiceStatus" }
+        },
+        "additionalProperties": false
+      },
+      "ProgrammeChoiceStatus": {
+        "enum": [
+          "New",
+          "Processing",
+          "AcceptedWaiting",
+          "Accepted",
+          "OtherProgrammeAccepted",
+          "Rejected"
+        ],
+        "type": "string"
       },
       "ProgrammeSimpleDto": {
         "type": "object",

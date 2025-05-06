@@ -19,14 +19,14 @@ global:
 name: 'web'
 enabled: true
 env:
-  API_URL: 'http://web-api'
+  API_URL: 'http://api'
   CODE_OWNER: 'stefna'
   DISABLE_API_CATALOGUE: 'false'
   DISABLE_ORGANIZATION_CHATBOT: 'false'
   DISABLE_SYSLUMENN_PAGE: 'false'
   ENVIRONMENT: 'dev'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
   TRACKING_DOMAIN: 'beta.dev01.devland.is'
 grantNamespaces:

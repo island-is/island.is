@@ -1,7 +1,6 @@
 import {
   buildForm,
   buildSection,
-  buildAlertMessageField,
   buildMultiField,
   buildDescriptionField,
 } from '@island.is/application/core'

@@ -1,4 +1,4 @@
-export enum PASSPORT_CHARGE_CODES {
+export enum PassportChargeCodes {
   REGULAR = 'AY105',
   EXPRESS = 'AY106',
   DISCOUNT_REGULAR = 'AY107',

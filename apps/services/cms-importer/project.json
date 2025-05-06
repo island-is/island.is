@@ -1,0 +1,47 @@
+{
+  "name": "services-cms-importer",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/services/cms-importer/src",
+  "projectType": "application",
+  "tags": ["scope:nest"],
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "options": {
+        "outputPath": "dist/apps/services/cms-importer",
+        "main": "apps/services/cms-importer/src/main.ts",
+        "tsConfig": "apps/services/cms-importer/tsconfig.app.json",
+        "assets": ["apps/services/cms-importer/src/assets"],
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "worker": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-cms-importer:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/services/cms-importer/jest.config.ts"
+      }
+    },
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
+}

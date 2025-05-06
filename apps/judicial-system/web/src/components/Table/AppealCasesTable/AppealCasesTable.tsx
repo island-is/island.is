@@ -73,6 +73,8 @@ const AppealCasesTable: FC<Props> = (props) => {
         thead={[
           {
             title: formatMessage(tables.caseNumber),
+            sortBy: 'appealCaseNumber',
+            sortFn: 'number',
           },
           {
             title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),

@@ -16,3 +16,14 @@ export class GetOrganizationSubpageInput {
   @IsString()
   lang: ElasticsearchIndexLocale = 'is'
 }
+
+@InputType()
+export class GetOrganizationSubpageByIdInput {
+  @Field()
+  @IsString()
+  id!: string
+
+  @Field(() => String)
+  @IsString()
+  lang: ElasticsearchIndexLocale = 'is'
+}

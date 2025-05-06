@@ -18,6 +18,7 @@ import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
 import com.microsoft.codepush.react.CodePush;
 import is.island.app.IslandPackage;
+import com.rnfs.RNFSPackage; 
 
 public class MainApplication extends NavigationApplication {
 
@@ -33,6 +34,7 @@ public class MainApplication extends NavigationApplication {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
           packages.add(new IslandPackage());
+          packages.add(new RNFSPackage());
           return packages;
         }
 

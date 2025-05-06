@@ -19,8 +19,8 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { CaseType } from '@island.is/judicial-system/types'
 
+import { Case } from './models/case.model'
 import appModuleConfig from './app.config'
-import { Case } from './app.model'
 
 const reportError = (
   url: string,

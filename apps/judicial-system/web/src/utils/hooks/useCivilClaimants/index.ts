@@ -4,11 +4,11 @@ import { useIntl } from 'react-intl'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
+  Case,
   CivilClaimant,
   CreateCivilClaimantInput,
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useCreateCivilClaimantMutation } from './createCivilClaimant.generated'
 import { useDeleteCivilClaimantMutation } from './deleteCivilClaimant.generated'

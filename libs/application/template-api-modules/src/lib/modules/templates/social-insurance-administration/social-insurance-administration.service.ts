@@ -1,9 +1,6 @@
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
-import {
-  HouseholdSupplementHousing,
-  getApplicationAnswers as getHSApplicationAnswers,
-} from '@island.is/application/templates/social-insurance-administration/household-supplement'
+import { getApplicationAnswers as getHSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   ApplicationType,
   Employment,
@@ -15,10 +12,7 @@ import {
   getApplicationAnswers as getDBApplicationAnswers,
   ChildInformation,
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
-import {
-  Application,
-  ApplicationTypes,
-} from '@island.is/application/types'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import {
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
@@ -220,25 +214,10 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   private async getHSAttachments(
     application: Application,
   ): Promise<Attachment[]> {
-    const {
-      additionalAttachments,
-      schoolConfirmationAttachments,
-      leaseAgreementAttachments,
-      householdSupplementChildren,
-      householdSupplementHousing,
-    } = getHSApplicationAnswers(application.answers)
+    const { schoolConfirmationAttachments, householdSupplementChildren } =
+      getHSApplicationAnswers(application.answers)
 
     const attachments: Attachment[] = []
-
-    if (additionalAttachments && additionalAttachments.length > 0) {
-      attachments.push(
-        ...(await this.initAttachments(
-          application,
-          DocumentTypeEnum.OTHER,
-          additionalAttachments,
-        )),
-      )
-    }
 
     if (
       schoolConfirmationAttachments &&
@@ -250,20 +229,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
           application,
           DocumentTypeEnum.SCHOOL_CONFIRMATION,
           schoolConfirmationAttachments,
-        )),
-      )
-    }
-
-    if (
-      leaseAgreementAttachments &&
-      leaseAgreementAttachments.length > 0 &&
-      householdSupplementHousing === HouseholdSupplementHousing.RENTER
-    ) {
-      attachments.push(
-        ...(await this.initAttachments(
-          application,
-          DocumentTypeEnum.RENTAL_AGREEMENT,
-          leaseAgreementAttachments,
         )),
       )
     }
@@ -362,28 +327,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
           application,
           DocumentTypeEnum.HALFWAY_HOUSE,
           halfwayHouseAttachments,
-        )),
-      )
-    }
-
-    return attachments
-  }
-
-  private async getASFTEAttachments(
-    application: Application,
-  ): Promise<Attachment[]> {
-    const { additionalAttachments } = getASFTEApplicationAnswers(
-      application.answers,
-    )
-
-    const attachments: Attachment[] = []
-
-    if (additionalAttachments && additionalAttachments.length > 0) {
-      attachments.push(
-        ...(await this.initAttachments(
-          application,
-          DocumentTypeEnum.OTHER,
-          additionalAttachments,
         )),
       )
     }
@@ -506,12 +449,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     if (
       application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
     ) {
-      const attachments = await this.getASFTEAttachments(application)
       const additionalSupportForTheElderlyDTO =
-        transformApplicationToAdditionalSupportForTheElderlyDTO(
-          application,
-          attachments,
-        )
+        transformApplicationToAdditionalSupportForTheElderlyDTO(application)
 
       const response = await this.siaClientService.sendApplication(
         auth,

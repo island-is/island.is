@@ -1,9 +1,9 @@
+import { NO, YES } from '@island.is/application/core'
+import { Option } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
-import { BankInfo, PaymentInfo } from '../types'
+import { BankInfo, CategorizedIncomeTypes, PaymentInfo } from '../types'
 import { BankAccountType, TaxLevelOptions } from './constants'
 import { socialInsuranceAdministrationMessage } from './messages'
-import { Option } from '@island.is/application/types'
-import { YES, NO } from '@island.is/application/core'
 
 export const formatBankInfo = (bankInfo: string) => {
   const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
@@ -87,7 +87,7 @@ export const shouldNotUpdateBankAccount = (
       bankInfo.currency === currency
     )
   } else {
-    return getBankIsk(bankInfo) === bank ?? false
+    return getBankIsk(bankInfo) === bank
   }
 }
 
@@ -161,4 +161,46 @@ export const getTaxLevelOption = (option: TaxLevelOptions) => {
     default:
       return socialInsuranceAdministrationMessage.payment.taxIncomeLevel
   }
+}
+
+export const getOneInstanceOfCategory = (
+  categories: CategorizedIncomeTypes[],
+) => {
+  return [
+    ...new Map(
+      categories.map((category) => [category.categoryName, category]),
+    ).values(),
+  ]
+}
+
+export const getCategoriesOptions = (
+  categorizedIncomeTypes: CategorizedIncomeTypes[],
+) => {
+  const categories = getOneInstanceOfCategory(categorizedIncomeTypes)
+
+  return (
+    categories &&
+    categories.map((item) => {
+      return {
+        value: item.categoryName || '',
+        label: item.categoryName || '',
+      }
+    })
+  )
+}
+
+export const getTypesOptions = (
+  categorizedIncomeTypes: CategorizedIncomeTypes[],
+  categoryName: string | undefined,
+) => {
+  if (categoryName === undefined) return []
+
+  return categorizedIncomeTypes
+    .filter((item) => item.categoryName === categoryName)
+    .map((item) => {
+      return {
+        value: item.incomeTypeName || '',
+        label: item.incomeTypeName || '',
+      }
+    })
 }

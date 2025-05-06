@@ -2,7 +2,7 @@ import {
   formatDate,
   IntroHeader,
   m,
-  MENNTAMALASTOFNUN_SLUG,
+  MMS_SLUG,
   UserInfoLine,
 } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -35,7 +35,7 @@ export const EducationGraduationDetail = () => {
       <IntroHeader
         title={graduationItem?.organisation ?? ''}
         intro={formatMessage(edMessage.graduationData)}
-        serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+        serviceProviderSlug={MMS_SLUG}
         serviceProviderTooltip={formatMessage(m.mmsTooltipSecondary)}
       />
       {/* <GridRow marginTop={4}>

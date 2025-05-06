@@ -241,7 +241,7 @@ const getScriptSource = (version: string) => {
 
 const loadScript = (
   options: Window['watsonAssistantChatOptions'],
-  version = 'latest',
+  version = '8.7.0',
 ) => {
   window.watsonAssistantChatOptions = options
   const scriptElement = document.createElement('script')
@@ -257,7 +257,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     useState(false)
 
   const {
-    version = 'latest',
+    version = '8.7.0',
     showLauncher = true,
     namespaceKey,
     onLoad,
@@ -334,6 +334,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           },
           serviceDesk: {
             skipConnectAgentCard: true,
+            ...props.serviceDesk,
           },
           ...propsCopy,
           onLoad: (instance) => {

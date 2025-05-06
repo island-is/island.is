@@ -8,18 +8,25 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  FormModes,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
-  corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles, ApiActions } from './constants'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { TrainingLicenseOnAWorkMachineAnswersSchema } from './dataSchema'
-import { application as applicationMessage } from './messages'
+import {
+  TrainingLicenseOnAWorkMachineAnswers,
+  TrainingLicenseOnAWorkMachineAnswersSchema,
+} from './dataSchema'
+import {
+  application as applicationMessage,
+  externalData,
+  overview,
+} from './messages'
 import {
   IdentityApi,
   LicensesApi,
@@ -66,8 +73,8 @@ const template: ApplicationTemplate<
     states: {
       [States.PREREQUISITES]: {
         meta: {
-          name: 'Gagnaöflun',
-          status: 'draft',
+          name: externalData.dataProvider.sectionTitle.defaultMessage,
+          status: FormModes.DRAFT,
           actionCard: {
             tag: {
               label: applicationMessage.actionCardPrerequisites,
@@ -113,8 +120,12 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Kennsluréttindi á vinnuvél',
-          status: 'draft',
+          name: applicationMessage.name.defaultMessage,
+          status: FormModes.DRAFT,
+          onExit: defineTemplateApi({
+            action: ApiActions.initReview,
+            triggerEvent: DefaultEvents.ASSIGN,
+          }),
           actionCard: {
             tag: {
               label: applicationMessage.actionCardDraft,
@@ -126,7 +137,7 @@ const template: ApplicationTemplate<
                 onEvent: DefaultEvents.SUBMIT,
               },
               {
-                logMessage: coreHistoryMessages.applicationAssigned,
+                logMessage: applicationMessage.historyLogInReview,
                 onEvent: DefaultEvents.ASSIGN,
               },
             ],
@@ -167,8 +178,8 @@ const template: ApplicationTemplate<
       [States.REVIEW]: {
         entry: 'assignUsers',
         meta: {
-          name: 'Kennsluréttindi á vinnuvél',
-          status: 'inprogress',
+          name: applicationMessage.name.defaultMessage,
+          status: FormModes.DRAFT,
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
           }),
@@ -215,14 +226,27 @@ const template: ApplicationTemplate<
                 import('../forms/ReviewForm').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.general.approveButton,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: overview.general.rejectButton,
+                  type: 'primary',
+                },
+              ],
               write: {
-                answers: ['rejected'],
+                answers: ['rejected', 'approved'],
               },
               read: 'all',
             },
           ],
         },
         on: {
+          [DefaultEvents.APPROVE]: { target: States.REVIEW },
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
           [DefaultEvents.REJECT]: { target: States.REJECTED },
         },
@@ -239,10 +263,6 @@ const template: ApplicationTemplate<
             tag: {
               label: applicationMessage.actionCardDone,
               variant: 'blueberry',
-            },
-            pendingAction: {
-              title: corePendingActionMessages.applicationReceivedTitle,
-              displayStatus: 'success',
             },
           },
           roles: [
@@ -306,13 +326,9 @@ const template: ApplicationTemplate<
       assignUsers: assign((context) => {
         const { application } = context
 
-        const assigneeNationalId = getValueViaPath<string>(
-          application.answers,
-          'assigneeInformation.assignee.nationalId',
-          '',
-        )
-        if (assigneeNationalId !== null && assigneeNationalId !== '') {
-          set(application, 'assignees', [assigneeNationalId])
+        const assignees = getNationalIdListOfAssignees(application)
+        if (assignees.length > 0) {
+          set(application, 'assignees', assignees)
         }
         return context
       }),
@@ -322,15 +338,11 @@ const template: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    const assigneeNationalId = getValueViaPath<string>(
-      application.answers,
-      'assigneeInformation.assignee.nationalId',
-      '',
-    )
-    if (id === application.applicant) {
+    const { assignees, applicant } = application
+    if (id === applicant) {
       return Roles.APPLICANT
     }
-    if (id === assigneeNationalId && application.assignees.includes(id)) {
+    if (assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
 
@@ -339,3 +351,13 @@ const template: ApplicationTemplate<
 }
 
 export default template
+
+const getNationalIdListOfAssignees = (application: Application) => {
+  const assigneeInformation = getValueViaPath<
+    TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
+  >(application.answers, 'assigneeInformation')
+  const assignees = assigneeInformation?.map(
+    ({ assignee }) => assignee.nationalId,
+  )
+  return assignees ?? []
+}

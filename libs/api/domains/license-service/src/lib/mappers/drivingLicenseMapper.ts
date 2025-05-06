@@ -7,6 +7,7 @@ import {
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
+  GenericLicenseType,
   GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import isAfter from 'date-fns/isAfter'
@@ -18,6 +19,7 @@ import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
 import { formatDate, expiryTag } from '../utils'
 import { format } from 'kennitala'
+import { formatPhoto } from '../utils/formatPhoto'
 
 @Injectable()
 export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
@@ -151,6 +153,10 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
               description: [
                 { text: formatMessage(m.yourDrivingLicenseDescription) },
               ],
+              photo: formatPhoto(
+                t.photo?.image,
+                GenericLicenseType.DriversLicense,
+              ),
             },
           },
         }

@@ -11,3 +11,4 @@ export type LicensePathType =
   | 'pkort'
   | 'ehic'
   | 'vegabref'
+  | 'nafnskirteini'

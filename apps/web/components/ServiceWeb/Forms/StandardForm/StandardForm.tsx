@@ -106,6 +106,7 @@ const labels: Record<string, string> = {
   nafn_fyrirtaekis: 'Nafn fyrirtækis',
   starfsstod: 'Starfsstöð',
   oska_eftir_vernd_uppljostrara: 'Óska eftir vernd uppljóstrara',
+  kennitala_thess_sem_malid_vardar: 'Kennitala þess sem málið varðar',
 }
 
 // these should be skipped in the message itself

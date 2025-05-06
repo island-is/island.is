@@ -120,7 +120,6 @@ export const estateAssets = buildSection({
             }),
             buildCustomField(
               {
-                title: '',
                 id: 'estate.guns',
                 component: 'AssetsRepeater',
               },
@@ -156,7 +155,6 @@ export const estateAssets = buildSection({
             }),
             buildCustomField(
               {
-                title: '',
                 id: 'bankAccounts',
                 component: 'TextFieldsRepeater',
               },
@@ -218,7 +216,6 @@ export const estateAssets = buildSection({
             }),
             buildCustomField(
               {
-                title: '',
                 id: 'claims',
                 component: 'TextFieldsRepeater',
               },
@@ -270,7 +267,6 @@ export const estateAssets = buildSection({
             }),
             buildCustomField(
               {
-                title: '',
                 id: 'stocks',
                 component: 'TextFieldsRepeater',
               },
@@ -363,7 +359,6 @@ export const estateAssets = buildSection({
             }),
             buildCustomField(
               {
-                title: '',
                 id: 'otherAssets',
                 component: 'OtherAssetsRepeater',
                 doesNotRequireAnswer: true,

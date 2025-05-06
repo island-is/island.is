@@ -1,5 +1,10 @@
 import { useState } from 'react'
-import { convertNumberToRoman, getAddition, isAddition } from '../../lib/utils'
+import {
+  convertNumberToRoman,
+  getAddition,
+  isAddition,
+  TitlePrefix,
+} from '../../lib/utils'
 import { additionSchema } from '../../lib/dataSchema'
 import {
   Stack,
@@ -12,7 +17,6 @@ import {
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { z } from 'zod'
 import {
-  DEBOUNCE_INPUT_TIMER,
   DEFAULT_ADDITIONS_COUNT,
   MAXIMUM_ADDITIONS_COUNT,
 } from '../../lib/constants'
@@ -22,7 +26,6 @@ import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import { InputFields, OJOIApplication } from '../../lib/types'
 import set from 'lodash/set'
-import debounce from 'lodash/debounce'
 import { useLocale } from '@island.is/localization'
 import { attachments } from '../../lib/messages'
 import { useApplicationAssetUploader } from '../../hooks/useAssetUpload'
@@ -36,6 +39,9 @@ type Addition = z.infer<typeof additionSchema>[number]
 export const Additions = ({ application }: Props) => {
   const [asRoman, setAsRoman] = useState<boolean>(
     application.answers.misc?.asRoman ?? false,
+  )
+  const [titlePrefix, setTitlePrefix] = useState<TitlePrefix>(
+    application.answers.misc?.titlePrefix ?? TitlePrefix.Appendix,
   )
 
   const { useFileUploader } = useApplicationAssetUploader({
@@ -60,15 +66,20 @@ export const Additions = ({ application }: Props) => {
 
     return isAddition(additions)
       ? additions
-      : [getAddition(DEFAULT_ADDITIONS_COUNT, false)]
+      : [getAddition(titlePrefix, DEFAULT_ADDITIONS_COUNT, false)]
   }
 
   const onRemoveAddition = (index: number) => {
     const filtered = additions.filter((_, i) => i !== index)
     const mapped = filtered.map((addition, i) => {
-      const title = f(attachments.additions.title, {
-        index: asRoman ? convertNumberToRoman(i + 1) : i + 1,
-      })
+      const title = f(
+        titlePrefix === TitlePrefix.Appendix
+          ? attachments.additions.appendixTitle
+          : attachments.additions.attachmentTitle,
+        {
+          index: asRoman ? convertNumberToRoman(i + 1) : i + 1,
+        },
+      )
 
       return {
         ...addition,
@@ -88,11 +99,16 @@ export const Additions = ({ application }: Props) => {
     updateApplication(updatedAnswers)
   }
 
-  const onRomanChange = (val: boolean) => {
+  const onTitleChange = (titlePrefix: TitlePrefix, roman: boolean) => {
     const handleTitleChange = (addition: Addition, i: number) => {
-      const title = f(attachments.additions.title, {
-        index: val ? convertNumberToRoman(i + 1) : i + 1,
-      })
+      const title = f(
+        titlePrefix === TitlePrefix.Appendix
+          ? attachments.additions.appendixTitle
+          : attachments.additions.attachmentTitle,
+        {
+          index: roman ? convertNumberToRoman(i + 1) : i + 1,
+        },
+      )
       return {
         ...addition,
         title: title,
@@ -108,11 +124,13 @@ export const Additions = ({ application }: Props) => {
       updatedAdditions,
     )
 
-    updatedAnswers = set(updatedAnswers, InputFields.misc.asRoman, val)
+    updatedAnswers = set(updatedAnswers, InputFields.misc.asRoman, roman)
 
-    setAsRoman(val)
+    setAsRoman(roman)
+    setTitlePrefix(titlePrefix)
     setValue(InputFields.advert.additions, updatedAdditions)
-    setValue(InputFields.misc.asRoman, val)
+    setValue(InputFields.misc.asRoman, roman)
+    setValue(InputFields.misc.titlePrefix, titlePrefix)
     updateApplication(updatedAnswers)
   }
 
@@ -129,7 +147,11 @@ export const Additions = ({ application }: Props) => {
 
     // TS not inferring the type after the check above
     if (isAddition(currentAdditions)) {
-      const newAddition = getAddition(additions.length + 1, asRoman)
+      const newAddition = getAddition(
+        titlePrefix,
+        additions.length + 1,
+        asRoman,
+      )
 
       const updatedAdditions = [...currentAdditions, newAddition]
       const updatedAnswers = set(
@@ -146,7 +168,9 @@ export const Additions = ({ application }: Props) => {
   const onAdditionChange = (index: number, value: string) => {
     const currentAnswers = structuredClone(currentApplication.answers)
     const updatedAdditions = additions.map((addition, i) =>
-      i === index ? { ...addition, content: value } : addition,
+      i === index
+        ? { ...addition, content: Buffer.from(value).toString('base64') }
+        : addition,
     )
 
     const updatedAnswers = set(
@@ -159,16 +183,6 @@ export const Additions = ({ application }: Props) => {
     updateApplication(updatedAnswers)
   }
 
-  const debouncedAdditionChange = debounce(
-    onAdditionChange,
-    DEBOUNCE_INPUT_TIMER,
-  )
-
-  const additionChangeHandler = (index: number, value: string) => {
-    debouncedAdditionChange.cancel()
-    debouncedAdditionChange(index, value)
-  }
-
   const additions = getAdditions()
 
   return (
@@ -176,16 +190,30 @@ export const Additions = ({ application }: Props) => {
       <Text variant="h3">{f(attachments.inputs.radio.title.label)}</Text>
       <Inline space={2}>
         <RadioButton
-          label={f(attachments.inputs.radio.numeric.label)}
-          name="asNumbers"
-          checked={!asRoman}
-          onChange={() => onRomanChange(false)}
+          label={f(attachments.inputs.radio.appendixNumeric.label)}
+          name="appendixAsNumbers"
+          checked={titlePrefix === TitlePrefix.Appendix && !asRoman}
+          onChange={() => onTitleChange(TitlePrefix.Appendix, false)}
         />
         <RadioButton
-          label={f(attachments.inputs.radio.roman.label)}
-          name="asRoman"
-          checked={asRoman}
-          onChange={() => onRomanChange(true)}
+          label={f(attachments.inputs.radio.appendixRoman.label)}
+          name="appendixAsRoman"
+          checked={titlePrefix === TitlePrefix.Appendix && asRoman}
+          onChange={() => onTitleChange(TitlePrefix.Appendix, true)}
+        />
+      </Inline>
+      <Inline space={2}>
+        <RadioButton
+          label={f(attachments.inputs.radio.attachmentNumeric.label)}
+          name="attachmentAsNumbers"
+          checked={titlePrefix === TitlePrefix.Attachment && !asRoman}
+          onChange={() => onTitleChange(TitlePrefix.Attachment, false)}
+        />
+        <RadioButton
+          label={f(attachments.inputs.radio.attachmentRoman.label)}
+          name="attachmentAsRoman"
+          checked={titlePrefix === TitlePrefix.Attachment && asRoman}
+          onChange={() => onTitleChange(TitlePrefix.Attachment, true)}
         />
       </Inline>
       <Stack space={4}>
@@ -206,11 +234,13 @@ export const Additions = ({ application }: Props) => {
                   controller={false}
                   name="addition"
                   key={addition.id}
-                  value={defaultValue as HTMLText}
-                  fileUploader={fileUploader()}
-                  onChange={(value) =>
-                    additionChangeHandler(additionIndex, value)
+                  value={
+                    Buffer.from(defaultValue, 'base64').toString(
+                      'utf-8',
+                    ) as HTMLText
                   }
+                  fileUploader={fileUploader()}
+                  onChange={(value) => onAdditionChange(additionIndex, value)}
                 />
                 <Button
                   variant="utility"

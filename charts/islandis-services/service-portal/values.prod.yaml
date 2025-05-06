@@ -21,7 +21,7 @@ enabled: true
 env:
   BASEPATH: '/minarsidur'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230'
+  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   SI_PUBLIC_ENVIRONMENT: 'prod'
 grantNamespaces:

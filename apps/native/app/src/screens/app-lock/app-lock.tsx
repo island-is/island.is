@@ -74,12 +74,13 @@ function useBiometricType() {
 export const AppLockScreen: NavigationFunctionComponent<{
   lockScreenActivatedAt?: number
   status: string
-}> = ({ componentId, lockScreenActivatedAt, status }) => {
+}> = ({ componentId, status }) => {
   const av = useRef(new Animated.Value(1)).current
   const isPromptRef = useRef(false)
   const [code, setCode] = useState('')
   const [invalidCode, setInvalidCode] = useState(false)
-  const [attempts, setAttempts] = useState(0)
+  const pinTries = preferencesStore.getState().pinTries
+  const [attempts, setAttempts] = useState(pinTries)
   const { useBiometrics } = usePreferencesStore()
   const biometricType = useBiometricType()
   const intl = useIntl()
@@ -146,7 +147,6 @@ export const AppLockScreen: NavigationFunctionComponent<{
           .getState()
           .logout()
           .then(() => {
-            preferencesStore.setState({ hasOnboardedPinCode: false })
             // you are now logged out and navigated to root screen
             resetLockScreen()
             Navigation.dismissAllOverlays()
@@ -158,10 +158,14 @@ export const AppLockScreen: NavigationFunctionComponent<{
         Keychain.getGenericPassword({ service: 'PIN_CODE' })
           .then((res) => {
             if (res && res.password === code) {
+              preferencesStore.setState({ pinTries: 0 })
               unlockApp()
             } else {
               // increment attemps, reset code and display warning
               setAttempts((previousAttempts) => previousAttempts + 1)
+              preferencesStore.setState((state) => ({
+                pinTries: state.pinTries + 1,
+              }))
               setInvalidCode(true)
               setTimeout(() => {
                 setCode('')

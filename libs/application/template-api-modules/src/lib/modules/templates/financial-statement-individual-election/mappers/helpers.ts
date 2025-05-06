@@ -15,14 +15,11 @@ export enum FinancialElectionIncomeLimit {
 }
 
 export const getIndividualElectionValues = (answers: FormValue) => {
-  const incomeLimit = getValueViaPath(answers, 'election.incomeLimit') as string
-  const electionId = getValueViaPath(
-    answers,
-    'election.selectElection',
-  ) as string
-  const clientName = getValueViaPath(answers, 'about.fullName') as string
-  const clientPhone = getValueViaPath(answers, 'about.phoneNumber') as string
-  const clientEmail = getValueViaPath(answers, 'about.email') as string
+  const incomeLimit = getValueViaPath<string>(answers, 'incomeLimit.limit')
+  const electionId = getValueViaPath<string>(answers, 'election.electionId')
+  const clientName = getValueViaPath<string>(answers, 'about.fullName')
+  const clientPhone = getValueViaPath<string>(answers, 'about.phoneNumber')
+  const clientEmail = getValueViaPath<string>(answers, 'about.email')
   const noValueStatement = incomeLimit === FinancialElectionIncomeLimit.LESS
 
   return {
@@ -36,39 +33,15 @@ export const getIndividualElectionValues = (answers: FormValue) => {
 }
 
 export const getShouldGetFileName = (answers: FormValue) => {
-  const incomeLimit = getValueViaPath(
+  const incomeLimit = getValueViaPath<FinancialElectionIncomeLimit>(
     answers,
-    'election.incomeLimit',
-  ) as FinancialElectionIncomeLimit
+    'incomeLimit.limit',
+  )
   return incomeLimit === FinancialElectionIncomeLimit.GREATER
-}
-
-export const getActorContact = (
-  actor:
-    | {
-        nationalId: string
-        scope: string[]
-      }
-    | undefined,
-  clientName: string,
-) => {
-  return actor
-    ? {
-        nationalId: actor.nationalId,
-        name: clientName,
-        contactType: ContactType.Actor,
-      }
-    : undefined
 }
 
 export const getInput = (
   answers: FormValue,
-  actor:
-    | {
-        nationalId: string
-        scope: string[]
-      }
-    | undefined,
   nationalId: string,
   fileName: string | undefined,
 ) => {
@@ -82,26 +55,23 @@ export const getInput = (
     phone: clientPhone,
     email: clientEmail,
   }
-  const actorContact = getActorContact(actor, clientName)
   const digitalSignee: DigitalSignee = {
-    email: clientEmail,
-    phone: clientPhone,
+    email: clientEmail ?? '',
+    phone: clientPhone ?? '',
   }
   const values: PersonalElectionFinancialStatementValues | undefined =
     noValueStatement ? undefined : mapValuesToIndividualtype(answers)
   const input: PersonalElectionSubmitInput = {
     client,
-    actor: actorContact,
+    actor: undefined,
     digitalSignee,
-    electionId,
+    electionId: electionId ?? '',
     noValueStatement,
     values,
     file: fileName,
   }
 
-  const loggerInfo = `PostFinancialStatementForPersonalElection => clientNationalId: '${nationalId}', actorNationalId: '${
-    actor?.nationalId
-  }', electionId: '${electionId}', noValueStatement: '${noValueStatement}', clientName: '${clientName}', values: '${JSON.stringify(
+  const loggerInfo = `PostFinancialStatementForPersonalElection => clientNationalId: '${nationalId}', electionId: '${electionId}', noValueStatement: '${noValueStatement}', clientName: '${clientName}', values: '${JSON.stringify(
     values,
   )}', file length: '${fileName?.length}'`
 

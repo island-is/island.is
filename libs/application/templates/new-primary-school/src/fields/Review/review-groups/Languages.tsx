@@ -74,21 +74,24 @@ export const Languages = ({
             LanguageEnvironmentOptions.ONLY_ICELANDIC && (
             <>
               <GridRow rowGap={2}>
-                {selectedLanguages?.map(({ code }, index) => (
-                  <GridColumn
-                    key={`${code}-${index}`}
-                    span={['12/12', '5/12', '5/12', '5/12']}
-                  >
-                    <DataValue
-                      label={formatMessage(
-                        newPrimarySchoolMessages.differentNeeds
-                          .languageSelectionTitle,
-                        { index: `${index + 1}` },
-                      )}
-                      value={getLanguageByCode(code)?.name}
-                    />
-                  </GridColumn>
-                ))}
+                {selectedLanguages?.map(
+                  ({ code }, index) =>
+                    code && (
+                      <GridColumn
+                        key={`${code}-${index}`}
+                        span={['12/12', '5/12', '5/12', '5/12']}
+                      >
+                        <DataValue
+                          label={formatMessage(
+                            newPrimarySchoolMessages.differentNeeds
+                              .languageSelectionTitle,
+                            { index: `${index + 1}` },
+                          )}
+                          value={getLanguageByCode(code)?.name}
+                        />
+                      </GridColumn>
+                    ),
+                )}
               </GridRow>
               {preferredLanguage && (
                 <GridRow>

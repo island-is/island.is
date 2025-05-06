@@ -2,7 +2,6 @@ import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
 import { EmailRecipient } from '../types'
 import { pathToAsset } from '../training-license-on-a-work-machine.utils'
-import { ApplicationConfigurations } from '@island.is/application/types'
 
 export type ApplicationDeleteEmail = (
   props: EmailTemplateGeneratorProps,
@@ -14,8 +13,7 @@ export const generateApplicationDeleteEmail: ApplicationDeleteEmail = (
   recipient,
 ): Message => {
   const {
-    application,
-    options: { email, clientLocationOrigin },
+    options: { email },
   } = props
 
   if (!recipient.email) throw new Error('Recipient email was undefined')
@@ -56,15 +54,7 @@ export const generateApplicationDeleteEmail: ApplicationDeleteEmail = (
             copy:
               `<span>Góðan dag,</span><br/><br/>` +
               `<span>Beiðni um samþykkt á starfstíma á vinnuvél hefur verið afturkölluð þar sem umsækjandi eyddi umsókninni.</span><br/>` +
-              `<span>Til þess að skrá kennsluréttindi á vinnuvél rafrænt verður að byrja ferlið að upp á nýtt á umsóknarvef island.is: island.is/umsoknir, ásamt því að allir aðilar þurfa að staðfesta rafrænt innan gefins tímafrests.</span><br/>` +
-              `<span>Vinsamlegast hafið samband við Vinnueftirlitið vinnueftirlit@ver.is ef nánari upplýsinga er þörf.</span>`,
-          },
-        },
-        {
-          component: 'Button',
-          context: {
-            copy: 'Skoða umsókn',
-            href: `${clientLocationOrigin}/${ApplicationConfigurations.TrainingLicenseOnAWorkMachine.slug}/${application.id}`,
+              `<span>Nánari upplýsingar á island.is/umsoknir.</span><br/>`,
           },
         },
       ],

@@ -42,12 +42,12 @@ export interface PreferencesStore extends State {
   locale: Locale
   appearanceMode: AppearanceMode
   appLockTimeout: number
+  pinTries: number
   setLocale(locale: Locale): void
   getAndSetLocale(): void
   setAppearanceMode(appearanceMode: AppearanceMode): void
   setUseBiometrics(useBiometrics: boolean): void
   dismiss(key: string, value?: boolean): void
-  resetHomeScreenWidgets(): void
   reset(): void
 }
 
@@ -79,6 +79,7 @@ const defaultPreferences = {
   notificationsApplicationStatusUpdates: true,
   dismissed: [] as string[],
   appLockTimeout: 5000,
+  pinTries: 0,
 }
 
 export const preferencesStore = create<PreferencesStore>(
@@ -122,17 +123,6 @@ export const preferencesStore = create<PreferencesStore>(
         } else {
           set({ dismissed: [...now.filter((k) => k !== key)] })
         }
-      },
-      resetHomeScreenWidgets() {
-        set({
-          graphicWidgetEnabled: true,
-          inboxWidgetEnabled: true,
-          applicationsWidgetEnabled: true,
-          licensesWidgetEnabled: true,
-          vehiclesWidgetEnabled: true,
-          airDiscountWidgetEnabled: true,
-          widgetsInitialised: false,
-        })
       },
       reset() {
         set(defaultPreferences as PreferencesStore)

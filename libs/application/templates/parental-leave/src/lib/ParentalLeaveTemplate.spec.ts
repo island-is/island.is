@@ -281,15 +281,12 @@ describe('Parental Leave Application Template', () => {
         ParentalLeaveTemplate,
       )
 
-      const VMST_ID = process.env.VMST_ID
-      const [hasChangedAgain, finalState, finalApplication] =
-        finalHelper.changeState({
-          type: DefaultEvents.APPROVE,
-        })
+      const [hasChangedAgain, finalState] = finalHelper.changeState({
+        type: DefaultEvents.APPROVE,
+      })
 
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVAL)
-      expect(finalApplication.assignees).toEqual([VMST_ID])
     })
 
     describe('other parent', () => {

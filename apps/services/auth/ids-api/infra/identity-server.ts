@@ -58,22 +58,15 @@ export const serviceSetup = (services: {
       },
       IdentityServer__ConsentsScope: '@island.is/auth/consents',
       PersistenceSettings__BaseAddress: {
-        local: ref(
-          (h) => `http://${h.svc(services.authIdsApi)}`,
-        ),
+        local: ref((h) => `http://${h.svc(services.authIdsApi)}`),
         dev: 'http://services-auth-ids-api',
-        staging:
-        ref(
-          (h) => `http://${h.svc(services.authIdsApi)}`,
-        ),
-        prod: ref(
-          (h) => `http://${h.svc(services.authIdsApi)}`,
-        ),
+        staging: ref((h) => `http://${h.svc(services.authIdsApi)}`),
+        prod: ref((h) => `http://${h.svc(services.authIdsApi)}`),
       },
       SessionsApiSettings__BaseAddress: {
         dev: 'https://sessions-api.internal.dev01.devland.is',
         staging:
-          'http://web-services-sessions.services-sessions.svc.cluster.local',
+          'http://services-sessions.services-sessions.svc.cluster.local',
         prod: 'https://sessions-api.internal.island.is',
       },
       PersistenceSettings__DelegationsCacheEnabled: {
@@ -84,7 +77,7 @@ export const serviceSetup = (services: {
       MeUserProfileApiSettings__BaseAddress: {
         dev: 'https://service-portal-api.internal.dev01.devland.is',
         staging:
-          'http://web-service-portal-api.service-portal.svc.cluster.local',
+          'http://service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
       },
       Application__MinCompletionPortThreads: '10',
@@ -118,8 +111,7 @@ export const serviceSetup = (services: {
         '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY_ID',
       Redaction__UserIdentifiers__Key:
         '/k8s/identity-server/redaction/USER_IDENTIFIERS_KEY',
-      Datadog__RUM__ApplicationId: '/k8s/ids/DD_RUM_APPLICATION_ID',
-      Datadog__RUM__ClientToken: '/k8s/ids/DD_RUM_CLIENT_TOKEN',
+      Datadog__ClientLogs__Token: '/k8s/identity-server/DD_LOGS_CLIENT_TOKEN',
     })
     .ingress({
       primary: {

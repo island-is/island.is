@@ -38,7 +38,7 @@ export type Events =
 export enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
-  ORGINISATION_REVIEWER = 'vmst',
+  ORGANISATION_REVIEWER = 'vmst',
 }
 
 export enum UnEmployedBenefitTypes {
@@ -71,6 +71,7 @@ export enum ApiModuleActions {
    */
   setVMSTPeriods = 'setVMSTPeriods',
   setApplicationRights = 'setApplicationRights',
+  setOtherParent = 'setOtherParent',
 }
 
 export enum StartDateOptions {

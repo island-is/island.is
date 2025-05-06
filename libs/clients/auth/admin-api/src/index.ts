@@ -4,6 +4,7 @@ export {
   AdminScopeDTO,
   ClientSecretDto,
   ClientType,
+  ClientSso,
   CreateClientType,
   MeClientsControllerCreateRequest,
   MeClientsControllerUpdateRequest,

@@ -16,6 +16,7 @@ export const AssigneeConclusion: Form = buildForm({
       alertTitle: conclusion.approvedForAssignee.alertMessage,
       alertMessage: '',
       expandableHeader: conclusion.approvedForAssignee.expandableHeader,
+      expandableIntro: '',
       expandableDescription:
         conclusion.approvedForAssignee.expandableDescription,
     }),

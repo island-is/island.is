@@ -10,7 +10,7 @@ import {
 import { IntlShape, useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -30,10 +30,10 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'

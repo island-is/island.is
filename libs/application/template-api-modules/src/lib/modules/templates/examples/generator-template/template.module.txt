@@ -1,0 +1,12 @@
+import { Module } from '@nestjs/common'
+
+import { SharedTemplateAPIModule } from '--IS-NESTED--../../shared'
+
+import { --PASCAL-CASE-TEMPLATE--Service } from './--KEBAB-CASE-TEMPLATE--.service'
+import { ApplicationsNotificationsModule } from '--IS-NESTED--../../../notification/notifications.module'
+@Module({
+  imports: [SharedTemplateAPIModule, ApplicationsNotificationsModule],
+  providers: [--PASCAL-CASE-TEMPLATE--Service],
+  exports: [--PASCAL-CASE-TEMPLATE--Service],
+})
+export class --PASCAL-CASE-TEMPLATE--Module {}

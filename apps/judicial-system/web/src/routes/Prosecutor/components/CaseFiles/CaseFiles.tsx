@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import {
   Box,
   ContentBlock,
+  FileUploadStatus,
   Input,
   InputFileUpload,
   Text,
@@ -127,8 +128,11 @@ export const CaseFiles = () => {
   }, [policeCaseFiles, workingCase.caseFiles])
 
   const uploadErrorMessage = useMemo(() => {
-    if (uploadFiles.some((file) => file.status === 'error')) {
+    if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
       return formatMessage(errors.general)
+    }
+    if (uploadFiles.some((file) => file.size === 0)) {
+      return 'Villa kom upp. Tómt skjal.'
     } else {
       return undefined
     }
@@ -221,8 +225,8 @@ export const CaseFiles = () => {
             <InputFileUpload
               name="fileUpload"
               accept={Object.values(fileExtensionWhitelist)}
-              fileList={uploadFiles.filter((file) => !file.category)}
-              header={formatMessage(strings.filesLabel)}
+              files={uploadFiles.filter((file) => !file.category)}
+              title={formatMessage(strings.filesLabel)}
               buttonLabel={formatMessage(strings.filesButtonLabel)}
               onChange={(files) =>
                 handleUpload(addUploadFiles(files), updateUploadFile)
@@ -231,7 +235,6 @@ export const CaseFiles = () => {
               onRetry={(file) => handleRetry(file, updateUploadFile)}
               errorMessage={uploadErrorMessage}
               disabled={isUploadingPoliceCaseFiles}
-              showFileSize
             />
           </ContentBlock>
         </Box>

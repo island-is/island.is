@@ -20,6 +20,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       userGeneratedFilename
       displayDate
       submittedBy
+      fileRepresentative
     }
     defendants {
       id
@@ -49,6 +50,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       sentToPrisonAdminDate
       openedByPrisonAdminDate
       punishmentType
+      isAlternativeService
+      alternativeServiceDescription
       subpoenas {
         id
         created
@@ -59,7 +62,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         defenderNationalId
         caseId
         defendantId
-        subpoenaId
+        policeSubpoenaId
       }
     }
     defenderName
@@ -178,7 +181,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     postponedIndefinitelyExplanation
     indictmentDecision
     indictmentRulingDecision
-    indictmentCompletedDate
     indictmentReviewDecision
     indictmentVerdictViewedByAll
     indictmentVerdictAppealDeadlineExpired
@@ -211,8 +213,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         offense
         substances
       }
-      deprecatedOffenses
-      substances
       lawsBroken
       incidentDescription
       legalArguments
@@ -264,6 +264,19 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       spokespersonEmail
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
+      isSpokespersonConfirmed
+    }
+    victims {
+      id
+      name
+      hasNationalId
+      nationalId
+      hasLawyer
+      lawyerNationalId
+      lawyerName
+      lawyerEmail
+      lawyerPhoneNumber
+      lawyerAccessToRequest
     }
     isCompletedWithoutRuling
     caseSentToCourtDate

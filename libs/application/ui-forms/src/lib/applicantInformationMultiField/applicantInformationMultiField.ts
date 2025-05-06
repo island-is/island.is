@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildMultiField,
   buildPhoneField,
   buildTextField,
@@ -27,6 +28,7 @@ export const applicantInformationMultiField = (
     emailDisabled = false,
     applicantInformationDescription = '',
     readOnly = false,
+    readOnlyEmailAndPhone = false,
   } = props ?? {}
   return buildMultiField({
     id: 'applicant',
@@ -108,6 +110,7 @@ export const applicantInformationMultiField = (
         condition: emailCondition,
         required: emailRequired,
         disabled: emailDisabled,
+        readOnly: readOnlyEmailAndPhone,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.userProfile?.data?.email ?? '',
         maxLength: 100,
@@ -120,9 +123,25 @@ export const applicantInformationMultiField = (
         condition: phoneCondition,
         required: phoneRequired,
         disabled: phoneDisabled,
+        readOnly: readOnlyEmailAndPhone,
         enableCountrySelector: phoneEnableCountrySelector,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.userProfile?.data?.mobilePhoneNumber ?? '',
+      }),
+      buildAlertMessageField({
+        id: 'applicationInfoEmailPhoneAlertMessage',
+        title: '',
+        alertType: 'info',
+        doesNotRequireAnswer: true,
+        message: applicantInformation.labels.alertMessage,
+        links: [
+          {
+            title: applicantInformation.labels.alertMessageLinkTitle,
+            url: applicantInformation.labels.alertMessageLink,
+            isExternal: false,
+          },
+        ],
+        condition: () => readOnlyEmailAndPhone,
       }),
     ],
   })

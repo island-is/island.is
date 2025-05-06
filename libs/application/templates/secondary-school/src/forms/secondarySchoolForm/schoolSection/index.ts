@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildFieldsRepeaterField,
   buildMultiField,
   buildSection,
@@ -10,15 +11,19 @@ import {
   clearOnChangeSchool,
   filterSchoolOptions,
   getAlertMessageAddThirdSelectionCondition,
+  getAlertSpecialNeedsProgramCondition,
+  getAlertSpecialNeedsProgramMessage,
   getConditionSecondProgram,
   getFormTitle,
   getIsClearableSecondProgram,
+  getNordicLanguageCondition,
   getNordicLanguageOptions,
   getRequestDormitoryCondition,
   getRequestDormitoryOptions,
   getRequiredSecondProgram,
   getRowsLimitCount,
   getSchoolOptions,
+  getThirdLanguageCondition,
   getThirdLanguageOptions,
   getUpdateOnSelectFirstProgram,
   getUpdateOnSelectSecondProgram,
@@ -39,6 +44,10 @@ export const schoolSection = buildSection({
       title: school.general.pageTitle,
       description: school.general.description,
       children: [
+        buildCustomField({
+          component: 'UpdateExternalDataSchools',
+          id: 'updateExternalDataSchools',
+        }),
         buildFieldsRepeaterField({
           id: 'selection',
           titleVariant: 'h5',
@@ -60,7 +69,7 @@ export const schoolSection = buildSection({
               filterOptions: (options, answers, index) =>
                 filterSchoolOptions(options, answers, index),
               clearOnChange: (index) => clearOnChangeSchool(index),
-              setOnChange: (option, application, index) =>
+              setOnChange: async (option, application, index) =>
                 setOnChangeSchool(option, application, index),
             },
             'firstProgram.id': {
@@ -82,7 +91,7 @@ export const schoolSection = buildSection({
                   setValueAtIndex,
                   'secondProgram.id',
                 ),
-              setOnChange: (option, application, index, activeField) =>
+              setOnChange: async (option, application, index, activeField) =>
                 setOnChangeFirstProgram(
                   option,
                   application,
@@ -114,16 +123,18 @@ export const schoolSection = buildSection({
                   setValueAtIndex,
                   'firstProgram.id',
                 ),
-              setOnChange: (option, _, index, activeField) =>
+              setOnChange: async (option, _, index, activeField) =>
                 setOnChangeSecondProgram(option, index, activeField),
             },
             'thirdLanguage.code': {
               component: 'select',
               label: school.selection.thirdLanguageLabel,
               isClearable: true,
+              condition: (application, activeField) =>
+                getThirdLanguageCondition(application, activeField),
               options: (application, activeField) =>
                 getThirdLanguageOptions(application, activeField),
-              setOnChange: (option, application, index, activeField) =>
+              setOnChange: async (option, application, index, activeField) =>
                 setOnChangeThirdLanguage(
                   option,
                   application,
@@ -135,9 +146,11 @@ export const schoolSection = buildSection({
               component: 'select',
               label: school.selection.nordicLanguageLabel,
               isClearable: true,
+              condition: (application, activeField) =>
+                getNordicLanguageCondition(application, activeField),
               options: (application, activeField) =>
                 getNordicLanguageOptions(application, activeField),
-              setOnChange: (option, application, index, activeField) =>
+              setOnChange: async (option, application, index, activeField) =>
                 setOnChangeNordicLanguage(
                   option,
                   application,
@@ -155,9 +168,19 @@ export const schoolSection = buildSection({
         }),
 
         buildAlertMessageField({
+          id: 'alertSpecialNeedsProgram',
+          alertType: 'warning',
+          title: school.selection.specialNeedsProgramAlertTitle,
+          message: (application, locale) =>
+            getAlertSpecialNeedsProgramMessage(application.answers, locale),
+          condition: (answers) => getAlertSpecialNeedsProgramCondition(answers),
+        }),
+
+        buildAlertMessageField({
           id: 'alertAddThirdSelection',
           alertType: 'info',
-          message: school.thirdSelection.addDescription,
+          title: school.thirdSelection.addAlertTitle,
+          message: school.thirdSelection.addAlertDescription,
           condition: (answers) =>
             getAlertMessageAddThirdSelectionCondition(answers),
         }),

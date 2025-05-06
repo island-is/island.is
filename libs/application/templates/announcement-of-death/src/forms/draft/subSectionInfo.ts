@@ -3,10 +3,12 @@ import {
   buildSelectField,
   buildTextField,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Application } from '../../types/schema'
 import { removeCountryCode } from '@island.is/application/ui-components'
+import { EstateMember } from '../../types'
 
 export const subSectionInfo = buildSubSection({
   id: 'infoStep',
@@ -26,7 +28,10 @@ export const subSectionInfo = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.fullName ?? '',
+            getValueViaPath<string>(
+              application.externalData,
+              'nationalRegistry.data.fullName',
+            ) ?? '',
         }),
         buildTextField({
           id: 'applicantPhone',
@@ -36,12 +41,10 @@ export const subSectionInfo = buildSubSection({
           width: 'half',
           defaultValue: (application: Application) => {
             const phone =
-              (
-                application.externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                }
-              )?.mobilePhoneNumber ?? ''
-
+              getValueViaPath<string>(
+                application.externalData,
+                'userProfile.data.mobilePhoneNumber',
+              ) ?? ''
             return removeCountryCode(phone)
           },
         }),
@@ -59,23 +62,25 @@ export const subSectionInfo = buildSubSection({
           placeholder: m.applicantsRelationPlaceholder,
           width: 'half',
           defaultValue: (application: Application) => {
-            const applicantRelation =
-              application.externalData?.syslumennOnEntry?.data?.estate?.estateMembers?.find(
-                (em: any) => em.nationalId === application.applicant,
-              )
+            const estateMembers = getValueViaPath<Array<EstateMember>>(
+              application.externalData,
+              'syslumennOnEntry.data.estate.estateMembers',
+            )
+            const applicantRelation = estateMembers?.find(
+              (em) => em.nationalId === application.applicant,
+            )
             return applicantRelation?.relation ?? ''
           },
-          options: ({
-            externalData: {
-              syslumennOnEntry: { data },
-            },
-          }) => {
-            return (data as { relationOptions: string[] }).relationOptions?.map(
-              (relation) => ({
-                value: relation,
-                label: relation,
-              }),
-            )
+          options: ({ externalData }) => {
+            const relationOptions =
+              getValueViaPath<Array<string>>(
+                externalData,
+                'syslumennOnEntry.data.relationOptions',
+              ) ?? []
+            return relationOptions?.map((relation) => ({
+              value: relation,
+              label: relation,
+            }))
           },
         }),
       ],

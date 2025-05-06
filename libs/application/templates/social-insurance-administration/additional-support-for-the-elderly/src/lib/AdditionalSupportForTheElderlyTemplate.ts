@@ -26,7 +26,6 @@ import {
 
 import {
   SocialInsuranceAdministrationApplicantApi,
-  SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import {
@@ -34,7 +33,6 @@ import {
   Events,
   Roles,
   States,
-  BankAccountType,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   additionalSupportForTheElderyFormMessage,
@@ -95,7 +93,6 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
                   },
                 }),
                 SocialInsuranceAdministrationApplicantApi,
-                SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
               ],
               delete: true,
@@ -116,7 +113,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearBankAccountInfo', 'clearTemp', 'restoreAnswersFromTemp'],
+        exit: ['clearTemp', 'restoreAnswersFromTemp'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -502,24 +499,6 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
             mergedAdditionalDocumentRequired,
           )
           unset(answers, 'fileUploadAdditionalFilesRequired')
-        }
-
-        return context
-      }),
-      clearBankAccountInfo: assign((context) => {
-        const { application } = context
-        const { bankAccountType } = getApplicationAnswers(application.answers)
-
-        if (bankAccountType === BankAccountType.ICELANDIC) {
-          unset(application.answers, 'paymentInfo.iban')
-          unset(application.answers, 'paymentInfo.swift')
-          unset(application.answers, 'paymentInfo.bankName')
-          unset(application.answers, 'paymentInfo.bankAddress')
-          unset(application.answers, 'paymentInfo.currency')
-        }
-
-        if (bankAccountType === BankAccountType.FOREIGN) {
-          unset(application.answers, 'paymentInfo.bank')
         }
 
         return context

@@ -4,7 +4,6 @@ import { useIntl } from 'react-intl'
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { PunishmentType } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -15,11 +14,14 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
   RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
+import { useSentToPrisonAdminDate } from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  PunishmentType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
@@ -58,14 +60,20 @@ const IndictmentOverview = () => {
   const sentToPrisonAdminFiles = workingCase.caseFiles?.filter(
     (file) => file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
   )
-
   const criminalRecordUpdateFile = workingCase.caseFiles?.filter(
     (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
   )
 
+  const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+  const isCompletedWithRuling =
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
+  const displaySentToPrisonAdminFiles =
+    (isCompletedWithRuling && sentToPrisonAdminDate) ||
+    isNonEmptyArray(sentToPrisonAdminFiles)
+
   const hasPunishmentType = (punishmentType: PunishmentType) =>
     defendant?.punishmentType === punishmentType
-
   const hasRuling = workingCase.caseFiles?.some(
     (file) => file.category === CaseFileCategory.RULING,
   )
@@ -98,10 +106,10 @@ const IndictmentOverview = () => {
               </Text>
             </Box>
           )}
-          {workingCase.indictmentCompletedDate && (
+          {workingCase.rulingDate && (
             <Text variant="h4" as="h3">
               {formatMessage(strings.indictmentCompletedTitle, {
-                date: formatDate(workingCase.indictmentCompletedDate, 'PPP'),
+                date: formatDate(workingCase.rulingDate, 'PPP'),
               })}
             </Text>
           )}
@@ -142,15 +150,28 @@ const IndictmentOverview = () => {
             }
           />
         </Box>
-        {sentToPrisonAdminFiles && sentToPrisonAdminFiles.length > 0 && (
+        {displaySentToPrisonAdminFiles && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(strings.sentToPrisonAdminFileTitle)}
             </Text>
-            <RenderFiles
-              onOpenFile={onOpen}
-              caseFiles={sentToPrisonAdminFiles}
-            />
+            {sentToPrisonAdminFiles && sentToPrisonAdminFiles.length > 0 && (
+              <RenderFiles
+                onOpenFile={onOpen}
+                caseFiles={sentToPrisonAdminFiles}
+              />
+            )}
+            {isCompletedWithRuling && sentToPrisonAdminDate && (
+              <PdfButton
+                caseId={workingCase.id}
+                title={`Dómur til fullnustu ${formatDate(
+                  sentToPrisonAdminDate,
+                )}.pdf`}
+                pdfType="rulingSentToPrisonAdmin"
+                elementId={'Dómur til fullnustu'}
+                renderAs="row"
+              />
+            )}
           </Box>
         )}
         <Box marginBottom={10}>
@@ -231,6 +252,17 @@ const IndictmentOverview = () => {
                 )}
               />
             </Box>
+            <RadioButton
+              id="punishment-type-other"
+              name="punishmentTypeOther"
+              checked={hasPunishmentType(PunishmentType.OTHER)}
+              onChange={() => {
+                onChange(PunishmentType.OTHER)
+              }}
+              large
+              backgroundColor="white"
+              label="Annað"
+            />
           </BlueBox>
         </Box>
       </FormContentContainer>

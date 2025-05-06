@@ -48,13 +48,12 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       },
       USER_PROFILE_CLIENT_URL: {
         dev: 'https://service-portal-api.internal.dev01.devland.is',
-        staging:
-          'http://web-service-portal-api.service-portal.svc.cluster.local',
+        staging: 'http://service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
       },
       USER_PROFILE_CLIENT_SCOPE: json([UserProfileScope.read]),
       XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
-        dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
+        dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
         staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
         prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
       },

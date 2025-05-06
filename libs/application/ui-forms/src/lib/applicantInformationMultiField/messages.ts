@@ -44,6 +44,22 @@ export const applicantInformation = {
       defaultMessage: 'Símanúmer',
       description: 'Telephone number',
     },
+    alertMessage: {
+      id: 'uiForms.application:applicantInfo.labels.alertMessage',
+      defaultMessage:
+        'Ef netfang og símanúmer er ekki rétt hér að ofan þá verður að breyta þeim upplýsingum á mínum síðum Ísland.is og opna nýja umsókn.',
+      description: 'Applicant alert message',
+    },
+    alertMessageLink: {
+      id: 'uiForms.application:applicantInfo.labels.alertMessageLink',
+      defaultMessage: '/minarsidur',
+      description: 'Link for mínar síður',
+    },
+    alertMessageLinkTitle: {
+      id: 'uiForms.application:applicantInfo.labels.alertMessageLinkTitle',
+      defaultMessage: 'Fara á mínar síður',
+      description: 'title for mínar síður link',
+    },
   }),
   error: defineMessages({
     phoneNumber: {

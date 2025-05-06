@@ -41,6 +41,11 @@ export const application = defineMessages({
     description:
       'Description of application state/status when the application is in prerequisites',
   },
+  historyLogInReview: {
+    id: 'aosh.tlwm.application:historyLogInReview',
+    defaultMessage: 'Umsókn í samþykktarferli',
+    description: 'History log when application is sent for review',
+  },
   connectionError: {
     id: 'aosh.tlwm.application:connectionError',
     defaultMessage: 'Ekki náðist að sækja gögnin',

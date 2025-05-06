@@ -25,15 +25,15 @@ export enum ApiActions {
   createCharge = 'createCharge',
 }
 
-export type SubmitResponse = {
-  success: boolean
-  orderId?: string
-}
-
 export type DrivingLicenseDuplicateFakeData = {
   useFakeData: YesOrNo | 'IgnoreQualityPhotoAndSignature'
   currentLicense: 'none' | 'B-full' | 'B-temp'
   licenseIssuedDate?: string
   hasQualityPhoto: YesOrNo
   hasQualitySignature: YesOrNo
+}
+
+export enum Delivery {
+  SEND_HOME = 'sendHome',
+  PICKUP = 'pickup',
 }

@@ -1078,4 +1078,23 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     return null
   }
+
+  async setOtherParent({ application }: TemplateApiModuleActionProps) {
+    try {
+      const { otherParentId, otherParentName } =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
+
+      return { otherParentId, otherParentName }
+    } catch (e) {
+      this.logger.warn(
+        `Could not fetch otherParent on applicationId: ${application.id} with error: ${e}`,
+      )
+    }
+
+    return null
+  }
 }

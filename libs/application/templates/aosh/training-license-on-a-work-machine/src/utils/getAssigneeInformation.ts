@@ -1,124 +1,86 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
   ExternalData,
-  FormatMessage,
   FormValue,
   KeyValueItem,
 } from '@island.is/application/types'
-import { assigneeInformation, overview } from '../lib/messages'
+import { overview } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { formatPhoneNumber } from './formatPhoneNumber'
-
-export const getAssigneeInformation = (
-  answers: FormValue,
-  formatMessage: FormatMessage,
-) => {
-  const companyNationalId = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.company.nationalId',
-  )
-  const companyName = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.company.name',
-  )
-  const assigneeNationalId = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.assignee.nationalId',
-  )
-  const assigneeName = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.assignee.name',
-  )
-  const assigneeEmail = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.assignee.email',
-  )
-  const assigneePhone = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.assignee.phone',
-  )
-
-  return [
-    `${formatMessage(assigneeInformation.labels.companyName)}: ${companyName}`,
-    `${formatMessage(
-      assigneeInformation.labels.companyNationalId,
-    )}: ${formatKennitala(companyNationalId ?? '')}`,
-    `${formatMessage(
-      assigneeInformation.labels.assigneeName,
-    )}: ${assigneeName}`,
-    `${formatMessage(
-      assigneeInformation.labels.assigneeNationalId,
-    )}: ${formatKennitala(assigneeNationalId ?? '')}`,
-    `${formatMessage(
-      assigneeInformation.labels.assigneeEmail,
-    )}: ${assigneeEmail}`,
-    `${formatMessage(
-      assigneeInformation.labels.assigneePhone,
-    )}: ${formatPhoneNumber(assigneePhone ?? '')}`,
-  ].filter((n) => n)
-}
+import { TrainingLicenseOnAWorkMachineAnswers } from '../lib/dataSchema'
+import { getUserInfo } from './getUserInfo'
 
 export const getAssigneeOverviewInformation = (
   answers: FormValue,
   _externalData: ExternalData,
+  userNationalId: string,
+  isAssignee?: boolean,
 ): Array<KeyValueItem> => {
-  const companyName = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.company.name',
-  )
-  const assigneeNationalId = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.assignee.nationalId',
-  )
-  const assigneeName = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.assignee.name',
-  )
-  const assigneeEmail = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.assignee.email',
-  )
-  const assigneePhone = getValueViaPath<string>(
-    answers,
-    'assigneeInformation.assignee.phone',
-  )
+  const assigneeInformation = getValueViaPath<
+    TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
+  >(answers, 'assigneeInformation')
+  const userInfo = getUserInfo(answers, userNationalId)
 
-  return [
-    {
-      width: 'full',
-      keyText: overview.labels.assignee,
-      valueText: [
-        {
-          ...overview.assignee.companyName,
+  return (
+    assigneeInformation
+      ?.filter(({ assignee }) =>
+        isAssignee
+          ? userInfo?.assignee?.nationalId &&
+            assignee.nationalId === userInfo.assignee.nationalId
+          : true,
+      )
+      .map(({ company, assignee, workMachine }, index) => ({
+        width: 'full',
+        keyText: {
+          ...overview.labels.assignee,
           values: {
-            value: companyName,
+            value: isAssignee ? '' : index + 1,
           },
         },
-        {
-          ...overview.assignee.assigneeName,
-          values: {
-            value: assigneeName,
+        valueText: [
+          {
+            ...overview.assignee.companyName,
+            values: {
+              value: company.name,
+            },
           },
-        },
-        {
-          ...overview.assignee.assigneeNationalId,
-          values: {
-            value: assigneeNationalId,
+          {
+            ...overview.assignee.companyNationalId,
+            values: {
+              value: formatKennitala(company.nationalId ?? ''),
+            },
           },
-        },
-        {
-          ...overview.assignee.assigneeEmail,
-          values: {
-            value: assigneeEmail,
+          {
+            ...overview.assignee.assigneeName,
+            values: {
+              value: assignee.name,
+            },
           },
-        },
-        {
-          ...overview.assignee.assigneePhone,
-          values: {
-            value: formatPhoneNumber(assigneePhone ?? ''),
+          {
+            ...overview.assignee.assigneeNationalId,
+            values: {
+              value: formatKennitala(assignee.nationalId ?? ''),
+            },
           },
-        },
-      ],
-    },
-  ]
+          {
+            ...overview.assignee.assigneeEmail,
+            values: {
+              value: assignee.email,
+            },
+          },
+          {
+            ...overview.assignee.assigneePhone,
+            values: {
+              value: formatPhoneNumber(assignee.phone ?? ''),
+            },
+          },
+          !isAssignee && {
+            ...overview.assignee.workMachines,
+            values: {
+              value: workMachine?.map((x) => x.split(' ')[0]).join(', '),
+            },
+          },
+        ],
+      })) ?? []
+  )
 }

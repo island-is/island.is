@@ -24,7 +24,6 @@ import type { User } from '@island.is/auth-nest-tools'
 
 const namespace = '@island.is/auth/confirm-identity'
 
-@UseGuards(ScopesGuard)
 @Scopes('@identityserver.api/authentication')
 @ApiTags('confirm-identity')
 @Controller({
@@ -38,7 +37,7 @@ export class ConfirmIdentityController {
   ) {}
 
   @Post(':id')
-  @UseGuards(IdsUserGuard)
+  @UseGuards(IdsUserGuard, ScopesGuard)
   @Documentation({
     response: {
       status: 200,
@@ -59,7 +58,7 @@ export class ConfirmIdentityController {
   }
 
   @Get(':id')
-  @UseGuards(IdsAuthGuard)
+  @UseGuards(IdsAuthGuard, ScopesGuard)
   @Documentation({
     response: {
       status: 200,

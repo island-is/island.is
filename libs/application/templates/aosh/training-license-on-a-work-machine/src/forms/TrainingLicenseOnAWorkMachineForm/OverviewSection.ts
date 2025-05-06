@@ -28,11 +28,11 @@ export const overviewSection = buildSection({
           title: '',
           backId: 'informationMultiField',
           bottomLine: false,
-          items: getApplicantOverviewInformation,
+          items: (answers) => getApplicantOverviewInformation(answers),
         }),
         buildOverviewField({
           id: 'overviewMachineTenure',
-          title: '',
+          title: overview.labels.machineTenure,
           backId: 'certificateOfTenureMultiField',
           bottomLine: false,
           items: getMachineTenureOverviewInformation,
@@ -54,6 +54,8 @@ export const overviewSection = buildSection({
           id: 'submit',
           placement: 'footer',
           title: overview.general.approveButton,
+          refetchApplicationAfterSubmit: (event) =>
+            event === DefaultEvents.SUBMIT,
           actions: [
             {
               event: DefaultEvents.SUBMIT,

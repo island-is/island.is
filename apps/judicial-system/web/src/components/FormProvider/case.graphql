@@ -30,6 +30,7 @@ query Case($input: CaseQueryInput!) {
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline
+      verdictAppealDecision
       verdictAppealDate
       isVerdictAppealDeadlineExpired
       subpoenaType
@@ -37,6 +38,8 @@ query Case($input: CaseQueryInput!) {
       sentToPrisonAdminDate
       openedByPrisonAdminDate
       punishmentType
+      isAlternativeService
+      alternativeServiceDescription
       subpoenas {
         id
         created
@@ -47,7 +50,7 @@ query Case($input: CaseQueryInput!) {
         defenderNationalId
         caseId
         defendantId
-        subpoenaId
+        policeSubpoenaId
       }
     }
     defenderName
@@ -195,6 +198,8 @@ query Case($input: CaseQueryInput!) {
       displayDate
       policeFileId
       submittedBy
+      submissionDate
+      fileRepresentative
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
@@ -206,6 +211,7 @@ query Case($input: CaseQueryInput!) {
     defendantWaivesRightToCounsel
     crimeScenes
     indictmentIntroduction
+    publicProsecutorIsRegisteredInPoliceSystem
     indictmentCounts {
       id
       caseId
@@ -221,8 +227,6 @@ query Case($input: CaseQueryInput!) {
         offense
         substances
       }
-      deprecatedOffenses
-      substances
       lawsBroken
       incidentDescription
       legalArguments
@@ -301,7 +305,6 @@ query Case($input: CaseQueryInput!) {
     indictmentVerdictAppealDeadlineExpired
     indictmentDecision
     indictmentReviewDecision
-    indictmentCompletedDate
     courtSessionType
     mergeCase {
       id
@@ -365,7 +368,7 @@ query Case($input: CaseQueryInput!) {
           comment
           defenderNationalId
           caseId
-          subpoenaId
+          policeSubpoenaId
         }
       }
       caseFiles {
@@ -400,10 +403,27 @@ query Case($input: CaseQueryInput!) {
       caseFilesSharedWithSpokesperson
       isSpokespersonConfirmed
     }
+    victims {
+      id
+      name
+      hasNationalId
+      nationalId
+      hasLawyer
+      lawyerNationalId
+      lawyerName
+      lawyerEmail
+      lawyerPhoneNumber
+      lawyerAccessToRequest
+    }
     mergeCaseNumber
     civilDemands
     hasCivilClaims
     isCompletedWithoutRuling
     caseSentToCourtDate
+    caseRepresentatives {
+      name
+      nationalId
+      caseFileCategory
+    }
   }
 }

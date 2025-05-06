@@ -17,7 +17,10 @@ import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import {
+  SignatureCollectionCollectionType,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import {
@@ -229,7 +232,9 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               </Box>
             </GridColumn>
           </GridRow>
-          {lists?.length > 0 && collection.isPresidential ? (
+          {lists?.length > 0 &&
+          collection.collectionType ===
+            SignatureCollectionCollectionType.Presidential ? (
             <>
               <Box marginBottom={2}>
                 {filters.input.length > 0 ||
@@ -314,25 +319,27 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               />
             </Box>
           )}
-          {lists?.length > 0 && collection.isPresidential && (
-            <Box marginTop={5}>
-              <Pagination
-                totalItems={lists.length}
-                itemsPerPage={pageSize}
-                page={page}
-                renderLink={(page, className, children) => (
-                  <Box
-                    cursor="pointer"
-                    className={className}
-                    onClick={() => setPage(page)}
-                    component="button"
-                  >
-                    {children}
-                  </Box>
-                )}
-              />
-            </Box>
-          )}
+          {lists?.length > 0 &&
+            collection.collectionType ===
+              SignatureCollectionCollectionType.Presidential && (
+              <Box marginTop={5}>
+                <Pagination
+                  totalItems={lists.length}
+                  itemsPerPage={pageSize}
+                  page={page}
+                  renderLink={(page, className, children) => (
+                    <Box
+                      cursor="pointer"
+                      className={className}
+                      onClick={() => setPage(page)}
+                      component="button"
+                    >
+                      {children}
+                    </Box>
+                  )}
+                />
+              </Box>
+            )}
           {lists?.length > 0 && allowedToProcess && (
             <Box>
               {(collectionStatus === CollectionStatus.InInitialReview ||
@@ -349,9 +356,11 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             </Box>
           )}
 
-          {lists?.length > 0 && collection.isPresidential && (
-            <ReviewCandidates candidates={collection?.candidates ?? []} />
-          )}
+          {lists?.length > 0 &&
+            collection.collectionType ===
+              SignatureCollectionCollectionType.Presidential && (
+              <ReviewCandidates candidates={collection?.candidates ?? []} />
+            )}
         </GridColumn>
       </GridRow>
     </GridContainer>

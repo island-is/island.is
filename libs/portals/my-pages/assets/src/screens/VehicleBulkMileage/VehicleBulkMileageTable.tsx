@@ -6,7 +6,6 @@ import { useMemo } from 'react'
 import { VehicleType } from './types'
 import { VehicleBulkMileageRow } from './VehicleBulkMileageRow'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { useFormContext } from 'react-hook-form'
 
 interface Props {
   vehicles: Array<VehicleType>
@@ -25,8 +24,6 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
     ))
   }, [formatMessage, vehicles])
 
-  const { getValues, watch } = useFormContext()
-
   const totalLastMileage = useMemo(() => {
     if (!vehicles.length) {
       return 0
@@ -38,21 +35,6 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
       0,
     )
   }, [vehicles])
-
-  const formValues = watch()
-
-  const totalRegisteredMileage = useMemo(() => {
-    const values = getValues()
-
-    return Object.values(values).reduce((total, mileage) => {
-      const number = Number.parseInt(mileage)
-      if (!number || Number.isNaN(number)) {
-        return total
-      }
-      return total + number
-    }, 0)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formValues])
 
   return (
     <Box>
@@ -89,17 +71,7 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
                       </Text>
                     </Box>
                   </td>
-                  <td>
-                    <Box padding={2}>
-                      <Text
-                        variant="medium"
-                        fontWeight="semiBold"
-                        textAlign="right"
-                      >
-                        {displayWithUnit(totalRegisteredMileage, 'km', true)}
-                      </Text>
-                    </Box>
-                  </td>
+                  <td />
                 </T.Row>
               )}
             </T.Body>

@@ -22,7 +22,6 @@ export const PrerequisitesForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'informationSection',

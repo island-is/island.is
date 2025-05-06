@@ -59,6 +59,9 @@ import {
 } from './dto/getGrants.input'
 import { Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
+import { BloodDonationRestrictionGenericTagList } from './models/bloodDonationRestriction.model'
+import { sortAlpha } from '@island.is/shared/utils'
+import { GetBloodDonationRestrictionsInput } from './dto/getBloodDonationRestrictions.input'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -421,6 +424,7 @@ export class CmsElasticsearchService {
     input: GetCustomSubpageInput,
   ): Promise<CustomPage | null> {
     const index = getElasticsearchIndex(input.lang)
+
     const must = [
       {
         term: {
@@ -435,16 +439,21 @@ export class CmsElasticsearchService {
           query: {
             bool: {
               must: [
-                {
-                  term: {
-                    'tags.key': input.parentPageId,
-                  },
-                },
-                {
-                  term: {
-                    'tags.type': 'referencedBy',
-                  },
-                },
+                { match: { 'tags.key': input.parentPageId } },
+                { term: { 'tags.type': 'referencedBy' } },
+              ],
+            },
+          },
+        },
+      },
+      {
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                { match: { 'tags.key': input.slug } },
+                { term: { 'tags.type': 'slug' } },
               ],
             },
           },
@@ -477,9 +486,7 @@ export class CmsElasticsearchService {
     })
   }
 
-  private async getListItems<
-    ListItemType extends 'webGenericListItem' | 'webTeamMember',
-  >(input: {
+  private async getListItems<ListItemType extends 'webGenericListItem'>(input: {
     listId: string
     lang: ElasticsearchIndexLocale
     page?: number
@@ -488,12 +495,8 @@ export class CmsElasticsearchService {
     tags?: string[]
     tagGroups?: Record<string, string[]>
     type: ListItemType
-    orderBy?: GetGenericListItemsInputOrderBy | GetTeamMembersInputOrderBy
-  }): Promise<
-    ListItemType extends 'webGenericListItem'
-      ? Omit<GenericListItemResponse, 'input'>
-      : Omit<TeamMemberResponse, 'input'>
-  > {
+    orderBy?: GetGenericListItemsInputOrderBy
+  }): Promise<Omit<GenericListItemResponse, 'input'>> {
     let must: Record<string, unknown>[] = [
       {
         term: {
@@ -611,17 +614,156 @@ export class CmsElasticsearchService {
     }
   }
 
+  private async getTeamListItems(input: {
+    listId: string
+    lang: ElasticsearchIndexLocale
+    page?: number
+    size?: number
+    queryString?: string
+    tags?: string[]
+    tagGroups?: Record<string, string[]>
+    orderBy?: GetTeamMembersInputOrderBy
+  }): Promise<Omit<TeamMemberResponse, 'input'>> {
+    let must: Record<string, unknown>[] = [
+      {
+        term: {
+          type: {
+            value: 'webTeamMember',
+          },
+        },
+      },
+      {
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    'tags.key': input.listId,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'referencedBy',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    ]
+
+    const queryString = input.queryString
+      ? input.queryString.replace('´', '').trim().toLowerCase()
+      : ''
+
+    must.push({
+      simple_query_string: {
+        query: queryString + '*',
+        fields: ['title^100'],
+        analyze_wildcard: true,
+        default_operator: 'and',
+      },
+    })
+
+    const size = input.size ?? 10
+
+    let sort: sortRule[] = []
+
+    if (!input.orderBy) {
+      sort = [
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+        { 'title.sort': { order: SortDirection.ASC } },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    } else if (input.orderBy === GetTeamMembersInputOrderBy.Name) {
+      sort = [
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    } else if (input.orderBy === GetTeamMembersInputOrderBy.Manual) {
+      sort = [
+        { dateCreated: { order: SortDirection.DESC } },
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+      ]
+    }
+
+    if (queryString.length > 0) {
+      sort.unshift({ _score: { order: SortDirection.DESC } })
+    }
+
+    if (input.tags && input.tags.length > 0 && input.tagGroups) {
+      must = must.concat(
+        generateGenericTagGroupQueries(input.tags, input.tagGroups),
+      )
+    }
+
+    const response: ApiResponse<SearchResponse<MappedData>> =
+      await this.elasticService.findByQuery(getElasticsearchIndex(input.lang), {
+        query: {
+          bool: {
+            must,
+            should: [
+              {
+                prefix: {
+                  'title.keyword': {
+                    value: queryString,
+                    boost: 100,
+                  },
+                },
+              },
+              {
+                match_phrase: {
+                  title: {
+                    query: queryString,
+                    boost: 5,
+                  },
+                },
+              },
+            ],
+            minimum_should_match: 0,
+          },
+        },
+        sort,
+        track_scores: true,
+        size,
+        from: ((input.page ?? 1) - 1) * size,
+      })
+
+    return {
+      items: response.body.hits.hits
+        .map((item) => JSON.parse(item._source.response ?? 'null'))
+        .filter(Boolean),
+      total: response.body.hits.total.value,
+    }
+  }
+
   async getTeamMembers(
     input: GetTeamMembersInput,
   ): Promise<TeamMemberResponse> {
-    const response = await this.getListItems({
+    const response = await this.getTeamListItems({
       ...input,
-      type: 'webTeamMember',
       listId: input.teamListId,
       orderBy:
         input.orderBy === GetTeamMembersInputOrderBy.Manual
-          ? GetGenericListItemsInputOrderBy.DATE
-          : GetGenericListItemsInputOrderBy.TITLE,
+          ? GetTeamMembersInputOrderBy.Manual
+          : GetTeamMembersInputOrderBy.Name,
     })
 
     return {
@@ -695,17 +837,16 @@ export class CmsElasticsearchService {
     let sortRules: ('_score' | sortRule)[] = []
     if (!sort || sort === GrantsSortBy.RECENTLY_UPDATED) {
       sortRules = [
-        { dateUpdated: { order: SortDirection.DESC } },
+        { dateUpdated: { order: SortDirection.ASC } },
         { 'title.sort': { order: SortDirection.ASC } },
-        { dateCreated: { order: SortDirection.DESC } },
       ]
     } else if (sort === GrantsSortBy.ALPHABETICAL) {
       sortRules = [
         { 'title.sort': { order: SortDirection.ASC } },
         { dateUpdated: { order: SortDirection.DESC } },
-        { dateCreated: { order: SortDirection.DESC } },
       ]
     }
+
     if (queryString.length > 0 && queryString !== '*') {
       sortRules.unshift('_score')
     }
@@ -959,7 +1100,7 @@ export class CmsElasticsearchService {
             must,
           },
         },
-        sort,
+        sort: sortRules,
         size,
         from: (page - 1) * size,
       })
@@ -1087,6 +1228,172 @@ export class CmsElasticsearchService {
     return supportqnasResponse.hits.hits
       .map((response) => JSON.parse(response._source.response ?? '[]'))
       .filter((qna) => qna?.title && qna?.slug)
+  }
+
+  async getBloodDonationRestrictionGenericTags(
+    index: string,
+  ): Promise<BloodDonationRestrictionGenericTagList> {
+    const response = await this.elasticService.findByQuery(index, {
+      size: 0,
+      aggs: {
+        onlyBloodDonationRestrictions: {
+          filter: {
+            term: {
+              type: 'webBloodDonationRestriction',
+            },
+          },
+          aggs: {
+            uniqueTags: {
+              nested: {
+                path: 'tags',
+              },
+              aggs: {
+                uniqueGenericTags: {
+                  filter: {
+                    term: {
+                      'tags.type': 'genericTag',
+                    },
+                  },
+                  aggs: {
+                    tagKeys: {
+                      terms: {
+                        field: 'tags.key',
+                        size: 1000,
+                      },
+                      aggs: {
+                        tagValues: {
+                          terms: {
+                            field: 'tags.value.keyword',
+                            size: 1,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const body = response.body as {
+      aggregations: {
+        onlyBloodDonationRestrictions: {
+          uniqueTags: {
+            uniqueGenericTags: {
+              tagKeys: {
+                buckets: Array<{
+                  key: string
+                  tagValues: { buckets: Array<{ key: string }> }
+                }>
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const tags =
+      body.aggregations.onlyBloodDonationRestrictions.uniqueTags.uniqueGenericTags.tagKeys.buckets
+        .filter(
+          (tagResult) =>
+            Boolean(tagResult?.key) &&
+            Boolean(tagResult.tagValues?.buckets?.[0]?.key),
+        )
+        .map((tagResult) => ({
+          key: tagResult.key,
+          value: tagResult.tagValues.buckets[0].key,
+        }))
+
+    tags.sort(sortAlpha('value'))
+
+    return {
+      total: tags.length,
+      items: tags.map((tag) => ({
+        key: tag.key,
+        label: tag.value,
+      })),
+    }
+  }
+
+  async getBloodDonationRestrictionList(
+    index: string,
+    input: GetBloodDonationRestrictionsInput,
+  ) {
+    const must: Record<string, unknown>[] = [
+      {
+        term: {
+          type: {
+            value: 'webBloodDonationRestriction',
+          },
+        },
+      },
+    ]
+
+    if (!!input.tagKeys && input.tagKeys.length > 0) {
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              should: input.tagKeys.map((key) => ({
+                bool: {
+                  must: [
+                    {
+                      term: {
+                        'tags.key': key,
+                      },
+                    },
+                    {
+                      term: {
+                        'tags.type': 'genericTag',
+                      },
+                    },
+                  ],
+                },
+              })),
+            },
+          },
+        },
+      })
+    }
+
+    const queryString = input.queryString
+      ? input.queryString.replace('´', '').trim().toLowerCase()
+      : ''
+
+    must.push({
+      simple_query_string: {
+        query: queryString + '*',
+        fields: ['title^100', 'content'],
+        analyze_wildcard: true,
+        default_operator: 'and',
+      },
+    })
+
+    const size = 10
+
+    const response: ApiResponse<SearchResponse<MappedData>> =
+      await this.elasticService.findByQuery(index, {
+        query: {
+          bool: {
+            must,
+          },
+        },
+        sort: [{ _score: { order: SortDirection.DESC } }],
+        size,
+        from: ((input.page ?? 1) - 1) * size,
+      })
+
+    return {
+      items: response.body.hits.hits
+        .map((item) => JSON.parse(item._source.response ?? 'null'))
+        .filter(Boolean),
+      total: response.body.hits.total.value,
+      input,
+    }
   }
 }
 

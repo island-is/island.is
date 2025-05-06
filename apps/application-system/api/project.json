@@ -91,6 +91,11 @@
           },
           {
             "glob": "*",
+            "input": "libs/application/template-api-modules/src/lib/modules/templates/aosh/training-license-on-a-work-machine/emailGenerators/assets",
+            "output": "./aosh-training-license-on-a-work-machine-assets"
+          },
+          {
+            "glob": "*",
             "input": "libs/application/template-api-modules/src/lib/modules/templates/secondary-school/emailGenerators/assets",
             "output": "./secondary-school-assets"
           },

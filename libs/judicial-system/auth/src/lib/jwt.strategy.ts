@@ -25,16 +25,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   validate(
     req: Request,
-    { currentUserIdx, eligibleUsers, csrfToken }: Credentials,
+    { currentUserNationalId, currentUser, csrfToken }: Credentials,
   ): AuthUser | undefined {
     if (csrfToken && `Bearer ${csrfToken}` !== req.headers['authorization']) {
       return undefined
     }
 
-    return {
-      currentUser:
-        currentUserIdx < 0 ? undefined : eligibleUsers[currentUserIdx],
-      eligibleUsers,
-    }
+    return { currentUserNationalId, currentUser }
   }
 }

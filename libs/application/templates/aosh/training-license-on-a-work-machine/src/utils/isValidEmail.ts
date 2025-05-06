@@ -1,3 +1,3 @@
-const emailRegex =
-  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-export const isValidEmail = (value: string) => emailRegex.test(value)
+import { EMAIL_REGEX } from '@island.is/application/core'
+
+export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)

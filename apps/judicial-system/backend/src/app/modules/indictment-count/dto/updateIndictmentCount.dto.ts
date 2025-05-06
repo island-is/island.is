@@ -2,7 +2,6 @@ import {
   IsArray,
   IsEnum,
   IsNumber,
-  IsObject,
   IsOptional,
   IsString,
   MaxLength,
@@ -11,11 +10,7 @@ import {
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import type { SubstanceMap } from '@island.is/judicial-system/types'
-import {
-  IndictmentCountOffense,
-  IndictmentSubtype,
-} from '@island.is/judicial-system/types'
+import { IndictmentSubtype } from '@island.is/judicial-system/types'
 
 export class UpdateIndictmentCountDto {
   @IsOptional()
@@ -32,17 +27,6 @@ export class UpdateIndictmentCountDto {
 
   @IsOptional()
   @IsArray()
-  @IsEnum(IndictmentCountOffense, { each: true })
-  @ApiPropertyOptional({ enum: IndictmentCountOffense, isArray: true })
-  readonly deprecatedOffenses?: IndictmentCountOffense[]
-
-  @IsOptional()
-  @IsObject()
-  @ApiPropertyOptional({ type: Object })
-  readonly substances?: SubstanceMap
-
-  @IsOptional()
-  @IsArray()
   @ApiPropertyOptional({ type: [Number, Number], isArray: true })
   readonly lawsBroken?: [number, number][]
 
@@ -55,6 +39,12 @@ export class UpdateIndictmentCountDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly legalArguments?: string
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(IndictmentSubtype, { each: true })
+  @ApiPropertyOptional({ enum: IndictmentSubtype, isArray: true })
+  readonly policeCaseNumberSubtypes?: IndictmentSubtype[]
 
   @IsOptional()
   @IsArray()

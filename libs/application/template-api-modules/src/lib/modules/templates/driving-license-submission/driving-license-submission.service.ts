@@ -146,11 +146,14 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const remarks = answers.hasHealthRemarks === 'yes'
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
-    const jurisdictionId = answers.jurisdiction
+    const jurisdictionId = Number(
+      getValueViaPath(answers, 'delivery.jurisdiction'),
+    )
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
-    const pickup = answers.pickup ? (answers.pickup as Pickup) : undefined
+    const deliveryMethod = getValueViaPath(answers, 'delivery.deliveryMethod')
     const phone = formatPhoneNumber(answers.phone as string)
+    const setJurisdictionToKopavogur = 37
 
     const postHealthDeclaration = async (
       nationalId: string,
@@ -176,18 +179,23 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       return this.drivingLicenseService.renewDrivingLicense65AndOver(
         auth.authorization.replace('Bearer ', ''),
         {
-          ...(jurisdictionId && { districtId: jurisdictionId as number }),
-          ...(pickup
+          districtId: jurisdictionId
+            ? jurisdictionId
+            : setJurisdictionToKopavogur,
+          ...(deliveryMethod
             ? {
-                pickupPlasticAtDistrict: pickup === Pickup.DISTRICT,
-                sendPlasticToPerson: pickup === Pickup.POST,
+                pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
+                sendPlasticToPerson: deliveryMethod === Pickup.POST,
               }
             : {}),
         },
       )
     } else if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
-        jurisdictionId: jurisdictionId as number,
+        jurisdictionId: jurisdictionId
+          ? jurisdictionId
+          : setJurisdictionToKopavogur,
+        sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
         needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
         licenseCategory:
@@ -203,7 +211,10 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         nationalId,
         auth.authorization.replace('Bearer ', ''),
         {
-          jurisdictionId: jurisdictionId as number,
+          jurisdictionId: jurisdictionId
+            ? jurisdictionId
+            : setJurisdictionToKopavogur,
+          sendLicenseInMail: deliveryMethod === Pickup.POST ? true : false,
           needsToPresentHealthCertificate: needsHealthCert,
           needsToPresentQualityPhoto: needsQualityPhoto,
           teacherNationalId: teacher,
@@ -222,7 +233,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         nationalId,
         auth.authorization,
         {
-          jurisdiction: jurisdictionId as number,
+          jurisdiction: jurisdictionId,
           instructorSSN: instructorSSN ?? '',
           primaryPhoneNumber: phone ?? '',
           studentEmail: email ?? '',

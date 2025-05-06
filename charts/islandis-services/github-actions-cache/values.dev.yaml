@@ -26,7 +26,7 @@ command:
 enabled: true
 env:
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=460'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
   REDIS_NODES: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces: []

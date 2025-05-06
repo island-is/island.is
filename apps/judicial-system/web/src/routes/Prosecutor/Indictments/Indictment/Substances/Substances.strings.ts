@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const substances = defineMessages({
+export const strings = defineMessages({
   substanceTitle: {
     id: 'judicial.system.core:substances.title',
     defaultMessage:

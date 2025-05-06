@@ -29,7 +29,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: arc-runners
+    runs-on: arc-shared
     outputs:
       ENVS: ${{ steps.select_envs.outputs.ENVS }}
     steps:
@@ -48,8 +48,8 @@ jobs:
           echo "ENVS={\"env\":$ENVS_JSON}" >> "$GITHUB_OUTPUT"
 
   helm-values-validation:
-    runs-on: arc-runners
-    timeout-minutes: 5
+    runs-on: arc-shared
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
@@ -60,31 +60,16 @@ jobs:
       - uses: actions/checkout@v4
         if: ${{ github.event_name != 'pull_request' }}
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
       - name: Setup yarn
-        run: corepack enable
+        uses: ./.github/actions/setup-yarn
 
-      - name: Cache for NodeJS dependencies
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: infra/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra-2
-
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Building NodeJS dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true'
+      - name: Install yarn in infra
         working-directory: infra
         run: yarn install --immutable
 
       - name: Run unit tests
-        run: ./infra/scripts/ci/test-unit.sh
+        working-directory: infra
+        run: yarn test
 
       - name: Check chart values are up-to-date
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -100,29 +85,17 @@ jobs:
     needs:
       - prepare
       - helm-values-validation # waiting on this job so the cache would be prepared
-    runs-on: arc-runners
+    runs-on: arc-shared
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
 
-      - name: Cache for NodeJS dependencies
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: infra/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-infra
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
 
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Building NodeJS dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true'
+      - name: Install yarn in infra
         working-directory: infra
         run: yarn install --immutable
 

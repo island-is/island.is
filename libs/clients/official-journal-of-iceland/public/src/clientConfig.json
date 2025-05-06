@@ -4,6 +4,7 @@
     "/api/v1/adverts/{id}": {
       "get": {
         "operationId": "getAdvertById",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -13,7 +14,7 @@
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -27,6 +28,7 @@
     "/api/v1/adverts/similar/{id}": {
       "get": {
         "operationId": "getSimilarAdvertsById",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -36,7 +38,7 @@
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -52,73 +54,74 @@
     "/api/v1/adverts": {
       "get": {
         "operationId": "getAdverts",
+        "summary": "",
         "parameters": [
           {
             "name": "search",
-            "description": "String to search for in adverts.",
             "required": false,
             "in": "query",
+            "description": "String to search for in adverts.",
             "schema": { "type": "string" }
           },
           {
             "name": "page",
-            "description": "Page number to return.",
             "required": false,
             "in": "query",
+            "description": "Page number to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "pageSize",
-            "description": "Page size to return.",
             "required": false,
             "in": "query",
+            "description": "Page size to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "department",
-            "description": "One or more departments (by `slug`) to filter on.",
             "required": false,
             "in": "query",
+            "description": "One or more departments (by `slug`) to filter on.",
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "type",
-            "description": "One or more types (by `slug`) to filter on.",
             "required": false,
             "in": "query",
+            "description": "One or more types (by `slug`) to filter on.",
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "category",
-            "description": "One or more categories (by `slug`) to filter on.",
             "required": false,
             "in": "query",
+            "description": "One or more categories (by `slug`) to filter on.",
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "involvedParty",
-            "description": "One or more involved parties (by `slug`) to filter on.",
             "required": false,
             "in": "query",
+            "description": "One or more involved parties (by `slug`) to filter on.",
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "dateFrom",
-            "description": "Date from which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "required": false,
             "in": "query",
+            "description": "Date from which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "schema": { "type": "string" }
           },
           {
             "name": "dateTo",
-            "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "required": false,
             "in": "query",
+            "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -132,6 +135,7 @@
     "/api/v1/departments/{id}": {
       "get": {
         "operationId": "getDepartmentById",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -141,7 +145,7 @@
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -157,31 +161,32 @@
     "/api/v1/departments": {
       "get": {
         "operationId": "getDepartments",
+        "summary": "",
         "parameters": [
           {
             "name": "search",
-            "description": "String to search for in departments.",
             "required": false,
             "in": "query",
+            "description": "String to search for in departments.",
             "schema": { "type": "string" }
           },
           {
             "name": "page",
-            "description": "Page number to return.",
             "required": false,
             "in": "query",
+            "description": "Page number to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "pageSize",
-            "description": "Page size number to return.",
             "required": false,
             "in": "query",
+            "description": "Page size number to return.",
             "schema": { "type": "number" }
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -197,12 +202,13 @@
     "/api/v1/maincategories": {
       "get": {
         "operationId": "getMainCategories",
+        "summary": "",
         "parameters": [
           {
             "name": "search",
-            "description": "String to search for",
             "required": false,
             "in": "query",
+            "description": "String to search for",
             "schema": { "type": "string" }
           },
           {
@@ -217,21 +223,21 @@
           },
           {
             "name": "page",
-            "description": "Page number to return.",
             "required": false,
             "in": "query",
+            "description": "Page number to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "pageSize",
-            "description": "Page size number to return.",
             "required": false,
             "in": "query",
+            "description": "Page size number to return.",
             "schema": { "type": "number" }
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -247,12 +253,13 @@
     "/api/v1/categories": {
       "get": {
         "operationId": "getCategories",
+        "summary": "",
         "parameters": [
           {
             "name": "search",
-            "description": "String to search for",
             "required": false,
             "in": "query",
+            "description": "String to search for",
             "schema": { "type": "string" }
           },
           {
@@ -267,21 +274,21 @@
           },
           {
             "name": "page",
-            "description": "Page number to return.",
             "required": false,
             "in": "query",
+            "description": "Page number to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "pageSize",
-            "description": "Page size number to return.",
             "required": false,
             "in": "query",
+            "description": "Page size number to return.",
             "schema": { "type": "number" }
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -297,12 +304,13 @@
     "/api/v1/institutions": {
       "get": {
         "operationId": "getInstitutions",
+        "summary": "",
         "parameters": [
           {
             "name": "search",
-            "description": "String to search for",
             "required": false,
             "in": "query",
+            "description": "String to search for",
             "schema": { "type": "string" }
           },
           {
@@ -317,21 +325,21 @@
           },
           {
             "name": "page",
-            "description": "Page number to return.",
             "required": false,
             "in": "query",
+            "description": "Page number to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "pageSize",
-            "description": "Page size number to return.",
             "required": false,
             "in": "query",
+            "description": "Page size number to return.",
             "schema": { "type": "number" }
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -347,40 +355,41 @@
     "/api/v1/signatures": {
       "get": {
         "operationId": "getSignatures",
+        "summary": "",
         "parameters": [
           {
-            "description": "Search for a specific signature by id",
-            "required": false,
             "name": "id",
+            "required": false,
             "in": "query",
+            "description": "Search for a specific signature by id",
             "schema": { "type": "string" }
           },
           {
+            "name": "type",
+            "required": false,
+            "in": "query",
             "description": "Search for a specific signature by type",
             "example": "Regular",
-            "required": false,
-            "name": "type",
-            "in": "query",
             "schema": { "type": "string" }
           },
           {
+            "name": "search",
+            "required": false,
+            "in": "query",
             "description": "Search for a specific signature",
             "example": "Dagur B. Eggertsson",
-            "required": false,
-            "name": "search",
-            "in": "query",
             "schema": { "type": "string" }
           },
           {
             "name": "page",
-            "description": "Page number to return.",
             "required": false,
             "in": "query",
+            "description": "Page number to return.",
             "schema": { "type": "number" }
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -396,12 +405,13 @@
     "/api/v1/cases": {
       "get": {
         "operationId": "getCasesInProgress",
+        "summary": "",
         "parameters": [
           {
             "name": "search",
-            "description": "String to search for",
             "required": false,
             "in": "query",
+            "description": "String to search for",
             "schema": { "type": "string" }
           },
           {
@@ -416,21 +426,21 @@
           },
           {
             "name": "page",
-            "description": "Page number to return.",
             "required": false,
             "in": "query",
+            "description": "Page number to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "pageSize",
-            "description": "Page size number to return.",
             "required": false,
             "in": "query",
+            "description": "Page size number to return.",
             "schema": { "type": "number" }
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -443,16 +453,62 @@
         }
       }
     },
-    "/api/v1/error": {
+    "/api/v1/rss/{id}": {
       "get": {
-        "operationId": "error",
-        "parameters": [],
+        "operationId": "getRssFeed",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
         "responses": {
-          "default": {
+          "200": {
+            "content": {
+              "application/rss+xml": { "schema": { "type": "string" } }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/{id}": {
+      "get": {
+        "operationId": "getPDFFromAdvert",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "301": {
+            "headers": {
+              "Location": { "schema": { "type": "string", "format": "uri" } }
+            },
+            "description": ""
+          },
+          "404": {
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
+                "schema": { "$ref": "#/components/schemas/NotFoundException" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorException"
+                }
               }
             }
           }
@@ -465,59 +521,59 @@
         "summary": "",
         "parameters": [
           {
-            "required": false,
-            "description": "Search by id",
             "name": "id",
+            "required": false,
             "in": "query",
+            "description": "Search by id",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Filter by unassigned",
             "name": "unassigned",
+            "required": false,
             "in": "query",
+            "description": "Filter by unassigned",
             "schema": { "type": "boolean" }
           },
           {
-            "required": false,
-            "description": "Search by main type id",
             "name": "mainType",
+            "required": false,
             "in": "query",
+            "description": "Search by main type id",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Search by title",
             "name": "search",
+            "required": false,
             "in": "query",
+            "description": "Search by title",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Search by slug",
             "name": "slug",
+            "required": false,
             "in": "query",
+            "description": "Search by slug",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Search by department slug, title or id",
             "name": "department",
+            "required": false,
             "in": "query",
+            "description": "Search by department slug, title or id",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "The page number",
             "name": "page",
+            "required": false,
             "in": "query",
+            "description": "The page number",
             "schema": { "type": "number" }
           },
           {
-            "required": false,
-            "description": "The page size",
             "name": "pageSize",
+            "required": false,
             "in": "query",
+            "description": "The page size",
             "schema": { "type": "number" }
           }
         ],
@@ -555,59 +611,59 @@
         "summary": "",
         "parameters": [
           {
-            "required": false,
-            "description": "Search by id",
             "name": "id",
+            "required": false,
             "in": "query",
+            "description": "Search by id",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Filter by unassigned",
             "name": "unassigned",
+            "required": false,
             "in": "query",
+            "description": "Filter by unassigned",
             "schema": { "type": "boolean" }
           },
           {
-            "required": false,
-            "description": "Search by main type id",
             "name": "mainType",
+            "required": false,
             "in": "query",
+            "description": "Search by main type id",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Search by title",
             "name": "search",
+            "required": false,
             "in": "query",
+            "description": "Search by title",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Search by slug",
             "name": "slug",
+            "required": false,
             "in": "query",
+            "description": "Search by slug",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "Search by department slug, title or id",
             "name": "department",
+            "required": false,
             "in": "query",
+            "description": "Search by department slug, title or id",
             "schema": { "type": "string" }
           },
           {
-            "required": false,
-            "description": "The page number",
             "name": "page",
+            "required": false,
             "in": "query",
+            "description": "The page number",
             "schema": { "type": "number" }
           },
           {
-            "required": false,
-            "description": "The page size",
             "name": "pageSize",
+            "required": false,
             "in": "query",
+            "description": "The page size",
             "schema": { "type": "number" }
           }
         ],
@@ -738,6 +794,7 @@
     "/api/v1/pdf/case/{id}": {
       "get": {
         "operationId": "getPdfByCaseId",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -747,7 +804,7 @@
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -761,16 +818,24 @@
     "/api/v1/pdf/application/{id}": {
       "get": {
         "operationId": "getPdfByApplicationId",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "showDate",
+            "required": false,
+            "in": "query",
+            "description": "Show date in PDF",
+            "schema": { "default": true, "type": "boolean" }
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -784,6 +849,7 @@
     "/api/v1/pdf/case/{id}/url": {
       "get": {
         "operationId": "getPdfUrlByCaseId",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -793,7 +859,7 @@
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -807,6 +873,7 @@
     "/api/v1/pdf/application/{id}/url": {
       "get": {
         "operationId": "getPdfUrlByApplicationId",
+        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -816,7 +883,7 @@
           }
         ],
         "responses": {
-          "default": {
+          "200": {
             "description": "",
             "content": {
               "application/json": {
@@ -910,6 +977,33 @@
         },
         "required": ["number", "year", "full"]
       },
+      "CategoryMainCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the main category, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the main category.",
+            "example": "Dómstólar og réttarfar"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the main category, used in URLs and API requests.",
+            "example": "domstolar-og-rettarfar"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the main category, used on front page.",
+            "example": "Hæstiréttur, lögmenn, lögreglumál, dómsmál og landsdómur."
+          }
+        },
+        "required": ["id", "title", "slug", "description"]
+      },
       "Category": {
         "type": "object",
         "properties": {
@@ -928,6 +1022,12 @@
             "type": "string",
             "description": "Slug of the advert category, used in URLs and API requests.",
             "example": "evropska-efnahagssvaedid"
+          },
+          "mainCategories": {
+            "description": "The main category this category belongs to.",
+            "example": "Dómstólar og réttarfar",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CategoryMainCategory" }
           }
         },
         "required": ["id", "title", "slug"]
@@ -950,9 +1050,14 @@
             "type": "string",
             "description": "Slug of the institution, used in URLs and API requests.",
             "example": "domsmalaraduneytid"
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "National ID of the institution",
+            "example": "650376-2949"
           }
         },
-        "required": ["id", "title", "slug"]
+        "required": ["id", "title", "slug", "nationalId"]
       },
       "AdvertDocument": {
         "type": "object",
@@ -1113,6 +1218,12 @@
           },
           "documentHtml": { "type": "string" },
           "documentPdfUrl": { "type": "string" },
+          "isLegacy": { "type": "boolean" },
+          "legacyDate": {
+            "type": "string",
+            "nullable": true,
+            "example": "2024-01-01T09:00:00Z"
+          },
           "createdDate": {
             "type": "string",
             "nullable": false,
@@ -1587,30 +1698,8 @@
         },
         "required": ["cases", "paging"]
       },
-      "ValidationResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "description": "Array of error messages",
-            "example": [
-              "message must be shorter than or equal to 10 characters"
-            ],
-            "type": "array",
-            "items": { "type": "string" }
-          },
-          "error": {
-            "type": "string",
-            "description": "Error type",
-            "example": "Bad Request"
-          },
-          "statusCode": {
-            "type": "number",
-            "description": "HTTP status code of response",
-            "example": 400
-          }
-        },
-        "required": ["message", "statusCode"]
-      },
+      "NotFoundException": { "type": "object", "properties": {} },
+      "InternalServerErrorException": { "type": "object", "properties": {} },
       "GetAdvertTypes": {
         "type": "object",
         "properties": {

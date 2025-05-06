@@ -81,14 +81,7 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
             >
               <Image
                 {...item?.image}
-                url={
-                  item?.image?.url
-                    ? item.image.url + '?w=1000&fm=webp&q=80'
-                    : ''
-                }
-                thumbnail={
-                  item?.image?.url ? item.image.url + '?w=50&fm=webp&q=80' : ''
-                }
+                url={item?.image?.url ? item.image.url : ''}
               />
             </Box>
           )}
@@ -115,8 +108,9 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
 }
 
 GenericListItemPage.getProps = async ({ apolloClient, query, locale }) => {
+  const querySlugs = (query.slugs ?? []) as string[]
   const slug =
-    (query.slugs as string[])?.[2] ?? (query.genericListItemSlug as string)
+    querySlugs[querySlugs.length - 1] ?? (query.genericListItemSlug as string)
 
   if (!slug) {
     throw new CustomNextError(

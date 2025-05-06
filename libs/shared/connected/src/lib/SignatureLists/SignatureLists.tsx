@@ -10,6 +10,7 @@ import { FC } from 'react'
 import {
   ConnectedComponent,
   SignatureCollectionCandidate,
+  SignatureCollectionCollectionType,
   SignatureCollectionListBase,
 } from '@island.is/api/schema'
 import { useLocalization } from '../../utils'
@@ -116,7 +117,8 @@ export const SignatureLists: FC<
                           onClick: () =>
                             window.open(
                               `${window.location.origin}/umsoknir/${
-                                collection.isPresidential
+                                collection.collectionType ===
+                                SignatureCollectionCollectionType.Presidential
                                   ? 'maela-med-frambodi'
                                   : 'maela-med-althingisframbodi'
                               }/?candidate=${candidate.id}`,

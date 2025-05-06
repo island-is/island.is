@@ -7,24 +7,19 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  defineTemplateApi,
   NationalRegistryUserApi,
-  StateLifeCycle,
   UserProfileApi,
 } from '@island.is/application/types'
-import { ApiActions, Events, Roles, States } from './constants'
+import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import { CanSignApi, CurrentCollectionApi, GetListApi } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
-
-const WeekLifeCycle: StateLifeCycle = {
-  shouldBeListed: false,
-  shouldBePruned: true,
-  whenToPrune: 1000 * 3600 * 24 * 7,
-}
 
 const signListTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -88,7 +83,7 @@ const signListTemplate: ApplicationTemplate<
         meta: {
           name: m.applicationName.defaultMessage,
           status: 'draft',
-          lifecycle: WeekLifeCycle,
+          lifecycle: pruneAfterDays(7),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -125,12 +120,13 @@ const signListTemplate: ApplicationTemplate<
           name: 'Done',
           status: 'completed',
           progress: 1,
-          lifecycle: WeekLifeCycle,
-          onEntry: defineTemplateApi({
+          lifecycle: pruneAfterDays(30),
+          //Todo: add back once needed
+          /*onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          }),
+          }),*/
           roles: [
             {
               id: Roles.APPLICANT,

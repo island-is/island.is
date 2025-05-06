@@ -2,11 +2,16 @@ name: 'Prep Dependencies'
 on:
   workflow_call:
     inputs:
+      force_all_to_be_affected:
+        description: 'Should all be affected'
+        required: false
+        type: boolean
+        default: false
       main_branch:
         default: 'main'
         type: string
       run_merge_queue:
-        description: 'Should the merge que step run'
+        description: 'Should the merge queue step run'
         required: false
         type: boolean
         default: false
@@ -15,6 +20,8 @@ on:
         value: ${{ jobs.install.outputs.MQ_SHA}}
       MQ_DOCKER_TAG:
         value: ${{ jobs.install.outputs.MQ_DOCKER_TAG }}
+      MQ_HELM_VALUES_BRANCH:
+        value: ${{ jobs.install.outputs.MQ_HELM_VALUES_BRANCH }}
       MQ_ARTIFACT_NAME:
         value: ${{ jobs.install.outputs.MQ_ARTIFACT_NAME }}
       MQ_GIT_BRANCH:
@@ -44,7 +51,7 @@ on:
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
-  NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  NX_AFFECTED_ALL: ${{ inputs.force_all_to_be_affected || contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
@@ -57,7 +64,7 @@ env:
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
-  GENERATED_FILES: ${{ github.workspace }}/${{ github.sha }}.tar.gz
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
@@ -65,16 +72,14 @@ env:
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
   DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-  YARN_CACHE_FOLDER: /home/runner/dependencies/.yarn/cache
-  CYPRESS_CACHE_FOLDER: /home/runner/dependencies/.cache
-  COREPACK_HOME: /home/runner/dependencies/corepack
-  NODE_PATH: /home/runner/dependencies/node_modules
-  COREPACK_ENABLE_STRICT: '0'
+  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
+  YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
   install:
     outputs:
       MQ_SHA: ${{ steps.prepare-merge-queue.outputs.GIT_SHA }}
+      MQ_HELM_VALUES_BRANCH: ${{ steps.prepare-merge-queue.outputs.HELM_VALUES_BRANCH }}
       MQ_DOCKER_TAG: ${{ steps.prepare-merge-queue.outputs.DOCKER_TAG }}
       MQ_ARTIFACT_NAME: ${{ steps.prepare-merge-queue.outputs.ARTIFACT_NAME }}
       MQ_GIT_BRANCH: ${{ steps.prepare-merge-queue.outputs.GIT_BRANCH }}
@@ -89,7 +94,7 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
-    runs-on: arc-runners
+    runs-on: arc-shared
     permissions:
       contents: 'read'
       actions: 'read'
@@ -103,9 +108,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  
+          fetch-depth: 0
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
       - name: load-deps
         uses: ./.github/actions/load-deps
       - id: get-branch
@@ -123,9 +130,11 @@ jobs:
       - name: Set base/head sha output
         id: export-sha
         shell: bash
+        env:
+          MAIN_BRANCH: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
         run: |
           if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
-            # In merge que we always want to use the last 
+            # In merge que we always want to use the last
             # commit as head - last commit sha is alway succesful
             # since else it won't get merged!
             # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
@@ -146,7 +155,16 @@ jobs:
           # NOTE: we reference BASE and HEAD elsewhere
           echo HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_ENV"
           echo BASE="${{ env.NX_BASE }}" >> "$GITHUB_ENV"
-
+          if [[ "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == release/* ]]; then
+          echo SKIP_JUDICIAL="true" >> "$GITHUB_OUTPUT"
+          echo SKIP_JUDICIAL="true" >> "$GITHUB_ENV"
+          export SKIP_JUDICIAL="true"
+          else
+          echo SKIP_JUDICIAL="false" >> "$GITHUB_OUTPUT"
+          echo SKIP_JUDICIAL="false" >> "$GITHUB_ENV"
+          export SKIP_JUDICIAL="false"
+          fi
+          echo Skipping judicial: $SKIP_JUDICIAL
           echo "Current base SHA is ${{ env.NX_BASE }} and head SHA is ${{ env.NX_HEAD }}"
           echo "{\"base_sha\": \"${{ env.NX_BASE }}\", \"head_sha\":\"${{ env.NX_HEAD }}\"}" > event.json
 
@@ -210,7 +228,7 @@ jobs:
           CHUNK_SIZE: 1
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
+          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi

@@ -5,11 +5,9 @@ import { EstateInfo } from '@island.is/clients/syslumenn'
 import { EstateTypes } from './constants'
 import { m } from './messages'
 import { Application, FormValue } from '@island.is/application/types'
+import { EMAIL_REGEX, getValueViaPath } from '@island.is/application/core'
 
-const emailRegex =
-  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-
-export const isValidEmail = (value: string) => emailRegex.test(value)
+export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 
 export const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -29,9 +27,9 @@ export const customZodError = (
   return zodValidation
 }
 
-export function isEstateInfo(
+export const isEstateInfo = (
   data: string | number | boolean | object | undefined,
-): data is { estate: EstateInfo } {
+): data is { estate: EstateInfo } => {
   return (data as { estate: EstateInfo })?.estate?.nameOfDeceased !== undefined
 }
 
@@ -44,52 +42,46 @@ export const isNumericalString = (string: string | undefined) =>
 export const getAssetDescriptionText = (
   application: Application<FormValue>,
 ) => {
-  return application.answers.selectedEstate === EstateTypes.estateWithoutAssets
-    ? /* EIGNALAUST DÁNARBU */
-      m.propertiesDescriptionEstateWithoutAssets
-    : application.answers.selectedEstate === EstateTypes.officialDivision
-    ? /* OPINBER SKIPTI */
-      m.propertiesDescriptionOfficialDivision
-    : application.answers.selectedEstate ===
-      EstateTypes.permitForUndividedEstate
-    ? /* SETA Í ÓSKIPTU BÚI */
-      m.propertiesDescriptionUndividedEstate
-    : /* EINKASKIPTI */
-      m.propertiesDescriptionDivisionOfEstateByHeirs
+  const { answers } = application
+  const selectedEstate = getValueViaPath(answers, 'selectedEstate') || ''
+
+  return selectedEstate === EstateTypes.estateWithoutAssets
+    ? m.propertiesDescriptionEstateWithoutAssets
+    : selectedEstate === EstateTypes.officialDivision
+    ? m.propertiesDescriptionOfficialDivision
+    : selectedEstate === EstateTypes.permitForUndividedEstate
+    ? m.propertiesDescriptionUndividedEstate
+    : m.propertiesDescriptionDivisionOfEstateByHeirs
 }
 
 export const getWillsAndAgreementsDescriptionText = (
   application: Application<FormValue>,
 ) => {
-  return application.answers.selectedEstate === EstateTypes.estateWithoutAssets
-    ? /* EIGNALAUST DÁNARBU */
-      m.willsAndAgreementsDescriptionEstateWithoutAssets
-    : application.answers.selectedEstate === EstateTypes.officialDivision
-    ? /* OPINBER SKIPTI */
-      m.willsAndAgreementsDescriptionOfficialDivision
-    : application.answers.selectedEstate ===
-      EstateTypes.permitForUndividedEstate
-    ? /* SETA Í ÓSKIPTU BÚI */
-      m.willsAndAgreementsDescriptionDescriptionUndividedEstate
-    : /* EINKASKIPTI */
-      m.willsAndAgreementsDescriptionDivisionOfEstateByHeirs
+  const { answers } = application
+  const selectedEstate = getValueViaPath(answers, 'selectedEstate') || ''
+
+  return selectedEstate === EstateTypes.estateWithoutAssets
+    ? m.willsAndAgreementsDescriptionEstateWithoutAssets
+    : selectedEstate === EstateTypes.officialDivision
+    ? m.willsAndAgreementsDescriptionOfficialDivision
+    : selectedEstate === EstateTypes.permitForUndividedEstate
+    ? m.willsAndAgreementsDescriptionDescriptionUndividedEstate
+    : m.willsAndAgreementsDescriptionDivisionOfEstateByHeirs
 }
 
 export const getEstateMembersDescriptionText = (
   application: Application<FormValue>,
 ) => {
-  return application.answers.selectedEstate === EstateTypes.estateWithoutAssets
-    ? /* EIGNALAUST DÁNARBU */
-      m.estateMembersDescriptionEstateWithoutAssets
-    : application.answers.selectedEstate === EstateTypes.officialDivision
-    ? /* OPINBER SKIPTI */
-      m.estateMembersDescriptionOfficialDivision
-    : application.answers.selectedEstate ===
-      EstateTypes.permitForUndividedEstate
-    ? /* SETA Í ÓSKIPTU BÚI */
-      m.estateMembersDescriptionUndividedEstate
-    : /* EINKASKIPTI */
-      m.estateMembersDescriptionDivisionOfEstateByHeirs
+  const { answers } = application
+  const selectedEstate = getValueViaPath(answers, 'selectedEstate') || ''
+
+  return selectedEstate === EstateTypes.estateWithoutAssets
+    ? m.estateMembersDescriptionEstateWithoutAssets
+    : selectedEstate === EstateTypes.officialDivision
+    ? m.estateMembersDescriptionOfficialDivision
+    : selectedEstate === EstateTypes.permitForUndividedEstate
+    ? m.estateMembersDescriptionUndividedEstate
+    : m.estateMembersDescriptionDivisionOfEstateByHeirs
 }
 
 export const getEstateDataFromApplication = (
@@ -103,8 +95,6 @@ export const getEstateDataFromApplication = (
     }
   ).estates?.find((estate) => estate.caseNumber === selectedEstate)
 
-  // TODO: remove singular estate property when legacy applications
-  //       have cleared out of the system
   if (!estateData) {
     estateData = (
       application.externalData.syslumennOnEntry?.data as {

@@ -45,7 +45,10 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
-import { SLICE_SPACING, STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
+import {
+  SLICE_SPACING,
+  STICKY_NAV_MAX_WIDTH_LG,
+} from '@island.is/web/constants'
 import { GlobalContext } from '@island.is/web/context'
 import {
   Image,
@@ -513,6 +516,10 @@ export const OrganizationExternalLinks: React.FC<
               organizationPage.slug === 'icelandic-health-insurance' ||
               organizationPage.slug === 'iceland-health'
 
+            const buttonHasLockIcon =
+              isSjukratryggingar &&
+              (link.text.includes('Gagna') || link.text.includes('Data'))
+
             let variant = undefined
             if (
               isSjukratryggingar &&
@@ -533,7 +540,7 @@ export const OrganizationExternalLinks: React.FC<
                   // @ts-ignore make web strict
                   variant={variant}
                   unfocusable
-                  icon={isSjukratryggingar ? 'lockClosed' : 'open'}
+                  icon={buttonHasLockIcon ? 'lockClosed' : 'open'}
                   iconType="outline"
                   size="medium"
                 >
@@ -1056,10 +1063,12 @@ export const OrganizationWrapper: React.FC<
           <meta name="robots" content="noindex, nofollow" />
         )}
       </HeadWithSocialSharing>
-      <OrganizationHeader
-        organizationPage={organizationPage}
-        isSubpage={isSubpage}
-      />
+      <Box>
+        <OrganizationHeader
+          organizationPage={organizationPage}
+          isSubpage={isSubpage}
+        />
+      </Box>
       {!minimal && (
         <SidebarLayout
           paddingTop={[2, 2, 9]}
@@ -1126,7 +1135,7 @@ export const OrganizationWrapper: React.FC<
                           card.image?.url ||
                           'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
 
-                        imageUrl += `?w=${STICKY_NAV_MAX_WIDTH}`
+                        imageUrl += `?w=${STICKY_NAV_MAX_WIDTH_LG}`
 
                         return (
                           <ProfileCard
@@ -1305,7 +1314,7 @@ export const OrganizationWrapper: React.FC<
       )}
       {!!mainContent && <Box className="rs_read">{children}</Box>}
       {!minimal && (
-        <Box className="rs_read">
+        <Box className="rs_read" marginTop="auto">
           <OrganizationFooter
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict

@@ -19,12 +19,12 @@ global:
 name: 'air-discount-scheme-web'
 enabled: true
 env:
-  API_URL: 'http://web-air-discount-scheme-api'
+  API_URL: 'http://air-discount-scheme-api'
   ENVIRONMENT: 'dev'
   IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
   NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
-  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'nginx-ingress-external'

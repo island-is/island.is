@@ -50,6 +50,13 @@ export class GenericUserLicenseMetadata {
   })
   subtitle?: string
 
+  @Field({
+    nullable: true,
+    description:
+      'Photo of the license holder as a base64 encoded data URI containing a PNG or a JPEG photo (eg `data:image/png;base64,{data}`).',
+  })
+  photo?: string
+
   @Field(() => [GenericUserLicenseMetadataDescription], {
     nullable: true,
     description: 'Display description for detail view',

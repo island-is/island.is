@@ -2,7 +2,7 @@ import { FC, PropsWithChildren, ReactNode, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -11,15 +11,19 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseType,
   isCompletedCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 
-import { CaseListEntry, CaseState } from '../../graphql/schema'
+import { CaseListEntry, CaseState, CaseType } from '../../graphql/schema'
 import MobileCase from '../../routes/Shared/Cases/MobileCase'
-import { directionType, sortableTableColumn, SortConfig } from '../../types'
+import {
+  directionType,
+  sortableFn,
+  sortableTableColumn,
+  SortConfig,
+} from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
 import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
@@ -35,6 +39,7 @@ interface TableProps {
   thead: {
     title: string
     sortBy?: sortableTableColumn
+    sortFn?: sortableFn
   }[]
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
@@ -62,17 +67,18 @@ export const useTable = () => {
     },
   )
 
-  const requestSort = (column: sortableTableColumn) => {
-    let d: directionType = 'ascending'
+  const requestSort = (column: sortableTableColumn, sortFn?: sortableFn) => {
+    let direction: directionType = 'ascending'
 
     if (
       sortConfig &&
       sortConfig.column === column &&
       sortConfig.direction === 'ascending'
     ) {
-      d = 'descending'
+      direction = 'descending'
     }
-    setSortConfig({ column, direction: d })
+
+    setSortConfig({ column, direction, sortFn })
   }
 
   const getClassNamesFor = (name: sortableTableColumn) => {
@@ -82,7 +88,7 @@ export const useTable = () => {
     return sortConfig.column === name ? sortConfig.direction : undefined
   }
 
-  return { requestSort, getClassNamesFor, sortConfig, setSortConfig }
+  return { requestSort, getClassNamesFor, sortConfig }
 }
 
 const Table: FC<TableProps> = (props) => {
@@ -164,42 +170,77 @@ const Table: FC<TableProps> = (props) => {
     return null
   }
 
-  const getColumnValue = (
-    entry: CaseListEntry,
-    column: keyof CaseListEntry,
-  ) => {
-    const courtAbbreviation = districtCourtAbbreviation(entry.court?.name)
-
-    switch (column) {
-      case 'defendants':
-        return entry.defendants?.[0]?.name ?? ''
-      case 'defendantsPunishmentType':
-        return entry.defendants?.[0]?.punishmentType ?? ''
-      case 'courtCaseNumber':
-        return courtAbbreviation
-          ? `${courtAbbreviation}: ${entry.courtCaseNumber}`
-          : entry.courtCaseNumber ?? ''
-      case 'state':
-        return mapCaseStateToTagVariant(formatMessage, entry).text
-      default:
-        return entry[column]?.toString() ?? ''
-    }
-  }
-
   useMemo(() => {
-    if (sortConfig) {
-      data.sort((a: CaseListEntry, b: CaseListEntry) => {
-        const compareResult = compareLocaleIS(
-          getColumnValue(a, sortConfig.column),
-          getColumnValue(b, sortConfig.column),
-        )
+    const getColumnValue = (
+      entry: CaseListEntry,
+      column: keyof CaseListEntry,
+    ) => {
+      const courtAbbreviation = districtCourtAbbreviation(entry.court?.name)
 
-        return sortConfig.direction === 'ascending'
-          ? compareResult
-          : -compareResult
-      })
+      switch (column) {
+        case 'defendants':
+          return entry.defendants?.[0]?.name ?? ''
+        case 'defendantsPunishmentType':
+          return entry.defendants?.[0]?.punishmentType ?? ''
+        case 'courtCaseNumber':
+          return courtAbbreviation
+            ? `${courtAbbreviation}: ${entry.courtCaseNumber}`
+            : entry.courtCaseNumber ?? ''
+        case 'state':
+          return mapCaseStateToTagVariant(formatMessage, entry).text
+        case 'policeCaseNumbers':
+          return entry.policeCaseNumbers?.[0] ?? ''
+        default:
+          return entry[column]?.toString() ?? ''
+      }
     }
-  }, [data, sortConfig])
+
+    const getSortFn = (
+      sortConfig: SortConfig,
+      sortFnName?: sortableFn,
+    ): ((a: CaseListEntry, b: CaseListEntry) => number) => {
+      const toNumber = (value?: string | null): number =>
+        Number(value?.replace(/\D/g, '') || '0')
+
+      const getSortableValue = (value?: string | null): number =>
+        toNumber(value) +
+        (!value || value.includes('R-') ? 0 : Number.MAX_SAFE_INTEGER)
+
+      switch (sortFnName) {
+        case 'number':
+          return (a: CaseListEntry, b: CaseListEntry) => {
+            const aValue = getColumnValue(a, sortConfig.column)
+            const bValue = getColumnValue(b, sortConfig.column)
+
+            const getValue =
+              sortConfig.column === 'courtCaseNumber'
+                ? getSortableValue
+                : toNumber
+
+            const sortableAValue = getValue(aValue)
+            const sortableBValue = getValue(bValue)
+
+            return sortConfig?.direction === 'ascending'
+              ? sortableAValue - sortableBValue
+              : sortableBValue - sortableAValue
+          }
+        default:
+          return (a: CaseListEntry, b: CaseListEntry) => {
+            const compareResult = compareLocaleIS(
+              getColumnValue(a, sortConfig.column),
+              getColumnValue(b, sortConfig.column),
+            )
+            return sortConfig.direction === 'ascending'
+              ? compareResult
+              : -compareResult
+          }
+      }
+    }
+
+    if (sortConfig) {
+      data.sort(getSortFn(sortConfig, sortConfig.sortFn))
+    }
+  }, [data, formatMessage, sortConfig])
 
   return width < theme.breakpoints.lg ? (
     <>
@@ -233,10 +274,12 @@ const Table: FC<TableProps> = (props) => {
         <tr>
           {thead.map((th) => (
             <th key={`${th}-${thead.indexOf(th)}`} className={styles.th}>
-              {th.sortBy ? (
+              {th.sortBy && data.length > 1 ? (
                 <SortButton
                   title={th.title}
-                  onClick={() => th.sortBy && requestSort(th.sortBy)}
+                  onClick={() => {
+                    th.sortBy && requestSort(th.sortBy, th.sortFn)
+                  }}
                   sortAsc={getClassNamesFor(th.sortBy) === 'ascending'}
                   sortDes={getClassNamesFor(th.sortBy) === 'descending'}
                   isActive={sortConfig?.column === th.sortBy}

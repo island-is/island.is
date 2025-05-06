@@ -27,6 +27,7 @@ import {
   PaymentSchedule,
   Properties,
   RskCompanyInfo,
+  SeminarsVer,
   SocialInsuranceAdministration,
   TransportAuthority,
   Vehicles,
@@ -64,6 +65,7 @@ const namespace = 'application-system'
 const serviceAccount = 'application-system-api'
 export const workerSetup = (services: {
   userNotificationService: ServiceBuilder<'services-user-notification'>
+  paymentsApi: ServiceBuilder<'services-payments'>
 }): ServiceBuilder<'application-system-api-worker'> =>
   service('application-system-api-worker')
     .namespace(namespace)
@@ -109,6 +111,13 @@ export const workerSetup = (services: {
         (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
       APPLICATION_SYSTEM_BULL_PREFIX,
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
+      PAYMENT_API_CALLBACK_URL: ref(
+        (ctx) =>
+          `http://${
+            ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+          }application-system-api.application-system.svc.cluster.local`,
+      ),
     })
     .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines)
     .secrets({
@@ -148,6 +157,7 @@ export const serviceSetup = (services: {
   // The user profile service is named service-portal-api in infra setup
   servicePortalApi: ServiceBuilder<'service-portal-api'>
   userNotificationService: ServiceBuilder<'services-user-notification'>
+  paymentsApi: ServiceBuilder<'services-payments'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
@@ -170,10 +180,15 @@ export const serviceSetup = (services: {
         prod: 'cdn.contentful.com',
       },
       CLIENT_LOCATION_ORIGIN: {
-        dev: 'https://beta.dev01.devland.is/umsoknir',
-        staging: 'https://beta.staging01.devland.is/umsoknir',
-        prod: 'https://island.is/umsoknir',
-        local: 'http://localhost:4200/umsoknir',
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }beta.dev01.devland.is/umsoknir`,
+        ),
+        staging: `https://beta.staging01.devland.is/umsoknir`,
+        prod: `https://island.is/umsoknir`,
+        local: 'http://localhost:4242/umsoknir',
       },
       APPLICATION_ATTACHMENT_BUCKET: {
         dev: 'island-is-dev-storage-application-system',
@@ -190,8 +205,7 @@ export const serviceSetup = (services: {
         staging: 'island-is-staging-fs-presign-bucket',
         prod: 'island-is-prod-fs-presign-bucket',
       },
-      [GRAPHQL_API_URL_ENV_VAR_NAME]:
-        'http://web-api.islandis.svc.cluster.local',
+      [GRAPHQL_API_URL_ENV_VAR_NAME]: 'http://api.islandis.svc.cluster.local',
       INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: {
         dev: 'gunnar.ingi@fjr.is',
         staging: 'gunnar.ingi@fjr.is',
@@ -275,10 +289,10 @@ export const serviceSetup = (services: {
           )}/app/skilavottord/api/graphql`,
       ),
       UNIVERSITY_GATEWAY_API_URL: {
-        dev: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
+        dev: 'http://services-university-gateway.services-university-gateway.svc.cluster.local',
         staging:
-          'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
-        prod: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
+          'http://services-university-gateway.services-university-gateway.svc.cluster.local',
+        prod: 'http://services-university-gateway.services-university-gateway.svc.cluster.local',
       },
       SERVICE_USER_PROFILE_URL: ref(
         (h) => `http://${h.svc(services.servicePortalApi)}`,
@@ -287,6 +301,15 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
       APPLICATION_SYSTEM_BULL_PREFIX,
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
+      PAYMENT_API_CALLBACK_URL: ref(
+        (ctx) =>
+          `http://application-system-api.${
+            ctx.featureDeploymentName
+              ? `feature-${ctx.featureDeploymentName}`
+              : 'application-system'
+          }.svc.cluster.local`,
+      ),
     })
     .xroad(
       Base,
@@ -316,6 +339,7 @@ export const serviceSetup = (services: {
       EHIC,
       DirectorateOfImmigration,
       SocialInsuranceAdministration,
+      SeminarsVer,
       OccupationalLicenses,
       SignatureCollection,
       WorkMachines,
@@ -416,4 +440,4 @@ export const serviceSetup = (services: {
         },
       },
     })
-    .grantNamespaces('nginx-ingress-internal', 'islandis')
+    .grantNamespaces('services-payments', 'nginx-ingress-internal', 'islandis')

@@ -20,6 +20,7 @@ interface Props {
   previousUrl?: string
   previousIsDisabled?: boolean
   previousButtonText?: string
+  hidePreviousButton?: boolean
   nextUrl?: string
   nextIsDisabled?: boolean
   nextIsLoading?: boolean
@@ -40,6 +41,7 @@ const FormFooter: FC<Props> = ({
   previousUrl,
   previousIsDisabled,
   previousButtonText,
+  hidePreviousButton,
   nextUrl,
   nextIsDisabled,
   nextIsLoading,
@@ -69,22 +71,24 @@ const FormFooter: FC<Props> = ({
       data-testid="formFooter"
       className={cn(styles.button)}
     >
-      <Box className={styles.button}>
-        <Button
-          variant="ghost"
-          disabled={previousIsDisabled}
-          onClick={() => {
-            router.push(previousUrl ?? '')
-          }}
-          icon={isMobile ? 'arrowBack' : undefined}
-          circle={isMobile}
-          aria-label={previousButtonText || formatMessage(core.back)}
-          data-testid="previousButton"
-          fluid
-        >
-          {!isMobile && (previousButtonText || formatMessage(core.back))}
-        </Button>
-      </Box>
+      {!hidePreviousButton && (
+        <Box className={styles.button}>
+          <Button
+            variant="ghost"
+            disabled={previousIsDisabled}
+            onClick={() => {
+              router.push(previousUrl ?? '')
+            }}
+            icon={isMobile ? 'arrowBack' : undefined}
+            circle={isMobile}
+            aria-label={previousButtonText || formatMessage(core.back)}
+            data-testid="previousButton"
+            fluid
+          >
+            {!isMobile && (previousButtonText || formatMessage(core.back))}
+          </Button>
+        </Box>
+      )}
       {!hideActionButton && actionButtonText && (
         <Box className={cn(styles.button, styles.actionButton)}>
           <Button

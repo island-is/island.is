@@ -30,7 +30,7 @@ env:
   DB_REPLICAS_HOST: 'postgres-applications.internal'
   DB_USER: 'services_sessions'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'nginx-ingress-internal'

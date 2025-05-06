@@ -55,6 +55,7 @@ import {
   defenderGeneratedPdfRule,
   defenderTransitionRule,
   defenderUpdateRule,
+  prisonSystemAdminRulingPdfRule,
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
@@ -299,13 +300,13 @@ export class LimitedAccessCaseController {
 
   @UseGuards(
     JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
     CaseCompletedGuard,
   )
-  @RolesRules(defenderRule)
+  @RolesRules(defenderRule, prisonSystemAdminRulingPdfRule)
   @Get('case/:caseId/limitedAccess/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -388,6 +389,51 @@ export class LimitedAccessCaseController {
     )
 
     const pdf = await this.pdfService.getIndictmentPdf(theCase)
+
+    res.end(pdf)
+  }
+
+  @UseGuards(
+    JwtAuthUserGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+  )
+  @RolesRules(prisonSystemStaffRule)
+  @Get('case/:caseId/limitedAccess/rulingSentToPrisonAdmin')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      'Gets the ruling sent to prison admin file for an existing case as a pdf document',
+  })
+  async getRulingSentToPrisonAdminPdf(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the ruling sent to prison admin pdf for indictment case ${caseId} as a pdf document`,
+    )
+
+    // TODO: Clarity on if/when we should prevent this PDF from being created
+    // Like if certain defendants aren't in the right state in terms of
+    // being sent to prison admin. To start with lets assume we surely
+    // don't want to make this PDF if none of the defendants have been
+    // sent to the prison admin.
+    const isSentToPrisonAdmin = theCase.defendants?.some(
+      (defendant) => defendant.isSentToPrisonAdmin,
+    )
+
+    if (!isSentToPrisonAdmin) {
+      throw new BadRequestException(
+        `Cannot generate a ruling sent to prison admin pdf for case ${caseId} as none of the defendants have been sent to prison admin
+        `,
+      )
+    }
+
+    const pdf = await this.pdfService.getRulingSentToPrisonAdminPdf(theCase)
 
     res.end(pdf)
   }

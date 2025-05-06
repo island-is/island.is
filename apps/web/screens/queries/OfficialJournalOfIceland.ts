@@ -71,11 +71,12 @@ export const ADVERT_QUERY = gql`
           pdfUrl
         }
         corrections {
-          title
           description
           advertId
           documentPdfUrl
           createdDate
+          legacyDate
+          isLegacy
         }
       }
     }

@@ -35,7 +35,7 @@ const getEnv = (services: {
   AUTH_DELEGATION_API_URL: {
     dev: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
     staging:
-      'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+      'http://services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
     prod: 'https://auth-delegation-api.internal.innskra.island.is',
   },
   AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([

@@ -11,7 +11,11 @@ import {
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
-import { defineConfig, ConfigModule } from '@island.is/nest/config'
+import {
+  defineConfig,
+  ConfigModule,
+  IdsClientConfig,
+} from '@island.is/nest/config'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 
 const config = defineConfig({
@@ -35,7 +39,10 @@ describe('MortgageCertificateService', () => {
     const module = await Test.createTestingModule({
       imports: [
         SyslumennClientModule,
-        ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [config, IdsClientConfig],
+        }),
       ],
       providers: [
         {
