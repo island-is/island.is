@@ -131,16 +131,22 @@ export const resetButtonPadding = style({
 })
 
 export const delegationName = style({
-  fontSize: '14px',
+  fontSize: '16px',
   lineHeight: '20px',
-  ...themeUtils.responsiveStyle({
-    md: {
-      fontSize: '16px',
-    },
-  }),
+
   ':hover': {
     textDecoration: 'none',
   },
+})
+
+export const actorText = style({
+  whiteSpace: 'nowrap',
+  overflowX: 'hidden',
+})
+
+export const textWrapper = style({
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
 })
 
 export const actorName = style({

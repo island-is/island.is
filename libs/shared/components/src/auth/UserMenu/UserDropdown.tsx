@@ -89,7 +89,8 @@ export const UserDropdown = ({
         <Box display="flex" flexDirection="column" className={styles.wrapper}>
           <Box
             display="flex"
-            flexWrap="nowrap"
+            position="relative"
+            width="full"
             alignItems="center"
             paddingBottom={3}
             paddingTop={2}
@@ -108,9 +109,9 @@ export const UserDropdown = ({
             ) : (
               <UserAvatar username={userName} />
             )}
-            <Box marginLeft={1} marginRight={4}>
+            <Box marginLeft={1} marginRight={4} className={styles.actorText}>
               <Text translate="no" variant="h4" as="h4">
-                {userName}
+                <Box className={styles.textWrapper}>{userName}</Box>
               </Text>
               {isDelegation && (
                 <Text translate="no" variant="small">
