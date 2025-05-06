@@ -28,7 +28,7 @@ export const HealthInsuranceDeclarationSubmitted: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'conclusionExpandableDescription',
-              description: m.conclution.general.descriptionFieldMessage,
+              description: m.conclution.general.descriptionFieldMessage2,
             }),
             buildCustomField({
               id: 'applicantList',
