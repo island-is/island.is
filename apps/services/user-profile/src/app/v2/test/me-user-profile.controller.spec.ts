@@ -1541,7 +1541,7 @@ describe('MeUserProfileController', () => {
       expect(res.body).toMatchObject({
         fromNationalId: testNationalId1,
         emailNotifications: false,
-        emailsId: expect.any(String),
+        emailsId: null,
       })
 
       const actorProfile = await delegationPreferenceModel.findAll({

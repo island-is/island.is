@@ -13,4 +13,7 @@ export class EmailsDto {
 
   @ApiProperty()
   emailStatus!: DataStatus
+
+  @ApiProperty()
+  isConnectedToActorProfile!: boolean
 }

@@ -95,7 +95,7 @@ export class ActorProfile extends Model {
     return {
       fromNationalId: this.fromNationalId,
       emailNotifications: this.emailNotifications,
-      emailsId: this.emailsId || undefined,
+      emailsId: this.emailsId || null,
     }
   }
 }
