@@ -5,8 +5,8 @@ import { AsyncSearch, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useLazyQuery } from '@apollo/client'
 import { ADDRESS_SEARCH_QUERY } from '../../../graphql/queries'
-import { AddressProps } from '..'
 import { registerProperty } from '../../../lib/messages'
+import { AddressProps } from '../../../utils/types'
 
 interface PropertySearchInputProps {
   id: string

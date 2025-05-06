@@ -6,7 +6,6 @@ import { EMAIL_REGEX, getValueViaPath } from '@island.is/application/core'
 import { Application, StateLifeCycle } from '@island.is/application/types'
 import { ApplicantsInfo, CostField } from './types'
 import {
-  UserRole,
   RentalAmountIndexTypes,
   RentalHousingCategoryClass,
   RentalHousingCategoryClassGroup,
@@ -331,16 +330,5 @@ export const getNextStepInReviewOptions = () => [
   {
     value: NextStepInReviewOptions.EDIT_APPLICATION,
     label: m.inReview.reviewInfo.nextStepToEditButtonText,
-  },
-]
-
-export const getUserRoleOptions = [
-  {
-    label: m.userRole.landlordOptionLabel,
-    value: UserRole.LANDLORD,
-  },
-  {
-    label: m.userRole.tenantOptionLabel,
-    value: UserRole.TENANT,
   },
 ]

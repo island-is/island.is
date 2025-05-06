@@ -1,6 +1,6 @@
 import { UploadFile } from '@island.is/island-ui/core'
 import { YesOrNoEnum } from '@island.is/application/core'
-import { Unit as OriginalUnit } from '@island.is/api/schema'
+import { HmsSearchAddress, Unit as OriginalUnit } from '@island.is/api/schema'
 import {
   DefaultEvents,
   FormValue,
@@ -15,7 +15,6 @@ import {
   RentalPaymentMethodOptions,
   SecurityDepositTypeOptions,
 } from './enums'
-import { AddressProps } from '../fields/PropertySearch'
 
 export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.EDIT }
 
@@ -49,6 +48,11 @@ export interface ExternalData {
     date: string
     status: StatusProvider
   }
+}
+
+export interface AddressProps extends HmsSearchAddress {
+  label: string
+  value: string
 }
 
 export interface Unit extends OriginalUnit {

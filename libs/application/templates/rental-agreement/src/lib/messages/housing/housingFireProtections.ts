@@ -39,9 +39,14 @@ export const housingFireProtections = defineMessages({
       'Flóttaleiðir þurfa að vera auðrataðar og greiðfærar en ekki er gerð krafa um eldvarnarteppi.',
     description: 'Smoke detector and fire blanket requirements',
   },
+  exitsTitle: {
+    id: 'ra.application:housingFireProtections.exitsTitle',
+    defaultMessage: 'Flóttaleiðir',
+    description: 'Exits title',
+  },
   exitsLabel: {
     id: 'ra.application:housingFireProtections.exitsLabel',
-    defaultMessage: 'Flóttaleiðir',
+    defaultMessage: 'Já, það er amk 1 flóttaleið',
     description: 'Exits label',
   },
   fireBlanketLabel: {
