@@ -95,7 +95,7 @@ definitions:
         fi
         cd android
         ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
-    - &install-maestro:
+    - &install-maestro
       name: Install Maestro
       script: |
         curl -Ls "https://get.maestro.mobile.dev" | bash
