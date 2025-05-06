@@ -95,6 +95,11 @@ definitions:
         fi
         cd android
         ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
+    - &install-maestro:
+      name: Install Maestro
+      script: |
+        curl -Ls "https://get.maestro.mobile.dev" | bash
+        export PATH="$HOME/.maestro/bin:$PATH"
     - &maestro-tests
       name: Run Maestro end to end tests
       script: |
@@ -177,6 +182,7 @@ workflows:
         XCODE_SCHEME: 'Ísland.dev'
         APP_STORE_APPLE_ID: 1570427360
     scripts:
+      - *install-maestro
       - *maestro-tests
       - *check_changes
       - *pip_install
