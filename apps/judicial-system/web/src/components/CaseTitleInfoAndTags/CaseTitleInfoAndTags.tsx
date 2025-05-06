@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { core } from '@island.is/judicial-system-web/messages'
 
 import {
   CaseAppealDecision,
@@ -10,6 +11,7 @@ import {
   InstitutionType,
   UserRole,
 } from '../../graphql/schema'
+import CaseNumbers from '../../routes/CourtOfAppeal/components/CaseNumbers/CaseNumbers'
 import { titleForCase } from '../../utils/titleForCase/titleForCase'
 import DateLabel from '../DateLabel/DateLabel'
 import RulingDateLabel from '../DateLabel/RulingDateLabel'
@@ -32,9 +34,12 @@ const CaseTitleInfoAndTags: FC = () => {
       marginBottom={3}
     >
       <Box>
-        <PageTitle marginBottom={1}>
+        <PageTitle marginBottom={5}>
           {titleForCase(formatMessage, workingCase)}
         </PageTitle>
+
+        <CaseNumbers />
+
         {workingCase.rulingDate &&
           (workingCase.isCompletedWithoutRuling ? (
             <DateLabel

@@ -104,7 +104,9 @@ const Summary: FC = () => {
         <PageHeader title={formatMessage(strings.htmlTitle)} />
         <FormContentContainer>
           <PageTitle>{formatMessage(strings.title)}</PageTitle>
-          <CaseNumbers />
+          <Box marginBottom={7}>
+            <CaseNumbers />
+          </Box>
           <Box marginBottom={6}>
             <Conclusion
               title={formatMessage(conclusion.title)}

@@ -179,7 +179,9 @@ const CourtOfAppealRuling = () => {
       <PageHeader title={formatMessage(strings.title)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
-        <CaseNumbers />
+        <Box marginBottom={7}>
+          <CaseNumbers />
+        </Box>
         <Box marginBottom={5}>
           <Box marginBottom={3} display="flex">
             <Text as="h3" variant="h3">
