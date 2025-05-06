@@ -8,6 +8,9 @@ import {
   RightsPortalPaymentOverviewResponse,
   RightsPortalCopaymentStatus,
   RightsPortalPaymentOverviewServiceTypeResponse,
+  RightsPortalHealthCenterRegistrationHistory,
+  RightsPortalInsuranceOverview,
+  RightsPortalDrugPeriod,
 } from '../../types'
 
 export const store = createStore(() => {
@@ -23,6 +26,11 @@ export const store = createStore(() => {
     data.getCopaymentPeriods
   const getCopaymentBills: RightsPortalCopaymentBillResponse =
     data.getCopaymentBills
+  const getHealthCenterRegistrationHistory: RightsPortalHealthCenterRegistrationHistory =
+    data.getHealthCenterRegistrationHistory
+  const getInsuranceOverview: RightsPortalInsuranceOverview =
+    data.getInsuranceOverview
+  const getDrugPeriods: Array<RightsPortalDrugPeriod> = data.drugPeriods
 
   return {
     getPaymentOverviewServiceTypes,
@@ -31,5 +39,8 @@ export const store = createStore(() => {
     getCopaymentStatus,
     getCopaymentPeriods,
     getCopaymentBills,
+    getHealthCenterRegistrationHistory,
+    getInsuranceOverview,
+    getDrugPeriods,
   }
 })
