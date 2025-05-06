@@ -67,7 +67,7 @@ export const UserDropdown = ({
       onClick={() => setDropdownState('closed')}
       aria-label={formatMessage(sharedMessages.close)}
     >
-      <Icon icon="close" color="blue400" />
+      <Icon icon="close" color="black" />
     </button>
   )
 
