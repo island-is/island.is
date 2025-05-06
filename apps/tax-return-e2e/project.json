@@ -1,0 +1,19 @@
+{
+  "name": "tax-return-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/tax-return-e2e/src",
+  "tags": [],
+  "implicitDependencies": ["tax-return"],
+  "targets": {
+    "e2e": {
+      "executor": "@nx/playwright:playwright",
+      "outputs": ["{workspaceRoot}/dist/.playwright/apps/tax-return-e2e"],
+      "options": {
+        "config": "apps/tax-return-e2e/playwright.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

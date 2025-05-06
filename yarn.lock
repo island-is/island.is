@@ -39919,6 +39919,7 @@ __metadata:
     rosetta: "npm:1.0.0"
     rxjs: "npm:7.8.1"
     sanitize-html: "npm:2.10.0"
+    sass: "npm:1.62.1"
     sequelize: "npm:6.37.3"
     sequelize-cli: "npm:6.4.1"
     sequelize-replace-enum-postgres: "npm:1.6.0"
@@ -52966,6 +52967,19 @@ __metadata:
     sass-embedded:
       optional: true
   checksum: 10/1a45bc2096644b7eebfff4095eb43fbbd620e86a9e7c1bcbb8f0b51acb3dbffb5d7020754f40690dfe95179fabbc7c3f310f38a61e0e2e7e4e986eeb7bb2c637
+  languageName: node
+  linkType: hard
+
+"sass@npm:1.62.1":
+  version: 1.62.1
+  resolution: "sass@npm:1.62.1"
+  dependencies:
+    chokidar: "npm:>=3.0.0 <4.0.0"
+    immutable: "npm:^4.0.0"
+    source-map-js: "npm:>=0.6.2 <2.0.0"
+  bin:
+    sass: sass.js
+  checksum: 10/4e9f3db604b4a9d50bc0986b1a748cff1986d8545d744c06cac2357057817c8951c605a06f6742df7cc47f98cdb9801cbfa819f3337e7c9a70be2ab1f7d5b343
   languageName: node
   linkType: hard
 
