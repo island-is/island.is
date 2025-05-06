@@ -15,10 +15,26 @@ export const getPaymentOverviewServiceTypes = {
   errors: [],
 }
 
+export const getHealthCenterRegistrationHistory = {
+  current: {
+    healthCenterName: 'Heilsugæslan í Garðabæ',
+    doctor: 'Arnar Þór Jónsson',
+  },
+}
+
+export const getInsuranceOverview = {
+  isInsured: true,
+  from: '2022-02-19T00:00:00.000Z',
+  maximumPayment: 35824,
+  status: {
+    display: 'Almennur',
+  },
+}
+
 export const getPaymentOverview = {
   items: [
     {
-      credit: 0,
+      credit: 15478,
       debt: 0,
       bills: [
         {
@@ -77,6 +93,19 @@ export const getCopaymentStatus = {
   maximumPayment: 27662,
   basePayment: 4694,
 }
+
+export const drugPeriods = [
+  {
+    active: true,
+    dateFrom: '2025-05-28T00:00:00.000Z',
+    dateTo: '2026-05-28T00:00:00.000Z',
+    levelNumber: 2,
+    levelPercentage: 15,
+    paidAmount: 28583,
+    id: '666021',
+    paymentStatus: 430,
+  },
+]
 
 export const getCopaymentPeriods = {
   items: [
