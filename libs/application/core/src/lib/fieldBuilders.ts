@@ -1181,6 +1181,7 @@ export const buildOverviewField = (
     items,
     attachments,
     tableData,
+    hideIfEmpty,
   } = data
   return {
     ...extractCommonFields(data),
@@ -1192,6 +1193,7 @@ export const buildOverviewField = (
     items,
     attachments,
     tableData,
+    hideIfEmpty,
     type: FieldTypes.OVERVIEW,
     component: FieldComponents.OVERVIEW,
     children: undefined,

@@ -434,4 +434,9 @@ export const institutionMapper = {
     slug: InstitutionTypes.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
     contentfulId: InstitutionContentfulIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
   },
+  [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: {
+    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
+    slug: InstitutionTypes.SAMGONGUSTOFA,
+    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
+  },
 }

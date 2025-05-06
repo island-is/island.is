@@ -156,6 +156,8 @@ import { SecondarySchoolModule } from './secondary-school/secondary-school.modul
 import { SecondarySchoolService } from './secondary-school/secondary-school.service'
 import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.module'
 import { TrainingLicenseOnAWorkMachineTemplateService } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service'
+import { ExemptionForTransportationModule } from './transport-authority/exemption-for-transportation/exemption-for-transportation.module'
+import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -237,6 +239,7 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  ExemptionForTransportationModule,
 ]
 
 export const services = [
@@ -318,4 +321,5 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  ExemptionForTransportationService,
 ]
