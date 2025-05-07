@@ -196,3 +196,6 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
       staging: { schedule: '@midnight' },
       prod: { schedule: '@midnight' },
     })
+
+
+    //DUMMY
