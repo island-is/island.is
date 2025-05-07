@@ -87,6 +87,7 @@ export const environmentStore = create<EnvironmentStore>(
                 apiUrl: `https://${branch.host}${branch.path}`,
               })),
               environments.local,
+              environments.mock,
             ]
             set({ loading: false, fetchedAt: Date.now(), result })
             return result

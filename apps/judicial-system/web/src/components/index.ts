@@ -122,3 +122,4 @@ export { default as RequestAppealRulingNotToBePublishedCheckbox } from './Reques
 export { LawyerRegistryProvider } from './LawyerRegistryProvider/LawyerRegistryProvider'
 export { default as RequiredStar } from './RequiredStar/RequiredStar'
 export { VictimInfo } from './VictimInfo/VictimInfo'
+export { LabelValue } from './LabelValue/LabelValue'

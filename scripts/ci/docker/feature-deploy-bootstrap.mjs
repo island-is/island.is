@@ -22,15 +22,13 @@ async function main() {
     )
   }
 
-  const namespacesToAdd = {}
+  const namespacesToAdd = new Set()
+  const nsGrantsToAdd = new Set()
   const directory = `charts/features/deployments/${featureName}`
 
   const files = await glob(`${directory}/**/values.yaml`)
 
   for (const file of files) {
-    const applicationDirname = path.dirname(file)
-    let applicationName = applicationDirname.split('/').slice(-1)[0]
-
     const textContent = readFileSync(file, 'utf8')
     const yamlContent = await jsyaml.load(textContent)
     const namespaceToAdd =
@@ -40,26 +38,37 @@ async function main() {
         ? yamlContent?.namespace
         : null
 
+    const nsGrantToAdd =
+      yamlContent &&
+      typeof yamlContent === 'object' &&
+      'grantNamespaces' in yamlContent
+        ? yamlContent?.grantNamespaces
+        : null
+
     if (namespaceToAdd) {
-      namespacesToAdd[applicationName] ??= []
-      namespacesToAdd[applicationName] = Array.from(
-        new Set([...namespacesToAdd[applicationName], namespaceToAdd]),
-      )
+      namespacesToAdd.add(namespaceToAdd)
+    }
+
+    if (nsGrantToAdd && Array.isArray(nsGrantToAdd)) {
+      console.log(nsGrantToAdd)
+      nsGrantToAdd.forEach((nsGrant) => nsGrantsToAdd.add(nsGrant))
     }
   }
 
   console.log('Namespaces to add:', namespacesToAdd)
+  console.log('NS grants to add:', nsGrantsToAdd)
 
-  for (const key of Object.keys(namespacesToAdd)) {
-    const directoryPath = path.join(directory, key)
-    mkdirSync(directory, { recursive: true })
-    const content = {
-      namespaces: namespacesToAdd[key],
-    }
-    writeFileSync(
-      `${directoryPath}/values.bootstrap.yaml`,
-      jsyaml.dump(content),
-      { encoding: 'utf-8' },
-    )
+  const directoryPath =  path.join(directory, "bootstrap")
+  mkdirSync(directoryPath, { recursive: true })
+
+  const content = {
+    namespaces: Array.from(namespacesToAdd),
+    grantNamespacesEnabled: true,
+    grantNamespaces: Array.from(nsGrantsToAdd)
   }
+  writeFileSync(
+    `${directoryPath}/values.bootstrap.yaml`,
+    jsyaml.dump(content),
+    { encoding: 'utf-8' },
+  )
 }

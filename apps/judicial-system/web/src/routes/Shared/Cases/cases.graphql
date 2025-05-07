@@ -34,7 +34,7 @@ query Cases {
       subpoenas {
         id
         serviceStatus
-        subpoenaId
+        policeSubpoenaId
       }
       verdictAppealDate
     }
@@ -110,7 +110,6 @@ query Cases {
     indictmentVerdictAppealDeadlineExpired
     indictmentRulingDecision
     indictmentDecision
-    indictmentCompletedDate
     courtSessionType
     caseSentToCourtDate
     isCompletedWithoutRuling

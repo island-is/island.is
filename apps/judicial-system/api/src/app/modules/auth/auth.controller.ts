@@ -23,7 +23,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentHttpUser,
-  EligibleHttpUsers,
+  CurrentHttpUserNationalId,
   JwtAuthGuard,
   SharedAuthService,
 } from '@island.is/judicial-system/auth'
@@ -51,7 +51,6 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { BackendService } from '../backend'
 import { authModuleConfig } from './auth.config'
 import { AuthService } from './auth.service'
 import { Cookie } from './auth.types'
@@ -99,7 +98,6 @@ export class AuthController {
   constructor(
     private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
-    private readonly backendService: BackendService,
     private readonly sharedAuthService: SharedAuthService,
 
     @Inject(LOGGER_PROVIDER)
@@ -274,7 +272,7 @@ export class AuthController {
   @Get('activate/:userId')
   async activateUser(
     @Param('userId') userId: string,
-    @EligibleHttpUsers() eligibleUsers: User[],
+    @CurrentHttpUserNationalId() nationalId: string,
     @Res() res: Response,
     @Req() req: Request,
     @CurrentHttpUser() user?: User,
@@ -292,12 +290,14 @@ export class AuthController {
       const csrfToken =
         csrfCookieToken === 'undefined' ? undefined : csrfCookieToken
 
+      const eligibleUsers =
+        await this.authService.findEligibleUsersByNationalId(nationalId)
       const currentUser = eligibleUsers.find((user) => user.id === userId)
 
       if (!currentUser) {
         this.logger.info('Blocking illegal user activation attempt')
 
-        await this.backendService.createEventLog({
+        await this.authService.createEventLog({
           eventType: csrfToken
             ? EventType.LOGIN_UNAUTHORIZED
             : EventType.LOGIN_BYPASS_UNAUTHORIZED,
@@ -316,8 +316,8 @@ export class AuthController {
       const { redirectRoute } = req.cookies[this.redirectCookie.name] ?? {}
       const useRedirectRoute = !user
 
-      this.redirectAuthorizeUser(
-        eligibleUsers,
+      await this.redirectAuthorizeUser(
+        nationalId,
         res,
         currentUser,
         csrfToken,
@@ -350,22 +350,6 @@ export class AuthController {
     cookies.forEach((cookie) => clearCookie(cookie))
   }
 
-  private async findEligibleUsersByNationalId(nationalId: string) {
-    const users = await this.authService.findUsersByNationalId(nationalId)
-
-    if (users) {
-      return users
-    }
-
-    const defender = await this.authService.findDefender(nationalId)
-
-    if (defender) {
-      return [defender]
-    }
-
-    return []
-  }
-
   private async redirectAuthenticatedUser(
     nationalId: string,
     res: Response,
@@ -374,7 +358,9 @@ export class AuthController {
     idToken?: string,
     csrfToken?: string,
   ) {
-    const eligibleUsers = await this.findEligibleUsersByNationalId(nationalId)
+    const eligibleUsers = await this.authService.findEligibleUsersByNationalId(
+      nationalId,
+    )
 
     if (eligibleUsers.length === 0) {
       this.logger.info('Blocking login attempt from an unauthorized user')
@@ -409,8 +395,8 @@ export class AuthController {
       this.clearCookies(res, [this.idToken])
     }
 
-    this.redirectAuthorizeUser(
-      eligibleUsers,
+    return this.redirectAuthorizeUser(
+      nationalId,
       res,
       currentUser,
       csrfToken,
@@ -418,15 +404,15 @@ export class AuthController {
     )
   }
 
-  private redirectAuthorizeUser(
-    eligibleUsers: User[], // eligibleUsers is an array of one or more users
+  private async redirectAuthorizeUser(
+    currentUserNationalId: string,
     res: Response,
     currentUser?: User,
     csrfToken?: string,
     requestedRedirectRoute?: string,
   ) {
     if (currentUser) {
-      this.backendService.createEventLog({
+      await this.authService.createEventLog({
         eventType: csrfToken ? EventType.LOGIN : EventType.LOGIN_BYPASS,
         nationalId: currentUser.nationalId,
         userRole: currentUser.role,
@@ -437,7 +423,7 @@ export class AuthController {
     }
 
     const jwtToken = this.sharedAuthService.signJwt(
-      eligibleUsers,
+      currentUserNationalId,
       currentUser,
       csrfToken,
     )

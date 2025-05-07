@@ -26,7 +26,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 
 import Login from './Login/Login'
-import MultipleInstitutions from './MultipleInstitutions/MultipleInstitutions'
+import SelectUser from './SelectUser/SelectUser'
 import * as styles from './Landing.css'
 
 const Landing = () => {
@@ -71,7 +71,7 @@ const Landing = () => {
                 className={styles.processContent}
               >
                 {eligibleUsers && eligibleUsers.length > 1 ? (
-                  <MultipleInstitutions />
+                  <SelectUser />
                 ) : (
                   <Login />
                 )}
