@@ -184,8 +184,6 @@ workflows:
         XCODE_SCHEME: 'Ísland.dev'
         APP_STORE_APPLE_ID: 1570427360
     scripts:
-      - *boot-simulator
-      - *maestro-tests
       - *check_changes
       - *pip_install
       - *npm_install
@@ -194,6 +192,8 @@ workflows:
       - *provisioning_profiles
       - *increment_build_number
       - *build_ipa
+      - *boot-simulator
+      - *maestro-tests
     artifacts: *ios_artifacts
     publishing:
       <<: *ios_publishing
