@@ -95,6 +95,11 @@ definitions:
         fi
         cd android
         ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
+    - &boot-simulator
+      name: Boot simulator
+      script: |
+        xcrun simctl boot "iPhone 16"
+        xcrun simctl list devices
     - &maestro-tests
       name: Install and run Maestro end to end tests
       script: |
@@ -179,6 +184,7 @@ workflows:
         XCODE_SCHEME: 'Ísland.dev'
         APP_STORE_APPLE_ID: 1570427360
     scripts:
+      - *boot-simulator
       - *maestro-tests
       - *check_changes
       - *pip_install
