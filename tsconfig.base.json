@@ -119,6 +119,7 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/hms": ["libs/api/domains/hms/src/index.ts"],
       "@island.is/api/domains/hms-loans": [
         "libs/api/domains/hms-loans/src/index.ts"
       ],
@@ -513,6 +514,9 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
+      "@island.is/application/templates/rental-agreement": [
+        "libs/application/templates/rental-agreement/src/index.ts"
+      ],
       "@island.is/application/templates/secondary-school": [
         "libs/application/templates/secondary-school/src/index.ts"
       ],
@@ -705,6 +709,7 @@
       "@island.is/clients/health-directorate": [
         "libs/clients/health-directorate/src/index.ts"
       ],
+      "@island.is/clients/hms": ["libs/clients/hms/src/index.ts"],
       "@island.is/clients/hms-housing-benefits": [
         "libs/clients/hms-housing-benefits/src/index.ts"
       ],
