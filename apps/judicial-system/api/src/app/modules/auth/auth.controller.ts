@@ -202,6 +202,9 @@ export class AuthController {
       const codeVerifier = req.cookies[this.codeVerifierCookie.name]
 
       const idsTokens = await this.authService.fetchIdsToken(code, codeVerifier)
+      // TODO: remove, used for temp testing
+      console.log({ idsTokens })
+
       const verifiedUserToken = await this.authService.verifyIdsToken(
         idsTokens.id_token,
       )
