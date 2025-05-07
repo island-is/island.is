@@ -14,6 +14,12 @@ export const USER_PROFILE = gql`
       mobilePhoneNumberVerified
       emailNotifications
       needsNudge
+      emails {
+        id
+        email
+        emailStatus
+        primary
+      }
     }
   }
 `

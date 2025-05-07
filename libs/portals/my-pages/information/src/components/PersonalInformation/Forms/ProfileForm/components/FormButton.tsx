@@ -10,23 +10,31 @@ type FormButtonProps = {
   onClick?: NativeButtonProps['onClick']
   submit?: boolean
   disabled?: boolean
-} & Pick<ButtonBaseProps, 'icon' | 'loading'>
+} & Pick<ButtonBaseProps, 'icon' | 'loading' | 'variant' | 'nowrap'>
 
 export const FormButton = ({
   children,
   onClick,
   submit,
+  variant,
   ...rest
 }: PropsWithChildren<FormButtonProps>) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
+
   if (submit) {
     return isMobile ? (
-      <Button type="submit" variant="ghost" size="small" {...rest}>
+      <Button type="submit" variant={variant ?? 'ghost'} size="small" {...rest}>
         {children}
       </Button>
     ) : (
-      <Button as="button" type="submit" variant="text" size="small" {...rest}>
+      <Button
+        as="button"
+        type="submit"
+        variant={variant ?? 'text'}
+        size="small"
+        {...rest}
+      >
         {children}
       </Button>
     )
@@ -34,7 +42,7 @@ export const FormButton = ({
   return (
     <Button
       onClick={onClick}
-      variant={isMobile ? 'ghost' : 'text'}
+      variant={variant ?? (isMobile ? 'ghost' : 'text')}
       size="small"
       {...rest}
     >

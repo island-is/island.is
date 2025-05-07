@@ -1,31 +1,46 @@
-import { Link, Text } from '@island.is/island-ui/core'
+import { Link, Text, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  useUserProfile,
-  useVerifyEmail,
-} from '@island.is/portals/my-pages/graphql'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { mVerify as m, mVerify, msg } from '../../../../lib/messages'
 import { InformationPaths } from '../../../../lib/paths'
 import { Modal } from '../../../Modal/Modal'
 import { InputSection } from './components/InputSection'
-import { AddEmail, EmailFormValues } from './components/Inputs/AddEmail'
-import { VerifyTemplate } from './components/verify/VerifyTemplate/VerifyTemplate'
+import { AddEmail } from './components/Inputs/AddEmail'
+import {
+  VerifyTemplate,
+  VerifyTemplateInput,
+} from './components/verify/VerifyTemplate/VerifyTemplate'
+import { useCreateEmailVerificationMutation } from './createEmailVerification.mutation.generated'
+import { useAddEmailMutation } from './addEmail.mutation.generated'
 
 export const ProfileFormEmail = () => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   const [openModal, setOpenModal] = useState(false)
+  const [email, setEmail] = useState<string | null>(null)
+  const [createEmailVerification, { data, loading, error }] =
+    useCreateEmailVerificationMutation()
+
+  const [
+    addEmail,
+    { data: addEmailData, loading: addEmailLoading, error: addEmailError },
+  ] = useAddEmailMutation()
+
+  const verifyEmail = (email: string) =>
+    createEmailVerification({
+      variables: {
+        input: {
+          email,
+        },
+      },
+    })
 
   const onNoCodeReceivedCallback = useCallback(async () => {
-    console.log('onNoCodeReceivedCallback')
-    // if (email) {
-    //   await userProfileService.createVerification({
-    //     email,
-    //   })
-    // }
+    if (email) {
+      await verifyEmail(email)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -48,13 +63,37 @@ export const ProfileFormEmail = () => {
         ),
         br: <br />,
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+
+    [email, formatMessage],
   )
 
-  const onVerifySuccess = () => {
-    console.log('onVerifySuccess')
-    setOpenModal(true)
+  useEffect(() => {
+    if (data?.createEmailVerification?.created) {
+      setOpenModal(true)
+    }
+  }, [data?.createEmailVerification, setOpenModal])
+
+  useEffect(() => {
+    if (addEmailData) {
+      setOpenModal(false)
+      toast.success(formatMessage(mVerify.addEmailSuccess))
+    }
+  }, [addEmailData, formatMessage])
+
+  const onSubmitCallback = useCallback(
+    async (input: VerifyTemplateInput) => {
+      addEmail({
+        variables: {
+          input,
+        },
+      })
+    },
+    [addEmail],
+  )
+
+  const onAddEmail = (email: string) => {
+    setEmail(email)
+    verifyEmail(email)
   }
 
   return (
@@ -79,15 +118,24 @@ export const ProfileFormEmail = () => {
           />
         }
       >
-        <AddEmail onVerifySuccess={onVerifySuccess} />
+        <AddEmail onAddEmail={onAddEmail} loading={loading} error={!!error} />
       </InputSection>
-      <Modal isVisible={openModal} onClose={() => setOpenModal(false)}>
-        <VerifyTemplate
-          title={formatMessage(mVerify.securityCode)}
-          intro={intro}
-          link={link}
-          onNoCodeReceivedCallback={onNoCodeReceivedCallback}
-        />
+      <Modal
+        isVisible={openModal && !!email}
+        onClose={() => setOpenModal(false)}
+      >
+        {email && (
+          <VerifyTemplate
+            loading={addEmailLoading}
+            serverError={addEmailError}
+            email={email}
+            title={formatMessage(mVerify.securityCode)}
+            intro={intro}
+            link={link}
+            onNoCodeReceivedCallback={onNoCodeReceivedCallback}
+            onSubmitCallback={onSubmitCallback}
+          />
+        )}
       </Modal>
     </>
   )

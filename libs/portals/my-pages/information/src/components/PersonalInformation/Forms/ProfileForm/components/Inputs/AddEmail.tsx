@@ -7,36 +7,42 @@ import {
 } from '@island.is/localization'
 import { m } from '@island.is/portals/my-pages/core'
 
+import { Problem } from '@island.is/react-spa/shared'
 import { InputController } from '@island.is/shared/form-fields'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { mVerify, msg } from '../../../../../../lib/messages'
 import { FormButton } from '../FormButton'
 import * as styles from './AddEmail.css'
-import { useVerifyEmail } from '@island.is/portals/my-pages/graphql'
-import { Problem } from '@island.is/react-spa/shared'
-import { useEffect } from 'react'
 
-const createEmailFormSchema = (formatMessage: FormatMessage) =>
-  z.object({
-    email: z.string().email({
-      message: formatMessage({
-        id: 'sp.settings:email-wrong-format-message',
-        defaultMessage: 'Netfangið er ekki á réttu formi',
-      }),
-    }),
+const createEmailFormSchema = (formatMessage: FormatMessage) => {
+  const message = formatMessage({
+    id: 'sp.settings:email-wrong-format-message',
+    defaultMessage: 'Netfangið er ekki á réttu formi',
   })
+
+  return z.object({
+    email: z
+      .string({
+        required_error: message,
+      })
+      .email({
+        message,
+      }),
+  })
+}
 
 type EmailFormValues = z.infer<ReturnType<typeof createEmailFormSchema>>
 
 type AddEmailProps = {
-  onVerifySuccess(): void
+  onAddEmail(email: string): void
+  loading?: boolean
+  error?: boolean
 }
 
-export const AddEmail = ({ onVerifySuccess }: AddEmailProps) => {
+export const AddEmail = ({ onAddEmail, loading, error }: AddEmailProps) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { createEmailVerification, data, loading, error } = useVerifyEmail()
 
   const methods = useForm<EmailFormValues>({
     resolver: zodResolver(createEmailFormSchema(formatMessage)),
@@ -45,41 +51,35 @@ export const AddEmail = ({ onVerifySuccess }: AddEmailProps) => {
   const {
     handleSubmit,
     control,
-    getValues,
     formState: { errors },
   } = methods
 
   const onSubmit = ({ email }: EmailFormValues) => {
     if (email) {
-      createEmailVerification({ email })
+      onAddEmail(email)
     }
   }
-
-  useEffect(() => {
-    if (data?.createEmailVerification?.created) {
-      onVerifySuccess()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.createEmailVerification])
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
+        {error && (
+          <Box marginBottom={2}>
+            <Problem size="small" />
+          </Box>
+        )}
         <Box
           width="full"
           display="flex"
-          alignItems="flexEnd"
-          columnGap={2}
+          alignItems={['flexStart', 'flexStart', 'flexStart', 'flexEnd']}
+          flexDirection={['column', 'column', 'column', 'row']}
+          columnGap={3}
+          rowGap={2}
           className={styles.contentContainer}
         >
-          {error && (
-            <Problem size="small" title={formatMessage(mVerify.errorOccured)} />
-          )}
-
-          <Box flexGrow={1}>
+          <Box flexGrow={1} width="full">
             <InputController
               control={control}
-              backgroundColor="blue"
               id="email"
               autoFocus
               name="email"
@@ -92,17 +92,23 @@ export const AddEmail = ({ onVerifySuccess }: AddEmailProps) => {
             />
           </Box>
 
-          <div
+          <Box
             className={
               errors?.email?.message
                 ? styles.errorEmailButtonContainer
                 : styles.defaultEmailButtonContainer
             }
           >
-            <FormButton submit icon="add" loading={loading}>
+            <FormButton
+              submit
+              icon="add"
+              loading={loading}
+              variant="text"
+              nowrap
+            >
               {formatMessage(msg.registerEmail)}
             </FormButton>
-          </div>
+          </Box>
         </Box>
       </form>
     </FormProvider>

@@ -338,6 +338,10 @@ export const msg = defineMessages({
     id: 'sp.settings:email-list-text-link',
     defaultMessage: 'tilkynningar hér.',
   },
+  close: {
+    id: 'sp.settings:close',
+    defaultMessage: 'Loka',
+  },
 })
 
 export const urls = defineMessages({
@@ -457,10 +461,6 @@ export const mNotifications = defineMessages({
 })
 
 export const mVerify = defineMessages({
-  close: {
-    id: 'sp.settings:close',
-    defaultMessage: 'Loka',
-  },
   confirmEmail: {
     id: 'sp.settings:confirm-email',
     defaultMessage: 'Staðfesta netfang',
@@ -471,11 +471,15 @@ export const mVerify = defineMessages({
   },
   noCodeReceived: {
     id: 'sp.settings:no-code-received',
-    defaultMessage: 'Fékk ekki kóða',
+    defaultMessage: 'Fékk ekki sendan kóða?',
   },
   codeSentSuccess: {
     id: 'sp.settings:code-sent-success',
     defaultMessage: 'Kóði hefur verið sendur',
+  },
+  addEmailSuccess: {
+    id: 'sp.settings:add-email-success',
+    defaultMessage: 'Netfang skráð',
   },
   securityCode: {
     id: 'ids:security-code',
@@ -487,7 +491,7 @@ export const mVerify = defineMessages({
   },
   wrongCodeTitle: {
     id: 'sp.settings:wrong-code-title',
-    defaultMessage: 'Rangur kóði',
+    defaultMessage: 'Rangur kóði sleginn inn',
   },
   confirm: {
     id: 'sp.settings:confirm',
@@ -525,5 +529,13 @@ export const mVerify = defineMessages({
   validateTwoFactorError: {
     id: 'ids:validate-two-factor-error',
     defaultMessage: 'Kóði er ekki á réttu formi',
+  },
+  twoFactorError: {
+    id: 'ids:two-factor-error',
+    defaultMessage: 'Kóði er ekki réttur',
+  },
+  emailAlreadyExists: {
+    id: 'ids:email-already-exists',
+    defaultMessage: 'Netfang er nú þegar til',
   },
 })

@@ -3,6 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { isDefined } from '@island.is/shared/utils'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 
+import { ApolloError } from '@apollo/client'
 import { Problem } from '@island.is/react-spa/shared'
 import { mVerify } from '../../../../../../../lib/messages'
 import { TwoFactorInputs } from '../TwoFactorInputs'
@@ -12,6 +13,10 @@ import { validateThreeDigitCode } from '../validate'
 import * as styles from './VerifyTemplate.css'
 
 type TextNode = string | ReactNode
+export type VerifyTemplateInput = {
+  code: string
+  email: string
+}
 
 type VerifyTemplateProps = {
   title: TextNode
@@ -20,8 +25,11 @@ type VerifyTemplateProps = {
     label: string
     onClick(): void
   }
-  remainingAttempts?: number
   onNoCodeReceivedCallback(): Promise<void>
+  onSubmitCallback(input: VerifyTemplateInput): Promise<void>
+  email: string
+  loading: boolean
+  serverError?: ApolloError
 }
 
 export const VerifyTemplate = ({
@@ -29,15 +37,48 @@ export const VerifyTemplate = ({
   intro,
   link,
   onNoCodeReceivedCallback,
-  remainingAttempts,
+  onSubmitCallback,
+  email,
+  loading,
+  serverError,
 }: VerifyTemplateProps) => {
-  const [clearCode, setClearCode] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
   const { formatMessage } = useLocale()
+  const [clearCode, setClearCode] = useState(false)
+  const [error, setError] = useState<string | undefined>()
+  const [serverErrorProblem, setServerErrorProblem] = useState<
+    { title: string; message: string } | undefined
+  >()
   const [noCodeReceivedLoading, setNoCodeReceivedLoading] = useState(false)
   const [buttonDisabled, setButtonDisabled] = useState(true)
   const submitButtonRef = useRef<HTMLButtonElement>(null)
+
+  const problem = serverError?.graphQLErrors[0].extensions.problem as {
+    remainingAttempts?: number
+    detail?: string
+    status: number
+  }
+
+  const remainingAttempts = problem?.remainingAttempts
+
+  const formatServerError = (err: ApolloError) => {
+    if (err) {
+      if (isDefined(remainingAttempts)) {
+        if (remainingAttempts > 0) {
+          return undefined
+        } else if (remainingAttempts === 0) {
+          return formatMessage(mVerify.twoFactorError)
+        }
+      } else if (
+        problem.status === 400 &&
+        problem.detail?.toLowerCase().includes('email already exists')
+      ) {
+        return formatMessage(mVerify.emailAlreadyExists)
+      }
+    }
+
+    return formatMessage(mVerify.errorOccured)
+  }
+
   const onNoCodeReceived = async () => {
     setNoCodeReceivedLoading(true)
     await onNoCodeReceivedCallback()
@@ -62,11 +103,27 @@ export const VerifyTemplate = ({
   }, [])
 
   useEffect(() => {
-    if (remainingAttempts && remainingAttempts > 0 && remainingAttempts <= 2) {
+    if (remainingAttempts && remainingAttempts > 0 && remainingAttempts <= 5) {
       setClearCode(true)
       setButtonDisabled(true)
     }
   }, [remainingAttempts])
+
+  useEffect(() => {
+    if (serverError) {
+      const formattedError = formatServerError(serverError)
+
+      if (formattedError) {
+        setServerErrorProblem({
+          title: formattedError,
+          message: '',
+        })
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serverError])
+
+  console.log('error', error)
 
   const onClearCodeReset = useCallback(() => {
     setClearCode(false)
@@ -74,20 +131,19 @@ export const VerifyTemplate = ({
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
 
     const formData = new FormData(e.target as HTMLFormElement)
     const code = formData.get('code') as string
 
     if (validateThreeDigitCode(code)) {
-      setError(formatMessage(mVerify.validateTwoFactorError))
+      onSubmitCallback({ code, email })
     } else {
-      setLoading(false)
+      setError(formatMessage(mVerify.validateTwoFactorError))
     }
   }
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className={styles.form}>
       <Box display="flex" flexDirection="column" rowGap={3}>
         <VerifyHeader
           label={formatMessage(mVerify.confirmEmail)}
@@ -114,9 +170,7 @@ export const VerifyTemplate = ({
           }
         />
 
-        {error && (
-          <Problem size="small" title={formatMessage(mVerify.errorOccured)} />
-        )}
+        {serverErrorProblem && <Problem size="small" {...serverErrorProblem} />}
 
         <Box width="full" marginTop={1}>
           <TwoFactorInputs

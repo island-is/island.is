@@ -13,10 +13,6 @@ import {
   useDeleteIslykillValue,
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
-import {
-  FeatureFlagClient,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { msg } from '../../../../lib/messages'
@@ -29,7 +25,7 @@ import { InputEmail } from './components/Inputs/Email'
 import { Nudge } from './components/Inputs/Nudge'
 import { PaperMail } from './components/Inputs/PaperMail'
 import { InputPhone } from './components/Inputs/Phone'
-import { ReadOnlyWithLinks } from './components/Inputs/ReadOnlyWithLinks'
+import { WithLinkWrapper } from './components/Inputs/WithLinkWrapper'
 import { OnboardingIntro } from './components/Intro'
 import { useConfirmNudgeMutation } from './confirmNudge.generated'
 import { DropModalType } from './types/form'
@@ -69,7 +65,6 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
     useDeleteIslykillValue()
   const userInfo = useUserInfo()
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const { formatMessage } = useLocale()
   const [confirmNudge] = useConfirmNudgeMutation()
   const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
@@ -176,7 +171,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
           >
             {!userLoading &&
               (!isCompany ? (
-                <ReadOnlyWithLinks
+                <WithLinkWrapper
                   input={
                     <Input
                       name="email"
@@ -235,7 +230,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
           >
             {!userLoading &&
               (!isCompany ? (
-                <ReadOnlyWithLinks
+                <WithLinkWrapper
                   input={
                     <PhoneInput
                       name="phoneNumber"
