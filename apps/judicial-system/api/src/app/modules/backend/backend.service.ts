@@ -271,6 +271,15 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${id}/file/url`, createPresignedPost)
   }
 
+  fetchAndCreateCriminalRecordCaseFile(
+    caseId: string,
+    defendantId: string,
+  ): Promise<CaseFile> {
+    return this.post(
+      `case/${caseId}/defendant/${defendantId}/criminalRecordFile`,
+    )
+  }
+
   createCaseFile(id: string, createFile: unknown): Promise<CaseFile> {
     return this.post(`case/${id}/file`, createFile)
   }

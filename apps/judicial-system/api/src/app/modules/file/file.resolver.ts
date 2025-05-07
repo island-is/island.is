@@ -101,6 +101,30 @@ export class FileResolver {
     )
   }
 
+  //fetchAndCreateCriminalRecordCaseFile
+  @Mutation(() => CaseFile)
+  fetchAndCreateCriminalRecordCaseFile(
+    // TODO: Change input types
+    @Args('input', { type: () => CreateDefendantFileInput })
+    input: CreateDefendantFileInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<CaseFile> {
+    const { caseId, defendantId } = input
+
+    this.logger.debug(
+      `Fetching and creating a criminal record case file for case ${caseId} and defendant ${defendantId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CREATE_FILE,
+      backendService.fetchAndCreateCriminalRecordCaseFile(caseId, defendantId),
+      (file) => file.id,
+    )
+  }
+
   @Mutation(() => CaseFile)
   createCivilClaimantFile(
     @Args('input', { type: () => CreateCivilClaimantFileInput })
