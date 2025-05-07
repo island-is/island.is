@@ -121,5 +121,6 @@ export const serviceSetup = (services: {
       'islandis',
       'service-portal',
       'user-notification-worker',
+      'user-notification-birthday-worker',
     )
 }
