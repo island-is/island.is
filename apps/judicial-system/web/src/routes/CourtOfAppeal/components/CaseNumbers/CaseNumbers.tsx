@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 
 import { strings } from './CaseNumbers.strings'

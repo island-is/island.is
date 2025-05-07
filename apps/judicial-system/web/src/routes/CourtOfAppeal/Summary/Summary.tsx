@@ -33,7 +33,7 @@ import {
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
+import { CaseNumbers } from '../components'
 import RulingModifiedModal from './RulingModifiedModal/RulingModifiedModal'
 import { strings } from './Summary.strings'
 

@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
 
 import {
   CaseAppealDecision,
@@ -11,7 +10,7 @@ import {
   InstitutionType,
   UserRole,
 } from '../../graphql/schema'
-import CaseNumbers from '../../routes/CourtOfAppeal/components/CaseNumbers/CaseNumbers'
+import { CaseNumbers } from '../../routes/CourtOfAppeal/components'
 import { titleForCase } from '../../utils/titleForCase/titleForCase'
 import DateLabel from '../DateLabel/DateLabel'
 import RulingDateLabel from '../DateLabel/RulingDateLabel'
