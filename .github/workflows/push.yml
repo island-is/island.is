@@ -500,21 +500,8 @@ jobs:
           IMAGES: ${{ needs.prepare.outputs.IMAGES }}
           DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
         run: |
-
-          for image in ${IMAGES//,/ }; do
-            image=$(echo "$image" | tr -d "'")
-            ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$image" "$DOCKER_REGISTRY"
-          done
-
-          echo "Change directory to root"
-          cd ../
-
-          git config user.name andes-it
-          git config user.email andes-it@andes.is
-
-          git add .
-
-          git commit -m "feat: feature-deployment"
+          IMAGES=$(echo "$IMAGES" | tr -d "'\\ ")
+          ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$IMAGES" "$DOCKER_REGISTRY"
 
       - name: load-deps
         uses: ./monorepo/.github/actions/load-deps
