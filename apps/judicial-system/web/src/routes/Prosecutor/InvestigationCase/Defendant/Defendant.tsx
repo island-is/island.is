@@ -198,16 +198,25 @@ const Defendant = () => {
     }))
   }
 
+  const handleScrollToAddDefendantButton = () => {
+    setTimeout(() => {
+      const element = document.getElementById('addDefendantButton')
+
+      element?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      })
+    }, 50)
+  }
+
   const handleCreateDefendantClick = async () => {
     if (workingCase.id) {
       const defendantId = await createDefendant({ caseId: workingCase.id })
-
       createEmptyDefendant(defendantId)
     } else {
       createEmptyDefendant()
     }
-
-    window.scrollTo(0, document.body.scrollHeight)
+    handleScrollToAddDefendantButton()
   }
 
   const createEmptyDefendant = (defendantId?: string) => {
@@ -381,6 +390,7 @@ const Defendant = () => {
             <Box display="flex" justifyContent="flexEnd" marginTop={3}>
               <Button
                 data-testid="addDefendantButton"
+                id="addDefendantButton"
                 variant="ghost"
                 icon="add"
                 onClick={handleCreateDefendantClick}
@@ -431,21 +441,29 @@ const Defendant = () => {
           ) : (
             <Box component="section" marginBottom={5}>
               <SectionHeading title="Brotaþoli" />
-              {workingCase.victims?.map((victim) => (
-                <VictimInfo
-                  key={victim.id}
-                  victim={victim}
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                  onDelete={() =>
-                    deleteVictimAndSetState(
-                      workingCase.id,
-                      victim,
-                      setWorkingCase,
-                    )
-                  }
-                />
-              ))}
+              <AnimatePresence>
+                {workingCase.victims?.map((victim) => (
+                  <motion.div
+                    key={victim.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                  >
+                    <VictimInfo
+                      victim={victim}
+                      workingCase={workingCase}
+                      setWorkingCase={setWorkingCase}
+                      onDelete={() =>
+                        deleteVictimAndSetState(
+                          workingCase.id,
+                          victim,
+                          setWorkingCase,
+                        )
+                      }
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
               <Box display="flex" justifyContent="flexEnd" marginTop={2}>
                 <Button
                   data-testid="addVictimButton"
