@@ -51,8 +51,6 @@ env:
   XROAD_COURT_MEMBER_CODE: '10019'
   XROAD_POLICE_API_PATH: '/Logreglan-Private/rettarvarsla-v1'
   XROAD_POLICE_MEMBER_CODE: '10005'
-  XROAD_DMR_CRIMINAL_RECORD_API_PATH: 'DMR-Protected/sakaskra-dev'
-  XROAD_DMR_MEMBER_CODE: '10014'
   XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
 grantNamespaces:
