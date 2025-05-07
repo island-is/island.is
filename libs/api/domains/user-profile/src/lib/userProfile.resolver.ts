@@ -1,5 +1,6 @@
+import { Loader } from '@island.is/nest/dataloader'
 import { UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -8,6 +9,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 
+import { EmailsDto } from '@island.is/clients/user-profile'
 import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
@@ -16,16 +18,25 @@ import { DeleteTokenResponse } from './dto/deleteTokenResponse'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
+import { Email } from './models/email.model'
 import { UserProfileLocale } from './models/userProfileLocale.model'
+import {
+  EmailsDataLoader,
+  EmailsLoader,
+} from './modules/user-emails/emails.loader'
+import { UserEmailsService } from './modules/user-emails/userEmails.service'
 import { Response } from './response.model'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Resolver()
+@Resolver(() => UserProfile)
 export class UserProfileResolver {
-  constructor(private readonly userProfileService: UserProfileService) {}
+  constructor(
+    private readonly userProfileService: UserProfileService,
+    private readonly userEmailService: UserEmailsService,
+  ) {}
 
   @Query(() => UserProfile, { nullable: true })
   getUserProfile(
@@ -103,5 +114,19 @@ export class UserProfileResolver {
   async confirmNudge(@CurrentUser() user: User): Promise<boolean> {
     await this.userProfileService.confirmNudge(user)
     return true
+  }
+
+  @ResolveField('emails', () => [Email], { nullable: true })
+  async getEmails(
+    @Loader(EmailsLoader) emailsLoader: EmailsDataLoader,
+  ): Promise<EmailsDto[]> {
+    return emailsLoader.load('me')
+  }
+
+  @ResolveField('primaryEmail', () => Email, { nullable: true })
+  async getPrimaryEmail(@Loader(EmailsLoader) emailsLoader: EmailsDataLoader) {
+    const emails = await emailsLoader.load('me')
+
+    return emails.find((email: EmailsDto) => email.primary) ?? null
   }
 }

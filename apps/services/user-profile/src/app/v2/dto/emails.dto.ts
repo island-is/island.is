@@ -5,7 +5,7 @@ export class EmailsDto {
   @ApiProperty()
   id!: string
 
-  @ApiProperty()
+  @ApiProperty({ type: String, nullable: true })
   email!: string | null
 
   @ApiProperty()

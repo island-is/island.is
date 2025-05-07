@@ -1,33 +1,30 @@
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
-  IdsAuthGuard,
+  IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { UserProfileScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
+import { Documentation } from '@island.is/nest/swagger'
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   Param,
-  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
-import { EmailsService } from './emails.service'
-import { Documentation } from '@island.is/nest/swagger'
-import { EmailsDto } from './dto/emails.dto'
-import { UserProfileScope } from '@island.is/auth/scopes'
-import { VerificationService } from '../user-profile/verification.service'
 import { CreateEmailDto } from './dto/create-emails.dto'
+import { EmailsDto } from './dto/emails.dto'
+import { EmailsService } from './emails.service'
 
 const namespace = '@island.is/user-profile/v2/emails'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(UserProfileScope.read)
 @ApiTags('v2/me/emails')
 @ApiSecurity('oauth2', [])
@@ -39,14 +36,13 @@ const namespace = '@island.is/user-profile/v2/emails'
 export class EmailsController {
   constructor(
     private readonly emailsService: EmailsService,
-    private readonly verificationService: VerificationService,
     private readonly auditService: AuditService,
   ) {}
 
   @Get('/')
   @Documentation({
     description: 'Get email list for national id',
-    response: { status: 200, type: EmailsDto },
+    response: { status: 200, type: [EmailsDto] },
     request: {
       query: {
         nationalId: {
