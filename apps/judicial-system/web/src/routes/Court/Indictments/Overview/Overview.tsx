@@ -116,22 +116,6 @@ const OverviewBody = ({
             </Button>
           </Box>
         </Box>
-        {workingCase.defendants && (
-          <Box component="section" marginBottom={5}>
-            {
-              <SubpoenaType
-                subpoenaItems={workingCase.defendants.map((defendant) => ({
-                  defendant,
-                  disabled: isArraignmentScheduled,
-                }))}
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-                updateDefendantState={updateDefendantState}
-                required={false}
-              />
-            }
-          </Box>
-        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

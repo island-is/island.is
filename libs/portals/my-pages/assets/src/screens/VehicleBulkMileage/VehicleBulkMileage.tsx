@@ -40,7 +40,7 @@ const VehicleBulkMileage = () => {
   const [search, setSearch] = useState<string>()
   const [displayFilters, setDisplayFilters] = useState<boolean>(false)
 
-  const [vehicleListQuery, { data, loading, error, called }] =
+  const [vehicleListQuery, { data, loading, error }] =
     useVehiclesListLazyQuery()
 
   useEffect(() => {
