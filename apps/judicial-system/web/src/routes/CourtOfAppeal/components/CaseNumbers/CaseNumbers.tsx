@@ -18,7 +18,7 @@ const CaseNumbers: FC = () => {
             caseNumber: `${workingCase.appealCaseNumber}`,
           })}
         </Text>
-      )}{' '}
+      )}
       <Text as="h3" variant="default" fontWeight="semiBold">
         {formatMessage(strings.courtOfAppealCaseNumber, {
           caseNumber: workingCase.courtCaseNumber,
