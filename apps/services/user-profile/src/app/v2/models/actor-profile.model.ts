@@ -6,6 +6,7 @@ import {
   CreatedAt,
   UpdatedAt,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { MeActorProfileDto } from '../dto/actor-profile.dto'
@@ -91,11 +92,18 @@ export class ActorProfile extends Model {
   @ApiProperty()
   lastNudge?: Date | null
 
+  @BelongsTo(() => Emails, {
+    foreignKey: 'emailsId',
+    targetKey: 'id',
+    as: 'emails',
+  })
+  emails?: Emails
+
   toDto(): MeActorProfileDto {
     return {
       fromNationalId: this.fromNationalId,
       emailNotifications: this.emailNotifications,
-      emailsId: this.emailsId || undefined,
+      emailsId: this.emailsId || null,
     }
   }
 }

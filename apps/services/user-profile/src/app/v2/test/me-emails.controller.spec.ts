@@ -17,6 +17,7 @@ import kennitala from 'kennitala'
 import { UserProfile } from '../../user-profile/userProfile.model'
 import { CreateEmailDto } from '../dto/create-emails.dto'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
+import { ActorProfile } from '../models/actor-profile.model'
 
 // Test data setup
 const testUserProfileEmail = {
@@ -37,6 +38,7 @@ describe('Me emails controller', () => {
   let emailsModel: typeof Emails
   let userProfileModel: typeof UserProfile
   let emailVerificationModel: typeof EmailVerification
+  let actorProfileModel: typeof ActorProfile
 
   // Test setup and teardown
   beforeEach(() => {
@@ -62,6 +64,9 @@ describe('Me emails controller', () => {
     emailVerificationModel = app.get<typeof EmailVerification>(
       getModelToken(EmailVerification),
     )
+    actorProfileModel = app.get<typeof ActorProfile>(
+      getModelToken(ActorProfile),
+    )
   })
 
   afterEach(async () => {
@@ -80,6 +85,12 @@ describe('Me emails controller', () => {
         truncate: true,
       }),
       emailVerificationModel.destroy({
+        where: {},
+        cascade: true,
+        force: true,
+        truncate: true,
+      }),
+      actorProfileModel.destroy({
         where: {},
         cascade: true,
         force: true,
@@ -120,8 +131,40 @@ describe('Me emails controller', () => {
         {
           email: testUserProfileEmail.email,
           primary: testUserProfileEmail.primary,
+          isConnectedToActorProfile: false,
         },
       ])
+    })
+
+    it('should return email with isConnectedToActorProfile=true when connected to an actor profile', async () => {
+      await fixtureFactory.createUserProfile({ ...testUserProfile, emails: [] })
+
+      // Create an email
+      const email = await fixtureFactory.createEmail({
+        nationalId: testUserProfile.nationalId,
+        email: 'connected@example.com',
+        primary: false,
+      })
+
+      // Create an actor profile referencing the email
+      await fixtureFactory.createActorProfile({
+        toNationalId: createNationalId(), // Another user's national ID
+        fromNationalId: testUserProfile.nationalId,
+        emailNotifications: true,
+        emailsId: email.id,
+      })
+
+      const res = await server.get(
+        `/v2/me/emails?nationalId=${testUserProfile.nationalId}`,
+      )
+
+      expect(res.status).toEqual(200)
+      expect(res.body).toHaveLength(1)
+      expect(res.body[0]).toMatchObject({
+        email: 'connected@example.com',
+        primary: false,
+        isConnectedToActorProfile: true,
+      })
     })
 
     it('should return 400 for invalid national id', async () => {
@@ -144,31 +187,55 @@ describe('Me emails controller', () => {
       })
     })
 
-    it('should return multiple emails when they exist', async () => {
+    it('should return multiple emails with correct isConnectedToActorProfile values', async () => {
       await fixtureFactory.createUserProfile({ ...testUserProfile, emails: [] })
 
-      await Promise.all([
-        fixtureFactory.createEmail({
-          nationalId: testUserProfile.nationalId,
-          email: 'test1@example.com',
-          primary: true,
-        }),
-        fixtureFactory.createEmail({
-          nationalId: testUserProfile.nationalId,
-          email: 'test2@example.com',
-          primary: false,
-        }),
-      ])
+      // Create two emails
+      const email1 = await fixtureFactory.createEmail({
+        nationalId: testUserProfile.nationalId,
+        email: 'test1@example.com',
+        primary: true,
+      })
+
+      const email2 = await fixtureFactory.createEmail({
+        nationalId: testUserProfile.nationalId,
+        email: 'test2@example.com',
+        primary: false,
+      })
+
+      // Connect only the second email to an actor profile
+      await fixtureFactory.createActorProfile({
+        toNationalId: createNationalId(),
+        fromNationalId: testUserProfile.nationalId,
+        emailNotifications: true,
+        emailsId: email2.id,
+      })
 
       const res = await server.get(
         `/v2/me/emails?nationalId=${testUserProfile.nationalId}`,
       )
 
       expect(res.status).toEqual(200)
-      expect(res.body).toMatchObject([
-        { email: 'test1@example.com', primary: true },
-        { email: 'test2@example.com', primary: false },
-      ])
+      expect(res.body).toHaveLength(2)
+
+      const firstEmail = res.body.find(
+        (e: any) => e.email === 'test1@example.com',
+      )
+      const secondEmail = res.body.find(
+        (e: any) => e.email === 'test2@example.com',
+      )
+
+      expect(firstEmail).toMatchObject({
+        email: 'test1@example.com',
+        primary: true,
+        isConnectedToActorProfile: false,
+      })
+
+      expect(secondEmail).toMatchObject({
+        email: 'test2@example.com',
+        primary: false,
+        isConnectedToActorProfile: true,
+      })
     })
   })
 

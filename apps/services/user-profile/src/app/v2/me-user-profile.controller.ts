@@ -32,7 +32,7 @@ import {
   MeActorProfileDto,
   PaginatedActorProfileDto,
   PatchActorProfileDto,
-  SingleActorProfileDto,
+  ActorProfileDetailsDto,
 } from './dto/actor-profile.dto'
 import {
   UpdateActorProfileEmailDto,
@@ -205,15 +205,15 @@ export class MeUserProfileController {
   @Documentation({
     description:
       'Get a single actor profile with detailed information for the current user and specified fromNationalId.',
-    response: { status: 200, type: SingleActorProfileDto },
+    response: { status: 200, type: ActorProfileDetailsDto },
   })
-  @Audit<SingleActorProfileDto>({
+  @Audit<ActorProfileDetailsDto>({
     resources: (profile) => profile.actorNationalId,
   })
   getSingleActorProfile(
     @CurrentUser() user: User,
     @Param('fromNationalId') fromNationalId: string,
-  ): Promise<SingleActorProfileDto> {
+  ): Promise<ActorProfileDetailsDto> {
     if (!user.actor?.nationalId) {
       throw new BadRequestException('User has no actor profile')
     }
@@ -230,6 +230,18 @@ export class MeUserProfileController {
         fromNationalId: user.nationalId,
       }),
     )
+  }
+
+  @Get('/actor-profiles/details')
+  @Scopes(ApiScope.internal)
+  @Documentation({
+    description: 'Get details for all actor profiles for the current user.',
+    response: { status: 200, type: PaginatedActorProfileDto },
+  })
+  getActorProfilesDetails(
+    @CurrentUser() user: User,
+  ): Promise<ActorProfileDetailsDto[]> {
+    return this.userProfileService.getActorProfilesDetails(user.nationalId)
   }
 
   @Patch('/actor-profiles/.from-national-id')

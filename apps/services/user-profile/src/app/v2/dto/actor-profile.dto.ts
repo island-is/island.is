@@ -24,7 +24,7 @@ export class MeActorProfileDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsUUID(4)
-  readonly emailsId?: string
+  readonly emailsId?: string | null
 }
 
 export class ActorProfileDto {
@@ -63,7 +63,7 @@ export class ActorProfileDto {
   readonly emailsId?: string
 }
 
-export class SingleActorProfileDto {
+export class ActorProfileDetailsDto {
   @ApiProperty({ type: () => String, nullable: true })
   @IsOptional()
   @IsEmail()

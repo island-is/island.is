@@ -7,12 +7,15 @@ import { VerificationService } from '../user-profile/verification.service'
 import { AttemptFailed } from '@island.is/nest/problem'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { uuid } from 'uuidv4'
+import { ActorProfile } from './models/actor-profile.model'
 
 @Injectable()
 export class EmailsService {
   constructor(
     @InjectModel(Emails)
     private readonly emailsModel: typeof Emails,
+    @InjectModel(ActorProfile)
+    private readonly actorProfileModel: typeof ActorProfile,
     private readonly verificationService: VerificationService,
   ) {}
 
@@ -26,14 +29,39 @@ export class EmailsService {
       where: { nationalId },
     })
 
+    // Get all email IDs that are referenced by actor profiles
+    const connectedEmailIds = await this.getConnectedEmailIds(
+      emails.map((email) => email.id),
+    )
+
     return (
       emails.map((email) => ({
         id: email.id,
         email: email.email ?? null,
         primary: email.primary,
         emailStatus: email.emailStatus,
+        isConnectedToActorProfile: connectedEmailIds.includes(email.id),
       })) || []
     )
+  }
+
+  /**
+   * Checks which emails are connected to actor profiles
+   */
+  private async getConnectedEmailIds(emailIds: string[]): Promise<string[]> {
+    if (!emailIds.length) {
+      return []
+    }
+
+    const actorProfiles = await this.actorProfileModel.findAll({
+      where: {
+        emailsId: emailIds,
+      },
+    })
+
+    return actorProfiles
+      .map((profile) => profile.emailsId)
+      .filter((id): id is string => id !== null && id !== undefined)
   }
 
   /**
@@ -62,11 +90,16 @@ export class EmailsService {
       emailStatus: DataStatus.VERIFIED,
     })
 
+    // Check if this email is connected to any actor profile
+    const connectedEmailIds = await this.getConnectedEmailIds([emailRecord.id])
+    const isConnectedToActorProfile = connectedEmailIds.includes(emailRecord.id)
+
     return {
       id: emailRecord.id,
       email: emailRecord.email ?? null,
       primary: emailRecord.primary,
       emailStatus: emailRecord.emailStatus,
+      isConnectedToActorProfile,
     }
   }
 
