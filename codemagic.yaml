@@ -99,7 +99,7 @@ definitions:
       name: Install Maestro
       script: |
         curl -Ls "https://get.maestro.mobile.dev" | bash
-        export PATH="$HOME/.maestro/bin:$PATH"
+        export PATH="$PATH":"$HOME/.maestro/bin"
     - &maestro-tests
       name: Run Maestro end to end tests
       script: |
