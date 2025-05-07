@@ -100,9 +100,9 @@ definitions:
       script: |
         curl -Ls "https://get.maestro.mobile.dev" | bash
         export PATH="$PATH":"$HOME/.maestro/bin"
-        maestro test apps/native/app/.maestro/launch-app-flow.yaml || true
-        maestro test apps/native/app/.maestro/try-signing-in-flow.yaml || true
-        maestro test apps/native/app/.maestro/inbox-flow.yaml || true
+        maestro .maestro/launch-app-flow.yaml || true
+        maestro .maestro/try-signing-in-flow.yaml || true
+        maestro .maestro/inbox-flow.yaml || true
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
