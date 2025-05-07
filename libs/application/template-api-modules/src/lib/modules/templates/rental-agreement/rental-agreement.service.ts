@@ -20,6 +20,7 @@ export class RentalAgreementService extends BaseTemplateApiService {
   ) {
     super(ApplicationTypes.RENTAL_AGREEMENT)
   }
+
   async sendApplicationSummary({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.sendEmail(
       generateRentalAgreementEmail,
@@ -27,6 +28,7 @@ export class RentalAgreementService extends BaseTemplateApiService {
     )
     return
   }
+
   async submitApplicationToHmsRentalService({
     application,
   }: TemplateApiModuleActionProps) {
@@ -81,33 +83,39 @@ export class RentalAgreementService extends BaseTemplateApiService {
       otherCostItems,
     } = applicationAnswers(answers)
 
-    const formattedLandlords = landlords?.map((landlord) => {
-      const isRep = landlord.isRepresentative.includes('isRepresentative')
-        ? true
-        : false
+    const landlordsArray = landlords?.map((landlord) => {
       return {
-        NationalId: landlord.nationalIdWithName.nationalId,
-        Name: landlord.nationalIdWithName.name,
-        Email: landlord.email,
-        Phone: landlord.phone,
-        Address: landlord.address,
-        IsRepresentative: isRep,
+        NationalId: landlord.nationalIdWithName.nationalId, // Required
+        Name: landlord.nationalIdWithName.name, // Required
+        Email: landlord.email, // Required
+        Phone: landlord.phone, // Required
+        Address: landlord.address, // Required
+        IsRepresentative: Boolean(
+          landlord.isRepresentative.includes('isRepresentative'),
+        ),
       }
     })
 
-    const formattedTenants = tenants?.map((tenant) => {
-      const isRep = tenant.isRepresentative.includes('isRepresentative')
-        ? true
-        : false
+    const tenantsArray = tenants?.map((tenant) => {
       return {
-        NationalId: tenant.nationalIdWithName.nationalId,
-        Name: tenant.nationalIdWithName.name,
-        Email: tenant.email,
-        Phone: tenant.phone,
-        Address: tenant.address,
-        IsRepresentative: isRep,
+        NationalId: tenant.nationalIdWithName.nationalId, // Required
+        Name: tenant.nationalIdWithName.name, // Required
+        Email: tenant.email, // Required
+        Phone: tenant.phone, // Required
+        Address: tenant.address, // Required
+        IsRepresentative: Boolean(
+          tenant.isRepresentative.includes('isRepresentative'),
+        ),
       }
     })
+
+    if (!searchResults) {
+      throw new Error('Property info is not defined')
+    }
+
+    if (!units) {
+      throw new Error('Property units are not defined')
+    }
 
     const appraisalUnits = units?.map((unit) => {
       const propertySize =
@@ -118,11 +126,11 @@ export class RentalAgreementService extends BaseTemplateApiService {
         unit.unitCode && parseInt(unit.unitCode.slice(-2), 10).toString()
 
       return {
-        AppraisalUnitId: unit.unitCode,
+        AppraisalUnitId: unit.unitCode, // Required
         Floor: apartmentFloor,
-        Size: propertySize,
         ApartmentNumber: apartmentNumber,
-        Rooms: unit.numOfRooms,
+        Size: propertySize, // Required
+        Rooms: unit.numOfRooms, // Required
       }
     })
 
@@ -157,76 +165,77 @@ export class RentalAgreementService extends BaseTemplateApiService {
     const propertyId = units && units.length > 0 ? units[0].propertyCode : ''
 
     // TODO: Check if mapping is correct, are types corresponding to the API?
-    const applicationToRentalRegistry = {
-      ApplicationId: id,
-      InitiatorNationalId: applicant,
-      Landlords: formattedLandlords,
-      Tenants: formattedTenants,
+    const newApplication = {
+      ApplicationId: id, // Required
+      InitiatorNationalId: applicant, // Required
+      Landlords: landlordsArray, // Required
+      Tenants: tenantsArray, // Required
       Property: {
-        Address: searchResults?.address || '',
-        Municipality: searchResults?.municipalityName || '',
-        Zip: searchResults?.postalCode?.toString() || '',
-        PropertyId: propertyId,
-        AppraisalUnits: appraisalUnits || [],
-        Part: '', // Whole | Part // TODO: We do not check for this in the application.
-        Type: categoryType || '', // House_Apartment | Room | Commercial
-        SpecialGroup: categoryClass || 'No', // No | Student | Elderly | Disabled | HalfwayHouse | IncomeRestricted
+        Address: searchResults?.address || new Error('Address is required'), // Required
+        Municipality: searchResults?.municipalityName || '', // Required
+        Zip: searchResults?.postalCode?.toString() || '', // Required
+        PropertyId: propertyId, // Required
+        AppraisalUnits: appraisalUnits || [], // Required
+        Part: 'Whole', // Required // Whole | Part // TODO: Should this be added or do we make an assumption. We do not ask about this in the application.
+        Type: categoryType || '', // Required
+        SpecialGroup: categoryClass || 'No', // Required
       },
       Lease: {
-        Description: description,
-        Rules: rules,
-        Condition: conditionDescription, // TODO: Check if this is correct?
+        // TODO: Description, Rules and Condition are required in the API but not in the application
+        Description: description, // Required
+        Rules: rules, // Required
+        Condition: conditionDescription || 'See files for info', // Required // TODO: Check if this is correct?
         InspectorType: inspector,
         IndipendantInspector: inspectorName,
-        HasInspectionFiles: files && files.length > 0 ? true : false,
+        HasInspectionFiles: files && files.length > 0 ? true : false, // Required
         FireProtections: {
           FireBlanket: fireBlankets || 0,
-          EmergencyExits: emergencyExits || 0,
-          SmokeDetectors: smokeDetectors || 0,
-          FireExtinguisher: fireExtinguisher || 0,
+          EmergencyExits: emergencyExits || 0, // Required
+          SmokeDetectors: smokeDetectors || 0, // Required
+          FireExtinguisher: fireExtinguisher || 0, // Required
         },
-        StartDate: startDate || '', // yyyy-MM-dd
-        EndDate: endDate || '', // yyyy-MM-dd
-        IsFixedTerm: endDate ? true : false,
+        StartDate: startDate || '', // Required
+        EndDate: endDate || '',
+        IsDefinite: endDate ? true : false, // Required // TODO: Check... This is not mentioned in the JSON format documentation, but saw it in the structure
         Rent: {
-          Amount: rentalAmount || 0,
-          Index: isIndexConnected ? indexType : 'None', // None | ConsumerPriceIndex
-          IndexRate: indexRate || 0,
+          Amount: rentalAmount || 0, // Required
+          Index: isIndexConnected ? indexType : 'None', // Required // TODO: Update.... Right now there is a choice of three index types but should only be: None | ConsumerPriceIndex
+          IndexRate: indexRate || null,
         },
         Payment: {
-          Method: paymentMethod, // BankTransfer | PaymentSlip | Other
+          Method: paymentMethod, // Required
           OtherMethod:
             paymentMethod === RentalPaymentMethodOptions.OTHER
               ? paymentMethodOther
-              : '',
-          PaymentDay: paymentDay, // First | Last | Other
+              : null,
+          PaymentDay: paymentDay, // Required
           OtherPaymentDay:
             paymentDay === RentalAmountPaymentDateOptions.OTHER
               ? paymentDayOther
-              : '',
+              : null,
           BankAccountNumber:
             paymentMethod === RentalPaymentMethodOptions.BANK_TRANSFER
               ? bankAccountNumber
-              : '',
+              : null,
           NationalIdOfAccountOwner:
             paymentMethod === RentalPaymentMethodOptions.BANK_TRANSFER
               ? nationalIdOfAccountOwner
-              : '',
+              : null,
         },
         SecurityDeposit: {
-          Type: securityDepositType || 'None', // None | BankGuarantee | Capital | ThirdPartyGuarantee | InsuranceCompany | LandlordMutualFund | Other
+          Type: securityDepositType || 'None',
           OtherType:
             securityDepositType === SecurityDepositTypeOptions.OTHER
               ? otherInfo
-              : '',
-          Description: getSecurityDepositTypeDescription(
-            securityDepositType || '',
-          ),
-          Amount: securityDepositAmount, // OneMonth | TwoMonths | ThreeMonths | Other
+              : null,
+          Description: securityDepositType
+            ? getSecurityDepositTypeDescription(securityDepositType)
+            : null,
+          Amount: securityDepositAmount,
           OtherAmount:
             securityDepositAmount === SecurityDepositAmountOptions.OTHER
               ? securityDepositAmountOther
-              : '',
+              : 0,
         },
         OtherFees: {
           HousingFund: {
@@ -243,7 +252,7 @@ export class RentalAgreementService extends BaseTemplateApiService {
                 : 'Landlord',
             MeterNumber: electricityCostMeterNumber || '',
             MeterStatus: electricityCostMeterStatus || '',
-            MeterStatusDate: electricityCostMeterStatusDate || '', // yyyy-MM-dd
+            MeterStatusDate: electricityCostMeterStatusDate || '',
           },
           HeatingCost: {
             PayedBy:
@@ -252,7 +261,7 @@ export class RentalAgreementService extends BaseTemplateApiService {
                 : 'Landlord',
             MeterNumber: heatingCostMeterNumber || '',
             MeterStatus: heatingCostMeterStatus || '',
-            MeterStatusDate: heatingCostMeterStatusDate || '', // yyyy-MM-dd
+            MeterStatusDate: heatingCostMeterStatusDate || '',
           },
           MiscellaneousFees: otherFeesOtherCostItems,
         },
@@ -260,8 +269,8 @@ export class RentalAgreementService extends BaseTemplateApiService {
     }
 
     console.log(
-      '-------------------- Answers to send to RentalService: ',
-      applicationToRentalRegistry,
+      '-------------------- Answers sent to RentalService --------------------: ',
+      newApplication,
     )
   }
 }
