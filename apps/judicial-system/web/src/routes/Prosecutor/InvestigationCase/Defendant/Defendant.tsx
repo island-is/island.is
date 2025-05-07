@@ -198,16 +198,7 @@ const Defendant = () => {
     }))
   }
 
-  const handleScrollToAddDefendantButton = () => {
-    setTimeout(() => {
-      const element = document.getElementById('addDefendantButton')
-
-      element?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
-      })
-    }, 50)
-  }
+  const addDefendantButtonId = 'addDefendantButton'
 
   const handleCreateDefendantClick = async () => {
     if (workingCase.id) {
@@ -216,7 +207,16 @@ const Defendant = () => {
     } else {
       createEmptyDefendant()
     }
-    handleScrollToAddDefendantButton()
+
+    // Scroll to the new defendant
+    setTimeout(() => {
+      const element = document.getElementById(addDefendantButtonId)
+
+      element?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      })
+    }, 50)
   }
 
   const createEmptyDefendant = (defendantId?: string) => {
@@ -389,8 +389,8 @@ const Defendant = () => {
             </AnimatePresence>
             <Box display="flex" justifyContent="flexEnd" marginTop={3}>
               <Button
-                data-testid="addDefendantButton"
-                id="addDefendantButton"
+                data-testid={addDefendantButtonId}
+                id={addDefendantButtonId}
                 variant="ghost"
                 icon="add"
                 onClick={handleCreateDefendantClick}
