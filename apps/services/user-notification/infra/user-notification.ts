@@ -199,45 +199,5 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
       prod: { schedule: '@midnight' },
     })
 
-export const userNotificationBirthdayWorkerSetup = (services: {
-  userProfileApi: ServiceBuilder<'service-portal-api'>
-}): ServiceBuilder<typeof serviceBirthdayWorkerName> =>
-  service(serviceBirthdayWorkerName)
-    .image(imageName)
-    .namespace(serviceName)
-    .serviceAccount(serviceBirthdayWorkerName)
-    .codeOwner(CodeOwners.Juni)
-    .db({ name: 'user-notification' })
-    .command('node')
-    .args(
-      '--no-experimental-fetch',
-      'main.js',
-      '--job=worker',
-      '--isBirthdayWorker',
-    )
-    .redis()
-    .env({ ...getEnv(services) })
-    .secrets({
-      FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
-      CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
-      IDENTITY_SERVER_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
-      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
-      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
-        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
-    })
-    .resources({
-      limits: {
-        cpu: '400m',
-        memory: '384Mi',
-      },
-      requests: {
-        cpu: '150m',
-        memory: '256Mi',
-      },
-    })
-    .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
-    .extraAttributes({
-      dev: { schedule: '0 12 * * *' }, // 12 at noon every day
-      staging: { schedule: '@midnight' },
-      prod: { schedule: '@midnight' },
-    })
+
+    //Dummy
