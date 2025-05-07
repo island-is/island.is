@@ -29,7 +29,7 @@ import {
   ActorProfileDto,
   MeActorProfileDto,
   PaginatedActorProfileDto,
-  SingleActorProfileDto,
+  ActorProfileDetailsDto,
 } from './dto/actor-profile.dto'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import { Emails } from './models/emails.model'
@@ -372,6 +372,49 @@ export class UserProfileService {
     return this.findById(nationalId, true, ClientType.FIRST_PARTY)
   }
 
+  async getActorProfilesDetails(
+    nationalId: string,
+  ): Promise<ActorProfileDetailsDto[]> {
+    const actorProfiles = await this.actorProfileModel.findAll({
+      where: { toNationalId: nationalId },
+      include: [
+        {
+          model: Emails,
+          as: 'emails',
+        },
+      ],
+    })
+
+    return actorProfiles.map((actorProfile): ActorProfileDetailsDto => {
+      const email = actorProfile.emails || null
+
+      if (!email) {
+        return {
+          emailStatus: DataStatus.EMPTY,
+          email: null,
+          needsNudge: null,
+          actorNationalId: actorProfile.fromNationalId,
+          emailNotifications: actorProfile.emailNotifications,
+          emailVerified: false,
+        }
+      }
+
+      return {
+        emailStatus: email.emailStatus,
+        email: email.email,
+        needsNudge: this.checkNeedsNudge({
+          email: email.email,
+          emailStatus: email.emailStatus,
+          nextNudge: actorProfile.nextNudge,
+          shouldValidatePhoneNumber: false,
+        }),
+        actorNationalId: actorProfile.fromNationalId,
+        emailNotifications: actorProfile.emailNotifications,
+        emailVerified: email.emailStatus === DataStatus.VERIFIED,
+      }
+    })
+  }
+
   async createEmailVerification({
     nationalId,
     email,
@@ -670,14 +713,28 @@ export class UserProfileService {
     ) {
       throw new NoContentException()
     }
-    const [profile] = await this.delegationPreference.upsert({
-      toNationalId,
-      fromNationalId,
-      emailNotifications,
-      emailsId,
-    })
 
-    return profile.toDto()
+    try {
+      // Validate emailsId exists if provided
+      if (emailsId) {
+        const emailRecord = await this.emailModel.findByPk(emailsId)
+        if (!emailRecord) {
+          throw new Error(`Email record with ID ${emailsId} does not exist`)
+        }
+      }
+
+      const [profile] = await this.delegationPreference.upsert({
+        toNationalId,
+        fromNationalId,
+        emailNotifications,
+        emailsId,
+      })
+
+      return profile.toDto()
+    } catch (error) {
+      console.log('error', error)
+      throw error
+    }
   }
 
   /**
@@ -739,7 +796,7 @@ export class UserProfileService {
   }: {
     toNationalId: string
     fromNationalId: string
-  }): Promise<SingleActorProfileDto> {
+  }): Promise<ActorProfileDetailsDto> {
     const incomingDelegations = await this.getIncomingDelegations(toNationalId)
 
     // Check if this delegation exists

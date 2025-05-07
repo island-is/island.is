@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -16,6 +17,7 @@ import type {
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
+import { ActorProfile } from './actor-profile.model'
 
 @Table({
   tableName: 'emails',
@@ -84,4 +86,10 @@ export class Emails extends Model<
     as: 'userProfile',
   })
   userProfile?: UserProfile
+
+  @HasMany(() => ActorProfile, {
+    foreignKey: 'emailsId',
+    sourceKey: 'id',
+  })
+  actorProfiles?: ActorProfile[]
 }

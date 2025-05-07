@@ -1359,7 +1359,6 @@ describe('MeUserProfileController', () => {
     let userProfileModel: typeof UserProfile
     let actorProfileModel: typeof ActorProfile
     let delegationsApi: DelegationsApi
-    const testEmailsId = uuid()
 
     beforeAll(async () => {
       app = await setupApp({
@@ -1421,12 +1420,24 @@ describe('MeUserProfileController', () => {
           totalCount: 2,
         })
 
+      const userProfile = await fixtureFactory.createUserProfile({
+        nationalId: testNationalId1,
+        emails: [],
+      })
+
+      const email1 = await fixtureFactory.createEmail({
+        email: 'test@example.com',
+        primary: true,
+        emailStatus: DataStatus.VERIFIED,
+        nationalId: testNationalId1,
+      })
+
       // only create actor profile for one of the delegations
       await fixtureFactory.createActorProfile({
         toNationalId: testUserProfile.nationalId,
         fromNationalId: testNationalId1,
         emailNotifications: false,
-        emailsId: testEmailsId,
+        emailsId: email1.id,
       })
 
       // Act
@@ -1437,7 +1448,7 @@ describe('MeUserProfileController', () => {
       expect(res.body.data[0]).toStrictEqual({
         fromNationalId: testNationalId1,
         emailNotifications: false,
-        emailsId: testEmailsId,
+        emailsId: email1.id,
       })
       // Should default to true because we don't have a record for this delegation
       expect(res.body.data[1]).toStrictEqual({
@@ -1445,6 +1456,201 @@ describe('MeUserProfileController', () => {
         emailNotifications: true,
       })
 
+      expect(
+        delegationsApi.delegationsControllerGetDelegationRecords,
+      ).toHaveBeenCalledWith({
+        xQueryNationalId: testUserProfile.nationalId,
+        scope: '@island.is/documents',
+        direction: 'incoming',
+      })
+    })
+
+    it('should return an empty array when there are no delegations', async () => {
+      // Arrange
+      jest
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValue({
+          data: [],
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
+          },
+          totalCount: 0,
+        })
+
+      // Act
+      const res = await server.get('/v2/me/actor-profiles')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toEqual({
+        data: [],
+        totalCount: 0,
+        pageInfo: {
+          hasNextPage: false,
+        },
+      })
+    })
+
+    it('should return actor profiles with multiple profiles having emailsId', async () => {
+      const testNationalId1 = createNationalId('person')
+      const testNationalId2 = createNationalId('person')
+
+      // Arrange
+      jest
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValue({
+          data: [
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId1,
+              subjectId: null,
+              type: 'delegation',
+            },
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId2,
+              subjectId: null,
+              type: 'delegation',
+            },
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
+          },
+          totalCount: 2,
+        })
+
+      // Create user profiles and emails for both delegations
+      const userProfile1 = await fixtureFactory.createUserProfile({
+        nationalId: testNationalId1,
+        emails: [],
+      })
+
+      const email1 = await fixtureFactory.createEmail({
+        email: 'test1@example.com',
+        primary: true,
+        emailStatus: DataStatus.VERIFIED,
+        nationalId: testNationalId1,
+      })
+
+      const userProfile2 = await fixtureFactory.createUserProfile({
+        nationalId: testNationalId2,
+        emails: [],
+      })
+
+      const email2 = await fixtureFactory.createEmail({
+        email: 'test2@example.com',
+        primary: true,
+        emailStatus: DataStatus.VERIFIED,
+        nationalId: testNationalId2,
+      })
+
+      // Create actor profiles for both delegations
+      await fixtureFactory.createActorProfile({
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId1,
+        emailNotifications: false,
+        emailsId: email1.id,
+      })
+
+      await fixtureFactory.createActorProfile({
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId2,
+        emailNotifications: true,
+        emailsId: email2.id,
+      })
+
+      // Act
+      const res = await server.get('/v2/me/actor-profiles')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body.data).toHaveLength(2)
+      expect(res.body.data[0]).toStrictEqual({
+        fromNationalId: testNationalId1,
+        emailNotifications: false,
+        emailsId: email1.id,
+      })
+      expect(res.body.data[1]).toStrictEqual({
+        fromNationalId: testNationalId2,
+        emailNotifications: true,
+        emailsId: email2.id,
+      })
+    })
+
+    it('should handle delegations API errors gracefully', async () => {
+      // Arrange
+      jest
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockRejectedValue(new Error('Service unavailable'))
+
+      // Act
+      const res = await server.get('/v2/me/actor-profiles')
+
+      // Assert
+      expect(res.status).toEqual(500) // Should return internal server error
+    })
+
+    it('should return actor profiles with different delegation types', async () => {
+      const testNationalId1 = createNationalId('person')
+      const testNationalId2 = createNationalId('person')
+
+      // Arrange
+      jest
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValue({
+          data: [
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId1,
+              subjectId: null,
+              type: 'delegation',
+            },
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId2,
+              subjectId: 'document-123',
+              type: 'document-delegation',
+            },
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
+          },
+          totalCount: 2,
+        })
+
+      // Create actor profile for the first delegation only
+      await fixtureFactory.createActorProfile({
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId1,
+        emailNotifications: false,
+      })
+
+      // Act
+      const res = await server.get('/v2/me/actor-profiles')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body.data).toHaveLength(2)
+      expect(res.body.data[0]).toStrictEqual({
+        fromNationalId: testNationalId1,
+        emailNotifications: false,
+        emailsId: null,
+      })
+      expect(res.body.data[1]).toStrictEqual({
+        fromNationalId: testNationalId2,
+        emailNotifications: true,
+      })
+
+      // Verify it used the correct parameters
       expect(
         delegationsApi.delegationsControllerGetDelegationRecords,
       ).toHaveBeenCalledWith({
@@ -1464,7 +1670,8 @@ describe('MeUserProfileController', () => {
     let emailsModel: typeof Emails
     let delegationsApi: DelegationsApi
     const testNationalId1 = createNationalId('person')
-    const testEmailsId = uuid()
+    let testEmailsId = uuid()
+    let testEmail2Id = uuid()
 
     beforeAll(async () => {
       app = await setupApp({
@@ -1515,6 +1722,28 @@ describe('MeUserProfileController', () => {
           },
           totalCount: 1,
         })
+
+      const userProfile = await fixtureFactory.createUserProfile({
+        nationalId: testNationalId1,
+        emails: [],
+      })
+
+      const email1 = await fixtureFactory.createEmail({
+        email: 'test@example.com',
+        primary: true,
+        emailStatus: DataStatus.VERIFIED,
+        nationalId: testNationalId1,
+      })
+
+      const email2 = await fixtureFactory.createEmail({
+        email: 'test2@example.com',
+        primary: false,
+        emailStatus: DataStatus.VERIFIED,
+        nationalId: testNationalId1,
+      })
+
+      testEmailsId = email1.id
+      testEmail2Id = email2.id
     })
 
     afterEach(async () => {
@@ -1564,27 +1793,29 @@ describe('MeUserProfileController', () => {
     })
 
     it('should update existing actor profile', async () => {
-      const testEmailsId2 = uuid()
       // Arrange
       await fixtureFactory.createActorProfile({
         toNationalId: testUserProfile.nationalId,
         fromNationalId: testNationalId1,
         emailNotifications: true,
-        emailsId: testEmailsId2,
+        emailsId: testEmailsId,
       })
 
       // Act
       const res = await server
         .patch('/v2/me/actor-profiles/.from-national-id')
         .set('X-Param-From-National-Id', testNationalId1)
-        .send({ emailNotifications: false, emailsId: testEmailsId2 })
+        .send({
+          emailNotifications: false,
+          emailsId: testEmail2Id,
+        })
 
       // Assert
       expect(res.status).toEqual(200)
       expect(res.body).toStrictEqual({
         fromNationalId: testNationalId1,
         emailNotifications: false,
-        emailsId: testEmailsId2,
+        emailsId: testEmail2Id,
       })
 
       const actorProfile = await delegationPreferenceModel.findAll({
@@ -1597,7 +1828,7 @@ describe('MeUserProfileController', () => {
       expect(actorProfile).toHaveLength(1)
       expect(actorProfile[0]).not.toBeNull()
       expect(actorProfile[0].emailNotifications).toBe(false)
-      expect(actorProfile[0].emailsId).toBe(testEmailsId2)
+      expect(actorProfile[0].emailsId).toBe(testEmail2Id)
     })
 
     it('should create new actor profile with emailsId', async () => {
@@ -1644,7 +1875,7 @@ describe('MeUserProfileController', () => {
         .patch('/v2/me/actor-profiles/.from-national-id')
         .set('X-Param-From-National-Id', testNationalId1)
         .send({
-          emailsId: testEmailsId,
+          emailsId: testEmail2Id,
         })
 
       // Assert
@@ -1652,7 +1883,7 @@ describe('MeUserProfileController', () => {
       expect(res.body).toStrictEqual({
         fromNationalId: testNationalId1,
         emailNotifications: true,
-        emailsId: testEmailsId,
+        emailsId: testEmail2Id,
       })
 
       const actorProfile = await delegationPreferenceModel.findAll({
@@ -1665,7 +1896,7 @@ describe('MeUserProfileController', () => {
       expect(actorProfile).toHaveLength(1)
       expect(actorProfile[0]).not.toBeNull()
       expect(actorProfile[0].emailNotifications).toBe(true)
-      expect(actorProfile[0].emailsId).toBe(testEmailsId)
+      expect(actorProfile[0].emailsId).toBe(testEmail2Id)
     })
 
     it('should throw no content exception if delegation is not found', async () => {

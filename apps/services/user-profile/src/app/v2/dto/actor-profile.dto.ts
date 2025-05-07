@@ -63,7 +63,7 @@ export class ActorProfileDto {
   readonly emailsId?: string
 }
 
-export class SingleActorProfileDto {
+export class ActorProfileDetailsDto {
   @ApiProperty({ type: () => String, nullable: true })
   @IsOptional()
   @IsEmail()

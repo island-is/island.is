@@ -2,6 +2,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsAuthGuard,
+  IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
@@ -27,7 +28,7 @@ import { CreateEmailDto } from './dto/create-emails.dto'
 
 const namespace = '@island.is/user-profile/v2/emails'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(UserProfileScope.read)
 @ApiTags('v2/me/emails')
 @ApiSecurity('oauth2', [])
