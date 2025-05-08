@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import {
@@ -42,7 +42,14 @@ export class VehiclesResolver {
   ) {}
 
   @Scopes(ApiScope.vehicles)
-  @Query(() => VehiclesList, { name: 'vehiclesList', nullable: true })
+  @Directive(
+    '@deprecated(reason: "Too slow. Use VehiclesListV2 when possible.")',
+  )
+  @Query(() => VehiclesList, {
+    name: 'vehiclesList',
+    nullable: true,
+    deprecationReason: 'Too slow. Use VehiclesListV2 when possible.',
+  })
   @Audit()
   async getVehicleList(
     @CurrentUser() user: User,

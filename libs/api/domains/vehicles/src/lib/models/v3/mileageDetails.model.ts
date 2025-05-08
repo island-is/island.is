@@ -4,10 +4,14 @@ import { MileageRegistration } from './mileageRegistration.model'
 
 @ObjectType('VehiclesMileageDetails')
 export class MileageDetails {
-  @Field({ nullable: true })
+  @Field({
+    nullable: true,
+  })
   canRegisterMileage?: boolean
 
-  @Field({ nullable: true })
+  @Field({
+    nullable: true,
+  })
   requiresMileageRegistration?: boolean
 
   @Field(() => MileageRegistration, { nullable: true })

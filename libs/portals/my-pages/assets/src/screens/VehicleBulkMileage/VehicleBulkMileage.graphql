@@ -6,10 +6,13 @@ query vehiclesList($input: VehiclesListInputV3!) {
     totalRecords
     data {
       vehicleId
-      registrationNumber
-      userRole
-      type
-      color
+      registration {
+        number
+      }
+      make
+      color {
+        name
+      }
       mileageDetails {
         lastMileageRegistration {
           ...mileageRegistration

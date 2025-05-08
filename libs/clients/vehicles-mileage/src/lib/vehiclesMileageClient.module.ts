@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common'
-import { VehiclesMileageApiProvider } from './vehiclesMileageClient.service'
+import { VehiclesMileageClientService } from './vehiclesMileageClient.service'
+import { VehiclesMileageApiProvider } from './providers'
 
 @Module({
-  providers: [VehiclesMileageApiProvider],
-  exports: [VehiclesMileageApiProvider],
+  providers: [VehiclesMileageApiProvider, VehiclesMileageClientService],
+  exports: [VehiclesMileageApiProvider, VehiclesMileageClientService],
 })
 export class VehiclesMileageClientModule {}
