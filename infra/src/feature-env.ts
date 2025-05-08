@@ -16,6 +16,7 @@ import {
   renderHelmJobForFeature,
   renderHelmServices,
   renderHelmValueFileContent,
+  renderCleanUpForFeature
 } from './dsl/exports/helm'
 import { ServiceBuilder } from './dsl/dsl'
 import { logger } from './logging'
@@ -34,6 +35,7 @@ interface Arguments extends ArgumentsCamelCase {
   chart: ChartName
   output?: string
   jobImage?: string
+  cleanupImage?: string
   withMocks?: 'true' | 'false'
 }
 
@@ -243,19 +245,18 @@ yargs(process.argv.slice(2))
         .filter((name) => !affectedServiceNames.includes(name))
 
       // BFF hack since the service name is not equal to the nx app name
-      const correctedFormattedList = Array.from(
-        new Set(
-          formattedList.map((name) => {
-            if (name.includes('services-bff-portals')) {
-              return 'services-bff'
-            } else {
-              return name
-            }
-          }),
-        ),
-      ).toString()
+      const correctedFormattedList = Array.from(new Set(formattedList.map((name) => {
+        if (name.includes("services-bff-portals")) {
+          return "services-bff"
+        } else {
+          return name
+        }
+      }))).toString()
 
-      writeToOutput(correctedFormattedList, typedArgv.output)
+      writeToOutput(
+        correctedFormattedList,
+        typedArgv.output,
+      )
     },
   })
   .command({
@@ -344,6 +345,56 @@ yargs(process.argv.slice(2))
       }
     },
   })
+  .command({
+    command: 'cleanup',
+    describe: 'get kubernetes jobs to cleanup feature environment',
+    builder: (yargs) => {
+      return yargs
+      .option('cleanupImage', {
+        type: 'string',
+        description: 'Image to run feature cleanup jobs',
+        demandOption: true,
+      })
+      .option('writeDest', {
+        type: 'string',
+        description: 'Template location where to write files to for down stream apps',
+        default: ''
+      })
+      .option('containerCommand', {
+        type: 'string',
+        description: 'Command to run in the container',
+        default: 'cleanup',
+      })
+    },
+    handler: async (argv) => {
+      const typedArgv = (argv as unknown) as Arguments
+      const { affectedServices, env, writeDest } = parseArguments(typedArgv)
+      const featureYaml = await renderCleanUpForFeature(
+        env,
+        typedArgv.cleanupImage!,
+        affectedServices,
+      )
+
+      if (featureYaml.spec.template.spec.containers.length <= 0 || affectedServices.length <= 0) {
+        return
+      }
+
+      const svcString = dumpJobYaml(featureYaml)
+
+      if (writeDest != '') {
+        try {
+          fs.mkdirSync(`${writeDest}/${affectedServices[0].name()}`, { recursive: true })
+        console.log(`writing file to: ${writeDest}/${affectedServices[0].name()}/cleanup-fd-job.yaml}`)
+        fs.writeFileSync(`${writeDest}/${affectedServices[0].name()}/cleanup-fd-job.yaml`, svcString);
+        } catch (error) {
+          console.log(`Failed to write values file for ${affectedServices[0].name()}:`, error)
+          throw new Error(`Failed to write values for ${affectedServices[0].name()}`);
+        }
+      } else {
+        await writeToOutput(svcString, typedArgv.output)
+      }
+    },
+  })
   .options({
     feature: {
       type: 'string',
@@ -367,3 +418,5 @@ yargs(process.argv.slice(2))
     },
   })
   .demandCommand().argv
+
+

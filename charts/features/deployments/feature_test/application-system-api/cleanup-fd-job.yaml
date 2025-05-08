@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+  name: destroy-fd-feature_test-1746708389041
+spec:
+  template:
+    spec:
+      containers:
+        - command:
+            - /app/destroy-dbs.sh feature_test
+          env: []
+          image: 'great_registy/helm-config:tag_my_bitch_up'
+          name: feature-feature-test-application-system-api1
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+      restartPolicy: Never
+      serviceAccountName: feature-deployment
