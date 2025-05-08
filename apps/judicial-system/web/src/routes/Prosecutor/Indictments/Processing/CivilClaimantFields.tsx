@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -10,6 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  FormContext,
   InputAdvocate,
   InputName,
   InputNationalId,
@@ -18,6 +19,10 @@ import {
   CivilClaimant,
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useCivilClaimants,
+  useNationalRegistry,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './processing.strings'
 
@@ -25,36 +30,97 @@ interface UpdateCivilClaimant
   extends Omit<UpdateCivilClaimantInput, 'caseId'> {}
 
 export const CivilClaimantFields = ({
+  caseId,
   civilClaimant,
   civilClaimantIndex,
   removeCivilClaimantById,
-  handleSetAndSendCivilClaimantToServer,
-  nationalIdNotFound,
-  setNationalIdNotFound,
-  handleCivilClaimantNationalIdBlur,
-  handleUpdateCivilClaimantState,
-  handleCivilClaimantNameBlur,
-  handleUpdateCivilClaimant,
 }: {
+  caseId: string
   civilClaimant: CivilClaimant
   civilClaimantIndex: number
   removeCivilClaimantById: (id: string) => void
-  handleSetAndSendCivilClaimantToServer: (update: UpdateCivilClaimant) => void
-  nationalIdNotFound: boolean
-  setNationalIdNotFound: Dispatch<SetStateAction<boolean>>
-  handleCivilClaimantNationalIdBlur: (
+}) => {
+  const { formatMessage } = useIntl()
+  const { setWorkingCase } = useContext(FormContext)
+  const { personData } = useNationalRegistry(civilClaimant.nationalId)
+  const {
+    updateCivilClaimant,
+    updateCivilClaimantState,
+    setAndSendCivilClaimantToServer,
+  } = useCivilClaimants()
+
+  const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
+    useState<{ nationalId: string | null; civilClaimantId: string }>()
+  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
+
+  const handleUpdateCivilClaimant = (update: UpdateCivilClaimant) => {
+    updateCivilClaimant({ caseId, ...update })
+  }
+
+  const handleUpdateCivilClaimantState = (update: UpdateCivilClaimant) => {
+    updateCivilClaimantState({ caseId, ...update }, setWorkingCase)
+  }
+
+  const handleSetAndSendCivilClaimantToServer = (
+    update: UpdateCivilClaimant,
+  ) => {
+    setAndSendCivilClaimantToServer({ caseId, ...update }, setWorkingCase)
+  }
+
+  const handleCivilClaimantNameBlur = async (
+    name: string,
+    civilClaimantId?: string | null,
+  ) => {
+    if (!civilClaimantId) {
+      return
+    }
+
+    updateCivilClaimant({ name, civilClaimantId, caseId })
+  }
+
+  const handleCivilClaimantNationalIdBlur = (
     nationalId: string,
     noNationalId?: boolean | null,
     civilClaimantId?: string | null,
-  ) => void
-  handleUpdateCivilClaimantState: (update: UpdateCivilClaimant) => void
-  handleCivilClaimantNameBlur: (
-    name: string,
-    civilClaimantId?: string | null,
-  ) => void
-  handleUpdateCivilClaimant: (update: UpdateCivilClaimant) => void
-}) => {
-  const { formatMessage } = useIntl()
+  ) => {
+    if (!civilClaimantId) {
+      return
+    }
+
+    if (noNationalId) {
+      handleSetAndSendCivilClaimantToServer({
+        civilClaimantId,
+        nationalId: nationalId || null,
+      })
+    } else {
+      const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
+      setCivilClaimantNationalIdUpdate({
+        nationalId: cleanNationalId || null,
+        civilClaimantId,
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (!civilClaimantNationalIdUpdate) {
+      return
+    }
+
+    const items = personData?.items || []
+    const person = items[0]
+
+    setNationalIdNotFound(items.length === 0)
+
+    const update: UpdateCivilClaimant = {
+      civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
+      nationalId: civilClaimantNationalIdUpdate.nationalId,
+      ...(person?.name ? { name: person.name } : {}),
+    }
+
+    handleSetAndSendCivilClaimantToServer(update)
+    // We want this hook to run exclusively when personData changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [personData])
 
   return (
     <>

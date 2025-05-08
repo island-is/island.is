@@ -1,11 +1,4 @@
-import {
-  FC,
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { FC, Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -39,14 +32,12 @@ import {
   CaseTransition,
   CivilClaimant,
   DefendantPlea,
-  UpdateCivilClaimantInput,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useCivilClaimants,
   useDefendants,
-  useNationalRegistry,
   useOnceOn,
   useS3Upload,
   useUploadFiles,
@@ -58,10 +49,8 @@ import { CivilClaimantFields } from './CivilClaimantFields'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
-interface UpdateCivilClaimant
-  extends Omit<UpdateCivilClaimantInput, 'caseId'> {}
-
 interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
+const addCivilClaimantFileSectionId = 'addCivilClaimantFileSection'
 
 const Processing: FC = () => {
   const { user } = useContext(UserContext)
@@ -75,13 +64,7 @@ const Processing: FC = () => {
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()
-  const {
-    updateCivilClaimant,
-    updateCivilClaimantState,
-    createCivilClaimant,
-    deleteCivilClaimant,
-    setAndSendCivilClaimantToServer,
-  } = useCivilClaimants()
+  const { createCivilClaimant, deleteCivilClaimant } = useCivilClaimants()
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -94,11 +77,8 @@ const Processing: FC = () => {
   )
   const router = useRouter()
 
-  const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
-    useState<{ nationalId: string | null; civilClaimantId: string }>()
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
     useState<boolean>()
-  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
@@ -140,10 +120,6 @@ const Processing: FC = () => {
     [router, setWorkingCase, transitionCase, workingCase],
   )
 
-  const { personData } = useNationalRegistry(
-    civilClaimantNationalIdUpdate?.nationalId,
-  )
-
   const stepIsValid =
     isProcessingStepValidIndictments(workingCase) && allFilesDoneOrError
 
@@ -152,12 +128,6 @@ const Processing: FC = () => {
       { caseId: workingCase.id, ...update },
       setWorkingCase,
     )
-  }
-
-  const handleCreateCivilClaimantClick = () => {
-    addCivilClaimant()
-
-    window.scrollTo(0, document.body.scrollHeight)
   }
 
   const addCivilClaimant = async () => {
@@ -176,6 +146,16 @@ const Processing: FC = () => {
         } as CivilClaimant,
       ],
     }))
+  }
+
+  const handleCreateCivilClaimantClick = () => {
+    addCivilClaimant()
+
+    const element = document.getElementById(addCivilClaimantFileSectionId)
+    element?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end',
+    })
   }
 
   const removeCivilClaimantById = async (civilClaimantId: string) => {
@@ -206,26 +186,6 @@ const Processing: FC = () => {
     }
   }
 
-  const handleUpdateCivilClaimantState = (update: UpdateCivilClaimant) => {
-    updateCivilClaimantState(
-      { caseId: workingCase.id, ...update },
-      setWorkingCase,
-    )
-  }
-
-  const handleUpdateCivilClaimant = (update: UpdateCivilClaimant) => {
-    updateCivilClaimant({ caseId: workingCase.id, ...update })
-  }
-
-  const handleSetAndSendCivilClaimantToServer = (
-    update: UpdateCivilClaimant,
-  ) => {
-    setAndSendCivilClaimantToServer(
-      { caseId: workingCase.id, ...update },
-      setWorkingCase,
-    )
-  }
-
   const handleHasCivilClaimsChange = (hasCivilClaims: boolean) => {
     setHasCivilClaimantChoice(hasCivilClaims)
 
@@ -241,62 +201,6 @@ const Processing: FC = () => {
       removeAllCivilClaimants()
     }
   }
-
-  const handleCivilClaimantNationalIdBlur = (
-    nationalId: string,
-    noNationalId?: boolean | null,
-    civilClaimantId?: string | null,
-  ) => {
-    if (!civilClaimantId) {
-      return
-    }
-
-    if (noNationalId) {
-      handleSetAndSendCivilClaimantToServer({
-        civilClaimantId,
-        nationalId: nationalId || null,
-      })
-    } else {
-      const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
-      setCivilClaimantNationalIdUpdate({
-        nationalId: cleanNationalId || null,
-        civilClaimantId,
-      })
-    }
-  }
-
-  const handleCivilClaimantNameBlur = async (
-    name: string,
-    civilClaimantId?: string | null,
-  ) => {
-    if (!civilClaimantId) {
-      return
-    }
-
-    updateCivilClaimant({ name, civilClaimantId, caseId: workingCase.id })
-  }
-
-  useEffect(() => {
-    if (!civilClaimantNationalIdUpdate) {
-      return
-    }
-
-    const items = personData?.items || []
-    const person = items[0]
-
-    setNationalIdNotFound(items.length === 0)
-
-    const update: UpdateCivilClaimant = {
-      civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
-      nationalId: civilClaimantNationalIdUpdate.nationalId,
-      ...(person?.name ? { name: person.name } : {}),
-    }
-
-    handleSetAndSendCivilClaimantToServer(update)
-
-    // We want this hook to run exclusively when personData changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personData])
 
   return (
     <PageLayout
@@ -453,24 +357,10 @@ const Processing: FC = () => {
                   <Box marginBottom={3}>
                     <BlueBox>
                       <CivilClaimantFields
+                        caseId={workingCase.id}
                         civilClaimant={civilClaimant}
                         civilClaimantIndex={index}
                         removeCivilClaimantById={removeCivilClaimantById}
-                        handleSetAndSendCivilClaimantToServer={
-                          handleSetAndSendCivilClaimantToServer
-                        }
-                        nationalIdNotFound={nationalIdNotFound}
-                        setNationalIdNotFound={setNationalIdNotFound}
-                        handleCivilClaimantNationalIdBlur={
-                          handleCivilClaimantNationalIdBlur
-                        }
-                        handleUpdateCivilClaimantState={
-                          handleUpdateCivilClaimantState
-                        }
-                        handleCivilClaimantNameBlur={
-                          handleCivilClaimantNameBlur
-                        }
-                        handleUpdateCivilClaimant={handleUpdateCivilClaimant}
                       />
                     </BlueBox>
                   </Box>
@@ -486,7 +376,11 @@ const Processing: FC = () => {
                 </Button>
               </Box>
             </Box>
-            <Box component="section" marginBottom={10}>
+            <Box
+              id={addCivilClaimantFileSectionId}
+              component="section"
+              marginBottom={10}
+            >
               <SectionHeading title="Bótakrafa" heading="h2" />
               <InputFileUpload
                 name="civilClaim"
