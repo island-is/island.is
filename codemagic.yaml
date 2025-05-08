@@ -95,12 +95,21 @@ definitions:
         fi
         cd android
         ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
-    - &boot-simulator
+    - &boot-simulator-ios
       name: Boot simulator
       script: |
         xcrun simctl boot "iPhone 16"
         xcrun simctl list devices
         xcrun simctl launch booted is.island.app.dev
+    - &build-simulator-ios
+      name: Build for simulator
+      script: xcodebuild \
+        -workspace "ios/$XCODE_WORKSPACE" \
+        -scheme "$XCODE_SCHEME" \
+        -sdk iphonesimulator \
+        -configuration Debug \
+        -derivedDataPath build
+        xcrun simctl install booted build/Build/Products/Debug-iphonesimulator/*.app
     - &maestro-tests
       name: Install and run Maestro end to end tests
       script: |
@@ -193,7 +202,8 @@ workflows:
       - *provisioning_profiles
       - *increment_build_number
       - *build_ipa
-      - *boot-simulator
+      - *boot-simulator-ios
+      - *build-simulator-ios
       - *maestro-tests
     artifacts: *ios_artifacts
     publishing:
