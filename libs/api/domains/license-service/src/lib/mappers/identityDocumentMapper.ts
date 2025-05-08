@@ -160,6 +160,13 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
             },
           }
         : null,
+      licenseType
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: formatMessage(m.licenseType),
+            value: licenseType,
+          }
+        : null,
       document.issuingDate
         ? {
             type: GenericLicenseDataFieldType.Value,
@@ -173,13 +180,6 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
             label: formatMessage(m.expiryDate),
             value: formatDate(document.expirationDate),
             tag: displayTag,
-          }
-        : null,
-      licenseType
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: formatMessage(m.licenseType),
-            value: licenseType,
           }
         : null,
       document.mrzFirstName && document.mrzLastName && document.subType === 'D'
