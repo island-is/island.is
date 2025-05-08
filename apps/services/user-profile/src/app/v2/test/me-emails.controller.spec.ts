@@ -31,9 +31,15 @@ const testUserProfile = {
   mobilePhoneNumber: formatPhoneNumber(createPhoneNumber()),
 }
 
+// Create actor test data
+const actorNationalId = createNationalId()
+const actorEmail = faker.internet.email()
+
 describe('Me emails controller', () => {
   let app: TestApp
   let server: SuperTest<Test>
+  let actorApp: TestApp
+  let actorServer: SuperTest<Test>
   let fixtureFactory: FixtureFactory
   let emailsModel: typeof Emails
   let userProfileModel: typeof UserProfile
@@ -55,7 +61,24 @@ describe('Me emails controller', () => {
       }),
     })
 
+    // Create actor app with user that has actor context
+    actorApp = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user: {
+        ...createCurrentUser({
+          nationalId: actorNationalId,
+          scope: [UserProfileScope.read, UserProfileScope.write],
+        }),
+        actor: {
+          nationalId: testUserProfile.nationalId,
+          scope: [UserProfileScope.read, UserProfileScope.write],
+        },
+      },
+    })
+
     server = request(app.getHttpServer())
+    actorServer = request(actorApp.getHttpServer())
     fixtureFactory = new FixtureFactory(app)
 
     // Get model references
@@ -101,6 +124,7 @@ describe('Me emails controller', () => {
 
   afterAll(async () => {
     await app.cleanUp()
+    await actorApp.cleanUp()
   })
 
   describe('GET /v2/me/emails', () => {
@@ -237,6 +261,32 @@ describe('Me emails controller', () => {
         isConnectedToActorProfile: true,
       })
     })
+
+    it('should fetch emails for actor.nationalId when actor context is present', async () => {
+      // Create user profile with emails for the actor's target
+      await fixtureFactory.createUserProfile(testUserProfile)
+
+      // Create a user profile for the actor as well
+      await fixtureFactory.createUserProfile({
+        nationalId: actorNationalId,
+        emails: [{ email: actorEmail, primary: true }],
+        mobilePhoneNumber: formatPhoneNumber(createPhoneNumber()),
+      })
+
+      // Actor should get emails for user.actor.nationalId
+      const res = await actorServer.get('/v2/me/emails')
+
+      expect(res.status).toEqual(200)
+      expect(res.body).toHaveLength(1)
+      expect(res.body[0]).toMatchObject({
+        email: testUserProfileEmail.email,
+        primary: testUserProfileEmail.primary,
+      })
+
+      // Verify actor's own emails are not returned
+      const actorEmails = res.body.find((e: any) => e.email === actorEmail)
+      expect(actorEmails).toBeUndefined()
+    })
   })
 
   describe('POST /v2/me/emails', () => {
@@ -331,6 +381,55 @@ describe('Me emails controller', () => {
         emailStatus: 'VERIFIED',
         primary: false,
       })
+    })
+
+    it('should create email for actor.nationalId when actor context is present', async () => {
+      // Set up profiles and verification for both the actor and the target user
+      await fixtureFactory.createUserProfile({
+        nationalId: actorNationalId,
+        emails: [{ email: actorEmail, primary: true }],
+        mobilePhoneNumber: formatPhoneNumber(createPhoneNumber()),
+      })
+
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        emails: [],
+      })
+
+      // Create email verification for the target user
+      await fixtureFactory.createEmailVerification({
+        nationalId: testUserProfile.nationalId,
+        email: 'actor-verified@example.com',
+        hash: 'actor123',
+      })
+
+      // Actor creates email for target user
+      const res = await actorServer.post('/v2/me/emails').send({
+        email: 'actor-verified@example.com',
+        code: 'actor123',
+      } as CreateEmailDto)
+
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        email: 'actor-verified@example.com',
+        emailStatus: 'VERIFIED',
+      })
+
+      // Verify email was created for the target user (not the actor)
+      const emails = await emailsModel.findAll({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+      expect(emails).toHaveLength(1)
+      expect(emails[0].email).toBe('actor-verified@example.com')
+
+      // Verify no email was created for the actor
+      const actorEmails = await emailsModel.findAll({
+        where: {
+          nationalId: actorNationalId,
+          email: 'actor-verified@example.com',
+        },
+      })
+      expect(actorEmails).toHaveLength(0)
     })
   })
 
@@ -493,6 +592,54 @@ describe('Me emails controller', () => {
         },
       })
       expect(otherUserEmailCount).toBe(1)
+    })
+
+    it('should delete email for actor.nationalId when actor context is present', async () => {
+      // Create profiles for both the actor and the target user
+      await fixtureFactory.createUserProfile({
+        nationalId: actorNationalId,
+        emails: [{ email: actorEmail, primary: true }],
+        mobilePhoneNumber: formatPhoneNumber(createPhoneNumber()),
+      })
+
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        emails: [],
+      })
+
+      // Create a non-primary email for the target user to be deleted
+      const targetUserEmail = await fixtureFactory.createEmail({
+        nationalId: testUserProfile.nationalId,
+        email: 'actor-target-delete@example.com',
+        primary: false,
+      })
+
+      // Create an email for the actor user (should not be affected)
+      const actorOwnEmail = await fixtureFactory.createEmail({
+        nationalId: actorNationalId,
+        email: 'actor-own-email@example.com',
+        primary: false,
+      })
+
+      // Actor deletes email for target user
+      const res = await actorServer.delete(
+        `/v2/me/emails/${targetUserEmail.id}`,
+      )
+
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({ success: true })
+
+      // Verify target user's email was deleted
+      const targetEmailAfter = await emailsModel.findOne({
+        where: { id: targetUserEmail.id },
+      })
+      expect(targetEmailAfter).toBeNull()
+
+      // Verify actor's own email was not affected
+      const actorEmailAfter = await emailsModel.findOne({
+        where: { id: actorOwnEmail.id },
+      })
+      expect(actorEmailAfter).not.toBeNull()
     })
   })
 })

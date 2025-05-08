@@ -16,6 +16,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
@@ -62,7 +63,9 @@ export class EmailsController {
     resources: (emails) => emails.map((email) => email.id),
   })
   async findAllByNationalId(@CurrentUser() user: User): Promise<EmailsDto[]> {
-    return this.emailsService.findAllByNationalId(user.nationalId)
+    return this.emailsService.findAllByNationalId(
+      user.actor?.nationalId ?? user.nationalId,
+    )
   }
 
   @Post('/')
@@ -85,7 +88,11 @@ export class EmailsController {
           email: input.email,
         },
       },
-      this.emailsService.createEmail(user.nationalId, input.email, input.code),
+      this.emailsService.createEmail(
+        user.actor?.nationalId ?? user.nationalId,
+        input.email,
+        input.code,
+      ),
     )
   }
 
@@ -118,7 +125,10 @@ export class EmailsController {
           emailId,
         },
       },
-      this.emailsService.deleteEmail(user.nationalId, emailId),
+      this.emailsService.deleteEmail(
+        user.actor?.nationalId ?? user.nationalId,
+        emailId,
+      ),
     )
   }
 }
