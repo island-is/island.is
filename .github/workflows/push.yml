@@ -488,6 +488,7 @@ jobs:
         uses: ./monorepo/.github/actions/check-label
         with:
           pr-number: ${{ github.event.pull_request.number }}
+          working-directory: monorepo
         continue-on-error: false
 
       - name: Get docker-build output
