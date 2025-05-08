@@ -4,7 +4,7 @@ import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { ResidenceCountriesRepeaterItem } from './ResidenceCountriesRepeaterItem'
 import { CountryOfResidence } from '../../shared'
 import {
@@ -191,22 +191,12 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
 
       <Box>
         {hasLivedAbroad === YES && (
-          <Box marginBottom={3} paddingTop={1}>
-            {DescriptionFormField({
-              application: application,
-              showFieldName: false,
-              field: {
-                id: 'title',
-                title: '',
-                description: formatMessage(
-                  information.labels.countriesOfResidence.countryListTitle,
-                ),
-                titleVariant: 'h5',
-                type: FieldTypes.DESCRIPTION,
-                component: FieldComponents.DESCRIPTION,
-                children: undefined,
-              },
-            })}
+          <Box marginBottom={1} paddingTop={2}>
+            <Text variant="h5">
+              {formatMessage(
+                information.labels.countriesOfResidence.countryListTitle,
+              )}
+            </Text>
           </Box>
         )}
         {selectedCountries.map((field, index) => {
