@@ -8,7 +8,7 @@ export PGPASSWORD
 set -x
 FEATURE_NAME=$1
 
-echo "feature name is $feature"
+echo "feature name is $FEATURE_NAME"
 
 # psql -tc "SELECT datname FROM pg_database WHERE datname like 'feature_${FEATURE_NAME}_%'" --field-separator ' ' --no-align --quiet |
 #   while read -r dbname; do
