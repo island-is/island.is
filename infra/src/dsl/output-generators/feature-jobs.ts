@@ -147,7 +147,7 @@ export const generateCleanUpForFeature = async (
         62,
       ),
       annotations: {
-        'argocd.argoproj.io/hook': 'PreSync'
+        'argocd.argoproj.io/hook': 'PostDelete'
       }
     },
     spec: {
