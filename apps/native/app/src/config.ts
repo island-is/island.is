@@ -39,6 +39,14 @@ export const environments = {
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: null,
   },
+  mock: {
+    id: 'mock',
+    label: 'Mock',
+    idsIssuer: 'https://identity-server.dev01.devland.is/',
+    apiUrl: 'http://localhost:4444/api',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
+    datadog: null,
+  },
 }
 
 export const bundleId = DeviceInfo.getBundleId()

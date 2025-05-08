@@ -4,6 +4,7 @@ import { store } from '../cms'
 
 export const resolvers: Resolvers = {
   Items: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     __resolveType: (parent) => {
       return parent.__typename as never
     },

@@ -8,6 +8,7 @@ import organizations from '../graphql/cache/organizations.json'
 import { getApolloClientAsync } from '../graphql/client'
 import { ListOrganizationsDocument } from '../graphql/types/schema'
 import { lowerCase } from '../lib/lowercase'
+import { environmentStore } from './environment-store'
 
 interface Organization {
   id: string
@@ -80,12 +81,17 @@ export const organizationsStore = create<OrganizationsStore>(
       actions: {
         updateOriganizations: async () => {
           const client = await getApolloClientAsync()
-          const querySub = client
-            .watchQuery({ query: ListOrganizationsDocument })
-            .subscribe(({ data }) => {
-              set({ organizations: processItems(data.getOrganizations.items) })
-              querySub.unsubscribe()
-            })
+          const environment = environmentStore.getState().environment
+          if (environment.id !== 'mock') {
+            const querySub = client
+              .watchQuery({ query: ListOrganizationsDocument })
+              .subscribe(({ data }) => {
+                set({
+                  organizations: processItems(data.getOrganizations.items),
+                })
+                querySub.unsubscribe()
+              })
+          }
         },
       },
     }),

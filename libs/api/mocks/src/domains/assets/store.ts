@@ -6,7 +6,7 @@ import {
   paginatedUnitsOfUse,
   pagingData,
 } from './factories'
-import { PropertyDetail } from '@island.is/api/schema'
+import { PropertyDetail } from '../../types'
 
 export const store = createStore(() => {
   const properties = singleProperty.list(20)

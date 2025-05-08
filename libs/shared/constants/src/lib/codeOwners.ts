@@ -11,6 +11,7 @@ export enum CodeOwners {
   Juni = 'juni',
   KolibriJusticeLeague = 'kolibri-justice-league',
   KolibriRobinHood = 'kolibri-robin-hood',
+  KolibriKotid = 'kolibri-kotid',
   NordaApplications = 'norda-applications',
   Origo = 'origo',
   Programm = 'programm',

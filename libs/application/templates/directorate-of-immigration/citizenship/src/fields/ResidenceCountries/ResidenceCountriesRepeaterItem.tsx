@@ -119,6 +119,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
           disabled: readOnly,
           type: FieldTypes.SELECT,
           required: repeaterField.wasRemoved === 'true' ? false : true,
+          backgroundColor: 'blue',
           onSelect: (value) =>
             addCountryToList('countryId', value.value as string, index),
         }}
@@ -146,6 +147,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
                 addCountryToList('dateFrom', value as string, index)
               }
               maxDate={new Date()}
+              backgroundColor="blue"
               required
             />
           </Column>
@@ -160,6 +162,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
                 addCountryToList('dateTo', value as string, index)
               }
               maxDate={new Date()}
+              backgroundColor="blue"
               required
             />
           </Column>

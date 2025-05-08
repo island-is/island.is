@@ -6,6 +6,7 @@ import { getDatePrefix } from './utils'
 
 export const resolvers: Resolvers = {
   Slice: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     __resolveType: (parent) => {
       return (parent as SystemMetadata<typeof parent>).typename as never
     },
@@ -90,6 +91,10 @@ export const resolvers: Resolvers = {
           (genericPage) => genericPage.slug === args.input.slug,
         ) || null
       )
+    },
+
+    getOrganizations: () => {
+      return store.organizations
     },
   },
 }
