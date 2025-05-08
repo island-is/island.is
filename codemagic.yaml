@@ -100,6 +100,7 @@ definitions:
       script: |
         xcrun simctl boot "iPhone 16"
         xcrun simctl list devices
+        xcrun simctl launch booted is.island.app.dev
     - &maestro-tests
       name: Install and run Maestro end to end tests
       script: |
