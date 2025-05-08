@@ -231,7 +231,7 @@ export const CivilClaimantFields = ({
           <Box display="flex" marginY={2}>
             <Box width="half" marginRight={1}>
               <RadioButton
-                name="defenderType"
+                name={`defender_type_lawyer-${civilClaimant.id}`}
                 id={`defender_type_lawyer-${civilClaimant.id}`}
                 label={formatMessage(strings.lawyer)}
                 large
@@ -247,7 +247,7 @@ export const CivilClaimantFields = ({
             </Box>
             <Box width="half" marginLeft={1}>
               <RadioButton
-                name="defenderType"
+                name={`defender_type_legal_rights_protector-${civilClaimant.id}`}
                 id={`defender_type_legal_rights_protector-${civilClaimant.id}`}
                 label={formatMessage(strings.legalRightsProtector)}
                 large
