@@ -122,6 +122,9 @@ export const CivilClaimantFields = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personData])
 
+  const legalProtectorCheckboxId = `defender_type_legal_rights_protector-${civilClaimant.id}`
+  const lawyerCheckboxId = `defender_type_lawyer-${civilClaimant.id}`
+
   return (
     <>
       {civilClaimantIndex > 0 && (
@@ -231,8 +234,8 @@ export const CivilClaimantFields = ({
           <Box display="flex" marginY={2}>
             <Box width="half" marginRight={1}>
               <RadioButton
-                name={`defender_type_lawyer-${civilClaimant.id}`}
-                id={`defender_type_lawyer-${civilClaimant.id}`}
+                name={lawyerCheckboxId}
+                id={lawyerCheckboxId}
                 label={formatMessage(strings.lawyer)}
                 large
                 backgroundColor="white"
@@ -247,8 +250,8 @@ export const CivilClaimantFields = ({
             </Box>
             <Box width="half" marginLeft={1}>
               <RadioButton
-                name={`defender_type_legal_rights_protector-${civilClaimant.id}`}
-                id={`defender_type_legal_rights_protector-${civilClaimant.id}`}
+                name={legalProtectorCheckboxId}
+                id={legalProtectorCheckboxId}
                 label={formatMessage(strings.legalRightsProtector)}
                 large
                 backgroundColor="white"
