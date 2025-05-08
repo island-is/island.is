@@ -9,7 +9,6 @@ export const FormStepper = ({ sections }: Props) => {
   const currentSection = sections.find(
     (section) => section.isCompleted === false || section.isCompleted === null,
   )
-  const currentScreen = currentSection?.screens?.find((screen) => screen)
 
   return (
     <FormStepperV2

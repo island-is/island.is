@@ -25,7 +25,7 @@ export class ApplicationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private applicationsApi: ApplicationsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -46,11 +46,9 @@ export class ApplicationsService {
     auth: User,
     input: CreateApplicationInput,
   ): Promise<Application> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerCreate(
-        input as ApplicationsControllerCreateRequest,
-      )
-
+    const response = await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerCreate(input as ApplicationsControllerCreateRequest)
     return response as Application
   }
 
@@ -69,32 +67,25 @@ export class ApplicationsService {
 
   async updateDependencies(
     auth: User,
-    input: UpdateApplicationDependenciesInput
+    input: UpdateApplicationDependenciesInput,
   ): Promise<void> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerUpdate(
-        input as ApplicationsControllerUpdateRequest
-      )
+    await this.applicationsApiWithAuth(auth).applicationsControllerUpdate(
+      input as ApplicationsControllerUpdateRequest,
+    )
   }
 
   async submitApplication(
     auth: User,
-    input: GetApplicationInput
+    input: GetApplicationInput,
   ): Promise<void> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerSubmit(
-        input as ApplicationsControllerSubmitRequest
-      )
+    await this.applicationsApiWithAuth(auth).applicationsControllerSubmit(
+      input as ApplicationsControllerSubmitRequest,
+    )
   }
 
-  async submitScreen(
-    auth: User,
-    input: SubmitScreenInput
-  ): Promise<void> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerSubmitScreen(
-        input as ApplicationsControllerSubmitScreenRequest
-      )
+  async submitScreen(auth: User, input: SubmitScreenInput): Promise<void> {
+    await this.applicationsApiWithAuth(auth).applicationsControllerSubmitScreen(
+      input as ApplicationsControllerSubmitScreenRequest,
+    )
   }
-
 }

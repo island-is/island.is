@@ -39,7 +39,7 @@ export const BaseInformation = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.applicant.fullName,
                 )}
-                value={applicantName}
+                value={applicantName ?? ''}
               />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -47,7 +47,7 @@ export const BaseInformation = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.applicant.nationalId,
                 )}
-                value={formatKennitala(application.applicant)}
+                value={formatKennitala(application.applicant) ?? ''}
               />
             </GridColumn>
           </GridRow>
@@ -57,7 +57,7 @@ export const BaseInformation = ({
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(parentalLeaveFormMessages.applicant.email)}
-              value={applicantEmail}
+              value={applicantEmail ?? ''}
               error={hasError('applicant.email')}
             />
           </GridColumn>
@@ -67,7 +67,7 @@ export const BaseInformation = ({
               label={formatMessage(
                 parentalLeaveFormMessages.applicant.phoneNumber,
               )}
-              value={formatPhoneNumber(applicantPhoneNumber)}
+              value={formatPhoneNumber(applicantPhoneNumber) ?? ''}
               error={hasError('applicant.phoneNumber')}
             />
           </GridColumn>

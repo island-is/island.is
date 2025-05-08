@@ -44,8 +44,14 @@ export class CarRecyclingService extends BaseTemplateApiService {
       let mileage = 0
       let modelYear = null
 
+      // If mileage is provided, convert it to a number and remove the dot
       if (vehicle.mileage) {
         mileage = +vehicle.mileage.trim().replace(/\./g, '')
+      }
+
+      // If no mileage is provided, use the latest mileage
+      if (mileage === 0) {
+        mileage = vehicle.latestMileage || 0
       }
 
       // Support the newRegistrationDate, for now, to keep backwards compatibility

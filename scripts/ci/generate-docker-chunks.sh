@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -eo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 # shellcheck disable=SC1091
@@ -46,6 +46,33 @@ for target in "$@"; do
   chunks=$(echo "$chunks" | jq -cM --argjson new_chunks "$processed_chunks" '. + $new_chunks')
 done
 
+if [[ -n "$ADDITIONAL_PROJECTS" ]] ; then
+  TMP_PROJ=$(yarn nx show projects -p "$ADDITIONAL_PROJECTS" --json)
+  >&2 echo "Running additional projects: ${TMP_PROJ}"
+  for target in "$@"; do
+  >&2 echo "Target for additional projects: ${target}"
+  processed_chunks=$(yarn nx show projects --withTarget="$target" -p "$ADDITIONAL_PROJECTS" --json |
+    jq -r '.[]' |
+    xargs -I {} -P "${MAX_JOBS:-4}" bash -c "
+      project=\"\$1\"
+      docker_type=\"\$2\"
+      project_info=\$(yarn nx show project \"\$project\" --json)
+      home=\$(echo \"\$project_info\" | jq -r \".root\")
+      dist=\$(echo \"\$project_info\" | jq -r \".targets.build.options.outputPath\")
+      jq -n \
+        --arg project \"\$project\" \
+        --arg docker_type \"\$docker_type\" \
+        --arg home \"\$home\" \
+        --arg dist \"\$dist\" \
+        '{projects: \$project, docker_type: \$docker_type, home: \$home, dist: \$dist}'
+    " _ {} "$target" |
+    jq -s '.')
+
+  chunks=$(echo "$chunks" | jq -cM --argjson new_chunks "$processed_chunks" '. + $new_chunks')
+done
+fi
+
+>&2 echo "Additional projects: ${ADDITIONAL_PROJECTS}"
 >&2 echo "Map: ${chunks}"
 # echo "$chunks" | jq -cM '. | map("\(.|tostring)")'
 echo "$chunks"

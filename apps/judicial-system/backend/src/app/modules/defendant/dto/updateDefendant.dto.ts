@@ -5,8 +5,8 @@ import {
   IsEnum,
   IsOptional,
   IsString,
+  Length,
   MaxLength,
-  MinLength,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -31,8 +31,7 @@ export class UpdateDefendantDto {
 
   @IsOptional()
   @IsString()
-  @MinLength(10)
-  @MaxLength(10)
+  @Length(10, 10)
   @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly nationalId?: string
@@ -68,8 +67,7 @@ export class UpdateDefendantDto {
 
   @IsOptional()
   @IsString()
-  @MinLength(10)
-  @MaxLength(10)
+  @Length(10, 10)
   @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
@@ -130,8 +128,7 @@ export class UpdateDefendantDto {
 
   @IsOptional()
   @IsString()
-  @MinLength(10)
-  @MaxLength(10)
+  @Length(10, 10)
   @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly requestedDefenderNationalId?: string
@@ -161,4 +158,15 @@ export class UpdateDefendantDto {
   @IsEnum(PunishmentType)
   @ApiPropertyOptional({ enum: PunishmentType })
   readonly punishmentType?: PunishmentType
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isAlternativeService?: boolean
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly alternativeServiceDescription?: string
 }

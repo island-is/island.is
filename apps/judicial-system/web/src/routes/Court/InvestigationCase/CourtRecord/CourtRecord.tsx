@@ -37,10 +37,10 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,

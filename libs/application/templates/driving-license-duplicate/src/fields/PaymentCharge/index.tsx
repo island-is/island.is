@@ -10,6 +10,7 @@ import { PaymentCatalogItem } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
 import { info } from 'kennitala'
 import { DriversLicense } from '@island.is/clients/driving-license'
+import { Delivery } from '../../lib/constants'
 
 export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -66,7 +67,8 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
 
   const withDeliveryFee =
-    getValueViaPath(application.answers, 'delivery.deliveryMethod') === '1'
+    getValueViaPath(application.answers, 'delivery.deliveryMethod') ===
+    Delivery.SEND_HOME
   const deliveryFee = chargeItems?.find(
     (item) => item.chargeItemCode === 'AY145',
   )
@@ -83,7 +85,7 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       </Box>
       {withDeliveryFee && (
         <Box display="flex" justifyContent="spaceBetween">
-          <Text marginTop="smallGutter">{'Heimsending'}</Text>
+          <Text marginTop="smallGutter">{formatMessage(m.delivery)}</Text>
           <Text>{getCurrencyString(deliveryFee?.priceAmount || 0)}</Text>
         </Box>
       )}

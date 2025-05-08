@@ -11,7 +11,8 @@ import {
 } from '@island.is/island-ui/core'
 import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
-import { FieldTypesEnum, m } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 
 const predeterminedLists = [
   {

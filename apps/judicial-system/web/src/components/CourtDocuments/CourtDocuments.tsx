@@ -7,11 +7,11 @@ import { theme } from '@island.is/island-ui/theme'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import { CourtDocument } from '@island.is/judicial-system/types'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
-import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  ReactSelectOption,
-  TempCase as Case,
-} from '@island.is/judicial-system-web/src/types'
+  Case,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import IconButton from '../IconButton/IconButton'

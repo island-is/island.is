@@ -1,0 +1,26 @@
+query getOccupationalLicenses {
+  occupationalLicenses {
+    __typename
+    licenses {
+      ... on OccupationalLicense {
+        __typename
+        licenseId
+        legalEntityId
+        issuer
+        type
+        issuerTitle
+        profession
+        licenseHolderNationalId
+        dateOfBirth
+        validFrom
+        title
+        status
+      }
+      ... on OccupationalLicensesError {
+        __typename
+        type
+        error
+      }
+    }
+  }
+}

@@ -162,6 +162,14 @@ export const pruneEntryHyperlink = (node: any) => {
           ...target.fields.organizationPage,
           fields: extractPrimitiveFields(target.fields.organizationPage.fields),
         },
+        organizationParentSubpage: target.fields.organizationParentSubpage
+          ? {
+              ...target.fields.organizationParentSubpage,
+              fields: extractPrimitiveFields(
+                target.fields.organizationParentSubpage.fields,
+              ),
+            }
+          : null,
       },
     }
   } else if (contentTypeId === 'price' && target.fields?.organization?.fields) {

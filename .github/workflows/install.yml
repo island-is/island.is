@@ -2,11 +2,16 @@ name: 'Prep Dependencies'
 on:
   workflow_call:
     inputs:
+      force_all_to_be_affected:
+        description: 'Should all be affected'
+        required: false
+        type: boolean
+        default: false
       main_branch:
         default: 'main'
         type: string
       run_merge_queue:
-        description: 'Should the merge que step run'
+        description: 'Should the merge queue step run'
         required: false
         type: boolean
         default: false
@@ -46,7 +51,7 @@ on:
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
-  NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  NX_AFFECTED_ALL: ${{ inputs.force_all_to_be_affected || contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
@@ -59,7 +64,7 @@ env:
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
-  GENERATED_FILES: ${{ github.workspace }}/${{ github.sha }}.tar.gz
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
@@ -89,7 +94,7 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
-    runs-on: arc-runners
+    runs-on: arc-shared
     permissions:
       contents: 'read'
       actions: 'read'
@@ -223,7 +228,7 @@ jobs:
           CHUNK_SIZE: 1
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
+          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi

@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildFieldsRepeaterField,
   buildMultiField,
   buildSection,
@@ -43,6 +44,10 @@ export const schoolSection = buildSection({
       title: school.general.pageTitle,
       description: school.general.description,
       children: [
+        buildCustomField({
+          component: 'UpdateExternalDataSchools',
+          id: 'updateExternalDataSchools',
+        }),
         buildFieldsRepeaterField({
           id: 'selection',
           titleVariant: 'h5',
@@ -64,7 +69,7 @@ export const schoolSection = buildSection({
               filterOptions: (options, answers, index) =>
                 filterSchoolOptions(options, answers, index),
               clearOnChange: (index) => clearOnChangeSchool(index),
-              setOnChange: (option, application, index) =>
+              setOnChange: async (option, application, index) =>
                 setOnChangeSchool(option, application, index),
             },
             'firstProgram.id': {
@@ -86,7 +91,7 @@ export const schoolSection = buildSection({
                   setValueAtIndex,
                   'secondProgram.id',
                 ),
-              setOnChange: (option, application, index, activeField) =>
+              setOnChange: async (option, application, index, activeField) =>
                 setOnChangeFirstProgram(
                   option,
                   application,
@@ -118,7 +123,7 @@ export const schoolSection = buildSection({
                   setValueAtIndex,
                   'firstProgram.id',
                 ),
-              setOnChange: (option, _, index, activeField) =>
+              setOnChange: async (option, _, index, activeField) =>
                 setOnChangeSecondProgram(option, index, activeField),
             },
             'thirdLanguage.code': {
@@ -129,7 +134,7 @@ export const schoolSection = buildSection({
                 getThirdLanguageCondition(application, activeField),
               options: (application, activeField) =>
                 getThirdLanguageOptions(application, activeField),
-              setOnChange: (option, application, index, activeField) =>
+              setOnChange: async (option, application, index, activeField) =>
                 setOnChangeThirdLanguage(
                   option,
                   application,
@@ -145,7 +150,7 @@ export const schoolSection = buildSection({
                 getNordicLanguageCondition(application, activeField),
               options: (application, activeField) =>
                 getNordicLanguageOptions(application, activeField),
-              setOnChange: (option, application, index, activeField) =>
+              setOnChange: async (option, application, index, activeField) =>
                 setOnChangeNordicLanguage(
                   option,
                   application,

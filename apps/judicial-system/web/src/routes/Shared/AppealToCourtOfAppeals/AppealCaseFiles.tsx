@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
+  FileUploadStatus,
   InputFileUpload,
   Text,
   UploadFile,
@@ -112,7 +113,10 @@ const AppealFiles = () => {
   }
 
   const handleChange = (files: File[]) => {
-    addUploadFiles(files, { category: appealCaseFilesType, status: 'done' })
+    addUploadFiles(files, {
+      category: appealCaseFilesType,
+      status: FileUploadStatus.done,
+    })
   }
 
   return (
@@ -159,13 +163,14 @@ const AppealFiles = () => {
               `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            name="appealCaseFiles"
+            files={uploadFiles.filter(
               (file) =>
                 file.category &&
                 caseFilesTypesToDisplay.includes(file.category),
             )}
             accept={'application/pdf'}
-            header={formatMessage(core.uploadBoxTitle)}
+            title={formatMessage(core.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {
               fileEndings: '.pdf',
             })}

@@ -4,7 +4,6 @@ import { useIntl } from 'react-intl'
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { PunishmentType } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -22,6 +21,7 @@ import { useSentToPrisonAdminDate } from '@island.is/judicial-system-web/src/com
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  PunishmentType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
@@ -106,10 +106,10 @@ const IndictmentOverview = () => {
               </Text>
             </Box>
           )}
-          {workingCase.indictmentCompletedDate && (
+          {workingCase.rulingDate && (
             <Text variant="h4" as="h3">
               {formatMessage(strings.indictmentCompletedTitle, {
-                date: formatDate(workingCase.indictmentCompletedDate, 'PPP'),
+                date: formatDate(workingCase.rulingDate, 'PPP'),
               })}
             </Text>
           )}
@@ -252,6 +252,17 @@ const IndictmentOverview = () => {
                 )}
               />
             </Box>
+            <RadioButton
+              id="punishment-type-other"
+              name="punishmentTypeOther"
+              checked={hasPunishmentType(PunishmentType.OTHER)}
+              onChange={() => {
+                onChange(PunishmentType.OTHER)
+              }}
+              large
+              backgroundColor="white"
+              label="Annað"
+            />
           </BlueBox>
         </Box>
       </FormContentContainer>

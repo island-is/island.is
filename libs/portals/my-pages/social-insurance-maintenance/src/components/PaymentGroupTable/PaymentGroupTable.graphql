@@ -9,15 +9,18 @@ query getPaymentPlan {
       name
       totalYearCumulativeAmount
       payments {
+        __typename
         name
         totalYearCumulativeAmount
         markWithAsterisk
         monthlyPaymentHistory {
+          __typename
           monthIndex
           amount
         }
       }
       monthlyPaymentHistory {
+        __typename
         monthIndex
         amount
       }

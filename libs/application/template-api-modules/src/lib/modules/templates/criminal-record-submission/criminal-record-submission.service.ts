@@ -1,24 +1,22 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
 import { SyslumennService, PersonType } from '@island.is/clients/syslumenn'
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
 } from '@island.is/application/types'
-import { UserProfile } from './types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { info } from 'kennitala'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core/messages'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class CriminalRecordSubmissionService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly criminalRecordService: CriminalRecordService,
     private readonly syslumennService: SyslumennService,
   ) {
     super(ApplicationTypes.CRIMINAL_RECORD)
@@ -43,13 +41,8 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
       )
     }
 
-    const userProfileData = application.externalData.userProfile
-      ?.data as UserProfile
-
     const person = {
       ssn: application.applicant,
-      phoneNumber: userProfileData?.mobilePhoneNumber,
-      email: userProfileData?.email,
       signed: false,
       type: PersonType.CriminalRecordApplicant,
     }
@@ -59,8 +52,16 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
     const uploadDataId = 'Sakavottord2.1'
 
     return await this.syslumennService
-      .uploadData(persons, undefined, {}, uploadDataName, uploadDataId)
-      .catch(async () => {
+      .uploadDataCriminalRecord(
+        auth,
+        persons,
+        undefined,
+        {},
+        uploadDataName,
+        uploadDataId,
+      )
+      .catch(async (e) => {
+        logger.error(e)
         await this.sharedTemplateAPIService.sendEmail(
           generateSyslumennNotifyErrorEmail,
           application as unknown as Application,
@@ -82,6 +83,6 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
         400,
       )
     }
-    return await this.syslumennService.checkCriminalRecord(auth.nationalId)
+    return await this.syslumennService.checkCriminalRecord(auth)
   }
 }

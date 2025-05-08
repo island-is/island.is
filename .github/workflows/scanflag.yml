@@ -1,13 +1,13 @@
 name: Scanflags
 
 on:
-  push:
-    branches:
-      - 'main'
+  schedule:
+    - cron: '0 5 * * *'
 
 defaults:
   run:
     shell: bash
+    
 concurrency:
   group: scanflag-${{ github.head_ref || github.run_id }}
   cancel-in-progress: false
@@ -18,20 +18,20 @@ env:
 
 jobs:
   scanflags:
-    runs-on: arc-runners
+    runs-on: arc-shared
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Scan & upload main config
         uses: configcat/scan-repository@v2
         with:
-          api-user: ${{ secrets.CONFIGCAT_API_USER }}
-          api-pass: ${{ secrets.CONFIGCAT_API_PASS }}
+          api-user: ${{ secrets.CONFIG_USERNAME }}
+          api-pass: ${{ secrets.CONFIG_PASSWORD }}
           config-id: ${{ env.CONFIGCAT_MAIN_CONFIG_ID }}
       - name: Scan & upload mobile app config
         uses: configcat/scan-repository@v2
         with:
-          api-user: ${{ secrets.CONFIGCAT_API_USER }}
-          api-pass: ${{ secrets.CONFIGCAT_API_PASS }}
+          api-user: ${{ secrets.CONFIG_USERNAME}}
+          api-pass: ${{ secrets.CONFIG_PASSWORD }}
           config-id: ${{ env.CONFIGCAT_MOBILE_APP_CONFIG_ID }}
           sub-folder: apps/native

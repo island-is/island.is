@@ -158,6 +158,8 @@ import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-lic
 import { TrainingLicenseOnAWorkMachineTemplateService } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service'
 import { LegalGazetteTemplateModule } from './legal-gazette/legal-gazette.module'
 import { LegalGazetteTemplateService } from './legal-gazette/legal-gazette.service'
+import { RentalAgreementModule } from './rental-agreement/rental-agreement.module'
+import { RentalAgreementService } from './rental-agreement/rental-agreement.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -240,6 +242,7 @@ export const modules = [
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
   LegalGazetteTemplateModule,
+  RentalAgreementModule,
 ]
 
 export const services = [
@@ -322,4 +325,5 @@ export const services = [
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
   LegalGazetteTemplateService,
+  RentalAgreementService,
 ]

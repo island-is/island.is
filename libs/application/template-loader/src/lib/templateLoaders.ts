@@ -62,7 +62,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]: () =>
     import('@island.is/application/templates/driving-instructor-registrations'),
   [ApplicationTypes.EXAMPLE_PAYMENT]: () =>
-    import('@island.is/application/templates/example-payment'),
+    import('@island.is/application/templates/examples/example-payment'),
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: () =>
     import('@island.is/application/templates/driving-school-confirmation'),
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: () =>
@@ -217,6 +217,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/new-primary-school'),
   [ApplicationTypes.MACHINE_REGISTRATION]: () =>
     import('@island.is/application/templates/aosh/register-new-machine'),
+  [ApplicationTypes.RENTAL_AGREEMENT]: () =>
+    import('@island.is/application/templates/rental-agreement'),
   [ApplicationTypes.SEMINAR_REGISTRATION]: () =>
     import('@island.is/application/templates/aosh/seminars'),
   [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: () =>

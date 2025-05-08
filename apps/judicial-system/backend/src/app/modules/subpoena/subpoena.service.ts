@@ -1,5 +1,13 @@
 import { Base64 } from 'js-base64'
-import { Includeable, Sequelize } from 'sequelize'
+import {
+  col,
+  fn,
+  Includeable,
+  literal,
+  Op,
+  Sequelize,
+  WhereOptions,
+} from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
@@ -21,6 +29,7 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  HashAlgorithm,
   isFailedServiceStatus,
   isSuccessfulServiceStatus,
   ServiceStatus,
@@ -42,6 +51,10 @@ import { User } from '../user'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { Subpoena } from './models/subpoena.model'
+import {
+  ServiceStatusStatistics,
+  SubpoenaStatistics,
+} from './models/subpoenaStatistics.response'
 
 export const include: Includeable[] = [
   {
@@ -127,9 +140,13 @@ export class SubpoenaService {
     )
   }
 
-  async setHash(id: string, hash: string): Promise<void> {
+  async setHash(
+    id: string,
+    hash: string,
+    hashAlgorithm: HashAlgorithm,
+  ): Promise<void> {
     const [numberOfAffectedRows] = await this.subpoenaModel.update(
-      { hash },
+      { hash, hashAlgorithm },
       { where: { id } },
     )
 
@@ -281,10 +298,10 @@ export class SubpoenaService {
     return subpoena
   }
 
-  async findBySubpoenaId(policeSubpoenaId?: string): Promise<Subpoena> {
+  async findByPoliceSubpoenaId(policeSubpoenaId?: string): Promise<Subpoena> {
     const subpoena = await this.subpoenaModel.findOne({
       include,
-      where: { subpoenaId: policeSubpoenaId },
+      where: { policeSubpoenaId },
     })
 
     if (!subpoena) {
@@ -348,7 +365,7 @@ export class SubpoenaService {
       }
 
       const [numberOfAffectedRows] = await this.subpoenaModel.update(
-        { subpoenaId: createdSubpoena.subpoenaId },
+        { policeSubpoenaId: createdSubpoena.policeSubpoenaId },
         { where: { id: subpoena.id } },
       )
 
@@ -359,7 +376,7 @@ export class SubpoenaService {
       }
 
       this.logger.info(
-        `Subpoena ${createdSubpoena.subpoenaId} delivered to the police centralized file service`,
+        `Subpoena with police subpoena id ${createdSubpoena.policeSubpoenaId} delivered to the police centralized file service`,
       )
 
       return { delivered: true }
@@ -481,7 +498,7 @@ export class SubpoenaService {
     subpoena: Subpoena,
     user: TUser,
   ): Promise<DeliverResponse> {
-    if (!subpoena.subpoenaId) {
+    if (!subpoena.policeSubpoenaId) {
       this.logger.warn(
         `Attempted to revoke a subpoena with id ${subpoena.id} that had not been delivered to the police`,
       )
@@ -490,13 +507,13 @@ export class SubpoenaService {
 
     const subpoenaRevoked = await this.policeService.revokeSubpoena(
       theCase,
-      subpoena.subpoenaId,
+      subpoena.policeSubpoenaId,
       user,
     )
 
     if (subpoenaRevoked) {
       this.logger.info(
-        `Subpoena ${subpoena.subpoenaId} successfully revoked from police`,
+        `Subpoena ${subpoena.policeSubpoenaId} successfully revoked from police`,
       )
       return { delivered: true }
     } else {
@@ -505,7 +522,7 @@ export class SubpoenaService {
   }
 
   async getSubpoena(subpoena: Subpoena, user?: TUser): Promise<Subpoena> {
-    if (!subpoena.subpoenaId) {
+    if (!subpoena.policeSubpoenaId) {
       // The subpoena has not been delivered to the police
       return subpoena
     }
@@ -518,7 +535,7 @@ export class SubpoenaService {
     // We don't know if the subpoena has been served to the defendant
     // so we need to check the police service
     const subpoenaInfo = await this.policeService.getSubpoenaStatus(
-      subpoena.subpoenaId,
+      subpoena.policeSubpoenaId,
       user,
     )
 
@@ -528,5 +545,87 @@ export class SubpoenaService {
     }
 
     return this.update(subpoena, subpoenaInfo)
+  }
+
+  async getStatistics(
+    from?: Date,
+    to?: Date,
+    institutionId?: string,
+  ): Promise<SubpoenaStatistics> {
+    const where: WhereOptions = {
+      policeSubpoenaId: {
+        [Op.ne]: null,
+      },
+    }
+
+    if (from || to) {
+      where.created = {}
+      if (from) {
+        where.created[Op.gte] = from
+      }
+      if (to) {
+        where.created[Op.lte] = to
+      }
+    }
+
+    const include: Includeable[] = []
+
+    if (institutionId) {
+      include.push({
+        model: Case,
+        required: true,
+        attributes: [],
+        where: {
+          [Op.or]: [
+            { courtId: institutionId },
+            { prosecutorsOfficeId: institutionId },
+          ],
+        },
+      })
+    }
+
+    const count = await this.subpoenaModel.count({
+      where,
+      include,
+    })
+
+    const grouped = (await this.subpoenaModel.findAll({
+      where,
+      include,
+      attributes: [
+        'serviceStatus',
+        [fn('COUNT', col('Subpoena.id')), 'count'],
+        [
+          literal(
+            'AVG(EXTRACT(EPOCH FROM "Subpoena"."service_date" - "Subpoena"."created") * 1000)',
+          ),
+          'averageServiceTimeMs',
+        ],
+      ],
+      group: ['serviceStatus'],
+      raw: true,
+    })) as unknown as {
+      serviceStatus: ServiceStatus | null
+      count: string
+      averageServiceTimeMs: string | null
+    }[]
+
+    const serviceStatusStatistics: ServiceStatusStatistics[] = grouped.map(
+      (row) => ({
+        serviceStatus: row.serviceStatus,
+        count: Number(row.count),
+        averageServiceTimeMs: Math.round(Number(row.averageServiceTimeMs) || 0),
+        averageServiceTimeDays:
+          Math.round(Number(row.averageServiceTimeMs) / 1000 / 60 / 60 / 24) ||
+          0,
+      }),
+    )
+
+    const stats: SubpoenaStatistics = {
+      count,
+      serviceStatusStatistics,
+    }
+
+    return stats
   }
 }

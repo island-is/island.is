@@ -14,11 +14,11 @@ import {
   errors as errorMessages,
 } from '@island.is/judicial-system-web/messages'
 import {
+  Case,
   CaseType,
   Exact,
   RequestSignatureInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { Modal } from '..'

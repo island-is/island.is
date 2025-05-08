@@ -1,7 +1,4 @@
-import {
-  prisonSystemStaffRule,
-  publicProsecutorStaffRule,
-} from '../../../../guards'
+import { publicProsecutorStaffRule } from '../../../../guards'
 import { CaseController } from '../../case.controller'
 
 describe('CaseController - Get ruling sent to prison admin pdf rules', () => {

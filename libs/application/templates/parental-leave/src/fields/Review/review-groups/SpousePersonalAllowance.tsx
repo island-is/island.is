@@ -38,7 +38,7 @@ export const SpousePersonalAllowance = ({
           label={formatMessage(
             parentalLeaveFormMessages.personalAllowance.spouseTitle,
           )}
-          value={usePersonalAllowanceFromSpouse}
+          value={usePersonalAllowanceFromSpouse ?? ''}
         />
       )}
     </ReviewGroup>

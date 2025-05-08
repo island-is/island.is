@@ -48,6 +48,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
   }
 
   async criminalRecord({
+    auth,
     application,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const fakeData = getValueViaPath<OperatingLicenseFakeData>(
@@ -75,7 +76,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
     // The criminalRecord endpoint is a void endpoint that only fails
     // if there is no criminal record available.
-    await this.syslumennService.checkCriminalRecord(applicantSsn).catch((e) => {
+    await this.syslumennService.checkCriminalRecord(auth).catch((e) => {
       throw new TemplateApiError(
         {
           title: error.dataCollectionCriminalRecordTitle,

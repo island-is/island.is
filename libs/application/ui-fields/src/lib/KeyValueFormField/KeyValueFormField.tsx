@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 
 import { formatText } from '@island.is/application/core'
 import { Application, KeyValueField } from '@island.is/application/types'
-import { Box, Divider, Text } from '@island.is/island-ui/core'
+import { Box, Divider, Text, Tooltip } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 
@@ -34,6 +34,14 @@ export const KeyValueFormField: FC<
           <Text variant="h4" as="h4">
             {formatText(field.label, application, formatMessage)}
           </Text>
+          {field.tooltip && (
+            <Box marginLeft={1} display="inlineBlock">
+              <Tooltip
+                placement="top"
+                text={formatText(field.tooltip, application, formatMessage)}
+              />
+            </Box>
+          )}
         </Box>
         <Box
           display={Array.isArray(values) ? 'block' : 'flex'}

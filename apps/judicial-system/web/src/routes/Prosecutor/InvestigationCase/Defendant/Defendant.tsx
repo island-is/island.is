@@ -18,6 +18,7 @@ import {
   capitalize,
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
+import { Feature } from '@island.is/judicial-system/types'
 import {
   core,
   defendant as m,
@@ -27,23 +28,27 @@ import {
 import {
   BlueBox,
   DefenderInfo,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
+  VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseOrigin,
   CaseType,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   useCase,
   useDefendants,
+  useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -61,11 +66,14 @@ const Defendant = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
+  const { createVictimAndSetState, deleteVictimAndSetState } = useVictim()
   const { formatMessage } = useIntl()
-  // This state is needed because type is initially set to OHTER on the
+  // This state is needed because type is initially set to OTHER on the
   // workingCase and we need to validate that the user selects an option
   // from the case type list to allow the user to continue.
   const [caseType, setCaseType] = useState<CaseType | null>()
+  const { features } = useContext(FeatureContext)
+  const showVictims = features.includes(Feature.VICTIMS)
 
   useEffect(() => {
     if (workingCase.id) {
@@ -401,6 +409,57 @@ const Defendant = () => {
             </motion.section>
           </AnimatePresence>
         </Box>
+        {showVictims &&
+          workingCase.id &&
+          (workingCase.victims && workingCase.victims?.length === 0 ? (
+            <Box
+              component="section"
+              marginBottom={5}
+              display="flex"
+              justifyContent="flexEnd"
+            >
+              <Button
+                data-testid="addFirstVictimButton"
+                icon="add"
+                onClick={() =>
+                  createVictimAndSetState(workingCase.id, setWorkingCase)
+                }
+              >
+                Skrá brotaþola
+              </Button>
+            </Box>
+          ) : (
+            <Box component="section" marginBottom={5}>
+              <SectionHeading title="Brotaþoli" />
+              {workingCase.victims?.map((victim) => (
+                <VictimInfo
+                  key={victim.id}
+                  victim={victim}
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                  onDelete={() =>
+                    deleteVictimAndSetState(
+                      workingCase.id,
+                      victim,
+                      setWorkingCase,
+                    )
+                  }
+                />
+              ))}
+              <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+                <Button
+                  data-testid="addVictimButton"
+                  variant="ghost"
+                  icon="add"
+                  onClick={() =>
+                    createVictimAndSetState(workingCase.id, setWorkingCase)
+                  }
+                >
+                  Bæta við brotaþola
+                </Button>
+              </Box>
+            </Box>
+          ))}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

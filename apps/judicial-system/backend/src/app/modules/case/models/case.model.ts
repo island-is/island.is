@@ -17,6 +17,7 @@ import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
+import { HashAlgorithm } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
@@ -44,6 +45,7 @@ import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { Notification } from '../../notification'
 import { User } from '../../user'
+import { Victim } from '../../victim/models/victim.model'
 import { CaseString } from './caseString.model'
 import { DateLog } from './dateLog.model'
 
@@ -1028,11 +1030,22 @@ export class Case extends Model {
   indictmentDecision?: IndictmentDecision
 
   /**********
-   * The md5 hash of the confirmed generated indictment
+   * The hash of the confirmed generated indictment
    **********/
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   indictmentHash?: string
+
+  /**********
+   * The hash algorithm of the confirmed generated indictment
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(HashAlgorithm),
+  })
+  @ApiPropertyOptional({ enum: HashAlgorithm })
+  indictmentHashAlgorithm?: HashAlgorithm
 
   /**********
    * The court session type in indictment cases - example: MAIN_HEARING
@@ -1097,4 +1110,20 @@ export class Case extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   isCompletedWithoutRuling?: boolean
+
+  /**********
+   * NOTE: This is a temporary field to indicate whether a public prosecutors
+   * user has marked a case as registered in the police system. This will be
+   * removed in the future.
+   **********/
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  publicProsecutorIsRegisteredInPoliceSystem?: boolean
+
+  /**********
+   * The case's victims
+   **********/
+  @HasMany(() => Victim, 'caseId')
+  @ApiPropertyOptional({ type: () => Victim, isArray: true })
+  victims?: Victim[]
 }

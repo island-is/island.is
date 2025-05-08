@@ -72,6 +72,9 @@ describe('IndictmentCountController - Update', () => {
       const mockUpdate = mockIndictmentCountModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1, [updatedIndictmentCount]])
 
+      const mockFindOne = mockIndictmentCountModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedIndictmentCount)
+
       then = await givenWhenThen(
         caseId,
         indictmentCountId,

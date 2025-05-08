@@ -39,7 +39,7 @@ interface SelectControllerProps<Value, IsMulti extends boolean = false> {
     | { key: string; value: any }[]
     | ((
         optionValue: MultiValue<Value> | SingleValue<Value> | undefined,
-      ) => { key: string; value: any }[])
+      ) => Promise<{ key: string; value: any }[]>)
 }
 
 export const SelectController = <Value, IsMulti extends boolean = false>({
@@ -123,7 +123,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
           size={size}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
-          onChange={(newVal) => {
+          onChange={async (newVal) => {
             clearErrors(id)
 
             if (isMultiValue(newVal)) {
@@ -149,7 +149,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
             if (setOnChange) {
               setInputsOnChange(
                 typeof setOnChange === 'function'
-                  ? setOnChange(
+                  ? await setOnChange(
                       isMultiValue(newVal)
                         ? newVal?.map((v) => v.value)
                         : newVal?.value,

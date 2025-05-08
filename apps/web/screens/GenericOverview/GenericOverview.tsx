@@ -116,11 +116,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
                     paddingLeft={leftImage ? undefined : [0, 0, 0, 0, 6]}
                     paddingRight={leftImage ? [10, 0, 0, 0, 6] : [10, 0]}
                   >
-                    <Image
-                      url={image.url + '?w=774&fm=webp&q=80'}
-                      thumbnail={image.url + '?w=50&fm=webp&q=80'}
-                      {...image}
-                    />
+                    <Image url={image.url} {...image} />
                   </Box>
                 </GridColumn>
                 <GridColumn span={['8/8', '5/8', '4/8', '5/8']}>

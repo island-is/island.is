@@ -336,7 +336,13 @@ export class InternalCaseService {
       .catch(() => undefined)
 
     // TODO: Sync with LÖKE so we can select the correct user
-    const creator = users?.find((user) => isProsecutionUser(user))
+    const creator = users?.find(
+      (user) =>
+        isProsecutionUser(user) &&
+        (!caseToCreate.prosecutorsOfficeNationalId ||
+          user.institution?.nationalId ===
+            caseToCreate.prosecutorsOfficeNationalId),
+    )
 
     if (!creator) {
       throw new BadRequestException(
@@ -377,6 +383,7 @@ export class InternalCaseService {
             theCase.id,
             {
               nationalId: caseToCreate.accusedNationalId,
+              dateOfBirth: caseToCreate.accusedDOB,
               name: caseToCreate.accusedName,
               gender: caseToCreate.accusedGender,
               address: (caseToCreate.accusedAddress || '').trim(),

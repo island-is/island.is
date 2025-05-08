@@ -6,15 +6,10 @@ import {
   IsOptional,
   Min,
 } from 'class-validator'
-import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, ID, InputType, Int } from '@nestjs/graphql'
 
-import type { SubstanceMap } from '@island.is/judicial-system/types'
-import {
-  IndictmentCountOffense,
-  IndictmentSubtype,
-} from '@island.is/judicial-system/types'
+import { IndictmentSubtype } from '@island.is/judicial-system/types'
 
 @InputType()
 export class UpdateIndictmentCountInput {
@@ -35,18 +30,6 @@ export class UpdateIndictmentCountInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly vehicleRegistrationNumber?: string
-
-  @Allow()
-  @IsOptional()
-  @IsArray()
-  @IsEnum(IndictmentCountOffense, { each: true })
-  @Field(() => [IndictmentCountOffense], { nullable: true })
-  readonly deprecatedOffenses?: IndictmentCountOffense[]
-
-  @Allow()
-  @IsOptional()
-  @Field(() => GraphQLJSONObject, { nullable: true })
-  readonly substances?: SubstanceMap
 
   @Allow()
   @IsOptional()

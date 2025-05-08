@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildDescriptionField,
   buildHiddenInput,
   buildMultiField,
@@ -162,6 +163,10 @@ export const personalSubSection = buildSubSection({
         }),
 
         // Validation for whether there are any schools open for admission depending on the application type selected above
+        buildCustomField({
+          component: 'UpdateExternalDataSchools',
+          id: 'updateExternalDataSchools',
+        }),
         buildHiddenInput({
           id: 'applicationType.isOpenForAdmissionFreshman',
           condition: (_, externalData) => {

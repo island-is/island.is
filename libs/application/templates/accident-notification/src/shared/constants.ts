@@ -5,7 +5,7 @@ import {
   ProfessionalAthleteAccidentLocationEnum,
   RescueWorkAccidentLocationEnum,
   StudiesAccidentLocationEnum,
-} from '../types'
+} from '../utils/enums'
 
 export enum ApiActions {
   submitApplication = 'submitApplication',

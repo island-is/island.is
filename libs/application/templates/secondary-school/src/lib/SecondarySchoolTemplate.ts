@@ -78,6 +78,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.SecondarySchool.translation,
   ],
   dataSchema: SecondarySchoolSchema,
+  allowMultipleApplicationsInDraft: false,
   featureFlag: Features.SecondarySchoolEnabled,
   allowedDelegations: [
     {
@@ -175,6 +176,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [SchoolsApi],
             },
           ],
         },

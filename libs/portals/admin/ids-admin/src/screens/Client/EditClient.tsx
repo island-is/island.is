@@ -12,7 +12,6 @@ import {
   Button,
   Stack,
   Text,
-  AlertBanner,
   Box,
   LinkV2,
 } from '@island.is/island-ui/core'
@@ -143,9 +142,9 @@ export const EditClient = () => {
               selectedEnvironment.slidingRefreshTokenLifetime
             }
             refreshTokenExpiration={
-              selectedEnvironment.refreshTokenExpiration ===
-              AuthAdminRefreshTokenExpiration.Sliding
+              selectedEnvironment.refreshTokenExpiration
             }
+            sso={selectedEnvironment.sso}
           />
           <Permissions
             allowedScopes={selectedEnvironment?.allowedScopes ?? []}
@@ -169,7 +168,6 @@ export const EditClient = () => {
               accessTokenLifetime={selectedEnvironment.accessTokenLifetime}
               customClaims={selectedEnvironment.customClaims}
               singleSession={selectedEnvironment.singleSession}
-              sso={selectedEnvironment.sso}
             />
           )}
           <DangerZone />

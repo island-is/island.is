@@ -23,7 +23,7 @@ const ConstraintController: FC<React.PropsWithChildren<Props>> = ({
   const { register, setValue } = useFormContext()
   const [isChecked, setIsChecked] = useState(defaultValue)
 
-  function clearTextArea(value: boolean) {
+  const clearTextArea = (value: boolean) => {
     if (!value) {
       setValue(id as string, '')
     }

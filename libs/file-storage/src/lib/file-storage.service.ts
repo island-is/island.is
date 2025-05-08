@@ -7,8 +7,8 @@ import { FileStorageConfig } from './file-storage.configuration'
 import { PresignedPost } from '@aws-sdk/s3-presigned-post'
 import { Tag } from '@aws-sdk/client-s3'
 
-const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
-const SIGNED_GET_EXPIRES = 10 * 60
+const PRESIGNED_POST_EXPIRES = 5 * 60
+const SIGNED_GET_EXPIRES = 5 * 60
 
 @Injectable()
 export class FileStorageService {
@@ -87,6 +87,9 @@ export class FileStorageService {
       throw new Error('Missing filename.')
     }
 
-    return this.s3Service.getFileTags({ bucket: this.config.uploadBucket, key: filename })
+    return this.s3Service.getFileTags({
+      bucket: this.config.uploadBucket,
+      key: filename,
+    })
   }
 }

@@ -20,7 +20,7 @@ import { ListItem } from '../../models/listItem.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ListItemsResolver {
-  constructor(private readonly listItemsService: ListItemsService) { }
+  constructor(private readonly listItemsService: ListItemsService) {}
 
   @Mutation(() => ListItem, {
     name: 'createFormSystemListItem',

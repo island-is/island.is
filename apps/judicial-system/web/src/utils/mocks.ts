@@ -2,6 +2,7 @@ import faker from 'faker'
 
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import {
+  Case,
   CaseAppealState,
   CaseFile,
   CaseFileCategory,
@@ -15,7 +16,6 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { TransitionCaseDocument } from './hooks/useCase/transitionCase.generated'
 
@@ -43,7 +43,7 @@ export const mockProsecutor = {
   title: 'saksóknari',
   institution: {
     id: '1337',
-    type: InstitutionType.PROSECUTORS_OFFICE,
+    type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
     name: 'Lögreglustjórinn á höfuðborgarsvæðinu',
   },
 } as User
@@ -194,7 +194,7 @@ export const mockUser = (userRole: UserRole): User => {
       type:
         // TODO: Add more institutions if we use more user roles
         userRole === UserRole.PROSECUTOR
-          ? InstitutionType.PROSECUTORS_OFFICE
+          ? InstitutionType.POLICE_PROSECUTORS_OFFICE
           : InstitutionType.DISTRICT_COURT,
       name: '',
       active: true,

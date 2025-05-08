@@ -13,7 +13,7 @@ import { Field } from '../../fields/models/field.model'
 import { ValueType } from '../../../dataTypes/valueTypes/valueType.model'
 import { ApplicationEvent } from './applicationEvent.model'
 import { Application } from './application.model'
-import { FieldTypesEnum } from '../../../dataTypes/fieldTypes/fieldTypes.enum'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 
 @Table({ tableName: 'value' })
 export class Value extends Model<Value> {

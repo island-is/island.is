@@ -2,17 +2,16 @@ import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseIndictmentRulingDecision,
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
   isPrisonAdminUser,
   isProsecutionUser,
-  isPublicProsecutor,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
@@ -22,11 +21,12 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseFile,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { CaseFileTable } from '../Table'
@@ -81,9 +81,12 @@ const FileSection: FC<React.PropsWithChildren<FileSectionProps>> = (props) => {
 
   return (
     <Box marginBottom={5}>
-      <Text variant="h4" as="h4" marginBottom={1}>
-        {title}
-      </Text>
+      <SectionHeading
+        title={title}
+        marginBottom={1}
+        heading="h4"
+        variant="h4"
+      />
       {files && <RenderFiles caseFiles={files} onOpenFile={onOpenFile} />}
       {children}
     </Box>
@@ -116,8 +119,11 @@ const useFilteredCaseFiles = (caseFiles?: CaseFile[] | null) => {
         CaseFileCategory.CRIMINAL_RECORD_UPDATE,
       ),
       uploadedCaseFiles: filterByCategories([
-        CaseFileCategory.PROSECUTOR_CASE_FILE,
-        CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_CASE_FILE, // sækjandi
+        CaseFileCategory.DEFENDANT_CASE_FILE, // verjandi
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE, // ákærði
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE, //réttargæslumaður
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE, // lögmaður
       ]),
       civilClaims: filterByCategories(CaseFileCategory.CIVIL_CLAIM),
       sentToPrisonAdminFiles: filterByCategories(
@@ -132,15 +138,15 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
     () => ({
       canViewCriminalRecordUpdate:
         isDistrictCourtUser(user) ||
-        isPublicProsecutor(user) ||
-        isPublicProsecutorUser(user),
+        isPublicProsecutionUser(user) ||
+        isPublicProsecutionOfficeUser(user),
       canViewCivilClaims:
         Boolean(workingCase.hasCivilClaims) &&
         (isDistrictCourtUser(user) ||
           isProsecutionUser(user) ||
           isDefenceUser(user)),
       canViewSentToPrisonAdminFiles:
-        isPrisonAdminUser(user) || isPublicProsecutorUser(user),
+        isPrisonAdminUser(user) || isPublicProsecutionOfficeUser(user),
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
     }),
@@ -189,6 +195,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
   const isCompletedWithRuling =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+  const hasNoFiles = !showFiles && !displayGeneratedPDFs
 
   return (
     <>
@@ -196,26 +203,53 @@ const IndictmentCaseFilesList: FC<Props> = ({
         <SectionHeading title={formatMessage(strings.title)} />
       )}
       {displayGeneratedPDFs && (
+        <Box marginBottom={5}>
+          <SectionHeading
+            title={formatMessage(caseFiles.indictmentSection)}
+            marginBottom={1}
+            heading="h4"
+            variant="h4"
+          />
+          <Box marginBottom={2} key={`indictment-${workingCase.id}`}>
+            <PdfButton
+              caseId={workingCase.id}
+              connectedCaseParentId={connectedCaseParentId}
+              title={formatMessage(caseFiles.indictmentTitle)}
+              pdfType="indictment"
+              renderAs="row"
+              elementId="Ákæra"
+            />
+          </Box>
+        </Box>
+      )}
+      {showFiles && (
+        <>
+          <FileSection
+            title={formatMessage(caseFiles.criminalRecordSection)}
+            files={filteredFiles.criminalRecords}
+            onOpenFile={onOpen}
+          />
+          <FileSection
+            title={formatMessage(caseFiles.costBreakdownSection)}
+            files={filteredFiles.costBreakdowns}
+            onOpenFile={onOpen}
+          />
+          <FileSection
+            title={formatMessage(caseFiles.otherDocumentsSection)}
+            files={filteredFiles.others}
+            onOpenFile={onOpen}
+          />
+        </>
+      )}
+      {displayGeneratedPDFs && (
         <>
           <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(caseFiles.indictmentSection)}
-            </Text>
-            <Box marginBottom={2} key={`indictment-${workingCase.id}`}>
-              <PdfButton
-                caseId={workingCase.id}
-                connectedCaseParentId={connectedCaseParentId}
-                title={formatMessage(caseFiles.indictmentTitle)}
-                pdfType="indictment"
-                renderAs="row"
-                elementId="Ákæra"
-              />
-            </Box>
-          </Box>
-          <Box marginBottom={5}>
-            <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(strings.caseFileTitle)}
-            </Text>
+            <SectionHeading
+              title={formatMessage(strings.caseFileTitle)}
+              marginBottom={1}
+              heading="h4"
+              variant="h4"
+            />
             {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
               <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
                 <PdfButton
@@ -233,9 +267,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
           </Box>
           {showSubpoenaPdf && (
             <Box marginBottom={5}>
-              <Text variant="h4" as="h4" marginBottom={1}>
-                {formatMessage(strings.subpoenaTitle)}
-              </Text>
+              <SectionHeading
+                title={formatMessage(strings.subpoenaTitle)}
+                marginBottom={1}
+                heading="h4"
+                variant="h4"
+              />
               {workingCase.defendants?.map((defendant) =>
                 defendant.subpoenas?.map((subpoena) => {
                   const subpoenaFileName = formatMessage(
@@ -285,33 +322,20 @@ const IndictmentCaseFilesList: FC<Props> = ({
       {showFiles && (
         <>
           <FileSection
-            title={formatMessage(caseFiles.criminalRecordSection)}
-            files={filteredFiles.criminalRecords}
+            title={formatMessage(strings.civilClaimsTitle)}
+            files={filteredFiles.civilClaims}
             onOpenFile={onOpen}
+            shouldRender={permissions.canViewCivilClaims}
           />
-          <FileSection
-            title={formatMessage(caseFiles.criminalRecordUpdateSection)}
-            files={filteredFiles.criminalRecordUpdate}
-            onOpenFile={onOpen}
-            shouldRender={permissions.canViewCriminalRecordUpdate}
-          />
-          <FileSection
-            title={formatMessage(caseFiles.costBreakdownSection)}
-            files={filteredFiles.costBreakdowns}
-            onOpenFile={onOpen}
-          />
-          <FileSection
-            title={formatMessage(caseFiles.otherDocumentsSection)}
-            files={filteredFiles.others}
-            onOpenFile={onOpen}
-          />
-
           {filteredFiles.courtRecords?.length ||
           filteredFiles.rulings?.length ? (
             <Box marginBottom={5}>
-              <Text variant="h4" as="h4" marginBottom={1}>
-                {formatMessage(strings.rulingAndCourtRecordsTitle)}
-              </Text>
+              <SectionHeading
+                title={formatMessage(strings.rulingAndCourtRecordsTitle)}
+                marginBottom={1}
+                heading="h4"
+                variant="h4"
+              />
               {filteredFiles.courtRecords &&
                 filteredFiles.courtRecords.length > 0 && (
                   <RenderFiles
@@ -330,10 +354,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
             </Box>
           ) : null}
           <FileSection
-            title={formatMessage(strings.civilClaimsTitle)}
-            files={filteredFiles.civilClaims}
+            title={formatMessage(caseFiles.criminalRecordUpdateSection)}
+            files={filteredFiles.criminalRecordUpdate}
             onOpenFile={onOpen}
-            shouldRender={permissions.canViewCivilClaims}
+            shouldRender={permissions.canViewCriminalRecordUpdate}
           />
           <FileSection
             title={formatMessage(strings.sentToPrisonAdmin)}
@@ -348,7 +372,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   sentToPrisonAdminDate,
                 )}.pdf`}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId={'Dómur til fullnustu'}
+                elementId="Dómur til fullnustu"
                 renderAs="row"
               />
             )}
@@ -356,9 +380,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
           {filteredFiles.uploadedCaseFiles &&
             filteredFiles.uploadedCaseFiles.length > 0 && (
               <Box marginBottom={5}>
-                <Text variant="h4" as="h4" marginBottom={3}>
-                  {formatMessage(strings.uploadedCaseFiles)}
-                </Text>
+                <SectionHeading
+                  title={formatMessage(strings.uploadedCaseFiles)}
+                  marginBottom={3}
+                  heading="h4"
+                  variant="h4"
+                />
                 <CaseFileTable
                   caseFiles={filteredFiles.uploadedCaseFiles}
                   onOpenFile={onOpen}
@@ -371,6 +398,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
           </AnimatePresence>
         </>
+      )}
+      {hasNoFiles && (
+        <Box marginTop={3}>
+          <AlertMessage type="info" message="Engin skjöl til að sýna" />
+        </Box>
       )}
     </>
   )

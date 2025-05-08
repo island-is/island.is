@@ -28,7 +28,6 @@ import {
   MockableVinnueftirlitidPaymentCatalogApi,
   VinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
-import { AuthDelegationType } from '@island.is/shared/types'
 import { application as applicationMessage } from './messages'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems } from '../utils'
@@ -55,14 +54,6 @@ const template: ApplicationTemplate<
   codeOwner: CodeOwners.Origo,
   initialQueryParameter: 'seminarId',
   dataSchema: SeminarAnswersSchema,
-  allowedDelegations: [
-    {
-      type: AuthDelegationType.ProcurationHolder,
-    },
-    {
-      type: AuthDelegationType.Custom,
-    },
-  ],
   requiredScopes: [ApiScope.vinnueftirlitid],
   featureFlag: Features.SeminarRegistrationEnabled,
   allowMultipleApplicationsInDraft: true,

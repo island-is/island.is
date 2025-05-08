@@ -17,7 +17,6 @@ import { useEffectOnce } from 'react-use'
 import { YES } from '@island.is/application/core'
 
 const RequestDaysBoxChart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  field,
   application,
 }) => {
   const alreadySelectedMonths = getMaxMultipleBirthsAndDefaultMonths(

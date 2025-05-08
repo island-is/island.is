@@ -51,7 +51,7 @@ const CasesAwaitingConfirmationTable: FC<
   const { openCaseInNewTabMenuItem } = useContextMenu()
 
   return (
-    <>
+    <section>
       <SectionHeading title={formatMessage(strings.title)} />
       <AnimatePresence initial={false}>
         <TableWrapper loading={loading || isFiltering}>
@@ -60,6 +60,8 @@ const CasesAwaitingConfirmationTable: FC<
               thead={[
                 {
                   title: formatMessage(tables.caseNumber),
+                  sortBy: 'policeCaseNumbers',
+                  sortFn: 'number',
                 },
                 {
                   title: capitalize(
@@ -127,13 +129,17 @@ const CasesAwaitingConfirmationTable: FC<
             />
           ) : (
             <TableInfoContainer
-              title={formatMessage(strings.noCasesTitle)}
+              title={
+                <Text as="h4" variant="h5" marginBottom={1}>
+                  {formatMessage(strings.noCasesTitle)}
+                </Text>
+              }
               message={formatMessage(strings.noCasesMessage)}
             />
           )}
         </TableWrapper>
       </AnimatePresence>
-    </>
+    </section>
   )
 }
 

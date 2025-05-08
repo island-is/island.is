@@ -8,8 +8,8 @@ import {
   KeyValueMap,
   QueryOptions,
 } from 'contentful-management'
-import { ENVIRONMENT, SPACE_ID } from './constants'
 import { ContentfulFetchResponse } from './managementClient.types'
+import { ENVIRONMENT, SPACE_ID } from '../../constants'
 
 @Injectable()
 export class ManagementClientService {

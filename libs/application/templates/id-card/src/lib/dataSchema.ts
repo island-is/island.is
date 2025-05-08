@@ -10,21 +10,17 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
-const personInfo = z
-  .object({
-    name: z.string(),
-    nationalId: z.string(),
-    email: z
-      .string()
-      .refine((v) => isValidEmail(v), { params: error.invalidValue }),
-    phoneNumber: z.string().refine((v) => isValidPhoneNumber(v), {
-      params: error.invalidValue,
-    }),
-    hasDisabilityLicense: z.boolean().optional(),
-  })
-  .refine((x) => {
-    return true
-  })
+const personInfo = z.object({
+  name: z.string(),
+  nationalId: z.string(),
+  email: z
+    .string()
+    .refine((v) => isValidEmail(v), { params: error.invalidValue }),
+  phoneNumber: z.string().refine((v) => isValidPhoneNumber(v), {
+    params: error.invalidValue,
+  }),
+  hasDisabilityLicense: z.boolean().optional(),
+})
 
 export const IdCardSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),

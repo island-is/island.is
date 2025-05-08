@@ -20,7 +20,7 @@ export const conclusion = {
   }),
   default: defineMessages({
     alertTitle: {
-      id: 'aosh.sem.application:conclusion.default.alertMessage',
+      id: 'aosh.sem.application:conclusion.default.alertTitle',
       defaultMessage: 'Skráning á námskeið {seminar} móttekin.',
       description: 'Conclusion alert message',
     },

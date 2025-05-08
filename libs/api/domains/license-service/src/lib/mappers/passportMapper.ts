@@ -83,7 +83,11 @@ export class PassportMapper implements GenericLicenseMapper {
             return {
               licenseName: formatMessage(m.passport),
               type: 'user' as const,
-              payload: this.mapDocument(t, formatMessage),
+              payload: this.mapDocument(
+                t,
+                formatMessage,
+                formatMessage(m.passport),
+              ),
             }
           }
         })
@@ -271,7 +275,7 @@ export class PassportMapper implements GenericLicenseMapper {
         expireDate: document.expirationDate?.toISOString() ?? undefined,
         displayTag,
         name: licenseName ?? document.verboseType ?? undefined,
-        title: document.verboseType ?? undefined,
+        title: formatMessage(m.passport) ?? undefined,
         subtitle: formatMessage(m.passportNumberDisplay, {
           arg:
             document.subType && document.number

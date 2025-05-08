@@ -11,6 +11,11 @@ buildscript {
         // https://github.com/expo/expo/issues/20821
         kotlinVersion = "1.9.22"
 
+        // Configure react-native-inappbrowser-reborn.
+        // Latest androidXBrowser (1.9.0-alpha03) requires SDK 36. Consider upgrading together.
+        androidXAnnotation = "1.9.1"
+        androidXBrowser = "1.8.0"
+
         // React Native Navigation
         RNNKotlinVersion = kotlinVersion
     }

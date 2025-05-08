@@ -108,34 +108,20 @@ const PdfView = ({ item }: VerdictDetailsProps) => {
               )}
               <Inline alignY="center" justifyContent="spaceBetween" space={3}>
                 <Webreader readClass="rs_read" marginBottom={0} marginTop={2} />
-                <Inline alignY="center" space={2}>
-                  {Boolean(item.pdfString) && (
-                    <Hidden print={true}>
-                      <Button
-                        icon="attach"
-                        iconType="outline"
-                        size="small"
-                        onClick={() => {
-                          downloadPdf(item.pdfString as string)
-                        }}
-                      >
-                        .PDF
-                      </Button>
-                    </Hidden>
-                  )}
+                {Boolean(item.pdfString) && (
                   <Hidden print={true}>
                     <Button
-                      icon="print"
+                      icon="attach"
                       iconType="outline"
                       size="small"
                       onClick={() => {
-                        window.print()
+                        downloadPdf(item.pdfString as string)
                       }}
                     >
-                      {formatMessage(m.verdictPage.print)}
+                      .PDF
                     </Button>
                   </Hidden>
-                </Inline>
+                )}
               </Inline>
             </GridColumn>
           </GridRow>

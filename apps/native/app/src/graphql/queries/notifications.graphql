@@ -1,5 +1,5 @@
-query GetUserNotifications($input: NotificationsInput!) {
-  userNotifications(input: $input) {
+query GetUserNotifications($input: NotificationsInput!, $locale: String) {
+  userNotifications(input: $input, locale: $locale) {
     data {
       ...NotificationDataFields
       recipient {
@@ -18,8 +18,11 @@ query GetUserNotifications($input: NotificationsInput!) {
   }
 }
 
-query GetUserNotificationsUnseenCount($input: NotificationsInput!) {
-  userNotifications(input: $input) {
+query GetUserNotificationsUnseenCount(
+  $input: NotificationsInput!
+  $locale: String
+) {
+  userNotifications(input: $input, locale: $locale) {
     unseenCount
   }
 }

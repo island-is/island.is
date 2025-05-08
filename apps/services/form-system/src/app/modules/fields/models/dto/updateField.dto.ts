@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { FieldTypesEnum } from '../../../../dataTypes/fieldTypes/fieldTypes.enum'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 import { IsEnum, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { FieldSettings } from '../../../../dataTypes/fieldSettings/fieldSettings.model'
