@@ -14,7 +14,8 @@
     "update:packagejson": "node -r esbuild-register scripts/update-package-json.ts",
     "cli": "echo 'Please use `yarn infra` instead of `yarn cli`' && exit 1",
     "infra": "node -r esbuild-register src/cli/cli.ts",
-    "feature-env": "node -r esbuild-register src/feature-env.ts"
+    "feature-env": "node -r esbuild-register src/feature-env.ts",
+    "secrets": "node -r esbuild-register src/secrets.ts"
   },
   "license": "MIT",
   "devDependencies": {
