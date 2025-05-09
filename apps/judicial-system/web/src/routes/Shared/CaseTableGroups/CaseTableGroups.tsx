@@ -6,8 +6,8 @@ import { getCaseTableGroups } from '@island.is/judicial-system/types'
 import {
   Logo,
   PageHeader,
-  SectionHeading,
   SharedPageLayout,
+  TableGroup,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 
@@ -27,8 +27,7 @@ const CaseTableGroups = () => {
         <Logo />
       </div>
       {groups.map((group, idx) => (
-        <Box key={idx}>
-          <SectionHeading title={group.title} />
+        <TableGroup title={group.title} key={idx}>
           {group.tables.map((t, idx) => (
             <Box
               key={idx}
@@ -39,7 +38,7 @@ const CaseTableGroups = () => {
               <Text>{t.description}</Text>
             </Box>
           ))}
-        </Box>
+        </TableGroup>
       ))}
     </SharedPageLayout>
   )

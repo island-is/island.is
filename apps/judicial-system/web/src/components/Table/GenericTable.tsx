@@ -1,6 +1,9 @@
 import { useMemo } from 'react'
 import { useLocalStorage } from 'react-use'
+import { AnimatePresence, motion } from 'motion/react'
 
+import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
+import IconButton from '../IconButton/IconButton'
 import SortButton from './SortButton/SortButton'
 import * as styles from './Table.css'
 
@@ -15,7 +18,10 @@ interface GenericTableProps<Cell> {
     id: string
     cells: Cell[]
   }[]
-  // generateContextMenuItems?: (row: CaseListEntry) => ContextMenuItem[]
+  generateContextMenuItems?: (id: string) => ContextMenuItem[]
+  loadingIndicator: () => JSX.Element
+  rowIdBeingOpened: string | null
+  showLoading: boolean
   onClick?: (id: string) => boolean
 }
 
@@ -23,6 +29,10 @@ const GenericTable = <Cell,>({
   tableId,
   rows,
   columns,
+  generateContextMenuItems,
+  loadingIndicator: LoadingIndicator,
+  rowIdBeingOpened: isOpeningRow,
+  showLoading,
   onClick,
 }: GenericTableProps<Cell>) => {
   const [sortConfig, setSortConfig] = useLocalStorage<{
@@ -76,6 +86,7 @@ const GenericTable = <Cell,>({
               />
             </th>
           ))}
+          {generateContextMenuItems && <th className={styles.th} />}
         </tr>
       </thead>
       <tbody>
@@ -94,6 +105,50 @@ const GenericTable = <Cell,>({
             {r.cells.map((cell, idx) => (
               <td key={idx}>{columns[idx].render(cell)}</td>
             ))}
+            {generateContextMenuItems && (
+              <td width="4%">
+                {generateContextMenuItems(r.id).length > 0 && (
+                  <AnimatePresence initial={false} mode="popLayout">
+                    {isOpeningRow === r.id && showLoading ? (
+                      <motion.div
+                        className={styles.smallContainer}
+                        key={r.id}
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 1 }}
+                        exit={{
+                          opacity: 0,
+                          y: 5,
+                        }}
+                        transition={{ type: 'spring' }}
+                      >
+                        <LoadingIndicator />
+                      </motion.div>
+                    ) : (
+                      <ContextMenu
+                        items={generateContextMenuItems(r.id)}
+                        render={
+                          <motion.div
+                            className={styles.smallContainer}
+                            key={r.id}
+                            initial={{ opacity: 1 }}
+                            animate={{ opacity: 1, y: 1 }}
+                            exit={{ opacity: 0, y: 5 }}
+                            onClick={(evt) => {
+                              evt.stopPropagation()
+                            }}
+                          >
+                            <IconButton
+                              icon="ellipsisVertical"
+                              colorScheme="transparent"
+                            />
+                          </motion.div>
+                        }
+                      />
+                    )}
+                  </AnimatePresence>
+                )}
+              </td>
+            )}
           </tr>
         ))}
       </tbody>

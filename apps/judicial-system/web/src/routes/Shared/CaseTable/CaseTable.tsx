@@ -8,6 +8,7 @@ import {
   PageHeader,
   SectionHeading,
   SharedPageLayout,
+  useContextMenu,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { GenericTable } from '@island.is/judicial-system-web/src/components/Table'
@@ -16,6 +17,7 @@ import {
   StringGroupValue,
   TagValue,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import { useCaseTableQuery } from './caseTable.generated'
@@ -118,6 +120,9 @@ const render = (cell: CaseTableCell): ReactNode => {
 const CaseTable = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
+  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
+    useCaseList()
 
   const type = getCaseTableType(user, router.asPath.split('/').pop())
 
@@ -154,6 +159,12 @@ const CaseTable = () => {
                 id: row.caseId,
                 cells: row.cells,
               }))}
+              generateContextMenuItems={(id) => {
+                return [openCaseInNewTabMenuItem(id)]
+              }}
+              loadingIndicator={LoadingIndicator}
+              rowIdBeingOpened={isOpeningCaseId}
+              showLoading={showLoading}
             />
           )}
         </>
