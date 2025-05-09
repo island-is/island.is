@@ -202,9 +202,6 @@ workflows:
       - *provisioning_profiles
       - *increment_build_number
       - *build_ipa
-      - *boot-simulator-ios
-      - *build-simulator-ios
-      - *maestro-tests
     artifacts: *ios_artifacts
     publishing:
       <<: *ios_publishing
@@ -278,3 +275,30 @@ workflows:
     publishing:
       <<: *android_publishing
       <<: *slack_errors
+
+  e2e-tests-ios:
+    <<: *base
+    name: Island.is E2E Tests iOS
+    instance_type: mac_mini_m2
+    cache: *ios_cache
+    environment:
+      <<: *environment
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: is.island.app.dev
+      vars:
+        <<: *shared_envs
+        BUNDLE_ID: 'is.island.app.dev'
+        XCODE_SCHEME: 'Ísland.dev'
+        APP_STORE_APPLE_ID: 1570427360
+    scripts:
+      - *check_changes
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *cocoapods
+      - *boot-simulator-ios
+      - *build-simulator-ios
+      - *maestro-tests
+    artifacts: &ios_artifacts_e2e_tests
+      - /tmp/xcodebuild_logs/*.log
