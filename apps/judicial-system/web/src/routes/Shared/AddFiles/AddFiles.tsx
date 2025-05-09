@@ -271,6 +271,7 @@ const AddFiles: FC = () => {
           )}
           onClose={() => setVisibleModal(undefined)}
           onSecondaryButtonClick={() => setVisibleModal(undefined)}
+          isPrimaryButtonDisabled={!allFilesDoneOrError}
           onPrimaryButtonClick={async () => {
             await handleNextButtonClick()
           }}
