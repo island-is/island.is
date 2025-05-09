@@ -1,7 +1,7 @@
 import { Email } from '@island.is/api/schema'
 import { Box, toast } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { msg } from '../../../lib/messages'
+import { emailsMsg } from '../../../lib/messages'
 import { EmailCard, EmailCardTag, EmailCta } from '../EmailCard/EmailCard'
 import { useDeleteEmailMutation } from './DeleteEmail.mutation.generated'
 import { useSetPrimaryEmailMutation } from './SetPrimaryEmail.mutation.generated'
@@ -28,8 +28,11 @@ export const EmailsList = ({ items }: EmailsListProps) => {
     onCompleted: (data) => {
       if (data.userEmailsDeleteEmail) {
         refreshEmailList()
-        toast.success(formatMessage(msg.emailDeleteSuccess))
+        toast.success(formatMessage(emailsMsg.emailDeleteSuccess))
       }
+    },
+    onError: () => {
+      toast.error(formatMessage(emailsMsg.emailDeleteError))
     },
   })
 
@@ -37,14 +40,17 @@ export const EmailsList = ({ items }: EmailsListProps) => {
     onCompleted: (data) => {
       if (data.userEmailsSetPrimaryEmail) {
         refreshEmailList()
-        toast.success(formatMessage(msg.emailMakePrimarySuccess))
+        toast.success(formatMessage(emailsMsg.emailMakePrimarySuccess))
       }
+    },
+    onError: () => {
+      toast.error(formatMessage(emailsMsg.emailMakePrimaryError))
     },
   })
 
   const createCtaList = (id: string): EmailCta[] => [
     {
-      label: formatMessage(msg.emailMakePrimary),
+      label: formatMessage(emailsMsg.emailMakePrimary),
       emailId: id,
       onClick(emailId: string) {
         setPrimaryEmail({
@@ -58,7 +64,7 @@ export const EmailsList = ({ items }: EmailsListProps) => {
     },
     {
       emailId: id,
-      label: formatMessage(msg.emailDelete),
+      label: formatMessage(emailsMsg.emailDelete),
       isDestructive: true,
       onClick(emailId: string) {
         deleteEmail({

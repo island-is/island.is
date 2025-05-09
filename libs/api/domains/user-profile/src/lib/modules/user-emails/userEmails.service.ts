@@ -49,8 +49,10 @@ export class UserEmailsService {
   }
 
   async deleteEmail({ emailId, user }: { emailId: string; user: User }) {
-    return this.v2EmailsApiWithAuth(user).emailsControllerDeleteEmail({
+    await this.v2EmailsApiWithAuth(user).emailsControllerDeleteEmail({
       emailId,
     })
+
+    return true
   }
 }

@@ -2,7 +2,7 @@ import { Text, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { mVerify as m, mVerify } from '../../../lib/messages'
+import { emailsMsg as m, emailsMsg } from '../../../lib/messages'
 import {
   VerifyTemplate,
   VerifyTemplateInput,
@@ -32,7 +32,7 @@ export const ProfileEmailForm = () => {
         client.refetchQueries({
           include: [USER_PROFILE],
         })
-        toast.success(formatMessage(mVerify.addEmailSuccess))
+        toast.success(formatMessage(emailsMsg.addEmailSuccess))
       }
     },
   })
@@ -70,7 +70,7 @@ export const ProfileEmailForm = () => {
 
   const intro = useMemo(
     () =>
-      formatMessage(mVerify.securityCodeEmailIntro, {
+      formatMessage(emailsMsg.securityCodeEmailIntro, {
         email: (
           <Text variant="h5" as="span">
             {email}
@@ -114,7 +114,7 @@ export const ProfileEmailForm = () => {
             loading={addEmailLoading}
             serverError={addEmailError}
             email={email}
-            title={formatMessage(mVerify.securityCode)}
+            title={formatMessage(emailsMsg.securityCode)}
             intro={intro}
             link={link}
             onNoCodeReceivedCallback={onNoCodeReceivedCallback}

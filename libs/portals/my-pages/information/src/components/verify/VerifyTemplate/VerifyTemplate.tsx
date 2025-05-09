@@ -10,7 +10,7 @@ import { VerifyFooter } from '../VerifyFooter'
 import { VerifyHeader } from '../VerifyHeader'
 import { validateThreeDigitCode } from '../validate'
 import * as styles from './VerifyTemplate.css'
-import { mVerify } from '../../../lib/messages'
+import { emailsMsg } from '../../../lib/messages'
 
 type TextNode = string | ReactNode
 export type VerifyTemplateInput = {
@@ -66,17 +66,17 @@ export const VerifyTemplate = ({
         if (remainingAttempts > 0) {
           return undefined
         } else if (remainingAttempts === 0) {
-          return formatMessage(mVerify.twoFactorError)
+          return formatMessage(emailsMsg.twoFactorError)
         }
       } else if (
         problem.status === 400 &&
         problem.detail?.toLowerCase().includes('email already exists')
       ) {
-        return formatMessage(mVerify.emailAlreadyExists)
+        return formatMessage(emailsMsg.emailAlreadyExists)
       }
     }
 
-    return formatMessage(mVerify.errorOccured)
+    return formatMessage(emailsMsg.errorOccured)
   }
 
   const onNoCodeReceived = async () => {
@@ -85,7 +85,7 @@ export const VerifyTemplate = ({
 
     // Delay the toast to give the user a chance to see the loading state and prevent spamming the button
     setTimeout(() => {
-      toast.success(formatMessage(mVerify.codeSentSuccess))
+      toast.success(formatMessage(emailsMsg.codeSentSuccess))
 
       setNoCodeReceivedLoading(false)
     }, 3000)
@@ -136,7 +136,7 @@ export const VerifyTemplate = ({
     if (validateThreeDigitCode(code)) {
       onSubmitCallback({ code, email })
     } else {
-      setError(formatMessage(mVerify.validateTwoFactorError))
+      setError(formatMessage(emailsMsg.validateTwoFactorError))
     }
   }
 
@@ -144,7 +144,7 @@ export const VerifyTemplate = ({
     <form onSubmit={onSubmit} className={styles.form}>
       <Box display="flex" flexDirection="column" rowGap={3}>
         <VerifyHeader
-          label={formatMessage(mVerify.confirmEmail)}
+          label={formatMessage(emailsMsg.confirmEmail)}
           title={title}
           intro={intro}
           subtitle={
@@ -161,7 +161,7 @@ export const VerifyTemplate = ({
                 </div>
               ) : (
                 <Button size="small" variant="text" onClick={onNoCodeReceived}>
-                  {formatMessage(mVerify.noCodeReceived)}
+                  {formatMessage(emailsMsg.noCodeReceived)}
                 </Button>
               )}
             </Box>
@@ -178,7 +178,7 @@ export const VerifyTemplate = ({
             error={
               error ||
               (isDefined(remainingAttempts) && remainingAttempts > 0
-                ? formatMessage(mVerify.wrongCodeTitle)
+                ? formatMessage(emailsMsg.wrongCodeTitle)
                 : undefined)
             }
           />
@@ -189,14 +189,14 @@ export const VerifyTemplate = ({
           button={{
             type: 'submit',
             loading,
-            ariaLabelLoading: formatMessage(mVerify.ariaLabelVerifyingCode),
-            label: formatMessage(mVerify.confirm),
+            ariaLabelLoading: formatMessage(emailsMsg.ariaLabelVerifyingCode),
+            label: formatMessage(emailsMsg.confirm),
             disabled: buttonDisabled,
             ariaLabelButtonDisabled: formatMessage(
-              mVerify.ariaSubmitButtonDisabled,
+              emailsMsg.ariaSubmitButtonDisabled,
               {
                 label: formatMessage(
-                  mVerify.securityCodeSpecialIS,
+                  emailsMsg.securityCodeSpecialIS,
                 ).toLowerCase(),
               },
             ),

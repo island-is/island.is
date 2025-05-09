@@ -317,67 +317,6 @@ export const msg = defineMessages({
     id: 'sp.settings:confirm-contact',
     defaultMessage: 'Staðfesta {contactType}',
   },
-  registerEmail: {
-    id: 'sp.settings:register-email',
-    defaultMessage: 'Skrá netfang',
-  },
-  addEmail: {
-    id: 'sp.settings:add-email',
-    defaultMessage: 'Bæta við netfangi',
-  },
-  verificationCodeButtonAria: {
-    id: 'sp.settings:verification-code-button-aria',
-    defaultMessage: 'Valmynd fyrir staðfestingarkóða',
-  },
-  emails: {
-    id: 'sp.settings:emails',
-    defaultMessage: 'Netföng',
-  },
-  emailListText: {
-    id: 'sp.settings:email-list-text',
-    defaultMessage:
-      'Hér er listi yfir netföng sem eru skráð hjá þér og umboðum tengt þér.Þú getur stillt {link}',
-  },
-  emailListTextLink: {
-    id: 'sp.settings:email-list-text-link',
-    defaultMessage: 'tilkynningar hér.',
-  },
-  close: {
-    id: 'sp.settings:close',
-    defaultMessage: 'Loka',
-  },
-  emailCardPopover: {
-    id: 'sp.settings:email-card-popover',
-    defaultMessage: 'Aðgerðalisti fyrir netfang',
-  },
-  emailMakePrimary: {
-    id: 'sp.settings:email-make-primary',
-    defaultMessage: 'Gera að aðal netfangi',
-  },
-  emailDelete: {
-    id: 'sp.settings:email-delete',
-    defaultMessage: 'Eyða netfangi',
-  },
-  emailMakePrimarySuccess: {
-    id: 'sp.settings:email-make-primary-success',
-    defaultMessage: 'Aðal netfangi breytt',
-  },
-  emailDeleteSuccess: {
-    id: 'sp.settings:email-delete-success',
-    defaultMessage: 'Netfangi eytt',
-  },
-  unverified: {
-    id: 'sp.settings:unverified',
-    defaultMessage: 'Óstaðfest',
-  },
-  connectedToDelegation: {
-    id: 'sp.settings:connected_to_delegation',
-    defaultMessage: 'Tengt umboði',
-  },
-  primary: {
-    id: 'sp.settings:primary',
-    defaultMessage: 'Aðal netfang',
-  },
 })
 
 export const urls = defineMessages({
@@ -496,7 +435,76 @@ export const mNotifications = defineMessages({
   },
 })
 
-export const mVerify = defineMessages({
+export const emailsMsg = defineMessages({
+  registerEmail: {
+    id: 'sp.settings:register-email',
+    defaultMessage: 'Skrá netfang',
+  },
+  addEmail: {
+    id: 'sp.settings:add-email',
+    defaultMessage: 'Bæta við netfangi',
+  },
+  verificationCodeButtonAria: {
+    id: 'sp.settings:verification-code-button-aria',
+    defaultMessage: 'Valmynd fyrir staðfestingarkóða',
+  },
+  emails: {
+    id: 'sp.settings:emails',
+    defaultMessage: 'Netföng',
+  },
+  emailListText: {
+    id: 'sp.settings:email-list-text',
+    defaultMessage:
+      'Hér er listi yfir netföng sem eru skráð hjá þér og umboðum tengt þér.Þú getur stillt {link}',
+  },
+  emailListTextLink: {
+    id: 'sp.settings:email-list-text-link',
+    defaultMessage: 'tilkynningar hér.',
+  },
+  close: {
+    id: 'sp.settings:close',
+    defaultMessage: 'Loka',
+  },
+  emailCardPopover: {
+    id: 'sp.settings:email-card-popover',
+    defaultMessage: 'Aðgerðalisti fyrir netfang',
+  },
+  emailMakePrimary: {
+    id: 'sp.settings:email-make-primary',
+    defaultMessage: 'Gera að aðal netfangi',
+  },
+  emailDelete: {
+    id: 'sp.settings:email-delete',
+    defaultMessage: 'Eyða netfangi',
+  },
+  emailMakePrimarySuccess: {
+    id: 'sp.settings:email-make-primary-success',
+    defaultMessage: 'Aðal netfangi breytt',
+  },
+  emailDeleteSuccess: {
+    id: 'sp.settings:email-delete-success',
+    defaultMessage: 'Netfangi eytt',
+  },
+  unverified: {
+    id: 'sp.settings:unverified',
+    defaultMessage: 'Óstaðfest',
+  },
+  connectedToDelegation: {
+    id: 'sp.settings:connected_to_delegation',
+    defaultMessage: 'Tengt umboði',
+  },
+  primary: {
+    id: 'sp.settings:primary',
+    defaultMessage: 'Aðal netfang',
+  },
+  emailDeleteError: {
+    id: 'sp.settings:email-delete-error',
+    defaultMessage: 'Ekki tókst að eyða netfangi',
+  },
+  emailMakePrimaryError: {
+    id: 'sp.settings:email-make-primary-error',
+    defaultMessage: 'Ekki tókst að setja aðal netfang',
+  },
   confirmEmail: {
     id: 'sp.settings:confirm-email',
     defaultMessage: 'Staðfesta netfang',

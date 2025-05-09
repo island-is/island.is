@@ -3,7 +3,7 @@ import { PopoverDisclosure, usePopoverState } from 'reakit'
 import { EmailCardPopover } from '../EmailCardPopover'
 import * as styles from './EmailCard.css'
 import { useIntl } from 'react-intl'
-import { msg } from '../../../lib/messages'
+import { emailsMsg } from '../../../lib/messages'
 
 export type EmailCta = {
   emailId: string
@@ -32,18 +32,18 @@ export const EmailCard = ({ title, ctaList, tag }: EmailCardProps) => {
       case 'not_verified':
         return {
           variant: 'yellow',
-          children: formatMessage(msg.unverified),
+          children: formatMessage(emailsMsg.unverified),
         }
       case 'connected_to_delegation':
         return {
           variant: 'blue',
-          children: formatMessage(msg.connectedToDelegation),
+          children: formatMessage(emailsMsg.connectedToDelegation),
         }
       case 'primary':
       default:
         return {
           variant: 'mint',
-          children: formatMessage(msg.primary),
+          children: formatMessage(emailsMsg.primary),
         }
     }
   }

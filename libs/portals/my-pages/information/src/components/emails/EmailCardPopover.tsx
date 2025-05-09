@@ -2,7 +2,7 @@ import { Box } from '@island.is/island-ui/core'
 import { PropsWithChildren } from 'react'
 import { useIntl } from 'react-intl'
 import { PopoverStateReturn, Popover as ReakitPopover } from 'reakit/Popover'
-import { msg } from '../../lib/messages'
+import { emailsMsg } from '../../lib/messages'
 
 type PopoverProps = PropsWithChildren<PopoverStateReturn>
 
@@ -18,7 +18,7 @@ export const EmailCardPopover = ({
       background="white"
       borderRadius="large"
       boxShadow="large"
-      aria-label={formatMessage(msg.emailCardPopover)}
+      aria-label={formatMessage(emailsMsg.emailCardPopover)}
       borderColor="white"
       zIndex={10}
       {...popoverState}
