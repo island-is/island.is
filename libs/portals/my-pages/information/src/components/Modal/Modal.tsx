@@ -1,7 +1,7 @@
 import { Box, Icon, ModalBase } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { PropsWithChildren } from 'react'
-import { msg } from '../../lib/messages'
+import { emailsMsg } from '../../lib/messages'
 import * as styles from './Modal.css'
 
 type ModalProps = {
@@ -20,7 +20,7 @@ export const Modal = ({
     <ModalBase
       baseId="service-portal-notification-menu"
       isVisible={isVisible}
-      modalLabel={formatMessage(msg.verificationCodeButtonAria)}
+      modalLabel={formatMessage(emailsMsg.verificationCodeButtonAria)}
       removeOnClose
       preventBodyScroll={false}
       className={styles.modalBase}
@@ -29,7 +29,7 @@ export const Modal = ({
         <button
           className={styles.closeButton}
           onClick={onClose}
-          aria-label={formatMessage(msg.close)}
+          aria-label={formatMessage(emailsMsg.close)}
         >
           <Icon icon="close" color="blue600" />
         </button>

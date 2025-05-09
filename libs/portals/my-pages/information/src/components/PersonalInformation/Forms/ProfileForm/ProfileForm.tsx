@@ -20,7 +20,7 @@ import {
 
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { FormattedMessage } from 'react-intl'
-import { msg } from '../../../../lib/messages'
+import { msg, emailsMsg } from '../../../../lib/messages'
 import { InformationPaths } from '../../../../lib/paths'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
 import { EmailsList } from '../../../emails/EmailsList/EmailsList'
@@ -179,10 +179,10 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
           />
 
           <InputSection
-            title={formatMessage(msg.emails)}
+            title={formatMessage(emailsMsg.emails)}
             text={
               <FormattedMessage
-                {...msg.emailListText}
+                {...emailsMsg.emailListText}
                 values={{
                   link: (
                     <Link
@@ -191,7 +191,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                       underlineVisibility="always"
                       underline="small"
                     >
-                      {formatMessage(msg.emailListTextLink)}
+                      {formatMessage(emailsMsg.emailListTextLink)}
                     </Link>
                   ),
                 }}
@@ -218,7 +218,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                       icon="add"
                       onClick={() => setShowEmailForm(true)}
                     >
-                      {formatMessage(msg.addEmail)}
+                      {formatMessage(emailsMsg.addEmail)}
                     </Button>
                   </Box>
                 )}

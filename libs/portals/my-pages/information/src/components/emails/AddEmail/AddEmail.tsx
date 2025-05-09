@@ -12,7 +12,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { msg } from '../../../lib/messages'
+import { emailsMsg } from '../../../lib/messages'
 import * as styles from './AddEmail.css'
 
 const createEmailFormSchema = (formatMessage: FormatMessage) => {
@@ -116,7 +116,7 @@ export const AddEmail = ({ onAddEmail, loading, error }: AddEmailProps) => {
               size="small"
               nowrap
             >
-              {formatMessage(msg.registerEmail)}
+              {formatMessage(emailsMsg.registerEmail)}
             </Button>
           </Box>
         </Box>
