@@ -7,7 +7,7 @@ on:
 jobs:
   deploy-feature:
     name: Stale `deploy-feature`
-    runs-on: arc-runners
+    runs-on: arc-shared
     permissions:
       pull-requests: write
       actions: write

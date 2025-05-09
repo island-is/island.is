@@ -40,6 +40,7 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
         <LinkButton
           to={formatMessage(messages.readAboutPaymentParticipationSystemsLink)}
           text={formatMessage(messages.readAboutPaymentParticipationSystems)}
+          variant="text"
         />
       </Box>
     </IntroWrapper>
