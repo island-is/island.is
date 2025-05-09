@@ -5,6 +5,7 @@ import {
   Controller,
   Get,
   Headers,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -31,7 +32,13 @@ import {
   MeActorProfileDto,
   PaginatedActorProfileDto,
   PatchActorProfileDto,
+  ActorProfileDetailsDto,
 } from './dto/actor-profile.dto'
+import {
+  UpdateActorProfileEmailDto,
+  ActorProfileEmailDto,
+} from './dto/actor-profile-email.dto'
+import { SetActorProfileEmailDto } from './dto/set-actor-profile-email.dto'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -148,6 +155,36 @@ export class MeUserProfileController {
     )
   }
 
+  @Post('/actor-profile/nudge')
+  @Scopes(ApiScope.internal)
+  @Documentation({
+    description:
+      'Confirms that the actor has seen the nudge. Updates the nextNudge date for the actor profile.',
+    response: { status: 200 },
+  })
+  confirmActorProfileNudge(
+    @CurrentUser() user: User,
+    @Body() input: PostNudgeDto,
+  ) {
+    if (!user.actor?.nationalId) {
+      throw new BadRequestException('User has no actor profile')
+    }
+
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'actorProfileNudge',
+        resources: `${user.nationalId}:${user.actor?.nationalId}`,
+      },
+      this.userProfileService.confirmActorProfileNudge({
+        toNationalId: user.actor?.nationalId,
+        fromNationalId: user.nationalId,
+        nudgeType: input.nudgeType,
+      }),
+    )
+  }
+
   @Get('/actor-profiles')
   @Scopes(ApiScope.internal)
   @Documentation({
@@ -162,6 +199,50 @@ export class MeUserProfileController {
     @CurrentUser() user: User,
   ): Promise<PaginatedActorProfileDto> {
     return this.userProfileService.getActorProfiles(user.nationalId)
+  }
+
+  @Get('/actor-profile')
+  @Scopes(ApiScope.internal)
+  @Documentation({
+    description:
+      'Get a single actor profile with detailed information for the current user and specified fromNationalId.',
+    response: { status: 200, type: ActorProfileDetailsDto },
+  })
+  @Audit<ActorProfileDetailsDto>({
+    resources: (profile) => profile.actorNationalId,
+  })
+  getSingleActorProfile(
+    @CurrentUser() user: User,
+    @Param('fromNationalId') fromNationalId: string,
+  ): Promise<ActorProfileDetailsDto> {
+    if (!user.actor?.nationalId) {
+      throw new BadRequestException('User has no actor profile')
+    }
+
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'getSingleActorProfile',
+        resources: `${user.nationalId}:${fromNationalId}`,
+      },
+      this.userProfileService.getSingleActorProfile({
+        toNationalId: user.actor?.nationalId,
+        fromNationalId: user.nationalId,
+      }),
+    )
+  }
+
+  @Get('/actor-profiles/details')
+  @Scopes(ApiScope.internal)
+  @Documentation({
+    description: 'Get details for all actor profiles for the current user.',
+    response: { status: 200, type: PaginatedActorProfileDto },
+  })
+  getActorProfilesDetails(
+    @CurrentUser() user: User,
+  ): Promise<ActorProfileDetailsDto[]> {
+    return this.userProfileService.getActorProfilesDetails(user.nationalId)
   }
 
   @Patch('/actor-profiles/.from-national-id')
@@ -198,6 +279,107 @@ export class MeUserProfileController {
         toNationalId: user.nationalId,
         fromNationalId,
         emailNotifications: actorProfile.emailNotifications,
+        emailsId: actorProfile.emailsId,
+      }),
+    )
+  }
+
+  @Patch('emails/:emailId/primary')
+  @Scopes(UserProfileScope.write)
+  @Documentation({
+    description:
+      'Sets the email associated with the provided emailId as the primary email.',
+    response: { status: 200, type: UserProfileDto },
+  })
+  setEmailAsPrimary(
+    @CurrentUser() user: User,
+    @Param('emailId') emailId: string,
+  ): Promise<UserProfileDto> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'setEmailAsPrimary',
+        resources: user.nationalId,
+        meta: {
+          emailId,
+        },
+      },
+      this.userProfileService.setEmailAsPrimary(user.nationalId, emailId),
+    )
+  }
+
+  @Patch('/actor-profile')
+  @Scopes(ApiScope.internal)
+  @Documentation({
+    description:
+      'Update or create an actor profile with email information for the current user',
+    response: {
+      status: 200,
+      type: ActorProfileEmailDto,
+    },
+  })
+  updateActorProfileEmail(
+    @CurrentUser() user: User,
+    @Body() actorProfile: UpdateActorProfileEmailDto,
+  ): Promise<ActorProfileEmailDto> {
+    if (!user.actor?.nationalId) {
+      throw new BadRequestException('User has no actor profile')
+    }
+
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'updateActorProfileEmail',
+        resources: `${user.nationalId}:${user.actor.nationalId}`,
+        meta: {
+          fields: Object.keys(actorProfile),
+        },
+      },
+      this.userProfileService.updateActorProfileEmail({
+        toNationalId: user.actor.nationalId,
+        fromNationalId: user.nationalId,
+        ...actorProfile,
+      }),
+    )
+  }
+
+  @Patch('/actor-profile/email')
+  @Scopes(UserProfileScope.write)
+  @Documentation({
+    description:
+      'Set an email ID on an actor profile and reset the nudge timer',
+    response: {
+      status: 200,
+      type: ActorProfileDetailsDto,
+    },
+  })
+  setActorProfileEmail(
+    @CurrentUser() user: User,
+    @Body() dto: SetActorProfileEmailDto,
+  ): Promise<ActorProfileDetailsDto> {
+    console.log('dto', dto)
+    if (!user.actor?.nationalId) {
+      console.log('User has no actor profile')
+      throw new BadRequestException('User has no actor profile')
+    }
+    console.log('User has actor profile')
+
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'setActorProfileEmail',
+        resources: `${user.nationalId}:${user.actor.nationalId}`,
+        meta: {
+          emailsId: dto.emailsId,
+        },
+      },
+      this.userProfileService.setActorProfileEmail({
+        toNationalId: user.actor.nationalId,
+        fromNationalId: user.nationalId,
+        emailsId: dto.emailsId,
       }),
     )
   }

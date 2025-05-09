@@ -19,6 +19,9 @@ import { UserTokenService } from './userToken.service'
 import { UserDeviceTokens } from '../user-profile/userDeviceTokens.model'
 import { ActorProfile } from './models/actor-profile.model'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
+import { Emails } from './models/emails.model'
+import { EmailsController } from './emails.controller'
+import { EmailsService } from './emails.service'
 
 @Module({
   imports: [
@@ -28,6 +31,7 @@ import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegatio
       SmsVerification,
       UserDeviceTokens,
       ActorProfile,
+      Emails,
     ]),
     EmailModule,
     SmsModule,
@@ -40,12 +44,14 @@ import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegatio
     MeUserProfileController,
     UserProfileController,
     UserTokenController,
+    EmailsController,
   ],
   providers: [
     UserProfileService,
     VerificationService,
     IslykillService,
     UserTokenService,
+    EmailsService,
   ],
 })
 export class UserProfileModule {}

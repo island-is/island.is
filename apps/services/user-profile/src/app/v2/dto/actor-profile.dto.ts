@@ -6,9 +6,11 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator'
 import { PageInfoDto } from '@island.is/nest/pagination'
 import { Locale } from '../../user-profile/types/localeTypes'
+import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 export class MeActorProfileDto {
   @ApiProperty()
@@ -18,6 +20,11 @@ export class MeActorProfileDto {
   @ApiProperty()
   @IsBoolean()
   emailNotifications!: boolean
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsUUID(4)
+  readonly emailsId?: string | null
 }
 
 export class ActorProfileDto {
@@ -49,12 +56,50 @@ export class ActorProfileDto {
   @IsOptional()
   @IsEnum(Locale)
   readonly locale?: Locale | null
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsUUID(4)
+  readonly emailsId?: string
+}
+
+export class ActorProfileDetailsDto {
+  @ApiProperty({ type: () => String, nullable: true })
+  @IsOptional()
+  @IsEmail()
+  readonly email?: string | null
+
+  @ApiProperty({ enum: DataStatus })
+  @IsEnum(DataStatus)
+  readonly emailStatus!: DataStatus
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly needsNudge!: boolean | null
+
+  @ApiProperty()
+  @IsString()
+  readonly actorNationalId!: string
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly emailNotifications!: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly emailVerified!: boolean
 }
 
 export class PatchActorProfileDto {
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsBoolean()
-  emailNotifications!: boolean
+  emailNotifications?: boolean
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsUUID(4)
+  emailsId?: string
 }
 
 export class PaginatedActorProfileDto {
