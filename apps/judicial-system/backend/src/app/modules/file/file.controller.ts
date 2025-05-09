@@ -1,12 +1,16 @@
+import { Request } from 'express'
+
 import {
   Body,
   Controller,
   Delete,
   Get,
+  Headers,
   Inject,
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -20,6 +24,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import { IDS_ACCESS_TOKEN_NAME } from '@island.is/judicial-system/consts'
 import type { User } from '@island.is/judicial-system/types'
 import {
   indictmentCases,
@@ -334,20 +339,31 @@ export class FileController {
     type: CaseFile,
     description: 'Fetches the latest criminal record and creates a case file',
   })
+  // rename to uploadCriminalRecordCaseFile?
   async fetchAndCreateCriminalRecordCaseFile(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
+    @Req() req: Request,
+    @Headers('Cookie') cookie: { [key: string]: string },
     @CurrentHttpUser() user: User,
     @CurrentDefendant() defendant: Defendant,
   ): Promise<void> {
     this.logger.debug(
       `Fetching and creating a criminal record file for case ${caseId} for defendant ${defendantId}`,
     )
+    // We will get the cookie via the headers in this way
+    // SOLUTION 1 - Tokens are stored in headers, call auht.service to refresh token?
+    const accessToken = req.cookies[IDS_ACCESS_TOKEN_NAME]
 
-    const response = await this.criminalRecordService.fetchCriminalRecord(
+    // const accessToken = headers.cookie[IDS_ACCESS_TOKEN_NAME]
+    const response = await this.criminalRecordService.fetchCriminalRecord({
+      accessToken,
       defendant,
       user,
-    )
+    })
+
+    
+    console.log({ response })
 
     // TODO: use the response to create the criminal record case file
     // return this.fileService.createCaseFile(

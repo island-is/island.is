@@ -2,7 +2,7 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, InputFileUpload } from '@island.is/island-ui/core'
+import { Box, Button, InputFileUpload } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -35,9 +35,8 @@ const CaseFiles = () => {
     updateUploadFile,
     removeUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
-  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
-    workingCase.id,
-  )
+  const { handleFetchCriminalRecord, handleUpload, handleRetry, handleRemove } =
+    useS3Upload(workingCase.id)
 
   const stepIsValid = allFilesDoneOrError
   const handleNavigationTo = useCallback(
@@ -64,6 +63,22 @@ const CaseFiles = () => {
             title={formatMessage(strings.caseFiles.criminalRecordSection)}
             heading="h2"
           />
+          <Box marginBottom={3}>
+            <Button
+              variant="text"
+              onClick={() => {
+                if (!workingCase.defendants) {
+                  return
+                }
+
+                // currently fetch all criminal records for defendants on a given case
+                handleFetchCriminalRecord(workingCase.defendants)
+              }}
+              size="small"
+            >
+              Sækja sakavottorð til sakaskrár
+            </Button>
+          </Box>
           <InputFileUpload
             name="criminalRecord"
             files={uploadFiles.filter(

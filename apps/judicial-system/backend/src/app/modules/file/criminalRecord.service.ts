@@ -21,9 +21,6 @@ import { Defendant } from '../defendant'
 import { EventService } from '../event'
 import { criminalRecordModuleConfig } from './criminalRecord.config'
 
-// TODO: finish token functionality
-const accessToken = 'test'
-
 @Injectable()
 export class CriminalRecordService {
   private xRoadPath: string
@@ -49,8 +46,15 @@ export class CriminalRecordService {
     })
   }
 
-  async fetchCriminalRecord(defendant: Defendant, user: User) {
-    console.log({ config: this.config.dmrCriminalRecordApiPath })
+  async fetchCriminalRecord({
+    accessToken,
+    defendant,
+    user,
+  }: {
+    accessToken: string
+    defendant: Defendant
+    user: User
+  }) {
     if (!this.config.dmrCriminalRecordApiPath) {
       throw new ServiceUnavailableException(
         'DMR criminal record API not available',
@@ -118,5 +122,14 @@ export class CriminalRecordService {
           detail: reason.message,
         })
       })
+
+      // TODO: 
+      // Upload to S3 - see throttleUploadPoliceCaseFile
+      // fetch the file given the police case file id from the police service
+      // await this.awsS3Service.putObject(caseType, key, pdf)
+      // return { key, size: pdf.length }
+
+      // I think we need to store this file in our db and represent it as a new file
+      // for each fetch triggered by the user
   }
 }

@@ -101,10 +101,8 @@ export class FileResolver {
     )
   }
 
-  //fetchAndCreateCriminalRecordCaseFile
   @Mutation(() => CaseFile)
   fetchAndCreateCriminalRecordCaseFile(
-    // TODO: Change input types
     @Args('input', { type: () => CreateDefendantFileInput })
     input: CreateDefendantFileInput,
     @CurrentGraphQlUser() user: User,
@@ -112,11 +110,11 @@ export class FileResolver {
     { backendService }: { backendService: BackendService },
   ): Promise<CaseFile> {
     const { caseId, defendantId } = input
-
     this.logger.debug(
       `Fetching and creating a criminal record case file for case ${caseId} and defendant ${defendantId}`,
     )
 
+    // Can we somehow pass the token down here? as a an auth header?
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_FILE,

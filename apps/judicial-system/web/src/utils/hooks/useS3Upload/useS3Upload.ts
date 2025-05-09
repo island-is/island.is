@@ -8,6 +8,7 @@ import {
   CaseFile,
   CaseFileCategory,
   CreateFileInput,
+  Defendant,
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -31,6 +32,7 @@ import {
   DeleteFileMutation,
   useDeleteFileMutation,
 } from './deleteFile.generated'
+import { useFetchAndCreateCriminalRecordFileMutation } from './fetchAndCreateCriminalRecordCaseFile.generated'
 import {
   LimitedAccessCreateCivilClaimantFileMutation,
   useLimitedAccessCreateCivilClaimantFileMutation,
@@ -235,6 +237,9 @@ const useS3Upload = (
   const [deleteFile] = useDeleteFileMutation()
   const [limitedAccessDeleteFile] = useLimitedAccessDeleteFileMutation()
   const [uploadPoliceCaseFile] = useUploadPoliceCaseFileMutation()
+  // TODO: WIP
+  const [fetchAndCreateCriminalRecordFile] =
+    useFetchAndCreateCriminalRecordFileMutation()
 
   const getPresignedPost = useCallback(
     async (file: TUploadFile) => {
@@ -432,6 +437,21 @@ const useS3Upload = (
     [getPresignedPost, addFileToCaseState, formatMessage],
   )
 
+  const handleFetchCriminalRecord = (defendants: Defendant[]) => {
+    const file = defendants.map(({ id }) => {
+      try {
+        const criminalRecordFile = fetchAndCreateCriminalRecordFile()
+
+        return true
+      } catch (error) {
+        toast.error(formatMessage(strings.uploadFailed))
+        // updateFile({ ...file, percent: 0, status: FileUploadStatus.error })
+
+        return false
+      }
+    })
+  }
+
   const handleUploadFromPolice = useCallback(
     (
       files: TUploadFile[],
@@ -548,6 +568,7 @@ const useS3Upload = (
     handleRetry,
     handleRemove,
     handleUploadFromPolice,
+    handleFetchCriminalRecord,
   }
 }
 

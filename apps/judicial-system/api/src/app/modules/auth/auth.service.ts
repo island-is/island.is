@@ -50,6 +50,9 @@ export class AuthService {
     }
   }
 
+  // TODO: refresh access token - update cookie
+  // fetch tokens?
+
   async verifyIdsToken(token: string) {
     try {
       const secretClient = jwksClient({

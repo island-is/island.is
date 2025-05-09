@@ -35,7 +35,9 @@ import {
   CSRF_COOKIE_NAME,
   DEFENDER_CASES_ROUTE,
   EXPIRES_IN_MILLISECONDS,
+  IDS_ACCESS_TOKEN_NAME,
   IDS_ID_TOKEN_NAME,
+  IDS_REFRESH_TOKEN_NAME,
   PRISON_CASES_ROUTE,
   USERS_ROUTE,
 } from '@island.is/judicial-system/consts'
@@ -95,6 +97,17 @@ export class AuthController {
     options: this.defaultCookieOptions,
   }
 
+  // Store it temp in a cookie
+  private readonly accessToken: Cookie = {
+    name: IDS_ACCESS_TOKEN_NAME,
+    options: this.defaultCookieOptions,
+  }
+
+  private readonly refreshToken: Cookie = {
+    name: IDS_REFRESH_TOKEN_NAME,
+    options: this.defaultCookieOptions,
+  }
+
   constructor(
     private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
@@ -122,12 +135,12 @@ export class AuthController {
       if (this.config.allowAuthBypass && nationalId) {
         this.logger.debug(`Logging in using development mode`)
 
-        await this.redirectAuthenticatedUser(
+        await this.redirectAuthenticatedUser({
           nationalId,
           res,
           userId,
-          redirectRoute,
-        )
+          requestedRedirectRoute: redirectRoute,
+        })
 
         return
       }
@@ -203,23 +216,27 @@ export class AuthController {
 
       const idsTokens = await this.authService.fetchIdsToken(code, codeVerifier)
       // TODO: remove, used for temp testing
-      console.log({ idsTokens })
-
       const verifiedUserToken = await this.authService.verifyIdsToken(
         idsTokens.id_token,
       )
+      console.log({
+        access_token: idsTokens.access_token,
+        refresh_token: idsTokens.refresh_token,
+      })
 
       if (verifiedUserToken) {
         this.logger.debug('Token verification successful')
 
-        await this.redirectAuthenticatedUser(
-          verifiedUserToken.nationalId,
+        await this.redirectAuthenticatedUser({
+          nationalId: verifiedUserToken.nationalId,
           res,
           userId,
-          redirectRoute,
-          idsTokens.id_token,
-          new Entropy({ bits: 128 }).string(),
-        )
+          requestedRedirectRoute: redirectRoute,
+          idToken: idsTokens.id_token,
+          csrfToken: new Entropy({ bits: 128 }).string(),
+          accessToken: idsTokens.access_token,
+          refreshToken: idsTokens.refresh_token,
+        })
 
         return
       }
@@ -350,14 +367,25 @@ export class AuthController {
     cookies.forEach((cookie) => clearCookie(cookie))
   }
 
-  private async redirectAuthenticatedUser(
-    nationalId: string,
-    res: Response,
-    userId?: string,
-    requestedRedirectRoute?: string,
-    idToken?: string,
-    csrfToken?: string,
-  ) {
+  private async redirectAuthenticatedUser({
+    nationalId,
+    res,
+    userId,
+    requestedRedirectRoute,
+    idToken,
+    csrfToken,
+    accessToken,
+    refreshToken,
+  }: {
+    nationalId: string
+    res: Response
+    userId?: string
+    requestedRedirectRoute?: string
+    idToken?: string
+    csrfToken?: string
+    accessToken?: string
+    refreshToken?: string
+  }) {
     const eligibleUsers = await this.authService.findEligibleUsersByNationalId(
       nationalId,
     )
@@ -388,6 +416,15 @@ export class AuthController {
 
     if (idToken) {
       res.cookie(this.idToken.name, idToken, {
+        ...this.idToken.options,
+        maxAge: EXPIRES_IN_MILLISECONDS,
+      })
+      // TEMP: Store it temp in a cookie
+      // expires in 5 minutes
+      res.cookie(this.accessToken.name, accessToken, {
+        ...this.idToken.options,
+      })
+      res.cookie(this.refreshToken.name, refreshToken, {
         ...this.idToken.options,
         maxAge: EXPIRES_IN_MILLISECONDS,
       })
