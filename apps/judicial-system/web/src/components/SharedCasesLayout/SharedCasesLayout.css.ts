@@ -6,6 +6,7 @@ export const gridContainer = style({
   gridTemplateColumns: 'repeat(4, 1fr)',
   columnGap: '24px',
   rowGap: '32px',
+  minHeight: '184px',
   '@media': {
     'screen and (max-width: 1024px)': {
       gridTemplateColumns: 'repeat(2, 1fr)',
