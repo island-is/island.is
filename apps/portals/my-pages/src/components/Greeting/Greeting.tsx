@@ -21,6 +21,8 @@ const Greeting = () => {
   const currentHour = new Date().getHours()
 
   const isEveningGreeting = currentHour > 17 || currentHour < 4
+  // DUMMY
+  const k = 8
 
   const [showSearch, setShowSearch] = useState<boolean>(false)
 
