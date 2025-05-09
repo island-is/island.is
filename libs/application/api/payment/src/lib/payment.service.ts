@@ -573,6 +573,11 @@ export class PaymentService {
     performingOrganizationID: string,
     targetChargeItems: BasicChargeItem[],
   ): Promise<CatalogItem[]> {
+    console.log('--------------------------------')
+    console.log('performingOrganizationID', performingOrganizationID)
+    console.log('targetChargeItems', targetChargeItems)
+    console.log('--------------------------------')
+
     const { item: catalogItems } =
       await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
         performingOrganizationID,
@@ -586,9 +591,16 @@ export class PaymentService {
         (item) => item.chargeItemCode === chargeItem.code,
       )
       if (catalogItem) {
-        result.push({ ...catalogItem, quantity: chargeItem.quantity })
+        result.push({
+          ...catalogItem,
+          quantity: chargeItem.quantity ?? 1,
+        })
       }
     }
+
+    console.log('--------------------------------')
+    console.log('result', result)
+    console.log('--------------------------------')
 
     if (!result || result.length === 0) {
       throw new Error('Bad chargeItems or empty catalog')
