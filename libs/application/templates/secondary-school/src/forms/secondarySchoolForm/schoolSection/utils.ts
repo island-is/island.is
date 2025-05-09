@@ -174,6 +174,10 @@ export const setOnChangeSchool = (
       key: `selection[${index}].school.name`,
       value: selectedSchool?.name,
     },
+    {
+      key: `selection[${index}].secondProgram.require`,
+      value: checkIsFreshman(application.answers),
+    },
     { key: `selection[${index}].requestDormitory`, value: [] }, // clear answer
   ]
 }
