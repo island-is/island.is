@@ -301,6 +301,9 @@
       "@island.is/application/templates/aosh/deregister-machine": [
         "libs/application/templates/aosh/deregister-machine/src/index.ts"
       ],
+      "@island.is/application/templates/aosh/issuance-of-certificate": [
+        "libs/application/templates/aosh/issuance-of-certificate/src/index.ts"
+      ],
       "@island.is/application/templates/aosh/register-new-machine": [
         "libs/application/templates/aosh/register-new-machine/src/index.ts"
       ],

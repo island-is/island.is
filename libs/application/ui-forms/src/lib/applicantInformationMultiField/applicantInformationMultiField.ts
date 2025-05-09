@@ -26,13 +26,14 @@ export const applicantInformationMultiField = (
     emailCondition,
     emailRequired = true,
     emailDisabled = false,
+    applicantInformationTitle = applicantInformation.general.title,
     applicantInformationDescription = '',
     readOnly = false,
     readOnlyEmailAndPhone = false,
   } = props ?? {}
   return buildMultiField({
     id: 'applicant',
-    title: applicantInformation.general.title,
+    title: applicantInformationTitle,
     description: applicantInformationDescription,
     children: [
       buildTextField({
