@@ -12,7 +12,7 @@ const CaseNumbers: FC = () => {
 
   if (!workingCase.appealCaseNumber) {
     return (
-      <Text as="h3" variant="default" fontWeight="semiBold">
+      <Text as="h3" variant="default" fontWeight="semiBold" marginBottom={1}>
         {formatMessage(strings.courtOfAppealCaseNumber, {
           caseNumber: workingCase.courtCaseNumber,
         })}
