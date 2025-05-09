@@ -29,8 +29,8 @@ import { Case } from '../case/models/case.model'
 import {
   CaseTableCellValue,
   CaseTableResponse,
-  StringGroup,
-  Tag,
+  StringGroupValue,
+  TagValue,
 } from './dto/caseTable.response'
 
 interface CaseTableCellGenerator {
@@ -41,7 +41,7 @@ interface CaseTableCellGenerator {
 const cellGenerators: Record<CaseTableColumnKey, CaseTableCellGenerator> = {
   caseNumber: {
     attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
-    generate: (c: Case): StringGroup => ({
+    generate: (c: Case): StringGroupValue => ({
       s: [
         c.appealCaseNumber ?? '',
         c.courtCaseNumber ?? '',
@@ -53,11 +53,11 @@ const cellGenerators: Record<CaseTableColumnKey, CaseTableCellGenerator> = {
   },
   defendants: {
     attributes: [],
-    generate: (c: Case): StringGroup => ({ s: ['1234'] }),
+    generate: (c: Case): StringGroupValue => ({ s: ['1234'] }),
   },
   caseType: {
     attributes: ['type', 'decision', 'parentCaseId'],
-    generate: (c: Case): StringGroup => ({
+    generate: (c: Case): StringGroupValue => ({
       s: [
         capitalize(
           formatCaseType(
@@ -72,7 +72,7 @@ const cellGenerators: Record<CaseTableColumnKey, CaseTableCellGenerator> = {
   },
   appealState: {
     attributes: ['appealState', 'appealRulingDecision', 'appealCaseNumber'],
-    generate: (c: Case, user: User): Tag | undefined => {
+    generate: (c: Case, user: User): TagValue | undefined => {
       switch (c.appealState) {
         case CaseAppealState.WITHDRAWN:
           return { color: 'red', text: 'Afturkallað' }
@@ -106,11 +106,11 @@ const cellGenerators: Record<CaseTableColumnKey, CaseTableCellGenerator> = {
   },
   courtOfAppealsHead: {
     attributes: [],
-    generate: (c: Case): StringGroup => ({ s: ['1234'] }),
+    generate: (c: Case): StringGroupValue => ({ s: ['1234'] }),
   },
   validFromTo: {
     attributes: [],
-    generate: (c: Case): StringGroup => ({ s: ['1234'] }),
+    generate: (c: Case): StringGroupValue => ({ s: ['1234'] }),
   },
 }
 

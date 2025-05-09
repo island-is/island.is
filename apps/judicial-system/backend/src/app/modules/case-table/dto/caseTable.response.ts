@@ -4,12 +4,12 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger'
 
-export class StringGroup {
+export class StringGroupValue {
   @ApiProperty({ type: [String], description: 'The string values' })
   readonly s!: string[]
 }
 
-export class Tag {
+export class TagValue {
   @ApiProperty({ type: String, description: 'The tag color' })
   readonly color!: string
 
@@ -17,11 +17,14 @@ export class Tag {
   readonly text!: string
 }
 
-export type CaseTableCellValue = StringGroup | Tag
+export type CaseTableCellValue = StringGroupValue | TagValue
 
 export class CaseTableCell {
   @ApiPropertyOptional({
-    oneOf: [{ $ref: getSchemaPath(StringGroup) }, { $ref: getSchemaPath(Tag) }],
+    oneOf: [
+      { $ref: getSchemaPath(StringGroupValue) },
+      { $ref: getSchemaPath(TagValue) },
+    ],
     description: 'The cell value',
   })
   readonly value?: CaseTableCellValue

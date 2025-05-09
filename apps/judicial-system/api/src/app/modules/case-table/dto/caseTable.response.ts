@@ -13,13 +13,13 @@ registerEnumType(CaseTableType, {
 })
 
 @ObjectType()
-class StringGroup {
+class StringGroupValue {
   @Field(() => [String], { description: 'The string values' })
   readonly s!: string[]
 }
 
 @ObjectType()
-export class Tag {
+export class TagValue {
   @Field(() => String, { description: 'The tag color' })
   readonly color!: string
 
@@ -29,13 +29,13 @@ export class Tag {
 
 const CaseTableCellValue = createUnionType({
   name: 'CaseTableCellValue',
-  types: () => [StringGroup, Tag] as const,
+  types: () => [StringGroupValue, TagValue] as const,
   resolveType(value) {
     if ('s' in value) {
-      return StringGroup
+      return StringGroupValue
     }
     if ('color' in value && 'text' in value) {
-      return Tag
+      return TagValue
     }
     return null
   },

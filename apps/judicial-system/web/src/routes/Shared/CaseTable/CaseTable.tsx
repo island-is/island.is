@@ -13,7 +13,8 @@ import {
 import { GenericTable } from '@island.is/judicial-system-web/src/components/Table'
 import {
   CaseTableCell,
-  StringGroup,
+  StringGroupValue,
+  TagValue,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
@@ -24,7 +25,7 @@ const hasCellValue = (cell: CaseTableCell): boolean => {
   return cell.value !== null || cell.value !== undefined
 }
 
-const compareStringGroup = (a: StringGroup, b: StringGroup) => {
+const compareStringGroup = (a: StringGroupValue, b: StringGroupValue) => {
   const aValue = a.s
   const bValue = b.s
 
@@ -39,6 +40,10 @@ const compareStringGroup = (a: StringGroup, b: StringGroup) => {
   return 0
 }
 
+const compareTag = (a: TagValue, b: TagValue) => {
+  return compareLocaleIS(a.text, b.text)
+}
+
 const compare = (a: CaseTableCell, b: CaseTableCell): number => {
   if (!hasCellValue(a)) {
     return hasCellValue(b) ? -1 : 0
@@ -51,15 +56,22 @@ const compare = (a: CaseTableCell, b: CaseTableCell): number => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const bValue = b.value!
 
+  // Cannot compare different types
+  if (aValue.__typename !== bValue.__typename) {
+    return 0
+  }
+
   switch (aValue.__typename) {
-    case 'StringGroup':
-      return compareStringGroup(aValue, bValue)
+    case 'StringGroupValue':
+      return compareStringGroup(aValue, bValue as StringGroupValue)
+    case 'TagValue':
+      return compareTag(aValue, bValue as TagValue)
     default:
       return 0
   }
 }
 
-const renderStringGroup = (value: StringGroup) => {
+const renderStringGroup = (value: StringGroupValue) => {
   const strings = value.s.filter((v) => v !== '')
   const length = strings.length
 
@@ -94,9 +106,9 @@ const render = (cell: CaseTableCell): ReactNode => {
   const value = cell.value
 
   switch (value.__typename) {
-    case 'StringGroup':
+    case 'StringGroupValue':
       return renderStringGroup(value)
-    case 'Tag':
+    case 'TagValue':
       return renderTag(value)
     default:
       return null

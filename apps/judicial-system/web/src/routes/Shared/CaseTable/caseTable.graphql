@@ -6,10 +6,10 @@ query CaseTable($input: CaseTableQueryInput!) {
       cells {
         value {
           __typename
-          ... on StringGroup {
+          ... on StringGroupValue {
             s
           }
-          ... on Tag {
+          ... on TagValue {
             color
             text
           }
