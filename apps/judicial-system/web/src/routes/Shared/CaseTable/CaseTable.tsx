@@ -165,6 +165,9 @@ const CaseTable = () => {
               loadingIndicator={LoadingIndicator}
               rowIdBeingOpened={isOpeningCaseId}
               showLoading={showLoading}
+              onClick={(id) => {
+                handleOpenCase(id)
+              }}
             />
           )}
         </>

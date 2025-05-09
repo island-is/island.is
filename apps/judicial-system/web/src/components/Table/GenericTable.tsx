@@ -18,11 +18,11 @@ interface GenericTableProps<Cell> {
     id: string
     cells: Cell[]
   }[]
-  generateContextMenuItems?: (id: string) => ContextMenuItem[]
+  generateContextMenuItems: (id: string) => ContextMenuItem[]
   loadingIndicator: () => JSX.Element
   rowIdBeingOpened: string | null
   showLoading: boolean
-  onClick?: (id: string) => boolean
+  onClick: (id: string) => void
 }
 
 const GenericTable = <Cell,>({
@@ -86,7 +86,7 @@ const GenericTable = <Cell,>({
               />
             </th>
           ))}
-          {generateContextMenuItems && <th className={styles.th} />}
+          {<th className={styles.th} />}
         </tr>
       </thead>
       <tbody>
@@ -97,9 +97,7 @@ const GenericTable = <Cell,>({
             aria-label="Opna kröfu"
             className={styles.tableRowContainer}
             onClick={() => {
-              if (onClick) {
-                onClick(r.id)
-              }
+              onClick(r.id)
             }}
           >
             {r.cells.map((cell, idx) => (
