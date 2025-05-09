@@ -1,4 +1,9 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+import {
+  createUnionType,
+  Field,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql'
 
 import { CaseTableType } from '@island.is/judicial-system/types'
 
@@ -14,9 +19,35 @@ class StringGroup {
 }
 
 @ObjectType()
+export class Tag {
+  @Field(() => String, { description: 'The tag color' })
+  readonly color!: string
+
+  @Field(() => String, { description: 'The tag text' })
+  readonly text!: string
+}
+
+const CaseTableCellValue = createUnionType({
+  name: 'CaseTableCellValue',
+  types: () => [StringGroup, Tag] as const,
+  resolveType(value) {
+    if ('s' in value) {
+      return StringGroup
+    }
+    if ('color' in value && 'text' in value) {
+      return Tag
+    }
+    return null
+  },
+})
+
+@ObjectType()
 class CaseTableCell {
-  @Field(() => StringGroup, { description: 'The cell value' })
-  readonly value!: StringGroup
+  @Field(() => CaseTableCellValue, {
+    description: 'The cell value',
+    nullable: true,
+  })
+  readonly value?: typeof CaseTableCellValue
 }
 
 @ObjectType()

@@ -1,13 +1,30 @@
-import { ApiProperty } from '@nestjs/swagger'
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from '@nestjs/swagger'
 
-class StringGroup {
+export class StringGroup {
   @ApiProperty({ type: [String], description: 'The string values' })
   readonly s!: string[]
 }
 
+export class Tag {
+  @ApiProperty({ type: String, description: 'The tag color' })
+  readonly color!: string
+
+  @ApiProperty({ type: String, description: 'The tag text' })
+  readonly text!: string
+}
+
+export type CaseTableCellValue = StringGroup | Tag
+
 export class CaseTableCell {
-  @ApiProperty({ type: StringGroup, description: 'The cell value' })
-  readonly value!: StringGroup
+  @ApiPropertyOptional({
+    oneOf: [{ $ref: getSchemaPath(StringGroup) }, { $ref: getSchemaPath(Tag) }],
+    description: 'The cell value',
+  })
+  readonly value?: CaseTableCellValue
 }
 
 class CaseTableRow {

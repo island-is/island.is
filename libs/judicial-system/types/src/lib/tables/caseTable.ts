@@ -41,7 +41,7 @@ const courtOfAppealsInProgressColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
-  'caseState',
+  'appealState',
   'courtOfAppealsHead',
 ]
 const courtOfAppealsInProgress: CaseTable = {
@@ -54,7 +54,7 @@ const courtOfAppealsCompletedColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
-  'caseState',
+  'appealState',
   'validFromTo',
 ]
 const courtOfAppealsCompleted: CaseTable = {

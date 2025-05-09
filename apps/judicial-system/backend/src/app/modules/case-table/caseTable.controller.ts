@@ -47,6 +47,6 @@ export class CaseTableController {
       `Getting a case table of type ${type} for user ${user.id}`,
     )
 
-    return this.caseTableService.getCaseTableRows(type)
+    return this.caseTableService.getCaseTableRows(type, user)
   }
 }

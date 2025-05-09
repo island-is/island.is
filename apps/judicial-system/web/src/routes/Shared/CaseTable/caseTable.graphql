@@ -9,6 +9,10 @@ query CaseTable($input: CaseTableQueryInput!) {
           ... on StringGroup {
             s
           }
+          ... on Tag {
+            color
+            text
+          }
         }
       }
     }
