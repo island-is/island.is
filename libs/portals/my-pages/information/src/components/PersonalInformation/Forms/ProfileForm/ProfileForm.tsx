@@ -15,7 +15,7 @@ import {
 } from '@island.is/react/feature-flags'
 import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
 import {
-  useDeleteIslykillValue,
+  useDeleteEmailOrPhoneValue,
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
 
@@ -65,8 +65,8 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const [emailDirty, setEmailDirty] = useState(true)
   const [internalLoading, setInternalLoading] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
-  const { deleteIslykillValue, loading: deleteLoading } =
-    useDeleteIslykillValue()
+  const { deleteEmailOrPhoneValue, loading: deleteLoading } =
+    useDeleteEmailOrPhoneValue()
   const userInfo = useUserInfo()
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
@@ -130,7 +130,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
          * After asking the user to verify that they are updating their profile with empty fields.
          */
 
-        await deleteIslykillValue({
+        await deleteEmailOrPhoneValue({
           email: true,
           mobilePhoneNumber: true,
         }).then(() => closeAllModals())
