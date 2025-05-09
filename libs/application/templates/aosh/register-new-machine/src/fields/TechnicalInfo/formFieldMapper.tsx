@@ -4,10 +4,7 @@ import {
   TextFormField,
 } from '@island.is/application/ui-fields'
 import { FormFieldMapperType } from '../../shared/types'
-import {
-  FieldComponents,
-  FieldTypes,
-} from '@island.is/application/types'
+import { FieldComponents, FieldTypes } from '@island.is/application/types'
 import { information } from '../../lib/messages'
 import { coreErrorMessages, NO, YES } from '@island.is/application/core'
 import { ListItemField } from './ListItemField'
@@ -20,24 +17,23 @@ export const formFieldMapper = ({
   formatMessage,
   lang,
 }: FormFieldMapperType) => {
-  const { variableName, label, labelEn, type, required, maxLength, values } =
-    item
+  const { name, label, labelEn, type, required, maxLength, values } = item
   const { application, field } = props
   const error =
-    displayError && required && variableName
-      ? (watchTechInfoFields[variableName].length === 0
+    displayError && required && name
+      ? (watchTechInfoFields[name].length === 0
           ? formatMessage(coreErrorMessages.defaultError)
           : undefined) ||
         ((type === 'int' || type === 'float') &&
         maxLength &&
-        watchTechInfoFields[variableName].length > maxLength
+        watchTechInfoFields[name].length > maxLength
           ? formatMessage(coreErrorMessages.defaultError)
           : undefined)
       : undefined
   if (values && values.length > 0) {
     return (
       <ListItemField
-        fieldId={`${field.id}.${variableName}`}
+        fieldId={`${field.id}.${name}`}
         label={(lang === 'is' ? label : labelEn) ?? ''}
         options={values?.map((value) => {
           return {
@@ -56,7 +52,7 @@ export const formFieldMapper = ({
         showFieldName
         error={error}
         field={{
-          id: `${field.id}.${variableName}`,
+          id: `${field.id}.${name}`,
           title: (lang === 'is' ? label : labelEn) ?? '',
           component: FieldComponents.TEXT,
           type: FieldTypes.TEXT,
@@ -78,7 +74,7 @@ export const formFieldMapper = ({
         error={error}
         showFieldName
         field={{
-          id: `${field.id}.${variableName}`,
+          id: `${field.id}.${name}`,
           title: (lang === 'is' ? label : labelEn) ?? '',
           component: FieldComponents.TEXT,
           type: FieldTypes.TEXT,
@@ -97,7 +93,7 @@ export const formFieldMapper = ({
         application={application}
         error={error}
         field={{
-          id: `${field.id}.${variableName}`,
+          id: `${field.id}.${name}`,
           title: (lang === 'is' ? label : labelEn) ?? '',
           component: FieldComponents.DATE,
           type: FieldTypes.DATE,
@@ -115,7 +111,7 @@ export const formFieldMapper = ({
         application={application}
         error={error}
         field={{
-          id: `${field.id}.${variableName}`,
+          id: `${field.id}.${name}`,
           title: (lang === 'is' ? label : labelEn) ?? '',
           options: [
             {
