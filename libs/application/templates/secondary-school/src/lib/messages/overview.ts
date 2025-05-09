@@ -171,4 +171,25 @@ export const overview = {
       description: 'Received application button',
     },
   }),
+  applicationDataHasBeenPruned: defineMessages({
+    submitted: {
+      id: 'ss.application:overview.applicationDataHasBeenPruned.submitted',
+      defaultMessage:
+        'Umsókn er innsend. Ef það þarf að breyta umsókn þarf að eyða þessari og gera nýja.',
+      description:
+        'Overview message if application data had been pruned, and application is in submitted state',
+    },
+    inReview: {
+      id: 'ss.application:overview.applicationDataHasBeenPruned.inReview',
+      defaultMessage: 'Umsókn er í vinnslu hjá stofnun.',
+      description:
+        'Overview message if application data had been pruned, and application is in in review state',
+    },
+    completed: {
+      id: 'ss.application:overview.applicationDataHasBeenPruned.submitted',
+      defaultMessage: 'Umsókn er afgreidd.',
+      description:
+        'Overview message if application data had been pruned, and application is in completed state',
+    },
+  }),
 }
