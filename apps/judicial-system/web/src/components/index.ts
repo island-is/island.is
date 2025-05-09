@@ -123,3 +123,4 @@ export { LawyerRegistryProvider } from './LawyerRegistryProvider/LawyerRegistryP
 export { default as RequiredStar } from './RequiredStar/RequiredStar'
 export { VictimInfo } from './VictimInfo/VictimInfo'
 export { LabelValue } from './LabelValue/LabelValue'
+export { default as TableGroup } from './TableGroup/TableGroup'
