@@ -22,7 +22,7 @@ import { useCaseTableQuery } from './caseTable.generated'
 import * as styles from './CaseTable.css'
 
 const hasCellValue = (cell: CaseTableCell): boolean => {
-  return cell.value !== null || cell.value !== undefined
+  return cell.value !== null && cell.value !== undefined
 }
 
 const compareStringGroup = (a: StringGroupValue, b: StringGroupValue) => {

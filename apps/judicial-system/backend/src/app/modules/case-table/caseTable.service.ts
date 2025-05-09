@@ -1,4 +1,5 @@
-import { Op, WhereOptions } from 'sequelize'
+import { Includeable, Op, WhereOptions } from 'sequelize'
+import { ModelStatic } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -8,12 +9,14 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   capitalize,
   formatCaseType,
+  formatDate,
   getAppealResultTextByValue,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseDecision,
+  CaseState,
   CaseTableColumnKey,
   caseTables,
   CaseTableType,
@@ -21,11 +24,13 @@ import {
   completedRequestCaseStates,
   investigationCases,
   isCourtOfAppealsUser,
+  isRestrictionCase,
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
+import { Defendant } from '../defendant'
 import {
   CaseTableCellValue,
   CaseTableResponse,
@@ -33,8 +38,25 @@ import {
   TagValue,
 } from './dto/caseTable.response'
 
+type ElementType<T> = T extends (infer U)[] ? U : T
+type DefinedObject<T> = NonNullable<ElementType<T>>
+type ObjectKeys<T> = Extract<
+  {
+    [K in keyof T]: DefinedObject<T[K]> extends object ? K : never
+  }[keyof T],
+  string
+>
+type CaseIncludes = {
+  [K in ObjectKeys<Case>]: {
+    model: ModelStatic<DefinedObject<Case[K]>>
+    attributes: (keyof DefinedObject<Case[K]>)[]
+    order?: [[keyof DefinedObject<Case[K]>, 'ASC' | 'DESC']]
+  }
+}
+
 interface CaseTableCellGenerator {
-  attributes: (keyof Case)[]
+  attributes?: (keyof Case)[]
+  includes?: Partial<CaseIncludes>
   generate: (caseModel: Case, user: User) => CaseTableCellValue | undefined
 }
 
@@ -52,8 +74,24 @@ const cellGenerators: Record<CaseTableColumnKey, CaseTableCellGenerator> = {
     }),
   },
   defendants: {
-    attributes: [],
-    generate: (c: Case): StringGroupValue => ({ s: ['1234'] }),
+    includes: {
+      defendants: {
+        model: Defendant,
+        attributes: ['nationalId', 'name'],
+        order: [['created', 'ASC']],
+      },
+    },
+    generate: (c: Case): StringGroupValue | undefined =>
+      c.defendants && c.defendants.length > 0
+        ? {
+            s: [
+              c.defendants[0].name ?? '',
+              c.defendants.length > 1
+                ? `+ ${c.defendants.length - 1}`
+                : c.defendants[0].nationalId ?? '',
+            ],
+          }
+        : undefined,
   },
   caseType: {
     attributes: ['type', 'decision', 'parentCaseId'],
@@ -109,12 +147,31 @@ const cellGenerators: Record<CaseTableColumnKey, CaseTableCellGenerator> = {
     generate: (c: Case): StringGroupValue => ({ s: ['1234'] }),
   },
   validFromTo: {
-    attributes: [],
-    generate: (c: Case): StringGroupValue => ({ s: ['1234'] }),
+    attributes: [
+      'type',
+      'state',
+      'initialRulingDate',
+      'rulingDate',
+      'validToDate',
+    ],
+    generate: (c: Case): StringGroupValue | undefined =>
+      isRestrictionCase(c.type) &&
+      c.state === CaseState.ACCEPTED &&
+      c.validToDate
+        ? c.initialRulingDate || c.rulingDate
+          ? {
+              s: [
+                `${formatDate(c.initialRulingDate ?? c.rulingDate) ?? ''} - ${
+                  formatDate(c.validToDate) ?? ''
+                }`,
+              ],
+            }
+          : { s: [formatDate(c.validToDate) ?? ''] }
+        : undefined,
   },
 }
 
-const whereMap: Record<CaseTableType, WhereOptions> = {
+const whereOptions: Record<CaseTableType, WhereOptions> = {
   [CaseTableType.COURT_OF_APPEALS_IN_PROGRESS]: {
     is_archived: false,
     type: [...restrictionCases, ...investigationCases],
@@ -150,12 +207,30 @@ export class CaseTableService {
   ): Promise<CaseTableResponse> {
     const caseTableCellKeys = caseTables[type].columnKeys
 
+    const attributes = [
+      'id',
+      ...caseTableCellKeys
+        .map((k) => cellGenerators[k].attributes ?? [])
+        .flat(),
+    ]
+
+    const include: Includeable[] = caseTableCellKeys
+      .filter((k) => cellGenerators[k].includes)
+      .map(
+        (k) =>
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          Object.entries(cellGenerators[k].includes!).map(([k, v]) => ({
+            ...v,
+            as: k,
+            separate: true,
+          })) as Includeable,
+      )
+      .flat()
+
     const cases = await this.caseModel.findAll({
-      attributes: [
-        'id',
-        ...caseTableCellKeys.map((k) => cellGenerators[k].attributes).flat(),
-      ],
-      where: whereMap[type],
+      attributes,
+      include,
+      where: whereOptions[type],
     })
 
     return {
