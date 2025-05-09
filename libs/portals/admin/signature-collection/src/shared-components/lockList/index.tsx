@@ -1,19 +1,21 @@
 import { useLocale } from '@island.is/localization'
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Icon,
+  Tag,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useRevalidator } from 'react-router-dom'
-import { m } from '../../../lib/messages'
-import { ListStatus } from '@island.is/api/schema'
+import { m } from '../../lib/messages'
 import { useSignatureCollectionLockListMutation } from './lockList.generated'
 
-const ActionLockList = ({
-  listId,
-  listStatus,
-}: {
-  listId: string
-  listStatus: string
-}) => {
+const ActionLockList = ({ listId }: { listId: string }) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
 
@@ -38,16 +40,30 @@ const ActionLockList = ({
 
   return (
     <Box>
-      <Button
-        iconType="outline"
-        variant="ghost"
-        icon="lockClosed"
-        colorScheme="destructive"
-        onClick={() => setModalLockListIsOpen(true)}
-        disabled={listStatus !== ListStatus.Active}
-      >
-        {formatMessage(m.lockList)}
-      </Button>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          <Box display="flex">
+            <Tag>
+              <Box display="flex" justifyContent="center">
+                <Icon icon="lockClosed" type="outline" color="blue600" />
+              </Box>
+            </Tag>
+            <Box marginLeft={5}>
+              <Text variant="h4">{formatMessage(m.lockList)}</Text>
+              <Text marginBottom={2}>
+                {formatMessage(m.lockListDescription)}
+              </Text>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => setModalLockListIsOpen(true)}
+              >
+                {formatMessage(m.lockList)}
+              </Button>
+            </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <Modal
         id="toggleLockList"
         isVisible={modalLockListIsOpen}

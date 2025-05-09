@@ -3,12 +3,15 @@ import {
   Box,
   Button,
   DatePicker,
-  Input,
+  Icon,
+  Tag,
   toast,
+  Text,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
-import format from 'date-fns/format'
 import { useExtendDeadlineMutation } from './extendDeadline.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
@@ -16,7 +19,6 @@ import { m } from '../../lib/messages'
 const ActionExtendDeadline = ({
   listId,
   endTime,
-  allowedToProcess,
 }: {
   listId: string
   endTime: string
@@ -30,7 +32,7 @@ const ActionExtendDeadline = ({
 
   useEffect(() => {
     setEndDate(endDate)
-  }, [endTime])
+  }, [endDate, endTime])
 
   const extendDeadline = async (newEndDate: string) => {
     try {
@@ -55,24 +57,33 @@ const ActionExtendDeadline = ({
 
   return (
     <Box>
-      <Box display="flex" alignItems="flexEnd">
-        <Input
-          name="endTime"
-          size="sm"
-          label={formatMessage(m.listEndTime)}
-          readOnly
-          value={format(new Date(endDate), 'dd.MM.yyyy HH:mm')}
-        />
-        <Box marginLeft={3}>
-          <Button
-            icon="calendar"
-            iconType="outline"
-            variant="ghost"
-            disabled={!allowedToProcess}
-            onClick={() => setModalChangeDateIsOpen(true)}
-          ></Button>
-        </Box>
-      </Box>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          <Box display="flex">
+            <Tag>
+              <Box display="flex" justifyContent="center">
+                <Icon icon="calendar" type="outline" color="blue600" />
+              </Box>
+            </Tag>
+            <Box marginLeft={5}>
+              <Text variant="h4">{formatMessage(m.updateListEndTime)}</Text>
+              <Text color="blue600" variant="eyebrow" marginY={1}>
+                25.06.2026 - 12:00
+              </Text>
+              <Text marginBottom={2}>
+                {formatMessage(m.updateListEndTimeDescription)}
+              </Text>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => setModalChangeDateIsOpen(true)}
+              >
+                {formatMessage(m.updateListEndTime)}
+              </Button>
+            </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <Modal
         id="extendDeadline"
         isVisible={modalChangeDateIsOpen}
@@ -85,7 +96,7 @@ const ActionExtendDeadline = ({
           <DatePicker
             locale="is"
             label={formatMessage(m.listEndTime)}
-            selected={new Date(endDate)}
+            //selected={new Date(endDate)}
             handleChange={(date) => setEndDate(new Date(date).toISOString())}
             placeholderText=""
             showTimeInput

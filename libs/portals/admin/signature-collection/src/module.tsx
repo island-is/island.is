@@ -2,12 +2,15 @@ import { PortalModule } from '@island.is/portals/core'
 import { lazy } from 'react'
 import { m } from './lib/messages'
 import { SignatureCollectionPaths } from './lib/paths'
-import { AdminPortalScope } from '@island.is/auth/scopes'
 import { listsLoader } from './loaders/AllLists.loader'
 import { listLoader } from './loaders/List.loader'
+import { allowedScopes } from './lib/utils'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 /* parliamentary */
-const ParliamentaryRoot = lazy(() => import('./screens-parliamentary'))
+const ParliamentaryRoot = lazy(() =>
+  import('./screens-parliamentary/Constituency'),
+)
 const ParliamentaryConstituency = lazy(() =>
   import('./screens-parliamentary/Constituency'),
 )
@@ -17,10 +20,10 @@ const ParliamentaryList = lazy(() => import('./screens-parliamentary/List'))
 const AllLists = lazy(() => import('./screens-presidential/AllLists'))
 const List = lazy(() => import('./screens-presidential/List'))
 
-const allowedScopes: string[] = [
-  AdminPortalScope.signatureCollectionManage,
-  AdminPortalScope.signatureCollectionProcess,
-]
+/* municipal */
+const AllMunicipalities = lazy(() => import('./screens-municipal/AllMunicipalities'))
+const Municipality = lazy(() => import('./screens-municipal/Municipality'))
+const MunicipalList = lazy(() => import('./screens-municipal/List'))
 
 export const signatureCollectionModule: PortalModule = {
   name: m.signatureCollection,
@@ -89,6 +92,26 @@ export const signatureCollectionModule: PortalModule = {
           )}
         />
       ),
+      loader: listLoader(props),
+    },
+
+    /* ------ Municipal ------ */
+    {
+      name: m.municipalCollectionTitle,
+      path: SignatureCollectionPaths.MunicipalRoot,
+      element: <AllMunicipalities />,
+      loader: listsLoader(props),
+    },
+    {
+      name: m.municipalCollectionTitle,
+      path: SignatureCollectionPaths.SingleMunicipality,
+      element: <Municipality />,
+      loader: listsLoader(props),
+    },
+    {
+      name: m.municipalCollectionTitle,
+      path: SignatureCollectionPaths.MunicipalList,
+      element: <MunicipalList />,
       loader: listLoader(props),
     },
   ],

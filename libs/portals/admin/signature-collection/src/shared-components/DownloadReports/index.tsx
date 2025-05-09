@@ -1,5 +1,15 @@
 import { useLocale } from '@island.is/localization'
-import { ActionCard, Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Icon,
+  Stack,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import {
@@ -73,15 +83,30 @@ export const DownloadReports = ({
 
   return (
     <Box>
-      <Button
-        icon="download"
-        iconType="outline"
-        variant="utility"
-        size="small"
-        onClick={() => setModalDownloadReportsIsOpen(true)}
-      >
-        {formatMessage(m.downloadReports)}
-      </Button>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          <Box display="flex">
+            <Tag>
+              <Box display="flex" justifyContent="center">
+                <Icon icon="document" type="outline" color="blue600" />
+              </Box>
+            </Tag>
+            <Box marginLeft={5}>
+              <Text variant="h4">{formatMessage(m.downloadReports)}</Text>
+              <Text marginBottom={2}>
+                Texti sem útskýrir þessa aðgerð betur kemur hér.
+              </Text>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => setModalDownloadReportsIsOpen(true)}
+              >
+                {formatMessage(m.downloadReports)}
+              </Button>
+            </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <Modal
         id="downloadReports"
         isVisible={modalDownloadReportsIsOpen}
