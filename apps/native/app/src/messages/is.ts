@@ -446,7 +446,7 @@ export const is = {
   'licenseDetail.identityDocument.alert.description':
     'Einungis skilríkið sjálft er fullgilt persónuskilríki.',
   'licenseDetail.identityTravelDocument.alert.title':
-    'Mundu eftir ferðaskilríkinu!',
+    'Mundu eftir nafnskírteininu!',
   'licenseDetail.identityTravelDocument.alert.description':
     'Þetta yfirlit gildir ekki sem ferðaskilríki.',
   'licenseDetail.warning.title': 'Rennur út innan 6 mánaða',

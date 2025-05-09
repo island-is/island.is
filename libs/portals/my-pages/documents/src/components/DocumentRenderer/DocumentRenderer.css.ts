@@ -58,3 +58,33 @@ globalStyle(`${pdfAction} + button`, {
 globalStyle(`${htmlDoc} a`, {
   color: theme.color.blue400,
 })
+
+export const reveal = style({
+  position: 'absolute',
+  bottom: 20,
+  right: 20,
+  padding: 10,
+  background: theme.color.dark400,
+  color: theme.color.white,
+  borderRadius: theme.border.radius.large,
+  opacity: 0,
+  borderWidth: 1,
+  outline: 0,
+  textDecoration: 'none',
+  borderStyle: 'solid',
+  borderColor: theme.color.blue200,
+  overflow: 'hidden',
+  zIndex: 1,
+  '@media': {
+    [`screen and (max-width: 991px)`]: {
+      borderRadius: 0,
+      border: 'none',
+    },
+  },
+  transition: 'transform 150ms ease',
+  transform: `translateY(calc(100% + 20px))`,
+  ':focus-within': {
+    transform: `translateY(0)`,
+    opacity: 1,
+  },
+})
