@@ -22,7 +22,6 @@ import { FormattedMessage } from 'react-intl'
 import { emailsMsg, msg } from '../../../../lib/messages'
 import { InformationPaths } from '../../../../lib/paths'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
-import { EmailsList } from '../../../emails/EmailsList/EmailsList'
 import { ProfileEmailForm } from '../../../emails/ProfileEmailForm/ProfileEmailForm'
 import { DropModal } from './components/DropModal'
 import { InputSection } from './components/InputSection'
@@ -34,6 +33,7 @@ import { WithLinkWrapper } from './components/Inputs/WithLinkWrapper'
 import { OnboardingIntro } from './components/Intro'
 import { useConfirmNudgeMutation } from './confirmNudge.generated'
 import { DropModalType } from './types/form'
+import { EmailsList } from '../../../emails/EmailsList/EmailsList'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',

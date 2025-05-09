@@ -132,16 +132,6 @@ export class UserProfileService {
     return this.userProfileServiceV2.updateActorProfile(input, user)
   }
 
-  async setActorProfileEmail({
-    emailId,
-    user,
-  }: {
-    emailId: string
-    user: User
-  }) {
-    //return this.userProfileApiWithAuth(user)..({emailId, user})
-  }
-
   async getUserProfileByNationalId(user: User, nationalId: string) {
     return this.userProfileServiceV2.getUserProfileByNationalId(
       user,

@@ -48,6 +48,24 @@ export class UserEmailsService {
     return true
   }
 
+  async setActorProfileEmail({
+    emailId,
+    user,
+  }: {
+    emailId: string
+    user: User
+  }): Promise<boolean> {
+    await this.v2MeApiWithAuth(
+      user,
+    ).meUserProfileControllerSetActorProfileEmail({
+      setActorProfileEmailDto: {
+        emailsId: emailId,
+      },
+    })
+
+    return true
+  }
+
   async deleteEmail({ emailId, user }: { emailId: string; user: User }) {
     await this.v2EmailsApiWithAuth(user).emailsControllerDeleteEmail({
       emailId,
