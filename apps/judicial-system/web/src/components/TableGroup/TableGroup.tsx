@@ -3,16 +3,13 @@ import { FC, PropsWithChildren } from 'react'
 import { Box } from '@island.is/island-ui/core'
 
 import SectionHeading from '../SectionHeading/SectionHeading'
-import * as styles from './SharedCasesLayout.css'
+import * as styles from './TableGroup.css'
 
 interface Props {
   title: string
 }
 
-const SharedCasesLayout: FC<PropsWithChildren<Props>> = ({
-  children,
-  title,
-}) => {
+const TableGroup: FC<PropsWithChildren<Props>> = ({ children, title }) => {
   return (
     <>
       <SectionHeading title={title} />
@@ -24,4 +21,4 @@ const SharedCasesLayout: FC<PropsWithChildren<Props>> = ({
   )
 }
 
-export default SharedCasesLayout
+export default TableGroup
