@@ -102,12 +102,9 @@ definitions:
         xcrun simctl list devices
     - &build-simulator-ios
       name: Build for simulator
-      script: xcodebuild \
-        -workspace "ios/$XCODE_WORKSPACE" \
-        -scheme "$XCODE_SCHEME" \
-        -sdk iphonesimulator \
-        -configuration Debug \
-        -derivedDataPath build
+      script: |
+        xcodebuild -workspace "ios/$XCODE_WORKSPACE" -scheme "$XCODE_SCHEME" -sdk iphonesimulator -configuration Debug -derivedDataPath build
+
         xcrun simctl install booted build/Build/Products/Debug-iphonesimulator/*.app
         xcrun simctl launch booted is.island.app.dev
     - &maestro-tests
