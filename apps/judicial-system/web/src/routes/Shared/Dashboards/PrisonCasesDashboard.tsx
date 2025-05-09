@@ -1,29 +1,13 @@
 import { FC } from 'react'
 
-import { Box, LinkV2, Text } from '@island.is/island-ui/core'
 import {
   CasesLayout,
   Logo,
 } from '@island.is/judicial-system-web/src/components'
+import CasesCard from '@island.is/judicial-system-web/src/components/Cards/CasesCard'
 import CasesDashboardLayout from '@island.is/judicial-system-web/src/components/Layouts/CasesDashboardLayout'
 
-interface CasesCardProps {
-  title: string
-  description: string
-}
-
-const CasesCard: FC<CasesCardProps> = (props) => (
-  <LinkV2 href={'/fangelsi/krofur'}>
-    <Box borderRadius="large" border="standard" paddingX={4} paddingY={3}>
-      <Text variant="h4" color="blue400" marginBottom={1}>
-        {props.title}
-      </Text>
-      <Text>{props.description}</Text>
-    </Box>
-  </LinkV2>
-)
-
-const PrisonCasesDashboard = () => {
+const PrisonCasesDashboard: FC = () => {
   return (
     <CasesLayout>
       <Logo marginBottom={[5, 5, 10]} />
