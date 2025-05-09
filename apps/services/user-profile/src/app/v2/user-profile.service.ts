@@ -1007,6 +1007,77 @@ export class UserProfileService {
     return result
   }
 
+  /**
+   * Sets the specified email ID on an actor profile and resets the nudge timer
+   * @param toNationalId The national ID of the delegation recipient
+   * @param fromNationalId The national ID of the delegation sender
+   * @param emailsId The ID of the email to set on the actor profile
+   * @returns The updated actor profile DTO
+   */
+  async setActorProfileEmail({
+    toNationalId,
+    fromNationalId,
+    emailsId,
+  }: {
+    toNationalId: string
+    fromNationalId: string
+    emailsId: string
+  }): Promise<ActorProfileDetailsDto> {
+    // Verify the delegation exists
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+    const delegation = incomingDelegations.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('Delegation does not exist')
+    }
+
+    // Verify the email exists
+    const emailRecord = await this.emailModel.findByPk(emailsId)
+    if (!emailRecord) {
+      throw new BadRequestException(`Email with ID ${emailsId} not found`)
+    }
+
+    if (emailRecord.emailStatus !== DataStatus.VERIFIED) {
+      throw new BadRequestException('Email is not verified')
+    }
+
+    // Get or create actor profile and update it
+    await this.sequelize.transaction(async (transaction) => {
+      const [actorProfile] = await this.actorProfileModel.findOrCreate({
+        where: {
+          toNationalId,
+          fromNationalId,
+        },
+        defaults: {
+          toNationalId,
+          fromNationalId,
+          emailNotifications: true,
+          lastNudge: new Date(),
+          nextNudge: addMonths(new Date(), NUDGE_INTERVAL),
+          emailsId,
+        },
+        transaction,
+        useMaster: true,
+      })
+
+      if (actorProfile) {
+        await actorProfile.update(
+          {
+            emailsId,
+            lastNudge: new Date(),
+            nextNudge: addMonths(new Date(), NUDGE_INTERVAL),
+          },
+          { transaction },
+        )
+      }
+    })
+
+    // Return the updated actor profile details
+    return this.getSingleActorProfile({ toNationalId, fromNationalId })
+  }
+
   /* Private methods */
 
   private async getIncomingDelegations(nationalId: string) {
