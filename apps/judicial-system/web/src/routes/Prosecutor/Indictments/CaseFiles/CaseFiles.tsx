@@ -71,6 +71,9 @@ const CaseFiles = () => {
                   return
                 }
 
+                // const criminalRecords = fetchCriminalRecords
+                // handleUpload(addUploadFiles(criminalRecords, {category: CaseFileCategory.CRIMINAL_RECORD,updateUploadFile})
+
                 // currently fetch all criminal records for defendants on a given case
                 handleFetchCriminalRecord(workingCase.defendants)
               }}

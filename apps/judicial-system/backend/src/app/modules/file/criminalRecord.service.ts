@@ -1,4 +1,5 @@
 import { Agent } from 'https'
+import { uuid } from 'uuidv4'
 
 import {
   BadGatewayException,
@@ -15,10 +16,12 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
-import type { User } from '@island.is/judicial-system/types'
+import type { CaseType, User } from '@island.is/judicial-system/types'
 
+import { AwsS3Service } from '../aws-s3'
 import { Defendant } from '../defendant'
 import { EventService } from '../event'
+import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
 import { criminalRecordModuleConfig } from './criminalRecord.config'
 
 @Injectable()
@@ -31,6 +34,8 @@ export class CriminalRecordService {
     private readonly config: ConfigType<typeof criminalRecordModuleConfig>,
     @Inject(forwardRef(() => EventService))
     private readonly eventService: EventService,
+    @Inject(forwardRef(() => AwsS3Service))
+    private readonly awsS3Service: AwsS3Service,
   ) {
     this.xRoadPath = createXRoadAPIPath(
       config.tlsBasePathWithEnv,
@@ -46,15 +51,17 @@ export class CriminalRecordService {
     })
   }
 
-  async fetchCriminalRecord({
-    accessToken,
+  async uploadCriminalRecordFile({
+    caseType,
     defendant,
     user,
+    accessToken,
   }: {
-    accessToken: string
+    caseType: CaseType
     defendant: Defendant
     user: User
-  }) {
+    accessToken: string
+  }): Promise<UploadCriminalRecordFileResponse> {
     if (!this.config.dmrCriminalRecordApiPath) {
       throw new ServiceUnavailableException(
         'DMR criminal record API not available',
@@ -67,7 +74,7 @@ export class CriminalRecordService {
       })
     }
 
-    return fetch(
+    const pdf = await fetch(
       `${this.xRoadPath}/api/v1/DigitalIceland/CriminalRecord/Official/${defendant.nationalId}`,
       {
         headers: {
@@ -123,13 +130,9 @@ export class CriminalRecordService {
         })
       })
 
-      // TODO: 
-      // Upload to S3 - see throttleUploadPoliceCaseFile
-      // fetch the file given the police case file id from the police service
-      // await this.awsS3Service.putObject(caseType, key, pdf)
-      // return { key, size: pdf.length }
+    const key = `${defendant.caseId}/${uuid()}/${pdf.fileName}`
+    await this.awsS3Service.putObject(caseType, key, pdf.buffer)
 
-      // I think we need to store this file in our db and represent it as a new file
-      // for each fetch triggered by the user
+    return { key, size: pdf.buffer.length }
   }
 }

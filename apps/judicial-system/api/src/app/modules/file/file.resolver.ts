@@ -28,6 +28,7 @@ import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UpdateFilesResponse } from './models/updateFiles.response'
+import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
@@ -102,24 +103,23 @@ export class FileResolver {
   }
 
   @Mutation(() => CaseFile)
-  fetchAndCreateCriminalRecordCaseFile(
+  uploadCriminalRecordFile(
     @Args('input', { type: () => CreateDefendantFileInput })
     input: CreateDefendantFileInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
-  ): Promise<CaseFile> {
+  ): Promise<UploadCriminalRecordFileResponse> {
     const { caseId, defendantId } = input
     this.logger.debug(
-      `Fetching and creating a criminal record case file for case ${caseId} and defendant ${defendantId}`,
+      `Uploading the latest criminal record file for defendant ${defendantId} of case ${caseId} to S3`,
     )
 
-    // Can we somehow pass the token down here? as a an auth header?
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.CREATE_FILE,
-      backendService.fetchAndCreateCriminalRecordCaseFile(caseId, defendantId),
-      (file) => file.id,
+      AuditedAction.UPLOAD_CRIMINAL_RECORD_CASE_FILE,
+      backendService.uploadCriminalRecordFile(caseId, defendantId),
+      input.caseId,
     )
   }
 

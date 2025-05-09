@@ -53,6 +53,7 @@ import {
   LimitedAccessDeleteFileMutation,
   useLimitedAccessDeleteFileMutation,
 } from './limitedAccessDeleteFile.generated'
+import { useUploadCriminalRecordFileMutation } from './uploadCriminalRecordFile.generated'
 import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generated'
 import { strings } from './useS3Upload.strings'
 
@@ -237,9 +238,7 @@ const useS3Upload = (
   const [deleteFile] = useDeleteFileMutation()
   const [limitedAccessDeleteFile] = useLimitedAccessDeleteFileMutation()
   const [uploadPoliceCaseFile] = useUploadPoliceCaseFileMutation()
-  // TODO: WIP
-  const [fetchAndCreateCriminalRecordFile] =
-    useFetchAndCreateCriminalRecordFileMutation()
+  const [uploadCriminalRecordFile] = useUploadCriminalRecordFileMutation()
 
   const getPresignedPost = useCallback(
     async (file: TUploadFile) => {
@@ -394,6 +393,7 @@ const useS3Upload = (
           const presignedPost = await getPresignedPost(file)
 
           await uploadToS3(file, presignedPost, (percent) => {
+            console.log({ percent })
             updateFile({ ...file, percent })
           })
 
@@ -438,9 +438,13 @@ const useS3Upload = (
   )
 
   const handleFetchCriminalRecord = (defendants: Defendant[]) => {
-    const file = defendants.map(({ id }) => {
+    const files = defendants.map(({ id }) => {
       try {
-        const criminalRecordFile = fetchAndCreateCriminalRecordFile()
+        // TODO: rename to uploadCriminalRecordFile
+        const criminalRecordFile = uploadCriminalRecordFile()
+        // (1) fetch criminal record and upload it to S3 as we do for police case files
+        // (2) then on success add files to the database
+        // (3) then update the upload file state
 
         return true
       } catch (error) {

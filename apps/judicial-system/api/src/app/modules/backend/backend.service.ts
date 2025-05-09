@@ -27,6 +27,7 @@ import {
   PresignedPost,
   SignedUrl,
   UpdateFilesResponse,
+  UploadCriminalRecordFileResponse,
   UploadFileToCourtResponse,
 } from '../file'
 import {
@@ -289,10 +290,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${id}/file/url`, createPresignedPost)
   }
 
-  fetchAndCreateCriminalRecordCaseFile(
+  uploadCriminalRecordFile(
     caseId: string,
     defendantId: string,
-  ): Promise<CaseFile> {
+  ): Promise<UploadCriminalRecordFileResponse> {
     return this.post(
       `case/${caseId}/defendant/${defendantId}/criminalRecordFile`,
     )

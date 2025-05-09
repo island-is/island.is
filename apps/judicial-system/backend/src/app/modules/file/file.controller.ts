@@ -5,7 +5,6 @@ import {
   Controller,
   Delete,
   Get,
-  Headers,
   Inject,
   Param,
   Patch,
@@ -72,6 +71,7 @@ import { DeleteFileResponse } from './models/deleteFile.response'
 import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
+import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { CriminalRecordService } from './criminalRecord.service'
 import { FileService } from './file.service'
@@ -337,39 +337,30 @@ export class FileController {
   @Post('defendant/:defendantId/criminalRecordFile')
   @ApiCreatedResponse({
     type: CaseFile,
-    description: 'Fetches the latest criminal record and creates a case file',
+    description:
+      'Uploads the latest criminal record file for defendant to AWS S3',
   })
-  // rename to uploadCriminalRecordCaseFile?
-  async fetchAndCreateCriminalRecordCaseFile(
+  async uploadCriminalRecordFile(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
+    // TEMP
     @Req() req: Request,
-    @Headers('Cookie') cookie: { [key: string]: string },
     @CurrentHttpUser() user: User,
     @CurrentDefendant() defendant: Defendant,
-  ): Promise<void> {
+    @CurrentCase() theCase: Case,
+  ): Promise<UploadCriminalRecordFileResponse> {
     this.logger.debug(
-      `Fetching and creating a criminal record file for case ${caseId} for defendant ${defendantId}`,
+      `Uploading the latest criminal record file for defendant ${defendantId} of case ${caseId} to S3`,
     )
-    // We will get the cookie via the headers in this way
-    // SOLUTION 1 - Tokens are stored in headers, call auht.service to refresh token?
+    // TEMP SOLUTION 1 - Tokens are stored in headers, call auth.service to refresh token?
+    // that will be an issue to update because the tokens are managed in the API layer
     const accessToken = req.cookies[IDS_ACCESS_TOKEN_NAME]
 
-    // const accessToken = headers.cookie[IDS_ACCESS_TOKEN_NAME]
-    const response = await this.criminalRecordService.fetchCriminalRecord({
+    return this.criminalRecordService.uploadCriminalRecordFile({
+      caseType: theCase.type,
       accessToken,
       defendant,
       user,
     })
-
-    
-    console.log({ response })
-
-    // TODO: use the response to create the criminal record case file
-    // return this.fileService.createCaseFile(
-    //   theCase,
-    //   { ...criminalRecord, defendantId },
-    //   user,
-    // )
   }
 }
