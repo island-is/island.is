@@ -3,12 +3,14 @@ import {
   buildCustomField,
   buildDateField,
   buildDescriptionField,
+  buildDividerField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
   buildPhoneField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildSubmitField,
   buildSubSection,
   buildTextField,
@@ -47,6 +49,7 @@ import {
 import {
   ComplainedForTypes,
   ComplaineeTypes,
+  GenderAnswerOptions,
   OmbudsmanComplaintTypeEnum,
   UPLOAD_ACCEPT,
 } from '../shared/constants'
@@ -151,6 +154,38 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               width: 'half',
               backgroundColor: 'blue',
               defaultValue: '',
+            }),
+            buildDividerField({marginTop: 2}),
+            buildSelectField({
+              id: 'complainedForInformation.gender',
+              title: information.aboutTheComplainer.gender,
+              options: [
+                {
+                  label: information.aboutTheComplainer.genderOptionFemale,
+                  value: GenderAnswerOptions.FEMALE,
+                },
+                {
+                  label: information.aboutTheComplainer.genderOptionMale,
+                  value: GenderAnswerOptions.MALE,
+                },
+                {
+                  label: information.aboutTheComplainer.genderOptionNonbinary,
+                  value: GenderAnswerOptions.NONBINARY,
+                },
+                {
+                  label: information.aboutTheComplainer.genderOptionOther,
+                  value: GenderAnswerOptions.OTHER,
+                },
+                {
+                  label: information.aboutTheComplainer.genderOptionDeclinedToAnswer,
+                  value: GenderAnswerOptions.DECLINED,
+                },
+              ],
+            }),
+            buildAlertMessageField({
+              id: 'complainedForInformation.genderJustification',
+              message: information.aboutTheComplainer.genderJustification,
+              alertType: 'info',
             }),
             buildDescriptionField({
               id: 'complainedForInformation.titleField',
