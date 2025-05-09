@@ -70,6 +70,7 @@ const Applications: Screen<CategoryProps> = ({
   countResults,
   namespace,
 }) => {
+  const k = 8
   const { query } = useRouter()
   const { globalNamespace } = useContext(GlobalContext)
   const gn = useNamespace(globalNamespace)

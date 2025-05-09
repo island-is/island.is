@@ -14,12 +14,23 @@ export const useSortableData = <T extends Record<string, unknown>>(
       const keyA = a[sortConfig.key as keyof T]
       const keyB = b[sortConfig.key as keyof T]
 
-      if (!(typeof keyA === 'string') || !(typeof keyB === 'string')) {
+      if (keyA === undefined || keyB === undefined) {
         return 0
       }
 
       const multiplier = sortConfig.direction === 'ascending' ? 1 : -1
-      return keyA.localeCompare(keyB, undefined, { numeric: true }) * multiplier
+
+      if (typeof keyA === 'string' && typeof keyB === 'string') {
+        return (
+          keyA.localeCompare(keyB, undefined, { numeric: true }) * multiplier
+        )
+      } else if (typeof keyA === 'number' && typeof keyB === 'number') {
+        return (keyA - keyB) * multiplier
+      } else if (keyA instanceof Date && keyB instanceof Date) {
+        return (keyA.getTime() - keyB.getTime()) * multiplier
+      } else {
+        return 0
+      }
     })
   }, [items, sortConfig])
 

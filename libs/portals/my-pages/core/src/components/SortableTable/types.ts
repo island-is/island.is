@@ -36,4 +36,5 @@ export type SortableTableProps = {
   align?: 'left' | 'right'
   ellipsisLength?: number
   emptyTableMessage?: string
+  tableLoading?: boolean
 }

@@ -24,9 +24,12 @@ import {
 } from './utils/mappers'
 import {
   MedicineHistory,
+  MedicineHistoryDispensation,
   MedicineHistoryItem,
 } from './models/medicineHistory.model'
 import { isDefined } from '@island.is/shared/utils'
+import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
+import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -271,30 +274,72 @@ export class HealthDirectorateService {
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
           dispensationCount: item.dispensationCount,
-          dispensations: item.dispensations.map((subItem) => {
-            const quantity = subItem.productQuantity ?? 0
+          dispensations: item.dispensations.map((item) => {
+            const quantity = item.productQuantity ?? 0
 
             return {
-              id: subItem.productId,
-              name: subItem.productName,
-              quantity: [quantity.toString(), subItem.productUnit]
+              id: item.productId,
+              name: item.productName,
+              quantity: [quantity.toString(), item.productUnit]
                 .filter((x) => isDefined(x))
                 .join(' '),
-              agentName: subItem.dispensingAgentName,
-              unit: subItem.productUnit,
-              type: subItem.productType,
-              indication: subItem.indication,
-              dosageInstructions: subItem.dosageInstructions,
-              issueDate: subItem.issueDate,
-              prescriberName: subItem.prescriberName,
-              expirationDate: subItem.expirationDate,
-              isExpired: subItem.isExpired,
-              date: subItem.dispensationDate,
+              agentName: item.dispensingAgentName,
+              unit: item.productUnit,
+              type: item.productType,
+              indication: item.indication,
+              dosageInstructions: item.dosageInstructions,
+              issueDate: item.issueDate,
+              prescriberName: item.prescriberName,
+              expirationDate: item.expirationDate,
+              isExpired: item.isExpired,
+              date: item.dispensationDate,
             }
           }),
         }
       }) ?? []
 
     return { medicineHistory }
+  }
+
+  /* Medicine dispensations for specific ATC code */
+  async getMedicineDispensationsForATC(
+    auth: Auth,
+    locale: Locale,
+    input: MedicineDispensationsATCInput,
+  ): Promise<MedicineDispensationsATC | null> {
+    const data = await this.healthApi.getDispensations(
+      auth,
+      input.atcCode,
+      locale,
+    )
+    if (!data) {
+      return null
+    }
+
+    const dispensations: Array<MedicineHistoryDispensation> = data.map(
+      (item) => {
+        const quantity = item.productQuantity ?? 0
+
+        return {
+          id: item.productId,
+          name: item.productName,
+          quantity: [quantity.toString(), item.productUnit]
+            .filter((x) => isDefined(x))
+            .join(' '),
+          agentName: item.dispensingAgentName,
+          unit: item.productUnit,
+          type: item.productType,
+          indication: item.indication,
+          dosageInstructions: item.dosageInstructions,
+          issueDate: item.issueDate,
+          prescriberName: item.prescriberName,
+          expirationDate: item.expirationDate,
+          isExpired: item.isExpired,
+          date: item.dispensationDate,
+        }
+      },
+    )
+
+    return { dispensations }
   }
 }

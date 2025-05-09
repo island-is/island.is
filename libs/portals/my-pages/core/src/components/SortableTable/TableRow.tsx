@@ -82,7 +82,7 @@ export const TableRow = ({
       key={id}
       data={valueItems.map((valueItem, i) => ({
         value: renderValueItem(valueItem, i),
-        align: align ?? 'left',
+        align: i === valueItems.length - 1 ? 'right' : align ?? 'left',
       }))}
       onExpandCallback={onExpandCallback}
     >

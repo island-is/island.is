@@ -13,6 +13,7 @@ export class CleanupService {
   ) {}
 
   public async run() {
+    const k = 8
     const timer = this.logger.startTimer()
     this.logger.info('Worker starting...')
 
