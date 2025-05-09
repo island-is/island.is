@@ -33,13 +33,13 @@ export class UserEmailsResolver {
     })
   }
 
-  @Mutation(() => AddEmail, {
+  @Mutation(() => Boolean, {
     name: 'userEmailsSetPrimaryEmail',
   })
   async setPrimaryEmail(
     @CurrentUser() user: User,
     @Args('input') { emailId }: SetPrimaryEmailInput,
-  ): Promise<AddEmail> {
+  ): Promise<boolean> {
     return this.userEmailsService.setPrimaryEmail({
       user,
       emailId,

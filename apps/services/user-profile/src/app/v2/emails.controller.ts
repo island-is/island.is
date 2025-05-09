@@ -57,7 +57,9 @@ export class EmailsController {
     resources: (emails) => emails.map((email) => email.id),
   })
   async findAllByNationalId(@CurrentUser() user: User): Promise<EmailsDto[]> {
-    return this.emailsService.findAllByNationalId(user.nationalId)
+    return this.emailsService.findAllByNationalId(
+      user.actor?.nationalId ?? user.nationalId,
+    )
   }
 
   @Post('/')
@@ -102,7 +104,7 @@ export class EmailsController {
   async deleteEmail(
     @CurrentUser() user: User,
     @Param('emailId') emailId: string,
-  ): Promise<{ success: boolean }> {
+  ): Promise<boolean> {
     return this.auditService.auditPromise(
       {
         auth: user,

@@ -5,12 +5,12 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 
 import { ApolloError } from '@apollo/client'
 import { Problem } from '@island.is/react-spa/shared'
-import { mVerify } from '../../../../../../../lib/messages'
 import { TwoFactorInputs } from '../TwoFactorInputs'
 import { VerifyFooter } from '../VerifyFooter'
 import { VerifyHeader } from '../VerifyHeader'
 import { validateThreeDigitCode } from '../validate'
 import * as styles from './VerifyTemplate.css'
+import { mVerify } from '../../../lib/messages'
 
 type TextNode = string | ReactNode
 export type VerifyTemplateInput = {
@@ -122,8 +122,6 @@ export const VerifyTemplate = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serverError])
-
-  console.log('error', error)
 
   const onClearCodeReset = useCallback(() => {
     setClearCode(false)

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import {
   FormatMessage,
   useLocale,
@@ -9,10 +9,10 @@ import { m } from '@island.is/portals/my-pages/core'
 
 import { Problem } from '@island.is/react-spa/shared'
 import { InputController } from '@island.is/shared/form-fields'
+import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { mVerify, msg } from '../../../../../../lib/messages'
-import { FormButton } from '../FormButton'
+import { msg } from '../../../lib/messages'
 import * as styles from './AddEmail.css'
 
 const createEmailFormSchema = (formatMessage: FormatMessage) => {
@@ -35,7 +35,7 @@ const createEmailFormSchema = (formatMessage: FormatMessage) => {
 type EmailFormValues = z.infer<ReturnType<typeof createEmailFormSchema>>
 
 type AddEmailProps = {
-  onAddEmail(email: string): void
+  onAddEmail(email: string): Promise<void>
   loading?: boolean
   error?: boolean
 }
@@ -54,11 +54,19 @@ export const AddEmail = ({ onAddEmail, loading, error }: AddEmailProps) => {
     formState: { errors },
   } = methods
 
-  const onSubmit = ({ email }: EmailFormValues) => {
+  const onSubmit = async ({ email }: EmailFormValues) => {
     if (email) {
-      onAddEmail(email)
+      await onAddEmail(email)
+      methods.reset()
     }
   }
+
+  useEffect(() => {
+    if (error) {
+      methods.reset()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error])
 
   return (
     <FormProvider {...methods}>
@@ -82,8 +90,8 @@ export const AddEmail = ({ onAddEmail, loading, error }: AddEmailProps) => {
               control={control}
               id="email"
               autoFocus
+              backgroundColor="blue"
               name="email"
-              required={false}
               type="email"
               label={formatMessage(m.email)}
               placeholder="nafn@island.is"
@@ -99,15 +107,17 @@ export const AddEmail = ({ onAddEmail, loading, error }: AddEmailProps) => {
                 : styles.defaultEmailButtonContainer
             }
           >
-            <FormButton
-              submit
+            <Button
+              as="button"
+              type="submit"
               icon="add"
               loading={loading}
               variant="text"
+              size="small"
               nowrap
             >
               {formatMessage(msg.registerEmail)}
-            </FormButton>
+            </Button>
           </Box>
         </Box>
       </form>

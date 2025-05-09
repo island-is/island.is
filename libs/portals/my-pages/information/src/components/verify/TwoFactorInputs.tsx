@@ -11,7 +11,7 @@ import { useLocale } from '@island.is/localization'
 import { validateNumber } from './validate'
 import { useEffectOnce } from '@island.is/react-spa/shared'
 import { Box, ErrorMessage, Input } from '@island.is/island-ui/core'
-import { mVerify } from '../../../../../../lib/messages'
+import { mVerify } from '../../lib/messages'
 
 const inputs = ['char0', 'char1', 'char2']
 

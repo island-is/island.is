@@ -1,11 +1,15 @@
 import React, { FC, useEffect, useState } from 'react'
 
 import {
+  Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
   Input,
+  Link,
   PhoneInput,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
@@ -15,9 +19,12 @@ import {
 } from '@island.is/portals/my-pages/graphql'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { FormattedMessage } from 'react-intl'
 import { msg } from '../../../../lib/messages'
+import { InformationPaths } from '../../../../lib/paths'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
-import { ProfileFormEmail } from './ProfileFormEmail'
+import { EmailsList } from '../../../emails/EmailsList/EmailsList'
+import { ProfileEmailForm } from '../../../emails/ProfileEmailForm/ProfileEmailForm'
 import { DropModal } from './components/DropModal'
 import { InputSection } from './components/InputSection'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
@@ -57,15 +64,22 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   showIntroText = true,
 }) => {
   useNamespaces('sp.settings')
+  const { formatMessage } = useLocale()
+
   const [telDirty, setTelDirty] = useState(true)
   const [emailDirty, setEmailDirty] = useState(true)
   const [internalLoading, setInternalLoading] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
+  const [showEmailForm, setShowEmailForm] = useState(false)
+
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
   const userInfo = useUserInfo()
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
-  const { formatMessage } = useLocale()
+
+  // Filter out emails that are not set
+  const emails = userProfile?.emails?.filter((item) => item.email) ?? []
+
   const [confirmNudge] = useConfirmNudgeMutation()
   const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
 
@@ -163,7 +177,55 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             showIntroTitle={showIntroTitle}
             showIntroText={showIntroText}
           />
-          <ProfileFormEmail />
+
+          <InputSection
+            title={formatMessage(msg.emails)}
+            text={
+              <FormattedMessage
+                {...msg.emailListText}
+                values={{
+                  link: (
+                    <Link
+                      color="blue400"
+                      href={InformationPaths.Notifications}
+                      underlineVisibility="always"
+                      underline="small"
+                    >
+                      {formatMessage(msg.emailListTextLink)}
+                    </Link>
+                  ),
+                }}
+              />
+            }
+          >
+            {userLoading && emails ? (
+              <SkeletonLoader
+                repeat={3}
+                height={80}
+                space={2}
+                borderRadius="large"
+              />
+            ) : (
+              <Box display="flex" flexDirection="column" rowGap={2}>
+                {emails.length > 0 && <EmailsList items={emails} />}
+                {emails.length === 0 || showEmailForm ? (
+                  <ProfileEmailForm />
+                ) : (
+                  <Box marginTop={1}>
+                    <Button
+                      variant="text"
+                      size="small"
+                      icon="add"
+                      onClick={() => setShowEmailForm(true)}
+                    >
+                      {formatMessage(msg.addEmail)}
+                    </Button>
+                  </Box>
+                )}
+              </Box>
+            )}
+          </InputSection>
+
           <InputSection
             title={formatMessage(m.email)}
             text={formatMessage(msg.editEmailText)}

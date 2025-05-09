@@ -1,21 +1,20 @@
-import { Link, Text, toast } from '@island.is/island-ui/core'
+import { Text, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { FormattedMessage } from 'react-intl'
-import { mVerify as m, mVerify, msg } from '../../../../lib/messages'
-import { InformationPaths } from '../../../../lib/paths'
-import { Modal } from '../../../Modal/Modal'
-import { InputSection } from './components/InputSection'
-import { AddEmail } from './components/Inputs/AddEmail'
+import { mVerify as m, mVerify } from '../../../lib/messages'
 import {
   VerifyTemplate,
   VerifyTemplateInput,
-} from './components/verify/VerifyTemplate/VerifyTemplate'
-import { useCreateEmailVerificationMutation } from './createEmailVerification.mutation.generated'
+} from '../..//verify/VerifyTemplate/VerifyTemplate'
+import { Modal } from '../../Modal/Modal'
+import { AddEmail } from '../AddEmail/AddEmail'
 import { useAddEmailMutation } from './addEmail.mutation.generated'
+import { useCreateEmailVerificationMutation } from './createEmailVerification.mutation.generated'
+import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
+import { client } from '@island.is/portals/my-pages/graphql'
 
-export const ProfileFormEmail = () => {
+export const ProfileEmailForm = () => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   const [openModal, setOpenModal] = useState(false)
@@ -25,10 +24,20 @@ export const ProfileFormEmail = () => {
 
   const [
     addEmail,
-    { data: addEmailData, loading: addEmailLoading, error: addEmailError },
-  ] = useAddEmailMutation()
+    { loading: addEmailLoading, error: addEmailError, reset: addEmailReset },
+  ] = useAddEmailMutation({
+    onCompleted: (data) => {
+      if (data.userEmailsAddEmail) {
+        setOpenModal(false)
+        client.refetchQueries({
+          include: [USER_PROFILE],
+        })
+        toast.success(formatMessage(mVerify.addEmailSuccess))
+      }
+    },
+  })
 
-  const verifyEmail = (email: string) =>
+  const verifyEmail = (email: string) => {
     createEmailVerification({
       variables: {
         input: {
@@ -36,6 +45,7 @@ export const ProfileFormEmail = () => {
         },
       },
     })
+  }
 
   const onNoCodeReceivedCallback = useCallback(async () => {
     if (email) {
@@ -44,13 +54,18 @@ export const ProfileFormEmail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const handleCloseModal = () => {
+    setOpenModal(false)
+    addEmailReset()
+  }
+
   const link = useMemo(
     () => ({
       label: formatMessage(m.cancel),
-      onClick: () => setOpenModal(false),
+      onClick: handleCloseModal,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [addEmailError],
   )
 
   const intro = useMemo(
@@ -71,14 +86,8 @@ export const ProfileFormEmail = () => {
     if (data?.createEmailVerification?.created) {
       setOpenModal(true)
     }
-  }, [data?.createEmailVerification, setOpenModal])
-
-  useEffect(() => {
-    if (addEmailData) {
-      setOpenModal(false)
-      toast.success(formatMessage(mVerify.addEmailSuccess))
-    }
-  }, [addEmailData, formatMessage])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.createEmailVerification])
 
   const onSubmitCallback = useCallback(
     async (input: VerifyTemplateInput) => {
@@ -91,39 +100,15 @@ export const ProfileFormEmail = () => {
     [addEmail],
   )
 
-  const onAddEmail = (email: string) => {
+  const onAddEmail = async (email: string) => {
     setEmail(email)
-    verifyEmail(email)
+    await verifyEmail(email)
   }
 
   return (
     <>
-      <InputSection
-        title={formatMessage(msg.emails)}
-        text={
-          <FormattedMessage
-            {...msg.emailListText}
-            values={{
-              link: (
-                <Link
-                  color="blue400"
-                  href={InformationPaths.Notifications}
-                  underlineVisibility="always"
-                  underline="small"
-                >
-                  {formatMessage(msg.emailListTextLink)}
-                </Link>
-              ),
-            }}
-          />
-        }
-      >
-        <AddEmail onAddEmail={onAddEmail} loading={loading} error={!!error} />
-      </InputSection>
-      <Modal
-        isVisible={openModal && !!email}
-        onClose={() => setOpenModal(false)}
-      >
+      <AddEmail onAddEmail={onAddEmail} loading={loading} error={!!error} />
+      <Modal isVisible={openModal && !!email} onClose={handleCloseModal}>
         {email && (
           <VerifyTemplate
             loading={addEmailLoading}

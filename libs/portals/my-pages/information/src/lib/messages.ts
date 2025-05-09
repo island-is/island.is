@@ -321,6 +321,10 @@ export const msg = defineMessages({
     id: 'sp.settings:register-email',
     defaultMessage: 'Skrá netfang',
   },
+  addEmail: {
+    id: 'sp.settings:add-email',
+    defaultMessage: 'Bæta við netfangi',
+  },
   verificationCodeButtonAria: {
     id: 'sp.settings:verification-code-button-aria',
     defaultMessage: 'Valmynd fyrir staðfestingarkóða',
@@ -341,6 +345,38 @@ export const msg = defineMessages({
   close: {
     id: 'sp.settings:close',
     defaultMessage: 'Loka',
+  },
+  emailCardPopover: {
+    id: 'sp.settings:email-card-popover',
+    defaultMessage: 'Aðgerðalisti fyrir netfang',
+  },
+  emailMakePrimary: {
+    id: 'sp.settings:email-make-primary',
+    defaultMessage: 'Gera að aðal netfangi',
+  },
+  emailDelete: {
+    id: 'sp.settings:email-delete',
+    defaultMessage: 'Eyða netfangi',
+  },
+  emailMakePrimarySuccess: {
+    id: 'sp.settings:email-make-primary-success',
+    defaultMessage: 'Aðal netfangi breytt',
+  },
+  emailDeleteSuccess: {
+    id: 'sp.settings:email-delete-success',
+    defaultMessage: 'Netfangi eytt',
+  },
+  unverified: {
+    id: 'sp.settings:unverified',
+    defaultMessage: 'Óstaðfest',
+  },
+  connectedToDelegation: {
+    id: 'sp.settings:connected_to_delegation',
+    defaultMessage: 'Tengt umboði',
+  },
+  primary: {
+    id: 'sp.settings:primary',
+    defaultMessage: 'Aðal netfang',
   },
 })
 

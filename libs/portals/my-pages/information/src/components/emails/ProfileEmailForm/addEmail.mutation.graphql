@@ -4,5 +4,6 @@ mutation AddEmail($input: AddEmailInput!) {
     email
     emailStatus
     primary
+    isConnectedToActorProfile
   }
 }

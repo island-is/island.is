@@ -14,4 +14,7 @@ export class Email {
 
   @Field(() => String)
   emailStatus!: DataStatus
+
+  @Field(() => Boolean)
+  isConnectedToActorProfile!: boolean
 }

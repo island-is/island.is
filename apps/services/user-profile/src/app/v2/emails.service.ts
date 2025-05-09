@@ -106,10 +106,7 @@ export class EmailsService {
   /**
    * Deletes an email for a user if it's not the primary email
    */
-  async deleteEmail(
-    nationalId: string,
-    emailId: string,
-  ): Promise<{ success: boolean }> {
+  async deleteEmail(nationalId: string, emailId: string): Promise<boolean> {
     this.validateRequiredFields(nationalId, emailId)
     this.validateNationalId(nationalId)
 
@@ -121,7 +118,8 @@ export class EmailsService {
     }
 
     await emailRecord.destroy()
-    return { success: true }
+
+    return true
   }
 
   /**

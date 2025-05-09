@@ -14,4 +14,7 @@ export class AddEmail {
 
   @Field(() => Boolean)
   primary!: boolean
+
+  @Field(() => Boolean)
+  isConnectedToActorProfile!: boolean
 }
