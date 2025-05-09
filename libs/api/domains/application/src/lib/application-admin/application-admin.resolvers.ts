@@ -17,6 +17,7 @@ import {
 import {
   ApplicationAdmin,
   ApplicationAdminPaginatedResponse,
+  ApplicationDetails,
   ApplicationStatistics,
 } from '../application.model'
 import { ApplicationService } from '../application.service'
@@ -64,5 +65,14 @@ export class ApplicationAdminResolver {
       locale,
       input,
     )
+  }
+
+  @Query(() => ApplicationDetails, { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  async getApplicationDetails(
+    @Args('applicationId') applicationId: string,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationDetails> {
+    return this.applicationService.getApplicationDetails(applicationId, user)
   }
 }
