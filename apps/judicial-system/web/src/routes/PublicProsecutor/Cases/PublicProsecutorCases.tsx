@@ -5,9 +5,9 @@ import { AlertMessage } from '@island.is/island-ui/core'
 import { isCompletedCase } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  CasesLayout,
   Logo,
   PageHeader,
-  CasesLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseIndictmentRulingDecision,
