@@ -57,7 +57,27 @@ export const mapEntityToOptions = (
   if (!entities) {
     return []
   }
-  const sortedEntities = entities.sort(sortAlpha<Entity>('title'))
+  const sortedEntities = [...entities].sort(sortAlpha<Entity>('title'))
+
+  // Combine duplicate titles for OfficialJournalOfIcelandAdvertType
+  if (sortedEntities[0]?.__typename === 'OfficialJournalOfIcelandAdvertType') {
+    const combinedTypes = sortedEntities.reduce<Record<string, string[]>>(
+      (acc, entity) => {
+        const e = entity as OfficialJournalOfIcelandAdvertType
+        if (!acc[e.title]) {
+          acc[e.title] = []
+        }
+        acc[e.title].push(e.slug)
+        return acc
+      },
+      {},
+    )
+
+    return Object.entries(combinedTypes).map(([title, slugs]) => ({
+      label: title,
+      value: slugs.join(','),
+    }))
+  }
   return sortedEntities.map((e) => {
     if (e.__typename === 'OfficialJournalOfIcelandAdvertCategory') {
       return {
@@ -75,7 +95,7 @@ export const mapEntityToOptions = (
 }
 
 export const sortCategories = (cats: EntityOption[]) => {
-  return cats.sort(sortAlpha('label'))
+  return [...cats].sort(sortAlpha('label'))
 }
 
 export const formatDate = (date?: string, df = 'dd.MM.yyyy') => {

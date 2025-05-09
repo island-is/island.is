@@ -82,7 +82,7 @@ export const externalData = {
     subTitle: {
       id: 'aosh.sem.application:externalData.ver.subTitle',
       defaultMessage:
-        'Upplýsingar um réttindi og stöðu námskeiða eru sótt úr réttindagrunni Vinnueftirlitsins',
+        'Upplýsingar um þín réttindi og stöðu námskeiða eru sótt úr réttindagrunni Vinnueftirlitsins',
       description: 'Ver data provider subtitle',
     },
   }),

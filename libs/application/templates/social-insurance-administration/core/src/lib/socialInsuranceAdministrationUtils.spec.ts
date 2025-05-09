@@ -1,17 +1,20 @@
+import { BankInfo, PaymentInfo } from '../types'
 import { BankAccountType } from './constants'
 import {
+  formatBank,
+  formatBankInfo,
+  friendlyFormatIBAN,
   friendlyFormatSWIFT,
   getBankIsk,
-  friendlyFormatIBAN,
-  validIBAN,
-  validSWIFT,
+  getCategoriesOptions,
+  getCurrencies,
+  getOneInstanceOfCategory,
+  getTypesOptions,
   shouldNotUpdateBankAccount,
   typeOfBankInfo,
-  formatBankInfo,
-  formatBank,
-  getCurrencies,
+  validIBAN,
+  validSWIFT,
 } from './socialInsuranceAdministrationUtils'
-import { BankInfo, PaymentInfo } from '../types'
 
 describe('formatBankInfo', () => {
   it('format bank info', () => {
@@ -259,5 +262,79 @@ describe('typeOfBankInfo', () => {
     const res = typeOfBankInfo(bankInfo, bankAccountType)
 
     expect('foreign').toEqual(res)
+  })
+})
+
+describe('getCategoriesOptions', () => {
+  it('should return income type categories', () => {
+    const categorizedIncomeTypes = [
+      {
+        categoryNumber: 1,
+        categoryName: 'Atvinnutekjur',
+        categoryCode: 'ATV01',
+        incomeTypeNumber: 101,
+        incomeTypeName: 'Laun',
+        incomeTypeCode: 'IPC01',
+      },
+      {
+        categoryNumber: 2,
+        categoryName: 'Fjármagnstekjur',
+        categoryCode: 'FJT01',
+        incomeTypeNumber: 201,
+        incomeTypeName: 'Atvinnuleysisbætur',
+        incomeTypeCode: 'IPC02',
+      },
+    ]
+
+    const categories = getOneInstanceOfCategory(categorizedIncomeTypes)
+
+    const res = getCategoriesOptions(categorizedIncomeTypes)
+
+    const expected =
+      categories &&
+      categories.map((item) => {
+        return {
+          value: item.categoryName || '',
+          label: item.categoryName || '',
+        }
+      })
+
+    expect(res).toEqual(expected)
+  })
+})
+
+describe('getTypesOptions', () => {
+  it('should return income type', () => {
+    const categorizedIncomeTypes = [
+      {
+        categoryNumber: 1,
+        categoryName: 'Atvinnutekjur',
+        categoryCode: 'ATV01',
+        incomeTypeNumber: 101,
+        incomeTypeName: 'Laun',
+        incomeTypeCode: 'IPC01',
+      },
+      {
+        categoryNumber: 2,
+        categoryName: 'Fjármagnstekjur',
+        categoryCode: 'FJT01',
+        incomeTypeNumber: 201,
+        incomeTypeName: 'Atvinnuleysisbætur',
+        incomeTypeCode: 'IPC02',
+      },
+    ]
+    const categoryName = 'Atvinnutekjur'
+
+    const res = getTypesOptions(categorizedIncomeTypes, categoryName)
+    const expected = categorizedIncomeTypes
+      .filter((item) => item.categoryName === categoryName)
+      .map((item) => {
+        return {
+          value: item.incomeTypeName || '',
+          label: item.incomeTypeName || '',
+        }
+      })
+
+    expect(res).toEqual(expected)
   })
 })

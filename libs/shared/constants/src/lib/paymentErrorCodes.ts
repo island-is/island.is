@@ -14,6 +14,7 @@ export enum PaymentServiceCode {
   PaymentFlowAlreadyPaid = 'PaymentFlowAlreadyPaid',
   CouldNotVerifyCallback = 'CouldNotVerifyCallback',
   CouldNotCreatePaymentConfirmation = 'CouldNotCreatePaymentConfirmation',
+  PaymentFlowAmountMismatch = 'PaymentFlowAmountMismatch',
 }
 
 export enum CardErrorCode {

@@ -99,4 +99,14 @@ export const genericError = defineMessages({
     defaultMessage: 'Það er nú þegar búið að greiða fyrir þessa vöru',
     description: 'Payment already made',
   },
+  amountMismatchTitle: {
+    id: 'payments.generic:amountMismatchTitle',
+    defaultMessage: 'Upphæð ekki rétt',
+    description: 'Amount mismatch',
+  },
+  amountMismatch: {
+    id: 'payments.generic:amountMismatch',
+    defaultMessage: 'Upphæðin sem þú reyndir að greiða er ekki rétt',
+    description: 'Amount mismatch',
+  },
 })
