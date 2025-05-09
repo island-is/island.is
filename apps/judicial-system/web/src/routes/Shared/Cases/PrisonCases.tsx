@@ -14,11 +14,11 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CasesLayout,
   CaseTag,
   Logo,
   PageHeader,
   SectionHeading,
-  CasesLayout,
   TagAppealState,
   TagCaseState,
   UserContext,

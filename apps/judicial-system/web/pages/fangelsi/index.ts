@@ -1,3 +1,3 @@
-import PrisonCases from '@island.is/judicial-system-web/src/routes/Shared/Cases/PrisonCases'
+import PrisonCasesDashboard from '@island.is/judicial-system-web/src/routes/Shared/Dashboards/PrisonCasesDashboard'
 
-export default PrisonCases
+export default PrisonCasesDashboard
