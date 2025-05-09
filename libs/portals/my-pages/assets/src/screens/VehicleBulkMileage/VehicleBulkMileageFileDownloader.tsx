@@ -1,10 +1,7 @@
 import { DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { vehicleMessage } from '../../lib/messages'
-import {
-  downloadFile,
-  formatDateWithTime,
-} from '@island.is/portals/my-pages/core'
+import { downloadFile } from '@island.is/portals/my-pages/core'
 import { TableData } from './types'
 import { useCallback, useMemo } from 'react'
 
