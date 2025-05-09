@@ -10,6 +10,7 @@ import {
   USER_PROFILE,
   client,
 } from '@island.is/portals/my-pages/graphql'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 type EmailsListProps = {
   items: Email[]
@@ -17,6 +18,9 @@ type EmailsListProps = {
 
 export const EmailsList = ({ items }: EmailsListProps) => {
   const { formatMessage } = useIntl()
+  const userInfo = useUserInfo()
+
+  const isActor = userInfo?.profile?.actor?.nationalId
 
   const refreshEmailList = () => {
     client.refetchQueries({
@@ -48,35 +52,60 @@ export const EmailsList = ({ items }: EmailsListProps) => {
     },
   })
 
-  const createCtaList = (id: string): EmailCta[] => [
-    {
-      label: formatMessage(emailsMsg.emailMakePrimary),
-      emailId: id,
-      onClick(emailId: string) {
-        setPrimaryEmail({
-          variables: {
-            input: {
-              emailId,
+  const createCtaList = (id: string): EmailCta[] => {
+    const commonList = [
+      {
+        emailId: id,
+        label: formatMessage(emailsMsg.emailDelete),
+        isDestructive: true,
+        onClick(emailId: string) {
+          deleteEmail({
+            variables: {
+              input: {
+                emailId,
+              },
             },
-          },
-        })
+          })
+        },
       },
-    },
-    {
-      emailId: id,
-      label: formatMessage(emailsMsg.emailDelete),
-      isDestructive: true,
-      onClick(emailId: string) {
-        deleteEmail({
-          variables: {
-            input: {
-              emailId,
+    ]
+
+    if (isActor) {
+      return [
+        {
+          label: formatMessage(emailsMsg.connectEmailToDelegation),
+          emailId: id,
+          onClick(emailId: string) {
+            setPrimaryEmail({
+              variables: {
+                input: {
+                  emailId,
+                },
+              },
+            })
+          },
+        },
+        ...commonList,
+      ]
+    }
+
+    return [
+      {
+        label: formatMessage(emailsMsg.emailMakePrimary),
+        emailId: id,
+        onClick(emailId: string) {
+          setPrimaryEmail({
+            variables: {
+              input: {
+                emailId,
+              },
             },
-          },
-        })
+          })
+        },
       },
-    },
-  ]
+      ...commonList,
+    ]
+  }
 
   const getTag = (email: Email): EmailCardTag | undefined => {
     if (email.primary) {

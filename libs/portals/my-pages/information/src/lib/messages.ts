@@ -505,6 +505,10 @@ export const emailsMsg = defineMessages({
     id: 'sp.settings:email-make-primary-error',
     defaultMessage: 'Ekki tókst að setja aðal netfang',
   },
+  connectEmailToDelegation: {
+    id: 'sp.settings:connect-email-to-delegation',
+    defaultMessage: 'Tengja netfang við umboð',
+  },
   confirmEmail: {
     id: 'sp.settings:confirm-email',
     defaultMessage: 'Staðfesta netfang',

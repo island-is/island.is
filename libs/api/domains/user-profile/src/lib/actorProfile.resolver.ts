@@ -18,6 +18,7 @@ import { IdentityClientService } from '@island.is/clients/identity'
 import { UserProfileService } from './userProfile.service'
 import { ActorProfile, ActorProfileResponse } from './dto/actorProfile'
 import { UpdateActorProfileInput } from './dto/updateActorProfileInput'
+import { SetActorProfileEmailInput } from './dto/setActorProfileEmail.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ActorProfile)
@@ -40,6 +41,19 @@ export class ActorProfileResolver {
     @CurrentUser() user: User,
   ): Promise<ActorProfile> {
     return this.userUserProfileService.updateActorProfile(input, user)
+  }
+
+  @Mutation(() => ActorProfile, {
+    name: 'userProfileSetActorProfileEmail',
+  })
+  async setActorProfileConnectedEmail(
+    @Args('input') input: SetActorProfileEmailInput,
+    @CurrentUser() user: User,
+  ): Promise<any> {
+    return this.userUserProfileService.setActorProfileEmail({
+      emailId: input.emailId,
+      user,
+    })
   }
 
   @ResolveField('fromName', () => String, { nullable: true })
