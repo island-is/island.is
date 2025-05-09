@@ -1,4 +1,12 @@
-import { FC, SetStateAction, useCallback, useEffect, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import InputMask from 'react-input-mask'
 
 import {
@@ -10,18 +18,19 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
+  getAdminUserInstitutionScope,
+  getAdminUserInstitutionUserRoles,
   isCoreUser,
   isProsecutorsOffice,
-  prosecutorsOfficeTypes,
 } from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
   FormFooter,
   PageTitle,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Institution,
-  InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -35,6 +44,105 @@ import {
 } from '../../../utils/validate'
 import { userRoleToString } from '../userRoleToString'
 import * as styles from './UserForm.css'
+
+interface UserRoleRadioButtonProps {
+  userRole: UserRole
+  user: User
+  setUser: Dispatch<SetStateAction<User>>
+  disabled?: boolean
+}
+
+const UserRoleRadioButton: FC<UserRoleRadioButtonProps> = ({
+  userRole,
+  user,
+  setUser,
+  disabled,
+}) => {
+  return (
+    <RadioButton
+      name="role"
+      id={userRole}
+      label={userRoleToString(userRole)}
+      checked={user.role === userRole}
+      onChange={() => setUser((prevUser) => ({ ...prevUser, role: userRole }))}
+      disabled={disabled}
+      large
+    />
+  )
+}
+
+interface UserRolePairProps {
+  userRole1: UserRole
+  userRole2: UserRole
+  user: User
+  setUser: Dispatch<SetStateAction<User>>
+  disabled?: boolean
+}
+
+const UserRolePair: FC<UserRolePairProps> = ({
+  userRole1,
+  userRole2,
+  user,
+  setUser,
+  disabled,
+}) => {
+  return (
+    <Box className={styles.roleRow}>
+      <Box className={styles.roleColumn}>
+        <UserRoleRadioButton
+          userRole={userRole1}
+          user={user}
+          setUser={setUser}
+          disabled={disabled}
+        />
+      </Box>
+      <Box className={styles.roleColumn}>
+        {userRole2 && (
+          <UserRoleRadioButton
+            userRole={userRole2}
+            user={user}
+            setUser={setUser}
+            disabled={disabled}
+          />
+        )}
+      </Box>
+    </Box>
+  )
+}
+
+interface RolesRadioButtonsProps {
+  userRoles: UserRole[]
+  user: User
+  setUser: Dispatch<SetStateAction<User>>
+  disabled?: boolean
+}
+
+const RolesRadioButtons: FC<RolesRadioButtonsProps> = ({
+  userRoles,
+  user,
+  setUser,
+  disabled,
+}) => {
+  const rolePairs = []
+
+  for (let i = 0; i < userRoles.length; i += 2) {
+    const userRole1 = userRoles[i]
+    const userRole2 = userRoles[i + 1] // may be undefined if odd number of roles
+
+    rolePairs.push(
+      <UserRolePair
+        key={userRole1}
+        userRole1={userRole1}
+        userRole2={userRole2}
+        user={user}
+        setUser={setUser}
+        disabled={disabled}
+      />,
+    )
+  }
+
+  return rolePairs
+}
 
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
@@ -51,6 +159,8 @@ export const UserForm: FC<Props> = ({
   onSave,
   loading,
 }) => {
+  const { user: admin } = useContext(UserContext)
+
   const [user, setUser] = useState<User>(existingUser)
 
   const { personData, personError } = useNationalRegistry(user.nationalId)
@@ -68,10 +178,7 @@ export const UserForm: FC<Props> = ({
   const setName = useCallback(
     (name: string) => {
       if (name !== user.name) {
-        setUser({
-          ...user,
-          name: name,
-        })
+        setUser((prevUser) => ({ ...prevUser, name: name }))
       }
     },
     [user],
@@ -89,11 +196,17 @@ export const UserForm: FC<Props> = ({
     }
   }, [personData, personError, setName])
 
-  const selectInstitutions = institutions.map((institution) => ({
-    label: institution.name ?? '',
-    value: institution.id,
-    institution,
-  }))
+  const selectInstitutions = institutions
+    .filter(
+      (institution) =>
+        institution.type &&
+        getAdminUserInstitutionScope(admin).includes(institution.type),
+    )
+    .map((institution) => ({
+      label: institution.name ?? '',
+      value: institution.id,
+      institution,
+    }))
 
   const usersInstitution = selectInstitutions.find(
     (institution) => institution.value === user.institution?.id,
@@ -107,10 +220,7 @@ export const UserForm: FC<Props> = ({
     validations: Validation[],
     setErrorMessage: (value: SetStateAction<string | undefined>) => void,
   ) => {
-    setUser({
-      ...user,
-      [field]: value,
-    })
+    setUser((prevUser) => ({ ...prevUser, [field]: value }))
 
     if (validate([[value, validations]]).isValid) {
       setErrorMessage(undefined)
@@ -211,248 +321,26 @@ export const UserForm: FC<Props> = ({
             value={usersInstitution}
             options={selectInstitutions}
             onChange={(selectedOption) =>
-              setUser({
-                ...user,
+              setUser((prevUser) => ({
+                ...prevUser,
                 institution: (selectedOption as ExtendedOption).institution,
-              })
+              }))
             }
             isDisabled={!isNewUser}
             required
           />
         </Box>
-        {isProsecutorsOffice(user.institution?.type) ? (
-          <>
-            <Box className={styles.roleRow}>
-              <Box className={styles.roleColumn}>
-                <RadioButton
-                  name="role"
-                  id="roleProsecutor"
-                  label={userRoleToString(UserRole.PROSECUTOR)}
-                  checked={user.role === UserRole.PROSECUTOR}
-                  onChange={() =>
-                    setUser({ ...user, role: UserRole.PROSECUTOR })
-                  }
-                  large
-                />
-              </Box>
-              <Box className={styles.roleColumn}>
-                <RadioButton
-                  name="role"
-                  id="roleProsecutorRepresentative"
-                  label={userRoleToString(UserRole.PROSECUTOR_REPRESENTATIVE)}
-                  checked={user.role === UserRole.PROSECUTOR_REPRESENTATIVE}
-                  onChange={() =>
-                    setUser({
-                      ...user,
-                      role: UserRole.PROSECUTOR_REPRESENTATIVE,
-                    })
-                  }
-                  large
-                />
-              </Box>
-            </Box>
-            <Box className={styles.roleRow}>
-              {user.institution?.type ===
-              InstitutionType.PUBLIC_PROSECUTORS_OFFICE ? (
-                <>
-                  <Box className={styles.roleColumn}>
-                    <RadioButton
-                      name="role"
-                      id="rolePublicProsecutorStaff"
-                      label={userRoleToString(UserRole.PUBLIC_PROSECUTOR_STAFF)}
-                      checked={user.role === UserRole.PUBLIC_PROSECUTOR_STAFF}
-                      onChange={() =>
-                        setUser({
-                          ...user,
-                          role: UserRole.PUBLIC_PROSECUTOR_STAFF,
-                        })
-                      }
-                      large
-                    />
-                  </Box>
-                  <Box className={styles.roleColumn}>
-                    <RadioButton
-                      name="role"
-                      id="roleLocalAdmin"
-                      label={userRoleToString(UserRole.LOCAL_ADMIN)}
-                      checked={user.role === UserRole.LOCAL_ADMIN}
-                      onChange={() =>
-                        setUser({ ...user, role: UserRole.LOCAL_ADMIN })
-                      }
-                      large
-                    />
-                  </Box>
-                </>
-              ) : (
-                <>
-                  <Box className={styles.roleColumn}>
-                    <RadioButton
-                      name="role"
-                      id="roleLocalAdmin"
-                      label={userRoleToString(UserRole.LOCAL_ADMIN)}
-                      checked={user.role === UserRole.LOCAL_ADMIN}
-                      onChange={() =>
-                        setUser({ ...user, role: UserRole.LOCAL_ADMIN })
-                      }
-                      large
-                    />
-                  </Box>
-                  <Box className={styles.roleColumn} />
-                </>
-              )}
-            </Box>
-          </>
-        ) : user.institution?.type === InstitutionType.DISTRICT_COURT ? (
-          <>
-            <Box className={styles.roleRow}>
-              <Box className={styles.roleColumn}>
-                <RadioButton
-                  name="role"
-                  id="roleJudge"
-                  label={userRoleToString(UserRole.DISTRICT_COURT_JUDGE)}
-                  checked={user.role === UserRole.DISTRICT_COURT_JUDGE}
-                  onChange={() =>
-                    setUser({ ...user, role: UserRole.DISTRICT_COURT_JUDGE })
-                  }
-                  large
-                />
-              </Box>
-              <Box className={styles.roleColumn}>
-                <RadioButton
-                  name="role"
-                  id="roleRegistrar"
-                  label={userRoleToString(UserRole.DISTRICT_COURT_REGISTRAR)}
-                  checked={user.role === UserRole.DISTRICT_COURT_REGISTRAR}
-                  onChange={() =>
-                    setUser({
-                      ...user,
-                      role: UserRole.DISTRICT_COURT_REGISTRAR,
-                    })
-                  }
-                  large
-                />
-              </Box>
-            </Box>
-            <Box className={styles.roleRow}>
-              <Box className={styles.roleColumn}>
-                <RadioButton
-                  name="role"
-                  id="roleAssistant"
-                  label={userRoleToString(UserRole.DISTRICT_COURT_ASSISTANT)}
-                  checked={user.role === UserRole.DISTRICT_COURT_ASSISTANT}
-                  onChange={() =>
-                    setUser({
-                      ...user,
-                      role: UserRole.DISTRICT_COURT_ASSISTANT,
-                    })
-                  }
-                  large
-                />
-              </Box>
-              <Box className={styles.roleColumn}>
-                <RadioButton
-                  name="role"
-                  id="roleLocalAdmin"
-                  label={userRoleToString(UserRole.LOCAL_ADMIN)}
-                  checked={user.role === UserRole.LOCAL_ADMIN}
-                  onChange={() =>
-                    setUser({ ...user, role: UserRole.LOCAL_ADMIN })
-                  }
-                  large
-                />
-              </Box>
-            </Box>
-          </>
-        ) : user.institution?.type === InstitutionType.COURT_OF_APPEALS ? (
-          <>
-            <Box className={styles.roleRow}>
-              <Box className={styles.roleColumn}>
-                <RadioButton
-                  name="role"
-                  id="roleJudge"
-                  label={userRoleToString(UserRole.COURT_OF_APPEALS_JUDGE)}
-                  checked={user.role === UserRole.COURT_OF_APPEALS_JUDGE}
-                  onChange={() =>
-                    setUser({ ...user, role: UserRole.COURT_OF_APPEALS_JUDGE })
-                  }
-                  large
-                />
-              </Box>
-              <Box className={styles.roleColumn}>
-                <RadioButton
-                  name="role"
-                  id="roleRegistrar"
-                  label={userRoleToString(UserRole.COURT_OF_APPEALS_REGISTRAR)}
-                  checked={user.role === UserRole.COURT_OF_APPEALS_REGISTRAR}
-                  onChange={() =>
-                    setUser({
-                      ...user,
-                      role: UserRole.COURT_OF_APPEALS_REGISTRAR,
-                    })
-                  }
-                  large
-                />
-              </Box>
-            </Box>
-            <Box className={styles.roleRow}>
-              <Box className={styles.roleColumn}>
-                <RadioButton
-                  name="role"
-                  id="roleAssistant"
-                  label={userRoleToString(UserRole.COURT_OF_APPEALS_ASSISTANT)}
-                  checked={user.role === UserRole.COURT_OF_APPEALS_ASSISTANT}
-                  onChange={() =>
-                    setUser({
-                      ...user,
-                      role: UserRole.COURT_OF_APPEALS_ASSISTANT,
-                    })
-                  }
-                  large
-                />
-              </Box>
-              <Box className={styles.roleColumn}>
-                <RadioButton
-                  name="role"
-                  id="roleLocalAdmin"
-                  label={userRoleToString(UserRole.LOCAL_ADMIN)}
-                  checked={user.role === UserRole.LOCAL_ADMIN}
-                  onChange={() =>
-                    setUser({ ...user, role: UserRole.LOCAL_ADMIN })
-                  }
-                  large
-                />
-              </Box>
-            </Box>
-          </>
-        ) : user.institution?.type === InstitutionType.PRISON ||
-          user.institution?.type === InstitutionType.PRISON_ADMIN ? (
-          <Box className={styles.roleRow}>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="rolePrisonSystemStaff"
-                label={userRoleToString(UserRole.PRISON_SYSTEM_STAFF)}
-                checked={user.role === UserRole.PRISON_SYSTEM_STAFF}
-                onChange={() =>
-                  setUser({ ...user, role: UserRole.PRISON_SYSTEM_STAFF })
-                }
-                large
-              />
-            </Box>
-            <Box className={styles.roleColumn}>
-              <RadioButton
-                name="role"
-                id="roleLocalAdmin"
-                label={userRoleToString(UserRole.LOCAL_ADMIN)}
-                checked={user.role === UserRole.LOCAL_ADMIN}
-                onChange={() =>
-                  setUser({ ...user, role: UserRole.LOCAL_ADMIN })
-                }
-                large
-              />
-            </Box>
-          </Box>
-        ) : null}
+        {user.institution?.type && (
+          <RolesRadioButtons
+            userRoles={getAdminUserInstitutionUserRoles(
+              admin,
+              user.institution?.type,
+            )}
+            user={user}
+            setUser={setUser}
+            disabled={!isNewUser}
+          />
+        )}
         {isProsecutorsOffice(user.institution?.type) &&
           user.role === UserRole.PROSECUTOR && (
             <Box marginBottom={2}>
@@ -461,7 +349,10 @@ export const UserForm: FC<Props> = ({
                 label="Notandi getur staðfest kærur"
                 checked={Boolean(user.canConfirmIndictment)}
                 onChange={({ target }) =>
-                  setUser({ ...user, canConfirmIndictment: target.checked })
+                  setUser((prevUser) => ({
+                    ...prevUser,
+                    canConfirmIndictment: target.checked,
+                  }))
                 }
                 large
                 filled
@@ -560,7 +451,7 @@ export const UserForm: FC<Props> = ({
             label="Virkur notandi"
             checked={Boolean(user.active)}
             onChange={({ target }) =>
-              setUser({ ...user, active: target.checked })
+              setUser((prevUser) => ({ ...prevUser, active: target.checked }))
             }
             large
             filled

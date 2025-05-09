@@ -95,6 +95,7 @@ const Nutrition = ({ data }: Props) => {
         <LinkButton
           to={formatMessage(messages['nutritionDescriptionLink'])}
           text={formatMessage(messages.nutritionDescriptionInfo)}
+          variant="text"
         />
       </Box>
     </Box>

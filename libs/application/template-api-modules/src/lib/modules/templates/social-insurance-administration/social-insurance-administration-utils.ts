@@ -15,7 +15,10 @@ import {
   getApplicationExternalData as getOAPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import {
+  BankAccountType,
+  INCOME,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   formatBank,
   shouldNotUpdateBankAccount,
@@ -40,7 +43,6 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
 
 import {
-  INCOME,
   getApplicationAnswers as getIPApplicationAnswers,
   getApplicationExternalData as getIPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
