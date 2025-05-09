@@ -39,7 +39,7 @@ export const submitExaminees = async (
     }
 
     data.getExamineeEligibility.forEach((examinee, index) => {
-      if (examinee.isEligable) {
+      if (examinee.isEligible) {
         pathItems.push({ path: `examinees[${index}].disabled`, value: 'false' })
       } else {
         pathItems.push({ path: `examinees[${index}].disabled`, value: 'true' })

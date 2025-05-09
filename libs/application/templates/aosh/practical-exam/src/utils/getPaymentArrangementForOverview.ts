@@ -21,13 +21,14 @@ export const getPaymentArrangementForOverview = (
   const paymentOptions = paymentArrangementAnswer?.paymentOptions
 
   if (
-    isRegisteringSelf ||
+    isRegisteringSelf === SelfOrOthers.self ||
     individualOrCompany === IndividualOrCompany.individual ||
     paymentOptions === PaymentOptions.cashOnDelivery
   ) {
     return [
       {
         width: 'full',
+        keyText: overview.payment.title,
         valueText: overview.payment.cashOnDelivery,
       },
     ]
@@ -36,6 +37,7 @@ export const getPaymentArrangementForOverview = (
   return [
     {
       width: 'full',
+      keyText: overview.payment.title,
       valueText: [
         {
           ...overview.payment.invoice,

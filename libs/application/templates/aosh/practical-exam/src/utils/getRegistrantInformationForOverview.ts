@@ -11,6 +11,7 @@ export const getRegistrantInformationForOverview = (
   return [
     {
       width: 'full',
+      keyText: overview.registrant.title,
       valueText: [
         {
           ...overview.registrant.name,

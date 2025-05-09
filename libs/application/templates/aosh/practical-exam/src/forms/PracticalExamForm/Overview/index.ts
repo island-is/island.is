@@ -25,14 +25,14 @@ export const overviewSection = buildSection({
       children: [
         buildOverviewField({
           id: 'overview.registrant',
-          title: overview.registrant.title,
+          title: '',
           titleVariant: 'h4',
           bottomLine: false,
           items: getRegistrantInformationForOverview,
         }),
         buildOverviewField({
           id: 'overview.examSelf',
-          title: overview.exam.title,
+          title: '',
           titleVariant: 'h4',
           items: getExamInformationSelfForOverview,
           condition: isSelfPath,
@@ -46,13 +46,13 @@ export const overviewSection = buildSection({
         }),
         buildOverviewField({
           id: 'overview.examLocation',
-          title: overview.examLocation.title,
+          title: '',
           titleVariant: 'h4',
           items: getExamLocatioForOverview,
         }),
         buildOverviewField({
           id: 'overview.paymentArrangement',
-          title: overview.payment.title,
+          title: '',
           titleVariant: 'h4',
           items: getPaymentArrangementForOverview,
         }),

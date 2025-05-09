@@ -5,9 +5,10 @@ import {
   buildSection,
   buildSelectField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { examLocation, shared } from '../../../lib/messages'
-import { postalCodes } from '@island.is/shared/utils'
+import { PostCodeDto } from '@island.is/clients/practical-exams-ver'
 
 export const examLocationSection = buildSection({
   id: 'examLocationSection',
@@ -31,9 +32,17 @@ export const examLocationSection = buildSection({
           width: 'half',
           backgroundColor: 'blue',
           required: true,
-          options: () => {
-            return postalCodes.map((code) => {
-              return { value: `${code}`, label: `${code}` }
+          options: (application) => {
+            const postCodes =
+              getValueViaPath<PostCodeDto[]>(
+                application.externalData,
+                'postcodes.data',
+              ) ?? []
+            return postCodes.map((code) => {
+              return {
+                value: `${code.postCode}`,
+                label: `${code.postCode} ${code.city}`,
+              }
             })
           },
         }),

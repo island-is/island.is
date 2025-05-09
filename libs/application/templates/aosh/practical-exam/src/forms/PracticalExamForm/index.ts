@@ -34,7 +34,7 @@ export const PracticalExamForm: Form = buildForm({
     examCategoriesSectionOthers, // Conditional on registering multiple examinees
     examLocationSection,
     paymentArrangementSection,
-    overviewSection, // TODO(balli) Different depending on user choice of self/others in informationSection
+    overviewSection,
     buildFormPaymentChargeOverviewSection({
       sectionTitle: payment.general.sectionTitle,
       getSelectedChargeItems: (_) =>

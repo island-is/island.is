@@ -6,7 +6,7 @@ export class ExamineeEligiblity {
   nationalId?: string | null
 
   @Field(() => Boolean, { nullable: true })
-  isEligable?: boolean
+  isEligible?: boolean
 
   @Field(() => String, { nullable: true })
   errorMsg?: string | null

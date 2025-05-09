@@ -16,6 +16,10 @@ import {
   ApiExamineeEligibilityGetRequest,
   ExamRegistrationApi,
   ApiExamRegistrationPostRequest,
+  PostCodeApi,
+  ApiPostCodeGetRequest,
+  ExamineeEligibilityDto,
+  PostCodeDto,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -27,6 +31,7 @@ export class PracticalExamsClientService {
     private readonly companyApi: CompanyApi,
     private readonly examineeEligibilityApi: ExamineeEligibilityApi,
     private readonly examRegistrationApi: ExamRegistrationApi,
+    private readonly postCodeApi: PostCodeApi,
   ) {}
   private examCategoriesApiWithAuth = (user: User) =>
     this.examCategoriesApi.withMiddleware(new AuthMiddleware(user as Auth))
@@ -46,6 +51,9 @@ export class PracticalExamsClientService {
   private companyApiWithAuth = (user: User) =>
     this.companyApi.withMiddleware(new AuthMiddleware(user as Auth))
 
+  private postCodeApiWithAuth = (user: User) =>
+    this.postCodeApi.withMiddleware(new AuthMiddleware(user as Auth))
+
   async getExamcategories(
     auth: User,
     requestParameters: ApiExamCategoriesGetRequest,
@@ -64,7 +72,7 @@ export class PracticalExamsClientService {
   async examineeEligibility(
     auth: User,
     requestParameters: ApiExamineeEligibilityGetRequest,
-  ) {
+  ): Promise<Array<ExamineeEligibilityDto>> {
     return await this.examineeEligibilityApiWithAuth(
       auth,
     ).apiExamineeEligibilityGet(requestParameters)
@@ -93,6 +101,15 @@ export class PracticalExamsClientService {
     requestParameters: ApiInstructorNationalIdGetRequest,
   ): Promise<WorkMachineInstructorDto> {
     return await this.instructorApiWithAuth(auth).apiInstructorNationalIdGet(
+      requestParameters,
+    )
+  }
+
+  async getPostcodes(
+    auth: User,
+    requestParameters: ApiPostCodeGetRequest,
+  ): Promise<Array<PostCodeDto>> {
+    return await this.postCodeApiWithAuth(auth).apiPostCodeGet(
       requestParameters,
     )
   }

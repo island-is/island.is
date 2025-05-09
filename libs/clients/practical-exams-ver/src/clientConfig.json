@@ -280,6 +280,37 @@
           }
         }
       }
+    },
+    "/api/PostCode": {
+      "get": {
+        "tags": ["PostCode"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PostCodeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -332,7 +363,7 @@
             "type": "string",
             "nullable": true
           },
-          "isEligable": {
+          "isEligible": {
             "type": "boolean"
           },
           "errorMsg": {
@@ -358,6 +389,20 @@
             "nullable": true
           },
           "fileType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PostCodeDto": {
+        "type": "object",
+        "properties": {
+          "postCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
             "type": "string",
             "nullable": true
           }
@@ -450,10 +495,6 @@
             "nullable": true
           },
           "postalCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "city": {
             "type": "string",
             "nullable": true
           }

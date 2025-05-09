@@ -27,3 +27,8 @@ export const getExamCategoriesApi = defineTemplateApi({
   action: ApiActions.getExamCategories,
   externalDataId: 'examCategories',
 })
+
+export const getPostcodesApi = defineTemplateApi({
+  action: ApiActions.getPostcodes,
+  externalDataId: 'postcodes',
+})

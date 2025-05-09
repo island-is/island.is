@@ -12,6 +12,7 @@ import {
   ExamineeValidationApi,
   ExamineeEligibilityApi,
   ExamRegistrationApi,
+  PostCodeApi,
 } from '../../gen/fetch'
 import { PracticalExamsClientConfig } from './practicalExams.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -72,6 +73,11 @@ export const exportedApis = [
   {
     api: ExamRegistrationApi,
     provide: ExamRegistrationApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: PostCodeApi,
+    provide: PostCodeApi,
     acceptHeader: 'application/json',
   },
 ].map(({ api, provide, acceptHeader }) => ({

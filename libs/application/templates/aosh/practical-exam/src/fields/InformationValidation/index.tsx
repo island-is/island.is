@@ -36,7 +36,7 @@ export const InformationValidation: FC<
       infoSelf.nationalId,
     ])
 
-    if (response.getExamineeEligibility[0].isEligable) {
+    if (response.getExamineeEligibility[0].isEligible) {
       const { nationalId, name, email, phone, licenseNumber, countryOfIssue } =
         infoSelf
       setValidationError('')

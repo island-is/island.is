@@ -14,7 +14,7 @@ export const EXAMINEE_ELIGIBILITY_QUERY = gql`
   query ExamineeEligibility($input: ExamineeEligibilityInput!) {
     getExamineeEligibility(input: $input) {
       nationalId
-      isEligable
+      isEligible
       errorMsg
       errorMsgEn
     }

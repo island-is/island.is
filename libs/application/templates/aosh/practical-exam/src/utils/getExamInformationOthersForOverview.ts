@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue, TableData } from '@island.is/application/types'
-import { ExamCategoriesAndInstructors, Examinees, Instructors } from '..'
+import { ExamCategoriesAndInstructors, Examinees } from '..'
 import { overview } from '../lib/messages'
 
 export const getExaminees = (answers: FormValue): Examinees | undefined => {

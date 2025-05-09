@@ -22,6 +22,7 @@ import { buildPaymentState } from '@island.is/application/utils'
 import { PracticalExamAnswersSchema } from './dataSchema'
 import {
   getExamCategoriesApi,
+  getPostcodesApi,
   IdentityApi,
   MockableVinnueftirlitidPaymentCatalogApi,
   VinnueftirlitidPaymentCatalogApi,
@@ -90,6 +91,7 @@ const template: ApplicationTemplate<
                 UserProfileApi,
                 VinnueftirlitidPaymentCatalogApi,
                 getExamCategoriesApi,
+                getPostcodesApi,
                 MockableVinnueftirlitidPaymentCatalogApi,
               ],
             },

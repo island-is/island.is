@@ -32,5 +32,6 @@ export enum Roles {
 
 export enum ApiActions {
   getExamCategories = 'getExamCategories',
+  getPostcodes = 'getPostcodes',
   submitApplication = 'submitApplication',
 }

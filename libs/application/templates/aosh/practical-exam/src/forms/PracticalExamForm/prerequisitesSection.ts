@@ -12,6 +12,7 @@ import {
   VinnueftirlitidPaymentCatalogApi,
   MockableVinnueftirlitidPaymentCatalogApi,
   getExamCategoriesApi,
+  getPostcodesApi,
 } from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
 
@@ -44,6 +45,9 @@ export const prerequisitesSection = buildSection({
         }),
         buildDataProviderItem({
           provider: getExamCategoriesApi,
+        }),
+        buildDataProviderItem({
+          provider: getPostcodesApi,
         }),
         buildDataProviderItem({
           provider: MockableVinnueftirlitidPaymentCatalogApi,

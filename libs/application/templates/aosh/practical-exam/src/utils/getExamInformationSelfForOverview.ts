@@ -39,6 +39,7 @@ export const getExamInformationSelfForOverview = (
   return [
     {
       width: 'full',
+      keyText: overview.exam.title,
       valueText: [
         {
           ...overview.examInfoSelf.examinee,

@@ -137,25 +137,34 @@ export const mapInstructors = (
 }
 
 export const mapPaymentArrangement = (
-  paymentArrengement: PaymentArrangement,
+  paymentArrangement: PaymentArrangement,
   information: Information,
-  applicationId: string,
+  chargeId: string,
 ): PaymentInfoRequest | undefined => {
-  if (paymentArrengement.individualOrCompany === IndividualOrCompany.individual)
+  const isIndividual =
+    paymentArrangement.individualOrCompany === IndividualOrCompany.individual
+  const isCashOnDelivery =
+    paymentArrangement.paymentOptions === PaymentOptions.cashOnDelivery
+
+  if (isIndividual) {
     return {
       payerNationalId: information.nationalId || '',
       payerName: information.name || '',
-      directPaymentId: applicationId, // TODO ??
       payerEmail: information.email || '',
+      directPaymentId: chargeId,
       textToDisplayOnInvoice: '',
     }
+  }
+
+  const companyInfo = paymentArrangement.companyInfo || {}
+  const contactInfo = paymentArrangement.contactInfo || {}
 
   return {
-    payerNationalId: paymentArrengement.companyInfo?.nationalId || '',
-    payerName: paymentArrengement.companyInfo?.name || '',
-    payerEmail: paymentArrengement.contactInfo?.email || '',
-    directPaymentId: applicationId, // TODO ??
-    textToDisplayOnInvoice: paymentArrengement.explanation || '',
+    payerNationalId: companyInfo.nationalId || '',
+    payerName: companyInfo.name || '',
+    payerEmail: contactInfo.email || '',
+    directPaymentId: isCashOnDelivery ? chargeId : '',
+    textToDisplayOnInvoice: paymentArrangement.explanation || '',
   }
 }
 

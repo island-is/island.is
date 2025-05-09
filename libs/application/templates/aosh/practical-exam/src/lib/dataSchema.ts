@@ -30,7 +30,6 @@ const InformationSchema = z
   .refine(
     (data) => {
       if (data.selfOrOthers === SelfOrOthers.self) {
-        // TODO(balli) Create util function to validate license number ??
         return data.licenseNumber && data.countryOfIssue
       }
 

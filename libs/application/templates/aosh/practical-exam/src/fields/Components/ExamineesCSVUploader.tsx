@@ -207,9 +207,10 @@ export const ExamineesCSVUploader: FC<
             (item) => item.nationalId.nationalId ?? [],
           )
           const response = await getAreExamineesEligibleCallback(nationalIdList)
+          console.log('RESPO', response)
 
           const disabledExaminees = response?.getExamineeEligibility?.find(
-            (x) => x.isEligable === false,
+            (x) => x.isEligible === false,
           )
           if (disabledExaminees) {
             setValue(
@@ -233,7 +234,7 @@ export const ExamineesCSVUploader: FC<
               )
               return {
                 ...x,
-                disabled: examineesInRes?.isEligable
+                disabled: examineesInRes?.isEligible
                   ? TrueOrFalse.false
                   : TrueOrFalse.true,
               }

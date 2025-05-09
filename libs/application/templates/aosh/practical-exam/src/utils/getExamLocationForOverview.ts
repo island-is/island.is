@@ -17,6 +17,7 @@ export const getExamLocatioForOverview = (
   return [
     {
       width: 'full',
+      keyText: overview.examLocation.title,
       valueText: [
         {
           ...overview.examLocation.location,

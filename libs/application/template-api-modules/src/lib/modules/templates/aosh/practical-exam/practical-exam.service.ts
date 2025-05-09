@@ -9,6 +9,7 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   ExamCategoryDto,
+  PostCodeDto,
   PracticalExamsClientService,
 } from '@island.is/clients/practical-exams-ver'
 import {
@@ -23,7 +24,8 @@ import {
   mapInstructors,
   mapPaymentArrangement,
 } from './practical-exam.utils'
-
+import { getValueViaPath } from '@island.is/application/core'
+import { application as applicationMessages } from '@island.is/application/templates/aosh/seminars'
 @Injectable()
 export class PracticalExamTemplateService extends BaseTemplateApiService {
   constructor(
@@ -31,6 +33,16 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     private readonly practicalExamClientService: PracticalExamsClientService,
   ) {
     super(ApplicationTypes.PRACTICAL_EXAM)
+  }
+
+  async getPostcodes({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<Array<PostCodeDto>> {
+    const response = await this.practicalExamClientService.getPostcodes(auth, {
+      xCorrelationID: application.id,
+    })
+    return response
   }
 
   async getExamCategories({
@@ -76,7 +88,6 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // const answers = application.answers as unknown as PracticalExam
     const answers = application.answers
     const examinees = getExaminees(answers)
     const information = getInformation(answers)
@@ -100,11 +111,17 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     const examCategories = mapCategoriesWithInstructor(
       examCategoriesAndInstructors,
     )
+
     const instructorsRequest = mapInstructors(instructors)
+    const chargeId =
+      getValueViaPath<string>(
+        application.externalData,
+        'createCharge.data.id',
+      ) ?? ''
     const paymentInfoRequest = mapPaymentArrangement(
       paymentArrangement,
       information,
-      application.id,
+      chargeId,
     )
     const examineesRequest = mapExaminees(examinees, examCategories)
 
@@ -114,19 +131,16 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
         examLocation: {
           address: examAddress,
           postalCode: examPostalCode,
-          city: 'Ekki vitað', // TODO We do not have this
         },
         examees: examineesRequest,
         instructors: instructorsRequest,
         paymentInfo: paymentInfoRequest,
         contact: {
-          // Part of exam location or paymentArrangement ??
           phoneNumber: examLocation.phone,
           email: examLocation.email,
         },
       },
     }
-    console.log('PAYLOOOOAD', payload)
 
     try {
       const response =
@@ -134,10 +148,18 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
           auth,
           payload,
         )
-      console.log('Response', response)
+      return response
     } catch (e) {
-      console.log('ERRROR', e)
-      throw new Error(e)
+      this.logger.warn(
+        '[practical-exams-service]: Error registering practical exams',
+      )
+      throw new TemplateApiError(
+        {
+          summary: applicationMessages.submissionError,
+          title: applicationMessages.submissionErrorTitle,
+        },
+        400,
+      )
     }
   }
 }

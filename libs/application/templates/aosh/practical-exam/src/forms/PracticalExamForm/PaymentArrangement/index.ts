@@ -32,7 +32,6 @@ export const paymentArrangementSection = buildSection({
           id: 'paymentArrangement.individualOrCompanyDescription',
           title: paymentArrangement.labels.registerForWhich,
           titleVariant: 'h5',
-          condition: isPersonType, // TODO(Balli) Look into this, probably removable after delegation was removed
         }),
         buildRadioField({
           id: 'paymentArrangement.individualOrCompany',
