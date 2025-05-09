@@ -8,6 +8,7 @@ import {
   FormSubmitSuccessModel,
   UserModel,
 } from '../../gen/fetch'
+import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class FriggClientService {
@@ -29,10 +30,44 @@ export class FriggClientService {
     return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality({})
   }
 
-  async getUserById(user: User, childNationalId: string): Promise<UserModel> {
-    return await this.friggApiWithAuth(user).getUserBySourcedId({
-      nationalId: childNationalId,
+  async getUserById(
+    user: User,
+    childNationalId: string,
+  ): Promise<UserModel | null> {
+    return Promise.resolve({
+      id: '1234567890',
+      phone: {},
+      mobile: {},
+      nationalId: '0101302399',
+      name: 'Stuttli Maack',
+      preferredName: { name: 'Fullorðni Maðurinn' },
+      pronouns: ['Hann'],
+      gradeLevel: '7',
+      email: { address: 'stuttli.maack@example.com' },
+      domicile: {
+        id: '1234567890',
+        address: '123 Main St',
+        municipality: { name: 'ExampleSýsla' },
+        postCode: '12345',
+        country: { name: 'Exampleland' },
+      },
+      residence: {
+        id: '1234567890',
+        address: '123 Main St',
+        municipality: { name: 'ExampleSýsla' },
+        postCode: '12345',
+        country: { name: 'Exampleland' },
+      },
+      primaryOrgId: { id: '1234567890' },
+      memberships: null,
+      agents: null,
     })
+    /*
+    return await this.friggApiWithAuth(user)
+      .getUserBySourcedId({
+        nationalId: childNationalId,
+      })
+      .catch(handle404) */
   }
 
   sendApplication(user: User, form: FormDto): Promise<FormSubmitSuccessModel> {
