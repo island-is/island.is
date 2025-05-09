@@ -1,7 +1,13 @@
 import {
+  YesOrNoEnum,
+  buildAlertMessageField,
+  buildCheckboxField,
   buildCustomField,
+  buildDateField,
   buildDescriptionField,
+  buildDividerField,
   buildForm,
+  buildKeyValueField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -12,17 +18,17 @@ import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const DraftForm: Form = buildForm({
-  id: 'DraftDraft',
-  title: '',
+  id: 'DraftForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
       title: m.requirements.approval.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'draft_section',
+      id: 'draft.section',
       title: m.draft.sections.advert.sectionTitle,
       children: [
         buildMultiField({
@@ -30,7 +36,7 @@ export const DraftForm: Form = buildForm({
           space: 5,
           children: [
             buildDescriptionField({
-              id: 'draft_description',
+              id: 'draft.description',
               description: m.draft.sections.advert.formIntro,
             }),
             buildTextField({
@@ -51,19 +57,130 @@ export const DraftForm: Form = buildForm({
       id: 'publishing',
       title: m.draft.sections.publishing.sectionTitle,
       children: [
-        buildDescriptionField({
-          id: 'publishing.description',
-          description: m.draft.sections.publishing.formIntro,
+        buildMultiField({
+          id: 'publishing.form',
+          title: m.draft.sections.publishing.formTitle,
+          children: [
+            buildDescriptionField({
+              id: 'publishing.formIntro',
+              description: m.draft.sections.publishing.formIntro,
+            }),
+            buildDescriptionField({
+              id: 'publishing.datePickerDescription',
+              marginTop: 5,
+              title: m.draft.sections.publishing.datePickerDescription,
+              titleVariant: 'h4',
+            }),
+            buildDateField({
+              id: 'publishing.date',
+              title: m.draft.sections.publishing.datePickerLabel,
+              placeholder: m.draft.sections.publishing.datePickerPlaceholder,
+              doesNotRequireAnswer: true,
+              required: false,
+              width: 'half',
+              minDate: new Date(),
+              backgroundColor: 'blue',
+            }),
+            buildCheckboxField({
+              id: 'publishing.noSpecificDate',
+              large: false,
+              backgroundColor: 'white',
+              required: false,
+              options: [
+                {
+                  value: YesOrNoEnum.YES,
+                  label: m.draft.sections.publishing.checkboxNoSpecificDate,
+                },
+              ],
+            }),
+            buildDescriptionField({
+              id: 'publishing.checkboxReceiveEmailDescription',
+              marginTop: 5,
+              titleVariant: 'h4',
+              title:
+                m.draft.sections.publishing.checkboxReceiveEmailDescription,
+            }),
+            buildCheckboxField({
+              id: 'publishing.receiveEmail',
+              large: false,
+              backgroundColor: 'white',
+              required: false,
+              setOnChange: async (optionValue) => {
+                if (optionValue === YesOrNoEnum.YES) {
+                  return [
+                    {
+                      key: 'receiveEmail',
+                      value: 'LOL',
+                    },
+                  ]
+                }
+                return [
+                  {
+                    key: 'receiveEmail',
+                    value: YesOrNoEnum.NO,
+                  },
+                ]
+              },
+              options: [
+                {
+                  value: YesOrNoEnum.YES,
+                  label: m.draft.sections.publishing.checkboxReceiveEmail,
+                },
+              ],
+            }),
+          ],
         }),
-        buildSubmitField({
-          id: 'submit',
-          title: coreMessages.buttonNext,
-          actions: [
-            {
-              event: { type: 'SUBMIT' },
-              name: 'Staðfesta',
-              type: 'primary',
-            },
+      ],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: 'Staðfesting',
+      children: [
+        buildMultiField({
+          id: 'confirmation.form',
+          title: 'Staðfesting',
+          children: [
+            buildDescriptionField({
+              id: 'confirmation.formIntro',
+              description:
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sit amet mattis erat, eget dignissim lacus. Cras id enim ac urna bibendum gravida. Donec ultricies dapibus lacinia. Curabitur ut est urna. Donec id eleifend erat. Nam et posuere arcu.',
+            }),
+            buildAlertMessageField({
+              id: 'confirmation.alertMessage',
+              alertType: 'info',
+              title: 'Vinsamlega athugið!',
+              message:
+                'Auglýsingar í Lögbirtingablaði eru undanskildar virðisaukaskatti samkvæmt ákvörðun ríkisskattstjóra',
+            }),
+            buildKeyValueField({
+              display: 'flex',
+              label: 'Sendandi',
+              value: (application) => {
+                return application.applicant
+              },
+              marginTop: 5,
+              paddingY: 2,
+            }),
+            buildDividerField({}),
+            buildKeyValueField({
+              display: 'flex',
+              label: 'Áætlað verð',
+              value: '0 kr.',
+              paddingY: 2,
+            }),
+            buildDividerField({}),
+            buildSubmitField({
+              id: 'submit',
+              title: coreMessages.buttonNext,
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: { type: 'SUBMIT' },
+                  name: 'Staðfesta og senda inn auglýsingu',
+                  type: 'primary',
+                },
+              ],
+            }),
           ],
         }),
       ],

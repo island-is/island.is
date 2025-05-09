@@ -189,6 +189,11 @@ export const m = {
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sit amet mattis erat, eget dignissim lacus. Cras id enim ac urna bibendum gravida. Donec ultricies dapibus lacinia. Curabitur ut est urna. Donec id eleifend erat. Nam et posuere arcu.',
           description: 'Inngangur á formi fyrir birtingu auglýsingar',
         },
+        datePickerDescription: {
+          id: 'lg.application:draft.publishing.datePickerDescription',
+          defaultMessage: 'Hvenær viltu að auglýsing birtist?',
+          description: 'Lýsing á dagatali fyrir birtingu auglýsingar',
+        },
         datePickerLabel: {
           id: 'lg.application:draft.publishing.datePickerLabel',
           defaultMessage: 'Birtingardagur',
@@ -203,6 +208,11 @@ export const m = {
           id: 'lg.application:draft.publishing.checkboxNoSpecificDate',
           defaultMessage: 'Ég hef enga sérstaka ósk um birtingardag',
           description: 'Titill á checkboxi fyrir birtingu auglýsingar',
+        },
+        checkboxReceiveEmailDescription: {
+          id: 'lg.application:draft.publishing.checkboxReceiveEmailDescription',
+          defaultMessage: 'Annað',
+          description: 'Titill á textaheiti fyrir birtingu auglýsingar',
         },
         checkboxReceiveEmail: {
           id: 'lg.application:draft.publishing.checkboxReceiveEmail',

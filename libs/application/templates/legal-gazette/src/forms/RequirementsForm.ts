@@ -19,31 +19,30 @@ export const RequirementsForm: Form = buildForm({
   children: [
     buildSection({
       title: m.requirements.approval.sectionTitle,
-      tabTitle: 'Test',
       children: [
         buildMultiField({
-          id: 'prerequisites_fields',
+          id: 'prerequisites.fields',
           title: m.requirements.approval.formTitle,
           descriptionSpacing: 0,
           children: [
             buildDescriptionField({
-              id: 'prerequisites_description_one',
+              id: 'prerequisites.description_one',
               description: m.requirements.approval.introPartOne,
             }),
             buildDescriptionField({
-              id: 'prerequisites_description_two',
+              id: 'prerequisites.description_two',
               description: m.requirements.approval.introPartTwo,
             }),
             buildDescriptionField({
-              id: 'prerequisites_description_three',
+              id: 'prerequisites.description_three',
               description: m.requirements.approval.introPartThree,
             }),
             buildDescriptionField({
-              id: 'prerequisites_description_four',
+              id: 'prerequisites.description_four',
               description: m.requirements.approval.introPartFour,
             }),
             buildDescriptionField({
-              id: 'prerequisites_description_five',
+              id: 'prerequisites.description_five',
               description: m.requirements.approval.introPartFive,
             }),
             buildCheckboxField({

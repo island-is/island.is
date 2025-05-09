@@ -22,22 +22,28 @@ export const legalGazetteDataSchema = z.object({
       params: m.errors.emptyHtml,
     }),
   }),
-  publication: z.object({
-    date: z.string().refine((val) => {
-      try {
-        const now = new Date()
-        const date = new Date(val)
+  publishing: z.object({
+    date: z
+      .string()
+      .optional()
+      .refine((val) => {
+        try {
+          if (!val) return true
+          const now = new Date()
+          const date = new Date(val)
 
-        if (
-          date.getTime() < now.getTime() ||
-          date.getTime() > now.setFullYear(now.getFullYear() + 1)
-        ) {
+          if (
+            date.getTime() < now.getTime() ||
+            date.getTime() > now.setFullYear(now.getFullYear() + 1)
+          ) {
+            return false
+          }
+          return true
+        } catch (e) {
           return false
         }
-        return true
-      } catch (e) {
-        return false
-      }
-    }),
+      }),
+    noSpecificDate: z.array(z.nativeEnum(YesOrNoEnum)).optional(),
+    receiveEmail: z.array(z.nativeEnum(YesOrNoEnum)).optional(),
   }),
 })
