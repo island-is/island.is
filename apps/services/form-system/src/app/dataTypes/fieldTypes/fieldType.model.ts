@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { FieldTypesEnum } from './fieldTypes.enum'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 import { FieldSettings } from '../fieldSettings/fieldSettings.model'
 import { LanguageType } from '../languageType.model'
 import { ValueDto } from '../../modules/applications/models/dto/value.dto'

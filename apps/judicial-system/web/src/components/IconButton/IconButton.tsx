@@ -1,6 +1,6 @@
 import { forwardRef, MouseEvent } from 'react'
 import cn from 'classnames'
-import { Button } from 'reakit'
+import { Button } from '@ariakit/react/button'
 
 import { Box, Icon, IconMapIcon } from '@island.is/island-ui/core'
 
@@ -33,6 +33,7 @@ const IconButton = forwardRef<HTMLButtonElement, Props>(({ ...props }, ref) => {
       }
       onClick={(evt) => onClick && onClick(evt)}
       disabled={disabled}
+      aria-label="Valmynd"
     >
       <Icon
         icon={icon}

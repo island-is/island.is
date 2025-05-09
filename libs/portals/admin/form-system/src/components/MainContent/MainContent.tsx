@@ -16,7 +16,8 @@ import { FieldContent } from './components/FieldContent/FieldContent'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { useIntl } from 'react-intl'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
-import { m, SectionTypes } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system/enums'
 
 export const MainContent = () => {
   const { control, controlDispatch, updateActiveItem, setFocus, focus } =

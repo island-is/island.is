@@ -10,11 +10,14 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  PhoneInputController,
+} from '@island.is/shared/form-fields'
 import { FC, useEffect, useState } from 'react'
 import { GET_VEHICLE_INFORMATION } from '../../graphql/queries'
 import { information } from '../../lib/messages'
-import { UserInformation, VehiclesCurrentVehicle } from '../../shared'
+import { UserInformation } from '../../shared'
 import { useFormContext } from 'react-hook-form'
 
 export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = ({
@@ -129,7 +132,7 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-                <InputController
+                <PhoneInputController
                   id={`${id}[${index}].phone`}
                   name={`${id}[${index}].phone`}
                   label={formatMessage(information.labels.coOwner.phone)}
@@ -140,13 +143,13 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                       '',
                     ) as string
                   }
-                  type="tel"
-                  format="###-####"
                   backgroundColor="blue"
                   error={
                     errors && getErrorViaPath(errors, `${id}[${index}].phone`)
                   }
                   required
+                  allowedCountryCodes={['IS']}
+                  disableDropdown={true}
                 />
               </GridColumn>
             </GridRow>

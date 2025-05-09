@@ -100,7 +100,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
   }
 
   return (
-    <>
+    <section>
       <SectionHeading title={formatMessage(strings.title)} />
       <AnimatePresence initial={false}>
         <TableWrapper loading={loading || isFiltering}>
@@ -217,7 +217,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
           </Box>
         </Modal>
       )}
-    </>
+    </section>
   )
 }
 

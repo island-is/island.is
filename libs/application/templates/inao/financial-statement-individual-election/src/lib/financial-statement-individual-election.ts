@@ -22,9 +22,9 @@ import {
   UserInfoApi,
 } from '../dataProviders'
 
-import { m } from './utils/messages'
+import { m } from './messages'
 import { ApiActions, Events, Roles, States } from '../types/types'
-import { dataSchema } from './utils/dataSchema'
+import { dataSchema } from './dataSchema'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 
@@ -98,6 +98,12 @@ const FinancialStatementIndividualElectionTemplate: ApplicationTemplate<
           },
           status: 'draft',
           lifecycle: pruneAfterDays(60),
+          onEntry: [
+            defineTemplateApi({
+              action: ApiActions.fetchElections,
+              order: 1,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,

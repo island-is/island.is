@@ -227,4 +227,12 @@ export class Defendant extends Model {
   @HasMany(() => DefendantEventLog, { foreignKey: 'defendantId' })
   @ApiPropertyOptional({ type: () => DefendantEventLog, isArray: true })
   eventLogs?: DefendantEventLog[]
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isAlternativeService?: boolean
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  alternativeServiceDescription?: string
 }

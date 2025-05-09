@@ -11,7 +11,7 @@ import {
   attachments,
   injuredPersonInformation,
 } from '../../../lib/messages'
-import { WorkAccidentTypeEnum } from '../../../types'
+import { WorkAccidentTypeEnum } from '../../../utils/enums'
 import { isWorkAccident } from '../../../utils/accidentUtils'
 import { isAgricultureAccident } from '../../../utils/occupationUtils'
 import { isReportingOnBehalfSelf } from '../../../utils/reportingUtils'

@@ -74,7 +74,6 @@ const Processing: FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
     isCaseUpToDate,
-    refreshCase,
   } = useContext(FormContext)
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
@@ -106,13 +105,21 @@ const Processing: FC = () => {
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
-      await updateCase(workingCase.id, {
+      const updatedCase = await updateCase(workingCase.id, {
         courtId: user?.institution?.defaultCourtId,
       })
-      refreshCase()
+
+      if (!updatedCase) {
+        return
+      }
+
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        court: updatedCase?.court,
+      }))
     }
   }, [
-    refreshCase,
+    setWorkingCase,
     updateCase,
     user?.institution?.defaultCourtId,
     workingCase.court,
@@ -732,11 +739,12 @@ const Processing: FC = () => {
             <Box component="section" marginBottom={10}>
               <SectionHeading title="Bótakrafa" heading="h2" />
               <InputFileUpload
-                fileList={uploadFiles.filter(
+                name="civilClaim"
+                files={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
                 )}
                 accept={Object.values(fileExtensionWhitelist)}
-                header="Dragðu gögn hingað til að hlaða upp"
+                title="Dragðu gögn hingað til að hlaða upp"
                 buttonLabel="Velja gögn til að hlaða upp"
                 onChange={(files) =>
                   handleUpload(

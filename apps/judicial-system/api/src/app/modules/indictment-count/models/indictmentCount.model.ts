@@ -1,8 +1,5 @@
-import { GraphQLJSONObject } from 'graphql-type-json'
-
 import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import type { SubstanceMap } from '@island.is/judicial-system/types'
 import { IndictmentSubtype } from '@island.is/judicial-system/types'
 
 import { Offense } from './offense.model'

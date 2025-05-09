@@ -2,7 +2,6 @@ import { Injectable, Inject } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
-import { handle4xx } from '../../utils/errorHandler'
 import {
   FormCertificationTypeDto,
   FormCertificationTypesApi,
@@ -20,7 +19,7 @@ export class CertificationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private certificationsApi: FormCertificationTypesApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -41,10 +40,11 @@ export class CertificationsService {
     auth: User,
     input: CreateCertificationInput,
   ): Promise<FormCertificationTypeDto> {
-    const response = await this.certificationsApiWithAuth(auth)
-      .formCertificationTypesControllerCreate(
-        input as FormCertificationTypesControllerCreateRequest,
-      )
+    const response = await this.certificationsApiWithAuth(
+      auth,
+    ).formCertificationTypesControllerCreate(
+      input as FormCertificationTypesControllerCreateRequest,
+    )
 
     return response as FormCertificationTypeDto
   }
@@ -53,9 +53,10 @@ export class CertificationsService {
     auth: User,
     input: DeleteCertificationInput,
   ): Promise<void> {
-    await this.certificationsApiWithAuth(auth)
-      .formCertificationTypesControllerDelete(
-        input as FormCertificationTypesControllerDeleteRequest,
-      )
+    await this.certificationsApiWithAuth(
+      auth,
+    ).formCertificationTypesControllerDelete(
+      input as FormCertificationTypesControllerDeleteRequest,
+    )
   }
 }

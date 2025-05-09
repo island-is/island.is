@@ -1,16 +1,28 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { ExternalData } from '@island.is/application/types'
-import kennitala from 'kennitala'
+import {
+  ExternalData,
+  NationalRegistryCustodian,
+} from '@island.is/application/types'
 
-export const checkHasAnyCustodians = (externalData: ExternalData): boolean => {
-  return !checkIsOfLegalAge(externalData)
+export const getCustodian = (
+  externalData: ExternalData,
+  index: number,
+): NationalRegistryCustodian | undefined => {
+  const custodians = getValueViaPath<NationalRegistryCustodian[]>(
+    externalData,
+    'nationalRegistryCustodians.data',
+  )
+  return custodians?.[index]
 }
 
-const checkIsOfLegalAge = (externalData: ExternalData) => {
-  const nationalId = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.nationalId',
-  )
-  const age = kennitala.info(nationalId || '').age
-  return age >= 18
+export const getHasCustodian = (
+  externalData: ExternalData,
+  index: number,
+): boolean => {
+  const custodian = getCustodian(externalData, index)
+  return !!custodian
+}
+
+export const checkHasAnyCustodians = (externalData: ExternalData): boolean => {
+  return getHasCustodian(externalData, 0)
 }

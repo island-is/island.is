@@ -207,7 +207,6 @@ export const ExamineesCSVUploader: FC<
             (item) => item.nationalId.nationalId ?? [],
           )
           const response = await getAreExamineesEligibleCallback(nationalIdList)
-          console.log('RESPO', response)
 
           const disabledExaminees = response?.getExamineeEligibility?.find(
             (x) => x.isEligible === false,
@@ -344,9 +343,8 @@ export const ExamineesCSVUploader: FC<
         name="csv-upload-participants"
         render={() => (
           <InputFileUpload
-            applicationId={application.id}
-            fileList={fileState}
-            header={formatMessage(examinee.labels.csvHeader)}
+            files={fileState}
+            title={formatMessage(examinee.labels.csvHeader)}
             buttonLabel={formatMessage(examinee.labels.csvUpload)}
             onChange={(e) => changeFile(e)}
             onRemove={() => removeFile()}
@@ -355,6 +353,7 @@ export const ExamineesCSVUploader: FC<
             multiple={false}
             accept={['text/csv']}
             maxSize={FILE_SIZE_LIMIT}
+            name={'csv-upload-participants-file-upload'}
           />
         )}
       />

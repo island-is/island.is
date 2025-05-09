@@ -29,6 +29,8 @@ import { PowerBiService } from './powerbi.service'
 import { PowerBiConfig } from './powerbi.config'
 import { OrganizationLinkEnByReferenceIdLoader } from './loaders/organizationLinkEnByKey.loader'
 import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTitleEnByKey.loader'
+import { OrganizationTitleByNationalIdLoader } from './loaders/organizationTitleByNationalId.loader'
+import { OrganizationTitleEnByNationalIdLoader } from './loaders/organizationTitleEnByNationalId.loader'
 import { OrganizationLogoByEntryIdLoader } from './loaders/organizationLogoByEntryId.loader'
 import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByEntryId.loader'
 
@@ -54,6 +56,8 @@ import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByE
     OrganizationLinkEnByReferenceIdLoader,
     OrganizationTitleByReferenceIdLoader,
     OrganizationTitleEnByReferenceIdLoader,
+    OrganizationTitleByNationalIdLoader,
+    OrganizationTitleEnByNationalIdLoader,
     OrganizationTitleByEntryIdLoader,
     OrganizationLogoByEntryIdLoader,
     PowerBiService,
@@ -73,6 +77,8 @@ import { OrganizationTitleByEntryIdLoader } from './loaders/organizationTitleByE
     OrganizationLinkByReferenceIdLoader,
     OrganizationLinkEnByReferenceIdLoader,
     OrganizationTitleByReferenceIdLoader,
+    OrganizationTitleByNationalIdLoader,
+    OrganizationTitleEnByNationalIdLoader,
     OrganizationTitleByEntryIdLoader,
     OrganizationLogoByEntryIdLoader,
     CmsElasticsearchService,

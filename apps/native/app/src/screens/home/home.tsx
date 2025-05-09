@@ -60,6 +60,9 @@ import {
   VehiclesModule,
 } from './vehicles-module'
 import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+import { GenericLicenseType } from '../../graphql/types/schema'
+import { useLocale } from '../../hooks/use-locale'
 
 interface ListItem {
   id: string
@@ -131,6 +134,10 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const getAndSetLocale = usePreferencesStore(
     ({ getAndSetLocale }) => getAndSetLocale,
   )
+  const isIdentityDocumentEnabled = useFeatureFlag(
+    'isIdentityDocumentEnabled',
+    false,
+  )
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
@@ -169,8 +176,14 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const licensesRes = useListLicensesQuery({
     variables: {
       input: {
-        includedTypes: INCLUDED_LICENSE_TYPES,
+        includedTypes: [
+          ...INCLUDED_LICENSE_TYPES,
+          ...(isIdentityDocumentEnabled
+            ? [GenericLicenseType.IdentityDocument]
+            : []),
+        ],
       },
+      locale: useLocale(),
     },
     fetchPolicy: 'cache-first',
     skip: !licensesWidgetEnabled,

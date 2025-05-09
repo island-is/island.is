@@ -1,4 +1,7 @@
-import { UploadFile, fileToObject } from '@island.is/island-ui/core'
+import {
+  UploadFileDeprecated,
+  fileToObjectDeprecated,
+} from '@island.is/island-ui/core'
 import { uuid } from 'uuidv4'
 import XLSX from 'xlsx'
 
@@ -75,8 +78,11 @@ export const downloadFile = () => {
 }
 
 // Bulk upload and compare
-export const createFileList = (files: File[], fileList: UploadFile[]) => {
-  const uploadFiles = files.map((file) => fileToObject(file))
+export const createFileList = (
+  files: File[],
+  fileList: UploadFileDeprecated[],
+) => {
+  const uploadFiles = files.map((file) => fileToObjectDeprecated(file))
   const uploadFilesWithKey = uploadFiles.map((f) => ({
     ...f,
     key: uuid(),

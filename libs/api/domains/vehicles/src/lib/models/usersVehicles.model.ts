@@ -251,6 +251,9 @@ export class VehicleListed {
 
   @Field(() => [VehicleMileageDetail], { nullable: true })
   mileageRegistrationHistory?: Array<VehicleMileageDetail>
+
+  @Field({ nullable: true })
+  latestMileage?: number
 }
 
 @ObjectType()

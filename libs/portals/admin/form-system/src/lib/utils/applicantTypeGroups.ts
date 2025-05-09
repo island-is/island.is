@@ -1,4 +1,4 @@
-import { ApplicantTypesEnum } from '@island.is/form-system/ui'
+import { ApplicantTypesEnum } from '@island.is/form-system/enums'
 
 export const applicantTypeGroups = {
   individual: [ApplicantTypesEnum.INDIVIDUAL],

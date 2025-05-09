@@ -33,6 +33,10 @@ const ProsecutorSectionHeightenedSecurity = () => {
         prosecutorId: prosecutorId,
       })
 
+      if (!updatedCase) {
+        return
+      }
+
       const prosecutor = updatedCase?.prosecutor
 
       setWorkingCase((prevWorkingCase) => ({

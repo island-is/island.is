@@ -1,6 +1,6 @@
 import { ApplicationContext } from '@island.is/application/types'
 
-export function existsAndKMarking(context: ApplicationContext): boolean {
+export const existsAndKMarking = (context: ApplicationContext): boolean => {
   const { validation } =
     (context.application.externalData.validateMortgageCertificate.data as {
       validation: { exists: boolean; hasKMarking: boolean }
@@ -12,7 +12,7 @@ export function existsAndKMarking(context: ApplicationContext): boolean {
   return exists && hasKMarking
 }
 
-export function exists(context: ApplicationContext): boolean {
+export const exists = (context: ApplicationContext): boolean => {
   const { validation } =
     (context.application.externalData.validateMortgageCertificate.data as {
       validation: { exists: boolean }

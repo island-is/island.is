@@ -74,5 +74,10 @@ export class CreateFileInput {
   @Allow()
   @IsOptional()
   @Field(() => String, { nullable: true })
+  readonly submissionDate?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly fileRepresentative?: string
 }

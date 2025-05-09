@@ -29,7 +29,7 @@ import {
   PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
-  ServiceAnnouncement,
+  ServiceAnnouncements,
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -199,15 +199,7 @@ const Overview: FC = () => {
             />
           </Box>
         )}
-        {workingCase.defendants?.map((defendant) =>
-          defendant.subpoenas?.map((subpoena) => (
-            <ServiceAnnouncement
-              key={`${subpoena.id}-${subpoena.created}`}
-              subpoena={subpoena}
-              defendantName={defendant.name}
-            />
-          )),
-        )}
+        <ServiceAnnouncements defendants={workingCase.defendants} />
         {workingCase.court &&
           latestDate?.date &&
           workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&

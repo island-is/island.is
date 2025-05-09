@@ -83,7 +83,7 @@ const BloodDonationRestrictionDetails: CustomScreen<
         <meta name="robots" content="noindex, nofollow" />
       </HeadWithSocialSharing>
       <Box className="rs_read">
-        <Stack space={4}>
+        <Stack space={5}>
           <Stack space={2}>
             <Text variant="h1" as="h1">
               {item.title}
@@ -100,7 +100,7 @@ const BloodDonationRestrictionDetails: CustomScreen<
               width="full"
             >
               <Text variant="h3" as="h2">
-                {formatMessage(m.listPage.cardSubheading)}
+                {formatMessage(m.detailsPage.cardSubheading)}
               </Text>
               <Text as="div">{webRichText(item.cardText)}</Text>
             </Box>
@@ -112,6 +112,12 @@ const BloodDonationRestrictionDetails: CustomScreen<
               </Text>
               <Text as="div">{webRichText(item.detailedText)}</Text>
             </Stack>
+          )}
+          {Boolean(item.keywordsText) && (
+            <Text variant="small">
+              {formatMessage(m.listPage.keywordsTextPrefix)}
+              {item.keywordsText}
+            </Text>
           )}
         </Stack>
       </Box>

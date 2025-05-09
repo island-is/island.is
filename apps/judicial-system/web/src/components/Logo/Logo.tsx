@@ -14,6 +14,10 @@ interface Props {
 
 const Logo: FC<Props> = ({ defaultInstitution = '' }) => {
   const { user } = useContext(UserContext)
+  if (!user) {
+    return null
+  }
+
   const institutionName = user?.institution?.name ?? defaultInstitution ?? ''
   const institutionNameArr = institutionName.split(' ')
   const institutionNameFirstHalf = institutionNameArr.slice(
@@ -28,10 +32,7 @@ const Logo: FC<Props> = ({ defaultInstitution = '' }) => {
       : institutionNameArr.length - 2,
   )
   const institutionType = user?.institution?.type
-  const isPolice =
-    institutionType === InstitutionType.PROSECUTORS_OFFICE &&
-    institutionName !== 'Héraðssaksóknari' &&
-    institutionName !== 'Ríkissaksóknari'
+  const isPolice = institutionType === InstitutionType.POLICE_PROSECUTORS_OFFICE
 
   return (
     <Box display="flex">

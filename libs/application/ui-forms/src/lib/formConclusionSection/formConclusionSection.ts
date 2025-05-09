@@ -32,12 +32,15 @@ type Props = Partial<{
   conclusionLink: string
   conclusionLinkLabel: StaticText
   sectionTitle: StaticText
+  tabTitle: StaticText
   bottomButtonLink: string
   bottomButtonLabel: StaticText
   bottomButtonMessage: FormText
   descriptionFieldTitle: StaticText
   descriptionFieldDescription: FormTextWithLocale
   condition?: Condition
+  infoAlertTitle?: FormText
+  infoAlertMessage?: FormTextWithLocale
 }>
 
 /**
@@ -56,11 +59,14 @@ type Props = Partial<{
  * @param  conclusionLink Link that user can click on top.
  * @param  conclusionLinkLabel The text of the button that links to a url on top.
  * @param  sectionTitle The title for the section
+ * @param  tabTitle The title for the tab
  * @param  bottomButtonLink The link for the bottom button
  * @param  bottomButtonLabel The label for the bottom button
  * @param  bottomButtonMessage The message for the bottom button
  * @param  descriptionFieldTitle The title for an optional description field
  * @param  descriptionFieldDescription The description for an optional description field
+ * @param  infoAlertTitle The title for an optional info alert
+ * @param  infoAlertMessage The message for an optional info alert
  */
 export const buildFormConclusionSection = ({
   alertTitle = conclusion.alertMessageField.title,
@@ -75,12 +81,15 @@ export const buildFormConclusionSection = ({
   conclusionLink = '',
   conclusionLinkLabel = undefined,
   sectionTitle = conclusion.information.sectionTitle,
+  tabTitle = conclusion.information.sectionTitle,
   bottomButtonLink = '/minarsidur/umsoknir',
   bottomButtonLabel = coreMessages.openServicePortalButtonTitle,
   bottomButtonMessage = coreMessages.openServicePortalMessageText,
   descriptionFieldTitle = undefined,
   descriptionFieldDescription = undefined,
   condition,
+  infoAlertTitle = undefined,
+  infoAlertMessage = undefined,
 }: Props) => {
   const expandableDescriptionField = accordion
     ? [
@@ -97,6 +106,7 @@ export const buildFormConclusionSection = ({
   return buildSection({
     id: 'uiForms.conclusionSection',
     title: sectionTitle,
+    tabTitle: tabTitle,
     condition,
     children: [
       buildMultiField({
@@ -118,6 +128,16 @@ export const buildFormConclusionSection = ({
             alertType: alertType,
             message: alertMessage,
           }),
+          ...(infoAlertTitle || infoAlertMessage
+            ? [
+                buildAlertMessageField({
+                  id: 'uiForms.conclusionInfoAlert',
+                  title: infoAlertTitle,
+                  message: infoAlertMessage,
+                  alertType: 'info',
+                }),
+              ]
+            : []),
           ...(descriptionFieldTitle || descriptionFieldDescription
             ? [
                 buildDescriptionField({

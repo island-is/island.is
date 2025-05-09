@@ -1,6 +1,10 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { UploadFile, Box, AlertMessage } from '@island.is/island-ui/core'
+import {
+  UploadFileDeprecated,
+  Box,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { taxReturnForm } from '../../lib/messages'
 
 import { FAFieldBaseProps, OverrideAnswerSchema, UploadFileType } from '../..'
@@ -48,7 +52,9 @@ const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
       <Files
         fileKey={field.id as UploadFileType}
         uploadFiles={
-          answers[field.id as keyof OverrideAnswerSchema] as UploadFile[]
+          answers[
+            field.id as keyof OverrideAnswerSchema
+          ] as UploadFileDeprecated[]
         }
         folderId={id}
       />

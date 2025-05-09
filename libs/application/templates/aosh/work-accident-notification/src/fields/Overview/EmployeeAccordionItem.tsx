@@ -4,7 +4,7 @@ import {
   FieldTypes,
 } from '@island.is/application/types'
 import { FC } from 'react'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { ReviewGroup } from '../Components/ReviewGroup'

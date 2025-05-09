@@ -15,7 +15,6 @@ import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
-import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
@@ -38,8 +37,8 @@ import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
 import { OccupationalLicensesModule } from '@island.is/api/domains/occupational-licenses'
-import { OccupationalLicensesV2Module } from '@island.is/api/domains/occupational-licenses-v2'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
+import { ApiDomainsHmsModule } from '@island.is/api/domains/hms'
 import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
 import { HousingBenefitsModule } from '@island.is/api/domains/housing-benefits'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
@@ -59,6 +58,10 @@ import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-reg
 import { NotificationsModule } from '@island.is/api/domains/notifications'
 import { PassportModule } from '@island.is/api/domains/passport'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
+import {
+  ApiDomainsPaymentsModule,
+  PaymentsApiModuleConfig,
+} from '@island.is/api/domains/payments'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
@@ -136,6 +139,7 @@ import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
+import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { ShipRegistryClientConfig } from '@island.is/clients/ship-registry'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
@@ -198,7 +202,6 @@ import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 import { LawAndOrderModule } from '@island.is/api/domains/law-and-order'
 import { UltravioletRadiationClientConfig } from '@island.is/clients/ultraviolet-radiation'
 import { JudicialSystemSPClientConfig } from '@island.is/clients/judicial-system-sp'
-import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
@@ -211,6 +214,7 @@ import { VerdictsClientConfig } from '@island.is/clients/verdicts'
 import { VerdictsModule } from '@island.is/api/domains/verdicts'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
+import { HmsConfig } from '@island.is/clients/hms'
 
 const environment = getConfig
 
@@ -294,7 +298,6 @@ const environment = getConfig
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
     OccupationalLicensesModule,
-    OccupationalLicensesV2Module,
     SocialInsuranceModule,
     HealthDirectorateClientModule,
     OfficialJournalOfIcelandClientModule,
@@ -323,6 +326,7 @@ const environment = getConfig
     VehiclesModule,
     RightsPortalModule,
     AssetsModule,
+    ApiDomainsHmsModule,
     HmsLoansModule,
     HousingBenefitsModule,
     PassportModule,
@@ -330,9 +334,9 @@ const environment = getConfig
     NationalRegistryXRoadModule,
     NotificationsModule,
     ApiDomainsPaymentModule,
+    ApiDomainsPaymentsModule,
     PaymentScheduleModule,
     ProblemModule,
-    CriminalRecordModule,
     MunicipalitiesFinancialAidModule,
     FishingLicenseModule,
     MortgageCertificateModule,
@@ -384,6 +388,7 @@ const environment = getConfig
         DownloadServiceConfig,
         HuntingLicenseClientConfig,
         FeatureFlagConfig,
+        HmsConfig,
         HmsLoansClientConfig,
         HousingBenefitsConfig,
         FinanceClientConfig,
@@ -421,6 +426,7 @@ const environment = getConfig
         OfficialJournalOfIcelandApplicationClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
+        PaymentsApiClientConfig,
         AuthAdminApiClientConfig,
         WatsonAssistantChatConfig,
         PowerBiConfig,
@@ -447,7 +453,6 @@ const environment = getConfig
         FriggClientConfig,
         GradeClientConfig,
         VmstClientConfig,
-        CriminalRecordClientConfig,
         HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
         WorkAccidentClientConfig,
@@ -456,6 +461,7 @@ const environment = getConfig
         emailModuleConfig,
         VerdictsClientConfig,
         SecondarySchoolClientConfig,
+        PaymentsApiModuleConfig,
       ],
     }),
   ],

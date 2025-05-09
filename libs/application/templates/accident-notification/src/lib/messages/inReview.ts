@@ -81,6 +81,12 @@ export const inReview = {
         'Skjalanúmer fyrir tilkynninguna hjá Sjúkratryggingum Íslands:',
       description: 'Document id description text',
     },
+    documentIdAlertMessage2: {
+      id: 'an.application:inReview.application.documentIdAlertMessage2',
+      defaultMessage:
+        'Skjalanúmer fyrir tilkynninguna hjá Sjúkratryggingum Íslands: **{docId}**',
+      description: 'Document id description text',
+    },
   }),
   documents: defineMessages({
     title: {

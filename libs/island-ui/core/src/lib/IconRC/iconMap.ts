@@ -94,6 +94,8 @@ export type Icon =
   | 'thumbsUp'
   | 'thumbsDown'
   | 'leaf'
+  | 'card'
+  | 'bank'
   | 'grid'
   | 'list'
   | 'hammer'
@@ -109,11 +111,13 @@ export default {
     arrowDown: 'ArrowDown',
     arrowUp: 'ArrowUp',
     attach: 'Attach',
+    bank: 'Bank',
     business: 'Business',
     calculator: 'Calculator',
     calendar: 'Calendar',
     call: 'Call',
     car: 'Car',
+    card: 'Card',
     cardWithCheckmark: 'CardWithCheckmark',
     caretDown: 'CaretDown',
     caretUp: 'CaretUp',
@@ -208,11 +212,13 @@ export default {
     arrowDown: 'ArrowDown',
     arrowUp: 'ArrowUp',
     attach: 'AttachOutline',
+    bank: 'BankOutline',
     business: 'BusinessOutline',
     calculator: 'CalculatorOutline',
     calendar: 'CalendarOutline',
     call: 'CallOutline',
     car: 'CarOutline',
+    card: 'CardOutline',
     cardWithCheckmark: 'CardWithCheckmarkOutline',
     caretDown: 'CaretDownOutline',
     caretUp: 'CaretUpOutline',
