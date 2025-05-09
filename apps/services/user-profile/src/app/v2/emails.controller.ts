@@ -15,6 +15,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
@@ -82,7 +83,11 @@ export class EmailsController {
           email: input.email,
         },
       },
-      this.emailsService.createEmail(user.nationalId, input.email, input.code),
+      this.emailsService.createEmail(
+        user.actor?.nationalId ?? user.nationalId,
+        input.email,
+        input.code,
+      ),
     )
   }
 
@@ -115,7 +120,10 @@ export class EmailsController {
           emailId,
         },
       },
-      this.emailsService.deleteEmail(user.nationalId, emailId),
+      this.emailsService.deleteEmail(
+        user.actor?.nationalId ?? user.nationalId,
+        emailId,
+      ),
     )
   }
 }

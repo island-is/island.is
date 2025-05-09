@@ -1092,17 +1092,14 @@ export class UserProfileService {
     emailStatus: DataStatus
   }): boolean {
     if ((email && !emailVerified) || emailStatus === DataStatus.NOT_DEFINED) {
-      console.log('true')
       // If email exists but isn't verified OR email status is explicitly NOT_DEFINED
       return true
     } else if (
       (mobilePhoneNumber && !mobilePhoneNumberVerified) || // Mobile exists but isn't verified
       mobileStatus === DataStatus.NOT_DEFINED // OR mobile status is explicitly NOT_DEFINED
     ) {
-      console.log('true')
       return true
     } else {
-      console.log('false')
       // Otherwise (email/mobile are verified OR status is EMPTY)
       return false
     }
