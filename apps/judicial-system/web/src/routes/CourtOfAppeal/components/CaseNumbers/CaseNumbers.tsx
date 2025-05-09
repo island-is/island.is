@@ -10,15 +10,23 @@ const CaseNumbers: FC = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
+  if (!workingCase.appealCaseNumber) {
+    return (
+      <Text as="h3" variant="default" fontWeight="semiBold" marginBottom={1}>
+        {formatMessage(strings.courtOfAppealCaseNumber, {
+          caseNumber: workingCase.courtCaseNumber,
+        })}
+      </Text>
+    )
+  }
+
   return (
     <Box marginBottom={7}>
-      {workingCase.appealCaseNumber && (
-        <Text as="h2" variant="h2">
-          {formatMessage(strings.caseNumber, {
-            caseNumber: `${workingCase.appealCaseNumber}`,
-          })}
-        </Text>
-      )}
+      <Text as="h2" variant="h2">
+        {formatMessage(strings.caseNumber, {
+          caseNumber: `${workingCase.appealCaseNumber}`,
+        })}
+      </Text>
       <Text as="h3" variant="default" fontWeight="semiBold">
         {formatMessage(strings.courtOfAppealCaseNumber, {
           caseNumber: workingCase.courtCaseNumber,
