@@ -3,10 +3,10 @@ import { useIntl } from 'react-intl'
 import { Box } from '@island.is/island-ui/core'
 import { tables, titles } from '@island.is/judicial-system-web/messages'
 import {
+  CasesLayout,
   Logo,
   PageHeader,
   SectionHeading,
-  SharedPageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import { AppealCasesTable } from '@island.is/judicial-system-web/src/components/Table'
 import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -35,7 +35,7 @@ const CourtOfAppealCases = () => {
   const appealedCasesData = appealedCases?.cases || []
 
   return (
-    <SharedPageLayout>
+    <CasesLayout>
       <PageHeader title={formatMessage(titles.shared.cases)} />
       <div className={logoContainer}>
         <Logo />
@@ -61,7 +61,7 @@ const CourtOfAppealCases = () => {
         }
         showingCompletedCases={true}
       />
-    </SharedPageLayout>
+    </CasesLayout>
   )
 }
 

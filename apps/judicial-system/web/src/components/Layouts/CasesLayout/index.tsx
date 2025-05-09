@@ -2,9 +2,9 @@ import { FC, PropsWithChildren } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
 
-import * as styles from './SharedPageLayout.css'
+import * as styles from './index.css'
 
-const SharedPageLayout: FC<PropsWithChildren> = ({ children }) => {
+const CasesLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <>
       <Box paddingX={[2, 2, 4]}>
@@ -22,4 +22,4 @@ const SharedPageLayout: FC<PropsWithChildren> = ({ children }) => {
   )
 }
 
-export default SharedPageLayout
+export default CasesLayout
