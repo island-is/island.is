@@ -23,6 +23,7 @@ const allowMultiple: EventType[] = [
   EventType.LOGIN_BYPASS,
   EventType.LOGIN_BYPASS_UNAUTHORIZED,
   EventType.INDICTMENT_CONFIRMED,
+  EventType.COURT_DATE_SCHEDULED,
 ]
 
 const eventToNotificationMap: Partial<
@@ -30,6 +31,7 @@ const eventToNotificationMap: Partial<
 > = {
   INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR:
     EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+  COURT_DATE_SCHEDULED: EventNotificationType.COURT_DATE_SCHEDULED,
 }
 
 @Injectable()
@@ -52,11 +54,7 @@ export class EventLogService {
       {
         eventType,
         caseId,
-        nationalId: user.nationalId,
-        userRole: user.role,
-        userName: user.name,
-        userTitle: user.title,
-        institutionName: user.institution?.name,
+        user,
       },
       transaction,
     )
@@ -66,7 +64,25 @@ export class EventLogService {
     event: CreateEventLogDto,
     transaction?: Transaction,
   ): Promise<boolean> {
-    const { eventType, caseId, userRole, nationalId, institutionName } = event
+    const { eventType, caseId, user } = event
+    const {
+      role: userRole,
+      nationalId,
+      name: userName,
+      title: userTitle,
+      institution,
+    } = user
+    const institutionName = institution?.name
+
+    const eventLog = {
+      eventType,
+      caseId,
+      nationalId,
+      userRole,
+      userName,
+      userTitle,
+      institutionName,
+    }
 
     if (!allowMultiple.includes(event.eventType)) {
       const where = Object.fromEntries(
@@ -88,7 +104,7 @@ export class EventLogService {
     }
 
     try {
-      await this.eventLogModel.create({ ...event }, { transaction })
+      await this.eventLogModel.create(eventLog, { transaction })
 
       return true
     } catch (error) {
@@ -98,7 +114,7 @@ export class EventLogService {
       return false
     } finally {
       if (caseId) {
-        this.addEventNotificationToQueue(eventType, caseId)
+        this.addEventNotificationToQueue(eventType, caseId, user)
       }
     }
   }
@@ -133,7 +149,11 @@ export class EventLogService {
   }
 
   // Sends events to queue for notification dispatch
-  private addEventNotificationToQueue(eventType: EventType, caseId: string) {
+  private addEventNotificationToQueue(
+    eventType: EventType,
+    caseId: string,
+    user: User,
+  ) {
     const notificationType = eventToNotificationMap[eventType]
 
     if (notificationType) {
@@ -141,6 +161,7 @@ export class EventLogService {
         this.messageService.sendMessagesToQueue([
           {
             type: MessageType.EVENT_NOTIFICATION_DISPATCH,
+            user,
             caseId: caseId,
             body: { type: notificationType },
           },

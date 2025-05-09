@@ -16,6 +16,7 @@ import {
 import {
   DefenderSubRole,
   Gender,
+  getContactInformation,
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
@@ -267,6 +268,83 @@ export const formatPostponedCourtDateEmailNotification = (
   return { subject, body }
 }
 
+export const formatArraignmentDateEmailNotification = ({
+  formatMessage,
+  courtName,
+  courtCaseNumber,
+  judgeName,
+  registrarName,
+  arraignmentDateLog,
+}: {
+  formatMessage: FormatMessage
+  courtName?: string
+  courtCaseNumber?: string
+  judgeName?: string
+  registrarName?: string
+  arraignmentDateLog: DateLog
+}) => {
+  const { date: arraignmentDate, location: courtRoom } = arraignmentDateLog
+  const cf = notifications.indictmentArraignmentDateEmail
+
+  const scheduledCaseText = formatMessage(cf.scheduledCase, {
+    court: courtName,
+    courtCaseNumber: courtCaseNumber ?? '',
+  })
+
+  const arraignmentDateText = formatMessage(cf.arraignmentDate, {
+    arraignmentDate: formatDate(arraignmentDate, 'PPPp')?.replace(
+      ' kl.',
+      ', kl.',
+    ),
+  })
+
+  const courtRoomText = formatMessage(notifications.courtRoom, {
+    courtRoom: courtRoom || 'NONE',
+  })
+
+  const judgeText = formatMessage(notifications.judge, {
+    judgeName: judgeName || 'NONE',
+  })
+  const registrarText = registrarName
+    ? formatMessage(notifications.registrar, { registrarName: registrarName })
+    : undefined
+
+  return {
+    body: formatMessage(cf.body, {
+      scheduledCaseText,
+      arraignmentDateText,
+      courtRoomText,
+      judgeText,
+      registrarText: registrarText || 'NONE',
+    }),
+    subject: formatMessage(cf.subject, {
+      courtCaseNumber: courtCaseNumber || '',
+    }),
+  }
+}
+
+export const formatCourtCalendarInvitation = (
+  theCase: Case,
+  courtRoom?: string,
+) => {
+  const title = `Fyrirtaka í máli ${theCase.courtCaseNumber} - ${theCase.prosecutorsOffice?.name} gegn X`
+  const location = `${theCase.court?.name} - ${
+    courtRoom ? `Dómsalur ${courtRoom}` : 'Dómsalur hefur ekki verið skráður.'
+  }`
+
+  const { registrar, judge } = theCase
+  const eventOrganizerUser = registrar ?? judge
+  const eventOrganizer = eventOrganizerUser
+    ? { ...getContactInformation(eventOrganizerUser) }
+    : { name: '', email: '' }
+
+  return {
+    title,
+    location,
+    eventOrganizer,
+  }
+}
+
 export const formatProsecutorCourtDateEmailNotification = (
   formatMessage: FormatMessage,
   type: CaseType,
@@ -280,20 +358,17 @@ export const formatProsecutorCourtDateEmailNotification = (
   sessionArrangements?: SessionArrangements,
 ): SubjectAndBody => {
   const cf = notifications.prosecutorCourtDateEmail
-  const scheduledCaseText = isIndictmentCase(type)
-    ? formatMessage(cf.sheduledIndictmentCase, { court, courtCaseNumber })
-    : formatMessage(cf.scheduledCase, {
-        court,
-        investigationPrefix:
-          type === CaseType.OTHER
-            ? 'onlyPrefix'
-            : isInvestigationCase(type)
-            ? 'withPrefix'
-            : 'noPrefix',
-        courtTypeName: formatCaseType(type),
-      })
+  const scheduledCaseText = formatMessage(cf.scheduledCase, {
+    court,
+    investigationPrefix:
+      type === CaseType.OTHER
+        ? 'onlyPrefix'
+        : isInvestigationCase(type)
+        ? 'withPrefix'
+        : 'noPrefix',
+    courtTypeName: formatCaseType(type),
+  })
   const courtDateText = formatMessage(cf.courtDate, {
-    isIndictment: isIndictmentCase(type),
     courtDate: courtDate
       ? formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
       : 'NONE',
@@ -313,26 +388,17 @@ export const formatProsecutorCourtDateEmailNotification = (
     sessionArrangements,
   })
 
-  const body = isIndictmentCase(type)
-    ? formatMessage(cf.bodyIndictments, {
-        scheduledCaseText,
-        courtDateText,
-        courtRoomText,
-        judgeText,
-        registrarText: registrarText || 'NONE',
-      })
-    : formatMessage(cf.body, {
-        scheduledCaseText,
-        courtDateText,
-        courtRoomText,
-        judgeText,
-        registrarText: registrarText || 'NONE',
-        defenderText,
-        sessionArrangements,
-      })
+  const body = formatMessage(cf.body, {
+    scheduledCaseText,
+    courtDateText,
+    courtRoomText,
+    judgeText,
+    registrarText: registrarText || 'NONE',
+    defenderText,
+    sessionArrangements,
+  })
 
   const subject = formatMessage(cf.subject, {
-    isIndictment: isIndictmentCase(type),
     courtCaseNumber: courtCaseNumber || '',
   })
 

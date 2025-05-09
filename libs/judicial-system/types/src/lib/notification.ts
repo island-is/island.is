@@ -2,7 +2,7 @@ export enum CaseNotificationType {
   HEADS_UP = 'HEADS_UP',
   READY_FOR_COURT = 'READY_FOR_COURT',
   RECEIVED_BY_COURT = 'RECEIVED_BY_COURT',
-  COURT_DATE = 'COURT_DATE',
+  COURT_DATE = 'COURT_DATE', // only for non-indictment cases
   DISTRICT_COURT_JUDGE_ASSIGNED = 'DISTRICT_COURT_JUDGE_ASSIGNED',
   DISTRICT_COURT_REGISTRAR_ASSIGNED = 'DISTRICT_COURT_REGISTRAR_ASSIGNED',
   RULING = 'RULING',
@@ -23,6 +23,7 @@ export enum CaseNotificationType {
 }
 
 export enum IndictmentCaseNotificationType {
+  COURT_DATE = 'COURT_DATE',
   INDICTMENT_VERDICT_INFO = 'INDICTMENT_VERDICT_INFO',
   CRIMINAL_RECORD_FILES_UPLOADED = 'CRIMINAL_RECORD_FILES_UPLOADED',
 }
@@ -33,6 +34,8 @@ export enum DefendantNotificationType {
   DEFENDER_ASSIGNED = 'DEFENDER_ASSIGNED',
   INDICTMENT_SENT_TO_PRISON_ADMIN = 'INDICTMENT_SENT_TO_PRISON_ADMIN',
   INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN = 'INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN',
+  // court date is sometimes scheduled before defender is assigned, thus we send them notification to follow-up with court date session
+  DEFENDER_COURT_DATE_FOLLOW_UP = 'DEFENDER_COURT_DATE_FOLLOW_UP',
 }
 
 export enum SubpoenaNotificationType {
@@ -49,6 +52,7 @@ export enum InstitutionNotificationType {
 }
 
 export enum EventNotificationType {
+  COURT_DATE_SCHEDULED = 'COURT_DATE_SCHEDULED',
   INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR = 'INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR',
 }
 
@@ -62,7 +66,7 @@ export enum NotificationType {
   APPEAL_TO_COURT_OF_APPEALS = CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
   APPEAL_WITHDRAWN = CaseNotificationType.APPEAL_WITHDRAWN,
   CASE_FILES_UPDATED = CaseNotificationType.CASE_FILES_UPDATED,
-  COURT_DATE = CaseNotificationType.COURT_DATE,
+  COURT_DATE = CaseNotificationType.COURT_DATE, // only use for non-indictment cases
   DEFENDANT_SELECTED_DEFENDER = DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER,
   DEFENDANTS_NOT_UPDATED_AT_COURT = CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
   DEFENDER_ASSIGNED = DefendantNotificationType.DEFENDER_ASSIGNED,
