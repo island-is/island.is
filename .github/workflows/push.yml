@@ -1,6 +1,9 @@
 name: Monorepo pipeline - build and deploy
 
 on:
+  push:
+    branches:
+      - 'pre-release/**'
   workflow_dispatch:
   pull_request:
     types:
