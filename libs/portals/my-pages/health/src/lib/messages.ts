@@ -1370,4 +1370,28 @@ export const messages = defineMessages({
     id: 'sp.health:vaccination-status-desc',
     defaultMessage: 'Útskýring á stöðu bólusetninga',
   },
+  bloodtype: {
+    id: 'sp.health:bloodtype',
+    defaultMessage: 'Blóðflokkur',
+  },
+  bloodtypeDesc: {
+    id: 'sp.health:bloodtype-desc',
+    defaultMessage: 'Hér sérð þú blóðflokk þinn ............................. ',
+  },
+  readAboutBloodtype: {
+    id: 'sp.health:read-about-bloodtype',
+    defaultMessage: 'Lesa um blóðflokk',
+  },
+  bloodtypeLink: {
+    id: 'sp.health:bloodtype-link',
+    defaultMessage: 'https://island.is/s/blodbankinn/blodflokkar',
+  },
+  registered: {
+    id: 'sp.health:registered',
+    defaultMessage: 'Skráð',
+  },
+  organization: {
+    id: 'sp.health:organization',
+    defaultMessage: 'Stofnun',
+  },
 })

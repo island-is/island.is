@@ -18,6 +18,8 @@ export const ISLAND_SYSLUMENN_SLUG = '/s/islandis'
 export const HEALTH_DIRECTORATE_SLUG = 'landlaeknir'
 export const HUGVERKASTOFAN_SLUG = 'hugverkastofan'
 export const DOMSMALARADUNEYTID_SLUG = 'domsmalaraduneytid'
+export const LANDLAEKNIR_SLUG = 'landlaeknir'
+
 export const DOMSMAL_DOC_ID = '12'
 export const MONTHS = [
   'january',
