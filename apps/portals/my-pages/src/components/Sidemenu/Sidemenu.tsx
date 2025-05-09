@@ -20,6 +20,7 @@ import { useWindowSize } from 'react-use'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import * as styles from './Sidemenu.css'
 import SidemenuItem from './SidemenuItem'
+import { CloseButton } from '../Button/CloseButton/CloseButton'
 interface Props {
   setSideMenuOpen: (status: boolean) => void
   sideMenuOpen: boolean
@@ -38,15 +39,6 @@ const Sidemenu = ({
   const onClose = () => {
     setSideMenuOpen(false)
   }
-  const closeButton = (
-    <button
-      className={styles.closeButton}
-      onClick={() => setSideMenuOpen(false)}
-      aria-label={formatMessage(sharedMessages.close)}
-    >
-      <Icon icon="close" color="blue600" />
-    </button>
-  )
 
   const content = (
     <Box display="flex" justifyContent="flexEnd">
@@ -106,7 +98,12 @@ const Sidemenu = ({
             )}
           </Box>
         </Box>
-        <Hidden below="md">{closeButton}</Hidden>
+        <Hidden below="md">
+          <CloseButton
+            onClick={() => setSideMenuOpen(false)}
+            aria-label={formatMessage(sharedMessages.close)}
+          />
+        </Hidden>
       </Box>
     </Box>
   )
