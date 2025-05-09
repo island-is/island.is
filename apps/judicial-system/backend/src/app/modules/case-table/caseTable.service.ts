@@ -11,6 +11,7 @@ import {
   formatCaseType,
   formatDate,
   getAppealResultTextByValue,
+  getInitials,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealRulingDecision,
@@ -26,11 +27,12 @@ import {
   isCourtOfAppealsUser,
   isRestrictionCase,
   restrictionCases,
-  User,
+  type User as TUser,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
 import { Defendant } from '../defendant'
+import { User } from '../user'
 import {
   CaseTableCellValue,
   CaseTableResponse,
@@ -51,13 +53,14 @@ type CaseIncludes = {
     model: ModelStatic<DefinedObject<Case[K]>>
     attributes: (keyof DefinedObject<Case[K]>)[]
     order?: [[keyof DefinedObject<Case[K]>, 'ASC' | 'DESC']]
+    separate?: boolean
   }
 }
 
 interface CaseTableCellGenerator {
   attributes?: (keyof Case)[]
   includes?: Partial<CaseIncludes>
-  generate: (caseModel: Case, user: User) => CaseTableCellValue | undefined
+  generate: (caseModel: Case, user: TUser) => CaseTableCellValue | undefined
 }
 
 const cellGenerators: Record<CaseTableColumnKey, CaseTableCellGenerator> = {
@@ -79,6 +82,7 @@ const cellGenerators: Record<CaseTableColumnKey, CaseTableCellGenerator> = {
         model: Defendant,
         attributes: ['nationalId', 'name'],
         order: [['created', 'ASC']],
+        separate: true,
       },
     },
     generate: (c: Case): StringGroupValue | undefined =>
@@ -110,7 +114,7 @@ const cellGenerators: Record<CaseTableColumnKey, CaseTableCellGenerator> = {
   },
   appealState: {
     attributes: ['appealState', 'appealRulingDecision', 'appealCaseNumber'],
-    generate: (c: Case, user: User): TagValue | undefined => {
+    generate: (c: Case, user: TUser): TagValue | undefined => {
       switch (c.appealState) {
         case CaseAppealState.WITHDRAWN:
           return { color: 'red', text: 'Afturkallað' }
@@ -143,8 +147,16 @@ const cellGenerators: Record<CaseTableColumnKey, CaseTableCellGenerator> = {
     },
   },
   courtOfAppealsHead: {
-    attributes: [],
-    generate: (c: Case): StringGroupValue => ({ s: ['1234'] }),
+    includes: {
+      appealJudge1: {
+        model: User,
+        attributes: ['name'],
+      },
+    },
+    generate: (c: Case): StringGroupValue | undefined =>
+      c.appealJudge1
+        ? { s: [getInitials(c.appealJudge1.name) ?? ''] }
+        : undefined,
   },
   validFromTo: {
     attributes: [
@@ -203,7 +215,7 @@ export class CaseTableService {
 
   async getCaseTableRows(
     type: CaseTableType,
-    user: User,
+    user: TUser,
   ): Promise<CaseTableResponse> {
     const caseTableCellKeys = caseTables[type].columnKeys
 
@@ -222,7 +234,6 @@ export class CaseTableService {
           Object.entries(cellGenerators[k].includes!).map(([k, v]) => ({
             ...v,
             as: k,
-            separate: true,
           })) as Includeable,
       )
       .flat()
