@@ -123,6 +123,7 @@ const Aids = ({ data }: Props) => {
         <LinkButton
           to={formatMessage(messages['aidsDescriptionLink'])}
           text={formatMessage(messages.aidsDescriptionInfo)}
+          variant="text"
         />
       </Box>
     </Box>
