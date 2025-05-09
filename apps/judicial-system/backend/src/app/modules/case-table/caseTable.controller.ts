@@ -1,11 +1,4 @@
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  Inject,
-  Query,
-  UseGuards,
-} from '@nestjs/common'
+import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -17,11 +10,12 @@ import {
 import { CaseTableType, User } from '@island.is/judicial-system/types'
 
 import { CaseTableResponse } from './dto/caseTable.response'
+import { CaseTableTypeGuard } from './guards/caseTableType.guard'
 import { CaseTableService } from './caseTable.service'
 
 @Controller('api/')
 @ApiTags('case-tables')
-@UseGuards(JwtAuthUserGuard)
+@UseGuards(JwtAuthUserGuard, CaseTableTypeGuard)
 export class CaseTableController {
   constructor(
     private readonly caseTableService: CaseTableService,
