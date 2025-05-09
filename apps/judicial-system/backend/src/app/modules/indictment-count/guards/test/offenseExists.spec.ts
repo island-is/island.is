@@ -46,6 +46,7 @@ describe('Offense Exists Guard', () => {
     const request = {
       params: { caseId, indictmentCountId, offenseId },
       case: theCase,
+      indictmentCount: indictmentCount,
       offense: undefined,
     }
     let then: Then
@@ -76,6 +77,7 @@ describe('Offense Exists Guard', () => {
       mockRequest.mockReturnValueOnce({
         params: { caseId, indictmentCountId, offenseId },
         case: theCase,
+        indictmentCount: indictmentCount,
       })
 
       then = await givenWhenThen()
