@@ -7,16 +7,8 @@ import {
   buildCheckboxField,
   buildDescriptionField,
   YesOrNoEnum,
-  buildSelectField,
-  getValueViaPath,
-  buildCustomField,
 } from '@island.is/application/core'
-import {
-  DefaultEvents,
-  Form,
-  FormModes,
-  Option,
-} from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const RequirementsForm: Form = buildForm({
@@ -64,63 +56,6 @@ export const RequirementsForm: Form = buildForm({
                 },
               ],
               required: true,
-            }),
-          ],
-        }),
-        buildMultiField({
-          title: m.requirements.legalEntity.formTitle,
-          descriptionSpacing: 0,
-          children: [
-            buildDescriptionField({
-              id: 'legalEntity_description',
-              description: m.requirements.legalEntity.formIntro,
-              marginBottom: 3,
-            }),
-            buildSelectField({
-              id: 'legalEntity.nationalId',
-              title: m.requirements.legalEntity.selectTitle,
-              placeholder: m.requirements.legalEntity.selectPlaceholder,
-              width: 'half',
-              size: 'sm',
-              options(application) {
-                const legalEntities = getValueViaPath<Option[]>(
-                  application.externalData,
-                  'legalEntityOptions.data',
-                )
-
-                return legalEntities ?? []
-              },
-            }),
-          ],
-        }),
-        buildMultiField({
-          title: m.requirements.advertType.formTitle,
-          descriptionSpacing: 0,
-          children: [
-            buildDescriptionField({
-              id: 'advertType_description',
-              description: m.requirements.advertType.formIntro,
-              marginBottom: 3,
-            }),
-            buildSelectField({
-              id: 'applicationType.id',
-              title: m.requirements.advertType.selectTitle,
-              placeholder: m.requirements.advertType.selectPlaceholder,
-              width: 'half',
-              size: 'sm',
-              marginBottom: 2,
-              options(application) {
-                const advertTypeOptions = getValueViaPath<Option[]>(
-                  application.externalData,
-                  'advertTypeOptions.data',
-                )
-
-                return advertTypeOptions ?? []
-              },
-            }),
-            buildCustomField({
-              id: 'advertType.recent',
-              component: 'RecentlySelected',
             }),
             buildSubmitField({
               id: 'toDraft',

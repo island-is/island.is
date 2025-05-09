@@ -6,13 +6,12 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  defineTemplateApi,
 } from '@island.is/application/types'
 
 import { assign } from 'xstate'
 import { legalGazetteDataSchema } from './dataSchema'
 import { CodeOwners } from '@island.is/shared/constants'
-import { LegalGazetteAPIActions, LegalGazetteStates } from './constants'
+import { LegalGazetteStates } from './constants'
 import { m } from './messages'
 import { pruneAfterDays } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
@@ -55,26 +54,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
           progress: 0,
           status: 'draft',
           lifecycle: pruneAfterDays(7),
-          onEntry: [
-            defineTemplateApi({
-              action: LegalGazetteAPIActions.getUserLegalEntities,
-              shouldPersistToExternalData: true,
-              externalDataId: 'legalEntityOptions',
-              throwOnError: true,
-            }),
-            defineTemplateApi({
-              action: LegalGazetteAPIActions.getAdvertTypes,
-              shouldPersistToExternalData: true,
-              externalDataId: 'advertTypeOptions',
-              throwOnError: true,
-            }),
-            defineTemplateApi({
-              action: LegalGazetteAPIActions.getUserRecentlySelectedAdvertTypes,
-              shouldPersistToExternalData: true,
-              externalDataId: 'recentAdvertTypes',
-              throwOnError: true,
-            }),
-          ],
+
           roles: [
             {
               id: Roles.APPLICANT,

@@ -14,20 +14,30 @@ export const legalGazetteDataSchema = z.object({
         },
       ),
   }),
-  legalEntity: z.object({
-    nationalId: z
-      .string()
-      .nullable()
-      .refine((value) => value && value.length > 0, {
-        params: m.requirements.legalEntity.selectError,
-      }),
+  application: z.object({
+    caption: z.string().refine((val) => val.length > 0, {
+      params: m.errors.emptyString,
+    }),
+    html: z.string().refine((val) => val.length > 0, {
+      params: m.errors.emptyHtml,
+    }),
   }),
-  applicationType: z.object({
-    id: z
-      .string()
-      .nullable()
-      .refine((value) => value && value.length > 0, {
-        params: m.requirements.advertType.selectError,
-      }),
+  publication: z.object({
+    date: z.string().refine((val) => {
+      try {
+        const now = new Date()
+        const date = new Date(val)
+
+        if (
+          date.getTime() < now.getTime() ||
+          date.getTime() > now.setFullYear(now.getFullYear() + 1)
+        ) {
+          return false
+        }
+        return true
+      } catch (e) {
+        return false
+      }
+    }),
   }),
 })

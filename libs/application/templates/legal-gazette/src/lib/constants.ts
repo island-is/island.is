@@ -7,7 +7,5 @@ export enum LegalGazetteStates {
 }
 
 export enum LegalGazetteAPIActions {
-  getUserLegalEntities = 'getUserLegalEntities',
-  getUserRecentlySelectedAdvertTypes = 'getUserRecentlySelectedAdvertTypes',
-  getAdvertTypes = 'getAdvertTypes',
+  submitApplication = 'submitApplication',
 }

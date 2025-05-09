@@ -13,6 +13,18 @@ export const m = {
       description: `Heiti umsóknar`,
     },
   }),
+  errors: defineMessages({
+    emptyString: {
+      id: 'lg.application.errors.emptyString',
+      defaultMessage: 'Reitur má ekki vera tómur',
+      description: 'Villa sem kemur upp ef gildið er tómt',
+    },
+    emptyHtml: {
+      id: 'lg.application.errors.emptyHtml',
+      defaultMessage: 'Meginmál má ekki vera autt',
+      description: 'Villa sem kemur upp ef HTML texti er tómur',
+    },
+  }),
   requirements: {
     approval: defineMessages({
       sectionTitle: {
@@ -136,25 +148,69 @@ export const m = {
     }),
   },
   draft: {
-    general: defineMessages({
-      sectionTitle: {
-        id: 'lg.application:draft.general.sectionTitle',
-        defaultMessage: 'Grunnupplýsingar',
-        description: 'Heiti kafla fyrir auglýsingu',
-      },
-    }),
-    common: defineMessages({
-      formTitle: {
-        id: 'lg.application:draft.common.formTitle',
-        defaultMessage: 'Ný auglýsing',
-        description: 'Titill á formi fyrir auglýsingu',
-      },
-      formIntro: {
-        id: 'lg.application:draft.common.formIntro',
-        defaultMessage:
-          'Veldu tegund auglýsingar sem þú vilt skrá. Fyrir sumar tegundir eru í boði innsláttarform til að auðvelda skráningu. Þú getur einnig sótt texta áður skráðrar auglýsingar af sömu tegund og notað sem grunn að nýrri.',
-        description: 'Inngangur á formi fyrir auglýsingu',
-      },
-    }),
+    sections: {
+      advert: defineMessages({
+        sectionTitle: {
+          id: 'lg.application:draft.advert.sectionTitle',
+          defaultMessage: 'Auglýsing',
+          description: 'Heiti kafla fyrir auglýsingu',
+        },
+        formTitle: {
+          id: 'lg.application:draft.advert.formTitle',
+          defaultMessage: 'Almenn auglýsing',
+          description: 'Titill á formi fyrir auglýsingu',
+        },
+        formIntro: {
+          id: 'lg.application:draft.advert.formIntro',
+          defaultMessage:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sit amet mattis erat, eget dignissim lacus. Cras id enim ac urna bibendum gravida. Donec ultricies dapibus lacinia. Curabitur ut est urna. Donec id eleifend erat. Nam et posuere arcu.',
+          description: 'Inngangur á formi fyrir auglýsingu',
+        },
+        captionInput: {
+          id: 'lg.application:draft.advert.captionInput',
+          defaultMessage: 'Yfirskrift',
+          description: 'Titill á textaheiti auglýsingar',
+        },
+      }),
+      publishing: defineMessages({
+        sectionTitle: {
+          id: 'lg.application:draft.publishing.sectionTitle',
+          defaultMessage: 'Birting',
+          description: 'Heiti kafla fyrir birtingu auglýsingar',
+        },
+        formTitle: {
+          id: 'lg.application:draft.publishing.formTitle',
+          defaultMessage: 'Birting auglýsingar',
+          description: 'Titill á formi fyrir birtingu auglýsingar',
+        },
+        formIntro: {
+          id: 'lg.application:draft.publishing.formIntro',
+          defaultMessage:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sit amet mattis erat, eget dignissim lacus. Cras id enim ac urna bibendum gravida. Donec ultricies dapibus lacinia. Curabitur ut est urna. Donec id eleifend erat. Nam et posuere arcu.',
+          description: 'Inngangur á formi fyrir birtingu auglýsingar',
+        },
+        datePickerLabel: {
+          id: 'lg.application:draft.publishing.datePickerLabel',
+          defaultMessage: 'Birtingardagur',
+          description: 'Titill á dagatali fyrir birtingu auglýsingar',
+        },
+        datePickerPlaceholder: {
+          id: 'lg.application:draft.publishing.datePickerPlaceholder',
+          defaultMessage: 'Veldu dagsetningu',
+          description: 'Placeholder á dagatali fyrir birtingu auglýsingar',
+        },
+        checkboxNoSpecificDate: {
+          id: 'lg.application:draft.publishing.checkboxNoSpecificDate',
+          defaultMessage: 'Ég hef enga sérstaka ósk um birtingardag',
+          description: 'Titill á checkboxi fyrir birtingu auglýsingar',
+        },
+        checkboxReceiveEmail: {
+          id: 'lg.application:draft.publishing.checkboxReceiveEmail',
+          defaultMessage:
+            'Fá tilkynningu í tölvupósti þegar auglýsing er útgefin',
+          description: 'Titill á checkboxi fyrir birtingu auglýsingar',
+        },
+      }),
+    },
   },
 }
