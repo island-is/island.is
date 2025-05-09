@@ -11,6 +11,7 @@ import {
   client,
 } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
+import { useSetActorProfileEmailMutation } from './SetActorProfileEmail.mutation.generated'
 
 type EmailsListProps = {
   items: Email[]
@@ -20,7 +21,7 @@ export const EmailsList = ({ items }: EmailsListProps) => {
   const { formatMessage } = useIntl()
   const userInfo = useUserInfo()
 
-  const isActor = userInfo?.profile?.actor?.nationalId
+  const isActor = !!userInfo?.profile?.actor?.nationalId
 
   const refreshEmailList = () => {
     client.refetchQueries({
@@ -52,6 +53,17 @@ export const EmailsList = ({ items }: EmailsListProps) => {
     },
   })
 
+  const [setActorProfileEmail] = useSetActorProfileEmailMutation({
+    onCompleted: (data) => {
+      if (data.userProfileSetActorProfileEmail) {
+        refreshEmailList()
+      }
+    },
+    onError: () => {
+      toast.error(formatMessage(emailsMsg.emailMakePrimaryError))
+    },
+  })
+
   const createCtaList = (id: string): EmailCta[] => {
     const commonList = [
       {
@@ -76,7 +88,7 @@ export const EmailsList = ({ items }: EmailsListProps) => {
           label: formatMessage(emailsMsg.connectEmailToDelegation),
           emailId: id,
           onClick(emailId: string) {
-            setPrimaryEmail({
+            setActorProfileEmail({
               variables: {
                 input: {
                   emailId,
@@ -108,12 +120,12 @@ export const EmailsList = ({ items }: EmailsListProps) => {
   }
 
   const getTag = (email: Email): EmailCardTag | undefined => {
-    if (email.primary) {
+    if (isActor && email.isConnectedToActorProfile) {
+      return 'connected_to_delegation'
+    } else if (!isActor && email.primary) {
       return 'primary'
     } else if (email.emailStatus === DataStatus.NotVerified) {
       return 'not_verified'
-    } else if (email.isConnectedToActorProfile) {
-      return 'connected_to_delegation'
     }
 
     return undefined
@@ -126,7 +138,9 @@ export const EmailsList = ({ items }: EmailsListProps) => {
           key={item.id}
           title={item.email}
           tag={getTag(item)}
-          ctaList={!item.primary ? createCtaList(item.id) : undefined}
+          ctaList={
+            item.primary && !isActor ? undefined : createCtaList(item.id)
+          }
         />
       ))}
     </Box>

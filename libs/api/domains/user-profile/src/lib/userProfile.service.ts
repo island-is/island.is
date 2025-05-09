@@ -132,6 +132,10 @@ export class UserProfileService {
     return this.userProfileServiceV2.updateActorProfile(input, user)
   }
 
+  async getUserProfiles(user: User, query: string) {
+    return this.userProfileServiceV2.getUserProfiles(user, query)
+  }
+
   async getUserProfileByNationalId(user: User, nationalId: string) {
     return this.userProfileServiceV2.getUserProfileByNationalId(
       user,
