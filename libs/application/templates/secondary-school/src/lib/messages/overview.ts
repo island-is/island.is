@@ -186,7 +186,7 @@ export const overview = {
         'Overview message if application data had been pruned, and application is in in review state',
     },
     completed: {
-      id: 'ss.application:overview.applicationDataHasBeenPruned.submitted',
+      id: 'ss.application:overview.applicationDataHasBeenPruned.completed',
       defaultMessage: 'Umsókn er afgreidd.',
       description:
         'Overview message if application data had been pruned, and application is in completed state',
