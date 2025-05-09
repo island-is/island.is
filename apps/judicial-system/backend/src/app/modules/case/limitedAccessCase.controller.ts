@@ -124,7 +124,7 @@ export class LimitedAccessCaseController {
     CaseWriteGuard,
     CaseCompletedGuard,
   )
-  @RolesRules(defenderUpdateRule)
+  @RolesRules(defenderUpdateRule, prisonSystemStaffRule)
   @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/limitedAccess')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })

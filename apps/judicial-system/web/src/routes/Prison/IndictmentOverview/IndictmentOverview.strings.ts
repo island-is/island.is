@@ -79,4 +79,14 @@ export const strings = defineMessages({
     defaultMessage: 'Tilkynning til sakaskrár',
     description: 'Titill á Tilkynning til sakaskrár',
   },
+  verdictRegistered: {
+    id: 'judicial.system.core:indictment_overview.verdict_registered',
+    defaultMessage: 'Dómur skráður',
+    description: 'Titill á takkanum sem leyfir að skrá dóm',
+  },
+  verdictDeregister: {
+    id: 'judicial.system.core:indictment_overview.verdict_deregister',
+    defaultMessage: 'Afskrá dóm',
+    description: 'Titill á takkanum sem leyfir að afskrá dóm',
+  },
 })

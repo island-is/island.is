@@ -1126,4 +1126,11 @@ export class Case extends Model {
   @HasMany(() => Victim, 'caseId')
   @ApiPropertyOptional({ type: () => Victim, isArray: true })
   victims?: Victim[]
+
+  /**********
+   * Indicates whether the prosecutor requests a drivers license suspension
+   **********/
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiProperty({ type: Boolean })
+  isRegisteredInPrisonSystem?: boolean
 }

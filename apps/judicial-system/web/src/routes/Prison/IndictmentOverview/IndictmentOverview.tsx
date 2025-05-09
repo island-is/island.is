@@ -1,7 +1,14 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  ButtonTypes,
+  IconMapIcon,
+  RadioButton,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -25,6 +32,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
+  useCase,
   useDefendants,
   useFileList,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -34,6 +42,9 @@ import { strings } from './IndictmentOverview.strings'
 const IndictmentOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+
+  const { updateCase } = useCase()
+
   const { formatMessage } = useIntl()
   const { limitedAccessUpdateDefendant, updateDefendantState } = useDefendants()
 
@@ -80,6 +91,38 @@ const IndictmentOverview = () => {
   const fileCategory = hasRuling
     ? CaseFileCategory.RULING
     : CaseFileCategory.COURT_RECORD
+
+  const savePunishmentType = async () => {
+    const updatedCase = await updateCase(workingCase.id, {
+      isRegisteredInPrisonSystem: !workingCase.isRegisteredInPrisonSystem,
+    })
+
+    if (!updatedCase) {
+      toast.error('Tókst ekki að skrá í fangelsiskerfi')
+      return
+    }
+    toast.info('skráði í fangelsiskerfi')
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      isRegisteredInPrisonSystem: !prevWorkingCase.isRegisteredInPrisonSystem,
+    }))
+  }
+
+  const footerNextButtonText: {
+    title: string
+    colorScheme: ButtonTypes['colorScheme']
+    icon: IconMapIcon
+  } = !workingCase?.isRegisteredInPrisonSystem
+    ? {
+        title: formatMessage(strings.verdictRegistered),
+        colorScheme: 'default',
+        icon: 'checkmark',
+      }
+    : {
+        title: formatMessage(strings.verdictDeregister),
+        colorScheme: 'destructive',
+        icon: 'close',
+      }
 
   return (
     <PageLayout
@@ -267,7 +310,13 @@ const IndictmentOverview = () => {
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
-        <FormFooter previousUrl={constants.PRISON_CASES_ROUTE} hideNextButton />
+        <FormFooter
+          previousUrl={constants.PRISON_CASES_ROUTE}
+          nextButtonText={footerNextButtonText.title}
+          onNextButtonClick={savePunishmentType}
+          nextButtonColorScheme={footerNextButtonText.colorScheme}
+          nextButtonIcon={footerNextButtonText.icon}
+        />
       </FormContentContainer>
     </PageLayout>
   )
