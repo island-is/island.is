@@ -7,7 +7,7 @@ export PGPASSWORD
 
 set -x
 FEATURE_NAME=$1
-FEATURE_DB_NAME=$(echo $FEATURE_NAME | tr -d '\-_')
+FEATURE_DB_NAME=$(echo "$FEATURE_NAME" | tr -d '\-_')
 
 echo "feature name is $FEATURE_NAME"
 
