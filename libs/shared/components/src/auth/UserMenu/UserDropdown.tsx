@@ -5,23 +5,24 @@ import {
   Hidden,
   Icon,
   ModalBase,
+  Stack,
   Text,
   UserAvatar,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import { useUserInfo } from '@island.is/react-spa/bff'
+import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { checkDelegation } from '@island.is/shared/utils'
 import cn from 'classnames'
 import { Dispatch, SetStateAction } from 'react'
 import { useWindowSize } from 'react-use'
-import { UserDelegations } from './UserDelegations'
 import { UserDropdownItem } from './UserDropdownItem'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'
 import * as styles from './UserMenu.css'
 import { UserProfileInfo } from './UserProfileInfo'
+import { UserTopicCard } from './UserTopicCard'
 
 interface UserDropdownProps {
   dropdownState: 'open' | 'closed'
@@ -48,7 +49,7 @@ export const UserDropdown = ({
   const onClose = () => {
     setDropdownState('closed')
   }
-
+  const { switchUser } = useAuth()
   const actor = user.profile.actor
   const isDelegation = checkDelegation(user)
   const userName = user.profile.name
@@ -76,7 +77,9 @@ export const UserDropdown = ({
       <Box
         position="relative"
         background="white"
-        padding={3}
+        paddingX={3}
+        paddingBottom={2}
+        paddingTop={5}
         borderRadius="large"
         display="flex"
         flexDirection="column"
@@ -86,7 +89,7 @@ export const UserDropdown = ({
           styles.container,
         )}
       >
-        <Box display="flex" flexDirection="column" className={styles.wrapper}>
+        <Box className={styles.wrapper}>
           <Box
             display="flex"
             position="relative"
@@ -114,7 +117,7 @@ export const UserDropdown = ({
                 <Box className={styles.textWrapper}>{userName}</Box>
               </Text>
               {isDelegation && (
-                <Text translate="no" variant="small">
+                <Text translate="no" variant={isMobile ? 'medium' : 'small'}>
                   {actorName}
                 </Text>
               )}
@@ -126,24 +129,31 @@ export const UserDropdown = ({
 
           <Divider />
 
-          <Box paddingTop={2}>
-            <UserDelegations
-              onSwitchUser={onSwitchUser}
-              showActorButton={showActorButton}
-            />
-          </Box>
+          <Box marginTop={2}>
+            <Stack space={1}>
+              {showActorButton && !!actor && (
+                <UserTopicCard
+                  colorScheme="blue"
+                  onClick={() => onSwitchUser(actor.nationalId)}
+                >
+                  {actor.name}
+                </UserTopicCard>
+              )}
+              <UserDropdownItem
+                text={formatMessage(userMessages.switchUser)}
+                icon={{ icon: 'reload', type: 'outline' }}
+                onClick={() => switchUser()}
+              />
 
-          {(!isDelegation || isProcurationHolder) && (
-            <Box paddingTop={1}>
-              <UserProfileInfo onClick={() => onClose()} />
-            </Box>
-          )}
-          <Box paddingTop={1}>
-            <UserDropdownItem
-              text={formatMessage(sharedMessages.logout)}
-              icon={{ type: 'outline', icon: 'logOut' }}
-              onClick={onLogout}
-            />
+              {(!isDelegation || isProcurationHolder) && (
+                <UserProfileInfo onClick={() => onClose()} />
+              )}
+              <UserDropdownItem
+                text={formatMessage(sharedMessages.logout)}
+                icon={{ type: 'outline', icon: 'logOut' }}
+                onClick={onLogout}
+              />
+            </Stack>
           </Box>
         </Box>
         <Hidden below="md">{closeButton}</Hidden>
