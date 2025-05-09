@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common'
 import {
   Args,
   Mutation,
@@ -6,17 +7,15 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { BadRequestException, UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { IdentityClientService } from '@island.is/clients/identity'
 
-import { UserProfileService } from './userProfile.service'
-import { PaginatedUserProfileResponse } from './dto/paginated-user-profile.response'
 import { AdminUserProfile } from './adminUserProfile.model'
-import { UserProfile } from './userProfile.model'
+import { PaginatedUserProfileResponse } from './dto/paginated-user-profile.response'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
+import { UserProfileService } from './userProfile.service'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => AdminUserProfile)
