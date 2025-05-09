@@ -2960,6 +2960,225 @@ describe('POST /v2/me/actor-profile/nudge', () => {
   })
 })
 
+describe('PATCH /v2/me/actor-profile/email', () => {
+  let app: TestApp
+  let server: SuperTest<Test>
+  let fixtureFactory: FixtureFactory
+  let userProfileModel: typeof UserProfile
+  let actorProfileModel: typeof ActorProfile
+  let delegationsApi: DelegationsApi
+  let emailsModel: typeof Emails
+  let verificationService: VerificationService
+  const testNationalId1 = createNationalId('person')
+  const testEmail = faker.internet.email()
+  const testVerificationCode = createVerificationCode()
+  let email1: Emails
+  let email2: Emails
+
+  beforeAll(async () => {
+    app = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user: createCurrentUser({
+        nationalId: testUserProfile.nationalId,
+        scope: [UserProfileScope.write, UserProfileScope.read],
+        actor: {
+          nationalId: testNationalId1,
+        },
+      }),
+      dbType: 'postgres', // Using postgres for verification attempt handling
+    })
+
+    server = request(app.getHttpServer())
+    fixtureFactory = new FixtureFactory(app)
+    delegationsApi = app.get(DelegationsApi)
+    userProfileModel = app.get(getModelToken(UserProfile))
+    actorProfileModel = app.get(getModelToken(ActorProfile))
+    emailsModel = app.get(getModelToken(Emails))
+    verificationService = app.get(VerificationService)
+  })
+
+  beforeEach(async () => {
+    await userProfileModel.destroy({
+      truncate: true,
+      force: true,
+      cascade: true,
+    })
+    await actorProfileModel.destroy({
+      truncate: true,
+      force: true,
+      cascade: true,
+    })
+    await emailsModel.destroy({
+      truncate: true,
+      force: true,
+      cascade: true,
+    })
+
+    // Create user profile first to satisfy foreign key constraints for all tests
+    await fixtureFactory.createUserProfile({
+      nationalId: testUserProfile.nationalId,
+      emails: [],
+    })
+
+    // Create email first to satisfy foreign key constraints for all tests
+    email1 = await fixtureFactory.createEmail({
+      email: testEmail,
+      emailStatus: DataStatus.VERIFIED,
+      nationalId: testUserProfile.nationalId,
+      primary: true,
+    })
+
+    email2 = await fixtureFactory.createEmail({
+      email: 'test2@test.com',
+      emailStatus: DataStatus.VERIFIED,
+      nationalId: testUserProfile.nationalId,
+      primary: false,
+    })
+
+    // Mock delegations API to return a delegation between the test user and testNationalId1
+    jest
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [
+          {
+            toNationalId: testNationalId1,
+            fromNationalId: testUserProfile.nationalId,
+            subjectId: null,
+            type: 'delegation',
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+        totalCount: 1,
+      })
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  it('should create actor profile with email', async () => {
+    // Act
+    const res = await server.patch('/v2/me/actor-profile/email').send({
+      emailsId: email1.id,
+    })
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toMatchObject({
+      email: email1.email,
+      emailStatus: email1.emailStatus,
+      needsNudge: false,
+      actorNationalId: testUserProfile.nationalId,
+      emailNotifications: true,
+    })
+
+    // Verify email record created
+    const email = await emailsModel.findOne({
+      where: {
+        email: testEmail,
+        nationalId: testUserProfile.nationalId,
+      },
+    })
+    expect(email).not.toBeNull()
+    expect(email?.emailStatus).toBe(DataStatus.VERIFIED)
+
+    // Verify actor profile created with reference to email
+    const actorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+    expect(actorProfile).not.toBeNull()
+    expect(actorProfile?.emailsId).toBe(email?.id)
+    expect(actorProfile?.emailNotifications).toBe(true)
+  })
+
+  it('should update actor profile with new email id', async () => {
+    // Arrange
+    await actorProfileModel.create({
+      id: uuid(),
+      toNationalId: testNationalId1,
+      fromNationalId: testUserProfile.nationalId,
+      emailsId: email1.id,
+      emailNotifications: true,
+    })
+
+    // Act
+    const res = await server.patch('/v2/me/actor-profile/email').send({
+      emailsId: email2.id,
+    })
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toMatchObject({
+      email: email2.email,
+      emailStatus: email2.emailStatus,
+      needsNudge: false,
+      actorNationalId: testUserProfile.nationalId,
+      emailNotifications: true,
+    })
+
+    // Verify actor profile updated
+    const actorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
+    })
+    expect(actorProfile).not.toBeNull()
+    expect(actorProfile?.emailsId).toBe(email2.id)
+    expect(actorProfile?.emailNotifications).toBe(true)
+  })
+
+  it('should return 400 when email does not exist', async () => {
+    // Arrange
+    const nonExistentEmailId = uuid()
+
+    // Act
+    const res = await server.patch('/v2/me/actor-profile/email').send({
+      emailsId: nonExistentEmailId,
+    })
+
+    console.log('res', res.body)
+
+    // Assert
+    expect(res.status).toEqual(400)
+    expect(res.body).toMatchObject({
+      title: 'Bad Request',
+      status: 400,
+      detail: `Email with ID ${nonExistentEmailId} not found`,
+    })
+  })
+
+  it('should return 400 when email is not verified', async () => {
+    const newEmail = await fixtureFactory.createEmail({
+      email: 'test3@test.com',
+      emailStatus: DataStatus.NOT_VERIFIED,
+      nationalId: testUserProfile.nationalId,
+      primary: false,
+    })
+
+    // Act
+    const res = await server.patch('/v2/me/actor-profile/email').send({
+      emailsId: newEmail.id,
+    })
+
+    // Assert
+    expect(res.status).toEqual(400)
+    expect(res.body).toMatchObject({
+      title: 'Bad Request',
+      status: 400,
+      detail: 'Email is not verified',
+    })
+  })
+})
 describe('PATCH /v2/me/actor-profile', () => {
   let app: TestApp
   let server: SuperTest<Test>
@@ -3209,8 +3428,6 @@ describe('PATCH /v2/me/actor-profile', () => {
         fromNationalId: testUserProfile.nationalId,
       },
     })
-
-    console.log('actorProfileWithNullEmailId', actorProfileWithNullEmailId)
 
     // Act
     const res = await server.patch('/v2/me/actor-profile').send({

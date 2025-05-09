@@ -38,6 +38,7 @@ import {
   UpdateActorProfileEmailDto,
   ActorProfileEmailDto,
 } from './dto/actor-profile-email.dto'
+import { SetActorProfileEmailDto } from './dto/set-actor-profile-email.dto'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -340,6 +341,45 @@ export class MeUserProfileController {
         toNationalId: user.actor.nationalId,
         fromNationalId: user.nationalId,
         ...actorProfile,
+      }),
+    )
+  }
+
+  @Patch('/actor-profile/email')
+  @Scopes(UserProfileScope.write)
+  @Documentation({
+    description:
+      'Set an email ID on an actor profile and reset the nudge timer',
+    response: {
+      status: 200,
+      type: ActorProfileDetailsDto,
+    },
+  })
+  setActorProfileEmail(
+    @CurrentUser() user: User,
+    @Body() dto: SetActorProfileEmailDto,
+  ): Promise<ActorProfileDetailsDto> {
+    console.log('dto', dto)
+    if (!user.actor?.nationalId) {
+      console.log('User has no actor profile')
+      throw new BadRequestException('User has no actor profile')
+    }
+    console.log('User has actor profile')
+
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'setActorProfileEmail',
+        resources: `${user.nationalId}:${user.actor.nationalId}`,
+        meta: {
+          emailsId: dto.emailsId,
+        },
+      },
+      this.userProfileService.setActorProfileEmail({
+        toNationalId: user.actor.nationalId,
+        fromNationalId: user.nationalId,
+        emailsId: dto.emailsId,
       }),
     )
   }
