@@ -23,6 +23,7 @@ import {
   BackendService,
   CaseListModule,
   CaseModule,
+  CaseTableModule,
   DefendantModule,
   DefenderModule,
   defenderModuleConfig,
@@ -79,6 +80,7 @@ const autoSchemaFile = production
     PoliceModule,
     EventLogModule,
     VictimModule,
+    CaseTableModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
