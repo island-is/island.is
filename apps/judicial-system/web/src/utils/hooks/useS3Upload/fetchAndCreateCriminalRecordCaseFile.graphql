@@ -1,0 +1,5 @@
+mutation FetchAndCreateCriminalRecordFile($input: CreateDefendantFileInput!) {
+  createDefendantFile(input: $input) {
+    id
+  }
+}

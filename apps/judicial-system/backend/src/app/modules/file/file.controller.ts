@@ -49,7 +49,12 @@ import {
   CurrentCase,
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
-import { CivilClaimantExistsGuard, DefendantExistsGuard } from '../defendant'
+import {
+  CivilClaimantExistsGuard,
+  CurrentDefendant,
+  Defendant,
+  DefendantExistsGuard,
+} from '../defendant'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
@@ -63,6 +68,7 @@ import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { CriminalRecordService } from './criminalRecord.service'
 import { FileService } from './file.service'
 
 @Controller('api/case/:caseId')
@@ -71,6 +77,7 @@ import { FileService } from './file.service'
 export class FileController {
   constructor(
     private readonly fileService: FileService,
+    private readonly criminalRecordService: CriminalRecordService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -308,5 +315,45 @@ export class FileController {
     this.logger.debug(`Updating files of case ${caseId}`, { updateFiles })
 
     return this.fileService.updateFiles(caseId, updateFiles.files)
+  }
+
+  @UseGuards(RolesGuard, CaseExistsGuard, DefendantExistsGuard, CaseWriteGuard)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
+  )
+  @Post('defendant/:defendantId/criminalRecordFile')
+  @ApiCreatedResponse({
+    type: CaseFile,
+    description: 'Fetches the latest criminal record and creates a case file',
+  })
+  async fetchAndCreateCriminalRecordCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentDefendant() defendant: Defendant,
+  ): Promise<void> {
+    this.logger.debug(
+      `Fetching and creating a criminal record file for case ${caseId} for defendant ${defendantId}`,
+    )
+
+    const response = await this.criminalRecordService.fetchCriminalRecord(
+      defendant,
+      user,
+    )
+
+    // TODO: use the response to create the criminal record case file
+    // return this.fileService.createCaseFile(
+    //   theCase,
+    //   { ...criminalRecord, defendantId },
+    //   user,
+    // )
   }
 }
