@@ -38,6 +38,8 @@ import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentF
 import { VerificationCallbackResponse } from './dtos/verificationCallback.response.dto'
 import { CardPaymentService } from './cardPayment.service'
 import { PaymentTrackingData } from '../../types/cardPayment'
+import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
+import { CatalogItemWithQuantity } from '../../types/charges'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -61,9 +63,10 @@ export class CardPaymentController {
   async verify(
     @Body() cardVerificationInput: VerifyCardInput,
   ): Promise<VerifyCardResponse> {
+    const paymentFlowId = cardVerificationInput.paymentFlowId
     try {
       const canBePaid = await this.paymentFlowService.isEligibleToBePaid(
-        cardVerificationInput.paymentFlowId,
+        paymentFlowId,
       )
 
       if (!canBePaid) {
@@ -75,29 +78,32 @@ export class CardPaymentController {
       )
 
       await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId: cardVerificationInput.paymentFlowId,
+        paymentFlowId: paymentFlowId,
         type: 'update',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'payment_started',
-        message: 'Card verification started',
+        message: `[${paymentFlowId}] Card verification started`,
       })
 
       // All required data to build the 3DS screen
       return verification
     } catch (e) {
       await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId: cardVerificationInput.paymentFlowId,
+        paymentFlowId: paymentFlowId,
         type: 'update',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'payment_failed',
-        message: `Card verification was not started because of an error`,
+        message: `[${paymentFlowId}] Card verification was not started due to an error: ${e.message}`,
         metadata: {
           error: e.message,
         },
       })
-      throw new BadRequestException(e.message)
+      if (e instanceof BadRequestException) {
+        throw e
+      }
+      throw new BadRequestException(e.message || 'Failed to verify card')
     }
   }
 
@@ -120,7 +126,6 @@ export class CardPaymentController {
     const { paymentFlowId } = savedVerificationPendingData
 
     try {
-      // Confirmed verification from user 3DS
       const { success } =
         await this.cardPaymentService.verifyThreeDSecureCallback({
           cardVerificationCallbackInput,
@@ -138,7 +143,7 @@ export class CardPaymentController {
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'other',
-        message: 'Card verification callback completed',
+        message: `[${paymentFlowId}] Card verification callback completed`,
       })
 
       return {
@@ -151,12 +156,15 @@ export class CardPaymentController {
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'other',
-        message: `Card verification callback failed`,
+        message: `[${paymentFlowId}] Card verification callback failed: ${e.message}`,
         metadata: {
           error: e.message,
         },
       })
-      throw e
+      if (e instanceof BadRequestException) {
+        throw e
+      }
+      throw new BadRequestException(e.message || 'Verification callback failed')
     }
   }
 
@@ -184,9 +192,11 @@ export class CardPaymentController {
   async charge(
     @Body() chargeCardInput: ChargeCardInput,
   ): Promise<ChargeCardResponse> {
+    const paymentFlowId = chargeCardInput.paymentFlowId
+
     try {
       const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
-        chargeCardInput.paymentFlowId,
+        paymentFlowId,
       )
       const [{ catalogItems, totalPrice }, { paymentStatus }] =
         await Promise.all([
@@ -207,210 +217,47 @@ export class CardPaymentController {
         throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
       }
 
-      // Create a unique guid for the merchant reference data
       const merchantReferenceData = uuid()
-
-      // Create a unique guid for the payment confirmation
       const paymentConfirmationId = uuid()
-
       const paymentTrackingData: PaymentTrackingData = {
         merchantReferenceData,
         correlationId: paymentConfirmationId,
       }
 
       this.logger.info(
-        `Starting card payment for payment flow ${chargeCardInput.paymentFlowId} with correlation id ${paymentConfirmationId}`,
+        `[${paymentFlowId}] Starting card payment with correlation id ${paymentConfirmationId}`,
       )
 
-      // Payment confirmation
       const paymentResult = await this.cardPaymentService.charge(
         chargeCardInput,
         paymentTrackingData,
       )
 
-      let persistedPaymentConfirmation = false
-
-      try {
-        // Try to persist the payment confirmation
-        await this.paymentFlowService.createPaymentConfirmation({
+      const persistedPaymentConfirmation =
+        await this._persistPaymentConfirmationAndHandleFailure(
+          chargeCardInput,
           paymentResult,
-          paymentFlowId: chargeCardInput.paymentFlowId,
           totalPrice,
           paymentTrackingData,
-        })
-        persistedPaymentConfirmation = true
-
-        await this.paymentFlowService.logPaymentFlowUpdate({
-          paymentFlowId: chargeCardInput.paymentFlowId,
-          type: 'update',
-          occurredAt: new Date(),
-          paymentMethod: PaymentMethod.CARD,
-          reason: 'payment_completed',
-          message: 'Card payment completed',
-          metadata: {
-            payment: paymentResult,
-          },
-        })
-      } catch (e) {
-        // Here we successfully accepted a payment but failed to persist the payment confirmation
-        // We should probably refund the payment?
-
-        try {
-          const refund = await retry(() =>
-            this.cardPaymentService.refund(
-              chargeCardInput.cardNumber,
-              paymentResult,
-              chargeCardInput.amount,
-            ),
-          )
-
-          await this.paymentFlowService.logPaymentFlowUpdate({
-            paymentFlowId: chargeCardInput.paymentFlowId,
-            type: 'update',
-            occurredAt: new Date(),
-            paymentMethod: PaymentMethod.CARD,
-            reason: 'other',
-            message:
-              'Card payment refunded because of a failure to persist payment confirmation',
-            metadata: {
-              payment: paymentResult,
-              refund,
-            },
-          })
-
-          throw new BadRequestException(
-            CardErrorCode.RefundedBecauseOfSystemError,
-          )
-        } catch (e) {
-          // need to trigger an alarm for manual intervention
-          await this.paymentFlowService.logPaymentFlowUpdate({
-            paymentFlowId: chargeCardInput.paymentFlowId,
-            type: 'failure',
-            occurredAt: new Date(),
-            paymentMethod: PaymentMethod.CARD,
-            reason: 'payment_started',
-            message:
-              'Accepted payment but failed to persist payment confirmation and failed to refund',
-            metadata: {
-              payment: paymentResult,
-              paymentTrackingData,
-            },
-          })
-        }
-      }
-
-      let confirmation: null | PaymentFlowFjsChargeConfirmation = null
-
-      try {
-        const fjsChargePayload =
-          this.cardPaymentService.createCardPaymentChargePayload({
-            paymentFlow,
-            charges: catalogItems,
-            chargeResponse: paymentResult,
-            totalPrice,
-            merchantReferenceData,
-          })
-
-        // Create a paid charge and send to FJS
-        confirmation = await retry(
-          () =>
-            this.paymentFlowService.createPaymentCharge(
-              paymentFlow.id,
-              fjsChargePayload,
-            ),
-          {
-            maxRetries: 3,
-            retryDelayMs: 1000,
-            logger: this.logger,
-            logPrefix: 'Failed to createPaymentCharge',
-            shouldRetryOnError: (error) => {
-              return error.message !== FjsErrorCode.AlreadyCreatedCharge
-            },
-          },
-        )
-      } catch (e) {
-        this.logger.error(
-          `Failed to create FJS charge information: ${e.message}`,
         )
 
-        const isAlreadyPaid = e.message === FjsErrorCode.AlreadyCreatedCharge
-
-        if (!persistedPaymentConfirmation || isAlreadyPaid) {
-          // We didn't manage to persist the payment confirmation
-          // So we have no way of knowing later if the payment was successful
-          // We have to refund the payment
-          // What if the refund fails?
-
-          try {
-            const refund = await retry(() =>
-              this.cardPaymentService.refund(
-                chargeCardInput.cardNumber,
-                paymentResult,
-                chargeCardInput.amount,
-              ),
-            )
-
-            await this.paymentFlowService.logPaymentFlowUpdate({
-              paymentFlowId: chargeCardInput.paymentFlowId,
-              type: 'update',
-              occurredAt: new Date(),
-              paymentMethod: PaymentMethod.CARD,
-              reason: 'other',
-              message:
-                'Card payment refunded because of a failure to persist payment confirmation',
-              metadata: {
-                payment: paymentResult,
-                refund,
-              },
-            })
-          } catch (e) {
-            // need to trigger an alarm for manual intervention
-            await this.paymentFlowService.logPaymentFlowUpdate({
-              paymentFlowId: chargeCardInput.paymentFlowId,
-              type: 'failure',
-              occurredAt: new Date(),
-              paymentMethod: PaymentMethod.CARD,
-              reason: 'payment_started',
-              message:
-                'Accepted payment but failed to persist payment confirmation, to create FJS charge and failed to refund',
-              metadata: {
-                payment: paymentResult,
-                paymentTrackingData,
-              },
-            })
-          }
-
-          throw e
-        } else {
-          // We managed to at least persist the payment confirmation
-          // So we will let the flow continue and pick up the charge
-          // confirmation later from a worker
-
-          this.logger.error(
-            `Failed to create FJS charge information: ${e.message}`,
-          )
-
-          await this.paymentFlowService.logPaymentFlowUpdate({
-            paymentFlowId: chargeCardInput.paymentFlowId,
-            type: 'update',
-            occurredAt: new Date(),
-            paymentMethod: PaymentMethod.CARD,
-            reason: 'other',
-            message: `Successfully accepted payment but failed to create FJS charge information`,
-            metadata: {
-              payment: paymentResult,
-            },
-          })
-        }
-      }
+      const confirmation = await this._createFjsChargeAndHandleFailure(
+        chargeCardInput,
+        paymentFlow,
+        catalogItems,
+        paymentResult,
+        totalPrice,
+        merchantReferenceData,
+        persistedPaymentConfirmation,
+      )
 
       await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId: chargeCardInput.paymentFlowId,
+        paymentFlowId,
         type: 'success',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'payment_completed',
-        message: 'Card payment completed',
+        message: `[${paymentFlowId}] Card payment completed successfully`,
         metadata: {
           payment: paymentResult,
           charge: confirmation,
@@ -419,20 +266,247 @@ export class CardPaymentController {
 
       return paymentResult
     } catch (e) {
+      this.logger.error(
+        `[${paymentFlowId}] Card payment failed in main charge handler`,
+        { error: e.message, stack: e.stack },
+      )
       await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId: chargeCardInput.paymentFlowId,
-        type: 'update',
+        paymentFlowId,
+        type: 'failure',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
-        reason: 'payment_failed',
-        message: `Card payment failed`,
+        reason: 'other',
+        message: `[${paymentFlowId}] Card payment processing ultimately failed: ${e.message}`,
         metadata: {
           error: e.message,
         },
       })
 
-      // TODO
+      if (e instanceof BadRequestException) {
+        throw e
+      }
       throw new BadRequestException(e.message || CardErrorCode.UnknownCardError)
+    }
+  }
+
+  private async _persistPaymentConfirmationAndHandleFailure(
+    chargeCardInput: ChargeCardInput,
+    paymentResult: ChargeCardResponse,
+    totalPrice: number,
+    paymentTrackingData: PaymentTrackingData,
+  ): Promise<boolean> {
+    const paymentFlowId = chargeCardInput.paymentFlowId
+    try {
+      await this.paymentFlowService.createPaymentConfirmation({
+        paymentResult: paymentResult as any,
+        paymentFlowId: paymentFlowId,
+        totalPrice,
+        paymentTrackingData,
+      })
+
+      await this.paymentFlowService.logPaymentFlowUpdate({
+        paymentFlowId: paymentFlowId,
+        type: 'update',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'payment_completed',
+        message: `[${paymentFlowId}] Card payment confirmation persisted`,
+        metadata: {
+          payment: paymentResult,
+        },
+      })
+      return true
+    } catch (e) {
+      this.logger.error(
+        `[${paymentFlowId}] Failed to persist payment confirmation. Attempting refund.`,
+        { error: e.message },
+      )
+      try {
+        const refund = await retry(() =>
+          this.cardPaymentService.refund(
+            chargeCardInput.cardNumber,
+            paymentResult as any,
+            chargeCardInput.amount,
+          ),
+        )
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId: paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'other',
+          message: `[${paymentFlowId}] Card payment refunded: failed to persist payment confirmation.`,
+          metadata: {
+            payment: paymentResult,
+            refund,
+            originalError: e.message,
+          },
+        })
+        throw new BadRequestException(
+          CardErrorCode.RefundedBecauseOfSystemError,
+        )
+      } catch (refundError) {
+        this.logger.error(
+          `[${paymentFlowId}] CRITICAL: Accepted payment, failed to persist confirmation, AND failed to refund. Manual intervention required.`,
+          {
+            originalPersistenceError: e.message,
+            refundError: refundError.message,
+            payment: paymentResult,
+            paymentTrackingData,
+          },
+        )
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId: paymentFlowId,
+          type: 'failure',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'other',
+          message: `[${paymentFlowId}] CRITICAL: Accepted payment, failed to persist confirmation, AND failed to refund.`,
+          metadata: {
+            payment: paymentResult,
+            paymentTrackingData,
+            originalPersistenceError: e.message,
+            refundError: refundError.message,
+          },
+        })
+        if (refundError instanceof BadRequestException) throw refundError
+        throw new BadRequestException(
+          `CRITICAL_ERROR: Payment taken, persistence failed, refund failed. ${e.message}`,
+        )
+      }
+    }
+  }
+
+  private async _createFjsChargeAndHandleFailure(
+    chargeCardInput: ChargeCardInput,
+    paymentFlow: PaymentFlowAttributes,
+    catalogItems: CatalogItemWithQuantity[],
+    paymentResult: ChargeCardResponse,
+    totalPrice: number,
+    merchantReferenceData: string,
+    persistedPaymentConfirmation: boolean,
+  ): Promise<PaymentFlowFjsChargeConfirmation | null> {
+    const paymentFlowId = chargeCardInput.paymentFlowId
+    try {
+      const fjsChargePayload =
+        this.cardPaymentService.createCardPaymentChargePayload({
+          paymentFlow,
+          charges: catalogItems,
+          chargeResponse: paymentResult as any,
+          totalPrice,
+          merchantReferenceData,
+        })
+
+      const confirmation = await retry(
+        () =>
+          this.paymentFlowService.createPaymentCharge(
+            paymentFlow.id,
+            fjsChargePayload,
+          ),
+        {
+          maxRetries: 3,
+          retryDelayMs: 1000,
+          logger: this.logger,
+          logPrefix: `[${paymentFlowId}] Create FJS Payment Charge`,
+          shouldRetryOnError: (error) => {
+            return error.message !== FjsErrorCode.AlreadyCreatedCharge
+          },
+        },
+      )
+      return confirmation
+    } catch (e) {
+      this.logger.error(
+        `[${paymentFlowId}] Failed to create FJS charge information: ${e.message}`,
+      )
+      const isAlreadyPaidError = e.message === FjsErrorCode.AlreadyCreatedCharge
+
+      if (!persistedPaymentConfirmation || isAlreadyPaidError) {
+        this.logger.warn(
+          `[${paymentFlowId}] FJS charge failed critically (payment not persisted or already paid in FJS). Attempting refund.`,
+          {
+            persistedPaymentConfirmation,
+            isAlreadyPaidError,
+            error: e.message,
+          },
+        )
+        try {
+          const refund = await retry(() =>
+            this.cardPaymentService.refund(
+              chargeCardInput.cardNumber,
+              paymentResult as any,
+              chargeCardInput.amount,
+            ),
+          )
+          await this.paymentFlowService.logPaymentFlowUpdate({
+            paymentFlowId: paymentFlowId,
+            type: 'update',
+            occurredAt: new Date(),
+            paymentMethod: PaymentMethod.CARD,
+            reason: 'other',
+            message: `[${paymentFlowId}] Card payment refunded: FJS charge failed and payment confirmation was not persisted or FJS indicated already paid.`,
+            metadata: {
+              payment: paymentResult,
+              refund,
+              fjsError: e.message,
+            },
+          })
+          const errorCode = isAlreadyPaidError
+            ? FjsErrorCode.AlreadyCreatedCharge
+            : CardErrorCode.RefundedBecauseOfSystemError
+          throw new BadRequestException(errorCode)
+        } catch (refundError) {
+          this.logger.error(
+            `[${paymentFlowId}] CRITICAL: FJS charge failed, payment confirmation issue, AND refund failed. Manual intervention required.`,
+            {
+              fjsError: e.message,
+              persistedPaymentConfirmation,
+              refundError: refundError.message,
+              payment: paymentResult,
+              paymentTrackingData: {
+                merchantReferenceData,
+                correlationId: paymentResult.correlationId,
+              },
+            },
+          )
+
+          await this.paymentFlowService.logPaymentFlowUpdate({
+            paymentFlowId: paymentFlowId,
+            type: 'failure',
+            occurredAt: new Date(),
+            paymentMethod: PaymentMethod.CARD,
+            reason: 'other',
+            message: `[${paymentFlowId}] CRITICAL: FJS charge creation failed, payment confirmation status: ${persistedPaymentConfirmation}, AND failed to refund.`,
+            metadata: {
+              payment: paymentResult,
+              paymentTrackingData: {
+                merchantReferenceData,
+                correlationId: paymentResult.correlationId,
+              },
+              fjsError: e.message,
+              refundError: refundError.message,
+            },
+          })
+
+          throw e
+        }
+      } else {
+        this.logger.warn(
+          `[${paymentFlowId}] Successfully accepted payment and persisted confirmation, but failed to create FJS charge (will be retried by worker): ${e.message}`,
+        )
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId: paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'other',
+          message: `[${paymentFlowId}] Accepted payment, but FJS charge creation failed (worker will retry).`,
+          metadata: {
+            payment: paymentResult,
+            fjsError: e.message,
+          },
+        })
+        return null
+      }
     }
   }
 }

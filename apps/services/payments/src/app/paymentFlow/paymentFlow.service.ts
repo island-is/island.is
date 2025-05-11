@@ -335,13 +335,18 @@ export class PaymentFlowService {
       await this.paymentFlowEventModel.create(update)
     } catch (e) {
       this.logger.error(
-        `Failed to log payment flow update (${update.paymentFlowId})`,
-        e,
+        `[${update.paymentFlowId}] Failed to log payment flow update event to database`,
+        { error: e, updateDetails: update },
       )
+      // Depending on requirements, we might not want to stop the onUpdateUrl notification if DB log fails
+      // For now, it continues.
     }
 
+    // Declare updateBody outside the try block to ensure it's in scope for the catch block
+    let updateBody: PaymentFlowUpdateEvent | null = null
+
     try {
-      const updateBody: PaymentFlowUpdateEvent = {
+      updateBody = {
         type: update.type,
         paymentFlowId: update.paymentFlowId,
         paymentFlowMetadata: paymentFlow.metadata,
@@ -354,17 +359,59 @@ export class PaymentFlowService {
         },
       }
 
-      await fetch(paymentFlow.onUpdateUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      await retry(
+        async () => {
+          const response = await fetch(paymentFlow.onUpdateUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            // Ensure updateBody is not null when used here, though it should always be set.
+            body: JSON.stringify(updateBody!),
+          })
+          if (!response.ok) {
+            const errorBody = await response
+              .text()
+              .catch(() => 'Could not read error body')
+            this.logger.warn(
+              `[${update.paymentFlowId}] Failed to notify onUpdateUrl (attempt): ${response.status} ${response.statusText}`,
+              {
+                url: paymentFlow.onUpdateUrl,
+                responseBody: errorBody,
+                notificationPayload: updateBody,
+              },
+            )
+            throw new Error(
+              `Failed to notify onUpdateUrl: ${response.status} ${response.statusText}, body: ${errorBody}`,
+            )
+          }
+          this.logger.info(
+            `[${update.paymentFlowId}] Successfully notified onUpdateUrl`,
+            {
+              url: paymentFlow.onUpdateUrl,
+              type: update.type,
+              reason: update.reason,
+            },
+          )
         },
-        body: JSON.stringify(updateBody),
-      })
+        {
+          maxRetries: 3,
+          retryDelayMs: 1000,
+          logger: this.logger,
+          logPrefix: `[${update.paymentFlowId}] Notify onUpdateUrl for flow event type ${update.type}`,
+          shouldRetryOnError: (error) => {
+            return true
+          },
+        },
+      )
     } catch (e) {
       this.logger.error(
-        `Failed to notify onUpdateUrl (${update.paymentFlowId})`,
-        e,
+        `[${update.paymentFlowId}] Failed to notify onUpdateUrl after all retries`,
+        {
+          error: e.message,
+          onUpdateUrl: paymentFlow.onUpdateUrl,
+          updateBodySent: updateBody,
+        },
       )
     }
   }

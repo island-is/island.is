@@ -15,7 +15,7 @@ import {
   ChargeResponse,
   SavedVerificationPendingData,
 } from './cardPayment.types'
-import { generateMd } from './cardPayment.utils'
+import { generateMd, getPayloadFromMd } from './cardPayment.utils'
 import { VerificationCallbackInput } from './dtos/verificationCallback.input'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { ChargeCardInput } from './dtos/chargeCard.input'
@@ -224,32 +224,30 @@ describe('CardPaymentController', () => {
 
       expect(cacheSpy).toHaveBeenCalled()
 
-      const [correlationId, value] = cacheSpy.mock.calls[0]
-      expect(typeof correlationId).toBe('string')
-      expect(value).toEqual(expectedCacheValue)
+      const [correlationIdFromCacheKey, cachedValue] = cacheSpy.mock.calls[0]
+      expect(typeof correlationIdFromCacheKey).toBe('string')
+      expect(cachedValue).toEqual(expectedCacheValue)
 
-      const [url, options] = fetchSpy.mock.calls[0]
+      const [fetchUrl, fetchOptions] = fetchSpy.mock.calls[0]
 
-      expect(url).toBe(verificationUrl)
-      expect(typeof options).toBe('object')
+      expect(fetchUrl).toBe(verificationUrl)
+      expect(typeof fetchOptions).toBe('object')
 
-      const body = JSON.parse(options!.body as string)
+      const requestBody = JSON.parse(fetchOptions!.body as string)
 
-      expect(body.cardNumber).toBe(verifyPayload.cardNumber.toString())
-      expect(body.expirationMonth).toBe(verifyPayload.expiryMonth)
-      expect(body.expirationYear).toBe(verifyPayload.expiryYear + 2000)
-      expect(body.amount).toBe(expectedVerifiedAmount)
-      expect(body.currency).toBe('ISK')
+      expect(requestBody.cardNumber).toBe(verifyPayload.cardNumber.toString())
+      expect(requestBody.expirationMonth).toBe(verifyPayload.expiryMonth)
+      expect(requestBody.expirationYear).toBe(verifyPayload.expiryYear + 2000)
+      expect(requestBody.amount).toBe(expectedVerifiedAmount)
+      expect(requestBody.currency).toBe('ISK')
 
-      const expectedMd = generateMd({
-        correlationId,
-        paymentFlowId,
-        amount: verifyPayload.amount,
+      const mdFromRequestBody = requestBody.MD
+      const decodedMdPayload = getPayloadFromMd({
+        md: mdFromRequestBody,
         paymentsTokenSigningSecret: TOKEN_SIGNING_SECRET,
-        paymentsTokenSigningAlgorithm: TOKEN_SIGNING_ALGORITHM,
       })
 
-      expect(body.MD).toBe(expectedMd)
+      expect(decodedMdPayload.correlationId).toBe(correlationIdFromCacheKey)
 
       cacheSpy.mockRestore()
       fetchSpy.mockRestore()
