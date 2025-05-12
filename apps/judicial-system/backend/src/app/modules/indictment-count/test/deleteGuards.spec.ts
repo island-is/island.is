@@ -1,6 +1,6 @@
 import { CanActivate } from '@nestjs/common'
 
-import { CaseExistsGuard, CaseWriteGuard } from '../../case'
+import { MinimalCaseAccessGuard, MinimalCaseExistsGuard } from '../../case'
 import { IndictmentCountExistsGuard } from '../guards/indictmentCountExists.guard'
 import { IndictmentCountController } from '../indictmentCount.controller'
 
@@ -19,27 +19,27 @@ describe('IndictmentCountController - Delete guards', () => {
     expect(guards).toHaveLength(3)
   })
 
-  describe('CaseExistsGuard', () => {
+  describe('MinimalCaseExistsGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[0]()
     })
 
-    it('should have CaseExistsGuard as guard 1', () => {
-      expect(guard).toBeInstanceOf(CaseExistsGuard)
+    it('should have MinimalCaseExistsGuard as guard 1', () => {
+      expect(guard).toBeInstanceOf(MinimalCaseExistsGuard)
     })
   })
 
-  describe('CaseWriteGuard', () => {
+  describe('MinimalCaseAccessGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[1]()
     })
 
-    it('should have CaseWriteGuard as guard 2', () => {
-      expect(guard).toBeInstanceOf(CaseWriteGuard)
+    it('should have MinimalCaseAccessGuard as guard 2', () => {
+      expect(guard).toBeInstanceOf(MinimalCaseAccessGuard)
     })
   })
 
@@ -50,7 +50,7 @@ describe('IndictmentCountController - Delete guards', () => {
       guard = new guards[2]()
     })
 
-    it('should have CaseWriteGuard as guard 3', () => {
+    it('should have IndictmentCountExistsGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(IndictmentCountExistsGuard)
     })
   })
