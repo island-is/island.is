@@ -101,10 +101,14 @@ const IndictmentOverview = () => {
       toast.error('Tókst ekki að skrá í fangelsiskerfi')
       return
     }
-    toast.info('skráði í fangelsiskerfi')
+    toast.info(
+      updatedCase.isRegisteredInPrisonSystem
+        ? formatMessage(strings.verdictDeRegisteredInfo)
+        : formatMessage(strings.verdictRegistered),
+    )
     setWorkingCase((prevWorkingCase) => ({
       ...prevWorkingCase,
-      isRegisteredInPrisonSystem: !prevWorkingCase.isRegisteredInPrisonSystem,
+      isRegisteredInPrisonSystem: updatedCase.isRegisteredInPrisonSystem,
     }))
   }
 
@@ -112,7 +116,7 @@ const IndictmentOverview = () => {
     title: string
     colorScheme: ButtonTypes['colorScheme']
     icon: IconMapIcon
-  } = !workingCase?.isRegisteredInPrisonSystem
+  } = workingCase?.isRegisteredInPrisonSystem
     ? {
         title: formatMessage(strings.verdictRegistered),
         colorScheme: 'default',
