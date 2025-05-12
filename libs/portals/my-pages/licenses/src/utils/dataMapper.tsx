@@ -532,6 +532,7 @@ export const getLicenseDetailHeading = (
                 <LinkButton
                   to={formatMessage(m.ehicDescriptionLink)}
                   text={str ?? ''}
+                  variant="text"
                 />
               ),
             })}

@@ -39,7 +39,7 @@ export const IntroLinkImageComponent = ({
             <img
               className={styles.image}
               src={`${image.url}?w=774&fm=webp&q=80`}
-              alt=""
+              alt={image.description ?? ''}
             />
           </Box>
         </GridColumn>

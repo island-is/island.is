@@ -8,7 +8,6 @@ import {
   CaseState,
   CaseType,
   completedIndictmentCaseStates,
-  completedRequestCaseStates,
   courtOfAppealsRoles,
   DateType,
   EventType,
@@ -17,6 +16,7 @@ import {
   InstitutionType,
   investigationCases,
   publicProsecutionOfficeRoles,
+  RequestSharedWhen,
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
@@ -385,6 +385,9 @@ describe('getCasesQueryFilter', () => {
               [Op.and]: [
                 { type: [...restrictionCases, ...investigationCases] },
                 {
+                  defender_national_id: [user.nationalId, user.nationalId],
+                },
+                {
                   [Op.or]: [
                     {
                       [Op.and]: [
@@ -409,11 +412,80 @@ describe('getCasesQueryFilter', () => {
                         },
                       ],
                     },
-                    { state: completedRequestCaseStates },
+                    {
+                      state: [
+                        CaseState.ACCEPTED,
+                        CaseState.REJECTED,
+                        CaseState.DISMISSED,
+                      ],
+                    },
                   ],
                 },
+              ],
+            },
+            {
+              // victim lawyer assigned to a case
+              [Op.and]: [
+                { type: [...restrictionCases, ...investigationCases] },
                 {
-                  defender_national_id: [user.nationalId, user.nationalId],
+                  [Op.or]: [
+                    {
+                      // lawyer should get access when sent to court
+                      [Op.and]: [
+                        {
+                          id: {
+                            [Op.in]: Sequelize.literal(`
+                        (SELECT case_id
+                          FROM victim
+                          WHERE lawyer_national_id in ('${user.nationalId}', '${user.nationalId}') 
+                          AND lawyer_access_to_request = '${RequestSharedWhen.READY_FOR_COURT}')
+                      `),
+                          },
+                        },
+                        { state: [CaseState.SUBMITTED, CaseState.RECEIVED] },
+                      ],
+                    },
+                    {
+                      // lawyer should get access when court date is scheduled or when case is concluded
+                      [Op.and]: [
+                        {
+                          id: {
+                            [Op.in]: Sequelize.literal(`
+                          (SELECT case_id
+                            FROM victim
+                            WHERE lawyer_national_id in ('${user.nationalId}', '${user.nationalId}') 
+                            AND lawyer_access_to_request != '${RequestSharedWhen.OBLIGATED}')
+                        `),
+                          },
+                        },
+                        {
+                          [Op.or]: [
+                            {
+                              [Op.and]: [
+                                { state: CaseState.RECEIVED },
+                                {
+                                  id: {
+                                    [Op.in]: Sequelize.literal(`
+                                (SELECT case_id
+                                  FROM date_log
+                                  WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
+                              `),
+                                  },
+                                },
+                              ],
+                            },
+                            {
+                              state: [
+                                CaseState.ACCEPTED,
+                                CaseState.REJECTED,
+                                CaseState.DISMISSED,
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
                 },
               ],
             },

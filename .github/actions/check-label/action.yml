@@ -1,0 +1,44 @@
+name: 'Cancel workflow if label is not present'
+description: 'Checks if label is present on pull-request'
+
+inputs:
+  working-directory:
+    required: false
+    default: '.'
+    description: 'Working directory'
+  label:
+    required: false
+    default: 'deploy-feature'
+    description: 'The label that has to be set, will otherwise trigger workflow cancellation'
+  repository:
+    required: false
+    default: ${{ github.repository }}
+    description: 'Repository containing the PR'
+  pr-number:
+    required: true
+    description: 'Pull request number to check for labels'
+  token:
+    required: false
+    description: 'GitHub token with permissions to access PR information'
+    default: ${{ github.token }}
+
+outputs:
+  is-label-present:
+    description: 'Returns true if label is present otherwise false'
+    value: ${{ steps.check-label.outputs.has_label }}
+
+runs:
+  using: composite
+  steps:
+    - name: Check for label
+      id: check-label
+      uses: actions/github-script@v6
+      env:
+        REPOSITORY: ${{ inputs.repository }}
+        LABEL: ${{ inputs.label }}
+        PR_NUMBER: ${{ inputs.pr-number }}
+      with:
+        github-token: ${{ inputs.token }}
+        script: |
+          const { default: main } = await import('${{github.workspace}}/${{inputs.working-directory}}/.github/actions/check-label/main.mjs')
+          return await main({ github, context, core })

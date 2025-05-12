@@ -4,9 +4,9 @@ import {
   Box,
   Button,
   FileUploadStatus,
-  InputFileUpload,
+  InputFileUploadDeprecated,
   LoadingDots,
-  UploadFile,
+  UploadFileDeprecated,
 } from '@island.is/island-ui/core'
 import {
   FieldBaseProps,
@@ -68,7 +68,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { setValue, trigger } = useFormContext()
   const values = useWatch({ name: 'participantList' })
   const { formatMessage, locale } = useLocale()
-  const [fileState, setFileState] = useState<Array<UploadFile>>([])
+  const [fileState, setFileState] = useState<Array<UploadFileDeprecated>>([])
   const [participantList, setParticipantList] = useState<Array<Participant>>([])
   const [foundNotValid, setFoundNotValid] = useState<boolean>(false)
   const [csvInputError, setCsvInputError] = useState<Array<CSVError>>([])
@@ -121,7 +121,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     }
   }, [values, participantList, setValue, trigger])
 
-  const changeFile = (props: Array<UploadFile>) => {
+  const changeFile = (props: Array<UploadFileDeprecated>) => {
     const reader = new FileReader()
     reader.onload = function () {
       if (typeof reader.result !== 'string') {
@@ -236,7 +236,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           }
 
           if (errorListFromAnswers.length === 0) {
-            const fileWithSuccessStatus: UploadFile = props[0]
+            const fileWithSuccessStatus: UploadFileDeprecated = props[0]
             Object.assign(fileWithSuccessStatus, {
               status: FileUploadStatus.done,
             })
@@ -355,7 +355,7 @@ export const Participants: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <Controller
         name="csv-upload-participants"
         render={() => (
-          <InputFileUpload
+          <InputFileUploadDeprecated
             applicationId={application.id}
             fileList={fileState}
             header={formatMessage(participantMessages.labels.uploadHeader)}
