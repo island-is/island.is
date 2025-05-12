@@ -208,13 +208,13 @@ export const useCardPayment = ({
         })
 
         if (!chargeCardResponse.isSuccess) {
+          setThreeDSecureModalActive(false)
           throw new Error(
             (chargeCardResponse.responseCode as CardErrorCode) ||
               CardErrorCode.GenericDecline,
           )
         }
 
-        setThreeDSecureModalActive(false)
         onPaymentSuccess()
       } catch (e: any) {
         isVerifyingRef.current = false
