@@ -64,10 +64,10 @@ export const EmailsList = ({ items }: EmailsListProps) => {
     },
   })
 
-  const createCtaList = (id: string): EmailCta[] => {
+  const createCtaList = (item: Email): EmailCta[] => {
     const commonList = [
       {
-        emailId: id,
+        emailId: item.id,
         label: formatMessage(emailsMsg.emailDelete),
         isDestructive: true,
         onClick(emailId: string) {
@@ -82,11 +82,16 @@ export const EmailsList = ({ items }: EmailsListProps) => {
       },
     ]
 
-    if (isActor) {
+    if (
+      (isActor && item?.isConnectedToActorProfile) ||
+      (!isActor && item.primary)
+    ) {
+      return commonList
+    } else if (isActor) {
       return [
         {
           label: formatMessage(emailsMsg.connectEmailToDelegation),
-          emailId: id,
+          emailId: item.id,
           onClick(emailId: string) {
             setActorProfileEmail({
               variables: {
@@ -104,7 +109,7 @@ export const EmailsList = ({ items }: EmailsListProps) => {
     return [
       {
         label: formatMessage(emailsMsg.emailMakePrimary),
-        emailId: id,
+        emailId: item.id,
         onClick(emailId: string) {
           setPrimaryEmail({
             variables: {
@@ -138,7 +143,7 @@ export const EmailsList = ({ items }: EmailsListProps) => {
           key={item.id}
           title={item.email}
           tag={getTag(item)}
-          ctaList={createCtaList(item.id)}
+          ctaList={createCtaList(item)}
         />
       ))}
     </Box>
