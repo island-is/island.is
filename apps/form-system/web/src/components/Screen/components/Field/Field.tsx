@@ -46,7 +46,7 @@ export const Field = ({ field, hasError }: Props) => {
         <PhoneNumber {...fieldItems} /> // TODO: need to find out how the country code can be extracted from PhoneInput
       )}
       {field.fieldType === FieldTypesEnum.PROPERTY_NUMBER && (
-        <PropertyNumber item={field} />
+        <PropertyNumber {...fieldItems} />
       )}
       {field.fieldType === FieldTypesEnum.RADIO_BUTTONS && (
         <Radio {...fieldItems} />

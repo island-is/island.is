@@ -58,7 +58,7 @@ export const FileUpload = ({ item, hasError, lang = 'is' }: Props) => {
         buttonLabel={formatMessage(m.fileUploadButton)}
         onChange={onChange}
         onRemove={onRemove}
-        errorMessage="error"
+        errorMessage={error}
         accept={
           types?.map((t: string) => fileTypes[t as keyof typeof fileTypes]) ?? []
         }

@@ -41,7 +41,9 @@ type FieldTypeMapping = {
   },
   [FieldTypesEnum.PROPERTY_NUMBER]: {
     propertyNumber?: FormSystemValue['propertyNumber'],
-    address?: FormSystemValue['address']
+    address?: FormSystemValue['address'],
+    municipality?: FormSystemValue['municipality'],
+    postalCode?: FormSystemValue['postalCode']
   },
   [FieldTypesEnum.FILE]: {
     s3Key?: FormSystemValue['s3Key'],
@@ -89,7 +91,7 @@ const getInitialJsonForField = <T extends keyof FieldTypeMapping>(fieldType: T):
     case FieldTypesEnum.MESSAGE:
       return { text: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.PROPERTY_NUMBER:
-      return { propertyNumber: undefined, address: undefined } as FieldTypeMapping[T]
+      return { propertyNumber: undefined, address: undefined, municipality: undefined, postalCode: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.FILE:
       return { s3Key: undefined, s3Url: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.NUMBERBOX:

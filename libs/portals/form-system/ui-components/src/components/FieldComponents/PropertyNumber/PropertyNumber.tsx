@@ -8,24 +8,29 @@ import {
   Checkbox,
   Button
 } from '@island.is/island-ui/core'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, Dispatch, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { FormSystemField } from '@island.is/api/schema'
-import { m } from '../../../lib/messages'
+import { m, webMessages } from '../../../lib/messages'
 import { getValue } from '../../../lib/getValue'
+import { Action, PropertyNumberType } from '../../../lib'
+
 
 interface Props {
   item: FormSystemField
+  dispatch?: Dispatch<Action>
+  lang?: 'is' | 'en'
+  hasError?: boolean
 }
 
-type PropertyNumberType = {
-  propertyNumber: string
-  address: string
-  municipality: string
-  postalCode: string
+const emptyProperty: PropertyNumberType = {
+  propertyNumber: '',
+  address: '',
+  municipality: '',
+  postalCode: '',
 }
 
-export const PropertyNumber = ({ item }: Props) => {
+export const PropertyNumber = ({ item, dispatch, hasError, lang = 'is' }: Props) => {
   const { formatMessage } = useIntl()
   const [hasCustomPropertyNumber, setCustomPropertyNumber] = useState(false)
   const [property, setProperty] = useState<PropertyNumberType>({
@@ -55,7 +60,7 @@ export const PropertyNumber = ({ item }: Props) => {
       postalCode: '105',
     },
   ])
-  const [chosenProperty, setChosenProperty] = useState<string>('')
+  const [chosenProperty, setChosenProperty] = useState<PropertyNumberType | null>(property ? property : null)
 
   const getProperty = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const propertyNumber = e.target.value
@@ -89,7 +94,7 @@ export const PropertyNumber = ({ item }: Props) => {
   return (
     <Box background="white" padding={2} borderRadius="large" >
 
-      <Text variant="h4">Þínar eignir</Text>
+      <Text variant="h4">{formatMessage(webMessages.yourProperties)}</Text>
       <Box
         paddingTop={2}
         paddingBottom={hasCustomPropertyNumber ? 4 : 0}
@@ -101,9 +106,18 @@ export const PropertyNumber = ({ item }: Props) => {
               label={`${property.propertyNumber} - ${property.address}, ${property.municipality}, ${property.postalCode}`}
               name={property.propertyNumber}
               value={property.propertyNumber}
-              checked={chosenProperty === property.propertyNumber}
+              checked={chosenProperty?.propertyNumber === property.propertyNumber}
               onChange={(e) => {
-                setChosenProperty(e.target.checked ? property.propertyNumber : '')
+                setChosenProperty(e.target.checked ? property : emptyProperty)
+                if (dispatch) {
+                  dispatch({
+                    type: 'SET_PROPERTY_NUMBER',
+                    payload: {
+                      value: e.target.checked ? property : emptyProperty,
+                      id: item.id,
+                    }
+                  })
+                }
               }}
             />
           ))}

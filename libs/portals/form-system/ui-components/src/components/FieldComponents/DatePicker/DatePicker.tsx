@@ -5,6 +5,7 @@ import { DatePicker as DatePickerCore } from '@island.is/island-ui/core'
 import { m } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
 import { getValue } from '../../../lib/getValue'
+import { parseISO } from 'date-fns'
 
 
 interface Props {
@@ -14,7 +15,7 @@ interface Props {
   hasError?: boolean
 }
 export const DatePicker = ({ item, dispatch, lang, hasError }: Props) => {
-  const [value, setValue] = useState<Date | null>(getValue(item, 'date') ?? null)
+  const [value, setValue] = useState<Date | null>(parseISO(getValue(item, 'date')) ?? null)
   const { formatMessage } = useIntl()
   const handleChange = (date: Date) => {
     setValue(date)

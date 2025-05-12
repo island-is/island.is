@@ -108,23 +108,23 @@ export class ApplicationsController {
     await this.applicationsService.submit(id)
   }
 
-  // @ApiOperation({ summary: 'validate and save input values of a screen' })
-  // @ApiCreatedResponse({
-  //   description: 'validate and save input values of a screen',
-  //   type: ScreenValidationResponse
-  // })
-  // @ApiParam({ name: 'screenId', type: String })
-  // @ApiBody({ type: ApplicationDto })
-  // @Post('/submitScreen/:screenId')
-  // async submitScreen(
-  //   @Param('screenId') screenId: string,
-  //   @Body() applicationDto: ApplicationDto,
-  //   @CurrentUser()
-  //   user: User,
-  // ): Promise<ScreenValidationResponse> {
-  //   console.log('application', JSON.stringify(applicationDto, null, 2))
-  //   return await this.applicationsService.submitScreen(screenId, applicationDto)
-  // }
+  @ApiOperation({ summary: 'validate and save input values of a screen' })
+  @ApiCreatedResponse({
+    description: 'validate and save input values of a screen',
+    type: ScreenValidationResponse
+  })
+  @ApiParam({ name: 'screenId', type: String })
+  @ApiBody({ type: ApplicationDto })
+  @Post('submitScreen/:screenId')
+  async submitScreen(
+    @Param('screenId') screenId: string,
+    @Body() applicationDto: ApplicationDto,
+    @CurrentUser()
+    user: User,
+  ): Promise<ScreenValidationResponse> {
+    console.log('application', JSON.stringify(applicationDto, null, 2))
+    return await this.applicationsService.submitScreen(screenId, applicationDto)
+  }
 
   @ApiOperation({ summary: 'Get all applications belonging to organization' })
   @ApiOkResponse({
@@ -180,7 +180,7 @@ export class ApplicationsController {
     type: ScreenDto,
   })
   @ApiBody({ type: SubmitScreenDto })
-  @Put('/submitScreen/:screenId')
+  @Put('submitScreen/:screenId')
   async saveScreen(
     @Param('screenId') screenId: string,
     @Body() screenDto: SubmitScreenDto,

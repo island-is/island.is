@@ -40,9 +40,25 @@ export const fieldReducer = (
     }
     case 'SET_DATE': {
       const { value, id } = action.payload
-      return setFieldValue(state, 'date', id, value)
+      return setFieldValue(state, 'date', id, new Date(value))
+    }
+    case 'SET_PROPERTY_NUMBER': {
+      const { value, id } = action.payload
+      return setMultipleFieldValues(state, id, value)
     }
     default:
       return state
   }
+}
+
+const setMultipleFieldValues = (
+  state: ApplicationState,
+  id: string,
+  values: Record<string, any>
+): ApplicationState => {
+  return Object.entries(values).reduce(
+    (acc, [fieldName, fieldValue]) =>
+      setFieldValue(acc, fieldName, id, fieldValue),
+    state
+  )
 }
