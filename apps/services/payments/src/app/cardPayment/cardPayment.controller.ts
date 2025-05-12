@@ -327,6 +327,7 @@ export class CardPaymentController {
       try {
         const refund = await retry(() =>
           this.cardPaymentService.refund(
+            paymentFlowId,
             chargeCardInput.cardNumber,
             paymentResult as any,
             chargeCardInput.amount,
@@ -435,6 +436,7 @@ export class CardPaymentController {
         try {
           const refund = await retry(() =>
             this.cardPaymentService.refund(
+              paymentFlowId,
               chargeCardInput.cardNumber,
               paymentResult as any,
               chargeCardInput.amount,
