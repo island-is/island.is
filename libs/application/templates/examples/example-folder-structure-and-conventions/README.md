@@ -36,7 +36,7 @@ The aim is to have all applications to be coded in a similar way, so that every 
 |-- graphql/-------------------------------# optional folder for graphql queries and mutations.\
 |
 |-- lib/-----------------------------------# folder for data schema, messages, and the main template file.\
-|-- |-- dataScema.ts-----------------------# Validation for the application.\
+|-- |-- dataSchema.ts----------------------# Validation for the application.\
 |-- |-- mainTemplate.ts--------------------# Main template file. State machine for the application, mapUsersToRole and more\
 |-- |-- messages.ts------------------------# File for all text that appears on the screen, synced with Contentful.\
 |-- |-- messages/--------------------------# optional folder for messages if there is a need to have the messages more organized.\
