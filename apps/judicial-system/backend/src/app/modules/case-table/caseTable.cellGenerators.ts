@@ -51,6 +51,8 @@ interface CaseTableCellGenerator {
   generate: (caseModel: Case, user: TUser) => CaseTableCellValue | undefined
 }
 
+const getDays = (days: number) => days * 24 * 60 * 60 * 1000
+
 export const caseTableCellGenerators: Record<
   CaseTableColumnKey,
   CaseTableCellGenerator
@@ -104,7 +106,12 @@ export const caseTableCellGenerators: Record<
     }),
   },
   appealState: {
-    attributes: ['appealState', 'appealRulingDecision', 'appealCaseNumber'],
+    attributes: [
+      'appealState',
+      'appealRulingDecision',
+      'appealCaseNumber',
+      'appealReceivedByCourtDate',
+    ],
     generate: (c: Case, user: TUser): TagValue | undefined => {
       switch (c.appealState) {
         case CaseAppealState.WITHDRAWN:
@@ -114,9 +121,17 @@ export const caseTableCellGenerators: Record<
         case CaseAppealState.RECEIVED:
           if (isCourtOfAppealsUser(user) && !c.appealCaseNumber) {
             return { color: 'purple', text: 'Nýtt' }
-          } else {
-            return { color: 'darkerBlue', text: 'Móttekið' }
           }
+
+          if (
+            isCourtOfAppealsUser(user) &&
+            c.appealReceivedByCourtDate &&
+            Date.now() >= c.appealReceivedByCourtDate.getTime() + getDays(1)
+          ) {
+            return { color: 'mint', text: 'Frestir liðnir' }
+          }
+
+          return { color: 'darkerBlue', text: 'Móttekið' }
         case CaseAppealState.COMPLETED:
           return {
             color:
