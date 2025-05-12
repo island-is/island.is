@@ -36,7 +36,6 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 import {
   CaseFileCategory,
   CaseState,
@@ -329,12 +328,14 @@ const Processing: FC = () => {
             {workingCase.defendants.map((defendant) => (
               <Box marginBottom={2} key={defendant.id}>
                 <BlueBox>
-                  <Text variant="h4" marginBottom={3}>
-                    {`${formatMessage(strings.defendantName, {
+                  <SectionHeading
+                    title={formatMessage(strings.defendantName, {
                       name: defendant.name,
-                    })} `}
-                    <RequiredStar />
-                  </Text>
+                    })}
+                    heading="h3"
+                    variant="h4"
+                    required
+                  />
                   <div className={styles.grid}>
                     <RadioButton
                       id={`defendant-${defendant.id}-plea-decision-guilty`}
