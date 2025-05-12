@@ -99,8 +99,6 @@ const Processing: FC = () => {
 
   const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
     useState<{ nationalId: string | null; civilClaimantId: string }>()
-  const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
-    useState<boolean>()
   const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const initialize = useCallback(async () => {
@@ -220,8 +218,6 @@ const Processing: FC = () => {
   }
 
   const handleHasCivilClaimsChange = async (hasCivilClaims: boolean) => {
-    setHasCivilClaimantChoice(hasCivilClaims)
-
     const res = await updateUnlimitedAccessCase(workingCase.id, {
       hasCivilClaims,
     })
@@ -233,16 +229,7 @@ const Processing: FC = () => {
     setWorkingCase((prev) => ({
       ...prev,
       hasCivilClaims,
-      civilClaimants:
-        hasCivilClaims && res.civilClaimants
-          ? [
-              {
-                id: res.civilClaimants[0].id,
-                name: res.civilClaimants[0].name,
-                nationalId: res.civilClaimants[0].nationalId,
-              },
-            ]
-          : [],
+      civilClaimants: res.civilClaimants,
     }))
   }
 
@@ -301,8 +288,6 @@ const Processing: FC = () => {
     // We want this hook to run exclusively when personData changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personData])
-
-  console.log(workingCase)
 
   return (
     <PageLayout
@@ -424,11 +409,7 @@ const Processing: FC = () => {
                   large
                   backgroundColor="white"
                   onChange={() => handleHasCivilClaimsChange(true)}
-                  checked={
-                    hasCivilClaimantChoice === true ||
-                    (hasCivilClaimantChoice === undefined &&
-                      workingCase.hasCivilClaims === true)
-                  }
+                  checked={workingCase.hasCivilClaims === true}
                 />
               </Box>
               <Box width="half" marginLeft={1}>
@@ -439,11 +420,7 @@ const Processing: FC = () => {
                   large
                   backgroundColor="white"
                   onChange={() => handleHasCivilClaimsChange(false)}
-                  checked={
-                    hasCivilClaimantChoice === false ||
-                    (hasCivilClaimantChoice === undefined &&
-                      workingCase.hasCivilClaims === false)
-                  }
+                  checked={workingCase.hasCivilClaims === false}
                 />
               </Box>
             </Box>
