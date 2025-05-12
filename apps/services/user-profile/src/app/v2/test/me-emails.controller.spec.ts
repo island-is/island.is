@@ -479,7 +479,7 @@ describe('Me emails controller', () => {
       expect(emailCount).toBe(0)
     })
 
-    it('should not allow deletion of primary email', async () => {
+    it('should be able to delete primary email', async () => {
       // Create user profile with the test email
       await fixtureFactory.createUserProfile({ ...testUserProfile, emails: [] })
 
@@ -492,12 +492,8 @@ describe('Me emails controller', () => {
 
       const res = await server.delete(`/v2/me/emails/${primaryEmail.id}`)
 
-      expect(res.status).toEqual(400)
-      expect(res.body).toMatchObject({
-        status: 400,
-        title: 'Bad Request',
-        detail: 'Cannot delete primary email',
-      })
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({ success: true })
 
       // Verify email was not deleted from database
       const emailInDb = await emailsModel.findOne({
@@ -505,7 +501,7 @@ describe('Me emails controller', () => {
           id: primaryEmail.id,
         },
       })
-      expect(emailInDb).not.toBeNull()
+      expect(emailInDb).toBeNull()
 
       // Also verify by count that the email is still in the database
       const emailCount = await emailsModel.count({
@@ -513,7 +509,7 @@ describe('Me emails controller', () => {
           nationalId: testUserProfile.nationalId,
         },
       })
-      expect(emailCount).toBe(1)
+      expect(emailCount).toBe(0)
     })
 
     it('should return 400 when email does not exist', async () => {

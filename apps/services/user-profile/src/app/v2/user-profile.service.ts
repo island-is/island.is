@@ -797,6 +797,17 @@ export class UserProfileService {
     toNationalId: string
     fromNationalId: string
   }): Promise<ActorProfileDetailsDto> {
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    // Check if this delegation exists
+    const delegation = incomingDelegations.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('Delegation does not exist')
+    }
+
     // Get actor profile (delegation preferences)
     const actorProfile = await this.actorProfileModel.findOne({
       where: {
@@ -1012,16 +1023,14 @@ export class UserProfileService {
     fromNationalId: string
     emailsId: string
   }): Promise<ActorProfileDetailsDto> {
-    // Verify the actor profile exists
-    const actorProfile = await this.actorProfileModel.findOne({
-      where: {
-        toNationalId,
-        fromNationalId,
-      },
-    })
+    // Verify the delegation exists
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+    const delegation = incomingDelegations.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
 
-    if (!actorProfile) {
-      throw new BadRequestException('Actor profile does not exist')
+    if (!delegation) {
+      throw new BadRequestException('Delegation does not exist')
     }
 
     // Verify the email exists
@@ -1036,14 +1045,33 @@ export class UserProfileService {
 
     // Get or create actor profile and update it
     await this.sequelize.transaction(async (transaction) => {
-      await actorProfile.update(
-        {
-          emailsId,
+      const [actorProfile] = await this.actorProfileModel.findOrCreate({
+        where: {
+          toNationalId,
+          fromNationalId,
+        },
+        defaults: {
+          toNationalId,
+          fromNationalId,
+          emailNotifications: true,
           lastNudge: new Date(),
           nextNudge: addMonths(new Date(), NUDGE_INTERVAL),
+          emailsId,
         },
-        { transaction },
-      )
+        transaction,
+        useMaster: true,
+      })
+
+      if (actorProfile) {
+        await actorProfile.update(
+          {
+            emailsId,
+            lastNudge: new Date(),
+            nextNudge: addMonths(new Date(), NUDGE_INTERVAL),
+          },
+          { transaction },
+        )
+      }
     })
 
     // Return the updated actor profile details
