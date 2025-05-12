@@ -138,9 +138,7 @@ export const EmailsList = ({ items }: EmailsListProps) => {
           key={item.id}
           title={item.email}
           tag={getTag(item)}
-          ctaList={
-            item.primary && !isActor ? undefined : createCtaList(item.id)
-          }
+          ctaList={createCtaList(item.id)}
         />
       ))}
     </Box>
