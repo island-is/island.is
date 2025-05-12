@@ -1,7 +1,7 @@
 import { InstitutionUser, isCourtOfAppealsUser } from '../user'
 import { CaseTableType } from './caseTable'
 
-interface CaseTableDesctiptor {
+interface CaseTableDescriptor {
   type: CaseTableType
   route: string
   title: string
@@ -10,7 +10,7 @@ interface CaseTableDesctiptor {
 
 interface CaseTableGroup {
   title: string
-  tables: CaseTableDesctiptor[]
+  tables: CaseTableDescriptor[]
 }
 
 const courtOfAppealsTableGroups: CaseTableGroup[] = [
