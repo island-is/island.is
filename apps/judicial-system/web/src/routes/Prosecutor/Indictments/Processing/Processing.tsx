@@ -232,6 +232,7 @@ const Processing: FC = () => {
 
     setWorkingCase((prev) => ({
       ...prev,
+      hasCivilClaims,
       civilClaimants:
         hasCivilClaims && res.civilClaimants
           ? [
