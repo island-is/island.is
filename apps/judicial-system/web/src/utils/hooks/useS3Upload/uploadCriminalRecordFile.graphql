@@ -1,5 +1,8 @@
-mutation UploadCriminalRecordFile($input: CreateDefendantFileInput!) {
-  createDefendantFile(input: $input) {
-    id
+mutation UploadCriminalRecordFile($input: CreateCriminalRecordInput!) {
+  uploadCriminalRecordFile(input: $input) {
+    name
+    key
+    size
+    type
   }
 }

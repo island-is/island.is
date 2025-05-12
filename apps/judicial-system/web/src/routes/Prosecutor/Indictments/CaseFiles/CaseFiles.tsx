@@ -35,8 +35,13 @@ const CaseFiles = () => {
     updateUploadFile,
     removeUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
-  const { handleFetchCriminalRecord, handleUpload, handleRetry, handleRemove } =
-    useS3Upload(workingCase.id)
+
+  const {
+    handleUploadCriminalRecord,
+    handleUpload,
+    handleRetry,
+    handleRemove,
+  } = useS3Upload(workingCase.id)
 
   const stepIsValid = allFilesDoneOrError
   const handleNavigationTo = useCallback(
@@ -71,11 +76,10 @@ const CaseFiles = () => {
                   return
                 }
 
-                // const criminalRecords = fetchCriminalRecords
-                // handleUpload(addUploadFiles(criminalRecords, {category: CaseFileCategory.CRIMINAL_RECORD,updateUploadFile})
-
-                // currently fetch all criminal records for defendants on a given case
-                handleFetchCriminalRecord(workingCase.defendants)
+                handleUploadCriminalRecord(
+                  workingCase.defendants,
+                  updateUploadFile,
+                )
               }}
               size="small"
             >

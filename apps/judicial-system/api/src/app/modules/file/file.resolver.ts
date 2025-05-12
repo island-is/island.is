@@ -16,6 +16,7 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CreateCivilClaimantFileInput } from './dto/createCivilClaimantFile.input'
+import { CreateCriminalRecordInput } from './dto/createCriminalRecord.input'
 import { CreateDefendantFileInput } from './dto/createDefendantFile.input'
 import { CreateFileInput } from './dto/createFile.input'
 import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
@@ -102,10 +103,10 @@ export class FileResolver {
     )
   }
 
-  @Mutation(() => CaseFile)
+  @Mutation(() => UploadCriminalRecordFileResponse)
   uploadCriminalRecordFile(
-    @Args('input', { type: () => CreateDefendantFileInput })
-    input: CreateDefendantFileInput,
+    @Args('input', { type: () => CreateCriminalRecordInput })
+    input: CreateCriminalRecordInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources')
     { backendService }: { backendService: BackendService },

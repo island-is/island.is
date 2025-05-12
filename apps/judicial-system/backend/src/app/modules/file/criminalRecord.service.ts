@@ -89,7 +89,10 @@ export class CriminalRecordService {
         if (res.ok) {
           const contentArrayBuffer = await res.arrayBuffer()
           const buffer = Buffer.from(contentArrayBuffer)
-          return { fileName: `Sakavottord_${defendant.nationalId}.pdf`, buffer }
+          return {
+            fileName: `Sakavottord_${defendant.nationalId}.pdf`,
+            buffer,
+          }
         }
         const reason = await res.text()
 
@@ -133,6 +136,11 @@ export class CriminalRecordService {
     const key = `${defendant.caseId}/${uuid()}/${pdf.fileName}`
     await this.awsS3Service.putObject(caseType, key, pdf.buffer)
 
-    return { key, size: pdf.buffer.length }
+    return {
+      name: pdf.fileName,
+      key,
+      size: pdf.buffer.length,
+      type: 'application/pdf',
+    }
   }
 }

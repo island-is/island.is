@@ -3,8 +3,14 @@ import { Field, Int, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class UploadCriminalRecordFileResponse {
   @Field(() => String)
-  key!: string
+  readonly name!: string
+
+  @Field(() => String)
+  readonly key!: string
 
   @Field(() => Int)
-  size!: number
+  readonly size!: number
+
+  @Field(() => String)
+  readonly type!: string
 }

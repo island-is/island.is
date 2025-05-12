@@ -32,7 +32,6 @@ import {
   DeleteFileMutation,
   useDeleteFileMutation,
 } from './deleteFile.generated'
-import { useFetchAndCreateCriminalRecordFileMutation } from './fetchAndCreateCriminalRecordCaseFile.generated'
 import {
   LimitedAccessCreateCivilClaimantFileMutation,
   useLimitedAccessCreateCivilClaimantFileMutation,
@@ -393,7 +392,6 @@ const useS3Upload = (
           const presignedPost = await getPresignedPost(file)
 
           await uploadToS3(file, presignedPost, (percent) => {
-            console.log({ percent })
             updateFile({ ...file, percent })
           })
 
@@ -437,23 +435,60 @@ const useS3Upload = (
     [getPresignedPost, addFileToCaseState, formatMessage],
   )
 
-  const handleFetchCriminalRecord = (defendants: Defendant[]) => {
-    const files = defendants.map(({ id }) => {
-      try {
-        // TODO: rename to uploadCriminalRecordFile
-        const criminalRecordFile = uploadCriminalRecordFile()
-        // (1) fetch criminal record and upload it to S3 as we do for police case files
-        // (2) then on success add files to the database
-        // (3) then update the upload file state
+  const handleUploadCriminalRecord = (
+    defendants: Defendant[],
+    updateFile: (file: TUploadFile, newId?: string) => void,
+  ) => {
+    const promises = defendants.map(({ id, nationalId }) => {
+      const commonFileProps = {
+        // add a temp tame for error handling
+        name: `Sakavottord_${nationalId ?? ''}.pdf`,
+        category: CaseFileCategory.CRIMINAL_RECORD,
+        // state: CaseFileState.STORED_IN_RVG,
+      }
 
-        return true
+      try {
+        // fetch criminal record and upload it to S3 in the backend
+        return uploadCriminalRecordFile({
+          variables: {
+            input: { caseId, defendantId: id },
+          },
+        }).then(async ({ data: criminalRecordFile }) => {
+          if (!criminalRecordFile) {
+            throw Error('Failed to upload criminal record to S3')
+          }
+
+          const fileProps = {
+            ...commonFileProps,
+            name: criminalRecordFile.uploadCriminalRecordFile.name,
+            key: criminalRecordFile.uploadCriminalRecordFile.key,
+            size: criminalRecordFile.uploadCriminalRecordFile.size,
+            type: criminalRecordFile.uploadCriminalRecordFile.type,
+            defendantId: id,
+          }
+          // create the case file in the backend
+          const fileId = await addFileToCaseState(fileProps)
+
+          // update the client state with the newly fetched file
+          updateFile(
+            {
+              ...fileProps,
+              percent: 100,
+              status: FileUploadStatus.done,
+            },
+            fileId,
+          )
+        })
       } catch (error) {
         toast.error(formatMessage(strings.uploadFailed))
-        // updateFile({ ...file, percent: 0, status: FileUploadStatus.error })
-
-        return false
+        updateFile({
+          ...commonFileProps,
+          percent: 0,
+          status: FileUploadStatus.error,
+        })
       }
     })
+    return Promise.all(promises)
   }
 
   const handleUploadFromPolice = useCallback(
@@ -572,7 +607,7 @@ const useS3Upload = (
     handleRetry,
     handleRemove,
     handleUploadFromPolice,
-    handleFetchCriminalRecord,
+    handleUploadCriminalRecord,
   }
 }
 
