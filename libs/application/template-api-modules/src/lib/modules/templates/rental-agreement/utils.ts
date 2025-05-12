@@ -2,6 +2,13 @@ import { Application, ApplicationFileInput } from '@island.is/api/schema'
 import { AddressProps, ApplicantsInfo, CostField, Unit } from './types'
 import { getValueViaPath } from '@island.is/application/core'
 
+export const formatPhoneNumber = (phone: string) => {
+  return phone
+    .trim()
+    .replace(/(^00354|^\+354)/g, '') // Remove country code
+    .replace(/\D/g, '') // Remove all non-digits
+}
+
 export const filterNonRepresentativesAndMapInfo = (
   applicants: Array<ApplicantsInfo> = [],
 ) => {
@@ -29,6 +36,10 @@ export const applicationAnswers = (answers: Application['answers']) => {
     ),
     categoryType: getValueViaPath(answers, 'registerProperty.categoryType'),
     categoryClass: getValueViaPath(answers, 'registerProperty.categoryClass'),
+    categoryClassGroup: getValueViaPath(
+      answers,
+      'registerProperty.categoryClassGroup',
+    ),
     description: getValueViaPath<string>(
       answers,
       'specialProvisions.descriptionInput',
@@ -44,9 +55,9 @@ export const applicationAnswers = (answers: Application['answers']) => {
       answers,
       'condition.resultsFiles',
     ),
-    fireBlankets: getValueViaPath<string>(
+    fireBlanket: getValueViaPath<string>(
       answers,
-      'fireProtections.fireBlankets',
+      'fireProtections.fireBlanket',
     ),
     smokeDetectors: getValueViaPath<string>(
       answers,
@@ -68,7 +79,6 @@ export const applicationAnswers = (answers: Application['answers']) => {
       'rentalAmount.indexConnected',
     ),
     indexType: getValueViaPath<string>(answers, 'rentalAmount.indexTypes'),
-    indexRate: getValueViaPath<string>(answers, 'rentalAmount.indexRate'),
     paymentMethod: getValueViaPath<string>(
       answers,
       'rentalAmount.paymentMethodOptions',
