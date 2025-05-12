@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
 import {
   Box,
@@ -34,6 +34,7 @@ import { OnboardingIntro } from './components/Intro'
 import { useConfirmNudgeMutation } from './confirmNudge.generated'
 import { DropModalType } from './types/form'
 import { EmailsList } from '../../../emails/EmailsList/EmailsList'
+import orderBy from 'lodash/orderBy'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -75,7 +76,15 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
 
   // Filter out emails that are not set
-  const emails = userProfile?.emails?.filter((item) => item.email) ?? []
+  const emails = useMemo(() => {
+    return (
+      orderBy(
+        userProfile?.emails?.filter((item) => item.email),
+        ['primary'],
+        ['desc'],
+      ) ?? []
+    )
+  }, [userProfile?.emails])
 
   const [confirmNudge] = useConfirmNudgeMutation()
   const isCompany = userInfo?.profile?.subjectType === 'legalEntity'

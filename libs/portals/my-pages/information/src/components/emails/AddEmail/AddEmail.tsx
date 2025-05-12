@@ -57,13 +57,17 @@ export const AddEmail = ({ onAddEmail, loading, error }: AddEmailProps) => {
   const onSubmit = async ({ email }: EmailFormValues) => {
     if (email) {
       await onAddEmail(email)
-      methods.reset()
+      methods.reset({
+        email: '',
+      })
     }
   }
 
   useEffect(() => {
     if (error) {
-      methods.reset()
+      methods.reset({
+        email: '',
+      })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error])
