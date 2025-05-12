@@ -1,4 +1,8 @@
-import { InstitutionUser, isCourtOfAppealsUser } from '../user'
+import {
+  InstitutionUser,
+  isCourtOfAppealsUser,
+  isPrisonAdminUser,
+} from '../user'
 import { CaseTableType } from './caseTable'
 
 interface CaseTableDescriptor {
@@ -33,11 +37,52 @@ const courtOfAppealsTableGroups: CaseTableGroup[] = [
   },
 ]
 
+const fmstTableGroups: CaseTableGroup[] = [
+  {
+    title: 'Rannsóknarmál',
+    tables: [
+      {
+        type: CaseTableType.FMST_ACTIVE,
+        route: 'virk-mal',
+        title: 'Virk mál',
+        description: 'Virk gæsluvarðhöld og farbönn.',
+      },
+      {
+        type: CaseTableType.FMST_DONE,
+        route: 'lokid',
+        title: 'Lokið',
+        description: 'Lokin gæsluvarðhöld og farbönn.',
+      },
+    ],
+  },
+  {
+    title: 'Sakamál',
+    tables: [
+      {
+        type: CaseTableType.FMST_INDICTMENT_SENT_TO_PRISON_ADMIN,
+        route: 'mal-til-fullnustu',
+        title: 'Mál til fullnustu',
+        description: 'Ný og móttekin mál.',
+      },
+      {
+        type: CaseTableType.FMST_INDICTMENT_REGISTERED_RULING,
+        route: 'skradir-domar',
+        title: 'Skráðir dómar',
+        description: 'Mál sem hafa verið skráð',
+      },
+    ],
+  },
+]
+
 export const getCaseTableGroups = (
   user: InstitutionUser | undefined,
 ): CaseTableGroup[] => {
   if (isCourtOfAppealsUser(user)) {
     return courtOfAppealsTableGroups
+  }
+
+  if (isPrisonAdminUser(user)) {
+    return fmstTableGroups
   }
 
   return []

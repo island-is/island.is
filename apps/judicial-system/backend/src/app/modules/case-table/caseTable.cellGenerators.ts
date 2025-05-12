@@ -51,125 +51,134 @@ interface CaseTableCellGenerator {
   generate: (caseModel: Case, user: TUser) => CaseTableCellValue | undefined
 }
 
+const caseNumber: CaseTableCellGenerator = {
+  attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
+  generate: (c: Case): StringGroupValue => ({
+    s: [
+      c.appealCaseNumber ?? '',
+      c.courtCaseNumber ?? '',
+      c.policeCaseNumbers.length > 1
+        ? `${c.policeCaseNumbers[0]} +${c.policeCaseNumbers.length - 1}`
+        : c.policeCaseNumbers[0],
+    ],
+  }),
+}
+
+const defendants: CaseTableCellGenerator = {
+  includes: {
+    defendants: {
+      model: Defendant,
+      attributes: ['nationalId', 'name'],
+      order: [['created', 'ASC']],
+      separate: true,
+    },
+  },
+  generate: (c: Case): StringGroupValue | undefined =>
+    c.defendants && c.defendants.length > 0
+      ? {
+          s: [
+            c.defendants[0].name ?? '',
+            c.defendants.length > 1
+              ? `+ ${c.defendants.length - 1}`
+              : c.defendants[0].nationalId ?? '',
+          ],
+        }
+      : undefined,
+}
+
+const caseType: CaseTableCellGenerator = {
+  attributes: ['type', 'decision', 'parentCaseId'],
+  generate: (c: Case): StringGroupValue => ({
+    s: [
+      capitalize(
+        formatCaseType(
+          c.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+            ? CaseType.CUSTODY
+            : c.type,
+        ),
+      ),
+      c.parentCaseId ? 'Framlenging' : '',
+    ],
+  }),
+}
+
+const appealState: CaseTableCellGenerator = {
+  attributes: ['appealState', 'appealRulingDecision', 'appealCaseNumber'],
+  generate: (c: Case, user: TUser): TagValue | undefined => {
+    switch (c.appealState) {
+      case CaseAppealState.WITHDRAWN:
+        return { color: 'red', text: 'Afturkallað' }
+      case CaseAppealState.APPEALED:
+        return { color: 'red', text: 'Kært' }
+      case CaseAppealState.RECEIVED:
+        if (isCourtOfAppealsUser(user) && !c.appealCaseNumber) {
+          return { color: 'purple', text: 'Nýtt' }
+        } else {
+          return { color: 'darkerBlue', text: 'Móttekið' }
+        }
+      case CaseAppealState.COMPLETED:
+        return {
+          color:
+            c.appealRulingDecision === CaseAppealRulingDecision.ACCEPTING
+              ? 'mint'
+              : c.appealRulingDecision === CaseAppealRulingDecision.CHANGED ||
+                c.appealRulingDecision ===
+                  CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY ||
+                c.appealRulingDecision === CaseAppealRulingDecision.REPEAL ||
+                c.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+              ? 'rose'
+              : 'blueberry',
+          text: getAppealResultTextByValue(c.appealRulingDecision),
+        }
+      default:
+        return undefined
+    }
+  },
+}
+
+const courtOfAppealsHead: CaseTableCellGenerator = {
+  includes: {
+    appealJudge1: {
+      model: User,
+      attributes: ['name'],
+    },
+  },
+  generate: (c: Case): StringGroupValue | undefined =>
+    c.appealJudge1
+      ? { s: [getInitials(c.appealJudge1.name) ?? ''] }
+      : undefined,
+}
+
+const validFromTo: CaseTableCellGenerator = {
+  attributes: [
+    'type',
+    'state',
+    'initialRulingDate',
+    'rulingDate',
+    'validToDate',
+  ],
+  generate: (c: Case): StringGroupValue | undefined =>
+    isRestrictionCase(c.type) && c.state === CaseState.ACCEPTED && c.validToDate
+      ? c.initialRulingDate || c.rulingDate
+        ? {
+            s: [
+              `${formatDate(c.initialRulingDate ?? c.rulingDate) ?? ''} - ${
+                formatDate(c.validToDate) ?? ''
+              }`,
+            ],
+          }
+        : { s: [formatDate(c.validToDate) ?? ''] }
+      : undefined,
+}
+
 export const caseTableCellGenerators: Record<
   CaseTableColumnKey,
   CaseTableCellGenerator
 > = {
-  caseNumber: {
-    attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
-    generate: (c: Case): StringGroupValue => ({
-      s: [
-        c.appealCaseNumber ?? '',
-        c.courtCaseNumber ?? '',
-        c.policeCaseNumbers.length > 1
-          ? `${c.policeCaseNumbers[0]} +${c.policeCaseNumbers.length - 1}`
-          : c.policeCaseNumbers[0],
-      ],
-    }),
-  },
-  defendants: {
-    includes: {
-      defendants: {
-        model: Defendant,
-        attributes: ['nationalId', 'name'],
-        order: [['created', 'ASC']],
-        separate: true,
-      },
-    },
-    generate: (c: Case): StringGroupValue | undefined =>
-      c.defendants && c.defendants.length > 0
-        ? {
-            s: [
-              c.defendants[0].name ?? '',
-              c.defendants.length > 1
-                ? `+ ${c.defendants.length - 1}`
-                : c.defendants[0].nationalId ?? '',
-            ],
-          }
-        : undefined,
-  },
-  caseType: {
-    attributes: ['type', 'decision', 'parentCaseId'],
-    generate: (c: Case): StringGroupValue => ({
-      s: [
-        capitalize(
-          formatCaseType(
-            c.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-              ? CaseType.CUSTODY
-              : c.type,
-          ),
-        ),
-        c.parentCaseId ? 'Framlenging' : '',
-      ],
-    }),
-  },
-  appealState: {
-    attributes: ['appealState', 'appealRulingDecision', 'appealCaseNumber'],
-    generate: (c: Case, user: TUser): TagValue | undefined => {
-      switch (c.appealState) {
-        case CaseAppealState.WITHDRAWN:
-          return { color: 'red', text: 'Afturkallað' }
-        case CaseAppealState.APPEALED:
-          return { color: 'red', text: 'Kært' }
-        case CaseAppealState.RECEIVED:
-          if (isCourtOfAppealsUser(user) && !c.appealCaseNumber) {
-            return { color: 'purple', text: 'Nýtt' }
-          } else {
-            return { color: 'darkerBlue', text: 'Móttekið' }
-          }
-        case CaseAppealState.COMPLETED:
-          return {
-            color:
-              c.appealRulingDecision === CaseAppealRulingDecision.ACCEPTING
-                ? 'mint'
-                : c.appealRulingDecision === CaseAppealRulingDecision.CHANGED ||
-                  c.appealRulingDecision ===
-                    CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY ||
-                  c.appealRulingDecision === CaseAppealRulingDecision.REPEAL ||
-                  c.appealRulingDecision ===
-                    CaseAppealRulingDecision.DISCONTINUED
-                ? 'rose'
-                : 'blueberry',
-            text: getAppealResultTextByValue(c.appealRulingDecision),
-          }
-        default:
-          return undefined
-      }
-    },
-  },
-  courtOfAppealsHead: {
-    includes: {
-      appealJudge1: {
-        model: User,
-        attributes: ['name'],
-      },
-    },
-    generate: (c: Case): StringGroupValue | undefined =>
-      c.appealJudge1
-        ? { s: [getInitials(c.appealJudge1.name) ?? ''] }
-        : undefined,
-  },
-  validFromTo: {
-    attributes: [
-      'type',
-      'state',
-      'initialRulingDate',
-      'rulingDate',
-      'validToDate',
-    ],
-    generate: (c: Case): StringGroupValue | undefined =>
-      isRestrictionCase(c.type) &&
-      c.state === CaseState.ACCEPTED &&
-      c.validToDate
-        ? c.initialRulingDate || c.rulingDate
-          ? {
-              s: [
-                `${formatDate(c.initialRulingDate ?? c.rulingDate) ?? ''} - ${
-                  formatDate(c.validToDate) ?? ''
-                }`,
-              ],
-            }
-          : { s: [formatDate(c.validToDate) ?? ''] }
-        : undefined,
-  },
+  caseNumber,
+  defendants,
+  caseType,
+  appealState,
+  courtOfAppealsHead,
+  validFromTo,
 }
