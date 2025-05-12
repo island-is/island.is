@@ -336,17 +336,14 @@ export class PaymentFlowService {
     } catch (e) {
       this.logger.error(
         `[${update.paymentFlowId}] Failed to log payment flow update event to database`,
-        { error: e, updateDetails: update },
+        { error: e },
       )
       // Depending on requirements, we might not want to stop the onUpdateUrl notification if DB log fails
       // For now, it continues.
     }
 
-    // Declare updateBody outside the try block to ensure it's in scope for the catch block
-    let updateBody: PaymentFlowUpdateEvent | null = null
-
     try {
-      updateBody = {
+      const updateBody: PaymentFlowUpdateEvent = {
         type: update.type,
         paymentFlowId: update.paymentFlowId,
         paymentFlowMetadata: paymentFlow.metadata,
@@ -378,7 +375,6 @@ export class PaymentFlowService {
               {
                 url: paymentFlow.onUpdateUrl,
                 responseBody: errorBody,
-                notificationPayload: updateBody,
               },
             )
             throw new Error(
@@ -410,7 +406,6 @@ export class PaymentFlowService {
         {
           error: e.message,
           onUpdateUrl: paymentFlow.onUpdateUrl,
-          updateBodySent: updateBody,
         },
       )
     }
