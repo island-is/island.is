@@ -118,7 +118,7 @@ and
 yarn start api
 ```
 
-### Adding a new template
+### Adding a new template (make a new application)
 
 - [Follow the example templates](https://github.com/island-is/island.is/tree/main/libs/application/templates/examples/README.md)
 
@@ -140,4 +140,4 @@ yarn nx test application-system-form
 
 ## Code owners and maintainers
 
-- [Norda](https://github.com/orgs/island-is/teams/norda-applications/members)
+- [Norda](https://github.com/orgs/island-is/teams/norda/members)
