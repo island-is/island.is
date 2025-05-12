@@ -18,14 +18,14 @@ describe('IndictmentCountController - Create guards', () => {
     expect(guards).toHaveLength(2)
   })
 
-  describe('MinimalCaseAccessGuard', () => {
+  describe('MinimalCaseExistsGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[0]()
     })
 
-    it('should have MinimalCaseAccessGuard as guard 1', () => {
+    it('should have MinimalCaseExistsGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(MinimalCaseExistsGuard)
     })
   })
