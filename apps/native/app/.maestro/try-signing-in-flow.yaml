@@ -1,5 +1,6 @@
 appId: 'is.island.app.dev'
 ---
+- runFlow: launch-app-flow.yaml
 # Sign in if login button is visible
 - runFlow:
     when:
