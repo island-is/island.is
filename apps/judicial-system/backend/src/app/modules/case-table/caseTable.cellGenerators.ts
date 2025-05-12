@@ -51,6 +51,8 @@ interface CaseTableCellGenerator {
   generate: (caseModel: Case, user: TUser) => CaseTableCellValue | undefined
 }
 
+const getDays = (days: number) => days * 24 * 60 * 60 * 1000
+
 const caseNumber: CaseTableCellGenerator = {
   attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
   generate: (c: Case): StringGroupValue => ({
@@ -103,7 +105,12 @@ const caseType: CaseTableCellGenerator = {
 }
 
 const appealState: CaseTableCellGenerator = {
-  attributes: ['appealState', 'appealRulingDecision', 'appealCaseNumber'],
+  attributes: [
+    'appealState',
+    'appealRulingDecision',
+    'appealCaseNumber',
+    'appealReceivedByCourtDate',
+  ],
   generate: (c: Case, user: TUser): TagValue | undefined => {
     switch (c.appealState) {
       case CaseAppealState.WITHDRAWN:
@@ -111,11 +118,20 @@ const appealState: CaseTableCellGenerator = {
       case CaseAppealState.APPEALED:
         return { color: 'red', text: 'Kært' }
       case CaseAppealState.RECEIVED:
-        if (isCourtOfAppealsUser(user) && !c.appealCaseNumber) {
-          return { color: 'purple', text: 'Nýtt' }
-        } else {
-          return { color: 'darkerBlue', text: 'Móttekið' }
+        if (isCourtOfAppealsUser(user)) {
+          if (!c.appealCaseNumber) {
+            return { color: 'purple', text: 'Nýtt' }
+          }
+
+          if (
+            c.appealReceivedByCourtDate &&
+            Date.now() >= c.appealReceivedByCourtDate.getTime() + getDays(1)
+          ) {
+            return { color: 'mint', text: 'Frestir liðnir' }
+          }
         }
+
+        return { color: 'darkerBlue', text: 'Móttekið' }
       case CaseAppealState.COMPLETED:
         return {
           color:
