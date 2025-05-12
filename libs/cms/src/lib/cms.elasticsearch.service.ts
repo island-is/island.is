@@ -837,7 +837,7 @@ export class CmsElasticsearchService {
     let sortRules: ('_score' | sortRule)[] = []
     if (!sort || sort === GrantsSortBy.RECENTLY_UPDATED) {
       sortRules = [
-        { dateUpdated: { order: SortDirection.DESC } },
+        { dateUpdated: { order: SortDirection.ASC } },
         { 'title.sort': { order: SortDirection.ASC } },
       ]
     } else if (sort === GrantsSortBy.ALPHABETICAL) {
