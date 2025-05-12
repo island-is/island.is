@@ -17,6 +17,12 @@ interface RetryConfig {
 const DEFAULT_MAX_RETRIES = 3
 const DEFAULT_RETRY_DELAY_MS = 1000
 
+const getJitteredDelay = (baseDelay: number) => {
+  // Add random jitter between 0 and 25% of the base delay
+  const jitter = Math.random() * (baseDelay * 0.25)
+  return baseDelay + jitter
+}
+
 export const retry = async <T>(
   fn: () => Promise<T>,
   config: RetryConfig = {},
@@ -45,15 +51,15 @@ export const retry = async <T>(
         throw e
       }
 
+      const jitteredDelay = getJitteredDelay(retryDelayMs)
       config.logger?.warn(
-        `${config.logPrefix ?? 'Retry failed'} with error: ${
-          e.message
-        }. Retrying in ${retryDelayMs}ms
-            `,
+        `[retry #${attempt + 1}]: ${
+          config.logPrefix ?? 'Retry failed'
+        } with error: ${e.message}. Retrying in ${Math.round(jitteredDelay)}ms`,
       )
 
       attempt++
-      await new Promise((resolve) => setTimeout(resolve, retryDelayMs))
+      await new Promise((resolve) => setTimeout(resolve, jitteredDelay))
     }
   }
 
