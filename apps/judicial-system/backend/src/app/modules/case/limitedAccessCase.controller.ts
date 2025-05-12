@@ -120,11 +120,15 @@ export class LimitedAccessCaseController {
     JwtAuthUserGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseWriteGuard,
     CaseCompletedGuard,
   )
-  @RolesRules(defenderUpdateRule, prisonSystemStaffRule)
+  @RolesRules(prisonSystemStaffRule, defenderUpdateRule)
   @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/limitedAccess')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })

@@ -127,6 +127,7 @@ export interface LimitedAccessUpdateCase
     | 'defendantStatementDate'
     | 'openedByDefender'
     | 'appealRulingDecision'
+    | 'isRegisteredInPrisonSystem'
   > {}
 
 export const include: Includeable[] = [
