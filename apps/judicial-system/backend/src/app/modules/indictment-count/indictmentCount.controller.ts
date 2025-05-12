@@ -80,7 +80,7 @@ export class IndictmentCountController {
     )
   }
 
-@UseGuards(
+  @UseGuards(
     MinimalCaseExistsGuard,
     MinimalCaseAccessGuard,
     IndictmentCountExistsGuard,
