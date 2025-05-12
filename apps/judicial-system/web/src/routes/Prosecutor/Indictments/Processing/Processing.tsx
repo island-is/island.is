@@ -37,6 +37,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseFileCategory,
   CaseState,
   CaseTransition,
@@ -74,7 +75,7 @@ const Processing: FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
+  const { updateCase, transitionCase, updateUnlimitedAccessCase } = useCase()
   const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()
   const {
@@ -198,16 +199,6 @@ const Processing: FC = () => {
     }))
   }
 
-  const removeAllCivilClaimants = () => {
-    if (!workingCase.civilClaimants) {
-      return
-    }
-
-    for (const civilClaimant of workingCase.civilClaimants) {
-      removeCivilClaimantById(civilClaimant.id)
-    }
-  }
-
   const handleUpdateCivilClaimantState = (update: UpdateCivilClaimant) => {
     updateCivilClaimantState(
       { caseId: workingCase.id, ...update },
@@ -228,20 +219,30 @@ const Processing: FC = () => {
     )
   }
 
-  const handleHasCivilClaimsChange = (hasCivilClaims: boolean) => {
+  const handleHasCivilClaimsChange = async (hasCivilClaims: boolean) => {
     setHasCivilClaimantChoice(hasCivilClaims)
 
-    setAndSendCaseToServer(
-      [{ hasCivilClaims, force: true }],
-      workingCase,
-      setWorkingCase,
-    )
+    const res = await updateUnlimitedAccessCase(workingCase.id, {
+      hasCivilClaims,
+    })
 
-    if (hasCivilClaims) {
-      addCivilClaimant()
-    } else {
-      removeAllCivilClaimants()
+    if (!res) {
+      return
     }
+
+    setWorkingCase((prev) => ({
+      ...prev,
+      civilClaimants:
+        hasCivilClaims && res.civilClaimants
+          ? [
+              {
+                id: res.civilClaimants[0].id,
+                name: res.civilClaimants[0].name,
+                nationalId: res.civilClaimants[0].nationalId,
+              },
+            ]
+          : [],
+    }))
   }
 
   const handleCivilClaimantNationalIdBlur = (
@@ -299,6 +300,8 @@ const Processing: FC = () => {
     // We want this hook to run exclusively when personData changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personData])
+
+  console.log(workingCase)
 
   return (
     <PageLayout

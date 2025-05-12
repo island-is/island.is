@@ -111,6 +111,27 @@ export class CivilClaimantService {
     return true
   }
 
+  async deleteAll(caseId: string): Promise<boolean> {
+    const numberOfAffectedRows = await this.civilClaimantModel.destroy({
+      where: {
+        caseId: caseId,
+      },
+    })
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting all civil claimants in case ${caseId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not delete all civil claimants in case ${caseId}`,
+      )
+    }
+
+    return true
+  }
+
   findLatestClaimantBySpokespersonNationalId(
     nationalId: string,
   ): Promise<CivilClaimant | null> {
