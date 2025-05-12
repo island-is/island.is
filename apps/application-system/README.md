@@ -120,9 +120,9 @@ yarn start api
 
 ### Adding a new template
 
-- [Follow the Reference Template](https://github.com/island-is/island.is/tree/main/libs/application/templates/reference-template)
+- [Follow the example templates](https://github.com/island-is/island.is/tree/main/libs/application/templates/examples/README.md)
 
-After following the Reference Template, repeat the steps from [OpenAPI and Swagger](https://github.com/island-is/island.is/tree/main/apps/application-system#openapi-and-swagger) or run `yarn codegen`.
+After following the example templates, repeat the steps from [OpenAPI and Swagger](https://github.com/island-is/island.is/tree/main/apps/application-system#openapi-and-swagger) or run `yarn codegen`.
 
 ### Adding a payment step
 

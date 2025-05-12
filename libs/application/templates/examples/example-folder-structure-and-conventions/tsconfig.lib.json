@@ -1,8 +1,8 @@
 {
-  "extends": "--IS-NESTED--../../../../tsconfig.base.json",
+  "extends": "../../../../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "--IS-NESTED--../../../../dist/out-tsc",
     "jsx": "react-jsx",
+    "outDir": "../../../../../dist/out-tsc",
     "types": ["node"]
   },
   "exclude": [

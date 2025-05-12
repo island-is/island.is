@@ -1,8 +1,6 @@
 import { ApplicationTypes } from '@island.is/application/types'
 
 const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
-  [ApplicationTypes.EXAMPLE]: () =>
-    import('@island.is/application/templates/reference-template'),
   [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: () =>
     import('@island.is/application/templates/examples/example-state-transfers'),
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: () =>
@@ -11,6 +9,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/examples/example-inputs'),
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: () =>
     import('@island.is/application/templates/examples/example-no-inputs'),
+  [ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS]: () =>
+    import(
+      '@island.is/application/templates/examples/example-folder-structure-and-conventions'
+    ),
   [ApplicationTypes.ESTATE]: () =>
     import('@island.is/application/templates/estate'),
   [ApplicationTypes.PARENTAL_LEAVE]: () =>

@@ -1,5 +1,5 @@
-import { ReferenceTemplateModule } from './reference-template/reference-template.module'
-import { ReferenceTemplateService } from './reference-template/reference-template.service'
+import { ExampleFolderStructureAndConventionsModule } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.module'
+import { ExampleFolderStructureAndConventionsService } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.service'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
 import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 import { ExampleCommonActionsModule } from './examples/example-common-actions/example-common-actions.module'
@@ -160,7 +160,6 @@ import { TrainingLicenseOnAWorkMachineTemplateService } from './aosh/training-li
 export const dynamicModules = [GeneralPetitionModule]
 
 export const modules = [
-  ReferenceTemplateModule,
   ExampleCommonActionsModule,
   ExampleStateTransfersModule,
   ExampleInputsModule,
@@ -237,10 +236,10 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  ExampleFolderStructureAndConventionsModule,
 ]
 
 export const services = [
-  ReferenceTemplateService,
   ExampleCommonActionsService,
   ExampleStateTransfersService,
   ExampleInputsService,
@@ -318,4 +317,5 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  ExampleFolderStructureAndConventionsService,
 ]
