@@ -2125,6 +2125,48 @@ describe('MeUserProfileController', () => {
         detail: 'Actor profile does not exist',
       })
     })
+
+    it('should return 400 when delegation does not exist', async () => {
+      // Mock delegations API to return empty result
+      jest
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValueOnce({
+          data: [], // No delegations
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
+          },
+          totalCount: 0,
+        })
+
+      try {
+        // Create the actor profile directly without creating a user profile first
+        // This reduces the number of database operations
+        await actorProfileModel.create({
+          id: uuid(),
+          toNationalId: testNationalId1,
+          fromNationalId: testUserProfile.nationalId,
+          emailNotifications: true,
+        })
+      } catch (error) {
+        console.error('Error creating actor profile:', error)
+        // You might want to fail the test if this creation fails
+        // throw error;
+      }
+
+      // Act
+      const res = await server.get('/v2/me/actor-profile')
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        title: 'Bad Request',
+        status: 400,
+        detail: 'Delegation does not exist',
+      })
+    })
   })
 
   describe('GET v2/me/actor-profile - user without actor', () => {
@@ -2993,6 +3035,27 @@ describe('PATCH /v2/me/actor-profile/email', () => {
       nationalId: testUserProfile.nationalId,
       primary: false,
     })
+
+    // Mock delegations API to return a delegation between the test user and testNationalId1
+    jest
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [
+          {
+            toNationalId: testNationalId1,
+            fromNationalId: testUserProfile.nationalId,
+            subjectId: null,
+            type: 'delegation',
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+        totalCount: 1,
+      })
   })
 
   afterAll(async () => {

@@ -797,6 +797,17 @@ export class UserProfileService {
     toNationalId: string
     fromNationalId: string
   }): Promise<ActorProfileDetailsDto> {
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    // Check if this delegation exists
+    const delegation = incomingDelegations.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('Delegation does not exist')
+    }
+
     // Get actor profile (delegation preferences)
     const actorProfile = await this.actorProfileModel.findOne({
       where: {
@@ -1012,6 +1023,16 @@ export class UserProfileService {
     fromNationalId: string
     emailsId: string
   }): Promise<ActorProfileDetailsDto> {
+    // Verify the delegation exists
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+    const delegation = incomingDelegations.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('Delegation does not exist')
+    }
+
     // Verify the email exists
     const emailRecord = await this.emailModel.findByPk(emailsId)
     if (!emailRecord) {

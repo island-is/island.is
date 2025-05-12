@@ -104,7 +104,7 @@ export class EmailsService {
   }
 
   /**
-   * Deletes an email for a user if it's not the primary email
+   * Deletes an email for a user
    */
   async deleteEmail(
     nationalId: string,
@@ -114,11 +114,6 @@ export class EmailsService {
     this.validateNationalId(nationalId)
 
     const emailRecord = await this.findEmailForUser(nationalId, emailId)
-
-    // Prevent deletion of primary email
-    if (emailRecord.primary) {
-      throw new BadRequestException('Cannot delete primary email')
-    }
 
     await emailRecord.destroy()
     return { success: true }
