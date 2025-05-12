@@ -27,6 +27,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { PaymentMethod } from '../../types'
+import { ChargeResponse } from './cardPayment.types'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import { VerificationCallbackInput } from './dtos/verificationCallback.input'
 import { ChargeCardInput } from './dtos/chargeCard.input'
@@ -255,18 +256,81 @@ export class CardPaymentController {
         persistedPaymentConfirmation,
       )
 
-      await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId,
-        type: 'success',
-        occurredAt: new Date(),
-        paymentMethod: PaymentMethod.CARD,
-        reason: 'payment_completed',
-        message: `[${paymentFlowId}] Card payment completed successfully`,
-        metadata: {
-          payment: paymentResult,
-          charge: confirmation,
-        },
-      })
+      try {
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId,
+          type: 'success',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'payment_completed',
+          message: `[${paymentFlowId}] Card payment completed successfully`,
+          metadata: {
+            payment: paymentResult,
+            charge: confirmation,
+          },
+        })
+      } catch (logUpdateError) {
+        this.logger.error(
+          `[${paymentFlowId}] Successfully processed payment but failed to notify the final onUpdateUrl. Attempting refund.`,
+          { error: logUpdateError.message },
+        )
+        try {
+          // Attempt refund
+          const refund = await retry(() =>
+            this.cardPaymentService.refund(
+              paymentFlowId,
+              chargeCardInput.cardNumber,
+              paymentResult as ChargeResponse,
+              chargeCardInput.amount,
+            ),
+          )
+          // Log refund success due to notification failure
+          await this.paymentFlowService.logPaymentFlowUpdate({
+            paymentFlowId: paymentFlowId,
+            type: 'update',
+            occurredAt: new Date(),
+            paymentMethod: PaymentMethod.CARD,
+            reason: 'other',
+            message: `[${paymentFlowId}] Card payment refunded: failed to notify onUpdateUrl of success.`,
+            metadata: {
+              payment: paymentResult,
+              refund,
+              originalNotificationError: logUpdateError.message,
+            },
+          })
+          // Throw an error indicating refund occurred because of notification failure
+          throw new BadRequestException(
+            CardErrorCode.RefundedBecauseOfSystemError,
+          )
+        } catch (refundError) {
+          // CRITICAL: Refund failed after notification failure
+          this.logger.error(
+            `[${paymentFlowId}] CRITICAL: Payment successful, final notification failed, AND refund failed. Manual intervention required.`,
+            {
+              originalNotificationError: logUpdateError.message,
+              refundError: refundError.message,
+              payment: paymentResult,
+            },
+          )
+          await this.paymentFlowService.logPaymentFlowUpdate({
+            paymentFlowId: paymentFlowId,
+            type: 'failure',
+            occurredAt: new Date(),
+            paymentMethod: PaymentMethod.CARD,
+            reason: 'other',
+            message: `[${paymentFlowId}] CRITICAL: Payment successful, final notification failed, AND refund failed.`,
+            metadata: {
+              payment: paymentResult,
+              originalNotificationError: logUpdateError.message,
+              refundError: refundError.message,
+            },
+          })
+          // Rethrow a critical error
+          throw new BadRequestException(
+            `CRITICAL_ERROR: Payment successful, notification failed, refund failed. ${logUpdateError.message} | ${refundError.message}`,
+          )
+        }
+      }
 
       return paymentResult
     } catch (e) {
@@ -329,7 +393,7 @@ export class CardPaymentController {
           this.cardPaymentService.refund(
             paymentFlowId,
             chargeCardInput.cardNumber,
-            paymentResult as any,
+            paymentResult as ChargeResponse,
             chargeCardInput.amount,
           ),
         )
@@ -438,7 +502,7 @@ export class CardPaymentController {
             this.cardPaymentService.refund(
               paymentFlowId,
               chargeCardInput.cardNumber,
-              paymentResult as any,
+              paymentResult as ChargeResponse,
               chargeCardInput.amount,
             ),
           )

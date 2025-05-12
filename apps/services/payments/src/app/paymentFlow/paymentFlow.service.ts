@@ -350,73 +350,60 @@ export class PaymentFlowService {
       // For now, it continues.
     }
 
-    try {
-      const updateBody: PaymentFlowUpdateEvent = {
-        type: update.type,
-        paymentFlowId: update.paymentFlowId,
-        paymentFlowMetadata: paymentFlow.metadata,
-        occurredAt: update.occurredAt,
-        details: {
-          paymentMethod: update.paymentMethod,
-          reason: update.reason,
-          message: update.message,
-          eventMetadata: update.metadata,
-        },
-      }
+    const updateBody: PaymentFlowUpdateEvent = {
+      type: update.type,
+      paymentFlowId: update.paymentFlowId,
+      paymentFlowMetadata: paymentFlow.metadata,
+      occurredAt: update.occurredAt,
+      details: {
+        paymentMethod: update.paymentMethod,
+        reason: update.reason,
+        message: update.message,
+        eventMetadata: update.metadata,
+      },
+    }
 
-      await retry(
-        async () => {
-          const response = await fetch(paymentFlow.onUpdateUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            // Ensure updateBody is not null when used here, though it should always be set.
-            body: JSON.stringify(updateBody!),
-          })
-          if (!response.ok) {
-            const errorBody = await response
-              .text()
-              .catch(() => 'Could not read error body')
-            this.logger.warn(
-              `[${update.paymentFlowId}] Failed to notify onUpdateUrl (attempt): ${response.status} ${response.statusText}`,
-              {
-                url: paymentFlow.onUpdateUrl,
-                responseBody: errorBody,
-              },
-            )
-            throw new Error(
-              `Failed to notify onUpdateUrl: ${response.status} ${response.statusText}, body: ${errorBody}`,
-            )
-          }
-          this.logger.info(
-            `[${update.paymentFlowId}] Successfully notified onUpdateUrl`,
+    await retry(
+      async () => {
+        const response = await fetch(paymentFlow.onUpdateUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          // Ensure updateBody is not null when used here, though it should always be set.
+          body: JSON.stringify(updateBody!),
+        })
+        if (!response.ok) {
+          const errorBody = await response
+            .text()
+            .catch(() => 'Could not read error body')
+          this.logger.warn(
+            `[${update.paymentFlowId}] Failed to notify onUpdateUrl (attempt): ${response.status} ${response.statusText}`,
             {
               url: paymentFlow.onUpdateUrl,
-              type: update.type,
-              reason: update.reason,
+              responseBody: errorBody,
             },
           )
-        },
-        {
-          maxRetries: 3,
-          retryDelayMs: 1000,
-          logger: this.logger,
-          logPrefix: `[${update.paymentFlowId}] Notify onUpdateUrl for flow event type ${update.type}`,
-          shouldRetryOnError: (error) => {
-            return true
+          throw new Error(
+            `Failed to notify onUpdateUrl: ${response.status} ${response.statusText}, body: ${errorBody}`,
+          )
+        }
+        this.logger.info(
+          `[${update.paymentFlowId}] Successfully notified onUpdateUrl`,
+          {
+            url: paymentFlow.onUpdateUrl,
+            type: update.type,
+            reason: update.reason,
           },
-        },
-      )
-    } catch (e) {
-      this.logger.error(
-        `[${update.paymentFlowId}] Failed to notify onUpdateUrl after all retries`,
-        {
-          error: e.message,
-          onUpdateUrl: paymentFlow.onUpdateUrl,
-        },
-      )
-    }
+        )
+      },
+      {
+        maxRetries: 3,
+        retryDelayMs: 1000,
+        logger: this.logger,
+        logPrefix: `[${update.paymentFlowId}] Notify onUpdateUrl for flow event type ${update.type}`,
+      },
+    )
   }
 
   async createPaymentConfirmation({

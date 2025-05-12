@@ -16,6 +16,7 @@ export enum PaymentServiceCode {
   CouldNotCreatePaymentConfirmation = 'CouldNotCreatePaymentConfirmation',
   PaymentFlowAmountMismatch = 'PaymentFlowAmountMismatch',
   ChargeItemCodesNotFound = 'ChargeItemCodesNotFound',
+  UpstreamNotificationFailure = 'UpstreamNotificationFailure',
   UnknownPaymentServiceError = 'UnknownPaymentServiceError',
 }
 
