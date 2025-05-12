@@ -10,7 +10,6 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
 } from '@island.is/application/types'
-import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -18,17 +17,21 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
+import { Events } from '../types'
+import { Roles, States } from '../types'
 
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS, // TODO: Change to the correct type
+  type: ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS,
   name: 'example-folder-structure-and-conventions template',
-  codeOwner: CodeOwners.NordaApplications, // TODO: Change to the correct code owner
-  institution: 'Stafrænt Ísland', // TODO: Change to the correct institution
-  translationNamespaces: [ApplicationConfigurations.ExampleFolderStructureAndConventions.translation], // TODO: Change to the correct translation namespace
+  codeOwner: CodeOwners.NordaApplications,
+  institution: 'Stafrænt Ísland',
+  translationNamespaces: [
+    ApplicationConfigurations.ExampleFolderStructureAndConventions.translation,
+  ],
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
