@@ -88,6 +88,7 @@ const fmstActiveColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
+  'rulingDate',
   'validFromTo',
 ]
 
@@ -101,6 +102,7 @@ const fmstDoneColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
+  'rulingDate',
   'validFromTo',
 ]
 

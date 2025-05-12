@@ -187,6 +187,14 @@ const validFromTo: CaseTableCellGenerator = {
       : undefined,
 }
 
+const rulingDate: CaseTableCellGenerator = {
+  attributes: ['initialRulingDate', 'rulingDate'],
+  generate: (c: Case): StringGroupValue | undefined =>
+    c.initialRulingDate || c.rulingDate
+      ? { s: [formatDate(c.initialRulingDate ?? c.rulingDate) ?? ''] }
+      : undefined,
+}
+
 export const caseTableCellGenerators: Record<
   CaseTableColumnKey,
   CaseTableCellGenerator
@@ -197,4 +205,5 @@ export const caseTableCellGenerators: Record<
   appealState,
   courtOfAppealsHead,
   validFromTo,
+  rulingDate,
 }
