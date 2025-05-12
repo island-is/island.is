@@ -2,7 +2,8 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { YES } from '@island.is/application/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { ExemptionType } from '../shared'
+import { ExemptionFor, ExemptionType } from '../shared'
+import { error } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -55,7 +56,7 @@ const ResponsiblePersonSchema = z
     { path: ['phone'] },
   )
 
-export const TransporterSchema = z
+const TransporterSchema = z
   .intersection(
     ResponsiblePersonSchema,
     z.object({
@@ -76,6 +77,162 @@ export const TransporterSchema = z
       return !!postalCodeAndCity
     },
     { path: ['postalCodeAndCity'] },
+  )
+
+const FreightItemSchema = z.object({
+  name: z.string().min(1).max(100),
+  length: z.string(),
+  weight: z.string(),
+  height: z.string().optional(),
+  width: z.string().optional(),
+  totalLength: z.string().optional(),
+  exemptionFor: z.array(z.nativeEnum(ExemptionFor)).optional(),
+})
+
+const getInvalidFreightItemIndex = (
+  values: (string | undefined)[],
+  maxValue: number | undefined,
+): number => {
+  return values.findIndex(
+    (x) =>
+      x &&
+      !(
+        !isNaN(Number(x)) &&
+        Number(x) > 0 &&
+        (!maxValue || Number(x) <= maxValue)
+      ),
+  )
+}
+
+const FreighSchema = z
+  .object({
+    exemptionPeriodType: z.string(),
+    limit: z
+      .object({
+        maxLength: z.number().optional(),
+        maxWeight: z.number().optional(),
+        maxHeight: z.number().optional(),
+        maxWidth: z.number().optional(),
+        maxTotalLength: z.number().optional(),
+      })
+      .optional(),
+    items: z.array(FreightItemSchema),
+  })
+  .refine(
+    ({ limit, items }) => {
+      const invalidItemIndex = getInvalidFreightItemIndex(
+        items.map((x) => x.length),
+        limit?.maxLength,
+      )
+      return invalidItemIndex === -1
+    },
+    ({ limit, items }) => {
+      const invalidItemIndex = getInvalidFreightItemIndex(
+        items.map((x) => x.length),
+        limit?.maxLength,
+      )
+      return {
+        path: ['items', invalidItemIndex, 'length'],
+        params: {
+          ...error.numberValueIsNotWithinLimit,
+          values: { min: '0', max: limit?.maxLength },
+        },
+      }
+    },
+  )
+  .refine(
+    ({ limit, items }) => {
+      const invalidItemIndex = getInvalidFreightItemIndex(
+        items.map((x) => x.weight),
+        limit?.maxWeight,
+      )
+      return invalidItemIndex === -1
+    },
+    ({ limit, items }) => {
+      const invalidItemIndex = getInvalidFreightItemIndex(
+        items.map((x) => x.weight),
+        limit?.maxWeight,
+      )
+      return {
+        path: ['items', invalidItemIndex, 'weight'],
+        params: {
+          ...error.numberValueIsNotWithinLimit,
+          values: { min: '0', max: limit?.maxWeight },
+        },
+      }
+    },
+  )
+  .refine(
+    ({ exemptionPeriodType, limit, items }) => {
+      if (exemptionPeriodType === ExemptionType.SHORT_TERM) return true
+
+      const invalidItemIndex = getInvalidFreightItemIndex(
+        items.map((x) => x.height),
+        limit?.maxHeight,
+      )
+      return invalidItemIndex === -1
+    },
+    ({ limit, items }) => {
+      const invalidItemIndex = getInvalidFreightItemIndex(
+        items.map((x) => x.height),
+        limit?.maxHeight,
+      )
+      return {
+        path: ['items', invalidItemIndex, 'height'],
+        params: {
+          ...error.numberValueIsNotWithinLimit,
+          values: { min: '0', max: limit?.maxHeight },
+        },
+      }
+    },
+  )
+  .refine(
+    ({ exemptionPeriodType, limit, items }) => {
+      if (exemptionPeriodType === ExemptionType.SHORT_TERM) return true
+
+      const invalidItemIndex = getInvalidFreightItemIndex(
+        items.map((x) => x.width),
+        limit?.maxWidth,
+      )
+      return invalidItemIndex === -1
+    },
+    ({ limit, items }) => {
+      const invalidItemIndex = getInvalidFreightItemIndex(
+        items.map((x) => x.width),
+        limit?.maxWidth,
+      )
+      return {
+        path: ['items', invalidItemIndex, 'width'],
+        params: {
+          ...error.numberValueIsNotWithinLimit,
+          values: { min: '0', max: limit?.maxWidth },
+        },
+      }
+    },
+  )
+  .refine(
+    ({ exemptionPeriodType, limit, items }) => {
+      if (exemptionPeriodType === ExemptionType.SHORT_TERM) return true
+
+      const invalidItemIndex = getInvalidFreightItemIndex(
+        items.map((x) => x.totalLength),
+        limit?.maxTotalLength,
+      )
+      return invalidItemIndex === -1
+    },
+    ({ limit, items }) => {
+      const invalidItemIndex = getInvalidFreightItemIndex(
+        items.map((x) => x.totalLength),
+        limit?.maxTotalLength,
+      )
+      return {
+        path: ['items', invalidItemIndex, 'totalLength'],
+        params: {
+          ...error.numberValueIsNotWithinLimit,
+          values: { min: '0', max: limit?.maxTotalLength },
+        },
+      }
+    },
   )
 
 const FileDocumentSchema = z.object({
@@ -163,6 +320,7 @@ export const ExemptionForTransportationSchema = z.object({
     dateFrom: z.string().min(1),
     dateTo: z.string().min(1),
   }),
+  freight: FreighSchema,
   location: LocationSchema,
   supportingDocuments: z.object({
     files: z.array(FileDocumentSchema).optional(),

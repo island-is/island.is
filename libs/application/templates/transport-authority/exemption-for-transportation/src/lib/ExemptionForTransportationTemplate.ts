@@ -28,7 +28,11 @@ import {
   // pendingActionMessages as applicationPendingActionMessages,
 } from './messages'
 import { Features } from '@island.is/feature-flags'
-import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
+import {
+  ApplicationRulesApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '../dataProviders'
 
 const ExemptionForTransportationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -90,7 +94,11 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                ApplicationRulesApi,
+              ],
               delete: true,
             },
           ],

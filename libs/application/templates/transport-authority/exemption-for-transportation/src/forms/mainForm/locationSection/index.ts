@@ -6,13 +6,15 @@ import {
   buildSection,
   buildSelectField,
   buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { location } from '../../../lib/messages'
 import {
   EXEMPTION_REGIONS,
   FILE_SIZE_LIMIT,
   FILE_TYPES_ALLOWED,
+  getExemptionType,
+  isExemptionTypeLongTerm,
+  isExemptionTypeShortTerm,
 } from '../../../utils'
 import { ExemptionType } from '../../../shared'
 import { Application } from '@island.is/application/types'
@@ -20,11 +22,7 @@ import { Application } from '@island.is/application/types'
 export const locationSection = buildSection({
   id: 'locationSection',
   title: (application: Application) => {
-    const exemptionPeriodType = getValueViaPath<ExemptionType>(
-      application.answers,
-      'exemptionPeriod.type',
-    )
-    return exemptionPeriodType === ExemptionType.SHORT_TERM
+    return isExemptionTypeShortTerm(application.answers)
       ? location.general.sectionTitleShortTerm
       : location.general.sectionTitleLongTerm
   },
@@ -32,11 +30,8 @@ export const locationSection = buildSection({
     buildMultiField({
       id: 'locationMultiField',
       title: (application: Application) => {
-        const exemptionPeriodType = getValueViaPath<ExemptionType>(
-          application.answers,
-          'exemptionPeriod.type',
-        )
-        return exemptionPeriodType === ExemptionType.SHORT_TERM
+        return getExemptionType(application.answers) ===
+          ExemptionType.SHORT_TERM
           ? location.general.pageTitleShortTerm
           : location.general.pageTitleLongTerm
       },
@@ -44,11 +39,7 @@ export const locationSection = buildSection({
         buildHiddenInput({
           id: 'location.exemptionPeriodType',
           defaultValue: (application: Application) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              application.answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType
+            return getExemptionType(application.answers)
           },
         }),
 
@@ -59,11 +50,7 @@ export const locationSection = buildSection({
           title: location.shortTerm.fromSubtitle,
           titleVariant: 'h5',
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.SHORT_TERM
+            return isExemptionTypeShortTerm(answers)
           },
         }),
         buildTextField({
@@ -72,11 +59,7 @@ export const locationSection = buildSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.SHORT_TERM
+            return isExemptionTypeShortTerm(answers)
           },
         }),
         buildTextField({
@@ -85,11 +68,7 @@ export const locationSection = buildSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.SHORT_TERM
+            return isExemptionTypeShortTerm(answers)
           },
         }),
 
@@ -99,11 +78,7 @@ export const locationSection = buildSection({
           title: location.shortTerm.toSubtitle,
           titleVariant: 'h5',
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.SHORT_TERM
+            return isExemptionTypeShortTerm(answers)
           },
         }),
         buildTextField({
@@ -112,11 +87,7 @@ export const locationSection = buildSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.SHORT_TERM
+            return isExemptionTypeShortTerm(answers)
           },
         }),
         buildTextField({
@@ -125,11 +96,7 @@ export const locationSection = buildSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.SHORT_TERM
+            return isExemptionTypeShortTerm(answers)
           },
         }),
 
@@ -142,11 +109,7 @@ export const locationSection = buildSection({
           title: location.shortTerm.directions,
           placeholder: location.shortTerm.directionsPlaceholder,
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.SHORT_TERM
+            return isExemptionTypeShortTerm(answers)
           },
         }),
 
@@ -157,11 +120,7 @@ export const locationSection = buildSection({
           title: location.longTerm.regionsSubtitle,
           titleVariant: 'h5',
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.LONG_TERM
+            return isExemptionTypeLongTerm(answers)
           },
         }),
         buildSelectField({
@@ -174,11 +133,7 @@ export const locationSection = buildSection({
             return EXEMPTION_REGIONS.map((x) => ({ value: x, label: x }))
           },
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.LONG_TERM
+            return isExemptionTypeLongTerm(answers)
           },
         }),
 
@@ -190,11 +145,7 @@ export const locationSection = buildSection({
           title: location.longTerm.directions,
           placeholder: location.longTerm.directionsPlaceholder,
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.LONG_TERM
+            return isExemptionTypeLongTerm(answers)
           },
         }),
 
@@ -212,11 +163,7 @@ export const locationSection = buildSection({
           },
           uploadButtonLabel: location.longTerm.fileUploadButtonLabel,
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.LONG_TERM
+            return isExemptionTypeLongTerm(answers)
           },
         }),
       ],

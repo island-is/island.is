@@ -9,6 +9,9 @@ import {
 import { exemptionPeriod } from '../../../lib/messages'
 import { ExemptionType } from '../../../shared'
 import {
+  getExemptionType,
+  isExemptionTypeLongTerm,
+  isExemptionTypeShortTerm,
   LONG_TERM_MAX_DAYS,
   LONG_TERM_MIN_DAYS,
   MS_IN_DAY,
@@ -25,6 +28,9 @@ export const exemptionPeriodSection = buildSection({
       title: exemptionPeriod.general.pageTitle,
       description: exemptionPeriod.general.description,
       children: [
+        //TODOx to make clearOnChangeWork - but then zod validation is checking the other stuff...
+        // buildHiddenInput({ id: 'location' }),
+        // buildHiddenInput({ id: 'freight' }),
         buildRadioField({
           id: 'exemptionPeriod.type',
           title: exemptionPeriod.type.subtitle,
@@ -42,20 +48,20 @@ export const exemptionPeriodSection = buildSection({
           clearOnChange: [
             'exemptionPeriod.dateFrom',
             'exemptionPeriod.dateTo',
+            //TODOx does not work, needs hidden field, but then I get validation error...
             'location.exemptionPeriodType',
+            'freight.exemptionPeriodType',
+            'freight.limit',
+            'freight.items',
           ],
         }),
         buildAlertMessageField({
-          id: 'exemptionPeriodTypeAlertMessage',
+          id: 'exemptionTypeLongTermAlertMessage',
           alertType: 'info',
           title: exemptionPeriod.type.alertTitle,
           message: exemptionPeriod.type.alertMessage,
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.LONG_TERM
+            return isExemptionTypeLongTerm(answers)
           },
         }),
         buildDateField({
@@ -65,18 +71,9 @@ export const exemptionPeriodSection = buildSection({
           required: true,
           placeholder: exemptionPeriod.period.datePlaceholder,
           condition: (answers) => {
-            const exemptionType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return !!exemptionType
+            return !!getExemptionType(answers)
           },
           minDate: (application) => {
-            const exemptionType = getValueViaPath<ExemptionType>(
-              application.answers,
-              'exemptionPeriod.type',
-            )
-
             const dateToStr = getValueViaPath<string>(
               application.answers,
               'exemptionPeriod.dateTo',
@@ -86,21 +83,15 @@ export const exemptionPeriodSection = buildSection({
             const today = new Date()
             if (!dateTo) return today
 
-            const offset =
-              exemptionType === ExemptionType.SHORT_TERM
-                ? SHORT_TERM_MAX_DAYS
-                : LONG_TERM_MAX_DAYS
+            const offset = isExemptionTypeShortTerm(application.answers)
+              ? SHORT_TERM_MAX_DAYS
+              : LONG_TERM_MAX_DAYS
 
             const lowerBound = new Date(dateTo.getTime() - offset * MS_IN_DAY)
 
             return lowerBound > today ? lowerBound : today
           },
           maxDate: (application) => {
-            const exemptionType = getValueViaPath<ExemptionType>(
-              application.answers,
-              'exemptionPeriod.type',
-            )
-
             const dateToStr = getValueViaPath<string>(
               application.answers,
               'exemptionPeriod.dateTo',
@@ -109,10 +100,9 @@ export const exemptionPeriodSection = buildSection({
 
             if (!dateTo) return undefined
 
-            const offset =
-              exemptionType === ExemptionType.SHORT_TERM
-                ? SHORT_TERM_MIN_DAYS
-                : LONG_TERM_MIN_DAYS
+            const offset = isExemptionTypeShortTerm(application.answers)
+              ? SHORT_TERM_MIN_DAYS
+              : LONG_TERM_MIN_DAYS
 
             const upperBound = new Date(dateTo.getTime() - offset * MS_IN_DAY)
 
@@ -127,47 +117,31 @@ export const exemptionPeriodSection = buildSection({
           required: true,
           placeholder: exemptionPeriod.period.datePlaceholder,
           condition: (answers) => {
-            const exemptionType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return !!exemptionType
+            return !!getExemptionType(answers)
           },
           minDate: (application) => {
-            const exemptionType = getValueViaPath<ExemptionType>(
-              application.answers,
-              'exemptionPeriod.type',
-            )
-
             const dateFromStr = getValueViaPath<string>(
               application.answers,
               'exemptionPeriod.dateFrom',
             )
             const dateFrom = dateFromStr ? new Date(dateFromStr) : new Date()
 
-            const offset =
-              exemptionType === ExemptionType.SHORT_TERM
-                ? SHORT_TERM_MIN_DAYS
-                : LONG_TERM_MIN_DAYS
+            const offset = isExemptionTypeShortTerm(application.answers)
+              ? SHORT_TERM_MIN_DAYS
+              : LONG_TERM_MIN_DAYS
 
             return new Date(dateFrom.getTime() + offset * MS_IN_DAY)
           },
           maxDate: (application) => {
-            const exemptionType = getValueViaPath<ExemptionType>(
-              application.answers,
-              'exemptionPeriod.type',
-            )
-
             const dateFromStr = getValueViaPath<string>(
               application.answers,
               'exemptionPeriod.dateFrom',
             )
             const dateFrom = dateFromStr ? new Date(dateFromStr) : new Date()
 
-            const offset =
-              exemptionType === ExemptionType.SHORT_TERM
-                ? SHORT_TERM_MAX_DAYS
-                : LONG_TERM_MAX_DAYS
+            const offset = isExemptionTypeShortTerm(application.answers)
+              ? SHORT_TERM_MAX_DAYS
+              : LONG_TERM_MAX_DAYS
 
             return new Date(dateFrom.getTime() + offset * MS_IN_DAY)
           },

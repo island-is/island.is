@@ -6,7 +6,7 @@ import { exemptionPeriod, overview } from '../../lib/messages'
 import { formatDateStr, formatKennitala, formatPhoneNumber } from './format'
 import { shouldShowResponsiblePerson } from './shouldShowResponsiblePerson'
 import { isSameAsApplicant } from './isSameAsApplicant'
-import { ExemptionType } from '../../shared'
+import { isExemptionTypeShortTerm } from './getExemptionType'
 
 export const getUserInformationOverviewItems = (
   answers: FormValue,
@@ -93,11 +93,6 @@ export const getExemptionPeriodOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const exemptionPeriodType = getValueViaPath<ExemptionType>(
-    answers,
-    'exemptionPeriod.type',
-  )
-
   return [
     {
       width: 'full',
@@ -108,7 +103,7 @@ export const getExemptionPeriodOverviewItems = (
       ],
       inlineKeyText: true,
       valueText: [
-        exemptionPeriodType === ExemptionType.SHORT_TERM
+        isExemptionTypeShortTerm(answers)
           ? exemptionPeriod.type.shortTermOptionTitle
           : exemptionPeriod.type.longTermOptionTitle,
         formatDateStr(

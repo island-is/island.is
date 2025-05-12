@@ -4,7 +4,6 @@ import {
   buildOverviewField,
   buildSection,
   buildSubmitField,
-  getValueViaPath,
   YES,
 } from '@island.is/application/core'
 import {
@@ -15,10 +14,11 @@ import {
   getSupportingDocumentsOverviewAttachments,
   getSupportingDocumentsOverviewItems,
   getUserInformationOverviewItems,
+  isExemptionTypeLongTerm,
+  isExemptionTypeShortTerm,
 } from '../../../utils'
 import { overview } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
-import { ExemptionType } from '../../../shared'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -49,11 +49,7 @@ export const overviewSection = buildSection({
           bottomLine: true,
           items: getShortTermLocationOverviewItems,
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.SHORT_TERM
+            return isExemptionTypeShortTerm(answers)
           },
         }),
         buildOverviewField({
@@ -64,11 +60,7 @@ export const overviewSection = buildSection({
           items: getLongTermLocationOverviewItems,
           attachments: getLongTermLocationOverviewAttachments,
           condition: (answers) => {
-            const exemptionPeriodType = getValueViaPath<ExemptionType>(
-              answers,
-              'exemptionPeriod.type',
-            )
-            return exemptionPeriodType === ExemptionType.LONG_TERM
+            return isExemptionTypeLongTerm(answers)
           },
         }),
         buildOverviewField({

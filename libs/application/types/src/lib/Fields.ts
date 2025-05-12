@@ -172,7 +172,7 @@ export type RepeaterItem = {
       rows?: number
       maxLength?: number
       currency?: boolean
-      suffix?: string
+      suffix?: FormText
     }
   | {
       component: 'phone'
@@ -386,6 +386,7 @@ export interface CheckboxField extends InputField {
   backgroundColor?: InputBackgroundColor
   onSelect?: ((s: string[]) => void) | undefined
   spacing?: 0 | 1 | 2
+  split?: '1/1' | '1/2' | '1/3' | '1/4'
 }
 
 export interface DateField extends InputField {
@@ -475,7 +476,7 @@ export interface TextField extends InputField {
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor
   format?: string | FormatInputValueFunction
-  suffix?: string
+  suffix?: FormText
   rows?: number
   tooltip?: FormText
   onChange?: (...event: any[]) => void
