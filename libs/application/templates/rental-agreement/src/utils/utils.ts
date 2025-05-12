@@ -215,14 +215,6 @@ export const getRentalAmountIndexTypes = () => [
     value: RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
     label: m.rentalAmount.indexOptionConsumerPriceIndex,
   },
-  {
-    value: RentalAmountIndexTypes.CONSTRUCTION_COST_INDEX,
-    label: m.rentalAmount.indexOptionConstructionCostIndex,
-  },
-  {
-    value: RentalAmountIndexTypes.WAGE_INDEX,
-    label: m.rentalAmount.indexOptionWageIndex,
-  },
 ]
 
 export const getRentalAmountPaymentDateOptions = () => [

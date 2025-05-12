@@ -22,8 +22,9 @@ import {
 import {
   rentalAmountConnectedToIndex,
   rentalInsuranceRequired,
-  rentalPaymentIsBankTransfer,
-  rentalPaymentIsOther,
+  rentalPaymentDateIsOther,
+  rentalPaymentMethodIsBankTransfer,
+  rentalPaymentMethodIsOther,
 } from '../../../utils/rentalPeriodUtils'
 import { rentalAmount } from '../../../lib/messages'
 
@@ -90,7 +91,7 @@ export const RentalPeriodAmount = buildSubSection({
           title: rentalAmount.paymentDateOtherOptionLabel,
           placeholder: rentalAmount.paymentDateOtherOptionPlaceholder,
           maxLength: 100,
-          condition: rentalPaymentIsOther,
+          condition: rentalPaymentDateIsOther,
         }),
 
         // Payment method
@@ -111,20 +112,20 @@ export const RentalPeriodAmount = buildSubSection({
           title: rentalAmount.paymentMethodNationalIdLabel,
           format: '######-####',
           width: 'half',
-          condition: rentalPaymentIsBankTransfer,
+          condition: rentalPaymentMethodIsBankTransfer,
         }),
         buildTextField({
           id: 'rentalAmount.paymentMethodBankAccountNumber',
           title: rentalAmount.paymentMethodBankAccountNumberLabel,
           format: '####-##-######',
           width: 'half',
-          condition: rentalPaymentIsBankTransfer,
+          condition: rentalPaymentMethodIsBankTransfer,
         }),
         buildTextField({
           id: 'rentalAmount.paymentMethodOtherTextField',
           title: rentalAmount.paymentMethodOtherTextFieldLabel,
           maxLength: 50,
-          condition: rentalPaymentIsOther,
+          condition: rentalPaymentMethodIsOther,
         }),
 
         // SecurityDeposit
