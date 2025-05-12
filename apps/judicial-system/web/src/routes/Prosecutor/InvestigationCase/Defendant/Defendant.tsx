@@ -72,8 +72,6 @@ const Defendant = () => {
   // workingCase and we need to validate that the user selects an option
   // from the case type list to allow the user to continue.
   const [caseType, setCaseType] = useState<CaseType | null>()
-  const { features } = useContext(FeatureContext)
-  const showVictims = features.includes(Feature.VICTIMS)
 
   useEffect(() => {
     if (workingCase.id) {
@@ -419,8 +417,7 @@ const Defendant = () => {
             </motion.section>
           </AnimatePresence>
         </Box>
-        {showVictims &&
-          workingCase.id &&
+        {workingCase.id &&
           (workingCase.victims && workingCase.victims?.length === 0 ? (
             <Box
               component="section"
