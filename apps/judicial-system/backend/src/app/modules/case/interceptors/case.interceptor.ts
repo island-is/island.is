@@ -83,16 +83,6 @@ const transformCaseRepresentatives = (theCase: Case) => {
   ].filter((representative) => !!representative)
 }
 
-const transformCivilClaimants = (theCase: Case) => {
-  return theCase.hasCivilClaims && theCase.civilClaimants
-    ? [
-        {
-          id: theCase.civilClaimants[0].id,
-        },
-      ]
-    : []
-}
-
 const transformCase = (theCase: Case) => {
   return {
     ...theCase.toJSON(),
@@ -103,7 +93,6 @@ const transformCase = (theCase: Case) => {
     caseSentToCourtDate: EventLog.caseSentToCourtEvent(theCase.eventLogs)
       ?.created,
     caseRepresentatives: transformCaseRepresentatives(theCase),
-    civilClaimants: transformCivilClaimants(theCase),
   }
 }
 
