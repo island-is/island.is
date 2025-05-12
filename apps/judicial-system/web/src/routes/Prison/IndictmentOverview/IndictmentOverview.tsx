@@ -102,7 +102,7 @@ const IndictmentOverview = () => {
       return
     }
     toast.info(
-      updatedCase.isRegisteredInPrisonSystem
+      !updatedCase.isRegisteredInPrisonSystem
         ? formatMessage(strings.verdictDeRegisteredInfo)
         : formatMessage(strings.verdictRegistered),
     )
@@ -116,7 +116,7 @@ const IndictmentOverview = () => {
     title: string
     colorScheme: ButtonTypes['colorScheme']
     icon: IconMapIcon
-  } = workingCase?.isRegisteredInPrisonSystem
+  } = !workingCase?.isRegisteredInPrisonSystem
     ? {
         title: formatMessage(strings.verdictRegistered),
         colorScheme: 'default',
