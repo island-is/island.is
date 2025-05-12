@@ -54,6 +54,7 @@ fragment GenericUserLicenseFragment on GenericUserLicense {
       expireDate
       expiryStatus
       name
+      title
       subtitle
       photo
       displayTag {

@@ -389,8 +389,8 @@ export function setupRoutes() {
   })
 
   addRoute(
-    '/wallet/:passId',
-    async ({ passId, fromId, toId, item, ...rest }: any) => {
+    '/wallet/:licenseType/:passId',
+    async ({ passId, licenseType, fromId, toId, item, ...rest }: any) => {
       await Navigation.dismissAllModals()
       selectTab(1)
       await Navigation.popToRoot(StackRegistry.WalletStack)
@@ -399,25 +399,8 @@ export function setupRoutes() {
           name: ComponentRegistry.WalletPassScreen,
           passProps: {
             id: passId,
+            type: licenseType,
             item,
-            ...rest,
-          },
-        },
-      })
-    },
-  )
-
-  addRoute(
-    '/walletpassport/:passId',
-    async ({ passId, fromId, toId, ...rest }: any) => {
-      selectTab(1)
-      await Navigation.dismissAllModals()
-      await Navigation.popToRoot(StackRegistry.WalletStack)
-      Navigation.push(StackRegistry.WalletStack, {
-        component: {
-          name: ComponentRegistry.WalletPassportScreen,
-          passProps: {
-            id: passId,
             ...rest,
           },
         },

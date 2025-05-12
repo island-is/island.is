@@ -27,6 +27,7 @@ export {
 export { default as useSort } from './useSort/useSort'
 export { useGeoLocation } from './useGeoLocation/useGeoLocation'
 export { default as useDefendants } from './useDefendants'
+export { default as useVictim } from './useVictim'
 export {
   type UpdateIndictmentCount,
   default as useIndictmentCounts,

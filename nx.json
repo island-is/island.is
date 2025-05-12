@@ -124,7 +124,8 @@
       "inputs": [
         "default",
         "^production"
-      ]
+      ],
+      "cache": true
     },
     "lint": {
       "inputs": [
@@ -195,6 +196,28 @@
         "{workspaceRoot}/.eslintrc.json"
       ],
       "cache": true
+    },
+    "@nx/next:build": {
+      "cache": true,
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "production",
+        "^production",
+        "DevOps"
+      ]
+    },
+    "@nx/webpack:webpack": {
+      "cache": true,
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "production",
+        "^production",
+        "DevOps"
+      ]
     }
   },
   "namedInputs": {

@@ -35,8 +35,8 @@ export class FormsService {
       error: JSON.stringify(error),
       category: 'forms-service',
     }
-    console.error(err)
-    this.logger.error(errorDetail || 'Error in forms service', err)
+    this.logger.error(errorDetail || 'Error in forms service.', err)
+
     throw new ApolloError(error.message)
   }
 

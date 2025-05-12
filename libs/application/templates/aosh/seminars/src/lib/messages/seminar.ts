@@ -65,11 +65,5 @@ export const seminar = {
       defaultMessage: 'Staðsetning:',
       description: `seminar location label `,
     },
-    alertMessage: {
-      id: 'aosh.sem.application:seminar.labels.alertMessage',
-      defaultMessage:
-        'Boðið er upp á tvenns konar flæði eftir því hvort að sá sem er að skrá sé einstaklingur sem greiðir þá sjálfur eða fyrirtæki sem mun greiða fyrir einn eða fleiri þátttakendur.',
-      description: `seminar alert message `,
-    },
   }),
 }

@@ -9,7 +9,7 @@ import {
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
-  isPublicProsecutor,
+  isPublicProsecutionUser,
   isRequestCase,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
@@ -87,13 +87,7 @@ const CreateCaseButton: FC<CreateCaseButtonProps> = (props) => {
 
   return (
     <Box marginTop={[2, 2, 0]}>
-      <ContextMenu
-        dataTestId="createCaseDropdown"
-        menuLabel="Tegund kröfu"
-        items={items}
-        title={formatMessage(m.createCaseButton)}
-        offset={[0, 8]}
-      />
+      <ContextMenu title="Nýtt mál" items={items} />
     </Box>
   )
 }
@@ -196,7 +190,7 @@ export const Cases: FC = () => {
         }
       }
 
-      // This componenet is only used for prosecution and district court users
+      // This component is only used for prosecution and district court users
       return false
     })
 
@@ -307,7 +301,7 @@ export const Cases: FC = () => {
                       onContextMenuDeleteClick={setVisibleModal}
                       canDeleteCase={canDeleteCase}
                     />
-                    {isPublicProsecutor(user) && (
+                    {isPublicProsecutionUser(user) && (
                       <CasesAwaitingReview
                         loading={loading}
                         cases={casesAwaitingReview}

@@ -33,6 +33,7 @@ import { GenericListItemSyncService } from './importers/genericListItem.service'
 import { TeamListSyncService } from './importers/teamList.service'
 import { MappingService } from './mapping.service'
 import { GrantsSyncService } from './importers/grants.service'
+import { BloodDonationRestrictionSyncService } from './importers/bloodDonationRestriction.service'
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { GrantsSyncService } from './importers/grants.service'
     CustomPageSyncService,
     GenericListItemSyncService,
     TeamListSyncService,
+    BloodDonationRestrictionSyncService,
     MappingService,
   ],
   exports: [CmsSyncService],

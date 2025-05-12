@@ -158,18 +158,31 @@ const Indictment = () => {
       trafficViolationOffenses: Set<IndictmentCountOffense>,
       requestDriversLicenseSuspension?: boolean | null,
     ) => {
+      // If suspension is not requested, then use the default demands
       if (!requestDriversLicenseSuspension) {
         return strings.demandsAutofill[gender]
       }
 
-      const requestFutureDriversLicenseSuspension =
+      // Suspension is requested
+
+      // If driving without ever having license, then use the future-suspension demands
+      if (
         trafficViolationOffenses.has(
           IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE,
         )
+      ) {
+        return strings.demandsAutofillWithFutureLicenseSuspension[gender]
+      }
 
-      return requestFutureDriversLicenseSuspension
-        ? strings.demandsAutofillWithFutureLicenseSuspension[gender]
-        : strings.demandsAutofillWithLicenseSuspension[gender]
+      // If any other suspension offense is present, then use the under-the-influence-suspension demands
+      if (trafficViolationOffenses.size > 0) {
+        return strings.demandsAutofillWithUnderTheInfluenceLicenseSuspension[
+          gender
+        ]
+      }
+
+      // Otherwise, use the speeding-suspension demands
+      return strings.demandsAutofillWithSpeedingLicenseSuspension[gender]
     },
     [gender],
   )
@@ -190,7 +203,7 @@ const Indictment = () => {
 
       // If the user manually selected suspension and a suspension offense is not being added,
       // then we have nothing to do
-      // Note that adding the "driving without ever having license" offense changes the demand text
+      // Note that adding a suspension offense changes the demand text
       if (
         prevSuspensionOffenses.size === 0 &&
         prevRequestDriversLicenseSuspension &&

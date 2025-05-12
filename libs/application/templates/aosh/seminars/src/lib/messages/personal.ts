@@ -4,12 +4,12 @@ export const personal = {
   general: defineMessages({
     pageTitle: {
       id: 'aosh.sem.application:personal.general.pageTitle',
-      defaultMessage: 'Persónuupplýsingar',
+      defaultMessage: 'Skráningaraðili',
       description: `personal page title `,
     },
     sectionTitle: {
       id: 'aosh.sem.application:personal.general.sectionTitle',
-      defaultMessage: 'Persónuupplýsingar',
+      defaultMessage: 'Skráningaraðili',
       description: `personal section title `,
     },
     pageDescription: {
@@ -19,6 +19,11 @@ export const personal = {
     },
   }),
   labels: defineMessages({
+    changeInfo: {
+      id: 'aosh.sem.application:personal.labels.changeInfo',
+      defaultMessage: 'Breyta upplýsingum á mínum síðum',
+      description: 'Change information label on personal screen',
+    },
     userName: {
       id: 'aosh.sem.application:personal.labels.userName',
       defaultMessage: 'Nafn',
@@ -54,11 +59,6 @@ export const personal = {
       id: 'aosh.sem.application:personal.labels.isApplyinForOthersRadioNo',
       defaultMessage: 'Skrá bara mig',
       description: `is applying for others radio no`,
-    },
-    personalValidationErrorTitle: {
-      id: 'aosh.sem.application:personal.labels.personalValidationErrorTitle',
-      defaultMessage: 'TODO',
-      description: `personal validation error title`,
     },
   }),
 }

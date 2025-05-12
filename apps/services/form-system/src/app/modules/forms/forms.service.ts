@@ -238,7 +238,7 @@ export class FormsService {
     const formResponse = await this.buildFormResponse(newForm)
 
     if (!formResponse) {
-      throw new Error('Error generating form response')
+      throw new Error('Error generating form response.')
     }
 
     return formResponse

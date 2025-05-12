@@ -49,20 +49,26 @@ export const information = {
       defaultMessage: 'Netfang',
       description: `Information email label`,
     },
-    machineLicenseNumber: {
-      id: 'aosh.tlwm.application:information.labels.machineLicenseNumber',
-      defaultMessage: 'Númer vinnuvélaskírteinis',
-      description: `Information machine license number label`,
-    },
     driversLicenseNumber: {
       id: 'aosh.tlwm.application:information.labels.driversLicenseNumber',
-      defaultMessage: 'Númer ökuskíretinis',
+      defaultMessage: 'Númer ökuskírteinis',
       description: `Information drivers license number label`,
     },
-    driversLicenseDate: {
-      id: 'aosh.tlwm.application:information.labels.driversLicenseDate',
-      defaultMessage: 'Útgáfustaður ökuskíretinis',
-      description: `Information drivers license date label`,
+    alertMessage: {
+      id: 'aosh.tlwm.application:information.labels.alertMessage',
+      defaultMessage:
+        'Ef netfang og símanúmer er ekki rétt hér að ofan þá verður að breyta þeim upplýsingum á mínum síðum Ísland.is og opna nýja umsókn.',
+      description: 'Applicant alert message',
+    },
+    alertMessageLink: {
+      id: 'aosh.tlwm.application:information.labels.alertMessageLink',
+      defaultMessage: '/minarsidur',
+      description: 'Link for mínar síður',
+    },
+    alertMessageLinkTitle: {
+      id: 'aosh.tlwm.application:information.labels.alertMessageLinkTitle',
+      defaultMessage: 'Fara á mínar síður',
+      description: 'title for mínar síður link',
     },
   }),
 }

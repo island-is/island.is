@@ -75,6 +75,13 @@
         }
       }
     },
+    "dev-services": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose up -d",
+        "cwd": "apps/services/form-system"
+      }
+    },
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
@@ -103,7 +110,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn dev-services services-form-system-api",
+          "yarn nx run services-form-system-api:dev-services",
           "yarn nx run services-form-system-api:migrate"
         ],
         "parallel": false

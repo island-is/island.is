@@ -2,7 +2,6 @@ import {
   IsArray,
   IsEnum,
   IsNumber,
-  IsObject,
   IsOptional,
   IsString,
   MaxLength,
@@ -11,7 +10,6 @@ import {
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import type { SubstanceMap } from '@island.is/judicial-system/types'
 import { IndictmentSubtype } from '@island.is/judicial-system/types'
 
 export class UpdateIndictmentCountDto {

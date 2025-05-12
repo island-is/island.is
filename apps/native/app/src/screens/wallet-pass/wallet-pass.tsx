@@ -27,6 +27,7 @@ import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
   GenericUserLicense,
+  GenericUserLicenseExpiryStatus,
   GenericUserLicensePkPassStatus,
   useGeneratePkPassMutation,
   useGetLicenseQuery,
@@ -41,6 +42,7 @@ import { useLocale } from '../../hooks/use-locale'
 import {
   BARCODE_MAX_WIDTH,
   INFORMATION_BASE_TOP_SPACING,
+  SHOW_INFO_ALERT_TYPES,
 } from './wallet-pass.constants'
 
 const Information = styled.ScrollView<{ topSpacing?: number }>`
@@ -128,11 +130,47 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
+const getInfoAlertMessageIds = (
+  licenseType: GenericLicenseType,
+  licenseNumber?: string,
+) => {
+  const isTravelIdentityDocument =
+    licenseType === GenericLicenseType.IdentityDocument &&
+    licenseNumber?.startsWith('ID')
+  switch (licenseType) {
+    case GenericLicenseType.PCard:
+      return {
+        title: 'licenseDetail.pcard.alert.title',
+        description: 'licenseDetail.pcard.alert.description',
+      }
+    case GenericLicenseType.Ehic:
+      return {
+        title: 'licenseDetail.ehic.alert.title',
+        description: 'licenseDetail.ehic.alert.description',
+      }
+    case GenericLicenseType.IdentityDocument:
+      return {
+        title: isTravelIdentityDocument
+          ? 'licenseDetail.identityTravelDocument.alert.title'
+          : 'licenseDetail.identityDocument.alert.title',
+        description: isTravelIdentityDocument
+          ? 'licenseDetail.identityTravelDocument.alert.description'
+          : 'licenseDetail.identityDocument.alert.description',
+      }
+    case GenericLicenseType.Passport:
+      return {
+        title: 'licenseDetail.passport.alert.title',
+        description: 'licenseDetail.passport.alert.description',
+      }
+  }
+}
+
 export const WalletPassScreen: NavigationFunctionComponent<{
   id: string
+  type: string
   item?: GenericUserLicense
   cardHeight?: number
-}> = ({ id, item, componentId, cardHeight = 140 }) => {
+}> = ({ id, item, type, componentId, cardHeight = 96 }) => {
   useNavigationOptions(componentId)
   useConnectivityIndicator({ componentId })
   const theme = useTheme()
@@ -151,26 +189,46 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     fetchPolicy: 'network-only',
     variables: {
       input: {
-        licenseType: item?.license.type ?? id,
+        licenseType: type,
+        licenseId: id,
       },
       locale: useLocale(),
     },
   })
 
   const data = res.data?.genericLicense ?? item
+  const isExpired = data?.payload?.metadata?.expired
+  const expireDate = item?.payload?.metadata?.expireDate
+  const expireWarning =
+    item?.payload?.metadata?.expiryStatus ===
+    GenericUserLicenseExpiryStatus.Expiring
   const fields = data?.payload?.data ?? []
   const isTablet = screenWidth > 760
   const pkPassAllowed =
     data?.license?.pkpass &&
     data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
-  const allowLicenseBarcode =
-    isBarcodeEnabled && pkPassAllowed && !data?.payload?.metadata?.expired
+  const allowLicenseBarcode = isBarcodeEnabled && pkPassAllowed && !isExpired
   const licenseType = data?.license?.type
   const barcodeWidth = isTablet
     ? BARCODE_MAX_WIDTH // For tablets - make sure barcode is not huge
     : screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
+
+  const shouldShowExpireDate = !!(
+    (licenseType === GenericLicenseType.IdentityDocument ||
+      licenseType === GenericLicenseType.Passport) &&
+    expireDate
+  )
+  const showInfoAlert =
+    licenseType && SHOW_INFO_ALERT_TYPES.includes(licenseType)
+
+  const alertMessageIds = showInfoAlert
+    ? getInfoAlertMessageIds(
+        licenseType,
+        data?.payload?.metadata?.licenseNumber ?? undefined,
+      )
+    : undefined
 
   const { loading } = res
 
@@ -405,7 +463,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         <LicenseCard
           nativeID={`license-${licenseType}_destination`}
           type={licenseType}
-          title={data?.payload?.metadata?.name ?? undefined}
+          title={
+            data?.payload?.metadata?.title ??
+            data?.payload?.metadata?.name ??
+            undefined
+          }
           loading={res.loading}
           error={res.error}
           logo={
@@ -413,8 +475,14 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               ? data?.payload?.metadata.photo ?? undefined
               : undefined
           }
-          date={updated ? new Date(Number(updated)) : undefined}
-          status={!data?.payload?.metadata?.expired ? 'VALID' : 'NOT_VALID'}
+          date={
+            shouldShowExpireDate
+              ? new Date(expireDate)
+              : updated
+              ? new Date(Number(updated))
+              : undefined
+          }
+          status={!isExpired ? 'VALID' : 'NOT_VALID'}
           {...(allowLicenseBarcode && {
             barcode: {
               value: data?.barcode?.token,
@@ -444,9 +512,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
                 : theme.spacing[2],
           }}
         >
-          {/* Show info alert if PCard or Ehic */}
-          {(licenseType === GenericLicenseType.PCard ||
-            licenseType === GenericLicenseType.Ehic) && (
+          {/* Show info alert if PCard, Ehic, Passport or IdentityDocument */}
+          {showInfoAlert && (
             <View
               style={{
                 paddingTop: theme.spacing[3],
@@ -454,22 +521,41 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             >
               <InfoAlert
                 title={intl.formatMessage({
-                  id:
-                    licenseType === GenericLicenseType.PCard
-                      ? 'licenseDetail.pcard.alert.title'
-                      : 'licenseDetail.ehic.alert.title',
+                  id: alertMessageIds?.title,
                 })}
                 message={intl.formatMessage({
-                  id:
-                    licenseType === GenericLicenseType.PCard
-                      ? 'licenseDetail.pcard.alert.description'
-                      : 'licenseDetail.ehic.alert.description',
+                  id: alertMessageIds?.description,
                 })}
                 type="info"
                 hasBorder
               />
             </View>
           )}
+          {/* Show expire warning if license is Passport or IdentityDocument and it is about to expire */}
+          {expireWarning &&
+          (licenseType === GenericLicenseType.Passport ||
+            licenseType === GenericLicenseType.IdentityDocument) ? (
+            <View
+              style={{
+                paddingTop: theme.spacing[2],
+                paddingBottom: 10,
+              }}
+            >
+              <InfoAlert
+                title={intl.formatMessage({
+                  id: 'licenseDetail.warning.title',
+                })}
+                message={intl.formatMessage({
+                  id:
+                    licenseType === GenericLicenseType.Passport
+                      ? 'licenseDetail.passport.warning.description'
+                      : 'licenseDetail.identityDocument.warning.description',
+                })}
+                type="warning"
+                hasBorder
+              />
+            </View>
+          ) : null}
           {!data?.payload?.data && loading ? (
             <ActivityIndicator
               size="large"

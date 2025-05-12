@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import { applyCase } from 'beygla/strict'
 
 import { Box } from '../../Box/Box'
@@ -12,24 +12,32 @@ interface UserMenuProps {
   authenticated?: boolean
   username?: string
   language?: string
+  isOpen?: boolean
   dropdownItems?: ReactNode
   switchLanguage?: () => void
   onLogout?: () => void
+  onClick?: () => void
 }
 
 export const UserMenu = ({
   authenticated,
   username,
   language,
+  isOpen,
   dropdownItems,
   switchLanguage,
   onLogout,
+  onClick,
 }: UserMenuProps) => {
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
     'closed',
   )
 
   const handleClick = () => {
+    if (onClick) {
+      onClick()
+    }
+
     setDropdownState(dropdownState === 'open' ? 'closed' : 'open')
   }
 
@@ -42,6 +50,12 @@ export const UserMenu = ({
       ? `Notendaupplýsingar fyrir ${applyCase('þgf', username)}`
       : `User information for ${username}`
   }
+
+  useEffect(() => {
+    if (isOpen === false) {
+      setDropdownState('closed')
+    }
+  }, [isOpen])
 
   if (!authenticated) {
     return null

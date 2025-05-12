@@ -1,5 +1,8 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { NationalRegistryIndividual } from '@island.is/application/types'
+import {
+  ExternalData,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 import { IdentityDocumentChild } from '../lib/constants'
 
 export interface ChosenApplicant {
@@ -10,14 +13,13 @@ export interface ChosenApplicant {
 }
 
 export const getChosenApplicant = (
-  externalData: any,
+  externalData: ExternalData,
   nationalId: string | null,
 ): ChosenApplicant => {
-  const applicantIdentity = getValueViaPath(
+  const applicantIdentity = getValueViaPath<NationalRegistryIndividual>(
     externalData,
     'nationalRegistry.data',
-    {},
-  ) as NationalRegistryIndividual
+  )
 
   const applicantChildren = getValueViaPath(
     externalData,
@@ -30,7 +32,7 @@ export const getChosenApplicant = (
     return {
       name: applicantIdentity?.fullName,
       isApplicant: true,
-      nationalId: applicantIdentity.nationalId,
+      nationalId: applicantIdentity?.nationalId ?? '',
     }
   } else {
     const chosenChild = applicantChildren.filter(

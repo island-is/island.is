@@ -224,6 +224,13 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
 
   const subpageLink = getOrganizationParentSubpage.childLinks[selectedIndex]
 
+  if (!subpageLink) {
+    throw new CustomNextError(
+      404,
+      'Subpage belonging to an organization parent subpage was not found',
+    )
+  }
+
   const subpage = !subpageLink.id
     ? (
         await apolloClient.query<Query, QueryGetOrganizationSubpageArgs>({

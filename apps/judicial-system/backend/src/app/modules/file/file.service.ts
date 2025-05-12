@@ -136,6 +136,9 @@ export class FileService {
       case CaseFileCategory.CASE_FILE:
       case CaseFileCategory.PROSECUTOR_CASE_FILE:
       case CaseFileCategory.DEFENDANT_CASE_FILE:
+      case CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE:
+      case CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE:
+      case CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE:
       case CaseFileCategory.CRIMINAL_RECORD:
       case CaseFileCategory.COST_BREAKDOWN:
       case CaseFileCategory.CIVIL_CLAIM:

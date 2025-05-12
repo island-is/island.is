@@ -29,6 +29,11 @@ export const m = defineMessages({
     id: 'service.portal:payments',
     defaultMessage: 'Greiðslur',
   },
+  paymentsIntro: {
+    id: 'service.portal:payments-intro',
+    defaultMessage:
+      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig vegna þjónustu sérgreinalækna, þjálfunar, myndgreininga, rannsókna og sálfræðiþjónustu sem sérstaklega er samið um við Sjúkratryggingar. Skilyrði er að viðkomandi þjónustuveitandi sé með samning við Sjúkratryggingar um sína þjónustu.',
+  },
   dueDate: {
     id: 'service.portal:due-date',
     defaultMessage: 'Gjalddagi',
@@ -183,6 +188,14 @@ export const m = defineMessages({
     id: 'service.portal:date-to-short',
     defaultMessage: 'Dags. til',
   },
+  nothing: {
+    id: 'service.portal:nothing',
+    defaultMessage: 'Hér er ekkert...',
+  },
+  searchForResults: {
+    id: 'service.portal:search-for-results',
+    defaultMessage: 'Sláðu inn leitarstreng til að fá niðurstöður.',
+  },
   selectForResults: {
     id: 'service.portal:select-for-results',
     defaultMessage: 'Veldu öll leitarskilyrði til að fá niðurstöður.',
@@ -305,6 +318,11 @@ export const m = defineMessages({
     id: 'service.portal:vehicles-history',
     defaultMessage: 'Ökutækjaferill',
   },
+  vehiclesHistoryIntro: {
+    id: 'service.portal:vehicles-history-intro',
+    defaultMessage:
+      'Hér má nálgast upplýsingar um þinn ökutækjaferil úr ökutækjaskrá Samgöngustofu.',
+  },
   vehiclesLookup: {
     id: 'service.portal:vehicles-lookup',
     defaultMessage: 'Uppfletting í ökutækjaskrá',
@@ -316,6 +334,11 @@ export const m = defineMessages({
   vehiclesRegisterMileage: {
     id: 'service.portal:vehicles-register-mileage',
     defaultMessage: 'Skrá kílómetrastöðu',
+  },
+  vehiclesRegisterMileageIntro: {
+    id: 'service.portal:vehicles-register-mileage-intro',
+    defaultMessage:
+      'Sýnir kílómetrastöðu fyrir hvert ár. Athugið að einungis er hægt að skrá einu sinni fyrir hvert tímabil',
   },
   vehiclesBulkMileageUpload: {
     id: 'service.portal:vehicles-bulk-mileage-upload',
@@ -497,6 +520,26 @@ export const m = defineMessages({
     id: 'service.portal:applications-description',
     defaultMessage: 'Staða umsókna sem þú hefur sótt um í gegnum island.is',
   },
+  applicationsIntro: {
+    id: 'service.portal:applications-intro',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir allar umsóknir sem þú hefur stofnað í gegnum Ísland.is.',
+  },
+  applicationsIntroFinished: {
+    id: 'service.portal:applications-intro-finished',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir þær umsóknir sem þú hefur sótt um í gegnum Ísland.is.',
+  },
+  applicationsIntroInProgress: {
+    id: 'service.portal:applications-intro-in-progress',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir þær umsóknir í vinnslu sem þú hefur hafið í gegnum Ísland.is.',
+  },
+  applicationsIntroUnfinished: {
+    id: 'service.portal:applications-intro-unfinished',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir þær ókláruðu umsóknir sem þú hefur hafið í gegnum Ísland.is.',
+  },
   unfinishedApplications: {
     id: 'service.portal:unfinishedApplications',
     defaultMessage: 'Ókláraðar umsóknir',
@@ -520,6 +563,11 @@ export const m = defineMessages({
   userInfoDescription: {
     id: 'service.portal:user-info-description',
     defaultMessage: 'Gögn um þig og fjölskylduna þína',
+  },
+  userInfoIntro: {
+    id: 'service.portal:user-info-intro',
+    defaultMessage:
+      'Hér eru gögn um þig og fjölskyldu þína sem sótt eru til Þjóðskrár. Með því að smella á skoða upplýsingar er hægt að óska eftir breytingum á þeim upplýsingum.',
   },
   detailInfo: {
     id: 'service.portal:detail-info',
@@ -565,18 +613,21 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionLists',
     defaultMessage: 'Meðmælasöfnun',
   },
+  signatureCollectionMunicipalLists: {
+    id: 'service.portal:signatureCollectionMunicipalLists',
+    defaultMessage: 'Sveitarstjórnarkosningar',
+  },
   signatureCollectionParliamentaryLists: {
     id: 'service.portal:signatureCollectionParliamentaryLists',
-    defaultMessage: 'Alþingiskosningar - Meðmælasöfnun',
+    defaultMessage: 'Alþingiskosningar',
   },
   signatureCollectionParliamentaryListsCompany: {
     id: 'service.portal:signatureCollectionParliamentaryListsCompany',
-    defaultMessage:
-      'Alþingiskosningar - Meðmælasöfnun (Aðeins fyrir stjórnmálasamtök)',
+    defaultMessage: 'Alþingiskosningar - Aðeins fyrir stjórnmálasamtök',
   },
   signatureCollectionPresidentialLists: {
     id: 'service.portal:signatureCollectionPresidentialLists',
-    defaultMessage: 'Forsetakosningar - Meðmælasöfnun',
+    defaultMessage: 'Forsetakosningar',
   },
   notifications: {
     id: 'service.portal:notifications',
@@ -626,6 +677,11 @@ export const m = defineMessages({
     id: 'service.portal:education-grunnskoli',
     defaultMessage: 'Grunnskóli',
   },
+  educationPrimarySchoolIntro: {
+    id: 'service.portal:education-primary-school-intro',
+    defaultMessage:
+      'Hér birtast einkunnir barna þinna úr samræmdum prófum frá árinu 2020 séu þau til staðar.',
+  },
   educationAssessment: {
     id: 'service.portal:education-assessment',
     defaultMessage: 'Námsmat',
@@ -633,6 +689,11 @@ export const m = defineMessages({
   educationFramhskoli: {
     id: 'service.portal:education-framhskoli',
     defaultMessage: 'Framhaldsskóli',
+  },
+  educationSecondarySchoolIntro: {
+    id: 'service.portal:education-secondary-school-intro',
+    defaultMessage:
+      'Hér getur þú séð yfirlit yfir námsferil þinn úr framhaldsskóla. Athugið að gögnin ná einungis aftur til ársins 2001. Séu gögnin ekki rétt skal leita til viðkomandi skóla.',
   },
   educationFramhskoliGraduation: {
     id: 'service.portal:education-framhskoli-graduation',
@@ -645,6 +706,11 @@ export const m = defineMessages({
   educationHaskoli: {
     id: 'service.portal:education-haskoli',
     defaultMessage: 'Háskóli',
+  },
+  educationUniversityIntro: {
+    id: 'service.portal:education-university-intro',
+    defaultMessage:
+      'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi.',
   },
   educationGraduation: {
     id: 'service.portal:education-graduation',
@@ -665,6 +731,15 @@ export const m = defineMessages({
   licensesDescription: {
     id: 'service.portal:licenses-description',
     defaultMessage: 'Upplýsingar um skírteini og réttindi sem þeim fylgja',
+  },
+  licensesIntro: {
+    id: 'service.portal:licenses-intro',
+    defaultMessage:
+      'Hér gefur að líta núverandi skírteini og réttindi þín. Unnið er að því að bæta við fleiri skírteinum og réttindum eins og bólusetningarskírteini og vegabréfi.',
+  },
+  occupationalLicenses: {
+    id: 'service.portal:occupational-licenses',
+    defaultMessage: 'Mín starfsleyfi',
   },
   occupationalLicensesDescription: {
     id: 'service.portal:occupational-licenses-description',
@@ -706,6 +781,10 @@ export const m = defineMessages({
     defaultMessage:
       'Hér sérð þú hreyfingar gjaldflokka fyrir valin skilyrði. Opnaðu síu og veldu gjaldflokka og tímabil. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
   },
+  financeTransactionsVehicleMileageDescription: {
+    id: 'service.portal:finance-transactions-vehicle-mileage-description',
+    defaultMessage: 'Kílómetragjaldslýsing',
+  },
   financeTransactionPeriodsDescription: {
     id: 'service.portal:finance-transaction-periods-description',
     defaultMessage:
@@ -714,6 +793,10 @@ export const m = defineMessages({
   financeTransactionsCategories: {
     id: 'service.portal:finance-transactions-categories',
     defaultMessage: 'Gjaldflokkar',
+  },
+  financeTransactionsVehiclesMileage: {
+    id: 'service.portal:finance-transactions-vehicles-mileage',
+    defaultMessage: 'Kílómetragjald',
   },
   financeTransactionPeriods: {
     id: 'service.portal:finance-transaction-periods',
@@ -782,6 +865,10 @@ export const m = defineMessages({
     id: 'service.portal:search-label',
     defaultMessage: 'Leit',
   },
+  searchOnMyPages: {
+    id: 'service.portal:search-on-my-pages',
+    defaultMessage: 'Leita á mínum síðum',
+  },
   searchPlaceholder: {
     id: 'service.portal:search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
@@ -789,6 +876,18 @@ export const m = defineMessages({
   searchByNationalId: {
     id: 'service.portal:search-by-national-id',
     defaultMessage: 'Leita eftir kennitölu',
+  },
+  resultFound: {
+    id: 'service.portal:search-result-found',
+    defaultMessage: '{arg} niðurstaða fannst',
+  },
+  resultsFound: {
+    id: 'service.portal:search-results-found',
+    defaultMessage: '{arg} niðurstöður fundust',
+  },
+  noResultsFound: {
+    id: 'service.portal:search-no-results-found',
+    defaultMessage: 'Engar niðurstöður fundust',
   },
   actions: {
     id: 'service.portal:actions',
@@ -823,17 +922,21 @@ export const m = defineMessages({
     id: 'service.portal:delegation',
     defaultMessage: 'Mín réttindi',
   },
-  occupationalLicenses: {
-    id: 'service.portal:occupational-license',
-    defaultMessage: 'Starfsleyfi',
-  },
   parentalLeave: {
     id: 'service.portal:parentalLeave',
     defaultMessage: 'Fæðingarorlof',
   },
   drivingLicense: {
-    id: 'service.portal:drivingLicense',
+    id: 'service.portal:driving-license',
     defaultMessage: 'Ökuréttindi',
+  },
+  huntingLicense: {
+    id: 'service.portal:hunting-license',
+    defaultMessage: 'Veiðikort',
+  },
+  disabilityLicense: {
+    id: 'service.portal:disability-license',
+    defaultMessage: 'Örorkuskírteini',
   },
   adrLicense: {
     id: 'service.portal:adr-license',
@@ -842,6 +945,14 @@ export const m = defineMessages({
   machineLicense: {
     id: 'service.portal:machine-license',
     defaultMessage: 'Vinnuvélaréttindi',
+  },
+  pCard: {
+    id: 'service.portal:p-card',
+    defaultMessage: 'P-kort',
+  },
+  ehic: {
+    id: 'service.portal:ehic',
+    defaultMessage: 'Evrópska sjúkratryggingakortið',
   },
   firearmLicense: {
     id: 'service.portal:firearm-license',
@@ -994,6 +1105,10 @@ export const m = defineMessages({
   noSearchResults: {
     id: 'service.portal:no-search-resulsts',
     defaultMessage: 'Engar niðurstöður',
+  },
+  noSearchResultsText: {
+    id: 'service.portal:no-search-results-text',
+    defaultMessage: 'Ekkert fannst við leit á „{arg}“',
   },
   noDataFoundDetail: {
     id: 'service.portal:no-data-found-detail',
@@ -1285,6 +1400,11 @@ export const m = defineMessages({
     defaultMessage: 'Lægri flug­fargjöld fyrir íbúa lands­byggð­arinnar',
     description: 'Airfare discount',
   },
+  airDiscountIntro: {
+    id: 'service.portal:air-discount-intro',
+    defaultMessage:
+      'Hver einstaklingur með lögheimili innan skilgreinds svæðis á rétt á afslætti á sex flugleggjum á ári, með notkun afsláttar með Loftbrú staðfestir þú að hafa lesið notendaskilmála Loftbrúar. Hver afsláttur nemur 40% af flugfargjaldi. Kóðinn virkjar afslátt í bókunarvél félagsins',
+  },
   sessions: {
     id: 'service.portal:sessions',
     defaultMessage: 'Notkun',
@@ -1293,9 +1413,19 @@ export const m = defineMessages({
     id: 'service.portal:therapies',
     defaultMessage: 'Þjálfun',
   },
+  therapiesIntro: {
+    id: 'service.portal:therapies-intro',
+    defaultMessage:
+      'Sjúkratryggingar greiða hluta af kostnaði við meðferð hjá þjálfara.',
+  },
   aidsAndNutrition: {
     id: 'service.portal:aids-and-nutrition',
     defaultMessage: 'Hjálpartæki og næring',
+  },
+  aidsAndNutritionIntro: {
+    id: 'service.portal:aids-and-nutrition-intro',
+    defaultMessage:
+      'Sjúkratryggingar annast afgreiðslu umsókna um styrki vegna hjálpartækja, heyrnartækja og næringar og sérfæðis. Veita einnig faglega ráðgjöf um val á hjálpartækjum.',
   },
   dentist: {
     id: 'service.portal:dentist',
@@ -1305,13 +1435,102 @@ export const m = defineMessages({
     id: 'service.portal:dentists',
     defaultMessage: 'Tannlæknar',
   },
+  dentistsIntro: {
+    id: 'service.portal:dentists-intro',
+    defaultMessage:
+      'Sjúkratryggingar taka þátt í greiðslu á tannlækningum fyrir börn upp að 18 ára og lífeyrisþega. Til lífeyrisþega teljast aldraðir, öryrkjar og einstaklingar sem fá endurhæfingarlífeyri frá Tryggingastofnun. Aðrir greiða sjálfir fyrir tannlæknakostnað samkvæmt gjaldskrá síns tannlæknis.',
+  },
   healthCenter: {
     id: 'service.portal:health-center',
     defaultMessage: 'Heilsugæsla',
   },
+  healthCenterIntro: {
+    id: 'service.portal:health-center-intro',
+    defaultMessage:
+      'Allir sjúkratryggðir á Íslandi eiga að vera skráðir á heilsugæslustöð. Hér fyrir neðan sérð þú á hvaða stöð eða hjá hvaða sjálfstætt starfandi heimilislækni þú ert skráð/ur ásamt hver heilsugæslan í þínu hverfi (hverfisheilsugæsla) er. Heimilt er að skrá sig á hvaða heilsugæslustöð sem er, en mögulega eru einhverjar heilsugæslustöðvar fullbókaðar og skrá eingöngu nýja skjólstæðinga sem búa innan hverfis.',
+  },
+  medicine: {
+    id: 'service.portal:medicine',
+    defaultMessage: 'Lyf',
+  },
+  medicinePrescriptions: {
+    id: 'service.portal:medicine-prescriptions',
+    defaultMessage: 'Lyfjaávísanir',
+  },
+  medicinePrescriptionsIntro: {
+    id: 'service.portal:medicine-prescriptions-intro',
+    defaultMessage:
+      'Hér finnur þú yfirlit yfir þínar lyfjaávísanir. Þú getur sótt um lyfjaendurnýjun þegar á við.',
+  },
+  medicineDelegation: {
+    id: 'service.portal:medicine-delegation',
+    defaultMessage: 'Lyfjaumboð',
+  },
+  medicinePaymentParticipation: {
+    id: 'service.portal:medicine-payment-participation',
+    defaultMessage: 'Greiðsluþátttaka',
+  },
+  medicinePaymentParticipationIntro: {
+    id: 'service.portal:medicine-payment-participation-intro',
+    defaultMessage:
+      'Sjúkratryggingar greiða samkvæmt lyfjaverðskrá í almennum lyfjum á markaði hér á landi. Greiðsla sjúkratryggðs fer eftir þrepastöðu. Lyfjaeining Sjúkratrygginga annast afgreiðslu umsókna um lyfjaskírteini (einstaklingsbundin greiðsluþátttaka)',
+  },
+  medicineDelegationLookup: {
+    id: 'service.portal:medicine-delegation-lookup',
+    defaultMessage:
+      'Ofangreindur aðili má einnig fletta upp mínum lyfjaávísunum í apóteki.',
+  },
+  medicinePurchaseTitle: {
+    id: 'service.portal:medicine-purchase-title',
+    defaultMessage: 'Lyfjakaup þrepstaða',
+  },
+  medicineCalculatorTitle: {
+    id: 'service.portal:medicine-calculator-title',
+    defaultMessage: 'Lyfjareiknivél',
+  },
+  medicineLicenseTitle: {
+    id: 'service.portal:medicine-license-title',
+    defaultMessage: 'Lyfjaskírteini',
+  },
+  medicineLicenseIntro: {
+    id: 'service.portal:medicine-license-intro',
+    defaultMessage:
+      'Læknir sækir um lyfjaskírteini fyrir einstakling sem gefin eru út af Sjúkratryggingum að uppfylltum ákveðnum skilyrðum samkvæmt vinnureglum.',
+  },
+  medicinePrescriptionHistory: {
+    id: 'service.portal:medicine-prescription-history',
+    defaultMessage: 'Lyfjasagan',
+  },
+  medicinePrescriptionHistoryIntro: {
+    id: 'service.portal:medicine-prescription-history-intro',
+    defaultMessage: 'Hér finnur þú yfirlit yfir þína lyfjasögu.',
+  },
+  vaccinations: {
+    id: 'service.portal:vaccinations',
+    defaultMessage: 'Bólusetningar',
+  },
+  vaccinationsIntro: {
+    id: 'service.portal:vaccinations-intro',
+    defaultMessage:
+      'Bólusetning er ónæmisaðgerð sem ætlað er að koma í veg fyrir alvarlegan smitsjúkdóm. Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar.',
+  },
+  organDonation: {
+    id: 'service.portal:organ-donation',
+    defaultMessage: 'Líffæragjöf',
+  },
+  organDonationIntro: {
+    id: 'service.portal:organ-donation-intro',
+    defaultMessage:
+      'Íslendingar eru sjálfkrafa skráðir líffæragjafar. Þau sem vilja geta breytt afstöðu sinni.',
+  },
   workMachines: {
     id: 'service.portal:work-machines',
     defaultMessage: 'Vinnuvélar',
+  },
+  workMachinesIntro: {
+    id: 'service.portal:work-machines-intro',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um þínar vinnuvélar úr skrá Vinnueftirlit ríkisins. Einnig er hægt að sjá yfirlit yfir eigendaskipti.',
   },
   workMachineDetail: {
     id: 'service.portal:work-machine-detail',
@@ -1325,9 +1544,18 @@ export const m = defineMessages({
     id: 'service.portal:health-description',
     defaultMessage: 'Hér eru heilsugögn um þig',
   },
+  healthIntro: {
+    id: 'service.portal:health-intro',
+    defaultMessage:
+      'Hér fyrir neðan eru þín gögn sem hafa verið sótt frá þjóðskrá. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
+  },
   intellectualProperties: {
     id: 'service.portal:intellectual-property',
     defaultMessage: 'Hugverkaréttindi',
+  },
+  intellectualPropertiesIntro: {
+    id: 'service.portal:intellectual-propert-intro',
+    defaultMessage: 'Hér getur þú skoðað yfirlit yfir þín hugverkaréttindi',
   },
   intellectualPropertiesTooltip: {
     id: 'service.portal:intellectual-property-tooltip',
@@ -1457,6 +1685,10 @@ export const m = defineMessages({
     id: 'service.portal:active-document-open',
     defaultMessage: '{subject} opið',
   },
+  activeDocumentOpenEnlargedAriaLabel: {
+    id: 'service.portal:active-document-open-enlarged-aria-label',
+    defaultMessage: '{subject} stækkað',
+  },
   closeActiveDocument: {
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',
@@ -1464,6 +1696,10 @@ export const m = defineMessages({
   backToList: {
     id: 'service.portal:back-to-list',
     defaultMessage: 'Aftur í lista',
+  },
+  backToDocumentsList: {
+    id: 'service.portal:back-to-documents-list',
+    defaultMessage: 'Aftur í skjalalista',
   },
   month: {
     id: 'service.portal:month',
@@ -1660,6 +1896,11 @@ export const m = defineMessages({
     id: 'service.portal:my-court-cases',
     defaultMessage: 'Mín dómsmál',
   },
+  myCourtCasesIntro: {
+    id: 'service.portal:my-court-cases-intro',
+    defaultMessage:
+      'Hér getur þú fundið upplýsingar yfir stöðu þinna mála í réttarvörslukerfinu',
+  },
   courtCases: {
     id: 'service.portal:court-cases',
     defaultMessage: 'Dómsmál',
@@ -1700,5 +1941,124 @@ export const m = defineMessages({
   sortBy: {
     id: 'service.portal:sort-by',
     defaultMessage: 'Raða eftir',
+  },
+})
+
+export const searchTagsMessages = defineMessages({
+  documentsMail: {
+    id: 'sp.search.tags:documents-mail',
+    defaultMessage: 'Póstur',
+  },
+  documentsMailTwo: {
+    id: 'sp.search.tags:documents-mail-two',
+    defaultMessage: 'Bréf',
+  },
+  applicationsApply: {
+    id: 'sp.search.tags:applications-apply',
+    defaultMessage: 'Sækja um',
+  },
+  applicationsApplicant: {
+    id: 'sp.search.tags:applications-applicant',
+    defaultMessage: 'Umsækjandi',
+  },
+  informationMe: {
+    id: 'sp.search.tags:information-me',
+    defaultMessage: 'Ég',
+  },
+  informationSpouse: {
+    id: 'sp.search.tags:information-spouse',
+    defaultMessage: 'Maki',
+  },
+  informationChild: {
+    id: 'sp.search.tags:information-child',
+    defaultMessage: 'Barn',
+  },
+  informationWife: {
+    id: 'sp.search.tags:information-wife',
+    defaultMessage: 'Kona',
+  },
+  informationHusband: {
+    id: 'sp.search.tags:information-husband',
+    defaultMessage: 'Maður',
+  },
+  informationFamily: {
+    id: 'sp.search.tags:information-family',
+    defaultMessage: 'Fjölskylda',
+  },
+  assetsHouse: {
+    id: 'sp.search.tags:assets-house',
+    defaultMessage: 'Hús',
+  },
+  assetsVehicle: {
+    id: 'sp.search.tags:assets-vehicle',
+    defaultMessage: 'Bíll',
+  },
+  assetsVehicles: {
+    id: 'sp.search.tags:assets-vehicles',
+    defaultMessage: 'Bílar',
+  },
+  lawAndOrderVerdict: {
+    id: 'sp.search.tags:law-and-order-verdict',
+    defaultMessage: 'Dómur',
+  },
+  lawAndOrderLaw: {
+    id: 'sp.search.tags:law-and-order-law',
+    defaultMessage: 'Lög',
+  },
+  lawAndOrderOrder: {
+    id: 'sp.search.tags:law-and-order-order',
+    defaultMessage: 'Reglur',
+  },
+  lawAndOrderCase: {
+    id: 'sp.search.tags:law-and-order-case',
+    defaultMessage: 'Mál',
+  },
+  educationDegree: {
+    id: 'sp.search.tags:education-degree',
+    defaultMessage: 'Gráða',
+  },
+  educationTest: {
+    id: 'sp.search.tags:education-test',
+    defaultMessage: 'Próf',
+  },
+  airDiscountFlight: {
+    id: 'sp.search.tags:air-discount-flight',
+    defaultMessage: 'Flug',
+  },
+  occupationalLicensesRights: {
+    id: 'sp.search.tags:occupational-licenses-rights',
+    defaultMessage: 'Réttindi',
+  },
+  occupationalLicensesJobRights: {
+    id: 'sp.search.tags:occupational-licenses-job-rights',
+    defaultMessage: 'Starfsréttindi',
+  },
+  occupationalLicensesCertificate: {
+    id: 'sp.search.tags:occupational-licenses-certificate',
+    defaultMessage: 'Vottorð',
+  },
+  occupationalLicensesSpecialLicense: {
+    id: 'sp.search.tags:occupational-licenses-special-license',
+    defaultMessage: 'Leyfisbréf',
+  },
+  healthShorter: {
+    id: 'sp.search.tags:health-shorter',
+    defaultMessage: 'Sjúkra',
+  },
+  licensesAlternative: {
+    id: 'sp.search.tags:licenses-alternative',
+    defaultMessage: 'Skilríki',
+  },
+  licensesCard: {
+    id: 'sp.search.tags:licenses-card',
+    defaultMessage: 'Kort',
+  },
+  assetsWorkMachines: {
+    id: 'sp.search.tags:assets-work-machines',
+    defaultMessage: 'Vinnutæki',
+  },
+  assetsMachines: {
+    id: 'sp.search.tags:assets-machines',
+    defaultMessage: 'Vélar',
   },
 })

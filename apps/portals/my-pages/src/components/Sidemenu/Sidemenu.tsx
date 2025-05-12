@@ -7,7 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import {
   m,
   ServicePortalPaths,
@@ -30,7 +30,6 @@ const Sidemenu = ({
   sideMenuOpen,
   rightPosition,
 }: Props): ReactElement | null => {
-  useNamespaces(['service.portal'])
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()

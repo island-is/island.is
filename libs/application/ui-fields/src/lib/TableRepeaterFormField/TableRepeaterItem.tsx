@@ -1,5 +1,6 @@
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
+  AlertMessageField,
   Application,
   AsyncSelectField,
   FieldComponents,
@@ -23,7 +24,10 @@ import {
 } from '@island.is/shared/form-fields'
 import { NationalIdWithName } from '@island.is/application/ui-components'
 import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormField'
+import { useApolloClient } from '@apollo/client'
 import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
+import { AlertMessageFormField } from '../AlertMessageFormField/AlertMessageFormField'
+import * as styles from './TableRepeaterItem.css'
 
 interface ItemFieldProps {
   application: Application
@@ -55,6 +59,7 @@ export const Item = ({
   const { formatMessage, lang } = useLocale()
   const { setValue, getValues, control, clearErrors } = useFormContext()
   const prevWatchedValuesRef = useRef<string | (string | undefined)[]>()
+  const apolloClient = useApolloClient()
 
   const getSpan = (component: string, width: string) => {
     if (component !== 'radio' && component !== 'checkbox') {
@@ -95,6 +100,8 @@ export const Item = ({
     Component = AsyncSelectFormField
   } else if (component === 'hiddenInput') {
     Component = HiddenInputFormField
+  } else if (component === 'alertMessage') {
+    Component = AlertMessageFormField
   } else {
     Component = componentMapper[component]
   }
@@ -165,7 +172,7 @@ export const Item = ({
     }
 
     return typeof defaultValue === 'function'
-      ? defaultValue(application, activeField)
+      ? defaultValue(application, activeField, activeIndex)
       : defaultValue
   }
 
@@ -246,6 +253,20 @@ export const Item = ({
     defaultVal = getDefaultValue(item, application, activeValues)
   }
 
+  let maxDateVal: Date | undefined
+  let minDateVal: Date | undefined
+  if (component === 'date') {
+    maxDateVal =
+      typeof item.maxDate === 'function'
+        ? item.maxDate(application, activeValues)
+        : item.maxDate
+
+    minDateVal =
+      typeof item.minDate === 'function'
+        ? item.minDate(application, activeValues)
+        : item.minDate
+  }
+
   let clearOnChangeVal: string[] | undefined
   if (typeof clearOnChange === 'function') {
     clearOnChangeVal = clearOnChange(activeIndex)
@@ -255,9 +276,19 @@ export const Item = ({
 
   const setOnChangeFunc =
     setOnChange &&
-    ((optionValue: RepeaterOptionValue) => {
+    (async (optionValue: RepeaterOptionValue) => {
       if (typeof setOnChange === 'function') {
-        return setOnChange(optionValue, application, activeIndex, activeValues)
+        return await setOnChange(
+          optionValue,
+          {
+            ...application,
+            answers: getValues(),
+          },
+          activeIndex,
+          activeValues,
+          apolloClient,
+          lang,
+        )
       } else {
         return setOnChange || []
       }
@@ -302,6 +333,30 @@ export const Item = ({
     }
   }
 
+  let alertMessageProps: AlertMessageField | undefined
+  if (component === 'alertMessage') {
+    const titleVal =
+      typeof item.title === 'function'
+        ? item.title(application, activeValues)
+        : item.title
+    const messageVal =
+      typeof item.message === 'function'
+        ? item.message(application, activeValues)
+        : item.message
+
+    alertMessageProps = {
+      id: id,
+      type: FieldTypes.ALERT_MESSAGE,
+      component: FieldComponents.ALERT_MESSAGE,
+      children: undefined,
+      alertType: item.alertType,
+      title: titleVal,
+      message: messageVal,
+      marginTop: item.marginTop,
+      marginBottom: item.marginBottom,
+    }
+  }
+
   if (
     typeof condition === 'function'
       ? condition && !condition(application, activeValues)
@@ -311,7 +366,13 @@ export const Item = ({
   }
 
   return (
-    <GridColumn span={['1/1', '1/1', '1/1', span]}>
+    <GridColumn
+      span={['1/1', '1/1', '1/1', span]}
+      position={component === 'hiddenInput' ? 'absolute' : 'relative'}
+      className={
+        component === 'nationalIdWithName' ? styles.removePaddingTop : undefined
+      }
+    >
       {component === 'radio' && label && (
         <Text variant="h4" as="h4" id={id + 'title'} marginBottom={3}>
           {formatText(label, application, formatMessage)}
@@ -334,8 +395,17 @@ export const Item = ({
           }}
         />
       )}
+      {component === 'alertMessage' && alertMessageProps && (
+        <AlertMessageFormField
+          application={application}
+          field={{
+            ...alertMessageProps,
+          }}
+        />
+      )}
       {!(component === 'selectAsync' && selectAsyncProps) &&
-        !(component === 'hiddenInput' && hiddenInputProps) && (
+        !(component === 'hiddenInput' && hiddenInputProps) &&
+        !(component === 'alertMessage' && alertMessageProps) && (
           <Component
             id={id}
             name={id}
@@ -361,6 +431,9 @@ export const Item = ({
             clearOnChange={clearOnChangeVal}
             setOnChange={setOnChangeFunc}
             {...props}
+            {...(component === 'date'
+              ? { maxDate: maxDateVal, minDate: minDateVal }
+              : {})}
           />
         )}
     </GridColumn>

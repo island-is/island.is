@@ -269,6 +269,12 @@ export enum RequestSharedWithDefender {
   NOT_SHARED = 'NOT_SHARED',
 }
 
+export enum RequestSharedWhen {
+  READY_FOR_COURT = 'READY_FOR_COURT',
+  ARRAIGNMENT_DATE_ASSIGNED = 'ARRAIGNMENT_DATE_ASSIGNED',
+  OBLIGATED = 'OBLIGATED',
+}
+
 export enum CourtSessionType {
   MAIN_HEARING = 'MAIN_HEARING',
   OTHER = 'OTHER',
