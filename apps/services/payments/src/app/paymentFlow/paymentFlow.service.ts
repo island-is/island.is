@@ -157,6 +157,10 @@ export class PaymentFlowService {
       })
     }
 
+    if (filteredChargeInformation.length !== charges.length) {
+      throw new BadRequestException(PaymentServiceCode.ChargeItemCodesNotFound)
+    }
+
     return {
       firstProductTitle: filteredChargeInformation?.[0]?.chargeItemName ?? null,
       totalPrice: filteredChargeInformation.reduce(
