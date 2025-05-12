@@ -12,19 +12,8 @@ export class ExampleFolderStructureAndConventionsService extends BaseTemplateApi
   ) {
     super(ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS)
   }
-  // TODO: Implement functions as needed
 
   async createApplication() {
-    // TODO: Implement this
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    return {
-      id: 1337,
-    }
-  }
-
-  async completeApplication() {
-    // TODO: Implement this
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     return {
