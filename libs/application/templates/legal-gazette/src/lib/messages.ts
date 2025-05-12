@@ -180,7 +180,7 @@ export const m = {
         },
         formTitle: {
           id: 'lg.application:draft.publishing.formTitle',
-          defaultMessage: 'Birting auglýsingar',
+          defaultMessage: 'Birting',
           description: 'Titill á formi fyrir birtingu auglýsingar',
         },
         formIntro: {
@@ -189,10 +189,45 @@ export const m = {
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sit amet mattis erat, eget dignissim lacus. Cras id enim ac urna bibendum gravida. Donec ultricies dapibus lacinia. Curabitur ut est urna. Donec id eleifend erat. Nam et posuere arcu.',
           description: 'Inngangur á formi fyrir birtingu auglýsingar',
         },
+        radioNoSpecificDate: {
+          id: 'lg.application:draft.publishing.radioNoSpecificDate',
+          defaultMessage: 'Engin ósk um birtingardag',
+          description: 'Titill á radio fyrir birtingu auglýsingar',
+        },
+        radioSpecificDate: {
+          id: 'lg.application:draft.publishing.radioSpecificDate',
+          defaultMessage: 'Ósk um birtingu',
+          description: 'Titill á radio fyrir birtingu auglýsingar',
+        },
+        datePickerType: {
+          id: 'lg.application:draft.publishing.datePickerType',
+          defaultMessage: 'Tegund birtingar',
+          description: 'Titill á dagatali fyrir birtingu auglýsingar',
+        },
         datePickerDescription: {
           id: 'lg.application:draft.publishing.datePickerDescription',
           defaultMessage: 'Hvenær viltu að auglýsing birtist?',
           description: 'Lýsing á dagatali fyrir birtingu auglýsingar',
+        },
+        dateRepeaterTitle: {
+          id: 'lg.application:draft.publishing.dateRepeaterTitle',
+          defaultMessage: 'Dagsetning birtingar',
+          description: 'Titill á dagatali fyrir birtingu auglýsingar',
+        },
+        dateRepeaterSaveButton: {
+          id: 'lg.application:draft.publishing.dateRepeaterSaveButton',
+          defaultMessage: 'Vista dagsetningu',
+          description: 'Titill á takka fyrir birtingu auglýsingar',
+        },
+        dateRepeaterAddButton: {
+          id: 'lg.application:draft.publishing.dateRepeaterAddButton',
+          defaultMessage: 'Bæta við dagsetningu',
+          description: 'Titill á takka fyrir birtingu auglýsingar',
+        },
+        dateRepeaterRemoveButton: {
+          id: 'lg.application:draft.publishing.dateRepeaterRemoveButton',
+          defaultMessage: 'Fjarlægja dagsetningu',
+          description: 'Titill á takka fyrir birtingu auglýsingar',
         },
         datePickerLabel: {
           id: 'lg.application:draft.publishing.datePickerLabel',

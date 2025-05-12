@@ -6,6 +6,7 @@ import {
   buildDateField,
   buildDescriptionField,
   buildDividerField,
+  buildFieldsRepeaterField,
   buildForm,
   buildKeyValueField,
   buildMultiField,
@@ -64,69 +65,11 @@ export const DraftForm: Form = buildForm({
             buildDescriptionField({
               id: 'publishing.formIntro',
               description: m.draft.sections.publishing.formIntro,
+              marginBottom: 5,
             }),
-            buildDescriptionField({
-              id: 'publishing.datePickerDescription',
-              marginTop: 5,
-              title: m.draft.sections.publishing.datePickerDescription,
-              titleVariant: 'h4',
-            }),
-            buildDateField({
-              id: 'publishing.date',
-              title: m.draft.sections.publishing.datePickerLabel,
-              placeholder: m.draft.sections.publishing.datePickerPlaceholder,
-              doesNotRequireAnswer: true,
-              required: false,
-              width: 'half',
-              minDate: new Date(),
-              backgroundColor: 'blue',
-            }),
-            buildCheckboxField({
-              id: 'publishing.noSpecificDate',
-              large: false,
-              backgroundColor: 'white',
-              required: false,
-              options: [
-                {
-                  value: YesOrNoEnum.YES,
-                  label: m.draft.sections.publishing.checkboxNoSpecificDate,
-                },
-              ],
-            }),
-            buildDescriptionField({
-              id: 'publishing.checkboxReceiveEmailDescription',
-              marginTop: 5,
-              titleVariant: 'h4',
-              title:
-                m.draft.sections.publishing.checkboxReceiveEmailDescription,
-            }),
-            buildCheckboxField({
-              id: 'publishing.receiveEmail',
-              large: false,
-              backgroundColor: 'white',
-              required: false,
-              setOnChange: async (optionValue) => {
-                if (optionValue === YesOrNoEnum.YES) {
-                  return [
-                    {
-                      key: 'receiveEmail',
-                      value: 'LOL',
-                    },
-                  ]
-                }
-                return [
-                  {
-                    key: 'receiveEmail',
-                    value: YesOrNoEnum.NO,
-                  },
-                ]
-              },
-              options: [
-                {
-                  value: YesOrNoEnum.YES,
-                  label: m.draft.sections.publishing.checkboxReceiveEmail,
-                },
-              ],
+            buildCustomField({
+              id: 'publishing.dates',
+              component: 'PublishingDates',
             }),
           ],
         }),
