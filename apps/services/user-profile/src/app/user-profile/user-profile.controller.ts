@@ -1,4 +1,9 @@
-import { ApiNoContentResponse, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger'
+import {
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger'
 import {
   BadRequestException,
   Body,
@@ -14,7 +19,13 @@ import * as kennitala from 'kennitala'
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { AdminPortalScope, UserProfileScope } from '@island.is/auth/scopes'
-import { CurrentActor, IdsAuthGuard, Scopes, ScopesGuard, type User } from '@island.is/auth-nest-tools'
+import {
+  CurrentActor,
+  IdsAuthGuard,
+  Scopes,
+  ScopesGuard,
+  type User,
+} from '@island.is/auth-nest-tools'
 
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
@@ -86,7 +97,7 @@ export class UserProfileController {
   @ApiSecurity('oauth2', [
     UserProfileScope.system,
     UserProfileScope.admin,
-    AdminPortalScope.serviceDesk
+    AdminPortalScope.serviceDesk,
   ])
   @Audit<UserProfileDto>({
     resources: (profile) => profile.nationalId,
@@ -143,25 +154,6 @@ export class UserProfileController {
     })
   }
 
-  @Scopes(UserProfileScope.read)
-  @ApiSecurity('oauth2', [UserProfileScope.read])
-  @Get('/actor/locale')
-  @ApiOkResponse({ type: ActorLocale })
-  @ApiNoContentResponse()
-  @Audit<ActorLocale>({
-    resources: (profile) => profile.nationalId,
-  })
-  async getActorLocale(@CurrentActor() actor: User): Promise<ActorLocale> {
-    const userProfile = await this.userProfileService.findById(
-      actor.nationalId,
-    )
-
-    return {
-      nationalId: userProfile.nationalId,
-      locale: userProfile.locale ?? Locale.ICELANDIC,
-    }
-  }
-
   @Patch('/.national-id')
   @Documentation({
     description: 'Update user profile for given nationalId.',
@@ -175,9 +167,7 @@ export class UserProfileController {
     },
     response: { status: 200, type: UserProfileDto },
   })
-  @ApiSecurity('oauth2', [
-    AdminPortalScope.serviceDesk
-  ])
+  @ApiSecurity('oauth2', [AdminPortalScope.serviceDesk])
   @Audit<UserProfileDto>({
     resources: (profile) => profile.nationalId,
   })

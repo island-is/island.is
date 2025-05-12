@@ -1,4 +1,10 @@
-import { ApiSecurity, ApiTags } from '@nestjs/swagger'
+import {
+  ApiOkResponse,
+  ApiNoContentResponse,
+  ApiSecurity,
+  ApiTags,
+  ApiOperation,
+} from '@nestjs/swagger'
 import {
   BadRequestException,
   Body,
@@ -11,6 +17,7 @@ import {
 } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
+import { CurrentActor } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -31,7 +38,12 @@ import {
   MeActorProfileDto,
   PaginatedActorProfileDto,
   PatchActorProfileDto,
+  ActorLocale,
 } from './dto/actor-profile.dto'
+import { Locale } from './types/localeTypes'
+import { UserTokenService } from './userToken.service'
+import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
+import { DeviceTokenDto } from './dto/deviceToken.dto'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -48,6 +60,7 @@ export class MeUserProfileController {
   constructor(
     private readonly auditService: AuditService,
     private readonly userProfileService: UserProfileService,
+    private readonly userTokenService: UserTokenService,
   ) {}
 
   @Get()
@@ -200,5 +213,48 @@ export class MeUserProfileController {
         emailNotifications: actorProfile.emailNotifications,
       }),
     )
+  }
+
+  @Scopes(UserProfileScope.read)
+  @ApiSecurity('oauth2', [UserProfileScope.read])
+  @Get('/actor/locale')
+  @ApiOkResponse({ type: ActorLocale })
+  @ApiNoContentResponse()
+  @Audit<ActorLocale>({
+    resources: (profile) => profile.nationalId,
+  })
+  async getActorLocale(@CurrentActor() actor: User): Promise<ActorLocale> {
+    const userProfile = await this.userProfileService.findById(actor.nationalId)
+
+    return {
+      nationalId: userProfile.nationalId,
+      locale: userProfile.locale ?? Locale.ICELANDIC,
+    }
+  }
+
+  @Post('/device-tokens')
+  @ApiOperation({
+    summary: 'Adds a device token for notifications for a user device ',
+  })
+  @ApiOkResponse({ type: UserDeviceTokenDto })
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
+  @Audit({
+    resources: (deviceToken: string) => deviceToken,
+  })
+  async addDeviceToken(
+    @CurrentUser() user: User,
+    @Body() body: DeviceTokenDto,
+  ): Promise<UserDeviceTokenDto> {
+    await this.userProfileService.patch(
+      {
+        nationalId: user.nationalId,
+      },
+      {},
+    )
+    // The behaviour of returning the token if it already exists is not following API Design Guide
+    // It should respond with 303 See Other and a Location header to the existing resource
+    // But as the v1 of the user profile is not following this, we will keep the same behaviour.
+    return this.userTokenService.addDeviceToken(body.deviceToken, user)
   }
 }

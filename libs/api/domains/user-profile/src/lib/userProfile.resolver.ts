@@ -20,15 +20,13 @@ import { UserProfileLocale } from './models/userProfileLocale.model'
 import { Response } from './response.model'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserProfile } from './userProfile.model'
-import { UserProfileServiceV2 } from './userProfile.service'
+import { UserProfileService } from './userProfile.service'
 import { ApolloError } from 'apollo-server-express'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => UserProfile)
 export class UserProfileResolver {
-  constructor(
-    private readonly userProfileService: UserProfileServiceV2
-  ) {}
+  constructor(private readonly userProfileService: UserProfileService) {}
 
   @Query(() => UserProfile, { nullable: true })
   getUserProfile(
@@ -129,6 +127,6 @@ export class UserProfileResolver {
 
   @ResolveField('bankInfo')
   async bankInfo(@CurrentUser() user: User): Promise<string | null> {
-    return await this.userProfileService.getUserBankInfo(user) ?? null
+    return (await this.userProfileService.getUserBankInfo(user)) ?? null
   }
 }

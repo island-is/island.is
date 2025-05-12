@@ -1294,4 +1294,91 @@ describe('MeUserProfileController', () => {
       expect(res.status).toEqual(204)
     })
   })
+
+  describe('POST /v2/me/device-tokens', () => {
+    const newDeviceToken = 'new-device-token-123'
+    const testUser = createCurrentUser({
+      nationalId: testUserProfile.nationalId,
+      scope: [UserProfileScope.write],
+    })
+
+    let app: TestApp = null
+    let server: SuperTest<Test> = null
+    let fixtureFactory: FixtureFactory = null
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: testUser,
+      })
+
+      server = request(app.getHttpServer())
+      fixtureFactory = new FixtureFactory(app)
+    })
+
+    it('should successfully add a new device token', async () => {
+      // Act
+      const res = await server
+        .post('/v2/me/device-tokens')
+        .send({ deviceToken: newDeviceToken })
+
+      // Assert
+      expect(res.status).toBe(201)
+      expect(res.body).toMatchObject({
+        nationalId: testUser.nationalId,
+        deviceToken: newDeviceToken,
+      })
+    })
+
+    it('should return 403 when user does not have write scope', async () => {
+      // Create a new app instance without write scope
+      await app.cleanUp()
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          scope: [UserProfileScope.read], // Only read scope, no write scope
+        }),
+      })
+      server = request(app.getHttpServer())
+
+      // Act
+      const res = await server
+        .post('/v2/me/device-tokens')
+        .send({ deviceToken: newDeviceToken })
+
+      // Assert
+      expect(res.status).toBe(403)
+      expect(res.body).toMatchObject({
+        status: 403,
+        title: 'Forbidden',
+        detail: 'Forbidden resource',
+        type: 'https://httpstatuses.org/403',
+      })
+    })
+
+    it('should return 400 when deviceToken is missing from request body', async () => {
+      // Reset app to have write scope
+      await app.cleanUp()
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: testUser,
+      })
+      server = request(app.getHttpServer())
+
+      // Act
+      const res = await server.post('/v2/me/device-tokens').send({}) // Empty body
+
+      // Assert
+      expect(res.status).toBe(400)
+      expect(res.body).toMatchObject({
+        status: 400,
+        title: 'Bad Request',
+        detail: ['deviceToken must be a string'],
+        type: 'https://httpstatuses.org/400',
+      })
+    })
+  })
 })

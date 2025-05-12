@@ -9,7 +9,10 @@ import {
   V2UsersApi,
 } from '@island.is/clients/user-profile'
 
-import { BankinfoClientService, formatBankInfo } from '@island.is/clients/fjs/bankinfo'
+import {
+  BankinfoClientService,
+  formatBankInfo,
+} from '@island.is/clients/fjs/bankinfo'
 import { AdminUserProfile } from './adminUserProfile.model'
 import { ActorProfile, ActorProfileResponse } from './dto/actorProfile'
 import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
@@ -24,7 +27,7 @@ import { ProblemError } from '@island.is/nest/problem'
 import { ProblemType } from '@island.is/shared/problem'
 
 @Injectable()
-export class UserProfileServiceV2 {
+export class UserProfileService {
   constructor(
     private v2MeApi: V2MeApi,
     private v2UserProfileApi: V2UsersApi,
@@ -45,7 +48,9 @@ export class UserProfileServiceV2 {
 
   async getUserBankInfo(user: User): Promise<string | null> {
     try {
-      const res = await this.bankinfoClientService.getBankAccountsForNationalId(user.nationalId)
+      const res = await this.bankinfoClientService.getBankAccountsForNationalId(
+        user.nationalId,
+      )
 
       if (!res?.bankAccountInfo) {
         return null
@@ -79,16 +84,20 @@ export class UserProfileServiceV2 {
       const [bank, ledger, accountNumber] = bankInfo.split('-')
       if (!bank || !ledger || !accountNumber) {
         throw new BadRequestException({
-          message: 'Invalid bank account format, expected: bank-ledger-accountNumber',
+          message:
+            'Invalid bank account format, expected: bank-ledger-accountNumber',
         })
       }
       // update bank info
       try {
-        await this.bankinfoClientService.createBankAccountForNationalId(user.nationalId, {
-          bank,
-          ledger,
-          accountNumber
-        })
+        await this.bankinfoClientService.createBankAccountForNationalId(
+          user.nationalId,
+          {
+            bank,
+            ledger,
+            accountNumber,
+          },
+        )
       } catch (e) {
         console.error('Failed to update bank info', e)
         throw new ProblemError({
@@ -96,8 +105,8 @@ export class UserProfileServiceV2 {
           title: 'Failed to update bank info',
           detail: e.message,
         })
-        }
       }
+    }
 
     return {
       ...userProfile,
@@ -195,10 +204,9 @@ export class UserProfileServiceV2 {
   }
 
   addDeviceToken(input: UserDeviceTokenInput, user: User) {
-    return this.v2UserProfileApiWithAuth(
+    return this.v2MeUserProfileApiWithAuth(
       user,
-    ).userTokenControllerAddDeviceToken({
-      xParamNationalId: user.nationalId,
+    ).meUserProfileControllerAddDeviceToken({
       deviceTokenDto: input,
     })
   }
@@ -214,9 +222,9 @@ export class UserProfileServiceV2 {
 
   async getUserProfileLocale(user: User) {
     const locale = await handle204(
-      this.v2UserProfileApiWithAuth(
+      this.v2MeUserProfileApiWithAuth(
         user,
-      ).userProfileControllerGetActorLocaleRaw(),
+      ).meUserProfileControllerGetActorLocaleRaw(),
     )
 
     return {
@@ -224,10 +232,4 @@ export class UserProfileServiceV2 {
       locale: locale?.locale === ActorLocaleLocaleEnum.En ? 'en' : 'is',
     }
   }
-
-
-
-
 }
-
-

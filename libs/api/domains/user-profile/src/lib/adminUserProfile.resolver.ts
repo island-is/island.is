@@ -6,13 +6,13 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import {  UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { IdentityClientService } from '@island.is/clients/identity'
 
-import { UserProfileServiceV2 } from './userProfile.service'
+import { UserProfileService } from './userProfile.service'
 import { PaginatedUserProfileResponse } from './dto/paginated-user-profile.response'
 import { AdminUserProfile } from './adminUserProfile.model'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
@@ -21,7 +21,7 @@ import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 @Resolver(() => AdminUserProfile)
 export class AdminUserProfileResolver {
   constructor(
-    private readonly userUserProfileService: UserProfileServiceV2,
+    private readonly userUserProfileService: UserProfileService,
     private readonly identityService: IdentityClientService,
   ) {}
 

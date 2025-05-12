@@ -15,7 +15,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { IdentityClientService } from '@island.is/clients/identity'
 
-import { UserProfileServiceV2 } from './userProfile.service'
+import { UserProfileService } from './userProfile.service'
 import { ActorProfile, ActorProfileResponse } from './dto/actorProfile'
 import { UpdateActorProfileInput } from './dto/updateActorProfileInput'
 
@@ -23,7 +23,7 @@ import { UpdateActorProfileInput } from './dto/updateActorProfileInput'
 @Resolver(() => ActorProfile)
 export class ActorProfileResolver {
   constructor(
-    private readonly userUserProfileService: UserProfileServiceV2,
+    private readonly userUserProfileService: UserProfileService,
     private identityService: IdentityClientService,
   ) {}
 
