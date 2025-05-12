@@ -2999,16 +2999,7 @@ describe('PATCH /v2/me/actor-profile/email', () => {
     await app.cleanUp()
   })
 
-  it('should update actor profile with email', async () => {
-    // Arrange
-    await actorProfileModel.create({
-      id: uuid(),
-      toNationalId: testNationalId1,
-      fromNationalId: testUserProfile.nationalId,
-      emailsId: email1.id,
-      emailNotifications: true,
-    })
-
+  it('should create actor profile with email', async () => {
     // Act
     const res = await server.patch('/v2/me/actor-profile/email').send({
       emailsId: email1.id,
@@ -3024,21 +3015,26 @@ describe('PATCH /v2/me/actor-profile/email', () => {
       emailNotifications: true,
     })
 
-    // Verify email record was updated
-    const updatedEmail = await emailsModel.findByPk(email1.id)
-    expect(updatedEmail).not.toBeNull()
-    expect(updatedEmail?.emailStatus).toBe(DataStatus.VERIFIED)
+    // Verify email record created
+    const email = await emailsModel.findOne({
+      where: {
+        email: testEmail,
+        nationalId: testUserProfile.nationalId,
+      },
+    })
+    expect(email).not.toBeNull()
+    expect(email?.emailStatus).toBe(DataStatus.VERIFIED)
 
-    // Verify actor profile updated
-    const updatedActorProfile = await actorProfileModel.findOne({
+    // Verify actor profile created with reference to email
+    const actorProfile = await actorProfileModel.findOne({
       where: {
         toNationalId: testNationalId1,
         fromNationalId: testUserProfile.nationalId,
       },
     })
-    expect(updatedActorProfile).not.toBeNull()
-    expect(updatedActorProfile?.emailsId).toBe(email1.id)
-    expect(updatedActorProfile?.emailNotifications).toBe(true)
+    expect(actorProfile).not.toBeNull()
+    expect(actorProfile?.emailsId).toBe(email?.id)
+    expect(actorProfile?.emailNotifications).toBe(true)
   })
 
   it('should update actor profile with new email id', async () => {
@@ -3080,13 +3076,6 @@ describe('PATCH /v2/me/actor-profile/email', () => {
 
   it('should return 400 when email does not exist', async () => {
     // Arrange
-    await actorProfileModel.create({
-      id: uuid(),
-      toNationalId: testNationalId1,
-      fromNationalId: testUserProfile.nationalId,
-      emailsId: email1.id,
-      emailNotifications: true,
-    })
     const nonExistentEmailId = uuid()
 
     // Act
@@ -3121,7 +3110,7 @@ describe('PATCH /v2/me/actor-profile/email', () => {
     expect(res.body).toMatchObject({
       title: 'Bad Request',
       status: 400,
-      detail: 'Actor profile does not exist',
+      detail: 'Email is not verified',
     })
   })
 })

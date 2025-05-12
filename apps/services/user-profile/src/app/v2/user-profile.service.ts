@@ -1012,18 +1012,6 @@ export class UserProfileService {
     fromNationalId: string
     emailsId: string
   }): Promise<ActorProfileDetailsDto> {
-    // Verify the actor profile exists
-    const actorProfile = await this.actorProfileModel.findOne({
-      where: {
-        toNationalId,
-        fromNationalId,
-      },
-    })
-
-    if (!actorProfile) {
-      throw new BadRequestException('Actor profile does not exist')
-    }
-
     // Verify the email exists
     const emailRecord = await this.emailModel.findByPk(emailsId)
     if (!emailRecord) {
@@ -1036,14 +1024,33 @@ export class UserProfileService {
 
     // Get or create actor profile and update it
     await this.sequelize.transaction(async (transaction) => {
-      await actorProfile.update(
-        {
-          emailsId,
+      const [actorProfile] = await this.actorProfileModel.findOrCreate({
+        where: {
+          toNationalId,
+          fromNationalId,
+        },
+        defaults: {
+          toNationalId,
+          fromNationalId,
+          emailNotifications: true,
           lastNudge: new Date(),
           nextNudge: addMonths(new Date(), NUDGE_INTERVAL),
+          emailsId,
         },
-        { transaction },
-      )
+        transaction,
+        useMaster: true,
+      })
+
+      if (actorProfile) {
+        await actorProfile.update(
+          {
+            emailsId,
+            lastNudge: new Date(),
+            nextNudge: addMonths(new Date(), NUDGE_INTERVAL),
+          },
+          { transaction },
+        )
+      }
     })
 
     // Return the updated actor profile details
