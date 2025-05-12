@@ -41,6 +41,7 @@ import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfi
 import { ChargeResponse } from '../cardPayment/cardPayment.types'
 import { retry } from '@island.is/shared/utils/server'
 import { PaymentTrackingData } from '../../types/cardPayment'
+import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 
 @Injectable()
 export class PaymentFlowService {
@@ -119,7 +120,10 @@ export class PaymentFlowService {
 
       // TODO: Map error codes to PaymentServiceCode
       throw new BadRequestException(
-        PaymentServiceCode.CouldNotCreatePaymentFlow,
+        onlyReturnKnownErrorCode(
+          e.message,
+          PaymentServiceCode.CouldNotCreatePaymentFlow,
+        ),
       )
     }
   }

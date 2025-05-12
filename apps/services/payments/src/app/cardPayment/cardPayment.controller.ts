@@ -40,6 +40,7 @@ import { CardPaymentService } from './cardPayment.service'
 import { PaymentTrackingData } from '../../types/cardPayment'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
+import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -100,10 +101,10 @@ export class CardPaymentController {
           error: e.message,
         },
       })
-      if (e instanceof BadRequestException) {
-        throw e
-      }
-      throw new BadRequestException(e.message || 'Failed to verify card')
+
+      throw new BadRequestException(
+        onlyReturnKnownErrorCode(e.message, CardErrorCode.VerificationFailed),
+      )
     }
   }
 
@@ -161,10 +162,13 @@ export class CardPaymentController {
           error: e.message,
         },
       })
-      if (e instanceof BadRequestException) {
-        throw e
-      }
-      throw new BadRequestException(e.message || 'Verification callback failed')
+
+      throw new BadRequestException(
+        onlyReturnKnownErrorCode(
+          e.message,
+          CardErrorCode.VerificationCallbackFailed,
+        ),
+      )
     }
   }
 
@@ -282,10 +286,9 @@ export class CardPaymentController {
         },
       })
 
-      if (e instanceof BadRequestException) {
-        throw e
-      }
-      throw new BadRequestException(e.message || CardErrorCode.UnknownCardError)
+      throw new BadRequestException(
+        onlyReturnKnownErrorCode(e.message, CardErrorCode.UnknownCardError),
+      )
     }
   }
 
@@ -450,9 +453,11 @@ export class CardPaymentController {
               fjsError: e.message,
             },
           })
+
           const errorCode = isAlreadyPaidError
             ? FjsErrorCode.AlreadyCreatedCharge
             : CardErrorCode.RefundedBecauseOfSystemError
+
           throw new BadRequestException(errorCode)
         } catch (refundError) {
           this.logger.error(
