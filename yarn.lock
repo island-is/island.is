@@ -761,39 +761,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/core@npm:0.4.15":
-  version: 0.4.15
-  resolution: "@ariakit/core@npm:0.4.15"
-  checksum: 10/525fd3f5506304d81a4aa1ec192dc5fb88940063d29893e2553a5766c15f3647ff5fe902b318304d404838a248c75c06b1f01ba0582657ad370b3c44379dcef4
-  languageName: node
-  linkType: hard
-
-"@ariakit/react-core@npm:0.4.17":
-  version: 0.4.17
-  resolution: "@ariakit/react-core@npm:0.4.17"
-  dependencies:
-    "@ariakit/core": "npm:0.4.15"
-    "@floating-ui/dom": "npm:^1.0.0"
-    use-sync-external-store: "npm:^1.2.0"
-  peerDependencies:
-    react: ^17.0.0 || ^18.0.0 || ^19.0.0
-    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10/4e2055ebfa886bc411297059be033590e7b9631c4282f4cc1a09c771fd92421aa65d850baf311c28d778e80fdbfac34e8aec034cbb53c0d26810ca99daa9469e
-  languageName: node
-  linkType: hard
-
-"@ariakit/react@npm:0.4.17":
-  version: 0.4.17
-  resolution: "@ariakit/react@npm:0.4.17"
-  dependencies:
-    "@ariakit/react-core": "npm:0.4.17"
-  peerDependencies:
-    react: ^17.0.0 || ^18.0.0 || ^19.0.0
-    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10/44c0fbbdafcdf81914ed93b20c873a176170203f620f7b5faa9a2e2443527cdc94db1b7525dcdba5aa48b76ea747eaddf03563fad1dac458a206307ff9e11fda
-  languageName: node
-  linkType: hard
-
 "@aw-web-design/x-default-browser@npm:1.4.126":
   version: 1.4.126
   resolution: "@aw-web-design/x-default-browser@npm:1.4.126"
@@ -39586,7 +39553,6 @@ __metadata:
     "@apollo/gateway": "npm:2.1.1"
     "@apollo/subgraph": "npm:2.1.1"
     "@apollo/utils.keyvadapter": "npm:3.0.0"
-    "@ariakit/react": "npm:0.4.17"
     "@aws-sdk/client-s3": "npm:3.662.0"
     "@aws-sdk/client-ses": "npm:3.145.0"
     "@aws-sdk/client-sqs": "npm:3.662.0"
