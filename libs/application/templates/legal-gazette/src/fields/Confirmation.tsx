@@ -42,6 +42,16 @@ export const Confirmation = ({ application }: LGFieldBaseProps) => {
     ? format(new Date(firstDate), 'dd.MM.yyyy')
     : format(addDays(new Date(), 14), 'dd.MM.yyyy')
 
+  const allPublicationDates = application.answers.publishing.dates.map((date) =>
+    format(new Date(date), 'dd.MM.yyyy'),
+  )
+
+  const allCommunicationChannels =
+    application.answers.communication.channels.map(
+      (channel) =>
+        `${channel.email} ${channel.phone ? ` - (${channel.phone})` : ''}`,
+    )
+
   return (
     <Stack space={0} dividers>
       <KeyValue
@@ -52,6 +62,32 @@ export const Confirmation = ({ application }: LGFieldBaseProps) => {
         label={formatMessage(m.draft.sections.confirmation.type)}
         value={formatMessage(m.draft.sections.confirmation.applicationType)}
       />
+      {!firstDate && (
+        <KeyValue
+          label={formatMessage(m.draft.sections.confirmation.publicationDate)}
+          value={formatMessage(m.draft.sections.confirmation.noPublicationDate)}
+        />
+      )}
+      {allPublicationDates.length > 0 &&
+        allPublicationDates.map((date, i) => (
+          <KeyValue
+            key={date}
+            label={`${formatMessage(
+              m.draft.sections.confirmation.publicationDate,
+            )}${i > 0 ? ` ${i + 1}` : ''}`}
+            value={date}
+          />
+        ))}
+      {allCommunicationChannels.length > 0 &&
+        allCommunicationChannels.map((channel, i) => (
+          <KeyValue
+            key={channel}
+            label={`${formatMessage(
+              m.draft.sections.confirmation.communicationChannel,
+            )}${i > 0 ? ` ${i + 1}` : ''}`}
+            value={channel}
+          />
+        ))}
       <Box paddingY={[1, 2, 3]}>
         <AdvertDisplay
           modal={true}

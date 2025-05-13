@@ -418,10 +418,20 @@ export const m = {
           defaultMessage: 'Útgáfudagur',
           description: 'Titill á útgáfudegi fyrir staðfestingu auglýsingar',
         },
+        noPublicationDate: {
+          id: 'lg.application:draft.confirmation.noPublicationDate',
+          defaultMessage: 'Engin ósk um birtingardag',
+          description: 'Titill á útgáfudegi fyrir staðfestingu auglýsingar',
+        },
         previewButton: {
           id: 'lg.application:draft.confirmation.previewButton',
           defaultMessage: 'Efni auglýsingar',
           description: 'Titill á takka fyrir forskoðun auglýsingar',
+        },
+        communicationChannel: {
+          id: 'lg.application:draft.confirmation.communicationChannel',
+          defaultMessage: 'Samskiptaleið',
+          description: 'Titill á samskiptaleið fyrir staðfestingu auglýsingar',
         },
       }),
     },
