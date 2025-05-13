@@ -35,21 +35,21 @@ const courtOfAppealsCompletedWhereOptions = {
   appeal_state: CaseAppealState.COMPLETED,
 }
 
-const fmstActiveWhereOptions = {
+const prisonAdminActiveWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
   state: CaseState.ACCEPTED,
   valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
 }
 
-const fmstDoneWhereOptions = {
+const prisonAdminDoneWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
   state: CaseState.ACCEPTED,
   valid_to_date: { [Op.lt]: fn('NOW') },
 }
 
-const fmstIndictmentSentToPrisonAdminWhereOptions = {
+const prisonAdminIndictmentSentToPrisonAdminWhereOptions = {
   is_archived: false,
   type: indictmentCases,
   state: CaseState.COMPLETED,
@@ -69,7 +69,7 @@ const fmstIndictmentSentToPrisonAdminWhereOptions = {
   },
 }
 
-const fmstIndictmentRegisteredRulingWhereOptions = {
+const prisonAdminIndictmentRegisteredRulingWhereOptions = {
   is_archived: false,
   type: indictmentCases,
   state: CaseState.COMPLETED,
@@ -94,10 +94,10 @@ export const caseTableWhereOptions: Record<CaseTableType, WhereOptions> = {
     courtOfAppealsInProgressWhereOptions,
   [CaseTableType.COURT_OF_APPEALS_COMPLETED]:
     courtOfAppealsCompletedWhereOptions,
-  [CaseTableType.FMST_ACTIVE]: fmstActiveWhereOptions,
-  [CaseTableType.FMST_DONE]: fmstDoneWhereOptions,
-  [CaseTableType.FMST_INDICTMENT_SENT_TO_PRISON_ADMIN]:
-    fmstIndictmentSentToPrisonAdminWhereOptions,
-  [CaseTableType.FMST_INDICTMENT_REGISTERED_RULING]:
-    fmstIndictmentRegisteredRulingWhereOptions,
+  [CaseTableType.PRISON_ADMIN_ACTIVE]: prisonAdminActiveWhereOptions,
+  [CaseTableType.PRISON_ADMIN_DONE]: prisonAdminDoneWhereOptions,
+  [CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN]:
+    prisonAdminIndictmentSentToPrisonAdminWhereOptions,
+  [CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING]:
+    prisonAdminIndictmentRegisteredRulingWhereOptions,
 }

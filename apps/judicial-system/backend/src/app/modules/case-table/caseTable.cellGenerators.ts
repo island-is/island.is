@@ -316,11 +316,11 @@ const punishmentType: CaseTableCellGenerator = {
   },
 }
 
-const fmstReceivalDate: CaseTableCellGenerator = {
+const prisonAdminReceivalDate: CaseTableCellGenerator = {
   generate: (c: Case): StringGroupValue | undefined => undefined,
 }
 
-const fmstState: CaseTableCellGenerator = {
+const prisonAdminState: CaseTableCellGenerator = {
   generate: (c: Case): TagValue | undefined => undefined,
 }
 
@@ -338,6 +338,6 @@ export const caseTableCellGenerators: Record<
   restrictionCaseState,
   rulingType,
   punishmentType,
-  fmstReceivalDate,
-  fmstState,
+  prisonAdminReceivalDate,
+  prisonAdminState,
 }

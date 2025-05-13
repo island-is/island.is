@@ -37,18 +37,18 @@ const courtOfAppealsTableGroups: CaseTableGroup[] = [
   },
 ]
 
-const fmstTableGroups: CaseTableGroup[] = [
+const prisonAdminTableGroups: CaseTableGroup[] = [
   {
     title: 'Rannsóknarmál',
     tables: [
       {
-        type: CaseTableType.FMST_ACTIVE,
+        type: CaseTableType.PRISON_ADMIN_ACTIVE,
         route: 'virk-mal',
         title: 'Virk mál',
         description: 'Virk gæsluvarðhöld og farbönn.',
       },
       {
-        type: CaseTableType.FMST_DONE,
+        type: CaseTableType.PRISON_ADMIN_DONE,
         route: 'lokid',
         title: 'Lokið',
         description: 'Lokin gæsluvarðhöld og farbönn.',
@@ -59,13 +59,13 @@ const fmstTableGroups: CaseTableGroup[] = [
     title: 'Sakamál',
     tables: [
       {
-        type: CaseTableType.FMST_INDICTMENT_SENT_TO_PRISON_ADMIN,
+        type: CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN,
         route: 'mal-til-fullnustu',
         title: 'Mál til fullnustu',
         description: 'Ný og móttekin mál.',
       },
       {
-        type: CaseTableType.FMST_INDICTMENT_REGISTERED_RULING,
+        type: CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING,
         route: 'skradir-domar',
         title: 'Skráðir dómar',
         description: 'Mál sem hafa verið skráð',
@@ -82,7 +82,7 @@ export const getCaseTableGroups = (
   }
 
   if (isPrisonAdminUser(user)) {
-    return fmstTableGroups
+    return prisonAdminTableGroups
   }
 
   return []
