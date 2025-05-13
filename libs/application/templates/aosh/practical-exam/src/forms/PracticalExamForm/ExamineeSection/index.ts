@@ -63,7 +63,6 @@ export const examineeSection = buildSection({
               placeholder: examinee.labels.pickCountry,
               width: 'half',
               displayInTable: false,
-              // TODO Add Iceland at top ? if so create a util and utilize in other places...
               options: getAllCountryCodes().map((country) => ({
                 label: country.name,
                 value: country.name,

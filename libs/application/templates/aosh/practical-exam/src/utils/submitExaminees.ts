@@ -46,7 +46,6 @@ export const submitExaminees = async (
       }
     })
   } catch (e) {
-    // TODO(balli) Do I invalidate everyone here or only graphql error
     return [{ path: 'examineesGraphQLError', value: 'true' }]
   }
   return pathItems

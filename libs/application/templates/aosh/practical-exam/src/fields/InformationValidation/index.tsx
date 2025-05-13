@@ -8,7 +8,6 @@ import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { getValueViaPath } from '@island.is/application/core'
 
 export const InformationValidation: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -52,8 +51,8 @@ export const InformationValidation: FC<
                     nationalId: nationalId,
                     name: name,
                   },
-                  email: 'test@bla.is',
-                  phone: '7781779',
+                  email: email,
+                  phone: phone,
                   countryIssuer: countryOfIssue,
                   licenseNumber: licenseNumber,
                   disabled: TrueOrFalse.false,

@@ -12,7 +12,7 @@ import {
     PracticalExamsClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [PracticalExamsClientConfig], // TODO(balli) Replace with actual client when VER provides it
+      load: [PracticalExamsClientConfig],
     }),
   ],
   providers: [PracticalExamTemplateService],

@@ -53,7 +53,7 @@ export const ExamCategoriesSelf: FC<React.PropsWithChildren<FieldBaseProps>> = (
     setTableData(watchedTable)
   }, [watchedTable])
 
-  if (!examineesFromAnswers) return null // TODO This shouldn't happen
+  if (!examineesFromAnswers) return null
   return (
     <Box>
       <>

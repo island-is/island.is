@@ -191,8 +191,8 @@ export const ExamInputs: FC<
     setValue(`examCategories[${idx}].nationalId`, nationalId.nationalId)
     const payload: WorkMachineExamineeInput = {
       nationalId: nationalId.nationalId,
-      email: 'bla@bla.is', // TODO Add email back
-      phoneNumber: '7781778', // TODO Add phone back
+      email: email,
+      phoneNumber: phone,
       drivingLicenseNumber: licenseNumber,
       drivingLicenseCountryOfOrigin: countryIssuer,
       examCategories: chosenCategories.map((category) => category.value),

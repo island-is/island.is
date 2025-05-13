@@ -73,9 +73,6 @@ export const ExamineesCSVUploader: FC<
   const [examineesList, setExamineeList] = useState<Array<ExamineeInput>>()
   const [foundNotValid, setFoundNotValid] = useState<boolean>(false)
   const [csvInputError, setCsvInputError] = useState<Array<CSVError>>([])
-  const [csvInputEmailWarning, setCsvInputEmailWarning] = useState<
-    Array<number>
-  >([])
   const [csvIsLoading, setCsvIsLoading] = useState<boolean>(false)
 
   const getAreExamineesEligible = useLazyAreExamineesEligible()

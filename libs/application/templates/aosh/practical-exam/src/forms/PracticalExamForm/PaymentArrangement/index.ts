@@ -49,8 +49,8 @@ export const paymentArrangementSection = buildSection({
           ],
           condition: isPersonType,
           clearOnChange: [
-            'paymentArrangement.explanation, paymentArrengement.paymentOptionsDescription',
-            'paymentArrengement.paymentOptions',
+            'paymentArrangement.explanation, paymentArrangement.paymentOptionsDescription',
+            'paymentArrangement.paymentOptions',
             'paymentArrangement.companyInfo',
             'paymentArrangement.contactInfo.email',
             'paymentArrangement.contactInfo.phone',

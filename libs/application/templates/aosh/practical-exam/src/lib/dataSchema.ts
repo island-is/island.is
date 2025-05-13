@@ -21,8 +21,8 @@ const InformationSchema = z
           nationalId.length !== 0 &&
           kennitala.isValid(nationalId),
       ),
-    phone: z.string().optional(), //.refine((v) => isValidPhoneNumber(v)), // TODO Refine again, dev issues with no email/phone
-    email: z.string().optional(), // TODO Remove optional add .email(), dev issues with no email/phone
+    phone: z.string().refine((v) => isValidPhoneNumber(v)),
+    email: z.string().email(),
     selfOrOthers: z.nativeEnum(SelfOrOthers),
     licenseNumber: z.string().optional(),
     countryOfIssue: z.string().nullish(),
@@ -197,7 +197,7 @@ const ExamineeSchema = z
       }),
       email: z.string().refine((email) => isValidEmail(email)),
       phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
-      licenseNumber: z.string().optional(), // TODO(balli) Need validation rules from VER
+      licenseNumber: z.string().optional(),
       countryIssuer: z.string().min(1).max(256),
       disabled: z.enum([TrueOrFalse.true, TrueOrFalse.false]).optional(),
     }),

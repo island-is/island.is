@@ -2,10 +2,9 @@ import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
   Box,
-  fileToObject,
-  InputFileUpload,
+  InputFileUploadDeprecated,
   LoadingDots,
-  UploadFile,
+  UploadFileDeprecated,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -26,7 +25,7 @@ export const FileUpload: FC<
   const { setValue } = useFormContext()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isError, setIsError] = useState<boolean>(false)
-  const [fileState, setFileState] = useState<Array<UploadFile>>([])
+  const [fileState, setFileState] = useState<Array<UploadFileDeprecated>>([])
 
   const rejectFile = () => {
     setValue(`examCategories[${idx}].medicalCertificate`, undefined)
@@ -54,7 +53,7 @@ export const FileUpload: FC<
         type: type,
         name: name,
       })
-      const file = fileToObject(props[0])
+      const file = props[0]
       setFileState([file])
       setIsLoading(false)
     }
@@ -97,7 +96,7 @@ export const FileUpload: FC<
               />
             </Box>
           )}
-          <InputFileUpload
+          <InputFileUploadDeprecated
             {...rest}
             applicationId={application.id}
             fileList={fileState}
