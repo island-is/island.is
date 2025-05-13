@@ -7,7 +7,7 @@ import {
   Logo,
   PageHeader,
   SectionHeading,
-  SharedPageLayout,
+  CasesLayout,
   useContextMenu,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -139,7 +139,7 @@ const CaseTable = () => {
   const caseTableData = data?.caseTable
 
   return (
-    <SharedPageLayout>
+    <CasesLayout>
       <PageHeader title="Málatafla" />
       <div className={styles.logoContainer}>
         <Logo />
@@ -172,7 +172,7 @@ const CaseTable = () => {
           )}
         </>
       )}
-    </SharedPageLayout>
+    </CasesLayout>
   )
 }
 
