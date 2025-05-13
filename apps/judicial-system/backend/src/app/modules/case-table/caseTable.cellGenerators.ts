@@ -11,6 +11,7 @@ import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseTableColumnKey,
   CaseType,
@@ -254,6 +255,32 @@ const restrictionCaseState: CaseTableCellGenerator = {
   }),
 }
 
+const rulingType: CaseTableCellGenerator = {
+  attributes: ['indictmentRulingDecision'],
+  generate: (c: Case): TagValue | undefined => {
+    switch (c.indictmentRulingDecision) {
+      case CaseIndictmentRulingDecision.FINE:
+        return { color: 'darkerBlue', text: 'Viðurlagaákvörðun' }
+      case CaseIndictmentRulingDecision.RULING:
+        return { color: 'darkerBlue', text: 'Dómur' }
+      default:
+        return undefined
+    }
+  },
+}
+
+const punishmentType: CaseTableCellGenerator = {
+  generate: (c: Case): TagValue | undefined => undefined,
+}
+
+const fmstReceivalDate: CaseTableCellGenerator = {
+  generate: (c: Case): StringGroupValue | undefined => undefined,
+}
+
+const fmstState: CaseTableCellGenerator = {
+  generate: (c: Case): TagValue | undefined => undefined,
+}
+
 export const caseTableCellGenerators: Record<
   CaseTableColumnKey,
   CaseTableCellGenerator
@@ -266,4 +293,8 @@ export const caseTableCellGenerators: Record<
   validFromTo,
   rulingDate,
   restrictionCaseState,
+  rulingType,
+  punishmentType,
+  fmstReceivalDate,
+  fmstState,
 }

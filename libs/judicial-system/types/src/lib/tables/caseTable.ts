@@ -117,6 +117,10 @@ const fmstDone: CaseTable = {
 const fmstIndictmentSentToPrisonAdminColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
+  'rulingType',
+  'punishmentType',
+  'fmstReceivalDate',
+  'fmstState',
 ]
 
 const fmstIndictmentSentToPrisonAdmin: CaseTable = {
@@ -128,6 +132,10 @@ const fmstIndictmentSentToPrisonAdmin: CaseTable = {
 const fmstIndictmentRegisteredRulingColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
+  'rulingType',
+  'punishmentType',
+  'fmstReceivalDate',
+  'fmstState',
 ]
 
 const fmstIndictmentRegisteredRuling: CaseTable = {
