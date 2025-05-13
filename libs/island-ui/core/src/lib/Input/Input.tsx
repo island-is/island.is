@@ -1,6 +1,6 @@
 import cn from 'classnames'
-import React, { FC, forwardRef, useLayoutEffect, useRef, useState } from 'react'
-import { VisuallyHidden } from '@ariakit/react'
+import React, { forwardRef, useLayoutEffect, useRef, useState } from 'react'
+import { VisuallyHidden } from 'reakit'
 import { resolveResponsiveProp } from '../../utils/responsiveProp'
 import { Box } from '../Box/Box'
 import { UseBoxStylesProps } from '../Box/useBoxStyles'
@@ -255,8 +255,14 @@ export const Input = forwardRef(
   },
 )
 
-const AsideIcons: FC<AsideProps> = (props) => {
-  const { icon, buttons = [], size, loading, hasError, hasLabel } = props
+function AsideIcons({
+  icon,
+  buttons = [],
+  size,
+  loading,
+  hasError,
+  hasLabel,
+}: AsideProps) {
   const displayedIcon: InputIcon | undefined = hasError
     ? { name: 'warning' }
     : icon
