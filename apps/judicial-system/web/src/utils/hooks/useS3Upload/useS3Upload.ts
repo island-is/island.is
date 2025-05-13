@@ -437,15 +437,19 @@ const useS3Upload = (
 
   const handleUploadCriminalRecord = (
     defendants: Defendant[],
+    addUploadFile: (file: TUploadFile) => void,
     updateFile: (file: TUploadFile, newId?: string) => void,
   ) => {
     const promises = defendants.map(({ id, nationalId }) => {
+      const name = `Sakavottord_${nationalId ?? ''}.pdf`
       const commonFileProps = {
         // add a temp tame for error handling
+        id: `${name}-${uuid()}`,
         name: `Sakavottord_${nationalId ?? ''}.pdf`,
         category: CaseFileCategory.CRIMINAL_RECORD,
-        // state: CaseFileState.STORED_IN_RVG,
+        percent: 0,
       }
+      addUploadFile(commonFileProps)
 
       try {
         // fetch criminal record and upload it to S3 in the backend

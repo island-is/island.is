@@ -31,6 +31,7 @@ const CaseFiles = () => {
   const {
     uploadFiles,
     allFilesDoneOrError,
+    addUploadFile,
     addUploadFiles,
     updateUploadFile,
     removeUploadFile,
@@ -78,6 +79,7 @@ const CaseFiles = () => {
 
                 handleUploadCriminalRecord(
                   workingCase.defendants,
+                  addUploadFile,
                   updateUploadFile,
                 )
               }}
