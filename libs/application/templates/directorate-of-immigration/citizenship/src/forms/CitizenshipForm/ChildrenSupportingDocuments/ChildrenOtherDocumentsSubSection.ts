@@ -83,7 +83,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
                 index,
               )
 
-              return !!age && age >= MIN_AGE_WRITTEN_CONSENT
+              return !!age && age >= MIN_AGE_WRITTEN_CONSENT ? 'true' : 'false'
             },
           }),
           buildFileUploadField({
@@ -121,7 +121,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
               const hasFullCustody =
                 selectedChildrenExtraData[index]?.hasFullCustody
 
-              return hasFullCustody === NO
+              return hasFullCustody === NO ? 'true' : 'false'
             },
           }),
           buildFileUploadField({
@@ -164,7 +164,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
               const hasFullCustody =
                 selectedChildrenExtraData[index]?.hasFullCustody
 
-              return hasFullCustody === NO
+              return hasFullCustody === NO ? 'true' : 'false'
             },
           }),
           buildFileUploadField({
