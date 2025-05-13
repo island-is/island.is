@@ -4,10 +4,10 @@ import { useRouter } from 'next/router'
 import { Box, Tag, TagVariant, Text } from '@island.is/island-ui/core'
 import { caseTables, getCaseTableType } from '@island.is/judicial-system/types'
 import {
+  CasesLayout,
   Logo,
   PageHeader,
   SectionHeading,
-  CasesLayout,
   useContextMenu,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
