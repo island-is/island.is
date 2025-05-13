@@ -18,7 +18,6 @@ import {
   capitalize,
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
-import { Feature } from '@island.is/judicial-system/types'
 import {
   core,
   defendant as m,
@@ -28,7 +27,6 @@ import {
 import {
   BlueBox,
   DefenderInfo,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
