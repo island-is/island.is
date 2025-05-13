@@ -100,7 +100,7 @@ export { default as CaseResentExplanation } from './CaseResentExplanation/CaseRe
 export { AlertBanner } from './AlertBanner'
 export { default as RulingDateLabel } from './DateLabel/RulingDateLabel'
 export { default as DateLabel } from './DateLabel/DateLabel'
-export { default as SharedPageLayout } from './SharedPageLayout/SharedPageLayout'
+export { default as CasesLayout } from './Layouts/CasesLayout'
 export { default as ReopenModal } from './ReopenModal/ReopenModal'
 export { default as RulingModifiedModal } from './RulingModifiedModal/RulingModifiedModal'
 export { default as CommentsInput } from './CommentsInput/CommentsInput'
@@ -126,4 +126,3 @@ export { LawyerRegistryProvider } from './LawyerRegistryProvider/LawyerRegistryP
 export { default as RequiredStar } from './RequiredStar/RequiredStar'
 export { VictimInfo } from './VictimInfo/VictimInfo'
 export { LabelValue } from './LabelValue/LabelValue'
-export { default as TableGroup } from './TableGroup/TableGroup'
