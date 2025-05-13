@@ -283,9 +283,9 @@ export class CaseController {
 
     if (update.hasCivilClaims !== undefined) {
       if (update.hasCivilClaims) {
-        this.civilClaimantService.create(theCase)
+        await this.civilClaimantService.create(theCase)
       } else {
-        this.civilClaimantService.deleteAll(theCase.id)
+        await this.civilClaimantService.deleteAll(theCase.id)
       }
     }
 
