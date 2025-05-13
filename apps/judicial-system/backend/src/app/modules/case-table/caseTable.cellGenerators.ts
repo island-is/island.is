@@ -15,6 +15,7 @@ import {
   CaseState,
   CaseTableColumnKey,
   CaseType,
+  DefendantEventType,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isRestrictionCase,
@@ -24,7 +25,7 @@ import {
 
 import { Case } from '../case/models/case.model'
 import { DateLog } from '../case/models/dateLog.model'
-import { Defendant } from '../defendant'
+import { Defendant, DefendantEventLog } from '../defendant'
 import { User } from '../user'
 import {
   CaseTableCellValue,
@@ -45,8 +46,24 @@ type CaseIncludes = {
   [K in ObjectKeys<Case>]: {
     model: ModelStatic<DefinedObject<Case[K]>>
     attributes: (keyof DefinedObject<Case[K]>)[]
+    where?: {
+      [K2 in keyof DefinedObject<Case[K]>]?: unknown
+    }
     order?: [[keyof DefinedObject<Case[K]>, 'ASC' | 'DESC']]
     separate?: boolean
+    includes?: Partial<{
+      [K2 in ObjectKeys<DefinedObject<Case[K]>>]: {
+        model: ModelStatic<DefinedObject<DefinedObject<Case[K]>[K2]>>
+        attributes: (keyof DefinedObject<DefinedObject<Case[K]>[K2]>)[]
+        where?: {
+          [K3 in keyof DefinedObject<DefinedObject<Case[K]>[K2]>]?: unknown
+        }
+        order?: [
+          [keyof DefinedObject<DefinedObject<Case[K]>[K2]>, 'ASC' | 'DESC'],
+        ]
+        separate?: boolean
+      }
+    }>
   }
 }
 
@@ -315,13 +332,76 @@ const punishmentType: CaseTableCellGenerator = {
     }
   },
 }
-
 const prisonAdminReceivalDate: CaseTableCellGenerator = {
-  generate: (c: Case): StringGroupValue | undefined => undefined,
+  includes: {
+    defendants: {
+      model: Defendant,
+      attributes: ['punishmentType'],
+      order: [['created', 'ASC']],
+      includes: {
+        eventLogs: {
+          model: DefendantEventLog,
+          attributes: ['created', 'eventType'],
+          order: [['created', 'DESC']],
+          where: {
+            eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
+          },
+          separate: true,
+        },
+      },
+      separate: true,
+    },
+  },
+  generate: (c: Case): StringGroupValue | undefined => {
+    if (c.defendants && c.defendants.length > 0) {
+      const dateOpened = DefendantEventLog.getDefendantEventLogTypeDate(
+        DefendantEventType.OPENED_BY_PRISON_ADMIN,
+        c.defendants[0].eventLogs,
+      )
+
+      if (dateOpened) {
+        return { s: [formatDate(dateOpened) ?? ''] }
+      }
+    }
+
+    return undefined
+  },
 }
 
 const prisonAdminState: CaseTableCellGenerator = {
-  generate: (c: Case): TagValue | undefined => undefined,
+  includes: {
+    defendants: {
+      model: Defendant,
+      attributes: ['punishmentType'],
+      order: [['created', 'ASC']],
+      includes: {
+        eventLogs: {
+          model: DefendantEventLog,
+          attributes: ['created', 'eventType'],
+          order: [['created', 'DESC']],
+          where: {
+            eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
+          },
+          separate: true,
+        },
+      },
+      separate: true,
+    },
+  },
+  generate: (c: Case): TagValue => {
+    if (c.defendants && c.defendants.length > 0) {
+      const dateOpened = DefendantEventLog.getDefendantEventLogTypeDate(
+        DefendantEventType.OPENED_BY_PRISON_ADMIN,
+        c.defendants[0].eventLogs,
+      )
+
+      if (dateOpened) {
+        return { color: 'blue', text: 'Móttekið' }
+      }
+    }
+
+    return { color: 'purple', text: 'Nýtt' }
+  },
 }
 
 export const caseTableCellGenerators: Record<
