@@ -153,6 +153,14 @@ export class PaymentService {
       )
     }
 
+    if (foundPayment.user4 === 'mockuser4') {
+      this.logger.info(
+        'foundPayment.user4 is mockuser4 meaning this is a mocked payment',
+      )
+      this.logger.info('forwarding payment to ark code for handling')
+      return this.getStatusArk(user, applicationId)
+    }
+
     const paymentUrl: string = JSON.parse(
       foundPayment.dataValues.definition,
     ).paymentUrl

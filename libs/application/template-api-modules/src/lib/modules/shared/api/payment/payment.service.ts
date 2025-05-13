@@ -138,7 +138,7 @@ export class PaymentService extends BaseTemplateApiService {
       await this.paymentModelService.setUser4(
         application.id,
         result.id,
-        'newser4',
+        'mockuser4',
       )
 
       await this.paymentModelService.fulfillPayment(
