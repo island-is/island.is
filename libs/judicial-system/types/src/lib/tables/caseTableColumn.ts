@@ -9,6 +9,7 @@ const appealState: CaseTableColumn = { title: 'Staða' }
 const courtOfAppealsHead: CaseTableColumn = { title: 'Dómsformaður' }
 const validFromTo: CaseTableColumn = { title: 'Gildistími' }
 const rulingDate: CaseTableColumn = { title: 'Úrskurðardagur' }
+const restrictionCaseState: CaseTableColumn = { title: 'Staða' }
 
 export const caseTableColumns = {
   caseNumber,
@@ -18,6 +19,7 @@ export const caseTableColumns = {
   courtOfAppealsHead,
   validFromTo,
   rulingDate,
+  restrictionCaseState,
 }
 
 export type CaseTableColumnMap = typeof caseTableColumns
