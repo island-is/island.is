@@ -103,7 +103,7 @@ export class FileResolver {
     )
   }
 
-  @Mutation(() => UploadCriminalRecordFileResponse)
+  @Mutation(() => UploadCriminalRecordFileResponse, { nullable: true })
   uploadCriminalRecordFile(
     @Args('input', { type: () => CreateCriminalRecordInput })
     input: CreateCriminalRecordInput,
