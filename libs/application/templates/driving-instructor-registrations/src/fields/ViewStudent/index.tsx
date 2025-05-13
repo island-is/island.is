@@ -206,7 +206,7 @@ const ViewStudent = ({
     }
   }
 
-  const deleteRegistration = async (regId: any) => {
+  const deleteRegistration = async (regId: string) => {
     const res = await deleteLesson({
       variables: {
         input: {
@@ -560,7 +560,7 @@ const ViewStudent = ({
                 <T.Body>
                   {student &&
                     studentRegistrations
-                      ?.map((entry: any, key: number) => {
+                      ?.map((entry: DrivingBookLesson, key: number) => {
                         const bgr = cn({
                           [`${styles.successBackground}`]:
                             !!newRegId &&

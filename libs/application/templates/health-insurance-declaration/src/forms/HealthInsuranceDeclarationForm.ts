@@ -268,9 +268,9 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
             buildCheckboxField({
               id: 'selectedApplicants.registerPersonsApplicantCheckboxField',
               title: m.application.registerPersons.applicantTitle,
-              defaultValue: (application: any) => [
-                getApplicantAsOption(application.externalData)[0]?.value,
-              ],
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) => [getApplicantAsOption(application.externalData)[0]?.value],
               options: ({ externalData }) => getApplicantAsOption(externalData),
             }),
             buildCheckboxField({

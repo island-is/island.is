@@ -104,7 +104,7 @@ const BloodDonationRestrictionList: CustomScreen<
   const [currentPage, setPage] = useQueryState(
     'page',
     parseAsInteger
-      .withOptions({ shallow: true, clearOnDefault: true })
+      .withOptions({ shallow: true, clearOnDefault: true, scroll: true })
       .withDefault(1),
   )
   const { activeLocale } = useI18n()

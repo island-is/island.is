@@ -12,7 +12,7 @@ import {
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isProsecutionUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -78,7 +78,7 @@ export const UserProvider: FC<PropsWithChildren<Props>> = ({
           !isProsecutionUser(user) &&
           !isDistrictCourtUser(user) &&
           !isCourtOfAppealsUser(user) &&
-          !isPublicProsecutorUser(user),
+          !isPublicProsecutionOfficeUser(user),
       }}
     >
       {children}

@@ -1,6 +1,4 @@
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
-
-import { ConsoleLogger } from '@nestjs/common'
 import { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { formatText } from '@island.is/application/core'
@@ -185,11 +183,11 @@ const ReviewScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   //#endregion Services Text
 
-  function getServiceDescriptionStack(
+  const getServiceDescriptionStack = (
     title: string,
     serviceName: string,
     description: string,
-  ) {
+  ) => {
     return (
       <>
         <Box>
@@ -204,7 +202,7 @@ const ReviewScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     )
   }
 
-  function getServicesTextOutput(): string {
+  const getServicesTextOutput = (): string => {
     let text = ''
     for (let i = 0; i < servicesTextArr?.length; i++) {
       text += servicesTextArr[i]

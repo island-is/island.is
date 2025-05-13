@@ -33,6 +33,7 @@ import { VerifyCardInput } from './dtos/verifyCard.input'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import { environment } from '../../environments'
+import { PaymentTrackingData } from '../../types/cardPayment'
 
 @Injectable()
 export class CardPaymentService {
@@ -222,7 +223,10 @@ export class CardPaymentService {
     }
   }
 
-  async charge(chargeCardInput: ChargeCardInput) {
+  async charge(
+    chargeCardInput: ChargeCardInput,
+    paymentTrackingData: PaymentTrackingData,
+  ) {
     const status = await this.getFullVerificationStatus(
       chargeCardInput.paymentFlowId,
     )
@@ -258,6 +262,7 @@ export class CardPaymentService {
       chargeCardInput,
       verificationData,
       paymentApiConfig: this.config.paymentGateway,
+      paymentTrackingData,
     })
 
     const response = await fetch(
@@ -347,11 +352,13 @@ export class CardPaymentService {
     charges,
     chargeResponse,
     totalPrice,
+    merchantReferenceData,
   }: {
     paymentFlow: PaymentFlowAttributes
     charges: CatalogItemWithQuantity[]
     chargeResponse: ChargeResponse
     totalPrice: number
+    merchantReferenceData: string
   }) {
     return generateCardChargeFJSPayload({
       paymentFlow,
@@ -359,6 +366,7 @@ export class CardPaymentService {
       chargeResponse,
       totalPrice,
       systemId: environment.chargeFjs.systemId,
+      merchantReferenceData,
     })
   }
 }

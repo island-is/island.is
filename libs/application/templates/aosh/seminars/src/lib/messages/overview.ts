@@ -86,6 +86,11 @@ export const overview = {
       defaultMessage: 'Setja í reikning',
       description: 'Overview paymentArrangement putIntoAccount label',
     },
+    payer: {
+      id: 'aosh.sem.application:overview.paymentArrangement.payer',
+      defaultMessage: 'Greiðandi: {value}',
+      description: 'Overview paymentArrangement payer label',
+    },
     contactEmail: {
       id: 'aosh.sem.application:overview.paymentArrangement.contactEmail',
       defaultMessage: 'Netfang tengiliðs: {value}',

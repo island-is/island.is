@@ -54,7 +54,7 @@ export class Subpoena extends Model {
 
   @ApiPropertyOptional({ type: String })
   @Column({ type: DataType.STRING, allowNull: true })
-  subpoenaId?: string
+  policeSubpoenaId?: string
 
   @ForeignKey(() => Defendant)
   @Column({ type: DataType.UUID, allowNull: false })

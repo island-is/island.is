@@ -7,7 +7,6 @@ import {
   buildSection,
   buildSubmitField,
   buildTextField,
-  buildTitleField,
   YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages/messages'

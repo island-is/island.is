@@ -239,9 +239,7 @@ export const PrisonCases: FC = () => {
               },
             },
             {
-              cell: (row) => (
-                <TableDate displayDate={row.indictmentCompletedDate} />
-              ),
+              cell: (row) => <TableDate displayDate={row.rulingDate} />,
             },
             {
               cell: (row) => {

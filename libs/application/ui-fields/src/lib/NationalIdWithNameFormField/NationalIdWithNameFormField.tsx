@@ -67,6 +67,7 @@ export const NationalIdWithNameFormField: FC<
         emailLabel={field.emailLabel}
         error={error}
         clearOnChange={field.clearOnChange}
+        setOnChange={field.setOnChange}
       />
     </Box>
   )

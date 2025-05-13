@@ -106,10 +106,10 @@ const IndictmentOverview = () => {
               </Text>
             </Box>
           )}
-          {workingCase.indictmentCompletedDate && (
+          {workingCase.rulingDate && (
             <Text variant="h4" as="h3">
               {formatMessage(strings.indictmentCompletedTitle, {
-                date: formatDate(workingCase.indictmentCompletedDate, 'PPP'),
+                date: formatDate(workingCase.rulingDate, 'PPP'),
               })}
             </Text>
           )}
@@ -252,6 +252,17 @@ const IndictmentOverview = () => {
                 )}
               />
             </Box>
+            <RadioButton
+              id="punishment-type-other"
+              name="punishmentTypeOther"
+              checked={hasPunishmentType(PunishmentType.OTHER)}
+              onChange={() => {
+                onChange(PunishmentType.OTHER)
+              }}
+              large
+              backgroundColor="white"
+              label="Annað"
+            />
           </BlueBox>
         </Box>
       </FormContentContainer>

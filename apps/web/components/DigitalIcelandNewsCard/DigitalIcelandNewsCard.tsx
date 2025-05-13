@@ -21,58 +21,90 @@ interface ItemProps {
   description?: string | null
   tags: string[]
   href: string
+  mini?: boolean
 }
 
 export const DigitalIcelandNewsCard = (item: ItemProps) => {
   const { format } = useDateUtils()
 
-  return (
-    <LinkV2 href={item.href} className={styles.itemContainer}>
-      <Box
-        display="flex"
-        flexDirection="column"
-        flexWrap="nowrap"
-        rowGap={[2, 2, 2, 5]}
-        justifyContent="spaceBetween"
-        height="full"
-      >
-        <Stack space={2}>
-          <BackgroundImage
-            positionX="left"
-            backgroundSize="cover"
-            image={{ url: item.imageSrc }}
-            ratio="396:210"
-            boxProps={{
-              alignItems: 'center',
-              width: 'full',
-              display: 'inlineFlex',
-              overflow: 'hidden',
-              borderRadius: 'large',
-            }}
-          />
+  const formattedDate = item.date && format(new Date(item.date), 'do MMMM yyyy')
 
-          <Stack space={1}>
-            {item.date && (
-              <Text variant="h5" color="purple400">
-                {format(new Date(item.date), 'do MMMM yyyy')}
-              </Text>
-            )}
-            <Text variant="h3">{item.title}</Text>
-            <Text variant="medium">
-              {shortenText(item.description ?? '', 80)}
-            </Text>
-          </Stack>
-        </Stack>
-        <Box>
-          <Inline space={1}>
-            {item.tags.map((tag) => (
-              <Tag key={tag} disabled>
-                {tag}
-              </Tag>
-            ))}
-          </Inline>
-        </Box>
+  if (item.mini) {
+    return (
+      <Box marginBottom={3}>
+        <LinkV2
+          href={item.href}
+          className={`${styles.itemWrapper} ${styles.itemWrapperMini}`}
+        >
+          <Box display="flex" flexGrow={1} width="full" height="full">
+            <Stack space={2}>
+              <Stack space={1}>
+                {!!formattedDate && (
+                  <Text variant="eyebrow" color="purple400">
+                    {formattedDate}
+                  </Text>
+                )}
+                <Text variant="h3">{item.title}</Text>
+              </Stack>
+              {item.tags.length > 0 && (
+                <Inline space={1}>
+                  {item.tags.map((tag) => (
+                    <Tag key={tag} disabled outlined>
+                      {tag}
+                    </Tag>
+                  ))}
+                </Inline>
+              )}
+            </Stack>
+          </Box>
+        </LinkV2>
       </Box>
-    </LinkV2>
+    )
+  }
+
+  return (
+    <Box marginBottom={3}>
+      <LinkV2 href={item.href} className={styles.itemWrapper}>
+        <Box className={styles.contentWrapper}>
+          <Box className={styles.contentMobile}>
+            <Stack space={2}>
+              <Stack space={1}>
+                {!!formattedDate && (
+                  <Text variant="eyebrow" color="purple400">
+                    {formattedDate}
+                  </Text>
+                )}
+                <Text variant="h3">{item.title}</Text>
+                <Text variant="default">
+                  {shortenText(item.description ?? '', 80)}
+                </Text>
+              </Stack>
+              {item.tags.length > 0 && (
+                <Inline space={1}>
+                  {item.tags.map((tag) => (
+                    <Tag key={tag} disabled outlined>
+                      {tag}
+                    </Tag>
+                  ))}
+                </Inline>
+              )}
+            </Stack>
+          </Box>
+          <Box className={styles.image}>
+            <BackgroundImage
+              backgroundSize="cover"
+              image={{ url: item.imageSrc }}
+              ratio="200:122"
+              boxProps={{
+                alignItems: 'center',
+                width: 'full',
+                display: 'inlineFlex',
+                overflow: 'hidden',
+              }}
+            />
+          </Box>
+        </Box>
+      </LinkV2>
+    </Box>
   )
 }

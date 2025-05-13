@@ -61,7 +61,6 @@ export const PublicProsecutorCases: FC = () => {
       <div className={styles.logoContainer}>
         <Logo />
       </div>
-
       {error ? (
         <div className={styles.infoContainer}>
           <AlertMessage

@@ -145,7 +145,7 @@ export const getRoleTitleFromCaseFileCategory = (
 ) => {
   switch (category) {
     case CaseFileCategory.PROSECUTOR_CASE_FILE:
-      return 'Sækjandi'
+      return 'Ákæruvald'
     case CaseFileCategory.DEFENDANT_CASE_FILE:
       return 'Verjandi'
     case CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE:

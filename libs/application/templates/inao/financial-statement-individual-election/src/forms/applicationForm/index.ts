@@ -3,11 +3,12 @@ import { Form, FormModes } from '@island.is/application/types'
 import { Logo } from '../../components/Logo'
 import { m } from '../../lib/messages'
 import { clientInfoSection } from './clientInfoSection'
-import { electionInfoSection } from './electionInfoSection'
 import { individualKeyNumbersSection } from './individualKeyNumbersSection'
 import { documentsSection } from './documentsSection'
 import { overviewSection } from './overviewSection'
 import { overviewUnderLimitSection } from './overviewUnderLimitSection'
+import { selectElectionSection } from './selectElectionSection'
+import { financialLimitSection } from './financialLimitSection'
 
 export const FinancialStatementIndividualElectionForm: Form = buildForm({
   id: 'FinancialStatementIndividualelectionForm',
@@ -18,7 +19,8 @@ export const FinancialStatementIndividualElectionForm: Form = buildForm({
   logo: Logo,
   children: [
     clientInfoSection,
-    electionInfoSection,
+    selectElectionSection,
+    financialLimitSection,
     individualKeyNumbersSection,
     documentsSection,
     overviewSection,

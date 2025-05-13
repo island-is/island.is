@@ -118,8 +118,29 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     defendant.verdictAppealDeadline,
   ])
 
+  const serviceRequirementText = useMemo(() => {
+    switch (defendant.serviceRequirement) {
+      case ServiceRequirement.REQUIRED:
+        return 'Birta skal dómfellda dóminn'
+      case ServiceRequirement.NOT_REQUIRED:
+        return 'Birting dóms ekki þörf'
+      case ServiceRequirement.NOT_APPLICABLE:
+        return 'Dómfelldi var viðstaddur dómsuppkvaðningu'
+      default:
+        return null
+    }
+  }, [defendant.serviceRequirement])
+
   const textItems = useMemo(() => {
-    const texts = []
+    const texts: string[] = []
+
+    const pushIf = (condition: boolean, message: string | null) => {
+      if (condition && message) {
+        texts.push(message)
+      }
+    }
+
+    pushIf(!!serviceRequirementText, serviceRequirementText)
 
     if (isFine) {
       texts.push(
@@ -128,20 +149,13 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           appealDeadline: formatDate(defendant.verdictAppealDeadline),
         }),
       )
-    } else {
-      if (serviceRequired) {
-        texts.push(
-          formatMessage(strings.defendantVerdictViewedDate, {
-            date: formatDate(
-              dates.verdictViewDate ?? defendant.verdictViewDate,
-            ),
-          }),
-        )
-      } else if (
-        defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
-      ) {
-        texts.push(formatMessage(strings.defendantViewedVerdictInCourt))
-      }
+    } else if (defendant.verdictViewDate) {
+      pushIf(
+        !!serviceRequired,
+        formatMessage(strings.defendantVerdictViewedDate, {
+          date: formatDate(defendant.verdictViewDate),
+        }),
+      )
 
       texts.push(
         formatMessage(appealExpirationInfo.message, {
@@ -149,38 +163,30 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         }),
       )
 
-      if (defendant.verdictAppealDate) {
-        texts.push(
-          formatMessage(strings.defendantAppealDate, {
-            date: formatDate(defendant.verdictAppealDate),
-          }),
-        )
-      }
-    }
-
-    if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
-      texts.push(
-        formatMessage(strings.sendToPrisonAdminDate, {
-          date: formatDate(defendant.sentToPrisonAdminDate),
+      pushIf(
+        !!defendant.verdictAppealDate,
+        formatMessage(strings.defendantAppealDate, {
+          date: formatDate(defendant.verdictAppealDate),
         }),
       )
     }
+
+    pushIf(
+      !!(defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin),
+      formatMessage(strings.sendToPrisonAdminDate, {
+        date: formatDate(defendant.sentToPrisonAdminDate),
+      }),
+    )
 
     return texts
   }, [
     appealExpirationInfo.date,
     appealExpirationInfo.message,
-    dates.verdictViewDate,
-    defendant.isSentToPrisonAdmin,
-    defendant.isVerdictAppealDeadlineExpired,
-    defendant.sentToPrisonAdminDate,
-    defendant.serviceRequirement,
-    defendant.verdictAppealDate,
-    defendant.verdictAppealDeadline,
-    defendant.verdictViewDate,
+    defendant,
     formatMessage,
     isFine,
     serviceRequired,
+    serviceRequirementText,
   ])
 
   const verdictViewDateVariants = {
@@ -226,32 +232,31 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         </Box>
       </Box>
       <AnimatePresence>
-        {(!serviceRequired || defendant.verdictViewDate || isFine) &&
-          textItems.map((text, index) => (
-            <motion.div
-              key={index}
-              initial={{
-                marginTop: 0,
-                opacity: 0,
-                y: 20,
-                height: triggerAnimation2 ? 0 : 'auto',
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                height: 'auto',
-                marginTop: index === 0 ? 0 : '16px',
-              }}
-              exit={{ opacity: 0, y: 20, height: 0 }}
-              transition={{
-                delay: index < 4 ? index * 0.2 : 0,
-                duration: 0.3,
-              }}
-              onAnimationComplete={() => setTriggerAnimation(true)}
-            >
-              <Text>{`• ${text}`}</Text>
-            </motion.div>
-          ))}
+        {textItems.map((text, index) => (
+          <motion.div
+            key={index}
+            initial={{
+              marginTop: 0,
+              opacity: 0,
+              y: 20,
+              height: triggerAnimation2 ? 0 : 'auto',
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              height: 'auto',
+              marginTop: index === 0 ? 0 : '16px',
+            }}
+            exit={{ opacity: 0, y: 20, height: 0 }}
+            transition={{
+              delay: index < 4 ? index * 0.2 : 0,
+              duration: 0.3,
+            }}
+            onAnimationComplete={() => setTriggerAnimation(true)}
+          >
+            <Text marginBottom={1}>{`• ${text}`}</Text>
+          </motion.div>
+        ))}
       </AnimatePresence>
       <AnimatePresence mode="wait">
         {shouldHideDatePickers ? null : !serviceRequired ||
