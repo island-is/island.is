@@ -87,7 +87,13 @@ const CreateCaseButton: FC<CreateCaseButtonProps> = (props) => {
 
   return (
     <Box marginTop={[2, 2, 0]}>
-      <ContextMenu title="Nýtt mál" items={items} />
+      <ContextMenu
+        dataTestId="createCaseDropdown"
+        menuLabel="Tegund kröfu"
+        items={items}
+        title={formatMessage(m.createCaseButton)}
+        offset={[0, 8]}
+      />
     </Box>
   )
 }
