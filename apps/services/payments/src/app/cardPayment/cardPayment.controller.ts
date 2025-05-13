@@ -26,7 +26,7 @@ import { retry } from '@island.is/shared/utils/server'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { PaymentMethod } from '../../types'
+import { PaymentMethod, PaymentStatus } from '../../types'
 import { ChargeResponse } from './cardPayment.types'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import { VerificationCallbackInput } from './dtos/verificationCallback.input'
@@ -256,81 +256,12 @@ export class CardPaymentController {
         persistedPaymentConfirmation,
       )
 
-      try {
-        await this.paymentFlowService.logPaymentFlowUpdate({
-          paymentFlowId,
-          type: 'success',
-          occurredAt: new Date(),
-          paymentMethod: PaymentMethod.CARD,
-          reason: 'payment_completed',
-          message: `[${paymentFlowId}] Card payment completed successfully`,
-          metadata: {
-            payment: paymentResult,
-            charge: confirmation,
-          },
-        })
-      } catch (logUpdateError) {
-        this.logger.error(
-          `[${paymentFlowId}] Successfully processed payment but failed to notify the final onUpdateUrl. Attempting refund.`,
-          { error: logUpdateError.message },
-        )
-        try {
-          // Attempt refund
-          const refund = await retry(() =>
-            this.cardPaymentService.refund(
-              paymentFlowId,
-              chargeCardInput.cardNumber,
-              paymentResult as ChargeResponse,
-              chargeCardInput.amount,
-            ),
-          )
-          // Log refund success due to notification failure
-          await this.paymentFlowService.logPaymentFlowUpdate({
-            paymentFlowId: paymentFlowId,
-            type: 'update',
-            occurredAt: new Date(),
-            paymentMethod: PaymentMethod.CARD,
-            reason: 'other',
-            message: `[${paymentFlowId}] Card payment refunded: failed to notify onUpdateUrl of success.`,
-            metadata: {
-              payment: paymentResult,
-              refund,
-              originalNotificationError: logUpdateError.message,
-            },
-          })
-          // Throw an error indicating refund occurred because of notification failure
-          throw new BadRequestException(
-            CardErrorCode.RefundedBecauseOfSystemError,
-          )
-        } catch (refundError) {
-          // CRITICAL: Refund failed after notification failure
-          this.logger.error(
-            `[${paymentFlowId}] CRITICAL: Payment successful, final notification failed, AND refund failed. Manual intervention required.`,
-            {
-              originalNotificationError: logUpdateError.message,
-              refundError: refundError.message,
-              payment: paymentResult,
-            },
-          )
-          await this.paymentFlowService.logPaymentFlowUpdate({
-            paymentFlowId: paymentFlowId,
-            type: 'failure',
-            occurredAt: new Date(),
-            paymentMethod: PaymentMethod.CARD,
-            reason: 'other',
-            message: `[${paymentFlowId}] CRITICAL: Payment successful, final notification failed, AND refund failed.`,
-            metadata: {
-              payment: paymentResult,
-              originalNotificationError: logUpdateError.message,
-              refundError: refundError.message,
-            },
-          })
-          // Rethrow a critical error
-          throw new BadRequestException(
-            `CRITICAL_ERROR: Payment successful, notification failed, refund failed. ${logUpdateError.message} | ${refundError.message}`,
-          )
-        }
-      }
+      await this._handleSuccessfulPaymentNotification(
+        paymentFlowId,
+        paymentResult,
+        confirmation,
+        chargeCardInput,
+      )
 
       return paymentResult
     } catch (e) {
@@ -577,6 +508,95 @@ export class CardPaymentController {
           },
         })
         return null
+      }
+    }
+  }
+
+  private async _handleSuccessfulPaymentNotification(
+    paymentFlowId: string,
+    paymentResult: ChargeResponse,
+    confirmation: PaymentFlowFjsChargeConfirmation | null,
+    chargeCardInput: ChargeCardInput,
+  ) {
+    try {
+      await this.paymentFlowService.logPaymentFlowUpdate({
+        paymentFlowId,
+        type: 'success',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'payment_completed',
+        message: `[${paymentFlowId}] Card payment completed successfully`,
+        metadata: {
+          payment: paymentResult,
+          charge: confirmation,
+        },
+      })
+    } catch (logUpdateError) {
+      this.logger.error(
+        `[${paymentFlowId}] Successfully processed payment but failed to notify the final onUpdateUrl. Attempting refund.`,
+        { error: logUpdateError.message },
+      )
+      try {
+        // Attempt refund
+        const refund = await retry(() =>
+          this.cardPaymentService.refund(
+            paymentFlowId,
+            chargeCardInput.cardNumber,
+            paymentResult as ChargeResponse,
+            chargeCardInput.amount,
+          ),
+        )
+
+        // Log refund success due to notification failure
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId: paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'other',
+          message: `[${paymentFlowId}] Card payment refunded: failed to notify onUpdateUrl [success].`,
+          metadata: {
+            payment: paymentResult,
+            refund,
+            originalNotificationError: logUpdateError.message,
+          },
+        })
+
+        // Throw an error indicating refund occurred because of notification failure
+        throw new BadRequestException(
+          CardErrorCode.RefundedBecauseOfSystemError,
+        )
+      } catch (refundError) {
+        if (
+          refundError.message === CardErrorCode.RefundedBecauseOfSystemError
+        ) {
+          throw refundError
+        }
+
+        // CRITICAL: Refund failed after notification failure
+        this.logger.error(
+          `[${paymentFlowId}] CRITICAL: Payment successful, final notification failed, AND refund failed. Manual intervention required.`,
+          {
+            originalNotificationError: logUpdateError.message,
+            refundError: refundError.message,
+            payment: paymentResult,
+          },
+        )
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId: paymentFlowId,
+          type: 'failure',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'other',
+          message: `[${paymentFlowId}] CRITICAL: Payment successful, final notification failed, AND refund failed.`,
+          metadata: {
+            payment: paymentResult,
+            originalNotificationError: logUpdateError.message,
+            refundError: refundError.message,
+          },
+        })
+        // Rethrow a critical error
+        throw new BadRequestException(refundError)
       }
     }
   }

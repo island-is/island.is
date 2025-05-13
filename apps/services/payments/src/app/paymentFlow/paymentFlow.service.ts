@@ -364,7 +364,7 @@ export class PaymentFlowService {
     }
 
     await retry(
-      async () => {
+      async (attempt) => {
         const response = await fetch(paymentFlow.onUpdateUrl, {
           method: 'POST',
           headers: {
@@ -378,7 +378,7 @@ export class PaymentFlowService {
             .text()
             .catch(() => 'Could not read error body')
           this.logger.warn(
-            `[${update.paymentFlowId}] Failed to notify onUpdateUrl (attempt): ${response.status} ${response.statusText}`,
+            `[${update.paymentFlowId}] Failed to notify onUpdateUrl [${update.type}] (attempt ${attempt}): ${response.status} ${response.statusText}`,
             {
               url: paymentFlow.onUpdateUrl,
               responseBody: errorBody,

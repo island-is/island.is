@@ -17,14 +17,24 @@ interface RetryConfig {
 const DEFAULT_MAX_RETRIES = 3
 const DEFAULT_RETRY_DELAY_MS = 1000
 
+const IS_TEST_ENV =
+  typeof process !== 'undefined' &&
+  process.versions?.node != null &&
+  process.env.NODE_ENV === 'test'
+
 const getJitteredDelay = (baseDelay: number) => {
+  // In test environment, return 0 delay
+  if (IS_TEST_ENV) {
+    return 0
+  }
+
   // Add random jitter between 0 and 25% of the base delay
   const jitter = Math.random() * (baseDelay * 0.25)
   return baseDelay + jitter
 }
 
 export const retry = async <T>(
-  fn: () => Promise<T>,
+  fn: (attempt?: number) => Promise<T>,
   config: RetryConfig = {},
 ) => {
   const {
@@ -36,7 +46,7 @@ export const retry = async <T>(
 
   while (attempt < maxRetries) {
     try {
-      return await fn()
+      return await fn(attempt)
     } catch (e) {
       const shouldRetry = config.shouldRetryOnError
         ? config.shouldRetryOnError(e)
