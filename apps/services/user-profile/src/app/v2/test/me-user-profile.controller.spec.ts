@@ -3294,7 +3294,7 @@ describe('PATCH /v2/me/actor-profile', () => {
       email: testEmail,
       emailStatus: DataStatus.VERIFIED,
       needsNudge: false,
-      actorNationalId: testNationalId1,
+      nationalId: testNationalId1,
       emailNotifications: true,
     })
 
@@ -3342,7 +3342,7 @@ describe('PATCH /v2/me/actor-profile', () => {
       email: testEmail,
       emailStatus: DataStatus.VERIFIED,
       needsNudge: false,
-      actorNationalId: testNationalId1,
+      nationalId: testNationalId1,
       emailNotifications: true,
     })
 
@@ -3385,7 +3385,7 @@ describe('PATCH /v2/me/actor-profile', () => {
       email: testEmail,
       emailStatus: DataStatus.VERIFIED,
       needsNudge: false,
-      actorNationalId: testNationalId1,
+      nationalId: testNationalId1,
       emailNotifications: true,
     })
 
@@ -3438,7 +3438,7 @@ describe('PATCH /v2/me/actor-profile', () => {
       email: '', // Should be empty since no email is provided
       emailStatus: DataStatus.NOT_DEFINED,
       needsNudge: false,
-      actorNationalId: testNationalId1,
+      nationalId: testNationalId1,
       emailNotifications: true,
     })
 
@@ -3555,7 +3555,7 @@ describe('PATCH /v2/me/actor-profile', () => {
       email: testEmail,
       emailStatus: DataStatus.VERIFIED,
       needsNudge: false,
-      actorNationalId: testNationalId1,
+      nationalId: testNationalId1,
       emailNotifications: false, // Should maintain the original value
     })
 

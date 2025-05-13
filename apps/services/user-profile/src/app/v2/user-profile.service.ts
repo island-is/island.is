@@ -1001,7 +1001,7 @@ export class UserProfileService {
       email: emailStr,
       emailStatus,
       needsNudge: false, // Reset nudge status since we just updated
-      actorNationalId: toNationalId,
+      nationalId: toNationalId,
       emailNotifications: actorProfile?.emailNotifications ?? true,
     }
     return result
