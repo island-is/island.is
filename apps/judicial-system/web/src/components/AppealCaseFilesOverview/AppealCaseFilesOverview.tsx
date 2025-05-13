@@ -157,6 +157,7 @@ const AppealCaseFilesOverview = () => {
                   </Box>
                   <Box marginLeft={3}>
                     <ContextMenu
+                      dataTestId="contextMenu"
                       items={[
                         {
                           title: formatMessage(contextMenu.openFile),
@@ -178,7 +179,8 @@ const AppealCaseFilesOverview = () => {
                             ]
                           : []),
                       ]}
-                      render={
+                      menuLabel="Opna valmöguleika á skjali"
+                      disclosure={
                         <IconButton
                           icon="ellipsisVertical"
                           colorScheme="transparent"
