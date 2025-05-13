@@ -64,7 +64,7 @@ export class CivilClaimantService {
       await this.civilClaimantModel.update(update, {
         where: {
           id: civilClaimant.id,
-          caseId: caseId,
+          caseId,
         },
         returning: true,
       })
@@ -93,7 +93,7 @@ export class CivilClaimantService {
     const numberOfAffectedRows = await this.civilClaimantModel.destroy({
       where: {
         id: civilClaimantId,
-        caseId: caseId,
+        caseId,
       },
     })
 
@@ -113,9 +113,7 @@ export class CivilClaimantService {
 
   async deleteAll(caseId: string): Promise<boolean> {
     const numberOfAffectedRows = await this.civilClaimantModel.destroy({
-      where: {
-        caseId: caseId,
-      },
+      where: { caseId },
     })
 
     if (numberOfAffectedRows > 1) {
