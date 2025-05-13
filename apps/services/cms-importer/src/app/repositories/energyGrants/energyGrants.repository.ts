@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common'
-import { EnergyGrantDto } from './dtos/energyGrant.dto'
-import { EnergyGrantCollectionDto } from './dtos/eneryGrantCollection.dto'
-
-import DATA from './fundData.json'
+import DATA from './data.json'
+import { EnergyGrantCollectionDto } from './dto/energyGrantCollection.dto'
+import { EnergyGrantDto } from './dto/energyGrant.dto'
 
 @Injectable()
-export class EnvironmentAndEnergyAgencyClientService {
-  async getEnergyFundGrants(): Promise<EnergyGrantCollectionDto | null> {
+export class EnergyGrantsRepository {
+  async getEnergyGrants(
+    limit?: number,
+  ): Promise<EnergyGrantCollectionDto | null> {
     const finalIndex = DATA.length - 1
-    const grantsArray = DATA.slice(0, finalIndex)
+    const grantsArray = DATA.slice(0, limit ?? finalIndex)
     const total = DATA[finalIndex]
 
     const grants: Array<EnergyGrantDto> = grantsArray.map((grant) => {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { GrantsClientService } from '@island.is/clients/grants'
 
 @Injectable()
-export class ClientGrantsRepository {
+export class GrantsRepository {
   constructor(private readonly grantsClientService: GrantsClientService) {}
 
   async getGrants() {

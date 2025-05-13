@@ -1,14 +1,23 @@
-import { NestFactory } from '@nestjs/core'
-import { AppModule } from './app/app.module'
-import { AppService } from './app/app.service'
+import { processJob } from './app/utils'
 
-export const worker = async () => {
-  const app = await NestFactory.createApplicationContext(AppModule)
+const job = processJob()
 
-  app.enableShutdownHooks()
-  await app.get(AppService).run()
-  await app.close()
-  process.exit(0)
+if (job === 'energy-fund-import') {
+  import('./app/energy-fund-import/energy-fund-import-worker')
+    .then((app) => app.energyFundWorker())
+    .catch((error) => {
+      console.error(
+        'Failed to import or execute the energy fund import worker:',
+        error,
+      )
+    })
+} else {
+  import('./app/grant-import/grant-import-worker')
+    .then((app) => app.worker())
+    .catch((error) => {
+      console.error(
+        'Failed to import or execute the cms grant import worker:',
+        error,
+      )
+    })
 }
-
-worker()
