@@ -1,4 +1,12 @@
-import { FC, Fragment, useCallback, useContext, useState } from 'react'
+import {
+  FC,
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -25,8 +33,8 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 import {
+  Case,
   CaseFileCategory,
   CaseState,
   CaseTransition,
@@ -61,7 +69,8 @@ const Processing: FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
+  const civilClaimRef = useRef<HTMLElement>(null)
+  const { updateCase, transitionCase, updateUnlimitedAccessCase } = useCase()
   const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()
   const { createCivilClaimant, deleteCivilClaimant } = useCivilClaimants()
@@ -76,9 +85,6 @@ const Processing: FC = () => {
     workingCase.id,
   )
   const router = useRouter()
-
-  const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
-    useState<boolean>()
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
@@ -176,29 +182,28 @@ const Processing: FC = () => {
     }))
   }
 
-  const removeAllCivilClaimants = () => {
-    if (!workingCase.civilClaimants) {
+  const handleHasCivilClaimsChange = async (hasCivilClaims: boolean) => {
+    const res = await updateUnlimitedAccessCase(workingCase.id, {
+      hasCivilClaims,
+    })
+
+    if (!res) {
       return
     }
 
-    for (const civilClaimant of workingCase.civilClaimants) {
-      removeCivilClaimantById(civilClaimant.id)
-    }
-  }
-
-  const handleHasCivilClaimsChange = (hasCivilClaims: boolean) => {
-    setHasCivilClaimantChoice(hasCivilClaims)
-
-    setAndSendCaseToServer(
-      [{ hasCivilClaims, force: true }],
-      workingCase,
-      setWorkingCase,
-    )
+    setWorkingCase((prev) => ({
+      ...prev,
+      hasCivilClaims,
+      civilClaimants: res.civilClaimants,
+    }))
 
     if (hasCivilClaims) {
-      addCivilClaimant()
-    } else {
-      removeAllCivilClaimants()
+      requestAnimationFrame(() => {
+        civilClaimRef.current?.scrollIntoView({
+          block: 'start',
+          behavior: 'smooth',
+        })
+      })
     }
   }
 
@@ -230,12 +235,14 @@ const Processing: FC = () => {
             {workingCase.defendants.map((defendant) => (
               <Box marginBottom={2} key={defendant.id}>
                 <BlueBox>
-                  <Text variant="h4" marginBottom={3}>
-                    {`${formatMessage(strings.defendantName, {
+                  <SectionHeading
+                    title={formatMessage(strings.defendantName, {
                       name: defendant.name,
-                    })} `}
-                    <RequiredStar />
-                  </Text>
+                    })}
+                    heading="h3"
+                    variant="h4"
+                    required
+                  />
                   <div className={styles.grid}>
                     <RadioButton
                       id={`defendant-${defendant.id}-plea-decision-guilty`}
@@ -298,6 +305,7 @@ const Processing: FC = () => {
         <Box
           component="section"
           marginBottom={workingCase.hasCivilClaims === true ? 5 : 10}
+          ref={civilClaimRef}
         >
           <SectionHeading
             title={formatMessage(strings.civilDemandsTitle)}
@@ -319,12 +327,10 @@ const Processing: FC = () => {
                   label={formatMessage(strings.yes)}
                   large
                   backgroundColor="white"
-                  onChange={() => handleHasCivilClaimsChange(true)}
-                  checked={
-                    hasCivilClaimantChoice === true ||
-                    (hasCivilClaimantChoice === undefined &&
-                      workingCase.hasCivilClaims === true)
-                  }
+                  onChange={() => {
+                    handleHasCivilClaimsChange(true)
+                  }}
+                  checked={workingCase.hasCivilClaims === true}
                 />
               </Box>
               <Box width="half" marginLeft={1}>
@@ -335,11 +341,7 @@ const Processing: FC = () => {
                   large
                   backgroundColor="white"
                   onChange={() => handleHasCivilClaimsChange(false)}
-                  checked={
-                    hasCivilClaimantChoice === false ||
-                    (hasCivilClaimantChoice === undefined &&
-                      workingCase.hasCivilClaims === false)
-                  }
+                  checked={workingCase.hasCivilClaims === false}
                 />
               </Box>
             </Box>

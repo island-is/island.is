@@ -184,6 +184,7 @@ export interface UpdateCase
     | 'mergeCaseId'
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
+    | 'hasCivilClaims'
   > {
   type?: CaseType
   state?: CaseState
