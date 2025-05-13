@@ -209,7 +209,7 @@ export class MeUserProfileController {
     response: { status: 200, type: ActorProfileDetailsDto },
   })
   @Audit<ActorProfileDetailsDto>({
-    resources: (profile) => profile.actorNationalId,
+    resources: (profile) => profile.nationalId,
   })
   getSingleActorProfile(
     @CurrentUser() user: User,
