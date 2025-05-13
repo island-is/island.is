@@ -1,0 +1,436 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/types": {
+      "get": {
+        "operationId": "getTypes",
+        "summary": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetCaseTypesDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "tags": ["Case Types"]
+      },
+      "post": {
+        "operationId": "createType",
+        "summary": "",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateCaseTypeDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetCaseTypeDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "tags": ["Case Types"]
+      }
+    },
+    "/api/v1/types/detailed": {
+      "get": {
+        "operationId": "getTypesDetailed",
+        "summary": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetCaseTypesDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "tags": ["Case Types"]
+      }
+    },
+    "/api/v1/types/{id}": {
+      "put": {
+        "operationId": "updateType",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateCaseTypeDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetCaseTypeDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "tags": ["Case Types"]
+      },
+      "delete": {
+        "operationId": "deleteType",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetCaseTypeDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "tags": ["Case Types"]
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "HealthController_",
+        "parameters": [],
+        "responses": { "200": { "description": "Health check endpoint." } }
+      }
+    }
+  },
+  "info": {
+    "title": "The Legal Gazette of Iceland API",
+    "description": "The Legal Gazette of Iceland API",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "CaseTypeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "UUIDV4 of the entity",
+            "example": "182391f7-d355-46f0-bcee-4d8baa68b55d"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the entity",
+            "example": "Base entity"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the entity",
+            "example": "base-entity"
+          }
+        },
+        "required": ["id", "title", "slug"]
+      },
+      "GetCaseTypesDto": {
+        "type": "object",
+        "properties": {
+          "types": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CaseTypeDto" }
+          }
+        },
+        "required": ["types"]
+      },
+      "ApiErrorDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": { "type": "number" },
+          "timestamp": { "type": "string" },
+          "name": {
+            "type": "string",
+            "enum": [
+              "NotFound",
+              "ValidationError",
+              "ForeignKeyConstraintError",
+              "UniqueConstraintError",
+              "TimeoutError",
+              "Unauthorized",
+              "Forbidden",
+              "BadRequest",
+              "InternalServerError",
+              "UnknownError"
+            ],
+            "example": [
+              "NotFound",
+              "ValidationError",
+              "ForeignKeyConstraintError",
+              "UniqueConstraintError",
+              "TimeoutError",
+              "Unauthorized",
+              "Forbidden",
+              "BadRequest",
+              "InternalServerError",
+              "UnknownError"
+            ]
+          },
+          "message": { "type": "string" },
+          "details": { "type": "string" }
+        },
+        "required": ["statusCode", "timestamp"]
+      },
+      "CreateCaseTypeDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the entity",
+            "example": "Base entity"
+          }
+        },
+        "required": ["title"]
+      },
+      "GetCaseTypeDto": {
+        "type": "object",
+        "properties": {
+          "type": { "$ref": "#/components/schemas/CaseTypeDto" }
+        },
+        "required": ["type"]
+      },
+      "UpdateCaseTypeDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the entity",
+            "example": "Base entity"
+          }
+        }
+      }
+    }
+  }
+}
