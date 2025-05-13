@@ -5,8 +5,10 @@ import router from 'next/router'
 import { Box, Button, InputFileUpload } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
+import { Feature } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -28,6 +30,7 @@ const CaseFiles = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
+  const { features } = useContext(FeatureContext)
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -50,6 +53,10 @@ const CaseFiles = () => {
     [workingCase.id],
   )
 
+  const isCriminalRecordsEndpointEnabled = features.includes(
+    Feature.CRIMINAL_RECORD_ENDPOINT,
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -69,25 +76,26 @@ const CaseFiles = () => {
             title={formatMessage(strings.caseFiles.criminalRecordSection)}
             heading="h2"
           />
-          <Box marginBottom={3}>
-            <Button
-              variant="text"
-              onClick={() => {
-                if (!workingCase.defendants) {
-                  return
-                }
-
-                handleUploadCriminalRecord(
-                  workingCase.defendants,
-                  addUploadFile,
-                  updateUploadFile,
-                )
-              }}
-              size="small"
-            >
-              Sækja sakavottorð til sakaskrár
-            </Button>
-          </Box>
+          {isCriminalRecordsEndpointEnabled ? (
+            <Box marginBottom={3}>
+              <Button
+                variant="text"
+                onClick={() => {
+                  if (!workingCase.defendants) {
+                    return
+                  }
+                  handleUploadCriminalRecord(
+                    workingCase.defendants,
+                    addUploadFile,
+                    updateUploadFile,
+                  )
+                }}
+                size="small"
+              >
+                Sækja sakavottorð til sakaskrár
+              </Button>
+            </Box>
+          ) : null}
           <InputFileUpload
             name="criminalRecord"
             files={uploadFiles.filter(
