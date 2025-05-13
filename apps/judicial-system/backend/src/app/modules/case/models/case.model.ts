@@ -1128,7 +1128,7 @@ export class Case extends Model {
   victims?: Victim[]
 
   /**********
-   * Indicates whether the prosecutor requests a drivers license suspension
+   * Indicates whether a case is registered in the prison system
    **********/
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiProperty({ type: Boolean })

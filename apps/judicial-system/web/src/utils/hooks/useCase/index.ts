@@ -49,7 +49,6 @@ type ChildKeys = Pick<
   | 'appealJudge3Id'
   | 'indictmentReviewerId'
   | 'mergeCaseId'
-  | 'isRegisteredInPrisonSystem'
 >
 
 export type UpdateCase = Omit<UpdateCaseInput, 'id'> & {
