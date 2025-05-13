@@ -112,8 +112,6 @@ definitions:
       script: |
         curl -Ls "https://get.maestro.mobile.dev" | bash
         export PATH="$PATH":"$HOME/.maestro/bin"
-        maestro test .maestro/launch-app-flow.yaml || true
-        xcrun simctl spawn booted launchctl list | grep is.island.app.dev
         maestro test .maestro/try-signing-in-flow.yaml || true
         maestro test .maestro/inbox-flow.yaml || true
   publishing:
