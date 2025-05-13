@@ -18,20 +18,17 @@ const modalHeaderSidesBase: StyleWithSelectors = {
   top: -1,
   height: '3.5rem',
   width: 16,
-  backgroundColor: theme.color.blue100,
-  borderBlock: `0.0625rem solid ${theme.color.blue200}`,
+  backgroundColor: theme.color.white,
 }
 export const modalHeader = style({
   height: '3.5rem',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  borderBlock: `0.0625rem solid ${theme.color.blue200}`,
-  backgroundColor: theme.color.blue100,
+  backgroundColor: theme.color.white,
   position: 'sticky',
-  top: 0,
   zIndex: 1500,
-
+  top: 0,
   '::before': {
     ...modalHeaderSidesBase,
     left: -16,
@@ -40,6 +37,12 @@ export const modalHeader = style({
     ...modalHeaderSidesBase,
     right: -16,
   },
+  transition: 'top 250ms ease',
+  transitionDelay: '100ms',
+})
+
+export const modalHeaderScrollingUp = style({
+  top: hheight - 1,
 })
 
 export const docWrap = style({

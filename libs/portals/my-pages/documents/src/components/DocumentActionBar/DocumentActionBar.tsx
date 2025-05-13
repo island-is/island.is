@@ -2,7 +2,6 @@ import {
   Box,
   BoxProps,
   Button,
-  Divider,
   DropdownMenu,
   DropdownMenuProps,
   Icon,
@@ -44,7 +43,6 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
 
   const { activeDocument } = useDocumentContext()
   const { fetchObject, refetch } = useDocumentList()
-
   const { formatMessage } = useLocale()
 
   const isBookmarked =

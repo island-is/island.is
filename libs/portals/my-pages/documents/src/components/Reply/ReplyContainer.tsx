@@ -177,7 +177,6 @@ const ReplyContainer = () => {
           ))
         )}
 
-        {/* {If document is marked replyable, we render the reply form} */}
         {closedForMoreReplies && (
           <AlertMessage
             type="info"
@@ -188,7 +187,6 @@ const ReplyContainer = () => {
         )}
       </Box>
 
-      {/* ---------------------- */}
       {replyable && replyOpen && (
         <Box marginY={3}>
           <Divider />

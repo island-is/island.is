@@ -153,7 +153,7 @@ export const DocumentsOverview = () => {
             }
             documentsLength={totalCount}
           />
-          <Box marginTop={4}>
+          <Box marginTop={[2, 2, 4]}>
             <Box
               background="blue100"
               width="full"

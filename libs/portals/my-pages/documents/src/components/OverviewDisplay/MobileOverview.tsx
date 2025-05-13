@@ -1,19 +1,10 @@
-import { FC } from 'react'
-import FocusLock from 'react-focus-lock'
+import { FC, useState } from 'react'
 import {
-  formatDate,
-  getInitials,
   LoadModal,
   m,
+  useScrollPosition,
 } from '@island.is/portals/my-pages/core'
-import {
-  Box,
-  Text,
-  GridColumn,
-  GridRow,
-  Divider,
-  AlertMessage,
-} from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
@@ -21,13 +12,8 @@ import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
 import { DocumentActionBar } from '../DocumentActionBar/DocumentActionBar'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import * as styles from './OverviewDisplay.css'
-import { Reply } from '../../lib/types'
-import ReplyHeader from '../Reply/ReplyHeader'
-import { isDefined } from '@island.is/shared/utils'
-import { useUserInfo } from '@island.is/react-spa/bff'
-import ReplySent from '../Reply/ReplySent'
-import ReplyContainer from '../Reply/ReplyContainer'
-import { dateFormatWithTime } from '@island.is/shared/constants'
+import MobileReply from '../Reply/MobileReply'
+import cn from 'classnames'
 
 interface Props {
   onPressBack: () => void
@@ -44,17 +30,20 @@ export const MobileOverview: FC<Props> = ({
 }) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
-  const {
-    activeDocument,
-    replyable,
-    replies,
-    setReplies,
-    setReplyOpen,
-    hideDocument,
-    setHideDocument,
-    closedForMoreReplies,
-  } = useDocumentContext()
-  const { profile } = useUserInfo()
+  const { activeDocument, replyable, replyOpen, setReplyOpen, hideDocument } =
+    useDocumentContext()
+  const [scrollingDown, setScrollingDown] = useState(false)
+
+  useScrollPosition(
+    ({ prevPos, currPos }) => {
+      const goingDown = currPos.y < prevPos.y
+      setScrollingDown(goingDown)
+    },
+    [scrollingDown],
+    undefined,
+    false,
+    150,
+  )
 
   if (loading) {
     return <LoadModal />
@@ -64,33 +53,22 @@ export const MobileOverview: FC<Props> = ({
     return null
   }
 
-  const toggleReply = (id?: string | null) => {
-    const updatedReplies: Reply = {
-      ...replies,
-      comments:
-        replies?.comments?.map((reply) =>
-          reply.id === id ? { ...reply, hide: !reply.hide } : reply,
-        ) || [],
-    }
-    setReplies(updatedReplies)
-  }
-
-  const toggleDocument = () => {
-    setHideDocument(!hideDocument)
-  }
-
   return (
-    <FocusLock autoFocus={false}>
-      <Box className={styles.modalBase}>
-        <Box className={styles.modalHeader}>
-          <DocumentActionBar
-            onGoBack={onPressBack}
-            bookmarked={activeBookmark}
-            isReplyable={replyable}
-            onReply={() => setReplyOpen(true)}
-          />
-        </Box>
-        <Box className={styles.modalContent} onClick={toggleDocument}>
+    <Box className={styles.modalBase}>
+      <Box
+        className={cn(styles.modalHeader, {
+          [styles.modalHeaderScrollingUp]: !scrollingDown,
+        })}
+      >
+        <DocumentActionBar
+          onGoBack={onPressBack}
+          bookmarked={activeBookmark}
+          isReplyable={replyable}
+          onReply={() => setReplyOpen(true)}
+        />
+      </Box>
+      {!replyOpen && (
+        <Box className={styles.modalContent}>
           <DocumentHeader
             avatar={activeDocument.img}
             sender={activeDocument.sender}
@@ -104,9 +82,9 @@ export const MobileOverview: FC<Props> = ({
           />
           {!hideDocument && <DocumentRenderer doc={activeDocument} />}
         </Box>
-        <ReplyContainer />
-      </Box>
-    </FocusLock>
+      )}
+      <MobileReply />
+    </Box>
   )
 }
 
