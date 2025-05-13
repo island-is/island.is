@@ -1,8 +1,8 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import {
   LoadModal,
   m,
-  useScrollPosition,
+  useScrollDirection,
 } from '@island.is/portals/my-pages/core'
 import { Box } from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
@@ -33,17 +33,15 @@ export const MobileOverview: FC<Props> = ({
   const { activeDocument, replyable, replyOpen, setReplyOpen, hideDocument } =
     useDocumentContext()
   const [scrollingDown, setScrollingDown] = useState(false)
+  const scrollDirection = useScrollDirection()
 
-  useScrollPosition(
-    ({ prevPos, currPos }) => {
-      const goingDown = currPos.y < prevPos.y
-      setScrollingDown(goingDown)
-    },
-    [scrollingDown],
-    undefined,
-    false,
-    150,
-  )
+  useEffect(() => {
+    if (scrollDirection === 'down' && !scrollingDown) {
+      setScrollingDown(true)
+    } else if (scrollDirection === 'up' && scrollingDown) {
+      setScrollingDown(false)
+    }
+  }, [scrollDirection])
 
   if (loading) {
     return <LoadModal />
