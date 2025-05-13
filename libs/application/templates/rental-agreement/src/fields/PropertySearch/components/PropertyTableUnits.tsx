@@ -49,10 +49,9 @@ export const PropertyTableUnits = ({
 }: PropertyUnitsProps) => {
   const { formatMessage } = useLocale()
 
-  // Prevent scrolling from changing the input value
+  // Prevent scrolling from changing the number input value
   const preventScrollChange = (event: React.WheelEvent<HTMLInputElement>) => {
     event.currentTarget.blur()
-    event.preventDefault()
   }
 
   const sizeInputError =
