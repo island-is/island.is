@@ -22,6 +22,17 @@ export const legalGazetteDataSchema = z.object({
       params: m.errors.emptyHtml,
     }),
   }),
+  signature: z.object({
+    location: z.string().refine((val) => val.length > 0, {
+      params: m.errors.emptyLocation,
+    }),
+    date: z.string().refine((val) => val.length > 0, {
+      params: m.errors.emptySignatureDate,
+    }),
+    name: z.string().refine((val) => val.length > 0, {
+      params: m.errors.emptySignatureName,
+    }),
+  }),
   publishing: z.object({
     dates: z.array(z.string()),
   }),

@@ -35,6 +35,21 @@ export const m = {
       defaultMessage: 'Netfang má ekki vera autt',
       description: 'Villa sem kemur upp ef netfang er tóm',
     },
+    emptyLocation: {
+      id: 'lg.application:errors.emptyLocation',
+      defaultMessage: 'Undirskriftarstaður má ekki vera auður',
+      description: 'Villa sem kemur upp ef undirskriftarstaður er tómur',
+    },
+    emptySignatureDate: {
+      id: 'lg.application:errors.emptySignatureDate',
+      defaultMessage: 'Dagsetning undirskriftar má ekki vera auð',
+      description: 'Villa sem kemur upp ef dagsetning undirskriftar er tóm',
+    },
+    emptySignatureName: {
+      id: 'lg.application:errors.emptySignatureName',
+      defaultMessage: 'Undirskrift má ekki vera auð',
+      description: 'Villa sem kemur upp ef undirskrift er tóm',
+    },
     invalidEmail: {
       id: 'lg.application:errors.invalidEmail',
       defaultMessage: 'Netfang er ekki gilt',
@@ -186,6 +201,28 @@ export const m = {
           id: 'lg.application:draft.advert.captionInput',
           defaultMessage: 'Yfirskrift',
           description: 'Titill á textaheiti auglýsingar',
+        },
+      }),
+      signature: defineMessages({
+        formTitle: {
+          id: 'lg.application:draft.signature.formTitle',
+          defaultMessage: 'Undirskrift',
+          description: 'Titill á formi fyrir undirskrift',
+        },
+        location: {
+          id: 'lg.application:draft.signature.location',
+          defaultMessage: 'Undirskriftarstaður',
+          description: 'Titill á staðsetningu fyrir undirskrift',
+        },
+        date: {
+          id: 'lg.application:draft.signature.date',
+          defaultMessage: 'Dagsetning undirskriftar',
+          description: 'Titill á dagsetningu fyrir undirskrift',
+        },
+        name: {
+          id: 'lg.application:draft.signature.name',
+          defaultMessage: 'Undirskrift',
+          description: 'Titill á nafni fyrir undirskrift',
         },
       }),
       publishing: defineMessages({
