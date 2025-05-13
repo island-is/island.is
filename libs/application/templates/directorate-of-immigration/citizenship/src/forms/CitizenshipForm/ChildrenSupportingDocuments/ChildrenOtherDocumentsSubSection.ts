@@ -121,7 +121,6 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
               const hasFullCustody =
                 selectedChildrenExtraData[index]?.hasFullCustody
 
-              console.log(`${hasFullCustody === NO}`)
               return hasFullCustody === NO ? 'true' : 'false'
             },
           }),
