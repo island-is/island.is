@@ -196,14 +196,16 @@ const Processing: FC = () => {
       hasCivilClaims,
       civilClaimants: res.civilClaimants,
     }))
-  }
 
-  useEffect(() => {
-    civilClaimRef.current?.scrollIntoView({
-      block: 'start',
-      behavior: 'smooth',
-    })
-  }, [workingCase.hasCivilClaims])
+    if (hasCivilClaims) {
+      requestAnimationFrame(() => {
+        civilClaimRef.current?.scrollIntoView({
+          block: 'start',
+          behavior: 'smooth',
+        })
+      })
+    }
+  }
 
   return (
     <PageLayout
@@ -325,7 +327,9 @@ const Processing: FC = () => {
                   label={formatMessage(strings.yes)}
                   large
                   backgroundColor="white"
-                  onChange={() => handleHasCivilClaimsChange(true)}
+                  onChange={() => {
+                    handleHasCivilClaimsChange(true)
+                  }}
                   checked={workingCase.hasCivilClaims === true}
                 />
               </Box>
