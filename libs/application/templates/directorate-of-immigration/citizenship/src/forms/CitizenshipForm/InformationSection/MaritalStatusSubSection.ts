@@ -13,7 +13,6 @@ import {
   NationalRegistryIndividual,
   NationalRegistrySpouse,
 } from '@island.is/application/types'
-import { ApplicantInformation } from '../../../shared'
 
 export const MaritalStatusSubSection = buildSubSection({
   id: Routes.MARITALSTATUS,

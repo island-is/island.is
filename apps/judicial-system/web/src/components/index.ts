@@ -63,7 +63,10 @@ export { default as RestrictionTags } from './RestrictionTags/RestrictionTags'
 export { default as RulingAccordionItem } from './AccordionItems/RulingAccordionItem/RulingAccordionItem'
 export { default as RulingInput } from './RulingInput/RulingInput'
 export { default as SectionHeading } from './SectionHeading/SectionHeading'
-export { default as ServiceAnnouncements } from './ServiceAnnouncement/ServiceAnnouncements'
+export {
+  default as ServiceAnnouncements,
+  AlternativeServiceAnnouncement,
+} from './ServiceAnnouncement/ServiceAnnouncements'
 export { strings as serviceAnnouncementsStrings } from './ServiceAnnouncement/ServiceAnnouncements.strings'
 export { default as ServiceInterruptionBanner } from './ServiceInterruptionBanner/ServiceInterruptionBanner'
 export { default as SignedDocument } from './SignedDocument/SignedDocument'
@@ -119,3 +122,4 @@ export { default as RequestAppealRulingNotToBePublishedCheckbox } from './Reques
 export { LawyerRegistryProvider } from './LawyerRegistryProvider/LawyerRegistryProvider'
 export { default as RequiredStar } from './RequiredStar/RequiredStar'
 export { VictimInfo } from './VictimInfo/VictimInfo'
+export { LabelValue } from './LabelValue/LabelValue'

@@ -127,6 +127,16 @@ export const m = {
       defaultMessage: 'Hreinsa allar síur',
       description: 'Label á "Hreinsa allar síur" takka',
     },
+    closeAllFiltersLabel: {
+      id: 'web.verdicts:listPage.closeAllFiltersLabel',
+      defaultMessage: 'Loka öllum síum',
+      description: 'Label á "Loka öllum síum" takka',
+    },
+    openAllFiltersLabel: {
+      id: 'web.verdicts:listPage.openAllFiltersLabel',
+      defaultMessage: 'Opna allar síur',
+      description: 'Label á "Opna allar síur" takka',
+    },
     dateToLabel: {
       id: 'web.verdicts:listPage.dateToLabel',
       defaultMessage: 'Til',

@@ -197,7 +197,7 @@ export class SignatureCollectionAdminClientService {
     auth: Auth,
   ): Promise<CandidateLookup> {
     const collection = await this.currentCollection(auth)
-    const { id, isPresidential, areas } = collection
+    const { id, collectionType, areas } = collection
     const user = await this.getApiWithAuth(
       this.adminApi,
       auth,
@@ -212,16 +212,14 @@ export class SignatureCollectionAdminClientService {
         ? user.medmaelalistar?.map((list) => mapListBase(list))
         : []
 
-    const {
-      success: canCreate,
-      reasons: canCreateInfo,
-    } = this.sharedService.canCreate({
-      requirementsMet: user.maFrambod,
-      canCreateInfo: user.maFrambodInfo,
-      ownedLists,
-      isPresidential,
-      areas,
-    })
+    const { success: canCreate, reasons: canCreateInfo } =
+      this.sharedService.canCreate({
+        requirementsMet: user.maFrambod,
+        canCreateInfo: user.maFrambodInfo,
+        ownedLists,
+        collectionType,
+        areas,
+      })
 
     return {
       nationalId: user.kennitala ?? '',

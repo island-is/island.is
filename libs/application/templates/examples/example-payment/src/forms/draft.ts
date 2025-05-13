@@ -11,7 +11,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  MockablePaymentCatalogApi,
   PaymentCatalogApi,
 } from '@island.is/application/types'
 import * as m from '../lib/messages'

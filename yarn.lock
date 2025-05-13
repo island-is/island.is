@@ -29022,6 +29022,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clsx@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "clsx@npm:2.1.1"
+  checksum: 10/cdfb57fa6c7649bbff98d9028c2f0de2f91c86f551179541cf784b1cfdc1562dcb951955f46d54d930a3879931a980e32a46b598acaea274728dbe068deca919
+  languageName: node
+  linkType: hard
+
 "cluster-key-slot@npm:^1.1.0":
   version: 1.1.0
   resolution: "cluster-key-slot@npm:1.1.0"
@@ -39900,7 +39907,7 @@ __metadata:
     react-select: "npm:5.8.2"
     react-table: "npm:7.7.0"
     react-test-renderer: "npm:18.2.0"
-    react-toastify: "npm:6.0.8"
+    react-toastify: "npm:11.0.0"
     react-top-loading-bar: "npm:2.3.1"
     react-use: "npm:15.3.3"
     reakit: "npm:1.3.11"
@@ -51203,16 +51210,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-toastify@npm:6.0.8":
-  version: 6.0.8
-  resolution: "react-toastify@npm:6.0.8"
+"react-toastify@npm:11.0.0":
+  version: 11.0.0
+  resolution: "react-toastify@npm:11.0.0"
   dependencies:
-    classnames: "npm:^2.2.6"
-    prop-types: "npm:^15.7.2"
-    react-transition-group: "npm:^4.4.1"
+    clsx: "npm:^2.1.1"
   peerDependencies:
-    react: ">=16"
-  checksum: 10/c10a04f3017d4d000500cbda09c1ff0eeef0e382856270d912a9f46fce5572fe300430d2167d7dc91e64ab1a38f0d596d4e834191582b6acc2145a50f4c9ef1f
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  checksum: 10/b825d584f1db52a380a8bd16d9b81b94c9b2a9b91d666c0126f3d69a2921f4c3229ad877add79a407257fcffbd7bd6b1cf150c3474c27352cf6eb7dfadaa59ac
   languageName: node
   linkType: hard
 
@@ -51260,7 +51266,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-transition-group@npm:^4.3.0, react-transition-group@npm:^4.4.1":
+"react-transition-group@npm:^4.3.0":
   version: 4.4.1
   resolution: "react-transition-group@npm:4.4.1"
   dependencies:

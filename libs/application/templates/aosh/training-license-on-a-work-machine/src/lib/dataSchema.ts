@@ -1,8 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { isValidEmail, isValidPhoneNumber } from '../utils'
-import { certificateOfTenure } from './messages'
-import { YES } from '@island.is/application/core'
 
 const InformationSchema = z.object({
   nationalId: z
@@ -13,6 +11,7 @@ const InformationSchema = z.object({
   postCode: z.string().min(1),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
+  driversLicenseNumber: z.string().min(1),
 })
 
 export const CertificateOfTenureSchema = z.object({
@@ -21,98 +20,43 @@ export const CertificateOfTenureSchema = z.object({
   machineType: z.string().min(1),
   dateFrom: z.string().min(1),
   dateTo: z.string().min(1),
-  tenureInHours: z.string().refine(
-    (v) => {
-      const val = typeof v === 'string' ? parseInt(v, 10) ?? 0 : v
-      return val >= 1000
-    },
-    {
-      params: certificateOfTenure.labels.tenureInHoursError,
-    },
-  ),
+  tenureInHours: z.string().min(1),
+  isContractor: z.array(z.string().optional()),
   licenseCategoryPrefix: z.string().optional(),
   unknownMachineType: z.boolean().optional(),
   unknownPracticalRight: z.boolean().optional(),
   alreadyHaveTrainingLicense: z.boolean().optional(),
   wrongPracticalRight: z.boolean().optional(),
   wrongPracticalRightWithInfo: z.boolean().optional(),
-  listOfPossiblePracticalRights: z.array(z.string()).optional(),
+  machineTypeDoesNotMatch: z.boolean().optional(),
 })
 
-const AssigneeInformationSchema = z
-  .object({
-    company: z.object({
-      nationalId: z.string().optional(),
-      name: z.string().optional(),
-    }),
-    assignee: z.object({
-      nationalId: z.string().optional(),
-      name: z.string().optional(),
-      email: z.string().optional(),
-      phone: z.string().optional(),
-    }),
-    isContractor: z.array(z.string().optional()),
-  })
-  .refine(
-    ({ company, isContractor }) => {
-      if (isContractor.includes(YES)) return true
-      return company.nationalId && kennitala.isCompany(company.nationalId)
-    },
-    {
-      path: ['company', 'nationalId'],
-    },
-  )
-  .refine(
-    ({ company, isContractor }) => {
-      if (isContractor.includes(YES)) return true
-      return company.name && company.name.length > 0
-    },
-    {
-      path: ['company', 'name'],
-    },
-  )
-  .refine(
-    ({ assignee, isContractor }) => {
-      if (isContractor.includes(YES)) return true
-      return assignee.nationalId && kennitala.isPerson(assignee.nationalId)
-    },
-    {
-      path: ['assignee', 'nationalId'],
-    },
-  )
-  .refine(
-    ({ assignee, isContractor }) => {
-      if (isContractor.includes(YES)) return true
-      return assignee.name && assignee.name.length > 0
-    },
-    {
-      path: ['assignee', 'name'],
-    },
-  )
-  .refine(
-    ({ assignee, isContractor }) => {
-      if (isContractor.includes(YES)) return true
-      return assignee.email && isValidEmail(assignee.email)
-    },
-    {
-      path: ['assignee', 'email'],
-    },
-  )
-  .refine(
-    ({ assignee, isContractor }) => {
-      if (isContractor.includes(YES)) return true
-      return assignee.phone && isValidPhoneNumber(assignee.phone)
-    },
-    {
-      path: ['assignee', 'phone'],
-    },
-  )
+const AssigneeInformationSchema = z.object({
+  company: z.object({
+    nationalId: z
+      .string()
+      .refine((nationalId) => nationalId && kennitala.isCompany(nationalId)),
+    name: z.string().min(1),
+  }),
+  assignee: z.object({
+    nationalId: z
+      .string()
+      .refine((nationalId) => nationalId && kennitala.isPerson(nationalId)),
+    name: z.string().min(1),
+    email: z.string().refine((email) => isValidEmail(email)),
+    phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
+  }),
+  workMachine: z.array(z.string()).min(1),
+  isSameAsApplicant: z.boolean().refine((val) => !val),
+})
 
 export const TrainingLicenseOnAWorkMachineAnswersSchema = z.object({
   information: InformationSchema,
-  certificateOfTenure: CertificateOfTenureSchema,
-  assigneeInformation: AssigneeInformationSchema,
+  certificateOfTenure: z.array(CertificateOfTenureSchema),
+  validCertificateOfTenure: z.boolean().optional(),
+  assigneeInformation: z.array(AssigneeInformationSchema),
   rejected: z.boolean().optional(),
+  approved: z.array(z.string()).optional(),
 })
 
 export type TrainingLicenseOnAWorkMachineAnswers = z.TypeOf<

@@ -36,7 +36,8 @@ export const externalData = {
     },
     subTitle: {
       id: 'hwp.application:externalData.nationalRegistry.subTitle',
-      defaultMessage: 'Nafn, kennitölu,  fæðingardagur og ríkisfang',
+      defaultMessage:
+        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
       description: 'National Registry sub title',
     },
   }),

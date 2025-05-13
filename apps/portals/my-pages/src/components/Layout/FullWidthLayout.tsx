@@ -118,7 +118,11 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                   <GridColumn span="12/12">
                     <IntroHeader
                       title={activeParent?.name || ''}
-                      intro={activeParent?.description}
+                      intro={
+                        isFinance
+                          ? activeParent?.intro
+                          : activeParent?.description
+                      }
                     />
                   </GridColumn>
                 </GridRow>

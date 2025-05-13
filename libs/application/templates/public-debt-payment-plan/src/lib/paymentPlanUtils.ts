@@ -12,11 +12,7 @@ import {
 import * as kennitala from 'kennitala'
 import { useCallback, useEffect, useState } from 'react'
 import { useLazyDistribution } from '../hooks/useLazyDistribution'
-import {
-  PaymentDistribution,
-  PaymentPlanExternalData,
-  PublicDebtPaymentPlan,
-} from '../types'
+import { PaymentDistribution, PaymentPlanExternalData } from '../types'
 
 export const prerequisitesFailed = (data: ExternalData) => {
   const prerequisites = (data as PaymentPlanExternalData)

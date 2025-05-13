@@ -43,7 +43,13 @@ export class LimitedAccessWriteCaseFileGuard implements CanActivate {
 
     if (user.role === UserRole.DEFENDER) {
       if (isIndictmentCase(theCase.type)) {
-        if (caseFileCategory === CaseFileCategory.DEFENDANT_CASE_FILE) {
+        if (
+          [
+            CaseFileCategory.DEFENDANT_CASE_FILE,
+            CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+            CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+          ].includes(caseFileCategory)
+        ) {
           return true
         }
       } else if (
