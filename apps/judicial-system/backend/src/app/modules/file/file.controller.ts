@@ -343,7 +343,7 @@ export class FileController {
   async uploadCriminalRecordFile(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
-    // TEMP
+    // TEMP v1: expose the request to access the session cookies below
     @Req() req: Request,
     @CurrentHttpUser() user: User,
     @CurrentDefendant() defendant: Defendant,
@@ -352,8 +352,10 @@ export class FileController {
     this.logger.debug(
       `Uploading the latest criminal record file for defendant ${defendantId} of case ${caseId} to S3`,
     )
-    // TEMP SOLUTION 1 - Tokens are stored in headers, call auth.service to refresh token?
-    // that will be an issue to update because the tokens are managed in the API layer
+    // TEMP v1: Tokens are stored in session cookie and thus passed down with the request.
+    // Currently we are only using the access token, but it expires in 5 min. There is an outstanding task
+    // to implement the refresh token functionality and update the session cookie. Later we will also fetch the cookies
+    // from a secure storage in the backend.
     const accessToken = req.cookies[IDS_ACCESS_TOKEN_NAME]
 
     return this.criminalRecordService.uploadCriminalRecordFile({

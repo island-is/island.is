@@ -11,8 +11,6 @@ export class JwtGraphQlAuthUserGuard extends AuthGuard('jwt') {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context)
 
-    // Refresh tokens: We can access the cookie + tokens here
-    // if token is not valid we can refresh it here?
     return ctx.getContext().req
   }
 

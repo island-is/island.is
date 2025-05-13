@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Response } from 'express'
 
 import {
   BadRequestException,
@@ -13,7 +13,6 @@ import {
   Patch,
   Post,
   Query,
-  Req,
   Res,
   UseGuards,
   UseInterceptors,
@@ -38,7 +37,6 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { IDS_ACCESS_TOKEN_NAME } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatDate,
@@ -367,10 +365,8 @@ export class CaseController {
     isArray: true,
     description: 'Gets all existing cases',
   })
-  getAll(@CurrentHttpUser() user: User, @Req() req: Request): Promise<Case[]> {
+  getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
     this.logger.debug('Getting all cases')
-    const test = req.cookies[IDS_ACCESS_TOKEN_NAME]
-    console.log({ test })
 
     return this.caseService.getAll(user)
   }

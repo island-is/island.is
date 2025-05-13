@@ -97,7 +97,8 @@ export class AuthController {
     options: this.defaultCookieOptions,
   }
 
-  // Store it temp in a cookie
+  // TEMP: To begin with we will store the two tokens in the session cookie as we do with other tokens.
+  // The plan is then to move it to a more secure storage.
   private readonly accessToken: Cookie = {
     name: IDS_ACCESS_TOKEN_NAME,
     options: this.defaultCookieOptions,
@@ -215,14 +216,9 @@ export class AuthController {
       const codeVerifier = req.cookies[this.codeVerifierCookie.name]
 
       const idsTokens = await this.authService.fetchIdsToken(code, codeVerifier)
-      // TODO: remove, used for temp testing
       const verifiedUserToken = await this.authService.verifyIdsToken(
         idsTokens.id_token,
       )
-      console.log({
-        access_token: idsTokens.access_token,
-        refresh_token: idsTokens.refresh_token,
-      })
 
       if (verifiedUserToken) {
         this.logger.debug('Token verification successful')
@@ -419,7 +415,6 @@ export class AuthController {
         ...this.idToken.options,
         maxAge: EXPIRES_IN_MILLISECONDS,
       })
-      // TEMP: Store it temp in a cookie
       // expires in 5 minutes
       res.cookie(this.accessToken.name, accessToken, {
         ...this.idToken.options,
