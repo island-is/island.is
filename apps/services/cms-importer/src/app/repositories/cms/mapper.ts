@@ -31,213 +31,251 @@ export const mapEnergyGrantToGenericListItem = (
   ]
     .filter(isDefined)
     .map((tagId) => ({
-      type: 'Link',
-      linkType: 'Entry',
-      id: tagId,
+      sys: {
+        id: tagId,
+        linkType: 'Entry',
+      },
     }))
 
   const slug = data.projectName.toLocaleLowerCase(LOCALE).replace(/ /g, '')
 
   const newEntry: CreationType['fields'] = {
-    fields: {
-      genericList: {
-        [LOCALE]: {
-          sys: {
-            id: PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
-            linkType: 'Entry',
+    genericList: {
+      [LOCALE]: {
+        sys: {
+          id: PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
+          linkType: 'Entry',
+        },
+      },
+    },
+    internalTitle: {
+      [LOCALE]: data.projectName,
+    },
+    filterTags: {
+      [LOCALE]: tagIds,
+    },
+    title: {
+      [LOCALE]: data.projectName,
+    },
+    cardIntro: {
+      [LOCALE]: {
+        data: {},
+        content: [
+          {
+            data: {},
+            content: [
+              {
+                data: {},
+                marks: [],
+                value: data.initiativeName,
+                nodeType: 'text',
+              },
+            ],
+            nodeType: 'paragraph',
           },
-        },
+          {
+            data: {},
+            content: [
+              {
+                data: {},
+                marks: [],
+                value: 'Styrkur: ',
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [{ type: 'bold' }],
+                value: formatCurrency(data.amount),
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [],
+                value: '\nStyrkhafi: ',
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [{ type: 'bold' }],
+                value: data.recipient,
+                nodeType: 'text',
+              },
+            ],
+            nodeType: 'paragraph',
+          },
+        ],
+        nodeType: 'document',
       },
-      internalTitle: {
-        [LOCALE]: data.projectName,
+    },
+    slug: {
+      [EN_LOCALE]: slug,
+      [LOCALE]: slug,
+    },
+    content: {
+      [EN_LOCALE]: {
+        nodeType: 'document',
+        data: {},
+        content: [
+          {
+            nodeType: 'paragraph',
+            data: {},
+            content: [
+              {
+                data: {},
+                marks: [],
+                value: 'Category name: ',
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [
+                  {
+                    type: 'bold',
+                  },
+                ],
+                value: `${data.initiativeName}\n`,
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [],
+                value: 'Case number: ',
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [
+                  {
+                    type: 'bold',
+                  },
+                ],
+                value: data.caseId,
+                nodeType: 'text',
+              },
+            ],
+          },
+          {
+            nodeType: 'paragraph',
+            data: {},
+            content: [
+              {
+                data: {},
+                marks: [],
+                value: 'Recipient: ',
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [
+                  {
+                    type: 'bold',
+                  },
+                ],
+                value: `${data.recipient}.\n`,
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [],
+                value: 'Grant: ',
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [
+                  {
+                    type: 'bold',
+                  },
+                ],
+                value: formatCurrency(data.amount),
+                nodeType: 'text',
+              },
+            ],
+          },
+        ],
       },
-      title: {
-        [LOCALE]: data.projectName,
+      [LOCALE]: {
+        nodeType: 'document',
+        data: {},
+        content: [
+          {
+            nodeType: 'paragraph',
+            data: {},
+            content: [
+              {
+                data: {},
+                marks: [],
+                value: 'Heiti átaks: ',
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [
+                  {
+                    type: 'bold',
+                  },
+                ],
+                value: `${data.initiativeName}\n`,
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [],
+                value: 'Málsnúmer: ',
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [
+                  {
+                    type: 'bold',
+                  },
+                ],
+                value: data.caseId,
+                nodeType: 'text',
+              },
+            ],
+          },
+          {
+            nodeType: 'paragraph',
+            data: {},
+            content: [
+              {
+                data: {},
+                marks: [],
+                value: 'Styrkhafi: ',
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [
+                  {
+                    type: 'bold',
+                  },
+                ],
+                value: `${data.recipient}.\n`,
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [],
+                value: 'Styrkur: ',
+                nodeType: 'text',
+              },
+              {
+                data: {},
+                marks: [
+                  {
+                    type: 'bold',
+                  },
+                ],
+                value: formatCurrency(data.amount),
+                nodeType: 'text',
+              },
+            ],
+          },
+        ],
       },
-      cardIntro: {
-        [LOCALE]: {
-          content: [
-            {
-              content: [
-                {
-                  value: data.initiativeName,
-                  nodeType: 'text',
-                },
-              ],
-              nodeType: 'paragraph',
-            },
-            {
-              content: [
-                {
-                  data: {},
-                  marks: [],
-                  value: 'Styrkur: ',
-                  nodeType: 'text',
-                },
-                {
-                  marks: [{ type: 'bold' }],
-                  value: formatCurrency(data.amount),
-                  nodeType: 'text',
-                },
-                {
-                  value: '\nStyrkhafi: ',
-                  nodeType: 'text',
-                },
-                {
-                  marks: [{ type: 'bold' }],
-                  value: data.recipient,
-                  nodeType: 'text',
-                },
-              ],
-              nodeType: 'paragraph',
-            },
-          ],
-          nodeType: 'document',
-        },
-      },
-      slug: {
-        [EN_LOCALE]: slug,
-        [LOCALE]: slug,
-      },
-      content: {
-        [EN_LOCALE]: {
-          nodeType: 'document',
-          content: [
-            {
-              nodeType: 'paragraph',
-              content: [
-                {
-                  value: 'Category name: ',
-                  nodeType: 'text',
-                },
-                {
-                  marks: [
-                    {
-                      type: 'bold',
-                    },
-                  ],
-                  value:
-                    'Innviðir fyrir rafknúin farartæki, skip og flugvélar\n',
-                  nodeType: 'text',
-                },
-                {
-                  value: 'Case number: ',
-                  nodeType: 'text',
-                },
-                {
-                  marks: [
-                    {
-                      type: 'bold',
-                    },
-                  ],
-                  value: 'OS2024040109',
-                  nodeType: 'text',
-                },
-              ],
-            },
-            {
-              nodeType: 'paragraph',
-              content: [
-                {
-                  value: 'Recipient: ',
-                  nodeType: 'text',
-                },
-                {
-                  marks: [
-                    {
-                      type: 'bold',
-                    },
-                  ],
-                  value: 'Orkan IS ehf.\n',
-                  nodeType: 'text',
-                },
-                {
-                  value: 'Grant: ',
-                  nodeType: 'text',
-                },
-                {
-                  marks: [
-                    {
-                      type: 'bold',
-                    },
-                  ],
-                  value: '22.800.000 kr.',
-                  nodeType: 'text',
-                },
-              ],
-            },
-          ],
-        },
-        [LOCALE]: {
-          nodeType: 'document',
-          content: [
-            {
-              nodeType: 'paragraph',
-              content: [
-                {
-                  value: 'Heiti átaks: ',
-                  nodeType: 'text',
-                },
-                {
-                  marks: [
-                    {
-                      type: 'bold',
-                    },
-                  ],
-                  value:
-                    'Innviðir fyrir rafknúin farartæki, skip og flugvélar\n',
-                  nodeType: 'text',
-                },
-                {
-                  value: 'Málsnúmer: ',
-                  nodeType: 'text',
-                },
-                {
-                  marks: [
-                    {
-                      type: 'bold',
-                    },
-                  ],
-                  value: 'OS2024040109',
-                  nodeType: 'text',
-                },
-              ],
-            },
-            {
-              nodeType: 'paragraph',
-              content: [
-                {
-                  value: 'Styrkhafi: ',
-                  nodeType: 'text',
-                },
-                {
-                  marks: [
-                    {
-                      type: 'bold',
-                    },
-                  ],
-                  value: 'Orkan IS ehf.\n',
-                  nodeType: 'text',
-                },
-                {
-                  value: 'Styrkur: ',
-                  nodeType: 'text',
-                },
-                {
-                  marks: [
-                    {
-                      type: 'bold',
-                    },
-                  ],
-                  value: '22.800.000 kr.',
-                  nodeType: 'text',
-                },
-              ],
-            },
-          ],
-        },
-      },
-      filterTags: tagIds,
     },
   }
   return {
