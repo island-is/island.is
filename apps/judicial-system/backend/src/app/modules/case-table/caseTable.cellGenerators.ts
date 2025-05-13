@@ -18,6 +18,7 @@ import {
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isRestrictionCase,
+  PunishmentType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -270,7 +271,49 @@ const rulingType: CaseTableCellGenerator = {
 }
 
 const punishmentType: CaseTableCellGenerator = {
-  generate: (c: Case): TagValue | undefined => undefined,
+  includes: {
+    defendants: {
+      model: Defendant,
+      attributes: ['punishmentType'],
+      order: [['created', 'ASC']],
+      separate: true,
+    },
+  },
+  generate: (c: Case): TagValue | undefined => {
+    if (
+      !c.defendants ||
+      c.defendants.length === 0 ||
+      !c.defendants[0].punishmentType
+    ) {
+      return undefined
+    }
+
+    const punishmentType = c.defendants[0].punishmentType
+
+    const getPunishmentTypeLabel = () => {
+      switch (punishmentType) {
+        case PunishmentType.IMPRISONMENT:
+          return 'Óskb.'
+        case PunishmentType.PROBATION:
+          return 'Skb.'
+        case PunishmentType.FINE:
+          return 'Sekt'
+        case PunishmentType.INDICTMENT_RULING_DECISION_FINE:
+          return 'VL'
+        case PunishmentType.SIGNED_FINE_INVITATION:
+          return 'ÁS'
+        case PunishmentType.OTHER:
+          return 'Annað'
+        default:
+          return 'Óþekkt'
+      }
+    }
+
+    return {
+      color: 'red',
+      text: getPunishmentTypeLabel(),
+    }
+  },
 }
 
 const fmstReceivalDate: CaseTableCellGenerator = {
