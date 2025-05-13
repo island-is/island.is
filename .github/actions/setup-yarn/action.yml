@@ -6,8 +6,7 @@ inputs:
     required: true
   YARN_NPM_REGISTRY_SERVER:
     description: ''
-    required: false
-    default: ''
+    required: true
   AWS_ACCOUNT_ID:
     description: ''
     required: false
@@ -42,13 +41,6 @@ runs:
     - name: Setup NPM pull-through
       shell: bash
       run: |
-        inital_registry_server=$(yarn config get npmRegistryServer)
-        echo "inital_registry_server $inital_registry_server"
-
-        # aws sts get-caller-identity
-        ble=$(aws sts get-caller-identity)
-        echo "AWS call identity $ble"
-
         yarn config set npmRegistryServer "${{ inputs.YARN_NPM_REGISTRY_SERVER }}"
 
         CODEARTIFACT_AUTH_TOKEN="$(aws codeartifact get-authorization-token --domain npm-upstream \
@@ -59,11 +51,8 @@ runs:
 
         [ "${CODEARTIFACT_AUTH_TOKEN}" != "" ] && echo "We have token" || echo "Token missing"
 
-        yarn config set 'npmRegistries["${{ inputs.YARN_NPM_REGISTRY_SERVER }}"].npmAuthToken' "${CODEARTIFACT_AUTH_TOKEN}"
+        yarn config set 'npmRegistries["${{ inputs.YARN_NPM_REGISTRY_SERVER }}"].npmAuthToken' "$CODEARTIFACT_AUTH_TOKEN"
         yarn config set 'npmRegistries["${{ inputs.YARN_NPM_REGISTRY_SERVER }}"].npmAlwaysAuth' "true"
-
-        val=$(yarn config get 'npmRegistries["${{ inputs.YARN_NPM_REGISTRY_SERVER }}"]')
-        echo "Value from yarn config get npmRegistries $val"
 
     - name: Set cache key
       working-directory: ${{ inputs.working-directory }}

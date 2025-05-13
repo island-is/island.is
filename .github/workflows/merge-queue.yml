@@ -94,17 +94,23 @@ jobs:
           echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
           echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
         continue-on-error: true
+
       - name: checkout
         uses: actions/checkout@v4
+
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
+
       - name: Set id for matrix
         run: |
           node ./scripts/ci/docker/create-id.mjs
+
       - name: load-deps
         uses: ./.github/actions/load-deps
+
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/docker-login-ecr.sh
@@ -206,6 +212,7 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -247,6 +254,7 @@ jobs:
         if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
