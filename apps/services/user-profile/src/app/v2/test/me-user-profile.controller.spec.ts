@@ -2036,7 +2036,7 @@ describe('MeUserProfileController', () => {
         emailStatus: DataStatus.VERIFIED,
         emailVerified: true,
         needsNudge: true, // Should be true because nextNudge is in the past
-        actorNationalId: testUserProfile.nationalId,
+        nationalId: testUserProfile.nationalId,
         emailNotifications: true,
       })
     })
@@ -2081,7 +2081,7 @@ describe('MeUserProfileController', () => {
         emailStatus: DataStatus.NOT_VERIFIED,
         emailVerified: false,
         needsNudge: null, // nextNudge is in the future and there is no verified contact info
-        actorNationalId: testUserProfile.nationalId,
+        nationalId: testUserProfile.nationalId,
         emailNotifications: false,
       })
     })
@@ -2106,7 +2106,7 @@ describe('MeUserProfileController', () => {
         emailStatus: DataStatus.NOT_DEFINED,
         emailVerified: false,
         needsNudge: null, // No nextNudge, no email, no phone, so result should be null
-        actorNationalId: testUserProfile.nationalId,
+        nationalId: testUserProfile.nationalId,
         emailNotifications: true,
       })
     })
@@ -3074,7 +3074,7 @@ describe('PATCH /v2/me/actor-profile/email', () => {
       email: email1.email,
       emailStatus: email1.emailStatus,
       needsNudge: false,
-      actorNationalId: testUserProfile.nationalId,
+      nationalId: testUserProfile.nationalId,
       emailNotifications: true,
     })
 
@@ -3121,7 +3121,7 @@ describe('PATCH /v2/me/actor-profile/email', () => {
       email: email2.email,
       emailStatus: email2.emailStatus,
       needsNudge: false,
-      actorNationalId: testUserProfile.nationalId,
+      nationalId: testUserProfile.nationalId,
       emailNotifications: true,
     })
 

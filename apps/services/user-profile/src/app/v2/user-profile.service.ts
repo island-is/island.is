@@ -393,7 +393,7 @@ export class UserProfileService {
           emailStatus: DataStatus.EMPTY,
           email: null,
           needsNudge: null,
-          actorNationalId: actorProfile.fromNationalId,
+          nationalId: actorProfile.fromNationalId,
           emailNotifications: actorProfile.emailNotifications,
           emailVerified: false,
         }
@@ -408,7 +408,7 @@ export class UserProfileService {
           nextNudge: actorProfile.nextNudge,
           shouldValidatePhoneNumber: false,
         }),
-        actorNationalId: actorProfile.fromNationalId,
+        nationalId: actorProfile.fromNationalId,
         emailNotifications: actorProfile.emailNotifications,
         emailVerified: email.emailStatus === DataStatus.VERIFIED,
       }
@@ -846,7 +846,7 @@ export class UserProfileService {
         nextNudge: actorProfile.nextNudge,
         shouldValidatePhoneNumber: false,
       }),
-      actorNationalId: fromNationalId,
+      nationalId: fromNationalId,
       emailNotifications: actorProfile.emailNotifications,
     }
   }
