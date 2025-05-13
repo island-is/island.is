@@ -114,7 +114,7 @@ yargs(hideBin(process.argv))
       let ParameterList: any = []
 
       while (true) {
-        let response = await ssm
+        let response: any = await ssm
           .describeParameters({
             ParameterFilters: [
               { Key: 'Name', Option: 'BeginsWith', Values: [prefix] },
@@ -131,14 +131,14 @@ yargs(hideBin(process.argv))
           if (!NextToken || NextToken == undefined || NextToken == null || NextToken == '') {
             break
           }
-          
+
       }
       if (ParameterList && ParameterList.length > 0) {
         logger.debug(
-          `Parameters to destroy: ${ParameterList.map(({ Name }) => Name)}`,
+          `Parameters to destroy: ${ParameterList.map(({ Name } : any ) => Name)}`,
         )
         await Promise.all(
-          ParameterList.map(({ Name }) =>
+          ParameterList.map(({ Name } : any) =>
             Name
               ? ssm.deleteParameter({ Name }).promise()
               : new Promise((resolve) => resolve(true)),
