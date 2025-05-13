@@ -22,7 +22,6 @@ import {
   SharedPageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { ContextMenuV2 } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
 import { TableWrapper } from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
@@ -88,14 +87,7 @@ const CreateCaseButton: FC<CreateCaseButtonProps> = (props) => {
 
   return (
     <Box marginTop={[2, 2, 0]}>
-      {/* <ContextMenu
-        dataTestId="createCaseDropdown"
-        menuLabel="Tegund kröfu"
-        items={items}
-        title={formatMessage(m.createCaseButton)}
-        offset={[0, 8]}
-      /> */}
-      <ContextMenuV2 title="Nýtt mál" items={items} />
+      <ContextMenu title="Nýtt mál" items={items} />
     </Box>
   )
 }
@@ -263,7 +255,6 @@ export const Cases: FC = () => {
     setVisibleModal(undefined)
   }
 
-  console.log(user, isProsecutionUser(user))
   return (
     <>
       <SharedPageLayout>

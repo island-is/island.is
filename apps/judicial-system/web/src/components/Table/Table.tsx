@@ -26,10 +26,7 @@ import {
 } from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
-import ContextMenu, {
-  ContextMenuItem,
-  ContextMenuV2,
-} from '../ContextMenu/ContextMenu'
+import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
 import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState'
 import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
@@ -333,8 +330,7 @@ const Table: FC<TableProps> = (props) => {
                         <LoadingIndicator />
                       </motion.div>
                     ) : (
-                      <ContextMenuV2
-                        menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
+                      <ContextMenu
                         items={generateContextMenuItems(row)}
                         render={
                           <motion.div
@@ -344,7 +340,6 @@ const Table: FC<TableProps> = (props) => {
                             animate={{ opacity: 1, y: 1 }}
                             exit={{ opacity: 0, y: 5 }}
                             onClick={(evt) => {
-                              console.log('click')
                               evt.stopPropagation()
                             }}
                           >
