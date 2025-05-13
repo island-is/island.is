@@ -7,8 +7,6 @@ import { LGFieldBaseProps } from '../lib/types'
 export const AdvertField = ({ application, errors }: LGFieldBaseProps) => {
   const { setValue, clearErrors, trigger } = useFormContext()
 
-  console.log('application', application)
-
   const handleChange = (val: HTMLText) => {
     const base64 = Buffer.from(val).toString('base64')
     setValue('application.html', base64)

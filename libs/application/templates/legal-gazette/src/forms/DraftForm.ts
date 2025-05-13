@@ -1,12 +1,8 @@
 import {
-  YesOrNoEnum,
   buildAlertMessageField,
-  buildCheckboxField,
   buildCustomField,
-  buildDateField,
   buildDescriptionField,
   buildDividerField,
-  buildFieldsRepeaterField,
   buildForm,
   buildKeyValueField,
   buildMultiField,
@@ -70,6 +66,21 @@ export const DraftForm: Form = buildForm({
             buildCustomField({
               id: 'publishing.dates',
               component: 'PublishingDates',
+            }),
+            buildDescriptionField({
+              id: 'communication.formTitle',
+              title: m.draft.sections.communication.formTitle,
+              titleVariant: 'h4',
+              marginTop: 5,
+            }),
+            buildDescriptionField({
+              id: 'communication.formIntro',
+              description: m.draft.sections.communication.formIntro,
+              marginBottom: 3,
+            }),
+            buildCustomField({
+              id: 'communication.channels',
+              component: 'CommunicationChannels',
             }),
           ],
         }),

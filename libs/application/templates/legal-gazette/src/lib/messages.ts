@@ -3,26 +3,42 @@ import { defineMessages } from 'react-intl'
 export const m = {
   general: defineMessages({
     institution: {
-      id: 'lg.application.general.institution',
+      id: 'lg.application:general.institution',
       defaultMessage: 'Dómsmálaráðuneytið',
       description: `Stofnun umsóknar`,
     },
     application: {
-      id: 'lg.application.general.application',
+      id: 'lg.application:general.application',
       defaultMessage: 'Lögbirting',
       description: `Heiti umsóknar`,
     },
   }),
   errors: defineMessages({
     emptyString: {
-      id: 'lg.application.errors.emptyString',
-      defaultMessage: 'Reitur má ekki vera tómur',
+      id: 'lg.application:errors.emptyString',
+      defaultMessage: 'Yfirskrift má ekki vera tóm',
       description: 'Villa sem kemur upp ef gildið er tómt',
     },
     emptyHtml: {
-      id: 'lg.application.errors.emptyHtml',
+      id: 'lg.application:errors.emptyHtml',
       defaultMessage: 'Meginmál má ekki vera autt',
       description: 'Villa sem kemur upp ef HTML texti er tómur',
+    },
+    emptyChannel: {
+      id: 'lg.application:errors.emptyChannel',
+      defaultMessage:
+        'Að minnsta kosti ein samskiptaleið þarf að vera til staðar',
+      description: 'Villa sem kemur upp ef samskiptaleið er tóm',
+    },
+    emptyEmail: {
+      id: 'lg.application:errors.emptyEmail',
+      defaultMessage: 'Netfang má ekki vera autt',
+      description: 'Villa sem kemur upp ef netfang er tóm',
+    },
+    invalidEmail: {
+      id: 'lg.application:errors.invalidEmail',
+      defaultMessage: 'Netfang er ekki gilt',
+      description: 'Villa sem kemur upp ef netfang er ekki í réttu sniði',
     },
   }),
   requirements: {
@@ -226,7 +242,7 @@ export const m = {
         },
         dateRepeaterRemoveButton: {
           id: 'lg.application:draft.publishing.dateRepeaterRemoveButton',
-          defaultMessage: 'Fjarlægja dagsetningu',
+          defaultMessage: 'Fjarlægja birtingardag',
           description: 'Titill á takka fyrir birtingu auglýsingar',
         },
         datePickerLabel: {
@@ -254,6 +270,44 @@ export const m = {
           defaultMessage:
             'Fá tilkynningu í tölvupósti þegar auglýsing er útgefin',
           description: 'Titill á checkboxi fyrir birtingu auglýsingar',
+        },
+      }),
+      communication: defineMessages({
+        formTitle: {
+          id: 'lg.application:draft.communication.formTitle',
+          defaultMessage: 'Samskiptaleiðir',
+          description: 'Heiti kafla fyrir tengilið',
+        },
+        formIntro: {
+          id: 'lg.application:draft.communication.formIntro',
+          defaultMessage:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sit amet mattis erat, eget dignissim lacus. Cras id enim ac urna bibendum gravida.',
+          description: 'Inngangur á formi fyrir tengilið',
+        },
+        addChannelButton: {
+          id: 'lg.application:draft.communication.addChannelButton',
+          defaultMessage: 'Bæta við samskiptaleið',
+          description: 'Titill á takka fyrir tengilið',
+        },
+        emailColumn: {
+          id: 'lg.application:draft.communication.emailColumn',
+          defaultMessage: 'Netfang',
+          description: 'Titill á dálki fyrir tengilið',
+        },
+        phoneColumn: {
+          id: 'lg.application:draft.communication.phoneColumn',
+          defaultMessage: 'Símanúmer',
+          description: 'Titill á dálki fyrir tengilið',
+        },
+        cancel: {
+          id: 'lg.application:draft.communication.cancel',
+          defaultMessage: 'Hætta við',
+          description: 'Titill á takka fyrir tengilið',
+        },
+        save: {
+          id: 'lg.application:draft.communication.save',
+          defaultMessage: 'Vista breytingar',
+          description: 'Titill á takka fyrir tengilið',
         },
       }),
     },

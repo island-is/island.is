@@ -23,27 +23,18 @@ export const legalGazetteDataSchema = z.object({
     }),
   }),
   publishing: z.object({
-    date: z
-      .string()
-      .optional()
-      .refine((val) => {
-        try {
-          if (!val) return true
-          const now = new Date()
-          const date = new Date(val)
-
-          if (
-            date.getTime() < now.getTime() ||
-            date.getTime() > now.setFullYear(now.getFullYear() + 1)
-          ) {
-            return false
-          }
-          return true
-        } catch (e) {
-          return false
-        }
+    dates: z.array(z.string()),
+  }),
+  communication: z.object({
+    channels: z
+      .array(
+        z.object({
+          email: z.string().email(),
+          phone: z.string().optional(),
+        }),
+      )
+      .refine((val) => val.length > 0, {
+        params: m.errors.emptyChannel,
       }),
-    noSpecificDate: z.array(z.nativeEnum(YesOrNoEnum)).optional(),
-    receiveEmail: z.array(z.nativeEnum(YesOrNoEnum)).optional(),
   }),
 })
