@@ -5,6 +5,7 @@ import type {
   DatePickerProps,
   IconProps,
   InputBackgroundColor,
+  InputProps,
   SpanType,
 } from '@island.is/island-ui/core/types'
 import {
@@ -480,6 +481,7 @@ export interface TextField extends InputField {
   suffix?: string
   rows?: number
   tooltip?: FormText
+  size?: InputProps['size']
   onChange?: (...event: any[]) => void
 }
 

@@ -311,6 +311,7 @@ export const buildTextField = (
     readOnly,
     rightAlign,
     tooltip,
+    size,
     onChange,
   } = data
   return {
@@ -330,6 +331,7 @@ export const buildTextField = (
     max,
     min,
     tooltip,
+    size,
     onChange,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
