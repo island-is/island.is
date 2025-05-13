@@ -1,4 +1,4 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import { Application, FieldBaseProps } from '@island.is/application/types'
 import { z } from 'zod'
 import { legalGazetteDataSchema } from './dataSchema'
 
@@ -9,8 +9,6 @@ export type LGAnswers = z.infer<typeof legalGazetteDataSchema>
 export type LGFieldBaseProps = Override<
   FieldBaseProps,
   {
-    application: {
-      answers: LGAnswers
-    }
+    application: Override<Application, { answers: LGAnswers }>
   }
 >

@@ -347,6 +347,83 @@ export const m = {
           description: 'Titill á takka fyrir tengilið',
         },
       }),
+      preview: defineMessages({
+        sectionTitle: {
+          id: 'lg.application:draft.preview.sectionTitle',
+          defaultMessage: 'Forskoðun',
+          description: 'Heiti kafla fyrir forskoðun auglýsingar',
+        },
+        formTitle: {
+          id: 'lg.application:draft.preview.formTitle',
+          defaultMessage: 'Forskoðun á birtingu',
+          description: 'Titill á formi fyrir forskoðun auglýsingar',
+        },
+        formIntro: {
+          id: 'lg.application:draft.preview.formIntro',
+          defaultMessage:
+            'Athugið að auglýsingin er ekki gefin út fyrr en eftir greiðslu og yfirferð ritstjóra.',
+          description: 'Inngangur á formi fyrir forskoðun auglýsingar',
+        },
+        estimatedPublicationDate: {
+          id: 'lg.application:draft.preview.estimatedPublicationDate',
+          defaultMessage: 'Áætlaður útgáfud.:',
+          description: 'Titill á áætluðum birtingardegi',
+        },
+      }),
+      confirmation: defineMessages({
+        sectionTitle: {
+          id: 'lg.application:draft.confirmation.sectionTitle',
+          defaultMessage: 'Staðfesting',
+          description: 'Heiti kafla fyrir staðfestingu auglýsingar',
+        },
+        formTitle: {
+          id: 'lg.application:draft.confirmation.formTitle',
+          defaultMessage: 'Staðfesting',
+          description: 'Titill á formi fyrir staðfestingu auglýsingar',
+        },
+        formIntro: {
+          id: 'lg.application:draft.confirmation.formIntro',
+          defaultMessage:
+            'Með því að senda auglýsingu til birtingar staðfestir þú eftirfarandi forsendur og felur Lögbirting að undirbúa útgáfu hennar.',
+          description: 'Inngangur á formi fyrir staðfestingu auglýsingar',
+        },
+        infoTitle: {
+          id: 'lg.application:draft.confirmation.infoTitle',
+          defaultMessage: 'Vinsamlegast athugið!',
+          description: 'Titill á upplýsingum fyrir staðfestingu auglýsingar',
+        },
+        infoMessage: {
+          id: 'lg.application:draft.confirmation.info',
+          defaultMessage:
+            'Athugið að auglýsingin er ekki gefin út fyrr en eftir greiðslu og yfirferð ritstjóra.',
+          description: 'Titill á upplýsingum fyrir staðfestingu auglýsingar',
+        },
+        sender: {
+          id: 'lg.application:draft.confirmation.sender',
+          defaultMessage: 'Sendandi',
+          description: 'Titill á umsækjanda fyrir staðfestingu auglýsingar',
+        },
+        type: {
+          id: 'lg.application:draft.confirmation.type',
+          defaultMessage: 'Tegund',
+          description: 'Titill á tegund fyrir staðfestingu auglýsingar',
+        },
+        applicationType: {
+          id: 'lg.application:draft.confirmation.applicationType',
+          defaultMessage: 'Almenn umsókn',
+          description: 'Titill á umsóknarheiti fyrir staðfestingu auglýsingar',
+        },
+        publicationDate: {
+          id: 'lg.application:draft.confirmation.publicationDate',
+          defaultMessage: 'Útgáfudagur',
+          description: 'Titill á útgáfudegi fyrir staðfestingu auglýsingar',
+        },
+        previewButton: {
+          id: 'lg.application:draft.confirmation.previewButton',
+          defaultMessage: 'Efni auglýsingar',
+          description: 'Titill á takka fyrir forskoðun auglýsingar',
+        },
+      }),
     },
   },
 }

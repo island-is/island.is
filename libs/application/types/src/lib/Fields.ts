@@ -399,6 +399,7 @@ export interface DateField extends InputField {
   maxYear?: number
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
+  size?: DatePickerProps['size']
   onChange?(date: string): void
   readOnly?: boolean
   tempDisabled?: (application: Application) => boolean
