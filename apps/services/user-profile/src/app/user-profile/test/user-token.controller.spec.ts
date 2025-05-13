@@ -1,5 +1,4 @@
 import request from 'supertest'
-import { INestApplication } from '@nestjs/common'
 import { SuperTest, Test } from 'supertest'
 
 import {

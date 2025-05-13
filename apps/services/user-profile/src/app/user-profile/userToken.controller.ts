@@ -1,9 +1,4 @@
-import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import {
   Controller,
   Get,
@@ -11,25 +6,15 @@ import {
   Headers,
   Delete,
   Param,
-  Post,
-  Body,
-  BadRequestException,
 } from '@nestjs/common'
 
-import {
-  CurrentUser,
-  IdsAuthGuard,
-  Scopes,
-  ScopesGuard,
-  type User,
-} from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
 import { UserTokenService } from './userToken.service'
 import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
-import { DeviceTokenDto } from './dto/deviceToken.dto'
 import { UserProfileService } from './user-profile.service'
 
 const namespace = '@island.is/user-profile/v2/userTokens'

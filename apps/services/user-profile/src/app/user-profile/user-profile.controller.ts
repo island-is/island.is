@@ -1,9 +1,4 @@
-import {
-  ApiNoContentResponse,
-  ApiOkResponse,
-  ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import {
   BadRequestException,
   Body,
@@ -19,21 +14,14 @@ import * as kennitala from 'kennitala'
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { AdminPortalScope, UserProfileScope } from '@island.is/auth/scopes'
-import {
-  CurrentActor,
-  IdsAuthGuard,
-  Scopes,
-  ScopesGuard,
-  type User,
-} from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
 import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 import { ClientType } from '../types/ClientType'
-import { ActorProfileDto, ActorLocale } from './dto/actor-profile.dto'
+import { ActorProfileDto } from './dto/actor-profile.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
-import { Locale } from './types/localeTypes'
 
 const namespace = '@island.is/user-profile/v2/users'
 
