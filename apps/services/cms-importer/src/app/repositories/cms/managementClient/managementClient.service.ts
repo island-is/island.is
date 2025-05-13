@@ -24,10 +24,6 @@ export class ManagementClientService {
   ): Promise<
     ContentfulFetchResponse<Collection<Entry, EntryProps<KeyValueMap>>>
   > => {
-    const space = await this.client.getSpace(SPACE_ID)
-    logger.warn('client', this.client)
-    logger.warn('space', space)
-
     return this.client
       .getSpace(SPACE_ID)
       .then((space) => space.getEnvironment(ENVIRONMENT))
@@ -43,10 +39,6 @@ export class ManagementClientService {
     contentTypeId: string,
     data: Omit<EntryProps, 'sys'>,
   ): Promise<ContentfulFetchResponse<Entry>> => {
-    const space = await this.client.getSpace(SPACE_ID)
-    logger.warn('client', this.client)
-    logger.warn('space', space)
-
     return this.client
       .getSpace(SPACE_ID)
       .then((space) => space.getEnvironment(ENVIRONMENT))

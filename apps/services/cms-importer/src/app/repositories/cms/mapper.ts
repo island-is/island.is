@@ -171,7 +171,7 @@ export const mapEnergyGrantToGenericListItem = (
                     type: 'bold',
                   },
                 ],
-                value: `${data.recipient}.\n`,
+                value: `${data.recipient}\n`,
                 nodeType: 'text',
               },
               {
@@ -253,7 +253,7 @@ export const mapEnergyGrantToGenericListItem = (
                     type: 'bold',
                   },
                 ],
-                value: `${data.recipient}.\n`,
+                value: `${data.recipient}\n`,
                 nodeType: 'text',
               },
               {

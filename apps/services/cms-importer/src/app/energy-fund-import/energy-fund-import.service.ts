@@ -9,6 +9,7 @@ import { mapEnergyGrantToGenericListItem } from '../repositories/cms/mapper'
 import { ContentfulFetchResponse } from '../repositories/cms/managementClient/managementClient.types'
 import {
   ENVIRONMENT,
+  GENERIC_LIST_ITEM_CONTENT_TYPE,
   LOCALE,
   PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
   SPACE_ID,
@@ -30,11 +31,53 @@ export class EnergyFundImportService {
   }
 
   private async processEnergyGrants() {
-    const grants = await this.clientsRepository.getEnergyGrants(5)
+    const grants = await this.clientsRepository.getEnergyGrants(10)
 
     if (grants) {
+      const existingEntries = await this.client
+        .getSpace(SPACE_ID)
+        .then((space) => space.getEnvironment(ENVIRONMENT))
+        .then((environment) =>
+          environment.getEntries({
+            content_type: GENERIC_LIST_ITEM_CONTENT_TYPE,
+            select: 'fields,sys,metadata',
+            links_to_entry: PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
+          }),
+        )
+        .then((entries) => ({ ok: true as const, data: entries }))
+        .catch((e) => ({
+          ok: false as const,
+          error: e,
+        }))
+
+      if (!existingEntries?.ok) {
+        logger.warn(`cms service failed to fetch previous energy fund grants`, {
+          error: existingEntries.error,
+        })
+        return
+      }
+
+      const previousEntryNames: Array<string> = existingEntries.data.items
+        .map((i) => {
+          const title: string = i.fields['internalTitle']?.[LOCALE]
+          if (!title) {
+            return null
+          }
+          return title
+        })
+        .filter(isDefined)
+
       const newEntries: Array<CreationType> = grants.grants
-        .map((eg) => mapEnergyGrantToGenericListItem(eg))
+        .map((eg) => {
+          if (previousEntryNames.find((i) => i === eg.projectName)) {
+            logger.info('Entry already exists, skipping.', {
+              name: eg.projectName,
+            })
+            return null
+          }
+
+          return mapEnergyGrantToGenericListItem(eg)
+        })
         .filter(isDefined)
 
       logger.info('creating entries...')
@@ -49,6 +92,7 @@ export class EnergyFundImportService {
       }
 
       for (const entry of newEntries) {
+        logger.warn('entry', entry.fields['internalTitle'])
         const createdEntry = await this.client
           .getSpace(SPACE_ID)
           .then((space) => space.getEnvironment(ENVIRONMENT))
@@ -58,7 +102,7 @@ export class EnergyFundImportService {
             ok: false as const,
             error: e,
           }))
-        logger.warn('createdEntry', createdEntry)
+        //  logger.warn('createdEntry', createdEntry)
       }
     }
   }
