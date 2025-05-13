@@ -4,12 +4,13 @@ import { useRouter } from 'next/router'
 import { Box, Text } from '@island.is/island-ui/core'
 import { getCaseTableGroups } from '@island.is/judicial-system/types'
 import {
+  CasesLayout,
   Logo,
   PageHeader,
-  SharedPageLayout,
-  TableGroup,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import CasesCard from '@island.is/judicial-system-web/src/components/Cards/CasesCard'
+import CasesDashboardLayout from '@island.is/judicial-system-web/src/components/Layouts/CasesDashboardLayout'
 
 import { logoContainer } from '../Cases/Cases.css'
 
@@ -21,26 +22,24 @@ const CaseTableGroups = () => {
   const groups = getCaseTableGroups(user)
 
   return (
-    <SharedPageLayout>
+    <CasesLayout>
       <PageHeader title="Málatöfluflokkar" />
       <div className={logoContainer}>
         <Logo />
       </div>
       {groups.map((group, idx) => (
-        <TableGroup title={group.title} key={idx}>
+        <CasesDashboardLayout title={group.title} key={idx}>
           {group.tables.map((t, idx) => (
-            <Box
+            <CasesCard
+              title={t.title}
+              description={t.description}
+              href={`${router.asPath}/${t.route}`}
               key={idx}
-              marginBottom={2}
-              onClick={() => router.push(`${router.asPath}/${t.route}`)}
-            >
-              <Text variant="h4">{t.title}</Text>
-              <Text>{t.description}</Text>
-            </Box>
+            />
           ))}
-        </TableGroup>
+        </CasesDashboardLayout>
       ))}
-    </SharedPageLayout>
+    </CasesLayout>
   )
 }
 
