@@ -199,6 +199,7 @@ export class DefendantNotificationService extends BaseNotificationService {
         courtName,
         courtCaseNumber: theCase.courtCaseNumber,
         defenderHasAccessToRVG,
+        // This link only works if the user is already logged in
         linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       })

@@ -43,6 +43,26 @@
         "security": [{ "bearer": [] }]
       }
     },
+    "/api/v1/applications/my-user-info": {
+      "get": {
+        "operationId": "getMyUserInfo",
+        "summary": "",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMyUserInfoResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }]
+      }
+    },
     "/api/v1/applications/{id}/price": {
       "get": {
         "operationId": "getPrice",
@@ -359,26 +379,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetInvoledPartiesByUserResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [{ "bearer": [] }]
-      }
-    },
-    "/api/v1/applications/my-user-info": {
-      "get": {
-        "operationId": "getMyUserInfo",
-        "summary": "",
-        "parameters": [],
-        "responses": {
-          "default": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMyUserInfoResponse"
                 }
               }
             }
@@ -1223,6 +1223,15 @@
         },
         "required": ["application"]
       },
+      "GetMyUserInfoResponse": {
+        "type": "object",
+        "properties": {
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "email": { "type": "string" }
+        },
+        "required": ["firstName", "lastName", "email"]
+      },
       "CasePriceResponse": {
         "type": "object",
         "properties": {
@@ -1522,15 +1531,6 @@
           }
         },
         "required": ["involvedParties"]
-      },
-      "GetMyUserInfoResponse": {
-        "type": "object",
-        "properties": {
-          "firstName": { "type": "string" },
-          "lastName": { "type": "string" },
-          "email": { "type": "string" }
-        },
-        "required": ["firstName", "lastName", "email"]
       },
       "CategoryMainCategory": {
         "type": "object",

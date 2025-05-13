@@ -25,16 +25,22 @@ export const ChannelList = ({
 
   const { user, loading } = useOJOIUser()
 
-  const defaultName = `${user?.firstName} ${user?.lastName}`
-  const defaultEmail = user?.email
+  const hasUserInfo = !!user?.firstName && !!user?.lastName
 
-  const initalChannel = {
-    name: defaultName,
-    email: defaultEmail,
+  const userInfo = useUserInfo()
+
+  const initialChannel = hasUserInfo ? {
+    name: `${user?.firstName} ${user?.lastName}`,
+    email: user?.email,
     phone: undefined,
+  } : {
+    name: userInfo?.profile?.name,
+    email: userInfo?.profile?.email,
+    phone: userInfo?.profile?.phone_number,
   }
 
-  const channels = application.answers.advert?.channels || [initalChannel]
+
+  const channels = application.answers.advert?.channels || [initialChannel]
 
   if (channels.length === 0 || loading) {
     return null

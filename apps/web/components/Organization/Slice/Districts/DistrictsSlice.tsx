@@ -69,10 +69,16 @@ export const DistrictsSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
               <GridColumn span={['10/10', '10/10', '10/10', '10/10', '5/10']}>
                 {slice.image.url.split('.').pop() === 'svg' ? (
                   <object data={slice.image.url} type="image/svg+xml">
-                    <img src={slice.image.url} alt="" />
+                    <img
+                      src={slice.image.url}
+                      alt={slice.image.description ?? ''}
+                    />
                   </object>
                 ) : (
-                  <img src={slice.image.url} alt="" />
+                  <img
+                    src={slice.image.url}
+                    alt={slice.image.description ?? ''}
+                  />
                 )}
               </GridColumn>
             )}

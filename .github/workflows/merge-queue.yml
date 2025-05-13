@@ -36,7 +36,7 @@ env:
   AWS_REGION: eu-west-1
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
-  GENERATED_FILES: ${{ github.workspace }}/${{ github.sha }}.tar.gz
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
   CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
   YARN_ENABLE_HARDENED_MODE: '0'
 
@@ -57,7 +57,7 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    runs-on: arc-docker
+    runs-on: arc-shared
     if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS }}
     permissions:
       actions: read
@@ -189,7 +189,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-docker
+    runs-on: arc-shared
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -220,7 +220,7 @@ jobs:
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
   success:
-    runs-on: arc-docker
+    runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs:
       - prepare
@@ -305,7 +305,7 @@ jobs:
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: arc-docker
+    runs-on: arc-shared
     env:
       CHECK: 'false'
     steps:
