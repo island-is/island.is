@@ -95,17 +95,10 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
       setOpen(false)
       setIsLoading(true)
 
-      const complete = () => setIsLoading(false)
-
-      if (item.href) {
-        router.push(item.href)
-        complete()
-        return
-      }
-
       if (item.onClick) {
         item.onClick()
-        complete()
+        setIsLoading(false)
+
         return
       }
     }
