@@ -31,7 +31,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import CaseNumberInput from '../components/CaseNumberInput/CaseNumberInput'
+import { CaseNumberInput } from '../components'
 import { useAppealCaseUsersQuery } from './appealCaseUsers.generated'
 import { appealCase as strings } from './AppealCase.strings'
 
