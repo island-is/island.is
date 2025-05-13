@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react'
 import { useIntl } from 'react-intl'
@@ -75,6 +76,7 @@ const Processing: FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const civilClaimRef = useRef<HTMLElement>(null)
   const { updateCase, transitionCase, updateUnlimitedAccessCase } = useCase()
   const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()
@@ -289,6 +291,13 @@ const Processing: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personData])
 
+  useEffect(() => {
+    civilClaimRef.current?.scrollIntoView({
+      block: 'start',
+      behavior: 'smooth',
+    })
+  }, [workingCase.hasCivilClaims])
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -387,6 +396,7 @@ const Processing: FC = () => {
         <Box
           component="section"
           marginBottom={workingCase.hasCivilClaims === true ? 5 : 10}
+          ref={civilClaimRef}
         >
           <SectionHeading
             title={formatMessage(strings.civilDemandsTitle)}
