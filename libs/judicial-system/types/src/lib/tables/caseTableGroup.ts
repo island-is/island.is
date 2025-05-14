@@ -38,24 +38,26 @@ const courtOfAppealsTableGroups: CaseTableGroup[] = [
   },
 ]
 
+const prisonSystemRequestCaseGroup = {
+  title: 'Rannsóknarmál',
+  tables: [
+    {
+      type: CaseTableType.PRISON_ACTIVE,
+      route: 'virk-mal',
+      title: 'Virk mál',
+      description: 'Virk gæsluvarðhöld og farbönn.',
+    },
+    {
+      type: CaseTableType.PRISON_DONE,
+      route: 'lokid',
+      title: 'Lokið',
+      description: 'Gæsluvarðhöld og farbönn sem er lokið.',
+    },
+  ],
+}
+
 const prisonAdminTableGroups: CaseTableGroup[] = [
-  {
-    title: 'Rannsóknarmál',
-    tables: [
-      {
-        type: CaseTableType.PRISON_ACTIVE,
-        route: 'virk-mal',
-        title: 'Virk mál',
-        description: 'Virk gæsluvarðhöld og farbönn.',
-      },
-      {
-        type: CaseTableType.PRISON_DONE,
-        route: 'lokid',
-        title: 'Lokið',
-        description: 'Gæsluvarðhöld og farbönn sem er lokið.',
-      },
-    ],
-  },
+  prisonSystemRequestCaseGroup,
   {
     title: 'Sakamál',
     tables: [
@@ -75,25 +77,7 @@ const prisonAdminTableGroups: CaseTableGroup[] = [
   },
 ]
 
-const prisonStaffTableGroups: CaseTableGroup[] = [
-  {
-    title: 'Rannsóknarmál',
-    tables: [
-      {
-        type: CaseTableType.PRISON_ACTIVE,
-        route: 'virk-mal',
-        title: 'Virk mál',
-        description: 'Virk gæsluvarðhöld og farbönn.',
-      },
-      {
-        type: CaseTableType.PRISON_DONE,
-        route: 'lokid',
-        title: 'Lokið',
-        description: 'Gæsluvarðhöld og farbönn sem er lokið.',
-      },
-    ],
-  },
-]
+const prisonStaffTableGroups: CaseTableGroup[] = [prisonSystemRequestCaseGroup]
 
 export const getCaseTableGroups = (
   user: InstitutionUser | undefined,
