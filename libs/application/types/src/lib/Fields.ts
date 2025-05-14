@@ -172,7 +172,7 @@ export type RepeaterItem = {
       rows?: number
       maxLength?: number
       currency?: boolean
-      suffix?: string
+      suffix?: FormText
     }
   | {
       component: 'phone'
@@ -386,14 +386,15 @@ export interface CheckboxField extends InputField {
   backgroundColor?: InputBackgroundColor
   onSelect?: ((s: string[]) => void) | undefined
   spacing?: 0 | 1 | 2
+  split?: '1/1' | '1/2' | '1/3' | '1/4'
 }
 
 export interface DateField extends InputField {
   readonly type: FieldTypes.DATE
   placeholder?: FormText
   component: FieldComponents.DATE
-  maxDate?: MaybeWithApplicationAndField<Date>
-  minDate?: MaybeWithApplicationAndField<Date>
+  maxDate?: MaybeWithApplicationAndField<Date | undefined>
+  minDate?: MaybeWithApplicationAndField<Date | undefined>
   minYear?: number
   maxYear?: number
   excludeDates?: MaybeWithApplicationAndField<Date[]>
@@ -475,7 +476,7 @@ export interface TextField extends InputField {
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor
   format?: string | FormatInputValueFunction
-  suffix?: string
+  suffix?: FormText
   rows?: number
   tooltip?: FormText
   onChange?: (...event: any[]) => void
@@ -921,10 +922,12 @@ export interface DisplayField extends BaseField {
 
 export type KeyValueItem = {
   width?: 'full' | 'half' | 'snug'
-  keyText?: FormText
+  keyText?: FormText | FormTextArray
+  inlineKeyText?: boolean
   valueText?: FormText | FormTextArray
   boldValueText?: boolean
   lineAboveKeyText?: boolean
+  hideIfEmpty?: boolean
 }
 
 export type AttachmentItem = {
@@ -957,6 +960,7 @@ export interface OverviewField extends BaseField {
     externalData: ExternalData,
   ) => Array<AttachmentItem>
   tableData?: (answers: FormValue, externalData: ExternalData) => TableData
+  hideIfEmpty?: boolean
 }
 
 export interface CopyLinkField extends BaseField {

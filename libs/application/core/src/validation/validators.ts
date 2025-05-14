@@ -30,7 +30,12 @@ const populateError = (
       const namespaceRegex = /^[\w.]+:\w+(\.\w+)*$/g
       const includeNamespace = element?.params?.id?.match(namespaceRegex)?.[0]
       if (includeNamespace) {
-        message = formatMessage(element.params as StaticTextObject)
+        const staticTextObject = element.params as StaticTextObject
+        if (staticTextObject.values) {
+          message = formatMessage(staticTextObject, staticTextObject.values)
+        } else {
+          message = formatMessage(staticTextObject)
+        }
       } else if (!defaultZodError) {
         message = element.message
       }
@@ -90,6 +95,7 @@ export const validateAnswers = ({
     }
   } catch (e) {
     const zodErrors: ZodIssue[] = e.errors
+    console.log('answers', answers) //TODOx remove
     return populateError(zodErrors, e.path, formatMessage, currentScreenFields)
   }
   return undefined
