@@ -107,7 +107,6 @@ export const externalDataSubSection = buildSubSection({
             socialInsuranceAdministrationMessage.pre
               .socialInsuranceAdministrationPrivacyDescription,
         }),
-
         // // TODO: Put this back in when isEligible is ready
         // buildDataProviderItem({
         //   provider: SocialInsuranceAdministrationIsApplicantEligibleApi,

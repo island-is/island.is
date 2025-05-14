@@ -22,4 +22,3 @@ export const SocialInsuranceAdministrationApplicantApi = defineTemplateApi({
   namespace: 'SocialInsuranceAdministration',
   order: 1,
 })
-
