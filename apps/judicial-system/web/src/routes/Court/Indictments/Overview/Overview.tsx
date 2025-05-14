@@ -24,7 +24,6 @@ import {
 import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { SubpoenaType } from '../../components'
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './Overview.strings'
 // onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
@@ -38,14 +37,12 @@ const OverviewBody = ({
 
   const { workingCase, isLoadingWorkingCase, setWorkingCase } =
     useContext(FormContext)
-  const { updateDefendantState } = useDefendants()
 
   const { formatMessage } = useIntl()
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
   const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
-  const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
 
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 

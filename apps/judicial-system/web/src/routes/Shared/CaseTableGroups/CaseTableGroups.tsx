@@ -1,7 +1,6 @@
 import { useContext } from 'react'
 import { useRouter } from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
 import { getCaseTableGroups } from '@island.is/judicial-system/types'
 import {
   CasesLayout,
