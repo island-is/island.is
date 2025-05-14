@@ -415,12 +415,12 @@ export class AuthController {
         ...this.idToken.options,
         maxAge: EXPIRES_IN_MILLISECONDS,
       })
-      // expires in 5 minutes
+      // expires in 5 minutes, can't be overridden
       res.cookie(this.accessToken.name, accessToken, {
-        ...this.idToken.options,
+        ...this.accessToken.options,
       })
       res.cookie(this.refreshToken.name, refreshToken, {
-        ...this.idToken.options,
+        ...this.refreshToken.options,
         maxAge: EXPIRES_IN_MILLISECONDS,
       })
     } else {

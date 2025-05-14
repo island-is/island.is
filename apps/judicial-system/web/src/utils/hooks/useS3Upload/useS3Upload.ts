@@ -440,58 +440,67 @@ const useS3Upload = (
     addUploadFile: (file: TUploadFile) => void,
     updateFile: (file: TUploadFile, newId?: string) => void,
   ) => {
-    const promises = defendants.map(async ({ id, nationalId }) => {
-      const name = `Sakavottord_${nationalId ?? ''}.pdf`
-      const commonFileProps = {
-        // add a temp tame for error handling
-        id: `${name}-${uuid()}`,
-        name: `Sakavottord_${nationalId ?? ''}.pdf`,
-        category: CaseFileCategory.CRIMINAL_RECORD,
-        percent: 0,
-      }
-      addUploadFile(commonFileProps)
-
-      try {
-        // fetch criminal record and upload it to S3 in the backend
-        const { data: criminalRecordFile } = await uploadCriminalRecordFile({
-          variables: {
-            input: { caseId, defendantId: id },
-          },
-        })
-
-        if (!criminalRecordFile) {
-          throw Error('Failed to upload criminal record to S3')
-        }
-
-        const fileProps = {
-          ...commonFileProps,
-          name: criminalRecordFile.uploadCriminalRecordFile.name,
-          key: criminalRecordFile.uploadCriminalRecordFile.key,
-          size: criminalRecordFile.uploadCriminalRecordFile.size,
-          type: criminalRecordFile.uploadCriminalRecordFile.type,
-          defendantId: id,
-        }
-        // create the case file in the backend
-        const fileId = await addFileToCaseState(fileProps)
-
-        // update the client state with the newly fetched file
-        updateFile(
-          {
-            ...fileProps,
-            percent: 100,
-            status: FileUploadStatus.done,
-          },
-          fileId,
-        )
-      } catch (error) {
-        toast.error(formatMessage(strings.uploadFailed))
-        updateFile({
-          ...commonFileProps,
+    const promises = defendants.map(
+      async ({ id, name: defendantName, nationalId, noNationalId }) => {
+        const name = `Sakavottord${nationalId ? `_${nationalId}` : ''}.pdf`
+        const commonFileProps = {
+          // add a temp tame for error handling
+          id: `${name}-${uuid()}`,
+          name,
+          category: CaseFileCategory.CRIMINAL_RECORD,
           percent: 0,
-          status: FileUploadStatus.error,
-        })
-      }
-    })
+        }
+
+        if (!noNationalId) {
+          addUploadFile(commonFileProps)
+        }
+
+        try {
+          // fetch criminal record and upload it to S3 in the backend
+          const { data: criminalRecordFile } = await uploadCriminalRecordFile({
+            variables: {
+              input: { caseId, defendantId: id },
+            },
+          })
+
+          if (!criminalRecordFile) {
+            throw Error('Failed to upload criminal record to S3')
+          }
+
+          const fileProps = {
+            ...commonFileProps,
+            name: criminalRecordFile.uploadCriminalRecordFile.name,
+            key: criminalRecordFile.uploadCriminalRecordFile.key,
+            size: criminalRecordFile.uploadCriminalRecordFile.size,
+            type: criminalRecordFile.uploadCriminalRecordFile.type,
+            defendantId: id,
+          }
+          // create the case file in the backend
+          const fileId = await addFileToCaseState(fileProps)
+
+          // update the client state with the newly fetched file
+          updateFile(
+            {
+              ...fileProps,
+              percent: 100,
+              status: FileUploadStatus.done,
+            },
+            fileId,
+          )
+        } catch (error) {
+          if (noNationalId) {
+            toast.error(`Ákærði: ${defendantName} er ekki með kennitölu`)
+          } else {
+            toast.error(formatMessage(strings.uploadFailed))
+            updateFile({
+              ...commonFileProps,
+              percent: 0,
+              status: FileUploadStatus.error,
+            })
+          }
+        }
+      },
+    )
     return Promise.all(promises)
   }
 

@@ -1,4 +1,5 @@
 import { Agent } from 'https'
+import fetch from 'isomorphic-fetch'
 import { uuid } from 'uuidv4'
 
 import {
@@ -67,7 +68,7 @@ export class CriminalRecordService {
         'DMR criminal record API not available',
       )
     }
-    if (defendant.noNationalId || !defendant.nationalId) {
+    if (defendant.noNationalId) {
       throw new NotFoundException({
         message: `Criminal record case file for defendant ${defendant.id} of case ${defendant.caseId} not found`,
         detail: 'Defendant is missing national id',

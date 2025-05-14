@@ -336,7 +336,7 @@ export class FileController {
   )
   @Post('defendant/:defendantId/criminalRecordFile')
   @ApiCreatedResponse({
-    type: CaseFile,
+    type: UploadCriminalRecordFileResponse,
     description:
       'Uploads the latest criminal record file for defendant to AWS S3',
   })
