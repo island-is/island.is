@@ -15,7 +15,7 @@ export const InformationValidation: FC<
   const { setBeforeSubmitCallback, application } = props
   const [validationError, setValidationError] = useState<string>()
   const { lang } = useLocale()
-  const { getValues } = useFormContext()
+  const { getValues, setValue } = useFormContext()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const getAreExamineesEligible = useLazyAreExamineesEligible()
   const getAreExamineesEligibleCallback = useCallback(
@@ -38,26 +38,28 @@ export const InformationValidation: FC<
     if (response.getExamineeEligibility[0].isEligible) {
       const { nationalId, name, email, phone, licenseNumber, countryOfIssue } =
         infoSelf
-      setValidationError('')
 
+      const valuePayload = [
+        {
+          nationalId: {
+            nationalId: nationalId,
+            name: name,
+          },
+          email: email,
+          phone: phone,
+          countryIssuer: countryOfIssue,
+          licenseNumber: licenseNumber,
+          disabled: TrueOrFalse.false,
+        },
+      ]
+      setValidationError('')
+      setValue('examinees', valuePayload)
       await updateApplication({
         variables: {
           input: {
             id: application.id,
             answers: {
-              examinees: [
-                {
-                  nationalId: {
-                    nationalId: nationalId,
-                    name: name,
-                  },
-                  email: email,
-                  phone: phone,
-                  countryIssuer: countryOfIssue,
-                  licenseNumber: licenseNumber,
-                  disabled: TrueOrFalse.false,
-                },
-              ],
+              examinees: valuePayload,
             },
           },
           locale: lang,

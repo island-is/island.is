@@ -37,7 +37,6 @@ export const WatchCompanyNationalId: FC<
   }, [setValue, application.answers])
 
   setBeforeSubmitCallback?.(async () => {
-    return [true, null]
     setIsCompanyValid(true)
     const paymentOptions = getValues('paymentArrangement.paymentOptions')
     if (paymentOptions !== PaymentOptions.putIntoAccount) {

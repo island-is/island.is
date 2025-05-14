@@ -47,7 +47,9 @@ const PaymentArrangementSchema = z
       .nullish(),
     paymentOptions: z
       .enum([PaymentOptions.cashOnDelivery, PaymentOptions.putIntoAccount])
-      .nullish(),
+      .nullish()
+      .or(z.literal('')) // Explicitly allow empty strings since clearing this field turns it to an empty string
+      .transform((val) => (val === '' ? undefined : val)), // Convert "" to undefined,
     companyInfo: z
       .object({
         nationalId: z.string().nullish(),
@@ -70,35 +72,35 @@ const PaymentArrangementSchema = z
       .nullish(),
     explanation: z.string().max(40).nullish(),
   })
-  // .refine(
-  //   ({ individualInfo, individualOrCompany }) => {
-  //     if (individualOrCompany === IndividualOrCompany.company) return true
-  //     return (
-  //       individualOrCompany === IndividualOrCompany.individual &&
-  //       individualInfo &&
-  //       individualInfo.email &&
-  //       individualInfo.email.length > 0 &&
-  //       isValidEmail(individualInfo.email)
-  //     )
-  //   },
-  //   {
-  //     path: ['individualInfo', 'email'],
-  //   },
-  // )
-  // .refine(
-  //   ({ individualInfo, individualOrCompany }) => {
-  //     if (individualOrCompany === IndividualOrCompany.company) return true
-  //     return (
-  //       individualOrCompany === IndividualOrCompany.individual &&
-  //       individualInfo &&
-  //       individualInfo.phone &&
-  //       isValidPhoneNumber(individualInfo?.phone)
-  //     )
-  //   },
-  //   {
-  //     path: ['individualInfo', 'phone'],
-  //   },
-  // )
+  .refine(
+    ({ individualInfo, individualOrCompany }) => {
+      if (individualOrCompany === IndividualOrCompany.company) return true
+      return (
+        individualOrCompany === IndividualOrCompany.individual &&
+        individualInfo &&
+        individualInfo.email &&
+        individualInfo.email.length > 0 &&
+        isValidEmail(individualInfo.email)
+      )
+    },
+    {
+      path: ['individualInfo', 'email'],
+    },
+  )
+  .refine(
+    ({ individualInfo, individualOrCompany }) => {
+      if (individualOrCompany === IndividualOrCompany.company) return true
+      return (
+        individualOrCompany === IndividualOrCompany.individual &&
+        individualInfo &&
+        individualInfo.phone &&
+        isValidPhoneNumber(individualInfo?.phone)
+      )
+    },
+    {
+      path: ['individualInfo', 'phone'],
+    },
+  )
   .refine(
     ({ companyInfo, individualOrCompany }) => {
       if (individualOrCompany === IndividualOrCompany.individual) {

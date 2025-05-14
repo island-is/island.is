@@ -137,16 +137,16 @@ export const mapInstructors = (
 }
 
 export const mapPaymentArrangement = (
-  paymentArrangement: PaymentArrangement,
+  paymentArrangement: PaymentArrangement | undefined,
   information: Information,
   chargeId: string,
 ): PaymentInfoRequest | undefined => {
   const isIndividual =
-    paymentArrangement.individualOrCompany === IndividualOrCompany.individual
+    paymentArrangement?.individualOrCompany === IndividualOrCompany.individual
   const isCashOnDelivery =
-    paymentArrangement.paymentOptions === PaymentOptions.cashOnDelivery
+    paymentArrangement?.paymentOptions === PaymentOptions.cashOnDelivery
 
-  if (isIndividual) {
+  if (isIndividual || !paymentArrangement) {
     return {
       payerNationalId: information.nationalId || '',
       payerName: information.name || '',

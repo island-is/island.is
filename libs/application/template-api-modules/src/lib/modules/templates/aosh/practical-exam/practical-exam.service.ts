@@ -98,7 +98,6 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
 
     if (
       !examinees ||
-      !paymentArrangement ||
       !instructors ||
       !examCategoriesAndInstructors ||
       !examLocation ||
@@ -118,8 +117,9 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
         application.externalData,
         'createCharge.data.id',
       ) ?? ''
+
     const paymentInfoRequest = mapPaymentArrangement(
-      paymentArrangement,
+      paymentArrangement || undefined,
       information,
       chargeId,
     )

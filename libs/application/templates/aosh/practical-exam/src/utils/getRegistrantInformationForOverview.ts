@@ -3,6 +3,8 @@ import { FormValue, KeyValueItem } from '@island.is/application/types'
 import { overview } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { InformationType } from '../lib/dataSchema'
+import { formatPhoneNumber } from './validation'
+
 export const getRegistrantInformationForOverview = (
   answers: FormValue,
 ): Array<KeyValueItem> => {
@@ -28,7 +30,7 @@ export const getRegistrantInformationForOverview = (
         {
           ...overview.registrant.phone,
           values: {
-            value: information?.phone,
+            value: formatPhoneNumber(information?.phone || ''),
           },
         },
         {

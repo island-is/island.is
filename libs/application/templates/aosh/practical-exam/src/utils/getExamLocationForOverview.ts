@@ -2,6 +2,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FormValue, KeyValueItem } from '@island.is/application/types'
 import { overview } from '../lib/messages'
 import { ExamLocationType } from '../lib/dataSchema'
+import { formatPhoneNumber } from './validation'
 export const getExamLocatioForOverview = (
   answers: FormValue,
 ): Array<KeyValueItem> => {
@@ -35,7 +36,7 @@ export const getExamLocatioForOverview = (
         {
           ...overview.examLocation.phone,
           values: {
-            value: phone,
+            value: formatPhoneNumber(phone || ''),
           },
         },
       ],

@@ -21,7 +21,7 @@ export const conclusion = {
   default: defineMessages({
     alertTitle: {
       id: 'aosh.pe.application:conclusion.default.alertMessage',
-      defaultMessage: 'Skráning í verklegt próf {exam} móttekin.',
+      defaultMessage: 'Skráning í verklegt próf hefur verið móttekin.',
       description: 'Conclusion alert message',
     },
     accordionTitle: {

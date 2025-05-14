@@ -141,10 +141,13 @@ export const informationSection = buildSection({
             )
 
             return [
-              { label: iceland.name_is || iceland.name, value: iceland.code },
+              {
+                label: iceland.name_is || iceland.name,
+                value: iceland.name_is,
+              },
               ...countries.map((country) => ({
                 label: country.name_is || country.name,
-                value: country.code,
+                value: country.name_is || country.name,
               })),
             ]
           },

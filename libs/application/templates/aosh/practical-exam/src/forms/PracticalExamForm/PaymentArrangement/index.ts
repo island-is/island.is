@@ -11,7 +11,11 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { paymentArrangement } from '../../../lib/messages'
-import { IndividualOrCompany, PaymentOptions } from '../../../utils/enums'
+import {
+  IndividualOrCompany,
+  PaymentOptions,
+  SelfOrOthers,
+} from '../../../utils/enums'
 import { Application, FormValue } from '@island.is/application/types'
 import {
   isIndividual,
@@ -23,6 +27,13 @@ import {
 export const paymentArrangementSection = buildSection({
   id: 'paymentArrangementSection',
   title: paymentArrangement.general.sectionTitle,
+  condition: (answers: FormValue) => {
+    const selfOrOthers = getValueViaPath<SelfOrOthers>(
+      answers,
+      'information.selfOrOthers',
+    )
+    return selfOrOthers === SelfOrOthers.self ? false : true
+  },
   children: [
     buildMultiField({
       id: 'paymentArrangement',
