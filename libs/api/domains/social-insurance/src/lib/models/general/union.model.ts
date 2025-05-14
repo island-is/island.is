@@ -2,9 +2,9 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('SocialInsuranceGeneralUnionModel')
 export class UnionModel {
-  @Field(() => ID)
-  id!: string
+  @Field(() => String, { nullable: true })
+  nationalId!: string | null | undefined
 
-  @Field()
+  @Field({ nullable: true })
   name!: string
 }

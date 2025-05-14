@@ -117,9 +117,9 @@ export const unionSickPaySubSection = buildSubSection({
 
             return (
               data?.siaGetUnions
-                ?.map(({ name, id }) => ({
-                  value: id || '',
-                  label: name,
+                ?.map(({ name, nationalId }) => ({
+                  value: nationalId || '',
+                  label: name || '',
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )

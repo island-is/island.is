@@ -1,4 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { handle404 } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
 import {
   ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
@@ -6,12 +7,14 @@ import {
   ApiProtectedV1PensionCalculatorPostRequest,
   ApplicantApi,
   ApplicationApi,
+  DeathBenefitsApi,
   GeneralApi,
   IncomePlanApi,
   PaymentPlanApi,
   PensionCalculatorApi,
-  DeathBenefitsApi,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
+  TrWebApiServicesDomainUnionsModelsUnionDto,
+  TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
@@ -20,12 +23,9 @@ import {
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
-  TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
-  // TrWebApiServicesDomainUnionsModelsUnionDto,
 } from '../../gen/fetch'
-import { handle404 } from '@island.is/clients/middlewares'
-import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
+import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -195,16 +195,9 @@ export class SocialInsuranceAdministrationClientService {
     })
   }
 
-  // async getUnions(
-  //   user: User,
-  // ): Promise<Array<TrWebApiServicesDomainUnionsModelsUnionDto>> {
-  //   reportErroreturn this.genaralApiWithAuth(user).apiProtectedV1GeneralUnionsGet()
-  // }
-
-  async getUnions(user: User): Promise<Array<{ id: string; name: string }>> {
-    return [
-      { id: 'VR', name: 'VR' },
-      { id: 'Efling', name: 'Efling' },
-    ]
+  async getUnions(
+    user: User,
+  ): Promise<Array<TrWebApiServicesDomainUnionsModelsUnionDto>> {
+    return this.genaralApiWithAuth(user).apiProtectedV1GeneralUnionsGet()
   }
 }

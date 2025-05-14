@@ -8,20 +8,20 @@ import {
   ApplicantApi,
   ApplicationApi,
   Configuration,
+  DeathBenefitsApi,
   DocumentsApi,
   GeneralApi,
   IncomePlanApi,
   PaymentPlanApi,
   PensionCalculatorApi,
-  DeathBenefitsApi,
 } from '../../gen/fetch'
+import { ConfigFactory } from './configFactory'
+import { SocialInsuranceAdministrationClientConfig } from './socialInsuranceAdministrationClient.config'
 import {
   Api,
   ApplicationWriteApi,
   Scope,
 } from './socialInsuranceAdministrationClient.type'
-import { ConfigFactory } from './configFactory'
-import { SocialInsuranceAdministrationClientConfig } from './socialInsuranceAdministrationClient.config'
 
 const apiCollection: Array<{
   api: Api
