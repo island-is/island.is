@@ -36,12 +36,14 @@ const getIncludes = (caseTableCellKeys: CaseTableColumnKey[]) => {
           ...v,
           includes: undefined,
           as: k,
-          include:
-            v.includes &&
-            Object.entries(v.includes).map(([k, v]) => ({
-              ...v,
-              as: k,
-            })),
+          ...(v.includes
+            ? {
+                include: Object.entries(v.includes).map(([k, v]) => ({
+                  ...v,
+                  as: k,
+                })),
+              }
+            : undefined),
         })) as Includeable,
     )
     .flat()
