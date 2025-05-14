@@ -27,7 +27,11 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
+import {
+  FilterTag,
+  HeadWithSocialSharing,
+  Webreader,
+} from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   type GetVerdictCaseCategoriesQuery,
@@ -66,6 +70,7 @@ import * as styles from './VerdictsList.css'
 
 const ITEMS_PER_PAGE = 10
 const DEBOUNCE_TIME_IN_MS = 500
+const DATE_FORMAT = 'd. MMMM yyyy'
 
 const ALL_COURTS_TAG = ''
 const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómur Reykjavíkur'
@@ -775,6 +780,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
         label: formatMessage(m.listPage.showSupremeCourt),
         value: 'Hæstiréttur',
       },
+      {
+        label: formatMessage(m.listPage.showRetrialCourt),
+        value: 'Endurupptökudómur',
+      },
     ]
   }, [formatMessage])
   const districtCourtTags = useMemo(() => {
@@ -815,6 +824,134 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
   }, [])
 
   const districtCourtTagValues = districtCourtTags.map(({ value }) => value)
+
+  const filterTags = useMemo(() => {
+    const tags: { label: string; onClick: () => void }[] = []
+    if (queryState[QueryParam.CASE_NUMBER]) {
+      tags.push({
+        label: `${formatMessage(m.listPage.caseNumberAccordionLabel)}: ${
+          queryState[QueryParam.CASE_NUMBER]
+        }`,
+        onClick: () => {
+          updateQueryState(QueryParam.CASE_NUMBER, '')
+          updateRenderKey()
+        },
+      })
+    }
+
+    if (queryState[QueryParam.LAWS]) {
+      tags.push({
+        label: `${formatMessage(m.listPage.lawsAccordionLabel)}: ${
+          queryState[QueryParam.LAWS]
+        }`,
+        onClick: () => {
+          updateQueryState(QueryParam.LAWS, '')
+          updateRenderKey()
+        },
+      })
+    }
+
+    if (queryState[QueryParam.KEYWORD]) {
+      tags.push({
+        label: `${formatMessage(m.listPage.keywordAccordionLabel)}: ${
+          queryState[QueryParam.KEYWORD]
+        }`,
+        onClick: () => {
+          updateQueryState(QueryParam.KEYWORD, null)
+          updateRenderKey()
+        },
+      })
+    }
+
+    if (queryState[QueryParam.CASE_CATEGORIES]) {
+      if (queryState[QueryParam.CASE_CATEGORIES].length > 0) {
+        for (const category of queryState[QueryParam.CASE_CATEGORIES]) {
+          tags.push({
+            label: `${formatMessage(
+              m.listPage.caseCategoryAccordionLabel,
+            )}: ${category}`,
+            onClick: () => {
+              updateQueryState(QueryParam.CASE_CATEGORIES, (previousState) => {
+                let previousCategories =
+                  previousState[QueryParam.CASE_CATEGORIES]
+                if (previousCategories) {
+                  previousCategories = previousCategories.filter(
+                    (previousCategory) => previousCategory !== category,
+                  )
+                  if (previousCategories.length === 0) {
+                    previousCategories = null
+                  }
+                }
+                return {
+                  ...previousState,
+                  [QueryParam.CASE_CATEGORIES]: previousCategories,
+                }
+              })
+              updateRenderKey()
+            },
+          })
+        }
+      }
+    }
+
+    if (queryState[QueryParam.CASE_TYPES]) {
+      if (queryState[QueryParam.CASE_TYPES].length > 0) {
+        for (const caseType of queryState[QueryParam.CASE_TYPES]) {
+          tags.push({
+            label: `${formatMessage(
+              m.listPage.caseTypeAccordionLabel,
+            )}: ${caseType}`,
+            onClick: () => {
+              updateQueryState(QueryParam.CASE_TYPES, (previousState) => {
+                let previousCaseTypes = previousState[QueryParam.CASE_TYPES]
+                if (previousCaseTypes) {
+                  previousCaseTypes = previousCaseTypes.filter(
+                    (previousCaseType) => previousCaseType !== caseType,
+                  )
+                  if (previousCaseTypes.length === 0) {
+                    previousCaseTypes = null
+                  }
+                }
+                return {
+                  ...previousState,
+                  [QueryParam.CASE_TYPES]: previousCaseTypes,
+                }
+              })
+              updateRenderKey()
+            },
+          })
+        }
+      }
+    }
+
+    if (queryState[QueryParam.DATE_FROM]) {
+      tags.push({
+        label: `${formatMessage(m.listPage.dateFromLabel)}: ${format(
+          queryState[QueryParam.DATE_FROM],
+          'P',
+        )}`,
+        onClick: () => {
+          updateQueryState(QueryParam.DATE_FROM, null)
+          updateRenderKey()
+        },
+      })
+    }
+
+    if (queryState[QueryParam.DATE_TO]) {
+      tags.push({
+        label: `${formatMessage(m.listPage.dateToLabel)}: ${format(
+          queryState[QueryParam.DATE_TO],
+          'P',
+        )}`,
+        onClick: () => {
+          updateQueryState(QueryParam.DATE_TO, null)
+          updateRenderKey()
+        },
+      })
+    }
+
+    return tags
+  }, [format, formatMessage, queryState, updateQueryState, updateRenderKey])
 
   return (
     <Box className="rs_read">
@@ -997,6 +1134,19 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
             }
           >
             <Stack space={3}>
+              {filterTags.length > 0 && (
+                <Inline alignY="center" space={1}>
+                  {filterTags.map((tag) => (
+                    <FilterTag
+                      key={tag.label}
+                      variant="darkerBlue"
+                      onClick={tag.onClick}
+                    >
+                      {tag.label}
+                    </FilterTag>
+                  ))}
+                </Inline>
+              )}
               <Inline justifyContent="spaceBetween" alignY="center" space={2}>
                 <Text>
                   <strong>{data.total}</strong>{' '}
@@ -1043,6 +1193,25 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 cards={data.visibleVerdicts
                   .filter((verdict) => Boolean(verdict.id))
                   .map((verdict) => {
+                    const detailLines = [
+                      {
+                        icon: 'calendar',
+                        text: verdict.verdictDate
+                          ? format(new Date(verdict.verdictDate), DATE_FORMAT)
+                          : '',
+                      },
+                      { icon: 'hammer', text: verdict.court ?? '' },
+                    ]
+
+                    if (verdict.presidentJudge?.name) {
+                      detailLines.push({
+                        icon: 'person',
+                        text: `${verdict.presidentJudge?.name ?? ''} ${
+                          verdict.presidentJudge?.title ?? ''
+                        }`,
+                      })
+                    }
+
                     return {
                       description: verdict.title,
                       eyebrow: '',
@@ -1050,24 +1219,7 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       link: { href: `/domar/${verdict.id}`, label: '' },
                       title: verdict.caseNumber,
                       borderColor: 'blue200',
-                      detailLines: [
-                        {
-                          icon: 'calendar',
-                          text: verdict.verdictDate
-                            ? format(
-                                new Date(verdict.verdictDate),
-                                'd. MMMM yyyy',
-                              )
-                            : '',
-                        },
-                        { icon: 'hammer', text: verdict.court ?? '' },
-                        {
-                          icon: 'person',
-                          text: `${verdict.presidentJudge?.name ?? ''} ${
-                            verdict.presidentJudge?.title ?? ''
-                          }`,
-                        },
-                      ],
+                      detailLines,
                     }
                   })}
               />
