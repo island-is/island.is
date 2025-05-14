@@ -17,13 +17,22 @@ export class TagValue {
   readonly text!: string
 }
 
-export type CaseTableCellValue = StringGroupValue | TagValue
+export class TagPairValue {
+  @ApiProperty({ type: TagValue, description: 'The first tag value' })
+  readonly firstTag!: TagValue
+
+  @ApiPropertyOptional({ type: TagValue, description: 'The second tag value' })
+  readonly secondTag?: TagValue
+}
+
+export type CaseTableCellValue = StringGroupValue | TagValue | TagPairValue
 
 export class CaseTableCell {
   @ApiPropertyOptional({
     oneOf: [
       { $ref: getSchemaPath(StringGroupValue) },
       { $ref: getSchemaPath(TagValue) },
+      { $ref: getSchemaPath(TagPairValue) },
     ],
     description: 'The cell value',
   })

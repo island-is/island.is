@@ -34,11 +34,21 @@ const getIncludes = (caseTableCellKeys: CaseTableColumnKey[]) => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         Object.entries(caseTableCellGenerators[k].includes!).map(([k, v]) => ({
           ...v,
+          includes: undefined,
           as: k,
+          ...(v.includes
+            ? {
+                include: Object.entries(v.includes).map(([k, v]) => ({
+                  ...v,
+                  as: k,
+                })),
+              }
+            : undefined),
         })) as Includeable,
     )
     .flat()
 }
+
 @Injectable()
 export class CaseTableService {
   constructor(

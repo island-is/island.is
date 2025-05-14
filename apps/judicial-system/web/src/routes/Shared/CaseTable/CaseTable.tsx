@@ -12,9 +12,11 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { GenericTable } from '@island.is/judicial-system-web/src/components/Table'
+import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
 import {
   CaseTableCell,
   StringGroupValue,
+  TagPairValue,
   TagValue,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -46,6 +48,25 @@ const compareTag = (a: TagValue, b: TagValue) => {
   return compareLocaleIS(a.text, b.text)
 }
 
+const compareTagPair = (a: TagPairValue, b: TagPairValue) => {
+  const comp = compareTag(a.firstTag, b.firstTag)
+
+  if (comp !== 0) {
+    return comp
+  }
+
+  const aSecondTag = a.secondTag
+  const bSecondTag = b.secondTag
+
+  if (!aSecondTag) {
+    return bSecondTag ? -1 : 0
+  } else if (!bSecondTag) {
+    return 1
+  }
+
+  return compareTag(aSecondTag, bSecondTag)
+}
+
 const compare = (a: CaseTableCell, b: CaseTableCell): number => {
   if (!hasCellValue(a)) {
     return hasCellValue(b) ? -1 : 0
@@ -68,6 +89,9 @@ const compare = (a: CaseTableCell, b: CaseTableCell): number => {
       return compareStringGroup(aValue, bValue as StringGroupValue)
     case 'TagValue':
       return compareTag(aValue, bValue as TagValue)
+    case 'TagPairValue':
+      return compareTagPair(aValue, bValue as TagPairValue)
+    // This should never happen, but if it does, we return 0
     default:
       return 0
   }
@@ -100,6 +124,18 @@ const renderTag = (value: { color: string; text: string }) => {
   )
 }
 
+const renderTagPair = (value: TagPairValue) => {
+  const firstTag = value.firstTag
+  const secondTag = value.secondTag
+
+  return (
+    <TagContainer>
+      {renderTag(firstTag)}
+      {secondTag && renderTag(secondTag)}
+    </TagContainer>
+  )
+}
+
 const render = (cell: CaseTableCell): ReactNode => {
   if (!cell.value) {
     return null
@@ -112,6 +148,9 @@ const render = (cell: CaseTableCell): ReactNode => {
       return renderStringGroup(value)
     case 'TagValue':
       return renderTag(value)
+    case 'TagPairValue':
+      return renderTagPair(value)
+    // This should never happen, but if it does, we return null
     default:
       return null
   }
