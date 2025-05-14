@@ -1,7 +1,6 @@
 import { forwardRef, ReactElement, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import router from 'next/router'
 import {
   Menu,
   MenuButton,
