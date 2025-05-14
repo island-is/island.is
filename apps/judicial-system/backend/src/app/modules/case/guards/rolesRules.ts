@@ -199,7 +199,7 @@ export const defenderUpdateRule: RolesRule = {
   dtoFields: limitedAccessFields,
 }
 
-// Allows defenders to update a specific set of fields
+// Allows prison admin to update a specific set of fields
 export const prisonSystemAdminUpdateRule: RolesRule = {
   role: UserRole.PRISON_SYSTEM_STAFF,
   type: RulesType.FIELD,
