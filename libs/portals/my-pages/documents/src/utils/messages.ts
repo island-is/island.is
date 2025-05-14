@@ -148,4 +148,24 @@ export const messages = defineMessages({
     id: 'sp.documents:show-all-replies-with-args',
     defaultMessage: 'Sýna öll samskipti ({repliesLength})',
   },
+  zoomIn: {
+    id: 'sp.documents:zoom-in',
+    defaultMessage: 'Auka þysjunarstig í {arg} ',
+  },
+  zoomOut: {
+    id: 'sp.documents:zoom-out',
+    defaultMessage: 'Minnka þysjunarstig í {arg} ',
+  },
+  currentZoomLevel: {
+    id: 'sp.documents:current-zoom-level',
+    defaultMessage: 'Núverandi þysjustig',
+  },
+  openExpandedModal: {
+    id: 'sp.documents:expand-expanded-modal',
+    defaultMessage: 'Opna módal með stækkuðu skjali ',
+  },
+  closeExpandedModal: {
+    id: 'sp.documents:close',
+    defaultMessage: 'Loka módal með stækkuðu skjali',
+  },
 })

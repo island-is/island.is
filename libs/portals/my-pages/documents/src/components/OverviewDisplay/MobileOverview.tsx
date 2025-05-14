@@ -82,6 +82,11 @@ export const MobileOverview: FC<Props> = ({
         </Box>
       )}
       <MobileReply />
+      <Box className={styles.reveal}>
+        <button onClick={onPressBack}>
+          {formatMessage(m.backToDocumentsList)}
+        </button>
+      </Box>
     </Box>
   )
 }

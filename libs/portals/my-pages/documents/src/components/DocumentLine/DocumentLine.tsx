@@ -35,6 +35,7 @@ import { Reply } from '../../lib/types'
 
 interface Props {
   documentLine: DocumentV2
+  hasInitialFocus?: boolean
   img?: string
   setSelectLine?: (id: string) => void
   active: boolean
@@ -46,6 +47,7 @@ interface Props {
 
 export const DocumentLine: FC<Props> = ({
   documentLine,
+  hasInitialFocus = false,
   img,
   setSelectLine,
   active,
@@ -54,7 +56,7 @@ export const DocumentLine: FC<Props> = ({
   bookmarked,
   selected,
 }) => {
-  const [hasFocusOrHover, setHasFocusOrHover] = useState(false)
+  const [hasFocusOrHover, setHasFocusOrHover] = useState(hasInitialFocus)
   const [hasAvatarFocus, setHasAvatarFocus] = useState(false)
   const [modalData, setModalData] = useState<{
     title: string
@@ -399,7 +401,7 @@ export const DocumentLine: FC<Props> = ({
                 subject: documentLine.subject,
               })}
               type="button"
-              id={active ? `button-${documentLine.id}` : undefined}
+              id={`button-${documentLine.id}`}
               className={styles.docLineButton}
             >
               <Text

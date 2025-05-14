@@ -78,7 +78,7 @@ globalStyle(`${modalHeader} > div:first-child`, {
 })
 
 export const reveal = style({
-  position: 'absolute',
+  position: 'fixed',
   bottom: 20,
   right: 20,
   padding: 10,
