@@ -419,6 +419,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
   },
+  [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
+    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+  },
   [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,

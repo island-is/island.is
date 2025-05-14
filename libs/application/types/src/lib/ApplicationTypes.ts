@@ -83,6 +83,7 @@ export enum ApplicationTypes {
   WORK_ACCIDENT_NOTIFICATION = 'WorkAccidentNotification',
   MACHINE_REGISTRATION = 'MachineRegistration',
   RENTAL_AGREEMENT = 'RentalAgreement',
+  TERMINATE_RENTAL_AGREEMENT = 'TerminateRentalAgreement',
   SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
@@ -428,6 +429,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.RENTAL_AGREEMENT]: {
     slug: 'leigusamningur',
     translation: 'ra.application',
+  },
+  [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
+    slug: 'uppsogn-leigusamnings',
+    translation: 'tra.application',
   },
   [ApplicationTypes.SEMINAR_REGISTRATION]: {
     slug: 'vinnueftirlitid-namskeid',
