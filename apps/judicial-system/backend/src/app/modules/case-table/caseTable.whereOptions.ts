@@ -60,6 +60,7 @@ const prisonAdminIndictmentSentToPrisonAdminWhereOptions = {
     ],
   },
   indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
+  is_registered_in_prison_system: { [Op.not]: true },
   id: {
     [Op.in]: Sequelize.literal(`
       (SELECT case_id
@@ -80,6 +81,7 @@ const prisonAdminIndictmentRegisteredRulingWhereOptions = {
     ],
   },
   indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
+  is_registered_in_prison_system: true,
   id: {
     [Op.in]: Sequelize.literal(`
       (SELECT case_id
