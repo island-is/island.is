@@ -1,3 +1,4 @@
+export * from './lib/actorProfile.scope'
 export * from './lib/admin-portal.scope'
 export * from './lib/air-discount-scheme.scope'
 export * from './lib/aosh.scope'
