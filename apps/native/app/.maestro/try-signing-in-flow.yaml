@@ -1,8 +1,7 @@
 appId: 'is.island.app.dev'
 ---
-- runFlow: launch-app-flow.yaml
-- takeScreenshot: after-launch
 # Sign in if login button is visible
+- takeScreenshot: after-launch
 - runFlow:
     when:
       visible:

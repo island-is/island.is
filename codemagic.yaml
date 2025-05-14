@@ -114,6 +114,8 @@ definitions:
         export PATH="$PATH":"$HOME/.maestro/bin"
         maestro test .maestro/try-signing-in-flow.yaml || true
         maestro test .maestro/inbox-flow.yaml || true
+        mkdir -p $CM_BUILD_DIR/artifacts
+        mv maestro-output/after-launch.png $CM_BUILD_DIR/artifacts/
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
@@ -298,3 +300,4 @@ workflows:
       - *maestro-tests
     artifacts: &ios_artifacts_e2e_tests
       - /tmp/xcodebuild_logs/*.log
+      - $CM_BUILD_DIR/*.png
