@@ -7,7 +7,7 @@ import {
   CurrentHttpUser,
   JwtAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import { CaseTableType, User } from '@island.is/judicial-system/types'
+import { CaseTableType, type User } from '@island.is/judicial-system/types'
 
 import { CaseTableResponse } from './dto/caseTable.response'
 import { CaseTableTypeGuard } from './guards/caseTableType.guard'
