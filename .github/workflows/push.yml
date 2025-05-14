@@ -50,7 +50,7 @@ jobs:
     secrets: inherit
 
   prepare:
-    runs-on: arc-runners
+    runs-on: arc-shared
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -250,7 +250,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: arc-docker
+    runs-on: arc-shared
     timeout-minutes: 45
     if: needs.prepare.outputs.BUILD_CHUNKS
     permissions:
@@ -288,6 +288,13 @@ jobs:
 
       - uses: actions/checkout@v4
         if: steps.gather.outcome == 'success'
+
+      - name: Check for deploy-feature label
+        id: check-label
+        uses: ./.github/actions/check-label
+        with:
+          pr-number: ${{ github.event.pull_request.number }}
+        continue-on-error: false
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
@@ -397,7 +404,7 @@ jobs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: arc-docker
+    runs-on: arc-shared
     timeout-minutes: 30
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
@@ -446,8 +453,9 @@ jobs:
             const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
             await updateComment({github, context, comment: COMMENT})
+
   deploy-feature:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: ${{ !cancelled()
       && needs.pre-checks.result == 'success'
       && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
@@ -475,6 +483,14 @@ jobs:
           path: monorepo
           fetch-depth: 0
 
+      - name: Check for deploy-feature label
+        id: check-label
+        uses: ./monorepo/.github/actions/check-label
+        with:
+          pr-number: ${{ github.event.pull_request.number }}
+          working-directory: monorepo
+        continue-on-error: false
+
       - name: Get docker-build output
         uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read
@@ -500,21 +516,8 @@ jobs:
           IMAGES: ${{ needs.prepare.outputs.IMAGES }}
           DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
         run: |
-
-          for image in ${IMAGES//,/ }; do
-            image=$(echo "$image" | tr -d "'")
-            ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$image" "$DOCKER_REGISTRY"
-          done
-
-          echo "Change directory to root"
-          cd ../
-
-          git config user.name andes-it
-          git config user.email andes-it@andes.is
-
-          git add .
-
-          git commit -m "feat: feature-deployment"
+          IMAGES=$(echo "$IMAGES" | tr -d "'\\ ")
+          ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$IMAGES" "$DOCKER_REGISTRY"
 
       - name: load-deps
         uses: ./monorepo/.github/actions/load-deps
@@ -572,7 +575,7 @@ jobs:
           "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
           -d "{\"event_type\":\"deploy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}}"
   push-success:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs:
       - pre-checks
@@ -587,7 +590,7 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
@@ -607,7 +610,7 @@ jobs:
 
   scanflags:
     if: github.ref == 'ref/heads/main'
-    runs-on: arc-runners
+    runs-on: arc-shared
     steps:
       - name: Checkout
         uses: actions/checkout@v4

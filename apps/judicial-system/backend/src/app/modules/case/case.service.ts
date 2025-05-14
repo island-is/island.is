@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
 import { Includeable, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -76,11 +76,17 @@ import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User } from '../user'
-import { Victim } from '../victim'
+import { Victim } from '../victim/models/victim.model'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
+import { partition } from './filters/filterHelpers'
 import { Case } from './models/case.model'
 import { MinimalCase } from './models/case.types'
+import {
+  CaseStatistics,
+  IndictmentCaseStatistics,
+  RequestCaseStatistics,
+} from './models/caseStatistics.response'
 import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
@@ -856,6 +862,9 @@ export class CaseService {
       CaseFileCategory.PROSECUTOR_CASE_FILE,
       CaseFileCategory.DEFENDANT_CASE_FILE,
       CaseFileCategory.CIVIL_CLAIM,
+      CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+      CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+      CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
     ]
 
     const deliverCaseFileToCourtMessages =
@@ -2341,5 +2350,130 @@ export class CaseService {
     )) as Case
 
     return updatedCase
+  }
+
+  async getCaseStatistics(
+    from?: Date,
+    to?: Date,
+    institutionId?: string,
+  ): Promise<CaseStatistics> {
+    let where: WhereOptions = {
+      state: {
+        [Op.not]: [
+          CaseState.DELETED,
+          CaseState.DRAFT,
+          CaseState.NEW,
+          CaseState.WAITING_FOR_CONFIRMATION,
+        ],
+      },
+    }
+
+    if (from || to) {
+      where.created = {}
+      if (from) {
+        where.created[Op.gte] = from
+      }
+      if (to) {
+        where.created[Op.lte] = to
+      }
+    }
+
+    if (institutionId) {
+      where = {
+        ...where,
+        [Op.or]: [
+          { courtId: institutionId },
+          { prosecutorsOfficeId: institutionId },
+        ],
+      }
+    }
+
+    const cases = await this.caseModel.findAll({
+      where,
+      include: [
+        {
+          model: EventLog,
+          required: false,
+          attributes: ['created', 'eventType'],
+          where: {
+            eventType: EventType.INDICTMENT_CONFIRMED,
+          },
+        },
+      ],
+    })
+
+    const [indictments, requests] = partition(cases, (c) =>
+      isIndictmentCase(c.type),
+    )
+
+    const requestCases = this.getRequestCaseStatistics(requests)
+    const indictmentCases = this.getIndictmentStatistics(indictments)
+    const subpoenas = await this.subpoenaService.getStatistics(
+      from,
+      to,
+      institutionId,
+    )
+
+    const stats: CaseStatistics = {
+      count: cases.length,
+      requestCases,
+      indictmentCases,
+      subpoenas,
+    }
+
+    return stats
+  }
+
+  getIndictmentStatistics(cases: Case[]): IndictmentCaseStatistics {
+    const inProgressCount = cases.filter(
+      (caseItem) => caseItem.state !== CaseState.COMPLETED,
+    ).length
+
+    const rulingCount = cases.filter(
+      (caseItem) => caseItem.rulingDate !== null,
+    ).length
+
+    const totalCount = cases.length
+
+    const caseDurations = cases
+      .map((caseItem) => {
+        const confirmedEvent = caseItem.eventLogs?.[0]
+        if (!confirmedEvent?.created || !caseItem.rulingDate) return null
+
+        const diff =
+          caseItem.rulingDate.getTime() - confirmedEvent.created.getTime()
+        return diff > 0 ? diff : null
+      })
+      .filter((ms): ms is number => ms !== null)
+
+    const averageRulingTimeMs = caseDurations.length
+      ? Math.round(
+          caseDurations.reduce((sum, ms) => sum + ms, 0) / caseDurations.length,
+        )
+      : 0
+
+    return {
+      count: totalCount,
+      inProgressCount,
+      rulingCount,
+      averageRulingTimeMs,
+      averageRulingTimeDays: Math.round(
+        averageRulingTimeMs / (1000 * 60 * 60 * 24),
+      ),
+    }
+  }
+
+  getRequestCaseStatistics(cases: Case[]): RequestCaseStatistics {
+    const inProgressCount = cases.filter(
+      (c) => !isCompletedCase(c.state),
+    ).length
+
+    const completedCount = cases.filter((c) => isCompletedCase(c.state)).length
+
+    return {
+      count: cases.length,
+      inProgressCount,
+      completedCount,
+    }
   }
 }

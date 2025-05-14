@@ -460,6 +460,133 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
   }),
 
+  incomePlanInstructions: defineMessages({
+    title: {
+      id: 'sia.application:income.plan.instructions.title',
+      defaultMessage: 'Leiðbeiningar um skráningu tekjuáætlunar',
+      description: 'Instructions on filling out your income plan',
+    },
+    instructions: {
+      id: 'sia.application:income.plan.instructions#markdown',
+      defaultMessage:
+        '\n* Á næstu síðu er að finna tillögu að tekjuáætlun. Þar getur þú breytt upphæðum og bætt við tekjum.\n* Skrá skal heildartekjur fyrir skatt í tekjuáætlun.\n* Fjármagnstekjur eru sameignlegar hjá hjónum/sambúðarfólki og skal skrá heildar fjármagnstekjur hjóna/sambúðarfólks í tekjuáætlun.\n* Ef maki er á lífeyri verða greiðslur hans einnig endurreiknaðar ef fjármagnstekjum er breytt.\n* Heimilt er að skrá atvinnutekjur á þá mánuði sem þeirra er aflað. Reiknast þá þær atvinnutekjur eingöngu í þeim mánuði. Vakin er athygli á að það þarf að haka sérstaklega við þann kost að óska eftir mánaðarskiptingu atvinnutekna í tekjuáætlun.\n* Laun / lífeyrisgreiðslur skal skrá í þeim gjaldmiðli sem þau eru greidd.\n* Það er á ábyrgð umsækjanda að tekjuáætlun sé rétt og að nauðsynlegar upplýsingar liggi fyrir til að hægt sé að ákvarða réttar greiðslur.',
+      description:
+        '\n* On the next page you will find your proposed income plan. There you can edit amounts and add income categories.\n* You must submit your total pre-tax income in your income plan.\n* For couples, their total income must be recorded in the income plan, as their income is considered shared.\n* If a spouse is receiving disability, his or her benefits will also be recalculated if there is a change in income.\n* Income may be recorded in the month in which it is earned. The income is then calculated only for that month. Attention, it is necessary to select the option of requesting a monthly distribution of income in the income plan.\n* Salary / pension payments must be recorded in the currency in which they are paid.\n* It is the responsibility of the applicant that the income plan is correct and that the necessary information for determining the correct payments is available.',
+    },
+  }),
+
+  incomePlan: defineMessages({
+    subSectionTitle: {
+      id: 'sia.application:income.plan.sub.section.title',
+      defaultMessage: 'Tekjuáætlun',
+      description: 'Income Plan',
+    },
+    description: {
+      id: 'sia.application:income.plan.description',
+      defaultMessage:
+        'Hér setur þú inn þær tekjur sem þú munt hafa árið {incomePlanYear} samhliða greiðslum frá Tryggingastofnun. Til þess að auðvelda skráningu þá sýnum við 5 algengustu tekjutegundir síðustu ára hér fyrir neðan. Hægt er að eyða út tekjutegundum eða breyta þeim eftir því sem við á. Upphæðir sem settar eru inn þurfa að vera fyrir skatt. Athygli er vakin á því að hjá hjónum og sambúðarfólki þarf að setja inn samanlagðar fjármagnstekjur beggja aðila.',
+      description:
+        'Below you can enter your proposed income for the year {incomePlanYear} along with payments from the Social Insurance Administration. To simplify the registration process we have provided the top 5 registered income types from the last few years below. You can delete or change income types as needed. Please enter your pre-tax income. Note that couples must supply the combined income for both parties.',
+    },
+    registerIncome: {
+      id: 'sia.application:income.plan.register.income',
+      defaultMessage: 'Skráning tekna',
+      description: 'Income registration',
+    },
+    addIncome: {
+      id: 'sia.application:income.plan.add.income',
+      defaultMessage: 'Bæta við tekjum',
+      description: 'Add income',
+    },
+    saveIncome: {
+      id: 'sia.application:income.plan.save.income',
+      defaultMessage: 'Skrá tekjur',
+      description: 'Save income',
+    },
+    removeIncome: {
+      id: 'sia.application:income.plan.remove.income',
+      defaultMessage: 'Eyða tekjum',
+      description: 'Remove income',
+    },
+    editIncome: {
+      id: 'sia.application:income.plan.edit.income',
+      defaultMessage: 'Breyta tekjum',
+      description: 'Edit income',
+    },
+    incomeCategory: {
+      id: 'sia.application:income.plan.income.category',
+      defaultMessage: 'Tekjuflokkur',
+      description: 'Income category',
+    },
+    selectIncomeCategory: {
+      id: 'sia.application:income.plan.select.income.category',
+      defaultMessage: 'Veldu tekjuflokk',
+      description: 'Select income category',
+    },
+    incomeType: {
+      id: 'sia.application:income.plan.income.type',
+      defaultMessage: 'Tekjutegund',
+      description: 'Income type',
+    },
+    selectIncomeType: {
+      id: 'sia.application:income.plan.select.income.type',
+      defaultMessage: 'Veldu tekjutegund',
+      description: 'Select income type',
+    },
+    annualIncome: {
+      id: 'sia.application:income.plan.annual.income',
+      defaultMessage: 'Árstekjur',
+      description: 'Annual income',
+    },
+    monthlyIncome: {
+      id: 'sia.application:income.plan.yearly.income',
+      defaultMessage: 'Mánaðartekjur',
+      description: 'Monthly income',
+    },
+    incomePerYear: {
+      id: 'sia.application:income.plan.income.per.year',
+      defaultMessage: 'Tekjur á ári',
+      description: 'Income per year',
+    },
+    foreignIncomePerYear: {
+      id: 'sia.application:income.plan.foreign.income.per.year',
+      defaultMessage: 'Erlendar tekjur á ári',
+      description: 'Foreign income per year',
+    },
+    equalIncomePerMonth: {
+      id: 'sia.application:income.plan.equal.income.per.month',
+      defaultMessage: 'Jafnar tekjur á mánuði',
+      description: 'Equal income per month',
+    },
+    equalForeignIncomePerMonth: {
+      id: 'sia.application:income.plan.equal.foreign.income.per.month',
+      defaultMessage: 'Erlendar tekjur á mánuði',
+      description: 'Foreign income per month',
+    },
+    monthlyDistributionOfIncome: {
+      id: 'sia.application:income.plan.monthly.distribution.of.income',
+      defaultMessage: 'Óska eftir mánaðarskiptingu atvinnutekna',
+      description: 'Request a monthly distribution of salary',
+    },
+    monthlyDistributionOfIncomeTooltip: {
+      id: 'sia.application:income.plan.monthly.distribution.of.income.tooltip',
+      defaultMessage:
+        'Atvinnutekjur hafa einungis áhrif á lífeyrisgreiðslur þess mánaðar sem atvinnutekna er aflað.',
+      description:
+        'Income only affects the pension payments for the month in which income is earned.',
+    },
+    currency: {
+      id: 'sia.application:income.plan.currency',
+      defaultMessage: 'Gjaldmiðill',
+      description: 'Currency',
+    },
+    selectCurrency: {
+      id: 'sia.application:income.plan.select.currency',
+      defaultMessage: 'Veldu gjaldmiðil',
+      description: 'Select currency',
+    },
+  }),
+
   confirm: defineMessages({
     overviewTitle: {
       id: 'sia.application:confirm.overview.title',
@@ -603,6 +730,16 @@ export const errorMessages = defineMessages({
     id: 'sia.application:personal.allowance',
     defaultMessage: 'Persónuafsláttur verður að vera milli 1 og 100',
     description: 'Personal tax-free allowance must be between 1 and 100',
+  },
+  incomePlanMonthsRequired: {
+    id: 'sia.application:error.income.plan.months.required',
+    defaultMessage: 'Nauðsynlegt er að bæta við tekjum fyrir a.m.k einn mánuð',
+    description: 'You must add income for at least one month',
+  },
+  incomePlanRequired: {
+    id: 'sia.application:error.income.plan.required',
+    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni tekjutegund',
+    description: 'You must add at least one income type',
   },
 })
 
