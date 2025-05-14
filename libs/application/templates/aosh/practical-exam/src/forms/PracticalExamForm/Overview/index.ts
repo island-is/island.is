@@ -8,7 +8,7 @@ import {
 import { overview } from '../../../lib/messages'
 import { getRegistrantInformationForOverview } from '../../../utils/getRegistrantInformationForOverview'
 import { getPaymentArrangementForOverview } from '../../../utils'
-import { getExamLocatioForOverview } from '../../../utils/getExamLocationForOverview'
+import { getExamLocationForOverview } from '../../../utils/getExamLocationForOverview'
 import { getExamInformationOthersForOverview } from '../../../utils/getExamInformationOthersForOverview'
 import { getExamInformationSelfForOverview } from '../../../utils/getExamInformationSelfForOverview'
 import { isOthersPath, isSelfPath } from '../../../utils/isForSelfOrOthers'
@@ -20,8 +20,7 @@ export const overviewSection = buildSection({
     buildMultiField({
       id: 'overviewSection.multiField',
       title: overview.general.pageTitle,
-      description:
-        'Vinsamlegast farðu vel yfir allar upplýsingar hér að neðan áður en skráningin er send.',
+      description: overview.general.description,
       children: [
         buildOverviewField({
           id: 'overview.registrant',
@@ -48,7 +47,7 @@ export const overviewSection = buildSection({
           id: 'overview.examLocation',
           title: '',
           titleVariant: 'h4',
-          items: getExamLocatioForOverview,
+          items: getExamLocationForOverview,
         }),
         buildOverviewField({
           id: 'overview.paymentArrangement',

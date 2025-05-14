@@ -10,6 +10,8 @@ type ExamCategoryTableProps = {
   rows: string[][]
   onEdit: React.Dispatch<SetStateAction<number>>
   onDelete: () => void
+  hideDelete?: boolean
+  hideEdit?: boolean
 }
 
 const headers = [
@@ -20,7 +22,14 @@ const headers = [
 
 export const ExamCategoryTable: FC<
   React.PropsWithChildren<FieldBaseProps & ExamCategoryTableProps>
-> = ({ application, rows, onEdit, onDelete }) => {
+> = ({
+  application,
+  rows,
+  onEdit,
+  onDelete,
+  hideDelete = false,
+  hideEdit = false,
+}) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -41,14 +50,16 @@ export const ExamCategoryTable: FC<
           {rows.map((row, rowIndex) => (
             <T.Row key={`row-${rowIndex}`}>
               <T.Data>
-                <button type="button" onClick={onDelete}>
-                  <Icon
-                    icon="trash"
-                    color="blue400"
-                    type="outline"
-                    size="small"
-                  />
-                </button>
+                {!hideDelete && (
+                  <button type="button" onClick={onDelete}>
+                    <Icon
+                      icon="trash"
+                      color="blue400"
+                      type="outline"
+                      size="small"
+                    />
+                  </button>
+                )}
               </T.Data>
               {row.map((cell, cellIndex) => (
                 <T.Data key={`row-${rowIndex}-cell-${cellIndex}`}>
@@ -56,14 +67,16 @@ export const ExamCategoryTable: FC<
                 </T.Data>
               ))}
               <T.Data>
-                <button type="button" onClick={() => onEdit(rowIndex)}>
-                  <Icon
-                    icon="pencil"
-                    color="blue400"
-                    type="outline"
-                    size="small"
-                  />
-                </button>
+                {!hideEdit && (
+                  <button type="button" onClick={() => onEdit(rowIndex)}>
+                    <Icon
+                      icon="pencil"
+                      color="blue400"
+                      type="outline"
+                      size="small"
+                    />
+                  </button>
+                )}
               </T.Data>
             </T.Row>
           ))}

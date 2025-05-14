@@ -257,6 +257,7 @@ export const ExamInputs: FC<
   const handleSelectOption = (
     value: Array<Option>,
     includedCategories: string[] | null | undefined,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onChange: (...event: any[]) => void,
   ) => {
     if (!includedCategories || !Array.isArray(value)) return onChange(value)

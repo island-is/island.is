@@ -38,7 +38,7 @@ export const ExamineeInfo: FC<
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
             <Input
-              label={formatMessage(shared.labels.name)}
+              label={formatMessage(shared.labels.ssn)}
               name={'nationalId'}
               readOnly
               backgroundColor={'white'}

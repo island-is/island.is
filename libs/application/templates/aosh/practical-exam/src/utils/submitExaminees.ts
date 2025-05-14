@@ -13,7 +13,7 @@ export const submitExaminees = async (
   tableItems: Array<ExamineeInput>,
 ) => {
   const nationalIdList: string[] = tableItems.flatMap(
-    (item) => item.nationalId.nationalId ?? [],
+    (item) => item.nationalId?.nationalId ?? [],
   )
   const pathItems: PathAndValue[] = []
 

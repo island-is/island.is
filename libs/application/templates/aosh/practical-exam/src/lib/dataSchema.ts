@@ -188,7 +188,6 @@ const ExamineeSchema = z
               nationalId &&
               nationalId.length !== 0 &&
               kennitala.isValid(nationalId)
-              // TOOO validate age above 17
             )
           },
           {
@@ -289,8 +288,8 @@ const ExamCategorySchema = z.object({
 
 const ExamLocationSchema = z.object({
   address: z.string().min(1).max(128),
-  phone: z.string(), //.refine((v) => isValidPhoneNumber(v)),
-  email: z.string(), //.email(),
+  phone: z.string().refine((v) => isValidPhoneNumber(v)),
+  email: z.string().email(),
   postalCode: z.string().min(3).max(3),
 })
 

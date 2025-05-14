@@ -76,6 +76,7 @@ export const ExamCategoriesOthers: FC<
       return
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const filterOutIndex = (arr: any[]) =>
       arr.filter((_, i) => i !== examineeIndex)
 

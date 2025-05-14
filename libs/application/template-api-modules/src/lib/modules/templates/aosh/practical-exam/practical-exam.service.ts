@@ -25,7 +25,7 @@ import {
   mapPaymentArrangement,
 } from './practical-exam.utils'
 import { getValueViaPath } from '@island.is/application/core'
-import { application as applicationMessages } from '@island.is/application/templates/aosh/seminars'
+import { shared } from '@island.is/application/templates/aosh/practical-exam'
 @Injectable()
 export class PracticalExamTemplateService extends BaseTemplateApiService {
   constructor(
@@ -39,10 +39,24 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<Array<PostCodeDto>> {
-    const response = await this.practicalExamClientService.getPostcodes(auth, {
-      xCorrelationID: application.id,
-    })
-    return response
+    try {
+      const response = await this.practicalExamClientService.getPostcodes(
+        auth,
+        {
+          xCorrelationID: application.id,
+        },
+      )
+      return response
+    } catch {
+      throw new TemplateApiError(
+        {
+          summary:
+            'Villa að sækja gögn frá Vinnueftirliti, vinsamlegast reynið síðar',
+          title: 'Villa í umsókn',
+        },
+        400,
+      )
+    }
   }
 
   async getExamCategories({
@@ -103,7 +117,13 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
       !examLocation ||
       !information
     ) {
-      throw Error('Values from answers are undefined')
+      throw new TemplateApiError(
+        {
+          summary: shared.application.missingData,
+          title: shared.application.submissionErrorTitle,
+        },
+        400,
+      )
     }
 
     const { address: examAddress, postalCode: examPostalCode } = examLocation
@@ -155,8 +175,8 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
       )
       throw new TemplateApiError(
         {
-          summary: applicationMessages.submissionError,
-          title: applicationMessages.submissionErrorTitle,
+          summary: shared.application.submissionError,
+          title: shared.application.submissionErrorTitle,
         },
         400,
       )

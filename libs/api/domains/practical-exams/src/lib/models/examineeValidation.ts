@@ -9,10 +9,10 @@ export class WorkMachineExamineeValidation {
   examCategories?: string[] | null
 
   @Field(() => Boolean, { nullable: true })
-  doesntHaveToPayLicenseFee!: boolean
+  doesntHaveToPayLicenseFee?: boolean
 
   @Field(() => Boolean, { nullable: true })
-  isValid!: boolean
+  isValid?: boolean
 
   @Field(() => String, { nullable: true })
   errorMessage?: string | null

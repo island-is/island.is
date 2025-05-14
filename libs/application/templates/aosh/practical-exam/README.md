@@ -15,8 +15,8 @@ choose to register themselves only.
 
 ## Clients and template-api-modules
 
-- [Client]()
-- [Template-api-module]()
+- [Client]('https://github.com/island-is/island.is/tree/main/libs/clients/practical-exams-ver/src/lib/practicalExams.service.ts)
+- [Template-api-module]('https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/aosh/practical-exam/practical-exam.service.ts')
 
 ## States
 
@@ -27,22 +27,19 @@ and The Administration of Occupational Safety and Health
 
 ### Draft
 
-TODO Complete this section
-
 ### Completed
-
-TODO complete this section
 
 ## Localisation
 
 All localisation can be found on Contentful.
 
-- [Practical Exam translation]() 
+- [Practical Exam translation](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/aosh.pe.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
 ## Test users
 
-- **Gervimaður Færeyjar 010130-2399 and 65°ARKTIC ehf delegation**
+- **Gervimaður Bretland 010130-2429 as Examinee**
+- **Gervimaður Ameríka 010130-2989 as Instructor**
 
 ## Codeowners
 

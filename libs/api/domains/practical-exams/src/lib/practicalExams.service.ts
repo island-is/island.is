@@ -9,7 +9,7 @@ import {
   WorkMachineExamineeValidationDto,
   WorkMachineInstructorDto,
 } from '@island.is/clients/practical-exams-ver'
-import { ValidateInstrutorInput } from './dto/validaInstructorInput.input'
+import { ValidateInstructorInput } from './dto/validaInstructorInput.input'
 import { ExamineeEligibilityInput } from './dto/examineeEligibilityInput.input'
 import { ExamineeValidationInput } from './dto/examineeValidationInput.input'
 
@@ -36,13 +36,12 @@ export class PracticalExamsService {
     auth: User,
     input: ExamineeValidationInput,
   ): Promise<WorkMachineExamineeValidationDto> {
-    console.log('getExamineeeeeValidationaanan')
     return this.practicalExamService.validateExaminee(auth, input)
   }
 
   async validateInstructor(
     auth: User,
-    input: ValidateInstrutorInput,
+    input: ValidateInstructorInput,
   ): Promise<WorkMachineInstructorDto> {
     return this.practicalExamService.validateInstructor(auth, input)
   }

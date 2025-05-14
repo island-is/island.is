@@ -11,10 +11,10 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { PracticalExamsService } from './practicalExams.service'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
-import { ValidateInstrutorInput } from './dto/validaInstructorInput.input'
+import { ValidateInstructorInput } from './dto/validaInstructorInput.input'
 import { PracticalExamInstructor } from './models/practicalExamInstructor'
 import { CompanyValidationItem } from './models/companyValidation'
-import { ExamineeEligiblity } from './models/examineeEligibility'
+import { ExamineeEligibility } from './models/examineeEligibility'
 import { ExamineeEligibilityInput } from './dto/examineeEligibilityInput.input'
 import { WorkMachineExamineeValidation } from './models/examineeValidation'
 import { ExamineeValidationInput } from './dto/examineeValidationInput.input'
@@ -34,7 +34,7 @@ export class PracticalExamsResolver {
     return this.practicalExamsService.isCompanyValid(auth, nationalId)
   }
 
-  @Query(() => [ExamineeEligiblity])
+  @Query(() => [ExamineeEligibility])
   @Audit()
   async getExamineeEligibility(
     @CurrentUser() auth: User,
@@ -64,9 +64,9 @@ export class PracticalExamsResolver {
   async validateInstructor(
     @CurrentUser() auth: User,
     @Args('input', {
-      type: () => ValidateInstrutorInput,
+      type: () => ValidateInstructorInput,
     })
-    input: ValidateInstrutorInput,
+    input: ValidateInstructorInput,
   ) {
     return this.practicalExamsService.validateInstructor(auth, input)
   }

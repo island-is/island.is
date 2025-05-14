@@ -52,7 +52,7 @@ export const examinee = {
       description: 'Upload .csv file',
     },
     csvHeader: {
-      id: 'aosh.pe.application:examinee.labels.csvUpload',
+      id: 'aosh.pe.application:examinee.labels.csvHeader',
       defaultMessage: 'Skrá marga próftaka í einu',
       description: 'csv header text',
     },
@@ -65,7 +65,7 @@ export const examinee = {
   tableRepeater: defineMessages({
     addExamineeButton: {
       id: 'aosh.pe.application:examinee.tableRepeater.addExamineeButton',
-      defaultMessage: 'Skrá fleiri leiðbeinendur',
+      defaultMessage: 'Skrá fleiri próftaka',
       description: `Text for the button to add another examinee`,
     },
     saveExamineeButton: {
@@ -92,7 +92,7 @@ export const examinee = {
     },
     examineeValidityError: {
       id: 'aosh.pe.application:examinee.tableRepeater.examineeValidityError#markdown',
-      defaultMessage: '',
+      defaultMessage: 'Sumir próftakar eru ekki gildir.',
       description: 'Alert message when there is a invalid examinee',
     },
     duplicateError: {
@@ -130,7 +130,7 @@ export const examinee = {
     },
     removeAllButton: {
       id: 'aosh.pe.application:examinee.tableRepeater.removeAllButton',
-      defaultMessage: 'Fjarlægja ógjaldgenga leiðbeinendur',
+      defaultMessage: 'Fjarlægja ógjaldgenga próftaka',
       description: 'Button label for removing all invalid examinees',
     },
     csvLineError: {

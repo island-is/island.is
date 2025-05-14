@@ -63,6 +63,8 @@ export const ExamCategoriesSelf: FC<React.PropsWithChildren<FieldBaseProps>> = (
             rows={tableData}
             onEdit={() => null}
             onDelete={() => null}
+            hideDelete={true}
+            hideEdit={true}
           />
         )}
         <ExamineeInfo

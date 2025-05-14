@@ -34,7 +34,12 @@ import { CSVError } from '../../utils/interfaces'
 const parseDataToExamineeList = (csvInput: string): ExamineeInput | null => {
   const values = csvInput.split(';')
   const hasNoEmptyValues =
-    !!values[0] && !!values[1] && !!values[2] && !!values[3]
+    !!values[0] &&
+    !!values[1] &&
+    !!values[2] &&
+    !!values[3] &&
+    !!values[4] &&
+    !!values[5]
   if (!hasNoEmptyValues) {
     return null
   }

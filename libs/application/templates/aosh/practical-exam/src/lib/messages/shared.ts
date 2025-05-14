@@ -35,6 +35,23 @@ export const shared = {
       defaultMessage: 'Gagnaöflun',
       description: 'Browser tab title for prerequisite section',
     },
+    submissionErrorTitle: {
+      id: 'aosh.pe.application:submissionErrorTitle',
+      defaultMessage: 'Villa í umsókn',
+      description: 'Submission error title',
+    },
+    submissionError: {
+      id: 'aosh.pe.application:submissionError',
+      defaultMessage:
+        'Ekki tókst að skrá verkleg próf, vinsamlegast reynið síðar',
+      description: 'Submission error description',
+    },
+    missingData: {
+      id: 'aosh.pe.application:missingData',
+      defaultMessage:
+        'Gögn vantar í umsókn, athugaðu hvort allt hefur verið fyllt út, reyndu aftur síðar eða hafðu samband við þjónustuaðila',
+      description: 'Submission error description',
+    },
   }),
   labels: defineMessages({
     ssn: {
