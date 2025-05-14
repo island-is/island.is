@@ -45,7 +45,7 @@ type ObjectKeys<T> = Extract<
 type CaseIncludes = {
   [K in ObjectKeys<Case>]: {
     model: ModelStatic<DefinedObject<Case[K]>>
-    attributes: (keyof DefinedObject<Case[K]>)[]
+    attributes?: (keyof DefinedObject<Case[K]>)[]
     where?: {
       [K2 in keyof DefinedObject<Case[K]>]?: unknown
     }
@@ -54,7 +54,7 @@ type CaseIncludes = {
     includes?: Partial<{
       [K2 in ObjectKeys<DefinedObject<Case[K]>>]: {
         model: ModelStatic<DefinedObject<DefinedObject<Case[K]>[K2]>>
-        attributes: (keyof DefinedObject<DefinedObject<Case[K]>[K2]>)[]
+        attributes?: (keyof DefinedObject<DefinedObject<Case[K]>[K2]>)[]
         where?: {
           [K3 in keyof DefinedObject<DefinedObject<Case[K]>[K2]>]?: unknown
         }
@@ -336,7 +336,6 @@ const prisonAdminReceivalDate: CaseTableCellGenerator = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['punishmentType'],
       order: [['created', 'ASC']],
       includes: {
         eventLogs: {
@@ -372,7 +371,6 @@ const prisonAdminState: CaseTableCellGenerator = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['punishmentType'],
       order: [['created', 'ASC']],
       includes: {
         eventLogs: {
