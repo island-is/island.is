@@ -370,8 +370,7 @@ export class PaymentFlowService {
           headers: {
             'Content-Type': 'application/json',
           },
-          // Ensure updateBody is not null when used here, though it should always be set.
-          body: JSON.stringify(updateBody!),
+          body: JSON.stringify(updateBody),
         })
         if (!response.ok) {
           const errorBody = await response
