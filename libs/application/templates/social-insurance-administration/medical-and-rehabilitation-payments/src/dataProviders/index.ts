@@ -23,9 +23,3 @@ export const SocialInsuranceAdministrationApplicantApi = defineTemplateApi({
   order: 1,
 })
 
-export const SocialInsuranceAdministrationUnionsApi = defineTemplateApi({
-  action: 'getUnions',
-  externalDataId: 'socialInsuranceAdministrationUnions',
-  namespace: 'SocialInsuranceAdministration',
-  order: 3,
-})
