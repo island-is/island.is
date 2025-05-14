@@ -89,5 +89,10 @@ export const examCategories = {
       defaultMessage: 'Próftaki ekki gjaldgengur í valin verkleg próf',
       description: `Error validating exam categories for examinee`,
     },
+    chooseExamCategory: {
+      id: 'aosh.pe.application:examCategories.labels.chooseExamCategory',
+      defaultMessage: 'Veldu prófflokka',
+      description: `Choose exam category label`,
+    },
   }),
 }

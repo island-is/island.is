@@ -280,6 +280,7 @@ export const ExamInputs: FC<
     value: Array<Option>,
     includedCategories: string[] | null | undefined,
     removedValue: Option,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onChange: (...event: any[]) => void,
   ) => {
     onChange(value)
@@ -328,10 +329,12 @@ export const ExamInputs: FC<
             {...rest}
             backgroundColor="blue"
             options={categoryList}
-            placeholder={'Veldu prófflokka'}
+            placeholder={formatMessage(
+              examCategories.labels.chooseExamCategory,
+            )}
             isMulti
             isSearchable={false}
-            label="Prófflokkar"
+            label={formatMessage(examCategories.general.pageTitle)}
             onChange={(value: MultiValue<Option>, action) => {
               const chosenCategory =
                 action.option?.value || action.removedValue?.value
