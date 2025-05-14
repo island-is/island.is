@@ -30,11 +30,27 @@ export const freight = {
         'Þar sem heildarmælingar ná {maxLength} metra lengd og/eða {maxHeight} metra hæð og/eða {maxWidth} metra breidd þarfnast þessi flutningur lögreglufylgdar. Flutningsaðili ber sjálfur ábyrgð á að hafa samband við lögreglu varðandi samþykki og fyrirkomulag vegna viðkomandi undanþáguflutnings, í framhaldi af veittri undanþágu frá Samgöngustofu. ',
       description: 'Alert message if police escort is required',
     },
+    errorAlertMessageTitle: {
+      id: 'ta.eft.application:freight.create.errorAlertMessageTitle',
+      defaultMessage: 'Athugið',
+      description: 'Freight error alert title',
+    },
+    errorEmptyListAlertMessageMessage: {
+      id: 'ta.eft.application:freight.create.errorEmptyListAlertMessageMessage',
+      defaultMessage: 'Það verður að skrá amk einn farm',
+      description: 'Error empty freight list alert message',
+    },
+    errorPoliceEscortAlertMessageMessage: {
+      id: 'ta.eft.application:freight.create.errorPoliceEscortAlertMessageMessage',
+      defaultMessage:
+        'Farmur sem fer yfir {maxLength} metra lengd þarfnast lögreglufylgdar. Lögreglufylgd er aðeins í boði fyrir skammtímaundanþágu. Vinsamlegast fjarlægðu farm {freightNumber}: {freightName}.',
+      description: 'Error police escort alert message',
+    },
   }),
   pairing: defineMessages({
     subSectionTitle: {
       id: 'ta.eft.application:freight.pairing.subSectionTitle',
-      defaultMessage: 'Para farm við vagnlest {freightName}',
+      defaultMessage: 'Para vagnlest við farm {freightNumber}: {freightName}',
       description: 'Title of pairing freight with convoy sub section',
     },
     pageTitle: {

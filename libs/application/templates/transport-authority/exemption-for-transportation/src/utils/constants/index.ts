@@ -13,3 +13,4 @@ export const EXEMPTION_REGIONS = [
   'Vestfirðir norður',
   'Vestfirðir suður',
 ]
+export const MAX_CNT_FREIGHT = 10

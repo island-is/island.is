@@ -1,6 +1,7 @@
 import {
   buildCheckboxField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildNationalIdWithNameField,
   buildPhoneField,
@@ -29,7 +30,7 @@ export const userInformationSection = buildSection({
         }),
         ...applicantInformationMultiField({
           baseInfoReadOnly: true,
-          hideLocationFields: true,
+          // hideLocationFields: true, //TODOx compact location fields?
           emailRequired: true,
           phoneRequired: true,
           phoneEnableCountrySelector: true,
@@ -96,6 +97,7 @@ export const userInformationSection = buildSection({
           },
         }),
         // Transporter - read-only
+        // TODO hide these fields to not have duplicate IDS, or use setOnChange with applicant email and phone
         buildTextField({
           id: 'applicant.nationalId',
           title: userInformation.transporter.nationalId,
@@ -184,6 +186,13 @@ export const userInformationSection = buildSection({
             return shouldShowResponsiblePerson(answers)
           },
         }),
+        buildHiddenInput({
+          id: 'responsiblePerson.isSameAsApplicant',
+          condition: (answers) => {
+            return !shouldShowResponsiblePerson(answers)
+          },
+          defaultValue: [YES],
+        }),
         // Responsible person - editable
         buildNationalIdWithNameField({
           id: 'responsiblePerson',
@@ -205,6 +214,7 @@ export const userInformationSection = buildSection({
           },
         }),
         // Responsible person - read-only
+        // TODO hide these fields to not have duplicate IDS, or use setOnChange with applicant email and phone
         buildTextField({
           id: 'applicant.nationalId',
           title: userInformation.responsiblePerson.nationalId,

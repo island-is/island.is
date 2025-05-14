@@ -28,9 +28,6 @@ export const exemptionPeriodSection = buildSection({
       title: exemptionPeriod.general.pageTitle,
       description: exemptionPeriod.general.description,
       children: [
-        //TODOx to make clearOnChangeWork - but then zod validation is checking the other stuff...
-        // buildHiddenInput({ id: 'location' }),
-        // buildHiddenInput({ id: 'freight' }),
         buildRadioField({
           id: 'exemptionPeriod.type',
           title: exemptionPeriod.type.subtitle,
@@ -45,15 +42,7 @@ export const exemptionPeriodSection = buildSection({
             },
           ],
           width: 'half',
-          clearOnChange: [
-            'exemptionPeriod.dateFrom',
-            'exemptionPeriod.dateTo',
-            //TODOx does not work, needs hidden field, but then I get validation error...
-            'location.exemptionPeriodType',
-            'freight.exemptionPeriodType',
-            'freight.limit',
-            'freight.items',
-          ],
+          clearOnChange: ['exemptionPeriod.dateFrom', 'exemptionPeriod.dateTo'],
         }),
         buildAlertMessageField({
           id: 'exemptionTypeLongTermAlertMessage',
