@@ -9,12 +9,3 @@ appId: 'is.island.app.dev'
         optional: true
     commands:
       - runFlow: sign-in-flow.yaml
-# If login button is not visible, we are already signed in, try going to home screen
-- runFlow:
-    when:
-      notVisible:
-        id: 'LOGIN_BUTTON_AUTHENTICATE'
-        optional: true
-    commands:
-      - tapOn:
-          id: 'TABBAR_TAB_HOME'

@@ -30,7 +30,6 @@ import {
 import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
-import { setupNativeMocking } from '@island.is/api/mocks/native'
 
 const Host = styled.View`
   flex: 1;
