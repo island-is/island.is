@@ -73,7 +73,7 @@ export class ActorProfileDetailsDto {
   @IsEnum(DataStatus)
   readonly emailStatus!: DataStatus
 
-  @ApiProperty()
+  @ApiProperty({ type: () => Boolean, nullable: true })
   @IsBoolean()
   readonly needsNudge!: boolean | null
 
