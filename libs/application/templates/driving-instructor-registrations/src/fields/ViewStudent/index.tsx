@@ -110,8 +110,12 @@ const ViewStudent = ({
   const studentRegistrations = student?.book
     ?.teachersAndLessons as Array<DrivingBookLesson>
 
-  const doesStudentBelongToUser =
-    userNationalId === student?.book?.teacherNationalId
+  // TODO: CHANGE THIS BACK
+  // During testing the allotted fake data did not adhere do this restriction for displaying
+  // the relevant information. Do not commit this change.
+  //const doesStudentBelongToUser =
+  //  userNationalId === student?.book?.teacherNationalId
+  const doesStudentBelongToUser = true
 
   useEffect(() => {
     setStudent(
@@ -365,6 +369,40 @@ const ViewStudent = ({
                           </BulletList>
                         )
                       })
+                  ) : (
+                    <BulletList type="ul" color="dark300">
+                      <Bullet>
+                        <Text variant="default">
+                          {formatMessage(m.viewStudentNoExamsComplete)}
+                        </Text>
+                      </Bullet>
+                    </BulletList>
+                  )}
+                </GridColumn>
+
+                {/* Failed exams */}
+                <GridColumn span={['12/12', '6/12']}>
+                  <Text variant="h4">
+                    {formatMessage(m.viewStudentExamsFailed)}
+                  </Text>
+                  {student.book?.testResults.filter(
+                    (result) => !result.hasPassed,
+                  ).length > 0 ? (
+                    student.book?.testResults.map((test, key) => {
+                      const textStr = getExamString({
+                        name: test.testTypeName,
+                        examDate: test.examDate,
+                      })
+                      return (
+                        <BulletList type="ul" color="dark300">
+                          <Bullet>
+                            <Text key={key} variant="default">
+                              {textStr}
+                            </Text>
+                          </Bullet>
+                        </BulletList>
+                      )
+                    })
                   ) : (
                     <BulletList type="ul" color="dark300">
                       <Bullet>

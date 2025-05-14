@@ -194,6 +194,11 @@ export const m = defineMessages({
     defaultMessage: 'Prófum lokið',
     description: 'Student complete exams',
   },
+  viewStudentExamsFailed: {
+    id: 'dir.application:viewStudentExamsFailed',
+    defaultMessage: 'Fallin próf',
+    description: 'Student failed exams',
+  },
   viewStudentNoCompleteSchools: {
     id: 'dir.application:viewStudentNoCompleteSchools',
     defaultMessage: 'Engum ökuskóla lokið',
