@@ -111,7 +111,7 @@ export class MeUserProfileController {
     const validateInputs = async () => {
       if (input.email && !input.mobilePhoneNumber) {
         await this.userProfileService.createEmailVerification({
-          nationalId: user.nationalId,
+          nationalId: user.actor?.nationalId ?? user.nationalId,
           email: input.email,
         })
       } else if (input.mobilePhoneNumber && !input.email) {

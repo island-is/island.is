@@ -433,6 +433,19 @@ export const mNotifications = defineMessages({
     id: 'sp.notifications:no-delegations-description',
     defaultMessage: 'Stillingar fyrir umboð munu birtast hér.',
   },
+  paperMailTitle: {
+    id: 'sp.notifications:paper-mail-title',
+    defaultMessage: 'Bréfpóstur',
+  },
+  paperMailDescription: {
+    id: 'sp.notifications:paper-mail-description',
+    defaultMessage:
+      'Hér getur þú óskað eftir því að erindi frá hinu opinbera sem birtast í stafræna pósthólfinu þínu verði jafnframt send til þín í bréfpósti.',
+  },
+  paperMailAriaLabel: {
+    id: 'sp.notifications:paper-mail-aria-label',
+    defaultMessage: 'Fá tilkynningar í bréfpósti?',
+  },
 })
 
 export const emailsMsg = defineMessages({

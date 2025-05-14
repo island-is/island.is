@@ -10,6 +10,7 @@ import { NotificationSettingsCard } from './cards/NotificationSettingsCard'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
+import { usePaperMail } from '../../hooks/usePaperMail'
 import { mNotifications } from '../../lib/messages'
 import { SettingsCard } from './cards/SettingsCard/SettingsCard'
 import {
@@ -20,6 +21,7 @@ import {
 type UserProfileNotificationSettings = {
   documentNotifications: boolean
   canNudge: boolean
+  wantsPaper: boolean
 }
 
 export const UserProfileNotificationSettings = () => {
@@ -31,21 +33,29 @@ export const UserProfileNotificationSettings = () => {
     error: fetchError,
   } = useUserProfileSettingsQuery()
   const [updateUserProfile] = useUpdateUserProfileSettingsMutation()
+  const {
+    wantsPaper,
+    postPaperMailMutation,
+    loading: paperMailLoading,
+  } = usePaperMail()
 
   const [settings, setSettings] = useState<UserProfileNotificationSettings>({
     documentNotifications:
       userProfile?.getUserProfile?.documentNotifications ?? true,
     canNudge: userProfile?.getUserProfile?.canNudge ?? true,
+    wantsPaper: wantsPaper ?? false,
   })
 
   useEffect(() => {
     if (userProfile?.getUserProfile) {
       setSettings({
+        ...settings,
         documentNotifications:
           userProfile?.getUserProfile.documentNotifications,
         canNudge: userProfile?.getUserProfile.canNudge ?? true,
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userProfile])
 
   const onChange = async (
@@ -67,7 +77,20 @@ export const UserProfileNotificationSettings = () => {
     }
   }
 
-  if (loading) {
+  const onPaperMailChange = async (active: boolean) => {
+    try {
+      await postPaperMailMutation({
+        variables: {
+          input: { wantsPaper: active },
+        },
+      })
+      setSettings({ ...settings, wantsPaper: active })
+    } catch {
+      toast.error(formatMessage(mNotifications.updateError))
+    }
+  }
+
+  if (loading || paperMailLoading) {
     return <SkeletonLoader borderRadius="large" height={326} />
   }
 
@@ -85,7 +108,7 @@ export const UserProfileNotificationSettings = () => {
             mNotifications.emailNotificationsAriaLabel,
           )}
           checked={settings.canNudge}
-          onChange={(active: boolean) => onChange({ canNudge: active })}
+          onChange={(active) => onChange({ canNudge: active })}
         />
         <Divider />
         <SettingsCard
@@ -93,9 +116,15 @@ export const UserProfileNotificationSettings = () => {
           subtitle={formatMessage(mNotifications.appNotificationsDescription)}
           toggleLabel={formatMessage(mNotifications.appNotificationsAriaLabel)}
           checked={settings.documentNotifications}
-          onChange={(active: boolean) =>
-            onChange({ documentNotifications: active })
-          }
+          onChange={(active) => onChange({ documentNotifications: active })}
+        />
+        <Divider />
+        <SettingsCard
+          title={formatMessage(mNotifications.paperMailTitle)}
+          subtitle={formatMessage(mNotifications.paperMailDescription)}
+          toggleLabel={formatMessage(mNotifications.paperMailAriaLabel)}
+          checked={settings.wantsPaper}
+          onChange={onPaperMailChange}
         />
       </Stack>
     </NotificationSettingsCard>
