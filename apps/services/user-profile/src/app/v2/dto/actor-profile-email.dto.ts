@@ -59,7 +59,7 @@ export class ActorProfileEmailDto {
     description: 'National ID of the actor',
     example: '1234567890',
   })
-  actorNationalId!: string
+  nationalId!: string
 
   @ApiProperty({
     description: 'Whether the actor profile receives email notifications',

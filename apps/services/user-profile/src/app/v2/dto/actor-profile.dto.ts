@@ -79,7 +79,7 @@ export class ActorProfileDetailsDto {
 
   @ApiProperty()
   @IsString()
-  readonly actorNationalId!: string
+  readonly nationalId!: string
 
   @ApiProperty()
   @IsBoolean()

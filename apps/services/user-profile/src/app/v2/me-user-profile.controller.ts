@@ -209,11 +209,10 @@ export class MeUserProfileController {
     response: { status: 200, type: ActorProfileDetailsDto },
   })
   @Audit<ActorProfileDetailsDto>({
-    resources: (profile) => profile.actorNationalId,
+    resources: (profile) => profile.nationalId,
   })
   getSingleActorProfile(
     @CurrentUser() user: User,
-    @Param('fromNationalId') fromNationalId: string,
   ): Promise<ActorProfileDetailsDto> {
     if (!user.actor?.nationalId) {
       throw new BadRequestException('User has no actor profile')
@@ -224,10 +223,10 @@ export class MeUserProfileController {
         auth: user,
         namespace,
         action: 'getSingleActorProfile',
-        resources: `${user.nationalId}:${fromNationalId}`,
+        resources: `${user.nationalId}:${user.actor.nationalId}`,
       },
       this.userProfileService.getSingleActorProfile({
-        toNationalId: user.actor?.nationalId,
+        toNationalId: user.actor.nationalId,
         fromNationalId: user.nationalId,
       }),
     )
