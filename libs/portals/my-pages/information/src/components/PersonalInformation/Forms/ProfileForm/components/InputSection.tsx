@@ -3,7 +3,7 @@ import { Text, Divider, Box, SkeletonLoader } from '@island.is/island-ui/core'
 
 interface Props {
   title: string
-  text: string
+  text: string | ReactNode
   children?: ReactNode
   loading?: boolean
 }

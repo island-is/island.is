@@ -106,17 +106,15 @@ export class EmailsService {
   /**
    * Deletes an email for a user
    */
-  async deleteEmail(
-    nationalId: string,
-    emailId: string,
-  ): Promise<{ success: boolean }> {
+  async deleteEmail(nationalId: string, emailId: string): Promise<boolean> {
     this.validateRequiredFields(nationalId, emailId)
     this.validateNationalId(nationalId)
 
     const emailRecord = await this.findEmailForUser(nationalId, emailId)
 
     await emailRecord.destroy()
-    return { success: true }
+
+    return true
   }
 
   /**
