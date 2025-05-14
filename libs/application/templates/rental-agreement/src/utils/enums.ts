@@ -65,8 +65,8 @@ export enum RentalHousingConditionInspector {
   INDEPENDENT_PARTY = 'Indipendant',
 }
 
-export enum RentalAmountIndexTypes { // TODO: Check if this is correct
-  CONSUMER_PRICE_INDEX = 'ConsumerPriceIndex',
+export enum RentalAmountIndexTypes {
+  CONSUMER_PRICE_INDEX = 'consumerPriceIndex',
 }
 
 export enum RentalAmountPaymentDateOptions {
