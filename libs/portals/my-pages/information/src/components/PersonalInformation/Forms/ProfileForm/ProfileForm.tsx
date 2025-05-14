@@ -18,23 +18,22 @@ import {
 } from '@island.is/portals/my-pages/graphql'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
+import orderBy from 'lodash/orderBy'
 import { FormattedMessage } from 'react-intl'
 import { emailsMsg, msg } from '../../../../lib/messages'
 import { InformationPaths } from '../../../../lib/paths'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
+import { EmailsList } from '../../../emails/EmailsList/EmailsList'
 import { ProfileEmailForm } from '../../../emails/ProfileEmailForm/ProfileEmailForm'
 import { DropModal } from './components/DropModal'
 import { InputSection } from './components/InputSection'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge'
-import { PaperMail } from './components/Inputs/PaperMail'
 import { InputPhone } from './components/Inputs/Phone'
 import { WithLinkWrapper } from './components/Inputs/WithLinkWrapper'
 import { OnboardingIntro } from './components/Intro'
 import { useConfirmNudgeMutation } from './confirmNudge.generated'
 import { DropModalType } from './types/form'
-import { EmailsList } from '../../../emails/EmailsList/EmailsList'
-import orderBy from 'lodash/orderBy'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -302,15 +301,6 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                   bankInfo={bankInfoObject(userProfile?.bankInfo || '')}
                 />
               )}
-            </InputSection>
-          )}
-          {showDetails && (
-            <InputSection
-              title={formatMessage(m.requestPaperMailTitle)}
-              loading={userLoading}
-              text={formatMessage(msg.editPaperMailText)}
-            >
-              {!userLoading && <PaperMail />}
             </InputSection>
           )}
           {showDropModal && onCloseOverlay && !internalLoading && (
