@@ -10,6 +10,7 @@ import {
   Patch,
   Post,
   Req,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -357,6 +358,9 @@ export class FileController {
     // to implement the refresh token functionality and update the session cookie. Later we will also fetch the cookies
     // from a secure storage in the backend.
     const accessToken = req.cookies[IDS_ACCESS_TOKEN_NAME]
+    if (!accessToken) {
+      throw new UnauthorizedException('Missing access token in session')
+    }
 
     return this.criminalRecordService.uploadCriminalRecordFile({
       caseType: theCase.type,
