@@ -2,6 +2,7 @@ import {
   InstitutionUser,
   isCourtOfAppealsUser,
   isPrisonAdminUser,
+  isPrisonStaffUser,
 } from '../user'
 import {
   CaseTableColumn,
@@ -13,8 +14,8 @@ import {
 export enum CaseTableType {
   COURT_OF_APPEALS_IN_PROGRESS = 'COURT_OF_APPEALS_IN_PROGRESS',
   COURT_OF_APPEALS_COMPLETED = 'COURT_OF_APPEALS_COMPLETED',
-  PRISON_ADMIN_ACTIVE = 'PRISON_ADMIN_ACTIVE',
-  PRISON_ADMIN_DONE = 'PRISON_ADMIN_DONE',
+  PRISON_ACTIVE = 'PRISON_ACTIVE',
+  PRISON_DONE = 'PRISON_DONE',
   PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN = 'PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN',
   PRISON_ADMIN_INDICTMENT_REGISTERED_RULING = 'PRISON_ADMIN_INDICTMENT_REGISTERED_RULING',
 }
@@ -35,13 +36,22 @@ export const getCaseTableType = (
   if (isPrisonAdminUser(user)) {
     switch (route) {
       case 'virk-mal':
-        return CaseTableType.PRISON_ADMIN_ACTIVE
+        return CaseTableType.PRISON_ACTIVE
       case 'lokid':
-        return CaseTableType.PRISON_ADMIN_DONE
+        return CaseTableType.PRISON_DONE
       case 'mal-til-fullnustu':
         return CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN
       case 'skradir-domar':
         return CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING
+    }
+  }
+
+  if (isPrisonStaffUser(user)) {
+    switch (route) {
+      case 'virk-mal':
+        return CaseTableType.PRISON_ACTIVE
+      case 'lokid':
+        return CaseTableType.PRISON_DONE
     }
   }
 }
@@ -147,8 +157,8 @@ const prisonAdminIndictmentRegisteredRuling: CaseTable = {
 export const caseTables: { [key in CaseTableType]: CaseTable } = {
   COURT_OF_APPEALS_IN_PROGRESS: courtOfAppealsInProgress,
   COURT_OF_APPEALS_COMPLETED: courtOfAppealsCompleted,
-  PRISON_ADMIN_ACTIVE: prisonAdminActive,
-  PRISON_ADMIN_DONE: prisonAdminDone,
+  PRISON_ACTIVE: prisonAdminActive,
+  PRISON_DONE: prisonAdminDone,
   PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN:
     prisonAdminIndictmentSentToPrisonAdmin,
   PRISON_ADMIN_INDICTMENT_REGISTERED_RULING:

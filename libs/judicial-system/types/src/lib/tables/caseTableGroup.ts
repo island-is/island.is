@@ -2,6 +2,7 @@ import {
   InstitutionUser,
   isCourtOfAppealsUser,
   isPrisonAdminUser,
+  isPrisonStaffUser,
 } from '../user'
 import { CaseTableType } from './caseTable'
 
@@ -42,16 +43,16 @@ const prisonAdminTableGroups: CaseTableGroup[] = [
     title: 'Rannsóknarmál',
     tables: [
       {
-        type: CaseTableType.PRISON_ADMIN_ACTIVE,
+        type: CaseTableType.PRISON_ACTIVE,
         route: 'virk-mal',
         title: 'Virk mál',
         description: 'Virk gæsluvarðhöld og farbönn.',
       },
       {
-        type: CaseTableType.PRISON_ADMIN_DONE,
+        type: CaseTableType.PRISON_DONE,
         route: 'lokid',
         title: 'Lokið',
-        description: 'Lokin gæsluvarðhöld og farbönn.',
+        description: 'Gæsluvarðhöld og farbönn sem er lokið.',
       },
     ],
   },
@@ -74,6 +75,26 @@ const prisonAdminTableGroups: CaseTableGroup[] = [
   },
 ]
 
+const prisonStaffTableGroups: CaseTableGroup[] = [
+  {
+    title: 'Rannsóknarmál',
+    tables: [
+      {
+        type: CaseTableType.PRISON_ACTIVE,
+        route: 'virk-mal',
+        title: 'Virk mál',
+        description: 'Virk gæsluvarðhöld og farbönn.',
+      },
+      {
+        type: CaseTableType.PRISON_DONE,
+        route: 'lokid',
+        title: 'Lokið',
+        description: 'Gæsluvarðhöld og farbönn sem er lokið.',
+      },
+    ],
+  },
+]
+
 export const getCaseTableGroups = (
   user: InstitutionUser | undefined,
 ): CaseTableGroup[] => {
@@ -83,6 +104,10 @@ export const getCaseTableGroups = (
 
   if (isPrisonAdminUser(user)) {
     return prisonAdminTableGroups
+  }
+
+  if (isPrisonStaffUser(user)) {
+    return prisonStaffTableGroups
   }
 
   return []

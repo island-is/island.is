@@ -94,8 +94,8 @@ export const caseTableWhereOptions: Record<CaseTableType, WhereOptions> = {
     courtOfAppealsInProgressWhereOptions,
   [CaseTableType.COURT_OF_APPEALS_COMPLETED]:
     courtOfAppealsCompletedWhereOptions,
-  [CaseTableType.PRISON_ADMIN_ACTIVE]: prisonAdminActiveWhereOptions,
-  [CaseTableType.PRISON_ADMIN_DONE]: prisonAdminDoneWhereOptions,
+  [CaseTableType.PRISON_ACTIVE]: prisonAdminActiveWhereOptions,
+  [CaseTableType.PRISON_DONE]: prisonAdminDoneWhereOptions,
   [CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN]:
     prisonAdminIndictmentSentToPrisonAdminWhereOptions,
   [CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING]:
