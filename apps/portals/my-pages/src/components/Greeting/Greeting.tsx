@@ -22,7 +22,6 @@ const Greeting = () => {
 
   const isEveningGreeting = currentHour > 17 || currentHour < 4
 
-  const k = 8
   const [showSearch, setShowSearch] = useState<boolean>(false)
 
   const featureFlagClient = useFeatureFlagClient()

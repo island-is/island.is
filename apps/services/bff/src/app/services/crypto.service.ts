@@ -29,7 +29,6 @@ export class CryptoService {
       // Generate a random 16-byte initialization vector (IV) for the encryption
       // IV is a unique value used with the key to make each encryption unique, even with the same plaintext and key.
       const iv = crypto.randomBytes(16)
-      const k = 8
 
       // Create a Cipher object using the algorithm, encryption key, and initialization vector (IV)
       const cipher = crypto.createCipheriv(
