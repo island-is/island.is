@@ -105,7 +105,7 @@ class JudicialSystemApplication extends App<Props> {
                     <HeaderContainer />
                     <FormProvider>
                       <Component {...pageProps} />
-                      <ToastContainer useKeyframeStyles />
+                      <ToastContainer />
                     </FormProvider>
                     <style jsx global>{`
                       @font-face {

@@ -82,7 +82,7 @@ const EventItemImage = ({
             ? eventItem.contentImage?.url + '?w=1000&fm=webp&q=80'
             : ''
         }
-        alt=""
+        alt={eventItem.contentImage?.description ?? ''}
       />
     </Box>
   )

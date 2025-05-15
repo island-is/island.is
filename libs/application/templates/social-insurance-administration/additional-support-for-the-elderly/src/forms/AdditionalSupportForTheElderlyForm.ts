@@ -271,16 +271,23 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'asfteInstructions',
-          title: additionalSupportForTheElderyFormMessage.info.instructionsShortTitle,
+          title:
+            additionalSupportForTheElderyFormMessage.info
+              .instructionsShortTitle,
           children: [
             buildCheckboxField({
               id: 'infoCheckbox',
-              title: additionalSupportForTheElderyFormMessage.info.instructionsTitle,
-              description: additionalSupportForTheElderyFormMessage.info.instructionsDescription,
+              title:
+                additionalSupportForTheElderyFormMessage.info.instructionsTitle,
+              description:
+                additionalSupportForTheElderyFormMessage.info
+                  .instructionsDescription,
               required: true,
               options: [
                 {
-                  label: additionalSupportForTheElderyFormMessage.info.instructionsCheckbox,
+                  label:
+                    additionalSupportForTheElderyFormMessage.info
+                      .instructionsCheckbox,
                   value: YES,
                 },
               ],
