@@ -24,7 +24,7 @@ export class Kubernetes implements ReferenceResolver {
       this.deps[to.name] = dependecies.add(from.name)
 
       // TODO: temp hack to exclude judicial system
-      if (this.releaseName === '' && !from.name.includes("judicial")) {
+      if (this.releaseName === '' && !from.name.includes('judicial')) {
         return from.namespace === to.namespace || this.feature != undefined
           ? `${to.name}`
           : `${to.name}.${to.namespace}.svc.cluster.local`

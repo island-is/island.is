@@ -77,7 +77,7 @@ describe('Page layout utils', () => {
     // Temporarily commented out because of issues with the pipeline
     // it('should return the correct string if the case is an investigation case and the state is ACCEPTED', async () => {
     //   // Arrange
-    //   const workingCase = {  
+    //   const workingCase = {
     //     ...mockCase(CaseType.CUSTODY),
     //     type: CaseType.AUTOPSY,
     //   }

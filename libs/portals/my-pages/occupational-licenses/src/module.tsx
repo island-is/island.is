@@ -5,16 +5,12 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { m } from '@island.is/portals/my-pages/core'
 import { olMessage as om } from './lib/messages'
 
-const OccupationalLicensesDetailScreen = lazy(
-  () =>
-    import('./screens/OccupationalLicensesDetail/OccupationalLicensesDetail'),
+const OccupationalLicensesDetailScreen = lazy(() =>
+  import('./screens/OccupationalLicensesDetail/OccupationalLicensesDetail'),
 )
 
-const OccupationalLicensesOverviewScreen = lazy(
-  () =>
-    import(
-      './screens/OccupationalLicensesOverview/OccupationalLicensesOverview'
-    ),
+const OccupationalLicensesOverviewScreen = lazy(() =>
+  import('./screens/OccupationalLicensesOverview/OccupationalLicensesOverview'),
 )
 
 export const occupationalLicensesModule: PortalModule = {

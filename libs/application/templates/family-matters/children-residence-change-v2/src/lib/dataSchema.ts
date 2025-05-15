@@ -64,11 +64,9 @@ export const dataSchema = z.object({
     .enum([ChildSupportPayment.Agreement, ChildSupportPayment.ChildSupport])
     .refine((v) => v, { params: error.validation.childSupportPayment }),
   confirmContractParentB: validateTerms(approveTerms),
-  acceptContract: z
-    .enum([YesOrNoEnum.YES, YesOrNoEnum.NO])
-    .refine((v) => v, {
-      params: error.validation.acceptContract,
-    }),
+  acceptContract: z.enum([YesOrNoEnum.YES, YesOrNoEnum.NO]).refine((v) => v, {
+    params: error.validation.acceptContract,
+  }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

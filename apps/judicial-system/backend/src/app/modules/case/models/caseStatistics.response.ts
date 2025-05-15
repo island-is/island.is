@@ -26,7 +26,7 @@ export class RequestCaseStatistics {
   @ApiProperty({ type: Number })
   inProgressCount!: number
 
-  @ApiProperty({ type: Number})
+  @ApiProperty({ type: Number })
   completedCount!: number
 }
 

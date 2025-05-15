@@ -118,7 +118,9 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
-    const careerPrograms = (careerProgramsHI ?? []).concat(careerProgramsUNAK ?? [])
+    const careerPrograms = (careerProgramsHI ?? []).concat(
+      careerProgramsUNAK ?? [],
+    )
     if (!careerPrograms || careerPrograms?.length < 1) {
       throw new TemplateApiError(
         {
