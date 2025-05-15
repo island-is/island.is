@@ -102,7 +102,7 @@ const parseArguments = (argv: Arguments) => {
     env,
     skipAppName: argv.skipAppName as boolean,
     writeDest: argv.writeDest as string,
-    disableNsGrants: argv.disableNsGrants as boolean
+    disableNsGrants: argv.disableNsGrants as boolean,
   }
 }
 
@@ -162,10 +162,15 @@ yargs(process.argv.slice(2))
         })
     },
     handler: async (argv) => {
-      const typedArgv = (argv as unknown) as Arguments
-      const { habitat, affectedServices, env, skipAppName, writeDest, disableNsGrants } = parseArguments(
-        typedArgv,
-      )
+      const typedArgv = argv as unknown as Arguments
+      const {
+        habitat,
+        affectedServices,
+        env,
+        skipAppName,
+        writeDest,
+        disableNsGrants,
+      } = parseArguments(typedArgv)
       let { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
@@ -215,10 +220,15 @@ yargs(process.argv.slice(2))
       return yargs
     },
     handler: async (argv) => {
-      const typedArgv = (argv as unknown) as Arguments
-      const { habitat, affectedServices, env, skipAppName, writeDest, disableNsGrants } = parseArguments(
-        typedArgv,
-      )
+      const typedArgv = argv as unknown as Arguments
+      const {
+        habitat,
+        affectedServices,
+        env,
+        skipAppName,
+        writeDest,
+        disableNsGrants,
+      } = parseArguments(typedArgv)
       const { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),

@@ -64,7 +64,7 @@ async function main() {
   const content = {
     namespaces: Array.from(namespacesToAdd),
     grantNamespacesEnabled: true,
-    grantNamespaces: Array.from(nsGrantsToAdd)
+    grantNamespaces: Array.from(nsGrantsToAdd),
   }
   writeFileSync(
     `${directoryPath}/values.bootstrap.yaml`,
