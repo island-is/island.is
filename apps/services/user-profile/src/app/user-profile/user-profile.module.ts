@@ -16,7 +16,7 @@ import { UserTokenService } from './userToken.service'
 import { UserDeviceTokens } from './models/userDeviceTokens.model'
 import { ActorProfile } from './models/actor-profile.model'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
-
+import { ActorUserProfileController } from './actor-user-profile.controller'
 @Module({
   imports: [
     SequelizeModule.forFeature([
@@ -34,11 +34,8 @@ import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegatio
     MeUserProfileController,
     UserProfileController,
     UserTokenController,
+    ActorUserProfileController,
   ],
-  providers: [
-    UserProfileService,
-    VerificationService,
-    UserTokenService,
-  ],
+  providers: [UserProfileService, VerificationService, UserTokenService],
 })
 export class UserProfileModule {}

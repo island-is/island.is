@@ -5,6 +5,7 @@ import {
   ActorLocaleLocaleEnum,
   PostNudgeDtoNudgeTypeEnum,
   UserProfileControllerFindUserProfileClientTypeEnum,
+  V2ActorApi,
   V2MeApi,
   V2UsersApi,
 } from '@island.is/clients/user-profile'
@@ -31,6 +32,7 @@ export class UserProfileService {
   constructor(
     private v2MeApi: V2MeApi,
     private v2UserProfileApi: V2UsersApi,
+    private v2ActorApi: V2ActorApi,
     private bankinfoClientService: BankinfoClientService,
   ) {}
 
@@ -40,6 +42,10 @@ export class UserProfileService {
 
   v2UserProfileApiWithAuth(auth: Auth) {
     return this.v2UserProfileApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  v2ActorApiWithAuth(auth: Auth) {
+    return this.v2ActorApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async createUserProfile(input: UpdateUserProfileInput, user: User) {
@@ -222,9 +228,9 @@ export class UserProfileService {
 
   async getUserProfileLocale(user: User) {
     const locale = await handle204(
-      this.v2MeUserProfileApiWithAuth(
+      this.v2ActorApiWithAuth(
         user,
-      ).meUserProfileControllerGetActorLocaleRaw(),
+      ).actorUserProfileControllerGetActorLocaleRaw(),
     )
 
     return {

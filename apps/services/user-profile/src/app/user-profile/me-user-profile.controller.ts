@@ -1,6 +1,5 @@
 import {
   ApiOkResponse,
-  ApiNoContentResponse,
   ApiSecurity,
   ApiTags,
   ApiOperation,
@@ -17,7 +16,6 @@ import {
 } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
-import { CurrentActor } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -38,9 +36,7 @@ import {
   MeActorProfileDto,
   PaginatedActorProfileDto,
   PatchActorProfileDto,
-  ActorLocale,
 } from './dto/actor-profile.dto'
-import { Locale } from './types/localeTypes'
 import { UserTokenService } from './userToken.service'
 import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
@@ -213,23 +209,6 @@ export class MeUserProfileController {
         emailNotifications: actorProfile.emailNotifications,
       }),
     )
-  }
-
-  @Scopes(UserProfileScope.read)
-  @ApiSecurity('oauth2', [UserProfileScope.read])
-  @Get('/actor/locale')
-  @ApiOkResponse({ type: ActorLocale })
-  @ApiNoContentResponse()
-  @Audit<ActorLocale>({
-    resources: (profile) => profile.nationalId,
-  })
-  async getActorLocale(@CurrentActor() actor: User): Promise<ActorLocale> {
-    const userProfile = await this.userProfileService.findById(actor.nationalId)
-
-    return {
-      nationalId: userProfile.nationalId,
-      locale: userProfile.locale ?? Locale.ICELANDIC,
-    }
   }
 
   @Post('/device-tokens')
