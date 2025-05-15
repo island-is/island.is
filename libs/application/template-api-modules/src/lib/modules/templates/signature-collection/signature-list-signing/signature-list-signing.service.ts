@@ -3,7 +3,6 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
-  CollectionType,
   ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
@@ -16,14 +15,12 @@ import { getCollectionTypeFromApplicationType } from '../shared/utils'
 export class SignatureListSigningService extends BaseTemplateApiService {
   constructor(
     private signatureCollectionClientService: SignatureCollectionClientService,
-    private collectionType: CollectionType,
   ) {
     super(ApplicationTypes.PRESIDENTIAL_LIST_SIGNING)
-    this.collectionType = getCollectionTypeFromApplicationType(
-      ApplicationTypes.PRESIDENTIAL_LIST_SIGNING,
-    )
   }
-
+  private collectionType = getCollectionTypeFromApplicationType(
+    ApplicationTypes.PRESIDENTIAL_LIST_SIGNING,
+  )
   async signList({ auth, application }: TemplateApiModuleActionProps) {
     const listId = application.answers.listId
       ? (application.answers.listId as string)

@@ -3,7 +3,6 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
-  CollectionType,
   List,
   ReasonKey,
   SignatureCollectionClientService,
@@ -17,14 +16,12 @@ import { getCollectionTypeFromApplicationType } from '../shared/utils'
 export class ParliamentaryListSigningService extends BaseTemplateApiService {
   constructor(
     private signatureCollectionClientService: SignatureCollectionClientService,
-    private collectionType: CollectionType,
   ) {
     super(ApplicationTypes.PARLIAMENTARY_LIST_SIGNING)
-    this.collectionType = getCollectionTypeFromApplicationType(
-      ApplicationTypes.PARLIAMENTARY_LIST_SIGNING,
-    )
   }
-
+  private collectionType = getCollectionTypeFromApplicationType(
+    ApplicationTypes.PARLIAMENTARY_LIST_SIGNING,
+  )
   async signList({ auth, application }: TemplateApiModuleActionProps) {
     const listId = application.answers.listId
       ? (application.answers.listId as string)

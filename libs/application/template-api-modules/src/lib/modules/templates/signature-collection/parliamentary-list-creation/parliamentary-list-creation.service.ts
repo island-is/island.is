@@ -26,14 +26,12 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
     private nationalRegistryClientService: NationalRegistryClientService,
-    private collectionType: CollectionType,
   ) {
     super(ApplicationTypes.PARLIAMENTARY_LIST_CREATION)
-    this.collectionType = getCollectionTypeFromApplicationType(
-      ApplicationTypes.PARLIAMENTARY_LIST_CREATION,
-    )
   }
-
+  private collectionType = getCollectionTypeFromApplicationType(
+    ApplicationTypes.PARLIAMENTARY_LIST_CREATION,
+  )
   async candidate({ auth }: TemplateApiModuleActionProps) {
     const candidate = await this.signatureCollectionClientService.getSignee(
       auth,
