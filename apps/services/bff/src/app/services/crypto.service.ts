@@ -37,8 +37,6 @@ export class CryptoService {
         iv,
       )
 
-      const k = 8
-
       // Encrypt the text in 'utf8' format and encode the result as base64
       let encrypted = cipher.update(text, 'utf8', 'base64')
 
