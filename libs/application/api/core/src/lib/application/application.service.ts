@@ -212,7 +212,7 @@ export class ApplicationService {
           // Delegation Is not active we get applications for the nationalId OR where we are one of the assignees
           [Op.or]: [
             { applicant: { [Op.eq]: nationalId } },
-            { assignees: { [Op.contains]: [actor] } },
+            { assignees: { [Op.contains]: [nationalId] } },
           ],
         }
 
