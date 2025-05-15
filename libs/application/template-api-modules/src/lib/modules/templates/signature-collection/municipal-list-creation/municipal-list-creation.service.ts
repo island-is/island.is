@@ -18,6 +18,7 @@ import { isCompany } from 'kennitala'
 import { coreErrorMessages } from '@island.is/application/core'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { getCollectionTypeFromApplicationType } from '../shared/utils'
 @Injectable()
 export class MunicipalListCreationService extends BaseTemplateApiService {
   constructor(
@@ -25,13 +26,18 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
     private nationalRegistryClientService: NationalRegistryClientService,
+    private collectionType: CollectionType,
   ) {
     super(ApplicationTypes.MUNICIPAL_LIST_CREATION)
+    this.collectionType = getCollectionTypeFromApplicationType(
+      ApplicationTypes.MUNICIPAL_LIST_CREATION,
+    )
   }
 
   async candidate({ auth }: TemplateApiModuleActionProps) {
     const candidate = await this.signatureCollectionClientService.getSignee(
       auth,
+      this.collectionType,
     )
 
     if (!candidate.hasPartyBallotLetter) {
@@ -42,8 +48,9 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
   }
 
   async municipalCollection({ auth }: TemplateApiModuleActionProps) {
-    const currentCollection =
-      await this.signatureCollectionClientService.currentCollection()
+    const currentCollection = await this.signatureCollectionClientService.getLatestCollectionForType(
+      this.collectionType,
+    )
     //Todo: adjust this check to municipal once available
     if (currentCollection.collectionType !== CollectionType.Parliamentary) {
       throw new TemplateApiError(
@@ -98,6 +105,7 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       .data as Collection
 
     const input = {
+      collectionType: this.collectionType,
       owner: {
         ...answers.applicant,
         nationalId: application?.applicantActors?.[0]
