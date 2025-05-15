@@ -602,7 +602,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return await this.siaClientService.getIncomePlanConditions(auth)
   }
 
-  async getUnions({ auth }: TemplateApiModuleActionProps) {
-    return await this.siaClientService.getUnions(auth)
+  async getRehabilitationplan({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getRehabilitationplan(auth)
   }
 }

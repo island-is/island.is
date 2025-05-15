@@ -10,9 +10,11 @@ import {
   DeathBenefitsApi,
   GeneralApi,
   IncomePlanApi,
+  MedicalDocumentsApi,
   PaymentPlanApi,
   PensionCalculatorApi,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
+  TrWebApiServicesDomainMedicalDocumentsModelsRehabilitationPlan,
   TrWebApiServicesDomainUnionsModelsUnionDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
@@ -39,6 +41,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly deathBenefitsApi: DeathBenefitsApi,
     private readonly incomePlanApi: IncomePlanApi,
     private readonly generalApi: GeneralApi,
+    private readonly medicalDocumentsApi: MedicalDocumentsApi,
   ) {}
 
   private applicationApiWithAuth = (user: User) =>
@@ -64,6 +67,9 @@ export class SocialInsuranceAdministrationClientService {
 
   private genaralApiWithAuth = (user: User) =>
     this.generalApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private medicalDocumentsApiWithAuth = (user: User) =>
+    this.medicalDocumentsApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   getPaymentPlan(
     user: User,
@@ -199,5 +205,13 @@ export class SocialInsuranceAdministrationClientService {
     user: User,
   ): Promise<Array<TrWebApiServicesDomainUnionsModelsUnionDto>> {
     return this.genaralApiWithAuth(user).apiProtectedV1GeneralUnionsGet()
+  }
+
+  async getRehabilitationplan(
+    user: User,
+  ): Promise<TrWebApiServicesDomainMedicalDocumentsModelsRehabilitationPlan> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsRehabilitationplanGet()
   }
 }
