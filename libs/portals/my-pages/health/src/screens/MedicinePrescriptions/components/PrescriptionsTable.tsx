@@ -72,6 +72,8 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                       {
                         title: formatMessage(messages.medicineTitle),
                         value: item?.name ?? '',
+                        href: item?.url ?? '',
+                        type: 'link',
                       },
                       {
                         title: formatMessage(messages.type),

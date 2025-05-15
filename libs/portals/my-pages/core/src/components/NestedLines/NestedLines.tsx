@@ -8,6 +8,7 @@ import {
 import cn from 'classnames'
 import * as styles from './NestedLines.css'
 import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
+import { LinkButton } from '../LinkButton/LinkButton'
 
 interface Props {
   data: {
@@ -54,9 +55,17 @@ export const NestedLines = ({ data, width = 'full' }: Props) => {
                   span={isMobile ? '6/12' : ['12/12', '12/12', columnWidth]}
                 >
                   <Box className={styles.valueCol}>
-                    <Text variant="small" as="span">
-                      {item.value}
-                    </Text>
+                    {item.type === 'link' ? (
+                      <LinkButton
+                        text={item.value?.toString() ?? ''}
+                        to={item.href ?? ''}
+                        variant="text"
+                      ></LinkButton>
+                    ) : (
+                      <Text variant="small" as="span">
+                        {item.value}
+                      </Text>
+                    )}
                   </Box>
                 </GridColumn>
               </GridRow>
