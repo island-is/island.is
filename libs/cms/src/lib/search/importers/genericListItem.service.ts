@@ -41,13 +41,9 @@ export class GenericListItemSyncService
               documentToPlainTextString(entry.fields.cardIntro),
             )
           }
-          if (mapped.content) {
+          if (entry.fields.content) {
             contentSections.push(
-              extractStringsFromObject(
-                mapped.content.map(pruneNonSearchableSliceUnionFields),
-                100,
-                2,
-              ),
+              documentToPlainTextString(entry.fields.content),
             )
           }
 
