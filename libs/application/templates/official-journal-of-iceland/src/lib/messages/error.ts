@@ -137,6 +137,11 @@ export const error = defineMessages({
     defaultMessage: 'Útgáfudagsetning má ekki vera tóm',
     description: 'Error message when requested date is missing',
   },
+  dateBeforeToday: {
+    id: 'ojoi.application:error.dateBeforeToday',
+    defaultMessage: 'Þessi útgáfudagsetning er ekki leyfileg',
+    description: 'Error message when requested date is not valid',
+  },
   applicationValidationError: {
     id: 'ojoi.application:error.applicationValidationError',
     defaultMessage: 'Umsókn er ekki rétt útfyllt',
