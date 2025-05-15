@@ -58,6 +58,7 @@ export class SignatureCollectionAdminResolver {
       user,
       input.signeeNationalId,
       input.listId,
+      input.collectionType,
     )
   }
 
@@ -135,9 +136,14 @@ export class SignatureCollectionAdminResolver {
   @Audit()
   async signatureCollectionAdminCandidateLookup(
     @CurrentUser() user: User,
-    @Args('input') { nationalId }: SignatureCollectionNationalIdInput,
+    @Args('input')
+    { nationalId, collectionType }: SignatureCollectionNationalIdInput,
   ): Promise<SignatureCollectionCandidateLookUp> {
-    return this.signatureCollectionService.signee(nationalId, user)
+    return this.signatureCollectionService.signee(
+      nationalId,
+      collectionType,
+      user,
+    )
   }
 
   @Query(() => SignatureCollectionListStatus)

@@ -1,17 +1,10 @@
-import { CollectionType } from '@island.is/clients/signature-collection'
-import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
-
-registerEnumType(CollectionType, {
-  name: 'SignatureCollectionNationalIdInputCollectionType',
-})
+import { SignatureCollectionCollectionTypeInput } from './collectionType.input'
 
 @InputType()
-export class SignatureCollectionNationalIdInput {
+export class SignatureCollectionNationalIdInput extends SignatureCollectionCollectionTypeInput {
   @Field()
   @IsString()
   nationalId!: string
-
-  @Field(() => CollectionType)
-  collectionType!: CollectionType
 }
