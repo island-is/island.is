@@ -228,11 +228,39 @@ jobs:
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
 
-      - name: NX format:write
-        if: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+  auto-format:
+    name: Auto-format Changed Files
+    runs-on: arc-shared
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_* below
+          fetch-depth: 0
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          # Need ref to know where to push to
+          # https://github.com/actions/checkout#push-a-commit-to-a-pr-using-the-built-in-token
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
+      - name: Run auto-format
+        id: auto-format
+        # NOTE: We want to use the PR base, not last good, since the format is not part of "good" build
+        # and causes unintended format changes when using a different commit
         run: |
-          ./scripts/ci/20_check-formatting.sh "write"
-          ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
+          yarn nx format --base="origin/$GITHUB_BASE_REF"
+          if ! git diff "$GITHUB_BASE_REF" --exit-code; then
+            echo "FILES_CHANGED=true" | tee -a "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit changed files
+        if: ${{ steps.auto-format.outputs.FILES_CHANGED == 'true' }}
+        run: ./infra/scripts/ci/git-check-dirty.sh . autoformat dirtybot
 
   lintfix-changed-files:
     name: Lintfix Changed Files
