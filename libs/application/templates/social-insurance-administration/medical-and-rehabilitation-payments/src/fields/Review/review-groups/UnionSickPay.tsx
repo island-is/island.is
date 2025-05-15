@@ -1,7 +1,16 @@
-import { formatText, YES } from '@island.is/application/core'
+import { useQuery } from '@apollo/client'
+import { coreErrorMessages, formatText, YES } from '@island.is/application/core'
+import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
+import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
-import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import {
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+  Stack,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useMemo } from 'react'
 import { NOT_APPLICABLE } from '../../../lib/constants'
 import {
   getApplicationAnswers,
@@ -23,7 +32,12 @@ export const UnionSickPay = ({
     unionNationalId,
   } = getApplicationAnswers(application.answers)
 
-  //TODO: Get the name of the union from the API
+  const { data, loading, error } = useQuery<SiaUnionsQuery>(siaUnionsQuery)
+  const unionName = useMemo(() => {
+    return data?.siaGetUnions.find(
+      (union) => union?.nationalId === unionNationalId,
+    )?.name
+  }, [data, unionNationalId])
 
   return (
     <ReviewGroup
@@ -47,35 +61,43 @@ export const UnionSickPay = ({
             />
           </GridColumn>
         </GridRow>
-        {hasUtilizedUnionSickPayRights !== NOT_APPLICABLE && (
-          <GridRow rowGap={3}>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(
-                  medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                    .unionSickPayUnionSelectTitle,
-                )}
-                value={unionNationalId}
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={
-                  hasUtilizedUnionSickPayRights === YES
-                    ? formatMessage(
-                        medicalAndRehabilitationPaymentsFormMessage.shared
-                          .sickPayDidEndDate,
-                      )
-                    : formatMessage(
-                        medicalAndRehabilitationPaymentsFormMessage.shared
-                          .sickPayDoesEndDate,
-                      )
-                }
-                value={formatDate(unionSickPayEndDate)}
-              />
-            </GridColumn>
-          </GridRow>
-        )}
+        {hasUtilizedUnionSickPayRights !== NOT_APPLICABLE &&
+          (loading ? (
+            <SkeletonLoader height={40} width="100%" borderRadius="large" />
+          ) : (
+            <GridRow rowGap={3}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    medicalAndRehabilitationPaymentsFormMessage
+                      .generalInformation.unionSickPayUnionSelectTitle,
+                  )}
+                  value={unionName}
+                  error={
+                    error
+                      ? formatMessage(coreErrorMessages.failedDataProvider)
+                      : undefined
+                  }
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={
+                    hasUtilizedUnionSickPayRights === YES
+                      ? formatMessage(
+                          medicalAndRehabilitationPaymentsFormMessage.shared
+                            .sickPayDidEndDate,
+                        )
+                      : formatMessage(
+                          medicalAndRehabilitationPaymentsFormMessage.shared
+                            .sickPayDoesEndDate,
+                        )
+                  }
+                  value={formatDate(unionSickPayEndDate)}
+                />
+              </GridColumn>
+            </GridRow>
+          ))}
       </Stack>
     </ReviewGroup>
   )

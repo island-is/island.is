@@ -601,4 +601,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   async getIncomePlanConditions({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getIncomePlanConditions(auth)
   }
+
+  async getRehabilitationplan({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getRehabilitationplan(auth)
+  }
 }
