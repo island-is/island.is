@@ -96,14 +96,15 @@ export class SignatureCollectionClientService {
   }
 
   async createLists(
-    { collectionId, owner, areas }: CreateListInput,
+    { collectionId, owner, areas, collectionType }: CreateListInput,
     auth: User,
   ): Promise<Slug> {
     const {
       id,
       isActive,
       areas: collectionAreas,
-    } = await this.currentCollection()
+    } = await this.getLatestCollectionForType(collectionType)
+
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id.toString() || !isActive) {
       throw new Error('Collection is not open')
@@ -114,7 +115,7 @@ export class SignatureCollectionClientService {
     }
     // check if user is already owner of lists
 
-    const { canCreate, isOwner } = await this.getSignee(auth)
+    const { canCreate, isOwner } = await this.getSignee(auth, collectionType)
     if (!canCreate || isOwner) {
       throw new Error('User is already owner of lists')
     }
@@ -149,14 +150,14 @@ export class SignatureCollectionClientService {
   }
 
   async createParliamentaryCandidacy(
-    { collectionId, owner, areas }: CreateListInput,
+    { collectionId, owner, areas, collectionType }: CreateListInput,
     auth: User,
   ): Promise<Slug> {
     const {
       id,
       isActive,
       areas: collectionAreas,
-    } = await this.currentCollection()
+    } = await this.getLatestCollectionForType(collectionType)
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id.toString() || !isActive) {
       // TODO: create ApplicationTemplateError
@@ -165,6 +166,7 @@ export class SignatureCollectionClientService {
 
     const { canCreate, isOwner, partyBallotLetterInfo } = await this.getSignee(
       auth,
+      collectionType,
     )
     if (!canCreate || isOwner) {
       // TODO: create ApplicationTemplateError
@@ -201,15 +203,14 @@ export class SignatureCollectionClientService {
   }
 
   async createParliamentaryLists(
-    { collectionId, candidateId, areas }: AddListsInput,
+    { collectionId, candidateId, areas, collectionType }: AddListsInput,
     auth: User,
   ): Promise<Success> {
     const {
       id,
       isActive,
       areas: collectionAreas,
-      collectionType,
-    } = await this.currentCollection()
+    } = await this.getLatestCollectionForType(collectionType)
 
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id.toString() || !isActive) {
@@ -217,7 +218,10 @@ export class SignatureCollectionClientService {
     }
     // check if user is already owner of lists
 
-    const { canCreate, canCreateInfo, name } = await this.getSignee(auth)
+    const { canCreate, canCreateInfo, name } = await this.getSignee(
+      auth,
+      collectionType,
+    )
     if (!canCreate) {
       // allow parliamentary owners to add more areas to their collection
       const isPresidential = collectionType === CollectionType.Presidential
@@ -257,8 +261,12 @@ export class SignatureCollectionClientService {
     return { success: true }
   }
 
-  async signList(listId: string, auth: User): Promise<Signature> {
-    const { signatures } = await this.getSignee(auth)
+  async signList(
+    listId: string,
+    collectionType: CollectionType,
+    auth: User,
+  ): Promise<Signature> {
+    const { signatures } = await this.getSignee(auth, collectionType)
     // If user has already signed list be sure to throw error
     if (signatures && signatures?.length > 0) {
       throw new Error('User has already signed a list')
@@ -309,11 +317,14 @@ export class SignatureCollectionClientService {
     }
   }
 
-  async unsignList(listId: string, auth: User): Promise<Success> {
-    const { collectionType } = await this.currentCollection()
+  async unsignList(
+    listId: string,
+    collectionType: CollectionType,
+    auth: User,
+  ): Promise<Success> {
     const isPresidential = collectionType === CollectionType.Presidential
 
-    const { signatures } = await this.getSignee(auth)
+    const { signatures } = await this.getSignee(auth, collectionType)
     const activeSignature = signatures?.find((signature) =>
       isPresidential ? signature.valid : signature.listId === listId,
     )
@@ -330,11 +341,21 @@ export class SignatureCollectionClientService {
   }
 
   async removeLists(
-    { collectionId, listIds }: { collectionId: string; listIds?: string[] },
+    {
+      collectionId,
+      listIds,
+      collectionType,
+    }: {
+      collectionId: string
+      listIds?: string[]
+      collectionType: CollectionType
+    },
     auth: User,
   ): Promise<Success> {
-    const { id, collectionType, isActive } = await this.currentCollection()
-    const { ownedLists, candidate } = await this.getSignee(auth)
+    const { id, isActive } = await this.getLatestCollectionForType(
+      collectionType,
+    )
+    const { ownedLists, candidate } = await this.getSignee(auth, collectionType)
     const { nationalId } = auth
     if (candidate?.nationalId !== nationalId || !candidate.id) {
       return { success: false, reasons: [ReasonKey.NotOwner] }
@@ -369,13 +390,17 @@ export class SignatureCollectionClientService {
       ),
     )
     // If no lists remain remove Candidate so that they can start a new collection through applications again
-    await this.checkIfRemoveCandidate(candidate.id, auth)
+    await this.checkIfRemoveCandidate(candidate.id, collectionType, auth)
 
     return { success: true }
   }
 
-  private async checkIfRemoveCandidate(id: string, auth: User) {
-    const { ownedLists, candidate } = await this.getSignee(auth)
+  private async checkIfRemoveCandidate(
+    id: string,
+    collectionType: CollectionType,
+    auth: User,
+  ) {
+    const { ownedLists, candidate } = await this.getSignee(auth, collectionType)
     if ((!ownedLists || ownedLists.length === 0) && candidate?.id) {
       await this.getApiWithAuth(this.candidateApi, auth).frambodIDDelete({
         iD: parseInt(id),
@@ -383,9 +408,12 @@ export class SignatureCollectionClientService {
     }
   }
 
-  async getSignedList(auth: User): Promise<SignedList[] | null> {
-    const { signatures } = await this.getSignee(auth)
-    const { endTime, collectionType } = await this.currentCollection()
+  async getSignedList(
+    collectionType: CollectionType,
+    auth: User,
+  ): Promise<SignedList[] | null> {
+    const { signatures } = await this.getSignee(auth, collectionType)
+    const { endTime } = await this.getLatestCollectionForType(collectionType)
     if (!signatures) {
       return null
     }
@@ -396,6 +424,7 @@ export class SignatureCollectionClientService {
           signature.listId,
           this.getApiWithAuth(this.listsApi, auth),
           this.getApiWithAuth(this.candidateApi, auth),
+          this.getApiWithAuth(this.collectionsApi, auth),
         )
         const isExtended = list.endTime > endTime
         const signedThisPeriod = signature.isInitialType === !isExtended
