@@ -67,6 +67,11 @@ export const error = defineMessages({
     defaultMessage: 'Fylla þarf út eftirfarandi reiti í {x}',
     description: 'Error message when fields are missing',
   },
+  missingFieldsAny: {
+    id: 'ojoi.application:error.missingFieldsAny',
+    defaultMessage: 'Fylla þarf út eftirfarandi reiti',
+    description: 'Error message when fields are missing',
+  },
   missingSignatureFieldsMessage: {
     id: 'ojoi.application:error.missingSignatureFieldsMessage',
     defaultMessage: '(Undirritunarkafli er hluti {x})',
@@ -139,7 +144,7 @@ export const error = defineMessages({
   },
   dateBeforeToday: {
     id: 'ojoi.application:error.dateBeforeToday',
-    defaultMessage: 'Þessi útgáfudagsetning er ekki leyfileg',
+    defaultMessage: 'Þessi birtingardagsetning er ekki leyfileg',
     description: 'Error message when requested date is not valid',
   },
   applicationValidationError: {
