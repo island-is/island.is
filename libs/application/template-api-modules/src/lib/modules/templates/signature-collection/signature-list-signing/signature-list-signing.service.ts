@@ -3,28 +3,35 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
+  CollectionType,
   ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { errorMessages } from '@island.is/application/templates/signature-collection/presidential-list-signing'
 import { ProviderErrorReason } from '@island.is/shared/problem'
+import { getCollectionTypeFromApplicationType } from '../shared/utils'
 
 @Injectable()
 export class SignatureListSigningService extends BaseTemplateApiService {
   constructor(
     private signatureCollectionClientService: SignatureCollectionClientService,
+    private collectionType: CollectionType,
   ) {
     super(ApplicationTypes.PRESIDENTIAL_LIST_SIGNING)
+    this.collectionType = getCollectionTypeFromApplicationType(
+      ApplicationTypes.PRESIDENTIAL_LIST_SIGNING,
+    )
   }
 
   async signList({ auth, application }: TemplateApiModuleActionProps) {
     const listId = application.answers.listId
       ? (application.answers.listId as string)
-      : (application.externalData.getList.data as any)[0].id
+      : (application.externalData.getList.data as Array<{ id: string }>)[0].id
 
     const signature = await this.signatureCollectionClientService.signList(
       listId,
+      this.collectionType,
       auth,
     )
     if (signature) {
@@ -35,7 +42,10 @@ export class SignatureListSigningService extends BaseTemplateApiService {
   }
 
   async canSign({ auth }: TemplateApiModuleActionProps) {
-    const signee = await this.signatureCollectionClientService.getSignee(auth)
+    const signee = await this.signatureCollectionClientService.getSignee(
+      auth,
+      this.collectionType,
+    )
     const { canSign, canSignInfo } = signee
 
     if (canSign) {
@@ -68,9 +78,9 @@ export class SignatureListSigningService extends BaseTemplateApiService {
 
   async getList({ auth, application }: TemplateApiModuleActionProps) {
     // Returns the list user is trying to sign, in the apporiate area
-    const areaId = (
-      application.externalData.canSign.data as { area: { id: string } }
-    ).area?.id
+    const areaId = (application.externalData.canSign.data as {
+      area: { id: string }
+    }).area?.id
 
     if (!areaId) {
       // If no area user will be stopped by can sign above
@@ -78,8 +88,10 @@ export class SignatureListSigningService extends BaseTemplateApiService {
     }
     const ownerId = application.answers.initialQuery as string
     // Check if user got correct ownerId, if not user has to pick list
-    const isCandidateId =
-      await this.signatureCollectionClientService.isCandidateId(ownerId, auth)
+    const isCandidateId = await this.signatureCollectionClientService.isCandidateId(
+      ownerId,
+      auth,
+    )
 
     // If initialQuery is not defined return all list for area
     const lists = await this.signatureCollectionClientService.getLists({
