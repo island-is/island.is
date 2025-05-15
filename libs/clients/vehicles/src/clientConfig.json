@@ -34,7 +34,7 @@
               "text/plain": {
                 "schema": {
                   "type": "string",
-                  "format": "byte"
+                  "format": "binary"
                 }
               },
               "application/json": {
