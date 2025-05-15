@@ -113,7 +113,6 @@ export class SignatureCollectionAdminClientService {
     return await this.sharedService.getLists(
       input,
       this.getApiWithAuth(this.listsApi, auth),
-      this.getApiWithAuth(this.collectionsApi, auth)
     )
   }
 
@@ -134,11 +133,13 @@ export class SignatureCollectionAdminClientService {
   }
 
   async createListsAdmin(
-    { collectionId, owner, areas }: CreateListInput,
+    { collectionId, owner, areas, collectionType }: CreateListInput,
     auth: Auth,
   ): Promise<Slug> {
-    const
-    const { id, areas: collectionAreas } = await this.currentCollection(auth)
+    const {
+      id,
+      areas: collectionAreas,
+    } = await this.getLatestCollectionForType(auth, collectionType)
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id) {
       throw new Error('Collection id input wrong')
