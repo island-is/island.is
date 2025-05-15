@@ -250,10 +250,9 @@ jobs:
         # and causes unintended format changes when using a different commit
         run: |
           yarn nx format --base="origin/$GITHUB_BASE_REF"
-          if ! git diff "$GITHUB_BASE_REF" --exit-code; then
+          if ! git diff "origin/$GITHUB_BASE_REF" --exit-code; then
             echo "FILES_CHANGED=true" | tee -a "$GITHUB_OUTPUT"
           fi
-
       - name: Commit changed files
         if: ${{ steps.auto-format.outputs.FILES_CHANGED == 'true' }}
         run: ./infra/scripts/ci/git-check-dirty.sh . autoformat dirtybot
