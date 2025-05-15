@@ -339,10 +339,10 @@ jobs:
             sed -i -E 's/\s*\[[^[]*cache[^]]*\]\s*//g' "${f}" || echo "No cached targets found in $f"
             grep -oP "(?<=$PWD/).*" "${f}" | sort -n | uniq -c | awk '{print($2 " #lints: " $1)}' > "${f}_files.out" || { echo "No lints found in $f"; }
           done
-          NEW_LINTS=$(comm -13 "${BASE_LINT_FILE}_files.out" "${HEAD_LINT_FILE}_files.out" | wc -l) || { echo "Failed comparing output files (new)"; exit 1; }
-          OLD_LINTS=$(comm -23 "${BASE_LINT_FILE}_files.out" "${HEAD_LINT_FILE}_files.out" | wc -l) || { echo "Failed comparing output files (old)"; exit 1; }
+          NEW_LINTS=$(comm -13 "${BASE_LINT_FILE}_files.out" "${HEAD_LINT_FILE}_files.out" | wc -l) || { echo "Failed comparing output files"; exit 1; }
+          COUNT_DIFF=$(( HEAD_LINT_COUNT - BASE_LINT_COUNT )) || :
           if (( NEW_LINTS == 0 )); then
-            echo "Lint count has not increased (𝚫=$OLD_LINTS)"
+            echo "Lint count has not increased (𝚫=$COUNT_DIFF)"
             exit 0
           fi
           echo "::error title=NEW_LINTS::Please fix your lints 🙏 (found $NEW_LINTS additional lints)"
