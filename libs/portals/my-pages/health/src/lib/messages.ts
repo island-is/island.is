@@ -1179,7 +1179,7 @@ export const messages = defineMessages({
     id: 'sp.health:reason',
   },
   referralsIntro: {
-    defaultMessage: 'Hér finnur þú tilvísanir ...',
+    defaultMessage: 'Hér finnur þú tilvísanir sem þú hefur fengið.',
     id: 'sp.health:referrals-intro',
   },
   regimenMedicine: {
@@ -1495,7 +1495,7 @@ export const messages = defineMessages({
     id: 'sp.health:waitlists',
   },
   waitlistsIntro: {
-    defaultMessage: 'Hér finnur þú biðlista ...',
+    defaultMessage: 'Hér finnur þú biðlista sem þú hefur verið skráð/ur á.',
     id: 'sp.health:waitlists-intro',
   },
   years: {

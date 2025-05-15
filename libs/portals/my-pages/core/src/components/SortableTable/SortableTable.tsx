@@ -77,10 +77,13 @@ export const SortableTable = (props: SortableTableProps) => {
   const [headerSorted, setHeaderSorted] = useState<string[]>([])
 
   useEffect(() => {
-    const headerItems = props.items
-      .map(({ id, tag, lastNode, ...restItems }) => Object.keys(restItems))
-      .flat()
-      .filter((value, index, self) => self.indexOf(value) === index)
+    const headerItems = Array.from(
+      new Set(
+        props.items.flatMap(({ id, tag, lastNode, ...restItems }) =>
+          Object.keys(restItems),
+        ),
+      ),
+    )
 
     // If expandable, remove the last item and add an empty string at the beginning
     if (props.expandable) {
@@ -205,7 +208,6 @@ export const SortableTable = (props: SortableTableProps) => {
                   />
                 ),
                 element: true,
-                width: i === 0 ? '100' : i === 1 ? '400' : '250',
               }))}
             />
           ) : (
