@@ -245,18 +245,19 @@ yargs(process.argv.slice(2))
         .filter((name) => !affectedServiceNames.includes(name))
 
       // BFF hack since the service name is not equal to the nx app name
-      const correctedFormattedList = Array.from(new Set(formattedList.map((name) => {
-        if (name.includes("services-bff-portals")) {
-          return "services-bff"
-        } else {
-          return name
-        }
-      }))).toString()
+      const correctedFormattedList = Array.from(
+        new Set(
+          formattedList.map((name) => {
+            if (name.includes('services-bff-portals')) {
+              return 'services-bff'
+            } else {
+              return name
+            }
+          }),
+        ),
+      ).toString()
 
-      writeToOutput(
-        correctedFormattedList,
-        typedArgv.output,
-      )
+      writeToOutput(correctedFormattedList, typedArgv.output)
     },
   })
   .command({

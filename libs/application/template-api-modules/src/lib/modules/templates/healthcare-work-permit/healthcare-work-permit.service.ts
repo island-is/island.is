@@ -130,14 +130,9 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
-    const secondarySchoolCareerPrograms =
-      mapSecondarySchoolStudentTrack(innaDiplomas)
-    const careerProgramsHI = mapUniversityStudentTracks(careerProgramsHIRaw)
-    const careerProgramsUNAK = mapUniversityStudentTracks(careerProgramsUNAKRaw)
-    const careerPrograms = (careerProgramsHI ?? [])
-      .concat(careerProgramsUNAK ?? [])
-      .concat(secondarySchoolCareerPrograms ?? [])
-
+    const careerPrograms = (careerProgramsHI ?? []).concat(
+      careerProgramsUNAK ?? [],
+    )
     if (!careerPrograms || careerPrograms?.length < 1) {
       throw new TemplateApiError(
         {
