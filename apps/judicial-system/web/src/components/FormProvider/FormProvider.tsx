@@ -19,6 +19,7 @@ import {
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { api } from '../../services'
 import { UserContext } from '../UserProvider/UserProvider'
 import { CaseQuery, useCaseLazyQuery } from './case.generated'
 import {
@@ -170,6 +171,12 @@ const FormProvider = ({ children }: Props) => {
   )
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      window.location.assign(
+        `${api.apiUrl}/api/auth/login?redirectRoute=${window.location.pathname}`,
+      )
+    }
+
     if (
       limitedAccess !== undefined && // Wait until limitedAccess is defined
       id &&

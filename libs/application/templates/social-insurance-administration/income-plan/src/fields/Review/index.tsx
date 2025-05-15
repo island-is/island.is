@@ -1,3 +1,5 @@
+import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   Application,
   Field,
@@ -6,27 +8,22 @@ import {
   RecordObject,
 } from '@island.is/application/types'
 import {
-  Box,
-  Text,
-  Button,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { FC, useMemo } from 'react'
-import { useMutation } from '@apollo/client'
-import {
   Label,
   ReviewGroup,
   formatCurrencyWithoutSuffix,
-  handleServerError,
 } from '@island.is/application/ui-components'
 import { StaticTableFormField } from '@island.is/application/ui-fields'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { inReviewFormMessages, incomePlanFormMessage } from '../../lib/messages'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { FC, useMemo } from 'react'
 import { getApplicationAnswers } from '../../lib/incomePlanUtils'
-import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { inReviewFormMessages, incomePlanFormMessage } from '../../lib/messages'
 
 interface ReviewScreenProps {
   application: Application
@@ -40,35 +37,11 @@ export const Review: FC<ReviewScreenProps> = ({
   application,
   field,
   goToScreen,
-  refetch,
 }) => {
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
   const { incomePlan } = getApplicationAnswers(application.answers)
   const { state } = application
-  const [submitApplication, { loading: loadingSubmit }] = useMutation(
-    SUBMIT_APPLICATION,
-    {
-      onError: (e) => handleServerError(e, formatMessage),
-    },
-  )
-
-  const handleSubmit = async (event: string) => {
-    const res = await submitApplication({
-      variables: {
-        input: {
-          id: application.id,
-          event,
-          answers: application.answers,
-        },
-      },
-    })
-
-    if (res?.data) {
-      // Takes them to the next state (which loads the relevant form)
-      refetch?.()
-    }
-  }
 
   const rows = useMemo(
     () =>
@@ -143,8 +116,12 @@ export const Review: FC<ReviewScreenProps> = ({
         editAction={() => goToScreen?.('incomePlanTable')}
       >
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-            <Label>{formatMessage(incomePlanFormMessage.info.section)}</Label>
+          <GridColumn span="12/12">
+            <Label>
+              {formatMessage(
+                socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
+              )}
+            </Label>
             <Box paddingTop={3}>
               <StaticTableFormField
                 application={application}
@@ -155,9 +132,10 @@ export const Review: FC<ReviewScreenProps> = ({
                   id: 'incomePlan',
                   title: '',
                   header: [
-                    incomePlanFormMessage.incomePlan.incomeType,
-                    incomePlanFormMessage.incomePlan.incomePerYear,
-                    incomePlanFormMessage.incomePlan.currency,
+                    socialInsuranceAdministrationMessage.incomePlan.incomeType,
+                    socialInsuranceAdministrationMessage.incomePlan
+                      .incomePerYear,
+                    socialInsuranceAdministrationMessage.incomePlan.currency,
                   ],
                   rows,
                 }}

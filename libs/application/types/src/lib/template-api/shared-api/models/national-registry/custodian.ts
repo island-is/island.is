@@ -1,7 +1,6 @@
 export interface NationalRegistryCustodian {
   nationalId: string
-  givenName: string | null
-  familyName: string | null
+  name: string | null
   legalDomicile?: {
     streetAddress: string
     postalCode: string | null

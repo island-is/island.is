@@ -57,9 +57,9 @@ export const reset = style({
 })
 
 export const nestedCell = style({
+  height: '48px',
   display: 'flex',
   alignItems: 'center',
-  height: '48px',
 })
 
 export const lastColumnCell = style({
