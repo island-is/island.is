@@ -837,17 +837,16 @@ export class CmsElasticsearchService {
     let sortRules: ('_score' | sortRule)[] = []
     if (!sort || sort === GrantsSortBy.RECENTLY_UPDATED) {
       sortRules = [
-        { dateUpdated: { order: SortDirection.DESC } },
+        { dateUpdated: { order: SortDirection.ASC } },
         { 'title.sort': { order: SortDirection.ASC } },
-        { dateCreated: { order: SortDirection.DESC } },
       ]
     } else if (sort === GrantsSortBy.ALPHABETICAL) {
       sortRules = [
         { 'title.sort': { order: SortDirection.ASC } },
         { dateUpdated: { order: SortDirection.DESC } },
-        { dateCreated: { order: SortDirection.DESC } },
       ]
     }
+
     if (queryString.length > 0 && queryString !== '*') {
       sortRules.unshift('_score')
     }
@@ -1101,7 +1100,7 @@ export class CmsElasticsearchService {
             must,
           },
         },
-        sort,
+        sort: sortRules,
         size,
         from: (page - 1) * size,
       })

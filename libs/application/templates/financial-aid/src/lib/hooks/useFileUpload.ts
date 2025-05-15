@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { gql } from '@apollo/client'
 
-import { UploadFile } from '@island.is/island-ui/core'
+import { UploadFileDeprecated } from '@island.is/island-ui/core'
 import {
   CreateFilesResponse,
   FileType,
@@ -52,10 +52,13 @@ export const SignedUrlQuery = gql`
   }
 `
 
-export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
+export const useFileUpload = (
+  formFiles: UploadFileDeprecated[],
+  folderId: string,
+) => {
   const { formatMessage } = useIntl()
-  const [files, _setFiles] = useState<UploadFile[]>([])
-  const filesRef = useRef<UploadFile[]>(files)
+  const [files, _setFiles] = useState<UploadFileDeprecated[]>([])
+  const filesRef = useRef<UploadFileDeprecated[]>(files)
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
   const [createApplicationFiles] = useMutation<{
@@ -87,7 +90,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
    * Sets ref and state value
    * @param files Files to set to state.
    */
-  const setFiles = (files: UploadFile[]) => {
+  const setFiles = (files: UploadFileDeprecated[]) => {
     /**
      * Use the filesRef value instead of the files state value because
      *
@@ -103,7 +106,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
   }
 
   const onChange = (
-    newFiles: UploadFile[],
+    newFiles: UploadFileDeprecated[],
     uploadCount?: number,
     isRetry?: boolean,
   ) => {
@@ -154,7 +157,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
   }
 
   const formatFiles = (
-    allFiles: UploadFile[],
+    allFiles: UploadFileDeprecated[],
     applicationId: string,
     type: FileType,
   ) => {
@@ -181,7 +184,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
   const uploadFiles = async (
     applicationId: string,
     type: FileType,
-    uploadFile: UploadFile[],
+    uploadFile: UploadFileDeprecated[],
   ) => {
     return (
       await createApplicationFiles({
@@ -192,7 +195,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     ).data?.createMunicipalitiesFinancialAidApplicationFiles?.files
   }
 
-  const uploadToCloudFront = (file: UploadFile, url: string) => {
+  const uploadToCloudFront = (file: UploadFileDeprecated, url: string) => {
     const request = new XMLHttpRequest()
     request.withCredentials = true
     request.responseType = 'json'
@@ -247,7 +250,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     })
   }
 
-  const updateFile = (file: UploadFile) => {
+  const updateFile = (file: UploadFileDeprecated) => {
     const newFiles = [...filesRef.current]
     const updatedFiles = newFiles.map((newFile) => {
       return newFile.key === file.key ? file : newFile
@@ -263,7 +266,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     }
   }
 
-  const onRemove = async (file: UploadFile) => {
+  const onRemove = async (file: UploadFileDeprecated) => {
     setUploadErrorMessage(undefined)
 
     if (file.key && file.key in requests) {
@@ -282,7 +285,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     setFiles([...files].filter((f) => f !== file))
   }
 
-  const onRetry = (file: UploadFile) => {
+  const onRetry = (file: UploadFileDeprecated) => {
     setUploadErrorMessage(undefined)
     onChange([file as File], 1, true)
   }

@@ -23,7 +23,11 @@ export const getMachineTenureOverviewInformation = (
   return (
     certificateOfTenure
       ?.filter(({ machineNumber }) =>
-        isAssignee ? userInfo?.workMachine.includes(machineNumber) : true,
+        isAssignee
+          ? userInfo?.workMachine
+              ?.map((x) => x.split(' ')[0])
+              .includes(machineNumber)
+          : true,
       )
       .map(
         ({

@@ -67,7 +67,7 @@ const wrapper: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
   </MockedProvider>
 )
 
-async function openMenu() {
+const openMenu = async () => {
   // Open user dropdown and wait for a few promise updates.
   await act(async () => {
     fireEvent.click(screen.getAllByRole('button', { name: /útskráning/i })[0])

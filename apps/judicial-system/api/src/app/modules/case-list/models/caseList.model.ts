@@ -141,9 +141,6 @@ export class CaseListEntry {
   @Field(() => [EventLog], { nullable: true })
   readonly eventLogs?: EventLog[]
 
-  @Field(() => String, { nullable: true })
-  readonly indictmentCompletedDate?: string
-
   // TEMP: Use with caution! This key will never be populated.
   // It was added to bypass table component type checks for a required custom sort key
   // until we have a resolution on how to handle multiple defendants in the case list
@@ -161,4 +158,7 @@ export class CaseListEntry {
   // automatically.
   @Field(() => Boolean, { nullable: true })
   readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isRegisteredInPrisonSystem?: boolean
 }

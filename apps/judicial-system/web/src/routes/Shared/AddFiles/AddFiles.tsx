@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import isEmpty from 'lodash/isEmpty'
 import { useRouter } from 'next/router'
 
+import { FileUploadStatus } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isDefenceUser,
@@ -122,7 +123,7 @@ const AddFiles: FC = () => {
     addUploadFiles(
       files,
       {
-        status: 'done',
+        status: FileUploadStatus.done,
         submissionDate: formatDateForServer(submissionDate),
         fileRepresentative: selectedCaseRepresentative?.name,
         category: !isEmpty(selectedCaseRepresentative)
@@ -270,6 +271,7 @@ const AddFiles: FC = () => {
           )}
           onClose={() => setVisibleModal(undefined)}
           onSecondaryButtonClick={() => setVisibleModal(undefined)}
+          isPrimaryButtonDisabled={!allFilesDoneOrError}
           onPrimaryButtonClick={async () => {
             await handleNextButtonClick()
           }}

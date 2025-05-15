@@ -1,5 +1,3 @@
-name: Monorepo pipeline - close and destroy
-
 on:
   workflow_dispatch:
   pull_request:
@@ -8,9 +6,14 @@ on:
       - unlabeled
       - auto_merge_enabled
 
+concurrency:
+  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
+  group: push-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: false
+
 jobs:
   close_feature:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: ${{ github.event.label.name == 'deploy-feature' }}
     permissions:
       id-token: write
@@ -24,6 +27,25 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
+      - name: Generate feature name
+        id: git-feature-name
+        run: |
+          set -euo pipefail
+
+          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+          GIT_BRANCH_DEPLOY="$GIT_BRANCH"
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
+              # If event is pull request but branch is not prefixed with feature/
+              GIT_BRANCH_DEPLOY="feature/$GIT_BRANCH_DEPLOY"
+            fi
+            # Avoid too long resource names
+            GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
+          fi
+
+          FEATURE_NAME="$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
+          echo "FEATURE_NAME=$FEATURE_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Get token
         id: get-token
@@ -44,7 +66,7 @@ jobs:
       - name: Dispatch workflow to helm-values repository
         env:
           HELM_VALUES_TOKEN: ${{ steps.get-token.outputs.token }}
-          FEATURE_NAME: ${{ env.FEATURE_NAME }}
+          FEATURE_NAME: ${{ steps.git-feature-name.outputs.FEATURE_NAME }}
         run: |
           repo_owner="island-is"
           repository="helm-values"

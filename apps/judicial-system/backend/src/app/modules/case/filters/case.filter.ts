@@ -17,12 +17,13 @@ import {
   isPublicProsecutionOfficeUser,
   isRequestCase,
   isRestrictionCase,
-  RequestSharedWithDefender,
+  RequestSharedWhen,
   type User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { CivilClaimant, Defendant } from '../../defendant'
+import { Victim } from '../../victim'
 import { Case } from '../models/case.model'
 import { MinimalCase } from '../models/case.types'
 import { DateLog } from '../models/dateLog.model'
@@ -227,7 +228,9 @@ const canPrisonAdminUserAccessCase = (
 ): boolean => {
   // Prison admin users cannot update cases
   if (forUpdate) {
-    return false
+    if (!isIndictmentCase(theCase.type)) {
+      return false
+    }
   }
 
   // Check case type access
@@ -291,6 +294,59 @@ const canPrisonAdminUserAccessCase = (
   return true
 }
 
+const canDefenceUserAccessRequestCaseState = ({
+  requestSharedWhen,
+  state,
+  dateLogs,
+}: {
+  requestSharedWhen?: string
+  state: CaseState
+  dateLogs?: DateLog[]
+}) => {
+  // Check submitted case access
+  const canDefenderAccessSubmittedCase =
+    requestSharedWhen === RequestSharedWhen.READY_FOR_COURT
+
+  if (state === CaseState.SUBMITTED && !canDefenderAccessSubmittedCase) {
+    return false
+  }
+
+  // Check received case access
+  const canDefenderAccessReceivedCase =
+    canDefenderAccessSubmittedCase || Boolean(DateLog.arraignmentDate(dateLogs))
+
+  if (state === CaseState.RECEIVED && !canDefenderAccessReceivedCase) {
+    return false
+  }
+
+  return true
+}
+
+const canCaseDefendantDefenceUserAccessRequestCase = (
+  theCase: Case,
+  user: User,
+) => {
+  if (
+    !canDefenceUserAccessRequestCaseState({
+      requestSharedWhen: theCase.requestSharedWithDefender,
+      state: theCase.state,
+      dateLogs: theCase.dateLogs,
+    })
+  ) {
+    return false
+  }
+
+  const normalizedAndFormattedNationalId = normalizeAndFormatNationalId(
+    user.nationalId,
+  )
+
+  // Check case defender assignment
+  return (
+    theCase.defenderNationalId &&
+    normalizedAndFormattedNationalId.includes(theCase.defenderNationalId)
+  )
+}
+
 const canDefenceUserAccessRequestCase = (
   theCase: Case,
   user: User,
@@ -308,40 +364,25 @@ const canDefenceUserAccessRequestCase = (
     return false
   }
 
-  // Check submitted case access
-  const canDefenderAccessSubmittedCase =
-    theCase.requestSharedWithDefender ===
-    RequestSharedWithDefender.READY_FOR_COURT
-
-  if (
-    theCase.state === CaseState.SUBMITTED &&
-    !canDefenderAccessSubmittedCase
-  ) {
-    return false
-  }
-
-  // Check received case access
-  const canDefenderAccessReceivedCase =
-    canDefenderAccessSubmittedCase ||
-    Boolean(DateLog.arraignmentDate(theCase.dateLogs))
-
-  if (theCase.state === CaseState.RECEIVED && !canDefenderAccessReceivedCase) {
-    return false
-  }
-
-  const normalizedAndFormattedNationalId = normalizeAndFormatNationalId(
-    user.nationalId,
-  )
-
-  // Check case defender assignment
-  if (
-    theCase.defenderNationalId &&
-    normalizedAndFormattedNationalId.includes(theCase.defenderNationalId)
-  ) {
+  // CASE DEFENDANT
+  if (canCaseDefendantDefenceUserAccessRequestCase(theCase, user)) {
     return true
   }
 
-  return false
+  // VICTIM LAWYER
+  const victimWithLawyer = Victim.getVictimWithLawyer(
+    user.nationalId,
+    theCase.victims,
+  )
+
+  return Boolean(
+    victimWithLawyer &&
+      canDefenceUserAccessRequestCaseState({
+        requestSharedWhen: victimWithLawyer.lawyerAccessToRequest,
+        state: theCase.state,
+        dateLogs: theCase.dateLogs,
+      }),
+  )
 }
 
 const canDefenceUserAccessIndictmentCase = (

@@ -229,6 +229,21 @@ export const Properties = new XroadConf({
   },
 })
 
+export const PropertySearch = new XroadConf({
+  env: {
+    XROAD_HMS_PROPERTY_SEARCH_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/fasteignir-v2-beta',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/fasteignir-v2-beta',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v2',
+    },
+    XROAD_HMS_PROPERTY_SEARCH_CLIENT_HEADER: {
+      dev: 'IS-DEV/GOV/10000/island-is-client',
+      staging: 'IS-TEST/GOV/5501692829/test-client',
+      prod: 'IS/GOV/5501692829/island-is-client',
+    },
+  },
+})
+
 export const AdrAndMachine = new XroadConf({
   env: {
     XROAD_ADR_MACHINE_LICENSE_PATH: {
