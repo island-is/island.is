@@ -299,6 +299,9 @@ jobs:
           set -euo pipefail
           lints=$(mktemp -t lint-head.XXXXXX)
           echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
+          echo "::group::Lints"
+          cat "$lints"
+          echo "::endgroup::"
           yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
             tee -a "$lints" | # Show output when running, but preserve pipe-chaining
             (grep -oP '(?<=✖ )(\d+)(?= problems)' || echo '0') | # Find number of problems
@@ -319,6 +322,9 @@ jobs:
           set -euo pipefail
           lints=$(mktemp -t lint-base.XXXXXX)
           echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
+          echo "::group::Lints"
+          cat "$lints"
+          echo "::endgroup::"
           yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
             tee -a "$lints" | # Show output when running, but preserve pipe-chaining
             (grep -oP '(?<=✖ )(\d+)(?= problems)' || echo '0') | # Find number of problems
