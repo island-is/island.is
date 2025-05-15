@@ -229,7 +229,7 @@ jobs:
         run: ./scripts/ci/20_check-formatting.sh "check"
 
       - name: NX format:write
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
         run: |
           ./scripts/ci/20_check-formatting.sh "write"
           ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
