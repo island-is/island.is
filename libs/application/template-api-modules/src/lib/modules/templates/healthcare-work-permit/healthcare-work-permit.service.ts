@@ -133,15 +133,13 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
-    const secondarySchoolCareerPrograms =
-      mapSecondarySchoolStudentTrack(innaDiplomas)
+    const secondarySchoolCareerPrograms = mapSecondarySchoolStudentTrack(null)
     const careerProgramsHI = mapUniversityStudentTracks(careerProgramsHIRaw)
     const careerProgramsUNAK = mapUniversityStudentTracks(careerProgramsUNAKRaw)
-
-    //const careerPrograms = careerProgramsHI?.concat(careerProgramsUNAK ?? []).concat(secondarySchoolCareerPrograms ?? [])
     const careerPrograms = (careerProgramsHI ?? [])
       .concat(careerProgramsUNAK ?? [])
       .concat(secondarySchoolCareerPrograms ?? [])
+
     if (!careerPrograms || careerPrograms?.length < 1) {
       throw new TemplateApiError(
         {
@@ -319,6 +317,8 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
         400,
       )
     }
+
+    console.log('PROGRAMS TO BE DISPLAYED', programsToBeDisplayed)
 
     return programsToBeDisplayed.sort(
       (a, b) => Number(a.error) - Number(b.error),
