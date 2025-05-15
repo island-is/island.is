@@ -744,6 +744,7 @@
       "@island.is/clients/judicial-system-sp": [
         "libs/clients/judicial-system-sp/src/index.ts"
       ],
+      "@island.is/clients/legal-gazette": ["libs/clients/legal-gazette/src/index.ts"],
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"
       ],
@@ -1203,7 +1204,6 @@
       "application/templates/name-of-application": [
         "libs/application/templates/name-of-application/src/index.ts"
       ],
-      "clients/legal-gazette": ["libs/clients/legal-gazette/src/index.ts"],
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
     }
   }

@@ -7,7 +7,6 @@ export const modalBase = style({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  alignItems: 'center',
 })
 
 export const bodyText = style({})

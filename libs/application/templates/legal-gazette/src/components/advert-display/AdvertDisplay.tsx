@@ -108,7 +108,7 @@ const AdvertDisplayModal = (props: AdvertDisplayProps) => {
           <GridContainer>
             <GridRow>
               <GridColumn span={['12/12', '8/12']} offset={['0', '2/12']}>
-                <Box padding={2} background="white">
+                <Box width="full" padding={2} background="white">
                   <Stack space={2}>
                     <Inline align="right">
                       <button onClick={closeModal}>

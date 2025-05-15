@@ -7,12 +7,13 @@ import {
   Application,
   DefaultEvents,
   InstitutionNationalIds,
+  defineTemplateApi,
 } from '@island.is/application/types'
 
 import { assign } from 'xstate'
 import { legalGazetteDataSchema } from './dataSchema'
 import { CodeOwners } from '@island.is/shared/constants'
-import { LegalGazetteStates } from './constants'
+import { LegalGazetteAPIActions, LegalGazetteStates } from './constants'
 import { m } from './messages'
 import { pruneAfterDays } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
@@ -144,6 +145,12 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: false,
           },
+          onEntry: defineTemplateApi({
+            action: LegalGazetteAPIActions.submitApplication,
+            shouldPersistToExternalData: true,
+            externalDataId: 'successfullyPosted',
+            throwOnError: false,
+          }),
           actionCard: {
             tag: {
               label: 'Í vinnslu hjá ritstjórn',

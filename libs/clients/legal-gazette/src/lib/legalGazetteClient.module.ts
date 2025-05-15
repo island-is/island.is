@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common'
+import { LegalGazetteClientService } from './legalGazetteClient.service'
+import { LegalGazetteClientProvider } from './legalGazetteClient.provider'
 
 @Module({
   controllers: [],
-  providers: [],
-  exports: [],
+  providers: [LegalGazetteClientProvider, LegalGazetteClientService],
+  exports: [LegalGazetteClientService],
 })
-export class ClientsLegalGazetteModule {}
+export class LegalGazetteClientModule {}

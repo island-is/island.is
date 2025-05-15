@@ -317,6 +317,65 @@
         "tags": ["Case Types"]
       }
     },
+    "/api/v1/applications": {
+      "post": {
+        "operationId": "submitApplication",
+        "summary": "",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubmitApplicationDto" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "tags": ["Legal Gazette Applications"]
+      }
+    },
     "/api/v1/health": {
       "get": {
         "operationId": "HealthController_",
@@ -399,7 +458,7 @@
             ]
           },
           "message": { "type": "string" },
-          "details": { "type": "string" }
+          "details": { "type": "array", "items": { "type": "string" } }
         },
         "required": ["statusCode", "timestamp"]
       },
@@ -430,6 +489,45 @@
             "example": "Base entity"
           }
         }
+      },
+      "SignatureDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "location": { "type": "string" },
+          "date": { "type": "string" }
+        },
+        "required": ["name", "location", "date"]
+      },
+      "CommunicationChannelDto": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string" },
+          "phone": { "type": "string" }
+        },
+        "required": ["email", "phone"]
+      },
+      "SubmitApplicationDto": {
+        "type": "object",
+        "properties": {
+          "applicationId": { "type": "string" },
+          "caption": { "type": "string" },
+          "htmlBase64": { "type": "string" },
+          "signature": { "$ref": "#/components/schemas/SignatureDto" },
+          "channels": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CommunicationChannelDto" }
+          },
+          "publishingDates": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": [
+          "applicationId",
+          "caption",
+          "htmlBase64",
+          "signature",
+          "channels",
+          "publishingDates"
+        ]
       }
     }
   }

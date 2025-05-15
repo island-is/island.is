@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 import { LegalGazetteTemplateService } from './legal-gazette.service'
-import { SharedTemplateAPIModule } from '../../shared'
+import { LegalGazetteClientModule } from '@island.is/clients/legal-gazette'
 
 @Module({
-  imports: [SharedTemplateAPIModule],
+  imports: [LegalGazetteClientModule],
   providers: [LegalGazetteTemplateService],
   exports: [LegalGazetteTemplateService],
 })
