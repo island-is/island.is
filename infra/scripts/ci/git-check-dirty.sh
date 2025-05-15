@@ -29,6 +29,7 @@ commit_as_dirty_bot() {
 if [[ $(git diff --stat "$abs_path") != '' ]]; then
   echo "Changes found in $rel_path that will be committed"
   git diff "$abs_path"
+  git add -u "$abs_path"
   # Determine which user to commit as
   case "$owner" in
   "github actions")
