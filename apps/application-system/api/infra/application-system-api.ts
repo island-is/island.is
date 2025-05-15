@@ -272,6 +272,11 @@ export const serviceSetup = (services: {
         staging: 'IS-TEST/GOV/10047/UA-Protected/kvortun-v1/',
         prod: 'IS/GOV/5605882089/UA-Protected/kvortun-v1',
       },
+      XROAD_FJS_BANKINFO_PATH: {
+        dev: 'IS-DEV/GOV/10021/FJS-Public/TBRBankMgrService_v1',
+        staging: 'IS-TEST/GOV/10021/FJS-Public/TBRBankMgrService_v1',
+        prod: 'IS/GOV/10021/FJS-Public/TBRBankMgrService_v1',
+      },
       NOVA_ACCEPT_UNAUTHORIZED: {
         dev: 'true',
         staging: 'false',

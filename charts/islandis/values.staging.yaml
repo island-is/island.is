@@ -664,6 +664,7 @@ application-system-api:
     XROAD_FINANCES_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_V2_PATH: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
+    XROAD_FJS_BANKINFO_PATH: 'IS-TEST/GOV/10021/FJS-Public/TBRBankMgrService_v1'
     XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1'
     XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: 'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1'
     XROAD_HEALTH_DIRECTORATE_PATH: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir'

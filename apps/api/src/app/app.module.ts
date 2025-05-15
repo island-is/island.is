@@ -129,6 +129,8 @@ import {
   FirearmDigitalLicenseClientConfig,
   MachineDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
+import { BankInfoClientConfig } from '@island.is/clients/fjs/bankinfo'
+
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
@@ -281,13 +283,7 @@ const environment = getConfig
     CmsTranslationsModule,
     TerminusModule,
     HealthInsuranceModule,
-    UserProfileModule.register({
-      islykill: {
-        cert: environment.islykill.cert!,
-        passphrase: environment.islykill.passphrase!,
-        basePath: environment.islykill.basePath!,
-      },
-    }),
+    UserProfileModule,
     CommunicationsModule,
     EmailSignupModule,
     ApiCatalogueModule,
@@ -458,6 +454,7 @@ const environment = getConfig
         VerdictsClientConfig,
         SecondarySchoolClientConfig,
         PaymentsApiModuleConfig,
+        BankInfoClientConfig,
       ],
     }),
   ],
