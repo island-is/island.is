@@ -231,7 +231,7 @@ jobs:
   auto-format:
     name: Auto-format Changed Files
     runs-on: arc-shared
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+    if: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
