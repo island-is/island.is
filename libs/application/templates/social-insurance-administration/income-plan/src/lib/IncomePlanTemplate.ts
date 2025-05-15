@@ -45,7 +45,6 @@ import {
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import {
-  defaultIncomeTypes,
   getApplicationAnswers,
   getApplicationExternalData,
   isEligible,
