@@ -26,7 +26,7 @@ import { retry } from '@island.is/shared/utils/server'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { PaymentMethod, PaymentStatus } from '../../types'
+import { PaymentMethod } from '../../types'
 import { ChargeResponse } from './cardPayment.types'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import { VerificationCallbackInput } from './dtos/verificationCallback.input'
@@ -239,14 +239,14 @@ export class CardPaymentController {
       )
 
       const persistedPaymentConfirmation =
-        await this._persistPaymentConfirmationAndHandleFailure(
+        await this.persistPaymentConfirmationAndHandleFailure(
           chargeCardInput,
           paymentResult,
           totalPrice,
           paymentTrackingData,
         )
 
-      const confirmation = await this._createFjsChargeAndHandleFailure(
+      const confirmation = await this.createFjsChargeAndHandleFailure(
         chargeCardInput,
         paymentFlow,
         catalogItems,
@@ -256,7 +256,7 @@ export class CardPaymentController {
         persistedPaymentConfirmation,
       )
 
-      await this._handleSuccessfulPaymentNotification(
+      await this.handleSuccessfulPaymentNotification(
         paymentFlowId,
         paymentResult,
         confirmation,
@@ -287,7 +287,7 @@ export class CardPaymentController {
     }
   }
 
-  private async _persistPaymentConfirmationAndHandleFailure(
+  private async persistPaymentConfirmationAndHandleFailure(
     chargeCardInput: ChargeCardInput,
     paymentResult: ChargeCardResponse,
     totalPrice: number,
@@ -296,7 +296,7 @@ export class CardPaymentController {
     const paymentFlowId = chargeCardInput.paymentFlowId
     try {
       await this.paymentFlowService.createPaymentConfirmation({
-        paymentResult: paymentResult as any,
+        paymentResult,
         paymentFlowId: paymentFlowId,
         totalPrice,
         paymentTrackingData,
@@ -376,7 +376,7 @@ export class CardPaymentController {
     }
   }
 
-  private async _createFjsChargeAndHandleFailure(
+  private async createFjsChargeAndHandleFailure(
     chargeCardInput: ChargeCardInput,
     paymentFlow: PaymentFlowAttributes,
     catalogItems: CatalogItemWithQuantity[],
@@ -391,7 +391,7 @@ export class CardPaymentController {
         this.cardPaymentService.createCardPaymentChargePayload({
           paymentFlow,
           charges: catalogItems,
-          chargeResponse: paymentResult as any,
+          chargeResponse: paymentResult,
           totalPrice,
           merchantReferenceData,
         })
@@ -512,7 +512,7 @@ export class CardPaymentController {
     }
   }
 
-  private async _handleSuccessfulPaymentNotification(
+  private async handleSuccessfulPaymentNotification(
     paymentFlowId: string,
     paymentResult: ChargeResponse,
     confirmation: PaymentFlowFjsChargeConfirmation | null,

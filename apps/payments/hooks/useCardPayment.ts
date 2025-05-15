@@ -16,6 +16,7 @@ import {
 } from '../graphql/queries.graphql.generated'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 import { PaymentError } from '../utils/error/error'
+import { ApolloError } from '@apollo/client'
 
 interface UseCardPaymentProps {
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
@@ -101,7 +102,7 @@ export const useCardPayment = ({
         if (gqlErrors && gqlErrors.length > 0) {
           const problem = findProblemInApolloError({
             graphQLErrors: gqlErrors,
-          } as any)
+          } as ApolloError)
           throw new Error(
             (problem?.detail as CardErrorCode) ||
               CardErrorCode.UnknownCardError,
@@ -112,9 +113,10 @@ export const useCardPayment = ({
           throw new Error(CardErrorCode.UnknownCardError)
         }
         return data.paymentsVerifyCard
-      } catch (e: any) {
-        const message = e?.message || CardErrorCode.UnknownCardError
-        const problem = findProblemInApolloError(e)
+      } catch (e: unknown) {
+        const message =
+          e instanceof Error ? e.message : CardErrorCode.UnknownCardError
+        const problem = findProblemInApolloError(e as ApolloError)
         throw new Error(
           (problem?.detail as CardErrorCode) ||
             (message as CardErrorCode) ||
@@ -137,7 +139,7 @@ export const useCardPayment = ({
         if (gqlErrors && gqlErrors.length > 0) {
           const problem = findProblemInApolloError({
             graphQLErrors: gqlErrors,
-          } as any)
+          } as ApolloError)
           throw new Error(
             (problem?.detail as CardErrorCode) ||
               CardErrorCode.UnknownCardError,
@@ -147,9 +149,10 @@ export const useCardPayment = ({
           throw new Error(CardErrorCode.UnknownCardError)
         }
         return data.paymentsChargeCard
-      } catch (e: any) {
-        const message = e?.message || CardErrorCode.UnknownCardError
-        const problem = findProblemInApolloError(e)
+      } catch (e: unknown) {
+        const message =
+          e instanceof Error ? e.message : CardErrorCode.UnknownCardError
+        const problem = findProblemInApolloError(e as ApolloError)
         throw new Error(
           (problem?.detail as CardErrorCode) ||
             (message as CardErrorCode) ||
@@ -216,11 +219,13 @@ export const useCardPayment = ({
         }
 
         onPaymentSuccess()
-      } catch (e: any) {
+      } catch (e: unknown) {
         isVerifyingRef.current = false
         setThreeDSecureModalActive(false)
         onPaymentError({
-          code: (e.message as CardErrorCode) || CardErrorCode.UnknownCardError,
+          code: (e instanceof Error
+            ? e.message
+            : CardErrorCode.UnknownCardError) as CardErrorCode,
         })
       } finally {
         setIsProcessing(false)

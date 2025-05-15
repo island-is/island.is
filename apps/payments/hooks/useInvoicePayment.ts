@@ -37,9 +37,11 @@ export const useInvoicePayment = ({
         throw new Error(CardErrorCode.GenericDecline)
       }
       onPaymentSuccess()
-    } catch (e: any) {
+    } catch (e: unknown) {
       onPaymentError({
-        code: (e.message as CardErrorCode) || CardErrorCode.UnknownCardError,
+        code: (e instanceof Error
+          ? e.message
+          : CardErrorCode.UnknownCardError) as CardErrorCode,
       })
     }
   }, [

@@ -87,8 +87,11 @@ export const usePaymentOrchestration = ({
         } else if (selectedPaymentMethod === 'invoice') {
           await invoicePayment.processInvoicePayment()
         }
-      } catch (e: any) {
-        if (e.message !== CardErrorCode.VerificationCancelledByUser) {
+      } catch (e: unknown) {
+        if (
+          e instanceof Error &&
+          e.message !== CardErrorCode.VerificationCancelledByUser
+        ) {
           setPaymentError({
             code:
               (e.message as CardErrorCode) || CardErrorCode.UnknownCardError,
@@ -97,7 +100,7 @@ export const usePaymentOrchestration = ({
         setIsInitiatingSubmit(false)
       }
     },
-    [selectedPaymentMethod, cardPayment, invoicePayment, commonOnPaymentError], // Added commonOnPaymentError for direct error setting
+    [selectedPaymentMethod, cardPayment, invoicePayment],
   )
 
   const combinedIsProcessing =
