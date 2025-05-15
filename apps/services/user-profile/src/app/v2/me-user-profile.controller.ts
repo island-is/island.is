@@ -382,4 +382,37 @@ export class MeUserProfileController {
       }),
     )
   }
+
+  @Patch('/actor-profile/:from-national-id')
+  @Scopes(ApiScope.internal)
+  @Documentation({
+    description: 'Update an actor profile with email id for the current user',
+    response: { status: 200, type: ActorProfileDetailsDto },
+  })
+  updateActorProfileEmailById(
+    @CurrentUser() user: User,
+    @Param('from-national-id') fromNationalId: string,
+    @Body() dto: SetActorProfileEmailDto,
+  ): Promise<ActorProfileDetailsDto> {
+    if (!user.actor?.nationalId) {
+      throw new BadRequestException('User has no actor profile')
+    }
+
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'updateActorProfileEmailById',
+        resources: `${user.nationalId}:${user.actor.nationalId}`,
+        meta: {
+          emailsId: dto.emailsId,
+        },
+      },
+      this.userProfileService.setActorProfileEmail({
+        toNationalId: user.nationalId,
+        fromNationalId,
+        emailsId: dto.emailsId,
+      }),
+    )
+  }
 }
