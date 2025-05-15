@@ -102,7 +102,7 @@ export const CustodianOverview: FC<FieldBaseProps> = ({
                     </Text>
                   )}
                   <Text>
-                    {custodian.givenName} {custodian.familyName}
+                    {custodian.name}
                   </Text>
                   <Text>{formatKennitala(custodian.nationalId)}</Text>
                   <Text>{custodian.legalDomicile?.streetAddress}</Text>

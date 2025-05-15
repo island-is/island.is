@@ -525,6 +525,7 @@ export const slices = gql`
         url
         width
         height
+        description
       }
       openLinkInNewTab
     }
@@ -549,6 +550,7 @@ export const slices = gql`
       url
       width
       height
+      description
     }
   }
 
@@ -614,6 +616,7 @@ export const slices = gql`
       contentType
       width
       height
+      description
     }
   }
 
@@ -648,6 +651,7 @@ export const slices = gql`
       title
       width
       height
+      description
     }
     link {
       text
@@ -734,6 +738,7 @@ export const slices = gql`
           title
           width
           height
+          description
         }
         organization {
           slug
@@ -886,6 +891,7 @@ export const slices = gql`
         title
         width
         height
+        description
       }
     }
   }
@@ -976,6 +982,7 @@ export const slices = gql`
       url
       width
       height
+      description
     }
     openLinkInNewTab
   }
@@ -1016,6 +1023,7 @@ export const slices = gql`
           title
           width
           height
+          description
         }
       }
     }

@@ -255,8 +255,12 @@ export class FileService {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    const content = await this.getCaseFileFromS3(theCase, file)
+    const fileName =
+      theCase.caseFiles
+        ?.find((f) => f.key === file.key)
+        ?.userGeneratedFilename?.trim() || file.name
 
+    const content = await this.getCaseFileFromS3(theCase, file)
     const courtDocumentFolder = this.getCourtDocumentFolder(file)
 
     return this.courtService.createDocument(
@@ -265,8 +269,8 @@ export class FileService {
       theCase.courtId,
       theCase.courtCaseNumber,
       courtDocumentFolder,
-      file.name,
-      file.name,
+      fileName,
+      fileName,
       file.type,
       content,
     )
@@ -357,6 +361,9 @@ export class FileService {
       [
         CaseFileCategory.PROSECUTOR_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
       ].includes(file.category)
     ) {
       const messages: Message[] = []

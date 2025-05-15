@@ -7,7 +7,10 @@ import {
 } from '@island.is/application/core'
 import {
   Actions,
+  defaultIncomeTypes,
   Events,
+  INCOME,
+  RatioType,
   Roles,
   States,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -40,7 +43,6 @@ import {
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
-import { INCOME, RatioType } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   defaultIncomeTypes,

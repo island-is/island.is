@@ -11,7 +11,11 @@ import { useIntl } from 'react-intl'
 import _isEqual from 'lodash/isEqual'
 import router from 'next/router'
 
-import { Box, InputFileUpload } from '@island.is/island-ui/core'
+import {
+  Box,
+  FileUploadStatus,
+  InputFileUpload,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   CrimeSceneMap,
@@ -98,7 +102,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
   >([])
 
   const errorMessage = useMemo(() => {
-    if (uploadFiles.some((file) => file.status === 'error')) {
+    if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
       return formatMessage(errorMessages.general)
     }
     if (uploadFiles.some((file) => file.size === 0)) {
@@ -264,9 +268,9 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
       />
       <InputFileUpload
         name="fileUpload"
-        fileList={uploadFiles}
+        files={uploadFiles}
         accept="application/pdf"
-        header={formatMessage(strings.inputFileUpload.header)}
+        title={formatMessage(strings.inputFileUpload.header)}
         description={formatMessage(strings.inputFileUpload.description)}
         buttonLabel={formatMessage(strings.inputFileUpload.buttonLabel)}
         onChange={(files) =>
@@ -281,7 +285,6 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
         onRemove={(file) => handleRemove(file, removeFileCB)}
         onRetry={(file) => handleRetry(file, updateUploadFile)}
         errorMessage={errorMessage}
-        showFileSize
       />
     </>
   )
