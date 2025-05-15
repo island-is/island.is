@@ -240,6 +240,7 @@ describe('MyService', () => {
   it('createLists should create lists', async () => {
     // Arrange
     const input: CreateListInput = {
+      collectionType: CollectionType.Presidential,
       collectionId: '123',
       owner: {
         email: 'jon@jonsson.is',
@@ -304,15 +305,23 @@ describe('MyService', () => {
       .mockImplementation(() => Promise.resolve())
     // Act
     const notOwner = await service.removeLists(
-      { collectionId: '', listIds: [''] },
+      {
+        collectionId: '',
+        listIds: [''],
+        collectionType: CollectionType.Presidential,
+      },
       { ...user, nationalId: '1234567910' },
     )
     const notOpen = await service.removeLists(
-      { collectionId: '', listIds: [''] },
+      {
+        collectionId: '',
+        listIds: [''],
+        collectionType: CollectionType.Presidential,
+      },
       user,
     )
     const presidentialResult = await service.removeLists(
-      { collectionId: '123' },
+      { collectionId: '123', collectionType: CollectionType.Presidential },
       user,
     )
     // Assert
@@ -359,8 +368,16 @@ describe('MyService', () => {
       }),
     )
     // Act
-    const alreadySigned = service.signList('123123', user)
-    const success = await service.signList('123123', user)
+    const alreadySigned = service.signList(
+      '123123',
+      CollectionType.Presidential,
+      user,
+    )
+    const success = await service.signList(
+      '123123',
+      CollectionType.Presidential,
+      user,
+    )
     // Assert
     expect(alreadySigned).rejects.toThrow('User has already signed a list')
     expect(success).toMatchObject({
@@ -402,8 +419,16 @@ describe('MyService', () => {
       }),
     )
     // Act
-    const noSignature = await service.unsignList('', user)
-    const success = await service.unsignList('999', user)
+    const noSignature = await service.unsignList(
+      '',
+      CollectionType.Presidential,
+      user,
+    )
+    const success = await service.unsignList(
+      '999',
+      CollectionType.Presidential,
+      user,
+    )
     // Assert
     expect(noSignature).toEqual({
       success: false,
