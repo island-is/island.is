@@ -43,7 +43,7 @@ if [[ $(git diff --stat "$abs_path") != '' ]]; then
     exit 1
     ;;
   esac
-  git commit -am "chore: $action update dirty files"
+  git commit -m "chore: $action update dirty files"
   git push
 else
   echo "Found no unstaged files from $action, nothing to commit"
