@@ -8,5 +8,7 @@ export const SLUGIFIED_POSTFIX = '--slugified'
 
 export const CUSTOM_SLUGIFY_REPLACEMENTS: ReadonlyArray<[string, string]> = [
   ['ö', 'o'],
+  ['Ö', 'o'],
   ['þ', 'th'],
+  ['Þ', 'th'],
 ]
