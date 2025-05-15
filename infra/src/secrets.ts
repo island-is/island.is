@@ -123,22 +123,28 @@ yargs(hideBin(process.argv))
           })
           .promise()
 
-          NextToken = response.NextToken
+        NextToken = response.NextToken
 
-          if (response.Parameters && response.Parameters.length > 0) {
-            ParameterList = ParameterList.concat(response.Parameters)
-          }
-          if (!NextToken || NextToken == undefined || NextToken == null || NextToken == '') {
-            break
-          }
-
+        if (response.Parameters && response.Parameters.length > 0) {
+          ParameterList = ParameterList.concat(response.Parameters)
+        }
+        if (
+          !NextToken ||
+          NextToken == undefined ||
+          NextToken == null ||
+          NextToken == ''
+        ) {
+          break
+        }
       }
       if (ParameterList && ParameterList.length > 0) {
         logger.debug(
-          `Parameters to destroy: ${ParameterList.map(({ Name } : any ) => Name)}`,
+          `Parameters to destroy: ${ParameterList.map(
+            ({ Name }: any) => Name,
+          )}`,
         )
         await Promise.all(
-          ParameterList.map(({ Name } : any) =>
+          ParameterList.map(({ Name }: any) =>
             Name
               ? ssm.deleteParameter({ Name }).promise()
               : new Promise((resolve) => resolve(true)),
