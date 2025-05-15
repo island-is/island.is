@@ -29,7 +29,6 @@ commit_as_dirty_bot() {
 if [[ $(git diff --stat "$abs_path") != '' ]]; then
   echo "Changes found in $rel_path that will be committed"
   git diff "$abs_path"
-  git add "$abs_path"
   # Determine which user to commit as
   case "$owner" in
   "github actions")
@@ -43,7 +42,7 @@ if [[ $(git diff --stat "$abs_path") != '' ]]; then
     exit 1
     ;;
   esac
-  git commit -m "chore: $action update dirty files"
+  git commit -am "chore: $action update dirty files"
   git push
 else
   echo "Found no unstaged files from $action, nothing to commit"
