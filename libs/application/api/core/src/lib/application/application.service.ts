@@ -202,7 +202,7 @@ export class ApplicationService {
 
     const applicantAccessConditions: WhereOptions = actor
       ? {
-          // Delegation Is active we get applications for the delegate AND where we are one of the actors
+          // Delegation Is active we get applications for the delegator AND where we are one of the actors
           [Op.and]: [
             { applicant: { [Op.eq]: nationalId } },
             { applicantActors: { [Op.contains]: [actor] } },
