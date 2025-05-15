@@ -2,6 +2,7 @@ import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import {
   OtherFeesPayeeOptions,
+  RentalAmountPaymentDateOptions,
   RentalPaymentMethodOptions,
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
@@ -16,20 +17,28 @@ export const rentalAmountConnectedToIndex = (answers: FormValue) => {
   return isAmountConnectedToIndex?.includes(YesOrNoEnum.YES) || false
 }
 
-export const rentalPaymentIsOther = (answers: FormValue) => {
-  const paymentMethod = getValueViaPath<string>(
+export const rentalPaymentDateIsOther = (answers: FormValue) => {
+  const paymentDate = getValueViaPath<string>(
     answers,
-    'rentalAmount.paymentMethodOptions',
+    'rentalAmount.paymentDateOptions',
   )
-  return paymentMethod === RentalPaymentMethodOptions.OTHER
+  return paymentDate === RentalAmountPaymentDateOptions.OTHER
 }
 
-export const rentalPaymentIsBankTransfer = (answers: FormValue) => {
+export const rentalPaymentMethodIsBankTransfer = (answers: FormValue) => {
   const paymentMethod = getValueViaPath<string>(
     answers,
     'rentalAmount.paymentMethodOptions',
   )
   return paymentMethod === RentalPaymentMethodOptions.BANK_TRANSFER
+}
+
+export const rentalPaymentMethodIsOther = (answers: FormValue) => {
+  const paymentMethod = getValueViaPath<string>(
+    answers,
+    'rentalAmount.paymentMethodOptions',
+  )
+  return paymentMethod === RentalPaymentMethodOptions.OTHER
 }
 
 export const rentalInsuranceRequired = (answers: FormValue) => {
