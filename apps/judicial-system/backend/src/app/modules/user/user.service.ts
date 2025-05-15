@@ -1,3 +1,5 @@
+import { Op } from 'sequelize'
+
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -5,7 +7,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { UserRole } from '@island.is/judicial-system/types'
+import {
+  getAdminUserInstitutionScope,
+  isAdminUser,
+  User as TUser,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { Institution } from '../institution'
@@ -23,11 +30,17 @@ export class UserService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async getAll(user: User): Promise<User[]> {
-    if (user.role === UserRole.ADMIN) {
+  async getAll(user: TUser): Promise<User[]> {
+    if (isAdminUser(user)) {
       return this.userModel.findAll({
         order: ['name'],
         include: [{ model: Institution, as: 'institution' }],
+        // Local admins can only see users from a select list of institutions
+        // and they do not see local admins
+        where: {
+          role: { [Op.not]: user.role },
+          '$institution.type$': getAdminUserInstitutionScope(user),
+        },
       })
     }
 

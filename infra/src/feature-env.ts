@@ -20,7 +20,6 @@ import {
 import { ServiceBuilder } from './dsl/dsl'
 import { logger } from './logging'
 import fs from 'fs'
-import path from 'path'
 
 type ChartName = 'islandis' | 'identity-server'
 
@@ -103,6 +102,7 @@ const parseArguments = (argv: Arguments) => {
     env,
     skipAppName: argv.skipAppName as boolean,
     writeDest: argv.writeDest as string,
+    disableNsGrants: argv.disableNsGrants as boolean
   }
 }
 
@@ -155,12 +155,18 @@ yargs(process.argv.slice(2))
             'Template location where to write files to for down stream apps',
           default: '',
         })
+        .option('disableNsGrants', {
+          type: 'boolean',
+          description: 'Disable namespace grants in rendered output',
+          default: false,
+        })
     },
     handler: async (argv) => {
-      const typedArgv = argv as unknown as Arguments
-      const { habitat, affectedServices, env, skipAppName, writeDest } =
-        parseArguments(typedArgv)
-      const { included: featureYaml } = await getFeatureAffectedServices(
+      const typedArgv = (argv as unknown) as Arguments
+      const { habitat, affectedServices, env, skipAppName, writeDest, disableNsGrants } = parseArguments(
+        typedArgv,
+      )
+      let { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
@@ -168,6 +174,10 @@ yargs(process.argv.slice(2))
       )
 
       featureYaml.map(async (svc) => {
+        if (disableNsGrants) {
+          svc.serviceDef.grantNamespacesEnabled = false
+        }
+
         const svcString = await renderHelmValueFileContent(
           env,
           habitat,
@@ -205,9 +215,10 @@ yargs(process.argv.slice(2))
       return yargs
     },
     handler: async (argv) => {
-      const typedArgv = argv as unknown as Arguments
-      const { habitat, affectedServices, env, skipAppName, writeDest } =
-        parseArguments(typedArgv)
+      const typedArgv = (argv as unknown) as Arguments
+      const { habitat, affectedServices, env, skipAppName, writeDest, disableNsGrants } = parseArguments(
+        typedArgv,
+      )
       const { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),

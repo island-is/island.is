@@ -68,7 +68,8 @@ export const getCleanCompanyInformationList = (
     contactName: info?.assignee.name ?? '',
     contactPhoneNumber: info?.assignee.phone ?? '',
     contactEmail: info?.assignee.email ?? '',
-    machineRegistrationNumbers: info?.workMachine ?? [],
+    machineRegistrationNumbers:
+      info?.workMachine?.map((x) => x.split(' ')[0]) ?? [],
   }))
 }
 
