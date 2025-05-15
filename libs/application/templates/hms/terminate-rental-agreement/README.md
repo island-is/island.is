@@ -1,14 +1,10 @@
-# terminate-rental-agreement
+# Application for the termination of a rental agreement (Leigusamningslok) for the Housing and Construction Authority (Húsnæðis og mannvirkjastofnun, HMS)
 
-This template for an application was generated with the `nx generate-template terminate-rental-agreement` command.
+## Glossary
 
-Write documentation here.
-
-- What gervimenn can use this template
-- What is this application for
-- Which organization is this application for
-- Describe the stateflow of the application on a high level
-- And more...
+- **Cancelation of a rental agreement** - Riftun leigusamnings. Immedeate emergency option.
+- **Dismissal of a rental agreement** - Uppsögn leigusamnings, can either be for a fixed term or an indefinite term.
+- **Termination of a rental agreement** - Uppsögn tímabundins leigusamnings.
 
 ## Running unit tests
 

@@ -15,3 +15,8 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
 }
+
+export enum TerminationTypes {
+  CANCELATION = 'cancelation',
+  DISMISSAL = 'dismissal',
+}
