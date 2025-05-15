@@ -50,7 +50,7 @@ env:
 jobs:
   should-run:
     name: Check if job should run
-    runs-on: arc-shared
+    runs-on: arc-docker
     env:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
