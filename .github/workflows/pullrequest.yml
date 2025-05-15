@@ -206,15 +206,12 @@ jobs:
     needs:
       - prepare
     runs-on: arc-shared
+    if: ${{ github.event_name == 'pull_request' }}
     timeout-minutes: 15
     env:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
     steps:
       - uses: actions/checkout@v4
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
-          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
@@ -225,7 +222,6 @@ jobs:
         uses: ./.github/actions/load-deps
 
       - name: NX format:check
-        if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
 
   auto-format:
