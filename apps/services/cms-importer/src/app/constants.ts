@@ -26,3 +26,9 @@ export const UOS_TAGS: Record<string, string> = {
   Þungaflutningar: '31T6vlqLVHS2n2qRtzQUMg',
   'Endurnýjanlegt eldsneyti': '5BxXpVLNf3LRNtA2ZJvrW0',
 }
+
+export const YEAR_TAGS: Record<number, string> = {
+  2022: '1g2bfomkeAseB0RBG3fcih',
+  2023: 'xvxE6ip8DU67CrLnL9Drm',
+  2024: '2lU8CS8eCLCIP7U3zwROJF',
+}

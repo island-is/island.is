@@ -6,6 +6,7 @@ import {
   PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
   EN_LOCALE,
   UOS_TAGS,
+  YEAR_TAGS,
 } from '../../constants'
 import { CreationType } from './cms.types'
 
@@ -28,6 +29,7 @@ export const mapEnergyGrantToGenericListItem = (
     UOS_TAGS[data.tagOne],
     data.tagTwo ? UOS_TAGS[data.tagTwo] : undefined,
     data.tagThree ? UOS_TAGS[data.tagThree] : undefined,
+    YEAR_TAGS[data.year]
   ]
     .filter(isDefined)
     .map((tagId) => ({
