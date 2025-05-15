@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { YesOrNoEnum } from '@island.is/application/core'
 import { ApplicationTypes } from '@island.is/application/types'
+import { HomeApi } from '@island.is/clients/hms-rental-agreement'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
@@ -18,6 +19,7 @@ import { applicationAnswers, formatPhoneNumber } from './utils'
 @Injectable()
 export class RentalAgreementService extends BaseTemplateApiService {
   constructor(
+    private readonly homeApi: HomeApi,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.RENTAL_AGREEMENT)
@@ -273,10 +275,9 @@ export class RentalAgreementService extends BaseTemplateApiService {
       },
     }
 
-    console.log(
-      '+++++++++++++++++++++++++++++++++++++++++++ Other cost items: ',
-      otherCostItems,
-    )
+    return await this.homeApi.contractPost({
+      leaseApplication: newApplication,
+    })
 
     console.log(
       '-------------------- Answers sent to RentalService --------------------: ',

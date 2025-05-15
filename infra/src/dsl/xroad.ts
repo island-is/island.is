@@ -244,6 +244,21 @@ export const PropertySearch = new XroadConf({
   },
 })
 
+export const RentalService = new XroadConf({
+  env: {
+    XROAD_HMS_RENTAL_SERVICE_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1',
+      prod: '', // TODO: Add correct prod path
+    },
+    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: {
+      dev: 'IS-DEV/GOV/10000/island-is-client',
+      staging: 'IS-TEST/GOV/5501692829/test-client',
+      prod: 'IS/GOV/5501692829/island-is-client',
+    },
+  },
+})
+
 export const AdrAndMachine = new XroadConf({
   env: {
     XROAD_ADR_MACHINE_LICENSE_PATH: {
