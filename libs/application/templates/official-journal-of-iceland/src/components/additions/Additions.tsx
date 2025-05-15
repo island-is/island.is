@@ -16,10 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { z } from 'zod'
-import {
-  DEFAULT_ADDITIONS_COUNT,
-  MAXIMUM_ADDITIONS_COUNT,
-} from '../../lib/constants'
+import { MAXIMUM_ADDITIONS_COUNT } from '../../lib/constants'
 import { HTMLEditor } from '../htmlEditor/HTMLEditor'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import { getValueViaPath } from '@island.is/application/core'
