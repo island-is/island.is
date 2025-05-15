@@ -17,13 +17,11 @@ export const bankInfoSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'bankInfoDescription',
-          title: '',
           description: m.bankInfoForm.general.info,
           marginBottom: 4,
         }),
         buildBankAccountField({
           id: Routes.BANKINFO,
-          title: '',
         }),
         buildDescriptionField({
           id: 'bankInfoDescription2',

@@ -57,6 +57,8 @@ export const mapPresignedUrlType = (val: any): GetPresignedUrlTypeEnum => {
       return GetPresignedUrlTypeEnum.Frumrit
     case GetPresignedUrlTypeEnum.Fylgiskjol:
       return GetPresignedUrlTypeEnum.Fylgiskjol
+    case GetPresignedUrlTypeEnum.Assets:
+      return GetPresignedUrlTypeEnum.Assets
     default:
       return GetPresignedUrlTypeEnum.Fylgiskjol
   }

@@ -39,7 +39,6 @@ export const generateApplicationDeletedEmail: ApplicationDeletedEmail = (
     `<span>Umsókn nemandans:</span><br/>` +
     `<span>${applicantName}, kt. ${kennitala.format(
       applicantNationalId,
-      '-',
     )},</span><br/>` +
     `<span>um nám í framhaldsskóla hefur verið eytt.</span><br/>` +
     `<span>Hægt er að gera nýja umsókn á Ísland.is.</span>`

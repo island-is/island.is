@@ -1,5 +1,13 @@
 import { Base64 } from 'js-base64'
-import { Includeable, Sequelize } from 'sequelize'
+import {
+  col,
+  fn,
+  Includeable,
+  literal,
+  Op,
+  Sequelize,
+  WhereOptions,
+} from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
@@ -21,6 +29,7 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  HashAlgorithm,
   isFailedServiceStatus,
   isSuccessfulServiceStatus,
   ServiceStatus,
@@ -28,6 +37,7 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
+import { InternalCaseService } from '../case/internalCase.service'
 import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -35,11 +45,16 @@ import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
-import { PoliceService, SubpoenaInfo } from '../police'
+import { Institution } from '../institution'
+import { PoliceDocumentType, PoliceService, SubpoenaInfo } from '../police'
 import { User } from '../user'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { Subpoena } from './models/subpoena.model'
+import {
+  ServiceStatusStatistics,
+  SubpoenaStatistics,
+} from './models/subpoenaStatistics.response'
 
 export const include: Includeable[] = [
   {
@@ -53,6 +68,14 @@ export const include: Includeable[] = [
       {
         model: User,
         as: 'registrar',
+      },
+      {
+        model: Institution,
+        as: 'prosecutorsOffice',
+      },
+      {
+        model: Institution,
+        as: 'court',
       },
     ],
   },
@@ -94,6 +117,8 @@ export class SubpoenaService {
     private readonly eventService: EventService,
     private readonly defendantService: DefendantService,
     private readonly courtService: CourtService,
+    @Inject(forwardRef(() => InternalCaseService))
+    private readonly internalCaseService: InternalCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -115,9 +140,13 @@ export class SubpoenaService {
     )
   }
 
-  async setHash(id: string, hash: string): Promise<void> {
+  async setHash(
+    id: string,
+    hash: string,
+    hashAlgorithm: HashAlgorithm,
+  ): Promise<void> {
     const [numberOfAffectedRows] = await this.subpoenaModel.update(
-      { hash },
+      { hash, hashAlgorithm },
       { where: { id } },
     )
 
@@ -269,10 +298,10 @@ export class SubpoenaService {
     return subpoena
   }
 
-  async findBySubpoenaId(policeSubpoenaId?: string): Promise<Subpoena> {
+  async findByPoliceSubpoenaId(policeSubpoenaId?: string): Promise<Subpoena> {
     const subpoena = await this.subpoenaModel.findOne({
       include,
-      where: { subpoenaId: policeSubpoenaId },
+      where: { policeSubpoenaId },
     })
 
     if (!subpoena) {
@@ -298,16 +327,19 @@ export class SubpoenaService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
-      let civilClaimPdf = undefined
-      const civilClaim = theCase.caseFiles?.find(
-        (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
-      )
+      const civilClaimPdfs: string[] = []
+      const civilClaimFiles =
+        theCase.caseFiles?.filter(
+          (caseFile) => caseFile.category === CaseFileCategory.CIVIL_CLAIM,
+        ) ?? []
 
-      if (civilClaim) {
-        civilClaimPdf = await this.fileService.getCaseFileFromS3(
+      for (const civilClaimFile of civilClaimFiles) {
+        const civilClaimPdf = await this.fileService.getCaseFileFromS3(
           theCase,
-          civilClaim,
+          civilClaimFile,
         )
+
+        civilClaimPdfs.push(Base64.btoa(civilClaimPdf.toString('binary')))
       }
 
       const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
@@ -323,9 +355,7 @@ export class SubpoenaService {
         Base64.btoa(subpoenaPdf.toString('binary')),
         Base64.btoa(indictmentPdf.toString('binary')),
         user,
-        civilClaimPdf
-          ? Base64.btoa(civilClaimPdf.toString('binary'))
-          : undefined,
+        civilClaimPdfs,
       )
 
       if (!createdSubpoena) {
@@ -335,7 +365,7 @@ export class SubpoenaService {
       }
 
       const [numberOfAffectedRows] = await this.subpoenaModel.update(
-        { subpoenaId: createdSubpoena.subpoenaId },
+        { policeSubpoenaId: createdSubpoena.policeSubpoenaId },
         { where: { id: subpoena.id } },
       )
 
@@ -346,10 +376,46 @@ export class SubpoenaService {
       }
 
       this.logger.info(
-        `Subpoena ${createdSubpoena.subpoenaId} delivered to police`,
+        `Subpoena with police subpoena id ${createdSubpoena.policeSubpoenaId} delivered to the police centralized file service`,
       )
 
       return { delivered: true }
+    } catch (error) {
+      this.logger.error(
+        'Error delivering subpoena to the police centralized file service',
+        error,
+      )
+
+      return { delivered: false }
+    }
+  }
+
+  async deliverSubpoenaFileToPolice(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    try {
+      const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
+        theCase,
+        defendant,
+        subpoena,
+      )
+
+      const delivered =
+        await this.internalCaseService.deliverCaseToPoliceWithFiles(
+          theCase,
+          user,
+          [
+            {
+              type: PoliceDocumentType.RVFK,
+              courtDocument: Base64.btoa(subpoenaPdf.toString('binary')),
+            },
+          ],
+        )
+
+      return { delivered }
     } catch (error) {
       this.logger.error('Error delivering subpoena to police', error)
 
@@ -391,12 +457,48 @@ export class SubpoenaService {
         return { delivered: false }
       })
   }
-  async deliverSubpoenaRevokedToPolice(
+
+  async deliverServiceCertificateToCourt(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.pdfService
+      .getServiceCertificatePdf(theCase, defendant, subpoena)
+      .then(async (pdf) => {
+        const fileName = `Birtingarvottorð - ${defendant.name}`
+
+        return this.courtService.createDocument(
+          user,
+          theCase.id,
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.SUBPOENA_DOCUMENTS,
+          fileName,
+          `${fileName}.pdf`,
+          'application/pdf',
+          pdf,
+        )
+      })
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.warn(
+          `Failed to upload service certificate pdf to court for subpoena ${subpoena.id} of defendant ${defendant.id} and case ${theCase.id}`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverSubpoenaRevocationToPolice(
     theCase: Case,
     subpoena: Subpoena,
     user: TUser,
   ): Promise<DeliverResponse> {
-    if (!subpoena.subpoenaId) {
+    if (!subpoena.policeSubpoenaId) {
       this.logger.warn(
         `Attempted to revoke a subpoena with id ${subpoena.id} that had not been delivered to the police`,
       )
@@ -405,26 +507,27 @@ export class SubpoenaService {
 
     const subpoenaRevoked = await this.policeService.revokeSubpoena(
       theCase,
-      subpoena.id,
+      subpoena.policeSubpoenaId,
       user,
     )
 
     if (subpoenaRevoked) {
       this.logger.info(
-        `Subpoena ${subpoena.subpoenaId} successfully revoked from police`,
+        `Subpoena ${subpoena.policeSubpoenaId} successfully revoked from police`,
       )
       return { delivered: true }
     } else {
       return { delivered: false }
     }
   }
+
   async getSubpoena(subpoena: Subpoena, user?: TUser): Promise<Subpoena> {
-    if (!subpoena.subpoenaId) {
+    if (!subpoena.policeSubpoenaId) {
       // The subpoena has not been delivered to the police
       return subpoena
     }
 
-    if (subpoena.serviceStatus) {
+    if (isSuccessfulServiceStatus(subpoena.serviceStatus)) {
       // The subpoena has already been served to the defendant
       return subpoena
     }
@@ -432,7 +535,7 @@ export class SubpoenaService {
     // We don't know if the subpoena has been served to the defendant
     // so we need to check the police service
     const subpoenaInfo = await this.policeService.getSubpoenaStatus(
-      subpoena.subpoenaId,
+      subpoena.policeSubpoenaId,
       user,
     )
 
@@ -442,5 +545,87 @@ export class SubpoenaService {
     }
 
     return this.update(subpoena, subpoenaInfo)
+  }
+
+  async getStatistics(
+    from?: Date,
+    to?: Date,
+    institutionId?: string,
+  ): Promise<SubpoenaStatistics> {
+    const where: WhereOptions = {
+      policeSubpoenaId: {
+        [Op.ne]: null,
+      },
+    }
+
+    if (from || to) {
+      where.created = {}
+      if (from) {
+        where.created[Op.gte] = from
+      }
+      if (to) {
+        where.created[Op.lte] = to
+      }
+    }
+
+    const include: Includeable[] = []
+
+    if (institutionId) {
+      include.push({
+        model: Case,
+        required: true,
+        attributes: [],
+        where: {
+          [Op.or]: [
+            { courtId: institutionId },
+            { prosecutorsOfficeId: institutionId },
+          ],
+        },
+      })
+    }
+
+    const count = await this.subpoenaModel.count({
+      where,
+      include,
+    })
+
+    const grouped = (await this.subpoenaModel.findAll({
+      where,
+      include,
+      attributes: [
+        'serviceStatus',
+        [fn('COUNT', col('Subpoena.id')), 'count'],
+        [
+          literal(
+            'AVG(EXTRACT(EPOCH FROM "Subpoena"."service_date" - "Subpoena"."created") * 1000)',
+          ),
+          'averageServiceTimeMs',
+        ],
+      ],
+      group: ['serviceStatus'],
+      raw: true,
+    })) as unknown as {
+      serviceStatus: ServiceStatus | null
+      count: string
+      averageServiceTimeMs: string | null
+    }[]
+
+    const serviceStatusStatistics: ServiceStatusStatistics[] = grouped.map(
+      (row) => ({
+        serviceStatus: row.serviceStatus,
+        count: Number(row.count),
+        averageServiceTimeMs: Math.round(Number(row.averageServiceTimeMs) || 0),
+        averageServiceTimeDays:
+          Math.round(Number(row.averageServiceTimeMs) / 1000 / 60 / 60 / 24) ||
+          0,
+      }),
+    )
+
+    const stats: SubpoenaStatistics = {
+      count,
+      serviceStatusStatistics,
+    }
+
+    return stats
   }
 }

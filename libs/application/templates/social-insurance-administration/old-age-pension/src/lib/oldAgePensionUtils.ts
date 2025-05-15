@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import {
   BankAccountType,
   MONTHS,
@@ -13,7 +13,6 @@ import {
 import {
   Application,
   NationalRegistryResidenceHistory,
-  YesOrNo,
 } from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import addYears from 'date-fns/addYears'

@@ -1,0 +1,11 @@
+name: islandis-shared
+services:
+  redis-cluster:
+    container_name: redis_cluster
+    image: docker.io/grokzen/redis-cluster:6.0.16
+    privileged: true
+    environment:
+      - INITIAL_PORT=7010
+      - IP=0.0.0.0
+    ports:
+      - '7010-7015:7010-7015'

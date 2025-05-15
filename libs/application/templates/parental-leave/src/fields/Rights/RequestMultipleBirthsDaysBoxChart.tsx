@@ -7,8 +7,7 @@ import { getMaxMultipleBirthsAndDefaultMonths } from '../../lib/parentalLeaveUti
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { defaultMonths, daysInMonth } from '../../config'
-import { formatText, formatTextWithLocale } from '@island.is/application/core'
-import { NO } from '../../constants'
+import { formatTextWithLocale, NO } from '@island.is/application/core'
 import { useEffectOnce } from 'react-use'
 import { Locale } from '@island.is/shared/types'
 

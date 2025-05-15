@@ -306,13 +306,14 @@ globalStyle(
 globalStyle(
   `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="bottom"]`,
   {
-    top: '-7px !important',
+    top: '-17px !important',
   },
 )
 
 globalStyle(
   `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="top"] .react-datepicker`,
   {
+    top: '6px',
     borderTopRightRadius: '8px',
     borderTopLeftRadius: '8px',
     borderBottomRightRadius: '0',

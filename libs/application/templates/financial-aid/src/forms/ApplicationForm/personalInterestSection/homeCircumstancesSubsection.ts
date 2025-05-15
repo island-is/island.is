@@ -19,7 +19,6 @@ export const homeCircumstancesSubsection = buildSubSection({
       children: [
         buildRadioField({
           id: 'homeCircumstances.type',
-          title: '',
           marginBottom: 2,
           options: homeCircumstancesOptions,
         }),

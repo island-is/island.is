@@ -26,11 +26,12 @@ export const childrenSubSection = buildSubSection({
               application.externalData,
             )
 
-            return children.map((child) => {
+            return children.map((child, index) => {
               return {
                 value: child.nationalId,
                 label: child.fullName,
                 subLabel: formatKennitala(child.nationalId),
+                dataTestId: `child-${index}`,
               }
             })
           },

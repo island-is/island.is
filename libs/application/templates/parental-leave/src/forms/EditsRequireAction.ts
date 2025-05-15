@@ -20,7 +20,6 @@ export const EditsRequireAction: Form = buildForm({
   children: [
     buildSection({
       id: 'EditsRequireAction.section',
-      title: '',
       children: [
         buildMultiField({
           id: 'editsRequireAction.multiField',
@@ -34,7 +33,6 @@ export const EditsRequireAction: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

@@ -1,8 +1,10 @@
 import { Locale } from '@island.is/shared/types'
 import {
+  ExpiryStatus,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
+  GenericLicenseType,
   GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
@@ -18,6 +20,7 @@ import { format as formatNationalId } from 'kennitala'
 import { expiryTag, formatDate, capitalize } from '../utils'
 import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { formatPhoto } from '../utils/formatPhoto'
 
 @Injectable()
 export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
@@ -112,6 +115,12 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
                 arg: t.number ?? formatMessage(m.unknown),
               }),
               licenseId: DEFAULT_LICENSE_ID,
+              expiryStatus:
+                t.validity === 'active'
+                  ? ExpiryStatus.ACTIVE
+                  : t.validity === 'expired'
+                  ? ExpiryStatus.EXPIRED
+                  : ExpiryStatus.UNKNOWN,
               expired: !t.isValid,
               expireDate: t.validTo ? t.validTo.toISOString() : undefined,
               displayTag: expiryTag(
@@ -138,6 +147,10 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
               description: [
                 { text: formatMessage(m.huntingLicenseDescription) },
               ],
+              photo: formatPhoto(
+                t.holderPhoto,
+                GenericLicenseType.HuntingLicense,
+              ),
             },
           },
         }

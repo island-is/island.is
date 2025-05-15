@@ -48,7 +48,7 @@ describe('CaseTransitionGuard', () => {
     const context = mockExecutionContext({
       body: { transition: CaseTransition.COMPLETE },
       case: mockCase,
-      user: { id: 'judgeId' },
+      user: { currentUser: { id: 'judgeId' } },
     })
 
     const result = guard.canActivate(context)
@@ -65,7 +65,7 @@ describe('CaseTransitionGuard', () => {
     const context = mockExecutionContext({
       body: { transition: CaseTransition.COMPLETE },
       case: mockCase,
-      user: { id: 'differentJudgeId' },
+      user: { currentUser: { id: 'differentJudgeId' } },
     })
 
     expect(() => guard.canActivate(context)).toThrow(ForbiddenException)
@@ -76,7 +76,7 @@ describe('CaseTransitionGuard', () => {
     const context = mockExecutionContext({
       body: { transition: CaseTransition.SUBMIT },
       case: mockCase,
-      user: { id: 'someId' },
+      user: { currentUser: { id: 'someId' } },
     })
 
     const result = guard.canActivate(context)
@@ -88,7 +88,7 @@ describe('CaseTransitionGuard', () => {
     const context = mockExecutionContext({
       body: { transition: CaseTransition.COMPLETE },
       case: null,
-      user: null,
+      user: { currentUser: null },
     })
 
     expect(() => guard.canActivate(context)).toThrow(

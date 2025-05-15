@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
 import { Navigation } from 'react-native-navigation'
+import { useNavigationButtonPress } from 'react-native-navigation-hooks'
 
 import {
   Accordion,
@@ -22,7 +23,6 @@ import {
   DocumentsV2Sender,
 } from '../../graphql/types/schema'
 import styled from 'styled-components'
-import { useNavigationButtonPress } from 'react-native-navigation-hooks'
 
 const ButtonContainer = styled(View)`
   margin-left: ${({ theme }) => theme.spacing[2]}px;

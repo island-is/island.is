@@ -15,7 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -53,7 +53,7 @@ import { FileService } from './file.service'
 
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('files')
-@UseGuards(JwtAuthGuard, RolesGuard, LimitedAccessCaseExistsGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard, LimitedAccessCaseExistsGuard)
 export class LimitedAccessFileController {
   constructor(
     private readonly fileService: FileService,

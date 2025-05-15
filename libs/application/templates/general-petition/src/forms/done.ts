@@ -8,7 +8,6 @@ import { m } from '../lib/messages'
 
 export const done: Form = buildForm({
   id: 'done',
-  title: '',
   mode: FormModes.COMPLETED,
   renderLastScreenButton: true,
   children: [

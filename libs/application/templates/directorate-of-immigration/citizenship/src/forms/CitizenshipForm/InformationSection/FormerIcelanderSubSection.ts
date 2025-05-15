@@ -3,13 +3,9 @@ import {
   buildSubSection,
   NO,
   buildRadioField,
-  buildAlertMessageField,
-  getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { Answer, FormValue, YES } from '@island.is/application/types'
-import { Citizenship } from '../../../lib/dataSchema'
-import { ApplicantInformation, ParentsToApplicant } from '../../../shared'
 
 export const FormerIcelanderSubSection = buildSubSection({
   id: 'formerIcelander',
@@ -57,7 +53,6 @@ export const FormerIcelanderSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'formerIcelander',
-          title: '',
           description: '',
           required: true,
           width: 'half',

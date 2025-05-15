@@ -145,7 +145,7 @@ export const calculateRemainingNumberOfDays = (
   }
 
   const availableDays = monthsToDays(rights.independentMonths)
-  const existingDays = calculateExistingNumberOfDays(application.periods)
+  const existingDays = calculateExistingNumberOfDays(application.periods ?? [])
 
   return availableDays - existingDays
 }

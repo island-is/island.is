@@ -22,11 +22,9 @@ export const powerOfAttorneyUploadSubSection = buildSubSection({
           id: 'attachments.powerOfAttorney.fileLink',
           component: 'ProxyDocument',
           doesNotRequireAnswer: true,
-          title: '',
         }),
         buildFileUploadField({
           id: 'attachments.powerOfAttorneyFile.file',
-          title: '',
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
           maxSizeErrorText: error.attachmentMaxSizeError,

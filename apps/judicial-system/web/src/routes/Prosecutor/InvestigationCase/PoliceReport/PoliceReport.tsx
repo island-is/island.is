@@ -78,7 +78,7 @@ const PoliceReport = () => {
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box marginBottom={5}>
           <BlueBox>
-            <Text>{workingCase.demands}</Text>
+            <Text whiteSpace="preLine">{workingCase.demands}</Text>
           </BlueBox>
         </Box>
         <Box component="section" marginBottom={5}>

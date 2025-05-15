@@ -4,6 +4,7 @@ import { conditions2Subsection } from './conditions2Subsection'
 import { getDataFromExternalDataSubsection } from './getDataFromExternalDataSection'
 import { validationSubsection } from './validadionSubsection'
 import { clearOnChangeSubsection } from './clearOnChangeSubsection'
+import { setOnChangeSubsection } from './setOnChangeSubsection'
 
 export const commonActionsSection = buildSection({
   id: 'commonActions',
@@ -12,6 +13,7 @@ export const commonActionsSection = buildSection({
     getDataFromExternalDataSubsection,
     validationSubsection,
     clearOnChangeSubsection,
+    setOnChangeSubsection,
     conditionsSubsection,
     conditions2Subsection,
   ],

@@ -3,17 +3,15 @@ import {
   buildMultiField,
   getValueViaPath,
   buildMessageWithLinkButtonField,
-  coreMessages,
   buildImageField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { EstateTypes } from '../lib/constants'
-import Grieving from '../components/assets/Grieving'
+import Grieving from '../../assets/Grieving'
 
 export const done: Form = buildForm({
   id: 'divisionOfEstateDone',
-  title: '',
   mode: FormModes.COMPLETED,
   renderLastScreenButton: true,
   children: [
@@ -21,7 +19,7 @@ export const done: Form = buildForm({
       id: 'done',
       title: m.doneTitle,
       description: (application) => {
-        const selectedEstate = getValueViaPath<string>(
+        const selectedEstate = getValueViaPath(
           application.answers,
           'selectedEstate',
         )
@@ -36,15 +34,14 @@ export const done: Form = buildForm({
       children: [
         buildImageField({
           id: 'doneImage',
-          title: '',
           image: Grieving,
+          marginTop: 3,
           marginBottom: 3,
           imageWidth: 'auto',
           imagePosition: 'center',
         }),
         buildMessageWithLinkButtonField({
           id: 'goToServicePortal',
-          title: '',
           url: '/minarsidur/umsoknir',
           buttonTitle: m.openServicePortalTitle,
           message: m.openServicePortalMessage,

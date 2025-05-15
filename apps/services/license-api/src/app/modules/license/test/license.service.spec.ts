@@ -34,7 +34,7 @@ import * as faker from 'faker'
 
 import ShortUniqueId from 'short-unique-id'
 import { VerifyInputData } from '../dto/verifyLicense.input'
-import { LicenseService } from '../license.service'
+import { LicenseServiceV1 } from '../services/licenseV1.service'
 import {
   LicenseId,
   LicenseUpdateType,
@@ -223,7 +223,7 @@ export class MockUpdateClient extends BaseLicenseUpdateClient {
 }
 
 describe('LicenseService', () => {
-  let licenseService: LicenseService
+  let licenseService: LicenseServiceV1
   let barcodeService: BarcodeService
   let config: ConfigType<typeof LicenseConfig>
 
@@ -236,7 +236,7 @@ describe('LicenseService', () => {
         }),
       ],
       providers: [
-        LicenseService,
+        LicenseServiceV1,
         BarcodeService,
         {
           provide: LOGGER_PROVIDER,
@@ -294,7 +294,7 @@ describe('LicenseService', () => {
       ],
     }).compile()
 
-    licenseService = moduleRef.get<LicenseService>(LicenseService)
+    licenseService = moduleRef.get<LicenseServiceV1>(LicenseServiceV1)
     barcodeService = moduleRef.get<BarcodeService>(BarcodeService)
     config = moduleRef.get(LicenseConfig.KEY)
   })

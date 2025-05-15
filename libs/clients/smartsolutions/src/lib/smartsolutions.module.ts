@@ -13,6 +13,7 @@ export type SmartSolutionsModuleAsyncOptions = {
 }
 
 @Module({})
+/** @deprecated */
 export class SmartSolutionsApiClientModule {
   public static register(config: SmartSolutionsConfig): DynamicModule {
     return {

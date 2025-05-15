@@ -89,7 +89,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'selectChildSupportPayment',
-                  title: '',
                   backgroundColor: 'white',
                   required: true,
                   options: [
@@ -109,7 +108,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                 }),
                 buildAlertMessageField({
                   id: 'alert',
-                  title: '',
                   message: m.childSupportPayments.general.alert,
                   alertType: 'info',
                   condition: (values) =>
@@ -118,7 +116,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                 }),
                 buildDescriptionField({
                   id: 'infoText',
-                  title: '',
                   space: 2,
                   description: m.childSupportPayments.general.infoText,
                 }),
@@ -184,7 +181,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'assign',
-              title: '',
               actions: [
                 {
                   event: DefaultEvents.ASSIGN,

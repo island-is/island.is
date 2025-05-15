@@ -1,11 +1,17 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import isEmpty from 'lodash/isEmpty'
 import { useRouter } from 'next/router'
 
+import { FileUploadStatus } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { isDefenceUser } from '@island.is/judicial-system/types'
+import {
+  isDefenceUser,
+  isDistrictCourtUser,
+} from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -19,28 +25,86 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
+  Case,
   CaseFileCategory,
   NotificationType,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  formatDateForServer,
   useCase,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  isCaseCivilClaimantLegalSpokesperson,
+  isCaseCivilClaimantSpokesperson,
+  isCaseDefendantDefender,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
+import {
+  RepresentativeSelectOption,
+  SelectCaseFileRepresentative,
+} from './SelectCaseFileRepresentative'
 import { strings } from './AddFiles.strings'
+
+const getUserProps = (user: User | undefined, workingCase: Case) => {
+  const getCaseInfoNode = (workingCase: Case) => (
+    <ProsecutorCaseInfo workingCase={workingCase} />
+  )
+  if (isDefenceUser(user)) {
+    const caseFileCategory = isCaseDefendantDefender(user, workingCase)
+      ? CaseFileCategory.DEFENDANT_CASE_FILE
+      : isCaseCivilClaimantLegalSpokesperson(user, workingCase)
+      ? CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE
+      : isCaseCivilClaimantSpokesperson(user, workingCase)
+      ? CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE
+      : CaseFileCategory.CASE_FILE // should never happen
+    return {
+      caseFileCategory: caseFileCategory,
+      previousRoute: constants.DEFENDER_INDICTMENT_ROUTE,
+      getCaseInfoNode,
+      hasFileRepresentativeSelection: false,
+    }
+  } else if (isDistrictCourtUser(user)) {
+    return {
+      previousRoute: constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
+      getCaseInfoNode: (workingCase: Case) => (
+        <CourtCaseInfo workingCase={workingCase} />
+      ),
+      hasFileRepresentativeSelection: true,
+    }
+  }
+  return {
+    caseFileCategory: CaseFileCategory.PROSECUTOR_CASE_FILE,
+    previousRoute: constants.INDICTMENTS_OVERVIEW_ROUTE,
+    getCaseInfoNode,
+    hasFileRepresentativeSelection: false,
+  }
+}
 
 const AddFiles: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
   const [editCount, setEditCount] = useState(0)
-  const [visibleModal, setVisibleModal] = useState<'sendFiles'>()
+  const [visibleModal, setVisibleModal] = useState<'confirmation'>()
   const router = useRouter()
   const { user } = useContext(UserContext)
-  const previousRoute = isDefenceUser(user)
-    ? `${constants.DEFENDER_INDICTMENT_ROUTE}/${workingCase.id}`
-    : `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`
+  const {
+    previousRoute: previousRouteType,
+    caseFileCategory,
+    getCaseInfoNode,
+    hasFileRepresentativeSelection,
+  } = getUserProps(user, workingCase)
+
+  const previousRoute = `${previousRouteType}/${workingCase.id}`
+
+  // states used when a user submits files on behalf of a case file representative
+  const [fileRepresentative, setFileRepresentative] = useState(
+    {} as RepresentativeSelectOption,
+  )
+  const [submissionDate, setSubmissionDate] = useState(new Date())
 
   const {
     uploadFiles,
@@ -53,20 +117,42 @@ const AddFiles: FC = () => {
   const { handleUpload } = useS3Upload(workingCase.id)
   const { sendNotification } = useCase()
 
-  const caseFileCategory = isDefenceUser(user)
-    ? CaseFileCategory.DEFENDANT_CASE_FILE
-    : CaseFileCategory.PROSECUTOR_CASE_FILE
+  const addFiles = (files: File[]) => {
+    const { selectedCaseRepresentative } = fileRepresentative
 
-  const handleChange = (files: File[]) => {
     addUploadFiles(
       files,
       {
-        category: caseFileCategory,
-        status: 'done',
-        displayDate: new Date().toISOString(),
+        status: FileUploadStatus.done,
+        submissionDate: formatDateForServer(submissionDate),
+        fileRepresentative: selectedCaseRepresentative?.name,
+        category: !isEmpty(selectedCaseRepresentative)
+          ? selectedCaseRepresentative.caseFileCategory
+          : caseFileCategory,
       },
       true,
     )
+  }
+
+  const handleCaseFileRepresentativeUpdate = (
+    updatedFileRepresentative?: RepresentativeSelectOption,
+    updatedSubmissionDate?: Date,
+  ) => {
+    const currentRepresentativeSelection =
+      updatedFileRepresentative || fileRepresentative
+    const { selectedCaseRepresentative } = currentRepresentativeSelection
+    const date = updatedSubmissionDate || submissionDate
+
+    uploadFiles.forEach((file) => {
+      updateUploadFile({
+        ...file,
+        fileRepresentative: selectedCaseRepresentative?.name,
+        submissionDate: formatDateForServer(date),
+        category: !isEmpty(selectedCaseRepresentative)
+          ? selectedCaseRepresentative.caseFileCategory
+          : caseFileCategory,
+      })
+    })
   }
 
   const handleRename = useCallback(
@@ -97,8 +183,10 @@ const AddFiles: FC = () => {
       sendNotification(workingCase.id, NotificationType.CASE_FILES_UPDATED)
     }
 
+    setVisibleModal(undefined)
+
     if (uploadResult === 'ALL_SUCCEEDED') {
-      setVisibleModal('sendFiles')
+      router.push(previousRoute)
     }
   }, [
     handleUpload,
@@ -106,8 +194,17 @@ const AddFiles: FC = () => {
     updateUploadFile,
     uploadFiles,
     workingCase.id,
+    router,
+    previousRoute,
   ])
 
+  const CaseInfo = getCaseInfoNode(workingCase)
+  const hasValidFileRepresentativeSelection = () => {
+    if (!hasFileRepresentativeSelection) {
+      return true
+    }
+    return !isEmpty(fileRepresentative) && !!submissionDate
+  }
   return (
     <PageLayout
       workingCase={workingCase}
@@ -119,18 +216,30 @@ const AddFiles: FC = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        {CaseInfo}
         <SectionHeading
           title={formatMessage(strings.uploadFilesHeading)}
           description={formatMessage(strings.uploadFilesDescription)}
         />
         <UploadFiles
           files={uploadFiles}
-          onChange={handleChange}
+          onChange={addFiles}
           onDelete={removeUploadFile}
           onRename={handleRename}
           setEditCount={setEditCount}
+          isBottomComponent={!hasFileRepresentativeSelection}
         />
+        {hasFileRepresentativeSelection && (
+          <SelectCaseFileRepresentative
+            fileRepresentative={fileRepresentative}
+            setFileRepresentative={setFileRepresentative}
+            submissionDate={submissionDate}
+            setSubmissionDate={setSubmissionDate}
+            handleCaseFileRepresentativeUpdate={
+              handleCaseFileRepresentativeUpdate
+            }
+          />
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
@@ -142,19 +251,30 @@ const AddFiles: FC = () => {
           }
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
           nextIsDisabled={
-            uploadFiles.length === 0 || !allFilesDoneOrError || editCount > 0
+            uploadFiles.length === 0 ||
+            !allFilesDoneOrError ||
+            editCount > 0 ||
+            !hasValidFileRepresentativeSelection()
           }
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={() => setVisibleModal('confirmation')}
         />
       </FormContentContainer>
-      {visibleModal === 'sendFiles' && (
+      {visibleModal === 'confirmation' && (
         <Modal
           title={formatMessage(strings.filesSentModalTitle)}
           text={formatMessage(strings.filesSentModalText)}
           primaryButtonText={formatMessage(
-            strings.filesSentModalPrimaryButtonText,
+            strings.filesConfirmedModalButtonText,
           )}
-          onPrimaryButtonClick={() => router.push(previousRoute)}
+          secondaryButtonText={formatMessage(
+            strings.filesDismissedModalButtonText,
+          )}
+          onClose={() => setVisibleModal(undefined)}
+          onSecondaryButtonClick={() => setVisibleModal(undefined)}
+          isPrimaryButtonDisabled={!allFilesDoneOrError}
+          onPrimaryButtonClick={async () => {
+            await handleNextButtonClick()
+          }}
         />
       )}
     </PageLayout>

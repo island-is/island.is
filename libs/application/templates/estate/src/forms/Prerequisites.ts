@@ -23,13 +23,11 @@ export const getForm = ({
 }): Form =>
   buildForm({
     id: 'PrerequisitesDraft',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     children: [
       buildSection({
         id: 'selectEstate',
-        title: '',
         children: [
           buildExternalDataProvider({
             id: 'preApproveExternalData',
@@ -81,12 +79,10 @@ export const getForm = ({
               buildDescriptionField({
                 id: 'applicationInfo',
                 space: 'containerGutter',
-                title: '',
                 description: m.prerequisitesSubtitle,
               }),
               buildRadioField({
                 id: 'selectedEstate',
-                title: '',
                 width: 'full',
                 required: true,
                 options: [
@@ -94,7 +90,7 @@ export const getForm = ({
                     ? [
                         {
                           value: EstateTypes.officialDivision,
-                          label: EstateTypes.officialDivision,
+                          label: m.estateTypeOfficialDivision,
                         },
                       ]
                     : []),
@@ -102,7 +98,7 @@ export const getForm = ({
                     ? [
                         {
                           value: EstateTypes.estateWithoutAssets,
-                          label: EstateTypes.estateWithoutAssets,
+                          label: m.estateTypeWithoutAssets,
                         },
                       ]
                     : []),
@@ -110,7 +106,7 @@ export const getForm = ({
                     ? [
                         {
                           value: EstateTypes.permitForUndividedEstate,
-                          label: EstateTypes.permitForUndividedEstate,
+                          label: m.estateTypeUndividedEstate,
                         },
                       ]
                     : []),
@@ -118,7 +114,7 @@ export const getForm = ({
                     ? [
                         {
                           value: EstateTypes.divisionOfEstateByHeirs,
-                          label: EstateTypes.divisionOfEstateByHeirs,
+                          label: m.estateTypeDivisionByHeirs,
                         },
                       ]
                     : []),
@@ -126,7 +122,6 @@ export const getForm = ({
               }),
               buildSubmitField({
                 id: 'estate.submit',
-                title: '',
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {

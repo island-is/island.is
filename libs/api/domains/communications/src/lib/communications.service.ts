@@ -153,7 +153,7 @@ export class CommunicationsService {
   async sendFormResponse(input: GenericFormInput): Promise<boolean> {
     const form = await this.cmsContentfulService.getForm({
       id: input.id,
-      lang: 'is-IS',
+      lang: input.lang === 'en' ? 'en' : 'is-IS',
     })
     if (!form) {
       return false

@@ -1,9 +1,10 @@
 import { Application } from '@island.is/application/types'
 import { GiveRightsObj } from '../../types'
 import { getApplicationAnswers, getSelectedChild } from '../parentalLeaveUtils'
-import { ParentalRelations, YES, MANUAL } from '../../constants'
+import { ParentalRelations, MANUAL } from '../../constants'
 import { buildError } from './utils'
 import { errorMessages } from '../messages'
+import { YES } from '@island.is/application/core'
 
 export const giveRightsValidationSection = (
   newAnswer: unknown,

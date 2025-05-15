@@ -24,12 +24,6 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill þegar krafa um rannsóknarheimild er samþykkt.',
   },
-  investigationCaseCompletedWithoutRuling: {
-    id: 'judicial.system.core:overview_header.investigation_case_completed_without_ruling',
-    defaultMessage: 'Máli er lokið án úrskurðar',
-    description:
-      'Notaður sem titill þegar rannsóknarheimild er lokið án úrskurðar.',
-  },
   restrictionCaseActiveTitle: {
     id: 'judicial.system.core:overview_header.restriction_case_active_title',
     defaultMessage:

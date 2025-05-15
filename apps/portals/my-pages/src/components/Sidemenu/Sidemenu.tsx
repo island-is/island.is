@@ -1,4 +1,3 @@
-import React, { ReactElement } from 'react'
 import {
   Box,
   GridContainer,
@@ -7,20 +6,20 @@ import {
   ModalBase,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
 import {
+  m,
   ServicePortalPaths,
   useDynamicRoutesWithNavigation,
 } from '@island.is/portals/my-pages/core'
-import * as styles from './Sidemenu.css'
 import { sharedMessages } from '@island.is/shared/translations'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-import { theme } from '@island.is/island-ui/theme'
-import { useWindowSize } from 'react-use'
 import cn from 'classnames'
+import { ReactElement } from 'react'
+import { useWindowSize } from 'react-use'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
+import * as styles from './Sidemenu.css'
 import SidemenuItem from './SidemenuItem'
-import { m } from '@island.is/portals/my-pages/core'
-
 interface Props {
   setSideMenuOpen: (status: boolean) => void
   sideMenuOpen: boolean
@@ -31,11 +30,9 @@ const Sidemenu = ({
   sideMenuOpen,
   rightPosition,
 }: Props): ReactElement | null => {
-  useNamespaces(['service.portal'])
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
-
   const isMobile = width < theme.breakpoints.md
 
   const onClose = () => {
@@ -115,7 +112,11 @@ const Sidemenu = ({
   )
 
   return isMobile ? (
-    <Box display={sideMenuOpen ? 'flex' : 'none'} height="full">
+    <Box
+      display={sideMenuOpen ? 'flex' : 'none'}
+      height="full"
+      id="sidemenu-mobile"
+    >
       {content}
     </Box>
   ) : (

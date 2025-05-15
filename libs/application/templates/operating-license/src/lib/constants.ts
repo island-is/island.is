@@ -26,15 +26,12 @@ export enum ApiActions {
   submitOperatingLicenseApplication = 'submitOperatingLicenseApplication',
 }
 
-export enum APPLICATION_TYPES {
+export enum ApplicationTypes {
   HOTEL = 'hotel',
   RESTURANT = 'resturant',
 }
 
-export const YES = 'yes'
-export const NO = 'no'
-
-export enum OPERATION_CATEGORY {
+export enum OperationCategory {
   TWO = '2',
   THREE = '3',
   FOUR = '4',
@@ -126,17 +123,17 @@ export const HotelTypes: Option[] = [
 
 export const HotelCategories: Option[] = [
   {
-    value: OPERATION_CATEGORY.TWO,
+    value: OperationCategory.TWO,
     label: m.operationCategoryTwo,
     subLabel: m.operationCategoryHotelTwo.defaultMessage,
   },
   {
-    value: OPERATION_CATEGORY.THREE,
+    value: OperationCategory.THREE,
     label: m.operationCategoryThree,
     subLabel: m.operationCategoryHotelThree.defaultMessage,
   },
   {
-    value: OPERATION_CATEGORY.FOUR,
+    value: OperationCategory.FOUR,
     label: m.operationCategoryFour,
     subLabel: m.operationCategoryHotelFour.defaultMessage,
   },
@@ -144,20 +141,20 @@ export const HotelCategories: Option[] = [
 
 export const ResturantCategories: Option[] = [
   {
-    value: OPERATION_CATEGORY.TWO,
+    value: OperationCategory.TWO,
     label: m.operationCategoryTwo,
     subLabel: m.operationCategoryResturantTwo.defaultMessage,
   },
   {
-    value: OPERATION_CATEGORY.THREE,
+    value: OperationCategory.THREE,
     label: m.operationCategoryThree,
     subLabel: m.operationCategoryResturantThree.defaultMessage,
   },
 ]
 
 export type Operation = {
-  operation: APPLICATION_TYPES
-  category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
+  operation: ApplicationTypes
+  category: OperationCategory | OperationCategory[] | undefined
   typeHotel?: string
   typeResturant?: string[]
   willServe?: string

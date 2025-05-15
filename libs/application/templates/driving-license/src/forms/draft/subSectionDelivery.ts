@@ -4,16 +4,13 @@ import {
   buildRadioField,
   buildSelectField,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import {
-  chooseDistrictCommissionerDescription,
-  hasNoDrivingLicenseInOtherCountry,
-} from '../../lib/utils'
+import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils/formUtils'
 
 import { Jurisdiction } from '@island.is/clients/driving-license'
-import { B_FULL_RENEWAL_65 } from '../../lib/constants'
-import { Pickup } from '../../lib/types'
+import { Pickup } from '../../lib/constants'
 
 export const subSectionDelivery = buildSubSection({
   id: 'user',
@@ -23,17 +20,30 @@ export const subSectionDelivery = buildSubSection({
     buildMultiField({
       id: 'info',
       title: m.pickupLocationTitle,
+      description: m.pickupLocationDescription,
       children: [
         buildDescriptionField({
-          id: 'jurisdictionHeader',
-          title: '',
-          description: chooseDistrictCommissionerDescription,
+          id: 'pickupHeader',
+          title: m.deliveryMethodHeader,
+          titleVariant: 'h4',
+        }),
+        buildRadioField({
+          id: 'delivery.deliveryMethod',
+          defaultValue: Pickup.POST,
+          width: 'half',
+          options: [
+            { value: Pickup.POST, label: m.overviewPickupPost },
+            { value: Pickup.DISTRICT, label: m.overviewPickupDistrict },
+          ],
         }),
         buildSelectField({
-          id: 'jurisdiction',
-          title: m.districtCommissionerPickup,
+          id: 'delivery.jurisdiction',
+          title: m.selectDistrictCommissionerPickup,
           required: true,
           placeholder: m.districtCommissionerPickupPlaceholder,
+          condition: (answers) =>
+            getValueViaPath(answers, 'delivery.deliveryMethod') ===
+            Pickup.DISTRICT,
           options: ({
             externalData: {
               jurisdictions: { data },
@@ -45,24 +55,6 @@ export const subSectionDelivery = buildSubSection({
               tooltip: `Póstnúmer ${zip}`,
             }))
           },
-        }),
-        buildDescriptionField({
-          id: 'pickupHeader',
-          title: '',
-          description: m.pickupLocationHeader,
-          titleVariant: 'h4',
-          space: 'containerGutter',
-          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
-        }),
-        buildRadioField({
-          id: 'pickup',
-          title: '',
-          defaultValue: Pickup.POST,
-          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
-          options: [
-            { value: Pickup.POST, label: m.overviewPickupPost },
-            { value: Pickup.DISTRICT, label: m.overviewPickupDistrict },
-          ],
         }),
       ],
     }),

@@ -79,10 +79,7 @@ export const filterOptionsForUser = (
   user?: User | undefined,
 ) => {
   return options.filter((option) => {
-    if (
-      user?.role === UserRole.PROSECUTOR_REPRESENTATIVE ||
-      user?.role === UserRole.DISTRICT_COURT_ASSISTANT
-    ) {
+    if (user?.role === UserRole.PROSECUTOR_REPRESENTATIVE) {
       return option.value !== 'INVESTIGATION' && option.value !== 'INDICTMENT'
     }
 

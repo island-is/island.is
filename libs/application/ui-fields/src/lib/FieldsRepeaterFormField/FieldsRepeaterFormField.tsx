@@ -1,4 +1,3 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
 import {
   coreMessages,
   formatText,
@@ -19,10 +18,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { Item } from './FieldsRepeaterItem'
 import { Locale } from '@island.is/shared/types'
 import isEqual from 'lodash/isEqual'
+import { Fragment, useEffect, useMemo, useState } from 'react'
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { Item } from './FieldsRepeaterItem'
 
 interface Props extends FieldBaseProps {
   field: FieldsRepeaterField
@@ -57,12 +57,23 @@ export const FieldsRepeaterFormField = ({
     answers,
     id,
   )?.length
-  const [numberOfItems, setNumberOfItems] = useState(
-    Math.max(numberOfItemsInAnswers ?? 0, minRows),
-  )
+
   const [updatedApplication, setUpdatedApplication] = useState(application)
   const stableApplication = useMemo(() => application, [application])
   const stableAnswers = useMemo(() => answers, [answers])
+
+  const minRowsValue =
+    typeof minRows === 'function'
+      ? minRows(answers, application.externalData)
+      : minRows
+  const maxRowsValue =
+    typeof maxRows === 'function'
+      ? maxRows(answers, application.externalData)
+      : maxRows
+
+  const [numberOfItems, setNumberOfItems] = useState(
+    Math.max(numberOfItemsInAnswers ?? 0, minRowsValue),
+  )
 
   useEffect(() => {
     setUpdatedApplication((prev) => {
@@ -74,10 +85,12 @@ export const FieldsRepeaterFormField = ({
     })
   }, [stableApplication, stableAnswers])
 
-  const items = Object.keys(rawItems).map((key) => ({
-    id: key,
-    ...rawItems[key],
-  }))
+  const items = Object.keys(rawItems).map((key) => {
+    return {
+      id: key,
+      ...rawItems[key],
+    }
+  })
 
   const { formatMessage, lang: locale } = useLocale()
 
@@ -158,7 +171,9 @@ export const FieldsRepeaterFormField = ({
                       {formTitleNumbering === 'prefix' ? `${i + 1}. ` : ''}
                       {formTitle &&
                         formatTextWithLocale(
-                          formTitle,
+                          typeof formTitle === 'function'
+                            ? formTitle(i)
+                            : formTitle,
                           application,
                           locale as Locale,
                           formatMessage,
@@ -172,7 +187,7 @@ export const FieldsRepeaterFormField = ({
             ))}
           </GridRow>
           <Box display="flex" justifyContent="flexEnd">
-            {numberOfItems > minRows && (
+            {numberOfItems > minRowsValue && (
               <Box marginRight={2}>
                 <Button
                   variant="ghost"
@@ -193,13 +208,13 @@ export const FieldsRepeaterFormField = ({
               type="button"
               onClick={handleNewItem}
               icon="add"
-              disabled={!maxRows ? false : numberOfItems >= maxRows}
+              disabled={!maxRowsValue ? false : numberOfItems >= maxRowsValue}
             >
               {formatText(addItemButtonText, updatedApplication, formatMessage)}
             </Button>
           </Box>
         </Stack>
-        {error && typeof error === 'string' && fields.length === 0 && (
+        {error && typeof error === 'string' && (
           <Box marginTop={3}>
             <AlertMessage type="error" title={error} />
           </Box>

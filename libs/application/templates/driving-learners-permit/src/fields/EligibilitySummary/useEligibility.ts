@@ -1,8 +1,8 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { ApplicationEligibility } from '../../types/schema'
 import { useQuery } from '@apollo/client'
-import { LearnersPermitFakeData, YES } from '../../lib/constants'
+import { LearnersPermitFakeData } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
 import { ELIGIBILITY_QUERY } from '../../graphql'
 

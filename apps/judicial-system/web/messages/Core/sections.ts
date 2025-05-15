@@ -249,11 +249,11 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Verjenda skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
-    courtRecord: {
-      id: 'judicial.system.core:sections.indictments_court_section.conclusion',
-      defaultMessage: 'Niðurstaða',
+    conclusion: {
+      id: 'judicial.system.core:sections.indictments_court_section.conclusion_v1',
+      defaultMessage: 'Staða og lyktir',
       description:
-        'Notaður sem texti fyrir Niðurstaða skref í hliðarstiku í ákærum hjá héraðsdómum',
+        'Notaður sem texti fyrir Staða og lyktir skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
     summary: {
       id: 'judicial.system.core:sections.indictments_court_section.summary',
@@ -421,12 +421,6 @@ export const sections = {
       defaultMessage: 'Máli lokið',
       description:
         'Notaður sem texti í skrefum á hliðarstiku þegar máli er lokið',
-    },
-    completedWithoutRuling: {
-      id: 'judicial.system.core:sections.case_results.completed_without_ruling',
-      defaultMessage: 'Máli er lokið án úrskurðar',
-      description:
-        'Notaður sem texti í skrefum á hliðarstiku þegar máli er lokið án úrskurðar',
     },
   }),
 }

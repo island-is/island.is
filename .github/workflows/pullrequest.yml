@@ -17,7 +17,7 @@ env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
-  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_SKIP_NX_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nx-cache') }}
   DISABLE_CHUNKS: 'true'
   DISABLE_GROUPING: 'false'
   DISABLE_PROBLEMATIC: 'false'
@@ -26,213 +26,33 @@ env:
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  YARN_ENABLE_HARDENED_MODE: '0'
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
+  AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+  SERVERSIDE_FEATURES_ON: ''
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+  CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
+  SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
+  DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
+  YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
   prepare:
-    runs-on: arc-runners
-    timeout-minutes: 35
-
-    env:
-      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
-      SERVERSIDE_FEATURES_ON: ''
-      DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
-      DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
-
-    outputs:
-      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
-      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
-      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
-      LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
-      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
-      NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
-      DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-    steps:
-      # Creates homedir if missing (e.g. when set to /tmp/runner/ when running locally with act)
-      - name: Debug home etc.
-        run: |
-          echo "docker version: $(docker --version)"
-          echo "User: HOME=$HOME, PWD=$PWD, id=$(id)"
-          mkdir -p "$HOME"
-          ls -lah "$HOME"
-
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-
-      - name: Prepare generated files
-        run: |
-          echo "generated files: ${{ env.GENERATED_FILES }}"
-          node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES }}
-          tar -xzvf ${{ env.GENERATED_FILES }}
-
-      - name: Cache Generated files
-        uses: runs-on/cache/save@v4
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Check node version
-        run: |
-          set -euo pipefail
-          node -v
-          yarn --version
-          ls -l "$(which node)"
-
-      - name: Derive appropriate SHAs
-        uses: nrwl/nx-set-shas@v4
-
-      - run: |
-          echo "BASE: ${{ env.NX_BASE }}"
-          echo "HEAD: ${{ env.NX_HEAD }}"
-
-      - name: Checking out relevant branches
-        id: export-sha
-        run: |
-          set -euo pipefail
-          echo "CHUNK_SIZE: $CHUNK_SIZE"
-          echo "MAX_JOBS: $MAX_JOBS"
-          echo "NX_PARALLEL: $NX_PARALLEL"
-          set -x
-
-          git config --global user.email "ci@island.is"
-          git config --global user.name "CI Bot"
-
-          BASE_SHA=${{ env.NX_BASE }}
-          HEAD_SHA=${{ env.NX_HEAD }}
-          echo "BASE=$BASE_SHA" >> "$GITHUB_ENV"
-          echo "NX_BASE=$BASE_SHA" >> "$GITHUB_OUTPUT"
-          echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
-          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
-
-      # This is to increase the retention days for our GitHub Actions run events
-      # See this for more information:
-      # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
-      - name: Keep PR run event
-        uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
-        # Don't run this step locally
-        if: ${{ !github.event.localrun }}
-        with:
-          name: pr-event
-          path: event.json
-          retention-days: 90
-          include-hidden-files: true
-          if-no-files-found: error
-
-      - name: License audit Node modules
-        run: ./scripts/ci/20_license-audit.sh
-
-      - name: Check user permissions
-        uses: actions-cool/check-user-permission@v2
-        id: check-permission
-        # This fails locally without a token, and only prevents "admin" label usage
-        if: ${{ !github.event.localrun }}
-
-      - name: Set magic env if test-everything label is set
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outcome == 'success' && steps.check-permission.outputs['user-permission'] == 'admin' }}
-        run: |
-          echo "AFFECTED_ALL=7913-$GITHUB_HEAD_REF" >> "$GITHUB_ENV"
-
-      - name: Warn if user does not have the required permissions
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outcome == 'success'&& steps.check-permission.outputs['user-permission'] != 'admin' }}
-        run: |
-          echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
-          echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Prepare lint targets
-        id: lint_projects
-        env:
-          # Linting is easy, no need to split/chunk it
-          DISABLE_CHUNKS: 'true'
-          DISABLE_GROUPING: 'true'
-          DISABLE_PROBLEMATIC: 'true'
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Prepare test targets
-        id: test_projects
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Prepare e2e targets
-        id: e2e_projects
-        env:
-          CHUNK_SIZE: 1
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-          echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
-
-      - name: Prepare build targets
-        id: build_projects
-        run: |
-          set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
-          if [[ "$CHUNKS" != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
-          fi
-      - name: Check release-manager approval
-        id: check-release-manager-approval
-        if: ${{ contains(github.event.pull_request.head.ref, '/pre-release/') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          node -r esbuild-register .github/actions/check-team-approval.ts release-managers
+    uses: ./.github/workflows/install.yml
+    secrets: inherit
+    with:
+      main_branch: ${{ github.base_ref }}
 
   tests:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-runners
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    runs-on: arc-shared
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -241,52 +61,16 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v4
 
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
         with:
-          node-version-file: 'package.json'
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
-
+      - name: load-deps
+        uses: ./.github/actions/load-deps
       - name: Run unit tests
         uses: ./.github/actions/unit-test
         with:
@@ -296,11 +80,65 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
+  unicorn-tests:
+    name: All projects have some tests
+    needs:
+      - prepare
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.is-unicorn == 'true' }}
+    runs-on: arc-shared
+    env:
+      CHUNKS: ${{ needs.prepare.outputs.TEST_CHUNKS }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_* below
+          fetch-depth: 0
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Find unicorn projects
+        id: unicorn
+        run: |
+          unicorns=$(node scripts/ci/unicorn-utils.mjs show-unicorns --json)
+          jq -ncr --argjson chunks "$CHUNKS" --argjson unicorns "$unicorns" '
+            [
+                $chunks.projects
+              | .[]
+              | select( . | IN( $unicorns | .[] ) )
+            ]
+            | "projects=\(. | join(","))"
+          ' | tee -a "$GITHUB_OUTPUT"
+
+      - name: Verify that projects have some tests
+        env:
+          projects: ${{ steps.unicorn.outputs.projects }}
+        run: |
+          # Get list of tests, with `<project-name>: ` prefixed (stream style, without cache), grouping by unique prefixes (sorted)
+          yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${projects}" --parallel --verbose -- --listTests |
+            grep -P "^(${projects//,/|}): " | cut -d':' -f1 | sort -u > /tmp/projects-with-tests
+          # Get affected projects sorted
+          echo -e "${projects}" | sed 's/,/\n/g' | sort -u > /tmp/projects-all
+          if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
+            echo "These projects don't have any tests:"
+            echo "${d}"
+            exit 1
+          fi
+          echo "All projects ($projects) have tests."
+
   e2e:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
-    runs-on: arc-runners
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    runs-on: arc-shared
     timeout-minutes: 45
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -310,109 +148,41 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=4096
       E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v4
 
-      - run: |
-          corepack enable
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
         with:
-          node-version-file: 'package.json'
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Running e2e tests
-        run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
+        run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3
 
   linting-workspace:
     needs:
       - prepare
-    runs-on: arc-runners
-    timeout-minutes: 5
+    runs-on: arc-shared
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - run: |
-          corepack enable
+      - name: checkout
+        uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
         with:
-          node-version-file: 'package.json'
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -428,15 +198,15 @@ jobs:
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
-          fail-level: info
+          fail_level: info
           exclude: >-
             */node_modules/*
 
   formatting:
     needs:
       - prepare
-    runs-on: arc-runners
-    timeout-minutes: 5
+    runs-on: arc-shared
+    timeout-minutes: 15
     env:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
     steps:
@@ -445,65 +215,63 @@ jobs:
         with:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
-      - uses: actions/checkout@v4
-        if: ${{ github.ref == 'ref/heads/main' }}
-      - run: |
-          corepack enable
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
         with:
-          node-version-file: 'package.json'
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            .yarn/cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
         run: ./scripts/ci/20_check-formatting.sh "check"
+
       # - name: NX format:write
       #   if: ${{ github.event_name == 'pull_request' }}
       #   run: |
       #     ./scripts/ci/20_check-formatting.sh "write"
       #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
 
+  lintfix-changed-files:
+    name: Lintfix Changed Files
+    runs-on: arc-shared
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_* below
+          fetch-depth: 0
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          # Need ref to know where to push to
+          # https://github.com/actions/checkout#push-a-commit-to-a-pr-using-the-built-in-token
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
+      - name: Run lintfix
+        id: lintfix
+        # NOTE: We want to use the PR base, not last good, since the lint is not part of "good" build
+        # and causes unintended lint changes when using a different commit
+        run: |
+          yarn nx affected -t lint --base="origin/$GITHUB_BASE_REF" --fix
+          if ! git diff "$GITHUB_BASE_REF" --exit-code; then
+            echo "FILES_CHANGED=true" | tee -a "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit changed files
+        if: ${{ steps.lintfix.outputs.FILES_CHANGED == 'true' }}
+        run: ./infra/scripts/ci/git-check-dirty.sh . lintfix dirtybot
+
   linting:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-shared
     timeout-minutes: 35
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -514,58 +282,81 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v4
-      - run: |
-          corepack enable
+      - name: checkout
+        uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
         with:
-          node-version-file: 'package.json'
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
+      - name: Lint head
+        id: lint-head
         run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+          set -euo pipefail
+          lints=$(mktemp -t lint-head.XXXXXX)
+          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
+          yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
+            tee -a "$lints" | # Show output when running, but preserve pipe-chaining
+            (grep -oP '(?<=✖ )(\d+)(?= problems)' || echo '0') | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee -a "$GITHUB_OUTPUT" # Finally create output
 
-      - name: Linting
-        run: ./scripts/ci/run-in-parallel-native.sh lint
+      # Checkout for linting base
+      - uses: actions/checkout@v4
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          clean: false
+
+      - name: Lint base
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+        id: lint-base
+        run: |
+          set -euo pipefail
+          lints=$(mktemp -t lint-base.XXXXXX)
+          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
+          yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
+            tee -a "$lints" | # Show output when running, but preserve pipe-chaining
+            (grep -oP '(?<=✖ )(\d+)(?= problems)' || echo '0') | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee -a "$GITHUB_OUTPUT" # Finally create output
+
+      - name: No new lints
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+        env:
+          HEAD_LINT_COUNT: ${{steps.lint-head.outputs.lint-count}}
+          BASE_LINT_COUNT: ${{steps.lint-base.outputs.lint-count}}
+          HEAD_LINT_FILE: ${{steps.lint-head.outputs.lints-file}}
+          BASE_LINT_FILE: ${{steps.lint-base.outputs.lints-file}}
+        run: |
+          # Get `<filename> #lints: <n>` lines for easy diff
+          for f in "${BASE_LINT_FILE}" "${HEAD_LINT_FILE}"; do
+            # Make "Remote cache..." and "Local cache" be the same
+            sed -i -E 's/\s*\[[^[]*cache[^]]*\]\s*//g' "${f}" || echo "No cached targets found in $f"
+            grep -oP "(?<=$PWD/).*" "${f}" | sort -n | uniq -c | awk '{print($2 " #lints: " $1)}' > "${f}_files.out" || { echo "No lints found in $f"; }
+          done
+          NEW_LINTS=$(comm -13 "${BASE_LINT_FILE}_files.out" "${HEAD_LINT_FILE}_files.out" | wc -l) || { echo "Failed comparing output files"; exit 1; }
+          COUNT_DIFF=$(( HEAD_LINT_COUNT - BASE_LINT_COUNT )) || :
+          if (( COUNT_DIFF <= 0 && NEW_LINTS == 0 )); then
+            echo "Lint count has not increased (𝚫=$COUNT_DIFF)"
+            exit 0
+          fi
+          echo "::error title=NEW_LINTS::Please fix your lints 🙏 (found $NEW_LINTS additional lints)"
+          echo "Files with changed lints:"
+          diff "${BASE_LINT_FILE}_files.out" "${HEAD_LINT_FILE}_files.out" || :
+          echo "::group::lintdiff"
+          diff "${BASE_LINT_FILE}" "${HEAD_LINT_FILE}" || : # Ignore diff exit code
+          echo "::endgroup::"
+          exit 1
 
   build:
     needs:
       - prepare
-    runs-on: arc-runners
+    runs-on: arc-shared
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -573,58 +364,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE != 'true' }}
+    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
     steps:
-      - uses: actions/checkout@v4
-      - run: |
-          corepack enable
+      - name: checkout
+        uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
         with:
-          node-version-file: 'package.json'
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
-      - name: Get Yarn Cache Directory Path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - name: Restore Dependencies Cache
-        uses: runs-on/cache/restore@v4
-        id: restore-cache
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: ${{ runner.os }}-
-
-      - run: |
-          yarn install --immutable
-
-      - name: Cache Dependencies
-        uses: runs-on/cache/save@v4
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-
-      - name: Restore generated files
-        uses: runs-on/cache/restore@v4
-        id: restore-generated-files-cache
-        with:
-          path: |
-            ${{ env.GENERATED_FILES }}
-          key: generated-files-${{ github.sha }}
-
-      - name: Extract generated files
-        run: |
-          tar -xzvf ${{ env.GENERATED_FILES }}
+      - name: load-deps
+        uses: ./.github/actions/load-deps
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs:
       - prepare
@@ -635,28 +392,28 @@ jobs:
       - formatting
       - e2e
       - build
+      - unicorn-tests
     steps:
-      - name: Check prepare success
-        run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check if deploy-feature is enabled
+      - name: Notify about deploy-feature label
+        if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
-          if [ "$DEPLOY_FEATURE" == "true" ]; then
-            echo "::error::The deploy-feature flag is currently enabled, remove it before merge."
+          echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> $GITHUB_STEP_SUMMARY
+          exit 1
+
+      - name: Collect
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          # "failed" here is everything that wasn't successful or skipped (e.g. "failuer", "cancelled")
+          failed_dependencies=$(jq -nr --argjson needs "$NEEDS" ' $needs | with_entries(select(.value.result != "success" and .value.result != "skipped")) ')
+          echo -n "Did any dependency fail? "
+          if jq -ne --argjson failures "$failed_dependencies" '$failures | length > 0'; then
+            failure_statuses=$(jq -nr --argjson failures "$failed_dependencies" '[ $failures | to_entries | .[] | "\(.key) (\(.value.result))" ] | join(", ")')
+            echo "::error title=NEEDS::Some dependencies failed: $failure_statuses"
             exit 1
-          else
-            echo "::notice::Deploy-feature flag is not enabled. Proceeding with the workflow."
           fi
-      - name: Check tests success
-        run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
-      - name: Check e2e success
-        run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
-      - name: Check linting success
-        run: '[[ ${{ needs.linting.result }} != "failure" ]] || exit 1'
-      - name: Check run-shellcheck success
-        run: '[[ ${{ needs.run-shellcheck.result }} != "failure" ]] || exit 1'
-      - name: Check formatting success
-        run: '[[ ${{ needs.formatting.result }} != "failure" ]] || exit 1'
-      - name: Check build success
-        run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
+          echo "::info title=NEEDS::No failing dependencies 🎉"
+          exit 0
+
       - name: Announce success
         run: echo "Build is successful"

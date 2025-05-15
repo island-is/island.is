@@ -13,13 +13,13 @@ import {
   buildSubmitField,
   buildTableRepeaterField,
   coreMessages,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import {
   Comparators,
   Form,
   FormModes,
-  NO,
-  YES,
 } from '@island.is/application/types'
 import { applicantInformationMessages } from '@island.is/application/ui-forms'
 import * as m from '../lib/messages'
@@ -140,7 +140,6 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           children: [
             buildCustomField({
               id: 'additionalOwners',
-              title: '',
               component: 'AdditionalOwnersRepeater',
             }),
           ],
@@ -160,7 +159,6 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             buildTableRepeaterField({
               id: 'loanProviders.loans',
               marginTop: 2,
-              title: '',
               addItemButtonText: m.application.loanStatus.addNewLoan,
               saveItemButtonText: m.application.loanStatus.saveNewLoan,
               fields: {
@@ -200,7 +198,6 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             }),
             buildCheckboxField({
               id: 'loanProviders.hasNoLoans',
-              title: '',
               condition: (answers) => {
                 const loans = (answers as GrindavikHousingBuyout)?.loanProviders
                   ?.loans
@@ -228,11 +225,9 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           children: [
             buildDescriptionField({
               id: '',
-              title: '',
               description: m.application.results.explaination,
             }),
             buildStaticTableField({
-              title: '',
               header: [
                 m.application.results.tableDescription,
                 m.application.results.tableValue,
@@ -276,12 +271,10 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'infoText',
-              title: '',
               description: m.application.results.infoText,
             }),
             buildCheckboxField({
               id: 'confirmLoanTakeover',
-              title: '',
               defaultValue: [],
               options: [
                 {
@@ -304,7 +297,6 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'sellerStatementText',
-              title: '',
               description: m.application.sellerStatement.text,
             }),
           ],

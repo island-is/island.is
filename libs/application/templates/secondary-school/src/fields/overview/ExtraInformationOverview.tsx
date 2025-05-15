@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { SecondarySchoolAnswers } from '../..'
 import { ReviewGroup } from '../../components/ReviewGroup'
-import { Routes, checkIsEditable } from '../../utils'
+import { Routes, checkIsEditable, checkUseAnswersCopy } from '../../utils'
 import { getLanguageByCode } from '@island.is/shared/utils'
 import { getValueViaPath } from '@island.is/application/core'
 
@@ -15,9 +15,12 @@ export const ExtraInformationOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
+  const useAnswersCopy = checkUseAnswersCopy(application)
+  const copyPrefix = useAnswersCopy ? 'copy.' : ''
+
   const extraInformation = getValueViaPath<
     SecondarySchoolAnswers['extraInformation']
-  >(application.answers, 'extraInformation')
+  >(application.answers, copyPrefix + 'extraInformation')
 
   const showNativeLanguage = !!extraInformation?.nativeLanguageCode
   const showOtherDescription = !!extraInformation?.otherDescription

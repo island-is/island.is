@@ -11,7 +11,6 @@ import { getChargeItems } from '../../utils'
 
 export const StreetRegistrationForm: Form = buildForm({
   id: 'StreetRegistrationFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

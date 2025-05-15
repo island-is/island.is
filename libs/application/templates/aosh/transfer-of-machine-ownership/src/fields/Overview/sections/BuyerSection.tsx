@@ -48,7 +48,6 @@ export const BuyerSection: FC<
           <Text>
             {kennitala.format(
               getValueViaPath(answers, 'buyer.nationalId', '') as string,
-              '-',
             )}
           </Text>
           <Text>{getValueViaPath(answers, 'buyer.email', '') as string}</Text>

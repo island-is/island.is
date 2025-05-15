@@ -1,6 +1,7 @@
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import {
+  ExpiryStatus,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
@@ -99,6 +100,12 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
                   arg: t.cardNumber?.toString() ?? formatMessage(m.unknown),
                 }),
                 licenseId: t.cardNumber?.toString() ?? 'default',
+                expiryStatus:
+                  isExpired === undefined
+                    ? ExpiryStatus.UNKNOWN
+                    : isExpired
+                    ? ExpiryStatus.EXPIRED
+                    : ExpiryStatus.ACTIVE,
                 expired: isExpired,
                 expireDate: t.expiryDate.toISOString(),
                 displayTag: expiryTag(

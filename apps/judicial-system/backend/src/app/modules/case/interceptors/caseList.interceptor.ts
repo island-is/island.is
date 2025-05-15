@@ -69,6 +69,10 @@ export class CaseListInterceptor implements NestInterceptor {
             caseSentToCourtDate: EventLog.caseSentToCourtEvent(
               theCase.eventLogs,
             )?.created,
+            isRegisteredInPrisonSystem: theCase.isRegisteredInPrisonSystem,
+            isCompletedWithoutRuling: theCase.isCompletedWithoutRuling,
+            publicProsecutorIsRegisteredInPoliceSystem:
+              theCase.publicProsecutorIsRegisteredInPoliceSystem,
           }
         }),
       ),

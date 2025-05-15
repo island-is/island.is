@@ -73,11 +73,17 @@ test.describe.serial('Indictment tests', () => {
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
 
-    // Processing
+    // Case files
+    await expect(page).toHaveURL(`/akaera/domskjol/${caseId}`)
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    ])
 
+    // Processing
     await Promise.all([
       expect(page).toHaveURL(`/akaera/malsmedferd/${caseId}`),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
     ])
 
     await Promise.all([
@@ -94,8 +100,8 @@ test.describe.serial('Indictment tests', () => {
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
-    // Indictment
 
+    // Indictment
     await Promise.all([
       expect(page).toHaveURL(`/akaera/akaera/${caseId}`),
       verifyRequestCompletion(page, '/api/graphql', 'CreateIndictmentCount'),
@@ -126,13 +132,6 @@ test.describe.serial('Indictment tests', () => {
       verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
     ])
 
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Case files
-    await expect(page).toHaveURL(`/akaera/domskjol/${caseId}`)
     await Promise.all([
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
@@ -241,7 +240,7 @@ test.describe.serial('Indictment tests', () => {
     ])
 
     // Conclusion
-    await expect(page).toHaveURL(`domur/akaera/nidurstada/${caseId}`)
+    await expect(page).toHaveURL(`domur/akaera/stada-og-lyktir/${caseId}`)
 
     await page.locator('label').filter({ hasText: 'Lokið' }).click()
     await page.locator('label').filter({ hasText: 'Dómur' }).click()

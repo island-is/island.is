@@ -1,25 +1,23 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { FC, Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
   Box,
   Button,
-  Checkbox,
+  InputFileUpload,
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
   FormContentContainer,
   FormContext,
   FormFooter,
-  InputAdvocate,
-  InputName,
-  InputNationalId,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -29,30 +27,30 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 import {
+  CaseFileCategory,
   CaseState,
   CaseTransition,
   CivilClaimant,
   DefendantPlea,
-  UpdateCivilClaimantInput,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useCivilClaimants,
   useDefendants,
-  useNationalRegistry,
   useOnceOn,
+  useS3Upload,
+  useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { ProsecutorSection, SelectCourt } from '../../components'
+import { SelectCourt } from '../../components'
+import { CivilClaimantFields } from './CivilClaimantFields'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
-interface UpdateCivilClaimant
-  extends Omit<UpdateCivilClaimantInput, 'caseId'> {}
-
 interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
+const addCivilClaimantFileSectionId = 'addCivilClaimantFileSection'
 
 const Processing: FC = () => {
   const { user } = useContext(UserContext)
@@ -62,35 +60,43 @@ const Processing: FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
     isCaseUpToDate,
-    refreshCase,
   } = useContext(FormContext)
   const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()
+  const { createCivilClaimant, deleteCivilClaimant } = useCivilClaimants()
   const {
-    updateCivilClaimant,
-    updateCivilClaimantState,
-    createCivilClaimant,
-    deleteCivilClaimant,
-    setAndSendCivilClaimantToServer,
-  } = useCivilClaimants()
+    uploadFiles,
+    allFilesDoneOrError,
+    addUploadFiles,
+    updateUploadFile,
+    removeUploadFile,
+  } = useUploadFiles(workingCase.caseFiles)
+  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
+    workingCase.id,
+  )
   const router = useRouter()
 
-  const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
-    useState<{ nationalId: string | null; civilClaimantId: string }>()
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
     useState<boolean>()
-  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const initialize = useCallback(async () => {
     if (!workingCase.court) {
-      await updateCase(workingCase.id, {
+      const updatedCase = await updateCase(workingCase.id, {
         courtId: user?.institution?.defaultCourtId,
       })
-      refreshCase()
+
+      if (!updatedCase) {
+        return
+      }
+
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        court: updatedCase?.court,
+      }))
     }
   }, [
-    refreshCase,
+    setWorkingCase,
     updateCase,
     user?.institution?.defaultCourtId,
     workingCase.court,
@@ -114,23 +120,14 @@ const Processing: FC = () => {
     [router, setWorkingCase, transitionCase, workingCase],
   )
 
-  const { personData } = useNationalRegistry(
-    civilClaimantNationalIdUpdate?.nationalId,
-  )
-
-  const stepIsValid = isProcessingStepValidIndictments(workingCase)
+  const stepIsValid =
+    isProcessingStepValidIndictments(workingCase) && allFilesDoneOrError
 
   const handleSetAndSendDefendantToServer = (update: UpdateDefendant) => {
     setAndSendDefendantToServer(
       { caseId: workingCase.id, ...update },
       setWorkingCase,
     )
-  }
-
-  const handleCreateCivilClaimantClick = () => {
-    addCivilClaimant()
-
-    window.scrollTo(0, document.body.scrollHeight)
   }
 
   const addCivilClaimant = async () => {
@@ -149,6 +146,16 @@ const Processing: FC = () => {
         } as CivilClaimant,
       ],
     }))
+  }
+
+  const handleCreateCivilClaimantClick = () => {
+    addCivilClaimant()
+
+    const element = document.getElementById(addCivilClaimantFileSectionId)
+    element?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end',
+    })
   }
 
   const removeCivilClaimantById = async (civilClaimantId: string) => {
@@ -179,26 +186,6 @@ const Processing: FC = () => {
     }
   }
 
-  const handleUpdateCivilClaimantState = (update: UpdateCivilClaimant) => {
-    updateCivilClaimantState(
-      { caseId: workingCase.id, ...update },
-      setWorkingCase,
-    )
-  }
-
-  const handleUpdateCivilClaimant = (update: UpdateCivilClaimant) => {
-    updateCivilClaimant({ caseId: workingCase.id, ...update })
-  }
-
-  const handleSetAndSendCivilClaimantToServer = (
-    update: UpdateCivilClaimant,
-  ) => {
-    setAndSendCivilClaimantToServer(
-      { caseId: workingCase.id, ...update },
-      setWorkingCase,
-    )
-  }
-
   const handleHasCivilClaimsChange = (hasCivilClaims: boolean) => {
     setHasCivilClaimantChoice(hasCivilClaims)
 
@@ -215,62 +202,6 @@ const Processing: FC = () => {
     }
   }
 
-  const handleCivilClaimantNationalIdBlur = (
-    nationalId: string,
-    noNationalId?: boolean | null,
-    civilClaimantId?: string | null,
-  ) => {
-    if (!civilClaimantId) {
-      return
-    }
-
-    if (noNationalId) {
-      handleSetAndSendCivilClaimantToServer({
-        civilClaimantId,
-        nationalId: nationalId || null,
-      })
-    } else {
-      const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
-      setCivilClaimantNationalIdUpdate({
-        nationalId: cleanNationalId || null,
-        civilClaimantId,
-      })
-    }
-  }
-
-  const handleCivilClaimantNameBlur = async (
-    name: string,
-    civilClaimantId?: string | null,
-  ) => {
-    if (!civilClaimantId) {
-      return
-    }
-
-    updateCivilClaimant({ name, civilClaimantId, caseId: workingCase.id })
-  }
-
-  useEffect(() => {
-    if (!civilClaimantNationalIdUpdate) {
-      return
-    }
-
-    const items = personData?.items || []
-    const person = items[0]
-
-    setNationalIdNotFound(items.length === 0)
-
-    const update: UpdateCivilClaimant = {
-      civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
-      nationalId: civilClaimantNationalIdUpdate.nationalId,
-      ...(person?.name ? { name: person.name } : {}),
-    }
-
-    handleSetAndSendCivilClaimantToServer(update)
-
-    // We want this hook to run exclusively when personData changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personData])
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -285,7 +216,6 @@ const Processing: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
-        <ProsecutorSection />
         <Box component="section" marginBottom={5}>
           <SelectCourt />
         </Box>
@@ -295,6 +225,7 @@ const Processing: FC = () => {
               title={formatMessage(strings.defendantPlea, {
                 defendantCount: workingCase.defendants.length,
               })}
+              heading="h2"
             />
             {workingCase.defendants.map((defendant) => (
               <Box marginBottom={2} key={defendant.id}>
@@ -368,12 +299,16 @@ const Processing: FC = () => {
           component="section"
           marginBottom={workingCase.hasCivilClaims === true ? 5 : 10}
         >
-          <SectionHeading title={formatMessage(strings.civilDemandsTitle)} />
+          <SectionHeading
+            title={formatMessage(strings.civilDemandsTitle)}
+            heading="h2"
+          />
           <BlueBox>
             <SectionHeading
               title={formatMessage(strings.isCivilClaim)}
               marginBottom={2}
-              heading="h4"
+              heading="h3"
+              variant="h4"
               required
             />
             <Box display="flex">
@@ -412,272 +347,60 @@ const Processing: FC = () => {
         </Box>
         {workingCase.hasCivilClaims && (
           <>
-            <SectionHeading title={formatMessage(strings.civilClaimant)} />
-            {workingCase.civilClaimants?.map((civilClaimant, index) => (
-              <Box component="section" marginBottom={5} key={civilClaimant.id}>
-                <BlueBox>
-                  {index > 0 && (
-                    <Box
-                      display="flex"
-                      justifyContent="flexEnd"
-                      marginBottom={2}
-                    >
-                      <Button
-                        variant="text"
-                        colorScheme="destructive"
-                        onClick={() => {
-                          removeCivilClaimantById(civilClaimant.id)
-                        }}
-                      >
-                        {formatMessage(strings.remove)}
-                      </Button>
-                    </Box>
-                  )}
-                  <Box marginBottom={2}>
-                    <Checkbox
-                      name={`civilClaimantNoNationalId-${civilClaimant.id}`}
-                      label={formatMessage(strings.civilClaimantNoNationalId)}
-                      checked={Boolean(civilClaimant.noNationalId)}
-                      onChange={() => {
-                        handleSetAndSendCivilClaimantToServer({
-                          civilClaimantId: civilClaimant.id,
-                          nationalId: null,
-                          noNationalId: !civilClaimant.noNationalId,
-                        })
-                      }}
-                      backgroundColor="white"
-                      large
-                      filled
-                    />
-                  </Box>
-                  <Box marginBottom={2}>
-                    <InputNationalId
-                      isDateOfBirth={Boolean(civilClaimant.noNationalId)}
-                      value={civilClaimant.nationalId ?? undefined}
-                      required={Boolean(!civilClaimant.noNationalId)}
-                      onChange={(val) => {
-                        if (val.length < 11) {
-                          setNationalIdNotFound(false)
-                        } else if (val.length === 11) {
-                          handleCivilClaimantNationalIdBlur(
-                            val,
-                            civilClaimant.noNationalId,
-                            civilClaimant.id,
-                          )
-                        }
-
-                        handleUpdateCivilClaimantState({
-                          civilClaimantId: civilClaimant.id ?? '',
-                          nationalId: val,
-                        })
-                      }}
-                      onBlur={(val) =>
-                        handleCivilClaimantNationalIdBlur(
-                          val,
-                          civilClaimant.noNationalId,
-                          civilClaimant.id,
-                        )
-                      }
-                    />
-                    {civilClaimant.nationalId?.length === 11 &&
-                      nationalIdNotFound && (
-                        <Text color="red600" variant="eyebrow" marginTop={1}>
-                          {formatMessage(
-                            core.nationalIdNotFoundInNationalRegistry,
-                          )}
-                        </Text>
-                      )}
-                  </Box>
-                  <InputName
-                    value={civilClaimant.name ?? undefined}
-                    onChange={(val) =>
-                      handleUpdateCivilClaimantState({
-                        civilClaimantId: civilClaimant.id ?? '',
-                        name: val,
-                      })
-                    }
-                    onBlur={(val) =>
-                      handleCivilClaimantNameBlur(val, civilClaimant.id)
-                    }
-                    required
-                  />
-                  <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-                    <Button
-                      variant="text"
-                      colorScheme={
-                        civilClaimant.hasSpokesperson
-                          ? 'destructive'
-                          : 'default'
-                      }
-                      onClick={() => {
-                        handleSetAndSendCivilClaimantToServer({
-                          civilClaimantId: civilClaimant.id,
-                          hasSpokesperson: !civilClaimant.hasSpokesperson,
-                          spokespersonEmail: null,
-                          spokespersonPhoneNumber: null,
-                          spokespersonName: null,
-                          spokespersonIsLawyer: null,
-                          spokespersonNationalId: null,
-                          caseFilesSharedWithSpokesperson: null,
-                        })
-                      }}
-                    >
-                      {formatMessage(
-                        civilClaimant.hasSpokesperson
-                          ? strings.removeDefender
-                          : strings.addDefender,
-                      )}
-                    </Button>
-                  </Box>
-                  {civilClaimant.hasSpokesperson && (
-                    <>
-                      <Box display="flex" marginY={2}>
-                        <Box width="half" marginRight={1}>
-                          <RadioButton
-                            name="defenderType"
-                            id={`defender_type_lawyer-${civilClaimant.id}`}
-                            label={formatMessage(strings.lawyer)}
-                            large
-                            backgroundColor="white"
-                            onChange={() =>
-                              handleSetAndSendCivilClaimantToServer({
-                                civilClaimantId: civilClaimant.id,
-                                spokespersonIsLawyer: true,
-                              })
-                            }
-                            checked={Boolean(
-                              civilClaimant.spokespersonIsLawyer,
-                            )}
-                          />
-                        </Box>
-                        <Box width="half" marginLeft={1}>
-                          <RadioButton
-                            name="defenderType"
-                            id={`defender_type_legal_rights_protector-${civilClaimant.id}`}
-                            label={formatMessage(strings.legalRightsProtector)}
-                            large
-                            backgroundColor="white"
-                            onChange={() =>
-                              handleSetAndSendCivilClaimantToServer({
-                                civilClaimantId: civilClaimant.id,
-                                spokespersonIsLawyer: false,
-                              })
-                            }
-                            checked={
-                              civilClaimant.spokespersonIsLawyer === false
-                            }
-                          />
-                        </Box>
-                      </Box>
-                      <Box marginBottom={2}>
-                        <InputAdvocate
-                          advocateType={
-                            civilClaimant.spokespersonIsLawyer
-                              ? 'lawyer'
-                              : 'legalRightsProtector'
-                          }
-                          name={civilClaimant.spokespersonName}
-                          email={civilClaimant.spokespersonEmail}
-                          phoneNumber={civilClaimant.spokespersonPhoneNumber}
-                          onAdvocateChange={(
-                            spokespersonName: string | null,
-                            spokespersonNationalId: string | null,
-                            spokespersonEmail: string | null,
-                            spokespersonPhoneNumber: string | null,
-                          ) => {
-                            handleSetAndSendCivilClaimantToServer({
-                              civilClaimantId: civilClaimant.id,
-                              spokespersonName,
-                              spokespersonNationalId,
-                              spokespersonEmail,
-                              spokespersonPhoneNumber,
-                              caseFilesSharedWithSpokesperson:
-                                spokespersonNationalId
-                                  ? civilClaimant.caseFilesSharedWithSpokesperson
-                                  : null,
-                            })
-                          }}
-                          onEmailChange={(spokespersonEmail: string | null) =>
-                            handleUpdateCivilClaimantState({
-                              civilClaimantId: civilClaimant.id,
-                              spokespersonEmail,
-                            })
-                          }
-                          onEmailSave={(spokespersonEmail: string | null) =>
-                            handleUpdateCivilClaimant({
-                              civilClaimantId: civilClaimant.id,
-                              spokespersonEmail,
-                            })
-                          }
-                          onPhoneNumberChange={(
-                            spokespersonPhoneNumber: string | null,
-                          ) =>
-                            handleUpdateCivilClaimantState({
-                              civilClaimantId: civilClaimant.id,
-                              spokespersonPhoneNumber,
-                            })
-                          }
-                          onPhoneNumberSave={(
-                            spokespersonPhoneNumber: string | null,
-                          ) =>
-                            handleUpdateCivilClaimant({
-                              civilClaimantId: civilClaimant.id,
-                              spokespersonPhoneNumber,
-                            })
-                          }
-                          disabled={
-                            civilClaimant.spokespersonIsLawyer === null ||
-                            civilClaimant.spokespersonIsLawyer === undefined
-                          }
-                        />
-                      </Box>
-                      <Checkbox
-                        name={`civilClaimantShareFilesWithDefender-${civilClaimant.id}`}
-                        label={formatMessage(
-                          strings.civilClaimantShareFilesWithDefender,
-                          {
-                            defenderIsLawyer:
-                              civilClaimant.spokespersonIsLawyer,
-                          },
-                        )}
-                        checked={Boolean(
-                          civilClaimant.caseFilesSharedWithSpokesperson,
-                        )}
-                        onChange={() => {
-                          handleSetAndSendCivilClaimantToServer({
-                            civilClaimantId: civilClaimant.id,
-                            caseFilesSharedWithSpokesperson:
-                              !civilClaimant.caseFilesSharedWithSpokesperson,
-                          })
-                        }}
-                        disabled={
-                          civilClaimant.spokespersonIsLawyer === null ||
-                          civilClaimant.spokespersonIsLawyer === undefined
-                        }
-                        tooltip={formatMessage(
-                          strings.civilClaimantShareFilesWithDefenderTooltip,
-                          {
-                            defenderIsLawyer:
-                              civilClaimant.spokespersonIsLawyer,
-                          },
-                        )}
-                        backgroundColor="white"
-                        large
-                        filled
+            <Box component="section" marginBottom={5}>
+              <SectionHeading
+                title={formatMessage(strings.civilClaimant)}
+                heading="h2"
+              />
+              {workingCase.civilClaimants?.map((civilClaimant, index) => (
+                <Fragment key={civilClaimant.id}>
+                  <Box marginBottom={3}>
+                    <BlueBox>
+                      <CivilClaimantFields
+                        caseId={workingCase.id}
+                        civilClaimant={civilClaimant}
+                        civilClaimantIndex={index}
+                        removeCivilClaimantById={removeCivilClaimantById}
                       />
-                    </>
-                  )}
-                </BlueBox>
+                    </BlueBox>
+                  </Box>
+                </Fragment>
+              ))}
+              <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
+                <Button
+                  variant="ghost"
+                  icon="add"
+                  onClick={handleCreateCivilClaimantClick}
+                >
+                  {formatMessage(strings.addCivilClaimant)}
+                </Button>
               </Box>
-            ))}
-            <Box display="flex" justifyContent="flexEnd" marginBottom={10}>
-              <Button
-                variant="ghost"
-                icon="add"
-                onClick={handleCreateCivilClaimantClick}
-              >
-                {formatMessage(strings.addCivilClaimant)}
-              </Button>
+            </Box>
+            <Box
+              id={addCivilClaimantFileSectionId}
+              component="section"
+              marginBottom={10}
+            >
+              <SectionHeading title="Bótakrafa" heading="h2" />
+              <InputFileUpload
+                name="civilClaim"
+                files={uploadFiles.filter(
+                  (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
+                )}
+                accept={Object.values(fileExtensionWhitelist)}
+                title="Dragðu gögn hingað til að hlaða upp"
+                buttonLabel="Velja gögn til að hlaða upp"
+                onChange={(files) =>
+                  handleUpload(
+                    addUploadFiles(files, {
+                      category: CaseFileCategory.CIVIL_CLAIM,
+                    }),
+                    updateUploadFile,
+                  )
+                }
+                onRemove={(file) => handleRemove(file, removeUploadFile)}
+                onRetry={(file) => handleRetry(file, updateUploadFile)}
+              />
             </Box>
           </>
         )}
@@ -685,7 +408,7 @@ const Processing: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_CASE_FILE_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           nextUrl={`${constants.INDICTMENTS_INDICTMENT_ROUTE}/${workingCase.id}`}
         />

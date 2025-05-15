@@ -31,7 +31,6 @@ import { FSIUSERTYPE, LESS } from '../../types'
 export const getApplication = (allowFakeData = false): Form => {
   return buildForm({
     id: 'FinancialStatementsInao',
-    title: '',
     renderLastScreenButton: false,
     renderLastScreenBackButton: false,
     mode: FormModes.DRAFT,

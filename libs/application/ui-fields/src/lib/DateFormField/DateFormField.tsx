@@ -11,6 +11,8 @@ import {
   DateField,
   MaybeWithApplicationAndField,
   Application,
+  FormValue,
+  BaseField,
 } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -20,6 +22,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
+import { useWatch } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: DateField
@@ -48,8 +51,21 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    tempDisabled,
   } = field
   const { formatMessage, lang } = useLocale()
+  const allValues = useWatch({ defaultValue: application.answers }) as FormValue
+  const updatedApplication = useMemo(
+    () => ({ ...application, answers: allValues }),
+    [application, allValues],
+  )
+
+  const isDisabled = useMemo(() => {
+    if (tempDisabled) {
+      return tempDisabled(updatedApplication)
+    }
+    return disabled
+  }, [disabled, tempDisabled, updatedApplication])
 
   const computeMinDate = (
     maybeMinDate: MaybeWithApplicationAndField<Date>,
@@ -91,30 +107,30 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     () =>
       computeMinDate(
         minDate as MaybeWithApplicationAndField<Date>,
-        application,
+        updatedApplication,
         field,
       ),
-    [minDate, application, field],
+    [minDate, updatedApplication, field],
   )
 
   const finalMaxDate = useMemo(
     () =>
       computeMaxDate(
         maxDate as MaybeWithApplicationAndField<Date>,
-        application,
+        updatedApplication,
         field,
       ),
-    [maxDate, application, field],
+    [maxDate, updatedApplication, field],
   )
 
   const finalExcludeDates = useMemo(
     () =>
       computeExcludeDates(
         excludeDates as MaybeWithApplicationAndField<Date[]>,
-        application,
+        updatedApplication,
         field,
       ),
-    [excludeDates, application, field],
+    [excludeDates, updatedApplication, field],
   )
 
   return (
@@ -132,10 +148,10 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
 
       <Box paddingTop={2}>
         <DatePickerController
-          disabled={disabled}
+          disabled={isDisabled}
           defaultValue={
             (getValueViaPath(application.answers, id) as string) ??
-            getDefaultValue(field, application)
+            getDefaultValue(field as BaseField, application)
           }
           id={id}
           name={id}

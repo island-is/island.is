@@ -1,7 +1,6 @@
 import {
   buildForm,
   buildSection,
-  buildAlertMessageField,
   buildMultiField,
   buildDescriptionField,
 } from '@island.is/application/core'
@@ -23,7 +22,6 @@ export const WaitingForOrganization = buildForm({
           children: [
             buildDescriptionField({
               id: 'waitingForOrganizationDescription',
-              title: '',
               description: m.stateDescriptions.waiting,
             }),
           ],

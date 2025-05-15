@@ -21,9 +21,6 @@ export enum CeremonyPlaces {
   society = 'society',
 }
 
-export const YES = 'yes'
-export const NO = 'no'
-
 export enum ApiActions {
   submitApplication = 'submitApplication',
   createCharge = 'createCharge',

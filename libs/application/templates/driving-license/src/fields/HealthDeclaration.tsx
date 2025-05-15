@@ -1,11 +1,11 @@
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
-import { getValueViaPath, formatText } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { useFormContext } from 'react-hook-form'
-import { BE, NO, YES } from '../lib/constants'
+import { BE } from '../lib/constants'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -36,14 +36,12 @@ const HealthDeclaration = ({ field, application }: PropTypes): JSX.Element => {
     <>
       {props.title && (
         <Box marginBottom={4}>
-          <Text variant="h5">
-            {formatText(props.title, application, formatMessage)}
-          </Text>
+          <Text variant="h5">{formatMessage(props.title)}</Text>
         </Box>
       )}
       <GridRow>
         <GridColumn span={['12/12', '8/12']} paddingBottom={1}>
-          <Text>{formatText(props.label, application, formatMessage)}</Text>
+          <Text>{formatMessage(props.label)}</Text>
         </GridColumn>
         <GridColumn span={['8/12', '3/12']} offset={['0', '1/12']}>
           <RadioController
@@ -57,11 +55,11 @@ const HealthDeclaration = ({ field, application }: PropTypes): JSX.Element => {
             }
             options={[
               {
-                label: formatText(m.yes, application, formatMessage),
+                label: formatMessage(m.yes),
                 value: 'yes',
               },
               {
-                label: formatText(m.no, application, formatMessage),
+                label: formatMessage(m.no),
                 value: 'no',
               },
             ]}

@@ -5,7 +5,6 @@ import { prerequisitesSection } from './prerequisitesSection'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
-  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   logo: Logo,

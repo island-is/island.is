@@ -9,7 +9,7 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import { AssetFormField } from '../../types'
+import { AssetFormField, ErrorValue } from '../../types'
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
@@ -28,7 +28,7 @@ export const AdditionalRealEstate = ({
   fieldName: string
   index: number
   remove: (index: number) => void
-  error: Record<string, string>
+  error: ErrorValue
 }) => {
   const fieldIndex = `${fieldName}[${index}]`
   const propertyNumberField = `${fieldIndex}.assetNumber`
@@ -37,7 +37,6 @@ export const AdditionalRealEstate = ({
     defaultValue: '',
   })
   const addressField = `${fieldIndex}.description`
-  const address = useWatch({ name: addressField, defaultValue: '' })
   const initialField = `${fieldIndex}.initial`
   const enabledField = `${fieldIndex}.enabled`
   const marketValueField = `${fieldIndex}.marketValue`
@@ -161,7 +160,6 @@ export const AdditionalRealEstate = ({
             placeholder="0 kr."
             error={error?.marketValue}
             currency
-            size="sm"
             required
           />
         </GridColumn>

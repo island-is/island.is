@@ -11,6 +11,7 @@ import {
 import {
   EmailSignup,
   GenericListWrapper,
+  IntroLinkImageSlice,
   RichText,
   SectionWithVideo,
 } from '@island.is/web/components'
@@ -22,6 +23,7 @@ import {
 import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
 
 import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
+import { OrganizationParentSubpageListSlice } from './OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
 
 const DistrictsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.DistrictsSlice),
@@ -227,6 +229,15 @@ export const renderSlice = (
     }
     case 'FeaturedLinks':
       return <FeaturedLinksSlice slice={slice} />
+    case 'OrganizationParentSubpageList':
+      return (
+        <OrganizationParentSubpageListSlice
+          slice={slice}
+          isFrontpage={params?.isFrontpage}
+        />
+      )
+    case 'IntroLinkImage':
+      return <IntroLinkImageSlice slice={slice} />
     default:
       return <RichText body={[slice]} />
   }

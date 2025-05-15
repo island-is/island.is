@@ -20,12 +20,10 @@ export const ReviewSection = buildSection({
         buildCustomField({
           id: 'review',
           component: 'Review',
-          title: '',
         }),
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
             {

@@ -30,7 +30,7 @@ env:
   DB_USER: 'servicesauth'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'nginx-ingress-external'

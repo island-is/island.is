@@ -86,13 +86,13 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   const orderByOptions = useMemo(() => {
     return [
       {
-        label: n('orderByReleaseDateDescending', 'Útgáfudagur (nýtt)'),
+        label: n('orderByReleaseDateDescending', 'Nýtt efst'),
         value: 'order-by-release-date-descending',
         field: 'releaseDate',
         order: 'desc',
       },
       {
-        label: n('orderByReleaseDateAscending', 'Útgáfudagur (gamalt)'),
+        label: n('orderByReleaseDateAscending', 'Elsta efst'),
         value: 'order-by-release-date-ascending',
         field: 'releaseDate',
         order: 'asc',

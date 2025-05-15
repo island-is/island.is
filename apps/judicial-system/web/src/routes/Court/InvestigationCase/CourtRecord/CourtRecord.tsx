@@ -12,7 +12,10 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { lowercase } from '@island.is/judicial-system/formatters'
+import {
+  applyDativeCaseToCourtName,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import {
   closedCourt,
   core,
@@ -34,10 +37,10 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -166,13 +169,9 @@ const CourtRecord: FC = () => {
       [
         {
           courtStartDate: workingCase.arraignmentDate?.date,
-          courtLocation: workingCase.court?.name
-            ? `í ${
-                workingCase.court.name.indexOf('dómur') > -1
-                  ? workingCase.court.name.replace('dómur', 'dómi')
-                  : workingCase.court.name
-              }`
-            : undefined,
+          courtLocation: `í ${applyDativeCaseToCourtName(
+            workingCase.court?.name || 'héraðsdómi',
+          )}`,
           courtAttendees:
             autofillAttendees.length > 0
               ? autofillAttendees.join('')
@@ -513,15 +512,20 @@ const CourtRecord: FC = () => {
           }
           nextIsDisabled={!stepIsValid}
           hideNextButton={
-            !workingCase.decision ||
-            !workingCase.conclusion ||
-            !workingCase.ruling
+            !workingCase.isCompletedWithoutRuling
+              ? !workingCase.decision ||
+                !workingCase.conclusion ||
+                !workingCase.ruling
+              : !workingCase.decision
           }
           infoBoxText={
             !workingCase.decision ||
             !workingCase.conclusion ||
             !workingCase.ruling
-              ? formatMessage(m.sections.nextButtonInfo.text)
+              ? formatMessage(m.sections.nextButtonInfo.text, {
+                  isCompletedWithoutRuling:
+                    workingCase.isCompletedWithoutRuling,
+                })
               : ''
           }
         />

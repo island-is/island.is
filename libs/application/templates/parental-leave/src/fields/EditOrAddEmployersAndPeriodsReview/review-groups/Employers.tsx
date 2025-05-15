@@ -17,10 +17,10 @@ import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
-  YES,
 } from '../../../constants'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
+import { YES } from '@island.is/application/core'
 
 interface ReviewScreenProps {
   application: Application

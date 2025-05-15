@@ -4,15 +4,17 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
-  HasOne,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Screen } from '../../screens/models/screen.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { FieldType } from './fieldType.model'
-import { FieldSettings } from '../../fieldSettings/models/fieldSettings.model'
+import { Value } from '../../applications/models/value.model'
+import { FieldSettings } from '../../../dataTypes/fieldSettings/fieldSettings.model'
+import { ListItem } from '../../listItems/models/listItem.model'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 
 @Table({ tableName: 'field' })
 export class Field extends Model<Field> {
@@ -23,6 +25,13 @@ export class Field extends Model<Field> {
     defaultValue: DataType.UUIDV4,
   })
   id!: string
+
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  identifier!: string
 
   @Column({
     type: DataType.JSON,
@@ -56,7 +65,7 @@ export class Field extends Model<Field> {
     allowNull: false,
     defaultValue: false,
   })
-  isHidden!: boolean
+  isRequired!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -73,15 +82,23 @@ export class Field extends Model<Field> {
   })
   screenId!: string
 
-  @HasOne(() => FieldSettings)
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
   fieldSettings?: FieldSettings
 
-  @ForeignKey(() => FieldType)
+  @HasMany(() => ListItem)
+  list?: ListItem[]
+
+  @HasMany(() => Value)
+  values?: Value[]
+
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: false,
-    defaultValue: 'default',
-    field: 'field_type',
+    values: Object.values(FieldTypesEnum),
+    defaultValue: FieldTypesEnum.TEXTBOX,
   })
   fieldType!: string
 }

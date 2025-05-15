@@ -18,7 +18,11 @@ import {
 } from '@island.is/clients/syslumenn'
 import { MortgageCertificateService } from '@island.is/api/domains/mortgage-certificate'
 import { ConfigService } from '@nestjs/config'
-import { defineConfig, ConfigModule } from '@island.is/nest/config'
+import {
+  defineConfig,
+  ConfigModule,
+  IdsClientConfig,
+} from '@island.is/nest/config'
 import { createApplication } from '@island.is/application/testing'
 
 const config = defineConfig({
@@ -42,7 +46,7 @@ describe('MortgageCertificateSubmissionService', () => {
         SyslumennClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [config, emailModuleConfig],
+          load: [config, emailModuleConfig, IdsClientConfig],
         }),
       ],
       providers: [

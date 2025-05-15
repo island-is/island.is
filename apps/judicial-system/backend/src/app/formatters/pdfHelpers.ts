@@ -151,7 +151,7 @@ export const addConfirmation = (
   // The X value here is approx. 8px after the title
   doc.text('Rafræn staðfesting', calculatePt(210), pageMargin + calculatePt(9))
   doc.text(
-    formatDate(confirmation.date) || '',
+    formatDate(confirmation.date) ?? '',
     shaddowWidth - calculatePt(24),
     pageMargin + calculatePt(9),
   )
@@ -342,7 +342,7 @@ export const addIndictmentConfirmation = (
   )
   doc.font('Times-Roman')
   doc.text(
-    formatDate(confirmation.date) || '',
+    formatDate(confirmation.date) ?? '',
     coatOfArmsX + coatOfArmsWidth + titleWidth - calculatePt(55),
     pageMargin + titleHeight + calculatePt(32),
     {

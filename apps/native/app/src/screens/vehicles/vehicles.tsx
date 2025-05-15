@@ -61,7 +61,7 @@ const Empty = () => (
 
 const input = {
   page: 1,
-  pageSize: 10,
+  pageSize: 15,
 }
 
 export const VehiclesScreen: NavigationFunctionComponent = ({

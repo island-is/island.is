@@ -31,7 +31,6 @@ export const sectionApplicationFor = (
         children: [
           buildRadioField({
             id: 'applicationFor',
-            title: '',
             backgroundColor: 'white',
             largeButtons: true,
             options: (app) => {

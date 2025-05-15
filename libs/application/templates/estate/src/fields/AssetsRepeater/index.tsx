@@ -11,27 +11,11 @@ import {
   ProfileCard,
   Text,
 } from '@island.is/island-ui/core'
-import { AssetFormField } from '../../types'
 
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
-
-type AssetsRepeaterProps = {
-  field: {
-    id: string
-    props: {
-      assetName: 'guns' | 'vehicles'
-      texts: {
-        assetTitle: object
-        assetNumber: object
-        assetType: object
-        addAsset: object
-      }
-    }
-  }
-  error: Record<string, string> | any
-}
+import { AssetFormField, AssetsRepeaterProps, ErrorValue } from '../../types'
 
 export const AssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & AssetsRepeaterProps>
@@ -39,13 +23,12 @@ export const AssetsRepeater: FC<
   const { id } = field
   const texts = field?.props?.texts
   const assetName = field?.props?.assetName
-  const error = (errors as any)?.estate?.[assetName]
+  const error = (errors as ErrorValue)?.estate?.[assetName]
   const { formatMessage } = useLocale()
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
-  const { control, clearErrors, setValue } = useFormContext()
-
+  const { control, clearErrors } = useFormContext()
   const estateData = getEstateDataFromApplication(application)
 
   useEffect(() => {

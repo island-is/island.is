@@ -15,13 +15,11 @@ export const descriptionSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'description1',
-          title: '',
           description: m.descriptionFieldDescription,
           marginBottom: [2],
         }),
         buildDescriptionField({
           id: 'description2',
-          title: '',
           description: m.descriptionFieldDescription2,
           marginBottom: [2],
         }),
@@ -74,7 +72,6 @@ export const descriptionSubsection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'description9',
-          title: '',
           description: m.markdownCodeExample,
           marginBottom: [2],
         }),

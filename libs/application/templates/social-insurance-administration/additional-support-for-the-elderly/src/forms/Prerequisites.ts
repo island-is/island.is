@@ -19,7 +19,6 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import {
   SocialInsuranceAdministrationApplicantApi,
-  SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import { isEligible } from '../lib/additionalSupportForTheElderlyUtils'
@@ -99,10 +98,6 @@ export const PrerequisitesForm: Form = buildForm({
                   .socialInsuranceAdministrationPrivacyDescription,
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationCurrenciesApi,
-              title: '',
-            }),
-            buildDataProviderItem({
               provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
               title: '',
             }),
@@ -119,7 +114,6 @@ export const PrerequisitesForm: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'isNotEligible',
-              title: '',
               description:
                 additionalSupportForTheElderyFormMessage.pre
                   .isNotEligibleDescription,
@@ -127,7 +121,6 @@ export const PrerequisitesForm: Form = buildForm({
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({
               id: '',
-              title: '',
               actions: [],
             }),
           ],

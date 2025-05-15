@@ -165,7 +165,6 @@ export const childsPersonalInfo = buildMultiField({
     buildSubmitField({
       id: 'childsPersonalInfo.submit',
       placement: 'footer',
-      title: '',
       actions: [
         {
           event: DefaultEvents.SUBMIT,

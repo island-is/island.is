@@ -151,7 +151,12 @@ export class FileController {
     )
   }
 
-  @Get(['indictment', 'mergedCase/:mergedCaseId/indictment'])
+  @Get([
+    'indictment',
+    'indictment/:fileName',
+    'mergedCase/:mergedCaseId/indictment',
+    'mergedCase/:mergedCaseId/indictment/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   getIndictmentPdf(
     @Param('id') id: string,
@@ -177,7 +182,12 @@ export class FileController {
     )
   }
 
-  @Get(['subpoena/:defendantId', 'subpoena/:defendantId/:subpoenaId'])
+  @Get([
+    'subpoena/:defendantId',
+    'subpoena/:defendantId/:fileName',
+    'subpoena/:defendantId/:subpoenaId',
+    'subpoena/:defendantId/:subpoenaId/:fileName',
+  ])
   @Header('Content-Type', 'application/pdf')
   getSubpoenaPdf(
     @Param('id') id: string,
@@ -231,6 +241,29 @@ export class FileController {
       AuditedAction.GET_SERVICE_CERTIFICATE_PDF,
       id,
       `defendant/${defendantId}/subpoena/${subpoenaId}/serviceCertificate`,
+      req,
+      res,
+      'pdf',
+    )
+  }
+
+  @Get(['rulingSentToPrisonAdmin', 'rulingSentToPrisonAdmin/:fileName'])
+  @Header('Content-Type', 'application/pdf')
+  getIndictmentRulingSentToPrisonAdminPdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting the indictment ruling sent to prison admin for case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_INDICTMENT_RULING_SENT_TO_PRISON_ADMIN_PDF,
+      id,
+      `rulingSentToPrisonAdmin`,
       req,
       res,
       'pdf',

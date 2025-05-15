@@ -4,6 +4,7 @@ import {
   DeletePass,
   DeletePassMutationVariables,
   DynamicBarcodeDataInput,
+  Pass,
   PassDataInput,
   PassTemplate,
   PassTemplates,
@@ -18,7 +19,6 @@ import { MODULE_OPTIONS_TOKEN } from './smartSolutions.module-definition'
 import {
   DeletePassResponseData,
   ListTemplatesResponseData,
-  PkPass,
   RevokePassData,
   UpdatePassResponseData,
   UpsertPassResponseData,
@@ -26,7 +26,10 @@ import {
   VerifyPassResponseData,
 } from './types/responses.type'
 import { GQLFetcher } from './gqlFetch'
-import { LOG_CATEGORY, SmartSolutionsModuleOptions } from './types/config.type'
+import {
+  LOG_CATEGORY,
+  type SmartSolutionsModuleOptions,
+} from './types/config.type'
 import { Result } from './types/result.type'
 
 export class SmartSolutionsService {
@@ -88,7 +91,7 @@ export class SmartSolutionsService {
   async updatePkPass(
     payload: PassDataInput,
     requestId?: string,
-  ): Promise<Result<PkPass>> {
+  ): Promise<Result<Pass>> {
     if (!payload.passTemplateId) {
       this.logger.warning(
         'Pkpass update failed, missing pass template id from input',
@@ -153,7 +156,7 @@ export class SmartSolutionsService {
     payload: PassDataInput,
     onCreateCallback?: () => Promise<void>,
     requestId?: string,
-  ): Promise<Result<PkPass>> {
+  ): Promise<Result<Pass>> {
     const variables: UpsertPassMutationVariables = {
       inputData: {
         ...payload,
@@ -212,7 +215,7 @@ export class SmartSolutionsService {
   ): Promise<Result<RevokePassData>> {
     const variables: DeletePassMutationVariables = {
       passTemplateId,
-      values: payload,
+      values: payload.inputFieldValues ?? [],
     }
 
     const res = await this.fetcher.fetch<DeletePassResponseData>(
@@ -246,7 +249,9 @@ export class SmartSolutionsService {
     }
   }
 
-  async listTemplates(): Promise<Result<Array<PassTemplate>>> {
+  async listTemplates(
+    requestId?: string,
+  ): Promise<Result<Array<PassTemplate>>> {
     const res = await this.fetcher.fetch<ListTemplatesResponseData>(
       PassTemplates,
     )

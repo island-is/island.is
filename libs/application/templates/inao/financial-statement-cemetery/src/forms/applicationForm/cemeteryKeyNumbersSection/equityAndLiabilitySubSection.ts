@@ -51,7 +51,6 @@ export const equityAndLiabilitiesSubSection = buildSubSection({
         }),
         buildDisplayField({
           id: EQUITYANDLIABILITIESTOTALS.assetsTotal,
-          title: '',
           label: m.totalAssets,
           value: sumAssets,
           variant: 'currency',
@@ -80,7 +79,6 @@ export const equityAndLiabilitiesSubSection = buildSubSection({
         }),
         buildDisplayField({
           id: EQUITYANDLIABILITIESTOTALS.liabilitiesTotal,
-          title: '',
           label: m.totalLiabilities,
           value: sumLiabilities,
           variant: 'currency',
@@ -116,7 +114,6 @@ export const equityAndLiabilitiesSubSection = buildSubSection({
         }),
         buildDisplayField({
           id: CEMETERYEQUITIESANDLIABILITIESIDS.operationResult,
-          title: '',
           label: m.operationResult,
           value: operationResult,
           variant: 'currency',
@@ -125,7 +122,6 @@ export const equityAndLiabilitiesSubSection = buildSubSection({
         }),
         buildDisplayField({
           id: CEMETERYEQUITIESANDLIABILITIESIDS.equityTotal,
-          title: '',
           label: m.totalEquity,
           value: sumTotalEquity,
           variant: 'currency',
@@ -140,7 +136,6 @@ export const equityAndLiabilitiesSubSection = buildSubSection({
         }),
         buildDisplayField({
           id: EQUITYANDLIABILITIESTOTALS.equityAndLiabilitiesTotal,
-          title: '',
           value: sumTotalEquityAndLiabilities,
           variant: 'currency',
           rightAlign: true,

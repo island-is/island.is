@@ -1,8 +1,11 @@
 import { EmailRecipient } from './types'
 import { join } from 'path'
 import { SecondarySchoolAnswers } from '@island.is/application/templates/secondary-school'
-import { Application, FormValue, YES } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
+import {
+  Application,
+  NationalRegistryCustodian,
+} from '@island.is/application/types'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import {
   ApplicationContact,
   ApplicationSelectionSchool,
@@ -12,12 +15,14 @@ export const pathToAsset = (file: string) => {
   return join(__dirname, `./secondary-school-assets/${file}`)
 }
 
-export const getRecipients = (answers: FormValue): Array<EmailRecipient> => {
+export const getRecipients = (
+  application: Application,
+): Array<EmailRecipient> => {
   const recipientList: Array<EmailRecipient> = []
 
   // Applicant
   const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
-    answers,
+    application.answers,
     'applicant',
   )
   if (applicant) {
@@ -29,17 +34,22 @@ export const getRecipients = (answers: FormValue): Array<EmailRecipient> => {
   }
 
   // Custodians
-  const custodians = (
+  const custodiansAnswers =
     getValueViaPath<SecondarySchoolAnswers['custodians']>(
-      answers,
+      application.answers,
       'custodians',
     ) || []
-  ).filter((x) => !!x.person?.nationalId)
-  custodians.forEach((custodian) => {
+  const custodiansExternalData = (
+    getValueViaPath<NationalRegistryCustodian[]>(
+      application.externalData,
+      'nationalRegistryCustodians.data',
+    ) || []
+  ).filter((x) => !!x.nationalId)
+  custodiansExternalData.forEach((custodian, index) => {
     recipientList.push({
-      nationalId: custodian.person?.nationalId,
-      name: custodian.person?.name || '',
-      email: custodian.person?.email || '',
+      nationalId: custodian.nationalId,
+      name: custodian.name || '',
+      email: custodiansAnswers[index]?.person?.email || '',
     })
   })
 
@@ -57,18 +67,21 @@ export const getCleanContacts = (
       application.answers,
       'custodians',
     ) || []
-  const custodiansExternalData = custodiansAnswers.filter(
-    (x) => !!x.person?.nationalId,
-  )
+  const custodiansExternalData = (
+    getValueViaPath<NationalRegistryCustodian[]>(
+      application.externalData,
+      'nationalRegistryCustodians.data',
+    ) || []
+  ).filter((x) => !!x.nationalId)
   custodiansExternalData.forEach((custodian, index) => {
     result.push({
-      nationalId: custodian.person?.nationalId,
-      name: custodian.person?.name,
+      nationalId: custodian.nationalId,
+      name: custodian.name || '',
       phone: custodiansAnswers[index]?.person?.phone || '',
       email: custodiansAnswers[index]?.person?.email || '',
       address: custodian.legalDomicile?.streetAddress,
       postalCode: custodian.legalDomicile?.postalCode || undefined,
-      city: custodian.legalDomicile?.city || undefined,
+      city: custodian.legalDomicile?.locality || undefined,
     })
   })
 
@@ -116,11 +129,7 @@ export const getCleanSchoolSelection = (
       SecondarySchoolAnswers['selection'][0]
     >(application.answers, `selection.${index}`)
 
-    if (
-      (selectionItem?.include || index === 0) &&
-      selectionItem?.school?.id &&
-      selectionItem?.firstProgram?.id
-    ) {
+    if (selectionItem?.school?.id && selectionItem?.firstProgram?.id) {
       result.push({
         priority: schoolPriority++,
         schoolId: selectionItem.school.id,

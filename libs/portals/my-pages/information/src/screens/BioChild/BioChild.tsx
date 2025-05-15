@@ -143,22 +143,6 @@ const BioChild = () => {
                 loading={loading}
                 printable
               />
-              <Box printHidden>
-                <Divider />
-              </Box>
-              {child?.housing?.address?.streetAddress && (
-                <>
-                  <UserInfoLine
-                    label={defineMessage(m.legalResidence)}
-                    content={child?.housing?.address?.streetAddress || ''}
-                    loading={loading}
-                    printable
-                  />
-                  <Box printHidden>
-                    <Divider />
-                  </Box>
-                </>
-              )}
             </Stack>
           </Stack>
         </>

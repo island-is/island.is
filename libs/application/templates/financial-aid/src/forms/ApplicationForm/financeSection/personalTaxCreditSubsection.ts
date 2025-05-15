@@ -18,12 +18,10 @@ export const personalTaxCreditSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'personalTaxCreditDescription',
-          title: '',
           description: m.personalTaxCreditForm.general.recommendedChoice,
         }),
         buildRadioField({
           id: 'personalTaxCredit',
-          title: '',
           options: personalTaxCreditOptions,
           width: 'half',
         }),

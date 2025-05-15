@@ -1,13 +1,5 @@
-export enum API_MODULE {
+export enum ApiModule {
   sendApplyHealthInsuranceApplication = 'sendApplyHealthInsuranceApplication',
-}
-
-export const YES = 'yes'
-export const NO = 'no'
-
-export enum YesOrNo {
-  YES = 'yes',
-  NO = 'no',
 }
 
 export enum EmploymentStatus {

@@ -19,6 +19,7 @@ import {
   QueryGetOrganizationPageArgs,
   QueryGetOrganizationParentSubpageArgs,
   QueryGetOrganizationSubpageArgs,
+  QueryGetOrganizationSubpageByIdArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -31,6 +32,7 @@ import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_PARENT_SUBPAGE_QUERY,
+  GET_ORGANIZATION_SUBPAGE_BY_ID_QUERY,
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../../queries'
 import { SubPageContent } from '../SubPage'
@@ -220,20 +222,39 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
     }
   }
 
-  const subpage = (
-    await apolloClient.query<Query, QueryGetOrganizationSubpageArgs>({
-      query: GET_ORGANIZATION_SUBPAGE_QUERY,
-      variables: {
-        input: {
-          organizationSlug: organizationPageSlug,
-          slug: getOrganizationParentSubpage.childLinks[selectedIndex].href
-            .split('/')
-            .pop() as string,
-          lang: locale as ContentLanguage,
-        },
-      },
-    })
-  ).data.getOrganizationSubpage
+  const subpageLink = getOrganizationParentSubpage.childLinks[selectedIndex]
+
+  if (!subpageLink) {
+    throw new CustomNextError(
+      404,
+      'Subpage belonging to an organization parent subpage was not found',
+    )
+  }
+
+  const subpage = !subpageLink.id
+    ? (
+        await apolloClient.query<Query, QueryGetOrganizationSubpageArgs>({
+          query: GET_ORGANIZATION_SUBPAGE_QUERY,
+          variables: {
+            input: {
+              organizationSlug: organizationPageSlug,
+              slug: subpageLink.href.split('/').pop() as string,
+              lang: locale as ContentLanguage,
+            },
+          },
+        })
+      ).data.getOrganizationSubpage
+    : (
+        await apolloClient.query<Query, QueryGetOrganizationSubpageByIdArgs>({
+          query: GET_ORGANIZATION_SUBPAGE_BY_ID_QUERY,
+          variables: {
+            input: {
+              id: subpageLink.id,
+              lang: locale as ContentLanguage,
+            },
+          },
+        })
+      ).data.getOrganizationSubpageById
 
   if (!subpage) {
     throw new CustomNextError(

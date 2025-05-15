@@ -12,7 +12,6 @@ export const PendingReview: Form = buildForm({
   mode: FormModes.IN_PROGRESS,
   children: [
     buildMultiField({
-      title: '',
       children: [
         buildDescriptionField({
           id: 'waitingToAssign',
@@ -30,7 +29,6 @@ export const PendingReview: Form = buildForm({
     }),
     buildDescriptionField({
       id: 'neverDisplayed',
-      title: '',
       description: '',
     }),
   ],

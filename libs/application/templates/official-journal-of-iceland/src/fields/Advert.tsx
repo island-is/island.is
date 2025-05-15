@@ -1,5 +1,5 @@
 import { InputFields, OJOIFieldBaseProps } from '../lib/types'
-import { Stack } from '@island.is/island-ui/core'
+import { SkeletonLoader, Stack } from '@island.is/island-ui/core'
 import { FormGroup } from '../components/form/FormGroup'
 import { advert } from '../lib/messages'
 import { useDepartments } from '../hooks/useDepartments'
@@ -10,33 +10,67 @@ import { OJOIHtmlController } from '../components/input/OJOIHtmlController'
 import { useFormContext } from 'react-hook-form'
 import { useApplication } from '../hooks/useUpdateApplication'
 import set from 'lodash/set'
-import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
-import { cleanTypename, getAdvertMarkup } from '../lib/utils'
-import { DEPARTMENT_A } from '../lib/constants'
+import { capitalizeText, cleanTypename } from '../lib/utils'
+import { DEPARTMENT_A, DEPARTMENT_B, OJOI_INPUT_HEIGHT } from '../lib/constants'
 import { useAdvertTemplateTypes } from '../hooks/useAdvertTemplateTypes'
 import { useAdvertTemplateLazy } from '../hooks/useAdvertTemplate'
 import { useMemo, useState } from 'react'
 import { uuid } from 'uuidv4'
+import { AdvertPreview } from '../components/advertPreview/AdvertPreview'
 
 export const Advert = ({ application }: OJOIFieldBaseProps) => {
   const { setValue } = useFormContext()
-  const { application: currentApplication, updateApplication } = useApplication(
-    {
-      applicationId: application.id,
-    },
-  )
+  const [isLoadingDepartments, setLoadingDepartments] = useState(false)
+  const {
+    application: currentApplication,
+    updateApplication,
+    updateApplicationV2,
+  } = useApplication({
+    applicationId: application.id,
+  })
 
   const [advertHtmlEditorKey, setAdvertHtmlEditorKey] = useState(
     'advert-html-content',
   )
 
-  const { departments, loading: loadingDepartments } = useDepartments()
+  const { departments, loading: loadingDepartments } = useDepartments({
+    onCompleted: (data) => {
+      if (application.answers.advert?.department) return
+      setLoadingDepartments(true)
+      const departmentB =
+        data.officialJournalOfIcelandDepartments.departments.find(
+          (d) => d.slug === DEPARTMENT_B,
+        )
+
+      updateApplicationV2({
+        path: InputFields.advert.department,
+        value: departmentB,
+        onComplete: () => {
+          setLoadingDepartments(false)
+          if (!departmentB) return
+          getLazyMainTypes({
+            variables: {
+              params: {
+                department: departmentB.id,
+                pageSize: 100,
+              },
+            },
+          })
+        },
+        onError: () => {
+          setLoadingDepartments(false)
+        },
+      })
+    },
+  })
   const { templateTypes, loading: advertTemplateLoading } =
     useAdvertTemplateTypes()
 
   const [advertTemplateQuery] = useAdvertTemplateLazy((data) => {
     const currentAnswers = structuredClone(currentApplication.answers)
-    const html = data.officialJournalOfIcelandApplicationAdvertTemplate.html
+    const html = Buffer.from(
+      data.officialJournalOfIcelandApplicationAdvertTemplate.html,
+    ).toString('base64')
     const updatedAnswers = set(currentAnswers, InputFields.advert.html, html)
     setValue(InputFields.advert.html, html)
     updateApplication(updatedAnswers, () => setAdvertHtmlEditorKey(uuid()))
@@ -59,20 +93,15 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
   }))
 
   const mainTypeOptions = mainTypes?.map((d) => ({
-    label: d.title,
+    label: capitalizeText(d.title),
     value: d,
   }))
 
   const currentTypes =
     currentApplication?.answers?.advert?.mainType?.types?.map((d) => ({
-      label: d.title,
+      label: capitalizeText(d.title),
       value: d,
     })) ?? []
-
-  const titlePreview = getAdvertMarkup({
-    type: currentApplication.answers.advert?.type?.title,
-    title: currentApplication.answers.advert?.title,
-  })
 
   const templateOptions = useMemo(
     () =>
@@ -87,30 +116,36 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
     <Stack space={[2, 2, 3]}>
       <FormGroup>
         <Stack space={[2, 2, 3]}>
-          <OJOISelectController
-            width="half"
-            applicationId={application.id}
-            name={InputFields.advert.department}
-            label={advert.inputs.department.label}
-            placeholder={advert.inputs.department.placeholder}
-            loading={loadingDepartments}
-            options={departmentOptions}
-            defaultValue={application.answers?.advert?.department}
-            onBeforeChange={(answers) => {
-              setValue(InputFields.advert.type, null)
-              set(answers, InputFields.advert.type, null)
-            }}
-            onChange={(value) =>
-              getLazyMainTypes({
-                variables: {
-                  params: {
-                    department: value.id,
-                    pageSize: 100,
+          {isLoadingDepartments ? (
+            <SkeletonLoader height={OJOI_INPUT_HEIGHT} borderRadius="large" />
+          ) : (
+            <OJOISelectController
+              width="half"
+              applicationId={application.id}
+              name={InputFields.advert.department}
+              label={advert.inputs.department.label}
+              placeholder={advert.inputs.department.placeholder}
+              loading={loadingDepartments || isLoadingDepartments}
+              options={departmentOptions}
+              defaultValue={application.answers?.advert?.department}
+              onBeforeChange={() => {
+                updateApplicationV2({
+                  path: InputFields.advert.type,
+                  value: null,
+                })
+              }}
+              onChange={(value) =>
+                getLazyMainTypes({
+                  variables: {
+                    params: {
+                      department: value.id,
+                      pageSize: 100,
+                    },
                   },
-                },
-              })
-            }
-          />
+                })
+              }
+            />
+          )}
 
           <OJOISelectController
             controller={true}
@@ -150,12 +185,9 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             maxLength={600}
           />
 
-          <HTMLEditor
-            key={`${currentApplication.answers.advert?.type?.title}-${currentApplication.answers.advert?.title}`}
-            name="preview.title"
-            config={{ toolbar: false }}
-            readOnly={true}
-            value={titlePreview}
+          <AdvertPreview
+            advertType={currentApplication.answers.advert?.type?.title}
+            advertSubject={currentApplication.answers.advert?.title}
           />
         </Stack>
       </FormGroup>
@@ -182,7 +214,9 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             key={advertHtmlEditorKey}
             // we have use setValue from useFormContext to update the value
             // because this is not a controlled component
-            onChange={(value) => setValue(InputFields.advert.html, value)}
+            onChange={(value) => {
+              setValue(InputFields.advert.html, value)
+            }}
           />
         </Stack>
       </FormGroup>

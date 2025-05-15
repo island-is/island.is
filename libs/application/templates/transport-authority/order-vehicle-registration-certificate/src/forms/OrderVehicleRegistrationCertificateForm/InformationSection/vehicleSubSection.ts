@@ -53,7 +53,6 @@ export const vehicleSubSection = buildSubSection({
         }),
         buildCustomField({
           id: 'mainOwner',
-          title: '',
           component: 'MainOwner',
           condition: (formValue, externalData) => {
             const vehicle = getSelectedVehicle(externalData, formValue)

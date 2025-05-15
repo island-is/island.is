@@ -8,7 +8,6 @@ import { Logo } from '../../assets/Logo'
 
 export const OrderVehicleLicensePlateForm: Form = buildForm({
   id: 'OrderVehicleLicensePlateFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

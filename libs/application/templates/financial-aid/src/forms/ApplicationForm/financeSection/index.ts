@@ -1,14 +1,16 @@
-import { buildCustomField, getValueViaPath } from '@island.is/application/core'
-
-import { buildSection } from '@island.is/application/core'
-
-import { buildSubSection } from '@island.is/application/core'
+import {
+  buildCustomField,
+  getValueViaPath,
+  buildSection,
+  buildSubSection,
+} from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
 import { ApproveOptions, TaxData } from '../../../lib/types'
 import { incomeSubsection } from './incomeSubsection'
 import { personalTaxCreditSubsection } from './personalTaxCreditSubsection'
 import { bankInfoSubsection } from './bankInfoSubsection'
+
 export const financeSection = buildSection({
   id: 'finances',
   title: m.section.finances,

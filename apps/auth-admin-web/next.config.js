@@ -17,6 +17,12 @@ module.exports = withNx(
     publicRuntimeConfig: {
       backendUrl: '',
     },
+    webpack: (config, { isServer, dev }) => {
+      if (!dev && isServer) {
+        config.devtool = 'source-map'
+      }
+      return config
+    },
     env: {
       API_MOCKS: process.env.API_MOCKS || '',
     },

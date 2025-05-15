@@ -3,10 +3,14 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
+  YES,
 } from '@island.is/application/core'
 import {
   Actions,
+  defaultIncomeTypes,
   Events,
+  INCOME,
+  RatioType,
   Roles,
   States,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -23,10 +27,12 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  UserProfileApi,
   defineTemplateApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
+import { CodeOwners } from '@island.is/shared/constants'
+import isEmpty from 'lodash/isEmpty'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
@@ -38,7 +44,6 @@ import {
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
-import { INCOME, ISK, RatioType, YES } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationAnswers,
@@ -50,7 +55,6 @@ import {
   incomePlanFormMessage,
   statesMessages,
 } from './messages'
-import { CodeOwners } from '@island.is/shared/constants'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -295,9 +299,13 @@ const IncomePlanTemplate: ApplicationTemplate<
       populateIncomeTable: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { withholdingTax, latestIncomePlan } = getApplicationExternalData(
+        const { latestIncomePlan } = getApplicationExternalData(
           application.externalData,
         )
+
+        if (isEmpty(latestIncomePlan)) {
+          set(answers, 'incomePlanTable', defaultIncomeTypes)
+        }
 
         if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {
           latestIncomePlan.incomeTypeLines.forEach((income, i) => {

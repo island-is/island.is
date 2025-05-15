@@ -1,0 +1,79 @@
+name: 'Update helm-values charts'
+description: 'Copys the changeset in charts folder to helm-values repository'
+
+inputs:
+  files:
+    description: 'Comma seperated string of paths to copy'
+    default: ''
+    required: false
+  branch:
+    description: 'Branch to push to'
+    default: 'main'
+    required: false
+  commit-msg:
+    description: 'Commit message'
+    default: 'Updated helm charts'
+    required: false
+  ssh-key:
+    description: 'SSH key so the action can fetch and push to the helm-values repository'
+    required: true
+  app-id:
+    description: 'App ID for the GitHub App'
+    required: true
+  working-directory:
+    description: 'Working directory'
+    default: '.'
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Get token
+      id: get-token
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      env:
+        APP_ID: ${{ inputs.app-id }}
+        PRIVATE_KEY: ${{ inputs.ssh-key }}
+      run: |
+        node scripts/ci/docker/get-github-token.mjs
+
+    - name: Checkout helm-values repository
+      uses: actions/checkout@v4
+      with:
+        repository: island-is/helm-values
+        ref: ${{ inputs.branch }}
+        token: ${{ steps.get-token.outputs.token }}
+        path: helm-values
+
+    - name: Copy affected helm charts from island.is repository to helm-values repository
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      env:
+        dir: ${{ inputs.working-directory }}
+        files: ${{ inputs.files }}
+      run: |
+        path_prefix=$([ "$dir" != "." ] && echo "../" || echo "")
+
+        IFS=$IFS,
+        paths=()
+        read -a paths <<< $files
+        for path in ${paths[@]}; do
+          export DEST="${path_prefix}helm-values/helm-values/${path#charts/}"
+          export DEST_PATH=$(dirname $DEST)
+          mkdir -p $DEST_PATH
+          echo "Copying filepath: ${path} to $DEST"
+          cp "$path" "$DEST"
+        done
+
+    - name: Commit and push changes to helm-values repository
+      working-directory: helm-values
+      if: ${{ inputs.files != '' }}
+      shell: bash
+      run: |
+        git config --global user.email "ci@island.is"
+        git config --global user.name "CI Bot"
+
+        git add .
+        git commit -m "${{ inputs.commit-msg }}"
+        git push

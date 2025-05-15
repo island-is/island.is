@@ -17,7 +17,6 @@ import {
 import { submitted } from '../lib/messages/submitted'
 export const Submitted: Form = buildForm({
   id: 'OfficialJournalOfIcelandApplication',
-  title: '',
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
@@ -55,11 +54,9 @@ export const Submitted: Form = buildForm({
       title: submitted.general.section,
       children: [
         buildMultiField({
-          title: '',
           children: [
             buildCustomField({
               id: 'submitted',
-              title: '',
               component: 'SubmittedScreen',
             }),
           ],

@@ -1,11 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const strings = defineMessages({
-  indictmentCreated: {
-    id: 'judicial.system.core:info_card_indictment.indictment_created',
-    defaultMessage: 'Ákæra skráð',
-    description:
-      'Notaður sem titill á "dagsetningu ákæru" hluta af yfirliti ákæru.',
+  indictmentSentToCourt: {
+    id: 'judicial.system.core:info_card_indictment.indictment_sent_to_court',
+    defaultMessage: 'Útgáfudagur',
+    description: 'Notaður sem titill á "Útgáfudagur" hluta af yfirliti ákæru.',
   },
   prosecutor: {
     id: 'judicial.system.core:info_card_indictment.prosecutor',

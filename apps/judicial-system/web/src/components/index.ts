@@ -63,8 +63,11 @@ export { default as RestrictionTags } from './RestrictionTags/RestrictionTags'
 export { default as RulingAccordionItem } from './AccordionItems/RulingAccordionItem/RulingAccordionItem'
 export { default as RulingInput } from './RulingInput/RulingInput'
 export { default as SectionHeading } from './SectionHeading/SectionHeading'
-export { default as ServiceAnnouncement } from './ServiceAnnouncement/ServiceAnnouncement'
-export { strings as serviceAnnouncementStrings } from './ServiceAnnouncement/ServiceAnnouncement.strings'
+export {
+  default as ServiceAnnouncements,
+  AlternativeServiceAnnouncement,
+} from './ServiceAnnouncement/ServiceAnnouncements'
+export { strings as serviceAnnouncementsStrings } from './ServiceAnnouncement/ServiceAnnouncements.strings'
 export { default as ServiceInterruptionBanner } from './ServiceInterruptionBanner/ServiceInterruptionBanner'
 export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as TagAppealState } from './Tags/TagAppealState/TagAppealState'
@@ -80,7 +83,7 @@ export {
 } from './SigningModal/SigningModal'
 export { default as Skeleton } from './Skeleton/Skeleton'
 export { default as TimeInputField } from './TimeInputField/TimeInputField'
-export { UserProvider, UserContext } from './UserProvider/UserProvider'
+export { UserProvider, UserContext, userRef } from './UserProvider/UserProvider'
 export {
   ViewportProvider,
   ViewportContext,
@@ -116,3 +119,8 @@ export {
 } from './ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'
 export { default as ZipButton } from './ZipButton/ZipButton'
 export { default as RequestAppealRulingNotToBePublishedCheckbox } from './RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
+export { LawyerRegistryProvider } from './LawyerRegistryProvider/LawyerRegistryProvider'
+export { default as RequiredStar } from './RequiredStar/RequiredStar'
+export { VictimInfo } from './VictimInfo/VictimInfo'
+export { LabelValue } from './LabelValue/LabelValue'
+export { default as TableGroup } from './TableGroup/TableGroup'

@@ -330,6 +330,21 @@ export class ApplicationController {
     return hasAccess
   }
 
+  private withApplicationInfo = <R, TArgs extends unknown[]>(
+    template : ApplicationTemplate<ApplicationContext, ApplicationStateSchema<EventObject>, EventObject>, 
+    application: Application, 
+    callback: (...args: TArgs) => R,
+    ...args: TArgs
+  ): R => {
+    const context = {
+      templateId: template.type,
+      applicationId: application.id
+    }
+    return withCodeOwner(template.codeOwner, () =>
+      withLoggingContext(context, callback, ...args)
+    )
+  }
+
   @Scopes(ApplicationScope.write)
   @Post('applications')
   @ApiCreatedResponse({ type: ApplicationResponseDto })
@@ -643,7 +658,7 @@ export class ApplicationController {
 
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
-    return withCodeOwner(template.codeOwner, async () => {
+    return this.withApplicationInfo(template, existingApplication, async () => {
       const helper = new ApplicationTemplateHelper(
         existingApplication as BaseApplication,
         template,
@@ -710,25 +725,6 @@ export class ApplicationController {
     })
   }
 
-  private logSubmissionResult(
-    applicationId: string,
-    templateId: string,
-    hasError = false,
-  ) {
-    const context = {
-      applicationId,
-      templateId,
-    }
-
-    withLoggingContext(context, () => {
-      if (hasError) {
-        this.logger.error(`Application submission ended with an error`)
-      } else {
-        this.logger.info(`Application submission ended successfully`)
-      }
-    })
-  }
-
   @Scopes(ApplicationScope.write)
   @Put('applications/:id/submit')
   @ApiParam({
@@ -758,7 +754,8 @@ export class ApplicationController {
         `No application template exists for type: ${existingApplication.typeId}`,
       )
     }
-    return withCodeOwner(template.codeOwner, async () => {
+
+    return this.withApplicationInfo(template, existingApplication, async () => {
       const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
       const namespaces = await getApplicationTranslationNamespaces(
         existingApplication as BaseApplication,
@@ -817,11 +814,11 @@ export class ApplicationController {
       })
 
       if (hasError && error) {
-        this.logSubmissionResult(existingApplication.id, templateId, hasError)
+        this.logger.error(`Application submission ended with an error`)
         throw new TemplateApiError(error, 500)
       }
 
-      this.logSubmissionResult(existingApplication.id, templateId)
+      this.logger.info(`Application submission ended successfully`)
 
       if (hasChanged) {
         return updatedApplication

@@ -2,7 +2,7 @@ import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Accordion, Box, Text } from '@island.is/island-ui/core'
+import { Accordion, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isAcceptingCaseDecision,
@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
-  BlueBox,
+  Conclusion,
   CourtCaseInfo,
   CourtRecordAccordionItem,
   FormContentContainer,
@@ -140,21 +140,11 @@ const Confirmation: FC = () => {
           </Accordion>
         </Box>
         <Box marginBottom={7}>
-          <BlueBox>
-            <Box marginBottom={2} textAlign="center">
-              <Text as="h3" variant="h3">
-                {formatMessage(strings.conclusionTitle)}
-              </Text>
-            </Box>
-            <Box marginBottom={3}>
-              <Box marginTop={1}>
-                <Text variant="intro">{workingCase.conclusion}</Text>
-              </Box>
-            </Box>
-            <Box marginBottom={1} textAlign="center">
-              <Text variant="h4">{workingCase.judge?.name}</Text>
-            </Box>
-          </BlueBox>
+          <Conclusion
+            title={formatMessage(strings.conclusionTitle)}
+            conclusionText={workingCase.conclusion}
+            judgeName={workingCase.judge?.name}
+          />
         </Box>
         <Box marginBottom={3}>
           <PdfButton

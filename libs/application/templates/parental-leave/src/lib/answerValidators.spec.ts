@@ -8,10 +8,11 @@ import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
-import { MANUAL, ParentalRelations, YES } from '../constants'
+import { MANUAL, ParentalRelations } from '../constants'
 import { answerValidators } from './answerValidators'
 import { errorMessages } from './messages'
-import { NO, StartDateOptions, AnswerValidationConstants } from '../constants'
+import { StartDateOptions, AnswerValidationConstants } from '../constants'
+import { NO, YES } from '@island.is/application/core'
 
 const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants
 

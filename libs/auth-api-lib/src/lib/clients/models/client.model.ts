@@ -517,6 +517,15 @@ export class Client extends Model {
   })
   singleSession!: boolean
 
+  @Column({
+    type: DataType.ENUM('enabled', 'disabled'),
+    allowNull: false,
+  })
+  @ApiProperty({
+    example: 'disabled',
+  })
+  sso!: string
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date

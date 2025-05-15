@@ -3,13 +3,10 @@ import {
   Box,
   Stack,
   Text,
-  Table as T,
-  Tooltip,
   DialogPrompt,
   Tag,
   Icon,
   toast,
-  Button,
 } from '@island.is/island-ui/core'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
@@ -20,17 +17,13 @@ import {
   SignatureCollectionList,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
-import {
-  CollectorSkeleton,
-  OwnerParliamentarySkeleton,
-} from '../../../skeletons'
-import { useGetCollectors, useGetListsForOwner } from '../../../hooks'
+import { OwnerParliamentarySkeleton } from '../../../lib/skeletons'
+import { useGetListsForOwner } from '../../../hooks'
 import { SignatureCollection } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
-import copyToClipboard from 'copy-to-clipboard'
-import { formatNationalId } from '@island.is/portals/core'
 import SignedList from '../../shared/SignedList'
+import Managers from '../../shared/Managers'
 
 const OwnerView = ({
   refetchIsOwner,
@@ -48,7 +41,6 @@ const OwnerView = ({
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
     useGetListsForOwner(currentCollection?.id || '')
-  const { collectors, loadingCollectors } = useGetCollectors()
 
   const [cancelCollection] = useMutation<SignatureCollectionSuccess>(
     cancelCollectionMutation,
@@ -76,8 +68,8 @@ const OwnerView = ({
   }
 
   return (
-    <Stack space={8}>
-      <Box marginTop={5}>
+    <Stack space={6}>
+      <Box>
         <SignedList currentCollection={currentCollection} />
         <Box
           display="flex"
@@ -193,81 +185,7 @@ const OwnerView = ({
           ))
         )}
       </Box>
-      <Box>
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="baseline"
-          marginBottom={3}
-        >
-          <Text variant="h4">
-            {formatMessage(m.supervisors) + ' '}
-            <Tooltip
-              placement="bottom"
-              text={formatMessage(m.supervisorsTooltip)}
-            />
-          </Text>
-        </Box>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>{formatMessage(m.personName)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.personNationalId)}</T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {loadingCollectors ? (
-              <T.Row>
-                <T.Data>
-                  <CollectorSkeleton />
-                </T.Data>
-                <T.Data>
-                  <CollectorSkeleton />
-                </T.Data>
-              </T.Row>
-            ) : collectors.length ? (
-              collectors.map((collector) => (
-                <T.Row key={collector.nationalId}>
-                  <T.Data width={'35%'}>{collector.name}</T.Data>
-                  <T.Data>{formatNationalId(collector.nationalId)}</T.Data>
-                </T.Row>
-              ))
-            ) : (
-              <Text marginTop={2}>{formatMessage(m.noSupervisors)}</Text>
-            )}
-          </T.Body>
-        </T.Table>
-      </Box>
-      <Box
-        background="blue100"
-        borderRadius="large"
-        display={['block', 'flex', 'flex']}
-        justifyContent="spaceBetween"
-        alignItems="center"
-        padding={3}
-      >
-        <Text marginBottom={[2, 0, 0]} variant="small">
-          {formatMessage(m.copyLinkDescription)}
-        </Text>
-        <Box>
-          <Button
-            onClick={() => {
-              const copied = copyToClipboard(
-                `${document.location.origin}${listsForOwner[0].slug}`,
-              )
-              if (!copied) {
-                return toast.error(formatMessage(m.copyLinkError))
-              }
-              toast.success(formatMessage(m.copyLinkSuccess))
-            }}
-            variant="text"
-            icon="link"
-            size="medium"
-          >
-            {formatMessage(m.copyLinkButton)}
-          </Button>
-        </Box>
-      </Box>
+      <Managers />
     </Stack>
   )
 }

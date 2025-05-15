@@ -10,7 +10,8 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { defaultMonths, additionalSingleParentMonths } from '../../config'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { SINGLE, YES } from '../../constants'
+import { SINGLE } from '../../constants'
+import { YES } from '@island.is/application/core'
 
 const GiveDaysSlider: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,

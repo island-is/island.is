@@ -19,7 +19,6 @@ const buildRepeatableSections = (): Section[] => {
 
 export const WorkAccidentNotificationForm: Form = buildForm({
   id: 'WorkAccidentNotificationFormsDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

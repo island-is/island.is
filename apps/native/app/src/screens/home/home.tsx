@@ -50,7 +50,7 @@ import {
 } from './inbox-module'
 import {
   LicensesModule,
-  useGetLicensesData,
+  useListLicensesQuery,
   validateLicensesInitialData,
 } from './licenses-module'
 import { OnboardingModule } from './onboarding-module'
@@ -59,6 +59,10 @@ import {
   validateVehiclesInitialData,
   VehiclesModule,
 } from './vehicles-module'
+import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+import { GenericLicenseType } from '../../graphql/types/schema'
+import { useLocale } from '../../hooks/use-locale'
 
 interface ListItem {
   id: string
@@ -130,6 +134,10 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const getAndSetLocale = usePreferencesStore(
     ({ getAndSetLocale }) => getAndSetLocale,
   )
+  const isIdentityDocumentEnabled = useFeatureFlag(
+    'isIdentityDocumentEnabled',
+    false,
+  )
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
@@ -165,8 +173,20 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     skip: !inboxWidgetEnabled,
   })
 
-  const licensesRes = useGetLicensesData({
-    skipFetching: !licensesWidgetEnabled,
+  const licensesRes = useListLicensesQuery({
+    variables: {
+      input: {
+        includedTypes: [
+          ...INCLUDED_LICENSE_TYPES,
+          ...(isIdentityDocumentEnabled
+            ? [GenericLicenseType.IdentityDocument]
+            : []),
+        ],
+      },
+      locale: useLocale(),
+    },
+    fetchPolicy: 'cache-first',
+    skip: !licensesWidgetEnabled,
   })
 
   const airDiscountRes = useGetAirDiscountQuery({
@@ -181,6 +201,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         pageSize: 15,
       },
     },
+    fetchPolicy: 'cache-first',
     skip: !vehiclesWidgetEnabled,
   })
 
@@ -279,7 +300,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         applicationsWidgetEnabled && applicationsRes.refetch(),
         inboxWidgetEnabled && inboxRes.refetch(),
         licensesWidgetEnabled && licensesRes.refetch(),
-        licensesWidgetEnabled && licensesRes.refetchPassport(),
         airDiscountWidgetEnabled && airDiscountRes.refetch(),
         vehiclesWidgetEnabled && vehiclesRes.refetch(),
       ].filter(Boolean)

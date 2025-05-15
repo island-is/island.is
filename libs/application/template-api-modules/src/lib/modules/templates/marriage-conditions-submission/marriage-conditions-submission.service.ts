@@ -13,7 +13,6 @@ import {
   ALLOWED_MARITAL_STATUSES,
   maritalStatuses,
   PersonTypes,
-  YES,
 } from './types'
 import {
   MarriageConditionsAnswers,
@@ -23,7 +22,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath, YES } from '@island.is/application/core'
 
 @Injectable()
 export class MarriageConditionsSubmissionService extends BaseTemplateApiService {

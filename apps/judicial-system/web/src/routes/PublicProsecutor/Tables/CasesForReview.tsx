@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Text } from '@island.is/island-ui/core'
 import {
@@ -83,6 +83,9 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                         }${row.courtCaseNumber ?? ''}`}
                         policeCaseNumbers={row.policeCaseNumbers ?? []}
                         appealCaseNumber={row.appealCaseNumber ?? ''}
+                        publicProsecutorIsRegisteredInPoliceSystem={
+                          row.publicProsecutorIsRegisteredInPoliceSystem
+                        }
                       />
                     )
                   },
@@ -103,12 +106,10 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 {
                   cell: (row) => (
                     <TagCaseState
-                      caseState={row.state}
+                      theCase={row}
                       customMapCaseStateToTag={
                         mapIndictmentCaseStateToTagVariant
                       }
-                      indictmentReviewer={row.indictmentReviewer}
-                      indictmentRulingDecision={row.indictmentRulingDecision}
                     />
                   ),
                 },

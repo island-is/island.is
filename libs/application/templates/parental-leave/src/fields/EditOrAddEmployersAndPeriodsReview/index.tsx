@@ -13,7 +13,7 @@ import Periods from './review-groups/Periods'
 import Employers from './review-groups/Employers'
 import Attachments from './review-groups/Attachments'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
-import { YES } from '../../constants'
+import { YES } from '@island.is/application/core'
 
 interface ReviewScreenProps {
   application: Application

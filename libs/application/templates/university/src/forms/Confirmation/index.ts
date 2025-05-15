@@ -13,7 +13,6 @@ import { formerEducation } from '../../lib/messages/formerEducation'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
-  title: '',
   // logo: Logo,
   mode: FormModes.COMPLETED,
   children: [

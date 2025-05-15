@@ -8,16 +8,15 @@ import {
   CaseState,
   CaseType,
   completedIndictmentCaseStates,
-  completedRequestCaseStates,
   courtOfAppealsRoles,
   DateType,
-  districtCourtRoles,
   EventType,
   IndictmentCaseReviewDecision,
   indictmentCases,
   InstitutionType,
   investigationCases,
-  publicProsecutorRoles,
+  publicProsecutionOfficeRoles,
+  RequestSharedWhen,
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
@@ -33,7 +32,7 @@ describe('getCasesQueryFilter', () => {
       role: UserRole.PROSECUTOR,
       institution: {
         id: 'Prosecutors Office Id',
-        type: InstitutionType.PROSECUTORS_OFFICE,
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
       },
     }
 
@@ -92,7 +91,7 @@ describe('getCasesQueryFilter', () => {
       role: UserRole.PROSECUTOR_REPRESENTATIVE,
       institution: {
         id: 'Prosecutors Office Id',
-        type: InstitutionType.PROSECUTORS_OFFICE,
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
       },
     }
 
@@ -140,6 +139,7 @@ describe('getCasesQueryFilter', () => {
   describe.each([
     UserRole.DISTRICT_COURT_JUDGE,
     UserRole.DISTRICT_COURT_REGISTRAR,
+    UserRole.DISTRICT_COURT_ASSISTANT,
   ])('given %s role', (role) => {
     it(`should get ${role} filter`, () => {
       // Arrange
@@ -198,49 +198,6 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  describe.each(
-    districtCourtRoles.filter(
-      (role) =>
-        ![
-          UserRole.DISTRICT_COURT_JUDGE,
-          UserRole.DISTRICT_COURT_REGISTRAR,
-        ].includes(role as UserRole),
-    ),
-  )('given %s role', (role) => {
-    it(`should get assistant filter`, () => {
-      // Arrange
-      const user = {
-        role,
-        institution: { id: 'Court Id', type: InstitutionType.DISTRICT_COURT },
-      }
-
-      // Act
-      const res = getCasesQueryFilter(user as User)
-
-      // Assert
-      expect(res).toStrictEqual({
-        [Op.and]: [
-          { is_archived: false },
-          {
-            [Op.or]: [
-              { court_id: { [Op.is]: null } },
-              { court_id: 'Court Id' },
-            ],
-          },
-          { type: indictmentCases },
-          {
-            state: [
-              CaseState.SUBMITTED,
-              CaseState.WAITING_FOR_CANCELLATION,
-              CaseState.RECEIVED,
-              CaseState.COMPLETED,
-            ],
-          },
-        ],
-      })
-    })
-  })
-
   describe.each(courtOfAppealsRoles)('given %s role', (role) => {
     it('should get court of appeals filter', () => {
       // Arrange
@@ -288,15 +245,15 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  describe.each(publicProsecutorRoles)('given %s role', (role) => {
+  describe.each(publicProsecutionOfficeRoles)('given %s role', (role) => {
     it('should get public prosecutor filter', () => {
       // Arrange
       const user = {
         id: 'Public Prosecutor Office Id',
         role,
         institution: {
-          id: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
-          type: InstitutionType.PROSECUTORS_OFFICE,
+          id: 'Public Prosecutors Office Id',
+          type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
         },
       }
 
@@ -428,6 +385,9 @@ describe('getCasesQueryFilter', () => {
               [Op.and]: [
                 { type: [...restrictionCases, ...investigationCases] },
                 {
+                  defender_national_id: [user.nationalId, user.nationalId],
+                },
+                {
                   [Op.or]: [
                     {
                       [Op.and]: [
@@ -452,11 +412,80 @@ describe('getCasesQueryFilter', () => {
                         },
                       ],
                     },
-                    { state: completedRequestCaseStates },
+                    {
+                      state: [
+                        CaseState.ACCEPTED,
+                        CaseState.REJECTED,
+                        CaseState.DISMISSED,
+                      ],
+                    },
                   ],
                 },
+              ],
+            },
+            {
+              // victim lawyer assigned to a case
+              [Op.and]: [
+                { type: [...restrictionCases, ...investigationCases] },
                 {
-                  defender_national_id: [user.nationalId, user.nationalId],
+                  [Op.or]: [
+                    {
+                      // lawyer should get access when sent to court
+                      [Op.and]: [
+                        {
+                          id: {
+                            [Op.in]: Sequelize.literal(`
+                        (SELECT case_id
+                          FROM victim
+                          WHERE lawyer_national_id in ('${user.nationalId}', '${user.nationalId}') 
+                          AND lawyer_access_to_request = '${RequestSharedWhen.READY_FOR_COURT}')
+                      `),
+                          },
+                        },
+                        { state: [CaseState.SUBMITTED, CaseState.RECEIVED] },
+                      ],
+                    },
+                    {
+                      // lawyer should get access when court date is scheduled or when case is concluded
+                      [Op.and]: [
+                        {
+                          id: {
+                            [Op.in]: Sequelize.literal(`
+                          (SELECT case_id
+                            FROM victim
+                            WHERE lawyer_national_id in ('${user.nationalId}', '${user.nationalId}') 
+                            AND lawyer_access_to_request != '${RequestSharedWhen.OBLIGATED}')
+                        `),
+                          },
+                        },
+                        {
+                          [Op.or]: [
+                            {
+                              [Op.and]: [
+                                { state: CaseState.RECEIVED },
+                                {
+                                  id: {
+                                    [Op.in]: Sequelize.literal(`
+                                (SELECT case_id
+                                  FROM date_log
+                                  WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
+                              `),
+                                  },
+                                },
+                              ],
+                            },
+                            {
+                              state: [
+                                CaseState.ACCEPTED,
+                                CaseState.REJECTED,
+                                CaseState.DISMISSED,
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
                 },
               ],
             },

@@ -64,4 +64,16 @@ export class EventLog extends Model {
   })
   @ApiPropertyOptional({ enum: UserRole })
   userRole?: UserRole
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  userName?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  userTitle?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  institutionName?: string
 }

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Box, IconMapIcon, StatusColor, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
@@ -28,7 +28,7 @@ const getBackgroundColor = (caseFile: CaseFileWithStatus): StatusColor => {
     !caseFile.key
   ) {
     return { background: 'dark100', border: 'dark200' }
-  } else if (caseFile.status === 'error') {
+  } else if (caseFile.status === 'error' || caseFile.size === 0) {
     return { background: 'red100', border: 'red200' }
   } else {
     return { background: 'blue100', border: 'blue300' }

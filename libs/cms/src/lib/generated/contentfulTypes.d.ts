@@ -480,6 +480,44 @@ export interface IBigBulletList extends Entry<IBigBulletListFields> {
   }
 }
 
+export interface IBloodDonationRestrictionFields {
+  /** Titill */
+  title?: string | undefined
+
+  /** Áhrif á blóðgjöf */
+  cardText?: Document | undefined
+
+  /** Lýsing á efni spjalds */
+  description?: string | undefined
+
+  /** Lykilorð */
+  keywords?: string | undefined
+
+  /** Nánar um áhrif á blóðgjöf */
+  detailedText?: Document | undefined
+
+  /** Flokkur */
+  filterTags?: IGenericTag[] | undefined
+}
+
+export interface IBloodDonationRestriction
+  extends Entry<IBloodDonationRestrictionFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'bloodDonationRestriction'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ICardFields {
   /** Title */
   title: string
@@ -772,6 +810,9 @@ export interface ICustomPageFields {
     | 'Vacancies'
     | 'Grants'
     | 'DirectorateOfLabourMyPages'
+    | 'Verdicts'
+    | 'OfficialJournalOfIcelandHelp'
+    | 'BloodDonationRestrictions'
     | undefined
 
   /** Alert Banner */
@@ -2155,8 +2196,6 @@ export interface IIntroLinkImageFields {
     | ILifeEventPage
     | ILinkUrl
     | INews
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
     | IAnchorPage
     | undefined
 
@@ -3176,8 +3215,8 @@ export interface IOrganizationFields {
   /** Kennitala */
   kennitala?: string | undefined
 
-  /** Alert Banner */
-  alertBanner?: IAlertBanner | undefined
+  /** News Bottom Slices */
+  newsBottomSlices?: IEmailSignup[] | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -3376,6 +3415,12 @@ export interface IOrganizationParentSubpageFields {
 
   /** Image */
   image?: Asset | undefined
+
+  /** Thumbnail Image */
+  thumbnailImage?: Asset | undefined
+
+  /** Tiny Thumbnail Image */
+  tinyThumbnailImage?: Asset | undefined
 }
 
 /** Navigation page for content that belongs in multiple organization subpages */
@@ -3391,6 +3436,43 @@ export interface IOrganizationParentSubpage
     contentType: {
       sys: {
         id: 'organizationParentSubpage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOrganizationParentSubpageListFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Variant */
+  variant?: 'Service Card' | 'Profile Card - Title Above' | undefined
+
+  /** Page List */
+  pageList?: IOrganizationParentSubpage[] | undefined
+
+  /** See More Link */
+  seeMoreLink?: ILink | undefined
+}
+
+/** List of organization parent subpages */
+
+export interface IOrganizationParentSubpageList
+  extends Entry<IOrganizationParentSubpageListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'organizationParentSubpageList'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3442,6 +3524,7 @@ export interface IOrganizationSubpageFields {
         | ISectionHeading
         | ILatestEventsSlice
         | IGenericList
+        | IOrganizationParentSubpageList
       )[]
     | undefined
 
@@ -3464,7 +3547,10 @@ export interface IOrganizationSubpageFields {
   signLanguageVideo?: IEmbeddedVideo | undefined
 
   /** Bottom Slices */
-  bottomSlices?: (ITimeline | ILogoListSlice)[] | undefined
+  bottomSlices?: (ITimeline | ILogoListSlice | ILatestNewsSlice)[] | undefined
+
+  /** Organization Parent Subpage */
+  organizationParentSubpage?: IOrganizationParentSubpage | undefined
 }
 
 export interface IOrganizationSubpage
@@ -5089,8 +5175,6 @@ export interface IUrlFields {
     | ILifeEventPage
     | INews
     | IProjectPage
-    | IVidspyrnaFrontpage
-    | IVidspyrnaPage
     | IOrganizationPage
     | undefined
 
@@ -5201,188 +5285,6 @@ export interface IVacancy extends Entry<IVacancyFields> {
   }
 }
 
-export interface IVidspyrnaFrontpageFields {
-  /** Title */
-  title: string
-
-  /** description */
-  description?: string | undefined
-
-  /** Slug */
-  slug: string
-
-  /** Content */
-  content?: Document | undefined
-
-  /** Group */
-  group?: IArticleGroup | undefined
-
-  /** Category */
-  category?: IArticleCategory | undefined
-
-  /** Organization */
-  organization?: IOrganization[] | undefined
-
-  /** Slices */
-  slices: (IVidspyrnaFeaturedNews | IVidspyrnaFlokkur)[]
-
-  /** Featured image */
-  featuredImage?: Asset | undefined
-}
-
-/** Frontpage of /covid-adgerdir */
-
-export interface IVidspyrnaFrontpage extends Entry<IVidspyrnaFrontpageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrna-frontpage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IVidspyrnaFeaturedNewsFields {
-  /** Title */
-  title?: string | undefined
-
-  /** featured */
-  featured: INews[]
-}
-
-export interface IVidspyrnaFeaturedNews
-  extends Entry<IVidspyrnaFeaturedNewsFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrnaFeaturedNews'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IVidspyrnaFlokkurFields {
-  /** Subtitle */
-  subtitle: string
-
-  /** Title */
-  title: string
-
-  /** Description */
-  description: string
-
-  /** Image */
-  image?: Asset | undefined
-
-  /** Pages */
-  pages: IVidspyrnaPage[]
-}
-
-/** A group of "covid" articles shown in a slider. */
-
-export interface IVidspyrnaFlokkur extends Entry<IVidspyrnaFlokkurFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrnaFlokkur'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IVidspyrnaPageFields {
-  /** Title */
-  title: string
-
-  /** Slug */
-  slug: string
-
-  /** Short description */
-  description: string
-
-  /** Long description */
-  longDescription?: string | undefined
-
-  /** Content */
-  content?: Document | undefined
-
-  /** Link */
-  link?: string | undefined
-
-  /** Link button text */
-  linkButtonText?: string | undefined
-
-  /** Tags */
-  tags: IVidspyrnaTag[]
-
-  /** Process Entry */
-  processEntry?: IProcessEntry | undefined
-}
-
-/** A "covid" article, seen on /covid-adgerdir */
-
-export interface IVidspyrnaPage extends Entry<IVidspyrnaPageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrnaPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IVidspyrnaTagFields {
-  /** Title */
-  title: string
-}
-
-/** A tag used to tag "covid" articles */
-
-export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrnaTag'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export type CONTENT_TYPE =
   | 'accordionSlice'
   | 'alertBanner'
@@ -5462,6 +5364,7 @@ export type CONTENT_TYPE =
   | 'organization'
   | 'organizationPage'
   | 'organizationParentSubpage'
+  | 'organizationParentSubpageList'
   | 'organizationSubpage'
   | 'organizationTag'
   | 'overviewLinks'
@@ -5504,11 +5407,6 @@ export type CONTENT_TYPE =
   | 'uiConfiguration'
   | 'url'
   | 'vacancy'
-  | 'vidspyrna-frontpage'
-  | 'vidspyrnaFeaturedNews'
-  | 'vidspyrnaFlokkur'
-  | 'vidspyrnaPage'
-  | 'vidspyrnaTag'
 
 export type LOCALE_CODE = 'en' | 'is-IS'
 

@@ -4,7 +4,6 @@ import {
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import {
-  AccidentNotificationAnswers,
   ReviewAddAttachmentData,
   ReviewApprovalEnum,
   SubmittedApplicationData,

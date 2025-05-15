@@ -51,18 +51,18 @@ ARG NX_PARALLEL=2
 ARG NX_MAX_PARALLEL=4
 ARG NX_TASKS_RUNNER=ci
 
-ENV NODE_ENV=production \
+ENV CI=true \
+  NODE_ENV=production \
   NODE_OPTIONS="--max-old-space-size=8192" \
   NX_PARALLEL=${NX_PARALLEL} \
   NX_MAX_PARALLEL=${NX_MAX_PARALLEL} \
   NX_TASKS_RUNNER=${NX_TASKS_RUNNER} \
+  NX_VERBOSE_LOGGING=true \
   APP=${APP}
 
+# Build with Nx Cloud caching. If credentials are missing or invalid, build will run without caching
 RUN --mount=type=secret,id=nx_cloud_access_token \
-  bash -c ' \
-  export NX_CLOUD_ACCESS_TOKEN=$(cat /run/secrets/nx_cloud_access_token) && \
-  yarn run build ${APP} --prod \
-  '
+  NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
 
 # ------------------------------------------------
 # Minimal node base for outputs
@@ -131,16 +131,18 @@ CMD ["node", "main.js"]
 # ------------------------------------------------
 # Static output (NGINX)
 # ------------------------------------------------
-FROM public.ecr.aws/docker/library/nginx:1.21-alpine AS output-static
+FROM public.ecr.aws/docker/library/nginx:1.21-alpine AS static-base
+
+RUN apk update && apk upgrade && apk add --no-cache bash nodejs
+RUN mkdir -p /etc/nginx/templates
+
+FROM static-base AS output-static
 
 ARG APP
 ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
-
-RUN apk update && apk upgrade && apk add --no-cache bash nodejs
-RUN mkdir -p /etc/nginx/templates
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 COPY scripts/dockerfile-assets/bash/extract-environment.* /docker-entrypoint.d/

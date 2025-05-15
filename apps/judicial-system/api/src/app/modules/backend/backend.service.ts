@@ -6,7 +6,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
-import { DateType, type User, UserRole } from '@island.is/judicial-system/types'
+import { DateType, type User } from '@island.is/judicial-system/types'
 
 import {
   Case,
@@ -14,14 +14,13 @@ import {
   SendNotificationResponse,
   SignatureConfirmationResponse,
 } from '../case'
-import { CaseListEntry } from '../case-list'
+import { CaseListEntry, CaseStatistics } from '../case-list'
 import {
   CivilClaimant,
   Defendant,
   DeleteCivilClaimantResponse,
   DeleteDefendantResponse,
 } from '../defendant'
-import { CreateEventLogInput } from '../event-log'
 import {
   CaseFile,
   DeleteFileResponse,
@@ -48,17 +47,24 @@ import {
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { Subpoena } from '../subpoena'
+import { Victim } from '../victim'
+import { DeleteVictimResponse } from '../victim/models/deleteVictim.response'
 import { backendModuleConfig } from './backend.config'
 
 @Injectable()
 export class BackendService extends DataSource<{ req: Request }> {
   private headers!: { [key: string]: string }
+  private secretTokenHeaders!: { [key: string]: string }
 
   constructor(
     @Inject(backendModuleConfig.KEY)
     private readonly config: ConfigType<typeof backendModuleConfig>,
   ) {
     super()
+    this.secretTokenHeaders = {
+      'Content-Type': 'application/json',
+      authorization: `Bearer ${this.config.secretToken}`,
+    }
   }
 
   initialize(config: DataSourceConfig<{ req: Request }>): void {
@@ -188,6 +194,19 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getCase(id: string): Promise<Case> {
     return this.get<Case>(`case/${id}`, this.caseTransformer)
+  }
+  getCaseStatistics(
+    fromDate?: Date,
+    toDate?: Date,
+    institutionId?: string,
+  ): Promise<CaseStatistics> {
+    const params = new URLSearchParams()
+
+    if (fromDate) params.append('fromDate', fromDate.toISOString())
+    if (toDate) params.append('toDate', toDate.toISOString())
+    if (institutionId) params.append('institutionId', institutionId)
+
+    return this.get(`cases/statistics?${params.toString()}`)
   }
 
   getConnectedCases(id: string): Promise<Case[]> {
@@ -412,6 +431,25 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/civilClaimant/${civilClaimantId}`)
   }
 
+  createVictim(caseId: string, createVictim: unknown): Promise<Victim> {
+    return this.post(`case/${caseId}/victim`, createVictim)
+  }
+
+  updateVictim(
+    caseId: string,
+    victimId: string,
+    updateVictim: unknown,
+  ): Promise<Victim> {
+    return this.patch(`case/${caseId}/victim/${victimId}`, updateVictim)
+  }
+
+  deleteVictim(
+    caseId: string,
+    victimId: string,
+  ): Promise<DeleteVictimResponse> {
+    return this.delete(`case/${caseId}/victim/${victimId}`)
+  }
+
   createIndictmentCount(
     input: CreateIndictmentCountInput,
   ): Promise<IndictmentCount> {
@@ -545,18 +583,27 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
   }
 
-  createEventLog(eventLog: CreateEventLogInput, userRole?: UserRole) {
-    return fetch(`${this.config.backendUrl}/api/eventLog/event`, {
+  createEventLog(eventLog: unknown): Promise<boolean> {
+    return this.callBackend<boolean>('eventLog/event', {
       method: 'POST',
-      headers: {
-        authorization: `Bearer ${this.config.secretToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...eventLog,
-        userRole,
-      }),
+      body: JSON.stringify(eventLog),
+      headers: this.secretTokenHeaders,
     })
+  }
+
+  findUsersByNationalId(nationalId: string): Promise<User[]> {
+    return this.callBackend<User[]>(`user/?nationalId=${nationalId}`, {
+      headers: this.secretTokenHeaders,
+    })
+  }
+
+  findDefenderByNationalId(nationalId: string): Promise<User> {
+    return this.callBackend<User>(
+      `cases/limitedAccess/defender?nationalId=${nationalId}`,
+      {
+        headers: this.secretTokenHeaders,
+      },
+    )
   }
 }
 

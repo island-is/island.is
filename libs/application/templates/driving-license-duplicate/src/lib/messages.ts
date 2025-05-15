@@ -251,15 +251,29 @@ export const m = defineMessages({
       'Fljótlegast er að sækja samrit hjá Þjóðskrá Íslands í Borgartúni 21, 105 Reykjavík. Á öðrum afhendingarstöðum getur afhending tekið allt að 6 til 10 daga. Sjá afgreiðslutíma.',
     description: 'Description for delivery method section',
   },
-  deliveryMethodOfficeLabel: {
-    id: 'dld.application:deliveryMethodOfficeLabel',
-    defaultMessage: 'Afhendingarstaður',
-    description: 'Title for office',
+  deliveryMethodHeader: {
+    id: 'dld.application:deliveryMethodHeader',
+    defaultMessage: 'Hvernig vilt þú fá plastökuskírteinið þitt afhent?',
   },
-  deliveryMethodOfficeSelectPlaceholder: {
-    id: 'dld.application:deliveryMethodOfficeSelectPlaceholder',
+  deliverySendHome: {
+    id: 'dld.application:deliverySendHome',
+    defaultMessage: 'Sent heim í pósti',
+  },
+  delivery: {
+    id: 'dld.application:delivery',
+    defaultMessage: 'Heimsending',
+  },
+  deliveryPickup: {
+    id: 'dld.application:deliveryPickup',
+    defaultMessage: 'Sækja á afhendingarstað',
+  },
+  deliveryPickupLocation: {
+    id: 'dld.application:deliveryPickupLocation',
+    defaultMessage: 'Afhendingarstaður',
+  },
+  deliveryPickupLocationPlaceholder: {
+    id: 'dld.application:deliveryPickupLocationPlaceholder',
     defaultMessage: 'Veldu afhendingarstað',
-    description: 'Placeholder for office selection',
   },
 
   /* Digital License Section */
@@ -373,7 +387,7 @@ export const m = defineMessages({
     id: 'dld.application:congratulationsTitleSuccess',
     defaultMessage:
       'Umsókn þín um samrit af ökuskírteini hefur verið móttekin og skírteini pantað.',
-    description: 'Your application for P-sign was successful.',
+    description: 'Your application for samrit was successful.',
   },
   congratulationsTitle: {
     id: 'dld.application:congratulationsTitle',

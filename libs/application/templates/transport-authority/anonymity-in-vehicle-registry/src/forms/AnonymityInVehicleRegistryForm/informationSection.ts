@@ -20,7 +20,6 @@ export const informationSection = buildSection({
       children: [
         buildCheckboxField({
           id: 'isChecked',
-          title: '',
           large: true,
           backgroundColor: 'white',
           defaultValue: (application: Application) =>
@@ -43,25 +42,21 @@ export const informationSection = buildSection({
         }),
         buildDescriptionField({
           id: 'anonymityStatus.noteText1',
-          title: '',
           description: information.labels.anonymityStatus.noteText1,
           space: 1,
         }),
         buildDescriptionField({
           id: 'anonymityStatus.noteText2',
-          title: '',
           description: information.labels.anonymityStatus.noteText2,
           space: 1,
         }),
         buildDescriptionField({
           id: 'anonymityStatus.noteText3',
-          title: '',
           description: information.labels.anonymityStatus.noteText3,
           space: 1,
         }),
         buildDescriptionField({
           id: 'anonymityStatus.noteText4',
-          title: '',
           description: information.labels.anonymityStatus.noteText4,
           space: 1,
         }),

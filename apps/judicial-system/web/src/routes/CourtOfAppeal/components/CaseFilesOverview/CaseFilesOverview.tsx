@@ -28,19 +28,19 @@ const CaseFilesOverview = () => {
           renderAs="row"
           caseId={workingCase.id}
           title={formatMessage(core.pdfButtonRequest)}
-          pdfType={'request'}
+          pdfType="request"
         />
         <PdfButton
           renderAs="row"
           caseId={workingCase.id}
           title={formatMessage(core.pdfButtonRulingShortVersion)}
-          pdfType={'courtRecord'}
+          pdfType="courtRecord"
         />
         <PdfButton
           renderAs="row"
           caseId={workingCase.id}
           title={formatMessage(core.pdfButtonRuling)}
-          pdfType={'ruling'}
+          pdfType="ruling"
         >
           {workingCase.rulingSignatureDate ? (
             <SignedDocument

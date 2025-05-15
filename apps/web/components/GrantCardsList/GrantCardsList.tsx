@@ -9,6 +9,7 @@ import { isDefined } from '@island.is/shared/utils'
 import {
   Grant,
   GrantCardsList as GrantCardsListSchema,
+  GrantCardsListSorting,
   GrantStatus,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
@@ -122,7 +123,7 @@ const GrantCardsList = ({ slice }: SliceProps) => {
     }
   }
 
-  const grantItems = slice.resolvedGrantsList?.items ?? []
+  const grantItems = [...(slice.resolvedGrantsList?.items ?? [])]
 
   if (grantItems.length === 1) {
     const grant = grantItems[0]
@@ -161,6 +162,18 @@ const GrantCardsList = ({ slice }: SliceProps) => {
         />
       </>
     )
+  }
+
+  if (grantItems.length > 1) {
+    if (slice.sorting === GrantCardsListSorting.MostRecentlyUpdatedFirst) {
+      grantItems.sort(
+        (a, b) =>
+          new Date(a.lastUpdateTimestamp).getTime() -
+          new Date(b.lastUpdateTimestamp).getTime(),
+      )
+    } else if (slice.sorting === GrantCardsListSorting.Alphabetical) {
+      grantItems.sort((a, b) => a.name.localeCompare(b.name))
+    }
   }
 
   const cards = grantItems

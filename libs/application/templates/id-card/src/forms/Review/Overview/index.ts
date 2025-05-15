@@ -8,7 +8,7 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { format as formatNationalId } from 'kennitala'
-import { DistrictCommissionerAgencies, Routes } from '../../../lib/constants'
+import { Routes } from '../../../lib/constants'
 import { review, idInformation, priceList } from '../../../lib/messages'
 import {
   isChild,
@@ -290,7 +290,6 @@ export const OverviewSection = buildSection({
         buildCustomField({
           id: 'overviewApproval',
           component: 'RejectApproveButtons',
-          title: '',
           description: '',
         }),
       ],

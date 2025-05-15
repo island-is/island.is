@@ -1,11 +1,10 @@
 import { z } from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { YES, NO, PICK_UP, SEND_HOME } from './constants'
+import { PICK_UP, SEND_HOME } from './constants'
 import { m } from './messages'
+import { EMAIL_REGEX, NO, YES } from '@island.is/application/core'
 
-const emailRegex =
-  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-const isValidEmail = (value: string) => emailRegex.test(value)
+const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')

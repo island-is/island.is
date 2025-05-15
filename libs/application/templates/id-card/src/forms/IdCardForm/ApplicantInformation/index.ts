@@ -7,10 +7,9 @@ import {
   buildSection,
   buildTextField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import {
-  IdentityDocumentChild,
-  PersonalInfo,
   Routes,
 } from '../../../lib/constants'
 import { applicantInformation } from '../../../lib/messages'
@@ -18,10 +17,8 @@ import {
   Application,
   NationalRegistryIndividual,
   UserProfile,
-  YES,
 } from '@island.is/application/types'
 import {
-  getChosenApplicant,
   hasSecondGuardian,
   getChildPassport,
   isChild,

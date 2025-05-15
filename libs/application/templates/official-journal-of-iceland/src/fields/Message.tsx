@@ -11,6 +11,7 @@ export const Message = ({ application }: OJOIFieldBaseProps) => {
         label={publishing.inputs.messages.label}
         placeholder={publishing.inputs.messages.placeholder}
         applicationId={application.id}
+        defaultValue={application.answers.advert?.message}
         textarea
       />
     </FormGroup>

@@ -3,6 +3,7 @@ import isEqual from 'lodash/isEqual'
 import { useRouter } from 'next/router'
 
 import {
+  AlertMessage,
   Box,
   Breadcrumbs,
   Filter,
@@ -39,7 +40,7 @@ import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
-import { CustomNextError } from '@island.is/web/units/errors'
+import { shortenText } from '@island.is/web/utils/shortenText'
 
 import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
 import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
@@ -52,29 +53,6 @@ type Vacancy =
 
 const ITEMS_PER_PAGE = 8
 export const VACANCY_INTRO_MAX_LENGTH = 80
-
-export const shortenText = (text: string, maxLength: number) => {
-  if (!text) return text
-
-  if (text.length <= maxLength) {
-    return text
-  }
-
-  const shortenedText = text.slice(0, maxLength)
-
-  if (text[maxLength] === ' ') {
-    return `${shortenedText} ...`
-  }
-
-  // Search for the nearest space before the maxLength
-  const spaceIndex = shortenedText.lastIndexOf(' ')
-
-  if (spaceIndex < 0) {
-    return `${shortenedText} ...`
-  }
-
-  return `${text.slice(0, spaceIndex)} ...`
-}
 
 const mapVacanciesField = (
   vacancies: Vacancy[],
@@ -120,11 +98,12 @@ const mapVacanciesField = (
 interface IcelandicGovernmentInstitutionVacanciesListProps {
   vacancies: Vacancy[]
   namespace: Record<string, string>
+  fetchErrorOccurred?: boolean | null
 }
 
 const IcelandicGovernmentInstitutionVacanciesList: Screen<
   IcelandicGovernmentInstitutionVacanciesListProps
-> = ({ vacancies, namespace }) => {
+> = ({ vacancies, namespace, fetchErrorOccurred }) => {
   const { query, replace, isReady } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -290,7 +269,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
   useEffect(() => {
     const updatedQuery = { ...query }
 
-    const shouldScroll = updatedQuery.page !== selectedPage.toString()
+    const shouldScroll = (updatedQuery.page ?? '1') !== selectedPage.toString()
 
     if (selectedPage === 1) {
       if ('page' in updatedQuery) delete updatedQuery['page']
@@ -359,6 +338,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
 
   const mainTitle = n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')
   const ogTitle = n('ogTitle', 'Starfatorg - laus störf hjá ríkinu | Ísland.is')
+  const displayFetchErrorIfPresent = n('displayFetchErrorIfPresent', true)
 
   return (
     <Box paddingTop={[0, 0, 8]}>
@@ -413,6 +393,11 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                 )}
                 name="filterInput"
                 value={searchTerm}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    ;(e.target as { blur?: () => void })?.blur?.()
+                  }
+                }}
                 onChange={(value) => {
                   setSelectedPage(1)
                   setSearchTerm(value)
@@ -493,6 +478,18 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
               </Inline>
             </GridColumn>
           </GridRow>
+          {fetchErrorOccurred && displayFetchErrorIfPresent && (
+            <Box paddingBottom={5}>
+              <AlertMessage
+                type="warning"
+                title={n('fetchErrorTitle', 'Ekki tókst að sækja öll störf')}
+                message={n(
+                  'fetchErrorMessage',
+                  'Villa kom upp við að sækja störf frá ytri kerfum og því er möguleiki að ekki öll auglýst störf séu sýnileg',
+                )}
+              />
+            </Box>
+          )}
         </Box>
       </GridContainer>
       <Box paddingTop={3} paddingBottom={6} background="blue100">
@@ -707,12 +704,13 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
     },
   })
 
-  const vacancies =
-    vacanciesResponse.data.icelandicGovernmentInstitutionVacancies.vacancies
+  const { vacancies, fetchErrorOccurred } =
+    vacanciesResponse.data.icelandicGovernmentInstitutionVacancies
 
   return {
     vacancies,
     namespace,
+    fetchErrorOccurred,
   }
 }
 

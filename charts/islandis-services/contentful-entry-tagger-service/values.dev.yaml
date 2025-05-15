@@ -20,7 +20,7 @@ name: 'contentful-entry-tagger-service'
 enabled: true
 env:
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces: []
 grantNamespacesEnabled: false

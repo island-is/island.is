@@ -10,21 +10,24 @@ export const tagSelector = (
 
   switch (status) {
     case HealthDirectorateVaccinationStatusEnum.complete:
-      return 'blue'
+      return 'mint'
+    case HealthDirectorateVaccinationStatusEnum.valid:
+      return 'mint'
+
+    case HealthDirectorateVaccinationStatusEnum.unvaccinated:
+      return 'red'
+
     case HealthDirectorateVaccinationStatusEnum.expired:
       return 'blue'
     case HealthDirectorateVaccinationStatusEnum.incomplete:
       return 'blue'
     case HealthDirectorateVaccinationStatusEnum.rejected:
-      return 'purple'
+      return 'blue'
     case HealthDirectorateVaccinationStatusEnum.undetermined:
       return 'purple'
     case HealthDirectorateVaccinationStatusEnum.undocumented:
       return 'purple'
-    case HealthDirectorateVaccinationStatusEnum.unvaccinated:
-      return 'red'
-    case HealthDirectorateVaccinationStatusEnum.valid:
-      return 'mint'
+
     default:
       return 'blue'
   }

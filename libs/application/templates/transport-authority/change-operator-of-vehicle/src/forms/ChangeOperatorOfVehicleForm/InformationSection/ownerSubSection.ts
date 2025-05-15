@@ -4,6 +4,7 @@ import {
   buildSubSection,
   buildDescriptionField,
   buildCustomField,
+  buildPhoneField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
@@ -50,19 +51,18 @@ export const ownerSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.email,
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'owner.phone',
           title: information.labels.owner.phone,
           width: 'half',
-          variant: 'tel',
-          format: '###-####',
           required: true,
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.mobilePhoneNumber,
+          allowedCountryCodes: ['IS'],
+          enableCountrySelector: false,
         }),
         buildCustomField({
           id: 'ownerCoOwner',
-          title: '',
           component: 'CoOwner',
           doesNotRequireAnswer: true,
         }),

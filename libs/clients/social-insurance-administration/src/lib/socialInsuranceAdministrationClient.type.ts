@@ -92,6 +92,7 @@ export interface Months {
 
 export interface IncomePlanInfo {
   incomeYear: number
+  distributeIncomeByMonth: boolean
   incomeTypes: Array<IncomeTypes>
 }
 
@@ -123,7 +124,6 @@ export enum DocumentTypeEnum {
   RETIREMENT = 'retirement',
   SAILOR = 'sailor',
   SELF_EMPLOYED = 'selfEmployed',
-  RENTAL_AGREEMENT = 'rentalAgreement',
   SCHOOL_CONFIRMATION = 'schoolConfirmation',
   ASSISTED_CARE_AT_HOME = 'assistedCareAtHome',
   PURCHASE_OF_HEARING_AIDS = 'purchaseOfHearingAids',

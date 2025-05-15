@@ -2,11 +2,11 @@ import { IntlShape } from 'react-intl'
 
 import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
+  Case,
   CaseDecision,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { strings } from './titleForCase.strings'
 
@@ -26,9 +26,7 @@ export const titleForCase = (
 
   if (theCase.state === CaseState.ACCEPTED) {
     if (isInvestigationCase(theCase.type)) {
-      return theCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING
-        ? formatMessage(strings.investigationCaseCompletedWithoutRuling)
-        : formatMessage(strings.investigationCaseAcceptedTitle)
+      return formatMessage(strings.investigationCaseAcceptedTitle)
     }
 
     const caseType =

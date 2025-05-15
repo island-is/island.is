@@ -5,75 +5,16 @@ import {
   Button,
   GridContainer,
   Hidden,
-  Inline,
   LinkV2,
   Stack,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { BackgroundImage } from '@island.is/web/components'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { DigitalIcelandLatestNewsCard } from '@island.is/web/components'
+import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
 import { LatestNewsSlice as LatestNewsSliceSchema } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
-import { shortenText } from '@island.is/web/screens/IcelandicGovernmentInstitutionVacancies/IcelandicGovernmentInstitutionVacanciesList'
 
 import * as styles from './DigitalIcelandLatestNewsSlice.css'
-
-interface ItemProps {
-  imageSrc: string
-  date: string
-  title: string
-  description?: string | null
-  tags: string[]
-  href: string
-}
-
-const Item = (item: ItemProps) => {
-  return (
-    <LinkV2 href={item.href} className={styles.itemContainer}>
-      <Box
-        display="flex"
-        flexDirection="column"
-        flexWrap="nowrap"
-        rowGap={[2, 2, 2, 5]}
-        justifyContent="spaceBetween"
-        height="full"
-      >
-        <Stack space={2}>
-          <BackgroundImage
-            positionX="left"
-            backgroundSize="cover"
-            image={{ url: item.imageSrc }}
-            ratio="396:210"
-            boxProps={{
-              alignItems: 'center',
-              width: 'full',
-              display: 'inlineFlex',
-              overflow: 'hidden',
-              borderRadius: 'large',
-            }}
-          />
-
-          <Stack space={1}>
-            <Text variant="h3">{item.title}</Text>
-            <Text variant="medium">
-              {shortenText(item.description ?? '', 80)}
-            </Text>
-          </Stack>
-        </Stack>
-        <Box>
-          <Inline space={1}>
-            {item.tags.map((tag) => (
-              <Tag key={tag} disabled>
-                {tag}
-              </Tag>
-            ))}
-          </Inline>
-        </Box>
-      </Box>
-    </LinkV2>
-  )
-}
 
 const SeeMoreLink = ({ slice, slug }: SliceProps) => {
   const { linkResolver } = useLinkResolver()
@@ -127,14 +68,14 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
           </Box>
           <Box className={styles.itemListContainer}>
             {slice.news.slice(0, 3).map((news) => (
-              <Item
+              <DigitalIcelandLatestNewsCard
                 key={news.id}
                 href={linkResolver('organizationnews', [slug, news.slug]).href}
                 date={news.date}
                 description={news.intro}
                 imageSrc={news.image?.url ?? ''}
                 tags={news.genericTags
-                  .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_ID)
+                  .filter((tag) => tag.slug !== FRONTPAGE_NEWS_TAG_SLUG)
                   .map((tag) => tag.title)}
                 title={news.title}
               />

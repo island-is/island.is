@@ -1,4 +1,5 @@
 import {
+  YES,
   buildAlertMessageField,
   buildCustomField,
   buildDateField,
@@ -17,7 +18,6 @@ import {
   Application,
   FormValue,
   DefaultEvents,
-  YES,
 } from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
 import { deathBenefitsFormMessage } from '../lib/messages'
@@ -107,7 +107,6 @@ export const DeathBenefitsForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
-                  title: '',
                   defaultValue: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
@@ -397,7 +396,6 @@ export const DeathBenefitsForm: Form = buildForm({
               description: deathBenefitsFormMessage.info.childrenDescription,
               children: [
                 buildStaticTableField({
-                  title: '',
                   header: [
                     socialInsuranceAdministrationMessage.confirm.name,
                     socialInsuranceAdministrationMessage.confirm.nationalId,
@@ -435,7 +433,6 @@ export const DeathBenefitsForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'expectingChild.question',
-                  title: '',
                   options: getYesNoOptions(),
                   width: 'half',
                 }),
@@ -519,7 +516,6 @@ export const DeathBenefitsForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'confirm',
-          title: '',
           children: [
             buildCustomField(
               {

@@ -2,6 +2,7 @@ import { FC, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import getConfig from 'next/config'
 import Link from 'next/link'
+import router from 'next/router'
 
 import {
   Box,
@@ -26,10 +27,12 @@ import {
   isCourtOfAppealsUser,
   isDefenceUser,
   isPrisonSystemUser,
+  Lawyer,
 } from '@island.is/judicial-system/types'
 import { api } from '@island.is/judicial-system-web/src/services'
 
-import { useGeoLocation, useGetLawyer } from '../../utils/hooks'
+import { useGeoLocation } from '../../utils/hooks'
+import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'
@@ -71,16 +74,27 @@ const Container: FC<PropsWithChildren> = ({ children }) => {
 
 const HeaderContainer = () => {
   const { formatMessage } = useIntl()
-  const { isAuthenticated, user } = useContext(UserContext)
+  const { isAuthenticated, user, eligibleUsers } = useContext(UserContext)
+  const [lawyer, setLawyer] = useState<Lawyer>()
   const [isRobot, setIsRobot] = useState<boolean>()
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState<boolean>()
 
-  const { practice, email, phoneNr } =
-    useGetLawyer(user?.nationalId, isDefenceUser(user)) ?? {}
   const { countryCode } = useGeoLocation()
+  const { lawyers } = useContext(LawyerRegistryContext)
+
+  const isLawyerInLawyersRegistry = isDefenceUser(user) && lawyer
 
   useEffect(() => {
     setIsRobot(countryCode !== 'IS')
   }, [countryCode])
+
+  useEffect(() => {
+    if (!lawyers || lawyers.length === 0 || !user) {
+      return
+    }
+
+    setLawyer(lawyers.find((lawyer) => lawyer.nationalId === user.nationalId))
+  }, [lawyers, user])
 
   const logoHref =
     !user || !isAuthenticated
@@ -99,6 +113,47 @@ const HeaderContainer = () => {
     api.logout()
   }
 
+  const handleSelectUser = async (userId?: string) => {
+    if (userId) {
+      await api.activate(userId)
+    } else {
+      router.push('/')
+    }
+
+    setIsUserMenuOpen(false)
+  }
+
+  const renderSelectUser = () => {
+    if (!user || !eligibleUsers || eligibleUsers.length < 2) {
+      return null
+    }
+
+    const otherUser =
+      eligibleUsers.length === 2
+        ? eligibleUsers.find((u) => u.id !== user.id)
+        : null
+
+    return (
+      <Box marginTop={2}>
+        <Button
+          variant="text"
+          onClick={() => handleSelectUser(otherUser?.id)}
+          size="small"
+          preTextIcon="swapHorizontal"
+        >
+          {otherUser
+            ? otherUser.institution?.name
+            : 'Skipta um embætti / hlutverk'}
+        </Button>
+        {otherUser && (
+          <Text fontWeight="light" variant="small" marginTop={1}>
+            {capitalize(otherUser.title)}
+          </Text>
+        )}
+      </Box>
+    )
+  }
+
   return (
     <Container>
       <Link href={logoHref} tabIndex={0}>
@@ -113,15 +168,15 @@ const HeaderContainer = () => {
             marginRight="auto"
           >
             <Box marginLeft={[1, 1, 2, 4]}>
-              <Text variant="eyebrow">{'Dómsmálaráðuneytið'}</Text>
+              <Text variant="eyebrow">Dómsmálaráðuneytið</Text>
               <Hidden above="sm">
-                <Text fontWeight="light" variant={'eyebrow'}>
-                  {'Réttarvörslugátt'}
+                <Text fontWeight="light" variant="eyebrow">
+                  Réttarvörslugátt
                 </Text>
               </Hidden>
               <Hidden below="md">
-                <Text fontWeight="light" variant={'default'}>
-                  {'Réttarvörslugátt'}
+                <Text fontWeight="light" variant="default">
+                  Réttarvörslugátt
                 </Text>
               </Hidden>
             </Box>
@@ -145,6 +200,8 @@ const HeaderContainer = () => {
             language="is"
             authenticated={isAuthenticated}
             username={user.name ?? undefined}
+            isOpen={isUserMenuOpen}
+            onClick={() => setIsUserMenuOpen(undefined)}
             dropdownItems={
               <>
                 <div className={styles.dropdownItem}>
@@ -164,8 +221,8 @@ const HeaderContainer = () => {
                     <Box marginBottom={2}>
                       <Text>
                         {capitalize(
-                          isDefenceUser(user)
-                            ? practice
+                          isLawyerInLawyersRegistry
+                            ? lawyer.practice
                             : user.institution?.name,
                         )}
                       </Text>
@@ -173,13 +230,18 @@ const HeaderContainer = () => {
                     <Box marginBottom={2}>
                       <Text>
                         {formatPhoneNumber(
-                          isDefenceUser(user) ? phoneNr : user.mobileNumber,
+                          isLawyerInLawyersRegistry
+                            ? lawyer.phoneNr
+                            : user.mobileNumber,
                         )}
                       </Text>
                     </Box>
                     <Box>
-                      <Text>{isDefenceUser(user) ? email : user.email}</Text>
+                      <Text>
+                        {isLawyerInLawyersRegistry ? lawyer.email : user.email}
+                      </Text>
                     </Box>
+                    {renderSelectUser()}
                   </Box>
                 </div>
                 <div className={styles.dropdownItem}>
@@ -191,7 +253,7 @@ const HeaderContainer = () => {
                     />
                   </Box>
                   <Box>
-                    {isDefenceUser(user) ? (
+                    {isLawyerInLawyersRegistry ? (
                       <Text>
                         {formatMessage(header.tipDisclaimerDefenders)}
                       </Text>

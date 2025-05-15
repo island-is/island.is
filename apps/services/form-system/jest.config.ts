@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'services-form-system',
+  displayName: 'services-form-system-api',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

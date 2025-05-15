@@ -229,6 +229,21 @@ export const Properties = new XroadConf({
   },
 })
 
+export const PropertySearch = new XroadConf({
+  env: {
+    XROAD_HMS_PROPERTY_SEARCH_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/fasteignir-v2-beta',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/fasteignir-v2-beta',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v2',
+    },
+    XROAD_HMS_PROPERTY_SEARCH_CLIENT_HEADER: {
+      dev: 'IS-DEV/GOV/10000/island-is-client',
+      staging: 'IS-TEST/GOV/5501692829/test-client',
+      prod: 'IS/GOV/5501692829/island-is-client',
+    },
+  },
+})
+
 export const AdrAndMachine = new XroadConf({
   env: {
     XROAD_ADR_MACHINE_LICENSE_PATH: {
@@ -236,6 +251,16 @@ export const AdrAndMachine = new XroadConf({
       staging:
         'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
       prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
+    },
+  },
+})
+
+export const SeminarsVer = new XroadConf({
+  env: {
+    XROAD_SEMINARS_VER_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/namskeid',
+      staging: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/namskeid',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/namskeid',
     },
   },
 })
@@ -398,7 +423,7 @@ export const Education = new XroadConf({
 export const NationalRegistry = new XroadConf({
   env: {
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
-      dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
+      dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
       staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
       prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
     },
@@ -441,10 +466,21 @@ export const NationalRegistryB2C = new XroadConf({
       staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
       prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
     },
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: {
+      dev: 'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default',
+      staging:
+        'https://skraidentitystaging.onmicrosoft.com/midlunumsoknir/.default',
+      prod: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default',
+    },
     NATIONAL_REGISTRY_B2C_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
       staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
       prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
+    },
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1',
     },
   },
 })
@@ -888,7 +924,7 @@ export const OfficialJournalOfIceland = new XroadConf({
     XROAD_OFFICIAL_JOURNAL_PATH: {
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
       staging: 'IS-TEST/GOV/10014/DMR-Protected/official-journal',
-      prod: 'IS/GOV/10014/DMR-Protected/official-journal',
+      prod: 'IS/GOV/5804170510/DMR-Protected/official-journal',
     },
   },
 })
@@ -898,7 +934,7 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
     XROAD_OFFICIAL_JOURNAL_APPLICATION_PATH: {
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
       staging: 'IS-TEST/GOV/10014/DMR-Protected/official-journal-application',
-      prod: 'IS/GOV/10014/DMR-Protected/official-journal-application',
+      prod: 'IS/GOV/5804170510/DMR-Protected/official-journal-application',
     },
   },
 })
@@ -918,7 +954,7 @@ export const HealthDirectorateOrganDonation = new XroadConf({
     XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: {
       dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1',
       staging:
-        'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1',
+        'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1',
       prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1',
     },
   },
@@ -928,8 +964,20 @@ export const HealthDirectorateVaccination = new XroadConf({
   env: {
     XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH: {
       dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1',
-      staging: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1',
+      staging:
+        'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/vaccination-v1',
       prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/vaccination-v1',
+    },
+  },
+})
+
+export const HealthDirectorateHealthService = new XroadConf({
+  env: {
+    XROAD_HEALTH_DIRECTORATE_HEALTH_PATH: {
+      dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/health-service-v1',
+      staging:
+        'IS-TEST/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1',
+      prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/health-service-v1',
     },
   },
 })

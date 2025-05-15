@@ -6,12 +6,12 @@ import { Message } from '@island.is/email-service'
 import {
   getApplicationAnswers,
   Period,
-  NO,
   getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
 import { dateFormat } from '@island.is/shared/constants'
+import { NO } from '@island.is/application/core'
 
 export type EmployerRejectedToEmployerEmail = (
   props: EmailTemplateGeneratorProps,

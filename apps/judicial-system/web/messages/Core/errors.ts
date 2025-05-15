@@ -122,6 +122,22 @@ export const errors = defineMessages({
     defaultMessage: 'Upp kom villa við að eyða ákærulið',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að eyða ákærulíð',
   },
+  createOffense: {
+    id: 'judicial.system.core:errors.create_offense',
+    defaultMessage: 'Upp kom villa við að stofna nýtt brot',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að stofna nýtt brot',
+  },
+  updateOffense: {
+    id: 'judicial.system.core:errors.update_offense',
+    defaultMessage: 'Upp kom villa við að uppfæra brot',
+    description: 'Notaður sem villuskilaboð þegar ekki gengur að uppfæra brot',
+  },
+  deleteOffense: {
+    id: 'judicial.system.core:errors.delete_offense',
+    defaultMessage: 'Upp kom villa við að eyða broti',
+    description: 'Notaður sem villuskilaboð þegar ekki gengur að eyða broti',
+  },
   getCaseToOpen: {
     id: 'judicial.system.core:errors.getCaseToOpen',
     defaultMessage: 'Upp kom villa við að sækja mál',

@@ -3,103 +3,28 @@ import jwt from 'jsonwebtoken'
 import jwksClient from 'jwks-rsa'
 import { uuid } from 'uuidv4'
 
-import {
-  Inject,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import {
-  EventType,
-  type User,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { type User, UserRole } from '@island.is/judicial-system/types'
 
+import { BackendService } from '../backend'
 import { DefenderService } from '../defender'
 import { authModuleConfig } from './auth.config'
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly backendService: BackendService,
     private readonly defenderService: DefenderService,
     @Inject(authModuleConfig.KEY)
     private readonly config: ConfigType<typeof authModuleConfig>,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
-
-  async findUser(nationalId: string): Promise<User | undefined> {
-    const res = await fetch(
-      `${this.config.backendUrl}/api/user/?nationalId=${nationalId}`,
-      {
-        headers: { authorization: `Bearer ${this.config.secretToken}` },
-      },
-    )
-
-    if (!res.ok) {
-      return undefined
-    }
-
-    return await res.json()
-  }
-
-  async findDefender(nationalId: string): Promise<User | undefined> {
-    try {
-      const res = await fetch(
-        `${this.config.backendUrl}/api/cases/limitedAccess/defender?nationalId=${nationalId}`,
-        {
-          headers: { authorization: `Bearer ${this.config.secretToken}` },
-        },
-      )
-      if (res.ok) {
-        return await res.json()
-      }
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        this.logger.info('Defender not found', error)
-      } else throw error
-    }
-
-    // If a defender doesn't have any active cases, we look them up
-    // in the lawyer registry because we want to at least display an empty
-    // case list for them to avoid confusion about them not having access to
-    // the judicial system
-    try {
-      const lawyerRegistryInfo = await this.defenderService.getLawyer(
-        nationalId,
-      )
-      if (lawyerRegistryInfo && lawyerRegistryInfo.nationalId === nationalId) {
-        return {
-          // Reason for this is so we trust the nationalId from the authentication provider
-          // just in case the lawyer registry does something strange, we don't want to create
-          // a user with a nationalId that is not the same as the one from the authentication provider
-          nationalId: nationalId,
-          name: lawyerRegistryInfo.name,
-          role: UserRole.DEFENDER,
-          email: lawyerRegistryInfo.email,
-          mobileNumber: lawyerRegistryInfo.phoneNr,
-          active: true,
-          title: 'verjandi',
-          id: uuid(),
-          created: new Date().toString(),
-          modified: new Date().toString(),
-          canConfirmIndictment: false,
-        } as User
-      }
-    } catch (error) {
-      this.logger.info(
-        'Error when looking up defender in lawyer registry',
-        error,
-      )
-    }
-
-    return undefined
-  }
 
   async fetchIdsToken(code: string, codeVerifier: string) {
     const requestBody = new URLSearchParams({
@@ -160,27 +85,76 @@ export class AuthService {
         nationalId: string
       }
     } catch (error) {
-      this.logger.error('Token verification failed:', error)
+      this.logger.error('Token verification failed:', { error })
+
       throw error
     }
   }
 
-  async logLogin(
-    eventType: EventType,
-    nationalId: string,
-    userRole?: UserRole,
-  ) {
-    await fetch(`${this.config.backendUrl}/api/eventLog/event`, {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${this.config.secretToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        eventType,
+  async findEligibleUsersByNationalId(nationalId: string): Promise<User[]> {
+    try {
+      return await this.backendService.findUsersByNationalId(nationalId)
+    } catch (error) {
+      if (error?.problem?.status === 404) {
+        this.logger.info('User not found', { error })
+      } else {
+        this.logger.error('Error when looking up user', { error })
+
+        throw error
+      }
+    }
+
+    try {
+      return [await this.backendService.findDefenderByNationalId(nationalId)]
+    } catch (error) {
+      if (error?.problem?.status === 404) {
+        this.logger.info('Defender not found', { error })
+      } else {
+        this.logger.error('Error when looking up defender', { error })
+
+        throw error
+      }
+    }
+
+    // If a defender doesn't have any active cases, we look them up
+    // in the lawyer registry because we want to at least display an empty
+    // case list for them to avoid confusion about them not having access to
+    // the judicial system
+    try {
+      const lawyerRegistryInfo = await this.defenderService.getLawyer(
         nationalId,
-        userRole,
-      }),
-    })
+      )
+
+      if (lawyerRegistryInfo && lawyerRegistryInfo.nationalId === nationalId) {
+        return [
+          {
+            // Reason for this is so we trust the nationalId from the authentication provider
+            // just in case the lawyer registry does something strange, we don't want to create
+            // a user with a nationalId that is not the same as the one from the authentication provider
+            nationalId: nationalId,
+            name: lawyerRegistryInfo.name,
+            role: UserRole.DEFENDER,
+            email: lawyerRegistryInfo.email,
+            mobileNumber: lawyerRegistryInfo.phoneNr,
+            active: true,
+            title: 'verjandi',
+            id: uuid(),
+            created: new Date().toString(),
+            modified: new Date().toString(),
+            canConfirmIndictment: false,
+          },
+        ]
+      }
+    } catch (error) {
+      this.logger.info('Error when looking up defender in lawyer registry', {
+        error,
+      })
+    }
+
+    return []
+  }
+
+  createEventLog(eventLog: unknown): Promise<boolean> {
+    return this.backendService.createEventLog(eventLog)
   }
 }

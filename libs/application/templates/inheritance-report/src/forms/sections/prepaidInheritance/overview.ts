@@ -44,12 +44,10 @@ export const prepaidOverview = buildSubSection({
         }),
         buildDescriptionField({
           id: 'space',
-          title: '',
           space: 'gutter',
         }),
         buildDividerField({}),
         buildCustomField({
-          title: '',
           id: 'overviewHeirs',
           doesNotRequireAnswer: true,
           component: 'OverviewHeirs',
@@ -70,7 +68,6 @@ export const prepaidOverview = buildSubSection({
         }),
         buildDescriptionField({
           id: 'heirs_space1',
-          title: '',
           space: 'gutter',
         }),
         buildKeyValueField({
@@ -87,7 +84,6 @@ export const prepaidOverview = buildSubSection({
         }),
         buildDescriptionField({
           id: 'heirs_space2',
-          title: '',
           space: 'gutter',
         }),
         buildKeyValueField({
@@ -105,7 +101,6 @@ export const prepaidOverview = buildSubSection({
         }),
         buildDescriptionField({
           id: 'heirs_space3',
-          title: '',
           space: 'gutter',
           condition: showTaxFreeInOverview,
         }),
@@ -123,7 +118,6 @@ export const prepaidOverview = buildSubSection({
         }),
         buildDescriptionField({
           id: 'heirs_space4',
-          title: '',
           space: 'gutter',
         }),
         buildKeyValueField({
@@ -158,12 +152,10 @@ export const prepaidOverview = buildSubSection({
           space: 'gutter',
         }),
         buildCustomField({
-          title: '',
           id: 'otherDocs',
           component: 'OverviewOtherDocuments',
         }),
         buildCustomField({
-          title: '',
           id: 'overviewPrint',
           doesNotRequireAnswer: true,
           component: 'PrintScreen',

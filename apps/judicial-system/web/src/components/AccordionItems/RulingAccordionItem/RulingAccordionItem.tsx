@@ -3,8 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { rulingAccordion as m } from '@island.is/judicial-system-web/messages'
-import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { AccordionListItem, SectionHeading } from '../..'
 
@@ -28,7 +27,7 @@ const RulingAccordionItem: FC<Props> = ({
       startExpanded={startExpanded}
     >
       <Box component="section">
-        {workingCase.decision === CaseDecision.COMPLETED_WITHOUT_RULING ? (
+        {workingCase.isCompletedWithoutRuling ? (
           <SectionHeading
             title={formatMessage(m.sections.noRuling.title)}
             heading="h4"

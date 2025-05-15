@@ -9,15 +9,10 @@ import {
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
-  isPublicProsecutor,
+  isPublicProsecutionUser,
   isRequestCase,
 } from '@island.is/judicial-system/types'
-import {
-  core,
-  errors,
-  tables,
-  titles,
-} from '@island.is/judicial-system-web/messages'
+import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   ContextMenu,
   Logo,
@@ -30,10 +25,11 @@ import {
 import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
 import { TableWrapper } from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
-  CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,
   CaseTransition,
+  EventType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -169,12 +165,22 @@ export const Cases: FC = () => {
 
       if (isDistrictCourtUser(user)) {
         if (isIndictmentCase(c.type)) {
-          return !isCompletedCase(c.state)
+          const sentToPublicProsecutor = c.eventLogs?.some(
+            (log) =>
+              log.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+          )
+          const isFineOrRuling =
+            c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE ||
+            c.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
+          return (
+            !isCompletedCase(c.state) ||
+            (isFineOrRuling && !sentToPublicProsecutor)
+          )
         } else {
           return !(
             isCompletedCase(c.state) &&
-            (c.rulingSignatureDate ||
-              c.decision === CaseDecision.COMPLETED_WITHOUT_RULING)
+            (c.rulingSignatureDate || c.isCompletedWithoutRuling)
           )
         }
       }
@@ -190,7 +196,7 @@ export const Cases: FC = () => {
         }
       }
 
-      // This componenet is only used for prosecution and district court users
+      // This component is only used for prosecution and district court users
       return false
     })
 
@@ -301,7 +307,7 @@ export const Cases: FC = () => {
                       onContextMenuDeleteClick={setVisibleModal}
                       canDeleteCase={canDeleteCase}
                     />
-                    {isPublicProsecutor(user) && (
+                    {isPublicProsecutionUser(user) && (
                       <CasesAwaitingReview
                         loading={loading}
                         cases={casesAwaitingReview}
@@ -309,28 +315,32 @@ export const Cases: FC = () => {
                     )}
                   </>
                 )}
-                <SectionHeading title={formatMessage(m.activeRequests.title)} />
-                <TableWrapper loading={loading || isFiltering}>
-                  {activeCases.length > 0 ? (
-                    <ActiveCases
-                      cases={activeCases}
-                      onContextMenuDeleteClick={setVisibleModal}
-                      canDeleteCase={canDeleteCase}
-                    />
-                  ) : (
-                    <div className={styles.infoContainer}>
-                      <AlertMessage
-                        type="info"
-                        title={formatMessage(
-                          m.activeRequests.infoContainerTitle,
-                        )}
-                        message={formatMessage(
-                          m.activeRequests.infoContainerText,
-                        )}
+                <section>
+                  <SectionHeading
+                    title={formatMessage(m.activeRequests.title)}
+                  />
+                  <TableWrapper loading={loading || isFiltering}>
+                    {activeCases.length > 0 ? (
+                      <ActiveCases
+                        cases={activeCases}
+                        onContextMenuDeleteClick={setVisibleModal}
+                        canDeleteCase={canDeleteCase}
                       />
-                    </div>
-                  )}
-                </TableWrapper>
+                    ) : (
+                      <div className={styles.infoContainer}>
+                        <AlertMessage
+                          type="info"
+                          title={formatMessage(
+                            m.activeRequests.infoContainerTitle,
+                          )}
+                          message={formatMessage(
+                            m.activeRequests.infoContainerText,
+                          )}
+                        />
+                      </div>
+                    )}
+                  </TableWrapper>
+                </section>
               </>
             )}
             {isDistrictCourtUser(user) && (
@@ -350,9 +360,12 @@ export const Cases: FC = () => {
                 />
               </>
             )}
-            <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
             {loading || pastCases.length > 0 ? (
-              <PastCasesTable cases={pastCases} />
+              <PastCasesTable
+                cases={pastCases}
+                loading={loading}
+                isFiltering={isFiltering}
+              />
             ) : (
               <div className={styles.infoContainer}>
                 <AlertMessage

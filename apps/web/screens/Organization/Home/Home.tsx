@@ -31,6 +31,7 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
+import { organizationHasDigitalIcelandNewsVisuals } from '@island.is/web/utils/organization'
 
 import { Screen, ScreenContext } from '../../../types'
 import {
@@ -190,6 +191,7 @@ const OrganizationHomePage = ({
                   marginBottom={
                     index === organizationPage.slices.length - 1 ? 5 : 0
                   }
+                  params={{ isFrontpage: true }}
                 />
               )
             })}
@@ -207,9 +209,9 @@ const OrganizationHomePage = ({
       >
         {organizationPage?.bottomSlices.map((slice) => {
           if (
-            (organizationPage.slug === 'stafraent-island' ||
-              organizationPage.slug === 'digital-iceland') &&
-            slice.__typename === 'LatestNewsSlice'
+            organizationHasDigitalIcelandNewsVisuals(organizationPage.slug) &&
+            slice.__typename === 'LatestNewsSlice' &&
+            slice.news.length >= 3
           ) {
             return (
               <Box paddingTop={[5, 5, 8]} paddingBottom={[2, 2, 5]}>

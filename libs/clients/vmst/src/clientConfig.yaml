@@ -513,8 +513,6 @@ components:
         - email
         - phoneNumber
         - paymentInfo
-        - periods
-        - employers
         - status
         - rightsCode
       properties:

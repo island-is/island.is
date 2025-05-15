@@ -115,7 +115,7 @@
     }
   }
 
-  .copy p {
+  .copy > a {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
@@ -126,26 +126,26 @@
     color: #00003c;
   }
 
-  .copy.style-bold p {
+  .copy.style-bold > a {
     font-weight: 600;
   }
 
-  .copy.style-italic p {
+  .copy.style-italic > a {
     font-style: italic;
   }
 
-  .copy.size-small p {
+  .copy.size-small > a {
     font-size: 18px;
     line-height: 28px;
   }
 
   @media only screen and (max-width: 620px) {
-    .copy p {
+    .copy > a {
       font-size: 18px !important;
       line-height: 26px !important;
     }
 
-    .copy.size-small p {
+    .copy.size-small > a {
       font-size: 16px !important;
       line-height: 24px !important;
     }

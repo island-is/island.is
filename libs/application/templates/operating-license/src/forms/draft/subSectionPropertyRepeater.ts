@@ -2,12 +2,13 @@ import {
   buildMultiField,
   buildSubSection,
   buildCustomField,
+  YES,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
-  APPLICATION_TYPES,
+  ApplicationTypes,
   Operation,
-  OPERATION_CATEGORY,
-  YES,
+  OperationCategory,
 } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
@@ -25,21 +26,19 @@ export const subSectionPropertyRepeater = buildSubSection({
           title: m.stayTitle,
           component: 'PropertyRepeater',
           condition: (answers) =>
-            (answers.applicationInfo as Operation)?.operation ===
-            APPLICATION_TYPES.HOTEL,
+            getValueViaPath(answers, 'applicationInfo.operation') ===
+            ApplicationTypes.HOTEL,
         }),
         buildCustomField({
           id: 'properties.dining',
           title: m.diningTitle,
           component: 'PropertyRepeater',
           condition: (answers) => {
+            const info = getValueViaPath<Operation>(answers, 'applicationInfo')
             return (
-              (answers.applicationInfo as Operation)?.operation ===
-                APPLICATION_TYPES.RESTURANT ||
-              ((answers.applicationInfo as Operation)?.operation ===
-                APPLICATION_TYPES.HOTEL &&
-                (answers.applicationInfo as Operation)?.category !==
-                  OPERATION_CATEGORY.TWO)
+              info?.operation === ApplicationTypes.RESTURANT ||
+              (info?.operation === ApplicationTypes.HOTEL &&
+                info?.category !== OperationCategory.TWO)
             )
           },
         }),
@@ -49,9 +48,10 @@ export const subSectionPropertyRepeater = buildSubSection({
           component: 'PropertyRepeater',
           condition: (answers) => {
             return (
-              (answers.applicationInfo as Operation)?.willServe?.includes(
-                YES,
-              ) || false
+              getValueViaPath<string>(
+                answers,
+                'applicationInfo.willServe',
+              )?.includes(YES) || false
             )
           },
         }),

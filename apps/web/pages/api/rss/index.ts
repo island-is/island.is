@@ -6,7 +6,7 @@ import { parseAsString, parseAsStringEnum } from 'next-usequerystate'
 
 import { defaultLanguage } from '@island.is/shared/constants'
 import type { Locale } from '@island.is/shared/types'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { FRONTPAGE_NEWS_TAG_SLUG } from '@island.is/web/constants'
 import initApollo from '@island.is/web/graphql/client'
 import {
   ContentLanguage,
@@ -50,7 +50,7 @@ const extractTagsFromQuery = (query: NextApiRequest['query']) => {
   }
 
   // If nothing is defined in query we'll show frontpage news
-  return [FRONTPAGE_NEWS_TAG_ID]
+  return [FRONTPAGE_NEWS_TAG_SLUG]
 }
 
 const generateItemString = (item: Item) => {

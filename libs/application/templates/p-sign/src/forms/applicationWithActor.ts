@@ -9,7 +9,6 @@ import { sectionOverview } from './applicationSections/sectionOverview'
 export const getApplication = (): Form => {
   return buildForm({
     id: 'PMarkApplicationDraftForm',
-    title: '',
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,

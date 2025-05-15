@@ -9,13 +9,12 @@ import {
 } from './useLinkResolver'
 
 describe('Link resolver', () => {
-  it('should return correct path to type with out variable', () => {
-    const nextLinks = linkResolver('adgerdirfrontpage', [], 'is')
+  it('should return correct path to type without variable', () => {
+    const nextLinks = linkResolver('search', [], 'is')
     expect(nextLinks).toEqual({
-      href: '/covid-adgerdir',
+      href: '/leit',
     })
   })
-
   it('should return correct path to type with variable', () => {
     const nextLinks = linkResolver('lifeeventpage', ['cat'], 'is')
     expect(nextLinks).toEqual({

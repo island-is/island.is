@@ -1,24 +1,24 @@
 import { useContext, useState } from 'react'
 import { Box, Icon } from '@island.is/island-ui/core'
-import { FormSystemGroup, FormSystemInput } from '@island.is/api/schema'
+import { FormSystemScreen, FormSystemField } from '@island.is/api/schema'
 import { ControlContext } from '../../../../../context/ControlContext'
-import { Preview } from '../../Preview/Preveiw'
+import { Preview } from '../../Preview/Preview'
 
 interface Props {
-  group: FormSystemGroup
+  screen: FormSystemScreen
 }
 
-export const MultiSet = ({ group }: Props) => {
+export const MultiSet = ({ screen }: Props) => {
   const { control } = useContext(ControlContext)
-  const { inputsList: inputs } = control.form
-  const originalInput = inputs?.filter((i) => i?.groupGuid === group.guid)
-  const [multiInput, setMultiInput] = useState<FormSystemInput[][]>([
-    (inputs?.filter((i) => i?.groupGuid === group.guid) ||
-      []) as FormSystemInput[],
+  const { fields } = control.form
+  const originalInput = fields?.filter((f) => f?.screenId === screen.id)
+  const [multiInput, setMultiInput] = useState<FormSystemField[][]>([
+    (fields?.filter((i) => i?.screenId === screen.id) ||
+      []) as FormSystemField[],
   ])
   const add = () => {
     if (originalInput) {
-      setMultiInput((prev) => [...prev, originalInput as FormSystemInput[]])
+      setMultiInput((prev) => [...prev, originalInput as FormSystemField[]])
     }
   }
   return (
@@ -26,7 +26,7 @@ export const MultiSet = ({ group }: Props) => {
       {multiInput.map((inputArray, index) => (
         <div key={index}>
           {inputArray.map((i) => (
-            <Preview key={i.guid} data={i} />
+            <Preview key={i.id} data={i} />
           ))}
         </div>
       ))}

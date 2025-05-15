@@ -34,6 +34,7 @@ export const imageFields = gql`
     __typename
     id
     title
+    description
     url
     contentType
     width
@@ -524,6 +525,7 @@ export const slices = gql`
         url
         width
         height
+        description
       }
       openLinkInNewTab
     }
@@ -548,6 +550,7 @@ export const slices = gql`
       url
       width
       height
+      description
     }
   }
 
@@ -613,6 +616,7 @@ export const slices = gql`
       contentType
       width
       height
+      description
     }
   }
 
@@ -647,6 +651,7 @@ export const slices = gql`
       title
       width
       height
+      description
     }
     link {
       text
@@ -733,6 +738,7 @@ export const slices = gql`
           title
           width
           height
+          description
         }
         organization {
           slug
@@ -885,6 +891,7 @@ export const slices = gql`
         title
         width
         height
+        description
       }
     }
   }
@@ -958,6 +965,28 @@ export const slices = gql`
     }
   }
 
+  fragment IntroLinkImageFields on IntroLinkImage {
+    id
+    title
+    introHtml {
+      ...HtmlFields
+    }
+    linkTitle
+    link {
+      type
+      slug
+    }
+    leftImage
+    image {
+      title
+      url
+      width
+      height
+      description
+    }
+    openLinkInNewTab
+  }
+
   fragment LatestGenericListItemsFields on LatestGenericListItems {
     title
     genericList {
@@ -994,6 +1023,7 @@ export const slices = gql`
           title
           width
           height
+          description
         }
       }
     }
@@ -1010,6 +1040,25 @@ export const slices = gql`
         slug
         type
       }
+    }
+  }
+
+  fragment OrganizationParentSubpageListFields on OrganizationParentSubpageList {
+    __typename
+    id
+    title
+    pageLinkVariant
+    pageLinks {
+      id
+      pageLinkIntro
+      label
+      href
+      thumbnailImageHref
+      tinyThumbnailImageHref
+    }
+    seeMoreLink {
+      text
+      url
     }
   }
 
@@ -1060,6 +1109,8 @@ export const slices = gql`
     ...LatestGenericListItemsFields
     ...FeaturedLinksFields
     ...GrantCardsListFields
+    ...OrganizationParentSubpageListFields
+    ...IntroLinkImageFields
   }
 
   fragment AllSlices on Slice {

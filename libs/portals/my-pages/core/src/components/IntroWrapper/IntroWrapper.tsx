@@ -69,7 +69,7 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
 
   return (
     <Box>
-      <GridRow marginBottom={marginBottom ?? 4}>
+      <GridRow marginBottom={props.buttonGroup ? 0 : marginBottom ?? 4}>
         <GridColumn span={props.span ? props.span : columnSpan}>
           {props.loading ? (
             <Stack space={2}>
@@ -89,9 +89,6 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
               {props.introComponent && (
                 <Box paddingTop={1}>{props.introComponent}</Box>
               )}
-              <Box marginTop={4}>
-                <Inline space={2}>{props.buttonGroup}</Inline>
-              </Box>
             </>
           )}
         </GridColumn>
@@ -117,6 +114,15 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
           </GridColumn>
         )}
       </GridRow>
+      {props.buttonGroup && (
+        <GridRow marginBottom={marginBottom ?? 4}>
+          <GridColumn>
+            <Box marginTop={4}>
+              <Inline space={2}>{props.buttonGroup}</Inline>
+            </Box>
+          </GridColumn>
+        </GridRow>
+      )}
       {props.children}
       <FootNote serviceProviderSlug={props.serviceProviderSlug} />
     </Box>

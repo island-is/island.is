@@ -1,4 +1,5 @@
 import {
+  districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
   prosecutorRule,
@@ -17,9 +18,10 @@ describe('CaseController - Get custody notice pdf rules', () => {
   })
 
   it('should give permission to roles', () => {
-    expect(rules).toHaveLength(3)
+    expect(rules).toHaveLength(4)
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(districtCourtJudgeRule)
     expect(rules).toContain(districtCourtRegistrarRule)
+    expect(rules).toContain(districtCourtAssistantRule)
   })
 })

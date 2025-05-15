@@ -13,6 +13,7 @@ import {
   DistrictCommissionersLicenseInfoDto,
   mapLicenseInfoDto,
 } from './dto/districtCommissionersLicenseInfoDto'
+import { Locale } from '@island.is/shared/types'
 
 @Injectable()
 export class DistrictCommissionersLicensesService {
@@ -50,10 +51,12 @@ export class DistrictCommissionersLicensesService {
   async getLicense(
     user: User,
     id: string,
+    locale: Locale = 'is',
   ): Promise<DistrictCommissionersLicenseDto | null> {
     const license = await this.apiWithAuth(user)
       .rettindiFyrirIslandIsGetStakt({
         audkenni: id,
+        locale,
       })
       .catch(handle404)
 

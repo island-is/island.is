@@ -75,7 +75,7 @@ yarn get-secrets air-discount-scheme-web
 2. Start the resources with docker compose and migrate/seed the database:
 
 ```bash
-docker compose -f apps/air-discount-scheme/backend/docker-compose.yml up
+yarn dev-services air-discount-scheme-backend
 ```
 
 ```bash

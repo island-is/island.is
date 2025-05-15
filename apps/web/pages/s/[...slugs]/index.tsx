@@ -412,6 +412,17 @@ Component.getProps = async (context) => {
     }
   }
 
+  if (slugs.length === 4) {
+    return {
+      page: {
+        type: PageType.GENERIC_LIST_ITEM,
+        props: await OrganizationSubPageGenericListItem.getProps(
+          modifiedContext,
+        ),
+      },
+    }
+  }
+
   throw new CustomNextError(404)
 }
 

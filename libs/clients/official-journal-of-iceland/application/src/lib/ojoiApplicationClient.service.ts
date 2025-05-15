@@ -4,7 +4,6 @@ import {
   GetCommentsRequest,
   PostCommentRequest,
   PostApplicationRequest,
-  GetCaseCommentsResponse,
   GetPriceRequest,
   CasePriceResponse,
   GetPdfUrlResponse,
@@ -20,9 +19,9 @@ import {
   GetApplicationCaseResponse,
   GetPdfRespone,
   GetSignaturesForInvolvedPartyRequest,
-  Signature,
   GetApplicationAdvertTemplateRequest,
-  AdvertTemplateDetailsSlugEnum,
+  GetComments,
+  GetSignature,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -48,7 +47,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
   async getComments(
     params: GetCommentsRequest,
     auth: Auth,
-  ): Promise<GetCaseCommentsResponse> {
+  ): Promise<GetComments> {
     try {
       return await this.ojoiApplicationApiWithAuth(auth).getComments(params)
     } catch (error) {
@@ -222,6 +221,19 @@ export class OfficialJournalOfIcelandApplicationClientService {
     }
   }
 
+  async getMyUserInfo(auth: Auth) {
+    try {
+      const data = await this.ojoiApplicationApiWithAuth(auth).getMyUserInfo()
+      return data
+    } catch (error) {
+      this.logger.warn('Failed to get my user info', {
+        error,
+        category: LOG_CATEGORY,
+      })
+      throw error
+    }
+  }
+
   async getApplicationCase(
     params: GetApplicationCaseRequest,
     auth: Auth,
@@ -244,7 +256,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
   async getSignaturesForInvolvedParty(
     params: GetSignaturesForInvolvedPartyRequest,
     auth: Auth,
-  ): Promise<Signature> {
+  ): Promise<GetSignature> {
     try {
       return await this.ojoiApplicationApiWithAuth(
         auth,

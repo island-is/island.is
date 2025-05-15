@@ -6,7 +6,6 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const ReviewSellerForm: Form = buildForm({
   id: 'ReviewSellerForm',
-  title: '',
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
   children: [

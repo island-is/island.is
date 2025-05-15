@@ -18,7 +18,6 @@ export const OverviewSection = buildSection({
       children: [
         buildCustomField({
           id: 'overview',
-          title: '',
           component: 'Overview',
         }),
         buildSubmitField({

@@ -18,7 +18,6 @@ export const representative = buildSection({
       children: [
         buildCustomField(
           {
-            title: '',
             id: 'representative',
             component: 'LookupPerson',
           },

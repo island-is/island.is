@@ -13,7 +13,6 @@ interface HiddenTextInputProps {
 
 export const HiddenTextInput: FC<HiddenTextInputProps & FieldBaseProps> = ({
   field,
-  application,
 }) => {
   const nationalId = field?.props?.nationalId
 

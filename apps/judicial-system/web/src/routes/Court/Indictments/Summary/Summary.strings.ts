@@ -58,4 +58,15 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í stað "áfram" takkans á samantektarskjá ákæru þegar "áfram" takkinn er falinn',
   },
+  courtEndTimeTitle: {
+    id: 'judicial.system.core:indictments.summary.court_end_time_title',
+    defaultMessage: 'Dagsetning lykta',
+    description: 'Notaður sem titill fyrir dagsetning lykta á samantektarskjá',
+  },
+  courtEndTimeDescription: {
+    id: 'judicial.system.core:indictments.summary.court_end_time_description_v2',
+    defaultMessage:
+      'Vinsamlegast skráið dagsetningu lykta, þ.e. hvenær dómur var kveðinn upp, dagsetning viðurlagaákvörðunar eða annarra lykta. Þessi dagsetning skilar sér til ríkissaksóknara og áfrýjunarfrestir og aðrir frestir miðast við hana.',
+    description: 'Notaður sem lýsing fyrir dagsetning lykta á samantektarskjá',
+  },
 })

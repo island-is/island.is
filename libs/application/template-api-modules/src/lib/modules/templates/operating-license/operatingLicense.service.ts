@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
 import {
   SyslumennService,
   Person,
@@ -13,26 +17,21 @@ import {
   File,
   ApplicationAttachments,
   AttachmentPaths,
-  CriminalRecord,
   DebtLessCertificateResult,
 } from './types/attachments'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
-  InstitutionNationalIds,
-  YES,
 } from '@island.is/application/types'
 import { Info, BankruptcyHistoryResult } from './types/application'
 import { getExtraData } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { FinanceClientService } from '@island.is/clients/finance'
 import { OperatingLicenseFakeData } from '@island.is/application/templates/operating-license/types'
 import { JudicialAdministrationService } from '@island.is/clients/judicial-administration'
 import { BANNED_BANKRUPTCY_STATUSES } from './constants'
 import { error } from '@island.is/application/templates/operating-license'
-import { isPerson } from 'kennitala'
 import { User } from '@island.is/auth-nest-tools'
 import { S3Service } from '@island.is/nest/aws'
 
@@ -41,7 +40,6 @@ export class OperatingLicenseService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly syslumennService: SyslumennService,
-    private readonly criminalRecordService: CriminalRecordService,
     private readonly financeService: FinanceClientService,
     private readonly judicialAdministrationService: JudicialAdministrationService,
     private readonly s3Service: S3Service,
@@ -50,6 +48,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
   }
 
   async criminalRecord({
+    auth,
     application,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const fakeData = getValueViaPath<OperatingLicenseFakeData>(
@@ -70,17 +69,14 @@ export class OperatingLicenseService extends BaseTemplateApiService {
             statusCode: 404,
           })
     }
-    try {
-      const applicantSsn =
-        application.applicantActors.length > 0
-          ? application.applicantActors[0]
-          : application.applicant
-      const hasCriminalRecord =
-        await this.criminalRecordService.validateCriminalRecord(applicantSsn)
-      if (hasCriminalRecord) {
-        return { success: true }
-      }
+    const applicantSsn =
+      application.applicantActors.length > 0
+        ? application.applicantActors[0]
+        : application.applicant
 
+    // The criminalRecord endpoint is a void endpoint that only fails
+    // if there is no criminal record available.
+    await this.syslumennService.checkCriminalRecord(auth).catch((e) => {
       throw new TemplateApiError(
         {
           title: error.dataCollectionCriminalRecordTitle,
@@ -88,15 +84,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         },
         400,
       )
-    } catch (e) {
-      throw new TemplateApiError(
-        {
-          title: error.dataCollectionCriminalRecordTitle,
-          summary: coreErrorMessages.errorDataProvider,
-        },
-        400,
-      )
-    }
+    })
+    return { success: true }
   }
 
   async getDebtLessCertificate(auth: User): Promise<DebtLessCertificateResult> {
@@ -249,27 +238,6 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     }
   }
 
-  async getCriminalRecord(nationalId: string): Promise<CriminalRecord> {
-    const document = await this.criminalRecordService.getCriminalRecord(
-      nationalId,
-    )
-
-    // Call sýslumaður to get the document sealed before handing it over to the user
-    const sealedDocumentResponse = await this.syslumennService.sealDocument(
-      document.contentBase64,
-    )
-
-    if (!sealedDocumentResponse?.skjal) {
-      throw new Error('Eitthvað fór úrskeiðis.')
-    }
-
-    const sealedDocument: CriminalRecord = {
-      contentBase64: sealedDocumentResponse.skjal,
-    }
-
-    return sealedDocument
-  }
-
   private async getAttachments(
     application: ApplicationWithAttachments,
     auth: User,
@@ -277,28 +245,6 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     const attachments: Attachment[] = []
 
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
-
-    let criminalRecordSSN = application.applicant
-
-    if (!isPerson(application.applicant)) {
-      // Go through actors until a person is found
-      // if no person then an error is thrown in the next step
-      application.applicantActors.every((actor) => {
-        if (isPerson(actor)) {
-          criminalRecordSSN = actor
-          return false
-        }
-        return true
-      })
-    }
-
-    const criminalRecord = await this.getCriminalRecord(criminalRecordSSN)
-    if (criminalRecord.contentBase64) {
-      attachments.push({
-        name: `sakavottord_${application.applicant}_${dateStr}.pdf`,
-        content: criminalRecord.contentBase64,
-      })
-    }
 
     const debtLess = await this.getDebtLessCertificate(auth)
     if (debtLess.certificate?.document) {

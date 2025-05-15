@@ -14,7 +14,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -36,7 +36,7 @@ import { CivilClaimantService } from './civilClaimant.service'
 
 @Controller('api/case/:caseId/civilClaimant')
 @ApiTags('civilClaimants')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard)
 export class CivilClaimantController {
   constructor(
     private readonly civilClaimantService: CivilClaimantService,

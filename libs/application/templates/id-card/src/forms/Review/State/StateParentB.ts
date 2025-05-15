@@ -33,7 +33,6 @@ export const StateParentBSection = buildSection({
       children: [
         buildAlertMessageField({
           id: 'stateAlertMessage',
-          title: '',
           message: state.labels.alertMessage,
           alertType: 'info',
         }),
@@ -41,7 +40,6 @@ export const StateParentBSection = buildSection({
           id: 'approvalActionCard',
           doesNotRequireAnswer: true,
           marginTop: 2,
-          title: '',
           items: (application) => {
             const chosenApplicantName = getValueViaPath(
               application.answers,

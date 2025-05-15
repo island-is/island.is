@@ -6,15 +6,18 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
 import { FormsModule } from './modules/forms/forms.module'
 import { ScreensModule } from './modules/screens/screens.module'
-import { FieldSettingsModule } from './modules/fieldSettings/fieldSettings.module'
 import { FieldsModule } from './modules/fields/fields.module'
-import { ListsModule } from './modules/lists/lists.module'
 import { OrganizationsModule } from './modules/organizations/organizations.module'
 import { SectionsModule } from './modules/sections/sections.module'
-import { CertificationsModule } from './modules/certifications/certifications.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ListItemsModule } from './modules/listItems/listItems.module'
 import { ApplicationsModule } from './modules/applications/applications.module'
+import { FormApplicantTypesModule } from './modules/formApplicantTypes/formApplicantTypes.module'
+import { FormCertificationTypesModule } from './modules/formCertificationTypes/formCertificationTypes.module'
+import { OrganizationUrlsModule } from './modules/organizationUrls/organizationUrls.module'
+import { FormUrlsModule } from './modules/formUrls/formUrls.module'
+import { ServicesModule } from './modules/services/services.module'
+import { OrganizationPermissionsModule } from './modules/organizationPermissions/organizationPermissions.module'
 
 @Module({
   imports: [
@@ -29,11 +32,14 @@ import { ApplicationsModule } from './modules/applications/applications.module'
     SectionsModule,
     ScreensModule,
     FieldsModule,
-    CertificationsModule,
-    ListsModule,
-    FieldSettingsModule,
     ListItemsModule,
     ApplicationsModule,
+    FormApplicantTypesModule,
+    FormCertificationTypesModule,
+    FormUrlsModule,
+    OrganizationPermissionsModule,
+    OrganizationUrlsModule,
+    ServicesModule,
   ],
 })
 export class AppModule {}

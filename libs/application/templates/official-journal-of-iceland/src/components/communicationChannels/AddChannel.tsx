@@ -1,58 +1,33 @@
 import { Box, Button, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useEffect, useState } from 'react'
+
 import { general, publishing } from '../../lib/messages'
 import * as styles from './AddChannel.css'
 import { FormGroup } from '../form/FormGroup'
-import { useApplication } from '../../hooks/useUpdateApplication'
-import set from 'lodash/set'
-import { InputFields } from '../../lib/types'
 
 type Props = {
-  applicationId: string
-  defaultName?: string
-  defaultEmail?: string
-  defaultPhone?: string
-  defaultVisible?: boolean
+  name: string
+  email: string
+  phone: string
+  isVisible: boolean
+  onChange(
+    field: 'name' | 'email' | 'phone' | 'isVisible',
+    value: string | boolean,
+  ): void
+  onCancel: () => void
+  onAddChannel(): void
 }
 
 export const AddChannel = ({
-  applicationId,
-  defaultName,
-  defaultEmail,
-  defaultPhone,
-  defaultVisible,
+  name,
+  email,
+  phone,
+  isVisible,
+  onChange,
+  onAddChannel,
+  onCancel,
 }: Props) => {
-  const { application, updateApplication } = useApplication({
-    applicationId,
-  })
   const { formatMessage: f } = useLocale()
-
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [isVisible, setIsVisible] = useState(defaultVisible ?? false)
-
-  useEffect(() => {
-    setName(defaultName ?? name)
-    setEmail(defaultEmail ?? email)
-    setPhone(defaultPhone ?? phone)
-    setIsVisible(defaultVisible ?? false)
-  }, [defaultName, defaultEmail, defaultPhone, defaultVisible])
-
-  const onAddChannel = () => {
-    const currentAnswers = structuredClone(application.answers)
-    const currentChannels = currentAnswers.advert?.channels ?? []
-    const updatedAnswers = set(currentAnswers, InputFields.advert.channels, [
-      ...currentChannels,
-      { name, email, phone },
-    ])
-
-    updateApplication(updatedAnswers)
-    setName('')
-    setEmail('')
-    setPhone('')
-  }
 
   return (
     <FormGroup>
@@ -70,7 +45,7 @@ export const AddChannel = ({
               type="text"
               value={name}
               label={f(general.name)}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => onChange('name', e.target.value)}
             />
           </Box>
           <Box className={styles.emailWrap}>
@@ -80,7 +55,7 @@ export const AddChannel = ({
               type="email"
               value={email}
               label={f(general.email)}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => onChange('email', e.target.value)}
             />
           </Box>
           <Box className={styles.phoneWrap}>
@@ -89,7 +64,7 @@ export const AddChannel = ({
               name="tel"
               value={phone}
               label={f(general.phoneNumber)}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => onChange('phone', e.target.value)}
             />
           </Box>
         </Box>
@@ -98,10 +73,7 @@ export const AddChannel = ({
             size="small"
             variant="ghost"
             onClick={() => {
-              setIsVisible(!isVisible)
-              setName('')
-              setEmail('')
-              setPhone('')
+              onCancel()
             }}
           >
             {f(general.cancel)}
@@ -115,7 +87,7 @@ export const AddChannel = ({
         <Button
           size="default"
           variant="primary"
-          onClick={() => setIsVisible(!isVisible)}
+          onClick={() => onChange('isVisible', !isVisible)}
           icon="add"
         >
           {f(publishing.buttons.addCommunicationChannel.label)}

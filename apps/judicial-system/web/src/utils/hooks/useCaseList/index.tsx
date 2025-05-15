@@ -1,6 +1,6 @@
 import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { LoadingDots, toast } from '@island.is/island-ui/core'
@@ -16,7 +16,7 @@ import {
   isDistrictCourtUser,
   isInvestigationCase,
   isPrisonSystemUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
   isRequestCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -25,8 +25,10 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  Case,
+  CaseAppealState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { findFirstInvalidStep } from '../../formHelper'
 import useCase from '../useCase'
@@ -53,7 +55,7 @@ const useCaseList = () => {
         } else {
           routeTo = DEFENDER_INDICTMENT_ROUTE
         }
-      } else if (isPublicProsecutorUser(user)) {
+      } else if (isPublicProsecutionOfficeUser(user)) {
         // Public prosecutor users can only see completed indictments
         routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {

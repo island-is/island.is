@@ -34,7 +34,6 @@ export const StateSection = buildSection({
           id: 'approvalActionCard',
           doesNotRequireAnswer: true,
           marginTop: 2,
-          title: '',
           items: (application) => {
             const chosenApplicantName = getValueViaPath(
               application.answers,

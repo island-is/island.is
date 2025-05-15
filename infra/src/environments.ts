@@ -12,7 +12,7 @@ const dev01: EnvironmentConfig = {
   featuresOn: [],
   defaultMaxReplicas: 3,
   defaultMinReplicas: 1,
-  releaseName: 'web',
+  releaseName: '',
   awsAccountId: '013313053092',
   awsAccountRegion: 'eu-west-1',
   global: {
@@ -40,7 +40,7 @@ const staging01: EnvironmentConfig = {
   featuresOn: [],
   defaultMaxReplicas: 3,
   defaultMinReplicas: 1,
-  releaseName: 'web',
+  releaseName: '',
   redisHost: JSON.stringify([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
   ]),
@@ -68,6 +68,10 @@ const staging01: EnvironmentConfig = {
 export let Envs: EnvironmentConfigs = {
   dev01: dev01,
   devIds: merge({}, dev01, {
+    awsAccountId: '324037283794',
+    redisHost: JSON.stringify([
+      'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
+    ]),
     global: {
       global: { env: { AUDIT_GROUP_NAME: '/identity-server/audit-log' } },
     },
@@ -85,7 +89,7 @@ export let Envs: EnvironmentConfigs = {
     featuresOn: [FeatureNames.drivingLicense],
     defaultMaxReplicas: 10,
     defaultMinReplicas: 3,
-    releaseName: 'web',
+    releaseName: '',
     redisHost: JSON.stringify([
       'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
     ]),
@@ -116,7 +120,7 @@ export let Envs: EnvironmentConfigs = {
     featuresOn: [FeatureNames.drivingLicense],
     defaultMaxReplicas: 10,
     defaultMinReplicas: 3,
-    releaseName: 'web',
+    releaseName: '',
     redisHost: JSON.stringify([
       'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
     ]),

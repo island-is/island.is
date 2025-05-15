@@ -1,4 +1,3 @@
-import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
@@ -8,6 +7,7 @@ import {
   ReasonForApplicationOptions,
 } from './constants'
 
+import { NO, YES } from '@island.is/application/core'
 import { errorMessages } from './messages'
 
 const validatePhoneNumber = (value: string) => {
@@ -127,84 +127,114 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.siblingsRequired,
     }),
-  startDate: z.string(),
+  startingSchool: z
+    .object({
+      expectedStartDate: z.string(),
+      temporaryStay: z.string().min(1).optional(),
+      expectedEndDate: z.string().optional(),
+    })
+    .refine(
+      ({ expectedStartDate, expectedEndDate, temporaryStay }) =>
+        !(
+          temporaryStay === YES &&
+          expectedEndDate &&
+          new Date(expectedStartDate) > new Date(expectedEndDate)
+        ),
+      {
+        path: ['expectedEndDate'],
+        params: errorMessages.expectedEndDateMessage,
+      },
+    )
+    .refine(
+      ({ expectedEndDate, temporaryStay }) =>
+        !(temporaryStay === YES && !expectedEndDate),
+      {
+        path: ['expectedEndDate'],
+        params: errorMessages.expectedEndDateRequired,
+      },
+    ),
   languages: z
     .object({
       languageEnvironment: z.string(),
       signLanguage: z.enum([YES, NO]),
-      interpreter: z.string().optional(),
-      language1: z.string().optional().nullable(),
-      language2: z.string().optional().nullable(),
-      childLanguage: z.string().optional().nullable(),
+      guardianRequiresInterpreter: z.string().optional(),
+      selectedLanguages: z
+        .array(z.object({ code: z.string().optional().nullable() }))
+        .optional(),
+      preferredLanguage: z.string().optional().nullable(),
+    })
+    .superRefine(({ languageEnvironment, selectedLanguages }, ctx) => {
+      const checkAndAddIssue = (index: number) => {
+        // If required 2 languages but the second language field is still hidden
+        // else check if applicant has selected a languages
+        if (index === 1 && selectedLanguages?.length === 1) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: errorMessages.twoLanguagesRequired,
+            path: ['selectedLanguages'],
+          })
+        } else if (!selectedLanguages?.[index]?.code) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: errorMessages.languageRequired,
+            path: ['selectedLanguages', index, 'code'],
+          })
+        }
+      }
+
+      if (
+        languageEnvironment ===
+        LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
+      ) {
+        checkAndAddIssue(0)
+      } else if (
+        languageEnvironment === LanguageEnvironmentOptions.ICELANDIC_AND_OTHER
+      ) {
+        checkAndAddIssue(0)
+        checkAndAddIssue(1)
+      }
     })
     .refine(
-      ({ languageEnvironment, language1 }) => {
-        return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
-          ? !!language1
-          : true
+      ({ languageEnvironment, selectedLanguages, preferredLanguage }) => {
+        if (
+          (languageEnvironment ===
+            LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC &&
+            !!selectedLanguages &&
+            selectedLanguages?.length >= 1) ||
+          (languageEnvironment ===
+            LanguageEnvironmentOptions.ICELANDIC_AND_OTHER &&
+            !!selectedLanguages &&
+            selectedLanguages?.length >= 2)
+        ) {
+          return !!preferredLanguage
+        }
+
+        return true
       },
       {
-        path: ['language1'],
-        params: errorMessages.languagesRequired,
-      },
-    )
-    .refine(
-      ({ languageEnvironment, language1, language2, childLanguage }) => {
-        return languageEnvironment !==
-          LanguageEnvironmentOptions.ONLY_ICELANDIC &&
-          !!language1 &&
-          !!language2
-          ? !!childLanguage
-          : true
-      },
-      {
-        path: ['childLanguage'],
+        path: ['preferredLanguage'],
         params: errorMessages.languageRequired,
       },
     )
     .refine(
-      ({ languageEnvironment, interpreter }) => {
+      ({ languageEnvironment, guardianRequiresInterpreter }) => {
         return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
-          ? !!interpreter
+          ? !!guardianRequiresInterpreter
           : true
       },
       {
-        path: ['interpreter'],
-      },
-    ),
-  freeSchoolMeal: z
-    .object({
-      acceptFreeSchoolLunch: z.enum([YES, NO]),
-      hasSpecialNeeds: z.string().optional(),
-      specialNeedsType: z.string().optional(),
-    })
-    .refine(
-      ({ acceptFreeSchoolLunch, hasSpecialNeeds }) =>
-        acceptFreeSchoolLunch === YES
-          ? !!hasSpecialNeeds && hasSpecialNeeds.length > 0
-          : true,
-      {
-        path: ['hasSpecialNeeds'],
-      },
-    )
-    .refine(
-      ({ acceptFreeSchoolLunch, hasSpecialNeeds, specialNeedsType }) =>
-        acceptFreeSchoolLunch === YES && hasSpecialNeeds === YES
-          ? !!specialNeedsType && specialNeedsType.length > 0
-          : true,
-      {
-        path: ['specialNeedsType'],
+        path: ['guardianRequiresInterpreter'],
       },
     ),
   allergiesAndIntolerances: z
     .object({
       hasFoodAllergiesOrIntolerances: z.array(z.string()),
-      foodAllergiesOrIntolerances: z.array(z.string()).optional(),
+      foodAllergiesOrIntolerances: z.array(z.string()).optional().nullable(),
       hasOtherAllergies: z.array(z.string()),
-      otherAllergies: z.array(z.string()).optional(),
+      otherAllergies: z.array(z.string()).optional().nullable(),
       usesEpiPen: z.string().optional(),
       hasConfirmedMedicalDiagnoses: z.enum([YES, NO]),
-      requestMedicationAssistance: z.enum([YES, NO]),
+      requestsMedicationAdministration: z.enum([YES, NO]),
     })
     .refine(
       ({ hasFoodAllergiesOrIntolerances, foodAllergiesOrIntolerances }) =>
@@ -237,8 +267,8 @@ export const dataSchema = z.object({
     ),
   support: z
     .object({
-      developmentalAssessment: z.enum([YES, NO]),
-      specialSupport: z.enum([YES, NO]),
+      hasDiagnoses: z.enum([YES, NO]),
+      hasHadSupport: z.enum([YES, NO]),
       hasIntegratedServices: z.string().optional(),
       hasCaseManager: z.string().optional(),
       caseManager: z
@@ -247,23 +277,23 @@ export const dataSchema = z.object({
           email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
-      requestMeeting: z.array(z.enum([YES, NO])).optional(),
+      requestingMeeting: z.array(z.enum([YES, NO])).optional(),
     })
     .refine(
-      ({ developmentalAssessment, specialSupport, hasIntegratedServices }) =>
-        developmentalAssessment === YES || specialSupport === YES
+      ({ hasDiagnoses, hasHadSupport, hasIntegratedServices }) =>
+        hasDiagnoses === YES || hasHadSupport === YES
           ? !!hasIntegratedServices
           : true,
       { path: ['hasIntegratedServices'] },
     )
     .refine(
       ({
-        developmentalAssessment,
-        specialSupport,
+        hasDiagnoses,
+        hasHadSupport,
         hasIntegratedServices,
         hasCaseManager,
       }) =>
-        (developmentalAssessment === YES || specialSupport === YES) &&
+        (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasIntegratedServices === YES
           ? !!hasCaseManager
           : true,
@@ -271,13 +301,13 @@ export const dataSchema = z.object({
     )
     .refine(
       ({
-        developmentalAssessment,
-        specialSupport,
+        hasDiagnoses,
+        hasHadSupport,
         hasIntegratedServices,
         hasCaseManager,
         caseManager,
       }) =>
-        (developmentalAssessment === YES || specialSupport === YES) &&
+        (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasIntegratedServices === YES &&
         hasCaseManager === YES
           ? caseManager && caseManager.name.length > 0
@@ -286,13 +316,13 @@ export const dataSchema = z.object({
     )
     .refine(
       ({
-        developmentalAssessment,
-        specialSupport,
+        hasDiagnoses,
+        hasHadSupport,
         hasIntegratedServices,
         hasCaseManager,
         caseManager,
       }) =>
-        (developmentalAssessment === YES || specialSupport === YES) &&
+        (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasIntegratedServices === YES &&
         hasCaseManager === YES
           ? caseManager && caseManager.email && caseManager.email.length > 0

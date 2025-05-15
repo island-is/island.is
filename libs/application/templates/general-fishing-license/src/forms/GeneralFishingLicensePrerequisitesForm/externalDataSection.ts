@@ -85,7 +85,6 @@ export const externalDataSection = buildSection({
     // Tackle that as AS task.
     buildDescriptionField({
       id: 'unused',
-      title: '',
       description: '',
     }),
   ],

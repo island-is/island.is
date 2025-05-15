@@ -1,0 +1,17 @@
+name: 'Checkout for pre-release'
+description: 'Checkout refs for pre-release'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checking out relevant branches for a pre-release
+      shell: bash
+      run: |
+        echo "Feature Name: '$FEATURE_NAME'"
+
+        GIT_BASE_BRANCH=main
+        git checkout main
+        git checkout "$GITHUB_SHA"
+
+        git config --global user.email "ci@island.is"
+        git config --global user.name "CI Bot"

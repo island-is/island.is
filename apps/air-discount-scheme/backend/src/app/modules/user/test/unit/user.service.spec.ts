@@ -1,3 +1,4 @@
+import { createNationalId } from '@island.is/testing/fixtures'
 import { Cache as CacheManager } from 'cache-manager'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
@@ -8,7 +9,6 @@ import { NationalRegistryService } from '../../../nationalRegistry'
 import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import kennitala from 'kennitala'
 import { createTestUser } from '../../../../../../test/createTestUser'
 
 function getAuthUser(nationalId: string): AuthUser {
@@ -110,7 +110,7 @@ describe('UserService', () => {
           total: 6,
           used: 0,
         },
-        '2222222229',
+        createNationalId('residentChild'),
       )
       const custodians: User[] = [
         createTestUser(100),
@@ -128,19 +128,6 @@ describe('UserService', () => {
       const cacheManagerGetSpy = jest
         .spyOn(cacheManager, 'get')
         .mockImplementation(() => Promise.resolve({ custodians }))
-
-      const kennitalaSpy = jest
-        .spyOn(kennitala, 'info')
-        .mockImplementation((kennitala: string | number) => {
-          return {
-            kt: kennitala.toString(),
-            age: kennitala.toString().includes('222222') ? 17 : 30,
-            birthday: new Date(Date.now()),
-            birthdayReadable: '',
-            type: 'person',
-            valid: true,
-          }
-        })
       const getUserSpy = jest
         .spyOn(nationalRegistryService, 'getUser')
         .mockImplementation(() => Promise.resolve(user))
@@ -157,7 +144,6 @@ describe('UserService', () => {
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
-      expect(kennitalaSpy).toHaveBeenCalledWith(user.nationalId)
       expect(cacheManagerGetSpy).toBeCalledTimes(1)
 
       expect(result).toEqual(user)
@@ -171,7 +157,7 @@ describe('UserService', () => {
           total: 6,
           used: 0,
         },
-        '2222222229',
+        createNationalId('residentChild'),
       )
 
       // This has been known to happen from the National Registry
@@ -193,19 +179,6 @@ describe('UserService', () => {
       const cacheManagerGetSpy = jest
         .spyOn(cacheManager, 'get')
         .mockImplementation(() => Promise.resolve({ custodians }))
-
-      const kennitalaSpy = jest
-        .spyOn(kennitala, 'info')
-        .mockImplementation((kennitala: string | number) => {
-          return {
-            kt: kennitala.toString(),
-            age: kennitala.toString().includes('222222') ? 17 : 30,
-            birthday: new Date(Date.now()),
-            birthdayReadable: '',
-            type: 'person',
-            valid: true,
-          }
-        })
       const getUserSpy = jest
         .spyOn(nationalRegistryService, 'getUser')
         .mockImplementation(() => Promise.resolve(user))
@@ -222,7 +195,6 @@ describe('UserService', () => {
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
-      expect(kennitalaSpy).toHaveBeenCalledWith(user.nationalId)
       expect(cacheManagerGetSpy).toBeCalledTimes(1)
 
       expect(result).toEqual(user)
@@ -236,7 +208,7 @@ describe('UserService', () => {
           total: 6,
           used: 0,
         },
-        '2222222229',
+        createNationalId('residentChild'),
       )
 
       // This has been known to happen from the National Registry
@@ -263,19 +235,6 @@ describe('UserService', () => {
       const cacheManagerGetSpy = jest
         .spyOn(cacheManager, 'get')
         .mockImplementation(() => Promise.resolve({ custodians }))
-
-      const kennitalaSpy = jest
-        .spyOn(kennitala, 'info')
-        .mockImplementation((kennitala: string | number) => {
-          return {
-            kt: kennitala.toString(),
-            age: kennitala.toString().includes('222222') ? 17 : 30,
-            birthday: new Date(Date.now()),
-            birthdayReadable: '',
-            type: 'person',
-            valid: true,
-          }
-        })
       const getUserSpy = jest
         .spyOn(nationalRegistryService, 'getUser')
         .mockImplementation(() => Promise.resolve(user))
@@ -292,7 +251,6 @@ describe('UserService', () => {
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
-      expect(kennitalaSpy).toHaveBeenCalledWith(user.nationalId)
       expect(cacheManagerGetSpy).toBeCalledTimes(1)
 
       expect(result).toEqual({
@@ -312,7 +270,7 @@ describe('UserService', () => {
           total: 6,
           used: 0,
         },
-        '2222222229',
+        createNationalId('residentChild'),
       )
       const custodians: User[] = [
         createTestUser(100),
@@ -330,19 +288,6 @@ describe('UserService', () => {
       const cacheManagerGetSpy = jest
         .spyOn(cacheManager, 'get')
         .mockImplementation(() => Promise.resolve({ custodians }))
-
-      const kennitalaSpy = jest
-        .spyOn(kennitala, 'info')
-        .mockImplementation((kennitala: string | number) => {
-          return {
-            kt: kennitala.toString(),
-            age: kennitala.toString().includes('222222') ? 17 : 30,
-            birthday: new Date(Date.now()),
-            birthdayReadable: '',
-            type: 'person',
-            valid: true,
-          }
-        })
       const getUserSpy = jest
         .spyOn(nationalRegistryService, 'getUser')
         .mockImplementation(() => Promise.resolve(user))
@@ -359,7 +304,6 @@ describe('UserService', () => {
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
-      expect(kennitalaSpy).toHaveBeenCalledWith(user.nationalId)
       expect(cacheManagerGetSpy).toBeCalledTimes(1)
 
       expect(result).toEqual({
@@ -379,7 +323,7 @@ describe('UserService', () => {
           total: 6,
           used: 0,
         },
-        '2222222229',
+        createNationalId('residentChild'),
       )
       const custodians: User[] = []
       const auth = getAuthUser(user.nationalId)
@@ -392,19 +336,6 @@ describe('UserService', () => {
       const cacheManagerGetSpy = jest
         .spyOn(cacheManager, 'get')
         .mockImplementation(() => Promise.resolve({ custodians }))
-
-      const kennitalaSpy = jest
-        .spyOn(kennitala, 'info')
-        .mockImplementation((kennitala: string | number) => {
-          return {
-            kt: kennitala.toString(),
-            age: kennitala.toString().includes('222222') ? 17 : 30,
-            birthday: new Date(Date.now()),
-            birthdayReadable: '',
-            type: 'person',
-            valid: true,
-          }
-        })
       const getUserSpy = jest
         .spyOn(nationalRegistryService, 'getUser')
         .mockImplementation(() => Promise.resolve(user))
@@ -421,7 +352,6 @@ describe('UserService', () => {
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
-      expect(kennitalaSpy).toHaveBeenCalledWith(user.nationalId)
       expect(cacheManagerGetSpy).toBeCalledTimes(1)
 
       expect(result).toEqual({

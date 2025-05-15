@@ -43,6 +43,9 @@ interface Props {
 export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
   const { formatMessage } = useLocale()
   const [postError, setPostError] = useState<string | null>(null)
+  const [localInternalId, setLocalInternalId] = useState<number>()
+  const [localMileage, setLocalMileage] = useState<number>()
+  const [localDate, setLocalDate] = useState<Date>()
   const [postStatus, setPostStatus] = useState<MutationStatus>('initial')
 
   const [showSubdata, setShowSubdata] = useState<boolean>(false)
@@ -74,24 +77,37 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
 
   const [putAction] = usePutSingleVehicleMileageMutation({
     onError: () => handleMutationResponse(true),
-    onCompleted: ({ vehicleMileagePutV2: data }) =>
+    onCompleted: ({ vehicleMileagePutV2: data }) => {
+      if (data?.__typename === 'VehicleMileagePutModel' && data.internalId) {
+        const internalId = parseInt(data.internalId, 10)
+        setLocalInternalId(internalId)
+        setLocalMileage(data.mileageNumber ?? undefined)
+      }
       handleMutationResponse(
         data?.__typename === 'VehiclesMileageUpdateError',
         data?.__typename === 'VehiclesMileageUpdateError'
           ? data?.message ?? formatMessage(m.errorTitle)
           : undefined,
-      ),
+      )
+    },
   })
 
   const [postAction] = usePostSingleVehicleMileageMutation({
     onError: () => handleMutationResponse(true),
-    onCompleted: ({ vehicleMileagePostV2: data }) =>
+    onCompleted: ({ vehicleMileagePostV2: data }) => {
+      if (data?.__typename === 'VehicleMileageDetail' && data.internalId) {
+        const internalId = parseInt(data.internalId, 10)
+        setLocalInternalId(internalId)
+        setLocalMileage(data.mileageNumber ?? undefined)
+        setLocalDate(data.readDate ? new Date(data.readDate) : undefined)
+      }
       handleMutationResponse(
         data?.__typename === 'VehiclesMileageUpdateError',
         data?.__typename === 'VehiclesMileageUpdateError'
           ? data?.message ?? formatMessage(m.errorTitle)
           : undefined,
-      ),
+      )
+    },
   })
 
   const [executeMileageQuery, { data: mileageData, refetch: mileageRefetch }] =
@@ -104,6 +120,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     getValues,
     formState: { errors },
     trigger,
+    reset,
   } = useFormContext()
 
   const handleMutationResponse = (isError: boolean, message?: string) =>
@@ -140,6 +157,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     setTimeout(() => {
       if (postStatus === 'success') {
         registrationsRefetch()
+        reset()
       }
     }, 500)
   }, [postStatus, registrationsRefetch])
@@ -182,7 +200,11 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
   }
 
   const onInputChange = () => {
-    if (postStatus === 'error' || postStatus === 'validation-error') {
+    if (
+      postStatus === 'error' ||
+      postStatus === 'validation-error' ||
+      postStatus === 'success'
+    ) {
       updateStatusAndMessage('initial')
     }
   }
@@ -200,7 +222,17 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
   const postToServer = useCallback(async () => {
     const formValue = await getValueFromForm(vehicle.vehicleId)
     if (formValue) {
-      if (
+      if (localInternalId) {
+        putAction({
+          variables: {
+            input: {
+              internalId: localInternalId,
+              permno: vehicle.vehicleId,
+              mileageNumber: formValue,
+            },
+          },
+        })
+      } else if (
         mileageData?.vehicleMileageDetails?.editing &&
         mileageData.vehicleMileageDetails?.data?.[0]?.internalId
       ) {
@@ -228,7 +260,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
         })
       }
     }
-  }, [mileageData?.vehicleMileageDetails, vehicle.vehicleId])
+  }, [mileageData?.vehicleMileageDetails, vehicle.vehicleId, localInternalId])
 
   const nestedTable = useMemo(() => {
     if (!data?.vehiclesMileageRegistrationHistory) {
@@ -250,6 +282,9 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     return tableData
   }, [data?.vehiclesMileageRegistrationHistory])
 
+  const displayDate = localDate ?? vehicle.lastMileageRegistration?.date
+  const displayMileage =
+    localMileage ?? vehicle.lastMileageRegistration?.mileage
   return (
     <ExpandRow
       key={`bulk-mileage-vehicle-row-${vehicle.vehicleId}`}
@@ -264,17 +299,11 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
           ),
         },
         {
-          value: vehicle.lastMileageRegistration?.date
-            ? format(vehicle.lastMileageRegistration?.date, 'dd.MM.yyyy')
-            : '-',
+          value: displayDate ? format(displayDate, 'dd.MM.yyyy') : '-',
         },
         {
-          value: vehicle.lastMileageRegistration?.mileage
-            ? displayWithUnit(
-                vehicle.lastMileageRegistration.mileage,
-                'km',
-                true,
-              )
+          value: displayMileage
+            ? displayWithUnit(displayMileage, 'km', true)
             : '-',
         },
         {

@@ -1,7 +1,5 @@
 import { Answer } from '@island.is/application/types'
-import { YES, NO, hasYes } from './constants'
-
-type YesOrNo = typeof YES | typeof NO
+import { YES, NO, hasYes, YesOrNo } from './constants'
 
 describe('hasYes', () => {
   const stringThatIsYes: Answer = YES

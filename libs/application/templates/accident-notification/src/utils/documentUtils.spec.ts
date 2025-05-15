@@ -2,12 +2,6 @@ import { FormatMessage } from '@island.is/localization'
 
 import { AccidentNotification } from '../lib/dataSchema'
 import {
-  AttachmentsEnum,
-  PowerOfAttorneyUploadEnum,
-  WhoIsTheNotificationForEnum,
-  YesOrNo,
-} from '../types'
-import {
   getAttachmentTitles,
   isUploadNow,
   returnMissingDocumentsList,
@@ -18,6 +12,12 @@ import {
   hasReceivedAllDocuments,
 } from './documentUtils'
 import { FormValue } from '@island.is/application/types'
+import { YesOrNoEnum } from '@island.is/application/core'
+import {
+  AttachmentsEnum,
+  PowerOfAttorneyUploadEnum,
+  WhoIsTheNotificationForEnum,
+} from './enums'
 
 describe('hasMissingDocuments', () => {
   it('should return true when missing documents', () => {
@@ -56,15 +56,21 @@ describe('getErrorMessageForMissingDocuments', () => {
 
 describe('hasReceivedAllDocuments', () => {
   const testCases = [
-    { who: WhoIsTheNotificationForEnum.ME, fatal: YesOrNo.NO },
-    { who: WhoIsTheNotificationForEnum.JURIDICALPERSON, fatal: YesOrNo.NO },
-    { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: YesOrNo.YES },
-    { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: YesOrNo.NO },
+    { who: WhoIsTheNotificationForEnum.ME, fatal: YesOrNoEnum.NO },
+    { who: WhoIsTheNotificationForEnum.JURIDICALPERSON, fatal: YesOrNoEnum.NO },
+    {
+      who: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
+      fatal: YesOrNoEnum.YES,
+    },
+    { who: WhoIsTheNotificationForEnum.POWEROFATTORNEY, fatal: YesOrNoEnum.NO },
   ]
   it.each(testCases)(
     'should return true when all documents are received',
     (data) => {
       const answers = getNoMissingDocuments() as AccidentNotification
+      if (!answers.whoIsTheNotificationFor) {
+        return
+      }
       answers.whoIsTheNotificationFor.answer = data.who
       answers.wasTheAccidentFatal = data.fatal
       expect(hasReceivedAllDocuments(answers)).toEqual(true)
@@ -73,6 +79,9 @@ describe('hasReceivedAllDocuments', () => {
 
   it.each(testCases)('should return false when missing documents', (data) => {
     const answers = getMissingDocuments() as AccidentNotification
+    if (!answers.whoIsTheNotificationFor) {
+      return
+    }
     answers.whoIsTheNotificationFor.answer = data.who
     answers.wasTheAccidentFatal = data.fatal
     expect(hasReceivedAllDocuments(answers)).toEqual(false)
@@ -91,7 +100,7 @@ const getMissingDocuments = (): FormValue => ({
   whoIsTheNotificationFor: {
     answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
   },
-  wasTheAccidentFatal: YesOrNo.YES,
+  wasTheAccidentFatal: YesOrNoEnum.YES,
   injuryCertificate: {
     answer: AttachmentsEnum.SENDCERTIFICATELATER,
   },
@@ -114,7 +123,7 @@ const getNoMissingDocuments = (): FormValue => ({
   whoIsTheNotificationFor: {
     answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
   },
-  wasTheAccidentFatal: YesOrNo.YES,
+  wasTheAccidentFatal: YesOrNoEnum.YES,
   injuryCertificate: {
     answer: AttachmentsEnum.SENDCERTIFICATELATER,
   },
@@ -247,7 +256,7 @@ describe('returnMissingDocumentsList', () => {
       whoIsTheNotificationFor: {
         answer: WhoIsTheNotificationForEnum.POWEROFATTORNEY,
       },
-      wasTheAccidentFatal: YesOrNo.YES,
+      wasTheAccidentFatal: YesOrNoEnum.YES,
       injuryCertificate: {
         answer: AttachmentsEnum.SENDCERTIFICATELATER,
       },

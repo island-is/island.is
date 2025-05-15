@@ -20,20 +20,17 @@ export const conditionsSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'conditionsDescription',
-          title: '',
           description:
             'It is possible to condition both single fields and text or an entire section/subsection',
           marginBottom: 2,
         }),
         buildDescriptionField({
           id: 'conditionsDescription2',
-          title: '',
           description: m.conditionsDescription2,
           marginBottom: 2,
         }),
         buildDescriptionField({
           id: 'conditionsDescription3',
-          title: '',
           description:
             'The visibility of everything can be dependent on the users answers in the application or data that has been fetched and placed in externalData.',
           marginBottom: 2,

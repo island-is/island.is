@@ -6,7 +6,7 @@ import {
 import { inReview } from '../../lib/messages'
 import { AccidentNotificationStatusEnum } from './StatusStep/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { ReviewApprovalEnum } from '../../types'
+import { ReviewApprovalEnum } from '../../utils/enums'
 import { AccidentNotificationStatus } from '@island.is/api/schema'
 import {
   hasReceivedConfirmation,

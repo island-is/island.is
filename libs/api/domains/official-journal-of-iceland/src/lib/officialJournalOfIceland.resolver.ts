@@ -9,6 +9,7 @@ import {
   QueryParams,
   TypeQueryParams,
   MainTypesQueryParams,
+  AdvertSimilarParams,
 } from './models/advert.input'
 import {
   AdvertCategoryResponse,
@@ -17,6 +18,7 @@ import {
   AdvertInstitutionsResponse,
   AdvertMainCategoriesResponse,
   AdvertResponse,
+  AdvertSimilarResponse,
   AdvertsResponse,
   AdvertTypeResponse,
   AdvertTypesResponse,
@@ -44,6 +46,13 @@ export class OfficialJournalOfIcelandResolver {
   })
   getAdverts(@Args('input') input: AdvertsInput) {
     return this.ojoiService.getAdverts(input)
+  }
+
+  @Query(() => AdvertSimilarResponse, {
+    name: 'officialJournalOfIcelandAdvertsSimilar',
+  })
+  getSimilarAdverts(@Args('params') params: AdvertSimilarParams) {
+    return this.ojoiService.getSimilarAdvertsById(params)
   }
 
   @Query(() => AdvertDepartmentResponse, {

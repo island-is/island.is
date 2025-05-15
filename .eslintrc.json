@@ -42,6 +42,7 @@
                 "onlyDependOnLibsWithTags": [
                   "lib:portals-admin",
                   "lib:application-system",
+                  "lib:form-system",
                   "lib:portals",
                   "lib:react-spa",
                   "lib:react",

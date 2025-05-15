@@ -1,11 +1,11 @@
 import {
-  buildCustomField,
   buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { overview } from '../../lib/messages'
+import { overviewFields } from '../../utils/overviewFields'
 
 export const overviewSection = buildSection({
   id: 'overview.section',
@@ -15,14 +15,9 @@ export const overviewSection = buildSection({
       id: 'overview.multifield',
       title: overview.general.sectionTitle,
       children: [
-        buildCustomField({
-          id: 'overview',
-          title: overview.general.sectionTitle,
-          component: 'FormOverview',
-        }),
+        ...overviewFields(),
         buildSubmitField({
           id: 'overview.submit',
-          title: '',
           actions: [
             {
               event: DefaultEvents.SUBMIT,

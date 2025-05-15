@@ -1,0 +1,5 @@
+mutation DeleteOffense($input: DeleteOffenseInput!) {
+  deleteOffense(input: $input) {
+    deleted
+  }
+}

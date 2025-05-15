@@ -33,7 +33,7 @@ judicial-system-api:
     HIDDEN_FEATURES: ''
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -107,6 +107,9 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
+    AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
+    AUDIT_TRAIL_REGION: 'eu-west-1'
+    AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BLOCKED_API_INTEGRATION: ''
     CLIENT_URL: 'https://rettarvorslugatt.island.is'
     CONTENTFUL_ENVIRONMENT: 'master'
@@ -118,7 +121,7 @@ judicial-system-backend:
     DOKOBIT_URL: 'https://ws.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     S3_BUCKET: 'island-is-prod-upload-judicial-system'
     S3_REGION: 'eu-west-1'
@@ -254,7 +257,7 @@ judicial-system-digital-mailbox-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -327,7 +330,7 @@ judicial-system-message-handler:
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
     SQS_QUEUE_NAME: 'sqs-judicial-system'
@@ -392,7 +395,7 @@ judicial-system-scheduler:
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
     SQS_QUEUE_NAME: 'sqs-judicial-system'
@@ -455,7 +458,7 @@ judicial-system-web:
     API_URL: 'https://rettarvorslugatt.island.is'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -521,7 +524,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'

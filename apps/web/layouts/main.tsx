@@ -120,15 +120,10 @@ export interface LayoutProps {
   children?: React.ReactNode
 }
 
-if (
-  publicRuntimeConfig.ddRumApplicationId &&
-  publicRuntimeConfig.ddRumClientToken &&
-  typeof window !== 'undefined'
-) {
-  userMonitoring.initDdRum({
+if (publicRuntimeConfig.ddLogsClientToken && typeof window !== 'undefined') {
+  userMonitoring.initDdLogs({
     service: 'islandis',
-    applicationId: publicRuntimeConfig.ddRumApplicationId,
-    clientToken: publicRuntimeConfig.ddRumClientToken,
+    clientToken: publicRuntimeConfig.ddLogsClientToken,
     env: publicRuntimeConfig.environment || 'local',
     version: publicRuntimeConfig.appVersion || 'local',
   })
@@ -414,11 +409,18 @@ const Layout: Screen<LayoutProps> = ({
                     : undefined
                 }
                 customTopLoginButtonItem={customTopLoginButtonItem}
+                loginButtonType={n('minarsidurLoginButtonType', 'dropdown')}
               />
             </ColorSchemeContext.Provider>
           )}
           <Main>
-            {wrapContent ? <Box width="full">{children}</Box> : children}
+            {wrapContent ? (
+              <Box width="full" display="flex" flexDirection="column">
+                {children}
+              </Box>
+            ) : (
+              children
+            )}
           </Main>
         </MenuTabsContext.Provider>
         {showFooter && (

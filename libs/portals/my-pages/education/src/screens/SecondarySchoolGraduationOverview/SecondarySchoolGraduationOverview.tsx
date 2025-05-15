@@ -2,7 +2,7 @@ import {
   ActionCard,
   CardLoader,
   IntroHeader,
-  MENNTAMALASTOFNUN_SLUG,
+  MMS_SLUG,
   m,
 } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -29,7 +29,7 @@ export const EducationGraduationDetail = () => {
           defaultMessage:
             'Hér getur þú fundið yfirlit yfir þínar útskriftir úr framhaldsskóla.',
         })}
-        serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+        serviceProviderSlug={MMS_SLUG}
         serviceProviderTooltip={formatMessage(m.mmsTooltipSecondary)}
       />
       {error && !loading && <Problem error={error} noBorder={false} />}

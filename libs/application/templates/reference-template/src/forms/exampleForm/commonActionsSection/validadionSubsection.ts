@@ -6,7 +6,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
-import { radioValidationExampleEnum } from '../../../utils/types'
+import { RadioValidationExampleEnum } from '../../../utils/types'
 
 export const validationSubsection = buildSubSection({
   id: 'validationSubsection',
@@ -18,13 +18,11 @@ export const validationSubsection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'validationDescriptionField',
-          title: '',
           description: m.validationDescription,
           marginBottom: 2,
         }),
         buildDescriptionField({
           id: 'validationDescriptionField2',
-          title: '',
           description:
             'All fields on this page have validation that must be filled out to continue',
         }),
@@ -35,17 +33,15 @@ export const validationSubsection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'validation.validationDescriptionField3',
-          title: '',
           description: m.validationDescription3,
           marginTop: 4,
         }),
         buildRadioField({
           id: 'validation.validationRadioField',
-          title: '',
           options: [
-            { label: 'Option 1', value: radioValidationExampleEnum.OPTION_1 },
-            { label: 'Option 2', value: radioValidationExampleEnum.OPTION_2 },
-            { label: 'Option 3', value: radioValidationExampleEnum.OPTION_3 },
+            { label: 'Option 1', value: RadioValidationExampleEnum.OPTION_1 },
+            { label: 'Option 2', value: RadioValidationExampleEnum.OPTION_2 },
+            { label: 'Option 3', value: RadioValidationExampleEnum.OPTION_3 },
           ],
         }),
       ],

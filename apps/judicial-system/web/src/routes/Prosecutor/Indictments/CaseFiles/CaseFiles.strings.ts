@@ -6,12 +6,6 @@ export const caseFiles = defineMessages({
     defaultMessage: 'Dómskjöl',
     description: 'Notaður sem titill á dómskjöl skrefi í ákærum.',
   },
-  pdfButtonIndictment: {
-    id: 'judicial.system.core:indictments.case_files.pdf_button_indictment',
-    defaultMessage: 'Ákæra - PDF',
-    description:
-      'Notaður sem texti á hnappi til að sækja ákæru sem PDF skjal á dómskjöl skrefi.',
-  },
   inputFieldLabel: {
     id: 'judicial.system.core:indictments.case_files.input_field_label',
     defaultMessage: 'Dragðu gögn hingað til að hlaða upp',
@@ -41,11 +35,6 @@ export const caseFiles = defineMessages({
     id: 'judicial.system.core:indictments.case_files.other_documents_section',
     defaultMessage: 'Önnur gögn',
     description: 'Titill á önnur gögn hluta á dómskjalaskjá í ákærum.',
-  },
-  civilClaimSection: {
-    id: 'judicial.system.core:indictments.case_files.civil_claim_section',
-    defaultMessage: 'Bótakröfur',
-    description: 'Titill á Bótakröfur hluta á dómskjalaskjá í ákærum.',
   },
   criminalRecordUpdateSection: {
     id: 'judicial.system.core:indictments.case_files.criminal_record_update_section',

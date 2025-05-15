@@ -1,0 +1,46 @@
+name: 'Checkout for features'
+description: 'Checkout refs for feature deployments'
+inputs:
+  github_token:
+    description: 'A Github PAT'
+    required: true
+  slack_webhook_url:
+    description: 'Webhook url for build issues resports'
+    required: true
+outputs:
+  GIT_BRANCH:
+    description: ''
+    value: ${{ steps.git-branch.outputs.GIT_BRANCH }}
+  GIT_BRANCH_DEPLOY:
+    description: ''
+    value: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
+  FEATURE_NAME:
+    description: ''
+    value: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Get git branch
+      shell: bash
+      id: git-branch
+      run: |
+        set -euo pipefail
+        GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+        echo GIT_BRANCH="${GIT_BRANCH}" >> "$GITHUB_OUTPUT"
+        echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
+
+    - name: Generate deployment branch name
+      shell: bash
+      id: git-branch-deploy
+      run: |
+        set -euo pipefail
+        GIT_BRANCH_DEPLOY="feature/$GIT_BRANCH"
+        # Avoid too long resource names
+        GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
+        FEATURE_NAME="$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
+
+        echo GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY}" >> "$GITHUB_OUTPUT"
+        echo GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY}" >> "$GITHUB_ENV"
+
+        echo FEATURE_NAME="${FEATURE_NAME}" >> "$GITHUB_OUTPUT"
+        echo FEATURE_NAME="${FEATURE_NAME}" >> "$GITHUB_ENV"

@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildMultiField,
   buildPhoneField,
   buildTextField,
@@ -18,11 +19,16 @@ export const applicantInformationMultiField = (
   // Email disabled is default false for all applications
   // Option to add description
   const {
+    phoneCondition,
     phoneRequired = false,
+    phoneDisabled = false,
+    phoneEnableCountrySelector,
+    emailCondition,
     emailRequired = true,
     emailDisabled = false,
     applicantInformationDescription = '',
     readOnly = false,
+    readOnlyEmailAndPhone = false,
   } = props ?? {}
   return buildMultiField({
     id: 'applicant',
@@ -101,8 +107,10 @@ export const applicantInformationMultiField = (
         width: 'half',
         variant: 'email',
         backgroundColor: 'blue',
+        condition: emailCondition,
         required: emailRequired,
         disabled: emailDisabled,
+        readOnly: readOnlyEmailAndPhone,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.userProfile?.data?.email ?? '',
         maxLength: 100,
@@ -112,9 +120,28 @@ export const applicantInformationMultiField = (
         title: applicantInformation.labels.tel,
         width: 'half',
         backgroundColor: 'blue',
+        condition: phoneCondition,
+        required: phoneRequired,
+        disabled: phoneDisabled,
+        readOnly: readOnlyEmailAndPhone,
+        enableCountrySelector: phoneEnableCountrySelector,
         defaultValue: (application: ApplicantInformationInterface) =>
           application.externalData?.userProfile?.data?.mobilePhoneNumber ?? '',
-        required: phoneRequired,
+      }),
+      buildAlertMessageField({
+        id: 'applicationInfoEmailPhoneAlertMessage',
+        title: '',
+        alertType: 'info',
+        doesNotRequireAnswer: true,
+        message: applicantInformation.labels.alertMessage,
+        links: [
+          {
+            title: applicantInformation.labels.alertMessageLinkTitle,
+            url: applicantInformation.labels.alertMessageLink,
+            isExternal: false,
+          },
+        ],
+        condition: () => readOnlyEmailAndPhone,
       }),
     ],
   })

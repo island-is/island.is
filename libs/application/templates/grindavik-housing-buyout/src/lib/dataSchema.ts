@@ -1,8 +1,8 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
 import { errors } from './messages'
-import { NO, YES } from '@island.is/application/types'
 import { OTHER_PROVIDER, PreemptiveRight } from './constants'
+import { NO, YES } from '@island.is/application/core'
 
 const required = { params: errors.fields.required }
 

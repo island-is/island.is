@@ -9,7 +9,6 @@ import { m } from '../lib/messages'
 
 export const prerequisites: Form = buildForm({
   id: 'prerequisites',
-  title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   children: [
@@ -23,7 +22,6 @@ export const prerequisites: Form = buildForm({
           children: [
             buildSubmitField({
               id: 'prereqs.submit',
-              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

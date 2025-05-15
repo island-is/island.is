@@ -19,9 +19,6 @@ export enum ApiActions {
 
 export const CARETAKER = 'Skoðunarmaður'
 export const BOARDMEMEBER = 'Stjórnarmaður'
-
-export const YES = 'yes'
-export const NO = 'no'
 export const GREATER = 'greater'
 export const LESS = 'less'
 export const TOTAL = 'total'

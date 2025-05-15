@@ -14,7 +14,7 @@ import {
 
 const REDIS_NODE_CONFIG = {
   dev: json([
-    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
   ]),
   staging: json([
     'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
@@ -54,7 +54,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true',
       XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true',
       XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
-        dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
+        dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
         staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
         prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
       },
@@ -79,10 +79,17 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       },
     })
     .secrets({
+      NOVA_URL: '/k8s/services-auth/NOVA_URL',
+      NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
+      NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
       ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
       ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE:
         '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE',
+      ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION:
+        '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION',
+      ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE:
+        '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE',
       CLIENT_SECRET_ENCRYPTION_KEY:
         '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY',
       IDENTITY_SERVER_CLIENT_SECRET:

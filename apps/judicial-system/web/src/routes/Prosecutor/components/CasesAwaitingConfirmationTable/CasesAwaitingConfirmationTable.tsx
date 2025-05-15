@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 
 import { Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
@@ -24,10 +24,7 @@ import Table, {
   TableWrapper,
 } from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
-import {
-  CaseListEntry,
-  CaseState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CasesAwaitingConfirmationTable.strings'
 
@@ -54,7 +51,7 @@ const CasesAwaitingConfirmationTable: FC<
   const { openCaseInNewTabMenuItem } = useContextMenu()
 
   return (
-    <>
+    <section>
       <SectionHeading title={formatMessage(strings.title)} />
       <AnimatePresence initial={false}>
         <TableWrapper loading={loading || isFiltering}>
@@ -63,6 +60,8 @@ const CasesAwaitingConfirmationTable: FC<
               thead={[
                 {
                   title: formatMessage(tables.caseNumber),
+                  sortBy: 'policeCaseNumbers',
+                  sortFn: 'number',
                 },
                 {
                   title: capitalize(
@@ -121,11 +120,7 @@ const CasesAwaitingConfirmationTable: FC<
                   ),
                 },
                 {
-                  cell: () => (
-                    <TagCaseState
-                      caseState={CaseState.WAITING_FOR_CONFIRMATION}
-                    />
-                  ),
+                  cell: (row) => <TagCaseState theCase={row} />,
                 },
                 {
                   cell: (row) => <Text as="span">{row.prosecutor?.name}</Text>,
@@ -134,13 +129,17 @@ const CasesAwaitingConfirmationTable: FC<
             />
           ) : (
             <TableInfoContainer
-              title={formatMessage(strings.noCasesTitle)}
+              title={
+                <Text as="h4" variant="h5" marginBottom={1}>
+                  {formatMessage(strings.noCasesTitle)}
+                </Text>
+              }
               message={formatMessage(strings.noCasesMessage)}
             />
           )}
         </TableWrapper>
       </AnimatePresence>
-    </>
+    </section>
   )
 }
 

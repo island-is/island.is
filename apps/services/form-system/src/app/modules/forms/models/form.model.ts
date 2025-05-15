@@ -1,6 +1,5 @@
-import { CreationOptional, NonAttribute } from 'sequelize'
+import { CreationOptional } from 'sequelize'
 import {
-  BelongsToMany,
   Column,
   CreatedAt,
   DataType,
@@ -13,9 +12,11 @@ import {
 import { Section } from '../../sections/models/section.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { FormApplicant } from '../../applicants/models/formApplicant.model'
-import { CertificationType } from '../../certifications/models/certificationType.model'
-import { randomUUID } from 'crypto'
+import { FormApplicantType } from '../../formApplicantTypes/models/formApplicantType.model'
+import { Dependency } from '../../../dataTypes/dependency.model'
+import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
+import { FormUrl } from '../../formUrls/models/formUrl.model'
+import { FormStatus } from '@island.is/form-system/shared'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {
@@ -28,6 +29,13 @@ export class Form extends Model<Form> {
   id!: string
 
   @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  identifier!: string
+
+  @Column({
     type: DataType.JSON,
     allowNull: false,
     defaultValue: new LanguageType(),
@@ -36,13 +44,28 @@ export class Form extends Model<Form> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
     unique: true,
-    defaultValue: randomUUID(),
   })
   slug!: string
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  organizationNationalId!: string
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  organizationDisplayName?: LanguageType
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
   invalidationDate?: Date
 
   @CreatedAt
@@ -50,6 +73,20 @@ export class Form extends Model<Form> {
 
   @UpdatedAt
   modified!: CreationOptional<Date>
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  hasPayment!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  beenPublished!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -65,11 +102,18 @@ export class Form extends Model<Form> {
   applicationDaysToRemove!: number
 
   @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
+    type: DataType.UUID,
+    allowNull: true,
   })
-  derivedFrom!: number
+  derivedFrom!: string
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(FormStatus),
+    defaultValue: FormStatus.IN_DEVELOPMENT,
+  })
+  status!: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -85,11 +129,23 @@ export class Form extends Model<Form> {
   })
   completedMessage?: LanguageType
 
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  dependencies?: Dependency[]
+
   @HasMany(() => Section)
   sections!: Section[]
 
-  @HasMany(() => FormApplicant)
-  applicants?: FormApplicant[]
+  @HasMany(() => FormApplicantType)
+  formApplicantTypes?: FormApplicantType[]
+
+  @HasMany(() => FormCertificationType)
+  formCertificationTypes?: FormCertificationType[]
+
+  @HasMany(() => FormUrl)
+  formUrls?: FormUrl[]
 
   @ForeignKey(() => Organization)
   @Column({
@@ -98,11 +154,4 @@ export class Form extends Model<Form> {
     field: 'organization_id',
   })
   organizationId!: string
-
-  @BelongsToMany(() => CertificationType, {
-    through: 'form_certification_type',
-    foreignKey: 'form_id',
-    otherKey: 'certification_type_id',
-  })
-  certificationTypes?: NonAttribute<CertificationType[]>
 }

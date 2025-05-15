@@ -47,6 +47,7 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           id
           title
           slug
+          url
           organizationPage {
             slug
           }
@@ -209,12 +210,6 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           id
           intro
           title
-          slug
-        }
-
-        ... on AdgerdirPage {
-          title
-          description
           slug
         }
 

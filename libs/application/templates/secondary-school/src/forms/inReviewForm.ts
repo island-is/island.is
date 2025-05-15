@@ -12,7 +12,6 @@ import { Logo } from '../assets/Logo'
 
 export const InReview: Form = buildForm({
   id: 'InReviewForm',
-  title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
   children: [
@@ -28,12 +27,10 @@ export const InReview: Form = buildForm({
             buildCustomField({
               component: 'Overview',
               id: 'conclusion',
-              title: '',
               description: '',
             }),
             buildMessageWithLinkButtonField({
               id: 'conclusionBottomLink',
-              title: '',
               url: '/minarsidur/umsoknir',
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,

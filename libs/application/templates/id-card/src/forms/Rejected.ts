@@ -9,7 +9,6 @@ import { Routes } from '../lib/constants'
 // Change messages
 export const Rejected: Form = buildForm({
   id: 'Rejected',
-  title: '',
   // logo: Logo,
   mode: FormModes.REJECTED,
   children: [

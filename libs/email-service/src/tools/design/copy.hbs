@@ -1,5 +1,19 @@
-{{#> center}}
-  <div class="copy size-{{ternary small 'small' 'normal'}} style-{{ternary style style 'normal'}}">
-    <p class="text-{{ternary align align 'center'}}">{{{copy}}}</p>
-  </div>
-{{/center}}
+{{#if (eq align "left")}}
+  {{#> left}}
+    <div class="copy size-{{ternary small 'small' 'normal'}} style-{{ternary style style 'normal'}}">
+      <a class="text-left">{{{copy}}}</a>
+    </div>
+  {{/left}}
+{{else if (eq align "right")}}
+  {{#> right}}
+    <div class="copy size-{{ternary small 'small' 'normal'}} style-{{ternary style style 'normal'}}">
+      <a class="text-right">{{{copy}}}</a>
+    </div>
+  {{/right}}
+{{else}}
+  {{#> center}}
+    <div class="copy size-{{ternary small 'small' 'normal'}} style-{{ternary style style 'normal'}}">
+      <a class="text-center">{{{copy}}}</a>
+    </div>
+  {{/center}}
+{{/if}}

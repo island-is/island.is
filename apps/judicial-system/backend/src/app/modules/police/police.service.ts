@@ -31,7 +31,8 @@ import {
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { Case } from '../case'
+import { Case } from '../case/models/case.model'
+import { DateLog } from '../case/models/dateLog.model'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
@@ -52,6 +53,7 @@ export enum PoliceDocumentType {
   RVMG = 'RVMG', // Málsgögn
   RVMV = 'RVMV', // Viðbótargögn verjanda
   RVVS = 'RVVS', // Viðbótargögn sækjanda
+  RVFK = 'RVFK', // Fyrirkall
 }
 
 export interface PoliceDocument {
@@ -343,11 +345,11 @@ export class PoliceService {
   }
 
   async getSubpoenaStatus(
-    subpoenaId: string,
+    policeSubpoenaId: string,
     user?: User,
   ): Promise<SubpoenaInfo> {
     return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
+      `${this.xRoadPath}/GetSubpoenaStatus?id=${policeSubpoenaId}`,
     )
       .then(async (res: Response) => {
         if (res.ok) {
@@ -381,7 +383,7 @@ export class PoliceService {
         // The police system does not provide a structured error response.
         // When a subpoena does not exist, a stack trace is returned.
         throw new NotFoundException({
-          message: `Subpoena with id ${subpoenaId} does not exist`,
+          message: `Subpoena with police subpoena id ${policeSubpoenaId} does not exist`,
           detail: reason,
         })
       })
@@ -394,7 +396,7 @@ export class PoliceService {
           // Act as if the subpoena does not exist
           throw new NotFoundException({
             ...reason,
-            message: `Subpoena ${subpoenaId} does not exist`,
+            message: `Subpoena ${policeSubpoenaId} does not exist`,
             detail: reason.message,
           })
         }
@@ -402,7 +404,7 @@ export class PoliceService {
         this.eventService.postErrorEvent(
           'Failed to get subpoena',
           {
-            subpoenaId,
+            policeSubpoenaId,
             actor: user?.name || 'Digital-mailbox',
             institution: user?.institution?.name,
           },
@@ -411,7 +413,7 @@ export class PoliceService {
 
         throw new BadGatewayException({
           ...reason,
-          message: `Failed to get subpoena ${subpoenaId}`,
+          message: `Failed to get subpoena ${policeSubpoenaId}`,
           detail: reason.message,
         })
       })
@@ -612,25 +614,23 @@ export class PoliceService {
   }
 
   async createSubpoena(
-    workingCase: Case,
+    theCase: Case,
     defendant: Defendant,
     subpoena: string,
     indictment: string,
     user: User,
-    civilClaim?: string,
+    civilClaims: string[],
   ): Promise<CreateSubpoenaResponse> {
     const { courtCaseNumber, dateLogs, prosecutor, policeCaseNumbers, court } =
-      workingCase
+      theCase
     const { nationalId: defendantNationalId } = defendant
     const { name: actor } = user
 
     const normalizedNationalId =
       normalizeAndFormatNationalId(defendantNationalId)[0]
 
-    const documentName = `Fyrirkall í máli ${workingCase.courtCaseNumber}`
-    const arraignmentInfo = dateLogs?.find(
-      (dateLog) => dateLog.dateType === 'ARRAIGNMENT_DATE',
-    )
+    const documentName = `Fyrirkall í máli ${theCase.courtCaseNumber}`
+    const arraignmentInfo = DateLog.arraignmentDate(dateLogs)
 
     try {
       const res = await this.fetchPoliceCaseApi(
@@ -646,11 +646,7 @@ export class PoliceService {
           agent: this.agent,
           body: JSON.stringify({
             documentName: documentName,
-            documentsBase64: [
-              subpoena,
-              indictment,
-              ...(civilClaim ? [civilClaim] : []),
-            ],
+            documentsBase64: [subpoena, indictment, ...civilClaims],
             courtRegistrationDate: arraignmentInfo?.date,
             prosecutorSsn: prosecutor?.nationalId,
             prosecutedSsn: normalizedNationalId,
@@ -660,26 +656,26 @@ export class PoliceService {
             lokeCaseNumber: policeCaseNumbers?.[0],
             courtCaseNumber: courtCaseNumber,
             fileTypeCode: 'BRTNG',
-            rvgCaseId: workingCase.id,
+            rvgCaseId: theCase.id,
           }),
         } as RequestInit,
       )
 
       if (res.ok) {
         const subpoenaResponse = await res.json()
-        return { subpoenaId: subpoenaResponse.id }
+        return { policeSubpoenaId: subpoenaResponse.id }
       }
 
       throw await res.text()
     } catch (error) {
-      this.logger.error(`Failed create subpoena for case ${workingCase.id}`, {
+      this.logger.error(`Failed create subpoena for case ${theCase.id}`, {
         error,
       })
 
       this.eventService.postErrorEvent(
         'Failed to create subpoena',
         {
-          caseId: workingCase.id,
+          caseId: theCase.id,
           defendantId: defendant?.id,
           actor,
         },
@@ -691,15 +687,15 @@ export class PoliceService {
   }
 
   async revokeSubpoena(
-    workingCase: Case,
-    subpoenaId: string,
+    theCase: Case,
+    policeSubpoenaId: string,
     user: User,
   ): Promise<boolean> {
     const { name: actor } = user
 
     try {
       const res = await this.fetchPoliceCaseApi(
-        `${this.xRoadPath}/InvalidateCourtSummon?sekGuid=${subpoenaId}`,
+        `${this.xRoadPath}/InvalidateCourtSummon?sekGuid=${policeSubpoenaId}`,
         {
           method: 'POST',
           headers: {
@@ -718,7 +714,7 @@ export class PoliceService {
       throw await res.text()
     } catch (error) {
       this.logger.error(
-        `Failed revoke subpoena with id ${subpoenaId} for case ${workingCase.id} from police`,
+        `Failed revoke subpoena with police subpoena id ${policeSubpoenaId} for case ${theCase.id} from police`,
         {
           error,
         },
@@ -727,8 +723,8 @@ export class PoliceService {
       this.eventService.postErrorEvent(
         'Failed to revoke subpoena from police',
         {
-          caseId: workingCase.id,
-          subpoenaId,
+          caseId: theCase.id,
+          policeSubpoenaId,
           actor,
         },
         error,

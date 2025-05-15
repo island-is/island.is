@@ -16,7 +16,6 @@ import { Logo } from '../assets/Logo'
 
 export const Rejected: Form = buildForm({
   id: 'RejectedApplicationForm',
-  title: '',
   logo: Logo,
   mode: FormModes.REJECTED,
   children: [
@@ -56,7 +55,6 @@ export const Rejected: Form = buildForm({
             buildCustomField({
               component: 'RejectedConclusion',
               id: 'RejectedConclusion',
-              title: '',
               description: '',
             }),
           ],

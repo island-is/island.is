@@ -9,7 +9,6 @@ import Logo from '../assets/Logo'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
-  title: '',
   logo: Logo,
   mode: FormModes.APPROVED,
   children: [
@@ -25,7 +24,6 @@ export const Approved: Form = buildForm({
         buildCustomField({
           component: 'ConfirmationField',
           id: 'confirmationField',
-          title: '',
           description: '',
         }),
       ],

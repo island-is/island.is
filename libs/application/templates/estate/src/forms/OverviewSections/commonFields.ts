@@ -18,7 +18,6 @@ export const commonOverviewFields = [
   ...deceasedInfoFields,
   buildDescriptionField({
     id: 'space0',
-    title: '',
     marginBottom: 'gutter',
     space: 'gutter',
   }),
@@ -31,7 +30,6 @@ export const commonOverviewFields = [
   }),
   buildCustomField(
     {
-      title: '',
       id: 'estateMembersCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
@@ -67,13 +65,25 @@ export const commonOverviewFields = [
                   ],
                 ]
               : '',
+
+            /* Advocate 2 */
+            member.advocate2
+              ? [
+                  [
+                    m.inheritanceAdvocateLabel.defaultMessage +
+                      ': ' +
+                      member.advocate2?.name,
+                    formatPhoneNumber(member.advocate2.phone || ''),
+                    member.advocate2.email,
+                  ],
+                ]
+              : '',
           ],
         })),
     },
   ),
   buildDescriptionField({
     id: 'space1',
-    title: '',
     marginBottom: 'gutter',
     space: 'gutter',
   }),
@@ -91,7 +101,6 @@ export const commonOverviewFields = [
   }),
   buildDescriptionField({
     id: 'space2',
-    title: '',
     space: 'gutter',
     condition: (answers) =>
       getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
@@ -107,7 +116,6 @@ export const commonOverviewFields = [
   }),
   buildDescriptionField({
     id: 'space3',
-    title: '',
     space: 'gutter',
   }),
   buildKeyValueField({
@@ -119,7 +127,6 @@ export const commonOverviewFields = [
   }),
   buildDescriptionField({
     id: 'space4',
-    title: '',
     space: 'gutter',
   }),
   buildDividerField({}),

@@ -14,5 +14,5 @@ export const StopBuyerIfSameAsSeller: FC<
     return [true, null]
   })
 
-  return <></>
+  return null
 }

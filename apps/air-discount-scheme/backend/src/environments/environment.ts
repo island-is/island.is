@@ -13,12 +13,12 @@ const devConfig = {
   },
   redis: {
     urls: [
-      'localhost:7000',
-      'localhost:7001',
-      'localhost:7002',
-      'localhost:7003',
-      'localhost:7004',
-      'localhost:7005',
+      'localhost:7010',
+      'localhost:7011',
+      'localhost:7012',
+      'localhost:7013',
+      'localhost:7014',
+      'localhost:7015',
     ],
   },
   baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',

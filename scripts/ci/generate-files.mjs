@@ -17,8 +17,10 @@ const additionalPatterns = [
   '**/gen/fetch/**/*',
 ]
 
+const ignorePatterns = ['**/node_modules/**']
+
 const findCodegenFiles = () => {
-  return globSync('**/codegen.yml', { ignore: ['**/node_modules/**'] })
+  return globSync('**/codegen.yml', { ignore: ignorePatterns })
 }
 
 const parseCodegenFile = async (filePath) => {
@@ -98,7 +100,10 @@ async function main() {
   const missingFiles = []
 
   for (const pattern of patterns) {
-    const matchingFiles = globSync(pattern, { nodir: true })
+    const matchingFiles = globSync(pattern, {
+      nodir: true,
+      ignore: ignorePatterns,
+    })
     if (matchingFiles.length > 0) {
       existingFiles.push(...matchingFiles)
     } else {

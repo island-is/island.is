@@ -12,8 +12,8 @@ import {
   minMonths,
   maxMonths,
 } from '../../config'
-import { YES } from '../../constants'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
+import { YES } from '@island.is/application/core'
 
 interface YourRightsBoxChartProps {
   application: Application

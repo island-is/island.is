@@ -17,7 +17,7 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
-    const user: User = request.user
+    const user: User = request.user?.currentUser
 
     if (!user) {
       throw new InternalServerErrorException('Missing user')
@@ -40,14 +40,16 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
     const accessControlCase: Case = request.mergedCaseParent ?? theCase
 
     if (
-      canLimitedAccessUserViewCaseFile(
+      canLimitedAccessUserViewCaseFile({
         user,
-        accessControlCase.type,
-        accessControlCase.state,
-        caseFile.category,
-        accessControlCase.defendants,
-        accessControlCase.civilClaimants,
-      )
+        caseType: accessControlCase.type,
+        caseState: accessControlCase.state,
+        submittedBy: caseFile.submittedBy,
+        fileRepresentative: caseFile.fileRepresentative,
+        caseFileCategory: caseFile.category,
+        defendants: accessControlCase.defendants,
+        civilClaimants: accessControlCase.civilClaimants,
+      })
     ) {
       return true
     }

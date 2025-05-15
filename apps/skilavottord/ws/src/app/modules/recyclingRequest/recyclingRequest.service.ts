@@ -88,6 +88,18 @@ export class RecyclingRequestService {
         lost: vehicle.plateLost ? 1 : 0,
       })
 
+      this.logger.info(
+        `car-recycling: Degregistering vehicle ${getShortPermno(
+          vehiclePermno,
+        )} from Samgongustofa`,
+        {
+          disposalStationId,
+          mileage: vehicle.mileage ?? 0,
+          plateCount: vehicle.plateCount,
+          lost: vehicle.plateLost ? 1 : 0,
+        },
+      )
+
       const headerDeRegRequest = {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + jToken,
@@ -363,15 +375,6 @@ export class RecyclingRequestService {
         try {
           // partnerId 000 is Rafræn afskráning in Samgongustofa's system
           // Samgongustofa wants to use it ('000') instead of Recycling partnerId for testing
-          this.logger.info(
-            `car-recycling: Degregistering vehicle ${loggedPermno} from Samgongustofa`,
-            {
-              partnerId,
-              mileage: vehicle.mileage ?? 0,
-              plateCount: vehicle.plateCount,
-              lost: vehicle.plateLost ? 1 : 0,
-            },
-          )
 
           await this.deRegisterVehicle(permno, partnerId, vehicle)
         } catch (err) {

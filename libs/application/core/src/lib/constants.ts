@@ -33,6 +33,11 @@ export const NO_ANSWER = null
 
 export const YES = 'yes'
 export const NO = 'no'
+export type YesOrNo = typeof YES | typeof NO
+export enum YesOrNoEnum {
+  YES = 'yes',
+  NO = 'no',
+}
 
 export const hasYes = (answer: any) => {
   if (Array.isArray(answer)) {
@@ -50,3 +55,7 @@ export const DEFAULT_FILE_SIZE_LIMIT = 10000000 // 10MB
 export const DEFAULT_TOTAL_FILE_SIZE_SUM = 100000000 // 100MB, too high?
 export const DEFAULT_ALLOWED_FILE_TYPES =
   '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic'
+
+export const EMAIL_REGEX =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+export const NATIONAL_ID_REGEX = /([0-9]){6}-?([0-9]){4}/

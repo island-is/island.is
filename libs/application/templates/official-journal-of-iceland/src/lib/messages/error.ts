@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const error = defineMessages({
+  missingSignature: {
+    id: 'ojoi.application:error.missingSignature',
+    defaultMessage: 'Undirritun vantar',
+    description: 'Error message when signature is missing',
+  },
   fetchCommentsFailedTitle: {
     id: 'ojoi.application:error.fetchCommentsFailedTitle',
     defaultMessage: 'Ekki tókst að sækja athugasemdir',

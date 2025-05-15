@@ -7,7 +7,6 @@ import { conclusion, externalData } from '../../lib/messages'
 
 export const TransferOfMachineOwnershipForm: Form = buildForm({
   id: 'TransferOfMachineOwnershipFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

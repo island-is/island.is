@@ -237,6 +237,22 @@ export const en: TranslatedMessages = {
   'inbox.filterDateConfirm': 'Confirm',
   'inbox.filterDateCancel': 'Cancel',
 
+  // inbox bulk select
+  'inbox.bulkSelectButton': 'Select documents',
+  'inbox.bulkSelectAllButton': 'Select all',
+  'inbox.bulkDeselectAllButton': 'Deselect all',
+  'inbox.bulkSelectCancelButton': 'Cancel',
+  'inbox.bulkSelectActionStar': 'Star',
+  'inbox.bulkSelectActionArchive': 'Archive',
+  'inbox.bulkSelectActionRead': 'Mark as read',
+  'inbox.bulkSelect.starSuccess': 'Selected documents starred',
+  'inbox.bulkSelect.archiveSuccess': 'Selected documents archived',
+  'inbox.bulkSelect.markAsReadSuccess': 'Selected documents marked as read',
+  'inbox.bulkSelect.starError': 'Could not star documents',
+  'inbox.bulkSelect.archiveError': 'Could not archive documents',
+  'inbox.bulkSelect.markAsReadError': 'Could not mark documents as read',
+  'inbox.bulkSelect.pleaseTryAgain': 'Please try again later',
+
   // document detail
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
@@ -252,6 +268,8 @@ export const en: TranslatedMessages = {
     'When you get e.g. driving licenses, firearms licenses or fishing licenses from the government, they appear here.',
   'wallet.lastUpdated': 'Last updated: {date}',
   'wallet.update': 'Update',
+  'wallet.yourLicenses': 'Your licenses',
+  'wallet.childLicenses': 'Your children’s licenses',
 
   // wallet pass
   'walletPass.screenTitle': 'Pass',
@@ -275,26 +293,36 @@ export const en: TranslatedMessages = {
     'Too little time since license was accessed on another device',
   'walletPass.validLicense': 'Valid',
   'walletPass.expiredLicense': 'Expired',
-  'walletPass.passportNumber': 'Passport number: {licenseNumber}',
-  'walletPass.licenseNumber': 'License number: {licenseNumber}',
   'walletPass.errorFetchingLicense': 'Could not update license',
 
-  // wallet passport
-  'walletPassport.screenTitle': 'Passport',
-  'walletPassport.infoTitle': 'Remember the passport!',
-  'walletPassport.infoDescription':
+  // license details
+  'licenseDetail.pcard.alert.title': 'Remember the parking card!',
+  'licenseDetail.pcard.alert.description':
+    'This summary is not valid as a parking card.',
+  'licenseDetail.ehic.alert.title': 'Remember the card!',
+  'licenseDetail.ehic.alert.description':
+    'This summary is not valid as a European Health Insurance card.',
+  'licenseDetail.passport.alert.title': 'Remember the passport!',
+  'licenseDetail.passport.alert.description':
     'This summary is not valid as a travel document.',
-  'walletPassport.warningTitle': 'Expires within 6 months',
-  'walletPassport.warningDescription':
+  'licenseDetail.identityDocument.alert.title':
+    'This is for information only and is not valid for identification purposes',
+  'licenseDetail.identityDocument.alert.description':
+    'Only the physical document is valid for identification.',
+  'licenseDetail.identityTravelDocument.alert.title':
+    'Please remember your travel document!',
+  'licenseDetail.identityTravelDocument.alert.description':
+    'This is not valid as a travel document.',
+  'licenseDetail.warning.title': 'Expires within 6 months',
+  'licenseDetail.passport.warning.description':
     'Note that your passport will expire within the next 6 months.',
-  'walletPassport.displayName': 'Name',
-  'walletPassport.number': 'Number',
-  'walletPassport.issuingDate': 'Date issued',
-  'walletPassport.expirationDate': 'Expiration date',
-  'walletPassport.mrzName': 'Machine-readable name',
-  'walletPassport.children': 'Childrens passport',
-  'walletPassport.noPassport': 'No passport.',
-  'walletPassport.noPassportLink': 'Read more at island.is/vegabref',
+  'licenseDetail.identityDocument.warning.description':
+    'Note that your Id-card will expire within the next 6 months.',
+  'licenseDetail.passport.noPassport': 'No valid passport',
+  'licenseDetail.identityDocument.noIdentityDocument': 'No valid Id-cards',
+  'licenseDetail.apply': 'Apply',
+  'licenseDetail.passport.title': 'Passport',
+  'licenseDetail.identityDocument.title': 'ID-card',
 
   // license scanner
   'licenseScanner.title': 'Scan barcode',
@@ -338,14 +366,6 @@ export const en: TranslatedMessages = {
   'licenseScannerResult.nationalId': 'National ID',
   'licenseScannerResult.birthDate': 'Birthdate',
   'licenseScannerResult.driverLicenseNumber': 'Driver license number',
-
-  // license details
-  'licenseDetail.pcard.alert.title': 'Remember the parking card!',
-  'licenseDetail.pcard.alert.description':
-    'This summary is not valid as a parking card.',
-  'licenseDetail.ehic.alert.title': 'Remember the card!',
-  'licenseDetail.ehic.alert.description':
-    'This summary is not valid as a European Health Insurance card.',
 
   // notifications
   'notifications.screenTitle': 'Notifications',
@@ -519,6 +539,8 @@ export const en: TranslatedMessages = {
     completed {Completed}
     rejected {Rejected}
     draft {Application in progress}
+    approved {Approved}
+    notstarted {Not started}
     other {Unknown status}
   }`,
   'applicationStatusCard.draftProgress':

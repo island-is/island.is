@@ -21,7 +21,8 @@ import {
   isPrisonAdminUser,
   isPrisonStaffUser,
   isProsecutionUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
+  RequestSharedWhen,
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
@@ -108,52 +109,38 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
     },
   ]
 
-  if (user.role === UserRole.DISTRICT_COURT_ASSISTANT) {
-    options.push(
-      { type: indictmentCases },
+  options.push({
+    [Op.or]: [
       {
-        state: [
-          CaseState.SUBMITTED,
-          CaseState.WAITING_FOR_CANCELLATION,
-          CaseState.RECEIVED,
-          CaseState.COMPLETED,
+        [Op.and]: [
+          { type: [...restrictionCases, ...investigationCases] },
+          {
+            state: [
+              CaseState.DRAFT,
+              CaseState.SUBMITTED,
+              CaseState.RECEIVED,
+              CaseState.ACCEPTED,
+              CaseState.REJECTED,
+              CaseState.DISMISSED,
+            ],
+          },
         ],
       },
-    )
-  } else {
-    options.push({
-      [Op.or]: [
-        {
-          [Op.and]: [
-            { type: [...restrictionCases, ...investigationCases] },
-            {
-              state: [
-                CaseState.DRAFT,
-                CaseState.SUBMITTED,
-                CaseState.RECEIVED,
-                CaseState.ACCEPTED,
-                CaseState.REJECTED,
-                CaseState.DISMISSED,
-              ],
-            },
-          ],
-        },
-        {
-          [Op.and]: [
-            { type: indictmentCases },
-            {
-              state: [
-                CaseState.SUBMITTED,
-                CaseState.WAITING_FOR_CANCELLATION,
-                CaseState.RECEIVED,
-                CaseState.COMPLETED,
-              ],
-            },
-          ],
-        },
-      ],
-    })
-  }
+      {
+        [Op.and]: [
+          { type: indictmentCases },
+          {
+            state: [
+              CaseState.SUBMITTED,
+              CaseState.WAITING_FOR_CANCELLATION,
+              CaseState.RECEIVED,
+              CaseState.COMPLETED,
+            ],
+          },
+        ],
+      },
+    ],
+  })
 
   return {
     [Op.and]: options,
@@ -239,8 +226,12 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
     {
       [Op.or]: [
         {
+          // defender per case
           [Op.and]: [
             { type: [...restrictionCases, ...investigationCases] },
+            {
+              defender_national_id: [normalizedNationalId, formattedNationalId],
+            },
             {
               [Op.or]: [
                 {
@@ -275,12 +266,76 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                 },
               ],
             },
+          ],
+        },
+        {
+          // victim lawyer assigned to a case
+          [Op.and]: [
+            { type: [...restrictionCases, ...investigationCases] },
             {
-              defender_national_id: [normalizedNationalId, formattedNationalId],
+              [Op.or]: [
+                {
+                  // lawyer should get access when sent to court
+                  [Op.and]: [
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                        (SELECT case_id
+                          FROM victim
+                          WHERE lawyer_national_id in ('${normalizedNationalId}', '${formattedNationalId}') 
+                          AND lawyer_access_to_request = '${RequestSharedWhen.READY_FOR_COURT}')
+                      `),
+                      },
+                    },
+                    { state: [CaseState.SUBMITTED, CaseState.RECEIVED] },
+                  ],
+                },
+                {
+                  // lawyer should get access when court date is scheduled or when case is concluded
+                  [Op.and]: [
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                          (SELECT case_id
+                            FROM victim
+                            WHERE lawyer_national_id in ('${normalizedNationalId}', '${formattedNationalId}') 
+                            AND lawyer_access_to_request != '${RequestSharedWhen.OBLIGATED}')
+                        `),
+                      },
+                    },
+                    {
+                      [Op.or]: [
+                        {
+                          [Op.and]: [
+                            { state: CaseState.RECEIVED },
+                            {
+                              id: {
+                                [Op.in]: Sequelize.literal(`
+                                (SELECT case_id
+                                  FROM date_log
+                                  WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
+                              `),
+                              },
+                            },
+                          ],
+                        },
+                        {
+                          state: [
+                            CaseState.ACCEPTED,
+                            CaseState.REJECTED,
+                            CaseState.DISMISSED,
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },
         {
+          // confirmed defender and civil claimants in indictment cases
           [Op.and]: [
             { type: indictmentCases },
             {
@@ -351,7 +406,7 @@ export const getCasesQueryFilter = (user: User): WhereOptions => {
     return getDefenceUserCasesQueryFilter(user)
   }
 
-  if (isPublicProsecutorUser(user)) {
+  if (isPublicProsecutionOfficeUser(user)) {
     return getPublicProsecutionUserCasesQueryFilter()
   }
 

@@ -126,19 +126,28 @@ export const Footer = ({
                 </Box>
                 <div>
                   <Stack space={1}>
-                    <Inline space={1} alignY="center">
-                      <Icon
-                        icon="informationCircle"
-                        size="small"
-                        color="blue400"
-                        type="outline"
-                      />
+                    <Box
+                      display="flex"
+                      rowGap={1}
+                      columnGap={1}
+                      flexWrap="nowrap"
+                      justifyContent="flexStart"
+                    >
+                      <Box className={styles.iconPaddingTop}>
+                        <Icon
+                          icon="informationCircle"
+                          size="small"
+                          color="blue400"
+                          type="outline"
+                        />
+                      </Box>
+
                       <Text variant="h5" color="blue600" fontWeight="light">
                         <Link href={privacyPolicyLink.href}>
                           {privacyPolicyLink.title}
                         </Link>
                       </Text>
-                    </Inline>
+                    </Box>
                     <Inline space={1} alignY="center">
                       <Icon
                         type="outline"

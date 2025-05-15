@@ -32,7 +32,6 @@ export const cemetryKeyNumbersSection = buildSection({
           children: [
             buildCustomField({
               id: 'cemetryKeyNumbers',
-              title: '',
               component: 'CemetryOperation',
               childInputIds: Object.values(CEMETRYOPERATIONIDS),
             }),

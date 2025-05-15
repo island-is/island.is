@@ -64,7 +64,6 @@ export const overviewSection = buildSection({
       children: [
         buildCustomField({
           id: 'overviewCemetryField',
-          title: '',
           condition: (answers, externalData) => {
             const userType = getCurrentUserType(answers, externalData)
             return userType === FSIUSERTYPE.CEMETRY
@@ -74,7 +73,6 @@ export const overviewSection = buildSection({
         }),
         buildCustomField({
           id: 'overviewPartyField',
-          title: '',
           condition: (answers, externalData) => {
             const userType = getCurrentUserType(answers, externalData)
             return userType === FSIUSERTYPE.PARTY
@@ -84,7 +82,6 @@ export const overviewSection = buildSection({
         }),
         buildCustomField({
           id: 'overviewField',
-          title: '',
           condition: (answers) =>
             getValueViaPath(answers, 'election.incomeLimit') === GREATER,
           doesNotRequireAnswer: true,
@@ -92,7 +89,6 @@ export const overviewSection = buildSection({
         }),
         buildCustomField({
           id: 'overviewStatementField',
-          title: '',
           condition: (answers) =>
             getValueViaPath(answers, 'election.incomeLimit') === LESS,
           doesNotRequireAnswer: true,

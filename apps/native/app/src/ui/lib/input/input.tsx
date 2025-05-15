@@ -1,7 +1,7 @@
 import Clipboard from '@react-native-clipboard/clipboard'
 import React from 'react'
 import { Image, TouchableOpacity, View } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { Label } from '../label/label'
 import CopyIcon from '../../assets/icons/copy.png'
@@ -50,6 +50,7 @@ interface InputProps {
   label: string
   value?: string | null
   loading?: boolean
+  loadLabel?: boolean
   error?: boolean
   valueTestID?: string
   noBorder?: boolean
@@ -66,6 +67,7 @@ export function Input({
   loading,
   error,
   valueTestID,
+  loadLabel = false,
   noBorder = false,
   size = 'normal',
   isCompact = false,
@@ -73,13 +75,22 @@ export function Input({
   copy = false,
   warningText = '',
 }: InputProps) {
+  const theme = useTheme()
   const tvalue =
     value !== undefined && typeof value === 'string' && value.trim()
 
   return (
     <Host noBorder={noBorder} darkBorder={darkBorder}>
       <Content isCompact={isCompact}>
-        <LabelText variant="body3">{label}</LabelText>
+        {loadLabel && loading ? (
+          <Skeleton
+            active={loading}
+            error={error}
+            style={{ marginBottom: theme.spacing[1], width: '50%' }}
+          />
+        ) : (
+          <LabelText variant="body3">{label}</LabelText>
+        )}
         {loading || error ? (
           <Skeleton
             active={loading}

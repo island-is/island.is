@@ -6,14 +6,12 @@ import {
   getValueViaPath,
   buildAlertMessageField,
   buildKeyValueField,
+  YES,
+  NO,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/useQualityPhoto'
-import { HasQualitySignatureData } from '../fields/QualitySignature/hooks/useQualitySignature'
 import { m } from '../lib/messages'
 import { allowFakeCondition, requirementsMet } from '../lib/utils'
-import { NO, YES } from '../lib/constants'
-import { NationalRegistryUser } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 
 export const declined: Form = buildForm({
@@ -32,8 +30,9 @@ export const declined: Form = buildForm({
         buildKeyValueField({
           label: m.applicantsName,
           width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).fullName,
+          value: ({ externalData }) =>
+            getValueViaPath(externalData, 'nationalRegistry.data.fullName') ??
+            '',
         }),
         buildKeyValueField({
           label: m.applicantsNationalId,
@@ -43,7 +42,6 @@ export const declined: Form = buildForm({
         }),
         buildCustomField({
           id: 'currentLicense',
-          title: '',
           component: 'CurrentLicense',
         }),
         buildDescriptionField({
@@ -65,8 +63,10 @@ export const declined: Form = buildForm({
               return hasQualityPhoto === NO
             }
             return (
-              (externalData.qualityPhoto as HasQualityPhotoData)?.data
-                ?.hasQualityPhoto === false
+              getValueViaPath(
+                externalData,
+                'qualityPhoto.data.hasQualityPhoto',
+              ) === false
             )
           },
         }),
@@ -84,19 +84,16 @@ export const declined: Form = buildForm({
               return hasQualitySig === NO
             }
             return (
-              (externalData.qualitySignature as HasQualitySignatureData)?.data
-                ?.hasQualitySignature === false
+              getValueViaPath(
+                externalData,
+                'qualityPhoto.data.hasQualitySignature',
+              ) === false
             )
           },
+          marginBottom: 'containerGutter',
         }),
         buildDescriptionField({
           id: 'rejected.space',
-          title: '',
-          space: 'containerGutter',
-        }),
-        buildDescriptionField({
-          id: 'rejected.space1',
-          title: '',
           space: 'containerGutter',
         }),
       ],

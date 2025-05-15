@@ -1,14 +1,13 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, ExternalData } from '@island.is/application/types'
 import {
   CategorizedIncomeTypes,
   Eligible,
   IncomePlanConditions,
   IncomePlanRow,
-  LatestIncomePlan,
-  WithholdingTax,
-} from '../types'
-import { NO_ACTIVE_APPLICATIONS, INCOME_PLANS_CLOSED } from './constants'
+} from '@island.is/application/templates/social-insurance-administration-core/types'
+import { Application, ExternalData } from '@island.is/application/types'
+import { LatestIncomePlan, WithholdingTax } from '../types'
+import { INCOME_PLANS_CLOSED, NO_ACTIVE_APPLICATIONS } from './constants'
 import { incomePlanFormMessage } from './messages'
 
 export const getApplicationExternalData = (
@@ -96,48 +95,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     temporaryCalculationMonth,
     temporaryCalculationShow,
   }
-}
-
-export const getOneInstanceOfCategory = (
-  categories: CategorizedIncomeTypes[],
-) => {
-  return [
-    ...new Map(
-      categories.map((category) => [category.categoryName, category]),
-    ).values(),
-  ]
-}
-
-export const getCategoriesOptions = (externalData: ExternalData) => {
-  const { categorizedIncomeTypes } = getApplicationExternalData(externalData)
-  const categories = getOneInstanceOfCategory(categorizedIncomeTypes)
-
-  return (
-    categories &&
-    categories.map((item) => {
-      return {
-        value: item.categoryName || '',
-        label: item.categoryName || '',
-      }
-    })
-  )
-}
-
-export const getTypesOptions = (
-  externalData: ExternalData,
-  categoryName: string | undefined,
-) => {
-  const { categorizedIncomeTypes } = getApplicationExternalData(externalData)
-  if (categoryName === undefined) return []
-
-  return categorizedIncomeTypes
-    .filter((item) => item.categoryName === categoryName)
-    .map((item) => {
-      return {
-        value: item.incomeTypeName || '',
-        label: item.incomeTypeName || '',
-      }
-    })
 }
 
 export const isEligible = (externalData: ExternalData): boolean => {

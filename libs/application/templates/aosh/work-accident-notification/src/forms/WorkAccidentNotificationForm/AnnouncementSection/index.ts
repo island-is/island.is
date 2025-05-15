@@ -10,7 +10,7 @@ import { FormValue } from '@island.is/application/types'
 export const announcementSection = buildSection({
   id: 'externalData',
   title: externalData.dataProvider.announcement,
-  condition: (formValue: FormValue, externalData, user) => {
+  condition: (_formValue: FormValue, externalData) => {
     const type = getValueViaPath<string>(externalData, 'identity.data.type')
     return type === 'person'
   },
@@ -20,12 +20,10 @@ export const announcementSection = buildSection({
       children: [
         buildDescriptionField({
           id: 'externalData.firstHeading',
-          title: '',
           titleVariant: 'h4',
         }),
         buildDescriptionField({
           id: 'externalData.Description',
-          title: '',
           description: externalData.dataProvider.announcementDescription,
           titleVariant: 'h4',
           marginBottom: 3,

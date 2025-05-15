@@ -11,7 +11,7 @@ import {
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
 import { AlertMessage, Box, Stack, Text } from '@island.is/island-ui/core'
-import { Webreader } from '@island.is/web/components'
+import { EmailSignup, Webreader } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -34,14 +34,8 @@ const NewsItemImage = ({ newsItem }: NewsArticleProps) =>
     >
       <Image
         {...newsItem?.image}
-        url={
-          newsItem?.image?.url
-            ? newsItem.image?.url + '?w=1000&fm=webp&q=80'
-            : ''
-        }
-        thumbnail={
-          newsItem?.image?.url ? newsItem.image?.url + '?w=50&fm=webp&q=80' : ''
-        }
+        url={newsItem?.image?.url ? newsItem.image?.url : ''}
+        height={newsItem.image.height ?? ''}
       />
     </Box>
   )
@@ -61,6 +55,8 @@ export const NewsArticle: React.FC<
   const displayImageAboveContent =
     !newsItem?.fullWidthImageInContent ||
     (!displaySignLanguageVideo && newsItem?.fullWidthImageInContent)
+
+  const bottomSlices = newsItem?.organization?.newsBottomSlices ?? []
 
   return (
     <Box paddingBottom={[0, 0, 4]}>
@@ -127,11 +123,7 @@ export const NewsArticle: React.FC<
               Image: (slice: ImageProps) => {
                 return (
                   <Box className={styles.clearBoth}>
-                    <Image
-                      {...slice}
-                      thumbnail={slice.url + '?w=50'}
-                      url={slice.url + '?w=1000&fm=webp&q=80'}
-                    />
+                    <Image {...slice} url={slice.url} />
                   </Box>
                 )
               },
@@ -150,6 +142,16 @@ export const NewsArticle: React.FC<
         newsItem?.fullWidthImageInContent && (
           <NewsItemImage newsItem={newsItem} />
         )}
+
+      {bottomSlices.length > 0 && (
+        <Box paddingTop={3}>
+          <Stack space={3}>
+            {bottomSlices.map((slice) => (
+              <EmailSignup key={slice.id} slice={slice} />
+            ))}
+          </Stack>
+        </Box>
+      )}
     </Box>
   )
 }

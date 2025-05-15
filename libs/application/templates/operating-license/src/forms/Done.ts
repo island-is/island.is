@@ -9,7 +9,6 @@ import { m } from '../lib/messages'
 
 export const Done: Form = buildForm({
   id: 'OperatingLicenseApplicationComplete',
-  title: '',
   mode: FormModes.COMPLETED,
   children: [
     buildMultiField({

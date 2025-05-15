@@ -1,11 +1,11 @@
 import {
   Stack,
   Box,
-  Filter,
-  FilterInput,
-  Checkbox,
   Pagination,
   Text,
+  Input,
+  GridColumn,
+  GridRow,
 } from '@island.is/island-ui/core'
 import debounce from 'lodash/debounce'
 import { debounceTime } from '@island.is/shared/constants'
@@ -38,10 +38,9 @@ const VehicleBulkMileage = () => {
   const [page, setPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(1)
   const [search, setSearch] = useState<string>()
-  const [filterValue, setFilterValue] = useState<boolean>(false)
   const [displayFilters, setDisplayFilters] = useState<boolean>(false)
 
-  const [vehicleListQuery, { data, loading, error, called }] =
+  const [vehicleListQuery, { data, loading, error }] =
     useVehiclesListLazyQuery()
 
   useEffect(() => {
@@ -51,6 +50,7 @@ const VehicleBulkMileage = () => {
           page,
           pageSize: 10,
           query: undefined,
+          filterOnlyVehiclesUserCanRegisterMileage: true,
         },
       },
     })
@@ -65,14 +65,14 @@ const VehicleBulkMileage = () => {
             page,
             pageSize: 10,
             query: search ?? undefined,
-            filterOnlyRequiredMileageRegistration: filterValue,
+            filterOnlyVehiclesUserCanRegisterMileage: true,
           },
         },
       }).then((res) => {
         const vehicles: Array<VehicleType> =
           res.data?.vehiclesListV3?.data
             ?.map((v) => {
-              if (!v.type) {
+              if (!v.make) {
                 return null
               }
 
@@ -96,7 +96,7 @@ const VehicleBulkMileage = () => {
 
               return {
                 vehicleId: v.vehicleId,
-                vehicleType: v.type,
+                vehicleType: v.make,
                 lastMileageRegistration,
               }
             })
@@ -106,7 +106,7 @@ const VehicleBulkMileage = () => {
       })
     }, debounceTime.search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, filterValue, page])
+  }, [search, page])
 
   useEffect(() => {
     debouncedQuery()
@@ -171,46 +171,25 @@ const VehicleBulkMileage = () => {
         >
           {displayFilters && (
             <Box marginBottom={2}>
-              <Filter
-                labelClear={formatMessage(m.clearFilter)}
-                labelClearAll={formatMessage(m.clearAllFilters)}
-                labelOpen={formatMessage(m.openFilter)}
-                labelClose={formatMessage(m.closeFilter)}
-                variant="popover"
-                onFilterClear={() => {
-                  setFilterValue(false)
-                }}
-                align="left"
-                reverse
-                filterInput={
-                  <FilterInput
+              <GridRow>
+                <GridColumn span="4/12">
+                  <Input
+                    icon={{ name: 'search' }}
                     backgroundColor="blue"
+                    size="xs"
                     value={search ?? ''}
                     onChange={(search) => {
                       if (page !== 1) {
                         setPage(1)
                       }
-                      setSearch(search)
+                      setSearch(search.target.value)
                     }}
+                    label={formatMessage(m.searchLabel)}
                     name={formatMessage(m.searchLabel)}
                     placeholder={formatMessage(vehicleMessage.searchForPlate)}
                   />
-                }
-              >
-                <Box padding={4}>
-                  <Text variant="eyebrow" as="p" paddingBottom={2}>
-                    {formatMessage(m.filterBy)}
-                  </Text>
-                  <Checkbox
-                    name="onlyMileageRequiredVehicles"
-                    label={formatMessage(
-                      vehicleMessage.vehiclesRequireMileageRegistration,
-                    )}
-                    checked={filterValue}
-                    onChange={() => setFilterValue(!filterValue)}
-                  />
-                </Box>
-              </Filter>
+                </GridColumn>
+              </GridRow>
             </Box>
           )}
           <Stack space={4}>

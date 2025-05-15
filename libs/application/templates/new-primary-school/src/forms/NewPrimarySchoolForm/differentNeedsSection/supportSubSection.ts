@@ -5,9 +5,10 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
+  NO,
+  YES,
 } from '@island.is/application/core'
-import { NO, YES } from '@island.is/application/types'
-import { ApplicationType } from '../../../lib/constants'
+import { ApplicationType, SchoolType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
@@ -27,7 +28,7 @@ export const supportSubSection = buildSubSection({
       },
       children: [
         buildRadioField({
-          id: 'support.developmentalAssessment',
+          id: 'support.hasDiagnoses',
           title: (application) => {
             const { applicationType } = getApplicationAnswers(
               application.answers,
@@ -35,27 +36,26 @@ export const supportSubSection = buildSubSection({
 
             return applicationType ===
               ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-              ? newPrimarySchoolMessages.differentNeeds
-                  .enrollmentDevelopmentalAssessment
-              : newPrimarySchoolMessages.differentNeeds.developmentalAssessment
+              ? newPrimarySchoolMessages.differentNeeds.enrollmentHasDiagnoses
+              : newPrimarySchoolMessages.differentNeeds.hasDiagnoses
           },
           width: 'half',
           required: true,
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'yes-option',
+              dataTestId: 'has-diagnoses',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-option',
+              dataTestId: 'no-has-diagnoses',
               value: NO,
             },
           ],
         }),
         buildRadioField({
-          id: 'support.specialSupport',
+          id: 'support.hasHadSupport',
           title: (application) => {
             const { applicationType } = getApplicationAnswers(
               application.answers,
@@ -63,8 +63,8 @@ export const supportSubSection = buildSubSection({
 
             return applicationType ===
               ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
-              ? newPrimarySchoolMessages.differentNeeds.enrollmentSpecialSupport
-              : newPrimarySchoolMessages.differentNeeds.specialSupport
+              ? newPrimarySchoolMessages.differentNeeds.enrollmentHasHadSupport
+              : newPrimarySchoolMessages.differentNeeds.hasHadSupport
           },
           width: 'half',
           required: true,
@@ -72,12 +72,12 @@ export const supportSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'yes-option',
+              dataTestId: 'has-had-support',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-option',
+              dataTestId: 'no-has-had-support',
               value: NO,
             },
           ],
@@ -94,20 +94,20 @@ export const supportSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'yes-option',
+              dataTestId: 'has-integrated-services',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-option',
+              dataTestId: 'no-has-integrated-services',
               value: NO,
             },
           ],
           condition: (answers) => {
-            const { developmentalAssessment, specialSupport } =
+            const { hasDiagnoses, hasHadSupport } =
               getApplicationAnswers(answers)
 
-            return developmentalAssessment === YES || specialSupport === YES
+            return hasDiagnoses === YES || hasHadSupport === YES
           },
         }),
         buildRadioField({
@@ -121,24 +121,21 @@ export const supportSubSection = buildSubSection({
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'yes-option',
+              dataTestId: 'has-case-manager',
               value: YES,
             },
             {
               label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-option',
+              dataTestId: 'no-has-case-manager',
               value: NO,
             },
           ],
           condition: (answers) => {
-            const {
-              developmentalAssessment,
-              specialSupport,
-              hasIntegratedServices,
-            } = getApplicationAnswers(answers)
+            const { hasDiagnoses, hasHadSupport, hasIntegratedServices } =
+              getApplicationAnswers(answers)
 
             return (
-              (developmentalAssessment === YES || specialSupport === YES) &&
+              (hasDiagnoses === YES || hasHadSupport === YES) &&
               hasIntegratedServices === YES
             )
           },
@@ -150,14 +147,14 @@ export const supportSubSection = buildSubSection({
           required: true,
           condition: (answers) => {
             const {
-              developmentalAssessment,
-              specialSupport,
+              hasDiagnoses,
+              hasHadSupport,
               hasIntegratedServices,
               hasCaseManager,
             } = getApplicationAnswers(answers)
 
             return (
-              (developmentalAssessment === YES || specialSupport === YES) &&
+              (hasDiagnoses === YES || hasHadSupport === YES) &&
               hasIntegratedServices === YES &&
               hasCaseManager === YES
             )
@@ -170,14 +167,14 @@ export const supportSubSection = buildSubSection({
           required: true,
           condition: (answers) => {
             const {
-              developmentalAssessment,
-              specialSupport,
+              hasDiagnoses,
+              hasHadSupport,
               hasIntegratedServices,
               hasCaseManager,
             } = getApplicationAnswers(answers)
 
             return (
-              (developmentalAssessment === YES || specialSupport === YES) &&
+              (hasDiagnoses === YES || hasHadSupport === YES) &&
               hasIntegratedServices === YES &&
               hasCaseManager === YES
             )
@@ -185,16 +182,23 @@ export const supportSubSection = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'support.supportAlertMessage',
-          title: newPrimarySchoolMessages.shared.alertTitle,
-          message: (application) => {
-            const { applicationType } = getApplicationAnswers(
-              application.answers,
-            )
+          title: (application) => {
+            const { applicationType, selectedSchoolType } =
+              getApplicationAnswers(application.answers)
 
-            return applicationType ===
-              ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+            return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
+              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
+              ? newPrimarySchoolMessages.shared.alertTitle.description
+              : newPrimarySchoolMessages.shared.alertTitle
+          },
+          message: (application) => {
+            const { applicationType, selectedSchoolType } =
+              getApplicationAnswers(application.answers)
+
+            return applicationType === ApplicationType.NEW_PRIMARY_SCHOOL &&
+              selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL
               ? newPrimarySchoolMessages.differentNeeds
-                  .enrollmentSupportAlertMessage
+                  .internationalSchoolSupportAlertMessage
               : newPrimarySchoolMessages.differentNeeds.supportAlertMessage
           },
           doesNotRequireAnswer: true,
@@ -202,14 +206,15 @@ export const supportSubSection = buildSubSection({
           marginTop: 4,
         }),
         buildCheckboxField({
-          id: 'support.requestMeeting',
-          description: newPrimarySchoolMessages.differentNeeds.requestMeeting,
+          id: 'support.requestingMeeting',
+          description:
+            newPrimarySchoolMessages.differentNeeds.requestingMeeting,
           options: [
             {
               value: YES,
               label:
                 newPrimarySchoolMessages.differentNeeds
-                  .requestMeetingDescription,
+                  .requestingMeetingDescription,
             },
           ],
         }),

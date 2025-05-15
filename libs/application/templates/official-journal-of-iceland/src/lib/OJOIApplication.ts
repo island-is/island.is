@@ -297,7 +297,7 @@ const OJOITemplate: ApplicationTemplate<
         meta: {
           name: 'Umsókn hafnað',
           status: 'rejected',
-          lifecycle: pruneAfterDays(30),
+          lifecycle: pruneAfterDays(90),
           actionCard: {
             tag: {
               label: 'Hafnað',

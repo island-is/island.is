@@ -1,6 +1,7 @@
 mutation CreateCase($input: CreateCaseInput!) {
   createCase(input: $input) {
     id
+    type
     defendants {
       id
     }

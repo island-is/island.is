@@ -27,7 +27,6 @@ export const sectionExistingApplication = buildSubSection({
       children: [
         buildCustomField({
           id: 'existingApplicationLink',
-          title: '',
           description: m.existingApplicationExists,
           component: 'LinkExistingApplication',
         }),

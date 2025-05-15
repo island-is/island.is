@@ -380,7 +380,7 @@ describe('CaseController - Update', () => {
       mockFindById.mockResolvedValueOnce({
         id: prosecutorId,
         role: UserRole.PROSECUTOR,
-        institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+        institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
       })
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
@@ -885,6 +885,12 @@ describe('CaseController - Update', () => {
       ])
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId1, subpoenaId1],
+        },
+        {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
           user,
           caseId: theCase.id,
@@ -895,6 +901,12 @@ describe('CaseController - Update', () => {
           user,
           caseId: theCase.id,
           elementId: [defendantId1, subpoenaId1],
+        },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId2, subpoenaId2],
         },
         {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,

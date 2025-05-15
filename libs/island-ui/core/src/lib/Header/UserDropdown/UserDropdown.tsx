@@ -41,6 +41,7 @@ export const UserDropdown = ({
       hideOnEsc={true}
       removeOnClose={true}
       preventBodyScroll={false}
+      modalLabel={language === 'is' ? 'Notendavalmynd' : 'User account menu'}
       onVisibilityChange={(visibility: boolean) => {
         if (visibility !== isVisible) {
           setDropdownState('closed')

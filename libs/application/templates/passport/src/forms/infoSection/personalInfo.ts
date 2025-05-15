@@ -81,12 +81,10 @@ export const personalInfo = buildMultiField({
     }),
     buildDescriptionField({
       id: 'personalInfo.space',
-      title: '',
       space: 'containerGutter',
     }),
     buildCheckboxField({
       id: 'personalInfo.disabilityCheckbox',
-      title: '',
       large: false,
       backgroundColor: 'white',
       defaultValue: [],
@@ -99,7 +97,6 @@ export const personalInfo = buildMultiField({
     }),
     buildCustomField({
       id: 'personalInfo.disabilityAlertMessage',
-      title: '',
       component: 'HasDisabilityLicenseMessage',
       doesNotRequireAnswer: true,
       condition: (answers) =>

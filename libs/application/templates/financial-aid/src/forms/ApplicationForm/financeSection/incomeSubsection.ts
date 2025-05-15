@@ -21,7 +21,6 @@ export const incomeSubsection = buildSubSection({
       children: [
         buildRadioField({
           id: Routes.INCOME,
-          title: '',
           width: 'half',
           options: incomeOptions,
           marginBottom: 2,
@@ -40,7 +39,6 @@ export const incomeSubsection = buildSubSection({
         }),
         buildDescriptionField({
           id: 'incomeBulletList',
-          title: '',
           description: m.incomeForm.bulletList.bullets,
         }),
       ],

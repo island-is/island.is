@@ -26,4 +26,7 @@ export class GenericFormInput {
 
   @Field({ nullable: true })
   recipientFormFieldDeciderValue?: string
+
+  @Field(() => String, { nullable: true })
+  lang?: string | null
 }

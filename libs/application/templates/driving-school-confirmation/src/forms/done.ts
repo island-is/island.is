@@ -9,7 +9,6 @@ export const done: Form = buildForm({
   children: [
     buildCustomField({
       id: 'schoolConfirmed',
-      title: '',
       component: 'SchoolConfirmed',
     }),
   ],

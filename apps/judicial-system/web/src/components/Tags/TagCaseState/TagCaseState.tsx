@@ -1,60 +1,61 @@
-import { FC } from 'react'
+import { FC, useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Tag, TagVariant } from '@island.is/island-ui/core'
 import {
+  isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import {
-  CaseIndictmentRulingDecision,
+  CaseListEntry,
   CaseState,
-  CaseType,
   Defendant,
   IndictmentDecision,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { UserContext } from '../../UserProvider/UserProvider'
 import { strings } from './TagCaseState.strings'
 
+interface CaseStateTag {
+  color: TagVariant
+  text: string
+}
+
 interface Props {
-  caseState?: CaseState | null
-  caseType?: CaseType | null
-  isCourtRole?: boolean
-  isValidToDateInThePast?: boolean | null
-  courtDate?: string | null
-  indictmentReviewer?: User | null
-  indictmentRulingDecision?: CaseIndictmentRulingDecision | null
+  theCase: CaseListEntry
   customMapCaseStateToTag?: (
     formatMessage: IntlShape['formatMessage'],
-    state?: CaseState | null,
-    indictmentReviewer?: User | null, // TODO: Refactor so we have a more generalized interface for the info passed in to the component
-  ) => { color: TagVariant; text: string }
-  indictmentDecision?: IndictmentDecision | null
-  defendants?: Defendant[] | null
+    theCase: CaseListEntry,
+  ) => CaseStateTag
 }
 
 const haveAllSubpoenasBeenServiced = (defendants: Defendant[]): boolean => {
   return defendants.every((defendant) => {
-    // if at least one subpoena for each defendant was serviced, we return true
-    return defendant.subpoenas?.some((subpoena) =>
-      isSuccessfulServiceStatus(subpoena.serviceStatus),
+    // if the defendant was served by alternative means or
+    // at least one subpoena for each defendant was serviced,
+    // then we return true
+    return (
+      defendant.isAlternativeService ||
+      defendant.subpoenas?.some((subpoena) =>
+        isSuccessfulServiceStatus(subpoena.serviceStatus),
+      )
     )
   })
 }
 
 export const mapIndictmentCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
-  state?: CaseState | null,
-  indictmentReviewer?: User | null,
-): { color: TagVariant; text: string } => {
-  switch (state) {
+  theCase: CaseListEntry,
+): CaseStateTag => {
+  switch (theCase.state) {
     case CaseState.COMPLETED:
       return {
-        color: indictmentReviewer ? 'mint' : 'purple',
+        color: theCase.indictmentReviewer ? 'mint' : 'purple',
         text: formatMessage(
-          indictmentReviewer ? strings.beingReviewed : strings.new,
+          theCase.indictmentReviewer ? strings.beingReviewed : strings.new,
         ),
       }
     default:
@@ -64,16 +65,10 @@ export const mapIndictmentCaseStateToTagVariant = (
 
 export const mapCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
-  state?: CaseState | null,
-  caseType?: CaseType | null,
-  isValidToDateInThePast?: boolean | null,
-  scheduledDate?: string | null,
-  isCourtRole?: boolean,
-  indictmentRulingDecision?: CaseIndictmentRulingDecision | null,
-  indictmentDecision?: IndictmentDecision | null,
-  defendants?: Defendant[] | null,
-): { color: TagVariant; text: string } => {
-  switch (state) {
+  theCase: CaseListEntry,
+  user?: User,
+): CaseStateTag => {
+  switch (theCase.state) {
     case CaseState.NEW:
     case CaseState.DRAFT:
     case CaseState.WAITING_FOR_CONFIRMATION:
@@ -81,21 +76,23 @@ export const mapCaseStateToTagVariant = (
     case CaseState.SUBMITTED:
       return {
         color: 'purple',
-        text: formatMessage(isCourtRole ? strings.new : strings.sent),
+        text: formatMessage(
+          isDistrictCourtUser(user) ? strings.new : strings.sent,
+        ),
       }
     case CaseState.RECEIVED: {
       if (
-        isIndictmentCase(caseType) &&
-        defendants &&
-        scheduledDate &&
-        !haveAllSubpoenasBeenServiced(defendants)
+        isIndictmentCase(theCase.type) &&
+        theCase.defendants &&
+        theCase.courtDate &&
+        !haveAllSubpoenasBeenServiced(theCase.defendants)
       ) {
         return {
           color: 'red',
           text: formatMessage(strings.notYetServiced),
         }
       }
-      switch (indictmentDecision) {
+      switch (theCase.indictmentDecision) {
         case IndictmentDecision.POSTPONING:
         case IndictmentDecision.SCHEDULING:
         case IndictmentDecision.COMPLETING:
@@ -109,18 +106,20 @@ export const mapCaseStateToTagVariant = (
           return { color: 'blue', text: formatMessage(strings.reassignment) }
       }
 
-      return scheduledDate
+      return theCase.courtDate
         ? { color: 'mint', text: formatMessage(strings.scheduled) }
         : { color: 'blueberry', text: formatMessage(strings.received) }
     }
 
     case CaseState.ACCEPTED:
-      return isIndictmentCase(caseType) || isValidToDateInThePast
+      return isIndictmentCase(theCase.type) || theCase.isValidToDateInThePast
         ? { color: 'darkerBlue', text: formatMessage(strings.inactive) }
         : {
             color: 'blue',
             text: formatMessage(
-              isInvestigationCase(caseType) ? strings.accepted : strings.active,
+              isInvestigationCase(theCase.type)
+                ? strings.accepted
+                : strings.active,
             ),
           }
     case CaseState.REJECTED:
@@ -130,7 +129,9 @@ export const mapCaseStateToTagVariant = (
     case CaseState.COMPLETED:
       return {
         color: 'darkerBlue',
-        text: formatMessage(strings.completed, { indictmentRulingDecision }),
+        text: formatMessage(strings.completed, {
+          indictmentRulingDecision: theCase.indictmentRulingDecision,
+        }),
       }
     case CaseState.WAITING_FOR_CANCELLATION:
       return {
@@ -144,32 +145,12 @@ export const mapCaseStateToTagVariant = (
 
 const TagCaseState: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
-  const {
-    caseState,
-    caseType,
-    isCourtRole,
-    isValidToDateInThePast,
-    courtDate,
-    indictmentReviewer,
-    indictmentRulingDecision,
-    customMapCaseStateToTag,
-    indictmentDecision,
-    defendants,
-  } = props
+  const { theCase, customMapCaseStateToTag } = props
+  const { user } = useContext(UserContext)
 
   const tagVariant = customMapCaseStateToTag
-    ? customMapCaseStateToTag(formatMessage, caseState, indictmentReviewer)
-    : mapCaseStateToTagVariant(
-        formatMessage,
-        caseState,
-        caseType,
-        isValidToDateInThePast,
-        courtDate,
-        isCourtRole,
-        indictmentRulingDecision,
-        indictmentDecision,
-        defendants,
-      )
+    ? customMapCaseStateToTag(formatMessage, theCase)
+    : mapCaseStateToTagVariant(formatMessage, theCase, user)
 
   if (!tagVariant) return null
 

@@ -113,8 +113,7 @@ const Ruling = () => {
   const caseFiles =
     workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
-  const isRulingRequired =
-    workingCase.decision !== CaseDecision.COMPLETED_WITHOUT_RULING
+  const isRulingRequired = !workingCase.isCompletedWithoutRuling
   return (
     <PageLayout
       workingCase={workingCase}
@@ -150,9 +149,7 @@ const Ruling = () => {
               setAndSendCaseToServer(
                 [
                   {
-                    decision: target.checked
-                      ? CaseDecision.COMPLETED_WITHOUT_RULING
-                      : null,
+                    isCompletedWithoutRuling: target.checked,
                     conclusion: formatMessage(
                       m.sections.completedWithoutRuling.conclusion,
                     ),
@@ -395,7 +392,7 @@ const Ruling = () => {
                   [
                     {
                       conclusion:
-                        decision === CaseDecision.ACCEPTING
+                        decision === CaseDecision.ACCEPTING && isRulingRequired
                           ? workingCase.demands
                           : workingCase.conclusion,
                       ruling,
@@ -407,7 +404,6 @@ const Ruling = () => {
                   setWorkingCase,
                 )
               }}
-              disabled={!isRulingRequired}
             />
           </Box>
         </Box>

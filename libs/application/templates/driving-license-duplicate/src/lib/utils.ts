@@ -1,7 +1,7 @@
 import { ExternalData } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { IGNORE, NO, YES } from './constants'
+import { IGNORE } from './constants'
 
 export const getCurrencyString = (n: number) =>
   n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'

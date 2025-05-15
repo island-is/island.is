@@ -11,11 +11,10 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { conclusion, overview } from '../lib/messages'
 import { Logo } from '../assets/Logo'
-import { checkIsFreshman } from '../utils'
+import { applicationDataHasBeenPruned, checkIsFreshman } from '../utils'
 
 export const Submitted: Form = buildForm({
   id: 'SubmittedForm',
-  title: '',
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
@@ -35,7 +34,10 @@ export const Submitted: Form = buildForm({
               title: conclusion.overview.alertTitle,
               message: conclusion.overview.alertMessageFreshman,
               condition: (answers) => {
-                return checkIsFreshman(answers)
+                return (
+                  !applicationDataHasBeenPruned(answers) &&
+                  checkIsFreshman(answers)
+                )
               },
             }),
             buildAlertMessageField({
@@ -44,18 +46,19 @@ export const Submitted: Form = buildForm({
               title: conclusion.overview.alertTitle,
               message: conclusion.overview.alertMessageGeneral,
               condition: (answers) => {
-                return !checkIsFreshman(answers)
+                return (
+                  !applicationDataHasBeenPruned(answers) &&
+                  !checkIsFreshman(answers)
+                )
               },
             }),
             buildCustomField({
               component: 'Overview',
               id: 'conclusion',
-              title: '',
               description: '',
             }),
             buildMessageWithLinkButtonField({
               id: 'conclusionBottomLink',
-              title: '',
               url: '/minarsidur/umsoknir',
               buttonTitle: coreMessages.openServicePortalButtonTitle,
               message: coreMessages.openServicePortalMessageText,
@@ -63,8 +66,8 @@ export const Submitted: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: '',
               refetchApplicationAfterSubmit: true,
+              condition: (answers) => !applicationDataHasBeenPruned(answers),
               actions: [
                 {
                   event: DefaultEvents.EDIT,
@@ -76,7 +79,6 @@ export const Submitted: Form = buildForm({
             buildCustomField({
               component: 'HandleBeforeSubmitInSubmitted',
               id: 'handleBeforeSubmitInSubmitted',
-              title: '',
               description: '',
             }),
           ],
