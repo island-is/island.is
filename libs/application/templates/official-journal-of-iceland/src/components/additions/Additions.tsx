@@ -16,10 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { z } from 'zod'
-import {
-  DEFAULT_ADDITIONS_COUNT,
-  MAXIMUM_ADDITIONS_COUNT,
-} from '../../lib/constants'
+import { MAXIMUM_ADDITIONS_COUNT } from '../../lib/constants'
 import { HTMLEditor } from '../htmlEditor/HTMLEditor'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import { getValueViaPath } from '@island.is/application/core'
@@ -64,9 +61,7 @@ export const Additions = ({ application }: Props) => {
       InputFields.advert.additions,
     )
 
-    return isAddition(additions)
-      ? additions
-      : [getAddition(titlePrefix, DEFAULT_ADDITIONS_COUNT, false)]
+    return isAddition(additions) ? additions : []
   }
 
   const onRemoveAddition = (index: number) => {
@@ -256,17 +251,19 @@ export const Additions = ({ application }: Props) => {
             </Box>
           )
         })}
-        <Inline space={2} flexWrap="wrap">
-          <Button
-            disabled={additions.length >= MAXIMUM_ADDITIONS_COUNT}
-            variant="utility"
-            icon="add"
-            size="small"
-            onClick={onAddAddition}
-          >
-            {f(attachments.buttons.addAddition)}
-          </Button>
-        </Inline>
+        <Box paddingY={2}>
+          <Inline space={2} flexWrap="wrap">
+            <Button
+              disabled={additions.length >= MAXIMUM_ADDITIONS_COUNT}
+              variant="utility"
+              icon="add"
+              size="small"
+              onClick={onAddAddition}
+            >
+              {f(attachments.buttons.addAddition)}
+            </Button>
+          </Inline>
+        </Box>
       </Stack>
     </Stack>
   )

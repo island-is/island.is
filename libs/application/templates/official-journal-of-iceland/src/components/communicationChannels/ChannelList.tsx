@@ -29,16 +29,17 @@ export const ChannelList = ({
 
   const userInfo = useUserInfo()
 
-  const initialChannel = hasUserInfo ? {
-    name: `${user?.firstName} ${user?.lastName}`,
-    email: user?.email,
-    phone: undefined,
-  } : {
-    name: userInfo?.profile?.name,
-    email: userInfo?.profile?.email,
-    phone: userInfo?.profile?.phone_number,
-  }
-
+  const initialChannel = hasUserInfo
+    ? {
+        name: `${user?.firstName} ${user?.lastName}`,
+        email: user?.email,
+        phone: undefined,
+      }
+    : {
+        name: userInfo?.profile?.name,
+        email: userInfo?.profile?.email,
+        phone: userInfo?.profile?.phone_number,
+      }
 
   const channels = application.answers.advert?.channels || [initialChannel]
 
@@ -69,12 +70,7 @@ export const ChannelList = ({
                   <button
                     type="button"
                     onClick={() =>
-                      onOpenModal(
-                        i,
-                        channel.name,
-                        channel.email,
-                        channel.phone,
-                      )
+                      onOpenModal(i, channel.name, channel.email, channel.phone)
                     }
                   >
                     <Icon color="blue400" icon="pencil" />

@@ -1,7 +1,4 @@
-import {
-  FieldBaseProps,
-  GenericFormField,
-} from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import { FC, useEffect } from 'react'
 import {
   Box,

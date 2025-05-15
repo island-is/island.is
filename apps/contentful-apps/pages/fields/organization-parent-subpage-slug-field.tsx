@@ -3,9 +3,8 @@ import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Stack, Text, TextInput } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
-import slugify from '@sindresorhus/slugify'
 
-import { CUSTOM_SLUGIFY_REPLACEMENTS } from '../../constants'
+import { slugify } from '../../utils'
 
 const DEBOUNCE_TIME = 100
 
@@ -46,11 +45,7 @@ const OrganizationParentSubpageSlugField = () => {
         }
 
         if (newTitle) {
-          setValue(
-            slugify(String(newTitle), {
-              customReplacements: CUSTOM_SLUGIFY_REPLACEMENTS,
-            }),
-          )
+          setValue(slugify(String(newTitle)))
         }
       })
   }, [hasEntryBeenPublished, sdk.entry.fields.title, sdk.field.locale])

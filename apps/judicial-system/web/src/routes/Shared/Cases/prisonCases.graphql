@@ -90,5 +90,6 @@ query PrisonCases {
     indictmentRulingDecision
     indictmentAppealDeadline
     caseSentToCourtDate
+    isRegisteredInPrisonSystem
   }
 }

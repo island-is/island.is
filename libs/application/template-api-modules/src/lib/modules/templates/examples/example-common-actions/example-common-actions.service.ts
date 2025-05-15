@@ -38,7 +38,6 @@ export class ExampleCommonActionsService extends BaseTemplateApiService {
       },
     })
 
-
     return {
       referenceData: {
         applicantName,
@@ -73,7 +72,6 @@ export class ExampleCommonActionsService extends BaseTemplateApiService {
   async createApplication() {
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
-
 
     return {
       id: 1337,

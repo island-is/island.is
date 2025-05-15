@@ -158,4 +158,7 @@ export class CaseListEntry {
   // automatically.
   @Field(() => Boolean, { nullable: true })
   readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isRegisteredInPrisonSystem?: boolean
 }

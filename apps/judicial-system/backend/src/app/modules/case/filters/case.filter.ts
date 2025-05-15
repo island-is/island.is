@@ -228,7 +228,9 @@ const canPrisonAdminUserAccessCase = (
 ): boolean => {
   // Prison admin users cannot update cases
   if (forUpdate) {
-    return false
+    if (!isIndictmentCase(theCase.type)) {
+      return false
+    }
   }
 
   // Check case type access

@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { formatText, getValueViaPath, NO, YES } from '@island.is/application/core'
+import {
+  formatText,
+  getValueViaPath,
+  NO,
+  YES,
+} from '@island.is/application/core'
 import {
   GridColumn,
   GridRow,

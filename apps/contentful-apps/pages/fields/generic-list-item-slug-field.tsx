@@ -3,10 +3,8 @@ import { useDebounce } from 'react-use'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Stack, Text, TextInput } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
-import slugify from '@sindresorhus/slugify'
 
-import { CUSTOM_SLUGIFY_REPLACEMENTS } from '../../constants'
-import { slugifyDate } from '../../utils'
+import { slugify, slugifyDate } from '../../utils'
 
 const DEBOUNCE_TIME = 100
 
@@ -58,11 +56,7 @@ const GenericListItemSlugField = () => {
           return
         }
         const date = sdk.entry.fields.date.getValue()
-        setValue(
-          `${slugify(newTitle, {
-            customReplacements: CUSTOM_SLUGIFY_REPLACEMENTS,
-          })}${date ? '-' + slugifyDate(date) : ''}`,
-        )
+        setValue(`${slugify(newTitle)}${date ? '-' + slugifyDate(date) : ''}`)
       })
 
     const unsubscribeFromDateValueChanges =
@@ -74,11 +68,7 @@ const GenericListItemSlugField = () => {
         if (!title || hasEntryBeenPublished) {
           return
         }
-        setValue(
-          `${slugify(title, {
-            customReplacements: CUSTOM_SLUGIFY_REPLACEMENTS,
-          })}${date ? `-${slugifyDate(date)}` : ''}`,
-        )
+        setValue(`${slugify(title)}${date ? `-${slugifyDate(date)}` : ''}`)
       })
 
     return () => {

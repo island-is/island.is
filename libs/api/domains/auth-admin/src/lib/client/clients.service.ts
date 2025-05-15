@@ -5,7 +5,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   CreateClientType,
   MeClientsControllerCreateRequest,
-  ClientSso
+  ClientSso,
 } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
 
@@ -133,7 +133,7 @@ export class ClientsService extends MultiEnvironmentService {
             clientName: input.displayName,
             contactEmail: tenant?.contactEmail,
             supportedDelegationTypes: input.supportedDelegationTypes,
-            sso: input.sso as ClientSso|| ClientSso.disabled,
+            sso: (input.sso as ClientSso) || ClientSso.disabled,
           },
         }
 

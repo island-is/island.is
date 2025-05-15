@@ -61,7 +61,7 @@ export const clientBaseAttributes: Partial<Client> = {
   requirePkce: true,
   slidingRefreshTokenLifetime: 20 * 60, // 20 minutes
   updateAccessTokenClaimsOnRefresh: true,
-  sso: ClientSso.Enabled
+  sso: ClientSso.Enabled,
 }
 
 @Injectable()

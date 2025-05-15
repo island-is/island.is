@@ -43,7 +43,8 @@ export const OJOIAdvertCard = ({
               <Text variant="eyebrow" color="blueberry400">
                 {department}
                 {department && publicationDate && ' - '}
-                {publicationDate && `Útg: ${formatDate(publicationDate, 'd.M.yyyy')}`}
+                {publicationDate &&
+                  `Útg: ${formatDate(publicationDate, 'd.M.yyyy')}`}
               </Text>
             </Box>
           )}

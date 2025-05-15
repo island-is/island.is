@@ -33,9 +33,7 @@ const applicant = z.object({
 
 const termsOfAgreement = z.object({
   userTerms: z
-    .array(
-      z.nativeEnum(YesOrNoEnum).refine((v) => v === YesOrNoEnum.YES, {}),
-    )
+    .array(z.nativeEnum(YesOrNoEnum).refine((v) => v === YesOrNoEnum.YES, {}))
     .length(1),
 })
 
