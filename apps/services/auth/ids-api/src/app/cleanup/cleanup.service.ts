@@ -11,7 +11,7 @@ export class CleanupService {
     private readonly logger: Logger,
     private readonly grantsService: GrantsService,
   ) {}
-  
+
   public async run() {
     const timer = this.logger.startTimer()
     this.logger.info('Worker starting...')
