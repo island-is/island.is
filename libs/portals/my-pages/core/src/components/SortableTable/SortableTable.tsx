@@ -70,7 +70,10 @@ import { EmptyTable } from '../EmptyTable/EmptyTable'
 export const SortableTable = (props: SortableTableProps) => {
   const { items, requestSort, sortConfig } = useSortableData<SortableData>(
     props.items,
-    { direction: 'ascending', key: props.defaultSortByKey },
+    {
+      direction: props.sortBy ?? 'ascending',
+      key: props.defaultSortByKey,
+    },
   )
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md

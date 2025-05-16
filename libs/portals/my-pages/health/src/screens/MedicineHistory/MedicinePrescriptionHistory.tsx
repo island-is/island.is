@@ -81,7 +81,8 @@ const MedicinePrescriptionHistory = () => {
           }}
           expandable
           align="left"
-          defaultSortByKey="medicine"
+          defaultSortByKey="lastDispensed"
+          sortBy="descending"
           mobileTitleKey="medicine"
           ellipsisLength={22}
           items={
@@ -113,7 +114,8 @@ const MedicinePrescriptionHistory = () => {
                             type="outline"
                           />
                         ),
-                        date: formatDate(subItem.date),
+                        date: formatDate(new Date(subItem.date)),
+
                         medicine:
                           subItem?.name ??
                           item.name ??
