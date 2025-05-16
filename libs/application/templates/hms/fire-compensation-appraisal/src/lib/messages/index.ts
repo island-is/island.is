@@ -1,0 +1,7 @@
+export * from './personalInformationMessages'
+export * from './appraisalMethodMessages'
+export * from './realEstateMessages'
+export * from './descriptionMessages'
+export * from './photoMessages'
+export * from './miscMessages'
+export * from './overviewMessages'

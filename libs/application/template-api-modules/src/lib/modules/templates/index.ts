@@ -1,3 +1,6 @@
+
+import { FireCompensationAppraisalModule } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.module'
+import { FireCompensationAppraisalService } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.service'
 import { ReferenceTemplateModule } from './reference-template/reference-template.module'
 import { ReferenceTemplateService } from './reference-template/reference-template.service'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
@@ -240,7 +243,8 @@ export const modules = [
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
   RentalAgreementModule,
-]
+  FireCompensationAppraisalModule,
+            ]
 
 export const services = [
   ReferenceTemplateService,
@@ -322,4 +326,5 @@ export const services = [
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
   RentalAgreementService,
-]
+  FireCompensationAppraisalService,
+            ]
