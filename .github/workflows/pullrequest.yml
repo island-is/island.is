@@ -411,7 +411,7 @@ jobs:
             echo "::error title=NEEDS::Some dependencies failed: $failure_statuses"
             exit 1
           fi
-          echo "::info title=NEEDS::No failing dependencies 🎉"
+          echo "::info title=Depfail::No failing dependencies 🎉"
           exit 0
 
       - name: Announce success
