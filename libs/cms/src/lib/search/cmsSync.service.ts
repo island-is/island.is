@@ -274,6 +274,36 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       )
     }
 
+    // If an organization parent subpage gets deleted make sure all of its subpages no longer reference it
+    if (document.sys.contentType.sys.id === 'organizationParentSubpage') {
+      const subpages = await this.contentfulService.getContentfulData(100, {
+        content_type: 'organizationSubpage',
+        'fields.organizationParentSubpage.sys.id': document.sys.id,
+      })
+
+      const promises: Promise<unknown>[] = []
+
+      for (const subpage of subpages) {
+        const subpageFields = subpage.fields as Record<
+          'organizationParentSubpage',
+          unknown
+        >
+        if ('organizationParentSubpage' in subpageFields) {
+          delete subpageFields['organizationParentSubpage']
+          promises.push(subpage.update())
+        }
+        await Promise.allSettled(promises)
+        // TODO: we should probably also publish the change
+      }
+
+      const subpageIds = subpages.map((s) => s.sys.id)
+
+      return this.elasticService.deleteByIds(
+        elasticIndex,
+        [document.sys.id].concat(subpageIds),
+      )
+    }
+
     return this.elasticService.deleteByIds(elasticIndex, [document.sys.id])
   }
 }
