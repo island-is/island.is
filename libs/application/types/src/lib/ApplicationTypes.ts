@@ -86,6 +86,7 @@ export enum ApplicationTypes {
   SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
+  ACTIVATION_ALLOWANCE = 'ActivationAllowance',
 }
 
 export const ApplicationConfigurations = {
@@ -440,5 +441,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.SECONDARY_SCHOOL]: {
     slug: 'framhaldsskoli',
     translation: 'ss.application',
+  },
+  [ApplicationTypes.ACTIVATION_ALLOWANCE]: {
+    slug: 'virknistyrkur',
+    translation: ['aa.application'],
   },
 }

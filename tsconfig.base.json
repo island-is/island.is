@@ -286,6 +286,9 @@
       "@island.is/application/templates/accident-notification": [
         "libs/application/templates/accident-notification/src/index.ts"
       ],
+      "@island.is/application/templates/activation-allowance": [
+        "libs/application/templates/activation-allowance/src/index.ts"
+      ],
       "@island.is/application/templates/alcohol-tax-redemption": [
         "libs/application/templates/alcohol-tax-redemption/src/index.ts"
       ],

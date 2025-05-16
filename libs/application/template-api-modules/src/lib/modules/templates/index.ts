@@ -1,3 +1,6 @@
+
+import { ActivationAllowanceModule } from './activation-allowance/activation-allowance.module'
+import { ActivationAllowanceService } from './activation-allowance/activation-allowance.service'
 import { ReferenceTemplateModule } from './reference-template/reference-template.module'
 import { ReferenceTemplateService } from './reference-template/reference-template.service'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
@@ -240,7 +243,8 @@ export const modules = [
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
   RentalAgreementModule,
-]
+  ActivationAllowanceModule,
+            ]
 
 export const services = [
   ReferenceTemplateService,
@@ -322,4 +326,5 @@ export const services = [
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
   RentalAgreementService,
-]
+  ActivationAllowanceService,
+            ]
