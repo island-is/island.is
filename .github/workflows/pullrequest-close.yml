@@ -16,7 +16,7 @@ jobs:
   check-unicorn:
     name: Is this a unicorn PR
     if: github.event.pull_request.merged == true
-    runs-on: arc-shared
+    runs-on: arc-runners
     timeout-minutes: 10
     outputs:
       IS_UNICORN: ${{ steps.unicorn_affected.outputs.IS_UNICORN }}
@@ -61,7 +61,7 @@ jobs:
         id: create_pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_BRANCH: cherry-picks/${{ github.head_ref}}
+          PR_BRANCH: ${{ github.head_ref}}/cherry-pick
           TARGET_BRANCH: release/${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
@@ -71,10 +71,10 @@ jobs:
           git checkout $TARGET_BRANCH
           git checkout -b $PR_BRANCH
           git cherry-pick -x ${{ github.event.pull_request.merge_commit_sha }}
-          git commit --allow-empty -am "chore: automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
+          git commit --allow-empty -am "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
           git push --set-upstream origin $PR_BRANCH
           echo "new branch created"
-          PR=$(gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "chore: automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
+          PR=$(gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
           echo "$PR created"
           echo PR=$PR >> "$GITHUB_OUTPUT"
 
@@ -90,7 +90,7 @@ jobs:
 
   cleanup:
     name: Clean up feature deployment
-    runs-on: arc-shared
+    runs-on: arc-runners
     steps:
       - name: Get git branch
         run: |

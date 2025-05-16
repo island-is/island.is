@@ -18,7 +18,7 @@ env:
 
 jobs:
   scanflags:
-    runs-on: arc-shared
+    runs-on: arc-runners
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -7,15 +7,14 @@ on:
 jobs:
   deploy-feature:
     name: Stale `deploy-feature`
-    runs-on: arc-shared
+    runs-on: arc-runners
     permissions:
       pull-requests: write
-      actions: write
     steps:
       - name: Clean up `deploy-feature` label usage
         uses: actions/stale@v9
         with:
-          repo-token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           days-before-stale: 7
           days-before-close: -1 # Never auto-close
           only-pr-labels: deploy-feature

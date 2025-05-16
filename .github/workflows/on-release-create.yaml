@@ -7,12 +7,10 @@ on:
 jobs:
   mq:
     if: github.event.created
-    runs-on: arc-shared
-    env:
-      GIT_BRANCH: ${{ github.ref_name }}
+    runs-on: arc-runners
     steps:
       - run: |
-          export GIT_BRANCH="${GIT_BRANCH:-${GITHUB_REF#refs/heads/}}"
+          export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           echo "New release branch created: $GIT_BRANCH"
           curl -X POST \
           -H "Accept: application/vnd.github+json" \
