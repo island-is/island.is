@@ -70,7 +70,7 @@ export const ExamInputs: FC<
     },
     [application.id, getExamineeValidation],
   )
-  const { control, trigger, getValues, setValue } = useFormContext()
+  const { control, getValues, setValue } = useFormContext()
   const externalExamCategories = getValueViaPath<Array<ExamCategoryDto>>(
     externalData,
     'examCategories.data',
@@ -140,6 +140,7 @@ export const ExamInputs: FC<
     )
     if (!categories) return
     setChosenCategories(categories[idx].categories)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx])
 
   const shouldShowUpload = chosenCategories.some((category) =>
@@ -150,6 +151,7 @@ export const ExamInputs: FC<
     if (!shouldShowUpload) {
       setValue(`examCategories[${idx}].medicalCertificate`, undefined)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldShowUpload])
 
   const onSubmit = async () => {

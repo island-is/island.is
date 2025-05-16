@@ -6,8 +6,7 @@ import {
 import { useCallback } from 'react'
 
 export const useLazyQuery = <
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  TData = any,
+  TData = unknown,
   TVariables extends OperationVariables = OperationVariables,
 >(
   query: DocumentNode,
@@ -20,6 +19,6 @@ export const useLazyQuery = <
         query,
         variables,
       }),
-    [client],
+    [client, query],
   )
 }

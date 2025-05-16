@@ -111,6 +111,7 @@ export const ExamineesCSVUploader: FC<
         setValue('examineesValidityError', '')
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [examineesList, values])
 
   const changeFile = (props: Array<UploadFile>) => {
