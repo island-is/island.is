@@ -9,7 +9,7 @@ inputs:
   cache-path:
     description: 'Cache path'
     required: false
-    default: ${{ runner.temp }}
+    default: ${{ runner.temp ?? '.cache' }}
 
 runs:
   using: 'composite'
