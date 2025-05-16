@@ -22,6 +22,8 @@ import {
 
 import { ApiConfiguration } from './apiConfiguration'
 import { exportedApis } from './apis'
+import { ConfigModule } from '@nestjs/config'
+import { XRoadConfig } from '@island.is/nest/config'
 
 const user: User = {
   nationalId: '0101302399',
@@ -76,7 +78,13 @@ describe('MyService', () => {
         FrambodApi,
         SignatureCollectionSharedClientService,
       ],
-      imports: [LoggingModule],
+      imports: [
+        LoggingModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [XRoadConfig],
+        }),
+      ],
     }).compile()
     service = module.get<SignatureCollectionClientService>(
       SignatureCollectionClientService,
