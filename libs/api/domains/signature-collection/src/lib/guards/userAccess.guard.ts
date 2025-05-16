@@ -56,7 +56,6 @@ export class UserAccessGuard implements CanActivate {
     const restrictGuarantors = m.getMetadataIfExists<boolean>(
       RESTRICT_GUARANTOR_KEY,
     )
-
     if (bypassAuth) {
       return true
     }
@@ -80,25 +79,27 @@ export class UserAccessGuard implements CanActivate {
       return false
     }
 
+    // TODO: Figure out if these restrictions are still needed for the decorator
+    // If so, how do we get it through the metadata reliably?
     // IsOwner needs signee
-    const signee = await this.signatureCollectionService.signee(user)
-    request.body = { ...request.body, signee }
+    //const signee = await this.signatureCollectionService.signee(user)
+    //request.body = { ...request.body, signee }
 
-    const { candidate } = signee
+    //const { candidate } = signee
 
-    if (isOwnerRestriction) {
-      if (signee.isOwner && candidate) {
-        // Check if user is an actor for owner and if so check if registered collector, if not actor will be added as collector
-        if (isDelegatedUser && allowDelegation) {
-          const isCollector = await this.signatureCollectionService.isCollector(
-            candidate.id,
-            user,
-          )
-          return isCollector
-        }
-      }
-      return signee.isOwner
-    }
+    //if (isOwnerRestriction) {
+    //  if (signee.isOwner && candidate) {
+    //    // Check if user is an actor for owner and if so check if registered collector, if not actor will be added as collector
+    //    if (isDelegatedUser && allowDelegation) {
+    //      const isCollector = await this.signatureCollectionService.isCollector(
+    //        candidate.id,
+    //        user,
+    //      )
+    //      return isCollector
+    //    }
+    //  }
+    //  return signee.isOwner
+    //}
 
     return true
   }
