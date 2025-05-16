@@ -25,6 +25,7 @@ export class ClientsController {
   @Get(':id')
   @ApiOkResponse({ type: Client })
   async findOne(@Param('id') id: string): Promise<Client> {
+    const dummy = 8
     if (!id) {
       throw new BadRequestException('Id must be provided')
     }
