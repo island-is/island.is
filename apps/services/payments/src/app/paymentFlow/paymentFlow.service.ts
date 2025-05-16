@@ -41,6 +41,7 @@ import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfi
 import { ChargeResponse } from '../cardPayment/cardPayment.types'
 import { retry } from '@island.is/shared/utils/server'
 import { PaymentTrackingData } from '../../types/cardPayment'
+import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 
 @Injectable()
 export class PaymentFlowService {
@@ -119,7 +120,10 @@ export class PaymentFlowService {
 
       // TODO: Map error codes to PaymentServiceCode
       throw new BadRequestException(
-        PaymentServiceCode.CouldNotCreatePaymentFlow,
+        onlyReturnKnownErrorCode(
+          e instanceof Error ? e.message : String(e),
+          PaymentServiceCode.CouldNotCreatePaymentFlow,
+        ),
       )
     }
   }
@@ -151,6 +155,10 @@ export class PaymentFlowService {
         priceAmount: price * matchingCharge.quantity,
         quantity: matchingCharge.quantity,
       })
+    }
+
+    if (filteredChargeInformation.length !== charges.length) {
+      throw new BadRequestException(PaymentServiceCode.ChargeItemCodesNotFound)
     }
 
     return {
@@ -335,38 +343,66 @@ export class PaymentFlowService {
       await this.paymentFlowEventModel.create(update)
     } catch (e) {
       this.logger.error(
-        `Failed to log payment flow update (${update.paymentFlowId})`,
-        e,
+        `[${update.paymentFlowId}] Failed to log payment flow update event to database`,
+        { error: e },
       )
+      // Depending on requirements, we might not want to stop the onUpdateUrl notification if DB log fails
+      // For now, it continues.
     }
 
-    try {
-      const updateBody: PaymentFlowUpdateEvent = {
-        type: update.type,
-        paymentFlowId: update.paymentFlowId,
-        paymentFlowMetadata: paymentFlow.metadata,
-        occurredAt: update.occurredAt,
-        details: {
-          paymentMethod: update.paymentMethod,
-          reason: update.reason,
-          message: update.message,
-          eventMetadata: update.metadata,
-        },
-      }
-
-      await fetch(paymentFlow.onUpdateUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateBody),
-      })
-    } catch (e) {
-      this.logger.error(
-        `Failed to notify onUpdateUrl (${update.paymentFlowId})`,
-        e,
-      )
+    const updateBody: PaymentFlowUpdateEvent = {
+      type: update.type,
+      paymentFlowId: update.paymentFlowId,
+      paymentFlowMetadata: paymentFlow.metadata,
+      occurredAt: update.occurredAt,
+      details: {
+        paymentMethod: update.paymentMethod,
+        reason: update.reason,
+        message: update.message,
+        eventMetadata: update.metadata,
+      },
     }
+
+    await retry(
+      async (attempt) => {
+        const response = await fetch(paymentFlow.onUpdateUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updateBody),
+        })
+        if (!response.ok) {
+          const errorBody = await response
+            .text()
+            .catch(() => 'Could not read error body')
+          this.logger.warn(
+            `[${update.paymentFlowId}] Failed to notify onUpdateUrl [${update.type}] (attempt ${attempt}): ${response.status} ${response.statusText}`,
+            {
+              url: paymentFlow.onUpdateUrl,
+              responseBody: errorBody,
+            },
+          )
+          throw new Error(
+            `Failed to notify onUpdateUrl: ${response.status} ${response.statusText}, body: ${errorBody}`,
+          )
+        }
+        this.logger.info(
+          `[${update.paymentFlowId}] Successfully notified onUpdateUrl`,
+          {
+            url: paymentFlow.onUpdateUrl,
+            type: update.type,
+            reason: update.reason,
+          },
+        )
+      },
+      {
+        maxRetries: 3,
+        retryDelayMs: 1000,
+        logger: this.logger,
+        logPrefix: `[${update.paymentFlowId}] Notify onUpdateUrl for flow event type ${update.type}`,
+      },
+    )
   }
 
   async createPaymentConfirmation({
