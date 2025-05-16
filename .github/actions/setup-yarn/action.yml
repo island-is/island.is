@@ -31,19 +31,16 @@ runs:
       run: |
         echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
         echo "CYPRESS_CACHE_FOLDER=${{ github.workspace }}/.cache/cypress" >> "$GITHUB_OUTPUT"
-
-    - name: Get Yarn Cache Directory Path
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      id: yarn-cache-dir-path
-      run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        echo "YARN_CACHE_FOLDER=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        echo "YARN_INFRA_CACHE_FOLDER=$(cd infra && yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
     - name: Restore Dependencies Cache
       uses: runs-on/cache/restore@v4
       id: restore-cache
       with:
         path: |
-          ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          ${{ steps.set-cache.outputs.YARN_CACHE_FOLDER }}
+          ${{ steps.set-cache.outputs.YARN_INFRA_CACHE_FOLDER }}
           ${{ steps.set-cache.outputs.CYPRESS_CACHE_FOLDER }}
         key: ${{ steps.set-cache.outputs.CACHE_KEY }}
       env:
@@ -58,12 +55,21 @@ runs:
       run: |
         yarn install --immutable
 
+    - name: Yarn install (infra)
+      working-directory: ${{ inputs.working-directory }}/infra
+      shell: bash
+      env:
+        YARN_ENABLE_HARDENED_MODE: 0
+      run: |
+        yarn install --immutable
+
     - name: Cache Dependencies
       uses: runs-on/cache/save@v4
-      if: steps.restore-cache.outputs.cache-hit != 'true'
+      if: ${{ steps.restore-cache.outputs.cache-hit != 'true' }}
       with:
         path: |
-          ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          ${{ steps.set-cache.outputs.YARN_CACHE_FOLDER }}
+          ${{ steps.set-cache.outputs.YARN_INFRA_CACHE_FOLDER }}
           ${{ steps.set-cache.outputs.CYPRESS_CACHE_FOLDER }}
         key: ${{ steps.set-cache.outputs.CACHE_KEY }}
       env:

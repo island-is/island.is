@@ -41,7 +41,6 @@ env:
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
-  YARN_ENABLE_HARDENED_MODE: '0'
 jobs:
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
@@ -161,11 +160,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-
-      - name: Install infra modules
-        working-directory: infra
-        run: |
-          corepack enable && CI=true yarn install --immutable
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -491,12 +485,6 @@ jobs:
         uses: ./monorepo/.github/actions/setup-yarn
         with:
           working-directory: monorepo
-
-      - name: Install infra modules
-        if: steps.infra-node-modules.outputs.cache-hit != 'true'
-        working-directory: monorepo/infra
-        run: |
-          corepack enable && CI=true yarn install --immutable
 
       - name: Generate islandis feature-deployment charts for ArgoCD
         working-directory: monorepo/infra

@@ -26,7 +26,6 @@ defaults:
 env:
   AWS_MAX_ATTEMPTS: 10
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
-  YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
   prepare:
@@ -64,10 +63,6 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Install yarn in infra
-        working-directory: infra
-        run: yarn install --immutable
-
       - name: Run unit tests
         working-directory: infra
         run: yarn test
@@ -95,10 +90,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-
-      - name: Install yarn in infra
-        working-directory: infra
-        run: yarn install --immutable
 
       - name: Select role
         env:
