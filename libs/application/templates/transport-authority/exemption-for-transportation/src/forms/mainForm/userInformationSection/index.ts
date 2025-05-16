@@ -7,6 +7,7 @@ import {
   buildPhoneField,
   buildSection,
   buildTextField,
+  getValueViaPath,
   YES,
 } from '@island.is/application/core'
 import { userInformation } from '../../../lib/messages'
@@ -30,10 +31,12 @@ export const userInformationSection = buildSection({
         }),
         ...applicantInformationMultiField({
           baseInfoReadOnly: true,
-          // hideLocationFields: true, //TODOx compact location fields?
+          compactFields: true,
           emailRequired: true,
           phoneRequired: true,
-          phoneEnableCountrySelector: true,
+          customAddressLabel: userInformation.transporter.address,
+          customPostalCodeAndCityLabel:
+            userInformation.transporter.postalCodeAndCity,
         }).children,
 
         // Transporter
@@ -60,16 +63,12 @@ export const userInformationSection = buildSection({
         buildNationalIdWithNameField({
           id: 'transporter',
           required: true,
-          phoneRequired: true,
-          emailRequired: true,
-          showPhoneField: true,
-          showEmailField: true,
+          showPhoneField: false,
+          showEmailField: false,
           searchPersons: true,
           searchCompanies: true,
           customNationalIdLabel: userInformation.transporter.nationalId,
           customNameLabel: userInformation.transporter.name,
-          phoneLabel: userInformation.transporter.phone,
-          emailLabel: userInformation.transporter.email,
           clearOnChange: ['transporter.name'],
           condition: (answers) => {
             return !isSameAsApplicant(answers, 'transporter')
@@ -96,10 +95,29 @@ export const userInformationSection = buildSection({
             return !isSameAsApplicant(answers, 'transporter')
           },
         }),
-        // Transporter - read-only
-        // TODO hide these fields to not have duplicate IDS, or use setOnChange with applicant email and phone
+        buildPhoneField({
+          id: 'transporter.phone',
+          title: userInformation.transporter.phone,
+          backgroundColor: 'blue',
+          width: 'half',
+          required: true,
+          condition: (answers) => {
+            return !isSameAsApplicant(answers, 'transporter')
+          },
+        }),
         buildTextField({
-          id: 'applicant.nationalId',
+          id: 'transporter.email',
+          title: userInformation.transporter.email,
+          backgroundColor: 'blue',
+          width: 'half',
+          required: true,
+          condition: (answers) => {
+            return !isSameAsApplicant(answers, 'transporter')
+          },
+        }),
+        // Transporter - read-only
+        buildTextField({
+          id: 'transporterReadonly.nationalId',
           title: userInformation.transporter.nationalId,
           width: 'half',
           readOnly: true,
@@ -107,57 +125,75 @@ export const userInformationSection = buildSection({
           condition: (answers) => {
             return isSameAsApplicant(answers, 'transporter')
           },
+          defaultValue: (application: Application) => {
+            return application.applicant
+          },
         }),
         buildTextField({
-          id: 'applicant.name',
+          id: 'transporterReadonly.name',
           title: userInformation.transporter.name,
           width: 'half',
           readOnly: true,
           condition: (answers) => {
             return isSameAsApplicant(answers, 'transporter')
           },
+          defaultValue: (application: Application) => {
+            return application.externalData.nationalRegistry.data?.fullName
+          },
+        }),
+        buildTextField({
+          id: 'transporterReadonly.address',
+          title: userInformation.transporter.address,
+          width: 'half',
+          readOnly: true,
+          condition: (answers) => {
+            return isSameAsApplicant(answers, 'transporter')
+          },
+          defaultValue: (application: Application) => {
+            return application.externalData.nationalRegistry.data?.address
+              ?.streetAddress
+          },
+        }),
+        buildTextField({
+          id: 'transporterReadonly.postalCodeAndCity',
+          title: userInformation.transporter.postalCodeAndCity,
+          width: 'half',
+          readOnly: true,
+          condition: (answers) => {
+            return isSameAsApplicant(answers, 'transporter')
+          },
+          defaultValue: (application: Application) => {
+            return `${application.externalData.nationalRegistry?.data?.address?.postalCode} ${application.externalData.nationalRegistry?.data?.address?.locality}`
+          },
         }),
         buildPhoneField({
-          id: 'applicant.phoneNumber',
+          id: 'transporterReadonly.phoneNumber',
           title: userInformation.transporter.phone,
           width: 'half',
           readOnly: true,
           condition: (answers) => {
             return isSameAsApplicant(answers, 'transporter')
           },
+          defaultValue: (application: Application) => {
+            return getValueViaPath<string>(
+              application.answers,
+              'applicant.phoneNumber',
+            )
+          },
         }),
         buildTextField({
-          id: 'applicant.email',
+          id: 'transporterReadonly.email',
           title: userInformation.transporter.email,
           width: 'half',
           readOnly: true,
           condition: (answers) => {
             return isSameAsApplicant(answers, 'transporter')
           },
-        }),
-        buildTextField({
-          id: 'applicant.address',
-          title: userInformation.transporter.address,
-          width: 'half',
-          readOnly: true,
           defaultValue: (application: Application) => {
-            return application.externalData.nationalRegistry.data?.address
-              ?.streetAddress
-          },
-          condition: (answers) => {
-            return isSameAsApplicant(answers, 'transporter')
-          },
-        }),
-        buildTextField({
-          id: 'applicant.postalCode',
-          title: userInformation.transporter.postalCodeAndCity,
-          width: 'half',
-          readOnly: true,
-          defaultValue: (application: Application) => {
-            return `${application.externalData.nationalRegistry?.data?.address?.postalCode} ${application.externalData.nationalRegistry?.data?.address?.locality}`
-          },
-          condition: (answers) => {
-            return isSameAsApplicant(answers, 'transporter')
+            return getValueViaPath<string>(
+              application.answers,
+              'applicant.email',
+            )
           },
         }),
 
@@ -214,9 +250,8 @@ export const userInformationSection = buildSection({
           },
         }),
         // Responsible person - read-only
-        // TODO hide these fields to not have duplicate IDS, or use setOnChange with applicant email and phone
         buildTextField({
-          id: 'applicant.nationalId',
+          id: 'responsiblePersonReadOnly.nationalId',
           title: userInformation.responsiblePerson.nationalId,
           width: 'half',
           readOnly: true,
@@ -227,9 +262,12 @@ export const userInformationSection = buildSection({
               isSameAsApplicant(answers, 'responsiblePerson')
             )
           },
+          defaultValue: (application: Application) => {
+            return application.applicant
+          },
         }),
         buildTextField({
-          id: 'applicant.name',
+          id: 'responsiblePersonReadOnly.name',
           title: userInformation.responsiblePerson.name,
           width: 'half',
           readOnly: true,
@@ -239,9 +277,12 @@ export const userInformationSection = buildSection({
               isSameAsApplicant(answers, 'responsiblePerson')
             )
           },
+          defaultValue: (application: Application) => {
+            return application.externalData.nationalRegistry.data?.fullName
+          },
         }),
         buildPhoneField({
-          id: 'applicant.phoneNumber',
+          id: 'responsiblePersonReadOnly.phoneNumber',
           title: userInformation.responsiblePerson.phone,
           width: 'half',
           readOnly: true,
@@ -251,9 +292,15 @@ export const userInformationSection = buildSection({
               isSameAsApplicant(answers, 'responsiblePerson')
             )
           },
+          defaultValue: (application: Application) => {
+            return getValueViaPath<string>(
+              application.answers,
+              'applicant.phoneNumber',
+            )
+          },
         }),
         buildTextField({
-          id: 'applicant.email',
+          id: 'responsiblePersonReadOnly.email',
           title: userInformation.responsiblePerson.email,
           width: 'half',
           readOnly: true,
@@ -261,6 +308,12 @@ export const userInformationSection = buildSection({
             return (
               shouldShowResponsiblePerson(answers) &&
               isSameAsApplicant(answers, 'responsiblePerson')
+            )
+          },
+          defaultValue: (application: Application) => {
+            return getValueViaPath<string>(
+              application.answers,
+              'applicant.email',
             )
           },
         }),

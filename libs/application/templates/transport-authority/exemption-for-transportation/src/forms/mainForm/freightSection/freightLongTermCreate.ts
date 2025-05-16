@@ -105,8 +105,6 @@ export const FreightLongTermCreateSubSection = buildSubSection({
             // Police escort error
             const maxLength =
               getApplicationRules(externalData)?.policeEscort.length
-            console.log('maxLength', maxLength)
-            console.log('freightItems', freightItems)
             const invalidFreightIndex = freightItems.findIndex(
               (x) => x.length && maxLength && Number(x.length) > maxLength,
             )
