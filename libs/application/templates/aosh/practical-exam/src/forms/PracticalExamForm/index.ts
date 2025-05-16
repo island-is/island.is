@@ -1,5 +1,5 @@
 import { buildForm, getValueViaPath } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Application, Form, FormModes } from '@island.is/application/types'
 import { Logo } from '../../assets/Logo'
 import { informationSection } from './InformationSection'
 import { examineeSection } from './ExamineeSection'
@@ -37,9 +37,10 @@ export const PracticalExamForm: Form = buildForm({
     overviewSection,
     buildFormPaymentChargeOverviewSection({
       sectionTitle: payment.general.sectionTitle,
-      getSelectedChargeItems: (_) =>
-        getChargeItems().map((x) => ({
+      getSelectedChargeItems: (application: Application) =>
+        getChargeItems(application).map((x) => ({
           chargeItemCode: x.code,
+          chargeItemQuantity: x.quantity,
         })),
     }),
     buildFormConclusionSection({
