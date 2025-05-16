@@ -9,6 +9,7 @@ import {
   Locale,
   PrescribedItemDto,
   PrescriptionsApi,
+  ProductDocumentDto,
   ReferralDto,
   ReferralsApi,
   WaitingListEntryDto,
@@ -105,6 +106,27 @@ export class HealthDirectorateHealthService {
     }
 
     return prescriptions
+  }
+
+  /* Fylgiseðill */
+  public async getPrescriptionDocuments(
+    auth: Auth,
+    productId: string,
+  ): Promise<ProductDocumentDto[] | null> {
+    const pdf = await this.prescriptionsApiWithAuth(auth)
+      .mePrescriptionControllerGetPrescribedItemDocumentsV1({
+        productId: productId,
+      })
+      .catch(handle404)
+
+    if (!pdf) {
+      this.logger.debug('No prescription documents returned', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    return pdf
   }
 
   /* Tilvísanir */

@@ -27,3 +27,14 @@ query GetMedicinePrescriptions($locale: String) {
     }
   }
 }
+
+query getPrescriptionDocuments($input: MedicinePrescriptionDocumentsInput!) {
+  healthDirectoratePrescriptionDocuments(input: $input) {
+    documents {
+      id
+      name
+      url
+    }
+    id
+  }
+}

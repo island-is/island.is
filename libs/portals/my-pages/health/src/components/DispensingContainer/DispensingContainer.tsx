@@ -62,17 +62,19 @@ const DispensingContainer: React.FC<Props> = ({
                 })}
               </Text>
             </Box>
-            <Box width="full" marginBottom={'smallGutter'}>
-              <Button
-                variant="text"
-                size="small"
-                fluid
-                onClick={item.button?.onClick}
-                icon="arrowForward"
-              >
-                {item.button?.text}
-              </Button>
-            </Box>
+            {item.button && (
+              <Box width="full" marginBottom={'smallGutter'}>
+                <Button
+                  variant="text"
+                  size="small"
+                  fluid
+                  onClick={item.button?.onClick}
+                  icon="arrowForward"
+                >
+                  {item.button?.text}
+                </Button>
+              </Box>
+            )}
           </Box>
         ))}
       </Hidden>

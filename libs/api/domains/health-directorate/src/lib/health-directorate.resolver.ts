@@ -33,6 +33,8 @@ import { Waitlists } from './models/waitlists.model'
 import { MedicineHistory } from './models/medicineHistory.model'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
+import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
+import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -140,6 +142,20 @@ export class HealthDirectorateResolver {
     @CurrentUser() user: User,
   ): Promise<Prescriptions | null> {
     return this.api.getPrescriptions(user, locale)
+  }
+
+  /* Prescription Documents */
+  @Query(() => PrescriptionDocuments, {
+    name: 'healthDirectoratePrescriptionDocuments',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal)
+  @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
+  getPrescriptionDocuments(
+    @Args('input') input: MedicinePrescriptionDocumentsInput,
+    @CurrentUser() user: User,
+  ): Promise<PrescriptionDocuments | null> {
+    return this.api.getPrescriptionDocuments(user, input)
   }
 
   /* Medicine History */

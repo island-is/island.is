@@ -78,7 +78,9 @@ export const SortableTable = (props: SortableTableProps) => {
 
   useEffect(() => {
     const headerItems = props.items
-      .map(({ id, tag, lastNode, ...restItems }) => Object.keys(restItems))
+      .map(({ id, tag, lastNode, onExpandCallback, ...restItems }) =>
+        Object.keys(restItems),
+      )
       .flat()
       .filter((value, index, self) => self.indexOf(value) === index)
 
@@ -119,6 +121,7 @@ export const SortableTable = (props: SortableTableProps) => {
               lastNode,
               children,
               subTitleFirstCol,
+              onExpandCallback,
               ...itemObject
             } = item
             // Remove the key that matches the "mobileTitleKey"
@@ -130,6 +133,7 @@ export const SortableTable = (props: SortableTableProps) => {
               title: props.mobileTitleKey
                 ? item[props.mobileTitleKey]
                 : undefined,
+              onExpandCallback,
               data: valueItems
                 .map((valueItem, valueIndex) => {
                   if (

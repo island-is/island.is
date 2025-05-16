@@ -30,6 +30,8 @@ import {
 import { isDefined } from '@island.is/shared/utils'
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
+import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
+import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -204,7 +206,6 @@ export class HealthDirectorateService {
     if (!data) {
       return null
     }
-
     const prescriptions: Array<Prescription> =
       data.map((item) => {
         return {
@@ -252,6 +253,28 @@ export class HealthDirectorateService {
       }) ?? []
 
     return { prescriptions }
+  }
+
+  /* Prescription Documents */
+  async getPrescriptionDocuments(
+    auth: Auth,
+    input: MedicinePrescriptionDocumentsInput,
+  ): Promise<PrescriptionDocuments | null> {
+    const data = await this.healthApi.getPrescriptionDocuments(auth, input.id)
+
+    if (!data) {
+      return null
+    }
+
+    const documents = data.map((item) => {
+      return {
+        id: item.typeId.toString(),
+        name: item.name,
+        url: item.path,
+      }
+    })
+
+    return { documents, id: input.id }
   }
 
   /* Medicine History */

@@ -4,6 +4,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  Button,
 } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import * as styles from './NestedLines.css'
@@ -14,8 +15,9 @@ interface Props {
   data: {
     title: string
     value?: string | number | React.ReactElement
-    type?: 'text' | 'link'
+    type?: 'text' | 'link' | 'action'
     href?: string
+    action?: () => void
   }[]
   width?: 'full' | 'half'
 }
@@ -55,12 +57,24 @@ export const NestedLines = ({ data, width = 'full' }: Props) => {
                   span={isMobile ? '6/12' : ['12/12', '12/12', columnWidth]}
                 >
                   <Box className={styles.valueCol}>
-                    {item.type === 'link' ? (
+                    {item.type === 'link' && item.href ? (
                       <LinkButton
                         text={item.value?.toString() ?? ''}
                         to={item.href ?? ''}
                         variant="text"
                       ></LinkButton>
+                    ) : item.type === 'action' && item.action ? (
+                      <Button
+                        as="span"
+                        size="small"
+                        variant="text"
+                        unfocusable
+                        icon="open"
+                        iconType="outline"
+                        onClick={item.action}
+                      >
+                        {item.value}
+                      </Button>
                     ) : (
                       <Text variant="small" as="span">
                         {item.value}

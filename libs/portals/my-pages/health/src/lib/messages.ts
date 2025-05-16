@@ -1514,4 +1514,13 @@ export const messages = defineMessages({
     id: 'sp.health:no-search-results',
     defaultMessage: 'Engar niðurstöður fundust',
   },
+
+  prescriptionPDFLabel: {
+    id: 'sp.health:prescription-pdf-label',
+    defaultMessage: 'Fylgiseðill',
+  },
+  prescriptionPDF: {
+    id: 'sp.health:prescription-pdf',
+    defaultMessage: 'Skoða fylgiseðil',
+  },
 })

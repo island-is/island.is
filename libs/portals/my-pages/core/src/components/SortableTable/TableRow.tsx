@@ -25,7 +25,15 @@ export const TableRow = ({
   ellipsisLength?: number
   onExpandCallback?: () => void
 }) => {
-  const { id, tag, lastNode, children, subTitleFirstCol, ...itemObject } = item
+  const {
+    id,
+    tag,
+    lastNode,
+    children,
+    subTitleFirstCol,
+    onExpandCallback: onExpandCallbackProp,
+    ...itemObject
+  } = item
   const valueItems = Object.values(itemObject)
 
   const renderValueItem = (valueItem: any, i: number) => {
@@ -68,7 +76,9 @@ export const TableRow = ({
     return (
       <>
         <Text variant="medium" as="span">
-          {ellipsisLength ? ellipsis(valueItem, ellipsisLength) : valueItem}
+          {ellipsisLength && valueItem
+            ? ellipsis(valueItem, ellipsisLength)
+            : valueItem}
         </Text>
         {i === 0 && subTitleFirstCol && (
           <Text variant="small">{subTitleFirstCol}</Text>
