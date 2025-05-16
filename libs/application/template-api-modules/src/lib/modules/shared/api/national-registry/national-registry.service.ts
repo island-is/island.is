@@ -12,6 +12,8 @@ import {
   NationalRegistryMaritalTitle,
   BirthplaceParameters,
   NationalRegistryCustodian,
+  NormalizedNationalRegistrySpouse,
+  SpouseSource,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -423,7 +425,26 @@ export class NationalRegistryService extends BaseTemplateApiService {
     )
 
     const newCohabitationInfo = await this.nationalRegistryV3Api.getSpouse(auth)
-    console.log('newCohabitationInfo', newCohabitationInfo)
+
+    let normalizedCohabitationInformation: NormalizedNationalRegistrySpouse
+    if (newCohabitationInfo.sambud?.sambud) {
+      normalizedCohabitationInformation = {
+        source: SpouseSource.SAMBUD,
+        spouseName: newCohabitationInfo.sambud.nafnMaka || '',
+        spouseNationalId: newCohabitationInfo.sambud.kennitalaMaka || '',
+        status: newCohabitationInfo.sambud.sambudTexti || '',
+        lastModified: newCohabitationInfo.sambud.dagsetningBreytt,
+      }
+    } else {
+      normalizedCohabitationInformation = {
+        source: SpouseSource.HJUSKAPUR,
+        spouseName: newCohabitationInfo.hjuskapur?.nafnMaka || '',
+        spouseNationalId: newCohabitationInfo.hjuskapur?.kennitalaMaka || '',
+        status: newCohabitationInfo.hjuskapur?.hjuskaparTexti || '',
+        code: newCohabitationInfo.hjuskapur?.hjuskaparKodi || '',
+        lastModified: newCohabitationInfo.hjuskapur?.dagsetningBreytt,
+      }
+    }
 
     const spouseBirthPlace = cohabitationInfo
       ? await this.nationalRegistryApi.getBirthplace(
@@ -436,10 +457,11 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
     return (
       cohabitationInfo && {
-        nationalId: cohabitationInfo.spouseNationalId,
-        name: cohabitationInfo.spouseName,
-        maritalStatus: cohabitationInfo.cohabitationCode,
-        lastModified: cohabitationInfo.lastModified,
+        nationalId: normalizedCohabitationInformation.spouseNationalId,
+        name: normalizedCohabitationInformation.spouseName,
+        marriedOrCohabitaiton: normalizedCohabitationInformation.source,
+        maritalStatus: normalizedCohabitationInformation.status,
+        lastModified: normalizedCohabitationInformation.lastModified,
         birthplace: spouseBirthPlace && {
           dateOfBirth: spouseBirthPlace.birthdate,
           location: spouseBirthPlace.locality,

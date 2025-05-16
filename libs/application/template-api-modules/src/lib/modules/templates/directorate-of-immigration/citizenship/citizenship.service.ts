@@ -28,6 +28,7 @@ import { NationalRegistryClientService } from '@island.is/clients/national-regis
 import { YES } from '@island.is/application/core'
 import { Auth } from '@island.is/auth-nest-tools'
 import { ApplicantInformation } from './types'
+import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
 
 @Injectable()
 export class CitizenshipService extends BaseTemplateApiService {
@@ -36,6 +37,7 @@ export class CitizenshipService extends BaseTemplateApiService {
     private readonly attachmentService: AttachmentS3Service,
     private readonly directorateOfImmigrationClient: DirectorateOfImmigrationClient,
     private readonly nationalRegistryApi: NationalRegistryClientService,
+    private readonly nationalRegistryV3Api: NationalRegistryV3ApplicationsClientService,
   ) {
     super(ApplicationTypes.CITIZENSHIP)
   }
@@ -127,49 +129,13 @@ export class CitizenshipService extends BaseTemplateApiService {
 
   async getResidenceInIcelandLastChangeDate({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Date | null> {
-    // get residence history
-    const residenceHistory = await this.nationalRegistryApi.getResidenceHistory(
-      auth.nationalId,
+  }: TemplateApiModuleActionProps): Promise<Date | null | undefined> {
+    const newResidence = await this.nationalRegistryV3Api.getLegalResidence(
+      auth,
     )
+    console.log('newResidence', newResidence)
 
-    // sort residence history so newest items are first, and if two items have the same date,
-    // then the Iceland item will be first
-    const countryIceland = 'IS'
-    const sortedResidenceHistory = residenceHistory
-      .filter((x) => x.dateOfChange)
-      .sort((a, b) =>
-        a.dateOfChange && b.dateOfChange && a.dateOfChange !== b.dateOfChange
-          ? a.dateOfChange > b.dateOfChange
-            ? -1
-            : 1
-          : a.country === countryIceland
-          ? -1
-          : 1,
-      )
-
-    // get the oldest change date for Iceland, where user did not move to another
-    // country in between
-    let lastChangeDate: Date | null = null
-    for (let i = 0; i < sortedResidenceHistory.length; i++) {
-      if (sortedResidenceHistory[i].country === countryIceland) {
-        lastChangeDate = sortedResidenceHistory[i].dateOfChange
-      } else {
-        break
-      }
-    }
-
-    // if (!lastChangeDate) {
-    //   throw new TemplateApiError(
-    //     {
-    //       title: errorMessages.residenceInIcelandLastChangeDateMissing,
-    //       summary: errorMessages.residenceInIcelandLastChangeDateMissing,
-    //     },
-    //     404,
-    //   )
-    // }
-
-    return lastChangeDate
+    return newResidence?.breytt
   }
 
   async validateApplication({
