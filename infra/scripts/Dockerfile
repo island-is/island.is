@@ -1,5 +1,6 @@
 FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS runner
 
+# Don't care about version pinning
 # hadolint ignore=DL3008
 RUN apt-get update && apt-get install -y --no-install-recommends \
   postgresql \
