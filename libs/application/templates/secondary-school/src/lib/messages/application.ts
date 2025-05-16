@@ -47,6 +47,12 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is completed',
   },
+  actionCardDismissed: {
+    id: 'ss.application:actionCardDismissed',
+    defaultMessage: 'Vísað frá',
+    description:
+      'Description of application state/status when application is dismissed',
+  },
   stateMetaNamePrerequisites: {
     id: 'ss.application:stateMetaNamePrerequisites',
     defaultMessage: 'Prerequisites',
@@ -82,6 +88,12 @@ export const application = defineMessages({
     defaultMessage: 'Completed',
     description:
       'Meta name of application state when the application is in completed',
+  },
+  stateMetaNameDismissed: {
+    id: 'ss.application:stateMetaNameDismissed',
+    defaultMessage: 'Dismissed',
+    description:
+      'Meta name of application state when the application is in dismissed',
   },
 })
 

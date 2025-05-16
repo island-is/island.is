@@ -273,6 +273,9 @@ const template: ApplicationTemplate<
           [DefaultEvents.ABORT]: { target: States.SUBMITTED },
           [ApplicationEvents.REVIEW_STARTED]: { target: States.IN_REVIEW },
           [ApplicationEvents.REVIEW_COMPLETED]: { target: States.COMPLETED },
+          [ApplicationEvents.APPLICATION_DISMISSED]: {
+            target: States.DISMISSED,
+          },
         },
       },
       [States.SUBMITTED]: {
@@ -358,6 +361,9 @@ const template: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.EDIT },
           [ApplicationEvents.REVIEW_STARTED]: { target: States.IN_REVIEW },
           [ApplicationEvents.REVIEW_COMPLETED]: { target: States.COMPLETED },
+          [ApplicationEvents.APPLICATION_DISMISSED]: {
+            target: States.DISMISSED,
+          },
         },
       },
       [States.IN_REVIEW]: {
@@ -413,7 +419,11 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
+          [ApplicationEvents.REVIEW_WITHDRAWN]: { target: States.IN_REVIEW },
           [ApplicationEvents.REVIEW_COMPLETED]: { target: States.COMPLETED },
+          [ApplicationEvents.APPLICATION_DISMISSED]: {
+            target: States.DISMISSED,
+          },
         },
       },
       [States.COMPLETED]: {
@@ -448,6 +458,29 @@ const template: ApplicationTemplate<
               read: 'all',
             },
           ],
+        },
+        on: {
+          [ApplicationEvents.APPLICATION_DISMISSED]: {
+            target: States.DISMISSED,
+          },
+        },
+      },
+      [States.DISMISSED]: {
+        meta: {
+          name: applicationMessage.stateMetaNameCompleted.defaultMessage,
+          status: FormModes.COMPLETED,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              pruneInDaysAfterRegistrationCloses(application, 3 * 30),
+          },
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardDismissed,
+              variant: 'blueberry',
+            },
+          },
         },
       },
     },
