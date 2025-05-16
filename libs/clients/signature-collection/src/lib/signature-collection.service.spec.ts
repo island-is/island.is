@@ -23,7 +23,8 @@ import {
 import { ApiConfiguration } from './apiConfiguration'
 import { exportedApis } from './apis'
 import { ConfigModule } from '@nestjs/config'
-import { XRoadConfig } from '@island.is/nest/config'
+import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
+import { SignatureCollectionClientConfig } from './signature-collection.config'
 
 const user: User = {
   nationalId: '0101302399',
@@ -82,7 +83,7 @@ describe('MyService', () => {
         LoggingModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [XRoadConfig],
+          load: [XRoadConfig, SignatureCollectionClientConfig, IdsClientConfig],
         }),
       ],
     }).compile()
