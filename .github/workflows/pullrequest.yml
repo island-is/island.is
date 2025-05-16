@@ -222,15 +222,9 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      - name: NX format:check
+      - name: Check formatting on main
         if: ${{ github.ref == 'ref/heads/main' }}
-        run: ./scripts/ci/20_check-formatting.sh "check"
-
-      # - name: NX format:write
-      #   if: ${{ github.event_name == 'pull_request' }}
-      #   run: |
-      #     ./scripts/ci/20_check-formatting.sh "write"
-      #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
+        run: yarn format:check
 
   lintfix-changed-files:
     name: Lintfix Changed Files
