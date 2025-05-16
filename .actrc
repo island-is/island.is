@@ -1,0 +1,23 @@
+# vi: ft=config
+
+# Config for running GitHub actions locally with [Act](https://github.com/nektos/act)
+# Note that only `--container-options` should be quoted. Only variables are expanded (like $HOME)
+
+# Runner image to run with (you'll need to log in to AWS)
+--platform=arc-runners=821090935708.dkr.ecr.eu-west-1.amazonaws.com/actions-runner:latest
+
+## Mounts and user/env config in container
+# Mount common dependencies as a volume; yarn needs it cache folder to exist, and won't try to create them – mounting here to ensure the folder exists
+--container-options -v dependencies:/home/runner/dependencies -v dependencies-yarn:/home/runner/dependencies/.yarn/cache
+
+# Homedir wasn't writeable on our EC2 runners, but ARC-runners are OK
+# --env=HOME=/tmp/github/home
+
+## Events, secrets, and config
+--eventpath=.event.json
+
+## Remote actions
+# To run fully local/offline (only fetches actions when missing, on first run),
+# unset or override via CLI to update your cached actions
+--pull=false
+--action-offline-mode=true
