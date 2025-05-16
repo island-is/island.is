@@ -5,6 +5,7 @@ import {
   Controller,
   Get,
   Headers,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -31,7 +32,13 @@ import {
   MeActorProfileDto,
   PaginatedActorProfileDto,
   PatchActorProfileDto,
+  ActorProfileDetailsDto,
 } from './dto/actor-profile.dto'
+import {
+  UpdateActorProfileEmailDto,
+  ActorProfileEmailDto,
+} from './dto/actor-profile-email.dto'
+import { SetActorProfileEmailDto } from './dto/set-actor-profile-email.dto'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -104,7 +111,7 @@ export class MeUserProfileController {
     const validateInputs = async () => {
       if (input.email && !input.mobilePhoneNumber) {
         await this.userProfileService.createEmailVerification({
-          nationalId: user.nationalId,
+          nationalId: user.actor?.nationalId ?? user.nationalId,
           email: input.email,
         })
       } else if (input.mobilePhoneNumber && !input.email) {
@@ -164,41 +171,28 @@ export class MeUserProfileController {
     return this.userProfileService.getActorProfiles(user.nationalId)
   }
 
-  @Patch('/actor-profiles/.from-national-id')
-  @Scopes(ApiScope.internal)
+  @Patch('emails/:emailId/primary')
+  @Scopes(UserProfileScope.write)
   @Documentation({
-    description: 'Update or create an actor profile for the current user',
-    request: {
-      header: {
-        'X-Param-From-National-Id': {
-          required: true,
-          description: 'National id of the user that granted the delegation',
-        },
-      },
-    },
-    response: { status: 200, type: MeActorProfileDto },
+    description:
+      'Sets the email associated with the provided emailId as the primary email.',
+    response: { status: 200, type: UserProfileDto },
   })
-  createOrUpdateActorProfile(
+  setEmailAsPrimary(
     @CurrentUser() user: User,
-    @Headers('X-Param-From-National-Id') fromNationalId: string,
-    @Body() actorProfile: PatchActorProfileDto,
-  ): Promise<MeActorProfileDto> {
+    @Param('emailId') emailId: string,
+  ): Promise<UserProfileDto> {
     return this.auditService.auditPromise(
       {
         auth: user,
         namespace,
-        action: 'patch',
+        action: 'setEmailAsPrimary',
         resources: user.nationalId,
         meta: {
-          fromNationalId,
-          fields: Object.keys(actorProfile),
+          emailId,
         },
       },
-      this.userProfileService.createOrUpdateActorProfile({
-        toNationalId: user.nationalId,
-        fromNationalId,
-        emailNotifications: actorProfile.emailNotifications,
-      }),
+      this.userProfileService.setEmailAsPrimary(user.nationalId, emailId),
     )
   }
 }
