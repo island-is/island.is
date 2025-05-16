@@ -8,6 +8,7 @@ import {
   MedmaelasofnunExtendedDTO,
   EinstaklingurKosningInfoDTO,
   FrambodDTO,
+  KosningApi,
 } from '../../gen/fetch'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import { Test, TestingModule } from '@nestjs/testing'
@@ -18,6 +19,8 @@ import {
   CollectionType,
   getNumberFromCollectionType,
 } from './types/collection.dto'
+
+import { ApiConfiguration } from './apiConfiguration'
 
 const user: User = {
   nationalId: '0101302399',
@@ -62,9 +65,11 @@ describe('MyService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        ApiConfiguration,
         SignatureCollectionClientService,
         MedmaelalistarApi,
         MedmaelasofnunApi,
+        KosningApi,
         MedmaeliApi,
         FrambodApi,
         SignatureCollectionSharedClientService,
