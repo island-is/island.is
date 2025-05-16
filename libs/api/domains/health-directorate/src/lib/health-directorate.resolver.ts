@@ -42,7 +42,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateOrganDonation',
   })
   @Audit()
-  @Scopes(ApiScope.healthOrganDonation)
+  @Scopes(ApiScope.healthOrganDonation, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async getDonorStatus(
     @Args('locale', { type: () => String, nullable: true })
@@ -68,7 +68,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateOrganDonationUpdateDonorStatus',
   })
   @Audit()
-  @Scopes(ApiScope.healthOrganDonation)
+  @Scopes(ApiScope.healthOrganDonation, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async updateDonorStatus(
     @Args('input') input: DonorInput,
@@ -84,7 +84,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateVaccinations',
   })
   @Audit()
-  @Scopes(ApiScope.healthVaccinations)
+  @Scopes(ApiScope.healthVaccinations, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthVaccinationsPageEnabled)
   getVaccinations(
     @Args('locale', { type: () => String, nullable: true })
@@ -99,7 +99,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateWaitlists',
   })
   @Audit()
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthWaitlistsPageEnabled)
   getWaitlists(
     @Args('locale', { type: () => String, nullable: true })
@@ -114,7 +114,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateReferrals',
   })
   @Audit()
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthReferralsPageEnabled)
   getReferrals(
     @Args('locale', { type: () => String, nullable: true })
@@ -129,7 +129,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectoratePrescriptions',
   })
   @Audit()
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getPrescriptions(
     @Args('locale', { type: () => String, nullable: true })
