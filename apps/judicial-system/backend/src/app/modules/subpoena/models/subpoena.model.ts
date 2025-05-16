@@ -61,7 +61,7 @@ export class Subpoena extends Model {
   defendantId!: string
 
   @BelongsTo(() => Defendant, 'defendantId')
-  @ApiProperty({ type: Defendant })
+  @ApiProperty({ type: () => Defendant })
   defendant?: Defendant
 
   @ForeignKey(() => Case)
@@ -70,7 +70,7 @@ export class Subpoena extends Model {
   caseId!: string
 
   @BelongsTo(() => Case, 'caseId')
-  @ApiPropertyOptional({ type: Case })
+  @ApiPropertyOptional({ type: () => Case })
   case?: Case
 
   @Column({
