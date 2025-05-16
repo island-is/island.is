@@ -177,19 +177,6 @@ export class VehiclesService {
     })
   }
 
-  async getExcelVehiclesForUser(auth: User): Promise<VehiclesExcel> {
-    const res = await this.getVehiclesWithAuth(auth).ownershipReportDataGet({
-      ssn: auth.nationalId,
-    })
-
-    return {
-      persidno: res.persidno ?? undefined,
-      name: res.name ?? undefined,
-      vehicles: res.vehicles?.map((item) =>
-        basicVehicleInformationMapper(item),
-      ),
-    }
-  }
 
   async getPublicVehicleSearch(search: string) {
     return await this.publicVehiclesApi
