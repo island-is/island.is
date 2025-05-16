@@ -55,6 +55,8 @@ runs:
     - name: Yarn install
       working-directory: ${{ inputs.working-directory }}
       shell: bash
+      env:
+        YARN_ENABLE_HARDENED_MODE: 0
       run: |
         yarn install --immutable
 
