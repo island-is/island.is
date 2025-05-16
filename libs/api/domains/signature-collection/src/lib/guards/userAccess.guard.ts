@@ -10,6 +10,10 @@ import {
   IS_OWNER_KEY,
   RESTRICT_GUARANTOR_KEY,
 } from './constants'
+import {
+  CollectionType,
+  isCollectionType,
+} from '@island.is/clients/signature-collection'
 
 enum UserDelegationContext {
   Person = 'Person',
@@ -48,6 +52,14 @@ export class UserAccessGuard implements CanActivate {
     return UserDelegationContext.Person
   }
 
+  private determineCollectionType = (context: ExecutionContext) => {
+    const { body } = getRequest(context)
+    if (body && body.collectionType && isCollectionType(body.collectionType)) {
+      return body.collectionType as CollectionType
+    }
+    return CollectionType.OtherUnknown
+  }
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const m = new MetadataAbstractor(this.reflector, context)
     const isOwnerRestriction = m.getMetadataIfExists<boolean>(IS_OWNER_KEY)
@@ -79,28 +91,30 @@ export class UserAccessGuard implements CanActivate {
       return false
     }
 
-    // TODO: Figure out if these restrictions are still needed for the decorator
-    // If so, how do we get it through the metadata reliably?
+    const collectionType = this.determineCollectionType(context)
+
     // IsOwner needs signee
-    //const signee = await this.signatureCollectionService.signee(user)
-    //request.body = { ...request.body, signee }
+    const signee = await this.signatureCollectionService.signee(
+      user,
+      collectionType,
+    )
+    request.body = { ...request.body, signee }
 
-    //const { candidate } = signee
+    const { candidate } = signee
 
-    //if (isOwnerRestriction) {
-    //  if (signee.isOwner && candidate) {
-    //    // Check if user is an actor for owner and if so check if registered collector, if not actor will be added as collector
-    //    if (isDelegatedUser && allowDelegation) {
-    //      const isCollector = await this.signatureCollectionService.isCollector(
-    //        candidate.id,
-    //        user,
-    //      )
-    //      return isCollector
-    //    }
-    //  }
-    //  return signee.isOwner
-    //}
-
+    if (isOwnerRestriction) {
+      if (signee.isOwner && candidate) {
+        // Check if user is an actor for owner and if so check if registered collector, if not actor will be added as collector
+        if (isDelegatedUser && allowDelegation) {
+          const isCollector = await this.signatureCollectionService.isCollector(
+            candidate.id,
+            user,
+          )
+          return isCollector
+        }
+      }
+      return signee.isOwner
+    }
     return true
   }
 }
