@@ -140,8 +140,8 @@ jobs:
             #
             # If we do not do this we will get the wrong base sha
             # :(
-            export NX_HEAD=${{ github.sha }}
-            export NX_BASE=$(git rev-parse HEAD^1)
+            export NX_HEAD="${{ github.sha }}"
+            export NX_BASE="$(git rev-parse HEAD^1)"
             echo NX_HEAD="$NX_HEAD" >> "$GITHUB_OUTPUT"
             echo NX_BASE="$NX_BASE" >> "$GITHUB_OUTPUT"
             echo HEAD="$NX_HEAD" >> "$GITHUB_ENV"
@@ -154,23 +154,24 @@ jobs:
           echo HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_ENV"
           echo BASE="${{ env.NX_BASE }}" >> "$GITHUB_ENV"
           if [[ "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == release/* ]]; then
-          echo SKIP_JUDICIAL="true" >> "$GITHUB_OUTPUT"
-          echo SKIP_JUDICIAL="true" >> "$GITHUB_ENV"
-          export SKIP_JUDICIAL="true"
+            echo SKIP_JUDICIAL="true" >> "$GITHUB_OUTPUT"
+            echo SKIP_JUDICIAL="true" >> "$GITHUB_ENV"
+            export SKIP_JUDICIAL="true"
           else
-          echo SKIP_JUDICIAL="false" >> "$GITHUB_OUTPUT"
-          echo SKIP_JUDICIAL="false" >> "$GITHUB_ENV"
-          export SKIP_JUDICIAL="false"
+            echo SKIP_JUDICIAL="false" >> "$GITHUB_OUTPUT"
+            echo SKIP_JUDICIAL="false" >> "$GITHUB_ENV"
+            export SKIP_JUDICIAL="false"
           fi
-          echo Skipping judicial: $SKIP_JUDICIAL
+          echo "Skipping judicial: $SKIP_JUDICIAL"
           echo "Current base SHA is ${{ env.NX_BASE }} and head SHA is ${{ env.NX_HEAD }}"
-          echo "{\"base_sha\": \"${{ env.NX_BASE }}\", \"head_sha\":\"${{ env.NX_HEAD }}\"}" > event.json
+          echo '{"base_sha": "${{ env.NX_BASE }}", "head_sha":"${{ env.NX_HEAD }}"}' > event.json
 
       - name: Git bot config
         id: git-bot-config
         run: |
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
+
       - name: Prepare merge queue
         id: prepare-merge-queue
         if: ${{ inputs.run_merge_queue == true }}
@@ -279,5 +280,5 @@ jobs:
           NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
           NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
         run: |
-          is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
+          is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn '{"head": "${{env.NX_HEAD}}", "base": "${{env.NX_BASE}}" }')
           echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
