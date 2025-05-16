@@ -32,6 +32,7 @@ import { Features } from '@island.is/feature-flags'
 import { buildPaymentState } from '@island.is/application/utils'
 import { GeneralFishingLicenseAnswers } from '..'
 import { ChargeItemCode, CodeOwners } from '@island.is/shared/constants'
+import { FishingLicenseChargeType } from '../shared/constants'
 
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
 
@@ -64,9 +65,22 @@ const getCodes = (application: Application): BasicChargeItem[] => {
     answers,
     'fishingLicense.chargeType',
   ) as string
+  const licenseType = getValueViaPath(
+    answers,
+    'fishingLicense.license',
+  ) as string
 
   if (!chargeItemCode) {
     throw new Error('Vörunúmer fyrir FJS vantar.')
+  }
+
+  if (
+    (chargeItemCode as string) !==
+    FishingLicenseChargeType[
+      licenseType as keyof typeof FishingLicenseChargeType
+    ]
+  ) {
+    throw new Error('Vörunúmer fyrir FJS rangt.')
   }
 
   const result: BasicChargeItem[] = [{ code: chargeItemCode }]
