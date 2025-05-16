@@ -7,8 +7,9 @@ interface Props {
   data: {
     title: string
     value?: string | number | React.ReactElement
-    type?: 'text' | 'link'
+    type?: 'text' | 'link' | 'action'
     href?: string
+    action?: () => void
   }[]
   width?: 'full' | 'half'
   backgroundColor?: 'blue' | 'white'
@@ -22,7 +23,8 @@ const NestedInfoLines: React.FC<Props> = ({
 }) => {
   return (
     <Box
-      padding={[0, 0, 1, 3, 3]}
+      padding={[0, 0, 1, 3]}
+      paddingBottom={0}
       background={backgroundColor === 'blue' ? 'blue100' : 'white'}
     >
       {label && (

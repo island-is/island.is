@@ -15,20 +15,20 @@ import {
   HealthCenter,
   HealthCenterData,
   MedicinePrescriptionDetailData,
-  Prescription,
 } from '../../../../utils/mockData'
 import * as styles from './RenewPrescriptionModal.css'
+import { HealthDirectoratePrescription } from '@island.is/api/schema'
 
 interface Props {
   id: string
-  activePrescription: Prescription
+  activePrescription: HealthDirectoratePrescription
   toggleClose?: boolean
   isVisible: boolean
 }
 
 interface RenewFormData {
   healthcare?: HealthCenter
-  medicineInformation?: Prescription
+  medicineInformation?: HealthDirectoratePrescription
 }
 
 const RenewPrescriptionModal: React.FC<Props> = ({

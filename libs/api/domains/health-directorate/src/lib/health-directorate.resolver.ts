@@ -30,6 +30,11 @@ import { Prescriptions } from './models/prescriptions.model'
 import { Referrals } from './models/referrals.model'
 import { Vaccinations } from './models/vaccinations.model'
 import { Waitlists } from './models/waitlists.model'
+import { MedicineHistory } from './models/medicineHistory.model'
+import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
+import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
+import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
+import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -137,5 +142,50 @@ export class HealthDirectorateResolver {
     @CurrentUser() user: User,
   ): Promise<Prescriptions | null> {
     return this.api.getPrescriptions(user, locale)
+  }
+
+  /* Prescription Documents */
+  @Query(() => PrescriptionDocuments, {
+    name: 'healthDirectoratePrescriptionDocuments',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal)
+  @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
+  getPrescriptionDocuments(
+    @Args('input') input: MedicinePrescriptionDocumentsInput,
+    @CurrentUser() user: User,
+  ): Promise<PrescriptionDocuments | null> {
+    return this.api.getPrescriptionDocuments(user, input)
+  }
+
+  /* Medicine History */
+  @Query(() => MedicineHistory, {
+    name: 'healthDirectorateMedicineHistory',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal)
+  @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
+  getMedicineHistory(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @CurrentUser() user: User,
+  ): Promise<MedicineHistory | null> {
+    return this.api.getMedicineHistory(user, locale)
+  }
+
+  /* Medicine dispensations for specific ATC code */
+  @Query(() => MedicineDispensationsATC, {
+    name: 'healthDirectorateMedicineDispensationsATC',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal)
+  @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
+  getMedicineHistoryForATC(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: MedicineDispensationsATCInput,
+    @CurrentUser() user: User,
+  ): Promise<MedicineDispensationsATC | null> {
+    return this.api.getMedicineDispensationsForATC(user, locale, input)
   }
 }
