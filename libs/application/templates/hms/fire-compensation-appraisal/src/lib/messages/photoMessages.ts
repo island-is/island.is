@@ -1,0 +1,15 @@
+import { defineMessages } from 'react-intl'
+
+export const photoMessages = defineMessages({
+  title: {
+    id: 'fca.application:photo.title',
+    defaultMessage: 'Myndir',
+    description: 'Photo section title',
+  },
+  description: {
+    id: 'fca.application:photo.description',
+    defaultMessage:
+      'Hér setur þú inn myndir af því sem þú taldir upp á lýsingu á frákvæmdum og sýnir frágang.\n\nUmsækjandi er hvattur til að hlaða upp myndum sem gagnast við gerð brunabótamatsins svo að það byggi á réttum upplýsingum.',
+    description: 'Photo section description',
+  },
+})
