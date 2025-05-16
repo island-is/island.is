@@ -165,6 +165,7 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: Install infra modules
         working-directory: infra
@@ -300,6 +301,7 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: Set id for matrix
         run: |
@@ -359,6 +361,7 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: Building Docker images
         continue-on-error: true
@@ -430,6 +433,7 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: Docker build image
         working-directory: infra
@@ -502,6 +506,7 @@ jobs:
         with:
           working-directory: monorepo
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
 
       - name: Install infra modules
         if: steps.infra-node-modules.outputs.cache-hit != 'true'
