@@ -1,6 +1,7 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   EmailsDto,
+  V2ActorApi,
   V2MeApi,
   V2MeEmailsApi,
 } from '@island.is/clients/user-profile'
@@ -12,6 +13,7 @@ export class UserEmailsService {
   constructor(
     private readonly v2EmailsApi: V2MeEmailsApi,
     private readonly v2MeApi: V2MeApi,
+    private readonly v2ActorApi: V2ActorApi,
   ) {}
 
   v2EmailsApiWithAuth(auth: Auth) {
@@ -20,6 +22,10 @@ export class UserEmailsService {
 
   v2MeApiWithAuth(auth: Auth) {
     return this.v2MeApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  v2ActorApiWithAuth(auth: Auth) {
+    return this.v2ActorApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getEmails(user: User): Promise<EmailsDto[]> {
@@ -55,9 +61,9 @@ export class UserEmailsService {
     emailId: string
     user: User
   }): Promise<boolean> {
-    await this.v2MeApiWithAuth(
+    await this.v2ActorApiWithAuth(
       user,
-    ).meUserProfileControllerSetActorProfileEmail({
+    ).actorUserProfileControllerSetActorProfileEmail({
       setActorProfileEmailDto: {
         emailsId: emailId,
       },

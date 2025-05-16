@@ -22,6 +22,7 @@ import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegatio
 import { Emails } from './models/emails.model'
 import { EmailsController } from './emails.controller'
 import { EmailsService } from './emails.service'
+import { ActorUserProfileController } from './actor-user-profile.controller'
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { EmailsService } from './emails.service'
     MeUserProfileController,
     UserProfileController,
     UserTokenController,
+    ActorUserProfileController,
     EmailsController,
   ],
   providers: [
