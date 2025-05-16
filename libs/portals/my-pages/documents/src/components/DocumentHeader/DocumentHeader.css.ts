@@ -17,10 +17,14 @@ export const categoryDivider = style({
   },
 })
 
+export const actionContainer = style({
+  ':hover': {
+    cursor: 'pointer',
+  },
+})
 export const actionBarWrapper = style({
   display: 'flex',
   alignSelf: 'center',
-  gap: '1rem',
   alignItems: 'center',
   marginLeft: 'auto',
 })
