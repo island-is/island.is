@@ -77,7 +77,19 @@ jobs:
           fetch-depth: 0
 
       - name: Derive appropriate SHAs
-        uses: ./.github/actions/set-shas
+        id: set-sha
+        uses: nrwl/nx-set-shas@v4
+
+      - name: Derive appropriate SHAs
+        shell: bash
+        env:
+          BASE_SHA: ${{ steps.set-sha.outputs.base }}
+          HEAD_SHA: ${{ steps.set-sha.outputs.head }}
+        run: |
+          echo BASE='${{ env.BASE_SHA }}' >> "$GITHUB_ENV"
+          echo HEAD='${{ env.HEAD_SHA }}' >> "$GITHUB_ENV"
+          echo 'Current base SHA is "${{ env.BASE_SHA }}" and head SHA is "${{ env.HEAD_SHA }}"'
+          echo '{ "base_sha": "${{ env.BASE_SHA }}", "head_sha": "${{ env.HEAD_SHA }}" }' > "${{ github.workspace }}/event.json"
 
       - name: Prepare feature deployment
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false'
