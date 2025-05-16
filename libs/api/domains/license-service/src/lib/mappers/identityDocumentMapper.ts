@@ -101,6 +101,21 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
         ? `${document.type}${document.subType}${document.number}`
         : undefined
 
+    const mapLicenseType = (subType: string) => {
+      if (subType === 'D') {
+        return formatMessage(m.identityDocumentTravelLicense)
+      }
+      if (subType === 'I') {
+        return formatMessage(m.identityDocumentNotTravelLicense)
+      }
+
+      return formatMessage(m.identityDocument)
+    }
+
+    const licenseType = document.subType
+      ? mapLicenseType(document.subType)
+      : undefined
+
     const displayTag: GenericUserLicenseMetaTag | undefined = {
       text: isInvalid
         ? formatMessage(m.invalid)
@@ -143,6 +158,13 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
               value: licenseNumber,
               type: GenericUserLicenseMetaLinksType.Copy,
             },
+          }
+        : null,
+      licenseType
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: formatMessage(m.licenseType),
+            value: licenseType,
           }
         : null,
       document.issuingDate
