@@ -139,6 +139,7 @@ export const buildDateField = (
     backgroundColor = 'blue',
     required,
     readOnly,
+    size,
     tempDisabled,
   } = data
   return {
@@ -155,6 +156,7 @@ export const buildDateField = (
     backgroundColor,
     required,
     readOnly,
+    size,
     tempDisabled,
   }
 }
@@ -223,6 +225,7 @@ export const buildSelectField = (
     isMulti,
     isClearable,
     required,
+    size = 'md',
   } = data
   return {
     ...extractCommonFields(data),
@@ -236,6 +239,7 @@ export const buildSelectField = (
     isMulti,
     isClearable,
     backgroundColor,
+    size,
   }
 }
 
@@ -309,6 +313,7 @@ export const buildTextField = (
     readOnly,
     rightAlign,
     tooltip,
+    size,
     onChange,
   } = data
   return {
@@ -328,6 +333,7 @@ export const buildTextField = (
     max,
     min,
     tooltip,
+    size,
     onChange,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,

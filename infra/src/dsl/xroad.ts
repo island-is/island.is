@@ -939,6 +939,16 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
   },
 })
 
+export const LegalGazette = new XroadConf({
+  env: {
+    XROAD_LEGAL_GAZETTE_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/legal-gazette-api',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/legal-gazette-api',
+      prod: 'IS/GOV/5804170510/DMR-Protected/legal-gazette-api',
+    },
+  },
+})
+
 export const Frigg = new XroadConf({
   env: {
     XROAD_MMS_FRIGG_PATH: {
