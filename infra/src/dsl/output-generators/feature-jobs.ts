@@ -121,7 +121,7 @@ export const generateCleanUpForFeature = async (
             service.initContainers?.postgres?.extensions,
           )
           return {
-            command: [`/app/destroy-dbs.sh ${feature}`],
+            command: ['/app/destroy-dbs.sh', feature],
             image,
             name: `${info!.username!.replace(/_/g, '-').substr(0, 60)}1`,
             securityContext,
