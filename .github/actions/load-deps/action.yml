@@ -2,14 +2,13 @@ name: 'Load Dependencies'
 description: 'Prerequisite is that the prepare step has already been run'
 
 inputs:
+  cache-bucket:
+    description: 'Bucket to use as cache (for RunsOn action cache)'
+    required: false
   working-directory:
     description: 'Directory to run the action in'
     required: false
     default: './'
-  cache-path:
-    description: 'Cache path'
-    required: false
-    default: ${{ runner.temp ?? '.cache' }}
 
 runs:
   using: 'composite'
@@ -18,7 +17,7 @@ runs:
       id: set-env
       shell: bash
       run: |
-        echo "GENERATED_FILES_PATH=${{ inputs.cache-path }}/${{ github.sha }}.tar.gz" >> "$GITHUB_OUTPUT"
+        echo "GENERATED_FILES_PATH=${{ inputs.working-directory }}/.cache/generated-files/${{ github.sha }}.tar.gz" >> "$GITHUB_OUTPUT"
         echo "AWS_REGION=eu-west-1" >> "$GITHUB_OUTPUT"
         echo "CACHE_KEY=generated-files-${{ github.sha }}" >> "$GITHUB_OUTPUT"
 
@@ -36,7 +35,7 @@ runs:
           ${{ steps.set-env.outputs.GENERATED_FILES_PATH }}
         key: ${{ steps.set-env.outputs.CACHE_KEY }}
       env:
-        RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }} # Secrets can't be stored in outputs
+        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.cache-bucket || env.CACHE_BUCKET }}
         AWS_REGION: eu-west-1
 
     - name: Prepare generated files
@@ -61,5 +60,5 @@ runs:
           ${{ steps.set-env.outputs.GENERATED_FILES_PATH }}
         key: ${{ steps.set-env.outputs.CACHE_KEY }}
       env:
-        RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }} # Secrets can't be stored in outputs
+        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.cache-bucket || env.CACHE_BUCKET }}
         AWS_REGION: eu-west-1

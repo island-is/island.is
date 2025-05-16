@@ -1,6 +1,9 @@
 name: 'Setup yarn'
 description: 'Yarn setup and install dependencies'
 inputs:
+  cache-bucket:
+    description: 'Bucket to use as cache (for RunsOn action cache)'
+    required: false
   working-directory:
     description: 'Directory to run the action in'
     required: false
@@ -9,6 +12,12 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Ensure inputs
+      shell: bash
+      run: |
+        echo "${{ inputs.cache-bucket }}" | grep '.' || env | grep 'CACHE_BUCKET'
+        echo "Localrun? ${{ !!github.event.localrun }}"
+
     - name: Corepack
       shell: bash
       working-directory: ${{ inputs.working-directory }}
@@ -30,21 +39,23 @@ runs:
       id: set-cache
       run: |
         echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
-        echo "CYPRESS_CACHE_FOLDER=${{ github.workspace }}/.cache/cypress" >> "$GITHUB_OUTPUT"
-        echo "YARN_CACHE_FOLDER=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-        echo "YARN_INFRA_CACHE_FOLDER=$(cd infra && yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        echo "CYPRESS_CACHE_PATH=${{ github.workspace }}/.cache/cypress" >> "$GITHUB_OUTPUT"
+        echo "YARN_CACHE_PATH=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        echo "YARN_INFRA_CACHE_PATH=$(cd infra && yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        if [[ "${{ github.event.localrun }}" == true ]]; then
+          echo "RUNS_ON_S3_BUCKET_CACHE=${{ inputs.cache-bucket || env.CACHE_BUCKET }}" >> "$GITHUB_ENV"
+        fi
 
     - name: Restore Dependencies Cache
-      uses: runs-on/cache/restore@v4
+      uses: runs-on/cache@v4
       id: restore-cache
       with:
         path: |
-          ${{ steps.set-cache.outputs.YARN_CACHE_FOLDER }}
-          ${{ steps.set-cache.outputs.YARN_INFRA_CACHE_FOLDER }}
-          ${{ steps.set-cache.outputs.CYPRESS_CACHE_FOLDER }}
+          ${{ steps.set-cache.outputs.YARN_CACHE_PATH }}
+          ${{ steps.set-cache.outputs.YARN_INFRA_CACHE_PATH }}
+          ${{ steps.set-cache.outputs.CYPRESS_CACHE_PATH }}
         key: ${{ steps.set-cache.outputs.CACHE_KEY }}
       env:
-        RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }} # Secrets can't be stored in outputs
         AWS_REGION: eu-west-1
 
     - name: Yarn install
@@ -62,16 +73,3 @@ runs:
         YARN_ENABLE_HARDENED_MODE: 0
       run: |
         yarn install --immutable
-
-    - name: Cache Dependencies
-      uses: runs-on/cache/save@v4
-      if: ${{ steps.restore-cache.outputs.cache-hit != 'true' }}
-      with:
-        path: |
-          ${{ steps.set-cache.outputs.YARN_CACHE_FOLDER }}
-          ${{ steps.set-cache.outputs.YARN_INFRA_CACHE_FOLDER }}
-          ${{ steps.set-cache.outputs.CYPRESS_CACHE_FOLDER }}
-        key: ${{ steps.set-cache.outputs.CACHE_KEY }}
-      env:
-        RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }} # Secrets can't be stored in outputs
-        AWS_REGION: eu-west-1
