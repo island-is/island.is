@@ -419,7 +419,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [ApplicationEvents.REVIEW_WITHDRAWN]: { target: States.IN_REVIEW },
+          [ApplicationEvents.REVIEW_WITHDRAWN]: { target: States.SUBMITTED },
           [ApplicationEvents.REVIEW_COMPLETED]: { target: States.COMPLETED },
           [ApplicationEvents.APPLICATION_DISMISSED]: {
             target: States.DISMISSED,
