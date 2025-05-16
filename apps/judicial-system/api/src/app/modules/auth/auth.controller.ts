@@ -364,6 +364,13 @@ export class AuthController {
 
       this.clearCookies(res)
 
+      this.authService.createEventLog({
+        eventType: csrfToken
+          ? EventType.LOGIN_UNAUTHORIZED
+          : EventType.LOGIN_BYPASS_UNAUTHORIZED,
+        nationalId,
+      })
+
       res.redirect('/?villa=innskraning-ekki-notandi')
 
       return
