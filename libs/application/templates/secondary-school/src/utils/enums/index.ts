@@ -2,7 +2,9 @@ import { DefaultEvents } from '@island.is/application/types'
 
 export enum ApplicationEvents {
   REVIEW_STARTED = 'REVIEW_STARTED',
+  REVIEW_WITHDRAWN = 'REVIEW_WITHDRAWN',
   REVIEW_COMPLETED = 'REVIEW_COMPLETED',
+  APPLICATION_DISMISSED = 'APPLICATION_DISMISSED',
 }
 export type Events = {
   type:
@@ -10,7 +12,9 @@ export type Events = {
     | DefaultEvents.ABORT
     | DefaultEvents.EDIT
     | ApplicationEvents.REVIEW_STARTED
+    | ApplicationEvents.REVIEW_WITHDRAWN
     | ApplicationEvents.REVIEW_COMPLETED
+    | ApplicationEvents.APPLICATION_DISMISSED
 }
 
 export enum States {
@@ -20,6 +24,7 @@ export enum States {
   SUBMITTED = 'submitted',
   IN_REVIEW = 'inReview',
   COMPLETED = 'completed',
+  DISMISSED = 'dismissed',
 }
 
 export enum Roles {
