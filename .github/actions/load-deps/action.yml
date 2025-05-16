@@ -15,43 +15,51 @@ runs:
   using: 'composite'
   steps:
     - name: Set env
+      id: set-env
       shell: bash
       run: |
-        export GENERATED_FILES_PATH=${{ inputs.cache-path }}/${{ github.sha }}.tar.gz
-        echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_ENV"
+        echo "GENERATED_FILES_PATH=${{ inputs.cache-path }}/${{ github.sha }}.tar.gz" >> "$GITHUB_OUTPUT"
+        echo "AWS_REGION=eu-west-1" >> "$GITHUB_OUTPUT"
+        echo "CACHE_KEY=generated-files-${{ github.sha }}" >> "$GITHUB_OUTPUT"
 
     - name: INFO
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        echo "generated files: ${{ env.GENERATED_FILES_PATH }}"
+        echo "generated files: ${{ steps.set-env.outputs.GENERATED_FILES_PATH }}"
 
     - name: Restore generated files
       uses: runs-on/cache/restore@v4
       id: restore-codegen-cache
       with:
         path: |
-          ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ github.sha }}
+          ${{ steps.set-env.outputs.GENERATED_FILES_PATH }}
+        key: ${{ steps.set-env.outputs.CACHE_KEY }}
+      env:
+        RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }} # Secrets can't be stored in outputs
+        AWS_REGION: eu-west-1
 
     - name: Prepare generated files
-      if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
+      if: ${{ steps.restore-codegen-cache.outputs.cache-hit != 'true' }}
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES_PATH }}
+        node ./scripts/ci/generate-files.mjs "${{ steps.set-env.outputs.GENERATED_FILES_PATH }}"
 
     - name: Extract generated files
-      if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
+      if: ${{ steps.restore-codegen-cache.outputs.cache-hit == 'true' }}
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        tar -xzvf ${{ env.GENERATED_FILES_PATH }}
+        tar -xzvf "${{ steps.set-env.outputs.GENERATED_FILES_PATH }}"
 
     - name: Cache Generated files
-      if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
+      if: ${{ steps.restore-codegen-cache.outputs.cache-hit != 'true' }}
       uses: runs-on/cache/save@v4
       with:
         path: |
-          ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ github.sha }}
+          ${{ steps.set-env.outputs.GENERATED_FILES_PATH }}
+        key: ${{ steps.set-env.outputs.CACHE_KEY }}
+      env:
+        RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }} # Secrets can't be stored in outputs
+        AWS_REGION: eu-west-1

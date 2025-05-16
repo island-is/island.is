@@ -9,7 +9,6 @@ defaults:
     shell: bash
 env:
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
   YARN_ENABLE_HARDENED_MODE: '0'
 jobs:
@@ -28,8 +27,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4

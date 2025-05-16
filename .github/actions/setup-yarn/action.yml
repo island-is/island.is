@@ -1,9 +1,6 @@
 name: 'Setup yarn'
 description: 'Yarn setup and install dependencies'
 inputs:
-  RUNS_ON_S3_BUCKET_CACHE:
-    description: ''
-    required: true
   working-directory:
     description: 'Directory to run the action in'
     required: false
@@ -50,7 +47,8 @@ runs:
           ${{ steps.set-cache.outputs.CYPRESS_CACHE_FOLDER }}
         key: ${{ steps.set-cache.outputs.CACHE_KEY }}
       env:
-        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE }}
+        RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }} # Secrets can't be stored in outputs
+        AWS_REGION: eu-west-1
 
     - name: Yarn install
       working-directory: ${{ inputs.working-directory }}
@@ -69,4 +67,5 @@ runs:
           ${{ steps.set-cache.outputs.CYPRESS_CACHE_FOLDER }}
         key: ${{ steps.set-cache.outputs.CACHE_KEY }}
       env:
-        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE }}
+        RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }} # Secrets can't be stored in outputs
+        AWS_REGION: eu-west-1
