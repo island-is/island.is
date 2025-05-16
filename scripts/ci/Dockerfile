@@ -8,15 +8,13 @@ ARG PLAYWRIGHT_VERSION
 # ------------------------------------------------
 FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS base
 
+# Don't care about package versions
+# hadolint ignore=DL3008
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
   apt-get update && \
-  apt-get install -y \
-  git \
-  python3 \
-  build-essential \
-  jq \
-  gcc && \
+  apt-get install -y --no-install-recommends \
+  git python3 build-essential jq gcc && \
   ln -sf /usr/bin/python3 /usr/bin/python
 
 
@@ -29,8 +27,10 @@ COPY .yarn/patches .yarn/patches
 COPY .yarn/releases .yarn/releases
 COPY apps/native/app/package.json ./apps/native/app/
 
+# Mounting, so no need for `yarn clean`
+# hadolint ignore=DL3060
 RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
-  yarn install --immutable
+  YARN_ENABLE_HARDENED_MODE=0 yarn install --immutable
 
 # ------------------------------------------------
 # Copy monorepo source
@@ -76,6 +76,8 @@ RUN groupadd runners && useradd -m -g runners runner
 # Base + pg
 # ------------------------------------------------
 FROM output-base AS output-base-with-pg
+# Don't care about package versions
+# hadolint ignore=DL3016
 RUN npm install -g sequelize sequelize-cli pg
 USER runner
 
@@ -133,6 +135,8 @@ CMD ["node", "main.js"]
 # ------------------------------------------------
 FROM public.ecr.aws/docker/library/nginx:1.21-alpine AS static-base
 
+# Don't care about package versions
+# hadolint ignore=DL3018
 RUN apk update && apk upgrade && apk add --no-cache bash nodejs
 RUN mkdir -p /etc/nginx/templates
 
@@ -164,12 +168,15 @@ LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
 # ------------------------------------------------
 FROM output-base AS output-jest
 
+RUN echo 'module.exports = {};' > jest.config.js
+
 ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
-RUN echo 'module.exports = {};' > jest.config.js
+# Don't care about package versions
+# hadolint ignore=DL3016
 RUN npm install -g jest
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
@@ -204,8 +211,10 @@ ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
+# Don't care about package versions
+# hadolint ignore=DL3008
 RUN apt-get update && \
-  apt-get install -y zip awscli && \
+  apt-get install -y --no-install-recommends zip awscli && \
   apt-get purge -y && \
   rm -rf /var/lib/apt/lists/*
 
@@ -220,8 +229,7 @@ USER pwuser
 COPY .yarnrc.yml ./
 RUN mkdir ./.yarn
 COPY .yarn/releases ./.yarn/releases
-RUN yarn install
-RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
+RUN YARN_ENABLE_HARDENED_MODE=0 yarn install --immutable && yarn playwright install "${PLAYWRIGHT_BROWSER}"
 
 COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
 

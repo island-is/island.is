@@ -26,10 +26,6 @@ concurrency:
   group: push-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
-env:
-  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  AWS_REGION: eu-west-1
-
 jobs:
   dedupe:
     name: Deduplicate
@@ -39,6 +35,7 @@ jobs:
         with:
           ref: ${{ inputs.branch }}
           fetch-depth: 0
+
       - name: Should dedupe?
         id: dedupe
         run: |
@@ -47,6 +44,7 @@ jobs:
           else
             echo "should=false" | tee -a "$GITHUB_OUTPUT"
           fi
+
       - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' && steps.dedupe.outputs.should == 'true' }}
         with:
@@ -56,12 +54,11 @@ jobs:
       - name: Setup yarn
         if: ${{ steps.dedupe.outputs.should == 'true' }}
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Deduplicate (check)
         if: ${{ !inputs.write && steps.dedupe.outputs.should == 'true' }}
         run: yarn dedupe --check
+
       - name: Deduplicate (write)
         if: ${{ inputs.write && steps.dedupe.outputs.should == 'true' }}
         run: |

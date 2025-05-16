@@ -41,9 +41,6 @@ env:
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
-  GENERATED_FILES: ${{ github.sha }}.tar.gz
-  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
-  YARN_ENABLE_HARDENED_MODE: '0'
 jobs:
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
@@ -80,7 +77,19 @@ jobs:
           fetch-depth: 0
 
       - name: Derive appropriate SHAs
-        uses: ./.github/actions/set-shas
+        id: set-sha
+        uses: nrwl/nx-set-shas@v4
+
+      - name: Derive appropriate SHAs
+        shell: bash
+        env:
+          BASE_SHA: ${{ steps.set-sha.outputs.base }}
+          HEAD_SHA: ${{ steps.set-sha.outputs.head }}
+        run: |
+          echo BASE='${{ env.BASE_SHA }}' >> "$GITHUB_ENV"
+          echo HEAD='${{ env.HEAD_SHA }}' >> "$GITHUB_ENV"
+          echo 'Current base SHA is "${{ env.BASE_SHA }}" and head SHA is "${{ env.HEAD_SHA }}"'
+          echo '{ "base_sha": "${{ env.BASE_SHA }}", "head_sha": "${{ env.HEAD_SHA }}" }' > "${{ github.workspace }}/event.json"
 
       - name: Prepare feature deployment
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false'
@@ -163,13 +172,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-
-      - name: Install infra modules
-        working-directory: infra
-        run: |
-          corepack enable && CI=true yarn install --immutable
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -298,8 +300,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Set id for matrix
         run: |
@@ -357,8 +357,6 @@ jobs:
           fi
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Building Docker images
         continue-on-error: true
@@ -428,8 +426,6 @@ jobs:
           aws-region: eu-west-1
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Docker build image
         working-directory: infra
@@ -501,13 +497,6 @@ jobs:
         uses: ./monorepo/.github/actions/setup-yarn
         with:
           working-directory: monorepo
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-
-      - name: Install infra modules
-        if: steps.infra-node-modules.outputs.cache-hit != 'true'
-        working-directory: monorepo/infra
-        run: |
-          corepack enable && CI=true yarn install --immutable
 
       - name: Generate islandis feature-deployment charts for ArgoCD
         working-directory: monorepo/infra

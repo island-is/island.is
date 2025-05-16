@@ -1,7 +1,7 @@
 FROM public.ecr.aws/docker/library/node:20.15.0-bookworm-slim AS runner
 
-# hadolint ignore=DL3018
-RUN apt-get update && apt-get install -y \
+# hadolint ignore=DL3008
+RUN apt-get update && apt-get install -y --no-install-recommends \
   postgresql \
   python3 \
   make \
@@ -13,10 +13,9 @@ WORKDIR /app/infra
 ENV NODE_OPTIONS=--openssl-legacy-provider
 COPY infra/.yarnrc.yml infra/package.json infra/yarn.lock ./
 COPY infra/.yarn/releases .yarn/releases
-RUN ls -al
-RUN yarn --version
+RUN ls -lah && yarn --version
 
-RUN yarn install --immutable
+RUN YARN_ENABLE_HARDENED_MODE=0 yarn install --immutable
 
 COPY infra/ ./
 COPY apps /app/apps/
