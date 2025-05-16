@@ -23,7 +23,7 @@ export class FieldsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private fieldsApi: FieldsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
