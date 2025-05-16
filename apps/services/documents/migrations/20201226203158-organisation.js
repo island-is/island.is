@@ -28,6 +28,9 @@ module.exports = {
         phone_number: {
           type: Sequelize.STRING,
         },
+        zendesk_id: {
+          type: Sequelize.STRING,
+        },
         created: {
           type: 'TIMESTAMP WITH TIME ZONE',
           defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
