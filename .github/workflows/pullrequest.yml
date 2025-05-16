@@ -119,6 +119,7 @@ jobs:
           ' | tee -a "$GITHUB_OUTPUT"
 
       - name: Verify that projects have some tests
+        if: ${{ steps.unicorn.outputs.projects != '' }}
         env:
           projects: ${{ steps.unicorn.outputs.projects }}
         run: |
@@ -327,6 +328,9 @@ jobs:
             (grep -oP '(?<=✖ )(\d+)(?= problems)' || echo '0') | # Find number of problems
             awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
             tee -a "$GITHUB_OUTPUT" # Finally create output
+          echo "::group::Lints"
+          cat "$lints"
+          echo "::endgroup::"
 
       # Checkout for linting base
       - uses: actions/checkout@v4
@@ -347,6 +351,9 @@ jobs:
             (grep -oP '(?<=✖ )(\d+)(?= problems)' || echo '0') | # Find number of problems
             awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
             tee -a "$GITHUB_OUTPUT" # Finally create output
+          echo "::group::Lints"
+          cat "$lints"
+          echo "::endgroup::"
 
       - name: No new lints
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
@@ -364,7 +371,7 @@ jobs:
           done
           NEW_LINTS=$(comm -13 "${BASE_LINT_FILE}_files.out" "${HEAD_LINT_FILE}_files.out" | wc -l) || { echo "Failed comparing output files"; exit 1; }
           COUNT_DIFF=$(( HEAD_LINT_COUNT - BASE_LINT_COUNT )) || :
-          if (( COUNT_DIFF <= 0 && NEW_LINTS == 0 )); then
+          if (( NEW_LINTS == 0 )); then
             echo "Lint count has not increased (𝚫=$COUNT_DIFF)"
             exit 0
           fi
