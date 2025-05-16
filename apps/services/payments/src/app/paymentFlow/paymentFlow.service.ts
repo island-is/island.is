@@ -121,7 +121,7 @@ export class PaymentFlowService {
       // TODO: Map error codes to PaymentServiceCode
       throw new BadRequestException(
         onlyReturnKnownErrorCode(
-          e.message,
+          e instanceof Error ? e.message : String(e),
           PaymentServiceCode.CouldNotCreatePaymentFlow,
         ),
       )

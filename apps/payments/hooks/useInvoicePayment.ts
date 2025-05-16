@@ -33,8 +33,10 @@ export const useInvoicePayment = ({
       })
 
       if (!response.data?.paymentsCreateInvoice.isSuccess) {
-        // TODO: Extract more specific error from response if available
-        throw new Error(CardErrorCode.GenericDecline)
+        const specific =
+          response.data?.paymentsCreateInvoice.responseCode ??
+          CardErrorCode.GenericDecline
+        throw new Error(specific)
       }
       onPaymentSuccess()
     } catch (e: unknown) {

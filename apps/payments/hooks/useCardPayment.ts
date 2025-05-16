@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, useEffect } from 'react'
 import {
   PaymentsChargeCardInput,
   PaymentsVerifyCardInput,
@@ -56,6 +56,12 @@ export const useCardPayment = ({
   >(null)
 
   const isVerifyingRef = useRef(false) // For polling loop control
+
+  useEffect(() => {
+    return () => {
+      isVerifyingRef.current = false
+    }
+  }, [])
 
   const waitForCardVerification = useCallback(async () => {
     if (!paymentFlow?.id) {

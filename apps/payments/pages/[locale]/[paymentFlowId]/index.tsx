@@ -309,14 +309,19 @@ export default function PaymentPage({
                       : formatMessage(invoice.create)}
                   </Button>
                   <Box display="flex" justifyContent="center">
-                    <Link
-                      href={paymentFlow.returnUrl ?? 'https://island.is'}
-                      aria-disabled={overallIsSubmitting}
+                    <Button
+                      variant="text"
+                      disabled={overallIsSubmitting}
+                      onClick={() => {
+                        if (!overallIsSubmitting) {
+                          router.push(
+                            paymentFlow.returnUrl ?? 'https://island.is',
+                          )
+                        }
+                      }}
                     >
-                      <Button variant="text" disabled={overallIsSubmitting}>
-                        {formatMessage(generic.buttonCancel)}
-                      </Button>
-                    </Link>
+                      {formatMessage(generic.buttonCancel)}
+                    </Button>
                   </Box>
                 </Box>
               </form>
