@@ -43,7 +43,6 @@ env:
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
-  GENERATED_FILES: ${{ github.sha }}.tar.gz
   YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:

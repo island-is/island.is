@@ -17,7 +17,7 @@ runs:
     - name: Set env
       shell: bash
       run: |
-        export GENERATED_FILES_PATH=${{ inputs.cache-path }}/${{ env.GENERATED_FILES }}
+        export GENERATED_FILES_PATH=${{ inputs.cache-path }}/${{ github.sha }}.tar.gz
         echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_ENV"
 
     - name: INFO
