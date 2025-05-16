@@ -2,6 +2,7 @@ export enum LegalGazetteStates {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   SUBMITTED = 'submitted',
+  SUBMITTED_FAILED = 'submittedFailed',
   APPROVED = 'approved',
   REJECTED = 'rejected',
 }

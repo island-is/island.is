@@ -4,6 +4,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { m } from '../lib/messages'
 
 export const SubmittedForm: Form = buildForm({
   id: 'SubmittedForm',
@@ -25,9 +26,9 @@ export const SubmittedForm: Form = buildForm({
       id: 'submitted.section',
       children: [
         buildMultiField({
-          id: 'submitted.section',
-          title: 'Umsókn móttekin',
-          description: 'Umsóknin hefur borist til ritstjórnar Lögbirtings.',
+          id: 'submitted.success',
+          title: m.submitted.success.formTitle,
+          description: m.submitted.success.formTitle,
           children: [],
         }),
       ],

@@ -9,7 +9,7 @@ export const m = {
     },
     application: {
       id: 'lg.application:general.application',
-      defaultMessage: 'Lögbirting',
+      defaultMessage: 'Lögbirtingarblaðið',
       description: `Heiti umsóknar`,
     },
   }),
@@ -54,6 +54,17 @@ export const m = {
       id: 'lg.application:errors.invalidEmail',
       defaultMessage: 'Netfang er ekki gilt',
       description: 'Villa sem kemur upp ef netfang er ekki í réttu sniði',
+    },
+    failedToSubmitTitle: {
+      id: 'lg.application:errors.failedToSubmitTitle',
+      defaultMessage: 'Ekki tókst að senda inn umsókn',
+      description: 'Villa sem kemur upp ef umsóknin tekst ekki að senda inn',
+    },
+    failedToSubmitMessage: {
+      id: 'lg.application:errors.failedToSubmitMessage',
+      defaultMessage:
+        'Ekki tókst að ná sambandi við vefþjóna Lögbirtingarblaðsins. Vinsamlegast reyndu aftur síðar.',
+      description: 'Villa sem kemur upp ef umsóknin tekst ekki að senda inn',
     },
   }),
   requirements: {
@@ -435,5 +446,53 @@ export const m = {
         },
       }),
     },
+  },
+  submitted: {
+    success: defineMessages({
+      sectionTitle: {
+        id: 'lg.application:submitted.success.sectionTitle',
+        defaultMessage: 'Innsend',
+        description: 'Heiti kafla fyrir staðfestingu umsóknar',
+      },
+      formTitle: {
+        id: 'lg.application:submitted.success.formTitle',
+        defaultMessage: 'Umsókn móttekin',
+        description: 'Titill á formi fyrir staðfestingu umsóknar',
+      },
+      formIntro: {
+        id: 'lg.application:submitted.success.formIntro',
+        defaultMessage:
+          'Umsóknin hefur borist til ritstjórnar Lögbirtingarblaðsins',
+        description: 'Inngangur á formi fyrir staðfestingu umsóknar',
+      },
+    }),
+    failed: defineMessages({
+      sectionTitle: {
+        id: 'lg.application:submitted.failed.sectionTitle',
+        defaultMessage: 'Innsending',
+        description: 'Heiti kafla fyrir staðfestingu umsóknar',
+      },
+      formTitle: {
+        id: 'lg.application:submitted.failed.formTitle',
+        defaultMessage: 'Eitthvað fór úrskeiðis',
+        description: 'Titill á formi fyrir staðfestingu umsóknar',
+      },
+      alertTitle: {
+        id: 'lg.application:submitted.failed.alertTitle',
+        defaultMessage: 'Ekki tókst að senda inn umsókn',
+        description: 'Titill á villu fyrir staðfestingu umsóknar',
+      },
+      alertMessage: {
+        id: 'lg.application:submitted.failed.alertMessage',
+        defaultMessage:
+          'Ekki tókst að ná sambandi við vefþjóna Lögbirtingarblaðsins. Vinsamlegast reyndu aftur síðar.',
+        description: 'Inngangur á formi fyrir staðfestingu umsóknar',
+      },
+      tryAgain: {
+        id: 'lg.application:submitted.failed.tryAgain',
+        defaultMessage: 'Reyndu aftur',
+        description: 'Titill á takka fyrir staðfestingu umsóknar',
+      },
+    }),
   },
 }

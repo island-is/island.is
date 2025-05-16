@@ -15,9 +15,10 @@ import { legalGazetteDataSchema } from './dataSchema'
 import { CodeOwners } from '@island.is/shared/constants'
 import { LegalGazetteAPIActions, LegalGazetteStates } from './constants'
 import { m } from './messages'
-import { pruneAfterDays } from '@island.is/application/core'
+import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import set from 'lodash/set'
+import { didSubmitSuccessfully } from './utils'
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -31,8 +32,14 @@ enum Roles {
   ASSIGNEE = 'assignee',
 }
 
-const getApplicationName = (_application: Application) => {
-  return `Lögbirting`
+const getApplicationName = (application: Application) => {
+  const caption = getValueViaPath(
+    application.answers,
+    'application.caption',
+    '',
+  )
+
+  return `Lögbirtingarblaðið${caption ? ` - ${caption}` : ''}`
 }
 
 const LegalGazetteApplicationTemplate: ApplicationTemplate<
@@ -129,11 +136,24 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               write: 'all',
             },
           ],
+          onExit: defineTemplateApi({
+            action: LegalGazetteAPIActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+            shouldPersistToExternalData: true,
+            externalDataId: 'successfullyPosted',
+            throwOnError: false,
+          }),
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: LegalGazetteStates.SUBMITTED,
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: LegalGazetteStates.SUBMITTED,
+              cond: didSubmitSuccessfully,
+            },
+            {
+              target: LegalGazetteStates.SUBMITTED_FAILED,
+            },
+          ],
         },
       },
       [LegalGazetteStates.SUBMITTED]: {
@@ -145,12 +165,6 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: false,
           },
-          onEntry: defineTemplateApi({
-            action: LegalGazetteAPIActions.submitApplication,
-            shouldPersistToExternalData: true,
-            externalDataId: 'successfullyPosted',
-            throwOnError: false,
-          }),
           actionCard: {
             tag: {
               label: 'Í vinnslu hjá ritstjórn',
@@ -182,6 +196,58 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
           [DefaultEvents.REJECT]: {
             target: LegalGazetteStates.REJECTED,
           },
+        },
+      },
+      [LegalGazetteStates.SUBMITTED_FAILED]: {
+        meta: {
+          name: 'Staðfesting',
+          progress: 1,
+          status: 'inprogress',
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
+          actionCard: {
+            tag: {
+              label: 'Villa við innsendingu',
+              variant: 'red',
+            },
+          },
+          onExit: defineTemplateApi({
+            action: LegalGazetteAPIActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+            shouldPersistToExternalData: true,
+            externalDataId: 'successfullyPosted',
+            throwOnError: false,
+          }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/SubmittedFailed').then((module) =>
+                  Promise.resolve(module.SubmittedFailed),
+                ),
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: LegalGazetteStates.SUBMITTED,
+              cond: didSubmitSuccessfully,
+            },
+            {
+              target: LegalGazetteStates.SUBMITTED_FAILED,
+            },
+          ],
         },
       },
       [LegalGazetteStates.APPROVED]: {

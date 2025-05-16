@@ -20,6 +20,7 @@ import {
 import { LGFieldBaseProps } from '../lib/types'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 type ChannelSchema = {
   email: string
@@ -27,22 +28,25 @@ type ChannelSchema = {
 }
 
 const CHANNELS_PATH = 'communication.channels'
-const CHANNEL_EMAIL_PATH = 'communication.channels.email'
 
 export const CommunicationChannels = ({
   application,
   errors,
 }: LGFieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const { setValue, setError, clearErrors } = useFormContext()
+  const { setValue, clearErrors } = useFormContext()
+
+  const user = useUserInfo()
 
   const emptyChannelError = errors && getErrorViaPath(errors, CHANNELS_PATH)
-  const emailError = errors && getErrorViaPath(errors, CHANNEL_EMAIL_PATH)
+  const [emailError, setEmailError] = useState<string | undefined>(undefined)
 
   const channelAnswers = getValueViaPath(
     application.answers,
     CHANNELS_PATH,
-    [],
+    user.profile.email
+      ? [{ email: user.profile.email, phone: user.profile.phone_number }]
+      : [],
   ) as ChannelSchema[]
 
   const [channels, setChannels] = useState(channelAnswers)
@@ -55,11 +59,8 @@ export const CommunicationChannels = ({
   const handleEmailBlur = () => {
     const isValidEmail = newEmail.match(EMAIL_REGEX)
 
-    if (!isValidEmail) {
-      setError(CHANNEL_EMAIL_PATH, {
-        type: 'manual',
-        message: formatMessage(m.errors.invalidEmail),
-      })
+    if (!isValidEmail && newEmail.length > 0) {
+      setEmailError(formatMessage(m.errors.invalidEmail))
     }
   }
 
@@ -81,7 +82,7 @@ export const CommunicationChannels = ({
       setEditIndex(null)
       setNewEmail('')
       setNewPhone('')
-      clearErrors([CHANNEL_EMAIL_PATH, CHANNELS_PATH])
+      clearErrors([CHANNELS_PATH])
       setToggleAddChannel(false)
       return
     }
@@ -93,7 +94,7 @@ export const CommunicationChannels = ({
     setNewPhone('')
     setToggleAddChannel(false)
     setEditIndex(null)
-    clearErrors([CHANNEL_EMAIL_PATH, CHANNELS_PATH])
+    clearErrors([CHANNELS_PATH])
   }
 
   const removeChannel = (index: number) => {
@@ -191,17 +192,13 @@ export const CommunicationChannels = ({
                     value={newEmail}
                     onChange={(e) => {
                       if (emailError) {
-                        clearErrors(CHANNEL_EMAIL_PATH)
+                        setEmailError(undefined)
                       }
                       setNewEmail(e.target.value)
                     }}
                     onBlur={handleEmailBlur}
+                    errorMessage={emailError}
                   />
-                  {emailError && (
-                    <Text color="red400" variant="small" fontWeight="medium">
-                      {formatMessage(m.errors.invalidEmail)}
-                    </Text>
-                  )}
                 </Stack>
               </GridColumn>
               <GridColumn span={['12/12', '5/12']}>
@@ -243,7 +240,7 @@ export const CommunicationChannels = ({
       <Button
         icon="add"
         onClick={() => {
-          clearErrors([CHANNEL_EMAIL_PATH, CHANNELS_PATH])
+          clearErrors([CHANNELS_PATH])
           setToggleAddChannel((prev) => !prev)
         }}
       >
