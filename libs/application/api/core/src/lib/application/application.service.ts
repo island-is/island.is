@@ -10,6 +10,7 @@ import {
 } from '@island.is/application/types'
 import {
   Application,
+  ApplicationDetails,
   ApplicationPaginatedResponse,
   ApplicationsStatistics,
 } from './application.model'
@@ -396,5 +397,17 @@ export class ApplicationService {
 
   async delete(id: string) {
     return this.applicationModel.destroy({ where: { id } })
+  }
+
+  async getApplicationDetails(
+    applicationId: string,
+  ): Promise<ApplicationDetails> {
+    const details = await this.applicationModel.findOne({
+      attributes: ['externalData', 'attachments', 'answers'],
+      where: { id: applicationId },
+      rejectOnEmpty: true,
+    })
+
+    return details
   }
 }
