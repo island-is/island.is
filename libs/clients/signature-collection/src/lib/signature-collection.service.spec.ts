@@ -21,6 +21,7 @@ import {
 } from './types/collection.dto'
 
 import { ApiConfiguration } from './apiConfiguration'
+import { exportedApis } from './apis'
 
 const user: User = {
   nationalId: '0101302399',
@@ -66,6 +67,7 @@ describe('MyService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApiConfiguration,
+        ...exportedApis,
         SignatureCollectionClientService,
         MedmaelalistarApi,
         MedmaelasofnunApi,
