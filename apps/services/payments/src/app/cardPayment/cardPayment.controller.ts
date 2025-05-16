@@ -85,7 +85,7 @@ export class CardPaymentController {
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'payment_started',
-        message: `[${paymentFlowId}] Card verification started`,
+        message: `Card verification started`,
       })
 
       // All required data to build the 3DS screen
@@ -97,7 +97,7 @@ export class CardPaymentController {
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'payment_failed',
-        message: `[${paymentFlowId}] Card verification was not started due to an error: ${e.message}`,
+        message: `Card verification was not started due to an error: ${e.message}`,
         metadata: {
           error: e.message,
         },
@@ -145,7 +145,7 @@ export class CardPaymentController {
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'other',
-        message: `[${paymentFlowId}] Card verification callback completed`,
+        message: `Card verification callback completed`,
       })
 
       return {
@@ -158,7 +158,7 @@ export class CardPaymentController {
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'other',
-        message: `[${paymentFlowId}] Card verification callback failed: ${e.message}`,
+        message: `Card verification callback failed: ${e.message}`,
         metadata: {
           error: e.message,
         },
@@ -275,7 +275,7 @@ export class CardPaymentController {
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'other',
-        message: `[${paymentFlowId}] Card payment processing ultimately failed: ${e.message}`,
+        message: `Card payment processing ultimately failed: ${e.message}`,
         metadata: {
           error: e.message,
         },
@@ -308,7 +308,7 @@ export class CardPaymentController {
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'payment_completed',
-        message: `[${paymentFlowId}] Card payment confirmation persisted`,
+        message: `Card payment confirmation persisted`,
         metadata: {
           payment: paymentResult,
         },
@@ -334,7 +334,7 @@ export class CardPaymentController {
           occurredAt: new Date(),
           paymentMethod: PaymentMethod.CARD,
           reason: 'other',
-          message: `[${paymentFlowId}] Card payment refunded: failed to persist payment confirmation.`,
+          message: `Card payment refunded: failed to persist payment confirmation.`,
           metadata: {
             payment: paymentResult,
             refund,
@@ -360,7 +360,7 @@ export class CardPaymentController {
           occurredAt: new Date(),
           paymentMethod: PaymentMethod.CARD,
           reason: 'other',
-          message: `[${paymentFlowId}] CRITICAL: Accepted payment, failed to persist confirmation, AND failed to refund.`,
+          message: `CRITICAL: Accepted payment, failed to persist confirmation, AND failed to refund.`,
           metadata: {
             payment: paymentResult,
             paymentTrackingData,
@@ -443,7 +443,7 @@ export class CardPaymentController {
             occurredAt: new Date(),
             paymentMethod: PaymentMethod.CARD,
             reason: 'other',
-            message: `[${paymentFlowId}] Card payment refunded: FJS charge failed and payment confirmation was not persisted or FJS indicated already paid.`,
+            message: `Card payment refunded: FJS charge failed and payment confirmation was not persisted or FJS indicated already paid.`,
             metadata: {
               payment: paymentResult,
               refund,
@@ -477,7 +477,7 @@ export class CardPaymentController {
             occurredAt: new Date(),
             paymentMethod: PaymentMethod.CARD,
             reason: 'other',
-            message: `[${paymentFlowId}] CRITICAL: FJS charge creation failed, payment confirmation status: ${persistedPaymentConfirmation}, AND failed to refund.`,
+            message: `CRITICAL: FJS charge creation failed, payment confirmation status: ${persistedPaymentConfirmation}, AND failed to refund.`,
             metadata: {
               payment: paymentResult,
               paymentTrackingData: {
@@ -501,7 +501,7 @@ export class CardPaymentController {
           occurredAt: new Date(),
           paymentMethod: PaymentMethod.CARD,
           reason: 'other',
-          message: `[${paymentFlowId}] Accepted payment, but FJS charge creation failed (worker will retry).`,
+          message: `Accepted payment, but FJS charge creation failed (worker will retry).`,
           metadata: {
             payment: paymentResult,
             fjsError: e.message,
@@ -525,7 +525,7 @@ export class CardPaymentController {
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'payment_completed',
-        message: `[${paymentFlowId}] Card payment completed successfully`,
+        message: `Card payment completed successfully`,
         metadata: {
           payment: paymentResult,
           charge: confirmation,
@@ -554,7 +554,7 @@ export class CardPaymentController {
           occurredAt: new Date(),
           paymentMethod: PaymentMethod.CARD,
           reason: 'other',
-          message: `[${paymentFlowId}] Card payment refunded: failed to notify onUpdateUrl [success].`,
+          message: `Card payment refunded: failed to notify onUpdateUrl [success].`,
           metadata: {
             payment: paymentResult,
             refund,
@@ -588,7 +588,7 @@ export class CardPaymentController {
           occurredAt: new Date(),
           paymentMethod: PaymentMethod.CARD,
           reason: 'other',
-          message: `[${paymentFlowId}] CRITICAL: Payment successful, final notification failed, AND refund failed.`,
+          message: `CRITICAL: Payment successful, final notification failed, AND refund failed.`,
           metadata: {
             payment: paymentResult,
             originalNotificationError: logUpdateError.message,
