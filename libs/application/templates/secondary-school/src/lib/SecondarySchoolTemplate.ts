@@ -467,7 +467,8 @@ const template: ApplicationTemplate<
       },
       [States.DISMISSED]: {
         meta: {
-          name: applicationMessage.stateMetaNameCompleted.defaultMessage,
+-          name: applicationMessage.stateMetaNameCompleted.defaultMessage,
++          name: applicationMessage.stateMetaNameDismissed.defaultMessage,
           status: FormModes.COMPLETED,
           lifecycle: {
             shouldBeListed: true,
