@@ -58,17 +58,18 @@ export class SignatureCollectionAdminResolver {
       user,
       input.signeeNationalId,
       input.listId,
+      input.collectionType,
     )
   }
 
-  @Query(() => SignatureCollection)
+  @Query(() => [SignatureCollection])
   @Scopes(
     AdminPortalScope.signatureCollectionManage,
     AdminPortalScope.signatureCollectionProcess,
   )
   async signatureCollectionAdminCurrent(
     @CurrentUser() user: User,
-  ): Promise<SignatureCollection> {
+  ): Promise<SignatureCollection[]> {
     const isManager = user.scope.includes(
       AdminPortalScope.signatureCollectionManage,
     )
@@ -135,9 +136,14 @@ export class SignatureCollectionAdminResolver {
   @Audit()
   async signatureCollectionAdminCandidateLookup(
     @CurrentUser() user: User,
-    @Args('input') { nationalId }: SignatureCollectionNationalIdInput,
+    @Args('input')
+    { nationalId, collectionType }: SignatureCollectionNationalIdInput,
   ): Promise<SignatureCollectionCandidateLookUp> {
-    return this.signatureCollectionService.signee(nationalId, user)
+    return this.signatureCollectionService.signee(
+      nationalId,
+      collectionType,
+      user,
+    )
   }
 
   @Query(() => SignatureCollectionListStatus)
