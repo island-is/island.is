@@ -30,9 +30,10 @@ runs:
     - name: Set cache key
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      id: set-cache-key
+      id: set-cache
       run: |
         echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
+        echo "CYPRESS_CACHE_FOLDER=${{ github.workspace }}/.cache/cypress" >> "$GITHUB_OUTPUT"
 
     - name: Get Yarn Cache Directory Path
       working-directory: ${{ inputs.working-directory }}
@@ -46,11 +47,10 @@ runs:
       with:
         path: |
           ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          ${{ env.CYPRESS_CACHE_FOLDER }}
-        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+          ${{ steps.set-cache.outputs.CYPRESS_CACHE_FOLDER }}
+        key: ${{ steps.set-cache.outputs.CACHE_KEY }}
       env:
         RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE }}
-        CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
 
     - name: Yarn install
       working-directory: ${{ inputs.working-directory }}
@@ -64,8 +64,7 @@ runs:
       with:
         path: |
           ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          ${{ env.CYPRESS_CACHE_FOLDER }}
-        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+          ${{ steps.set-cache.outputs.CYPRESS_CACHE_FOLDER }}
+        key: ${{ steps.set-cache.outputs.CACHE_KEY }}
       env:
         RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE }}
-        CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
