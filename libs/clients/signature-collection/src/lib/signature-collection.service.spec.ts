@@ -9,6 +9,7 @@ import {
   EinstaklingurKosningInfoDTO,
   FrambodDTO,
   KosningApi,
+  KosningBaseDTO,
 } from '../../gen/fetch'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import { Test, TestingModule } from '@nestjs/testing'
@@ -19,12 +20,6 @@ import {
   CollectionType,
   getNumberFromCollectionType,
 } from './types/collection.dto'
-
-import { ApiConfiguration } from './apiConfiguration'
-import { exportedApis } from './apis'
-import { ConfigModule } from '@nestjs/config'
-import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
-import { SignatureCollectionClientConfig } from './signature-collection.config'
 
 const user: User = {
   nationalId: '0101302399',
@@ -66,11 +61,10 @@ describe('MyService', () => {
   let sofnunApi: MedmaelasofnunApi
   let medmaeliApi: MedmaeliApi
   let frambodApi: FrambodApi
+  let kosningApi: KosningApi
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ApiConfiguration,
-        ...exportedApis,
         SignatureCollectionClientService,
         MedmaelalistarApi,
         MedmaelasofnunApi,
@@ -79,13 +73,7 @@ describe('MyService', () => {
         FrambodApi,
         SignatureCollectionSharedClientService,
       ],
-      imports: [
-        LoggingModule,
-        ConfigModule.forRoot({
-          isGlobal: true,
-          load: [XRoadConfig, SignatureCollectionClientConfig, IdsClientConfig],
-        }),
-      ],
+      imports: [LoggingModule],
     }).compile()
     service = module.get<SignatureCollectionClientService>(
       SignatureCollectionClientService,
@@ -94,6 +82,7 @@ describe('MyService', () => {
     sofnunApi = module.get<MedmaelasofnunApi>(MedmaelasofnunApi)
     medmaeliApi = module.get<MedmaeliApi>(MedmaeliApi)
     frambodApi = module.get<FrambodApi>(FrambodApi)
+    kosningApi = module.get<KosningApi>(KosningApi)
   })
 
   it('should be defined', () => {
@@ -241,6 +230,7 @@ describe('MyService', () => {
           svaediID === 123 ? lists.filter((l) => l.svaedi?.id === 123) : lists,
         ),
       )
+
     // Act
     const all = await service.getLists({})
     const allArea = await service.getLists({ areaId: '123' })
@@ -382,6 +372,59 @@ describe('MyService', () => {
         id: 999,
         medmaelalistiID: 888,
       }),
+    )
+
+    jest.spyOn(kosningApi, 'kosningGet').mockReturnValue(
+      Promise.resolve([
+        {
+          id: 123123,
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          nafn: 'bbbb',
+        },
+        {
+          id: 124124,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          nafn: 'aaaa',
+        },
+      ]),
+    )
+
+    jest.spyOn(kosningApi, 'kosningIDSofnunListGet').mockReturnValue(
+      Promise.resolve([
+        {
+          kosningNafn: 'bbbb',
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          id: 123123,
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'bbbb',
+            kosningTegund: 'Forsetakosning',
+            kosningTegundNr: 2,
+          },
+        },
+        {
+          id: 124124,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          kosningNafn: 'aaaa',
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          erMedmaelaKosning: true,
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'aaaa',
+            kosningTegund: 'Alþingiskosningar',
+            kosningTegundNr: 1,
+          },
+        },
+      ]),
     )
     // Act
     const alreadySigned = service.signList(
