@@ -1,6 +1,7 @@
 import {
   ComplaintsToAlthingiOmbudsmanAnswers,
   ComplainedForTypes,
+  GenderAnswerOptions,
 } from '@island.is/application/templates/complaints-to-althingi-ombudsman'
 import { Application } from '@island.is/application/types'
 import {
@@ -40,12 +41,13 @@ export const applicationToCaseRequest = async (
 const getContactInfo = (
   answers: ComplaintsToAlthingiOmbudsmanAnswers,
 ): ComplainerContactInfo => {
-  let contact = answers.applicant
+  let contact: typeof answers.applicant & { gender?: GenderAnswerOptions }
   if (answers.complainedFor.decision == ComplainedForTypes.SOMEONEELSE) {
-    contact = answers.complainedForInformation as typeof answers.applicant
+    contact = answers.complainedForInformation as typeof answers.applicant & { gender?: GenderAnswerOptions }
   } else {
     contact = answers.applicant
   }
+  
   return {
     name: contact.name,
     nationalId: contact.nationalId,
@@ -55,6 +57,7 @@ const getContactInfo = (
     phone: contact.phoneNumber ?? '',
     postalCode: contact.postalCode,
     city: contact.city,
+    gender: contact.gender
   }
 }
 
@@ -75,6 +78,7 @@ export const gatherContacts = (
     role: ContactRole.COMPLAINTANT,
     primary: 'true',
     webPage: '',
+    gender: contact.gender
   }
 
   return [complaintant]
