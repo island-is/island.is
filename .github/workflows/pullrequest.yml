@@ -119,6 +119,7 @@ jobs:
           ' | tee -a "$GITHUB_OUTPUT"
 
       - name: Verify that projects have some tests
+        if: ${{ steps.unicorn.outputs.projects != '' }}
         env:
           projects: ${{ steps.unicorn.outputs.projects }}
         run: |
