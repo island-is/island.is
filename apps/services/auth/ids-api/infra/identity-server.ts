@@ -65,8 +65,7 @@ export const serviceSetup = (services: {
       },
       SessionsApiSettings__BaseAddress: {
         dev: 'https://sessions-api.internal.dev01.devland.is',
-        staging:
-          'http://services-sessions.services-sessions.svc.cluster.local',
+        staging: 'http://services-sessions.services-sessions.svc.cluster.local',
         prod: 'https://sessions-api.internal.island.is',
       },
       PersistenceSettings__DelegationsCacheEnabled: {
@@ -76,8 +75,7 @@ export const serviceSetup = (services: {
       },
       MeUserProfileApiSettings__BaseAddress: {
         dev: 'https://service-portal-api.internal.dev01.devland.is',
-        staging:
-          'http://service-portal-api.service-portal.svc.cluster.local',
+        staging: 'http://service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
       },
       Application__MinCompletionPortThreads: '10',
