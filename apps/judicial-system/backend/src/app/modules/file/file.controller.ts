@@ -1,3 +1,5 @@
+import { Request } from 'express'
+
 import {
   Body,
   Controller,
@@ -7,6 +9,8 @@ import {
   Param,
   Patch,
   Post,
+  Req,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -20,6 +24,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import { IDS_ACCESS_TOKEN_NAME } from '@island.is/judicial-system/consts'
 import type { User } from '@island.is/judicial-system/types'
 import {
   indictmentCases,
@@ -49,7 +54,12 @@ import {
   CurrentCase,
 } from '../case'
 import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
-import { CivilClaimantExistsGuard, DefendantExistsGuard } from '../defendant'
+import {
+  CivilClaimantExistsGuard,
+  CurrentDefendant,
+  Defendant,
+  DefendantExistsGuard,
+} from '../defendant'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
@@ -62,7 +72,9 @@ import { DeleteFileResponse } from './models/deleteFile.response'
 import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
+import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { CriminalRecordService } from './criminalRecord.service'
 import { FileService } from './file.service'
 
 @Controller('api/case/:caseId')
@@ -71,6 +83,7 @@ import { FileService } from './file.service'
 export class FileController {
   constructor(
     private readonly fileService: FileService,
+    private readonly criminalRecordService: CriminalRecordService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -308,5 +321,52 @@ export class FileController {
     this.logger.debug(`Updating files of case ${caseId}`, { updateFiles })
 
     return this.fileService.updateFiles(caseId, updateFiles.files)
+  }
+
+  @UseGuards(RolesGuard, CaseExistsGuard, DefendantExistsGuard, CaseWriteGuard)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
+  )
+  @Post('defendant/:defendantId/criminalRecordFile')
+  @ApiCreatedResponse({
+    type: UploadCriminalRecordFileResponse,
+    description:
+      'Uploads the latest criminal record file for defendant to AWS S3',
+  })
+  async uploadCriminalRecordFile(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    // TEMP v1: expose the request to access the session cookies below
+    @Req() req: Request,
+    @CurrentHttpUser() user: User,
+    @CurrentDefendant() defendant: Defendant,
+    @CurrentCase() theCase: Case,
+  ): Promise<UploadCriminalRecordFileResponse> {
+    this.logger.debug(
+      `Uploading the latest criminal record file for defendant ${defendantId} of case ${caseId} to S3`,
+    )
+    // TEMP v1: Tokens are stored in session cookie and thus passed down with the request.
+    // Currently we are only using the access token, but it expires in 5 min. There is an outstanding task
+    // to implement the refresh token functionality and update the session cookie. Later we will also fetch the cookies
+    // from a secure storage in the backend.
+    const accessToken = req.cookies[IDS_ACCESS_TOKEN_NAME]
+    if (!accessToken) {
+      throw new UnauthorizedException('Missing access token in session')
+    }
+
+    return this.criminalRecordService.uploadCriminalRecordFile({
+      caseType: theCase.type,
+      accessToken,
+      defendant,
+      user,
+    })
   }
 }
