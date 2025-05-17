@@ -1,5 +1,3 @@
-import React from 'react'
-import { useLocale } from '@island.is/localization'
 import {
   Box,
   Hidden,
@@ -7,13 +5,15 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
-import { mNotifications } from '../../lib/messages'
-import { NotificationSettingsCard } from './cards/NotificationSettingsCard'
-import { ActorProfileSettingsCard } from './cards/ActorProfileSettingsCard'
-import { useActorProfilesQuery } from './graphql/ActorProfiles.generated'
-import * as styles from './ActorProfilesNotificationSettings.css'
+import { mNotifications } from '../../../lib/messages'
+import { ActorProfileSettingsCard } from '../cards/ActorProfileSettingsCard'
+import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
+
 import { Problem } from '@island.is/react-spa/shared'
+import * as styles from './ActorProfilesNotificationSettings.css'
+import { useActorProfilesQuery } from './userProfileActorProfiles.query.generated'
 
 export const ActorProfilesNotificationSettings = () => {
   const { data, loading, error } = useActorProfilesQuery()

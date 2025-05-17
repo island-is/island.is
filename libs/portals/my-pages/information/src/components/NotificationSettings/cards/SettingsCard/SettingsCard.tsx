@@ -1,5 +1,4 @@
 import { Box, Text, ToggleSwitchButton } from '@island.is/island-ui/core'
-import { FC } from 'react'
 
 import * as styles from './SettingsCard.css'
 
@@ -11,13 +10,13 @@ interface SettingsCardProps {
   onChange(active: boolean): void
 }
 
-export const SettingsCard: FC<SettingsCardProps> = ({
+export const SettingsCard = ({
   title,
   subtitle,
   toggleLabel,
   checked,
   onChange,
-}) => {
+}: SettingsCardProps) => {
   return (
     <Box
       display="flex"

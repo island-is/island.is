@@ -1,15 +1,14 @@
-import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import {
   BadRequestException,
   Body,
   Controller,
   Get,
-  Headers,
   Param,
   Patch,
   Post,
   UseGuards,
 } from '@nestjs/common'
+import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -18,27 +17,25 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
-import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
 
-import { CreateVerificationDto } from './dto/create-verification.dto'
-import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
-import { UserProfileDto } from './dto/user-profile.dto'
-import { UserProfileService } from './user-profile.service'
-import { PostNudgeDto } from './dto/post-nudge.dto'
 import { ClientType } from '../types/ClientType'
 import {
-  MeActorProfileDto,
-  PaginatedActorProfileDto,
-  PatchActorProfileDto,
-  ActorProfileDetailsDto,
-} from './dto/actor-profile.dto'
-import {
-  UpdateActorProfileEmailDto,
   ActorProfileEmailDto,
+  UpdateActorProfileEmailDto,
 } from './dto/actor-profile-email.dto'
+import {
+  ActorProfileDetailsDto,
+  PaginatedActorProfileDto,
+} from './dto/actor-profile.dto'
+import { CreateVerificationDto } from './dto/create-verification.dto'
+import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
+import { PostNudgeDto } from './dto/post-nudge.dto'
 import { SetActorProfileEmailDto } from './dto/set-actor-profile-email.dto'
+import { UserProfileDto } from './dto/user-profile.dto'
+import { UserProfileService } from './user-profile.service'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -193,6 +190,111 @@ export class MeUserProfileController {
         },
       },
       this.userProfileService.setEmailAsPrimary(user.nationalId, emailId),
+    )
+  }
+
+  @Patch('/actor-profile')
+  @Scopes(ApiScope.internal)
+  @Documentation({
+    description:
+      'Update or create an actor profile with email information for the current user',
+    response: {
+      status: 200,
+      type: ActorProfileEmailDto,
+    },
+  })
+  updateActorProfileEmail(
+    @CurrentUser() user: User,
+    @Body() actorProfile: UpdateActorProfileEmailDto,
+  ): Promise<ActorProfileEmailDto> {
+    if (!user.actor?.nationalId) {
+      throw new BadRequestException('User has no actor profile')
+    }
+
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'updateActorProfileEmail',
+        resources: `${user.nationalId}:${user.actor.nationalId}`,
+        meta: {
+          fields: Object.keys(actorProfile),
+        },
+      },
+      this.userProfileService.updateActorProfileEmail({
+        toNationalId: user.actor.nationalId,
+        fromNationalId: user.nationalId,
+        ...actorProfile,
+      }),
+    )
+  }
+
+  @Patch('/actor-profile/email')
+  @Scopes(UserProfileScope.write)
+  @Documentation({
+    description:
+      'Set an email ID on an actor profile and reset the nudge timer',
+    response: {
+      status: 200,
+      type: ActorProfileDetailsDto,
+    },
+  })
+  setActorProfileEmail(
+    @CurrentUser() user: User,
+    @Body() dto: SetActorProfileEmailDto,
+  ): Promise<ActorProfileDetailsDto> {
+    if (!user.actor?.nationalId) {
+      throw new BadRequestException('User has no actor profile')
+    }
+
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'setActorProfileEmail',
+        resources: `${user.nationalId}:${user.actor.nationalId}`,
+        meta: {
+          emailsId: dto.emailsId,
+        },
+      },
+      this.userProfileService.setActorProfileEmail({
+        toNationalId: user.actor.nationalId,
+        fromNationalId: user.nationalId,
+        emailsId: dto.emailsId,
+      }),
+    )
+  }
+
+  @Patch('/actor-profile/.from-national-id')
+  @Scopes(ApiScope.internal)
+  @Documentation({
+    description: 'Update an actor profile with email id for the current user',
+    response: { status: 200, type: ActorProfileDetailsDto },
+  })
+  updateActorProfileEmailById(
+    @CurrentUser() user: User,
+    @Param('from-national-id') fromNationalId: string,
+    @Body() dto: SetActorProfileEmailDto,
+  ): Promise<ActorProfileDetailsDto> {
+    if (!user.actor?.nationalId) {
+      throw new BadRequestException('User has no actor profile')
+    }
+
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'updateActorProfileEmailById',
+        resources: `${user.nationalId}:${user.actor.nationalId}`,
+        meta: {
+          emailsId: dto.emailsId,
+        },
+      },
+      this.userProfileService.setActorProfileEmail({
+        toNationalId: user.nationalId,
+        fromNationalId,
+        emailsId: dto.emailsId,
+      }),
     )
   }
 }

@@ -1,9 +1,13 @@
-import { ISLANDIS_SLUG, IntroHeader, m } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  ISLANDIS_SLUG,
+  IntroWrapper,
+  m,
+} from '@island.is/portals/my-pages/core'
 
+import { ActorProfilesNotificationSettings } from '../../components/NotificationSettings/ActorProfilesNotificationSettings/ActorProfilesNotificationSettings'
+import { UserProfileNotificationSettings } from '../../components/NotificationSettings/UserProfileNotificationSettings/UserProfileNotificationSettings'
 import { mNotifications } from '../../lib/messages'
-import { UserProfileNotificationSettings } from '../../components/NotificationSettings/UserProfileNotificationSettings'
-import { ActorProfilesNotificationSettings } from '../../components/NotificationSettings/ActorProfilesNotificationSettings'
 
 const UserProfile = () => {
   useNamespaces('sp.notifications')
@@ -11,7 +15,7 @@ const UserProfile = () => {
 
   return (
     <>
-      <IntroHeader
+      <IntroWrapper
         marginBottom={[4, 8]}
         title={formatMessage(m.mySettingsNotifications)}
         intro={formatMessage(mNotifications.intro)}

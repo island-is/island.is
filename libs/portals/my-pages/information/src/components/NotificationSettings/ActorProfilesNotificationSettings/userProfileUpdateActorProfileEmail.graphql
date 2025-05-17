@@ -1,0 +1,5 @@
+
+
+mutation UpdateActorProfileEmail($input: UpdateActorProfileEmailInput!) {
+  userProfileUpdateActorProfileEmail(input: $input)
+}

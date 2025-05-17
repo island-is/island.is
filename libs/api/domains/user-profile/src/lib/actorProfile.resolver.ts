@@ -20,6 +20,8 @@ import { ActorProfile, ActorProfileResponse } from './dto/actorProfile'
 import { UpdateActorProfileInput } from './dto/updateActorProfileInput'
 import { SetActorProfileEmailInput } from './dto/setActorProfileEmail.input'
 import { UserEmailsService } from './modules/user-emails/userEmails.service'
+import { UpdateActorProfileEmailInput } from './dto/updateActorProfileEmail.input'
+import { ActorProfileDetails } from './dto/actorProfileDetails'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ActorProfile)
@@ -56,6 +58,16 @@ export class ActorProfileResolver {
       emailId: input.emailId,
       user,
     })
+  }
+
+  @Mutation(() => ActorProfileDetails, {
+    name: 'userProfileUpdateActorProfileEmail',
+  })
+  async updateActorProfileEmail(
+    @Args('input') input: UpdateActorProfileEmailInput,
+    @CurrentUser() user: User,
+  ): Promise<ActorProfileDetails> {
+    return this.userUserProfileService.updateActorProfileEmail(input, user)
   }
 
   @ResolveField('fromName', () => String, { nullable: true })

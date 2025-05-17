@@ -28,7 +28,6 @@ import { ProfileEmailForm } from '../../../emails/ProfileEmailForm/ProfileEmailF
 import { DropModal } from './components/DropModal'
 import { InputSection } from './components/InputSection'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
-import { Nudge } from './components/Inputs/Nudge'
 import { InputPhone } from './components/Inputs/Phone'
 import { WithLinkWrapper } from './components/Inputs/WithLinkWrapper'
 import { OnboardingIntro } from './components/Intro'
@@ -49,6 +48,7 @@ interface Props {
   showIntroTitle?: boolean
   showIntroText?: boolean
   setFormLoading?: (isLoading: boolean) => void
+  hasUserProfileWriteScope?: boolean
 }
 
 export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
@@ -60,6 +60,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   setFormLoading,
   showIntroTitle,
   showIntroText = true,
+  hasUserProfileWriteScope,
 }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
@@ -231,77 +232,62 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             )}
           </InputSection>
 
-          {showDetails && (
-            <InputSection
-              title={formatMessage(m.refuseEmailTitle)}
-              loading={userLoading}
-              text={formatMessage(msg.editNudgeText)}
-            >
-              {!userLoading && (
-                <Nudge
-                  refuseMail={
-                    /**
-                     * This checkbox block is being displayed as the opposite of canNudge.
-                     * Details inside <Nudge />
-                     */
-                    typeof userProfile?.emailNotifications === 'boolean'
-                      ? !userProfile.emailNotifications
-                      : true
-                  }
-                />
-              )}
-            </InputSection>
-          )}
-          <InputSection
-            title={formatMessage(m.telNumber)}
-            text={formatMessage(msg.editTelText)}
-            loading={userLoading}
-          >
-            {!userLoading &&
-              (!isCompany ? (
-                <WithLinkWrapper
-                  input={
-                    <PhoneInput
-                      name="phoneNumber"
-                      label={formatMessage(msg.tel)}
-                      placeholder="000-0000"
-                      value={parseNumber(userProfile?.mobilePhoneNumber || '')}
-                      size="xs"
-                      readOnly
-                      {...(userProfile?.mobilePhoneNumberVerified && {
-                        icon: { name: 'checkmark' },
-                      })}
+          {hasUserProfileWriteScope && (
+            <>
+              <InputSection
+                title={formatMessage(m.telNumber)}
+                text={formatMessage(msg.editTelText)}
+                loading={userLoading}
+              >
+                {!userLoading &&
+                  (!isCompany ? (
+                    <WithLinkWrapper
+                      input={
+                        <PhoneInput
+                          name="phoneNumber"
+                          label={formatMessage(msg.tel)}
+                          placeholder="000-0000"
+                          value={parseNumber(
+                            userProfile?.mobilePhoneNumber || '',
+                          )}
+                          size="xs"
+                          readOnly
+                          {...(userProfile?.mobilePhoneNumberVerified && {
+                            icon: { name: 'checkmark' },
+                          })}
+                        />
+                      }
+                      link={{
+                        href: getIDSLink(IdsUserProfileLinks.PHONE_NUMBER),
+                        title: formatMessage(
+                          userProfile?.mobilePhoneNumber ? msg.change : msg.add,
+                        ),
+                      }}
                     />
-                  }
-                  link={{
-                    href: getIDSLink(IdsUserProfileLinks.PHONE_NUMBER),
-                    title: formatMessage(
-                      userProfile?.mobilePhoneNumber ? msg.change : msg.add,
-                    ),
-                  }}
-                />
-              ) : (
-                <InputPhone
-                  buttonText={formatMessage(msg.saveTel)}
-                  mobile={parseNumber(userProfile?.mobilePhoneNumber || '')}
-                  telVerified={userProfile?.mobilePhoneNumberVerified}
-                  telDirty={(isDirty) => setTelDirty(isDirty)}
-                  disabled={deleteLoading}
-                />
-              ))}
-          </InputSection>
-          {showDetails && (
-            <InputSection
-              title={formatMessage(m.bankAccountInfo)}
-              text={formatMessage(msg.editBankInfoText)}
-              loading={userLoading}
-            >
-              {!userLoading && (
-                <BankInfoForm
-                  bankInfo={bankInfoObject(userProfile?.bankInfo || '')}
-                />
+                  ) : (
+                    <InputPhone
+                      buttonText={formatMessage(msg.saveTel)}
+                      mobile={parseNumber(userProfile?.mobilePhoneNumber || '')}
+                      telVerified={userProfile?.mobilePhoneNumberVerified}
+                      telDirty={(isDirty) => setTelDirty(isDirty)}
+                      disabled={deleteLoading}
+                    />
+                  ))}
+              </InputSection>
+              {showDetails && (
+                <InputSection
+                  title={formatMessage(m.bankAccountInfo)}
+                  text={formatMessage(msg.editBankInfoText)}
+                  loading={userLoading}
+                >
+                  {!userLoading && (
+                    <BankInfoForm
+                      bankInfo={bankInfoObject(userProfile?.bankInfo || '')}
+                    />
+                  )}
+                </InputSection>
               )}
-            </InputSection>
+            </>
           )}
           {showDropModal && onCloseOverlay && !internalLoading && (
             <DropModal

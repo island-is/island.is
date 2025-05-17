@@ -6,17 +6,17 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
-import { NotificationSettingsCard } from './cards/NotificationSettingsCard'
+import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
-import { usePaperMail } from '../../hooks/usePaperMail'
-import { mNotifications } from '../../lib/messages'
-import { SettingsCard } from './cards/SettingsCard/SettingsCard'
+import { usePaperMail } from '../../../hooks/usePaperMail'
+import { mNotifications } from '../../../lib/messages'
+import { SettingsCard } from '../cards/SettingsCard/SettingsCard'
 import {
   useUpdateUserProfileSettingsMutation,
   useUserProfileSettingsQuery,
-} from './graphql/UserProfile.generated'
+} from './getUserProfile.query.generated'
 
 type UserProfileNotificationSettings = {
   documentNotifications: boolean
@@ -91,7 +91,7 @@ export const UserProfileNotificationSettings = () => {
   }
 
   if (loading || paperMailLoading) {
-    return <SkeletonLoader borderRadius="large" height={326} />
+    return <SkeletonLoader borderRadius="large" height={473} />
   }
 
   if (fetchError) {
