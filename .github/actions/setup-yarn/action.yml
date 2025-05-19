@@ -48,7 +48,7 @@ runs:
           ${{ steps.set-cache.outputs.CYPRESS_CACHE_PATH }}
         key: ${{ steps.set-cache.outputs.CACHE_KEY }}
       env:
-        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.cache-bucket }}
+        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.cache-bucket || env.CACHE_BUCKET || env.RUNS_ON_S3_BUCKET_CACHE }}
         AWS_REGION: eu-west-1
 
     - name: EXIT

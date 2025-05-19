@@ -43,7 +43,7 @@ runs:
           ${{ steps.set-env.outputs.GENERATED_FILES_PATH }}
         key: ${{ steps.set-env.outputs.CACHE_KEY }}
       env:
-        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.cache-bucket || env.CACHE_BUCKET }}
+        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.cache-bucket || env.CACHE_BUCKET || env.RUNS_ON_S3_BUCKET_CACHE }}
         AWS_REGION: eu-west-1
 
     - name: Prepare generated files
