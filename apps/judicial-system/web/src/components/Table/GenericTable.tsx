@@ -123,9 +123,8 @@ const GenericTable = <Cell,>({
                       </motion.div>
                     ) : (
                       <ContextMenu
-                        menuLabel={`Valmynd fyrir mál ${r.id}`}
                         items={generateContextMenuItems(r.id)}
-                        disclosure={
+                        render={
                           <motion.div
                             className={styles.smallContainer}
                             key={r.id}
