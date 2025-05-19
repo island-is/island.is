@@ -9,6 +9,10 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application } from '@island.is/application/types'
 import {
+  SelfAssessmentQuestionnaireAnswers,
+  SelfAssessmentQuestionnaireQuestions,
+} from '../types'
+import {
   AttachmentLabel,
   AttachmentTypes,
   NOT_APPLICABLE,
@@ -98,6 +102,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const comment = getValueViaPath(answers, 'comment') as string
 
+  const questionnaire = getValueViaPath(
+    answers,
+    'selfAssessment.questionnaire',
+    [],
+  ) as SelfAssessmentQuestionnaireAnswers[]
+
   return {
     applicantPhonenumber,
     bank,
@@ -117,6 +127,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     unionSickPayFileUpload,
     rehabilitationPlanConfirmation,
     comment,
+    questionnaire,
   }
 }
 
@@ -185,6 +196,11 @@ export const getApplicationExternalData = (
     'nationalRegistrySpouse.data',
   ) as object
 
+  const selfAssessmentQuestionnaireQuestions = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationQuestionnairesSelfAssessment.data.questions',
+  ) as SelfAssessmentQuestionnaireQuestions[]
+
   return {
     applicantName,
     applicantNationalId,
@@ -199,6 +215,7 @@ export const getApplicationExternalData = (
     spouseNationalId,
     maritalStatus,
     hasSpouse,
+    selfAssessmentQuestionnaireQuestions,
   }
 }
 

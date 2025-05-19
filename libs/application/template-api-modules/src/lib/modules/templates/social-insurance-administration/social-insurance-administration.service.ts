@@ -601,4 +601,218 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   async getIncomePlanConditions({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getIncomePlanConditions(auth)
   }
+
+  async getQuestionnairesSelfAssessment({
+    auth,
+  }: TemplateApiModuleActionProps) {
+    // TODO: Get Questionnaire from TR
+
+    return {
+      questionnaireName: 'Færnimat: Sjálfsmat ICF',
+      questionnaireCode: 'ICF',
+      versionNumber: '1.0',
+      scaleMin: 0,
+      scaleMax: 4,
+      questions: [
+        {
+          questionCode: '3244CE48671C2E62E0631F72040A8546',
+          title: 'Ávinna sér leikni',
+          description:
+            'Að læra nýja hluti og tileinka þér þekkingu (t.d. læra á tölvu, læra að nota ný verkfæri o.s.frv.)',
+          icfCode: 'd155',
+        },
+        {
+          questionCode: '3244CE48671D2E62E0631F72040A8546',
+          title: 'Einbeita sér',
+          description:
+            'Að viðhalda einbeitingu í tilteknum verkefnum þrátt fyrir truflanir',
+          icfCode: 'd160',
+        },
+        {
+          questionCode: '3244CE48671E2E62E0631F72040A8546',
+          title: 'Leysa vanda',
+          description:
+            'Að greina vandamál í daglegu lífi og finna lausnir á þeim',
+          icfCode: 'd175',
+        },
+        {
+          questionCode: '3244CE48671F2E62E0631F72040A8546',
+          title: 'Taka ákvarðanir',
+          description: 'Að taka ákvarðanir án aðstoðar annarra',
+          icfCode: 'd177',
+        },
+        {
+          questionCode: '3244CE4867202E62E0631F72040A8546',
+          title: 'Inna af hendi stakt viðfangsefni',
+          description:
+            'Að byrja á og klára stakt og/eða einfalt verkefni (t.d. lesa bók, skrifa bréf, búa um rúm o.s.frv.)',
+          icfCode: 'd210',
+        },
+        {
+          questionCode: '3244CE4867212E62E0631F72040A8546',
+          title: 'Inna af hendi mörg viðfangsefni',
+          description:
+            'Að skipuleggja og framkvæma mörg verkefni í einu, samtímis eða hvert á eftir öðru',
+          icfCode: 'd220',
+        },
+        {
+          questionCode: '3244CE4867222E62E0631F72040A8546',
+          title: 'Fylgja dagskipulagi',
+          description:
+            'Að halda þig við áætlað dagskipulag (t.d. vakna, klæða þig, borða morgunmat, fara í vinnu/skóla o.s.frv.)',
+          icfCode: 'd230',
+        },
+        {
+          questionCode: '3244CE4867232E62E0631F72040A8546',
+          title: 'Takast á við streitu og annað andlegt álag',
+          description: 'Að takast á við streitu, ábyrgð og annað andlegt álag',
+          icfCode: 'd240',
+        },
+        {
+          questionCode: '3244CE4867242E62E0631F72040A8546',
+          title: 'Skilja talað mál / táknmál',
+          description: 'Að skilja talað mál eða tjáningu á táknmáli',
+          icfCode: 'd310/20',
+        },
+        {
+          questionCode: '3244CE4867252E62E0631F72040A8546',
+          title: 'Skilja tjáningu án orða',
+          description:
+            'Að skilja tjáningu án orða/án táknmáls (t.d. líkamstjáningu eða teikningar)',
+          icfCode: 'd315',
+        },
+        {
+          questionCode: '3244CE4867262E62E0631F72040A8546',
+          title: 'Tala /nota samskiptatæki og/eða tækni',
+          description: 'Að tjá þig á skiljanlegan hátt í tali eða táknmáli',
+          icfCode: 'd330/40',
+        },
+        {
+          questionCode: '3244CE4867272E62E0631F72040A8546',
+          title: 'Breyta grunnlíkamsstöðu',
+          description:
+            'Að breyta líkamsstöðu þinni (t.d. að standa upp úr stól, setjast niður, beygja þig o.s.frv.)',
+          icfCode: 'd410',
+        },
+        {
+          questionCode: '3244CE4867282E62E0631F72040A8546',
+          title: 'Vera í líkamsstöðu',
+          description:
+            'Að vera í sömu líkamsstöðu í lengri tíma án verkja (t.d. að sitja, standa eða liggja)',
+          icfCode: 'd415',
+        },
+        {
+          questionCode: '3244CE4867292E62E0631F72040A8546',
+          title: 'Lyfta og bera hluti',
+          description:
+            'Að lyfta hlutum og bera þá frá einum stað til annars (t.d. lyfta bolla, halda á kassa eða barni á milli herbergja)',
+          icfCode: 'd430',
+        },
+        {
+          questionCode: '3244CE48672A2E62E0631F72040A8546',
+          title: 'Fínhreyfivinna',
+          description:
+            'Að nota hendur og fingur til að handleika hluti (t.d. að taka upp smáhlut, hneppa hnöppum, skrifa, hringja í síma, opna hurðarhún eða handleika lykla)',
+          icfCode: 'd440',
+        },
+        {
+          questionCode: '3244CE48672B2E62E0631F72040A8546',
+          title: 'Ganga stuttar vegalengdir (< kílómeter)',
+          description:
+            'Að ganga stuttar vegalengdir (t.d. á göngum innanhúss eða ganga stuttar vegalengdir utandyra)',
+          icfCode: 'd4500',
+        },
+        {
+          questionCode: '3244CE48672C2E62E0631F72040A8546',
+          title: 'Fara um með aðstoð tækja',
+          description:
+            'Að fara um með aðstoð hjálpartækja (t.d. að nota göngugrind, hækjur, hjólastól eða annan útbúnað sem auðveldar hreyfingu)',
+          icfCode: 'd465',
+        },
+        {
+          questionCode: '3244CE48672D2E62E0631F72040A8546',
+          title: 'Nota farartæki',
+          description:
+            'Að nota farartæki sem farþegi (t.d. að fara inn og út úr bíl eða nota almenningssamgöngur, svo sem strætó)',
+          icfCode: 'd470',
+        },
+        {
+          questionCode: '3244CE48672E2E62E0631F72040A8546',
+          title: 'Þvo sér',
+          description:
+            'Að þvo þér (t.d. að þvo hendur og andlit, fara í sturtu eða bað, þvo hár)',
+          icfCode: 'd510',
+        },
+        {
+          questionCode: '3244CE48672F2E62E0631F72040A8546',
+          title: 'Fara á salerni',
+          description:
+            'Að nota salerni (t.d. að komast á klósett, stjórna þvaglátum og hægðalosun)',
+          icfCode: 'd530',
+        },
+        {
+          questionCode: '3244CE4867302E62E0631F72040A8546',
+          title: 'Klæðast og afklæðast',
+          description:
+            'Að klæða þig í og úr (t.d. að fara í skyrtu, buxur eða skó, hneppa eða reima)',
+          icfCode: 'd540',
+        },
+        {
+          questionCode: '3244CE4867312E62E0631F72040A8546',
+          title: 'Nærast (Matast og drekka)',
+          description: 'Að borða og/eða drekka',
+          icfCode: 'd550/60',
+        },
+        {
+          questionCode: '3244CE4867322E62E0631F72040A8546',
+          title: 'Grunnsamskipti',
+          description:
+            'Að eiga í samskiptum við annað fólk (t.d. skilja og bregðast við hegðun og tilfinningum annarra)',
+          icfCode: 'd710',
+        },
+        {
+          questionCode: '3244CE4867332E62E0631F72040A8546',
+          title: 'Flókin samskipti',
+          description:
+            'Að sýna viðeigandi hegðun í flóknum samskiptum (t.d. halda samræðum gangandi, hafa stjórn á tilfinningum í samskiptum, sýna félagslega hæfni o.s.frv.)',
+          icfCode: 'd720',
+        },
+        {
+          questionCode: '3244CE4867342E62E0631F72040A8546',
+          title: 'Formleg tengsl',
+          description:
+            'Að eiga í formlegum samskiptum (t.d. við kennara, yfirmenn, samstarfsfólk o.s.frv.)',
+          icfCode: 'd740',
+        },
+        {
+          questionCode: '3244CE4867352E62E0631F72040A8546',
+          title: 'Starfsþjálfun',
+          description:
+            'Að undirbúa þig og taka þátt í þjálfun fyrir starf (t.d. vinna verk sem krafist er af í verknámi, námssamningi o.s.frv.)',
+          icfCode: 'd840',
+        },
+        {
+          questionCode: '3244CE4867362E62E0631F72040A8546',
+          title: 'Finna, halda og ljúka starfi',
+          description:
+            'Að finna, halda og ljúka launuðu starfi eða sjálfboðavinnu',
+          icfCode: 'd845',
+        },
+        {
+          questionCode: '3244CE4867372E62E0631F72040A8546',
+          title: 'Launuð störf',
+          description:
+            'Að sinna launuðu starfi (t.d. að mæta á réttum tíma, vinna verkefnin sem tilheyra starfinu, vinna sjálfstætt eða í hópi og fylgja leiðsögn)',
+          icfCode: 'd850',
+        },
+        {
+          questionCode: '3244CE4867382E62E0631F72040A8546',
+          title: 'Efnahagslegt sjálfstæði',
+          description:
+            'Að stýra eigin fjármálum og tryggja fjárhagslegt öryggi þitt',
+          icfCode: 'd870',
+        },
+      ],
+    }
+  }
 }
