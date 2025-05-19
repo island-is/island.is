@@ -17,8 +17,8 @@ export class CaseNotificationDto {
   readonly type!: CaseNotificationType
 
   // notifications triggered from the event service don't always have the user object defined,
-  // thus we include an optional sibling subtype of User since we can't fully rely on the
-  // type inference between the event notification dispatcher and case notification controllers during compile time
+  // thus we include an optional sibling subtype of User to handle a minimal user info that
+  // is requires in few notification methods
   @IsOptional()
   @IsObject()
   @ApiPropertyOptional({ type: Object })

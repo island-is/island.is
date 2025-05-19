@@ -323,25 +323,11 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
     const promises: Promise<Recipient>[] = []
 
-    // get only confirmed defenders
+    // get only confirmed defenders on defendants
     const defenders = _uniqBy(
       theCase.defendants ?? [],
       (d: Defendant) => d.defenderEmail,
-    )
-      .map(
-        ({
-          defenderName,
-          defenderEmail,
-          defenderNationalId,
-          isDefenderChoiceConfirmed,
-        }) => ({
-          defenderName,
-          defenderEmail,
-          defenderNationalId,
-          isDefenderChoiceConfirmed,
-        }),
-      )
-      .filter(({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed)
+    ).filter(({ isDefenderChoiceConfirmed }) => isDefenderChoiceConfirmed)
 
     if (!courtDate && arraignmentDate) {
       if (theCase.prosecutor) {
