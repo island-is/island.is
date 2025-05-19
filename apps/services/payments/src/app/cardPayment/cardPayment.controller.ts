@@ -389,7 +389,11 @@ export class CardPaymentController {
     paymentConfirmationId: string,
   ): Promise<PaymentFlowFjsChargeConfirmation | null> {
     const paymentFlowId = chargeCardInput.paymentFlowId
+    let createdFjsChargeConfirmation: PaymentFlowFjsChargeConfirmation | null =
+      null
     try {
+      // TODO: look into paymentFlow.existingInvoiceId later when we use the existingInvoiceId
+      // then we can reuse an existing charge and pay for it
       const fjsChargePayload =
         this.cardPaymentService.createCardPaymentChargePayload({
           paymentFlow,
@@ -399,7 +403,7 @@ export class CardPaymentController {
           merchantReferenceData,
         })
 
-      const confirmation = await retry(
+      createdFjsChargeConfirmation = await retry(
         () =>
           this.paymentFlowService.createPaymentCharge(
             paymentFlow.id,
@@ -415,7 +419,7 @@ export class CardPaymentController {
           },
         },
       )
-      return confirmation
+      return createdFjsChargeConfirmation
     } catch (e) {
       this.logger.error(
         `[${paymentFlowId}] Failed to create FJS charge information: ${e.message}`,
@@ -424,11 +428,12 @@ export class CardPaymentController {
 
       if (!persistedPaymentConfirmation || isAlreadyPaidError) {
         this.logger.warn(
-          `[${paymentFlowId}] FJS charge failed critically (payment not persisted or already paid in FJS). Attempting refund.`,
+          `[${paymentFlowId}] FJS charge failed critically or payment not persisted. Attempting refund.`,
           {
             persistedPaymentConfirmation,
             isAlreadyPaidError,
             error: e.message,
+            existingInvoiceId: paymentFlow.existingInvoiceId,
           },
         )
         try {
@@ -440,6 +445,8 @@ export class CardPaymentController {
               chargeCardInput.amount,
             ),
           )
+
+          // After successful refund, delete the payment confirmation.
           if (persistedPaymentConfirmation) {
             try {
               await this.paymentFlowService.deletePaymentConfirmation(
@@ -456,6 +463,15 @@ export class CardPaymentController {
               )
             }
           }
+
+          // Also delete the FJS charge if it exists
+          if (createdFjsChargeConfirmation || isAlreadyPaidError) {
+            this.logger.info(
+              `[${paymentFlowId}] Attempting to delete FJS charge ${paymentFlow.id} after refund due to FJS charge creation/persistence issue.`,
+            )
+            await this.paymentFlowService.deletePaymentCharge(paymentFlowId)
+          }
+
           await this.paymentFlowService.logPaymentFlowUpdate({
             paymentFlowId: paymentFlowId,
             type: 'error',
@@ -563,7 +579,6 @@ export class CardPaymentController {
         { error: logUpdateError.message },
       )
       try {
-        // Attempt refund
         const refund = await retry(() =>
           this.cardPaymentService.refund(
             paymentFlowId,
@@ -589,7 +604,14 @@ export class CardPaymentController {
           )
         }
 
-        // Log refund success due to notification failure
+        // Also delete the FJS charge if it exists
+        if (confirmation?.receptionId) {
+          this.logger.info(
+            `[${paymentFlowId}] Attempting to delete FJS charge ${confirmation.receptionId} after refund due to notification failure.`,
+          )
+          await this.paymentFlowService.deletePaymentCharge(paymentFlowId)
+        }
+
         await this.paymentFlowService.logPaymentFlowUpdate({
           paymentFlowId: paymentFlowId,
           type: 'error',
@@ -604,24 +626,26 @@ export class CardPaymentController {
           },
         })
 
-        // Throw an error indicating refund occurred because of notification failure
         throw new BadRequestException(
           CardErrorCode.RefundedBecauseOfSystemError,
         )
       } catch (refundError) {
         if (
-          refundError.message === CardErrorCode.RefundedBecauseOfSystemError
+          refundError instanceof BadRequestException &&
+          refundError.message.includes(
+            CardErrorCode.RefundedBecauseOfSystemError,
+          )
         ) {
           throw refundError
         }
 
-        // CRITICAL: Refund failed after notification failure
         this.logger.error(
           `[${paymentFlowId}] CRITICAL: Payment successful, final notification failed, AND refund failed. Payment confirmation ${paymentConfirmationId} was NOT deleted. Manual intervention required.`,
           {
             originalNotificationError: logUpdateError.message,
             refundError: refundError.message,
             payment: paymentResult,
+            fjsChargeId: confirmation?.receptionId,
           },
         )
         await this.paymentFlowService.logPaymentFlowUpdate({
@@ -635,10 +659,15 @@ export class CardPaymentController {
             payment: paymentResult,
             originalNotificationError: logUpdateError.message,
             refundError: refundError.message,
+            fjsChargeId: confirmation?.receptionId,
           },
         })
-        // Rethrow a critical error
-        throw new BadRequestException(refundError)
+        if (refundError instanceof BadRequestException) {
+          throw refundError
+        }
+        throw new BadRequestException(
+          `CRITICAL_ERROR: Final notification failed, refund failed. ${refundError.message}`,
+        )
       }
     }
   }

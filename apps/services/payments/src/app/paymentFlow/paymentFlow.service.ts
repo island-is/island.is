@@ -286,7 +286,7 @@ export class PaymentFlowService {
         })
       )?.toJSON()
 
-      if (chargeConfirmation || paymentFlow.existingInvoiceId) {
+      if (chargeConfirmation) {
         paymentStatus = PaymentStatus.INVOICE_PENDING
       }
 
@@ -294,6 +294,10 @@ export class PaymentFlowService {
         updatedAt = chargeConfirmation.created
       }
     }
+
+    console.log({
+      paymentStatus,
+    })
 
     return { paymentStatus, updatedAt }
   }
@@ -353,17 +357,6 @@ export class PaymentFlowService {
 
     if (!paymentFlow) {
       throw new BadRequestException(PaymentServiceCode.PaymentFlowNotFound)
-    }
-
-    try {
-      await this.paymentFlowEventModel.create(update)
-    } catch (e) {
-      this.logger.error(
-        `[${update.paymentFlowId}] Failed to log payment flow update event to database`,
-        { error: e },
-      )
-      // Depending on requirements, we might not want to stop the onUpdateUrl notification if DB log fails
-      // For now, it continues.
     }
 
     const updateBody: PaymentFlowUpdateEvent = {
@@ -428,6 +421,17 @@ export class PaymentFlowService {
       })
     } else {
       await notifyUpdateUrl()
+    }
+
+    try {
+      await this.paymentFlowEventModel.create(update)
+    } catch (e) {
+      this.logger.error(
+        `[${update.paymentFlowId}] Failed to log payment flow update event to database`,
+        { error: e },
+      )
+      // Depending on requirements, we might not want to stop the onUpdateUrl notification if DB log fails
+      // For now, it continues.
     }
   }
 
@@ -511,6 +515,42 @@ export class PaymentFlowService {
       this.logger.error(`Failed to create payment charge (${paymentFlowId})`, e)
 
       throw new BadRequestException(mapFjsErrorToCode(e))
+    }
+  }
+
+  async deletePaymentCharge(paymentFlowId: string): Promise<void> {
+    this.logger.info(`[${paymentFlowId}] Attempting to delete FJS charge`)
+    try {
+      // Delete from FJS
+      await this.chargeFjsV2ClientService.deleteCharge(paymentFlowId)
+      this.logger.info(
+        `[${paymentFlowId}] Successfully requested deletion of FJS charge (or it was already deleted/cancelled)`,
+      )
+
+      // Delete local confirmation
+      const deletedConfirmations =
+        await this.paymentFlowFjsChargeConfirmationModel.destroy({
+          where: {
+            paymentFlowId,
+          },
+        })
+      if (deletedConfirmations > 0) {
+        this.logger.info(
+          `[${paymentFlowId}] Deleted PaymentFlowFjsChargeConfirmation`,
+        )
+      } else {
+        this.logger.warn(
+          `[${paymentFlowId}] No PaymentFlowFjsChargeConfirmation found to delete`,
+        )
+      }
+    } catch (error) {
+      this.logger.error(
+        `[${paymentFlowId}] Failed to fully process FJS charge deletion or update local records`,
+        { error: error.message, stack: error.stack },
+      )
+      // We don't rethrow here to allow the refund process to continue if possible,
+      // but the error is logged for monitoring. Manual cleanup might be needed if FJS delete failed.
+      // If FJS deletion fails critically, chargeFjsV2ClientService.deleteCharge should throw, which would be caught here.
     }
   }
 
