@@ -1,3 +1,4 @@
+export * from './confirmReadMessages'
 export * from './personalInformationMessages'
 export * from './appraisalMethodMessages'
 export * from './realEstateMessages'

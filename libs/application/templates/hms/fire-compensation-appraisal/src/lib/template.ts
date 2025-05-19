@@ -19,7 +19,7 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
-import { NationalRegistryApi } from '../dataProviders'
+import { NationalRegistryApi, propertiesApi } from '../dataProviders'
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -54,7 +54,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, NationalRegistryApi],
+              api: [UserProfileApi, NationalRegistryApi, propertiesApi],
               delete: true,
             },
           ],
