@@ -37,7 +37,6 @@ export const usePaymentOrchestration = ({
     } else {
       router.reload()
     }
-    setIsInitiatingSubmit(false) // Reset on success
   }, [paymentFlow, router])
 
   const commonOnPaymentError = useCallback((error: PaymentError) => {
