@@ -1047,12 +1047,12 @@ export class ApplicationController {
 
     await this.fileService.deleteAttachmentsForApplication(existingApplication)
 
-    // delete history for application
-    await this.historyService.deleteHistoryByApplicationId(
-      existingApplication.id,
-    )
+    // // delete history for application
+    // await this.historyService.deleteHistoryByApplicationId(
+    //   existingApplication.id,
+    // )
 
-    await this.applicationService.delete(existingApplication.id)
+    await this.applicationService.softDelete(existingApplication.id)
 
     this.auditService.audit({
       auth: user,
