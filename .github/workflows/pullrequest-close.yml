@@ -8,6 +8,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
 jobs:
   check-unicorn:
     name: Is this a unicorn PR

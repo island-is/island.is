@@ -41,6 +41,7 @@ env:
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
+
 jobs:
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml

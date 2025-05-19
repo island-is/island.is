@@ -11,6 +11,9 @@ concurrency:
   group: push-${{ github.head_ref || github.run_id }}
   cancel-in-progress: false
 
+env:
+  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
 jobs:
   close_feature:
     runs-on: arc-shared

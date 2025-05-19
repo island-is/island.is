@@ -26,6 +26,9 @@ concurrency:
   group: push-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+env:
+  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
 jobs:
   dedupe:
     name: Deduplicate
