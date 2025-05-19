@@ -1,12 +1,13 @@
 import { createScope } from './helpers'
 
 export const up = createScope({
-  name: '@island.is/iceland-health',
-  displayName: 'Iceland Health applications',
-  description: 'Allow access to Iceland Health applications',
+  name: '@island.is/applications/iceland-health',
+  displayName: 'Sjúkratryggingar Íslands',
+  description: 'Veitir aðgengi að umsóknum til Sjúkratrygginga Íslands',
 
   delegation: {
     custom: true,
+    procuringHolders: true,
   },
   addToClients: ['@island.is/web'],
 })
