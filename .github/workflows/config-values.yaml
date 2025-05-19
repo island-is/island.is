@@ -69,7 +69,7 @@ jobs:
         run: yarn test
 
       - name: Check chart values are up-to-date
-        if: ${{ github.ref == 'ref/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: ./infra/scripts/ci/diff-chart-values-all-charts.sh
 
       - name: Commit any changes to charts
