@@ -39,21 +39,21 @@ runs:
         AWS_REGION: eu-west-1
 
     - name: Prepare generated files
-      if: ${{ steps.restore-codegen-cache.outputs.cache-hit != 'true' }}
+      if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
         node ./scripts/ci/generate-files.mjs "${{ steps.set-env.outputs.GENERATED_FILES_PATH }}"
 
     - name: Extract generated files
-      if: ${{ steps.restore-codegen-cache.outputs.cache-hit == 'true' }}
+      if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
         tar -xzvf "${{ steps.set-env.outputs.GENERATED_FILES_PATH }}"
 
     - name: Cache Generated files
-      if: ${{ steps.restore-codegen-cache.outputs.cache-hit != 'true' }}
+      if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       uses: runs-on/cache/save@v4
       with:
         path: |
