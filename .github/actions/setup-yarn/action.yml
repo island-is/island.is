@@ -38,24 +38,24 @@ runs:
     - name: Set cache key
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      id: set-cache
+      id: set-cache-key
       env:
         CACHE_KEY: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}${{ inputs.infra-install && '-withinfra' }}
       run: |
-        echo "CACHE_KEY=${{ env.CACHE_KEY }}-1" >> $GITHUB_OUTPUT
-        echo "CYPRESS_CACHE_PATH=${{ github.workspace }}/.cache/cypress" >> "$GITHUB_OUTPUT"
-        echo "YARN_CACHE_PATH=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-        echo "YARN_INFRA_CACHE_PATH=$(cd infra && yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        echo "cache-key=${{ env.CACHE_KEY }}-1" >> $GITHUB_OUTPUT
+        echo "cypress-cache-path=${{ github.workspace }}/.cache/cypress" >> "$GITHUB_OUTPUT"
+        echo "yarn-cache-path=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        echo "yarn-infra-cache-path=$(cd infra && yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
     - name: Cache Dependencies
       uses: runs-on/cache@v4
-      id: cache-deps
+      id: restore-cache
       with:
         path: |
-          ${{ steps.set-cache.outputs.YARN_CACHE_PATH }}
-          ${{ steps.set-cache.outputs.YARN_INFRA_CACHE_PATH }}
-          ${{ steps.set-cache.outputs.CYPRESS_CACHE_PATH }}
-        key: ${{ steps.set-cache.outputs.CACHE_KEY }}
+          ${{ steps.set-cache-key.outputs.yarn-cache-path }}
+          ${{ steps.set-cache-key.outputs.yarn-infra-cache-path }}
+          ${{ steps.set-cache-key.outputs.cypress-cache-path }}
+        key: ${{ steps.set-cache-key.outputs.cache-key }}
       env:
         RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.cache-bucket || env.CACHE_BUCKET || env.RUNS_ON_S3_BUCKET_CACHE }}
         AWS_REGION: eu-west-1
