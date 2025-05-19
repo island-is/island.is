@@ -1,4 +1,4 @@
-import { fn, Op, Sequelize, WhereOptions } from 'sequelize'
+import { fn, literal, Op, Sequelize, where, WhereOptions } from 'sequelize'
 
 import {
   CaseAppealState,
@@ -12,12 +12,14 @@ import {
   indictmentCases,
   investigationCases,
   restrictionCases,
+  ServiceRequirement,
 } from '@island.is/judicial-system/types'
 
 const courtOfAppealsSharedWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
   state: completedRequestCaseStates,
+  appeal_state: { [Op.not]: null },
 }
 
 const courtOfAppealsInProgressWhereOptions = {
@@ -115,17 +117,60 @@ const prosecutorsOfficeIndictmentInReviewWhereOptions = {
 }
 
 const prosecutorsOfficeIndictmentReviewedWhereOptions = {
-  is_archived: false,
-  type: indictmentCases,
-  state: CaseState.COMPLETED,
-  indictment_ruling_decision: {
-    [Op.or]: [
-      CaseIndictmentRulingDecision.RULING,
-      CaseIndictmentRulingDecision.FINE,
-    ],
-  },
-  indictment_reviewer_id: { [Op.not]: null },
-  indictment_review_decision: { [Op.not]: null },
+  [Op.and]: [
+    {
+      ...prosecutorsOfficeIndictmentSharedWhereOptions,
+      indictment_reviewer_id: { [Op.not]: null },
+      indictment_review_decision: { [Op.not]: null },
+    },
+    {
+      [Op.or]: [
+        {
+          indictment_ruling_decision: CaseIndictmentRulingDecision.FINE,
+          [Op.and]: [
+            where(
+              literal(`"ruling_date"::date + INTERVAL '4 days'`),
+              Op.gt,
+              fn('NOW'),
+            ),
+          ],
+        },
+        {
+          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+          [Op.or]: [
+            {
+              [Op.and]: [
+                literal(`EXISTS (
+                  SELECT 1 FROM defendant
+                  WHERE defendant.case_id = "Case".id
+                    AND defendant.service_requirement = '${ServiceRequirement.NOT_REQUIRED}'
+                )`),
+                where(
+                  literal(`"ruling_date"::date + INTERVAL '4 days'`),
+                  Op.gt,
+                  fn('NOW'),
+                ),
+              ],
+            },
+          ],
+        },
+        {
+          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+          [Op.and]: [
+            literal(`EXISTS (
+              SELECT 1 FROM defendant
+              WHERE defendant.case_id = "Case".id
+                AND defendant.service_requirement = 'REQUIRED'
+                AND (
+                  defendant.verdict_view_date IS NULL
+                  OR defendant.verdict_view_date + INTERVAL '29 days' > NOW()
+                )
+            )`),
+          ],
+        },
+      ],
+    },
+  ],
 }
 
 const prosecutorsOfficeIndictmentAppealPeriodExpiredWhereOptions = {}
