@@ -18,6 +18,7 @@ import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UserProfile } from './userProfile.model'
 import { UserProfileServiceV2 } from './V2/userProfile.service'
+import { UpdateActorProfileEmailInput } from './dto/updateActorProfileEmail.input'
 
 @Injectable()
 export class UserProfileService {
@@ -134,6 +135,13 @@ export class UserProfileService {
 
   async getUserProfiles(user: User, query: string) {
     return this.userProfileServiceV2.getUserProfiles(user, query)
+  }
+
+  async updateActorProfileEmail(
+    input: UpdateActorProfileEmailInput,
+    user: User,
+  ) {
+    return this.userProfileServiceV2.updateActorProfileEmail(input, user)
   }
 
   async getUserProfileByNationalId(user: User, nationalId: string) {

@@ -1,13 +1,14 @@
-import React, { FC } from 'react'
-import { Box, Text, Divider } from '@island.is/island-ui/core'
+import { Box, Divider, Text } from '@island.is/island-ui/core'
+import { PropsWithChildren } from 'react'
 
 interface NotificationSettingsCardProps {
   title?: string | null
 }
 
-export const NotificationSettingsCard: FC<
-  React.PropsWithChildren<NotificationSettingsCardProps>
-> = ({ title, children }) => {
+export const NotificationSettingsCard = ({
+  title,
+  children,
+}: PropsWithChildren<NotificationSettingsCardProps>) => {
   return (
     <Box
       border="standard"
@@ -16,10 +17,14 @@ export const NotificationSettingsCard: FC<
       paddingBottom={[3, 4]}
       borderRadius="large"
     >
-      <Text variant="h4" marginBottom={3} as="h3">
-        {title}
-      </Text>
-      <Divider />
+      {title && (
+        <>
+          <Text variant="h4" marginBottom={3} as="h3">
+            {title}
+          </Text>
+          <Divider />
+        </>
+      )}
       <Box paddingTop={[3, 4]}>{children}</Box>
     </Box>
   )

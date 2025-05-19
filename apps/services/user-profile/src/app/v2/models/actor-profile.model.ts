@@ -5,9 +5,12 @@ import {
   Table,
   CreatedAt,
   UpdatedAt,
+  ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { MeActorProfileDto } from '../dto/actor-profile.dto'
+import { Emails } from './emails.model'
 
 @Table({
   tableName: 'actor_profile',
@@ -66,10 +69,41 @@ export class ActorProfile extends Model {
   @ApiProperty()
   modified!: Date
 
+  @ForeignKey(() => Emails)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiProperty()
+  emailsId?: string | null
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  nextNudge?: Date | null
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  lastNudge?: Date | null
+
+  @BelongsTo(() => Emails, {
+    foreignKey: 'emailsId',
+    targetKey: 'id',
+    as: 'emails',
+  })
+  emails?: Emails
+
   toDto(): MeActorProfileDto {
     return {
       fromNationalId: this.fromNationalId,
       emailNotifications: this.emailNotifications,
+      emailsId: this.emailsId || null,
     }
   }
 }

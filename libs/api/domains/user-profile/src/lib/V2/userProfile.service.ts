@@ -4,6 +4,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   PostNudgeDtoNudgeTypeEnum,
   UserProfileControllerFindUserProfileClientTypeEnum,
+  V2ActorApi,
   V2MeApi,
   V2UsersApi,
 } from '@island.is/clients/user-profile'
@@ -19,12 +20,14 @@ import { UpdateUserProfileInput } from '../dto/updateUserProfileInput'
 import { IslykillService } from '../islykill.service'
 import { DeleteIslykillSettings } from '../models/deleteIslykillSettings.model'
 import { UserProfile } from '../userProfile.model'
+import { UpdateActorProfileEmailInput } from '../dto/updateActorProfileEmail.input'
 
 @Injectable()
 export class UserProfileServiceV2 {
   constructor(
     private v2MeApi: V2MeApi,
     private v2UserProfileApi: V2UsersApi,
+    private v2ActorApi: V2ActorApi,
     private readonly islyklarService: IslykillService,
   ) {}
 
@@ -34,6 +37,10 @@ export class UserProfileServiceV2 {
 
   v2UserProfileApiWithAuth(auth: Auth) {
     return this.v2UserProfileApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  v2ActorApiWithAuth(auth: Auth) {
+    return this.v2ActorApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private async getBankInfo(user: User) {
@@ -120,9 +127,9 @@ export class UserProfileServiceV2 {
     input: UpdateActorProfileInput,
     user: User,
   ): Promise<ActorProfile> {
-    return this.v2MeUserProfileApiWithAuth(
+    return this.v2ActorApiWithAuth(
       user,
-    ).meUserProfileControllerCreateOrUpdateActorProfile({
+    ).actorUserProfileControllerCreateOrUpdateActorProfile({
       xParamFromNationalId: input.fromNationalId,
       patchActorProfileDto: { emailNotifications: input.emailNotifications },
     })
@@ -189,5 +196,19 @@ export class UserProfileServiceV2 {
       nationalId,
       valid: true,
     }
+  }
+
+  async updateActorProfileEmail(
+    input: UpdateActorProfileEmailInput,
+    user: User,
+  ) {
+    return this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerUpdateActorProfileEmailById({
+      fromNationalId: input.fromNationalId,
+      setActorProfileEmailDto: {
+        emailsId: input.emailsId,
+      },
+    })
   }
 }

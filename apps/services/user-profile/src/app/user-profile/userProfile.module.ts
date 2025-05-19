@@ -12,6 +12,7 @@ import { VerificationService } from './verification.service'
 import { UserProfileInfraController } from './userProfileInfra.controller'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
 import { UserDeviceTokens } from './userDeviceTokens.model'
+import { Emails } from '../v2/models/emails.model'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UserDeviceTokens } from './userDeviceTokens.model'
       SmsVerification,
       UserProfile,
       UserDeviceTokens,
+      Emails,
     ]),
     EmailModule,
     SmsModule,

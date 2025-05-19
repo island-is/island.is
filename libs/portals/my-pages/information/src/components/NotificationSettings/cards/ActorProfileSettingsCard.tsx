@@ -1,20 +1,20 @@
-import React, { FC, useState } from 'react'
+import { useState } from 'react'
 
 import { useLocale } from '@island.is/localization'
 
-import { SettingsCard } from './SettingsCard/SettingsCard'
-import { mNotifications } from '../../../lib/messages'
-import { useUpdateActorProfileMutation } from '../graphql/ActorProfiles.generated'
 import { UserProfileActorProfile } from '@island.is/api/schema'
 import { toast } from '@island.is/island-ui/core'
+import { mNotifications } from '../../../lib/messages'
+import { useUpdateActorProfileMutation } from '../ActorProfilesNotificationSettings/userProfileUpdateActorProfile.generated'
+import { SettingsCard } from './SettingsCard/SettingsCard'
 
 interface ActorProfileSettingsCardProps {
   profile: UserProfileActorProfile
 }
 
-export const ActorProfileSettingsCard: FC<ActorProfileSettingsCardProps> = ({
+export const ActorProfileSettingsCard = ({
   profile: initialProfile,
-}) => {
+}: ActorProfileSettingsCardProps) => {
   const { formatMessage } = useLocale()
   const [updateActorProfile] = useUpdateActorProfileMutation()
   const [profile, setProfile] = useState(initialProfile)
