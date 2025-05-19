@@ -3,9 +3,8 @@ import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { TextInput } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
-import slugify from '@sindresorhus/slugify'
 
-import { slugifyDate } from '../../utils'
+import { slugify, slugifyDate } from '../../utils'
 
 const EventSlugField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
@@ -41,11 +40,7 @@ const EventSlugField = () => {
           return
         }
         const date = sdk.entry.fields.startDate.getValue()
-        setValue(
-          `${slugify(newTitle, { customReplacements: [['ö', 'o']] })}${
-            date ? '-' + slugifyDate(date) : ''
-          }`,
-        )
+        setValue(`${slugify(newTitle)}${date ? '-' + slugifyDate(date) : ''}`)
       })
 
     const unsubscribeFromDateValueChanges =
