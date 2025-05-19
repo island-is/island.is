@@ -30,6 +30,8 @@ import { Prescriptions } from './models/prescriptions.model'
 import { Referrals } from './models/referrals.model'
 import { Vaccinations } from './models/vaccinations.model'
 import { Waitlists } from './models/waitlists.model'
+import { HealthDirectorateReferralInput } from './dto/referral.input'
+import { ReferralDetail } from './models/referral.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -122,6 +124,22 @@ export class HealthDirectorateResolver {
     @CurrentUser() user: User,
   ): Promise<Referrals | null> {
     return this.api.getReferrals(user, locale)
+  }
+
+  /* Referral */
+  @Query(() => ReferralDetail, {
+    name: 'healthDirectorateReferral',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthReferralsPageEnabled)
+  getReferral(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: HealthDirectorateReferralInput,
+    @CurrentUser() user: User,
+  ): Promise<ReferralDetail | null> {
+    return this.api.getReferral(user, locale, input.id)
   }
 
   /* Prescriptions */

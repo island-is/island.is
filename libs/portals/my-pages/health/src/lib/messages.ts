@@ -1174,6 +1174,10 @@ export const messages = defineMessages({
     defaultMessage: 'Tilvísanir',
     id: 'sp.health:referrals',
   },
+  singleReferral: {
+    defaultMessage: 'Tilvísun',
+    id: 'sp.health:single-referral',
+  },
   reason: {
     defaultMessage: 'Ástæða',
     id: 'sp.health:reason',
@@ -1493,6 +1497,10 @@ export const messages = defineMessages({
   waitlists: {
     defaultMessage: 'Biðlistar',
     id: 'sp.health:waitlists',
+  },
+  singleWaitlist: {
+    defaultMessage: 'Biðlisti',
+    id: 'sp.health:single-waitlist',
   },
   waitlistsIntro: {
     defaultMessage: 'Hér finnur þú biðlista sem þú hefur verið skráð/ur á.',

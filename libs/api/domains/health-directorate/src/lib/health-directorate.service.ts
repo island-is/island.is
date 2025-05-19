@@ -27,6 +27,7 @@ import {
   MedicineHistoryItem,
 } from './models/medicineHistory.model'
 import { isDefined } from '@island.is/shared/utils'
+import { ReferralDetail } from './models/referral.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -189,6 +190,25 @@ export class HealthDirectorateService {
       }) ?? []
 
     return { referrals }
+  }
+
+  /* Referral */
+  async getReferral(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<ReferralDetail | null> {
+    const data = await this.getReferrals(auth, locale)
+
+    if (!data) {
+      return null
+    }
+
+    const referral: Referral | undefined = data.referrals.find(
+      (item) => item.id === id,
+    )
+
+    return { data: referral }
   }
 
   /* Prescriptions */

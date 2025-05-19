@@ -13,9 +13,12 @@ query GetReferrals($locale: String) {
   }
 }
 
-query GetReferralsDetail($locale: String) {
-  healthDirectorateReferrals(locale: $locale) {
-    referrals {
+query GetReferralsDetail(
+  $locale: String
+  $input: HealthDirectorateReferralInput!
+) {
+  healthDirectorateReferral(locale: $locale, input: $input) {
+    data {
       ...Referral
       createdDate
       reason

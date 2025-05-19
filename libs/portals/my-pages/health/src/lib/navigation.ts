@@ -179,7 +179,7 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthReferrals,
       children: [
         {
-          name: 'id',
+          name: messages.singleReferral,
           path: HealthPaths.HealthReferralsDetail,
           navHide: true,
         },
@@ -190,7 +190,7 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthWaitlists,
       children: [
         {
-          name: 'id',
+          name: messages.singleWaitlist,
           path: HealthPaths.HealthWaitlistsDetail,
           navHide: true,
         },

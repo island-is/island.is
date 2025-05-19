@@ -22,12 +22,10 @@ const ReferencesDetail: React.FC = () => {
   const { id } = useParams() as UseParams
 
   const { data, loading, error } = useGetReferralsDetailQuery({
-    variables: { locale: lang },
+    variables: { input: { id }, locale: lang },
   })
 
-  const referral = data?.healthDirectorateReferrals.referrals.find(
-    (item) => item.id === id,
-  )
+  const referral = data?.healthDirectorateReferral.data
 
   return (
     <IntroWrapper
