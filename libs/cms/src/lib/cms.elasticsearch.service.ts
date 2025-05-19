@@ -1380,7 +1380,10 @@ export class CmsElasticsearchService {
       { 'title.sort': { order: SortDirection.ASC } },
     ]
 
-    if (queryString.length === 0) {
+    if (
+      queryString.length === 0 &&
+      (!input.tagKeys || input.tagKeys.length === 0)
+    ) {
       sort = [{ 'title.sort': { order: SortDirection.ASC } }]
     }
 
