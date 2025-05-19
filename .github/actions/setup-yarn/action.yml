@@ -8,10 +8,18 @@ inputs:
     description: 'Directory to run the action in'
     required: false
     default: '.'
+  infra-install:
+    description: 'Install infra dependencies'
+    required: false
+    default: 'true'
 
 runs:
   using: 'composite'
   steps:
+    - name: Ensure cache bucket
+      shell: bash
+      run: echo "${{ inputs.cache-bucket || env.CACHE_BUCKET }}" | grep '.'
+
     - name: Corepack
       shell: bash
       working-directory: ${{ inputs.working-directory }}
@@ -22,8 +30,10 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       id: set-cache
+      env:
+        CACHE_KEY: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}${{ inputs.infra-install && '-withinfra' }}
       run: |
-        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
+        echo "CACHE_KEY=${{ env.CACHE_KEY }}-1" >> $GITHUB_OUTPUT
         echo "CYPRESS_CACHE_PATH=${{ github.workspace }}/.cache/cypress" >> "$GITHUB_OUTPUT"
         echo "YARN_CACHE_PATH=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
         echo "YARN_INFRA_CACHE_PATH=$(cd infra && yarn config get cacheFolder)" >> $GITHUB_OUTPUT
@@ -79,6 +89,7 @@ runs:
         yarn install --immutable
 
     - name: Yarn install (infra)
+      if: ${{ inputs.infra-install == 'true' }}
       working-directory: ${{ inputs.working-directory }}/infra
       shell: bash
       env:
