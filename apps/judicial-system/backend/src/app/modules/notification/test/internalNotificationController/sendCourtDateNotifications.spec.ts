@@ -33,6 +33,7 @@ type GivenWhenThen = (
 
 describe('InternalNotificationController - Send court date notifications', () => {
   const userId = uuid()
+  const userName = 'Test'
   const caseId = uuid()
 
   const courtName = 'Héraðsdómur Reykjavíkur'
@@ -71,6 +72,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
 
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
+      userDescriptor: { name: userName },
       type: CaseNotificationType.COURT_DATE,
     }
 
@@ -121,6 +123,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
 
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
+      userDescriptor: { name: userName },
       type: CaseNotificationType.COURT_DATE,
     }
 

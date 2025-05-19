@@ -32,7 +32,7 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
       type,
     } as Case)
 
-  const user = { id: uuid() } as User
+  const user = { id: uuid(), name: 'Test' } as User
 
   let mockMessageService: MessageService
   let internalNotificationController: InternalNotificationController
@@ -78,9 +78,9 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
         {
           type: MessageType.INDICTMENT_CASE_NOTIFICATION,
           caseId,
-          user,
           body: {
             type: IndictmentCaseNotificationType.COURT_DATE,
+            userDescriptor: { name: user.name },
           },
         },
       ],
@@ -92,9 +92,9 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
         {
           type: MessageType.NOTIFICATION,
           caseId,
-          user,
           body: {
             type: CaseNotificationType.COURT_DATE,
+            userDescriptor: { name: user.name },
           },
         },
       ],
@@ -117,7 +117,7 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
       await internalNotificationController.dispatchEventNotification(
         theCase.id,
         theCase,
-        { type: notificationType, user },
+        { type: notificationType, userDescriptor: { name: user.name } },
       )
 
     expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
