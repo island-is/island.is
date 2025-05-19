@@ -5,7 +5,7 @@ export const processJob = () =>
   yargs(hideBin(process.argv))
     .option('job', {
       string: true,
-      choices: ['worker', 'server', 'cleanup', 'birthday'] as const,
+      choices: ['worker', 'server', 'cleanup'] as const,
       description: 'Indicate if application should run as a worker or server',
     })
     .parseSync().job
