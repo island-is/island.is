@@ -81,7 +81,7 @@
       "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-user-notification:build",
-        "args": ["--job", "birthday"]
+        "args": ["--job", "worker", "--isBirthdayWorker"]
       }
     },
     "lint": {
