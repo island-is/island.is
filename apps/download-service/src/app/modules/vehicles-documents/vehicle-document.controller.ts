@@ -117,8 +117,6 @@ export class VehicleController {
         resources: ssn,
       })
 
-      //TODO REMOVE
-      const dummy = 8
 
       const contentArrayBuffer = await documentResponse.arrayBuffer()
       const buffer = Buffer.from(contentArrayBuffer)
