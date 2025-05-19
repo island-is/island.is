@@ -21,6 +21,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
     return isExemptionTypeShortTerm(answers)
   },
   title: freight.create.pageTitle,
+  description: freight.create.description,
   children: [
     ...FreightHiddenInputs,
     buildDescriptionField({
@@ -86,35 +87,6 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       required: true,
       suffix: freight.labels.metersSuffix,
     }),
-    buildDescriptionField({
-      id: 'freightWithConvoy.subtitle',
-      description: freight.labels.exemptionFor,
-      titleVariant: 'h5',
-    }),
-    buildCheckboxField({
-      id: 'freight.items[0].exemptionFor',
-      large: false,
-      backgroundColor: 'white',
-      split: '1/4',
-      options: [
-        {
-          value: ExemptionFor.WIDTH,
-          label: freight.exemptionFor.widthOptionTitle,
-        },
-        {
-          value: ExemptionFor.HEIGHT,
-          label: freight.exemptionFor.heightOptionTitle,
-        },
-        {
-          value: ExemptionFor.LENGTH,
-          label: freight.exemptionFor.lengthOptionTitle,
-        },
-        {
-          value: ExemptionFor.WEIGHT,
-          label: freight.exemptionFor.weightOptionTitle,
-        },
-      ],
-    }),
     buildAlertMessageField({
       id: 'freightShortTermPoliceEscortAlertMessage',
       alertType: 'info',
@@ -151,6 +123,35 @@ export const FreightShortTermCreateMultiField = buildMultiField({
           (length && maxLength ? Number(length) > maxLength : false)
         )
       },
+    }),
+    buildDescriptionField({
+      id: 'freightWithConvoy.subtitle',
+      title: freight.labels.exemptionFor,
+      titleVariant: 'h5',
+    }),
+    buildCheckboxField({
+      id: 'freight.items[0].exemptionFor',
+      large: true,
+      backgroundColor: 'blue',
+      split: '1/2',
+      options: [
+        {
+          value: ExemptionFor.WIDTH,
+          label: freight.exemptionFor.widthOptionTitle,
+        },
+        {
+          value: ExemptionFor.HEIGHT,
+          label: freight.exemptionFor.heightOptionTitle,
+        },
+        {
+          value: ExemptionFor.LENGTH,
+          label: freight.exemptionFor.lengthOptionTitle,
+        },
+        {
+          value: ExemptionFor.WEIGHT,
+          label: freight.exemptionFor.weightOptionTitle,
+        },
+      ],
     }),
   ],
 })

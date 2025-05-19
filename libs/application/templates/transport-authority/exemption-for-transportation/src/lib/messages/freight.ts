@@ -19,6 +19,12 @@ export const freight = {
       defaultMessage: 'Farmur',
       description: 'Title of create freight page',
     },
+    description: {
+      id: 'ta.eft.application:freight.create.description',
+      defaultMessage:
+        'Vinsamlegast fylltu út upplýsingar um farminn sem þú ert að fara að flytja.',
+      description: 'Description of create freight page',
+    },
     policeEscortAlertTitle: {
       id: 'ta.eft.application:freight.create.policeEscortAlertTitle',
       defaultMessage: 'Lögreglufylgd',

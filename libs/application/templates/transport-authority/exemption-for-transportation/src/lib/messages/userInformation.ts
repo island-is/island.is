@@ -14,6 +14,11 @@ export const userInformation = {
     },
   }),
   applicant: defineMessages({
+    subSectionTitle: {
+      id: 'ta.eft.application:userInformation.applicant.subSectionTitle',
+      defaultMessage: 'Umsækjandi',
+      description: 'Title of applicant sub section',
+    },
     subtitle: {
       id: 'ta.eft.application:userInformation.applicant.subtitle',
       defaultMessage: 'Umsækjandi',
@@ -21,6 +26,11 @@ export const userInformation = {
     },
   }),
   transporter: defineMessages({
+    subSectionTitle: {
+      id: 'ta.eft.application:userInformation.transporter.subSectionTitle',
+      defaultMessage: 'Flutningsaðili',
+      description: 'Title of transporter sub section',
+    },
     subtitle: {
       id: 'ta.eft.application:userInformation.transporter.subtitle',
       defaultMessage: 'Flutningsaðili',

@@ -23,11 +23,11 @@ export const FreightLongTermCreateSubSection = buildSubSection({
     buildMultiField({
       id: 'freightLongTermCreateMultiField',
       title: freight.create.pageTitle,
+      description: freight.create.description,
       children: [
         ...FreightHiddenInputs,
         buildTableRepeaterField({
           id: 'freight.items',
-          formTitle: freight.labels.freightSubtitle,
           addItemButtonText: freight.labels.addItemButtonText,
           saveItemButtonText: freight.labels.saveItemButtonText,
           removeButtonTooltipText: freight.labels.removeItemButtonTooltipText,
@@ -35,6 +35,7 @@ export const FreightLongTermCreateSubSection = buildSubSection({
           maxRows: MAX_CNT_FREIGHT,
           marginTop: 0,
           editField: true,
+          initActiveFieldIfEmpty: true,
           table: {
             header: [
               freight.labels.freightName,
