@@ -28,7 +28,6 @@ env:
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
@@ -63,9 +62,14 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
       - name: Run unit tests
         uses: ./.github/actions/unit-test
         with:
@@ -94,9 +98,13 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Find unicorn projects
         id: unicorn
@@ -151,9 +159,13 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Running e2e tests
         run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3
@@ -169,9 +181,13 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -207,9 +223,13 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Check formatting on main
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -232,6 +252,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Run lintfix
         id: lintfix
@@ -266,9 +288,13 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Lint head
         id: lint-head
@@ -348,9 +374,13 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build

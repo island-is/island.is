@@ -39,7 +39,6 @@ env:
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
 jobs:
   pre-checks:
@@ -172,9 +171,13 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: test-everything
         uses: ./.github/actions/test-everything
@@ -300,6 +303,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Set id for matrix
         run: |
@@ -307,6 +312,8 @@ jobs:
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
@@ -357,6 +364,8 @@ jobs:
           fi
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Building Docker images
         continue-on-error: true
@@ -426,6 +435,8 @@ jobs:
           aws-region: eu-west-1
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Docker build image
         working-directory: infra
@@ -496,6 +507,7 @@ jobs:
       - name: Setup yarn
         uses: ./monorepo/.github/actions/setup-yarn
         with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
           working-directory: monorepo
 
       - name: Generate islandis feature-deployment charts for ArgoCD
@@ -511,6 +523,7 @@ jobs:
       - name: load-deps
         uses: ./monorepo/.github/actions/load-deps
         with:
+          cache-bucket: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
           working-directory: monorepo
 
       - name: Prepare artifact to be uploaded
