@@ -43,7 +43,6 @@ const OverviewBody = ({
   const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
-
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   return (
