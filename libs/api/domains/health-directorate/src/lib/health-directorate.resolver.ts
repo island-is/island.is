@@ -24,16 +24,16 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
+import { HealthDirectorateReferralInput } from './dto/referral.input'
+import { HealthDirectorateWaitlistInput } from './dto/waitlist.input'
 import { HealthDirectorateService } from './health-directorate.service'
 import { DonorInput, Organ, OrganDonation } from './models/organ-donation.model'
 import { Prescriptions } from './models/prescriptions.model'
+import { ReferralDetail } from './models/referral.model'
 import { Referrals } from './models/referrals.model'
 import { Vaccinations } from './models/vaccinations.model'
-import { Waitlist, Waitlists } from './models/waitlists.model'
-import { HealthDirectorateReferralInput } from './dto/referral.input'
-import { ReferralDetail } from './models/referral.model'
 import { WaitlistDetail } from './models/waitlist.model'
-import { HealthDirectorateWaitlistInput } from './dto/waitlist.input'
+import { Waitlists } from './models/waitlists.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
