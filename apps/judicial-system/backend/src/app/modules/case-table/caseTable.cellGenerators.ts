@@ -17,10 +17,12 @@ import {
   CaseType,
   DefendantEventType,
   getIndictmentAppealDeadlineDate,
+  getIndictmentVerdictAppealDeadlineStatus,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isRestrictionCase,
   PunishmentType,
+  ServiceRequirement,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -426,6 +428,49 @@ const indictmentAppealDeadline: CaseTableCellGenerator = {
   },
 }
 
+const subpoenaServiceState: CaseTableCellGenerator = {
+  attributes: ['rulingDate', 'indictmentRulingDecision'],
+  includes: {
+    defendants: {
+      model: Defendant,
+      attributes: ['serviceRequirement', 'verdictViewDate'],
+      order: [['created', 'ASC']],
+      separate: true,
+    },
+  },
+  generate: (c: Case): TagValue | undefined => {
+    const isFine =
+      c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+
+    if (isFine) {
+      return undefined
+    }
+
+    const isRuling =
+      c.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+    const verdictInfo = c.defendants?.map<[boolean, Date | undefined]>((d) => [
+      isRuling || isFine,
+      isFine || d.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+        ? c.rulingDate
+        : d.verdictViewDate,
+    ])
+    const [
+      indictmentVerdictViewedByAll,
+      indictmentVerdictAppealDeadlineExpired,
+    ] = getIndictmentVerdictAppealDeadlineStatus(verdictInfo, isFine)
+
+    if (!indictmentVerdictViewedByAll) {
+      return { color: 'red', text: 'Óbirt' }
+    }
+
+    if (indictmentVerdictAppealDeadlineExpired) {
+      return { color: 'mint', text: 'Frestur liðinn' }
+    }
+
+    return { color: 'blue', text: 'Á fresti' }
+  },
+}
+
 export const caseTableCellGenerators: Record<
   CaseTableColumnKey,
   CaseTableCellGenerator
@@ -443,4 +488,5 @@ export const caseTableCellGenerators: Record<
   prisonAdminReceivalDate,
   prisonAdminState,
   indictmentAppealDeadline,
+  subpoenaServiceState,
 }
