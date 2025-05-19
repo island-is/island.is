@@ -14,10 +14,14 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-const courtOfAppealsInProgressWhereOptions = {
+const courtOfAppealsSharedWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
   state: completedRequestCaseStates,
+}
+
+const courtOfAppealsInProgressWhereOptions = {
+  ...courtOfAppealsSharedWhereOptions,
   [Op.or]: [
     { appeal_state: CaseAppealState.RECEIVED },
     {
@@ -30,27 +34,27 @@ const courtOfAppealsInProgressWhereOptions = {
 }
 
 const courtOfAppealsCompletedWhereOptions = {
-  is_archived: false,
-  type: [...restrictionCases, ...investigationCases],
-  state: completedRequestCaseStates,
+  ...courtOfAppealsSharedWhereOptions,
   appeal_state: CaseAppealState.COMPLETED,
 }
 
-const prisonAdminActiveWhereOptions = {
+const prisonAdminSharedWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
   state: CaseState.ACCEPTED,
+}
+
+const prisonAdminActiveWhereOptions = {
+  ...prisonAdminSharedWhereOptions,
   valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
 }
 
 const prisonAdminDoneWhereOptions = {
-  is_archived: false,
-  type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
-  state: CaseState.ACCEPTED,
+  ...prisonAdminSharedWhereOptions,
   valid_to_date: { [Op.lt]: fn('NOW') },
 }
 
-const prisonAdminIndictmentSentToPrisonAdminWhereOptions = {
+const prisonAdminIndictmentSharedWhereOptions = {
   is_archived: false,
   type: indictmentCases,
   state: CaseState.COMPLETED,
@@ -61,7 +65,6 @@ const prisonAdminIndictmentSentToPrisonAdminWhereOptions = {
     ],
   },
   indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
-  is_registered_in_prison_system: { [Op.not]: true },
   id: {
     [Op.in]: Sequelize.literal(`
       (SELECT case_id
@@ -71,7 +74,17 @@ const prisonAdminIndictmentSentToPrisonAdminWhereOptions = {
   },
 }
 
+const prisonAdminIndictmentSentToPrisonAdminWhereOptions = {
+  ...prisonAdminIndictmentSharedWhereOptions,
+  is_registered_in_prison_system: { [Op.not]: true },
+}
+
 const prisonAdminIndictmentRegisteredRulingWhereOptions = {
+  ...prisonAdminIndictmentSharedWhereOptions,
+  is_registered_in_prison_system: true,
+}
+
+const prosecutorsOfficeIndictmentSharedWhereOptions = {
   is_archived: false,
   type: indictmentCases,
   state: CaseState.COMPLETED,
@@ -81,54 +94,22 @@ const prisonAdminIndictmentRegisteredRulingWhereOptions = {
       CaseIndictmentRulingDecision.FINE,
     ],
   },
-  indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
-  is_registered_in_prison_system: true,
   id: {
     [Op.in]: Sequelize.literal(`
       (SELECT case_id
-        FROM defendant
-        WHERE is_sent_to_prison_admin = true)
+        FROM event_log
+        WHERE event_type = '${EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR}')
     `),
   },
 }
 
 const prosecutorsOfficeIndictmentNewWhereOptions = {
-  is_archived: false,
-  type: indictmentCases,
-  state: CaseState.COMPLETED,
-  indictment_ruling_decision: {
-    [Op.or]: [
-      CaseIndictmentRulingDecision.RULING,
-      CaseIndictmentRulingDecision.FINE,
-    ],
-  },
-  id: {
-    [Op.in]: Sequelize.literal(`
-      (SELECT case_id
-        FROM event_log
-        WHERE event_type = '${EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR}')
-    `),
-  },
+  ...prosecutorsOfficeIndictmentSharedWhereOptions,
   indictment_reviewer_id: null,
 }
 
 const prosecutorsOfficeIndictmentInReviewWhereOptions = {
-  is_archived: false,
-  type: indictmentCases,
-  state: CaseState.COMPLETED,
-  indictment_ruling_decision: {
-    [Op.or]: [
-      CaseIndictmentRulingDecision.RULING,
-      CaseIndictmentRulingDecision.FINE,
-    ],
-  },
-  id: {
-    [Op.in]: Sequelize.literal(`
-      (SELECT case_id
-        FROM event_log
-        WHERE event_type = '${EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR}')
-    `),
-  },
+  ...prosecutorsOfficeIndictmentSharedWhereOptions,
   indictment_reviewer_id: { [Op.not]: null },
   indictment_review_decision: null,
 }
