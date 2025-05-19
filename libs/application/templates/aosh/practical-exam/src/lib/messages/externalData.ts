@@ -45,4 +45,17 @@ export const externalData = {
         'In order to apply for this application we need your email and phone number',
     },
   }),
+  ver: defineMessages({
+    dataError: {
+      id: 'aosh.pe.application:externalData.ver.dataError',
+      defaultMessage:
+        'Villa í gögnum frá Vinnueftirliti, vinsamlegast reynið síða',
+      description: 'Error fetching data from VER',
+    },
+    errorInApplication: {
+      id: 'aosh.pe.application:externalData.ver.errorInApplication',
+      defaultMessage: 'Villa í umsókn',
+      description: 'Error fetching data from VER title',
+    },
+  }),
 }

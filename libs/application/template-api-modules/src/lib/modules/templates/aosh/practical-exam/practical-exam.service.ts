@@ -25,7 +25,10 @@ import {
   mapPaymentArrangement,
 } from './practical-exam.utils'
 import { getValueViaPath } from '@island.is/application/core'
-import { shared } from '@island.is/application/templates/aosh/practical-exam'
+import {
+  externalData,
+  shared,
+} from '@island.is/application/templates/aosh/practical-exam'
 @Injectable()
 export class PracticalExamTemplateService extends BaseTemplateApiService {
   constructor(
@@ -50,9 +53,8 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     } catch {
       throw new TemplateApiError(
         {
-          summary:
-            'Villa að sækja gögn frá Vinnueftirliti, vinsamlegast reynið síðar',
-          title: 'Villa í umsókn',
+          summary: externalData.ver.dataError,
+          title: externalData.ver.errorInApplication,
         },
         400,
       )
@@ -74,9 +76,8 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
         )
         throw new TemplateApiError(
           {
-            summary:
-              'Villa í gögnum frá Vinnueftirliti, vinsamlegast reynið síðar',
-            title: 'Villa í umsókn',
+            summary: externalData.ver.dataError,
+            title: externalData.ver.errorInApplication,
           },
           400,
         )
@@ -89,9 +90,8 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
       )
       throw new TemplateApiError(
         {
-          summary:
-            'Ekki tókst að sækja gögn til VER, vinsamlegast reynið síðar',
-          title: 'Villa í umsókn',
+          summary: externalData.ver.dataError,
+          title: externalData.ver.errorInApplication,
         },
         400,
       )
