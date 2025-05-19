@@ -61,7 +61,6 @@ export class VictimService {
     }
 
     return updatedVictims[0]
-
   }
 
   async delete(caseId: string, victimId: string): Promise<boolean> {
