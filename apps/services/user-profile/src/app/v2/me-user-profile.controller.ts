@@ -94,45 +94,6 @@ export class MeUserProfileController {
     )
   }
 
-  @Post('/create-verification')
-  @Scopes(UserProfileScope.write)
-  @Documentation({
-    description:
-      'Creates a verification code for the user for either email or sms',
-    response: { status: 200 },
-  })
-  async createVerification(
-    @CurrentUser() user: User,
-    @Body() input: CreateVerificationDto,
-  ) {
-    const validateInputs = async () => {
-      if (input.email && !input.mobilePhoneNumber) {
-        await this.userProfileService.createEmailVerification({
-          nationalId: user.actor?.nationalId ?? user.nationalId,
-          email: input.email,
-        })
-      } else if (input.mobilePhoneNumber && !input.email) {
-        await this.userProfileService.createSmsVerification({
-          nationalId: user.nationalId,
-          mobilePhoneNumber: input.mobilePhoneNumber,
-        })
-      } else {
-        throw new BadRequestException(
-          'Either email or mobile phone number must be provided',
-        )
-      }
-    }
-    return this.auditService.auditPromise(
-      {
-        auth: user,
-        namespace,
-        action: 'createVerification',
-        resources: user.nationalId,
-      },
-      validateInputs(),
-    )
-  }
-
   @Post('/nudge')
   @Scopes(UserProfileScope.write)
   @Documentation({

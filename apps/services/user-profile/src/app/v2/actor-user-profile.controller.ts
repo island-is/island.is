@@ -39,6 +39,7 @@ import { PostNudgeDto } from './dto/post-nudge.dto'
 import { SetActorProfileEmailDto } from './dto/set-actor-profile-email.dto'
 import { UpdateActorProfileEmailDto } from './dto/actor-profile-email.dto'
 import { ActorProfileEmailDto } from './dto/actor-profile-email.dto'
+import { CreateVerificationDto } from './dto/create-verification.dto'
 
 const namespace = '@island.is/user-profile/v2/actor'
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -195,6 +196,45 @@ export class ActorUserProfileController {
         fromNationalId: user.nationalId,
         emailsId: dto.emailsId,
       }),
+    )
+  }
+
+  @Post('/create-verification')
+  @ActorScopes(ApiScope.internal) // TODO: Edit to New Scopes ?
+  @Documentation({
+    description:
+      'Creates a verification code for the user for either email or sms',
+    response: { status: 200 },
+  })
+  async createVerification(
+    @CurrentUser() user: User,
+    @Body() input: CreateVerificationDto,
+  ) {
+    const validateInputs = async () => {
+      if (input.email && !input.mobilePhoneNumber) {
+        await this.userProfileService.createEmailVerification({
+          nationalId: user.actor?.nationalId ?? user.nationalId,
+          email: input.email,
+        })
+      } else if (input.mobilePhoneNumber && !input.email) {
+        await this.userProfileService.createSmsVerification({
+          nationalId: user.nationalId,
+          mobilePhoneNumber: input.mobilePhoneNumber,
+        })
+      } else {
+        throw new BadRequestException(
+          'Either email or mobile phone number must be provided',
+        )
+      }
+    }
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'createVerification',
+        resources: user.nationalId,
+      },
+      validateInputs(),
     )
   }
 
