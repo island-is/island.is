@@ -56,26 +56,33 @@ export const personalInformationOverviewItems = (
   ]
 }
 
-export const appraisalMethodOverviewItems = (
+export const changesOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
   return [
     {
       width: 'full',
-      keyText: m.appraisalMethodMessages.becauseOfRenovations,
-      valueText:
-        getValueViaPath<string>(answers, 'becauseOfRenovations') === YES
-          ? m.miscMessages.yes
-          : m.miscMessages.no,
+      keyText: m.changesMessages.becauseOfRenovations,
+      valueText: getValueViaPath<string>(answers, 'appraisalMethod')?.includes(
+        'renovations',
+      )
+        ? m.miscMessages.yes
+        : m.miscMessages.no,
     },
     {
       width: 'full',
-      keyText: m.appraisalMethodMessages.becauseOfAdditions,
-      valueText:
-        getValueViaPath<string>(answers, 'becauseOfAdditions') === YES
-          ? m.miscMessages.yes
-          : m.miscMessages.no,
+      keyText: m.changesMessages.becauseOfAdditions,
+      valueText: getValueViaPath<string>(answers, 'appraisalMethod')?.includes(
+        'additions',
+      )
+        ? m.miscMessages.yes
+        : m.miscMessages.no,
+    },
+    {
+      width: 'full',
+      keyText: m.changesMessages.descriptionOfChanges,
+      valueText: getValueViaPath<string>(answers, 'description') ?? '',
     },
   ]
 }
@@ -89,19 +96,6 @@ export const realEstateOverviewItems = (
       width: 'full',
       keyText: m.realEstateMessages.title,
       valueText: getValueViaPath<string>(answers, 'realEstate') ?? '',
-    },
-  ]
-}
-
-export const descriptionOverviewItems = (
-  answers: FormValue,
-  _externalData: ExternalData,
-): Array<KeyValueItem> => {
-  return [
-    {
-      width: 'full',
-      keyText: '',
-      valueText: getValueViaPath<string>(answers, 'description') ?? '',
     },
   ]
 }

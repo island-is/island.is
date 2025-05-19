@@ -5,21 +5,21 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import {
-  appraisalMethodOverviewItems,
   personalInformationOverviewItems,
   realEstateOverviewItems,
-  descriptionOverviewItems,
   photoOverviewItems,
+  changesOverviewItems,
 } from '../../utils/getOverviewItems'
 import * as m from '../../lib/messages'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
-  title: 'Overview',
+  title: m.overviewMessages.title,
   children: [
     buildMultiField({
       id: 'overviewSection',
-      title: 'Overview',
+      title: m.overviewMessages.title,
+      description: m.overviewMessages.description,
       children: [
         buildOverviewField({
           condition: (application) => {
@@ -32,23 +32,18 @@ export const overviewSection = buildSection({
           items: personalInformationOverviewItems,
         }),
         buildOverviewField({
-          id: 'appraisalMethodOverview',
-          title: m.appraisalMethodMessages.title,
-          backId: 'appraisalMethod',
-          items: appraisalMethodOverviewItems,
-        }),
-        buildOverviewField({
           id: 'realEstateOverview',
           title: m.realEstateMessages.title,
           backId: 'realEstate',
           items: realEstateOverviewItems,
         }),
         buildOverviewField({
-          id: 'descriptionOverview',
-          title: m.descriptionMessages.title,
-          backId: 'descriptionMultiField',
-          items: descriptionOverviewItems,
+          id: 'changesOverview',
+          title: m.changesMessages.title,
+          backId: 'appraisalMethod',
+          items: changesOverviewItems,
         }),
+
         buildOverviewField({
           id: 'photoOverview',
           title: m.photoMessages.title,

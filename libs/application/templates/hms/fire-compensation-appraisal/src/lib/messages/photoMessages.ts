@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const photoMessages = defineMessages({
   title: {
     id: 'fca.application:photo.title',
-    defaultMessage: 'Myndir',
+    defaultMessage: 'Myndir af breytingum',
     description: 'Photo section title',
   },
   description: {

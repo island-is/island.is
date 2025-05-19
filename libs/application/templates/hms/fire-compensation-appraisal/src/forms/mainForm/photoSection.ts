@@ -7,7 +7,7 @@ import * as m from '../../lib/messages'
 
 export const photoSection = buildSection({
   id: 'photoSection',
-  title: 'Myndir',
+  title: m.photoMessages.title,
   children: [
     buildMultiField({
       id: 'photoMultiField',
