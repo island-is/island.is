@@ -3432,7 +3432,7 @@ user-notification-birthday-worker:
   args:
     - '--no-experimental-fetch'
     - 'main.js'
-    - '--job=birthday'
+    - '--job=worker'
   command:
     - 'node'
   enabled: true
