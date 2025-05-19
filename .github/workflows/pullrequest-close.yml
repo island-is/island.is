@@ -14,7 +14,7 @@ env:
 jobs:
   check-unicorn:
     name: Is this a unicorn PR
-    if: ${{ github.event.pull_request.merged == true }}
+    if: github.event.pull_request.merged == true
     runs-on: arc-shared
     timeout-minutes: 10
     outputs:
