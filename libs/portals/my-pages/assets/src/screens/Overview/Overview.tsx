@@ -101,6 +101,7 @@ const VehiclesOverview = () => {
                 searchLoading) ? [
           ownershipLinks ?
           <DropdownMenu
+          key="dropdown-menu"
             icon="ellipsisHorizontal"
             menuLabel={formatMessage(messages.myCarsFiles)}
             items={[
@@ -116,18 +117,21 @@ const VehiclesOverview = () => {
             title={formatMessage(messages.myCarsFiles)}
           /> : undefined,
           <LinkButton
+           key="owner-change"
             to={formatMessage(urls.ownerChange)}
             text={formatMessage(messages.changeOfOwnership)}
             icon='open'
             variant="utility"
           />,
           <LinkButton
+           key="recycle-car"
             to={formatMessage(urls.recycleCar)}
             text={formatMessage(messages.recycleCar)}
             icon='reader'
             variant="utility"
           />,
           <LinkButton
+           key="hide-name"
             to={formatMessage(urls.hideName)}
             text={formatMessage(messages.vehicleNameSecret)}
             icon='eyeOff'

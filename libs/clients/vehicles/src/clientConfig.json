@@ -2,7 +2,7 @@
   "openapi": "3.0.4",
   "info": {
     "title": "SamgÃ¶ngustofa",
-    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrÃ¡ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-52 : 20250513.7",
+    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrÃ¡ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-53 : 20250516.1",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -31,22 +31,10 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
                 "schema": {
                   "type": "string",
                   "format": "binary"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "byte"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "byte"
                 }
               }
             }
@@ -92,6 +80,9 @@
               }
             }
           },
+          "500": {
+            "description": "Internal Server Error"
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -129,6 +120,9 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error"
           },
           "401": {
             "description": "Unauthorized"
