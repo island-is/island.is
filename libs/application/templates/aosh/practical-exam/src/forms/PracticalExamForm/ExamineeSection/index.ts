@@ -21,7 +21,7 @@ export const examineeSection = buildSection({
       answers,
       'information.selfOrOthers',
     )
-    return selfOrOthers === SelfOrOthers.others ? true : false
+    return selfOrOthers === SelfOrOthers.others
   },
   children: [
     buildMultiField({
@@ -31,7 +31,6 @@ export const examineeSection = buildSection({
       children: [
         buildTableRepeaterField({
           id: 'examinees',
-          title: '',
           fields: {
             nationalId: {
               component: 'nationalIdWithName',
@@ -124,7 +123,6 @@ export const examineeSection = buildSection({
         }),
         buildCustomField({
           id: 'examinees.examineeValidation',
-          title: '',
           doesNotRequireAnswer: true,
           component: 'ExamineeValidation',
         }),

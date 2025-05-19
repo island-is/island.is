@@ -17,7 +17,7 @@ export const examCategoriesSectionOthers = buildSection({
       answers,
       'information.selfOrOthers',
     )
-    return selfOrOthers === SelfOrOthers.others ? true : false
+    return selfOrOthers === SelfOrOthers.others
   },
   children: [
     buildMultiField({
@@ -30,7 +30,6 @@ export const examCategoriesSectionOthers = buildSection({
         }),
         buildCustomField({
           id: 'examCategories',
-          title: '',
           component: 'ExamCategoriesOthers',
         }),
       ],

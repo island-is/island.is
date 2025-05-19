@@ -14,7 +14,11 @@ import {
   FieldTypes,
 } from '@island.is/application/types'
 import { FC, useCallback, useEffect, useState } from 'react'
-import { FILE_SIZE_LIMIT, predefinedHeaders } from '../../lib/constants'
+import {
+  FILE_SIZE_LIMIT,
+  predefinedHeaders,
+  CSV_FILE,
+} from '../../lib/constants'
 import { parse } from 'csv-parse'
 import { useLocale } from '@island.is/localization'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
@@ -30,43 +34,6 @@ import {
   validateExaminee,
 } from './examineeCSVUtils'
 import { CSVError } from '../../utils/interfaces'
-
-const parseDataToExamineeList = (csvInput: string): ExamineeInput | null => {
-  const values = csvInput.split(';')
-  const hasNoEmptyValues =
-    !!values[0] &&
-    !!values[1] &&
-    !!values[2] &&
-    !!values[3] &&
-    !!values[4] &&
-    !!values[5]
-  if (!hasNoEmptyValues) {
-    return null
-  }
-  const nationalIdWithoutHyphen = values[1].replace('-', '')
-  return {
-    nationalId: {
-      name: values[0],
-      nationalId: nationalIdWithoutHyphen,
-    },
-    email: values[2],
-    phone: formatPhoneNumber(values[3]),
-    licenseNumber: values[4],
-    countryIssuer: values[5],
-  }
-}
-
-const checkHeaders = (headers: string): boolean => {
-  const values = headers.split(';')
-  let validHeaders = true
-  values.forEach((value, index) => {
-    if (!predefinedHeaders[index].includes(value)) {
-      validHeaders = false
-    }
-  })
-
-  return validHeaders
-}
 
 export const ExamineesCSVUploader: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -90,6 +57,38 @@ export const ExamineesCSVUploader: FC<
     },
     [application.id, getAreExamineesEligible],
   )
+
+  const parseDataToExamineeList = (csvInput: string): ExamineeInput | null => {
+    const values = csvInput.split(';')
+    const isValid = values.length === 6 && values.every((value) => !!value)
+
+    if (!isValid) {
+      return null
+    }
+    const nationalIdWithoutHyphen = values[1].replace('-', '')
+    return {
+      nationalId: {
+        name: values[0],
+        nationalId: nationalIdWithoutHyphen,
+      },
+      email: values[2],
+      phone: formatPhoneNumber(values[3]),
+      licenseNumber: values[4],
+      countryIssuer: values[5],
+    }
+  }
+
+  const checkHeaders = (headers: string): boolean => {
+    const values = headers.split(';')
+    let validHeaders = true
+    values.forEach((value, index) => {
+      if (!predefinedHeaders[index].includes(value)) {
+        validHeaders = false
+      }
+    })
+
+    return validHeaders
+  }
 
   useEffect(() => {
     const finishedValues: Array<Examinee> = values?.filter(
@@ -267,10 +266,8 @@ export const ExamineesCSVUploader: FC<
     return
   }
 
-  const csvFile = `data:text/csv;charset=utf-8,nafn;kennitala;netfang;simi;okuskirteini;utgafuland\nNafn hér;123456-7890;netfang@netfang.com;123-4567;123123;Ísland`
-
   const onCsvButtonClick = () => {
-    const encodeUri = encodeURI(csvFile)
+    const encodeUri = encodeURI(CSV_FILE)
     const a = document.createElement('a')
     a.setAttribute('href', encodeUri)
     a.setAttribute('target', '_blank')

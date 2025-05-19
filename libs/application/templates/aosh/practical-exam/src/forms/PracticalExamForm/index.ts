@@ -21,7 +21,6 @@ import { examLocationSection } from './ExamLocation'
 
 export const PracticalExamForm: Form = buildForm({
   id: 'PracticalExamFormDraft',
-  title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

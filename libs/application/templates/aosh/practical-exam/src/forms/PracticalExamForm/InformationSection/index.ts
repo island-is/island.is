@@ -111,7 +111,7 @@ export const informationSection = buildSection({
               'information.selfOrOthers',
             )
 
-            return isForSelf === SelfOrOthers.self ? true : false
+            return isForSelf === SelfOrOthers.self
           },
         }),
         buildSelectField({
@@ -124,7 +124,7 @@ export const informationSection = buildSection({
               answers,
               'information.selfOrOthers',
             )
-            return isForSelf === SelfOrOthers.self ? true : false
+            return isForSelf === SelfOrOthers.self
           },
           options: () => {
             const iceland = {
@@ -162,7 +162,7 @@ export const informationSection = buildSection({
               answers,
               'information.selfOrOthers',
             )
-            return selfOrOthers === SelfOrOthers.self ? true : false
+            return selfOrOthers === SelfOrOthers.self
           },
         }),
       ],

@@ -46,7 +46,6 @@ export const paymentArrangementSection = buildSection({
         }),
         buildRadioField({
           id: 'paymentArrangement.individualOrCompany',
-          title: '',
           width: 'half',
           options: [
             {
@@ -118,7 +117,6 @@ export const paymentArrangementSection = buildSection({
         }),
         buildRadioField({
           id: 'paymentArrangement.paymentOptions',
-          title: '',
           width: 'half',
           options: [
             {
@@ -179,7 +177,6 @@ export const paymentArrangementSection = buildSection({
         }),
         buildCustomField({
           id: 'paymentArrangement.watchCompanyNationalId',
-          title: '',
           component: 'WatchCompanyNationalId',
           condition: isCompany,
         }),

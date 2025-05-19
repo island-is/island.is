@@ -7,7 +7,7 @@ export const isSelfPath = (answers: FormValue): boolean => {
     answers,
     'information.selfOrOthers',
   )
-  return selfOrOthers === SelfOrOthers.self ? true : false
+  return selfOrOthers === SelfOrOthers.self
 }
 
 export const isOthersPath = (answers: FormValue): boolean => {
@@ -15,5 +15,5 @@ export const isOthersPath = (answers: FormValue): boolean => {
     answers,
     'information.selfOrOthers',
   )
-  return selfOrOthers === SelfOrOthers.others ? true : false
+  return selfOrOthers === SelfOrOthers.others
 }

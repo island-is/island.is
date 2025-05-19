@@ -23,7 +23,6 @@ export const instructorSection = buildSection({
       children: [
         buildTableRepeaterField({
           id: 'instructors',
-          title: '',
           addItemButtonText: instructor.tableRepeater.addInstructorButton,
           fields: {
             nationalId: {
@@ -95,7 +94,6 @@ export const instructorSection = buildSection({
         }),
         buildCustomField({
           id: 'instructor.validation',
-          title: '',
           doesNotRequireAnswer: true,
           component: 'InstructorValidation',
         }),

@@ -7,7 +7,6 @@ import { IndividualOrCompany, PaymentOptions } from '../utils/enums'
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionApplicationForm',
-  title: '',
   logo: Logo,
   mode: FormModes.COMPLETED,
   children: [
