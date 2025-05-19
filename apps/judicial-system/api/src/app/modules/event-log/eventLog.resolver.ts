@@ -33,7 +33,11 @@ export class EventLogResolver {
 
     return backendService.createEventLog({
       ...input,
-      user,
+      nationalId: user.nationalId,
+      userRole: user.role,
+      userName: user.name,
+      userTitle: user.title,
+      institutionName: user.institution?.name,
     })
   }
 }

@@ -37,6 +37,10 @@ export interface User {
   latestLogin?: string
   loginCount?: number
 }
+export interface UserDescriptor {
+  name?: string
+  institution?: { name?: string }
+}
 
 interface InstitutionUser {
   id?: string | null

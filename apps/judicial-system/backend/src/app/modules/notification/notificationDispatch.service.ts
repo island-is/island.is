@@ -16,7 +16,7 @@ import {
   isIndictmentCase,
   NotificationDispatchType,
   prosecutorsOfficeTypes,
-  User,
+  UserDescriptor,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../case'
@@ -100,25 +100,25 @@ export class NotificationDispatchService {
 
   private async dispatchCourtDateNotifications(
     theCase: Case,
-    user?: User,
+    userDescriptor?: UserDescriptor,
   ): Promise<void> {
     const messages = []
     if (isIndictmentCase(theCase.type)) {
       messages.push({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,
-        user,
         body: {
           type: IndictmentCaseNotificationType.COURT_DATE,
+          userDescriptor,
         },
       })
     } else {
       messages.push({
         type: MessageType.NOTIFICATION,
         caseId: theCase.id,
-        user,
         body: {
           type: CaseNotificationType.COURT_DATE,
+          userDescriptor,
         },
       })
     }
@@ -129,12 +129,12 @@ export class NotificationDispatchService {
   async dispatchEventNotification(
     type: EventNotificationType,
     theCase: Case,
-    user?: User,
+    userDescriptor?: UserDescriptor,
   ): Promise<DeliverResponse> {
     try {
       switch (type) {
         case EventNotificationType.COURT_DATE_SCHEDULED:
-          await this.dispatchCourtDateNotifications(theCase, user)
+          await this.dispatchCourtDateNotifications(theCase, userDescriptor)
           break
         case EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR:
           await this.dispatchIndictmentSentToPublicProsecutorNotifications(

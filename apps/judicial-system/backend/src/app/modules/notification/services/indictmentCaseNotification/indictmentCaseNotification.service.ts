@@ -20,7 +20,7 @@ import { applyDativeCaseToCourtName } from '@island.is/judicial-system/formatter
 import {
   CaseIndictmentRulingDecision,
   IndictmentCaseNotificationType,
-  User,
+  UserDescriptor,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -101,7 +101,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   // TODO-FIX: redundant in other services - defendant, case, indictmentCase notifications
   private async uploadEmailToCourt(
     theCase: Case,
-    user: User,
+    user: UserDescriptor,
     subject: string,
     body: string,
     recipients?: string,
@@ -245,7 +245,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     recipientEmail,
   }: {
     theCase: Case
-    user: User
+    user: UserDescriptor
     arraignmentDateLog: DateLog
     recipientName: string
     recipientEmail: string
@@ -282,7 +282,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private async sendPostponedCourtDateEmailNotification(
     theCase: Case,
-    user: User,
+    user: UserDescriptor,
     courtDate: DateLog,
     calendarInvite: Attachment | undefined,
     overviewUrl?: string,
@@ -315,7 +315,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private sendCourtDateEmailNotification(
     theCase: Case,
-    user: User,
+    user: UserDescriptor,
   ): Promise<Recipient>[] {
     // check both regular court dates and arraignment date
     const courtDate = DateLog.courtDate(theCase.dateLogs)
@@ -417,10 +417,10 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
   private async sendCourtDateNotifications(
     theCase: Case,
-    user?: User,
+    user?: UserDescriptor,
   ): Promise<DeliverResponse> {
     if (!user) {
-      // Nothing happens
+      // nothing happens
       return { delivered: true }
     }
     this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase)
@@ -443,7 +443,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   private sendNotification(
     notificationType: IndictmentCaseNotificationType,
     theCase: Case,
-    user?: User,
+    user?: UserDescriptor,
   ): Promise<DeliverResponse> {
     switch (notificationType) {
       case IndictmentCaseNotificationType.COURT_DATE:
@@ -463,7 +463,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   async sendIndictmentCaseNotification(
     type: IndictmentCaseNotificationType,
     theCase: Case,
-    user?: User,
+    user?: UserDescriptor,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
     try {

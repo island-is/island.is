@@ -2,7 +2,7 @@ import { IsEnum, IsNotEmpty, IsObject, IsOptional } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import type { User } from '@island.is/judicial-system/types'
+import type { UserDescriptor } from '@island.is/judicial-system/types'
 import {
   EventNotificationType,
   NotificationDispatchType,
@@ -24,5 +24,5 @@ export class EventNotificationDispatchDto {
   @IsOptional()
   @IsObject()
   @ApiPropertyOptional({ type: Object })
-  readonly user?: User
+  readonly userDescriptor?: UserDescriptor
 }

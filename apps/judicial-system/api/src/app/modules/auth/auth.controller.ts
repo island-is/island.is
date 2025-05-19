@@ -298,7 +298,7 @@ export class AuthController {
           eventType: csrfToken
             ? EventType.LOGIN_UNAUTHORIZED
             : EventType.LOGIN_BYPASS_UNAUTHORIZED,
-          user: eligibleUsers[0],
+          nationalId: eligibleUsers[0].nationalId,
         })
 
         this.clearCookies(res)
@@ -411,7 +411,11 @@ export class AuthController {
     if (currentUser) {
       await this.authService.createEventLog({
         eventType: csrfToken ? EventType.LOGIN : EventType.LOGIN_BYPASS,
-        user: currentUser,
+        nationalId: currentUser.nationalId,
+        userRole: currentUser.role,
+        userName: currentUser.name,
+        userTitle: currentUser.title,
+        institutionName: currentUser.institution?.name,
       })
     }
 

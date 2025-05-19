@@ -70,7 +70,7 @@ export {
   getAdminUserInstitutionScope,
   getAdminUserInstitutionUserRoles,
 } from './lib/user'
-export type { User } from './lib/user'
+export type { User, UserDescriptor } from './lib/user'
 
 export {
   CaseOrigin,

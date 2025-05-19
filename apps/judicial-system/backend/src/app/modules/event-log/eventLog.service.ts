@@ -12,6 +12,7 @@ import {
   EventNotificationType,
   EventType,
   User,
+  UserDescriptor,
 } from '@island.is/judicial-system/types'
 
 import { CreateEventLogDto } from './dto/createEventLog.dto'
@@ -54,7 +55,11 @@ export class EventLogService {
       {
         eventType,
         caseId,
-        user,
+        nationalId: user.nationalId,
+        userRole: user.role,
+        userName: user.name,
+        userTitle: user.title,
+        institutionName: user.institution?.name,
       },
       transaction,
     )
@@ -64,25 +69,14 @@ export class EventLogService {
     event: CreateEventLogDto,
     transaction?: Transaction,
   ): Promise<boolean> {
-    const { eventType, caseId, user } = event
     const {
-      role: userRole,
-      nationalId,
-      name: userName,
-      title: userTitle,
-      institution,
-    } = user
-    const institutionName = institution?.name
-
-    const eventLog = {
       eventType,
       caseId,
-      nationalId,
-      userRole,
       userName,
-      userTitle,
+      userRole,
+      nationalId,
       institutionName,
-    }
+    } = event
 
     if (!allowMultiple.includes(event.eventType)) {
       const where = Object.fromEntries(
@@ -104,7 +98,7 @@ export class EventLogService {
     }
 
     try {
-      await this.eventLogModel.create(eventLog, { transaction })
+      await this.eventLogModel.create({ ...event }, { transaction })
 
       return true
     } catch (error) {
@@ -114,7 +108,14 @@ export class EventLogService {
       return false
     } finally {
       if (caseId) {
-        this.addEventNotificationToQueue(eventType, caseId, user)
+        this.addEventNotificationToQueue({
+          eventType,
+          caseId,
+          userDescriptor: {
+            name: userName,
+            institution: { name: institutionName },
+          },
+        })
       }
     }
   }
@@ -149,11 +150,15 @@ export class EventLogService {
   }
 
   // Sends events to queue for notification dispatch
-  private addEventNotificationToQueue(
-    eventType: EventType,
-    caseId: string,
-    user: User,
-  ) {
+  private addEventNotificationToQueue({
+    eventType,
+    caseId,
+    userDescriptor,
+  }: {
+    eventType: EventType
+    caseId: string
+    userDescriptor: UserDescriptor
+  }) {
     const notificationType = eventToNotificationMap[eventType]
 
     if (notificationType) {
@@ -161,9 +166,11 @@ export class EventLogService {
         this.messageService.sendMessagesToQueue([
           {
             type: MessageType.EVENT_NOTIFICATION_DISPATCH,
-            user,
             caseId: caseId,
-            body: { type: notificationType },
+            // There is a user property defined in the Message type definition, but
+            // in the event log service we won't always have a registered user with required props (e.g. user id)
+            // Thus we refrain from passing down the user instance in the event service
+            body: { type: notificationType, userDescriptor },
           },
         ])
       } catch (error) {

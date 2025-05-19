@@ -81,6 +81,7 @@ export class InternalNotificationController {
       notificationDto.type,
       theCase,
       notificationDto.user,
+      notificationDto.userDescriptor,
     )
   }
 
@@ -104,7 +105,7 @@ export class InternalNotificationController {
     return this.indictmentCaseNotificationService.sendIndictmentCaseNotification(
       notificationDto.type,
       theCase,
-      notificationDto.user,
+      notificationDto.userDescriptor,
     )
   }
 
@@ -230,7 +231,7 @@ export class InternalNotificationController {
     return this.notificationDispatchService.dispatchEventNotification(
       notificationDto.type,
       theCase,
-      notificationDto.user,
+      notificationDto.userDescriptor,
     )
   }
 

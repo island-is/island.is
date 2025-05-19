@@ -50,6 +50,7 @@ import {
   RequestSharedWithDefender,
   SessionArrangements,
   type User,
+  UserDescriptor,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -501,7 +502,7 @@ export class CaseNotificationService extends BaseNotificationService {
   //#region non-indictment COURT_DATE notifications */
   private async uploadEmailToCourt(
     theCase: Case,
-    user: User,
+    user: UserDescriptor,
     subject: string,
     body: string,
     recipients?: string,
@@ -547,7 +548,7 @@ export class CaseNotificationService extends BaseNotificationService {
 
   private sendCourtDateEmailNotificationToProsecutor(
     theCase: Case,
-    user: User,
+    user: UserDescriptor,
   ): Promise<Recipient> {
     const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
 
@@ -637,7 +638,7 @@ export class CaseNotificationService extends BaseNotificationService {
     defenderSubRole,
   }: {
     theCase: Case
-    user: User
+    user: UserDescriptor
     defenderName?: string
     defenderEmail?: string
     defenderNationalId?: string
@@ -781,8 +782,12 @@ export class CaseNotificationService extends BaseNotificationService {
   // NOTE: Only for non-indictment cases
   private async sendCourtDateNotifications(
     theCase: Case,
-    user: User,
+    user?: UserDescriptor,
   ): Promise<DeliverResponse> {
+    if (!user) {
+      // nothing happens
+      return { delivered: true }
+    }
     this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase)
 
     const promises: Promise<Recipient>[] = []
@@ -2829,6 +2834,7 @@ export class CaseNotificationService extends BaseNotificationService {
     type: CaseNotificationType,
     theCase: Case,
     user: User,
+    userDescriptor?: UserDescriptor,
   ): Promise<DeliverResponse> {
     switch (type) {
       case CaseNotificationType.HEADS_UP:
@@ -2838,7 +2844,7 @@ export class CaseNotificationService extends BaseNotificationService {
       case CaseNotificationType.RECEIVED_BY_COURT:
         return this.sendReceivedByCourtNotifications(theCase)
       case CaseNotificationType.COURT_DATE:
-        return this.sendCourtDateNotifications(theCase, user)
+        return this.sendCourtDateNotifications(theCase, userDescriptor)
       case CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED:
         return this.sendDistrictCourtUserAssignedNotifications(
           theCase,
@@ -2890,11 +2896,12 @@ export class CaseNotificationService extends BaseNotificationService {
     type: CaseNotificationType,
     theCase: Case,
     user: User,
+    userDescriptor?: UserDescriptor,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
     try {
-      return await this.sendNotification(type, theCase, user)
+      return await this.sendNotification(type, theCase, user, userDescriptor)
     } catch (error) {
       this.logger.error('Failed to send notification', error)
 
