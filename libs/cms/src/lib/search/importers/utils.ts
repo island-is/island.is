@@ -214,6 +214,7 @@ export const pruneNonSearchableSliceUnionFields = (
       ...slice,
       json: {},
       configJson: {},
+      translationStrings: {},
     }
   }
   if ((slice as { typename?: string })?.typename === 'EmailSignup') {
