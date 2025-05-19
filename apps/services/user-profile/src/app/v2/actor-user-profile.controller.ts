@@ -71,7 +71,6 @@ export class ActorUserProfileController {
   }
 
   @Get('/actor-profile')
-  @ActorScopes(UserProfileScope.read)
   @Documentation({
     description:
       'Get a single actor profile with detailed information for the current user and specified fromNationalId.',
@@ -101,27 +100,7 @@ export class ActorUserProfileController {
     )
   }
 
-  @Post('/nudge')
-  @Scopes(UserProfileScope.write)
-  @Documentation({
-    description:
-      'Confirms that the user has seen the nudge from a specific screen. Allowed screens are defined in NudgeFrom enum.',
-    response: { status: 200 },
-  })
-  confirmNudge(@CurrentUser() user: User, @Body() input: PostNudgeDto) {
-    return this.auditService.auditPromise(
-      {
-        auth: user,
-        namespace,
-        action: 'nudge',
-        resources: user.nationalId,
-      },
-      this.userProfileService.confirmNudge(user.nationalId, input.nudgeType),
-    )
-  }
-
   @Post('/actor-profile/nudge')
-  @ActorScopes(ApiScope.internal)
   @Documentation({
     description:
       'Confirms that the actor has seen the nudge. Updates the nextNudge date for the actor profile.',
@@ -151,7 +130,6 @@ export class ActorUserProfileController {
   }
 
   @Get('/actor-profiles')
-  @ActorScopes(ApiScope.internal)
   @Documentation({
     description: 'Get details for all actor profiles for the current user.',
     response: { status: 200, type: PaginatedActorProfileDto },
@@ -159,11 +137,18 @@ export class ActorUserProfileController {
   getActorProfiles(
     @CurrentUser() user: User,
   ): Promise<PaginatedActorProfileDto> {
-    return this.userProfileService.getActorProfiles(user.nationalId)
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'getActorProfiles',
+        resources: user.nationalId,
+      },
+      this.userProfileService.getActorProfiles(user.nationalId),
+    )
   }
 
   @Patch('/actor-profile/email')
-  @ActorScopes(ApiScope.internal) // TODO: Edit to New Scopes ?
   @Documentation({
     description:
       'Set an email ID on an actor profile and reset the nudge timer',
@@ -176,7 +161,6 @@ export class ActorUserProfileController {
     @CurrentUser() user: User,
     @Body() dto: SetActorProfileEmailDto,
   ): Promise<ActorProfileDetailsDto> {
-    console.log('dto', dto)
     if (!user.actor?.nationalId) {
       throw new BadRequestException('User has no actor profile')
     }
@@ -200,7 +184,6 @@ export class ActorUserProfileController {
   }
 
   @Post('/create-verification')
-  @ActorScopes(ApiScope.internal) // TODO: Edit to New Scopes ?
   @Documentation({
     description:
       'Creates a verification code for the user for either email or sms',
@@ -239,7 +222,6 @@ export class ActorUserProfileController {
   }
 
   @Patch('/actor-profile/:fromNationalId')
-  @ActorScopes(ApiScope.internal) // TODO: Edit to New Scopes ?
   @Documentation({
     description: 'Update an actor profile with email id for the current user',
     response: { status: 200, type: ActorProfileDetailsDto },
@@ -272,7 +254,6 @@ export class ActorUserProfileController {
   }
 
   @Patch('/actor-profiles/.from-national-id')
-  @ActorScopes(ApiScope.internal) // TODO: Edit to New Scopes ?
   @Documentation({
     description: 'Update or create an actor profile for the current user',
     request: {
@@ -311,7 +292,6 @@ export class ActorUserProfileController {
   }
 
   @Patch('/actor-profile')
-  @ActorScopes(ApiScope.internal) // TODO: Edit to New Scopes ?
   @Documentation({
     description:
       'Update or create an actor profile with email information for the current user',

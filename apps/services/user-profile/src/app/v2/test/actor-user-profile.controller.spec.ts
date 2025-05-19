@@ -4,7 +4,7 @@ import subMonths from 'date-fns/subMonths'
 import request, { SuperTest, Test } from 'supertest'
 import { v4 as uuid } from 'uuid'
 
-import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
+import { UserProfileScope } from '@island.is/auth/scopes'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 import {
   createCurrentUser,
@@ -330,10 +330,10 @@ describe('POST /v2/actor/actor-profile/nudge', () => {
       SequelizeConfigService,
       user: createCurrentUser({
         nationalId: testUserProfile.nationalId,
-        scope: [ApiScope.internal],
+        scope: [UserProfileScope.read],
         actor: {
           nationalId: testNationalId1,
-          scope: [ApiScope.internal],
+          scope: [UserProfileScope.read],
         },
       }),
     })
@@ -704,7 +704,7 @@ describe('POST /v2/actor/actor-profile/nudge', () => {
       SequelizeConfigService,
       user: createCurrentUser({
         nationalId: testUserProfile.nationalId,
-        scope: [ApiScope.internal],
+        scope: [UserProfileScope.read],
         // No actor property
       }),
     })
@@ -744,7 +744,7 @@ describe('GET v2/actor/actor-profiles', () => {
       SequelizeConfigService,
       user: createCurrentUser({
         nationalId: testUserProfile.nationalId,
-        scope: [ApiScope.internal],
+        scope: [UserProfileScope.read],
       }),
     })
 
@@ -1063,7 +1063,7 @@ describe('PATCH /v2/actor/actor-profile/email', () => {
         scope: [UserProfileScope.write, UserProfileScope.read],
         actor: {
           nationalId: testNationalId1,
-          scope: [ApiScope.internal],
+          scope: [UserProfileScope.read],
         },
       }),
       dbType: 'postgres', // Using postgres for verification attempt handling
@@ -1276,10 +1276,10 @@ describe('PATCH /v2/actor/actor-profile', () => {
       SequelizeConfigService,
       user: createCurrentUser({
         nationalId: testUserProfile.nationalId,
-        scope: [ApiScope.internal],
+        scope: [UserProfileScope.read],
         actor: {
           nationalId: testNationalId1,
-          scope: [ApiScope.internal], // TODO: Edit to New Scopes ?
+          scope: [UserProfileScope.read],
         },
       }),
       dbType: 'postgres', // Using postgres for verification attempt handling
@@ -1674,7 +1674,7 @@ describe('PATCH /v2/actor/actor-profile', () => {
       SequelizeConfigService,
       user: createCurrentUser({
         nationalId: testUserProfile.nationalId,
-        scope: [ApiScope.internal],
+        scope: [UserProfileScope.read],
         // No actor property
       }),
     })
@@ -1715,7 +1715,7 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
       SequelizeConfigService,
       user: createCurrentUser({
         nationalId: testUserProfile.nationalId,
-        scope: [ApiScope.internal],
+        scope: [UserProfileScope.read],
       }),
     })
 

@@ -202,9 +202,9 @@ export class UserProfileServiceV2 {
     input: UpdateActorProfileEmailInput,
     user: User,
   ) {
-    return this.v2MeUserProfileApiWithAuth(
+    return this.v2ActorApiWithAuth(
       user,
-    ).meUserProfileControllerUpdateActorProfileEmailById({
+    ).actorUserProfileControllerUpdateActorProfileEmailById({
       fromNationalId: input.fromNationalId,
       setActorProfileEmailDto: {
         emailsId: input.emailsId,
