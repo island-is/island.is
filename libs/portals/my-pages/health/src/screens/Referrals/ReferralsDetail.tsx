@@ -16,7 +16,7 @@ type UseParams = {
   id: string
 }
 
-const ReferencesDetail: React.FC = () => {
+const ReferralsDetail: React.FC = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
@@ -37,9 +37,7 @@ const ReferencesDetail: React.FC = () => {
       )}
       marginBottom={6}
     >
-      {error && !loading && (
-        <Problem error={{ name: 'ee', message: 'error' }} noBorder={false} />
-      )}
+      {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && (
         <InfoLineStack space={1}>
           <InfoLine
@@ -93,4 +91,4 @@ const ReferencesDetail: React.FC = () => {
   )
 }
 
-export default ReferencesDetail
+export default ReferralsDetail

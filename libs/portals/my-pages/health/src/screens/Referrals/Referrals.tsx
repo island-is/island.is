@@ -15,7 +15,7 @@ import { useGetReferralsQuery } from './Referrals.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import { isDefined } from '@island.is/shared/utils'
 
-const References: React.FC = () => {
+const Referrals: React.FC = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const { data, loading, error } = useGetReferralsQuery({
@@ -79,4 +79,4 @@ const References: React.FC = () => {
   )
 }
 
-export default References
+export default Referrals
