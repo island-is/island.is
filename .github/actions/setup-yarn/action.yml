@@ -70,16 +70,6 @@ runs:
         yarn --version
         ls -l "$(which node)"
 
-    - name: Set cache key
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      id: set-cache
-      run: |
-        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
-        echo "CYPRESS_CACHE_PATH=${{ github.workspace }}/.cache/cypress" >> "$GITHUB_OUTPUT"
-        echo "YARN_CACHE_PATH=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-        echo "YARN_INFRA_CACHE_PATH=$(cd infra && yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
     - name: Yarn install
       working-directory: ${{ inputs.working-directory }}
       shell: bash
