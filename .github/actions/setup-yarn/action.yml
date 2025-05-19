@@ -26,6 +26,15 @@ runs:
       run: |
         corepack enable
 
+    - name: Check node version
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        node -v
+        yarn --version
+        ls -l "$(which node)"
+
     - name: Set cache key
       working-directory: ${{ inputs.working-directory }}
       shell: bash
@@ -50,15 +59,6 @@ runs:
       env:
         RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.cache-bucket || env.CACHE_BUCKET || env.RUNS_ON_S3_BUCKET_CACHE }}
         AWS_REGION: eu-west-1
-
-    - name: Check node version
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      run: |
-        set -euo pipefail
-        node -v
-        yarn --version
-        ls -l "$(which node)"
 
     - name: Yarn install
       working-directory: ${{ inputs.working-directory }}
