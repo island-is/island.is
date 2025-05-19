@@ -19,7 +19,7 @@ runs:
   steps:
     - name: Ensure cache bucket
       shell: bash
-      run: echo "${{ inputs.cache-bucket || env.CACHE_BUCKET }}" | grep '.'
+      run: echo "${{ inputs.cache-bucket || env.CACHE_BUCKET || env.RUNS_ON_S3_BUCKET_CACHE }}" | grep '.'
 
     - name: Set env
       id: set-env
