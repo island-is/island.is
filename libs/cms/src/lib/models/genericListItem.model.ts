@@ -62,7 +62,7 @@ export const mapGenericListItem = ({
     genericList: fields.genericList
       ? mapGenericList(fields.genericList)
       : undefined,
-    title: (fields.title ?? '').trim(),
+    title: fields.title ?? '',
     date: fields.date || null,
     cardIntro: fields.cardIntro
       ? mapDocument(fields.cardIntro, `${sys.id}:cardIntro`)
