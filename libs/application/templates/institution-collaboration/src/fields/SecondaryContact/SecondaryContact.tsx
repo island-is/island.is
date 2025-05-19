@@ -4,7 +4,12 @@ import { Box, Button, Icon, Stack, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 
 import { FieldBaseProps } from '@island.is/application/types'
-import { formatText, formatTextWithLocale, NO, YES } from '@island.is/application/core'
+import {
+  formatText,
+  formatTextWithLocale,
+  NO,
+  YES,
+} from '@island.is/application/core'
 import { institutionApplicationMessages as m } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'

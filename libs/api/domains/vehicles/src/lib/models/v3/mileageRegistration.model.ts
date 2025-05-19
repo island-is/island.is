@@ -1,4 +1,4 @@
-import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('VehiclesMileageRegistration')
 export class MileageRegistration {
@@ -8,9 +8,15 @@ export class MileageRegistration {
   @Field(() => Int)
   mileage!: number
 
-  @Field(() => GraphQLISODateTime)
-  date!: Date
+  @Field({ description: 'ISO8601' })
+  date!: string
 
   @Field(() => Int, { nullable: true })
   internalId?: number
+
+  @Field({ nullable: true })
+  operation?: string
+
+  @Field({ nullable: true, description: 'ISO8601' })
+  transactionDate?: string
 }

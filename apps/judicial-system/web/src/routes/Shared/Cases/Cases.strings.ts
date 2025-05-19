@@ -63,6 +63,12 @@ export const cases = {
         description:
           'Notaður sem titill á málalista yfir mál til fullnustu hjá FMST.',
       },
+      prisonAdminIndictmentCaseTitleRegisteredCases: {
+        id: 'judicial.system.core:cases.active_requests.prison_staff_users.prison_admin_indictment_case_title_registered_cases',
+        defaultMessage: 'Skráðir dómar',
+        description:
+          'Notaður sem titill á málalista yfir mál sem eru skráðir hjá FMST.',
+      },
     }),
     deleteCaseModal: defineMessages({
       title: {

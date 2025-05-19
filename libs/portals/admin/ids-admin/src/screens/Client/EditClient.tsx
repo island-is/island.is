@@ -141,9 +141,7 @@ export const EditClient = () => {
             slidingRefreshTokenLifetime={
               selectedEnvironment.slidingRefreshTokenLifetime
             }
-            refreshTokenExpiration={
-              selectedEnvironment.refreshTokenExpiration
-            }
+            refreshTokenExpiration={selectedEnvironment.refreshTokenExpiration}
             sso={selectedEnvironment.sso}
           />
           <Permissions

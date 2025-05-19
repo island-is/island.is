@@ -44,6 +44,7 @@ export type AsyncSearchOption = {
 export interface AsyncSearchProps {
   id?: string
   label?: string
+  ariaLabel?: string
   placeholder?: string
   options: AsyncSearchOption[]
   colored?: boolean
@@ -72,6 +73,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
     {
       id = 'asyncsearch-id',
       label,
+      ariaLabel,
       placeholder,
       size = 'medium',
       colored,
@@ -225,6 +227,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               buttonProps={{
                 onFocus,
                 onBlur,
+                'aria-label': ariaLabel,
                 ...(onSubmit
                   ? {
                       onClick: () => {

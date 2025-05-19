@@ -20,7 +20,6 @@ import {
   LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
-import { AssetsPaths } from '@island.is/portals/my-pages/assets'
 import { m as messages } from '../../lib/messages'
 
 import format from 'date-fns/format'
@@ -38,6 +37,7 @@ import * as extraStyles from './FinanceTransactionsVehicleMileage.css'
 import { useFinanceSwapHook } from '../../utils/financeSwapHook'
 import { CustomerRecords } from '../../lib/types'
 import { useGetCustomerRecordsLazyQuery } from './FinanceTransactionsVehicleMileage.generated'
+import { FinancePaths } from '../../lib/paths'
 
 const VEHICLE_MILEAGE_CHARGE_TYPE = 'BM'
 
@@ -111,6 +111,7 @@ const FinanceTransactions = () => {
         <LinkButton
           to={formatMessage(messages.mileageFeeLink)}
           text={formatMessage(messages.mileageFeeLinkLabel)}
+          variant="text"
         />
       </Box>
       <DynamicWrapper>
@@ -214,7 +215,7 @@ const FinanceTransactions = () => {
                 </Filter>
 
                 <LinkButton
-                  to={AssetsPaths.AssetsVehiclesBulkMileage}
+                  to={FinancePaths.LinkAssetsVehiclesBulkMileage}
                   variant="utility"
                   icon="pencil"
                   size="medium"
