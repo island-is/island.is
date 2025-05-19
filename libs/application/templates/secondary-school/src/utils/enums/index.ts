@@ -23,6 +23,7 @@ export enum States {
   EDIT = 'edit',
   SUBMITTED = 'submitted',
   IN_REVIEW = 'inReview',
+  IN_REVIEW_FROM_EDIT = 'inReviewFromEdit',
   COMPLETED = 'completed',
   DISMISSED = 'dismissed',
 }

@@ -113,6 +113,16 @@ export const historyMessages = defineMessages({
     defaultMessage: 'Yfirferð lokið',
     description: 'History message application review finished',
   },
+  reviewWithdrawn: {
+    id: 'ss.application:historyMessages.reviewWithdrawn',
+    defaultMessage: 'Yfirferð hafin á ný',
+    description: 'History message application review withdrawn',
+  },
+  applicationDismissed: {
+    id: 'ss.application:historyMessages.applicationDismissed',
+    defaultMessage: 'Umsókn vísað frá',
+    description: 'History message application dismissed',
+  },
 })
 
 export const pendingActionMessages = defineMessages({
