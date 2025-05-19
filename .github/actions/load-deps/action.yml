@@ -30,23 +30,23 @@ runs:
       id: set-env
       shell: bash
       run: |
-        echo "GENERATED_FILES_PATH=${{ inputs.working-directory }}/.cache/generated-files/${{ inputs.generate-key }}.tar.gz" >> "$GITHUB_OUTPUT"
-        echo "AWS_REGION=eu-west-1" >> "$GITHUB_OUTPUT"
-        echo "CACHE_KEY=generated-files-${{ inputs.generate-key }}" >> "$GITHUB_OUTPUT"
+        echo "generated-files-path=${{ inputs.working-directory }}/.cache/generated-files/${{ inputs.generate-key }}.tar.gz" >> "$GITHUB_OUTPUT"
+        echo "aws-region=eu-west-1" >> "$GITHUB_OUTPUT"
+        echo "cache-key=generated-files-${{ inputs.generate-key }}" >> "$GITHUB_OUTPUT"
 
     - name: INFO
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        echo "generated files: ${{ steps.set-env.outputs.GENERATED_FILES_PATH }}"
+        echo "generated files: ${{ steps.set-env.outputs.generated-files-path }}"
 
     - name: Cache generated files
       uses: runs-on/cache@v4
       id: restore-codegen-cache
       with:
         path: |
-          ${{ steps.set-env.outputs.GENERATED_FILES_PATH }}
-        key: ${{ steps.set-env.outputs.CACHE_KEY }}
+          ${{ steps.set-env.outputs.generated-files-path }}
+        key: ${{ steps.set-env.outputs.cache-key }}
       env:
         RUNS_ON_S3_BUCKET_CACHE: ${{ steps.bucket.outputs.bucket }}
         AWS_REGION: eu-west-1
@@ -56,11 +56,11 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        node ./scripts/ci/generate-files.mjs "${{ steps.set-env.outputs.GENERATED_FILES_PATH }}"
+        node ./scripts/ci/generate-files.mjs "${{ steps.set-env.outputs.generated-files-path }}"
 
     - name: Extract generated files
       if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        tar -xzvf "${{ steps.set-env.outputs.GENERATED_FILES_PATH }}"
+        tar -xzvf "${{ steps.set-env.outputs.generated-files-path }}"
