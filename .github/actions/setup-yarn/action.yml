@@ -1,5 +1,5 @@
 name: 'Setup yarn'
-description: 'Yarn setup and install dependencies'
+description: 'Yarn setup and install npm/yarn dependencies'
 inputs:
   cache-bucket:
     description: 'Bucket to use as cache (for RunsOn action cache)'

@@ -1,5 +1,5 @@
 name: 'Load Dependencies'
-description: 'Prerequisite is that the prepare step has already been run'
+description: 'Load generated files (or load from cache)'
 
 inputs:
   cache-bucket:
