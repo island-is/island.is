@@ -3,6 +3,6 @@ import { Referral } from './referrals.model'
 
 @ObjectType('HealthDirectorateReferralDetail')
 export class ReferralDetail {
-  @Field(() => Referral)
+  @Field(() => Referral, { nullable: true })
   data?: Referral
 }

@@ -28,6 +28,7 @@ import {
 } from './models/medicineHistory.model'
 import { isDefined } from '@island.is/shared/utils'
 import { ReferralDetail } from './models/referral.model'
+import { WaitlistDetail } from './models/waitlist.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -165,6 +166,25 @@ export class HealthDirectorateService {
       }) ?? []
 
     return { waitlists }
+  }
+
+  /* Waitlist */
+  async getWaitlist(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<WaitlistDetail | null> {
+    const data = await this.getWaitlists(auth, locale)
+
+    if (!data) {
+      return null
+    }
+
+    const waitlist: Waitlist | undefined = data.waitlists.find(
+      (item) => item.id === id,
+    )
+
+    return { data: waitlist }
   }
 
   /* Referrals */

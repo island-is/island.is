@@ -11,9 +11,10 @@ import {
 import React from 'react'
 import { messages } from '../../lib/messages'
 import { useParams } from 'react-router-dom'
-import { useGetWaitlistsQuery } from './Waitlists.generated'
+import { useGetWaitlistDetailQuery } from './Waitlists.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
+import { HealthDirectorateWaitlist } from '@island.is/api/schema'
 
 type UseParams = {
   id: string
@@ -25,13 +26,12 @@ const WaitlistsDetail: React.FC = () => {
 
   const { id } = useParams() as UseParams
 
-  const { data, loading, error } = useGetWaitlistsQuery({
-    variables: { locale: lang },
+  const { data, loading, error } = useGetWaitlistDetailQuery({
+    variables: { input: { id }, locale: lang },
   })
 
-  const waitlist = data?.healthDirectorateWaitlists.waitlists.find(
-    (item) => item.id === id,
-  )
+  const waitlist: HealthDirectorateWaitlist | undefined | null =
+    data?.healthDirectorateWaitlist.data
 
   return (
     <IntroWrapper
@@ -50,50 +50,54 @@ const WaitlistsDetail: React.FC = () => {
       ]}
       marginBottom={6}
     >
-      {!loading && !error && !isDefined(waitlist) && (
+      {!loading && !error && waitlist === null && (
         <Problem
           type="no_data"
           message={formatMessage(messages.noWaitlists)}
           imgSrc="./assets/images/nodata.svg"
+          noBorder={false}
         />
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
-
-      <InfoLineStack space={1}>
-        <InfoLine
-          loading={loading}
-          label={formatMessage(messages.waitlist)}
-          content={waitlist?.name ?? formatMessage(messages.noDataRegistered)}
-        />
-        <InfoLine
-          loading={loading}
-          label={formatMessage(messages.organization)}
-          content={
-            waitlist?.organization ?? formatMessage(messages.noDataRegistered)
-          }
-        />
-        <InfoLine
-          loading={loading}
-          label={formatMessage(messages.registeredToList)}
-          content={
-            formatDate(waitlist?.waitBegan) ??
-            formatMessage(messages.noDataRegistered)
-          }
-        />
-        <InfoLine
-          loading={loading}
-          label={formatMessage(messages.status)}
-          content={waitlist?.status ?? formatMessage(messages.noDataRegistered)}
-        />
-        <InfoLine
-          loading={loading}
-          label={formatMessage(messages.statusLastUpdated)}
-          content={
-            formatDate(waitlist?.lastUpdated) ??
-            formatMessage(messages.noDataRegistered)
-          }
-        />
-      </InfoLineStack>
+      {!error && !loading && waitlist && (
+        <InfoLineStack space={1}>
+          <InfoLine
+            loading={loading}
+            label={formatMessage(messages.waitlist)}
+            content={waitlist?.name ?? formatMessage(messages.noDataRegistered)}
+          />
+          <InfoLine
+            loading={loading}
+            label={formatMessage(messages.organization)}
+            content={
+              waitlist?.organization ?? formatMessage(messages.noDataRegistered)
+            }
+          />
+          <InfoLine
+            loading={loading}
+            label={formatMessage(messages.registeredToList)}
+            content={
+              formatDate(waitlist?.waitBegan) ??
+              formatMessage(messages.noDataRegistered)
+            }
+          />
+          <InfoLine
+            loading={loading}
+            label={formatMessage(messages.status)}
+            content={
+              waitlist?.status ?? formatMessage(messages.noDataRegistered)
+            }
+          />
+          <InfoLine
+            loading={loading}
+            label={formatMessage(messages.statusLastUpdated)}
+            content={
+              formatDate(waitlist?.lastUpdated) ??
+              formatMessage(messages.noDataRegistered)
+            }
+          />
+        </InfoLineStack>
+      )}
     </IntroWrapper>
   )
 }

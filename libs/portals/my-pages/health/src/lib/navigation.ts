@@ -177,6 +177,7 @@ export const healthNavigation: PortalNavigationItem = {
     {
       name: messages.referrals,
       path: HealthPaths.HealthReferrals,
+      searchTags: [s.healthReferrals],
       children: [
         {
           name: messages.singleReferral,
@@ -188,6 +189,7 @@ export const healthNavigation: PortalNavigationItem = {
     {
       name: messages.waitlists,
       path: HealthPaths.HealthWaitlists,
+      searchTags: [s.healthWaiting],
       children: [
         {
           name: messages.singleWaitlist,

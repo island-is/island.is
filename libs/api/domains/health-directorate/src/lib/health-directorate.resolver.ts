@@ -29,9 +29,11 @@ import { DonorInput, Organ, OrganDonation } from './models/organ-donation.model'
 import { Prescriptions } from './models/prescriptions.model'
 import { Referrals } from './models/referrals.model'
 import { Vaccinations } from './models/vaccinations.model'
-import { Waitlists } from './models/waitlists.model'
+import { Waitlist, Waitlists } from './models/waitlists.model'
 import { HealthDirectorateReferralInput } from './dto/referral.input'
 import { ReferralDetail } from './models/referral.model'
+import { WaitlistDetail } from './models/waitlist.model'
+import { HealthDirectorateWaitlistInput } from './dto/waitlist.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -109,6 +111,22 @@ export class HealthDirectorateResolver {
     @CurrentUser() user: User,
   ): Promise<Waitlists | null> {
     return this.api.getWaitlists(user, locale)
+  }
+
+  /* Waitlist */
+  @Query(() => WaitlistDetail, {
+    name: 'healthDirectorateWaitlist',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthWaitlistsPageEnabled)
+  getWaitlist(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: HealthDirectorateWaitlistInput,
+    @CurrentUser() user: User,
+  ): Promise<WaitlistDetail | null> {
+    return this.api.getWaitlist(user, locale, input.id)
   }
 
   /* Referrals */
