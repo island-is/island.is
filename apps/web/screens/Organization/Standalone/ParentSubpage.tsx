@@ -270,7 +270,7 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
         linkResolver(
           'organizationparentsubpagechild',
           [organizationPageSlug, parentSubpageSlug, subpage.slug],
-          locale as Locale,
+          locale as ContentLanguage,
         ).href,
       ),
     })
