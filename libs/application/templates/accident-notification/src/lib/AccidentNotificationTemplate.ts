@@ -76,7 +76,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
       type: AuthDelegationType.GeneralMandate,
     },
   ],
-  requiredScopes: [ApiScope.company],
+  requiredScopes: [ApiScope.icelandHealth],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
