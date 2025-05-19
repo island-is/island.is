@@ -202,6 +202,10 @@ export default function PaymentPage({
     productInformation,
   })
 
+  // Invoice payment doesn't have any input fields, so we don't need to check if it's valid
+  const isCardPaymentInvalid =
+    selectedPaymentMethod === 'card' && !methods.formState.isValid
+
   const invalidFlowSetup =
     !organization ||
     !productInformation ||
@@ -302,7 +306,7 @@ export default function PaymentPage({
                     type="submit"
                     loading={overallIsSubmitting}
                     fluid
-                    disabled={!methods.formState.isValid || overallIsSubmitting}
+                    disabled={overallIsSubmitting || isCardPaymentInvalid}
                   >
                     {selectedPaymentMethod === 'card'
                       ? formatMessage(card.pay)
