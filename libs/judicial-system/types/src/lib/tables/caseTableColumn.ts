@@ -16,6 +16,7 @@ const prisonAdminReceivalDate: CaseTableColumn = { title: 'Móttökudagsetning' 
 const prisonAdminState: CaseTableColumn = { title: 'Staða' }
 const indictmentAppealDeadline: CaseTableColumn = { title: 'Frestur' }
 const subpoenaServiceState: CaseTableColumn = { title: 'Birtingarstaða' }
+const indictmentReviewer: CaseTableColumn = { title: 'Saksóknari' }
 
 export const caseTableColumns = {
   caseNumber,
@@ -32,6 +33,7 @@ export const caseTableColumns = {
   prisonAdminState,
   indictmentAppealDeadline,
   subpoenaServiceState,
+  indictmentReviewer,
 }
 
 export type CaseTableColumnMap = typeof caseTableColumns

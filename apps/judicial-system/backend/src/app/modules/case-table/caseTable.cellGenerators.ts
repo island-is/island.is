@@ -471,6 +471,17 @@ const subpoenaServiceState: CaseTableCellGenerator = {
   },
 }
 
+const indictmentReviewer: CaseTableCellGenerator = {
+  includes: {
+    indictmentReviewer: {
+      model: User,
+      attributes: ['name'],
+    },
+  },
+  generate: (c: Case): StringGroupValue | undefined =>
+    c.indictmentReviewer?.name ? { s: [c.indictmentReviewer.name] } : undefined,
+}
+
 export const caseTableCellGenerators: Record<
   CaseTableColumnKey,
   CaseTableCellGenerator
@@ -489,4 +500,5 @@ export const caseTableCellGenerators: Record<
   prisonAdminState,
   indictmentAppealDeadline,
   subpoenaServiceState,
+  indictmentReviewer,
 }

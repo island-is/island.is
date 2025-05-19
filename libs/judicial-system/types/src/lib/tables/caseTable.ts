@@ -195,6 +195,7 @@ const prosecutorsOfficeIndictmentInReviewColumnKeys: CaseTableColumnKey[] = [
   'defendants',
   'rulingType',
   'subpoenaServiceState',
+  'indictmentReviewer',
   'indictmentAppealDeadline',
 ]
 const prosecutorsOfficeIndictmentInReview: CaseTable = {
