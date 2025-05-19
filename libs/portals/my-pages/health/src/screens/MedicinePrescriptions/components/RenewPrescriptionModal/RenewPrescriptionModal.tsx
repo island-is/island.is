@@ -7,17 +7,17 @@ import {
   ModalBase,
   Text,
 } from '@island.is/island-ui/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
 import cn from 'classnames'
 import React, { useState } from 'react'
 import { messages } from '../../../../lib/messages'
-import {
-  HealthCenter,
-  HealthCenterData,
-  MedicinePrescriptionDetailData,
-} from '../../../../utils/mockData'
+import { HealthCenter, HealthCenterData } from '../../../../utils/mockData'
 import * as styles from './RenewPrescriptionModal.css'
 import { HealthDirectoratePrescription } from '@island.is/api/schema'
+import NestedInfoLines from '../../../../components/NestedInfoLines/NestedInfoLines'
+import { usePostPrescriptionRenewalMutation } from '../../Prescriptions.generated'
+import { Problem } from '@island.is/react-spa/shared'
 
 interface Props {
   id: string
@@ -38,37 +38,64 @@ const RenewPrescriptionModal: React.FC<Props> = ({
   isVisible,
 }) => {
   const { formatMessage } = useLocale()
+  const [error, setError] = useState()
   const columnWidth = '7/12'
   const titleWidth = '5/12'
   const modulusCalculations = (index: number) => {
-    return index % 4 === 0 || index % 4 === 1
+    return index % 2 === 0
   }
-  const [selectedMedicine, setSelectedMedicine] = useState('')
   const [modalVisible, setModalVisible] = useState<boolean>(isVisible ?? false)
-  const [formData, setFormData] = useState<RenewFormData | null>({
-    healthcare: HealthCenterData[1],
-    medicineInformation: activePrescription,
-  })
+
+  const [postRenewal, { data: renewalData, error: renewalError, loading }] =
+    usePostPrescriptionRenewalMutation()
+
+  const data = [
+    {
+      title: formatMessage(messages.medicineName),
+      value: activePrescription.name ?? '',
+    },
+    {
+      title: formatMessage(messages.type),
+      value: activePrescription?.type ?? '',
+    },
+    {
+      title: formatMessage(messages.usedFor),
+      value: activePrescription.indication ?? '',
+    },
+    {
+      title: formatMessage(messages.usage),
+      value: activePrescription.dosageInstructions ?? '',
+    },
+    {
+      title: formatMessage(messages.prescribedAmount),
+      value: activePrescription.totalPrescribedAmount ?? '',
+    },
+  ]
 
   const closeModal = () => {
     setModalVisible(false)
   }
 
-  const submitForm = async (
-    e: React.FormEvent<HTMLFormElement> | undefined,
-  ) => {
+  const submitForm = async () => {
     // TODO: Implement form submission when service is ready
-    e?.preventDefault()
-    try {
-      if (!e) return
-      const formData2 = e && new FormData(e.currentTarget)
-      const data = formData2 && Object.fromEntries((formData2 as any).entries())
-      setFormData(null)
-      setModalVisible(false)
-    } catch (e) {
-      //TODO: Add error handling
-      console.error('Error submitting form:', e)
+    if (
+      activePrescription.category === undefined ||
+      activePrescription.id === undefined
+    ) {
+      // error
     }
+
+    postRenewal({
+      variables: {
+        input: {
+          id: activePrescription.id,
+          medCardDrugCategory: activePrescription.category ?? '',
+          medCardDrugId: activePrescription.id,
+          prescribedItemId: activePrescription.id,
+        },
+      },
+    })
+    setModalVisible(false)
   }
 
   return (
@@ -83,21 +110,34 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       removeOnClose
       className={styles.modal}
     >
-      <Box paddingY={8} paddingX={12}>
-        <Text variant="h3" marginBottom={5}>
-          {formatMessage(messages.renewalMedicineRequest)}
+      <Box paddingY={[4, 4, 4, 8]} paddingX={[4, 4, 4, 12]}>
+        <Box className={styles.closeButton}>
+          <Button
+            circle
+            colorScheme="negative"
+            icon="close"
+            onClick={() => {
+              closeModal()
+            }}
+            size="large"
+          />
+        </Box>
+        <Box paddingRight={[3, 3, 3, 0]}>
+          <Text variant="h3" marginBottom={[2, 2, 2, 5]}>
+            {formatMessage(messages.renewalMedicineRequest)}
+          </Text>
+        </Box>
+        <Text marginBottom={3}>
+          {formatMessage(messages.renewalMedicineRequestText)}
         </Text>
-        <Text>{formatMessage(messages.renewalMedicineRequestText)}</Text>
-
         <Text variant="small" fontWeight="medium" marginBottom={1}>
           {formatMessage(messages.medicineInformation)}
         </Text>
-
         <Box>
           <GridContainer className={styles.grid}>
             <GridRow>
-              {MedicinePrescriptionDetailData.map((item, i) => (
-                <GridColumn key={i} span={'6/12'}>
+              {data.map((item, i) => (
+                <GridColumn key={i} span={'12/12'}>
                   <GridContainer
                     className={cn(styles.innerGrid, {
                       [styles.blue]: modulusCalculations(i),
@@ -112,9 +152,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
                         </Box>
                       </GridColumn>
                       <GridColumn span={columnWidth} className={styles.data}>
-                        <Text variant="small" truncate>
-                          {item.value}
-                        </Text>
+                        <Text variant="small">{item.value}</Text>
                       </GridColumn>
                     </GridRow>
                   </GridContainer>
@@ -123,11 +161,37 @@ const RenewPrescriptionModal: React.FC<Props> = ({
             </GridRow>
             <GridRow>
               <GridColumn span={'12/12'}>
-                <Button>Button</Button>
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="spaceBetween"
+                  alignItems="center"
+                  marginTop={5}
+                >
+                  <Button size="small" variant="ghost" onClick={closeModal}>
+                    {formatMessage(m.buttonCancel)}
+                  </Button>
+
+                  <Button
+                    size="small"
+                    type="submit"
+                    onClick={() => submitForm()}
+                  >
+                    {formatMessage(messages.renew)}
+                  </Button>
+                </Box>
               </GridColumn>
+              {error && (
+                <GridColumn>
+                  <Box>
+                    <Text>{error}</Text>
+                  </Box>
+                </GridColumn>
+              )}
             </GridRow>
           </GridContainer>
         </Box>
+        {renewalError && !loading && <Problem />}
       </Box>
     </ModalBase>
   )

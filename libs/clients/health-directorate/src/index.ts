@@ -18,4 +18,5 @@ export {
   PrescribedItemDtoRenewalBlockedReasonEnum,
   PrescribedItemDtoRenewalStatusEnum,
   PrescribedItemDtoCategoryEnum,
+  PrescriptionRenewalRequestDto,
 } from './lib/clients'

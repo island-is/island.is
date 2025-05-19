@@ -3,6 +3,7 @@ import {
   HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
+  PrescriptionRenewalRequestDto,
   VaccinationDto,
   organLocale,
 } from '@island.is/clients/health-directorate'
@@ -32,6 +33,8 @@ import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
+import { HealthDirectorateRenewalInput } from './models/renewal.input'
+import isNumber from 'lodash/isNumber'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -255,6 +258,29 @@ export class HealthDirectorateService {
     return { prescriptions }
   }
 
+  /* Renewal */
+  async postRenewal(auth: Auth, input: HealthDirectorateRenewalInput) {
+    const parsedInput = this.castRenewalInputToNumber(input)
+
+    if (!parsedInput) return null
+
+    // TODO: FIX WHEN RESPONSE BODY IS READY FROM CLIENT
+    await this.healthApi
+      .postRenewalPrescription(auth, input.id, {
+        medCardDrugId: input.medCardDrugId,
+        medCardDrugCategory: parsedInput.medCardDrugCategory,
+        prescribedItemId: parsedInput.prescribedItemId,
+      })
+      .catch((e) => {
+        return e
+      })
+      .then(() => {
+        return
+      })
+
+    return null
+  }
+
   /* Prescription Documents */
   async getPrescriptionDocuments(
     auth: Auth,
@@ -364,5 +390,25 @@ export class HealthDirectorateService {
     )
 
     return { dispensations }
+  }
+
+  private castRenewalInputToNumber = (
+    input: HealthDirectorateRenewalInput,
+  ): PrescriptionRenewalRequestDto | null => {
+    // Trim whitespace from the string
+    const trimmedCategory = input.medCardDrugCategory.trim()
+    const trimmedId = input.prescribedItemId.trim()
+
+    // Try to convert the string to a number
+    const parsedCategory = Number(trimmedCategory)
+    const parsedId = Number(trimmedId)
+
+    if (isNumber(parsedCategory) && isNumber(parsedId)) {
+      return {
+        prescribedItemId: parsedId,
+        medCardDrugCategory: parsedCategory,
+        medCardDrugId: input.medCardDrugId,
+      }
+    } else return null
   }
 }

@@ -8,6 +8,7 @@ import {
   DispensationHistoryItemDto,
   Locale,
   PrescribedItemDto,
+  PrescriptionRenewalRequestDto,
   PrescriptionsApi,
   ProductDocumentDto,
   ReferralDto,
@@ -106,6 +107,20 @@ export class HealthDirectorateHealthService {
     }
 
     return prescriptions
+  }
+
+  /* Endurnýjun lyfseðils */
+  public async postRenewalPrescription(
+    auth: Auth,
+    id: string,
+    input: PrescriptionRenewalRequestDto,
+  ) {
+    return await this.prescriptionsApiWithAuth(
+      auth,
+    ).mePrescriptionControllerRenewPrescriptionV1({
+      id,
+      prescriptionRenewalRequestDto: input,
+    })
   }
 
   /* Fylgiseðill */

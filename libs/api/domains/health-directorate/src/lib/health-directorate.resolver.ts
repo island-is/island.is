@@ -35,6 +35,7 @@ import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
+import { HealthDirectorateRenewalInput } from './models/renewal.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -156,6 +157,21 @@ export class HealthDirectorateResolver {
     @CurrentUser() user: User,
   ): Promise<PrescriptionDocuments | null> {
     return this.api.getPrescriptionDocuments(user, input)
+  }
+
+  /* Prescription Renewal */
+  @Mutation(() => Prescriptions, {
+    nullable: true,
+    name: 'healthDirectoratePrescriptionRenewal',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal)
+  @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
+  postPrescriptionRenewal(
+    @Args('input') input: HealthDirectorateRenewalInput,
+    @CurrentUser() user: User,
+  ): Promise<Prescriptions | null> {
+    return this.api.postRenewal(user, input)
   }
 
   /* Medicine History */

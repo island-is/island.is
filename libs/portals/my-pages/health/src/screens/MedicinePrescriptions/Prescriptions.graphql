@@ -38,3 +38,11 @@ query getPrescriptionDocuments($input: MedicinePrescriptionDocumentsInput!) {
     id
   }
 }
+
+mutation postPrescriptionRenewal($input: HealthDirectorateRenewalInput!) {
+  healthDirectoratePrescriptionRenewal(input: $input) {
+    prescriptions {
+      id
+    }
+  }
+}

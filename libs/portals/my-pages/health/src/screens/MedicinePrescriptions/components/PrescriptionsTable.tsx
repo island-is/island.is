@@ -103,7 +103,7 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
             process: item?.amountRemaining ?? '',
             validTo: formatDate(item?.expiryDate) ?? '',
             status: undefined,
-            lastNode: item?.isRenewable
+            lastNode: true //item?.isRenewable
               ? {
                   type: 'action',
                   label: formatMessage(messages.renew),
