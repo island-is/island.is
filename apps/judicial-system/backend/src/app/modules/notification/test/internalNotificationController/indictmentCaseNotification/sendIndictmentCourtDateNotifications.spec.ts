@@ -31,7 +31,6 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send indictment court date notifications', () => {
-  const userId = uuid()
   const userName = 'Test'
   const caseId = uuid()
 
