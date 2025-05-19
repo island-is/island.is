@@ -271,7 +271,7 @@ export class CardPaymentController {
       )
       await this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId,
-        type: 'failure',
+        type: 'error',
         occurredAt: new Date(),
         paymentMethod: PaymentMethod.CARD,
         reason: 'other',
@@ -330,7 +330,7 @@ export class CardPaymentController {
         )
         await this.paymentFlowService.logPaymentFlowUpdate({
           paymentFlowId: paymentFlowId,
-          type: 'update',
+          type: 'error',
           occurredAt: new Date(),
           paymentMethod: PaymentMethod.CARD,
           reason: 'other',
@@ -356,7 +356,7 @@ export class CardPaymentController {
         )
         await this.paymentFlowService.logPaymentFlowUpdate({
           paymentFlowId: paymentFlowId,
-          type: 'failure',
+          type: 'error',
           occurredAt: new Date(),
           paymentMethod: PaymentMethod.CARD,
           reason: 'other',
@@ -439,7 +439,7 @@ export class CardPaymentController {
           )
           await this.paymentFlowService.logPaymentFlowUpdate({
             paymentFlowId: paymentFlowId,
-            type: 'update',
+            type: 'error',
             occurredAt: new Date(),
             paymentMethod: PaymentMethod.CARD,
             reason: 'other',
@@ -473,7 +473,7 @@ export class CardPaymentController {
 
           await this.paymentFlowService.logPaymentFlowUpdate({
             paymentFlowId: paymentFlowId,
-            type: 'failure',
+            type: 'error',
             occurredAt: new Date(),
             paymentMethod: PaymentMethod.CARD,
             reason: 'other',
@@ -519,18 +519,24 @@ export class CardPaymentController {
     chargeCardInput: ChargeCardInput,
   ) {
     try {
-      await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId,
-        type: 'success',
-        occurredAt: new Date(),
-        paymentMethod: PaymentMethod.CARD,
-        reason: 'payment_completed',
-        message: `Card payment completed successfully`,
-        metadata: {
-          payment: paymentResult,
-          charge: confirmation,
+      await this.paymentFlowService.logPaymentFlowUpdate(
+        {
+          paymentFlowId,
+          type: 'success',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'payment_completed',
+          message: `Card payment completed successfully`,
+          metadata: {
+            payment: paymentResult,
+            charge: confirmation,
+          },
         },
-      })
+        {
+          useRetry: true,
+          throwOnError: true,
+        },
+      )
     } catch (logUpdateError) {
       this.logger.error(
         `[${paymentFlowId}] Successfully processed payment but failed to notify the final onUpdateUrl. Attempting refund.`,
@@ -550,7 +556,7 @@ export class CardPaymentController {
         // Log refund success due to notification failure
         await this.paymentFlowService.logPaymentFlowUpdate({
           paymentFlowId: paymentFlowId,
-          type: 'update',
+          type: 'error',
           occurredAt: new Date(),
           paymentMethod: PaymentMethod.CARD,
           reason: 'other',
@@ -584,7 +590,7 @@ export class CardPaymentController {
         )
         await this.paymentFlowService.logPaymentFlowUpdate({
           paymentFlowId: paymentFlowId,
-          type: 'failure',
+          type: 'error',
           occurredAt: new Date(),
           paymentMethod: PaymentMethod.CARD,
           reason: 'other',

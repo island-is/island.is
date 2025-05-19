@@ -43,6 +43,19 @@ import { retry } from '@island.is/shared/utils/server'
 import { PaymentTrackingData } from '../../types/cardPayment'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 
+interface PaymentFlowUpdateConfig {
+  /**
+   * Whether to use retry logic when notifying the onUpdateUrl
+   * @default true
+   */
+  useRetry?: boolean
+  /**
+   * Whether to throw an error if the update notification fails
+   * @default true
+   */
+  throwOnError?: boolean
+}
+
 @Injectable()
 export class PaymentFlowService {
   constructor(
@@ -315,15 +328,18 @@ export class PaymentFlowService {
     }
   }
 
-  async logPaymentFlowUpdate(update: {
-    paymentFlowId: string
-    type: PaymentFlowEvent['type']
-    occurredAt: Date
-    paymentMethod: PaymentMethod
-    reason: PaymentFlowEvent['reason']
-    message: string
-    metadata?: object
-  }) {
+  async logPaymentFlowUpdate(
+    update: {
+      paymentFlowId: string
+      type: PaymentFlowEvent['type']
+      occurredAt: Date
+      paymentMethod: PaymentMethod
+      reason: PaymentFlowEvent['reason']
+      message: string
+      metadata?: object
+    },
+    config: PaymentFlowUpdateConfig = { useRetry: false, throwOnError: false },
+  ) {
     this.logger.info(
       `Payment flow update [${update.paymentFlowId}][${update.type}][${update.message}]`,
     )
@@ -363,30 +379,35 @@ export class PaymentFlowService {
       },
     }
 
-    await retry(
-      async (attempt) => {
-        const response = await fetch(paymentFlow.onUpdateUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+    const notifyUpdateUrl = async (attempt?: number) => {
+      const response = await fetch(paymentFlow.onUpdateUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateBody),
+      })
+      if (!response.ok) {
+        const errorBody = await response
+          .text()
+          .catch(() => 'Could not read error body')
+        this.logger.warn(
+          `[${update.paymentFlowId}] Failed to notify onUpdateUrl [${
+            update.type
+          }]${attempt ? ` (attempt ${attempt})` : ''}: ${response.status} ${
+            response.statusText
+          }`,
+          {
+            url: paymentFlow.onUpdateUrl,
+            responseBody: errorBody,
           },
-          body: JSON.stringify(updateBody),
-        })
-        if (!response.ok) {
-          const errorBody = await response
-            .text()
-            .catch(() => 'Could not read error body')
-          this.logger.warn(
-            `[${update.paymentFlowId}] Failed to notify onUpdateUrl [${update.type}] (attempt ${attempt}): ${response.status} ${response.statusText}`,
-            {
-              url: paymentFlow.onUpdateUrl,
-              responseBody: errorBody,
-            },
-          )
+        )
+        if (config.throwOnError) {
           throw new Error(
             `Failed to notify onUpdateUrl: ${response.status} ${response.statusText}, body: ${errorBody}`,
           )
         }
+      } else {
         this.logger.info(
           `[${update.paymentFlowId}] Successfully notified onUpdateUrl`,
           {
@@ -395,14 +416,19 @@ export class PaymentFlowService {
             reason: update.reason,
           },
         )
-      },
-      {
+      }
+    }
+
+    if (config.useRetry) {
+      await retry(notifyUpdateUrl, {
         maxRetries: 3,
         retryDelayMs: 1000,
         logger: this.logger,
         logPrefix: `[${update.paymentFlowId}] Notify onUpdateUrl for flow event type ${update.type}`,
-      },
-    )
+      })
+    } else {
+      await notifyUpdateUrl()
+    }
   }
 
   async createPaymentConfirmation({
