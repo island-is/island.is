@@ -517,4 +517,37 @@ export class PaymentFlowService {
   async deletePaymentFlow(id: string) {
     // TODO
   }
+
+  async deletePaymentConfirmation(
+    paymentFlowId: string,
+    correlationId: string,
+  ): Promise<void> {
+    this.logger.info(
+      `Attempting to delete payment confirmation for flow ${paymentFlowId} with correlation ID ${correlationId}`,
+    )
+    try {
+      const deletedCount = await this.paymentFlowConfirmationModel.destroy({
+        where: {
+          id: correlationId,
+          paymentFlowId: paymentFlowId,
+        },
+      })
+
+      if (deletedCount > 0) {
+        this.logger.info(
+          `Successfully deleted payment confirmation for flow ${paymentFlowId}, correlation ID ${correlationId}`,
+        )
+      } else {
+        this.logger.warn(
+          `Payment confirmation not found or not deleted for flow ${paymentFlowId}, correlation ID ${correlationId}. It might have been already deleted or never existed with this ID for the given flow.`,
+        )
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete payment confirmation for flow ${paymentFlowId}, correlation ID ${correlationId}`,
+        { error },
+      )
+      // Not re-throwing, to prevent disruption of a primary flow (e.g., refund)
+    }
+  }
 }

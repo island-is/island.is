@@ -198,6 +198,7 @@ export class CardPaymentController {
     @Body() chargeCardInput: ChargeCardInput,
   ): Promise<ChargeCardResponse> {
     const paymentFlowId = chargeCardInput.paymentFlowId
+    const paymentConfirmationId = uuid()
 
     try {
       const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
@@ -223,7 +224,6 @@ export class CardPaymentController {
       }
 
       const merchantReferenceData = uuid()
-      const paymentConfirmationId = uuid()
       const paymentTrackingData: PaymentTrackingData = {
         merchantReferenceData,
         correlationId: paymentConfirmationId,
@@ -254,6 +254,7 @@ export class CardPaymentController {
         totalPrice,
         merchantReferenceData,
         persistedPaymentConfirmation,
+        paymentConfirmationId,
       )
 
       await this.handleSuccessfulPaymentNotification(
@@ -261,6 +262,7 @@ export class CardPaymentController {
         paymentResult,
         confirmation,
         chargeCardInput,
+        paymentConfirmationId,
       )
 
       return paymentResult
@@ -384,6 +386,7 @@ export class CardPaymentController {
     totalPrice: number,
     merchantReferenceData: string,
     persistedPaymentConfirmation: boolean,
+    paymentConfirmationId: string,
   ): Promise<PaymentFlowFjsChargeConfirmation | null> {
     const paymentFlowId = chargeCardInput.paymentFlowId
     try {
@@ -437,6 +440,22 @@ export class CardPaymentController {
               chargeCardInput.amount,
             ),
           )
+          if (persistedPaymentConfirmation) {
+            try {
+              await this.paymentFlowService.deletePaymentConfirmation(
+                paymentFlowId,
+                paymentConfirmationId,
+              )
+              this.logger.info(
+                `[${paymentFlowId}] Deleted payment confirmation ${paymentConfirmationId} after successful refund due to FJS error.`,
+              )
+            } catch (delError) {
+              this.logger.error(
+                `[${paymentFlowId}] Failed to delete payment confirmation ${paymentConfirmationId} after FJS error and refund. Continuing.`,
+                { error: delError },
+              )
+            }
+          }
           await this.paymentFlowService.logPaymentFlowUpdate({
             paymentFlowId: paymentFlowId,
             type: 'error',
@@ -517,6 +536,7 @@ export class CardPaymentController {
     paymentResult: ChargeResponse,
     confirmation: PaymentFlowFjsChargeConfirmation | null,
     chargeCardInput: ChargeCardInput,
+    paymentConfirmationId: string,
   ) {
     try {
       await this.paymentFlowService.logPaymentFlowUpdate(
@@ -553,6 +573,22 @@ export class CardPaymentController {
           ),
         )
 
+        // After successful refund, delete the confirmation.
+        try {
+          await this.paymentFlowService.deletePaymentConfirmation(
+            paymentFlowId,
+            paymentConfirmationId,
+          )
+          this.logger.info(
+            `[${paymentFlowId}] Deleted payment confirmation ${paymentConfirmationId} after successful refund due to notification failure.`,
+          )
+        } catch (delError) {
+          this.logger.error(
+            `[${paymentFlowId}] Failed to delete payment confirmation ${paymentConfirmationId} after notification failure and refund. Continuing.`,
+            { error: delError },
+          )
+        }
+
         // Log refund success due to notification failure
         await this.paymentFlowService.logPaymentFlowUpdate({
           paymentFlowId: paymentFlowId,
@@ -581,7 +617,7 @@ export class CardPaymentController {
 
         // CRITICAL: Refund failed after notification failure
         this.logger.error(
-          `[${paymentFlowId}] CRITICAL: Payment successful, final notification failed, AND refund failed. Manual intervention required.`,
+          `[${paymentFlowId}] CRITICAL: Payment successful, final notification failed, AND refund failed. Payment confirmation ${paymentConfirmationId} was NOT deleted. Manual intervention required.`,
           {
             originalNotificationError: logUpdateError.message,
             refundError: refundError.message,
