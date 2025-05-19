@@ -3,6 +3,9 @@ import { defineConfig } from '../defineConfig'
 export const DownloadServiceConfig = defineConfig({
   name: 'DownloadService',
   load: (env) => ({
-    baseUrl: "https://featupdate-vehicles-ownership-report-api.dev01.devland.is"
+    baseUrl: env.required(
+      'DOWNLOAD_SERVICE_BASE_PATH',
+      'http://localhost:3377',
+    ),
   }),
 })
