@@ -17,8 +17,9 @@ runs:
   using: 'composite'
   steps:
     - name: Ensure cache bucket
+      id: bucket
       shell: bash
-      run: echo "${{ inputs.cache-bucket || env.CACHE_BUCKET || env.RUNS_ON_S3_BUCKET_CACHE }}" | grep '.'
+      run: echo "${{ inputs.cache-bucket || env.CACHE_BUCKET || env.RUNS_ON_S3_BUCKET_CACHE }}" | grep '.' >> "$GITHUB_OUTPUT"
 
     - name: Corepack
       shell: bash
@@ -57,7 +58,7 @@ runs:
           ${{ steps.set-cache-key.outputs.cypress-cache-path }}
         key: ${{ steps.set-cache-key.outputs.cache-key }}
       env:
-        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.cache-bucket || env.CACHE_BUCKET || env.RUNS_ON_S3_BUCKET_CACHE }}
+        RUNS_ON_S3_BUCKET_CACHE: ${{ steps.bucket.outputs.bucket }}
         AWS_REGION: eu-west-1
 
     - name: Yarn install
