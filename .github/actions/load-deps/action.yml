@@ -9,6 +9,10 @@ inputs:
     description: 'Directory to run the action in'
     required: false
     default: './'
+  cache-path:
+    description: 'Cache path'
+    required: false
+    default: ${{ runner.temp }}
   generate-key:
     description: 'Key for the generated files'
     required: false
