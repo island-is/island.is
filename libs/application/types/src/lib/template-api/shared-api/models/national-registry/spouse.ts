@@ -13,3 +13,11 @@ export interface NationalRegistrySpouse {
   } | null
   address?: Address | null
 }
+
+export interface NationalRegistrySpouseV3 {
+  name: string
+  nationalId: string
+  maritalStatus: string
+  lastModified?: Date | null
+  address?: Address | null
+}

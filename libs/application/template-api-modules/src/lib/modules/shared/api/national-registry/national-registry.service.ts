@@ -3,7 +3,6 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import {
   ApplicantChildCustodyInformation,
   NationalRegistryIndividual,
-  NationalRegistrySpouse,
   NationalRegistryParameters,
   NationalRegistryBirthplace,
   NationalRegistryResidenceHistory,
@@ -12,6 +11,7 @@ import {
   NationalRegistryMaritalTitle,
   BirthplaceParameters,
   NationalRegistryCustodian,
+  NationalRegistrySpouseV3,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
@@ -419,18 +419,12 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
   async getSpouse({
     auth,
-  }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouse | null> {
+  }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouseV3 | null> {
     const cohabitationInfo =
       await this.nationalRegistryV3Api.getCohabitationInfo(
         auth.nationalId,
         auth,
       )
-    const spouseBirthPlace = cohabitationInfo
-      ? await this.nationalRegistryV3Api.getBirthplace(
-          cohabitationInfo.spouseNationalId,
-          auth,
-        )
-      : undefined
     const spouseIndividual = cohabitationInfo
       ? await this.getIndividual(cohabitationInfo.spouseNationalId, auth)
       : undefined
@@ -441,12 +435,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
         name: cohabitationInfo.spouseName,
         maritalStatus: cohabitationInfo.cohabitationCode,
         lastModified: cohabitationInfo.lastModified,
-        birthplace: spouseBirthPlace && {
-          dateOfBirth: spouseBirthPlace.birthdate,
-          location: spouseBirthPlace.locality,
-          municipalityCode: spouseBirthPlace.municipalityNumber,
-        },
-        citizenship: spouseIndividual?.citizenship,
         address: spouseIndividual?.address,
       }
     )
