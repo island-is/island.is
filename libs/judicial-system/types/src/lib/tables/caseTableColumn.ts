@@ -14,6 +14,7 @@ const rulingType: CaseTableColumn = { title: 'Tegund' }
 const punishmentType: CaseTableColumn = { title: 'Refsitegund' }
 const prisonAdminReceivalDate: CaseTableColumn = { title: 'Móttökudagsetning' }
 const prisonAdminState: CaseTableColumn = { title: 'Staða' }
+const indictmentAppealDeadline: CaseTableColumn = { title: 'Frestur' }
 
 export const caseTableColumns = {
   caseNumber,
@@ -28,6 +29,7 @@ export const caseTableColumns = {
   punishmentType,
   prisonAdminReceivalDate,
   prisonAdminState,
+  indictmentAppealDeadline,
 }
 
 export type CaseTableColumnMap = typeof caseTableColumns

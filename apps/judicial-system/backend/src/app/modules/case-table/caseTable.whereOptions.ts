@@ -7,6 +7,7 @@ import {
   CaseTableType,
   CaseType,
   completedRequestCaseStates,
+  EventType,
   IndictmentCaseReviewDecision,
   indictmentCases,
   investigationCases,
@@ -91,6 +92,67 @@ const prisonAdminIndictmentRegisteredRulingWhereOptions = {
   },
 }
 
+const prosecutorsOfficeIndictmentNewWhereOptions = {
+  is_archived: false,
+  type: indictmentCases,
+  state: CaseState.COMPLETED,
+  indictment_ruling_decision: {
+    [Op.or]: [
+      CaseIndictmentRulingDecision.RULING,
+      CaseIndictmentRulingDecision.FINE,
+    ],
+  },
+  id: {
+    [Op.in]: Sequelize.literal(`
+      (SELECT case_id
+        FROM event_log
+        WHERE event_type = '${EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR}')
+    `),
+  },
+  indictment_reviewer_id: null,
+}
+
+const prosecutorsOfficeIndictmentInReviewWhereOptions = {
+  is_archived: false,
+  type: indictmentCases,
+  state: CaseState.COMPLETED,
+  indictment_ruling_decision: {
+    [Op.or]: [
+      CaseIndictmentRulingDecision.RULING,
+      CaseIndictmentRulingDecision.FINE,
+    ],
+  },
+  id: {
+    [Op.in]: Sequelize.literal(`
+      (SELECT case_id
+        FROM event_log
+        WHERE event_type = '${EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR}')
+    `),
+  },
+  indictment_reviewer_id: { [Op.not]: null },
+  indictment_review_decision: null,
+}
+
+const prosecutorsOfficeIndictmentReviewedWhereOptions = {
+  is_archived: false,
+  type: indictmentCases,
+  state: CaseState.COMPLETED,
+  indictment_ruling_decision: {
+    [Op.or]: [
+      CaseIndictmentRulingDecision.RULING,
+      CaseIndictmentRulingDecision.FINE,
+    ],
+  },
+  indictment_reviewer_id: { [Op.not]: null },
+  indictment_review_decision: { [Op.not]: null },
+}
+
+const prosecutorsOfficeIndictmentAppealPeriodExpiredWhereOptions = {}
+
+const prosecutorsOfficeIndictmentSentToPrisonAdminWhereOptions = {}
+
+const prosecutorsOfficeIndictmentAppealedWhereOptions = {}
+
 export const caseTableWhereOptions: Record<CaseTableType, WhereOptions> = {
   [CaseTableType.COURT_OF_APPEALS_IN_PROGRESS]:
     courtOfAppealsInProgressWhereOptions,
@@ -102,4 +164,16 @@ export const caseTableWhereOptions: Record<CaseTableType, WhereOptions> = {
     prisonAdminIndictmentSentToPrisonAdminWhereOptions,
   [CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING]:
     prisonAdminIndictmentRegisteredRulingWhereOptions,
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_NEW]:
+    prosecutorsOfficeIndictmentNewWhereOptions,
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW]:
+    prosecutorsOfficeIndictmentInReviewWhereOptions,
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_REVIEWED]:
+    prosecutorsOfficeIndictmentReviewedWhereOptions,
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED]:
+    prosecutorsOfficeIndictmentAppealPeriodExpiredWhereOptions,
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN]:
+    prosecutorsOfficeIndictmentSentToPrisonAdminWhereOptions,
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED]:
+    prosecutorsOfficeIndictmentAppealedWhereOptions,
 }

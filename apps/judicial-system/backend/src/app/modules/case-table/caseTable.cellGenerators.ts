@@ -16,6 +16,7 @@ import {
   CaseTableColumnKey,
   CaseType,
   DefendantEventType,
+  getIndictmentAppealDeadlineDate,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isRestrictionCase,
@@ -332,6 +333,7 @@ const punishmentType: CaseTableCellGenerator = {
     }
   },
 }
+
 const prisonAdminReceivalDate: CaseTableCellGenerator = {
   includes: {
     defendants: {
@@ -402,6 +404,28 @@ const prisonAdminState: CaseTableCellGenerator = {
   },
 }
 
+const indictmentAppealDeadline: CaseTableCellGenerator = {
+  attributes: ['rulingDate', 'indictmentRulingDecision'],
+  generate: (c: Case): StringGroupValue | undefined => {
+    if (!c.rulingDate) {
+      return undefined
+    }
+
+    const indictmentAppealDeadline = formatDate(
+      getIndictmentAppealDeadlineDate(
+        c.rulingDate,
+        c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
+      ),
+    )
+
+    if (!indictmentAppealDeadline) {
+      return undefined
+    }
+
+    return { s: [indictmentAppealDeadline] }
+  },
+}
+
 export const caseTableCellGenerators: Record<
   CaseTableColumnKey,
   CaseTableCellGenerator
@@ -418,4 +442,5 @@ export const caseTableCellGenerators: Record<
   punishmentType,
   prisonAdminReceivalDate,
   prisonAdminState,
+  indictmentAppealDeadline,
 }
