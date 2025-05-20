@@ -194,6 +194,7 @@ export const OverviewLinksEditor = () => {
     sdk.entry.fields.linkData.getValue() || {
       variant: LinkDataVariant.IntroLinkImage,
       categoryCardItems: [],
+      categoryCardItemsEn: [],
     },
   )
 
