@@ -284,7 +284,8 @@ export class FileService {
 
     // We need to do this because if there is no file extension in
     // the file name, the court file upload fails.
-    // This also handles adding .jpeg to .jpg files (since .jpeg also doesn't work)
+    // This also handles adding .jpg to files with .jpeg endings
+    // (because the court system also rejects .jpeg)
     const fileName = this.buildValidFilename(rawFileName, file.type)
 
     const content = await this.getCaseFileFromS3(theCase, file)
