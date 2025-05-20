@@ -11,6 +11,7 @@ import {
 } from '@island.is/clients/charge-fjs-v2'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
+import { retry } from '@island.is/shared/utils/server'
 
 import {
   PaymentFlow,
@@ -33,15 +34,15 @@ import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeC
 import { FjsErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import {
-  fjsErrorMessageToCode,
   generateChargeFJSPayload,
   mapFjsErrorToCode,
 } from '../../utils/fjsCharge'
 import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfirmation.model'
 import { ChargeResponse } from '../cardPayment/cardPayment.types'
-import { retry } from '@island.is/shared/utils/server'
 import { PaymentTrackingData } from '../../types/cardPayment'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
+import { generateWebhookJwt } from '../../utils/webhookAuth.utils'
+import { JwtConfigService } from '../jwks/jwt-config.service'
 
 interface PaymentFlowUpdateConfig {
   /**
@@ -74,6 +75,7 @@ export class PaymentFlowService {
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private nationalRegistryV3: NationalRegistryV3ClientService,
     private companyRegistryApi: CompanyRegistryClientService,
+    private jwtConfigService: JwtConfigService,
   ) {}
 
   async createPaymentUrl(
@@ -373,10 +375,22 @@ export class PaymentFlowService {
     }
 
     const notifyUpdateUrl = async (attempt?: number) => {
+      // Generate the JWT
+      const token = generateWebhookJwt(
+        { id: paymentFlow.id, onUpdateUrl: paymentFlow.onUpdateUrl },
+        { type: update.type },
+        updateBody,
+        {
+          ...environment.jwtSigning,
+          privateKey: this.jwtConfigService.getPrivateKey(),
+        },
+      )
+
       const response = await fetch(paymentFlow.onUpdateUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updateBody),
       })

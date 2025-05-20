@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-
 import { SequelizeModule } from '@nestjs/sequelize'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { ChargeFjsV2ClientModule } from '@island.is/clients/charge-fjs-v2'
@@ -12,6 +11,7 @@ import { NationalRegistryV3ClientModule } from '@island.is/clients/national-regi
 import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeConfirmation.model'
 import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfirmation.model'
+import { JwksModule } from '../jwks/jwks.module'
 
 @Module({
   imports: [
@@ -26,8 +26,10 @@ import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfi
     ChargeFjsV2ClientModule,
     NationalRegistryV3ClientModule,
     CompanyRegistryClientModule,
+    JwksModule,
   ],
   controllers: [PaymentFlowController],
   providers: [PaymentFlowService],
+  exports: [PaymentFlowService],
 })
 export class PaymentFlowModule {}
