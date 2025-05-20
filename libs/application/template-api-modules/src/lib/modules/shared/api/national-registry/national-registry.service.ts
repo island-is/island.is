@@ -425,9 +425,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
         auth.nationalId,
         auth,
       )
-    const spouseIndividual = cohabitationInfo
-      ? await this.getIndividual(cohabitationInfo.spouseNationalId, auth)
-      : undefined
 
     return (
       cohabitationInfo && {
@@ -435,7 +432,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
         name: cohabitationInfo.spouseName,
         maritalStatus: cohabitationInfo.cohabitationCode,
         lastModified: cohabitationInfo.lastModified,
-        address: spouseIndividual?.address,
       }
     )
   }
