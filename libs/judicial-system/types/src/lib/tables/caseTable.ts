@@ -227,7 +227,7 @@ const prosecutorsOfficeIndictmentAppealPeriodExpired: CaseTable = {
 }
 
 const prosecutorsOfficeIndictmentSentToPrisonAdminColumnKeys: CaseTableColumnKey[] =
-  ['caseNumber', 'defendants', 'rulingType']
+  ['caseNumber', 'defendants', 'rulingType', 'sentToPrisonAdminDate']
 
 const prosecutorsOfficeIndictmentSentToPrisonAdmin: CaseTable = {
   title: 'Mál í fullnustu',
@@ -239,6 +239,7 @@ const prosecutorsOfficeIndictmentAppealedColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'rulingType',
+  'indictmentReviewDecision',
   'subpoenaServiceState',
 ]
 const prosecutorsOfficeIndictmentAppealed: CaseTable = {

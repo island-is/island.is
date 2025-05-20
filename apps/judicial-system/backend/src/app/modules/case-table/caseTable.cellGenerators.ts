@@ -482,6 +482,54 @@ const indictmentReviewer: CaseTableCellGenerator = {
     c.indictmentReviewer?.name ? { s: [c.indictmentReviewer.name] } : undefined,
 }
 
+const sentToPrisonAdminDate: CaseTableCellGenerator = {
+  includes: {
+    defendants: {
+      model: Defendant,
+      order: [['created', 'ASC']],
+      includes: {
+        eventLogs: {
+          model: DefendantEventLog,
+          attributes: ['created', 'eventType'],
+          order: [['created', 'DESC']],
+          where: {
+            eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+          },
+          separate: true,
+        },
+      },
+      separate: true,
+    },
+  },
+  generate: (c: Case): StringGroupValue | undefined => {
+    if (c.defendants && c.defendants.length > 0) {
+      const dateSent = c.defendants.reduce<Date | undefined>((firstSent, d) => {
+        const dateSent = DefendantEventLog.getDefendantEventLogTypeDate(
+          DefendantEventType.SENT_TO_PRISON_ADMIN,
+          d.eventLogs,
+        )
+
+        if (dateSent && (!firstSent || firstSent > dateSent)) {
+          return dateSent
+        }
+
+        return firstSent
+      }, undefined)
+
+      if (dateSent) {
+        return { s: [formatDate(dateSent) ?? ''] }
+      }
+    }
+
+    return undefined
+  },
+}
+
+const indictmentReviewDecision: CaseTableCellGenerator = {
+  attributes: ['indictmentReviewDecision'],
+  generate: (c: Case): TagPairValue | undefined => undefined,
+}
+
 export const caseTableCellGenerators: Record<
   CaseTableColumnKey,
   CaseTableCellGenerator
@@ -501,4 +549,6 @@ export const caseTableCellGenerators: Record<
   indictmentAppealDeadline,
   subpoenaServiceState,
   indictmentReviewer,
+  sentToPrisonAdminDate,
+  indictmentReviewDecision,
 }
