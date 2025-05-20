@@ -7,7 +7,6 @@ import { m } from '../../lib/messages'
 import {
   CurrentLicenseApi,
   JurisdictionApi,
-  NationalRegistryUserApi,
   QualityPhotoApi,
   QualitySignatureApi,
   AllPhotosFromThodskraApi,
@@ -32,7 +31,6 @@ export const sectionDataProviders = buildSection({
       enableMockPayment: true,
       dataProviders: [
         buildDataProviderItem({
-          // eslint-disable-next-line
           // provider: NationalRegistryUserApi,
           title: m.dataCollectionNationalRegistryTitle,
           subTitle: m.dataCollectionNationalRegistrySubtitle,
