@@ -1,4 +1,4 @@
-import {
+import type {
   ILink,
   ILinkedPage,
   IOrganizationParentSubpage,
@@ -38,7 +38,7 @@ const generateOrganizationSubpageLinkFromLinkedPage = (
   linkedPage: ILinkedPage,
 ): Link | null => {
   const contentTypeId = linkedPage.fields.page.sys.contentType.sys.id
-  let slug: string
+  let slug = ''
 
   if (contentTypeId === 'organizationParentSubpage') {
     const subpage = linkedPage.fields.page as IOrganizationParentSubpage
