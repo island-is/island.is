@@ -765,6 +765,7 @@
         "type": "object",
         "properties": {
           "applicationId": { "type": "string" },
+          "categoryId": { "type": "string" },
           "caption": { "type": "string" },
           "htmlBase64": { "type": "string" },
           "signature": { "$ref": "#/components/schemas/SignatureDto" },
@@ -776,6 +777,7 @@
         },
         "required": [
           "applicationId",
+          "categoryId",
           "caption",
           "htmlBase64",
           "signature",

@@ -471,8 +471,13 @@ export const m = {
       },
       formTitle: {
         id: 'lg.application:submitted.success.formTitle',
-        defaultMessage: 'Umsókn móttekin',
+        defaultMessage: 'Innsend',
         description: 'Titill á formi fyrir staðfestingu umsóknar',
+      },
+      applicationReceived: {
+        id: 'lg.application:submitted.success.applicationReceived',
+        defaultMessage: 'Umsókn móttekin',
+        description: 'Titill á staðfestingu umsóknar',
       },
       formIntro: {
         id: 'lg.application:submitted.success.formIntro',

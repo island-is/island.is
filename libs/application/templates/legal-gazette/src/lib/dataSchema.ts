@@ -15,12 +15,9 @@ export const legalGazetteDataSchema = z.object({
       ),
   }),
   application: z.object({
-    categoryId: z
-      .string()
-      .optional()
-      .refine((val) => val && val.length > 0, {
-        params: m.errors.emptyCategory,
-      }),
+    categoryId: z.string().refine((val) => val && val.length > 0, {
+      params: m.errors.emptyCategory,
+    }),
     caption: z.string().refine((val) => val.length > 0, {
       params: m.errors.emptyString,
     }),

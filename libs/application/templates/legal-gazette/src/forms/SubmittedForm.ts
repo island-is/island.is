@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildForm,
   buildMultiField,
@@ -29,11 +30,16 @@ export const SubmittedForm: Form = buildForm({
         buildMultiField({
           id: 'submitted.success',
           title: m.submitted.success.formTitle,
-          description: m.submitted.success.formTitle,
           children: [
+            buildAlertMessageField({
+              id: 'submitted.success.alert',
+              title: m.submitted.success.applicationReceived,
+              message: m.submitted.success.formIntro,
+              alertType: 'success',
+            }),
             buildCustomField({
-              id: 'submitted.preview',
-              component: 'AdvertPreview',
+              id: 'submitted.confirmation',
+              component: 'Confirmation',
             }),
           ],
         }),

@@ -59,6 +59,7 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
 
     const submitApplicationDto = {
       applicationId: application.id,
+      categoryId: appl.categoryId,
       caption: appl.caption,
       htmlBase64: appl.html,
       signature: signature,
