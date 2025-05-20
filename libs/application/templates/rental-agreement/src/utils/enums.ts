@@ -60,8 +60,6 @@ export enum RentalHousingConditionInspector {
 
 export enum RentalAmountIndexTypes {
   CONSUMER_PRICE_INDEX = 'consumerPriceIndex',
-  CONSTRUCTION_COST_INDEX = 'constructionCostIndex',
-  WAGE_INDEX = 'wageIndex',
 }
 
 export enum RentalAmountPaymentDateOptions {
