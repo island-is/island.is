@@ -50,6 +50,29 @@ export class AuthService {
     }
   }
 
+  async refreshToken(refreshToken: string) {
+    const requestBody = new URLSearchParams({
+      client_id: this.config.clientId,
+      client_secret: this.config.clientSecret,
+      redirect_uri: this.config.redirectUri,
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    })
+
+    const response = await fetch(`${this.config.issuer}/connect/token`, {
+      method: 'POST',
+      body: requestBody,
+    })
+
+    if (response.ok) {
+      return await response.json()
+    } else {
+      throw new UnauthorizedException(
+        `Authorization request failed with status ${response.status} - ${response.statusText}`,
+      )
+    }
+  }
+
   async verifyIdsToken(token: string) {
     try {
       const secretClient = jwksClient({

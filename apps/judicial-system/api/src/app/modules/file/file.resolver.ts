@@ -11,6 +11,7 @@ import {
 import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
+  JwtRefreshTokenGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -103,6 +104,7 @@ export class FileResolver {
     )
   }
 
+  @UseGuards(JwtRefreshTokenGuard)
   @Mutation(() => UploadCriminalRecordFileResponse)
   uploadCriminalRecordFile(
     @Args('input', { type: () => CreateCriminalRecordInput })

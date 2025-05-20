@@ -10,7 +10,6 @@ import { AuthUser } from '../auth.types'
 export class JwtGraphQlAuthUserGuard extends AuthGuard('jwt') {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context)
-
     return ctx.getContext().req
   }
 
