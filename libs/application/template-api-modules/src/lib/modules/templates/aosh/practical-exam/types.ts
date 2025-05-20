@@ -8,7 +8,6 @@ export type CategoryInstructorAndMedicalCertRequest = {
   medicalCertificate: {
     content: string
     fileName: string
-    fileType: string
   }
 }
 
@@ -46,7 +45,6 @@ export type ExamineesRequest = {
   medicalCertificate: {
     content: string
     fileName: string
-    fileType: string
   }
   examCategories: {
     examCategory: string

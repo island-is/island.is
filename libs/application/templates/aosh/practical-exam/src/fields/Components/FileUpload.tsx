@@ -83,6 +83,7 @@ export const FileUpload: FC<
         description={formatMessage(examCategories.fileUpload.description)}
         buttonLabel={formatMessage(examCategories.fileUpload.downloadButton)}
         maxSize={FILE_SIZE_LIMIT}
+        multiple={false}
       />
     </Box>
   )

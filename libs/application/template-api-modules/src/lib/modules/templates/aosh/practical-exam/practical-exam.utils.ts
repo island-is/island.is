@@ -61,13 +61,14 @@ export const mapCategoriesWithInstructor = (
       }
     })
 
-    const type = examCategories[index]?.medicalCertificate?.type || ''
-    const name = examCategories[index]?.medicalCertificate?.name || ''
-    const content = examCategories[index]?.medicalCertificate?.content || ''
+    //const type = examCategories[index]?.medicalCertificate?.type || ''
+    const name = examCategories[index]?.medicalCertificate?.[0]?.name || ''
+    const content = examCategories[index]?.medicalCertificate?.[0]?.key || ''
+
     return {
       categoriesAndInstructors: catAndInstructor || [],
       medicalCertificate: {
-        fileType: type || '',
+        //fileType: type || '',
         fileName: name || '',
         content: content || '',
       },
@@ -123,7 +124,7 @@ export const mapPaymentArrangement = (
 export const mapExaminees = (
   examinees: Examinees,
   examCategories: CategoryInstructorAndMedicalCertRequest[],
-): ExamineesRequest[] | undefined => {
+): ExamineesRequest[] => {
   return examinees.map((examinee, index) => {
     const { nationalId, email, phone, countryIssuer, licenseNumber } = examinee
     return {
