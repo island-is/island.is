@@ -33,7 +33,7 @@ export const sectionDataProviders = buildSection({
       dataProviders: [
         buildDataProviderItem({
           // eslint-disable-next-line
-          //provider: NationalRegistryUserApi,
+          // provider: NationalRegistryUserApi,
           title: m.dataCollectionNationalRegistryTitle,
           subTitle: m.dataCollectionNationalRegistrySubtitle,
         }),
