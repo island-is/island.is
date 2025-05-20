@@ -596,5 +596,21 @@ export const webMessages = defineMessages({
     id: 'form-system:your-properties',
     defaultMessage: 'Þínar eignir',
     description: 'Your properties',
+  },
+  uploadBoxTitle: {
+    id: 'form-system:upload-box-title',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: 'Notaður fyrir titil í Hlaða upp skrám svæði.',
+  },
+  uploadBoxButtonLabel: {
+    id: 'form-system:upload-box-button-label',
+    defaultMessage: 'Velja skjöl til að hlaða upp',
+    description: 'Notaður fyrir titil í takka á Hlaða upp skrám svæði.',
+  },
+  uploadBoxDescription: {
+    id: 'form-system:upload-box-description',
+    defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
+    description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
   }
+
 })

@@ -2,23 +2,96 @@ import {
   InputFileUploadDeprecated,
   UploadFileDeprecated,
   fileToObjectDeprecated,
+  FileUploadStatus,
+  toast,
+  UploadFile,
+  InputFileUpload
 } from '@island.is/island-ui/core'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { uuid } from 'uuidv4'
 import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
 import { fileTypes } from '../../../lib/fileTypes'
-import { m } from '../../../lib/messages'
+import { m, webMessages } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
   hasError?: boolean
   lang?: 'is' | 'en'
+  applicationId?: string
 }
 
 export const FileUpload = ({ item, hasError, lang = 'is' }: Props) => {
+  const [files, setFiles] = useState<UploadFile[]>([])
   const [error, setError] = useState<string | undefined>(hasError ? 'error' : undefined)
-  const [fileList, setFileList] = useState<Array<UploadFile>>([])
+  const { formatMessage } = useIntl()
+  const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
+
+  const onChange = useCallback((selectedFiles: File[]) => {
+    if (files.length + selectedFiles.length > (item?.fieldSettings?.maxFiles ?? 1)) {
+      setError(`${formatMessage(m.maxFileError)} ${item.fieldSettings?.maxFiles ?? 1}`)
+      return
+    }
+
+    setError(undefined)
+
+    const uploadFiles = selectedFiles.map((file) => ({
+      id: `${file.name}-${uuid()}`,
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      status: FileUploadStatus.uploading,
+      percent: 0,
+      originalFileObj: file,
+    }))
+
+    setFiles((prev) => [...prev, ...uploadFiles])
+
+    //Upload files to S3 missing here
+
+  }, [files, item, types, formatMessage])
+
+  const updateFile = useCallback((file: UploadFile, newId?: string) => {
+    setFiles(prev => prev.map(f =>
+      f.id === file.id ? { ...f, ...file, id: newId ?? file.id } : f
+    ))
+  }, [])
+
+  // TODO: add handleRetry
+  const onRetry = useCallback((file: UploadFile) => {
+    // handleRetry(file, updateFile)
+    // },[handleRetry, updateFile])
+  }, [])
+
+  // Handle file removal
+  const onRemove = useCallback((file: UploadFile) => {
+    // handleRemove(file, removedFile => {
+    //   setFiles(prev => prev.filter(f => f.id !== removedFile.id))
+    // })
+    // }, [handleRemove])
+  }, [])
+
+  return (
+    <InputFileUpload
+      name={`fileUpload-${item.id}`}
+      files={files}
+      accept={types}
+      title={formatMessage(webMessages.uploadBoxTitle)}
+      description={formatMessage(webMessages.uploadBoxDescription, {
+        fileEndings: types.join(', '),
+      })}
+      buttonLabel={formatMessage(webMessages.uploadBoxButtonLabel)}
+      onChange={onChange}
+      onRemove={onRemove}
+      onRetry={onRetry}
+      errorMessage={error}
+    />
+  )
+}
+
+export const OldFileUpload = ({ item, hasError, lang = 'is' }: Props) => {
+  const [error, setError] = useState<string | undefined>(hasError ? 'error' : undefined)
+  const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
   const { formatMessage } = useIntl()
   const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
   const onChange = (files: File[]) => {
@@ -48,7 +121,7 @@ export const FileUpload = ({ item, hasError, lang = 'is' }: Props) => {
 
   return (
     <>
-      <InputFileUpload
+      <InputFileUploadDeprecated
         name="fileUpload"
         fileList={fileList}
         header={item?.name?.[lang] ?? ''}
