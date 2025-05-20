@@ -1636,6 +1636,7 @@ payments:
   env:
     API_EXTERNAL_BASEPATH: 'https://beta.staging01.devland.is'
     API_INTERNAL_BASEPATH: 'http://api.islandis.svc.cluster.local'
+    APP_EXTERNAL_BASEPATH: 'https://beta.staging01.devland.is'
     BASEPATH: '/greida'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
