@@ -102,12 +102,6 @@ function getArtifactname() {
 }
 
 function getTypeOfDeployment() {
-  if (MAIN_BRANCHES.includes(targetBranch)) {
-    return {
-      dev: true,
-      prod: false,
-    }
-  }
   if (RELEASE_BRANCHES.includes(targetBranch)) {
     return {
       dev: false,
@@ -115,7 +109,10 @@ function getTypeOfDeployment() {
     }
   }
 
-  throw new Error(`Unsupported branch: ${targetBranch}`)
+  return {
+    dev: true,
+    prod: false,
+  }
 }
 
 function getTargetBranch() {
