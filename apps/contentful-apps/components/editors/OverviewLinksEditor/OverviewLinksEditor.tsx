@@ -122,7 +122,7 @@ const CategoryCardItemWrapper = ({
             })
             setLinkData((prevLinkData) => ({
               ...prevLinkData,
-              [categoryItemKey]: prevLinkData[categoryItemKey].map(
+              [categoryItemKey]: (prevLinkData[categoryItemKey] ?? []).map(
                 (prevItem) => {
                   if (prevItem.id !== item.id) return prevItem
                   return updatedItem
@@ -147,9 +147,9 @@ const CategoryCardItemWrapper = ({
                   onClick={() => {
                     setLinkData((prevLinkData) => ({
                       ...prevLinkData,
-                      [categoryItemKey]: prevLinkData[categoryItemKey].filter(
-                        ({ id }) => item.id !== id,
-                      ),
+                      [categoryItemKey]: (
+                        prevLinkData[categoryItemKey] ?? []
+                      ).filter(({ id }) => item.id !== id),
                     }))
                   }}
                 >
