@@ -33,6 +33,7 @@ import { assign } from 'xstate'
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationQuestionnairesApi,
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import {
@@ -95,6 +96,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 }),
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
+                SocialInsuranceAdministrationQuestionnairesApi,
               ],
               delete: true,
             },
