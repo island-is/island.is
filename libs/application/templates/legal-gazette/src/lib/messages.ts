@@ -464,6 +464,11 @@ export const m = {
           defaultMessage: 'Samskiptaleið',
           description: 'Titill á samskiptaleið fyrir staðfestingu auglýsingar',
         },
+        submitButton: {
+          id: 'lg.application:draft.confirmation.submitButton',
+          defaultMessage: 'Staðfesta og senda inn auglýsingu',
+          description: 'Titill á takka fyrir staðfestingu auglýsingar',
+        },
       }),
     },
   },

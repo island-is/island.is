@@ -194,7 +194,7 @@ export const DraftForm: Form = buildForm({
               actions: [
                 {
                   event: { type: 'SUBMIT' },
-                  name: 'Staðfesta og senda inn auglýsingu',
+                  name: m.draft.sections.confirmation.submitButton,
                   type: 'primary',
                 },
               ],
