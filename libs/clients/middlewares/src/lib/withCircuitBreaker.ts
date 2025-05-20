@@ -31,19 +31,28 @@ export function withCircuitBreaker({
     // We want to use our own timeout logic so we can disable the circuit
     // breaker while still supporting timeouts.
     timeout: false as unknown as number,
-
     ...opossum,
     errorFilter,
   })
+  const fetchMetadata = { fetch: { name } }
 
   breaker.on('open', () =>
-    logger.error(`Fetch (${name}): Too many errors, circuit breaker opened`),
+    logger.error(`Fetch (${name}): Too many errors, circuit breaker opened`, {
+      ...fetchMetadata,
+      breaker: { state: 'open' },
+    }),
   )
   breaker.on('halfOpen', () =>
-    logger.error(`Fetch (${name}): Circuit breaker half-open`),
+    logger.error(`Fetch (${name}): Circuit breaker half-open`, {
+      ...fetchMetadata,
+      breaker: { state: 'half-open' },
+    }),
   )
   breaker.on('close', () =>
-    logger.error(`Fetch (${name}): Circuit breaker closed`),
+    logger.error(`Fetch (${name}): Circuit breaker closed`, {
+      ...fetchMetadata,
+      breaker: { state: 'closed' },
+    }),
   )
 
   return (request) => breaker.fire(request)
