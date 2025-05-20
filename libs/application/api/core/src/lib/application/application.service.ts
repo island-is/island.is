@@ -400,7 +400,12 @@ export class ApplicationService {
 
   async softDelete(id: string) {
     return this.applicationModel.update(
-      { pruneAt: new Date(), isListed: false },
+      {
+        pruneAt: new Date(),
+        isListed: false,
+        userDeleted: true,
+        userDeletedAt: new Date(),
+      },
       { where: { id } },
     )
   }
