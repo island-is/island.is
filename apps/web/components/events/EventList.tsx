@@ -14,7 +14,10 @@ import {
   LatestEventSliceCard,
   NewsCard,
 } from '@island.is/web/components'
-import { GetEventsQuery, Image as ImageSchema } from '@island.is/web/graphql/schema'
+import {
+  GetEventsQuery,
+  Image as ImageSchema
+} from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
