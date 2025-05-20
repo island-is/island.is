@@ -2,7 +2,7 @@
   "openapi": "3.0.4",
   "info": {
     "title": "SamgÃ¶ngustofa",
-    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrÃ¡ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-50 : 20250326.1",
+    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrÃ¡ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-53 : 20250516.1",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -24,6 +24,38 @@
     }
   ],
   "paths": {
+    "/OwnershipReportExcel": {
+      "get": {
+        "tags": ["Excel"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
+      }
+    },
     "/VehicleReportPdf": {
       "get": {
         "tags": ["Pdf"],
@@ -47,6 +79,9 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error"
           },
           "401": {
             "description": "Unauthorized"
@@ -85,6 +120,9 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error"
           },
           "401": {
             "description": "Unauthorized"
@@ -881,6 +919,21 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "afterPermno",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
@@ -893,6 +946,9 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error"
           },
           "401": {
             "description": "Unauthorized"
@@ -3063,6 +3119,10 @@
             "type": "boolean",
             "nullable": true
           },
+          "vin": {
+            "type": "string",
+            "nullable": true
+          },
           "eugroup": {
             "type": "string",
             "nullable": true
@@ -3243,19 +3303,102 @@
       "OwnershipReportDataDto": {
         "type": "object",
         "properties": {
-          "name": {
+          "persidno": {
             "type": "string",
             "nullable": true
           },
-          "persidno": {
+          "fullname": {
             "type": "string",
             "nullable": true
           },
           "vehicles": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/BasicVehicleInformationDto"
+              "$ref": "#/components/schemas/OwnershipReportVehicleDto"
             },
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OwnershipReportVehicleDto": {
+        "type": "object",
+        "properties": {
+          "permno": {
+            "type": "string",
+            "nullable": true
+          },
+          "regno": {
+            "type": "string",
+            "nullable": true
+          },
+          "make": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstregdate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "deRegDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ownregdate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ownerPersidno": {
+            "type": "string",
+            "nullable": true
+          },
+          "ownerFullname": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          },
+          "mainOper": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "operSerno": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "hasCoOwner": {
+            "type": "boolean"
+          },
+          "lastInspectionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastInspectionResult": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastInspectionType": {
+            "type": "string",
+            "nullable": true
+          },
+          "vehicleStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "nextMainInspection": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },
