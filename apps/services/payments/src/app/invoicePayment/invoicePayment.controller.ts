@@ -22,6 +22,7 @@ import { CreateInvoiceInput } from './dtos/createInvoice.input'
 import { PaymentMethod } from '../../types'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 import { environment } from '../../environments'
+import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -89,15 +90,6 @@ export class InvoicePaymentController {
         isSuccess: true,
       }
     } catch (e) {
-      let code: InvoiceErrorCode | PaymentServiceCode
-      if (e.message in InvoiceErrorCode) {
-        code = e.message as InvoiceErrorCode
-      } else if (e.message in PaymentServiceCode) {
-        code = e.message as PaymentServiceCode
-      } else {
-        code = InvoiceErrorCode.UnknownInvoiceError
-      }
-
       this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId: createInvoiceInput.paymentFlowId,
         type: 'update',
@@ -107,7 +99,12 @@ export class InvoicePaymentController {
         message: `Failed to create charge in FJS: ${e.message}`,
       })
 
-      throw new BadRequestException(code)
+      throw new BadRequestException(
+        onlyReturnKnownErrorCode(
+          e.message,
+          InvoiceErrorCode.UnknownInvoiceError,
+        ),
+      )
     }
   }
 }
