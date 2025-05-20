@@ -3,10 +3,11 @@ import { createPublicKey } from 'crypto'
 import { exportJWK } from 'jose'
 
 import { environment } from '../../environments'
+import { JwkDto } from './dtos/serveJwks.response'
 
 interface JwkEntry {
   kid: string
-  jwk: Record<string, unknown>
+  jwk: JwkDto
   expiresAt?: Date
 }
 
@@ -63,7 +64,7 @@ export class KeyRegistryService {
         kid,
         use: 'sig',
         alg: 'RS256',
-      },
+      } as JwkDto,
       expiresAt,
     })
   }
