@@ -16,7 +16,7 @@ import {
 } from '@island.is/web/components'
 import {
   GetEventsQuery,
-  Image as ImageSchema
+  Image as ImageSchema,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
