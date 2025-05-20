@@ -12,6 +12,8 @@ import { environment } from '../environments'
 import { BASE_PATH } from '../lib/routes'
 import { isMockMode } from '../mocks'
 
+// DEPLOYME
+
 const mockedInitialState = isMockMode
   ? createMockedInitialState({
       scopes: applicationSystemScopes,
