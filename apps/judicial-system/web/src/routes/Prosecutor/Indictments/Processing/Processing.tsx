@@ -38,6 +38,7 @@ import {
   useCase,
   useCivilClaimants,
   useDefendants,
+  useFileList,
   useOnceOn,
   useS3Upload,
   useUploadFiles,
@@ -75,6 +76,10 @@ const Processing: FC = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
+
   const router = useRouter()
 
   const [hasCivilClaimantChoice, setHasCivilClaimantChoice] =
@@ -398,6 +403,7 @@ const Processing: FC = () => {
                     updateUploadFile,
                   )
                 }
+                onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
                 onRemove={(file) => handleRemove(file, removeUploadFile)}
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
               />
