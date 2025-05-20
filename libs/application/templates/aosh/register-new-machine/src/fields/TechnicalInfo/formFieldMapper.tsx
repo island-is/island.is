@@ -4,10 +4,7 @@ import {
   TextFormField,
 } from '@island.is/application/ui-fields'
 import { FormFieldMapperType } from '../../shared/types'
-import {
-  FieldComponents,
-  FieldTypes,
-} from '@island.is/application/types'
+import { FieldComponents, FieldTypes } from '@island.is/application/types'
 import { information } from '../../lib/messages'
 import { coreErrorMessages, NO, YES } from '@island.is/application/core'
 import { ListItemField } from './ListItemField'
