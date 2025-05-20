@@ -112,8 +112,6 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       this.innaService.getDiplomas(auth),
     ])
 
-    console.log('diplomas', innaDiplomas)
-
     if (!programs) {
       throw new TemplateApiError(
         {
@@ -133,7 +131,8 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
-    const secondarySchoolCareerPrograms = mapSecondarySchoolStudentTrack(null)
+    const secondarySchoolCareerPrograms =
+      mapSecondarySchoolStudentTrack(innaDiplomas)
     const careerProgramsHI = mapUniversityStudentTracks(careerProgramsHIRaw)
     const careerProgramsUNAK = mapUniversityStudentTracks(careerProgramsUNAKRaw)
     const careerPrograms = (careerProgramsHI ?? [])
