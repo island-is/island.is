@@ -39,10 +39,10 @@ export class JwtConfigService implements OnModuleInit {
     this.privateKeyPem = environment.jwtSigning.privateKey
     this.publicKeyPem = environment.jwtSigning.publicKey
 
-    // Validate that the keys are valid PEM format and store the KeyObjects
+    // Validate that the keys are valid PEM format
     try {
-      this.privateKeyObject = createPrivateKey(this.privateKeyPem)
-      this.publicKeyObject = createPublicKey(this.publicKeyPem)
+      createPrivateKey(this.privateKeyPem)
+      createPublicKey(this.publicKeyPem)
     } catch (error) {
       throw new Error(`Invalid JWT signing keys format: ${error.message}`)
     }
@@ -53,26 +53,5 @@ export class JwtConfigService implements OnModuleInit {
       throw new Error('Private key not initialized')
     }
     return this.privateKeyPem
-  }
-
-  getPublicKey(): string {
-    if (!this.publicKeyPem) {
-      throw new Error('Public key not initialized')
-    }
-    return this.publicKeyPem
-  }
-
-  getPrivateKeyObject(): KeyObject {
-    if (!this.privateKeyObject) {
-      throw new Error('Private key not initialized')
-    }
-    return this.privateKeyObject
-  }
-
-  getPublicKeyObject(): KeyObject {
-    if (!this.publicKeyObject) {
-      throw new Error('Public key not initialized')
-    }
-    return this.publicKeyObject
   }
 }

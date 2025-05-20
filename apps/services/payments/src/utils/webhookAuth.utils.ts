@@ -1,5 +1,5 @@
 import * as jwt from 'jsonwebtoken'
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuid } from 'uuid'
 import * as crypto from 'crypto'
 
 interface JwtSigningConfig {
@@ -57,7 +57,7 @@ export const generateWebhookJwt = (
     iss: jwtConfig.issuer,
     aud: upstreamSystemIdentifier,
     sub: paymentFlow.id,
-    jti: uuidv4(),
+    jti: uuid(),
     iat: now,
     exp: now + jwtConfig.expiresInMinutes * 60,
     event_type: updateInfo.type,

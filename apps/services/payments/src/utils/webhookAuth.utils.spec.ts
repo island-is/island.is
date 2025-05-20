@@ -1,6 +1,7 @@
 import { createPrivateKey, generateKeyPairSync } from 'crypto'
-import { generatePayloadHash, generateWebhookJwt } from './webhookAuth.utils'
 import * as jwt from 'jsonwebtoken'
+
+import { generatePayloadHash, generateWebhookJwt } from './webhookAuth.utils'
 
 const { privateKey } = generateKeyPairSync('rsa', {
   modulusLength: 2048,
