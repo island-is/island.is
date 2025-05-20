@@ -1,3 +1,4 @@
+import { HealthDirectorateWaitlist } from '@island.is/api/schema'
 import { Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -8,13 +9,11 @@ import {
   IntroWrapper,
   LinkResolver,
 } from '@island.is/portals/my-pages/core'
-import React from 'react'
-import { messages } from '../../lib/messages'
-import { useParams } from 'react-router-dom'
-import { useGetWaitlistDetailQuery } from './Waitlists.generated'
-import { isDefined } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
-import { HealthDirectorateWaitlist } from '@island.is/api/schema'
+import React from 'react'
+import { useParams } from 'react-router-dom'
+import { messages } from '../../lib/messages'
+import { useGetWaitlistDetailQuery } from './Waitlists.generated'
 
 type UseParams = {
   id: string
