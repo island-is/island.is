@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
+  ApplicationType,
   LegalGazetteApplicationsApi as LegalGazetteApi,
   SubmitApplicationDto,
 } from '../../gen/fetch'
@@ -18,6 +19,21 @@ export class LegalGazetteClientService {
 
   private legalGazetteApiWithAuth(auth: Auth) {
     return this.legalGazetteApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getCategories(auth: Auth) {
+    try {
+      return this.legalGazetteApiWithAuth(auth).getCategories({
+        type: ApplicationType.AlmennAuglysing,
+      })
+    } catch (error) {
+      this.logger.error('Failed to get categories', {
+        error,
+        category: LOGGING_CATEGORY,
+      })
+
+      throw error
+    }
   }
 
   async submitApplication(

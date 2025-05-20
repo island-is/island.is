@@ -6,13 +6,16 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  buildSelectField,
   buildSubmitField,
   buildTextField,
   coreMessages,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
+import { LGBaseEntity } from '../lib/types'
 
 export const DraftForm: Form = buildForm({
   id: 'DraftForm',
@@ -35,6 +38,21 @@ export const DraftForm: Form = buildForm({
               id: 'draft.description',
               description: m.draft.sections.advert.formIntro,
               marginBottom: [2, 3, 4],
+            }),
+            buildSelectField({
+              id: 'application.categoryId',
+              title: m.draft.sections.advert.categoryInput,
+              options: ({ externalData }) => {
+                const categories = getValueViaPath<LGBaseEntity[]>(
+                  externalData,
+                  'categories.data',
+                  [],
+                )
+
+                if (!categories) return []
+
+                return categories.map((c) => ({ label: c.title, value: c.id }))
+              },
             }),
             buildTextField({
               id: 'application.caption',

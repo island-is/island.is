@@ -5,7 +5,6 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { LegalGazetteClientService } from '@island.is/clients/legal-gazette'
-import { getValueViaPath } from '@island.is/application/core'
 import { legalGazetteDataSchema } from '@island.is/application/templates/legal-gazette'
 
 const LOGGING_CATEGORY = 'LegalGazetteTemplateService'
@@ -18,6 +17,21 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
     private legalGazetteClient: LegalGazetteClientService,
   ) {
     super(ApplicationTypes.LEGAL_GAZETTE)
+  }
+
+  async getCategories({ auth }: TemplateApiModuleActionProps) {
+    try {
+      const { categories } = await this.legalGazetteClient.getCategories(auth)
+
+      return categories.map((c) => ({ id: c.id, title: c.title, slug: c.slug }))
+    } catch (error) {
+      this.logger.error('Failed to get categories', {
+        error,
+        category: LOGGING_CATEGORY,
+      })
+
+      throw error
+    }
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {

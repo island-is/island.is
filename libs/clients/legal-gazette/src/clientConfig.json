@@ -55,8 +55,7 @@
               }
             }
           }
-        },
-        "tags": ["Case Types"]
+        }
       },
       "post": {
         "operationId": "createType",
@@ -119,8 +118,7 @@
               }
             }
           }
-        },
-        "tags": ["Case Types"]
+        }
       }
     },
     "/api/v1/types/detailed": {
@@ -177,8 +175,7 @@
               }
             }
           }
-        },
-        "tags": ["Case Types"]
+        }
       }
     },
     "/api/v1/types/{id}": {
@@ -250,8 +247,7 @@
               }
             }
           }
-        },
-        "tags": ["Case Types"]
+        }
       },
       "delete": {
         "operationId": "deleteType",
@@ -313,8 +309,138 @@
               }
             }
           }
+        }
+      }
+    },
+    "/api/v1/categories": {
+      "get": {
+        "operationId": "getCategories",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/ApplicationType" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetCategoriesDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
         },
-        "tags": ["Case Types"]
+        "tags": ["Legal Gazette Applications"]
+      }
+    },
+    "/api/v1/categories/detailed": {
+      "get": {
+        "operationId": "getCategoriesDetailed",
+        "summary": "",
+        "parameters": [
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": { "$ref": "#/components/schemas/ApplicationType" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCategoriesDetailedDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/applications": {
@@ -490,6 +616,134 @@
           }
         }
       },
+      "ApplicationType": { "type": "string", "enum": ["almenn-auglysing"] },
+      "CategoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "UUIDV4 of the entity",
+            "example": "182391f7-d355-46f0-bcee-4d8baa68b55d"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the entity",
+            "example": "Base entity"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the entity",
+            "example": "base-entity"
+          },
+          "typeId": { "type": "string" },
+          "type": { "$ref": "#/components/schemas/CaseTypeDto" }
+        },
+        "required": ["id", "title", "slug", "typeId", "type"]
+      },
+      "GetCategoriesDto": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CategoryDto" }
+          }
+        },
+        "required": ["categories"]
+      },
+      "CaseTypeDetailedDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "UUIDV4 of the entity",
+            "example": "182391f7-d355-46f0-bcee-4d8baa68b55d"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the entity",
+            "example": "Base entity"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the entity",
+            "example": "base-entity"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "ISO representation of the creation date",
+            "example": "2021-08-31T12:00:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "ISO representation of the updated date",
+            "example": "2021-08-31T12:00:00.000Z"
+          },
+          "deletedAt": {
+            "type": "string",
+            "description": "ISO representation of the deletion date",
+            "example": "2021-08-31T12:00:00.000Z",
+            "nullable": true
+          }
+        },
+        "required": ["id", "title", "slug", "createdAt", "updatedAt"]
+      },
+      "CategoryDetailedDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "UUIDV4 of the entity",
+            "example": "182391f7-d355-46f0-bcee-4d8baa68b55d"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the entity",
+            "example": "Base entity"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the entity",
+            "example": "base-entity"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "ISO representation of the creation date",
+            "example": "2021-08-31T12:00:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "ISO representation of the updated date",
+            "example": "2021-08-31T12:00:00.000Z"
+          },
+          "deletedAt": {
+            "type": "string",
+            "description": "ISO representation of the deletion date",
+            "example": "2021-08-31T12:00:00.000Z",
+            "nullable": true
+          },
+          "typeId": { "type": "string" },
+          "type": { "$ref": "#/components/schemas/CaseTypeDetailedDto" }
+        },
+        "required": [
+          "id",
+          "title",
+          "slug",
+          "createdAt",
+          "updatedAt",
+          "typeId",
+          "type"
+        ]
+      },
+      "GetCategoriesDetailedDto": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CategoryDetailedDto" }
+          }
+        },
+        "required": ["categories"]
+      },
       "SignatureDto": {
         "type": "object",
         "properties": {
@@ -503,7 +757,7 @@
         "type": "object",
         "properties": {
           "email": { "type": "string" },
-          "phone": { "type": "string" }
+          "phone": { "type": "string", "nullable": true }
         },
         "required": ["email", "phone"]
       },

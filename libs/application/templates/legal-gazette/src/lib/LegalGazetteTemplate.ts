@@ -136,6 +136,11 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               write: 'all',
             },
           ],
+          onEntry: defineTemplateApi({
+            action: LegalGazetteAPIActions.getCategories,
+            shouldPersistToExternalData: true,
+            externalDataId: 'categories',
+          }),
           onExit: defineTemplateApi({
             action: LegalGazetteAPIActions.submitApplication,
             triggerEvent: DefaultEvents.SUBMIT,

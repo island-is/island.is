@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -29,7 +30,12 @@ export const SubmittedForm: Form = buildForm({
           id: 'submitted.success',
           title: m.submitted.success.formTitle,
           description: m.submitted.success.formTitle,
-          children: [],
+          children: [
+            buildCustomField({
+              id: 'submitted.preview',
+              component: 'AdvertPreview',
+            }),
+          ],
         }),
       ],
     }),

@@ -30,6 +30,11 @@ export const m = {
         'Að minnsta kosti ein samskiptaleið þarf að vera til staðar',
       description: 'Villa sem kemur upp ef samskiptaleið er tóm',
     },
+    emptyCategory: {
+      id: 'lg.application:errors.emptyCategory',
+      defaultMessage: 'Tegund auglýsingar má ekki vera auð',
+      description: 'Villa sem kemur upp ef tegund auglýsingar er tóm',
+    },
     emptyEmail: {
       id: 'lg.application:errors.emptyEmail',
       defaultMessage: 'Netfang má ekki vera autt',
@@ -65,6 +70,11 @@ export const m = {
       defaultMessage:
         'Ekki tókst að ná sambandi við vefþjóna Lögbirtingarblaðsins. Vinsamlegast reyndu aftur síðar.',
       description: 'Villa sem kemur upp ef umsóknin tekst ekki að senda inn',
+    },
+    internalError: {
+      id: 'lg.application:errors.internalError',
+      defaultMessage: 'Innri kerfisvilla kom upp',
+      description: 'Villa sem kemur upp ef innri villa kemur upp',
     },
   }),
   requirements: {
@@ -211,6 +221,11 @@ export const m = {
         captionInput: {
           id: 'lg.application:draft.advert.captionInput',
           defaultMessage: 'Yfirskrift',
+          description: 'Titill á textaheiti auglýsingar',
+        },
+        categoryInput: {
+          id: 'lg.application:draft.advert.categoryInput',
+          defaultMessage: 'Tegund auglýsingar',
           description: 'Titill á textaheiti auglýsingar',
         },
       }),
