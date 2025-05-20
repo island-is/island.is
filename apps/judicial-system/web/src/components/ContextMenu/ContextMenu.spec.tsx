@@ -7,7 +7,6 @@ describe('ContextMenu', () => {
     render(
       <ContextMenu
         title="Innskráning"
-        menuLabel="innskráning"
         items={[{ title: 'Einstaklingur' }, { title: 'Fyrirtæki', href: '#' }]}
       />,
     )

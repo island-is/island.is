@@ -14,7 +14,7 @@ import {
   timeFormat,
   dateFormatWithTime,
 } from '@island.is/shared/constants'
-import { VisuallyHidden } from 'reakit'
+import { VisuallyHidden } from '@ariakit/react'
 import range from 'lodash/range'
 
 import { Icon } from '../IconRC/Icon'
