@@ -28,6 +28,14 @@ export const applicantSubSection = buildSubSection({
           customAddressLabel: userInformation.transporter.address,
           customPostalCodeAndCityLabel:
             userInformation.transporter.postalCodeAndCity,
+          order: {
+            nationalId: 0,
+            name: 1,
+            address: 2,
+            postalCodeAndCity: 3,
+            phoneNumber: 5,
+            email: 6,
+          },
         }).children,
       ],
     }),

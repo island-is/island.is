@@ -32,20 +32,20 @@ export const applicantInformationMultiField = (
     emailAndPhoneReadOnly = false,
   } = props ?? {}
 
+  // Note: base info fields are not editable, and are default displayed as disabled fields.
+  // If baseInfoReadOnly=true, then these fields will be displayed as readonly instead of disabled
+  const baseInfoDisabled = !baseInfoReadOnly
+
   const order = {
     name: props?.order?.name ?? 0,
     nationalId: props?.order?.nationalId ?? 1,
     address: props?.order?.address ?? 2,
+    postalCodeAndCity: props?.order?.postalCodeAndCity ?? 3,
     postalCode: props?.order?.postalCode ?? 3,
     city: props?.order?.city ?? 4,
     email: props?.order?.email ?? 5,
-    phone: props?.order?.phone ?? 6,
+    phoneNumber: props?.order?.phoneNumber ?? 6,
   }
-  //TODOx use order...
-
-  // Note: base info fields are not editable, and are default displayed as disabled fields.
-  // If baseInfoReadOnly=true, then these fields will be displayed as readonly instead of disabled
-  const baseInfoDisabled = !baseInfoReadOnly
 
   const locationFields = [
     buildTextField({
@@ -137,7 +137,7 @@ export const applicantInformationMultiField = (
     }),
   ]
 
-  return buildMultiField({
+  const result = buildMultiField({
     id: 'applicant',
     title: applicantInformation.general.title,
     description: applicantInformationDescription,
@@ -212,4 +212,16 @@ export const applicantInformationMultiField = (
       }),
     ],
   })
+
+  // Sort children by order
+  result.children.sort((a, b) => {
+    const getOrder = (id: string): number => {
+      const fieldKey = id.replace('applicant.', '')
+      return order[fieldKey as keyof typeof order] ?? 999
+    }
+
+    return getOrder(a.id) - getOrder(b.id)
+  })
+
+  return result
 }

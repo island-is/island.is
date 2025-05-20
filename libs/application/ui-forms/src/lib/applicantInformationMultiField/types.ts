@@ -54,9 +54,10 @@ export type applicantInformationProps = {
     name?: number
     nationalId?: number
     address?: number
+    postalCodeAndCity?: number
     postalCode?: number
     city?: number
     email?: number
-    phone?: number
+    phoneNumber?: number
   }
 }
