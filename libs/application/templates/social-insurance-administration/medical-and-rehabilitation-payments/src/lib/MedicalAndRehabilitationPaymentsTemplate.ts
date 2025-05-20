@@ -26,17 +26,21 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
+import { ApiScope } from '@island.is/auth/scopes'
 import { CodeOwners } from '@island.is/shared/constants'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { assign } from 'xstate'
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationQuestionnairesApi,
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import {
   medicalAndRehabilitationPaymentsFormMessage,
   statesMessages,
 } from './messages'
+import { Features } from '@island.is/feature-flags'
 
 const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -50,7 +54,14 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.MedicalAndRehabilitationPayments.translation,
   dataSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [ApiScope.socialInsuranceAdministration],
   // allowMultipleApplicationsInDraft: false,
+  featureFlag: Features.medicalAndRehabilitationPayments,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -85,6 +96,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 }),
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
+                SocialInsuranceAdministrationQuestionnairesApi,
               ],
               delete: true,
             },

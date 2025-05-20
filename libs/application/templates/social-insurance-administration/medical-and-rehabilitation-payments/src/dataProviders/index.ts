@@ -22,3 +22,11 @@ export const SocialInsuranceAdministrationApplicantApi = defineTemplateApi({
   namespace: 'SocialInsuranceAdministration',
   order: 1,
 })
+
+export const SocialInsuranceAdministrationQuestionnairesApi = defineTemplateApi(
+  {
+    action: 'getQuestionnairesSelfAssessment',
+    externalDataId: 'socialInsuranceAdministrationQuestionnairesSelfAssessment',
+    namespace: 'SocialInsuranceAdministration',
+  },
+)
