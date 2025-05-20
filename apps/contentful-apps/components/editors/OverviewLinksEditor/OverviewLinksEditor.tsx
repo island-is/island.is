@@ -109,7 +109,7 @@ const CategoryCardItemWrapper = ({
         updateItems={(updatedItems: LinkData['categoryCardItems']) => {
           setLinkData((prevLinkData) => ({
             ...prevLinkData,
-            categoryCardItems: updatedItems,
+            [categoryItemKey]: updatedItems,
           }))
         }}
         renderItem={(item: LinkData['categoryCardItems'][number]) => {
