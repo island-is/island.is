@@ -42,6 +42,7 @@ export const SubmittedForm: Form = buildForm({
         buildMultiField({
           id: 'submitted.success',
           title: m.submitted.success.formTitle,
+          space: 3,
           children: [
             buildAlertMessageField({
               id: 'submitted.success.alert',
@@ -52,6 +53,15 @@ export const SubmittedForm: Form = buildForm({
             buildCustomField({
               id: 'submitted.confirmation',
               component: 'Confirmation',
+            }),
+            buildCustomField({
+              id: 'submitted.success.createOrOverview',
+              component: 'CreateOrOverview',
+            }),
+            buildCustomField({
+              condition: () => process.env.NODE_ENV === 'development',
+              id: 'submitted.success.SubmitApplication',
+              component: 'SubmitApplication',
             }),
           ],
         }),

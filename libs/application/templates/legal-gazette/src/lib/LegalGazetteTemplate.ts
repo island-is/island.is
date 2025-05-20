@@ -20,7 +20,7 @@ import { Features } from '@island.is/feature-flags'
 import set from 'lodash/set'
 import { didSubmitSuccessfully } from './utils'
 
-type ReferenceTemplateEvent =
+export type LegalGazetteEvents =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
@@ -44,8 +44,8 @@ const getApplicationName = (application: Application) => {
 
 const LegalGazetteApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<ReferenceTemplateEvent>,
-  ReferenceTemplateEvent
+  ApplicationStateSchema<LegalGazetteEvents>,
+  LegalGazetteEvents
 > = {
   type: ApplicationTypes.LEGAL_GAZETTE,
   name: getApplicationName,
@@ -105,6 +105,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
         },
       },
       [LegalGazetteStates.DRAFT]: {
+        entry: 'assignToInstitution',
         meta: {
           name: 'Uppsetning',
           progress: 0.5,
@@ -185,7 +186,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
                 ),
               write: 'all',
               read: 'all',
-              delete: true,
+              delete: false,
             },
             {
               id: Roles.ASSIGNEE,

@@ -76,6 +76,11 @@ export const m = {
       defaultMessage: 'Innri kerfisvilla kom upp',
       description: 'Villa sem kemur upp ef innri villa kemur upp',
     },
+    createApplicationError: {
+      id: 'lg.application:errors.createApplicationError',
+      defaultMessage: 'Ekki tókst að búa til umsókn',
+      description: 'Villa sem kemur upp ef ekki tókst að búa til umsókn',
+    },
   }),
   requirements: {
     approval: defineMessages({
@@ -526,10 +531,43 @@ export const m = {
       defaultMessage: 'Umsóknin lokið',
       description: 'Titill á formi fyrir staðfestingu umsóknar',
     },
+    formSubtitle: {
+      id: 'lg.application:approved.form.subtitle',
+      defaultMessage: 'Umsóknin hefur verið samþykkt',
+      description: 'Undirtitill á formi fyrir staðfestingu umsóknar',
+    },
     formIntro: {
       id: 'lg.application:approved.form.intro',
       defaultMessage:
         'Umsóknin hefur lokið vinnslu og auglýsing birt í Lögbirtingablaðinu',
+      description: 'Inngangur á formi fyrir staðfestingu umsóknar',
+    },
+    newApplication: {
+      id: 'lg.application:approved.newApplication',
+      defaultMessage: 'Ný umsókn',
+      description: 'Titill á takka fyrir nýja umsókn',
+    },
+    overview: {
+      id: 'lg.application:approved.overview',
+      defaultMessage: 'Yfirlit',
+      description: 'Titill á takka fyrir yfirlit umsókna',
+    },
+  }),
+  rejected: defineMessages({
+    sectionTitle: {
+      id: 'lg.application:approved.rejected.sectionTitle',
+      defaultMessage: 'Umsókn hafnað',
+      description: 'Heiti kafla fyrir staðfestingu umsóknar',
+    },
+    formTitle: {
+      id: 'lg.application:approved.rejected.formTitle',
+      defaultMessage: 'Umsókn hafnað',
+      description: 'Titill á formi fyrir staðfestingu umsóknar',
+    },
+    formIntro: {
+      id: 'lg.application:approved.rejected.formIntro',
+      defaultMessage:
+        'Umsóknin hefur verið hafnað, fyrir frekari upplýsingar hafðu samband við Lögbirtingablaðið.',
       description: 'Inngangur á formi fyrir staðfestingu umsóknar',
     },
   }),

@@ -1,7 +1,9 @@
 import {
   buildForm,
-  buildDescriptionField,
   buildSection,
+  buildMultiField,
+  buildCustomField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
@@ -38,9 +40,22 @@ export const ApprovedForm: Form = buildForm({
       id: 'approved.section',
       title: m.approved.sectionTitle,
       children: [
-        buildDescriptionField({
-          id: 'approved.description',
-          description: m.approved.formIntro,
+        buildMultiField({
+          id: 'approved.form',
+          title: m.approved.formTitle,
+          space: 5,
+          children: [
+            buildAlertMessageField({
+              id: 'approved.description',
+              title: m.approved.formSubtitle,
+              message: m.approved.formIntro,
+              alertType: 'success',
+            }),
+            buildCustomField({
+              id: 'approved.createOrOverview',
+              component: 'CreateOrOverview',
+            }),
+          ],
         }),
       ],
     }),
