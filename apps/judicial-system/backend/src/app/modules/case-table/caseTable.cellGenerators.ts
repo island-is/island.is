@@ -18,6 +18,7 @@ import {
   DefendantEventType,
   getIndictmentAppealDeadlineDate,
   getIndictmentVerdictAppealDeadlineStatus,
+  IndictmentCaseReviewDecision,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isRestrictionCase,
@@ -527,7 +528,33 @@ const sentToPrisonAdminDate: CaseTableCellGenerator = {
 
 const indictmentReviewDecision: CaseTableCellGenerator = {
   attributes: ['indictmentReviewDecision'],
-  generate: (c: Case): TagPairValue | undefined => undefined,
+  includes: {
+    defendants: {
+      model: Defendant,
+      attributes: ['verdictAppealDate'],
+      order: [['created', 'ASC']],
+      separate: true,
+    },
+  },
+  generate: (c: Case): TagPairValue => {
+    const firstTag = {
+      color: 'darkerBlue',
+      text:
+        c.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL
+          ? c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+            ? 'Kæra'
+            : 'Áfrýja'
+          : 'Una',
+    }
+
+    const defendantAppealed = c.defendants?.some((d) => d.verdictAppealDate)
+
+    const secondTag = defendantAppealed
+      ? { color: 'red', text: 'Ákærði áfrýjar' }
+      : undefined
+
+    return { firstTag, secondTag }
+  },
 }
 
 export const caseTableCellGenerators: Record<
