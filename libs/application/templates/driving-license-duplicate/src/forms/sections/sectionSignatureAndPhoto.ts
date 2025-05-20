@@ -2,12 +2,13 @@ import {
   buildSection,
   buildMultiField,
   buildCustomField,
-  buildDescriptionField,
   buildAlertMessageField,
   getValueViaPath,
+  buildRadioField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { requirementsMet } from '../../lib/utils'
+import { SvgImage } from '../../assets/test'
 
 export const sectionSignatureAndPhoto = buildSection({
   id: 'signatureAndPhoto',
@@ -25,12 +26,14 @@ export const sectionSignatureAndPhoto = buildSection({
           message: m.signatureAndImageAlert,
           alertType: 'info',
         }),
-        buildDescriptionField({
-          id: 'signatureTitle',
-          title: m.signature,
-          titleVariant: 'h4',
-          description: '',
-          marginTop: 'gutter',
+        buildCustomField({
+          id: 'qphoto',
+          component: 'QualityPhoto',
+          condition: (_, externalData) =>
+            getValueViaPath(
+              externalData,
+              'qualityPhoto.data.hasQualityPhoto',
+            ) === true,
         }),
         buildCustomField({
           id: 'qSignature',
@@ -41,21 +44,27 @@ export const sectionSignatureAndPhoto = buildSection({
               'qualitySignature.data.hasQualitySignature',
             ) === true,
         }),
-        buildDescriptionField({
-          id: 'imgTitle',
-          title: m.image,
-          titleVariant: 'h4',
-          description: '',
-          space: 'gutter',
-        }),
-        buildCustomField({
-          id: 'qphoto',
-          component: 'QualityPhoto',
-          condition: (_, externalData) =>
-            getValueViaPath(
-              externalData,
-              'qualitySignature.data.hasQualityPhoto',
-            ) === true,
+        buildRadioField({
+          id: 'testSelectPhoto',
+          width: 'full',
+          backgroundColor: 'white',
+          options: [
+            {
+              value: '1',
+              label: 'Test mynd 1',
+              illustration: SvgImage,
+            },
+            {
+              value: '2',
+              label: 'Test mynd 2',
+              illustration: SvgImage,
+            },
+            {
+              value: '3',
+              label: 'Test mynd 3',
+              illustration: SvgImage,
+            },
+          ],
         }),
       ],
     }),

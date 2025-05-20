@@ -65,11 +65,13 @@ export const sectionFakeData = buildSubSection({
               label: 'Engin',
             },
           ],
+          marginBottom: 3,
         }),
         buildDateField({
           id: 'fakeData.licenseIssuedDate',
           title: 'Útgáfudagur ökuréttinda',
           placeholder: 'Útgáfudagur ökuréttinda',
+          defaultValue: () => new Date().toISOString(),
           condition: (answers) => {
             const fakeData = getValueViaPath<DrivingLicenseDuplicateFakeData>(
               answers,
@@ -80,6 +82,7 @@ export const sectionFakeData = buildSubSection({
               fakeData?.currentLicense === 'B-temp'
             )
           },
+          marginBottom: 3,
         }),
         buildRadioField({
           id: 'fakeData.qualityPhoto',
@@ -96,6 +99,7 @@ export const sectionFakeData = buildSubSection({
               label: 'Nei',
             },
           ],
+          marginBottom: 3,
         }),
         buildRadioField({
           id: 'fakeData.qualitySignature',
@@ -112,6 +116,7 @@ export const sectionFakeData = buildSubSection({
               label: 'Nei',
             },
           ],
+          marginBottom: 3,
         }),
         buildRadioField({
           id: 'fakeData.age',

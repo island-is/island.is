@@ -31,7 +31,7 @@ export const sectionDataProviders = buildSection({
       enableMockPayment: true,
       dataProviders: [
         buildDataProviderItem({
-          provider: NationalRegistryUserApi,
+          //provider: MockableNationalRegistry,
           title: m.dataCollectionNationalRegistryTitle,
           subTitle: m.dataCollectionNationalRegistrySubtitle,
         }),

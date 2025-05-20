@@ -78,10 +78,11 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE_DUPLICATE,
-  name: m.applicationTitle,
   codeOwner: CodeOwners.Juni,
   dataSchema: dataSchema,
   translationNamespaces: [configuration.translation],
+  institution: m.applicantInstitution,
+  name: m.applicationTitle,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

@@ -28,7 +28,8 @@ export const sectionOverview = buildSection({
           label: m.applicantsName,
           width: 'half',
           value: ({ externalData }: Application) =>
-            getValueViaPath(externalData, 'nationalRegistry.data.fullName'),
+            getValueViaPath(externalData, 'nationalRegistry.data.fullName') ??
+            '',
         }),
         buildKeyValueField({
           label: m.applicantsNationalId,
