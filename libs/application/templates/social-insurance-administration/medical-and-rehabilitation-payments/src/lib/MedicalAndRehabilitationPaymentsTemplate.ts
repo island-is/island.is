@@ -31,7 +31,6 @@ import { assign } from 'xstate'
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
-  SocialInsuranceAdministrationRehabilitationplanApi,
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import {
@@ -86,7 +85,6 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 }),
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
-                SocialInsuranceAdministrationRehabilitationplanApi,
               ],
               delete: true,
             },
