@@ -401,10 +401,11 @@ export class ApplicationService {
   async softDelete(id: string) {
     return this.applicationModel.update(
       {
-        pruneAt: new Date(),
         isListed: false,
         userDeleted: true,
         userDeletedAt: new Date(),
+        externalData: {},
+        answers: {},
       },
       { where: { id } },
     )
