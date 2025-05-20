@@ -125,7 +125,12 @@ export const generateCleanUpForFeature = async (
             image,
             name: `${info!.username!.replace(/_/g, '-').substr(0, 60)}1`,
             securityContext,
-            env: [],
+            env: [
+              {
+                name: 'PGPASSWORD_KEY',
+                value: '/rds/vidspyrna/masterpassword',
+              }
+            ],
           }
         }),
     )
