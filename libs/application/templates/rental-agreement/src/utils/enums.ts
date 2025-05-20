@@ -98,7 +98,6 @@ export enum SecurityDepositAmountOptions {
 }
 
 export enum OtherFeesPayeeOptions {
-  LANDLORD_OR_NOT_APPLICABLE = 'Landlord',
   LANDLORD = 'Landlord',
   TENANT = 'Tenant',
 }

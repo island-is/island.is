@@ -128,9 +128,6 @@ const RentalAgreementTemplate: ApplicationTemplate<
           name: States.INREVIEW,
           status: 'inprogress',
           lifecycle: pruneAfterDays(30),
-          onExit: defineTemplateApi({
-            action: TemplateApiActions.submitApplicationToHmsRentalService,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -171,6 +168,9 @@ const RentalAgreementTemplate: ApplicationTemplate<
           name: States.SIGNING,
           status: 'completed',
           lifecycle: pruneAfterDays(30),
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.submitApplicationToHmsRentalService,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

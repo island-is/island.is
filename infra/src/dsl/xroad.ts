@@ -249,7 +249,7 @@ export const RentalService = new XroadConf({
     XROAD_HMS_RENTAL_SERVICE_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1',
-      prod: '', // TODO: Add correct prod path
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Leigusamningar-v1',
     },
     XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: {
       dev: 'IS-DEV/GOV/10000/island-is-client',

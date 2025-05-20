@@ -12,7 +12,7 @@ export const HmsRentalAgreementClientConfig = defineConfig({
     return {
       xRoadServicePath: env.required(
         'XROAD_HMS_RENTAL_SERVICE_PATH',
-        '/IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1',
+        'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1',
       ),
     }
   },

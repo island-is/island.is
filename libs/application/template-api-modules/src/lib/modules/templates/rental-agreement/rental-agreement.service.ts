@@ -1,17 +1,22 @@
 import { Injectable } from '@nestjs/common'
 import { YesOrNoEnum } from '@island.is/application/core'
 import { ApplicationTypes } from '@island.is/application/types'
-import { HomeApi } from '@island.is/clients/hms-rental-agreement'
+import {
+  DepositAmount,
+  HomeApi,
+  InspectorType,
+  Payer,
+  PaymentDay,
+  PaymentMethod,
+  PropertyPart,
+  PropertyType,
+  RentIndex,
+  SecurityDepositType,
+  SpecialGroup,
+} from '@island.is/clients/hms-rental-agreement'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import {
-  OtherFeesPayeeOptions,
-  RentalAmountPaymentDateOptions,
-  RentalHousingCategoryClass,
-  RentalPaymentMethodOptions,
-  SecurityDepositAmountOptions,
-  SecurityDepositTypeOptions,
-} from '../../../../../../../application/templates/rental-agreement/src/utils/enums'
+import { RentalHousingCategoryClass } from '../../../../../../../application/templates/rental-agreement/src/utils/enums'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { generateRentalAgreementEmail } from './rental-agreement-email'
 import { applicationAnswers, formatPhoneNumber } from './utils'
@@ -90,12 +95,12 @@ export class RentalAgreementService extends BaseTemplateApiService {
 
     const landlordsArray = landlords?.map((landlord) => {
       return {
-        NationalId: landlord.nationalIdWithName.nationalId,
-        Name: landlord.nationalIdWithName.name,
-        Email: landlord.email,
-        Phone: formatPhoneNumber(landlord.phone),
-        Address: landlord.address,
-        IsRepresentative: Boolean(
+        nationalId: landlord.nationalIdWithName.nationalId,
+        name: landlord.nationalIdWithName.name,
+        email: landlord.email,
+        phone: formatPhoneNumber(landlord.phone),
+        address: landlord.address,
+        isRepresentative: Boolean(
           landlord.isRepresentative.includes('isRepresentative'),
         ),
       }
@@ -103,18 +108,19 @@ export class RentalAgreementService extends BaseTemplateApiService {
 
     const tenantsArray = tenants?.map((tenant) => {
       return {
-        NationalId: tenant.nationalIdWithName.nationalId,
-        Name: tenant.nationalIdWithName.name,
-        Email: tenant.email,
-        Phone: formatPhoneNumber(tenant.phone),
-        Address: tenant.address,
-        IsRepresentative: Boolean(
+        nationalId: tenant.nationalIdWithName.nationalId,
+        name: tenant.nationalIdWithName.name,
+        email: tenant.email,
+        phone: formatPhoneNumber(tenant.phone),
+        address: tenant.address,
+        isRepresentative: Boolean(
           tenant.isRepresentative.includes('isRepresentative'),
         ),
       }
     })
 
-    const propertyId = units && units.length > 0 ? units[0].propertyCode : ''
+    const propertyId =
+      units && units.length > 0 ? units[0].propertyCode ?? null : null
 
     const appraisalUnits = units?.map((unit) => {
       const propertySize =
@@ -125,11 +131,17 @@ export class RentalAgreementService extends BaseTemplateApiService {
         unit.unitCode && parseInt(unit.unitCode.slice(-2), 10).toString()
 
       return {
-        AppraisalUnitId: unit.unitCode,
-        Floor: apartmentFloor,
-        ApartmentNumber: apartmentNumber,
-        Size: propertySize,
-        Rooms: unit.numOfRooms,
+        appraisalUnitId: unit.unitCode ?? null,
+        apartmentNumber: apartmentNumber ?? null,
+        floor: apartmentFloor ?? null,
+        size:
+          propertySize !== undefined && propertySize !== null
+            ? propertySize
+            : 0,
+        rooms:
+          unit.numOfRooms !== undefined && unit.numOfRooms !== null
+            ? unit.numOfRooms
+            : 0,
       }
     })
 
@@ -140,21 +152,21 @@ export class RentalAgreementService extends BaseTemplateApiService {
 
     const getSecurityDepositTypeDescription = (type: string) => {
       if (
-        type === SecurityDepositTypeOptions.CAPITAL ||
-        type === SecurityDepositTypeOptions.OTHER ||
+        type === SecurityDepositType.Capital ||
+        type === SecurityDepositType.Other ||
         type === ''
       ) {
         return null
       }
 
       switch (type) {
-        case SecurityDepositTypeOptions.BANK_GUARANTEE:
+        case SecurityDepositType.BankGuarantee:
           return bankGuaranteeInfo
-        case SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE:
+        case SecurityDepositType.ThirdPartyGuarantee:
           return thirdPartyGuaranteeInfo
-        case SecurityDepositTypeOptions.INSURANCE_COMPANY:
+        case SecurityDepositType.InsuranceCompany:
           return insuranceCompanyInfo
-        case SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND:
+        case SecurityDepositType.LandlordMutualFund:
           return landlordsMutualFundInfo
         default:
           return null
@@ -162,126 +174,139 @@ export class RentalAgreementService extends BaseTemplateApiService {
     }
 
     const newApplication = {
-      ApplicationId: id,
-      InitiatorNationalId: applicant,
-      Landlords: landlordsArray,
-      Tenants: tenantsArray,
-      Property: {
-        Address: searchResults?.address || '',
-        Municipality: searchResults?.municipalityName || '',
-        Zip: searchResults?.postalCode?.toString() || '',
-        PropertyId: propertyId?.toString(),
-        AppraisalUnits: appraisalUnits || [],
-        Part: 'Whole', // Whole | Part // TODO: Should this be added or do we make an assumption. We do not ask about this in the application.
-        Type: categoryType || '',
-        SpecialGroup:
+      applicationId: id,
+      initiatorNationalId: applicant,
+      landlords: landlordsArray ?? [],
+      tenants: tenantsArray ?? [],
+      property: {
+        address: searchResults?.address ?? null,
+        municipality: searchResults?.municipalityName ?? null,
+        zip: searchResults?.postalCode?.toString() ?? null,
+        propertyId: propertyId?.toString() ?? null,
+        appraisalUnits: appraisalUnits ?? null,
+        part: 'Whole' as PropertyPart, // Whole | Part // TODO: How should this be handled? We are not asking about this in the application
+        type: categoryType as PropertyType,
+        specialGroup:
           categoryClass === RentalHousingCategoryClass.SPECIAL_GROUPS
-            ? categoryClassGroup
-            : 'No',
+            ? (categoryClassGroup as SpecialGroup)
+            : SpecialGroup.No,
       },
-      Lease: {
-        Description: description,
-        Rules: rules,
-        Condition: conditionDescription || 'See files for info', // TODO: Check if this is ok?
-        InspectorType: inspector,
-        IndipendantInspector: inspectorName,
-        HasInspectionFiles: files && files.length > 0 ? true : false,
-        FireProtections: {
-          FireBlanket: parseToNumber(fireBlanket || '0'),
-          EmergencyExits: parseToNumber(emergencyExits || '0'),
-          SmokeDetectors: parseToNumber(smokeDetectors || '0'),
-          FireExtinguisher: parseToNumber(fireExtinguisher || '0'),
+      lease: {
+        description: description,
+        rules: rules,
+        condition: conditionDescription || 'See files for info', // TODO: Check if this is ok?
+        inspectorType: inspector as InspectorType,
+        hasInspectionFiles: files && files.length > 0 ? true : false,
+        indipendantInspector: inspectorName,
+        fireProtections: {
+          fireBlanket: parseToNumber(fireBlanket || '0'),
+          emergencyExits: parseToNumber(emergencyExits || '0'),
+          smokeDetectors: parseToNumber(smokeDetectors || '0'),
+          fireExtinguisher: parseToNumber(fireExtinguisher || '0'),
         },
-        StartDate: startDate,
-        EndDate: endDate || null,
-        IsFixedTerm: endDate ? true : false,
-        Rent: {
-          Amount: parseToNumber(rentalAmount || '0'),
-          Index: isIndexConnected === YesOrNoEnum.YES ? indexType : 'None',
-          IndexRate: null, // TODO: add the index rate when it has been implemented in the application
+        startDate: startDate ? new Date(startDate) : undefined,
+        endDate: endDate ? new Date(endDate) : null,
+        isFixedTerm: endDate ? true : false,
+        rent: {
+          amount: parseToNumber(rentalAmount || '0'),
+          index:
+            isIndexConnected === YesOrNoEnum.YES && indexType
+              ? (indexType as RentIndex)
+              : RentIndex.None,
+          indexRate: null, // TODO: add the index rate when it has been implemented in the application
         },
-        Payment: {
-          Method: paymentMethod,
-          OtherMethod:
-            paymentMethod === RentalPaymentMethodOptions.OTHER
-              ? paymentMethodOther
-              : null,
-          PaymentDay: paymentDay,
-          OtherPaymentDay:
-            paymentDay === RentalAmountPaymentDateOptions.OTHER
-              ? paymentDayOther
-              : null,
-          BankAccountNumber:
-            paymentMethod === RentalPaymentMethodOptions.BANK_TRANSFER
+        payment: {
+          method: paymentMethod as PaymentMethod,
+          otherMethod:
+            paymentMethod === PaymentMethod.Other ? paymentMethodOther : null,
+          paymentDay: paymentDay as PaymentDay,
+          otherPaymentDay:
+            paymentDay === PaymentDay.Other ? paymentDayOther : null,
+          bankAccountNumber:
+            paymentMethod === PaymentMethod.BankTransfer
               ? bankAccountNumber
               : null,
-          NationalIdOfAccountOwner:
-            paymentMethod === RentalPaymentMethodOptions.BANK_TRANSFER
+          nationalIdOfAccountOwner:
+            paymentMethod === PaymentMethod.BankTransfer
               ? nationalIdOfAccountOwner
               : null,
         },
-        SecurityDeposit: {
-          Type: securityDepositType || 'None',
-          OtherType:
-            securityDepositType === SecurityDepositTypeOptions.OTHER
+        securityDeposit: {
+          type: securityDepositType
+            ? (securityDepositType as SecurityDepositType)
+            : undefined,
+          otherType:
+            securityDepositType === SecurityDepositType.Other
               ? otherInfo
               : null,
-          Description: securityDepositType
+          description: securityDepositType
             ? getSecurityDepositTypeDescription(securityDepositType)
             : null,
-          Amount: securityDepositAmount,
-          OtherAmount:
-            securityDepositAmount === SecurityDepositAmountOptions.OTHER
+          amount: securityDepositAmount as DepositAmount,
+          otherAmount:
+            securityDepositAmount === DepositAmount.Other
               ? parseToNumber(securityDepositAmountOther || '0')
               : 0,
         },
-        OtherFees: {
-          HousingFund: {
-            PayedBy:
-              housingFundPayee === OtherFeesPayeeOptions.TENANT
-                ? 'Tenant'
-                : 'Landlord',
-            Amount: housingFundAmount || 0,
+        otherFees: {
+          housingFund: {
+            payedBy:
+              housingFundPayee === Payer.Tenant ? Payer.Tenant : Payer.Landlord,
+            amount:
+              housingFundAmount !== undefined && housingFundAmount !== null
+                ? Number(housingFundAmount)
+                : 0,
           },
-          ElectricityCost: {
-            PayedBy:
-              electricityCostPayee === OtherFeesPayeeOptions.TENANT
-                ? 'Tenant'
-                : 'Landlord',
-            MeterNumber: electricityCostMeterNumber || null,
-            MeterStatus: electricityCostMeterStatus || null,
-            MeterStatusDate: electricityCostMeterStatusDate || null,
+          electricityCost: {
+            payedBy:
+              electricityCostPayee === Payer.Tenant
+                ? Payer.Tenant
+                : Payer.Landlord,
+            meterNumber: electricityCostMeterNumber || null,
+            meterStatus: electricityCostMeterStatus || null,
+            meterStatusDate: electricityCostMeterStatusDate
+              ? new Date(electricityCostMeterStatusDate)
+              : null,
           },
-          HeatingCost: {
-            PayedBy:
-              heatingCostPayee === OtherFeesPayeeOptions.TENANT
-                ? 'Tenant'
-                : 'Landlord',
-            MeterNumber: heatingCostMeterNumber || null,
-            MeterStatus: heatingCostMeterStatus || null,
-            MeterStatusDate: heatingCostMeterStatusDate || null,
+          heatingCost: {
+            payedBy:
+              heatingCostPayee === Payer.Tenant ? Payer.Tenant : Payer.Landlord,
+            meterNumber: heatingCostMeterNumber || null,
+            meterStatus: heatingCostMeterStatus || null,
+            meterStatusDate: heatingCostMeterStatusDate
+              ? new Date(heatingCostMeterStatusDate)
+              : null,
           },
-          MiscellaneousFees: otherCostItems
+          miscellaneousFees: otherCostItems
             ? Object.values(otherCostItems)
                 .filter(
                   (item) => item.description && item.description.trim() !== '',
                 )
                 .map((item) => ({
-                  Name: item.description,
-                  Amount: Number(item.amount) || 0,
+                  name: item.description,
+                  amount: Number(item.amount) || 0,
                 }))
             : [],
         },
       },
     }
 
-    return await this.homeApi.contractPost({
-      leaseApplication: newApplication,
-    })
-
     console.log(
-      '-------------------- Answers sent to RentalService --------------------: ',
+      '-------------------- Data sent to HMS Rental Service --------------------: ',
       newApplication,
     )
+
+    return await this.homeApi
+      .contractPost({
+        leaseApplication: newApplication,
+      })
+      .catch((error) => {
+        console.error(
+          'Error sending application to HMS Rental Service: ',
+          error,
+        )
+
+        throw new Error('Error sending application to HMS Rental Service')
+      })
   }
 }

@@ -711,6 +711,9 @@
         "libs/clients/health-directorate/src/index.ts"
       ],
       "@island.is/clients/hms": ["libs/clients/hms/src/index.ts"],
+      "@island.is/clients/hms-rental-agreement": [
+        "libs/clients/hms-rental-agreement/src/index.ts"
+      ],
       "@island.is/clients/hms-housing-benefits": [
         "libs/clients/hms-housing-benefits/src/index.ts"
       ],

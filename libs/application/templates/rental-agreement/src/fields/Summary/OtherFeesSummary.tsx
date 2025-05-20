@@ -8,7 +8,6 @@ import {
   filterEmptyCostItems,
   formatCurrency,
   formatDate,
-  getOtherFeesHousingFundPayeeOptions,
   getOtherFeesPayeeOptions,
 } from '../../utils/utils'
 import { KeyValue } from './components/KeyValue'
@@ -83,7 +82,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
             label={summary.houseFundLabel}
             value={getOptionLabel(
               housingFund || '',
-              getOtherFeesHousingFundPayeeOptions,
+              getOtherFeesPayeeOptions,
               '',
             )}
           />

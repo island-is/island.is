@@ -288,17 +288,6 @@ export const getOtherFeesPayeeOptions = () => [
   },
 ]
 
-export const getOtherFeesHousingFundPayeeOptions = () => [
-  {
-    value: OtherFeesPayeeOptions.LANDLORD_OR_NOT_APPLICABLE,
-    label: m.otherFees.housingFundPayedByLandlordLabel,
-  },
-  {
-    value: OtherFeesPayeeOptions.TENANT,
-    label: m.otherFees.paidByTenantLabel,
-  },
-]
-
 export const getPaymentMethodOptions = () => [
   {
     value: RentalPaymentMethodOptions.BANK_TRANSFER,
