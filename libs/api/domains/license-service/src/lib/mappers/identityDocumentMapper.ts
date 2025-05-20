@@ -189,6 +189,11 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
             value: `${document.mrzLastName} ${document.mrzFirstName}`,
           }
         : null,
+      {
+        type: GenericLicenseDataFieldType.Value,
+        label: formatMessage(m.publisher),
+        value: 'Þjóðskrá',
+      },
     ].filter(isDefined)
 
     const alert: GenericUserLicenseAlert | undefined =
