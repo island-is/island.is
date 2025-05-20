@@ -5,7 +5,7 @@ const decodeBase64Key = (base64Key: string | undefined): string | undefined => {
   return Buffer.from(base64Key, 'base64').toString('utf-8')
 }
 
-const environment = {
+export const environment = {
   audit: {
     defaultNamespace: '@island.is/payments',
     groupName: process.env.AUDIT_GROUP_NAME,
@@ -33,7 +33,5 @@ const environment = {
   },
   port: process.env.PORT ? Number(process.env.PORT) : 5555,
 }
-
-export default environment
 
 export type Environment = typeof environment
