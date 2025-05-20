@@ -160,26 +160,15 @@ export const formatCourtResubmittedToCourtSmsNotification = (
 }
 
 export const formatDefenderResubmittedToCourtEmailNotification = (
-  formatMessage: FormatMessage,
-  overviewUrl?: string,
+  overviewUrl: string,
   court?: string,
   courtCaseNumber?: string,
 ): SubjectAndBody => {
-  const cf = notifications.defenderResubmittedToCourt
   const courtName = applyDativeCaseToCourtName(court || 'héraðsdómi')
-  const subject = formatMessage(cf.subject, { courtCaseNumber })
-  const body = formatMessage(cf.body, {
-    courtCaseNumber,
-    courtName,
-  })
-  const link = formatMessage(cf.link, {
-    defenderHasAccessToRvg: Boolean(overviewUrl),
-    courtName,
-    linkStart: `<a href="${overviewUrl}">`,
-    linkEnd: '</a>',
-  })
+  const subject = `Krafa í máli ${courtCaseNumber}`
+  const body = `Sækjandi í máli ${courtCaseNumber} hjá ${courtName} hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="${overviewUrl}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`
 
-  return { body: `${body}${link}`, subject }
+  return { body, subject }
 }
 
 export const formatProsecutorReadyForCourtEmailNotification = (

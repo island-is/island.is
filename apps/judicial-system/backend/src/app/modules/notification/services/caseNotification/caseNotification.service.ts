@@ -288,19 +288,15 @@ export class CaseNotificationService extends BaseNotificationService {
   // this is shared between defender sub roles: defendant defender, victim lawyer, etc.
   private sendResubmittedToCourtEmailNotificationToDefender({
     theCase,
-    defenderNationalId,
     defenderEmail,
     defenderName,
   }: {
     theCase: Case
-    defenderNationalId?: string
     defenderEmail?: string
     defenderName?: string
   }): Promise<Recipient> {
     const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
-      this.formatMessage,
-      defenderNationalId &&
-        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
+      formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
       theCase.courtCaseNumber ?? theCase.policeCaseNumbers[0],
     )
@@ -310,7 +306,6 @@ export class CaseNotificationService extends BaseNotificationService {
       html: body,
       recipientName: defenderName,
       recipientEmail: defenderEmail,
-      skipTail: !defenderNationalId,
     })
   }
 
@@ -465,7 +460,6 @@ export class CaseNotificationService extends BaseNotificationService {
             theCase,
             defenderEmail: theCase.defenderEmail,
             defenderName: theCase.defenderName,
-            defenderNationalId: theCase.defenderNationalId,
           }),
         )
       } else if (
@@ -494,7 +488,6 @@ export class CaseNotificationService extends BaseNotificationService {
             theCase,
             defenderEmail: victim.lawyerEmail,
             defenderName: victim.lawyerName,
-            defenderNationalId: victim.lawyerNationalId,
           }),
         )
       } else if (

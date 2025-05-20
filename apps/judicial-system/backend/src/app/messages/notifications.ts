@@ -177,28 +177,6 @@ export const notifications = {
     description:
       'Notaður sem texti í sms-i þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
   }),
-  defenderResubmittedToCourt: defineMessages({
-    subject: {
-      id: 'judicial.system.backend:notifications.defender_resubmitted_to_court.subject_v3',
-      defaultMessage: 'Krafa í máli {courtCaseNumber}',
-      description:
-        'Notaður sem titil í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
-    },
-    body: {
-      id: 'judicial.system.backend:notifications.defender_resubmitted_to_court.body_v3',
-      defaultMessage:
-        'Sækjandi í máli {courtCaseNumber} hjá {courtName} hefur breytt kröfunni og sent hana aftur á dóminn.',
-      description:
-        'Notaður sem texti í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
-    },
-    link: {
-      id: 'judicial.system.backend:notifications.defender_resubmitted_to_court.link_v3',
-      defaultMessage:
-        '<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
-      description:
-        'Notaður sem vísun í gögn málsins í pósti til verjanda/talsmanns þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
-    },
-  }),
   prosecutorReceivedByCourt: defineMessage({
     id: 'judicial.system.backend:notifications.prosecutor_received_by_court',
     defaultMessage:
