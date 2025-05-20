@@ -10,7 +10,6 @@ import {
 import { IntlShape, useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
-import { motion } from 'motion/react'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -344,155 +343,138 @@ const ModifyDatesModal: FC<Props> = ({
   }
 
   return successText ? (
-    <motion.div
-      key="dateModifyingModalSuccess"
-      data-testid="dateModifyingModalSuccess"
-      animate={{ opacity: 1, y: 0 }}
-      initial={{ opacity: 0, y: 20 }}
-      exit={{ opacity: 0, y: 20 }}
-      transition={{ duration: 0.5 }}
-    >
-      <Modal
-        title={formatMessage(m.sections.modifyDatesModal.successTitle, {
-          caseType: workingCase.type,
-        })}
-        text={successText}
-        secondaryButtonText={formatMessage(core.closeModal)}
-        onSecondaryButtonClick={() => {
-          setCaseModifiedExplanation(undefined)
-          setIsModifyingDates(false)
-          setSuccessText(undefined)
-        }}
-      />
-    </motion.div>
+    <Modal
+      title={formatMessage(m.sections.modifyDatesModal.successTitle, {
+        caseType: workingCase.type,
+      })}
+      text={successText}
+      secondaryButtonText={formatMessage(core.closeModal)}
+      onSecondaryButtonClick={() => {
+        setCaseModifiedExplanation(undefined)
+        setIsModifyingDates(false)
+        setSuccessText(undefined)
+      }}
+    />
   ) : (
-    <motion.div
-      key="dateModifyingModal"
-      animate={{ opacity: 1, y: 0 }}
-      initial={{ opacity: 0, y: 20 }}
-      exit={{ opacity: 0, y: 20 }}
-      transition={{ duration: 0.5 }}
-    >
-      <Modal
-        title={formatMessage(m.sections.modifyDatesModal.title, {
-          caseType: workingCase.type,
-        })}
-        text={
-          workingCase.type === CaseType.TRAVEL_BAN
-            ? formatMessage(m.sections.modifyDatesModal.travelBanText)
-            : formatMessage(m.sections.modifyDatesModal.text, {
-                caseType: workingCase.type,
-              })
+    <Modal
+      title={formatMessage(m.sections.modifyDatesModal.title, {
+        caseType: workingCase.type,
+      })}
+      text={
+        workingCase.type === CaseType.TRAVEL_BAN
+          ? formatMessage(m.sections.modifyDatesModal.travelBanText)
+          : formatMessage(m.sections.modifyDatesModal.text, {
+              caseType: workingCase.type,
+            })
+      }
+      primaryButtonText={formatMessage(
+        m.sections.modifyDatesModal.primaryButtonText,
+      )}
+      isPrimaryButtonDisabled={isCaseModificationInvalid()}
+      onPrimaryButtonClick={handleDateModification}
+      isPrimaryButtonLoading={isSendingNotification || isUpdatingCase}
+      secondaryButtonText={formatMessage(
+        m.sections.modifyDatesModal.secondaryButtonText,
+      )}
+      onSecondaryButtonClick={() => {
+        setCaseModifiedExplanation(undefined)
+
+        if (workingCase.validToDate) {
+          setModifiedValidToDate({
+            value: new Date(workingCase.validToDate),
+            isValid: true,
+          })
         }
-        primaryButtonText={formatMessage(
-          m.sections.modifyDatesModal.primaryButtonText,
-        )}
-        isPrimaryButtonDisabled={isCaseModificationInvalid()}
-        onPrimaryButtonClick={handleDateModification}
-        isPrimaryButtonLoading={isSendingNotification || isUpdatingCase}
-        secondaryButtonText={formatMessage(
-          m.sections.modifyDatesModal.secondaryButtonText,
-        )}
-        onSecondaryButtonClick={() => {
-          setCaseModifiedExplanation(undefined)
 
-          if (workingCase.validToDate) {
-            setModifiedValidToDate({
-              value: new Date(workingCase.validToDate),
-              isValid: true,
-            })
+        if (workingCase.isolationToDate) {
+          setModifiedIsolationToDate({
+            value: new Date(workingCase.isolationToDate),
+            isValid: true,
+          })
+        }
+        setIsModifyingDates(false)
+      }}
+    >
+      <Box marginBottom={5}>
+        <Box marginBottom={3}>
+          <Text variant="h3" as="h2">
+            {formatMessage(m.sections.modifyDatesModal.reasonForChangeTitle)}
+          </Text>
+        </Box>
+        <Input
+          name="reason"
+          label={formatMessage(
+            m.sections.modifyDatesModal.reasonForChangeLabel,
+          )}
+          placeholder={formatMessage(
+            m.sections.modifyDatesModal.reasonForChangePlaceholder,
+            { caseType: workingCase.type },
+          )}
+          onChange={(event) => {
+            handleCaseModifiedExplanationChange(event.target.value)
+          }}
+          onBlur={(event) =>
+            handleCaseModifiedExplanationBlur(event.target.value)
           }
-
-          if (workingCase.isolationToDate) {
-            setModifiedIsolationToDate({
-              value: new Date(workingCase.isolationToDate),
-              isValid: true,
-            })
-          }
-          setIsModifyingDates(false)
-        }}
-      >
-        <Box marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text variant="h3" as="h2">
-              {formatMessage(m.sections.modifyDatesModal.reasonForChangeTitle)}
-            </Text>
-          </Box>
-          <Input
-            name="reason"
-            label={formatMessage(
-              m.sections.modifyDatesModal.reasonForChangeLabel,
+          hasError={caseModifiedExplanationErrorMessage !== ''}
+          errorMessage={caseModifiedExplanationErrorMessage}
+          textarea
+          rows={9}
+          required
+        />
+      </Box>
+      <Box marginBottom={6}>
+        <BlueBox>
+          <DateTime
+            name="modifiedValidToDate"
+            size="sm"
+            datepickerLabel={formatMessage(
+              m.sections.modifyDatesModal.modifiedValidToDateLabel,
+              {
+                caseType: workingCase.type,
+              },
             )}
-            placeholder={formatMessage(
-              m.sections.modifyDatesModal.reasonForChangePlaceholder,
-              { caseType: workingCase.type },
-            )}
-            onChange={(event) => {
-              handleCaseModifiedExplanationChange(event.target.value)
+            selectedDate={modifiedValidToDate?.value}
+            onChange={(value, valid) => {
+              handleValidToDateModification(value, valid)
             }}
-            onBlur={(event) =>
-              handleCaseModifiedExplanationBlur(event.target.value)
+            minDate={
+              workingCase.rulingDate
+                ? new Date(workingCase.rulingDate)
+                : undefined
             }
-            hasError={caseModifiedExplanationErrorMessage !== ''}
-            errorMessage={caseModifiedExplanationErrorMessage}
-            textarea
-            rows={9}
+            blueBox={false}
             required
           />
-        </Box>
-        <Box marginBottom={6}>
-          <BlueBox>
-            <DateTime
-              name="modifiedValidToDate"
-              size="sm"
-              datepickerLabel={formatMessage(
-                m.sections.modifyDatesModal.modifiedValidToDateLabel,
-                {
-                  caseType: workingCase.type,
-                },
-              )}
-              selectedDate={modifiedValidToDate?.value}
-              onChange={(value, valid) => {
-                handleValidToDateModification(value, valid)
-              }}
-              minDate={
-                workingCase.rulingDate
-                  ? new Date(workingCase.rulingDate)
-                  : undefined
-              }
-              blueBox={false}
-              required
-            />
-            {workingCase.isCustodyIsolation && (
-              <Box marginTop={2}>
-                <DateTime
-                  name="modifiedIsolationToDate"
-                  size="sm"
-                  datepickerLabel={formatMessage(
-                    m.sections.modifyDatesModal.modifiedIsolationToDateLabel,
-                  )}
-                  selectedDate={modifiedIsolationToDate?.value}
-                  onChange={(value, valid) => {
-                    setModifiedIsolationToDate({
-                      value: value ?? modifiedIsolationToDate?.value,
-                      isValid: valid,
-                    })
-                  }}
-                  minDate={
-                    workingCase.rulingDate
-                      ? new Date(workingCase.rulingDate)
-                      : undefined
-                  }
-                  maxDate={modifiedValidToDate?.value}
-                  blueBox={false}
-                  required
-                />
-              </Box>
-            )}
-          </BlueBox>
-        </Box>
-      </Modal>
-    </motion.div>
+          {workingCase.isCustodyIsolation && (
+            <Box marginTop={2}>
+              <DateTime
+                name="modifiedIsolationToDate"
+                size="sm"
+                datepickerLabel={formatMessage(
+                  m.sections.modifyDatesModal.modifiedIsolationToDateLabel,
+                )}
+                selectedDate={modifiedIsolationToDate?.value}
+                onChange={(value, valid) => {
+                  setModifiedIsolationToDate({
+                    value: value ?? modifiedIsolationToDate?.value,
+                    isValid: valid,
+                  })
+                }}
+                minDate={
+                  workingCase.rulingDate
+                    ? new Date(workingCase.rulingDate)
+                    : undefined
+                }
+                maxDate={modifiedValidToDate?.value}
+                blueBox={false}
+                required
+              />
+            </Box>
+          )}
+        </BlueBox>
+      </Box>
+    </Modal>
   )
 }
 

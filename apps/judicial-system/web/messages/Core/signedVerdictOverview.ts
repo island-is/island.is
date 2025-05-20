@@ -74,13 +74,6 @@ export const signedVerdictOverview = {
       },
     }),
     modifyDatesModal: defineMessages({
-      title: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.title_v3',
-        defaultMessage:
-          'Breyting á lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}}',
-        description:
-          'Notaður sem titill í "Breyting á lengd gæsluvarðhalds/vistunar/farbanns" glugga á yfirlitsskjá afgreiddra mála.',
-      },
       successTitle: {
         id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_title_v3',
         defaultMessage:
@@ -113,13 +106,6 @@ export const signedVerdictOverview = {
           'Hafi {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldi}} eða einangrun verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}}. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.',
         description:
           'Notaður sem texti í "Breyting á lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
-      },
-      travelBanText: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.travel_ban_text',
-        defaultMessage:
-          'Hafi farbanni verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd farbanns. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.',
-        description:
-          'Notaður sem texti í "Breyting á lengd farbanns" glugga á yfirlitsskjá afgreiddra farbannsmála.',
       },
       validToDateAndIsolationToDateAreTheSame: {
         id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.valid_to_date_and_isolation_to_date_are_the_same',
@@ -160,12 +146,6 @@ export const signedVerdictOverview = {
         defaultMessage: 'Staðfesta',
         description:
           'Notaður sem texti í staðfesta takka í "Breyta lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
-      },
-      secondaryButtonText: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.secondary_button_text',
-        defaultMessage: 'Hætta við',
-        description:
-          'Notaður sem texti í hætta við takka í "Breyta lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
       },
       modifiedValidToDateLabel: {
         id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.modified_valid_to_date_label_v3',

@@ -425,6 +425,8 @@ export const SignedVerdictOverview: FC = () => {
     (isProsecutionUser(user) && workingCase.canProsecutorAppeal) ||
     workingCase.appealState === CaseAppealState.COMPLETED
 
+  console.log(isModifyingDates)
+
   return (
     <>
       {!isLoadingAppealBanner && shouldDisplayAlertBanner && (
@@ -656,17 +658,15 @@ export const SignedVerdictOverview: FC = () => {
             onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
           />
         )}
-        <AnimatePresence mode="wait">
-          {isModifyingDates && (
-            <ModifyDatesModal
-              workingCase={workingCase}
-              onSubmit={onModifyDatesSubmit}
-              isSendingNotification={isSendingNotification}
-              isUpdatingCase={isUpdatingCase}
-              setIsModifyingDates={setIsModifyingDates}
-            />
-          )}
-        </AnimatePresence>
+        {isModifyingDates && (
+          <ModifyDatesModal
+            workingCase={workingCase}
+            onSubmit={onModifyDatesSubmit}
+            isSendingNotification={isSendingNotification}
+            isUpdatingCase={isUpdatingCase}
+            setIsModifyingDates={setIsModifyingDates}
+          />
+        )}
         {requestCourtRecordSignatureResponse && (
           <Modal
             title={
