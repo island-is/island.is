@@ -1,7 +1,6 @@
 import { forwardRef, ReactElement, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import router from 'next/router'
 import {
   Menu,
   MenuButton,
@@ -91,22 +90,14 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
 
     const handleClick = (evt: React.MouseEvent, item: ContextMenuItem) => {
       evt.stopPropagation()
-      evt.preventDefault()
 
       setOpen(false)
       setIsLoading(true)
 
-      const complete = () => setIsLoading(false)
-
-      if (item.href) {
-        router.push(item.href)
-        complete()
-        return
-      }
-
       if (item.onClick) {
         item.onClick()
-        complete()
+        setIsLoading(false)
+
         return
       }
     }
@@ -132,8 +123,10 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
                 <Box component="li" width="full">
                   <Box
                     component={item.href ? 'a' : 'button'}
+                    onClick={
+                      item.href ? undefined : (evt) => handleClick(evt, item)
+                    }
                     href={item.href ?? undefined}
-                    onClick={(evt) => handleClick(evt, item)}
                     className={cn(
                       menuItemBoxStyle,
                       menuItemTextStyle,

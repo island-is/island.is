@@ -33,7 +33,7 @@ import {
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
+import { CaseNumbers } from '../components'
 import RulingModifiedModal from './RulingModifiedModal/RulingModifiedModal'
 import { strings } from './Summary.strings'
 
@@ -104,7 +104,9 @@ const Summary: FC = () => {
         <PageHeader title={formatMessage(strings.htmlTitle)} />
         <FormContentContainer>
           <PageTitle>{formatMessage(strings.title)}</PageTitle>
+
           <CaseNumbers />
+
           <Box marginBottom={6}>
             <Conclusion
               title={formatMessage(conclusion.title)}
