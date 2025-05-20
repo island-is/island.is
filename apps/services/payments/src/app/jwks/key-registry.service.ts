@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, OnModuleInit } from '@nestjs/common'
 import { createPublicKey } from 'crypto'
 import { exportJWK } from 'jose'
 
@@ -12,14 +12,16 @@ interface JwkEntry {
 }
 
 @Injectable()
-export class KeyRegistryService {
+export class KeyRegistryService implements OnModuleInit {
   private jwkEntries: JwkEntry[] = []
 
-  constructor() {
-    this.initializeKeyRegistry()
+  async onModuleInit() {
+    await this.initialize()
   }
 
-  private async initializeKeyRegistry() {
+  async initialize() {
+    this.jwkEntries = [] // Reset entries
+
     // Add current key without expiration
     await this.addKeyToRegistry({
       kid: environment.jwtSigning.keyId,

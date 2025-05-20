@@ -78,11 +78,9 @@ describe('KeyRegistryService', () => {
       environment.jwtSigning.previousPublicKeyId = undefined
       environment.jwtSigning.previousPublicKey = undefined
 
-      // Create a new instance to trigger initialization with new environment
-      const newService = new KeyRegistryService()
-      await new Promise((resolve) => setTimeout(resolve, 0)) // Wait for async initialization
+      await service.initialize()
 
-      const result = await newService.getJwks()
+      const result = await service.getJwks()
 
       expect(result).toBeDefined()
       expect(result.keys).toHaveLength(1)
@@ -103,11 +101,9 @@ describe('KeyRegistryService', () => {
       environment.jwtSigning.previousPublicKeyId = 'previous-key'
       environment.jwtSigning.previousPublicKey = previousKeyPair.publicKey
 
-      // Create a new instance to trigger initialization with new environment
-      const newService = new KeyRegistryService()
-      await new Promise((resolve) => setTimeout(resolve, 0)) // Wait for async initialization
+      await service.initialize()
 
-      const result = await newService.getJwks()
+      const result = await service.getJwks()
 
       expect(result).toBeDefined()
       expect(result.keys).toHaveLength(2)
