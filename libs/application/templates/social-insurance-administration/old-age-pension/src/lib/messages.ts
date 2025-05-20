@@ -532,8 +532,10 @@ export const statesMessages = defineMessages({
   },
   oldAgePensionDismissed: {
     id: 'oap.application:application.dismissed',
-    defaultMessage: 'Tryggingastofnun hefur vísað umsókn þinni um ellilífeyri frá',
-    description: 'Tryggingastofnun has dismissed your old age pension application',
+    defaultMessage:
+      'Tryggingastofnun hefur vísað umsókn þinni um ellilífeyri frá',
+    description:
+      'Tryggingastofnun has dismissed your old age pension application',
   },
   oldAgePensionDismissedDescription: {
     id: 'oap.application:application.dismissed.description',

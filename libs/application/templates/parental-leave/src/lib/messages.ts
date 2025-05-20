@@ -2734,7 +2734,8 @@ export const errorMessages = defineMessages({
     id: 'pl.application:errors.start.date.in.the.past',
     defaultMessage:
       'Upphafsdagur fæðingarorlofs er lengra aftur í tímann en þrír mánuðir. Ekki er hægt að halda áfram með umsókn án breytinga.',
-    description: 'Start date is more than 3 months in the past. It is not possible to continue without editing the period.',
+    description:
+      'Start date is more than 3 months in the past. It is not possible to continue without editing the period.',
   },
   missingMultipleBirthsAnswer: {
     id: 'pl.application:errors.missing.multiple.births.answer',
