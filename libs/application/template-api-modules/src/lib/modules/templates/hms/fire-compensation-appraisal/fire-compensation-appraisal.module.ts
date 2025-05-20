@@ -4,8 +4,14 @@ import { SharedTemplateAPIModule } from '../../../shared'
 
 import { FireCompensationAppraisalService } from './fire-compensation-appraisal.service'
 import { ApplicationsNotificationsModule } from '../../../../notification/notifications.module'
+import { AssetsClientModule } from '@island.is/clients/assets'
+
 @Module({
-  imports: [SharedTemplateAPIModule, ApplicationsNotificationsModule],
+  imports: [
+    SharedTemplateAPIModule,
+    ApplicationsNotificationsModule,
+    AssetsClientModule,
+  ],
   providers: [FireCompensationAppraisalService],
   exports: [FireCompensationAppraisalService],
 })

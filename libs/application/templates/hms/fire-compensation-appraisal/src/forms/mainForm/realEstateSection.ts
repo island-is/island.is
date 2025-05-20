@@ -1,71 +1,39 @@
 import {
-  buildAsyncSelectField,
   buildMultiField,
-  buildRadioField,
   buildSection,
-  buildTextField,
+  buildSelectField,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Fasteign } from '@island.is/clients/assets'
 
 export const realEstateSection = buildSection({
   id: 'realEstateSection',
   title: 'Fasteign',
   children: [
     buildMultiField({
+      condition: (answers, externalData) => {
+        console.log(externalData)
+        return true
+      },
       id: 'realEstate',
       title: 'Fasteign',
       children: [
-        buildRadioField({
-          condition: (answers, externalData) => {
-            console.log(externalData)
-            return true
-          },
-          id: 'chooseOrSearch',
-          options: [
-            {
-              value: 'choose',
-              label: 'Velja fasteign',
-            },
-            {
-              value: 'search',
-              label: 'Skrá fasteignanúmer',
-            },
-          ],
-        }),
-        buildAsyncSelectField({
-          condition: (answers) => {
-            const chooseOrSearch = getValueViaPath<string>(
-              answers,
-              'chooseOrSearch',
-            )
-            return chooseOrSearch === 'choose'
-          },
+        buildSelectField({
           id: 'realEstate',
           title: 'Fasteign',
-          loadOptions: async (inputValue) => {
-            // Replace with actual API call
-            return [
-              {
-                label: 'Fasteign 1',
-                value: '1',
-              },
-              {
-                label: 'Fasteign 2',
-                value: '2',
-              },
-            ]
-          },
-        }),
-        buildTextField({
-          condition: (answers) => {
-            const chooseOrSearch = getValueViaPath<string>(
-              answers,
-              'chooseOrSearch',
+          options: (application) => {
+            const properties = getValueViaPath<Array<Fasteign>>(
+              application.externalData,
+              'getProperties.data',
             )
-            return chooseOrSearch === 'search'
+
+            return (
+              properties?.map((property) => ({
+                label: property?.sjalfgefidStadfang?.birting ?? '',
+                value: property.fasteignanumer ?? '',
+              })) ?? []
+            )
           },
-          id: 'realEstateNumber',
-          title: 'Fasteignanúmer',
         }),
       ],
     }),
