@@ -235,6 +235,15 @@ const FreighSchema = z
     },
   )
 
+const ConvoyItemSchema = z.object({
+  vehiclePermno: z.string(),
+  trailerPermno: z.string().optional(),
+})
+
+const ConvoySchema = z.object({
+  items: z.array(ConvoyItemSchema),
+})
+
 const FileDocumentSchema = z.object({
   name: z.string(),
   key: z.string(),
@@ -321,6 +330,7 @@ export const ExemptionForTransportationSchema = z.object({
     dateTo: z.string().min(1),
   }),
   freight: FreighSchema,
+  convoy: ConvoySchema,
   location: LocationSchema,
   supportingDocuments: z.object({
     files: z.array(FileDocumentSchema).optional(),
