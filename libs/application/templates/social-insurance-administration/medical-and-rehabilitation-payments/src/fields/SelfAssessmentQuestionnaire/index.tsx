@@ -74,11 +74,11 @@ export const SelfAssessmentQuestionnaire: FC<FieldBaseProps> = ({
     currentIndex === selfAssessmentQuestionnaireQuestions.length - 1
   const showPreviousQuestionButton = currentIndex >= 1
 
-  const gotToPreviousQuestion = (index: number) => {
+  const goToPreviousQuestion = (index: number) => {
     setCurrentIndex(index - 1)
   }
 
-  const gotToNextQuestion = async (index: number) => {
+  const goToNextQuestion = async (index: number) => {
     const isValid = await trigger(`${field.id}[${index}].answer`)
 
     if (isValid) {
@@ -180,7 +180,7 @@ export const SelfAssessmentQuestionnaire: FC<FieldBaseProps> = ({
             <Button
               variant="text"
               preTextIcon="arrowBack"
-              onClick={() => gotToPreviousQuestion(currentIndex)}
+              onClick={() => goToPreviousQuestion(currentIndex)}
             >
               {formatMessage(
                 medicalAndRehabilitationPaymentsFormMessage.selfAssessment
@@ -194,7 +194,7 @@ export const SelfAssessmentQuestionnaire: FC<FieldBaseProps> = ({
             <Button
               variant="text"
               icon="arrowForward"
-              onClick={() => gotToNextQuestion(currentIndex)}
+              onClick={() => goToNextQuestion(currentIndex)}
             >
               {formatMessage(
                 medicalAndRehabilitationPaymentsFormMessage.selfAssessment
