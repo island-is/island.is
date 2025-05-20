@@ -10,7 +10,6 @@ import {
   QualityPhotoApi,
   QualitySignatureApi,
   AllPhotosFromThodskraApi,
-  UserProfileApi,
 } from '@island.is/application/types'
 import {
   DuplicateEligibilityApi,
@@ -50,7 +49,7 @@ export const sectionDataProviders = buildSection({
           provider: DuplicateEligibilityApi,
         }),
         buildDataProviderItem({
-          provider: UserProfileApi,
+          // provider: UserProfileApi,
           title: m.dataCollectionUserProfileTitle,
           subTitle: m.dataCollectionUserProfileSubtitle,
         }),
