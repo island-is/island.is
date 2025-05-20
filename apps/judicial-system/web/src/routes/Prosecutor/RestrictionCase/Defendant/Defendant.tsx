@@ -2,7 +2,7 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   accused as m,
@@ -17,6 +17,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -149,11 +150,9 @@ export const Defendant = () => {
             </Box>
             {workingCase.defendants && (
               <Box component="section" marginBottom={5}>
-                <Box marginBottom={2}>
-                  <Text as="h3" variant="h3">
-                    {formatMessage(m.sections.accusedInfo.heading)}
-                  </Text>
-                </Box>
+                <SectionHeading
+                  title={formatMessage(m.sections.accusedInfo.heading)}
+                />
                 <DefendantInfo
                   defendant={workingCase.defendants[0]}
                   workingCase={workingCase}
@@ -178,12 +177,10 @@ export const Defendant = () => {
                   alignItems="baseline"
                   marginBottom={2}
                 >
-                  <Text as="h3" variant="h3">
-                    {formatMessage(m.sections.leadInvestigator.heading)}{' '}
-                    <Tooltip
-                      text={formatMessage(m.sections.leadInvestigator.tooltip)}
-                    />
-                  </Text>
+                  <SectionHeading
+                    title={formatMessage(m.sections.leadInvestigator.heading)}
+                    tooltip={formatMessage(m.sections.leadInvestigator.tooltip)}
+                  />
                 </Box>
                 <Box marginBottom={2}>
                   <Input
