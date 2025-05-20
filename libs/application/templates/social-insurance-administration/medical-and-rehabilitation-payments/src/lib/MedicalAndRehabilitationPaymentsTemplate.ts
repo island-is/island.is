@@ -30,9 +30,11 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
+import { ApiScope } from '@island.is/auth/scopes'
 import { CodeOwners } from '@island.is/shared/constants'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { assign } from 'xstate'
 import {
   SocialInsuranceAdministrationApplicantApi,
@@ -47,6 +49,7 @@ import {
   medicalAndRehabilitationPaymentsFormMessage,
   statesMessages,
 } from './messages'
+import { Features } from '@island.is/feature-flags'
 
 const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -60,7 +63,14 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.MedicalAndRehabilitationPayments.translation,
   dataSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [ApiScope.socialInsuranceAdministration],
   // allowMultipleApplicationsInDraft: false,
+  featureFlag: Features.medicalAndRehabilitationPayments,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
