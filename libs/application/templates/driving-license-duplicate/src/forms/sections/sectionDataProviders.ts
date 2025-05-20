@@ -10,6 +10,7 @@ import {
   NationalRegistryUserApi,
   QualityPhotoApi,
   QualitySignatureApi,
+  AllPhotosFromThodskraApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import {
@@ -31,7 +32,7 @@ export const sectionDataProviders = buildSection({
       enableMockPayment: true,
       dataProviders: [
         buildDataProviderItem({
-          //provider: MockableNationalRegistry,
+          //provider: NationalRegistryUserApi,
           title: m.dataCollectionNationalRegistryTitle,
           subTitle: m.dataCollectionNationalRegistrySubtitle,
         }),
@@ -42,6 +43,9 @@ export const sectionDataProviders = buildSection({
         }),
         buildDataProviderItem({
           provider: QualitySignatureApi,
+        }),
+        buildDataProviderItem({
+          provider: AllPhotosFromThodskraApi,
         }),
         buildDataProviderItem({
           provider: DuplicateEligibilityApi,

@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { requirementsMet } from '../../lib/utils'
-import { SvgImage } from '../../assets/test'
+import { createPhotoComponent } from '../../fields/CreatePhoto'
 
 export const sectionSignatureAndPhoto = buildSection({
   id: 'signatureAndPhoto',
@@ -45,26 +45,28 @@ export const sectionSignatureAndPhoto = buildSection({
             ) === true,
         }),
         buildRadioField({
-          id: 'testSelectPhoto',
+          id: 'selectPhotoFromThodskra',
           width: 'full',
           backgroundColor: 'white',
-          options: [
-            {
-              value: '1',
-              label: 'Test mynd 1',
-              illustration: SvgImage,
-            },
-            {
-              value: '2',
-              label: 'Test mynd 2',
-              illustration: SvgImage,
-            },
-            {
-              value: '3',
-              label: 'Test mynd 3',
-              illustration: SvgImage,
-            },
-          ],
+          options: ({ externalData }) => {
+            const photos: {
+              biometricId: string
+              content: string
+            }[] =
+              getValueViaPath(
+                externalData,
+                'allPhotosFromThodskra.data.images',
+                [],
+              ) || []
+
+            return photos?.map((photo, index) => ({
+              value: photo.biometricId,
+              label: `Photo ${index + 1}`,
+              illustration: photo.content
+                ? createPhotoComponent(photo.content)
+                : undefined,
+            }))
+          },
         }),
       ],
     }),

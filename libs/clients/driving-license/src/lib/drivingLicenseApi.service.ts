@@ -17,7 +17,7 @@ import {
   Remark,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
-import { PracticePermitDto, DriverLicenseWithoutImagesDto } from '../v5'
+import { PracticePermitDto, DriverLicenseWithoutImagesDto, ImagesFromThjodskraDto } from '../v5'
 
 @Injectable()
 export class DrivingLicenseApi {
@@ -648,7 +648,9 @@ export class DrivingLicenseApi {
     }
   }
 
-  async getHasQualityScannedPhoto(params: { token: string }): Promise<boolean> {
+  async getHasQualityScannedPhoto(params: {
+    token: string
+  }): Promise<boolean> {
     const res =
       await this.imageApiV5.apiImagecontrollerV5HasqualityscannedphotoGet({
         apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -657,6 +659,19 @@ export class DrivingLicenseApi {
       })
 
     return res > 0
+  }
+
+  async getAllPhotosFromThjodskra(params: {
+    token: string
+  }): Promise<ImagesFromThjodskraDto> {
+    const res =
+      await this.imageApiV5.apiImagecontrollerV5FromnationalregistryGet({
+        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+        jwttoken: params.token.replace('Bearer ', ''),
+      })
+
+    return res
   }
 
   async getAllDriverLicenses(

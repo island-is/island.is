@@ -295,6 +295,12 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
+  async allPhotosFromThodskra({auth }: TemplateApiModuleActionProps) {
+    return await this.drivingLicenseService.getAllPhotosFromThjodskra({
+      token: auth.authorization,
+    })
+  }
+
   async jurisdictions(): Promise<Jurisdiction[]> {
     return await this.drivingLicenseService.getListOfJurisdictions()
   }

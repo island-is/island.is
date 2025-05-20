@@ -37,6 +37,11 @@ export const QualitySignatureApi = defineTemplateApi({
   namespace,
 })
 
+export const AllPhotosFromThodskraApi = defineTemplateApi({
+  action: 'allPhotosFromThodskra',
+  namespace,
+})
+
 export const DrivingAssessmentApi = defineTemplateApi({
   action: 'drivingAssessment',
   namespace,
