@@ -394,13 +394,13 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
                     })
                   }}
                 >
-                  XOR default
+                  Bitwise OR default
                   <Tooltip
                     placement="right"
                     text={
                       <Text variant="small">
                         Only turn on what is in the default editable entry list
-                        and leave everything else like it was
+                        and leave everything else like it was (bitwise OR)
                       </Text>
                     }
                   />
