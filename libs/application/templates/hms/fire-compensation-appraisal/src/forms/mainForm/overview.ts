@@ -22,10 +22,6 @@ export const overviewSection = buildSection({
       description: m.overviewMessages.description,
       children: [
         buildOverviewField({
-          condition: (application) => {
-            console.log(application)
-            return true
-          },
           id: 'personalInformationOverview',
           title: m.personalInformationMessages.title,
           backId: 'personalInformation',

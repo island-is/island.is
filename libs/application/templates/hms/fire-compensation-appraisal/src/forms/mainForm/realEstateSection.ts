@@ -16,6 +16,10 @@ export const realEstateSection = buildSection({
       title: 'Fasteign',
       children: [
         buildRadioField({
+          condition: (answers, externalData) => {
+            console.log(externalData)
+            return true
+          },
           id: 'chooseOrSearch',
           options: [
             {
