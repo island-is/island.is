@@ -42,6 +42,7 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationQuestionnairesApi,
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
 import { getApplicationAnswers } from './medicalAndRehabilitationPaymentsUtils'
@@ -109,6 +110,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationCategorizedIncomeTypesApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIncomePlanConditionsApi,
+                SocialInsuranceAdministrationQuestionnairesApi,
               ],
               delete: true,
             },

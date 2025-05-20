@@ -689,6 +689,68 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Sjálfsmat',
       description: 'Self-assessment',
     },
+    title: {
+      id: 'marp.application:self.assessment.title',
+      defaultMessage: 'Spurningalisti vegna færniskerðingar',
+      description: 'Questionnaire for skills impairment',
+    },
+    description: {
+      id: 'marp.application:self.assessment.description',
+      defaultMessage:
+        'Þessi hluti inniheldur spurningar um hvernig þú upplifir eigin færni í daglegu lífi og starfi. Hér getur verið um að ræða líkamlega, andlega eða félagslega þætti sem geta haft áhrif á getu þína til að sinna daglegum athöfnum, starfi og frístundum. \n\nHafðu í huga að um er að ræða umfangsmikinn lista yfir atriði sem eiga ekki endilega við þig. Því er mikilvægt að þú metir hvernig þú upplifir stöðuna eins og hún er núna, ekki hvernig hún var áður eða hvernig þú vilt að hún verði.',
+      description:
+        'This section contains questions about how you experience your own skills in everyday life and work. These may include physical, mental, or social factors that can affect your ability to carry out daily activities, work, and leisure activities. \n\nKeep in mind that this is an extensive list of subjects that do not necessarily apply to you. Therefore, it is important that you evaluate how you experience your situation as it is at the present time, not how it was before or how you would like it to be.',
+    },
+    questionNumber: {
+      id: 'marp.application:self.assessment.question.number',
+      defaultMessage: 'Spurning {index} af {total}',
+      description: 'Question {index} of {total}',
+    },
+    previousQuestion: {
+      id: 'marp.application:self.assessment.previous.question',
+      defaultMessage: 'Fyrri spurning',
+      description: 'Previous question',
+    },
+    nextQuestion: {
+      id: 'marp.application:self.assessment.next.question',
+      defaultMessage: 'Næsta spurning',
+      description: 'Next question',
+    },
+    noDifficultyOption: {
+      id: 'marp.application:self.assessment.no.difficulty.option',
+      defaultMessage: 'Enginn vandi',
+      description: 'No difficulty',
+    },
+    minorDifficultyOption: {
+      id: 'marp.application:self.assessment.minor.difficulty.option',
+      defaultMessage: 'Vægur vandi',
+      description: 'Minor difficulty',
+    },
+    moderateDifficultyOption: {
+      id: 'marp.application:self.assessment.moderate.difficulty.option',
+      defaultMessage: 'Miðlungs vandi',
+      description: 'Moderate difficulty',
+    },
+    majorDifficultyOption: {
+      id: 'marp.application:self.assessment.major.difficulty.option',
+      defaultMessage: 'Mikill vandi',
+      description: 'Major difficulty',
+    },
+    completeInabilityOption: {
+      id: 'marp.application:self.assessment.complete.inability.option',
+      defaultMessage: 'Algjör vandi',
+      description: 'Complete inability',
+    },
+    noAnswerOption: {
+      id: 'marp.application:self.assessment.no.answer.option',
+      defaultMessage: 'Get/vil ekki svara',
+      description: 'Cannot/will not answer',
+    },
+    completeSelfAssessment: {
+      id: 'marp.application:self.assessment.complete.self.assessment',
+      defaultMessage: 'Ljúka sjálfsmati',
+      description: 'Complete self-assessment',
+    },
   }),
 
   overview: defineMessages({
@@ -706,6 +768,11 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:overiew.rehabilitation.plan.confirmed',
       defaultMessage: 'Þú hefur staðfest endurhæfingaráætlunina',
       description: 'You have confirmed your rehabilitation plan',
+    },
+    selfAssessmentConfirmed: {
+      id: 'marp.application:overiew.self.assessment.confirmed',
+      defaultMessage: 'Þú hefur lokið við að svara spurningalista',
+      description: 'You have completed answering the questionnaire',
     },
   }),
 

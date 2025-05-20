@@ -18,6 +18,7 @@ import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
+  SocialInsuranceAdministrationQuestionnairesApi,
 } from '../../dataProviders'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
 
@@ -120,6 +121,9 @@ export const externalDataSubSection = buildSubSection({
           subTitle:
             socialInsuranceAdministrationMessage.pre
               .socialInsuranceAdministrationPrivacyDescription,
+        }),
+        buildDataProviderItem({
+          provider: SocialInsuranceAdministrationQuestionnairesApi,
         }),
         // // TODO: Put this back in when isEligible is ready
         // buildDataProviderItem({
