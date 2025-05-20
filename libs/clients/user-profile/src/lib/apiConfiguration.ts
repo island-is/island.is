@@ -28,6 +28,8 @@ export const ApiConfiguration = {
             overrideCacheControl: config.cacheControl,
           }
 
+    //DEPLOYME
+
     return new Configuration({
       basePath: config.basePath,
       fetchApi: createEnhancedFetch({
