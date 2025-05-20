@@ -13,15 +13,27 @@ export const SubmittedForm: Form = buildForm({
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({
-      id: 'prequisites.section',
+      title: m.requirements.approval.sectionTitle,
       children: [],
     }),
     buildSection({
       id: 'draft.section',
+      title: m.draft.sections.advert.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'publishing.section',
+      id: 'publishing',
+      title: m.draft.sections.publishing.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'preview',
+      title: m.draft.sections.preview.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: m.draft.sections.confirmation.sectionTitle,
       children: [],
     }),
     buildSection({

@@ -515,4 +515,22 @@ export const m = {
       },
     }),
   },
+  approved: defineMessages({
+    sectionTitle: {
+      id: 'lg.application:approved.section.title',
+      defaultMessage: 'Umsókn lokið',
+      description: 'Heiti kafla fyrir staðfestingu umsóknar',
+    },
+    formTitle: {
+      id: 'lg.application:approved.form.title',
+      defaultMessage: 'Umsóknin lokið',
+      description: 'Titill á formi fyrir staðfestingu umsóknar',
+    },
+    formIntro: {
+      id: 'lg.application:approved.form.intro',
+      defaultMessage:
+        'Umsóknin hefur lokið vinnslu og auglýsing birt í Lögbirtingablaðinu',
+      description: 'Inngangur á formi fyrir staðfestingu umsóknar',
+    },
+  }),
 }
