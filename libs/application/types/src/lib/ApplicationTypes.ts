@@ -1,5 +1,6 @@
 export enum ApplicationTypes {
   EXAMPLE = 'ExampleForm',
+  EXAMPLE_AUTH_DELEGATION = 'ExampleAuthDelegation',
   EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
   EXAMPLE_INPUTS = 'ExampleInputs',
   EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
@@ -109,6 +110,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
     slug: 'example-payment',
     translation: 'ep.application',
+  },
+  [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: {
+    slug: 'example-auth-delegation',
+    translation: 'exad.application',
   },
   [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
     slug: 'example-state-transfers',
