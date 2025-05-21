@@ -15,6 +15,7 @@ import {
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
 const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
+const serviceBirthdayWorkerName = `${serviceName}-birthday-worker`
 const imageName = `services-${serviceName}`
 const MAIN_QUEUE_NAME = serviceName
 const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
@@ -33,7 +34,8 @@ const getEnv = (services: {
     (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
   ),
   AUTH_DELEGATION_API_URL: {
-    dev: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
+    dev:
+      'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
     staging:
       'http://services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
     prod: 'https://auth-delegation-api.internal.innskra.island.is',
@@ -193,6 +195,34 @@ export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
     .migrations()
     .extraAttributes({
       dev: { schedule: '@hourly' },
+      staging: { schedule: '@midnight' },
+      prod: { schedule: '@midnight' },
+    })
+
+export const userNotificationBirthdayWorkerSetup = (services: {
+  userProfileApi: ServiceBuilder<'service-portal-api'>
+}): ServiceBuilder<typeof serviceBirthdayWorkerName> =>
+  service(serviceBirthdayWorkerName)
+    .image(imageName)
+    .namespace(serviceName)
+    .serviceAccount(serviceBirthdayWorkerName)
+    .codeOwner(CodeOwners.Juni)
+    .db({ name: 'user-notification' })
+    .command('node')
+    .args('--no-experimental-fetch', 'main.js', '--job=worker')
+    .redis()
+    .env({ ...getEnv(services) })
+    .secrets({
+      FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
+      CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
+      IDENTITY_SERVER_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
+      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+    })
+    .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
+    .extraAttributes({
+      dev: { schedule: '0 12 * * *' }, // 12 at noon every day
       staging: { schedule: '@midnight' },
       prod: { schedule: '@midnight' },
     })
