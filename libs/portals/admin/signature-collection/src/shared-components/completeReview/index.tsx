@@ -53,7 +53,11 @@ const ActionReviewComplete = ({
   return (
     <Box marginTop={12}>
       <Box display="flex" justifyContent="spaceBetween">
-        <ActionLockList listId={listId} listStatus={listStatus} />
+        <ActionLockList
+          listId={listId}
+          listStatus={listStatus}
+          collectionType={collectionType}
+        />
         <Button
           iconType="outline"
           variant="ghost"
