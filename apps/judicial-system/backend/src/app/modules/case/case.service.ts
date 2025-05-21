@@ -185,6 +185,7 @@ export interface UpdateCase
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
     | 'hasCivilClaims'
+    | 'isRegisteredInPrisonSystem'
   > {
   type?: CaseType
   state?: CaseState

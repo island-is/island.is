@@ -1,3 +1,3 @@
 # Application Templates driving-license-duplicate
 
-Application for driving license "samrit" 
+Application for driving license "samrit"
