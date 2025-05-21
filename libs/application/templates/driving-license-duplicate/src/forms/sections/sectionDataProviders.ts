@@ -9,7 +9,7 @@ import {
   JurisdictionApi,
   QualityPhotoApi,
   QualitySignatureApi,
-  AllPhotosFromThodskraApi,
+  AllPhotosFromThjodskraApi,
 } from '@island.is/application/types'
 import {
   DuplicateEligibilityApi,
@@ -43,7 +43,7 @@ export const sectionDataProviders = buildSection({
           provider: QualitySignatureApi,
         }),
         buildDataProviderItem({
-          provider: AllPhotosFromThodskraApi,
+          provider: AllPhotosFromThjodskraApi,
         }),
         buildDataProviderItem({
           provider: DuplicateEligibilityApi,

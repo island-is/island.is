@@ -97,7 +97,7 @@ export const sectionOverview = buildSection({
           titleVariant: 'h4',
         }),
         buildCheckboxField({
-          id: 'overview.confirmationCheckbox',
+          id: 'overviewConfirmationCheckbox',
           defaultValue: [],
           options: [
             {

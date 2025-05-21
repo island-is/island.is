@@ -10,7 +10,6 @@ import {
 import {
   StudentAssessment,
   DrivingLicenseFakeData,
-  HasQualityPhoto,
   DrivingLicense,
   HasQualitySignature,
 } from './types'
@@ -241,7 +240,10 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   async qualityPhoto({
     auth,
     application,
-  }: TemplateApiModuleActionProps): Promise<HasQualityPhoto> {
+  }: TemplateApiModuleActionProps): Promise<{
+    hasQualityPhoto: boolean
+    qualityPhoto: string | null
+  }> {
     // If running locally or on dev allow for fake data
     const useFakeData = getValueViaPath<'yes' | 'no'>(
       application.answers,
@@ -253,13 +255,19 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
         application.answers,
         'fakeData.qualityPhoto',
       )
-      return { hasQualityPhoto: hasQualityPhoto === 'yes' }
+      return { hasQualityPhoto: hasQualityPhoto === 'yes', qualityPhoto: null }
     }
     const hasQualityPhoto = await this.drivingLicenseService.getHasQualityPhoto(
       { token: auth.authorization },
     )
+
+    const qualityPhoto = await this.drivingLicenseService.getQualityPhoto({
+      token: auth.authorization,
+    })
+
     return {
       hasQualityPhoto,
+      qualityPhoto: qualityPhoto?.data || null,
     }
   }
 
@@ -295,7 +303,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  async allPhotosFromThodskra({auth }: TemplateApiModuleActionProps) {
+  async allPhotosFromThjodskra({ auth }: TemplateApiModuleActionProps) {
     return await this.drivingLicenseService.getAllPhotosFromThjodskra({
       token: auth.authorization,
     })

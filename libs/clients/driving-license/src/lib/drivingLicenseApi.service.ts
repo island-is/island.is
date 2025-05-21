@@ -587,8 +587,9 @@ export class DrivingLicenseApi {
     districtId: number
     stolenOrLost: boolean
     pickUpLicense: boolean
+    imageBiometricsId: string | null
   }): Promise<number> {
-    const { districtId, token, stolenOrLost, pickUpLicense } = params
+    const { districtId, token, stolenOrLost, pickUpLicense, imageBiometricsId } = params
     return await this.v5.apiDrivinglicenseV5ApplicationsNewCollaborativePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -598,6 +599,7 @@ export class DrivingLicenseApi {
         licenseStolenOrLost: stolenOrLost,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
         pickUpLicense,
+        imageBiometricsId
       },
     })
   }
