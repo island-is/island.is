@@ -13,6 +13,7 @@ import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import { Query } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
@@ -50,6 +51,7 @@ const OrganizationParentSubpage: Screen<
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
   useContentfulId(organizationPage.id, parentSubpage.id, subpage.id)
+  useLocalLinkTypeResolver()
 
   return (
     <OrganizationWrapper
