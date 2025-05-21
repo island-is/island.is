@@ -63,16 +63,16 @@ export class ApplicationService {
     startDate: string,
     endDate: string,
   ): Promise<ApplicationsStatistics[]> {
-    const query = `SELECT
-        type_id as typeid,
-        COUNT(*) as count,
+    const query = `SELECT 
+        type_id as typeid, 
+        COUNT(*) as count, 	
         COUNT(*) FILTER (WHERE status = 'draft') AS draft,
-        COUNT(*) FILTER (WHERE status = 'inprogress') AS inprogress,
-        COUNT(*) FILTER (WHERE status = 'completed') AS completed,
-        COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,
-        COUNT(*) FILTER (WHERE status = 'approved') AS approved
-      FROM public.application
-      WHERE modified BETWEEN :startDate AND :endDate
+        COUNT(*) FILTER (WHERE status = 'inprogress') AS inprogress,    
+        COUNT(*) FILTER (WHERE status = 'completed') AS completed,	
+        COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,	
+        COUNT(*) FILTER (WHERE status = 'approved') AS approved 
+      FROM public.application 
+      WHERE modified BETWEEN :startDate AND :endDate 
       GROUP BY typeid;`
 
     return this.sequelize.query<ApplicationsStatistics>(query, {
@@ -200,28 +200,22 @@ export class ApplicationService {
     const typeIds = typeId?.split(',')
     const statuses = status?.split(',')
 
-    const applicantAccessConditions: WhereOptions = actor
-      ? {
-          // Delegation Is active we get applications for the delegator AND where we are one of the actors
-          [Op.and]: [
-            { applicant: { [Op.eq]: nationalId } },
-            { applicantActors: { [Op.contains]: [actor] } },
-          ],
-        }
-      : {
-          // Delegation Is not active we get applications for the nationalId OR where we are one of the assignees
-          [Op.or]: [
-            { applicant: { [Op.eq]: nationalId } },
-            { assignees: { [Op.contains]: [nationalId] } },
-          ],
-        }
-
     return this.applicationModel.findAll({
       where: {
         ...(typeIds ? { typeId: { [Op.in]: typeIds } } : {}),
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),
         [Op.and]: [
-          applicantAccessConditions,
+          {
+            [Op.or]: [
+              ...(actor
+                ? [
+                    { applicant: nationalId },
+                    { applicantActors: { [Op.contains]: [actor] } },
+                  ]
+                : [{ applicant: { [Op.eq]: nationalId } }]),
+              ...[{ assignees: { [Op.contains]: [nationalId] } }],
+            ],
+          },
           showPruned ? {} : applicationIsNotSetToBePruned(),
         ],
         isListed: {
