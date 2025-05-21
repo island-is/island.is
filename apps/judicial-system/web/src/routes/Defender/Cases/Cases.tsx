@@ -6,8 +6,8 @@ import { AlertMessage, Box, Tabs, Text } from '@island.is/island-ui/core'
 import { isCompletedCase } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  CasesLayout,
   PageHeader,
-  SharedPageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -72,7 +72,7 @@ export const Cases: FC = () => {
   }
 
   return (
-    <SharedPageLayout>
+    <CasesLayout>
       <PageHeader title={formatMessage(titles.defender.cases)} />
       {error ? (
         <div
@@ -156,7 +156,7 @@ export const Cases: FC = () => {
           },
         ]}
       />
-    </SharedPageLayout>
+    </CasesLayout>
   )
 }
 
