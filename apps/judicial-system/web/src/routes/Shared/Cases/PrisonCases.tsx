@@ -279,12 +279,8 @@ export const PrisonCases: FC = () => {
       <div className={styles.infoContainer}>
         <AlertMessage
           type="info"
-          title={formatMessage(
-            m.activeRequests.prisonStaffUsers.infoContainerTitle,
-          )}
-          message={formatMessage(
-            m.activeRequests.prisonStaffUsers.infoContainerText,
-          )}
+          title="Engin mál fundust"
+          message="Engin mál fundust í þessum flokk"
         />
       </div>
     )
