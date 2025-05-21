@@ -143,6 +143,7 @@ export type RepeaterItem = {
   disabled?: MaybeWithApplicationAndActiveField<boolean>
   isClearable?: MaybeWithApplicationAndActiveField<boolean>
   defaultValue?: MaybeWithApplicationAndActiveField<unknown>
+  index?: MaybeWithApplicationAndActiveField<number>
   updateValueObj?: {
     valueModifier: (
       application: Application,

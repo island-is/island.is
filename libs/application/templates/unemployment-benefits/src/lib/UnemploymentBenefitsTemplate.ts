@@ -22,7 +22,7 @@ import {
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { application as applicationMessages } from './messages'
-import { WorkMachineLicensesApi } from '../dataProviders'
+import { UnemploymentApi, WorkMachineLicensesApi } from '../dataProviders'
 
 const UnemploymentBenefitsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -65,6 +65,7 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
                 NationalRegistrySpouseApi,
                 NationalRegistryUserApi,
                 ChildrenCustodyInformationApi,
+                UnemploymentApi,
               ],
               delete: true,
             },

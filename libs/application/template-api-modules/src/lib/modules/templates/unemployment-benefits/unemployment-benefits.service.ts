@@ -14,6 +14,7 @@ import {
   DriversLicense,
   DrivingLicenseApi,
 } from '@island.is/clients/driving-license'
+import { VmstUnemploymentClientService } from '@island.is/clients/vmst-unemployment'
 
 @Injectable()
 export class UnemploymentBenefitsService extends BaseTemplateApiService {
@@ -22,6 +23,7 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     private readonly notificationsService: NotificationsService,
     private readonly workMachineClientService: WorkMachinesClientService,
     private readonly drivingLicenceClientService: DrivingLicenseApi,
+    private readonly vmstUnemploymentClientService: VmstUnemploymentClientService,
   ) {
     super(ApplicationTypes.UNEMPLOYMENT_BENEFITS)
   }
@@ -59,5 +61,12 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     return await this.drivingLicenceClientService.getCurrentLicense({
       token: auth.authorization,
     })
+  }
+
+  async getEmptyApplication() {
+    const results =
+      await this.vmstUnemploymentClientService.getEmptyApplication()
+    console.log('results', results)
+    return null
   }
 }

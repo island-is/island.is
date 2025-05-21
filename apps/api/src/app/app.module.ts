@@ -151,6 +151,10 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
 import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
 import { WorkAccidentClientConfig } from '@island.is/clients/work-accident-ver'
+import {
+  VmstUnemploymentClientConfig,
+  VmstUnemploymentClientModule,
+} from '@island.is/clients/vmst-unemployment'
 
 import {
   ConfigModule,
@@ -351,6 +355,7 @@ const environment = getConfig
     HealthDirectorateModule,
     VerdictsModule,
     SecondarySchoolApiModule,
+    VmstUnemploymentClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -456,6 +461,7 @@ const environment = getConfig
         SecondarySchoolClientConfig,
         NationalRegistryV3ApplicationsClientConfig,
         PaymentsApiModuleConfig,
+        VmstUnemploymentClientConfig,
       ],
     }),
   ],

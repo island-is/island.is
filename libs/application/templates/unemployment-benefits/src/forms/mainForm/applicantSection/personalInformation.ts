@@ -35,7 +35,7 @@ export const applicantInformationSubSection = buildSubSection({
         buildTextField({
           id: 'applicant.password',
           title: applicantMessages.labels.passwordLabel,
-          placeholder: '123ABC',
+          placeholder: 'TODO',
           // defaultValue: (application: Application) => {
           //   const password = getValueViaPath<string>(
           //     application.externalData,
@@ -90,15 +90,15 @@ export const applicantInformationSubSection = buildSubSection({
               : false
           },
         }),
-        buildTextField({
-          id: 'applicant.serviceOffice',
-          title: applicantMessages.labels.email,
-          backgroundColor: 'white',
-          readOnly: true,
-          defaultValue: (application: Application) => {
-            return 'TODO'
-          },
-        }),
+        // buildTextField({
+        //   id: 'applicant.serviceOffice',
+        //   title: applicantMessages.labels.email,
+        //   backgroundColor: 'white',
+        //   readOnly: true,
+        //   defaultValue: (application: Application) => {
+        //     return 'TODO'
+        //   },
+        // }),
       ],
     }),
   ],

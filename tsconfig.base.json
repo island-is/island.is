@@ -883,6 +883,9 @@
       ],
       "@island.is/clients/verdicts": ["libs/clients/verdicts/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
+      "@island.is/clients/vmst-unemployment": [
+        "libs/clients/vmst-unemployment/src/index.ts"
+      ],
       "@island.is/clients/work-accident-ver": [
         "libs/clients/work-accident-ver/src/index.ts"
       ],
@@ -1199,11 +1202,7 @@
       "application/templates/name-of-application": [
         "libs/application/templates/name-of-application/src/index.ts"
       ],
-      "clients/vmst-unemployment": [
-        "libs/clients/vmst-unemployment/src/index.ts"
-      ],
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
-      "vmst-unemployment": ["clients/vmst-unemployment/src/index.ts"]
     }
   }
 }

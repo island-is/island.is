@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'clients-vmst-unemployment',
+  displayName: 'vmstUnemployment',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

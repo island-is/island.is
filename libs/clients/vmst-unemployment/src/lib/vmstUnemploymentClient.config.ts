@@ -3,9 +3,9 @@ import { z } from 'zod'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
-  fetch: z.object({
-    timeout: z.number().int(),
-  }),
+  // fetch: z.object({
+  //   timeout: z.number().int(),
+  // }),
   username: z.string(),
   password: z.string(),
 })
@@ -16,15 +16,15 @@ export const VmstUnemploymentClientConfig = defineConfig({
   load(env) {
     return {
       xRoadServicePath: env.required(
-        'DRIVING_LICENSE_BOOK_XROAD_PATH',
-        'IS-DEV/GOV/10003/VMST-Protected',
+        'VMST_UNEMPLOYMENT_XROAD_PATH',
+        'IS-DEV/GOV/10003/VMST-Protected/XRoadDev-v1',
       ),
-      fetch: {
-        timeout:
-          env.optionalJSON('XROAD_DRIVING_LICENSE_BOOK_TIMEOUT') ?? 10000,
-      },
-      username: env.required('DRIVING_LICENSE_BOOK_USERNAME', ''),
-      password: env.required('DRIVING_LICENSE_BOOK_PASSWORD', ''),
+      // fetch: {
+      //   timeout:
+      //     env.optionalJSON('TIMEOUT') ?? 10000,
+      // },
+      username: env.required('XROAD_VMST_UNEMPLOYMENT_USERNAME', ''),
+      password: env.required('XROAD_VMST_UNEMPLOYMENT_PASSWORD', ''),
     }
   },
 })

@@ -14,7 +14,7 @@ import {
   NationalRegistrySpouseApi,
   ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
-import { WorkMachineLicensesApi } from '../../dataProviders'
+import { UnemploymentApi, WorkMachineLicensesApi } from '../../dataProviders'
 import Logo from '../../assets/Logo'
 
 export const Prerequisites = buildForm({
@@ -56,6 +56,12 @@ export const Prerequisites = buildForm({
               title: 'WorkMachineLicensesApi',
               subTitle: 'WorkMachineLicensesApi',
             }),
+            buildDataProviderItem({
+              provider: UnemploymentApi,
+              title: 'UnemploymentApi',
+              subTitle: 'UnemploymentApi',
+            }),
+
             // buildDataProviderItem({
             //   provider: DrivingLicenseApi,
             //   title: 'DrivingLicenseApi',

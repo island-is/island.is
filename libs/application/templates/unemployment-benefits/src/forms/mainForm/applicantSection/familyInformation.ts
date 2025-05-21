@@ -1,9 +1,12 @@
 import {
   buildDescriptionField,
+  buildFieldsRepeaterField,
   buildMultiField,
+  buildRepeater,
   buildSubSection,
 } from '@island.is/application/core'
 import { applicant as applicantMessages } from '../../../lib/messages'
+import { Application } from '@island.is/application/types'
 
 export const familyInformationSubSection = buildSubSection({
   id: 'familyInformationSubSection',
@@ -13,8 +16,23 @@ export const familyInformationSubSection = buildSubSection({
       id: 'familyInformationSubSection',
       title: applicantMessages.familyInformation.pageTitle,
       children: [
-        buildDescriptionField({
-          id: 'test',
+        buildFieldsRepeaterField({
+          id: 'familyInformation.children',
+          minRows: 2,
+          fields: {
+            name: {
+              label: 'Nafn barns',
+              type: 'text',
+              readonly: true,
+              component: 'input',
+            },
+            nationalId: {
+              label: 'Kennitala barns',
+              type: 'text',
+              readonly: true,
+              component: 'input',
+            },
+          },
         }),
       ],
     }),

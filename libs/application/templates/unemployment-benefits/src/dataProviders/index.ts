@@ -9,3 +9,8 @@ export const WorkMachineLicensesApi = defineTemplateApi({
 //   action: 'getDrivingLicense',
 //   externalDataId: 'drivingLicense',
 // })
+
+export const UnemploymentApi = defineTemplateApi({
+  action: 'getEmptyApplication',
+  externalDataId: 'test',
+})
