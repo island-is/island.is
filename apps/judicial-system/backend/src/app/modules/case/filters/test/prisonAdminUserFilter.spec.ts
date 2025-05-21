@@ -88,7 +88,11 @@ describe.each(prisonSystemRoles)('prison admin user %s', (role) => {
             'accessible case decision %s',
             (decision) => {
               const theCase = { type, state, decision } as Case
-              verifyReadAccess(theCase, user)
+              if (type === CaseType.CUSTODY) {
+                verifyFullAccess(theCase, user)
+              } else {
+                verifyReadAccess(theCase, user)
+              }
             },
           )
         },
