@@ -40,7 +40,7 @@ export const AdvertField = ({ application, errors }: LGFieldBaseProps) => {
       value={defaultHtml}
       onChange={handleChange}
       onBlur={handleBlur}
-      fileUploader={() => Promise.resolve({} as any)}
+      fileUploader={() => Promise.resolve({} as unknown)}
     />
   )
 }
