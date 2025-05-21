@@ -3,7 +3,6 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import {
   ApplicantChildCustodyInformation,
   NationalRegistryIndividual,
-  NationalRegistrySpouse,
   NationalRegistryParameters,
   NationalRegistryBirthplace,
   NationalRegistryResidenceHistory,
@@ -12,8 +11,7 @@ import {
   NationalRegistryMaritalTitle,
   BirthplaceParameters,
   NationalRegistryCustodian,
-  NormalizedNationalRegistrySpouse,
-  SpouseSource,
+  NationalRegistrySpouseV3,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -22,6 +20,7 @@ import { AssetsXRoadService } from '@island.is/api/domains/assets'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
 import { EES } from './EES'
+import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class NationalRegistryService extends BaseTemplateApiService {
@@ -197,6 +196,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
   async getIndividual(
     nationalId: string,
+    auth?: User,
     params: NationalRegistryParameters | undefined = undefined,
   ): Promise<NationalRegistryIndividual | null> {
     const person = await this.nationalRegistryApi.getIndividual(nationalId)
@@ -419,55 +419,22 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
   async getSpouse({
     auth,
-  }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouse | null> {
-    const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
-      auth.nationalId,
-    )
-
-    const newCohabitationInfo = await this.nationalRegistryV3Api.getSpouse(auth)
-
-    let normalizedCohabitationInformation: NormalizedNationalRegistrySpouse
-    if (newCohabitationInfo.sambud?.sambud) {
-      normalizedCohabitationInformation = {
-        source: SpouseSource.SAMBUD,
-        spouseName: newCohabitationInfo.sambud.nafnMaka || '',
-        spouseNationalId: newCohabitationInfo.sambud.kennitalaMaka || '',
-        status: newCohabitationInfo.sambud.sambudTexti || '',
-        lastModified: newCohabitationInfo.sambud.dagsetningBreytt,
-      }
-    } else {
-      normalizedCohabitationInformation = {
-        source: SpouseSource.HJUSKAPUR,
-        spouseName: newCohabitationInfo.hjuskapur?.nafnMaka || '',
-        spouseNationalId: newCohabitationInfo.hjuskapur?.kennitalaMaka || '',
-        status: newCohabitationInfo.hjuskapur?.hjuskaparTexti || '',
-        code: newCohabitationInfo.hjuskapur?.hjuskaparKodi || '',
-        lastModified: newCohabitationInfo.hjuskapur?.dagsetningBreytt,
-      }
-    }
-
-    const spouseBirthPlace = cohabitationInfo
-      ? await this.nationalRegistryApi.getBirthplace(
-          cohabitationInfo.spouseNationalId,
-        )
-      : undefined
+  }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouseV3 | null> {
+    const cohabitationInfo =
+      await this.nationalRegistryV3Api.getCohabitationInfo(
+        auth.nationalId,
+        auth,
+      )
     const spouseIndividual = cohabitationInfo
-      ? await this.getIndividual(cohabitationInfo.spouseNationalId)
+      ? await this.getIndividual(cohabitationInfo.spouseNationalId, auth)
       : undefined
 
     return (
       cohabitationInfo && {
-        nationalId: normalizedCohabitationInformation.spouseNationalId,
-        name: normalizedCohabitationInformation.spouseName,
-        marriedOrCohabitaiton: normalizedCohabitationInformation.source,
-        maritalStatus: normalizedCohabitationInformation.status,
-        lastModified: normalizedCohabitationInformation.lastModified,
-        birthplace: spouseBirthPlace && {
-          dateOfBirth: spouseBirthPlace.birthdate,
-          location: spouseBirthPlace.locality,
-          municipalityCode: spouseBirthPlace.municipalityNumber,
-        },
-        citizenship: spouseIndividual?.citizenship,
+        nationalId: cohabitationInfo.spouseNationalId,
+        name: cohabitationInfo.spouseName,
+        maritalStatus: cohabitationInfo.cohabitationCode,
+        lastModified: cohabitationInfo.lastModified,
         address: spouseIndividual?.address,
       }
     )

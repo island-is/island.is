@@ -8,6 +8,11 @@ import {
   LogheimiliDTO,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import {
+  CohabitationDto,
+  formatCohabitationDtoV3FromHju,
+  formatCohabitationDtoV3FromSam,
+} from './types/cohabitation.dto'
 
 @Injectable()
 export class NationalRegistryV3ApplicationsClientService {
@@ -44,6 +49,25 @@ export class NationalRegistryV3ApplicationsClientService {
     ).einstaklingarKennitalaHjuskapurGet({
       kennitala: auth.nationalId,
     })
+  }
+
+  async getCohabitationInfo(
+    nationalId: string,
+    auth: User,
+  ): Promise<CohabitationDto | null> {
+    const res = await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaHjuskapurGet({
+      kennitala: nationalId,
+    })
+
+    if (res.sambud?.sambud) {
+      return formatCohabitationDtoV3FromSam(res.sambud, res.hjuskapur)
+    } else if (res.hjuskapur && res.hjuskapur.kennitalaMaka) {
+      return formatCohabitationDtoV3FromHju(res.hjuskapur)
+    } else {
+      return null
+    }
   }
 
   async getLegalResidence(auth: User): Promise<LogheimiliDTO> {

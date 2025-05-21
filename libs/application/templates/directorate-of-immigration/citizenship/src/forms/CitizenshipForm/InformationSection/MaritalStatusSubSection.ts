@@ -11,8 +11,7 @@ import { formatDate } from '../../../utils'
 import { Routes } from '../../../lib/constants'
 import {
   NationalRegistryIndividual,
-  NationalRegistrySpouse,
-  SpouseSource,
+  NationalRegistrySpouseV3,
 } from '@island.is/application/types'
 
 export const MaritalStatusSubSection = buildSubSection({
@@ -53,7 +52,7 @@ export const MaritalStatusSubSection = buildSubSection({
       externalData,
       'spouseDetails.data',
       undefined,
-    ) as NationalRegistrySpouse | undefined
+    ) as NationalRegistrySpouseV3 | undefined
 
     const hasSpouse = !!spouseDetails?.nationalId
 
@@ -76,7 +75,7 @@ export const MaritalStatusSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const spouseInformation = getValueViaPath<NationalRegistrySpouse>(
+            const spouseInformation = getValueViaPath<NationalRegistrySpouseV3>(
               application.externalData,
               'spouseDetails.data',
               undefined,
@@ -92,7 +91,7 @@ export const MaritalStatusSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const spouseDetails = getValueViaPath<NationalRegistrySpouse>(
+            const spouseDetails = getValueViaPath<NationalRegistrySpouseV3>(
               application.externalData,
               'spouseDetails.data',
               undefined,
@@ -112,7 +111,7 @@ export const MaritalStatusSubSection = buildSubSection({
           format: '######-####',
           required: true,
           defaultValue: (application: Application) => {
-            const spouseDetails = getValueViaPath<NationalRegistrySpouse>(
+            const spouseDetails = getValueViaPath<NationalRegistrySpouseV3>(
               application.externalData,
               'spouseDetails.data',
               undefined,
@@ -128,7 +127,7 @@ export const MaritalStatusSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const spouseDetails = getValueViaPath<NationalRegistrySpouse>(
+            const spouseDetails = getValueViaPath<NationalRegistrySpouseV3>(
               application.externalData,
               'spouseDetails.data',
               undefined,
@@ -137,42 +136,24 @@ export const MaritalStatusSubSection = buildSubSection({
             return spouseDetails?.name
           },
         }),
-        buildTextField({
-          id: 'maritalStatus.birthCountry',
-          title: information.labels.maritalStatus.spouseBirthCountry,
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-          defaultValue: (application: Application) => {
-            const spouseDetails = getValueViaPath<NationalRegistrySpouse>(
-              application.externalData,
-              'spouseDetails.data',
-              undefined,
-            )
+        // buildTextField({
+        //   id: 'maritalStatus.citizenship',
+        //   title: information.labels.maritalStatus.spouseCitizenship,
+        //   backgroundColor: 'white',
+        //   width: 'half',
+        //   readOnly: true,
+        //   defaultValue: (application: Application) => {
+        //     const spouseDetails = getValueViaPath<NationalRegistrySpouseV3>(
+        //       application.externalData,
+        //       'spouseDetails.data',
+        //       undefined,
+        //     )
 
-            return spouseDetails?.birthplace?.location
-              ? spouseDetails?.birthplace?.location
-              : ''
-          },
-        }),
-        buildTextField({
-          id: 'maritalStatus.citizenship',
-          title: information.labels.maritalStatus.spouseCitizenship,
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-          defaultValue: (application: Application) => {
-            const spouseDetails = getValueViaPath<NationalRegistrySpouse>(
-              application.externalData,
-              'spouseDetails.data',
-              undefined,
-            )
-
-            return spouseDetails?.citizenship?.name
-              ? spouseDetails?.citizenship?.name
-              : ''
-          },
-        }),
+        //     return spouseDetails?.citizenship?.name
+        //       ? spouseDetails?.citizenship?.name
+        //       : ''
+        //   },
+        // }),
         buildTextField({
           id: 'maritalStatus.applicantAddress',
           title: information.labels.maritalStatus.applicantAddress,
@@ -187,103 +168,6 @@ export const MaritalStatusSubSection = buildSubSection({
             )
 
             return `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
-          },
-          condition: (_, externalData) => {
-            const individual = getValueViaPath<NationalRegistryIndividual>(
-              externalData,
-              'individual.data',
-              undefined,
-            )
-
-            const spouseDetails = getValueViaPath<NationalRegistrySpouse>(
-              externalData,
-              'spouseDetails.data',
-              undefined,
-            )
-
-            const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
-            const mySpouseAddressCombination = `${spouseDetails?.address?.streetAddress}, ${spouseDetails?.address?.postalCode} ${spouseDetails?.address?.city}`
-            return myAddressCombination !== mySpouseAddressCombination
-          },
-        }),
-        buildTextField({
-          id: 'maritalStatus.spouseAddress',
-          title: information.labels.maritalStatus.spouseAddress,
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-          defaultValue: (application: Application) => {
-            const spouseDetails = getValueViaPath<NationalRegistrySpouse>(
-              application.externalData,
-              'spouseDetails.data',
-              undefined,
-            )
-
-            return `${spouseDetails?.address?.streetAddress}, ${spouseDetails?.address?.postalCode} ${spouseDetails?.address?.city}`
-          },
-          condition: (_, externalData) => {
-            const individual = getValueViaPath<NationalRegistryIndividual>(
-              externalData,
-              'individual.data',
-              undefined,
-            )
-
-            const spouseDetails = getValueViaPath<NationalRegistrySpouse>(
-              externalData,
-              'spouseDetails.data',
-              undefined,
-            )
-
-            const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
-            const mySpouseAddressCombination = `${spouseDetails?.address?.streetAddress}, ${spouseDetails?.address?.postalCode} ${spouseDetails?.address?.city}`
-            return myAddressCombination !== mySpouseAddressCombination
-          },
-        }),
-        buildDescriptionField({
-          id: 'maritalStatus.explanationTitle',
-          title: information.labels.maritalStatus.explanationTitle,
-          titleVariant: 'h5',
-          space: 'gutter',
-          condition: (_, externalData) => {
-            const individual = getValueViaPath<NationalRegistryIndividual>(
-              externalData,
-              'individual.data',
-              undefined,
-            )
-
-            const spouseDetails = getValueViaPath<NationalRegistrySpouse>(
-              externalData,
-              'spouseDetails.data',
-              undefined,
-            )
-
-            const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
-            const mySpouseAddressCombination = `${spouseDetails?.address?.streetAddress}, ${spouseDetails?.address?.postalCode} ${spouseDetails?.address?.city}`
-            return myAddressCombination !== mySpouseAddressCombination
-          },
-        }),
-        buildTextField({
-          id: 'maritalStatus.explanation',
-          title: information.labels.maritalStatus.explanation,
-          backgroundColor: 'blue',
-          width: 'full',
-          variant: 'textarea',
-          condition: (_, externalData) => {
-            const individual = getValueViaPath<NationalRegistryIndividual>(
-              externalData,
-              'individual.data',
-              undefined,
-            )
-
-            const spouseDetails = getValueViaPath<NationalRegistrySpouse>(
-              externalData,
-              'spouseDetails.data',
-              undefined,
-            )
-
-            const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
-            const mySpouseAddressCombination = `${spouseDetails?.address?.streetAddress}, ${spouseDetails?.address?.postalCode} ${spouseDetails?.address?.city}`
-            return myAddressCombination !== mySpouseAddressCombination
           },
         }),
       ],

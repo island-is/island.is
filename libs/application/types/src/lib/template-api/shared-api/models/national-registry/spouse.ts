@@ -12,19 +12,12 @@ export interface NationalRegistrySpouse {
     name: string | null
   } | null
   address?: Address | null
-  marriedOrCohabitaiton: SpouseSource
 }
 
-export interface NormalizedNationalRegistrySpouse {
-  source: SpouseSource
-  spouseName: string
-  spouseNationalId: string
-  status: string
-  code?: string
+export interface NationalRegistrySpouseV3 {
+  name: string
+  nationalId: string
+  maritalStatus: string
   lastModified?: Date | null
-}
-
-export enum SpouseSource {
-  HJUSKAPUR = 'hjuskapur',
-  SAMBUD = 'sambud',
+  address?: Address | null
 }
