@@ -19,12 +19,15 @@ import { setReason } from './utils'
 import { useCreateCollectionMutation } from './createCollection.generated'
 import { m } from '../../lib/messages'
 import { useParams, useRevalidator } from 'react-router-dom'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 const CreateCollection = ({
   collectionId,
   areaId,
+  collectionType,
 }: {
   collectionId: string
+  collectionType: SignatureCollectionCollectionType
   areaId: string | undefined
 }) => {
   const { formatMessage } = useLocale()
@@ -48,6 +51,7 @@ const CreateCollection = ({
   const [createCollection, { loading }] = useCreateCollectionMutation({
     variables: {
       input: {
+        collectionType,
         collectionId,
         owner: {
           name: name,
