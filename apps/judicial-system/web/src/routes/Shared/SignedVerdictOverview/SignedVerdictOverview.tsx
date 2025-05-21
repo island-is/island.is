@@ -425,8 +425,6 @@ export const SignedVerdictOverview: FC = () => {
     (isProsecutionUser(user) && workingCase.canProsecutorAppeal) ||
     workingCase.appealState === CaseAppealState.COMPLETED
 
-  console.log(isModifyingDates)
-
   return (
     <>
       {!isLoadingAppealBanner && shouldDisplayAlertBanner && (
