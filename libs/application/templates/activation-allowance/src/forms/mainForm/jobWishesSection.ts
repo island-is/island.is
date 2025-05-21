@@ -11,7 +11,7 @@ export const jobWishesSection = buildSection({
   title: jobWishes.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'paymentInformationMultiField',
+      id: 'jobWishesMultiField',
       title: jobWishes.general.pageTitle,
       children: [
         buildDescriptionField({

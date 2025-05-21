@@ -17,6 +17,7 @@ export const paymentInformationSection = buildSection({
           id: 'paymentInformation',
           title: paymentInformation.labels.accountInformation,
           titleVariant: 'h5',
+          required: true,
         }),
       ],
     }),

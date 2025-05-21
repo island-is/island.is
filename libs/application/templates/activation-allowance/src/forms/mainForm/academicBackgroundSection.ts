@@ -15,7 +15,7 @@ export const academicBackgroundSection = buildSection({
   title: academicBackground.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'paymentInformationMultiField',
+      id: 'academicBackgroundMultiField',
       title: academicBackground.general.pageTitle,
       description: academicBackground.general.description,
       children: [
@@ -49,7 +49,7 @@ export const academicBackgroundSection = buildSection({
           marginBottom: 0,
         }),
         buildFieldsRepeaterField({
-          id: 'academicBackground',
+          id: 'academicBackground.education',
           titleVariant: 'h5',
           marginTop: 0,
           minRows: 0,

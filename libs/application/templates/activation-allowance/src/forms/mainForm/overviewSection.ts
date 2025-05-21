@@ -4,7 +4,10 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { getOverviewItems } from '../../utils/getOverviewItems'
+import {
+  getApplicantOverviewItems,
+  getOverviewItems,
+} from '../../utils/getOverviewItems'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -14,6 +17,12 @@ export const overviewSection = buildSection({
       id: 'overviewSection',
       title: 'Overview',
       children: [
+        buildOverviewField({
+          id: 'overview.applicant',
+          title: '',
+          backId: 'applicantMultiField',
+          items: getApplicantOverviewItems,
+        }),
         buildOverviewField({
           id: 'overview',
           title: 'Overview',

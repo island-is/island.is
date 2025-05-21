@@ -25,6 +25,7 @@ export const applicantSection = buildSection({
         buildTextField({
           id: 'applicant.name',
           title: applicant.labels.name,
+          width: 'half',
           backgroundColor: 'white',
           readOnly: true,
           defaultValue: (application: Application) =>
@@ -55,6 +56,14 @@ export const applicantSection = buildSection({
               application.externalData,
               'identity.data.address.streetAddress',
             ) ?? '',
+        }),
+        buildTextField({
+          id: 'applicant.nationalAddress',
+          title: applicant.labels.nationalAddress,
+          width: 'half',
+          backgroundColor: 'white',
+          readOnly: true,
+          defaultValue: 'Íslensk', // TODO: Fetch national address from API
         }),
         buildTextField({
           id: 'applicant.postalCode',
@@ -154,29 +163,6 @@ export const applicantSection = buildSection({
               label: '105 Reykjavík',
             },
           ],
-          condition: isSamePlaceOfResidence,
-        }),
-        buildTextField({
-          id: 'applicant.other.nationalAddress',
-          title: applicant.labels.nationalAddress,
-          width: 'full',
-          backgroundColor: 'white',
-          readOnly: true,
-          defaultValue: 'Íslensk', // TODO: Fetch national address from API
-          condition: isSamePlaceOfResidence,
-        }),
-        buildTextField({
-          id: 'applicant.other.email',
-          title: applicant.labels.email,
-          width: 'half',
-          variant: 'email',
-          maxLength: 100,
-          condition: isSamePlaceOfResidence,
-        }),
-        buildPhoneField({
-          id: 'applicant.other.phoneNumber',
-          title: applicant.labels.tel,
-          width: 'half',
           condition: isSamePlaceOfResidence,
         }),
         buildAlertMessageField({

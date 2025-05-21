@@ -3,14 +3,22 @@ import * as kennitala from 'kennitala'
 import { isValidPhoneNumber } from '../utils'
 import { YesOrNoEnum } from '@island.is/application/core'
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 const applicantSchema = z
   .object({
     name: z.string().min(1),
     nationalId: z
       .string()
       .refine((nationalId) => nationalId && kennitala.isValid(nationalId)),
+    nationalAddress: z.string().min(1),
     address: z.string().min(1),
     postalCode: z.string().min(1),
+    city: z.string().min(1),
     email: z.string().email(),
     phoneNumber: z.string().refine((v) => isValidPhoneNumber(v)),
     isSamePlaceOfResidence: z.array(z.string()).optional(),
@@ -19,9 +27,6 @@ const applicantSchema = z
       .object({
         address: z.string().optional(),
         // postalCode: z.string().optional(),
-        nationalAddress: z.string().optional(),
-        email: z.string().optional(),
-        phoneNumber: z.string().optional(),
       })
       .optional(),
   })
@@ -36,30 +41,17 @@ const applicantSchema = z
       path: ['other', 'address'],
     },
   )
-  // .refine(
-  //   ({ isSamePlaceOfResidence, other }) => {
-  //     if (isSamePlaceOfResidence?.length) {
-  //       return other && other.postalCode && other.postalCode.length > 0
-  //     }
-  //     return true
-  //   },
-  //   {
-  //     path: ['other', 'postalCode'],
-  //   },
-  // )
-  .refine(
-    ({ isSamePlaceOfResidence, other }) => {
-      if (isSamePlaceOfResidence?.length) {
-        return (
-          other && other.nationalAddress && other.nationalAddress.length > 0
-        )
-      }
-      return true
-    },
-    {
-      path: ['other', 'nationalAddress'],
-    },
-  )
+// .refine(
+//   ({ isSamePlaceOfResidence, other }) => {
+//     if (isSamePlaceOfResidence?.length) {
+//       return other && other.postalCode && other.postalCode.length > 0
+//     }
+//     return true
+//   },
+//   {
+//     path: ['other', 'postalCode'],
+//   },
+// )
 
 const paymentInformationSchema = z.object({
   bankNumber: z.string().min(1),
@@ -99,6 +91,22 @@ const academicBackgroundSchema = z.object({
     .optional(),
 })
 
+const drivingLicensesSchema = z.object({
+  drivingLicenseType: z.array(z.string()).optional(),
+  workMachineRights: z.array(z.string()).optional(),
+})
+
+const languageSkillsSchema = z.object({
+  language: z.string().optional(),
+  skills: z.string().optional(),
+})
+
+const cvSchema = z.object({
+  haveCV: z.nativeEnum(YesOrNoEnum),
+  cvFile: z.object({ file: z.array(FileSchema) }).optional(),
+  other: z.string().optional(),
+})
+
 export const ActivationAllowanceAnswersSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   approveTerms: z.array(z.string()).refine((v) => v.length > 0),
@@ -107,6 +115,9 @@ export const ActivationAllowanceAnswersSchema = z.object({
   jobHistory: z.array(jobHistorySchema),
   jobWishes: jobWishesSchema,
   academicBackground: academicBackgroundSchema,
+  drivingLicenses: drivingLicensesSchema,
+  languageSkills: z.array(languageSkillsSchema),
+  cv: cvSchema,
 })
 
 export type ActivationAllowanceAnswers = z.TypeOf<
