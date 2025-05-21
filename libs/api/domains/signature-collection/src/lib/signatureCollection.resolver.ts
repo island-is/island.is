@@ -52,7 +52,7 @@ export class SignatureCollectionResolver {
   }
 
   @BypassAuth()
-  @Query(() => SignatureCollection)
+  @Query(() => [SignatureCollection])
   async signatureCollectionCurrent(): Promise<SignatureCollection[]> {
     return this.signatureCollectionService.currentCollection()
   }
