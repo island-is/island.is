@@ -9,7 +9,6 @@ import {
   EinstaklingurKosningInfoDTO,
   FrambodDTO,
   KosningApi,
-  KosningBaseDTO,
 } from '../../gen/fetch'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import { Test, TestingModule } from '@nestjs/testing'
@@ -283,6 +282,57 @@ describe('MyService', () => {
     jest
       .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
       .mockReturnValue(Promise.resolve(sofnunUser))
+    jest.spyOn(kosningApi, 'kosningGet').mockReturnValue(
+      Promise.resolve([
+        {
+          id: 124,
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          nafn: 'bbbb',
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          nafn: 'aaaa',
+        },
+      ]),
+    )
+    jest.spyOn(kosningApi, 'kosningIDSofnunListGet').mockReturnValue(
+      Promise.resolve([
+        {
+          kosningNafn: 'bbbb',
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          id: 124,
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'bbbb',
+            kosningTegund: 'Forsetakosning',
+            kosningTegundNr: 2,
+          },
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          kosningNafn: 'aaaa',
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          erMedmaelaKosning: true,
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'aaaa',
+            kosningTegund: 'Alþingiskosningar',
+            kosningTegundNr: 1,
+          },
+        },
+      ]),
+    )
 
     // Act
     const result = await service.createLists(input, user)
@@ -309,6 +359,58 @@ describe('MyService', () => {
     jest
       .spyOn(frambodApi, 'frambodIDDelete')
       .mockImplementation(() => Promise.resolve())
+    jest.spyOn(kosningApi, 'kosningGet').mockReturnValue(
+      Promise.resolve([
+        {
+          id: 124,
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          nafn: 'bbbb',
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          nafn: 'aaaa',
+        },
+      ]),
+    )
+    jest.spyOn(kosningApi, 'kosningIDSofnunListGet').mockReturnValue(
+      Promise.resolve([
+        {
+          kosningNafn: 'bbbb',
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          id: 124,
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'bbbb',
+            kosningTegund: 'Forsetakosning',
+            kosningTegundNr: 2,
+          },
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          kosningNafn: 'aaaa',
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          erMedmaelaKosning: true,
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'aaaa',
+            kosningTegund: 'Alþingiskosningar',
+            kosningTegundNr: 1,
+          },
+        },
+      ]),
+    )
+
     // Act
     const notOwner = await service.removeLists(
       {
@@ -377,13 +479,13 @@ describe('MyService', () => {
     jest.spyOn(kosningApi, 'kosningGet').mockReturnValue(
       Promise.resolve([
         {
-          id: 123123,
+          id: 1234,
           kosningTegund: 'Forsetakosning',
           kosningTegundNr: 2,
           nafn: 'bbbb',
         },
         {
-          id: 124124,
+          id: 123,
           kosningTegund: 'Alþingiskosningar',
           kosningTegundNr: 1,
           nafn: 'aaaa',
@@ -397,7 +499,7 @@ describe('MyService', () => {
           kosningNafn: 'bbbb',
           kosningTegund: 'Forsetakosning',
           kosningTegundNr: 2,
-          id: 123123,
+          id: 124,
           sofnunStart: new Date(0),
           sofnunEnd: new Date(3999_999_999_999),
           svaedi: [],
@@ -409,7 +511,7 @@ describe('MyService', () => {
           },
         },
         {
-          id: 124124,
+          id: 123,
           kosningTegund: 'Alþingiskosningar',
           kosningTegundNr: 1,
           kosningNafn: 'aaaa',
@@ -428,12 +530,12 @@ describe('MyService', () => {
     )
     // Act
     const alreadySigned = service.signList(
-      '123123',
+      '124',
       CollectionType.Presidential,
       user,
     )
     const success = await service.signList(
-      '123123',
+      '124',
       CollectionType.Presidential,
       user,
     )
@@ -477,6 +579,58 @@ describe('MyService', () => {
         kennitala: '0101302399',
       }),
     )
+    jest.spyOn(kosningApi, 'kosningGet').mockReturnValue(
+      Promise.resolve([
+        {
+          id: 124,
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          nafn: 'bbbb',
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          nafn: 'aaaa',
+        },
+      ]),
+    )
+    jest.spyOn(kosningApi, 'kosningIDSofnunListGet').mockReturnValue(
+      Promise.resolve([
+        {
+          kosningNafn: 'bbbb',
+          kosningTegund: 'Forsetakosning',
+          kosningTegundNr: 2,
+          id: 124,
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'bbbb',
+            kosningTegund: 'Forsetakosning',
+            kosningTegundNr: 2,
+          },
+        },
+        {
+          id: 123,
+          kosningTegund: 'Alþingiskosningar',
+          kosningTegundNr: 1,
+          kosningNafn: 'aaaa',
+          sofnunStart: new Date(0),
+          sofnunEnd: new Date(3999_999_999_999),
+          svaedi: [],
+          erMedmaelaKosning: true,
+          kosning: {
+            erMedmaelakosning: true,
+            nafn: 'aaaa',
+            kosningTegund: 'Alþingiskosningar',
+            kosningTegundNr: 1,
+          },
+        },
+      ]),
+    )
+
     // Act
     const noSignature = await service.unsignList(
       '',
