@@ -50,8 +50,8 @@ const OrganizationParentSubpage: Screen<
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
-  useContentfulId(organizationPage.id, parentSubpage.id, subpage.id)
   useLocalLinkTypeResolver()
+  useContentfulId(organizationPage.id, parentSubpage.id, subpage.id)
 
   return (
     <OrganizationWrapper
