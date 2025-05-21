@@ -1,4 +1,4 @@
-// TODOx move into client
+// TODOy move into client
 
 export interface ApplicationRulesLimitations {
   maxHeight: number

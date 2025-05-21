@@ -236,8 +236,16 @@ const FreighSchema = z
   )
 
 const ConvoyItemSchema = z.object({
-  vehiclePermno: z.string(),
-  trailerPermno: z.string().optional(),
+  vehicle: z.object({
+    permno: z.string(),
+    make: z.string(),
+    color: z.string(),
+  }),
+  trailer: z
+    .object({
+      permno: z.string().optional(),
+    })
+    .optional(),
 })
 
 const ConvoySchema = z.object({

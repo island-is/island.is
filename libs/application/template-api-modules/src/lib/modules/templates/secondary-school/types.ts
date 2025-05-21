@@ -4,7 +4,7 @@ export interface EmailRecipient {
   email?: string
 }
 
-//TODOx move into client
+//TODOy move into client
 export interface ApplicationRules {
   policeEscort: {
     height: number

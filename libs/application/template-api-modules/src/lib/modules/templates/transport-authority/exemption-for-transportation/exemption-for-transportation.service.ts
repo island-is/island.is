@@ -16,7 +16,7 @@ export class ExemptionForTransportationService extends BaseTemplateApiService {
   async getApplicationRules({
     auth,
   }: TemplateApiModuleActionProps): Promise<ApplicationRules> {
-    //TODOx get from API
+    //TODOy get from API
     return {
       policeEscort: {
         height: 5.5,
