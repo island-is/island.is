@@ -975,7 +975,6 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ) {
-    console.log(`deleting application ${id} for user ${user.nationalId}`)
     const { nationalId } = user
     const existingApplication =
       (await this.applicationAccessService.findOneByIdAndNationalId(
@@ -993,6 +992,8 @@ export class ApplicationController {
       )
     }
 
+    this.logger.info(`Deleting application ${id} as requested by user`)
+
     const template = await getApplicationTemplateByTypeId(
       existingApplication.typeId,
     )
@@ -1006,7 +1007,6 @@ export class ApplicationController {
       existingApplication,
       template,
     ).getOnDeleteStateAPIAction()
-    console.log(`onDeleteActions: ${JSON.stringify(onDeleteActions)}`)
     if (onDeleteActions) {
       const namespaces = await getApplicationTranslationNamespaces(
         existingApplication,
@@ -1041,34 +1041,16 @@ export class ApplicationController {
       }
     }
 
-    console.log('deleting charge')
     // delete charge in FJS
     await this.applicationChargeService.deleteCharge(existingApplication)
 
     // delete the entry in Payment table to prevent FK error
     await this.paymentService.delete(existingApplication.id, user)
 
-    console.log('deleting attachments')
     await this.fileService.deleteAttachmentsForApplication(existingApplication)
 
-    // // delete history for application
-    // await this.historyService.deleteHistoryByApplicationId(
-    //   existingApplication.id,
-    // )
-
-    console.log('soft deleting application')
     await this.applicationService.softDelete(existingApplication.id)
 
-    console.log(`application ${existingApplication.id} soft deleted`)
-
-    console.dir(
-      await this.applicationService.findOneById(existingApplication.id),
-      {
-        depth: null,
-      },
-    )
-
-    console.log('auditing')
     this.auditService.audit({
       auth: user,
       action: 'delete',
