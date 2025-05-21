@@ -99,9 +99,9 @@ export class UserProfileServiceV2 {
   }
 
   async createSmsVerification(input: CreateSmsVerificationInput, user: User) {
-    await this.v2MeUserProfileApiWithAuth(
+    await this.v2ActorApiWithAuth(
       user,
-    ).meUserProfileControllerCreateVerification({
+    ).actorUserProfileControllerCreateVerification({
       createVerificationDto: input,
     })
   }
@@ -110,9 +110,9 @@ export class UserProfileServiceV2 {
     input: CreateEmailVerificationInput,
     user: User,
   ): Promise<void> {
-    await this.v2MeUserProfileApiWithAuth(
+    await this.v2ActorApiWithAuth(
       user,
-    ).meUserProfileControllerCreateVerification({
+    ).actorUserProfileControllerCreateVerification({
       createVerificationDto: input,
     })
   }
