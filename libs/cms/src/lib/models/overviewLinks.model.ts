@@ -64,11 +64,10 @@ const mapLinkData = (
   const categoryCardItems: CategoryCardItem[] = []
 
   // broaden English check to cover "en", "en-US", "en-GB", etc.
-  const isEnglish = locale?.toLowerCase().startsWith('en')
+  const isEnglish = locale.toLowerCase().startsWith('en')
 
-  for (const item of linkData?.[
-    `categoryCardItems${isEnglish ? 'En' : ''}`
-  ] ?? []) {
+  for (const item of linkData?.[`categoryCardItems${isEnglish ? 'En' : ''}`] ??
+    []) {
     if (Boolean(item?.title) && Boolean(item?.href)) {
       categoryCardItems.push(item)
     }
