@@ -1059,6 +1059,15 @@ export class ApplicationController {
     console.log('soft deleting application')
     await this.applicationService.softDelete(existingApplication.id)
 
+    console.log(`application ${existingApplication.id} soft deleted`)
+
+    console.dir(
+      await this.applicationService.findOneById(existingApplication.id),
+      {
+        depth: null,
+      },
+    )
+
     console.log('auditing')
     this.auditService.audit({
       auth: user,
