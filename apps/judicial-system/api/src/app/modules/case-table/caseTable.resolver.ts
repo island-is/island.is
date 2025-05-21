@@ -34,7 +34,7 @@ export class CaseTableResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<CaseTableResponse> {
-    this.logger.debug(`Getting a case table of type ${input.type}`)
+    this.logger.debug(`Getting contents for case table of type ${input.type}`)
 
     return this.auditTrailService.audit(
       user.id,
