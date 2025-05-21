@@ -8,6 +8,8 @@ import {
   PensionCalculatorApi,
   DeathBenefitsApi,
   TestApi,
+  MedicalDocumentsApi,
+  QuestionnairesApi,
 } from '../../gen/fetch'
 
 export type Scope =
@@ -20,6 +22,7 @@ export type Scope =
   | '@tr.is/almennt:read'
   | '@tr.is/fylgiskjol:write'
   | '@tr.is/danarbaetur:read'
+  | '@tr.is/sjukraogendurhaefingargreidslur:read'
 
 export type Api =
   | typeof ApplicationApi
@@ -32,6 +35,8 @@ export type Api =
   | typeof PensionCalculatorApi
   | typeof DeathBenefitsApi
   | typeof TestApi
+  | typeof MedicalDocumentsApi
+  | typeof QuestionnairesApi
 
 export class ApplicationWriteApi extends ApplicationApi {}
 

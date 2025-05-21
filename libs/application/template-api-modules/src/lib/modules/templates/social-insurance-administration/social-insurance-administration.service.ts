@@ -815,4 +815,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       ],
     }
   }
+
+  async getRehabilitationplan({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getRehabilitationplan(auth)
+  }
 }

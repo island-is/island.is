@@ -4,6 +4,7 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { CmsModule } from '@island.is/cms'
 import { SocialInsuranceService } from './socialInsurance.service'
 import {
+  GeneralResolver,
   IncomePlanResolver,
   PaymentPlanResolver,
   PensionResolver,
@@ -20,6 +21,7 @@ import {
     PensionResolver,
     IncomePlanResolver,
     SocialInsuranceService,
+    GeneralResolver,
   ],
 })
 export class SocialInsuranceModule {}
