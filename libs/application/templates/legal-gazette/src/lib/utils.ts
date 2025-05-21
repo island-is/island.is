@@ -1,4 +1,3 @@
-import { Application } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import { ApplicationContext } from '@island.is/application/types'
 
