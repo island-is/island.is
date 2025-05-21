@@ -5,7 +5,10 @@ import { getYesNoOptions } from '@island.is/application/templates/social-insuran
 import {
   Attachments,
   BankInfo,
+  CategorizedIncomeTypes,
   FileType,
+  IncomePlanConditions,
+  IncomePlanRow,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application } from '@island.is/application/types'
 import {
@@ -42,6 +45,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'paymentInfo.taxLevel',
   ) as TaxLevelOptions
+
+  const incomePlan = getValueViaPath(
+    answers,
+    'incomePlanTable',
+    [],
+  ) as IncomePlanRow[]
 
   const isSelfEmployed = getValueViaPath(
     answers,
@@ -114,6 +123,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
+    incomePlan,
     isSelfEmployed,
     calculatedRemunerationDate,
     isPartTimeEmployed,
@@ -196,6 +206,22 @@ export const getApplicationExternalData = (
     'nationalRegistrySpouse.data',
   ) as object
 
+  const categorizedIncomeTypes = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationCategorizedIncomeTypes.data',
+    [],
+  ) as CategorizedIncomeTypes[]
+
+  const currencies = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationCurrencies.data',
+  ) as Array<string>
+
+  const incomePlanConditions = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationIncomePlanConditions.data',
+  ) as IncomePlanConditions
+
   const selfAssessmentQuestionnaireQuestions = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationQuestionnairesSelfAssessment.data.questions',
@@ -215,6 +241,9 @@ export const getApplicationExternalData = (
     spouseNationalId,
     maritalStatus,
     hasSpouse,
+    categorizedIncomeTypes,
+    currencies,
+    incomePlanConditions,
     selfAssessmentQuestionnaireQuestions,
   }
 }

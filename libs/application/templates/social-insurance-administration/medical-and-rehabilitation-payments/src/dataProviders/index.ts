@@ -1,8 +1,7 @@
 import { defineTemplateApi } from '@island.is/application/types'
-
 export {
-  NationalRegistryUserApi,
   NationalRegistrySpouseApi,
+  NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 
@@ -22,6 +21,26 @@ export const SocialInsuranceAdministrationApplicantApi = defineTemplateApi({
   namespace: 'SocialInsuranceAdministration',
   order: 1,
 })
+
+export const SocialInsuranceAdministrationCategorizedIncomeTypesApi =
+  defineTemplateApi({
+    action: 'getCategorizedIncomeTypes',
+    externalDataId: 'socialInsuranceAdministrationCategorizedIncomeTypes',
+    namespace: 'SocialInsuranceAdministration',
+  })
+
+export const SocialInsuranceAdministrationCurrenciesApi = defineTemplateApi({
+  action: 'getCurrencies',
+  externalDataId: 'socialInsuranceAdministrationCurrencies',
+  namespace: 'SocialInsuranceAdministration',
+})
+
+export const SocialInsuranceAdministrationIncomePlanConditionsApi =
+  defineTemplateApi({
+    action: 'getIncomePlanConditions',
+    externalDataId: 'socialInsuranceAdministrationIncomePlanConditions',
+    namespace: 'SocialInsuranceAdministration',
+  })
 
 export const SocialInsuranceAdministrationQuestionnairesApi = defineTemplateApi(
   {
