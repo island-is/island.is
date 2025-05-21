@@ -1,20 +1,4 @@
-import { Application } from '@island.is/application/types'
-import parse from 'date-fns/parse'
-import {
-  ApplicationDTO,
-  TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
-  Employer as TrWebEmployer,
-  IncomeTypes,
-} from '@island.is/clients/social-insurance-administration'
-import {
-  ApplicationType,
-  Employer,
-  Employment,
-  RatioType,
-  getApplicationAnswers as getOAPApplicationAnswers,
-  getApplicationExternalData as getOAPApplicationExternalData,
-} from '@island.is/application/templates/social-insurance-administration/old-age-pension'
-import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import {
   BankAccountType,
   INCOME,
@@ -24,13 +8,30 @@ import {
   shouldNotUpdateBankAccount,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
+  getApplicationAnswers as getASFTEApplicationAnswers,
+  getApplicationExternalData as getASFTEApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
+import {
   getApplicationAnswers as getHSApplicationAnswers,
   getApplicationExternalData as getHSApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
-  getApplicationAnswers as getASFTEApplicationAnswers,
-  getApplicationExternalData as getASFTEApplicationExternalData,
-} from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
+  ApplicationType,
+  Employer,
+  Employment,
+  getApplicationAnswers as getOAPApplicationAnswers,
+  getApplicationExternalData as getOAPApplicationExternalData,
+  RatioType,
+} from '@island.is/application/templates/social-insurance-administration/old-age-pension'
+import { Application } from '@island.is/application/types'
+import {
+  ApplicationDTO,
+  TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
+  IncomeTypes,
+  MedicalAndRehabilitationPaymentsDTO,
+  Employer as TrWebEmployer,
+} from '@island.is/clients/social-insurance-administration'
+import parse from 'date-fns/parse'
 
 import {
   getApplicationAnswers as getPSApplicationAnswers,
@@ -46,6 +47,8 @@ import {
   getApplicationAnswers as getIPApplicationAnswers,
   getApplicationExternalData as getIPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
+
+import { getApplicationAnswers as getMARPApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -368,6 +371,85 @@ export const transformApplicationToIncomePlanDTO = (
   return incomePlanDTO
 }
 
+export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
+  application: Application,
+  uploads: Attachment[],
+): MedicalAndRehabilitationPaymentsDTO => {
+  const {
+    applicantPhonenumber,
+    applicantEmail,
+    bank,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
+    incomePlan,
+    isSelfEmployed,
+    calculatedRemunerationDate,
+    isPartTimeEmployed,
+    isStudying,
+    isStudyingFileUpload,
+    hasUtilizedEmployeeSickPayRights,
+    employeeSickPayEndDate,
+    hasUtilizedUnionSickPayRights,
+    unionSickPayEndDate,
+    unionNationalId,
+    unionSickPayFileUpload,
+    rehabilitationPlanConfirmation,
+    comment,
+    questionnaire,
+  } = getMARPApplicationAnswers(application.answers)
+
+  const marpDTO: MedicalAndRehabilitationPaymentsDTO = {
+    applicantInfo: {
+      email: applicantEmail,
+      phonenumber: applicantPhonenumber,
+    },
+    period: {
+      year: new Date().getFullYear(),
+      month: new Date().getMonth(),
+    },
+    comment,
+    applicationId: application.id,
+    domesticBankInfo: {
+      bank,
+    },
+    taxInfo: {
+      personalAllowance: YES === personalAllowance,
+      personalAllowanceUsage:
+        YES === personalAllowance ? +personalAllowanceUsage : 0,
+      taxLevel: +taxLevel,
+    },
+    occupation: {
+      isSelfEmployed: YES === isSelfEmployed,
+      isStudying: YES === isStudying,
+      isPartTimeEmployed: YES === isPartTimeEmployed,
+      calculatedRemunerationDate,
+    },
+    employeeSickPay: {
+      hasUtilizedEmployeeSickPayRights: getYesNoNotApplicableValue(
+        hasUtilizedEmployeeSickPayRights,
+      ),
+      employeeSickPayEndDate,
+    },
+    unionSickPay: {
+      hasUtilizedUnionSickPayRights: getYesNoNotApplicableValue(
+        hasUtilizedUnionSickPayRights,
+      ),
+      unionNationalId,
+      unionSickPayEndDate,
+    },
+    // baseCertificateReference,
+    // rehabilitationPlanReference,
+    selfAssessment: {
+      hadAssistance: true,
+      answers: questionnaire,
+    },
+    uploads,
+  }
+
+  return marpDTO
+}
+
 export const getIncomeTypes = (application: Application): IncomeTypes[] => {
   const { incomePlan } = getIPApplicationAnswers(application.answers)
   const { categorizedIncomeTypes } = getIPApplicationExternalData(
@@ -510,4 +592,16 @@ export const getEmployers = (employers: Employer[]): Array<TrWebEmployer> => {
   }
 
   return employersInfo
+}
+function getYesNoNotApplicableValue(
+  hasUtilizedEmployeeSickPayRights: string,
+): number | null {
+  switch (hasUtilizedEmployeeSickPayRights) {
+    case YES:
+      return 1
+    case NO:
+      return 0
+    default:
+      return null
+  }
 }
