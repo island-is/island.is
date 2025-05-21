@@ -114,9 +114,8 @@ export const signedVerdictOverview = {
           'Notaður sem texti "Lengd gæsluvarðhalds breytt/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
       },
       successText: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_text',
-        defaultMessage:
-          '{modification}\nTilkynning verður send á ábyrgðaraðila málsins hjá {courtOrProsecutor}. Ef gæsluvarðhaldsfangelsi hefur ekki verið upplýst og þörf er á því, þarf að gera það eftir hefðbundinni boðleið.',
+        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_text_v1',
+        defaultMessage: '{modification}\nTilkynning verður send aðilum máls.',
         description:
           'Notaður sem texti í "Lengd gæsluvarðhalds/vistunar breytt" glugga á yfirlitsskjá afgreiddra mála.',
       },

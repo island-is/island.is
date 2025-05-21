@@ -155,8 +155,6 @@ const getModificationSuccessText = (
 
   return formatMessage(m.sections.modifyDatesModal.successText, {
     modification,
-    courtOrProsecutor:
-      userRole === UserRole.PROSECUTOR ? 'héraðsdómstól' : 'saksóknaraembætti',
   })
 }
 
