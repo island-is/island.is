@@ -659,9 +659,9 @@ export const SignedVerdictOverview: FC = () => {
         <AnimatePresence>
           {isModifyingDates && (
             <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               key="modify-dates-modal"
             >
               <ModifyDatesModal

@@ -379,12 +379,7 @@ const ModifyDatesModal: FC<Props> = ({
   return (
     <AnimatePresence mode="wait">
       {successText ? (
-        <motion.div
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -10 }}
-          key="success"
-        >
+        <motion.div key="success">
           <Modal
             title={getSuccessTitle(workingCase.type)}
             text={successText}
@@ -398,12 +393,7 @@ const ModifyDatesModal: FC<Props> = ({
           />
         </motion.div>
       ) : (
-        <motion.div
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -10 }}
-          key="modal"
-        >
+        <motion.div key="modal">
           <Modal
             title={getTitle(workingCase.type)}
             text={getText(workingCase.type)}
@@ -413,6 +403,8 @@ const ModifyDatesModal: FC<Props> = ({
             isPrimaryButtonLoading={isSendingNotification || isUpdatingCase}
             secondaryButtonText="Hætta við"
             onSecondaryButtonClick={() => {
+              closeModal()
+
               setCaseModifiedExplanation(undefined)
 
               if (workingCase.validToDate) {
@@ -428,8 +420,6 @@ const ModifyDatesModal: FC<Props> = ({
                   isValid: true,
                 })
               }
-
-              closeModal()
             }}
           >
             <Box marginBottom={5}>
