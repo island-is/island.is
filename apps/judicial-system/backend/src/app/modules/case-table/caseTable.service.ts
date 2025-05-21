@@ -48,7 +48,6 @@ const getIncludes = (caseTableCellKeys: CaseTableColumnKey[]) => {
     )
     .flat()
 }
-
 @Injectable()
 export class CaseTableService {
   constructor(
