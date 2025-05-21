@@ -203,7 +203,12 @@ export const defenderUpdateRule: RolesRule = {
 export const prisonSystemAdminUpdateRule: RolesRule = {
   role: UserRole.PRISON_SYSTEM_STAFF,
   type: RulesType.FIELD,
-  dtoFields: ['isRegisteredInPrisonSystem'],
+  dtoFields: [
+    'isRegisteredInPrisonSystem',
+    'caseModifiedExplanation',
+    'isolationToDate',
+    'validToDate',
+  ],
   canActivate(request) {
     const user: User = request.user?.currentUser
     // Deny if something is missing or if the user is not a prison admin

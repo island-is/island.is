@@ -14,11 +14,11 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CasesLayout,
   CaseTag,
   Logo,
   PageHeader,
   SectionHeading,
-  SharedPageLayout,
   TagAppealState,
   TagCaseState,
   UserContext,
@@ -279,19 +279,15 @@ export const PrisonCases: FC = () => {
       <div className={styles.infoContainer}>
         <AlertMessage
           type="info"
-          title={formatMessage(
-            m.activeRequests.prisonStaffUsers.infoContainerTitle,
-          )}
-          message={formatMessage(
-            m.activeRequests.prisonStaffUsers.infoContainerText,
-          )}
+          title="Engin mál fundust"
+          message="Engin mál fundust í þessum flokk"
         />
       </div>
     )
   }
 
   return (
-    <SharedPageLayout>
+    <CasesLayout>
       <PageHeader title={formatMessage(titles.shared.cases)} />
       <div className={styles.logoContainer}>
         <Logo />
@@ -363,7 +359,7 @@ export const PrisonCases: FC = () => {
             : renderAlertMessage()}
         </>
       )}
-    </SharedPageLayout>
+    </CasesLayout>
   )
 }
 

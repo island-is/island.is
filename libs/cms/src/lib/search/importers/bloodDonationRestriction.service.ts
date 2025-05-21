@@ -72,7 +72,7 @@ export class BloodDonationRestrictionSyncService
 
           return {
             _id: mapped.id,
-            title: entry.fields.title || '',
+            title: (entry.fields.title || '').trim(),
             content,
             contentWordCount: content.split(' ').length,
             type: 'webBloodDonationRestriction',

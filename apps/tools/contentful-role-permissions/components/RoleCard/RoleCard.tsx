@@ -97,6 +97,13 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
     return Boolean(tags.find((t) => t.name === slugify(role.name)))
   }, [role.name, tags])
 
+  const sortedDefaultReadOnlyEntryIds = useMemo(() => {
+    return DEFAULT_READ_ONLY_ENTRY_IDS.sort()
+  }, [])
+  const sortedDefaultEditableEntryIds = useMemo(() => {
+    return DEFAULT_EDITABLE_ENTRY_TYPE_IDS.sort()
+  }, [])
+
   return (
     <Box
       border="standard"
@@ -224,7 +231,7 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
                     placement="right"
                     text={
                       <div>
-                        {DEFAULT_READ_ONLY_ENTRY_IDS.sort().map((id) => (
+                        {sortedDefaultReadOnlyEntryIds.map((id) => (
                           <Text key={id} variant="small">
                             {id}
                           </Text>
@@ -356,12 +363,45 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
                     placement="right"
                     text={
                       <div>
-                        {DEFAULT_EDITABLE_ENTRY_TYPE_IDS.sort().map((id) => (
+                        {sortedDefaultEditableEntryIds.map((id) => (
                           <Text key={id} variant="small">
                             {id}
                           </Text>
                         ))}
                       </div>
+                    }
+                  />
+                </Button>
+                <Button
+                  disabled={isSaving}
+                  variant="text"
+                  size="small"
+                  onClick={() => {
+                    setEditableState((prevState) => {
+                      const newState = { ...prevState }
+                      for (const contentTypeName in newState) {
+                        const contentTypeSysId = contentTypes.find(
+                          (type) => type.name === contentTypeName,
+                        )?.sys?.id
+                        newState[contentTypeName] =
+                          DEFAULT_EDITABLE_ENTRY_TYPE_IDS.includes(
+                            contentTypeSysId,
+                          )
+                            ? true
+                            : newState[contentTypeName]
+                      }
+                      return newState
+                    })
+                  }}
+                >
+                  Bitwise OR default
+                  <Tooltip
+                    placement="right"
+                    text={
+                      <Text variant="small">
+                        Only turn on what is in the default editable entry list
+                        and leave everything else like it was (bitwise OR)
+                      </Text>
                     }
                   />
                 </Button>
@@ -412,7 +452,7 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
               />
               <Tooltip
                 placement="right"
-                text={`If this is not checked then roles can only read assets tagged with ${slugify(
+                text={`If this is not checked then role can only view assets tagged with ${slugify(
                   role.name,
                 )}`}
               />

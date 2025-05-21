@@ -14,12 +14,12 @@ import {
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  CasesLayout,
   ContextMenu,
   Logo,
   Modal,
   PageHeader,
   SectionHeading,
-  SharedPageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
@@ -87,13 +87,7 @@ const CreateCaseButton: FC<CreateCaseButtonProps> = (props) => {
 
   return (
     <Box marginTop={[2, 2, 0]}>
-      <ContextMenu
-        dataTestId="createCaseDropdown"
-        menuLabel="Tegund kröfu"
-        items={items}
-        title={formatMessage(m.createCaseButton)}
-        offset={[0, 8]}
-      />
+      <ContextMenu title="Nýtt mál" items={items} />
     </Box>
   )
 }
@@ -263,7 +257,7 @@ export const Cases: FC = () => {
 
   return (
     <>
-      <SharedPageLayout>
+      <CasesLayout>
         <PageHeader title={formatMessage(titles.shared.cases)} />
         <div className={styles.logoContainer}>
           <Logo />
@@ -377,7 +371,7 @@ export const Cases: FC = () => {
             )}
           </>
         )}
-      </SharedPageLayout>
+      </CasesLayout>
       {modalVisible !== undefined && (
         <Modal
           title={formatMessage(m.activeRequests.deleteCaseModal.title)}

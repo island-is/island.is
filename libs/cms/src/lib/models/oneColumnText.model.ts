@@ -4,8 +4,9 @@ import { SystemMetadata } from '@island.is/shared/types'
 
 import { IOneColumnText } from '../generated/contentfulTypes'
 
-import { Link, mapLink } from './link.model'
+import { Link } from './link.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+import { mapReferenceLink } from './utils'
 
 @ObjectType()
 export class OneColumnText {
@@ -35,9 +36,9 @@ export const mapOneColumnText = ({
   typename: 'OneColumnText',
   id: sys.id,
   title: fields.title ?? '',
-  link: fields.link ? mapLink(fields.link) : null,
+  link: mapReferenceLink(fields.link),
   content: fields.content
-    ? mapDocument(fields.content, sys.id + ':content')
+    ? mapDocument(fields.content, `${sys.id}:content`)
     : [],
   dividerOnTop: fields.dividerOnTop ?? true,
   showTitle: fields.showTitle ?? true,

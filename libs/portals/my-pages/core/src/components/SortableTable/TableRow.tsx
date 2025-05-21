@@ -68,7 +68,9 @@ export const TableRow = ({
     return (
       <>
         <Text variant="medium" as="span">
-          {ellipsisLength ? ellipsis(valueItem, ellipsisLength) : valueItem}
+          {ellipsisLength && valueItem
+            ? ellipsis(valueItem, ellipsisLength)
+            : valueItem}
         </Text>
         {i === 0 && subTitleFirstCol && (
           <Text variant="small">{subTitleFirstCol}</Text>

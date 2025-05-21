@@ -37,6 +37,14 @@ export const m = defineMessages({
     id: 'api.license-service:identity-document',
     defaultMessage: 'Nafnskírteini',
   },
+  identityDocumentTravelLicense: {
+    id: 'api.license-service:identity-document-travel-license',
+    defaultMessage: 'Nafnskírteini sem ferðaskilríki',
+  },
+  identityDocumentNotTravelLicense: {
+    id: 'api.license-service:identity-document-not-travel-license',
+    defaultMessage: 'Nafnskírteini ekki sem ferðaskilríki',
+  },
   pCard: {
     id: 'api.license-service:p-card',
     defaultMessage: 'P-kort',

@@ -144,7 +144,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
       {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
         <Text marginTop={1} fontWeight="semiBold">
           {formatMessage(strings.sendToPrisonAdminDate, {
-            date: formatDate(defendant.sentToPrisonAdminDate),
+            date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
           })}
         </Text>
       )}

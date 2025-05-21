@@ -167,19 +167,21 @@ const HeaderContainer = () => {
             marginLeft={[1, 1, 2, 4]}
             marginRight="auto"
           >
-            <Box marginLeft={[1, 1, 2, 4]}>
-              <Text variant="eyebrow">Dómsmálaráðuneytið</Text>
-              <Hidden above="sm">
-                <Text fontWeight="light" variant="eyebrow">
-                  Réttarvörslugátt
-                </Text>
-              </Hidden>
-              <Hidden below="md">
-                <Text fontWeight="light" variant="default">
-                  Réttarvörslugátt
-                </Text>
-              </Hidden>
-            </Box>
+            <Hidden below="sm">
+              <Box marginLeft={[1, 1, 2, 4]}>
+                <Text variant="eyebrow">Dómsmálaráðuneytið</Text>
+                <Hidden above="sm">
+                  <Text fontWeight="light" variant="eyebrow">
+                    Réttarvörslugátt
+                  </Text>
+                </Hidden>
+                <Hidden below="md">
+                  <Text fontWeight="light" variant="default">
+                    Réttarvörslugátt
+                  </Text>
+                </Hidden>
+              </Box>
+            </Hidden>
           </Box>
         </Inline>
       </Link>

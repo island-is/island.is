@@ -16,6 +16,7 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   isDistrictCourtUser,
   isInvestigationCase,
+  isPrisonAdminUser,
   isPrisonSystemUser,
   isProsecutionUser,
   isRestrictionCase,
@@ -250,7 +251,9 @@ export const SignedVerdictOverview: FC = () => {
    */
   const canModifyCaseDates = useCallback(() => {
     return (
-      (isProsecutionUser(user) || isDistrictCourtUser(user)) &&
+      (isProsecutionUser(user) ||
+        isDistrictCourtUser(user) ||
+        isPrisonAdminUser(user)) &&
       isRestrictionCase(workingCase.type)
     )
   }, [workingCase.type, user])

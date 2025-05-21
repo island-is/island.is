@@ -32,9 +32,13 @@ console.info(`Git SHA: ${sha}`)
 console.info(`Helm values branch: ${typeOfDeployment.dev ? 'main' : 'release'}`)
 
 function shouldRun() {
-  if (eventName === 'merge_group' || eventName === 'workflow_dispatch') {
+  if (eventName === 'workflow_dispatch') {
+    return true;
+  }
+  if (eventName === 'merge_group') {
     return isTargetBranchCompatible(targetBranch)
-  } else if (isFeatureDeployment(context)) {
+  }
+  if (isFeatureDeployment(context)) {
     return isTargetBranchCompatible(targetBranch)
   }
   return false

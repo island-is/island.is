@@ -218,6 +218,11 @@ export class PassportMapper implements GenericLicenseMapper {
                 : formatMessage(m.otherGender),
           }
         : null,
+      {
+        type: GenericLicenseDataFieldType.Value,
+        label: formatMessage(m.publisher),
+        value: 'Þjóðskrá',
+      },
     ].filter(isDefined)
 
     const alert: GenericUserLicenseAlert | undefined =

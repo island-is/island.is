@@ -331,9 +331,8 @@ const Table: FC<TableProps> = (props) => {
                       </motion.div>
                     ) : (
                       <ContextMenu
-                        menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
                         items={generateContextMenuItems(row)}
-                        disclosure={
+                        render={
                           <motion.div
                             className={styles.smallContainer}
                             key={row.id}

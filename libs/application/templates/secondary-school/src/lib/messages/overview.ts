@@ -165,10 +165,20 @@ export const overview = {
       defaultMessage: 'Hætta við breytingar',
       description: 'Abort changes button',
     },
+    withdrawn: {
+      id: 'ss.application:overview.buttons.withdrawn',
+      defaultMessage: 'Afturkalla rýni',
+      description: 'Withdrawn application button',
+    },
     received: {
       id: 'ss.application:overview.buttons.received',
       defaultMessage: 'Móttekin',
       description: 'Received application button',
+    },
+    dismissed: {
+      id: 'ss.application:overview.buttons.dismissed',
+      defaultMessage: 'Vísað frá',
+      description: 'Dismissed application button',
     },
   }),
   applicationDataHasBeenPruned: defineMessages({

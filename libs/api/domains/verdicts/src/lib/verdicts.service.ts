@@ -19,6 +19,7 @@ export class VerdictsService {
       caseNumber: input.caseNumber,
       dateFrom: input.dateFrom,
       dateTo: input.dateTo,
+      laws: input.laws,
     })
     return {
       items: response.items,
