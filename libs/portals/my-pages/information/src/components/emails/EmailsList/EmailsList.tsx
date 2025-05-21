@@ -57,6 +57,7 @@ export const EmailsList = ({ items }: EmailsListProps) => {
     onCompleted: (data) => {
       if (data.userProfileSetActorProfileEmail) {
         refreshEmailList()
+        toast.success(formatMessage(emailsMsg.emailSetActorProfileSuccess))
       }
     },
     onError: () => {

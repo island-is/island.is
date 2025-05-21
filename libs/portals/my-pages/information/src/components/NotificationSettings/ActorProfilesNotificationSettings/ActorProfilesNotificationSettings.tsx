@@ -12,6 +12,7 @@ import { ActorProfileSettingsCard } from '../cards/ActorProfileSettingsCard'
 import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 
 import { Problem } from '@island.is/react-spa/shared'
+import { ActorProfileEmails } from '../ActorProfileEmails/ActorProfileEmails'
 import * as styles from './ActorProfilesNotificationSettings.css'
 import { useActorProfilesQuery } from './userProfileActorProfiles.query.generated'
 
@@ -70,7 +71,10 @@ export const ActorProfilesNotificationSettings = () => {
             title={actorProfile.fromName}
             key={actorProfile.fromNationalId}
           >
-            <ActorProfileSettingsCard profile={actorProfile} />
+            <Box display="flex" flexDirection="column" rowGap={3}>
+              <ActorProfileSettingsCard profile={actorProfile} />
+              <ActorProfileEmails />
+            </Box>
           </NotificationSettingsCard>
         ))}
       </Stack>

@@ -17,10 +17,10 @@ const UserProfile = () => {
   const { formatMessage } = useLocale()
   const { scopes, profile } = useUserInfo()
 
+  const isActor = !!profile?.actor
   const hasUserProfileWriteScope = scopes.includes(UserProfileScope.write)
-  const hasActorProfileWriteScope = scopes.includes(ActorProfileScope.write)
 
-  if (!hasUserProfileWriteScope && !hasActorProfileWriteScope) {
+  if (!hasUserProfileWriteScope && !isActor) {
     return (
       <Box paddingY={1}>
         <AccessDenied />
@@ -31,7 +31,7 @@ const UserProfile = () => {
   return (
     <>
       <IntroWrapper
-        marginBottom={2}
+        marginBottom={[4, 4, 6]}
         title={formatMessage(m.mySettings)}
         intro={formatMessage(msg.overlayIntro)}
         serviceProviderTooltip={formatMessage(m.userProfileTooltip)}
@@ -41,7 +41,7 @@ const UserProfile = () => {
         showIntroText={false}
         showDetails={!!data}
         title={profile.name || ''}
-        hasUserProfileWriteScope={hasUserProfileWriteScope}
+        isActor={isActor}
       />
     </>
   )

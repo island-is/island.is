@@ -39,6 +39,7 @@ const sharedRoutes = (scopes: string[]) => [
   {
     name: m.mySettings,
     path: InformationPaths.Settings,
+    enabled: scopes.includes(UserProfileScope.read),
     element: <UserProfileSettings />,
   },
   {

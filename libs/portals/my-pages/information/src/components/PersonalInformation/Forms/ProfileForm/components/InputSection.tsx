@@ -6,6 +6,7 @@ interface Props {
   text: string | ReactNode
   children?: ReactNode
   loading?: boolean
+  divider?: boolean
 }
 
 export const InputSection: FC<React.PropsWithChildren<Props>> = ({
@@ -13,6 +14,7 @@ export const InputSection: FC<React.PropsWithChildren<Props>> = ({
   text,
   children,
   loading,
+  divider = true,
 }) => {
   return (
     <Box paddingTop={4}>
@@ -28,7 +30,7 @@ export const InputSection: FC<React.PropsWithChildren<Props>> = ({
           <SkeletonLoader />
         </Box>
       )}
-      <Divider />
+      {divider && <Divider />}
     </Box>
   )
 }

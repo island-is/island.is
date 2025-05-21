@@ -494,6 +494,10 @@ export const emailsMsg = defineMessages({
     id: 'sp.settings:email-make-primary-success',
     defaultMessage: 'Aðal netfangi breytt',
   },
+  emailSetActorProfileSuccess: {
+    id: 'sp.settings:email-set-actor-profile-success',
+    defaultMessage: 'Netfang tengt umboði',
+  },
   emailDeleteSuccess: {
     id: 'sp.settings:email-delete-success',
     defaultMessage: 'Netfangi eytt',

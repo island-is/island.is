@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import {
   Box,
@@ -39,7 +39,7 @@ enum IdsUserProfileLinks {
   PHONE_NUMBER = '/app/user-profile/phone',
 }
 
-interface Props {
+interface ProfileFormProps {
   onCloseOverlay?: () => void
   onCloseDropModal?: () => void
   canDrop?: boolean
@@ -48,10 +48,10 @@ interface Props {
   showIntroTitle?: boolean
   showIntroText?: boolean
   setFormLoading?: (isLoading: boolean) => void
-  hasUserProfileWriteScope?: boolean
+  isActor?: boolean
 }
 
-export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
+export const ProfileForm = ({
   onCloseOverlay,
   onCloseDropModal,
   canDrop,
@@ -60,8 +60,8 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   setFormLoading,
   showIntroTitle,
   showIntroText = true,
-  hasUserProfileWriteScope,
-}) => {
+  isActor,
+}: ProfileFormProps) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
 
@@ -232,7 +232,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             )}
           </InputSection>
 
-          {hasUserProfileWriteScope && (
+          {!isActor && (
             <>
               <InputSection
                 title={formatMessage(m.telNumber)}
@@ -279,6 +279,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                   title={formatMessage(m.bankAccountInfo)}
                   text={formatMessage(msg.editBankInfoText)}
                   loading={userLoading}
+                  divider={false}
                 >
                   {!userLoading && (
                     <BankInfoForm

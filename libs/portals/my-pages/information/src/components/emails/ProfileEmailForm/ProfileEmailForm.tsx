@@ -14,7 +14,15 @@ import { useCreateEmailVerificationMutation } from './createEmailVerification.mu
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
 import { client } from '@island.is/portals/my-pages/graphql'
 
-export const ProfileEmailForm = () => {
+type ProfileEmailFormProps = {
+  onCancel?(): void
+  onAddSuccess?(): void
+}
+
+export const ProfileEmailForm = ({
+  onCancel,
+  onAddSuccess,
+}: ProfileEmailFormProps) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   const [openModal, setOpenModal] = useState(false)
@@ -29,6 +37,7 @@ export const ProfileEmailForm = () => {
     onCompleted: (data) => {
       if (data.userEmailsAddEmail) {
         setOpenModal(false)
+        onAddSuccess?.()
         client.refetchQueries({
           include: [USER_PROFILE],
         })
@@ -107,7 +116,12 @@ export const ProfileEmailForm = () => {
 
   return (
     <>
-      <AddEmail onAddEmail={onAddEmail} loading={loading} error={!!error} />
+      <AddEmail
+        onAddEmail={onAddEmail}
+        loading={loading}
+        error={!!error}
+        onCancel={onCancel}
+      />
       <Modal isVisible={openModal && !!email} onClose={handleCloseModal}>
         {email && (
           <VerifyTemplate

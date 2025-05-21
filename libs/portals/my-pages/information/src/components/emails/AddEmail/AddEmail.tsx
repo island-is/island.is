@@ -36,16 +36,25 @@ type EmailFormValues = z.infer<ReturnType<typeof createEmailFormSchema>>
 
 type AddEmailProps = {
   onAddEmail(email: string): Promise<void>
+  onCancel?(): void
   loading?: boolean
   error?: boolean
 }
 
-export const AddEmail = ({ onAddEmail, loading, error }: AddEmailProps) => {
+export const AddEmail = ({
+  onAddEmail,
+  loading,
+  error,
+  onCancel,
+}: AddEmailProps) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
 
   const methods = useForm<EmailFormValues>({
     resolver: zodResolver(createEmailFormSchema(formatMessage)),
+    defaultValues: {
+      email: '',
+    },
   })
 
   const {
@@ -87,7 +96,9 @@ export const AddEmail = ({ onAddEmail, loading, error }: AddEmailProps) => {
           flexDirection={['column', 'column', 'column', 'row']}
           columnGap={3}
           rowGap={2}
-          className={styles.contentContainer}
+          className={
+            onCancel ? styles.contentContainerLarge : styles.contentContainer
+          }
         >
           <Box flexGrow={1} width="full">
             <InputController
@@ -111,17 +122,36 @@ export const AddEmail = ({ onAddEmail, loading, error }: AddEmailProps) => {
                 : styles.defaultEmailButtonContainer
             }
           >
-            <Button
-              as="button"
-              type="submit"
-              icon="add"
-              loading={loading}
-              variant="text"
-              size="small"
-              nowrap
+            <Box
+              display="flex"
+              flexDirection="row"
+              columnGap={2}
+              alignItems="center"
             >
-              {formatMessage(emailsMsg.registerEmail)}
-            </Button>
+              <Button
+                as="button"
+                type="submit"
+                icon="add"
+                loading={loading}
+                variant="text"
+                size="small"
+                nowrap
+              >
+                {formatMessage(emailsMsg.registerEmail)}
+              </Button>
+              {onCancel && (
+                <Button
+                  icon="close"
+                  variant="text"
+                  colorScheme="destructive"
+                  size="small"
+                  nowrap
+                  onClick={onCancel}
+                >
+                  {formatMessage(emailsMsg.cancel)}
+                </Button>
+              )}
+            </Box>
           </Box>
         </Box>
       </form>

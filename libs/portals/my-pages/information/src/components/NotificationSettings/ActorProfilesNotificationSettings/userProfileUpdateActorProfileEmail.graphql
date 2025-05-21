@@ -1,5 +1,10 @@
-
-
 mutation UpdateActorProfileEmail($input: UpdateActorProfileEmailInput!) {
-  userProfileUpdateActorProfileEmail(input: $input)
+  userProfileUpdateActorProfileEmail(input: $input) {
+    email
+    emailStatus
+    needsNudge
+    nationalId
+    emailNotifications
+    emailVerified
+  }
 }

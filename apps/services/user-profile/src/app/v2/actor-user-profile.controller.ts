@@ -1,45 +1,47 @@
-import {
-  ApiOkResponse,
-  ApiNoContentResponse,
-  ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger'
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  UseGuards,
-  Headers,
-  Post,
-  Body,
-  Param,
-  Patch,
-} from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   ActorScopes,
   CurrentActor,
   CurrentUser,
-  Scopes,
+  IdsUserGuard,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { UserProfileScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
-import { UserProfileService } from './user-profile.service'
+import { Documentation } from '@island.is/nest/swagger'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
+import {
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger'
 import { ActorLocale } from '../user-profile/dto/actorLocale'
 import { Locale } from '../user-profile/types/localeTypes'
+import {
+  ActorProfileEmailDto,
+  UpdateActorProfileEmailDto,
+} from './dto/actor-profile-email.dto'
 import {
   ActorProfileDetailsDto,
   MeActorProfileDto,
   PaginatedActorProfileDto,
   PatchActorProfileDto,
 } from './dto/actor-profile.dto'
-import { Documentation } from '@island.is/nest/swagger'
+import { CreateVerificationDto } from './dto/create-verification.dto'
 import { PostNudgeDto } from './dto/post-nudge.dto'
 import { SetActorProfileEmailDto } from './dto/set-actor-profile-email.dto'
-import { UpdateActorProfileEmailDto } from './dto/actor-profile-email.dto'
-import { ActorProfileEmailDto } from './dto/actor-profile-email.dto'
-import { CreateVerificationDto } from './dto/create-verification.dto'
+import { UserProfileService } from './user-profile.service'
 
 const namespace = '@island.is/user-profile/v2/actor'
 @UseGuards(IdsUserGuard, ScopesGuard)
