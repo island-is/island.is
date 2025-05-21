@@ -127,9 +127,37 @@ export const generateCleanUpForFeature = async (
             securityContext,
             env: [
               {
+                name: 'PGHOST',
+                value: host.writer,
+              },
+              {
+                name: 'PGDATABASE',
+                value: 'postgres',
+              },
+              {
+                name: 'PGUSER',
+                value: 'root',
+              },
+              {
                 name: 'PGPASSWORD_KEY',
                 value: '/rds/vidspyrna/masterpassword',
-              }
+              },
+              {
+                name: 'DB_USER',
+                value: info!.username!,
+              },
+              {
+                name: 'DB_NAME',
+                value: info!.name!,
+              },
+              {
+                name: 'DB_PASSWORD_KEY',
+                value: info!.passwordSecret!,
+              },
+              {
+                name: 'DB_EXTENSIONS',
+                value: extensions,
+              },
             ],
           }
         }),
