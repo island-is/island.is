@@ -74,13 +74,6 @@ export const signedVerdictOverview = {
       },
     }),
     modifyDatesModal: defineMessages({
-      successTitle: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_title_v3',
-        defaultMessage:
-          'Lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}} breytt',
-        description:
-          'Notaður sem titill í "Lengd gæsluvarðhalds/vistunar/farbanns breytt" glugga á yfirlitsskjá afgreiddra mála þegar breyting á lengd gæsluvarðhalds/vistunar/farbanns hefur verið geymd.',
-      },
       reasonForChangeTitle: {
         id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.reason_for_change_title',
         defaultMessage: 'Ástæða breytingar',
@@ -99,13 +92,6 @@ export const signedVerdictOverview = {
           'Bóka þarf ástæðu fyrir breytingu á skráðri lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}}.',
         description:
           'Notaður sem skýritexti í "Ástæða breytingar" textaboxi í "Breyting á lengd gæsluvarðhalds/vistunar" glugga.',
-      },
-      text: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.text_v2',
-        defaultMessage:
-          'Hafi {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldi}} eða einangrun verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}}. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.',
-        description:
-          'Notaður sem texti í "Breyting á lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
       },
       validToDateAndIsolationToDateAreTheSame: {
         id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.valid_to_date_and_isolation_to_date_are_the_same',
@@ -140,12 +126,6 @@ export const signedVerdictOverview = {
           'Farbann til {date}. Tilkynning verður send á ábyrgðaraðila málsins hjá {userRole, select, PROSECUTOR {héraðsdómstól} other {saksóknaraembætti}}.',
         description:
           'Notaður sem texti í "Lengd farbanns breytt" glugga á yfirlitsskjá afgreiddra mála.',
-      },
-      primaryButtonText: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.primary_button_text',
-        defaultMessage: 'Staðfesta',
-        description:
-          'Notaður sem texti í staðfesta takka í "Breyta lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
       },
       modifiedValidToDateLabel: {
         id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.modified_valid_to_date_label_v3',

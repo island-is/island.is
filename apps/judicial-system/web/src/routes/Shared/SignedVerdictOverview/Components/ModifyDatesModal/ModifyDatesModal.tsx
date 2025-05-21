@@ -3,7 +3,7 @@ import { IntlShape, useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
 
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
@@ -18,6 +18,7 @@ import {
   BlueBox,
   DateTime,
   Modal,
+  SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -29,6 +30,7 @@ import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHel
 import { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { AnimatePresence, motion } from 'framer-motion'
+
 interface DateTime {
   value?: Date
   isValid: boolean
@@ -158,6 +160,48 @@ const getModificationSuccessText = (
   })
 }
 
+const getTitle = (caseType?: CaseType | null): string => {
+  switch (caseType) {
+    case CaseType.ADMISSION_TO_FACILITY:
+      return 'Breyting á lengd vistunar'
+    case CaseType.TRAVEL_BAN:
+      return 'Breyting á lengd farbanns'
+    case CaseType.CUSTODY:
+      return 'Breyting á lengd gæsluvarðhalds'
+    default:
+      // Should never happen
+      return ''
+  }
+}
+
+const getText = (caseType?: CaseType | null): string => {
+  switch (caseType) {
+    case CaseType.TRAVEL_BAN:
+      return 'Hafi farbanni verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd farbanns. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.'
+    case CaseType.ADMISSION_TO_FACILITY:
+      return 'Hafi vistun eða einangrun verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd vistunar. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.'
+    case CaseType.CUSTODY:
+      return 'Hafi gæsluvarðhaldi eða einangrun verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd gæsluvarðhalds. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.'
+    default:
+      // Should never happen
+      return ''
+  }
+}
+
+const getSuccessTitle = (caseType?: CaseType | null): string => {
+  switch (caseType) {
+    case CaseType.ADMISSION_TO_FACILITY:
+      return 'Lengd vistunar breytt'
+    case CaseType.TRAVEL_BAN:
+      return 'Lengd farbanns breytt'
+    case CaseType.CUSTODY:
+      return 'Lengd gæsluvarðhalds breytt'
+    default:
+      // Should never happen
+      return ''
+  }
+}
+
 const ModifyDatesModal: FC<Props> = ({
   workingCase,
   onSubmit,
@@ -183,7 +227,6 @@ const ModifyDatesModal: FC<Props> = ({
   )
 
   const [successText, setSuccessText] = useState<string>()
-  const [isOpen, setIsOpen] = useState<boolean>(true)
 
   const handleDateModification = useCallback(async () => {
     let formattedIsolationToDate = undefined
@@ -345,15 +388,12 @@ const ModifyDatesModal: FC<Props> = ({
           key="success"
         >
           <Modal
-            title={formatMessage(m.sections.modifyDatesModal.successTitle, {
-              caseType: workingCase.type,
-            })}
+            title={getSuccessTitle(workingCase.type)}
             text={successText}
             secondaryButtonText={formatMessage(core.closeModal)}
             onSecondaryButtonClick={() => {
               closeModal()
 
-              setIsOpen(false)
               setCaseModifiedExplanation(undefined)
               setSuccessText(undefined)
             }}
@@ -367,17 +407,9 @@ const ModifyDatesModal: FC<Props> = ({
           key="modal"
         >
           <Modal
-            title="TODO: FIX"
-            text={
-              workingCase.type === CaseType.TRAVEL_BAN
-                ? 'Hafi farbanni verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd farbanns. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.'
-                : formatMessage(m.sections.modifyDatesModal.text, {
-                    caseType: workingCase.type,
-                  })
-            }
-            primaryButtonText={formatMessage(
-              m.sections.modifyDatesModal.primaryButtonText,
-            )}
+            title={getTitle(workingCase.type)}
+            text={getText(workingCase.type)}
+            primaryButtonText="Staðfesta"
             isPrimaryButtonDisabled={isCaseModificationInvalid()}
             onPrimaryButtonClick={handleDateModification}
             isPrimaryButtonLoading={isSendingNotification || isUpdatingCase}
@@ -403,13 +435,11 @@ const ModifyDatesModal: FC<Props> = ({
             }}
           >
             <Box marginBottom={5}>
-              <Box marginBottom={3}>
-                <Text variant="h3" as="h2">
-                  {formatMessage(
-                    m.sections.modifyDatesModal.reasonForChangeTitle,
-                  )}
-                </Text>
-              </Box>
+              <SectionHeading
+                title={formatMessage(
+                  m.sections.modifyDatesModal.reasonForChangeTitle,
+                )}
+              />
               <Input
                 name="reason"
                 label={formatMessage(
