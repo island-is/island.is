@@ -2,6 +2,7 @@ import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -28,7 +29,6 @@ import {
 import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { AnimatePresence, motion } from 'framer-motion'
 interface DateTime {
   value?: Date
   isValid: boolean
