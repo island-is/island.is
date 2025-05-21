@@ -12,7 +12,10 @@ import { ApiTags, ApiHeader, ApiBearerAuth } from '@nestjs/swagger'
 import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import { ApplicationService } from '@island.is/application/api/core'
+import {
+  ApplicationDetails,
+  ApplicationService,
+} from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
 import { DelegationGuard } from './guards/delegation.guard'
 import type { Logger } from '@island.is/logging'
@@ -205,5 +208,31 @@ export class AdminController {
       from,
       to,
     )
+  }
+
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  @BypassDelegation()
+  @Get('admin/application/:applicationId/details')
+  @Documentation({
+    description:
+      'Get external data, attachments, and answers for a specific application',
+    response: {
+      status: 200,
+      type: ApplicationDetails,
+    },
+    request: {
+      params: {
+        applicationId: {
+          type: 'string',
+          required: true,
+          description: 'The ID of the application to fetch details for.',
+        },
+      },
+    },
+  })
+  async getApplicationDetails(
+    @Param('applicationId') applicationId: string,
+  ): Promise<ApplicationDetails> {
+    return this.applicationService.getApplicationDetails(applicationId)
   }
 }

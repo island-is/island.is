@@ -112,3 +112,11 @@ query getApplicationStatistics(
     name
   }
 }
+
+query getApplicationDetails($applicationId: String!) {
+  getApplicationDetails(applicationId: $applicationId) {
+    externalData
+    attachments
+    answers
+  }
+}
