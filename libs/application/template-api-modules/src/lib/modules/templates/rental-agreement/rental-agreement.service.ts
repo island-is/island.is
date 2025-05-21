@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { YesOrNoEnum } from '@island.is/application/core'
 import { ApplicationTypes } from '@island.is/application/types'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   DepositAmount,
   HomeApi,
@@ -30,6 +31,10 @@ export class RentalAgreementService extends BaseTemplateApiService {
     super(ApplicationTypes.RENTAL_AGREEMENT)
   }
 
+  private homeApiWithAuth(auth: Auth) {
+    return this.homeApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   async sendApplicationSummary({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.sendEmail(
       generateRentalAgreementEmail,
@@ -40,6 +45,7 @@ export class RentalAgreementService extends BaseTemplateApiService {
 
   async submitApplicationToHmsRentalService({
     application,
+    auth,
   }: TemplateApiModuleActionProps) {
     const { id, applicant, answers } = application
 
@@ -296,15 +302,12 @@ export class RentalAgreementService extends BaseTemplateApiService {
       newApplication,
     )
 
-    return await this.homeApi
+    return await this.homeApiWithAuth(auth)
       .contractPost({
         leaseApplication: newApplication,
       })
       .catch((error) => {
-        console.error(
-          'Error sending application to HMS Rental Service: ',
-          error,
-        )
+        console.log('Error sending application to HMS Rental Service: ', error)
 
         throw new Error('Error sending application to HMS Rental Service')
       })
