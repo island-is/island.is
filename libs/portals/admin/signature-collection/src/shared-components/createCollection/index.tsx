@@ -87,7 +87,7 @@ const CreateCollection = ({
         variables: {
           input: {
             nationalId: nationalIdInput,
-            collectionId: collectionId,
+            collectionType: collectionType,
           },
         },
       }).then((res) => {

@@ -37,6 +37,7 @@ import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.i
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
 import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
+import { SignatureCollectionCollectionTypeInput } from './dto/collectionType.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -62,20 +63,27 @@ export class SignatureCollectionAdminResolver {
     )
   }
 
-  @Query(() => [SignatureCollection])
+  @Query(() => SignatureCollection)
   @Scopes(
     AdminPortalScope.signatureCollectionManage,
     AdminPortalScope.signatureCollectionProcess,
   )
   async signatureCollectionAdminCurrent(
     @CurrentUser() user: User,
-  ): Promise<SignatureCollection[]> {
+    @Args('input') input: SignatureCollectionCollectionTypeInput,
+  ): Promise<SignatureCollection> {
     const isManager = user.scope.includes(
       AdminPortalScope.signatureCollectionManage,
     )
     return isManager
-      ? this.signatureCollectionManagerService.currentCollection(user)
-      : this.signatureCollectionService.currentCollection(user)
+      ? this.signatureCollectionManagerService.getLatestCollectionForType(
+          user,
+          input.collectionType,
+        )
+      : this.signatureCollectionService.getLatestCollectionForType(
+          user,
+          input.collectionType,
+        )
   }
 
   @Query(() => [SignatureCollectionList])

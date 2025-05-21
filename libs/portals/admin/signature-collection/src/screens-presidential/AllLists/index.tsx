@@ -229,7 +229,9 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                   collectionStatus === CollectionStatus.InInitialReview && (
                     <CreateCollection
                       collectionId={collection?.id}
-                      collectionType={SignatureCollectionCollectionType}
+                      collectionType={
+                        SignatureCollectionCollectionType.Presidential
+                      }
                       areaId={undefined}
                     />
                   )}
@@ -354,6 +356,9 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               {!hasInReview &&
                 collectionStatus === CollectionStatus.InInitialReview && (
                   <ActionCompleteCollectionProcessing
+                    collectionType={
+                      SignatureCollectionCollectionType.Presidential
+                    }
                     collectionId={collection?.id}
                   />
                 )}

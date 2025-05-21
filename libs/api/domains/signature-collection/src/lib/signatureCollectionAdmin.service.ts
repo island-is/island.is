@@ -42,6 +42,16 @@ export class SignatureCollectionAdminService {
     return await this.signatureCollectionClientService.currentCollection(user)
   }
 
+  async getLatestCollectionForType(
+    user: User,
+    collectionType: CollectionType,
+  ): Promise<SignatureCollection> {
+    return await this.signatureCollectionClientService.getLatestCollectionForType(
+      user,
+      collectionType,
+    )
+  }
+
   async allLists(
     input: SignatureCollectionIdInput,
     user: User,
