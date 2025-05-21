@@ -203,10 +203,10 @@ describe('BFF PortalEnv serialization', () => {
   it('ingress', () => {
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
+        ingressClassName: 'nginx-external-alb',
         annotations: {
           'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
           'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          'kubernetes.io/ingress.class': 'nginx-external-alb',
           'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [

@@ -134,8 +134,8 @@ describe('Basic serialization', () => {
   it('ingress', () => {
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
+        ingressClassName: 'nginx-external-alb',
         annotations: {
-          'kubernetes.io/ingress.class': 'nginx-external-alb',
           'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [
