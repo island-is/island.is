@@ -60,7 +60,6 @@ image:
 ingress:
   primary-alb:
     annotations:
-      kubernetes.io/ingress.class: 'nginx-external-alb'
       nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
       nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -72,6 +71,7 @@ ingress:
           - '/api/case'
           - '/api/feature'
           - '/api/defender'
+    ingressClassName: 'nginx-external-alb'
 namespace: 'judicial-system'
 podDisruptionBudget:
   maxUnavailable: 1

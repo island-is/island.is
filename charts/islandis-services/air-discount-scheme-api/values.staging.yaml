@@ -53,7 +53,6 @@ image:
 ingress:
   primary-alb:
     annotations:
-      kubernetes.io/ingress.class: 'nginx-external-alb'
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
       - host: 'loftbru.staging01.devland.is'
@@ -62,6 +61,7 @@ ingress:
       - host: 'loftbru-cf.staging01.devland.is'
         paths:
           - '/api/graphql'
+    ingressClassName: 'nginx-external-alb'
 namespace: 'air-discount-scheme'
 podDisruptionBudget:
   maxUnavailable: 1

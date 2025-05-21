@@ -43,7 +43,6 @@ auth-admin-web:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '16k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/proxy-buffers-number: '4'
@@ -53,6 +52,7 @@ auth-admin-web:
         - host: 'identity-server.dev01.devland.is'
           paths:
             - '/admin'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -154,7 +154,6 @@ identity-server:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
@@ -163,6 +162,7 @@ identity-server:
         - host: 'identity-server.dev01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -278,13 +278,13 @@ services-auth-admin-api:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'identity-server.dev01.devland.is'
           paths:
             - '/backend'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -383,12 +383,12 @@ services-auth-delegation-api:
   ingress:
     internal-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'auth-delegation-api.internal.identity-server.dev01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-internal-alb'
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -674,12 +674,12 @@ services-auth-personal-representative:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'personal-representative-xrd.internal.dev01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-internal-alb'
   namespace: 'personal-representative'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -743,12 +743,12 @@ services-auth-personal-representative-public:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'personal-representative-public-xrd.internal.dev01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-internal-alb'
   namespace: 'personal-representative'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -838,7 +838,6 @@ services-auth-public-api:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
@@ -848,6 +847,7 @@ services-auth-public-api:
         - host: 'identity-server.dev01.devland.is'
           paths:
             - '/api(/|$)(.*)'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1

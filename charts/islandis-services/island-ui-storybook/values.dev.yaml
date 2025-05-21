@@ -47,12 +47,12 @@ image:
 ingress:
   primary-alb:
     annotations:
-      kubernetes.io/ingress.class: 'nginx-external-alb'
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
       - host: 'ui.dev01.devland.is'
         paths:
           - '/'
+    ingressClassName: 'nginx-external-alb'
 namespace: 'storybook'
 podDisruptionBudget:
   maxUnavailable: 1

@@ -42,7 +42,6 @@ air-discount-scheme-api:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'loftbru.staging01.devland.is'
@@ -51,6 +50,7 @@ air-discount-scheme-api:
         - host: 'loftbru-cf.staging01.devland.is'
           paths:
             - '/api/graphql'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -130,7 +130,6 @@ air-discount-scheme-backend:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
@@ -142,6 +141,7 @@ air-discount-scheme-backend:
           paths:
             - '/api/swagger'
             - '/api/public'
+      ingressClassName: 'nginx-external-alb'
   initContainer:
     containers:
       - args:
@@ -230,7 +230,6 @@ air-discount-scheme-web:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '16k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/proxy-buffers-number: '4'
@@ -243,6 +242,7 @@ air-discount-scheme-web:
         - host: 'loftbru-cf.staging01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -455,12 +455,12 @@ api:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.staging01.devland.is'
           paths:
             - '/api'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'islandis'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -740,7 +740,6 @@ application-system-api:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -753,6 +752,7 @@ application-system-api:
           paths:
             - '/application-payment'
             - '/applications'
+      ingressClassName: 'nginx-internal-alb'
   initContainer:
     containers:
       - args:
@@ -986,7 +986,6 @@ application-system-form:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -994,6 +993,7 @@ application-system-form:
         - host: 'beta.staging01.devland.is'
           paths:
             - '/umsoknir'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'application-system'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -1107,7 +1107,6 @@ consultation-portal:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -1115,6 +1114,7 @@ consultation-portal:
         - host: 'beta.staging01.devland.is'
           paths:
             - '/samradsgatt'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'consultation-portal'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -1197,13 +1197,13 @@ download-service:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'api.staging01.devland.is'
           paths:
             - '/download'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'download-service'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -1483,12 +1483,12 @@ island-ui-storybook:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'ui.staging01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'storybook'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -1556,12 +1556,12 @@ license-api:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'license-api-xrd.internal.staging01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-internal-alb'
   namespace: 'license-api'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -1667,7 +1667,6 @@ payments:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
@@ -1676,6 +1675,7 @@ payments:
         - host: 'beta.staging01.devland.is'
           paths:
             - '/greida'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'payments'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -1734,7 +1734,6 @@ portals-admin:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -1742,6 +1741,7 @@ portals-admin:
         - host: 'beta.staging01.devland.is'
           paths:
             - '/stjornbord'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'portals-admin'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -1901,13 +1901,13 @@ search-indexer-service:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'search-indexer-service.staging01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-external-alb'
   initContainer:
     containers:
       - args:
@@ -2032,7 +2032,6 @@ service-portal:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -2040,6 +2039,7 @@ service-portal:
         - host: 'beta.staging01.devland.is'
           paths:
             - '/minarsidur'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'service-portal'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -2122,12 +2122,12 @@ service-portal-api:
   ingress:
     internal-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'service-portal-api.internal.staging01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-internal-alb'
   initContainer:
     containers:
       - args:
@@ -2240,7 +2240,6 @@ services-bff-portals-admin:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
@@ -2249,6 +2248,7 @@ services-bff-portals-admin:
         - host: 'beta.staging01.devland.is'
           paths:
             - '/stjornbord/bff'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'portals-admin'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -2326,7 +2326,6 @@ services-bff-portals-my-pages:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
@@ -2335,6 +2334,7 @@ services-bff-portals-my-pages:
         - host: 'beta.staging01.devland.is'
           paths:
             - '/bff'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'portals-my-pages'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -2498,15 +2498,14 @@ services-payments:
   ingress:
     internal-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'services-payments.internal.staging01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-internal-alb'
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -2514,6 +2513,7 @@ services-payments:
         - host: 'services-payments-xrd.internal.staging01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-internal-alb'
   initContainer:
     containers:
       - args:
@@ -2609,12 +2609,12 @@ services-sessions:
   ingress:
     internal-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'sessions-api.internal.staging01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-internal-alb'
   namespace: 'services-sessions'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -2851,12 +2851,12 @@ services-university-gateway:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'services-university-gateway.internal.staging01.devland.is'
           paths:
             - '/api'
+      ingressClassName: 'nginx-internal-alb'
   initContainer:
     containers:
       - args:
@@ -3041,7 +3041,6 @@ skilavottord-web:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -3049,6 +3048,7 @@ skilavottord-web:
         - host: 'beta.staging01.devland.is'
           paths:
             - '/app/skilavottord/'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'skilavottord'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -3110,12 +3110,12 @@ skilavottord-ws:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.staging01.devland.is'
           paths:
             - '/app/skilavottord/api/graphql'
+      ingressClassName: 'nginx-external-alb'
   initContainer:
     containers:
       - args:
@@ -3238,15 +3238,14 @@ user-notification:
   ingress:
     internal-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'user-notification.internal.staging01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-internal-alb'
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -3254,6 +3253,7 @@ user-notification:
         - host: 'user-notification-xrd.internal.staging01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-internal-alb'
   namespace: 'user-notification'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -3648,7 +3648,6 @@ web:
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -3656,6 +3655,7 @@ web:
         - host: 'beta.staging01.devland.is'
           paths:
             - '/'
+      ingressClassName: 'nginx-external-alb'
   namespace: 'islandis'
   podDisruptionBudget:
     maxUnavailable: 1
