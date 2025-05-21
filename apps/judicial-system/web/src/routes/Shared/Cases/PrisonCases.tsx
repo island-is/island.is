@@ -65,22 +65,28 @@ export const PrisonCases: FC = () => {
 
   const resCases = data?.cases
 
-  const [activeCases, pastCases, indictmentCases] = useMemo(() => {
-    if (!resCases) {
-      return [[], [], []]
-    }
+  const [activeCases, pastCases, registeredCases, unregisteredCases] =
+    useMemo(() => {
+      if (!resCases) {
+        return [[], [], [], []]
+      }
 
-    const [indictmentCases, otherCases] = partition(
-      resCases,
-      (c) => c.type === CaseType.INDICTMENT,
-    )
-    const [activeCases, pastCases] = partition(
-      otherCases,
-      (c) => !c.isValidToDateInThePast,
-    )
+      const [indictmentCases, otherCases] = partition(
+        resCases,
+        (c) => c.type === CaseType.INDICTMENT,
+      )
+      const [activeCases, pastCases] = partition(
+        otherCases,
+        (c) => !c.isValidToDateInThePast,
+      )
 
-    return [activeCases, pastCases, indictmentCases]
-  }, [resCases])
+      const [registeredCases, unregisteredCases] = partition(
+        indictmentCases,
+        (c) => c.isRegisteredInPrisonSystem,
+      )
+
+      return [activeCases, pastCases, registeredCases, unregisteredCases]
+    }, [resCases])
 
   const renderTable = useMemo(
     () => (cases: CaseListEntry[]) => {
@@ -273,12 +279,8 @@ export const PrisonCases: FC = () => {
       <div className={styles.infoContainer}>
         <AlertMessage
           type="info"
-          title={formatMessage(
-            m.activeRequests.prisonStaffUsers.infoContainerTitle,
-          )}
-          message={formatMessage(
-            m.activeRequests.prisonStaffUsers.infoContainerText,
-          )}
+          title="Engin mál fundust"
+          message="Engin mál fundust í þessum flokk"
         />
       </div>
     )
@@ -313,8 +315,20 @@ export const PrisonCases: FC = () => {
                 )}
               />
               <Box marginBottom={[5, 5, 12]}>
-                {loading || !user || indictmentCases.length > 0
-                  ? renderIndictmentTable(indictmentCases)
+                {loading || !user || unregisteredCases.length > 0
+                  ? renderIndictmentTable(unregisteredCases)
+                  : renderAlertMessage()}
+              </Box>
+
+              <SectionHeading
+                title={formatMessage(
+                  m.activeRequests.prisonStaffUsers
+                    .prisonAdminIndictmentCaseTitleRegisteredCases,
+                )}
+              />
+              <Box marginBottom={[5, 5, 12]}>
+                {loading || !user || registeredCases.length > 0
+                  ? renderIndictmentTable(registeredCases)
                   : renderAlertMessage()}
               </Box>
             </>

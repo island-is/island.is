@@ -199,6 +199,27 @@ export const defenderUpdateRule: RolesRule = {
   dtoFields: limitedAccessFields,
 }
 
+// Allows prison admin to update a specific set of fields
+export const prisonSystemAdminUpdateRule: RolesRule = {
+  role: UserRole.PRISON_SYSTEM_STAFF,
+  type: RulesType.FIELD,
+  dtoFields: [
+    'isRegisteredInPrisonSystem',
+    'caseModifiedExplanation',
+    'isolationToDate',
+    'validToDate',
+  ],
+  canActivate(request) {
+    const user: User = request.user?.currentUser
+    // Deny if something is missing or if the user is not a prison admin
+    if (!user || !isPrisonAdminUser(user)) {
+      return false
+    }
+
+    return true
+  },
+}
+
 // Allows prosecutors to transition cases
 export const prosecutorTransitionRule: RolesRule = {
   role: UserRole.PROSECUTOR,
