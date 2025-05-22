@@ -1,22 +1,27 @@
 import { AlertMessage, Box, Button, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatDate, getInitials } from '@island.is/portals/my-pages/core'
+import {
+  formatDate,
+  getInitials,
+  useIsMobile,
+} from '@island.is/portals/my-pages/core'
+import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import React, { useState } from 'react'
+import { dateFormat } from '@island.is/shared/constants'
+import { isDefined } from '@island.is/shared/utils'
+import { useEffect, useState } from 'react'
+import { Reply } from '../../lib/types'
 import { useGetDocumentTicketLazyQuery } from '../../queries/Overview.generated'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { messages } from '../../utils/messages'
+import NoPDF from '../NoPDF/NoPDF'
 import ReplyForm from './ReplyForm'
 import ReplyHeader from './ReplyHeader'
 import ReplySent from './ReplySent'
-import { Reply } from '../../lib/types'
-import { isDefined } from '@island.is/shared/utils'
-import NoPDF from '../NoPDF/NoPDF'
-import { dateFormatWithTime } from '@island.is/shared/constants'
 
 const ReplyContainer = () => {
-  const { profile } = useUserInfo()
   const { formatMessage } = useLocale()
+  const { profile } = useUserInfo()
   const {
     replies,
     replyable,
@@ -27,18 +32,27 @@ const ReplyContainer = () => {
     activeDocument,
     closedForMoreReplies,
   } = useDocumentContext()
-  const hasEmail = true //isDefined(userProfile?.email)
   const [sent, setSent] = useState<boolean>()
   const [showAllReplies, setShowAllReplies] = useState(false)
-  const [getTicketQuery] = useGetDocumentTicketLazyQuery({
-    variables: {
-      input: {
-        id: activeDocument?.id ?? '',
-        includeDocument: true,
+  const [getTicketQuery, { loading: getTicketLoading }] =
+    useGetDocumentTicketLazyQuery({
+      variables: {
+        input: {
+          id: activeDocument?.id ?? '',
+          includeDocument: true,
+        },
       },
-    },
-    fetchPolicy: 'no-cache',
-  })
+      fetchPolicy: 'no-cache',
+    })
+  const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
+  const userEmail = userProfile?.email
+  const hasEmail = isDefined(userEmail)
+  const userName = profile.name
+  const { isMobile } = useIsMobile()
+
+  useEffect(() => {
+    console.log(userProfile)
+  }, [userLoading, userProfile])
 
   const successfulSubmit = () => {
     setSent(true)
@@ -67,8 +81,6 @@ const ReplyContainer = () => {
                 }
             }),
           }
-          reply.comments?.pop()
-          setReplies(reply)
         }
       },
     })
@@ -83,7 +95,7 @@ const ReplyContainer = () => {
         size="small"
         onClick={() => setReplyOpen(true)}
       >
-        Svara pósti
+        {formatMessage(messages.sendMessage)}
       </Button>
     </Box>
   )
@@ -112,7 +124,7 @@ const ReplyContainer = () => {
   return (
     <>
       <Box>
-        {!showAllReplies && repliesLength > 4 ? (
+        {!showAllReplies && repliesLength > (isMobile ? 2 : 4) ? (
           <>
             <Box paddingY={3}>
               <Divider />
@@ -133,20 +145,14 @@ const ReplyContainer = () => {
                 <Divider />
               </Box>
               <ReplyHeader
+                caseNumber={lastReply?.id ?? undefined}
                 initials={getInitials(lastReply?.author ?? '')}
                 title={lastReply?.author ?? activeDocument.subject}
-                hasEmail={isDefined(profile.email)}
-                subTitle={formatDate(
-                  lastReply?.createdDate,
-                  dateFormatWithTime.is,
-                )}
+                hasEmail={isDefined(userEmail)}
+                subTitle={formatDate(lastReply?.createdDate, dateFormat.is)}
                 displayEmail={false}
               />
-              <ReplySent
-                date={lastReply?.createdDate}
-                id={lastReply?.id}
-                body={lastReply?.body}
-              />
+              <ReplySent body={lastReply?.body} />
             </Box>
           </>
         ) : (
@@ -160,19 +166,14 @@ const ReplyContainer = () => {
                 <Divider />
               </Box>
               <ReplyHeader
+                caseNumber={reply.id ?? undefined}
                 initials={getInitials(reply.author ?? '')}
                 title={reply.author ?? activeDocument.subject}
-                hasEmail={isDefined(profile.email)}
-                subTitle={formatDate(reply?.createdDate, dateFormatWithTime.is)}
+                hasEmail={isDefined(userEmail)}
+                subTitle={formatDate(reply?.createdDate, dateFormat.is)}
                 displayEmail={false}
               />
-              {!reply.hide && (
-                <ReplySent
-                  date={reply.createdDate}
-                  id={reply.id}
-                  body={reply.body}
-                />
-              )}
+              {!reply.hide && <ReplySent body={reply.body} />}
             </Box>
           ))
         )}
@@ -180,26 +181,23 @@ const ReplyContainer = () => {
         {closedForMoreReplies && (
           <AlertMessage
             type="info"
-            message={
-              'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.'
-            }
+            message={formatMessage(messages.closedForReplies)}
           />
         )}
       </Box>
-
-      {replyable && replyOpen && (
-        <Box marginY={3}>
+      {sent && reply && (
+        <>
           <Divider />
           <ReplyHeader
-            initials={getInitials(profile.name)}
-            title={sent ? profile.name : formatMessage(messages.titleWord)}
+            initials={getInitials(userName)}
+            title={sent ? userName : formatMessage(messages.titleWord)}
             subTitle={formatMessage(messages.toWithArgs, {
               receiverName: activeDocument.sender,
             })}
             secondSubTitle={
               !sent && hasEmail
                 ? formatMessage(messages.fromWithArgs, {
-                    senderName: profile.email,
+                    senderName: userEmail,
                   })
                 : undefined
             }
@@ -208,14 +206,42 @@ const ReplyContainer = () => {
             displayCloseButton={!sent}
             onClose={() => setReplyOpen(false)}
           />
+          <ReplySent
+            body={reply.body}
+            intro={formatMessage(messages.replySent, {
+              email: userEmail,
+            })}
+          />
+        </>
+      )}
 
-          {reply && (
+      {replyable && replyOpen && (
+        <Box marginY={3} height="full">
+          {!isMobile && <Divider />}
+          <ReplyHeader
+            initials={getInitials(userName)}
+            title={sent ? userName : formatMessage(messages.titleWord)}
+            subTitle={formatMessage(messages.toWithArgs, {
+              receiverName: activeDocument.sender,
+            })}
+            secondSubTitle={
+              !sent && hasEmail
+                ? formatMessage(messages.fromWithArgs, {
+                    senderName: userEmail,
+                  })
+                : undefined
+            }
+            displayEmail
+            hasEmail={hasEmail}
+            displayCloseButton={!sent}
+            onClose={() => setReplyOpen(false)}
+          />
+          {sent && reply && (
             <ReplySent
-              id={reply?.id}
               body={reply.body}
-              intro={
-                'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang. '
-              }
+              intro={formatMessage(messages.replySent, {
+                email: userEmail,
+              })}
             />
           )}
           {/* Form  */}

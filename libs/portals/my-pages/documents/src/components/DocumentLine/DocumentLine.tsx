@@ -373,9 +373,9 @@ export const DocumentLine: FC<Props> = ({
               <Text variant="medium" truncate>
                 {documentLine.sender?.name ?? ''}
               </Text>
-              {
+              {documentLine.replyable && (
                 <Box
-                  background="backgroundBrandLighter"
+                  background="dark100"
                   borderRadius="standard"
                   paddingX="smallGutter"
                   marginLeft={1}
@@ -385,12 +385,12 @@ export const DocumentLine: FC<Props> = ({
                 >
                   <Icon
                     icon="undo"
-                    color="blue600"
+                    color="dark400"
                     size="small"
                     type="outline"
                   />
                 </Box>
-              }
+              )}
             </Box>
             <Text variant="medium">{date}</Text>
           </Box>

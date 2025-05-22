@@ -1,16 +1,9 @@
 import { DocumentsV2Category } from '@island.is/api/schema'
-import {
-  AlertMessage,
-  Box,
-  Divider,
-  LoadingDots,
-} from '@island.is/island-ui/core'
+import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/portals/my-pages/constants'
-import { formatDate, getInitials, m } from '@island.is/portals/my-pages/core'
+import { m } from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { dateFormatWithTime } from '@island.is/shared/constants'
-import { isDefined } from '@island.is/shared/utils'
 import { FC } from 'react'
 import { useDocumentList } from '../../hooks/useDocumentList'
 import { Reply } from '../../lib/types'
@@ -19,8 +12,6 @@ import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
 import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
 import NoPDF from '../NoPDF/NoPDF'
 import ReplyContainer from '../Reply/ReplyContainer'
-import ReplyHeader from '../Reply/ReplyHeader'
-import ReplySent from '../Reply/ReplySent'
 import * as styles from './OverviewDisplay.css'
 
 interface Props {

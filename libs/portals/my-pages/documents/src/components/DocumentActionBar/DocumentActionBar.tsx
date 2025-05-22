@@ -9,7 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Tooltip, m } from '@island.is/portals/my-pages/core'
+import { Tooltip, m, useIsMobile } from '@island.is/portals/my-pages/core'
 import { useDocumentList } from '../../hooks/useDocumentList'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import { ActiveDocumentType2 } from '../../lib/types'
@@ -41,10 +41,10 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
     loading,
   } = useMailAction()
 
-  const { activeDocument } = useDocumentContext()
+  const { activeDocument, replyOpen, setReplyOpen } = useDocumentContext()
   const { fetchObject, refetch } = useDocumentList()
   const { formatMessage } = useLocale()
-
+  const { isMobile } = useIsMobile()
   const isBookmarked =
     (bookmarked && !dataSuccess.unbookmark) || bookmarkSuccess
   const isArchived = (archived && !dataSuccess.unarchive) || archiveSuccess
@@ -149,6 +149,9 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
       onClick: () => onReply?.(),
     })
   }
+
+  const hideActions = !isMobile || (!replyOpen && isMobile) //Display only if desktop or replyOpen is false and isMobile
+
   return (
     <>
       {onGoBack && (
@@ -162,7 +165,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
         </Box>
       )}
       <Box className={styles.filterBtns} display="flex" columnGap={spacing}>
-        {!loading && (
+        {!loading && hideActions && (
           <>
             {isReplyable && (
               <Tooltip text={formatMessage(m.reply)}>
@@ -224,26 +227,38 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
           </Box>
         )}
       </Box>
-      <Tooltip text={formatMessage(m.actions)}>
-        <DropdownMenu
-          icon="ellipsisVertical"
-          iconType="filled"
-          items={actions.reverse()}
-          disclosure={
-            <span className={styles.actionsButton}>
-              <Tooltip text={formatMessage(m.actions)}>
-                <Button
-                  icon="ellipsisVertical"
-                  iconType="filled"
-                  size="small"
-                  variant="text"
-                  loading={loading}
-                />
-              </Tooltip>
-            </span>
-          }
-        ></DropdownMenu>
-      </Tooltip>
+      {hideActions && (
+        <Tooltip text={formatMessage(m.actions)}>
+          <DropdownMenu
+            icon="ellipsisVertical"
+            iconType="filled"
+            items={actions.reverse()}
+            disclosure={
+              <span className={styles.actionsButton}>
+                <Tooltip text={formatMessage(m.actions)}>
+                  <Button
+                    icon="ellipsisVertical"
+                    iconType="filled"
+                    size="small"
+                    variant="text"
+                    loading={loading}
+                  />
+                </Tooltip>
+              </span>
+            }
+          ></DropdownMenu>
+        </Tooltip>
+      )}
+      {replyOpen && isMobile && (
+        <Box>
+          <Button
+            circle
+            icon="close"
+            colorScheme="light"
+            onClick={() => setReplyOpen(false)}
+          />
+        </Box>
+      )}
     </>
   )
 }

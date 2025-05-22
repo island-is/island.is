@@ -8,16 +8,15 @@ import {
   PhoneInput,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  FeatureFlagClient,
-  Features,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
 import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
 import {
   useDeleteIslykillValue,
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
+import {
+  FeatureFlagClient,
+  useFeatureFlagClient,
+} from '@island.is/react/feature-flags'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { msg } from '../../../../lib/messages'

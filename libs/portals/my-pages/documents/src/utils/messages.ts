@@ -118,7 +118,11 @@ export const messages = defineMessages({
   },
   caseNumber: {
     id: 'sp.documents:case-number',
-    defaultMessage: 'Málsnúmer',
+    defaultMessage: 'Málsnúmer:',
+  },
+  caseNumberShort: {
+    id: 'sp.documents:case-number-short',
+    defaultMessage: 'Málsnr.',
   },
   sentToEmail: {
     id: 'sp.documents:sent-to-email',
@@ -130,11 +134,11 @@ export const messages = defineMessages({
   },
   fromWithArgs: {
     id: 'sp.documents:from-with-args',
-    defaultMessage: 'Frá {senderName}',
+    defaultMessage: 'Frá: {senderName}',
   },
   toWithArgs: {
     id: 'sp.documents:to-with-args',
-    defaultMessage: 'Til {receiverName}',
+    defaultMessage: 'Til: {receiverName}',
   },
   titleWord: {
     id: 'sp.documents:title-word',
@@ -167,5 +171,19 @@ export const messages = defineMessages({
   closeExpandedModal: {
     id: 'sp.documents:close',
     defaultMessage: 'Loka módal með stækkuðu skjali',
+  },
+  replySent: {
+    id: 'sp.documents:reply-sent',
+    defaultMessage:
+      'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}.',
+  },
+  sendMessage: {
+    id: 'sp.documents:send-message',
+    defaultMessage: 'Senda skilaboð',
+  },
+  closedForReplies: {
+    id: 'sp.documents:closed-for-replies',
+    defaultMessage:
+      'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
   },
 })

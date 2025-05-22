@@ -1,10 +1,13 @@
 import { Box, Button, Input, toast } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { useIsMobile } from '@island.is/portals/my-pages/core'
 import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import React from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useReplyMutation } from '../../queries/Reply.generated'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import { messages } from '../../utils/messages'
 
 interface Props {
   hasEmail: boolean
@@ -20,6 +23,8 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
   const { activeDocument, setReply } = useDocumentContext()
   const { data: userProfile } = useUserProfile()
   const { profile } = useUserInfo()
+  const { formatMessage } = useLocale()
+  const { isMobile } = useIsMobile()
 
   const [postReply, { loading: postReplyLoading }] = useReplyMutation({
     onError: () => {
@@ -84,13 +89,15 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
                 value={value}
                 errorMessage={methods.formState.errors.reply?.message}
               />
+
               <Box display="flex" justifyContent="flexEnd" marginTop={3}>
                 <Button
                   type="submit"
                   size="small"
                   disabled={methods.formState.isSubmitting || postReplyLoading}
+                  fluid={isMobile ? true : false}
                 >
-                  Senda skilaboð
+                  {formatMessage(messages.sendMessage)}
                 </Button>
               </Box>
             </Box>
