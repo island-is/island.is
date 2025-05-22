@@ -16,7 +16,7 @@ jobs:
   actionlint:
     runs-on: arc-shared
     env:
-      ACTIONLINT_VERSION: '1.7.6'
+      ACTIONLINT_VERSION: '1.7.7'
       ACTIONLINT_FMT_URL: 'https://github.com/rhysd/actionlint/releases/download/v%s/actionlint_%s_linux_amd64.tar.gz'
       ACTIONLINT_DIR: '.cache/actionlint'
       ACTIONLINT_BIN: '.cache/actionlint/actionlint'
