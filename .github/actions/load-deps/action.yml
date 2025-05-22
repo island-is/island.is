@@ -15,10 +15,14 @@ runs:
   using: 'composite'
   steps:
     - name: Set env
+      working-directory: ${{ inputs.working-directory }}
       shell: bash
+      env:
+        CACHE_PATH: ${{ inputs.cache-path }}
       run: |
-        export GENERATED_FILES_PATH=${{ inputs.cache-path }}/${{ env.GENERATED_FILES }}
-        echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_ENV"
+        node ./scripts/ci/generate-files.mjs --skip-codegen
+        CACHE_KEY=${{ hashFiles('generated_files.txt') }}
+        echo "GENERATED_FILES_PATH=$CACHE_PATH/$CACHE_KEY" >> "$GITHUB_ENV"
 
     - name: INFO
       working-directory: ${{ inputs.working-directory }}
