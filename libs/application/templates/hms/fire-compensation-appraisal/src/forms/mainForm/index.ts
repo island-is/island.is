@@ -1,7 +1,7 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 import { personalInformationSection } from './personalInformationSection'
-import { overviewSection } from './overview'
+import { overviewSection } from './overviewSection'
 import { changesSection } from './changesSection'
 import { realEstateSection } from './realEstateSection'
 import { photoSection } from './photoSection'

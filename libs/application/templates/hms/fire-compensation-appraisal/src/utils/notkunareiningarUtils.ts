@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { Fasteign } from '@island.is/clients/assets'
+import { formatCurrency } from '@island.is/shared/utils'
 
 export const hasMoreThanOneNotkunareining = (
   answers: FormValue,
@@ -34,8 +35,10 @@ export const notkunareiningarOptions = (
   )
   return (
     fasteign?.notkunareiningar?.notkunareiningar?.map((notkunareining) => ({
-      label: notkunareining.notkunBirting ?? '',
-      value: notkunareining.notkunBirting ?? '',
+      label: `${notkunareining.notkunBirting} - Brunabótamat: ${formatCurrency(
+        notkunareining.brunabotamat ?? 0,
+      )}`,
+      value: notkunareining.notkunareininganumer ?? '',
     })) ?? []
   )
 }

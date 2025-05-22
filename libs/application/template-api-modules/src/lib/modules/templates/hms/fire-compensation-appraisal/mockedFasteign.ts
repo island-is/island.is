@@ -3,10 +3,11 @@ import { Fasteign } from '@island.is/clients/assets'
 const getMockedNotkunareining = (
   notkunBirting: string,
   brunabotamat: number,
+  notkunareininganumer: string,
 ) => {
   return {
     birtStaerdMaelieining: 'm²',
-    notkunareininganumer: '010101',
+    notkunareininganumer,
     fasteignanumer: 'F12345',
     stadfang: {
       birtingStutt: 'RVK',
@@ -38,6 +39,7 @@ const getMockedNotkunareining = (
 type NotkunarValues = {
   notkunBirting: string
   brunabotamat: number
+  notkunareininganumer: string
 }
 
 export const getMockedFasteign = (
@@ -93,7 +95,11 @@ export const getMockedFasteign = (
     notkunareiningar: {
       notkunareiningar: [
         ...notkunareiningar.map((notkun) =>
-          getMockedNotkunareining(notkun.notkunBirting, notkun.brunabotamat),
+          getMockedNotkunareining(
+            notkun.notkunBirting,
+            notkun.brunabotamat,
+            notkun.notkunareininganumer,
+          ),
         ),
       ],
     },

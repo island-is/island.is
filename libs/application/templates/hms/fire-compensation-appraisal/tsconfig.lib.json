@@ -20,6 +20,7 @@
     "src/**/*.jsx",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/forms/prerequisitesForm"
+    "src/forms/prerequisitesForm",
+    "src/types"
   ]
 }

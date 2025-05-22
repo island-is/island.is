@@ -6,10 +6,30 @@ export const realEstateMessages = defineMessages({
     defaultMessage: 'Fasteign',
     description: 'Real estate section title',
   },
+  multifieldTitle: {
+    id: 'fca.application:realEstate.multifieldTitle',
+    defaultMessage: 'Fasteignir og notkunareiningar',
+    description: 'Real estate section multifield title',
+  },
   description: {
     id: 'fca.application:realEstate.description',
     defaultMessage:
       'Veldu eina af þínum fasteignum úr listanum hér fyrir neðan. Því næst þarftu að velja hvaða notkunareiningar innan fasteignarinnar á að endurmeta brunabótamat fyrir.',
     description: 'Real estate section description',
+  },
+  useageUnit: {
+    id: 'fca.application:realEstate.useageUnit',
+    defaultMessage: 'Notkunareining',
+    description: 'Useage unit',
+  },
+  useageUnitsFireCompensation: {
+    id: 'fca.application:realEstate.useageUnitsFireCompensation',
+    defaultMessage: 'Brunabótamat valdra notkunareininga',
+    description: 'Useage units fire compensation',
+  },
+  totalFireCompensation: {
+    id: 'fca.application:realEstate.totalFireCompensation',
+    defaultMessage: 'Heildar brunabótamat fasteignar',
+    description: 'Total fire compensation',
   },
 })

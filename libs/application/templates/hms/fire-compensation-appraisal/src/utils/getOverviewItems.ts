@@ -7,8 +7,9 @@ import { KeyValueItem } from '@island.is/application/types'
 import * as m from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { formatPhoneNumber } from './utils'
-import { FileType } from '../types.ts'
+import { FileType } from '../types'
 import { Fasteign } from '@island.is/clients/assets'
+import { formatCurrency } from '@island.is/shared/utils'
 
 export const personalInformationOverviewItems = (
   answers: FormValue,
@@ -100,27 +101,40 @@ export const realEstateOverviewItems = (
   const property = properties?.find(
     (property) => property.fasteignanumer === realEstateId,
   )
-  const useageUnits = property?.notkunareiningar
+  console.log('Property: ', property)
+  const selectedUseageUnits =
+    getValueViaPath<string[]>(answers, 'useageUnits') || []
+  console.log(answers)
+  const displayUseageUnits = property?.notkunareiningar?.notkunareiningar
+    ?.filter((unit) =>
+      selectedUseageUnits.includes(unit.notkunareininganumer ?? ''),
+    )
+    .map((unit) => unit.notkunBirting)
 
-  console.log(externalData)
+  const useageUnitsFireCompensation = parseInt(
+    getValueViaPath<string>(answers, 'useageUnitsFireCompensation') ?? '0',
+  )
+
   return [
     {
-      width: 'full',
+      width: 'half',
       keyText: m.overviewMessages.address,
-      valueText: property?.sjalfgefidStadfang?.birtingStutt ?? '',
+      valueText: property?.sjalfgefidStadfang?.birting ?? '',
     },
     {
-      width: 'full',
+      width: 'half',
       keyText: m.overviewMessages.realEstateId,
       valueText: property?.fasteignanumer ?? '',
     },
     {
-      width: 'full',
+      width: 'half',
       keyText: m.overviewMessages.useageUnits,
-      valueText:
-        useageUnits?.notkunareiningar
-          ?.map((unit) => unit.notkunBirting)
-          .join(', ') ?? '',
+      valueText: displayUseageUnits?.join(', ') ?? '',
+    },
+    {
+      width: 'half',
+      keyText: m.realEstateMessages.useageUnitsFireCompensation,
+      valueText: formatCurrency(useageUnitsFireCompensation),
     },
   ]
 }
