@@ -165,7 +165,7 @@ export class PaymentFlowService {
 
       filteredChargeInformation.push({
         ...product,
-        priceAmount: price * matchingCharge.quantity,
+        priceAmount: price,
         quantity: matchingCharge.quantity,
       })
     }
