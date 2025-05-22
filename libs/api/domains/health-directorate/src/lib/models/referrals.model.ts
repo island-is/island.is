@@ -32,11 +32,11 @@ export class Referral {
   @Field({ nullable: true })
   reason?: string
 
-  @Field()
-  fromContactInfo!: ReferralContact
+  @Field({ nullable: true })
+  fromContactInfo?: ReferralContact
 
-  @Field()
-  toContactInfo!: ReferralContact
+  @Field({ nullable: true })
+  toContactInfo?: ReferralContact
 }
 
 @ObjectType('HealthDirectorateReferrals')
