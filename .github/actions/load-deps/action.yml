@@ -14,48 +14,52 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Set env
+    - name: Set cache key
       working-directory: ${{ inputs.working-directory }}
+      id: cache-key
       shell: bash
       env:
         CACHE_PATH: ${{ inputs.cache-path }}
       run: |
         node ./scripts/ci/generate-files.mjs --skip-codegen
         CACHE_KEY=${{ hashFiles('generated_files.txt') }}
-        echo "GENERATED_FILES_PATH=$CACHE_PATH/$CACHE_KEY" >> "$GITHUB_ENV"
+        GENERATED_FILES_PATH=$CACHE_PATH/$CACHE_KEY
+        echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_OUTPUT"
+        echo "Generated files will be stored in $GENERATED_FILES_PATH"
+        echo "CACHE_KEY=$CACHE_KEY"
 
     - name: INFO
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        echo "generated files: ${{ env.GENERATED_FILES_PATH }}"
+        echo "generated files: ${{ steps.cache-key.outputs.GENERATED_FILES_PATH }}"
 
-    - name: Restore generated files
+    - name: Cache generated files (restore)
       uses: runs-on/cache/restore@v4
       id: restore-codegen-cache
       with:
         path: |
-          ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ github.sha }}
+          ${{ steps.cache-key.outputs.GENERATED_FILES_PATH }}
+        key: generated-files-${{ steps.cache-key.outputs.CACHE_KEY }}
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES_PATH }}
+        node ./scripts/ci/generate-files.mjs ${{ steps.cache-key.outputs.GENERATED_FILES_PATH }}
 
     - name: Extract generated files
       if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        tar -xzvf ${{ env.GENERATED_FILES_PATH }}
+        tar -xzvf ${{ steps.cache-key.outputs.GENERATED_FILES_PATH }}
 
-    - name: Cache Generated files
+    - name: Cache generated files (save)
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       uses: runs-on/cache/save@v4
       with:
         path: |
-          ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ github.sha }}
+          ${{ steps.cache-key.outputs.GENERATED_FILES_PATH }}
+        key: generated-files-${{ steps.cache-key.outputs.CACHE_KEY }}
