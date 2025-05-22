@@ -15,11 +15,13 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { Feature } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -93,6 +95,8 @@ const Completed: FC = () => {
     createEventLog,
     workingCase.id,
   ])
+
+  const { features } = useContext(FeatureContext)
 
   const handleRemoveFile = useCallback(
     (file: UploadFile) => {
@@ -362,93 +366,95 @@ const Completed: FC = () => {
                     </AnimatePresence>
                   </BlueBox>
                 </Box>
-                <AnimatePresence>
-                  {defendant.serviceRequirement ===
-                    ServiceRequirement.REQUIRED && (
-                    <Box>
-                      <SectionHeading
-                        title={'Upplýsingagjöf til dómfellda'}
-                        marginBottom={2}
-                        heading="h4"
-                      />
-                      <Text marginBottom={3}>
-                        Vinsamlegast hakið við þau atriði sem upplýsa verður
-                        dómfellda um við birtingu dómsins.
-                      </Text>
-                      <BlueBox>
-                        <Checkbox
-                          label="Leiðbeiningar um endurupptöku útivistarmála"
-                          large
-                          filled
+                {features?.includes(Feature.SERVICE_PORTAL) && (
+                  <AnimatePresence>
+                    {defendant.serviceRequirement ===
+                      ServiceRequirement.REQUIRED && (
+                      <Box>
+                        <SectionHeading
+                          title={'Upplýsingagjöf til dómfellda'}
+                          marginBottom={2}
+                          heading="h4"
                         />
-                        <Box marginBottom={marginSpaceBetweenButtons} />
-                        <Checkbox
-                          label="Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti"
-                          large
-                          filled
-                        />
-                        <Box marginBottom={marginSpaceBetweenButtons} />
-                        <Checkbox
-                          label="Þýðing skilorðsbundinnar refsingar og skilorðsrofs"
-                          large
-                          filled
-                        />
-                        <Box marginBottom={marginSpaceBetweenButtons} />
-                        <Checkbox
-                          label="Þýðing sviptingu ökuréttinda"
-                          large
-                          filled
-                        />
+                        <Text marginBottom={3}>
+                          Vinsamlegast hakið við þau atriði sem upplýsa verður
+                          dómfellda um við birtingu dómsins.
+                        </Text>
+                        <BlueBox>
+                          <Checkbox
+                            label="Leiðbeiningar um endurupptöku útivistarmála"
+                            large
+                            filled
+                          />
+                          <Box marginBottom={marginSpaceBetweenButtons} />
+                          <Checkbox
+                            label="Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti"
+                            large
+                            filled
+                          />
+                          <Box marginBottom={marginSpaceBetweenButtons} />
+                          <Checkbox
+                            label="Þýðing skilorðsbundinnar refsingar og skilorðsrofs"
+                            large
+                            filled
+                          />
+                          <Box marginBottom={marginSpaceBetweenButtons} />
+                          <Checkbox
+                            label="Þýðing sviptingu ökuréttinda"
+                            large
+                            filled
+                          />
 
-                        <Box marginBottom={marginSpaceBetweenButtons} />
-                        <Checkbox
-                          label="Þýðing vararefsingu fésekta"
-                          large
-                          filled
-                        />
+                          <Box marginBottom={marginSpaceBetweenButtons} />
+                          <Checkbox
+                            label="Þýðing vararefsingu fésekta"
+                            large
+                            filled
+                          />
 
-                        <Box marginBottom={marginSpaceBetweenButtons} />
-                        <Checkbox
-                          label="Upplýsingar um skilyrði og umsókn um samfélagsþjónustu"
-                          large
-                          filled
-                        />
+                          <Box marginBottom={marginSpaceBetweenButtons} />
+                          <Checkbox
+                            label="Upplýsingar um skilyrði og umsókn um samfélagsþjónustu"
+                            large
+                            filled
+                          />
 
-                        <Box marginBottom={marginSpaceBetweenButtons} />
-                        <Checkbox
-                          label="Upplýsingar um greiðslu sekta, sakarkostnaðar og bóta"
-                          large
-                          filled
-                        />
+                          <Box marginBottom={marginSpaceBetweenButtons} />
+                          <Checkbox
+                            label="Upplýsingar um greiðslu sekta, sakarkostnaðar og bóta"
+                            large
+                            filled
+                          />
 
-                        <Box marginBottom={marginSpaceBetweenButtons} />
-                        <Checkbox
-                          label="Upplýsingar um upptöku muna/efna"
-                          large
-                          filled
+                          <Box marginBottom={marginSpaceBetweenButtons} />
+                          <Checkbox
+                            label="Upplýsingar um upptöku muna/efna"
+                            large
+                            filled
+                          />
+                        </BlueBox>
+                        <Box marginBottom={5} />
+                        <SectionHeading
+                          title={'Dómsorð'}
+                          marginBottom={2}
+                          heading="h4"
                         />
-                      </BlueBox>
-                      <Box marginBottom={5} />
-                      <SectionHeading
-                        title={'Dómsorð'}
-                        marginBottom={2}
-                        heading="h4"
-                      />
-                      <Input
-                        data-testid="sessionBookings"
-                        name="sessionBookings"
-                        label={'Dómsorð'}
-                        value={''}
-                        placeholder={'Hvert er dómsorðið?'}
-                        // onChange={(event) => console.log(event.target.value)}
-                        textarea
-                        rows={8}
-                        autoExpand={{ on: true, maxHeight: 600 }}
-                        required={true}
-                      />
-                    </Box>
-                  )}
-                </AnimatePresence>
+                        <Input
+                          data-testid="sessionBookings"
+                          name="sessionBookings"
+                          label={'Dómsorð'}
+                          value={''}
+                          placeholder={'Hvert er dómsorðið?'}
+                          // onChange={(event) => console.log(event.target.value)}
+                          textarea
+                          rows={8}
+                          autoExpand={{ on: true, maxHeight: 600 }}
+                          required={true}
+                        />
+                      </Box>
+                    )}
+                  </AnimatePresence>
+                )}
               </>
             ))}
           </Box>
