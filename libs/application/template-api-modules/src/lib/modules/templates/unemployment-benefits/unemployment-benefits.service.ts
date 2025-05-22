@@ -16,6 +16,7 @@ import {
 } from '@island.is/clients/driving-license'
 import {
   GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel,
+  GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto,
   VmstUnemploymentClientService,
 } from '@island.is/clients/vmst-unemployment'
 
@@ -66,10 +67,15 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     })
   }
 
-  async getEmptyApplication(): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel> {
+  async getEmptyApplication(): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto | null> {
     const results =
       await this.vmstUnemploymentClientService.getEmptyApplication()
-    // console.log('results', results)
-    return results
+    // This also comes from result, might want to do something with this!
+    // canApply: true
+    // errorMessage: ""
+    // hasApplicationInLast4Weeks: false
+    // reopenApplication: false
+    // success: true
+    return results.unemploymentApplication || null
   }
 }

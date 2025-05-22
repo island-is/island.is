@@ -5,11 +5,14 @@ import {
   buildSelectField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
   YES,
 } from '@island.is/application/core'
+import { GaldurDomainModelsSettingsPostcodesPostcodeDTO } from '@island.is/clients/vmst-unemployment'
 import { applicant as applicantMessages } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { isOtherAddressChecked } from '../../../utils'
+import { Application } from '@island.is/application/types'
 
 export const applicantInformationSubSection = buildSubSection({
   id: 'applicant',
@@ -51,20 +54,28 @@ export const applicantInformationSubSection = buildSubSection({
           title: applicantMessages.labels.postcode,
           width: 'half',
           required: true,
-          options: [
-            // TODO: Fetch postal codes from API
-            {
-              value: '105',
-              label: '105 Reykjavík',
-            },
-          ],
+          options: (application) => {
+            const nameAndPostcode = getValueViaPath<
+              GaldurDomainModelsSettingsPostcodesPostcodeDTO[]
+            >(
+              application.externalData,
+              'unemploymentApplication.data.supportData.postCodes',
+            )
+            return (
+              nameAndPostcode
+                ?.filter(
+                  ({ nameAndCode }) => nameAndCode && nameAndCode.length > 0,
+                )
+                .map(({ nameAndCode }) => {
+                  return {
+                    label: nameAndCode ?? '',
+                    value: nameAndCode ?? '',
+                  }
+                }) ?? []
+            )
+          },
           condition: isOtherAddressChecked,
         }),
-        // buildDescriptionField({
-        //   id: 'applicant.passwordDescription',
-        //   title: applicantMessages.labels.passwordDescription,
-        //   titleVariant: 'h5',
-        // }),
         buildAlertMessageField({
           id: 'applicant.passwordDescription',
           alertType: 'info',
@@ -76,17 +87,17 @@ export const applicantInformationSubSection = buildSubSection({
         buildTextField({
           id: 'applicant.password',
           title: applicantMessages.labels.passwordLabel,
-          placeholder: 'TODO',
-          // defaultValue: (application: Application) => {
-          //   const password = getValueViaPath<string>(
-          //     application.externalData,
-          //     'userProfile.data.password',
-          //     '',
-          //   )
-
-          //   return password
-          // },
+          placeholder: applicantMessages.labels.passwordPlaceholder,
+          defaultValue: (application: Application) => {
+            return (
+              getValueViaPath<string>(
+                application.externalData,
+                'unemploymentApplication.data.personalInformation.passCode',
+              ) ?? ''
+            )
+          },
         }),
+        // TODO: Remove when we get a confirmation that this is out!
         // buildTextField({
         //   id: 'applicant.serviceOffice',
         //   title: applicantMessages.labels.email,

@@ -12,5 +12,5 @@ export const WorkMachineLicensesApi = defineTemplateApi({
 
 export const UnemploymentApi = defineTemplateApi({
   action: 'getEmptyApplication',
-  externalDataId: 'unemploymentInformation',
+  externalDataId: 'unemploymentApplication',
 })

@@ -50,6 +50,11 @@ export const applicant = {
       defaultMessage: 'Lykilorð',
       description: 'password label',
     },
+    passwordPlaceholder: {
+      id: 'vmst.ub.application:applicant.labels.passwordPlaceholder',
+      defaultMessage: '123ABC',
+      description: 'password placeholder label',
+    },
     otherAddressCheckboxLabel: {
       id: 'vmst.ub.application:applicant.labels.otherAddressCheckboxLabel',
       defaultMessage: 'Dvalarstaður ef annar en lögheimili',
