@@ -24,9 +24,12 @@ export const requirementsMet = (
     photoPath = 'fakeData.qualityPhoto'
     signaturePath = 'fakeData.qualitySignature'
   }
-  
+
   const photo = getValueViaPath({ ...externalData, ...answers }, photoPath)
-  const thjodskraPhoto = getValueViaPath<any>(externalData, 'allPhotosFromThjodskra.data.images')
+  const thjodskraPhoto = getValueViaPath(
+    externalData,
+    'allPhotosFromThjodskra.data.images',
+  )
   const signature = getValueViaPath(
     { ...externalData, ...answers },
     signaturePath,
@@ -34,7 +37,10 @@ export const requirementsMet = (
   if (allowFakeCondition(YES)(answers)) {
     return !(photo === NO || signature === NO)
   }
-  return (!!photo && !!signature) || !!thjodskraPhoto?.length
+  return (
+    (!!photo && !!signature) ||
+    (Array.isArray(thjodskraPhoto) && !!thjodskraPhoto.length)
+  )
 }
 
 export const allowFakeCondition =
