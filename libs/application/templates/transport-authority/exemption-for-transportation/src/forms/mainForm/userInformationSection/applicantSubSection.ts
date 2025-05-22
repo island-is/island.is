@@ -12,7 +12,7 @@ export const applicantSubSection = buildSubSection({
   children: [
     buildMultiField({
       id: 'userInformationMultiField',
-      title: userInformation.general.pageTitle,
+      title: userInformation.applicant.pageTitle,
       children: [
         // Applicant
         buildDescriptionField({

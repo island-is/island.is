@@ -11,19 +11,38 @@ export const ConvoyShortTermMultiField = buildMultiField({
   description: convoy.general.description,
   children: [
     buildTextField({
-      id: 'convoy.items[0].vehiclePermno',
-      title: convoy.labels.vehicle,
+      id: 'convoy.items[0].vehicle.permno',
+      title: convoy.labels.vehiclePermno,
       backgroundColor: 'blue',
       width: 'half',
       required: true,
       maxLength: 5,
+      setOnChange: async (value) => {
+        console.log('setOnChange')
+        console.log('value', value)
+        return []
+      },
     }),
     buildTextField({
-      id: 'convoy.items[0].trailerPermno',
-      title: convoy.labels.trailer,
+      id: 'convoy.items[0].vehicle.makeAndColor',
+      title: convoy.labels.vehicleMakeAndColor,
+      backgroundColor: 'white',
+      width: 'half',
+      readOnly: true,
+    }),
+    buildTextField({
+      id: 'convoy.items[0].trailer.permno',
+      title: convoy.labels.trailerPermno,
       backgroundColor: 'blue',
       width: 'half',
       maxLength: 5,
+    }),
+    buildTextField({
+      id: 'convoy.items[0].trailer.makeAndColor',
+      title: convoy.labels.trailerMakeAndColor,
+      backgroundColor: 'white',
+      width: 'half',
+      readOnly: true,
     }),
   ],
 })

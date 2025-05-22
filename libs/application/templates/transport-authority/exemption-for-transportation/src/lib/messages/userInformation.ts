@@ -7,17 +7,17 @@ export const userInformation = {
       defaultMessage: 'Grunnupplýsingar',
       description: 'Title of user information section',
     },
-    pageTitle: {
-      id: 'ta.eft.application:userInformation.general.pageTitle',
-      defaultMessage: 'Grunnupplýsingar',
-      description: 'Title of user information page',
-    },
   }),
   applicant: defineMessages({
     subSectionTitle: {
       id: 'ta.eft.application:userInformation.applicant.subSectionTitle',
       defaultMessage: 'Umsækjandi',
       description: 'Title of applicant sub section',
+    },
+    pageTitle: {
+      id: 'ta.eft.application:userInformation.applicant.pageTitle',
+      defaultMessage: 'Umsækjandi',
+      description: 'Title of applicant page',
     },
     subtitle: {
       id: 'ta.eft.application:userInformation.applicant.subtitle',
@@ -30,6 +30,11 @@ export const userInformation = {
       id: 'ta.eft.application:userInformation.transporter.subSectionTitle',
       defaultMessage: 'Flutningsaðili',
       description: 'Title of transporter sub section',
+    },
+    pageTitle: {
+      id: 'ta.eft.application:userInformation.transporter.pageTitle',
+      defaultMessage: 'Flutningsaðili',
+      description: 'Title of transporter page',
     },
     subtitle: {
       id: 'ta.eft.application:userInformation.transporter.subtitle',

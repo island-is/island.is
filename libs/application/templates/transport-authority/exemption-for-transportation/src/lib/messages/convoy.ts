@@ -20,15 +20,25 @@ export const convoy = {
     },
   }),
   labels: defineMessages({
-    vehicle: {
-      id: 'ta.eft.application:convoy.labels.vehicle',
+    vehiclePermno: {
+      id: 'ta.eft.application:convoy.labels.vehiclePermno',
       defaultMessage: 'Fastanúmer ökutækis',
       description: 'Vehicle permno label',
     },
-    trailer: {
-      id: 'ta.eft.application:convoy.labels.trailer',
+    vehicleMakeAndColor: {
+      id: 'ta.eft.application:convoy.labels.vehicleMakeAndColor',
+      defaultMessage: 'Tegund og litur ökutækis',
+      description: 'Vehicle make and color label',
+    },
+    trailerPermno: {
+      id: 'ta.eft.application:convoy.labels.trailerPermno',
       defaultMessage: 'Fastanúmer eftirvagns',
       description: 'Trailer permno label',
+    },
+    trailerMakeAndColor: {
+      id: 'ta.eft.application:convoy.labels.trailerMakeAndColor',
+      defaultMessage: 'Tegund og litur eftirvagns',
+      description: 'Trailer make and color label',
     },
   }),
 }

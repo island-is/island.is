@@ -20,7 +20,7 @@ export const transporterSubSection = buildSubSection({
   children: [
     buildMultiField({
       id: 'userInformationMultiField',
-      title: userInformation.general.pageTitle,
+      title: userInformation.transporter.pageTitle,
       children: [
         // Transporter
         buildDescriptionField({
