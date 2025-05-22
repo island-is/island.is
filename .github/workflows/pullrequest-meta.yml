@@ -21,6 +21,11 @@ jobs:
       ACTIONLINT_FMT_URL: 'https://github.com/rhysd/actionlint/releases/download/v%s/actionlint_%s_linux_amd64.tar.gz'
       ACTIONLINT_DIR: '.cache/actionlint'
       ACTIONLINT_BIN: '.cache/actionlint/actionlint'
+      # See https://github.com/rhysd/actionlint/blob/v1.7.7/docs/usage.md#example-error-annotation-on-github-actions
+      # for format rationale
+      ACTIONLINT_FLAGS: >-
+        --format '{{range $err := .}}::error file={{$err.Filepath}},line={{$err.Line}},col={{$err.Column}}::{{$err.Message}}%0A```%0A{{replace $err.Snippet "\\n" "%0A"}}%0A```\n{{end}}'
+        --ignore SC2016
 
     steps:
       - name: Checkout code
@@ -46,7 +51,7 @@ jobs:
 
       - name: Run actionlint
         id: run-actionlint
-        run: ${{ env.ACTIONLINT_BIN }}
+        run: ${{ env.ACTIONLINT_BIN }} ${{ env.ACTIONLINT_FLAGS }}
 
       - name: Cache actionlint binary (save)
         if: steps.cache-actionlint.outputs.cache-hit != 'true' && failure()
