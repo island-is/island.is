@@ -40,7 +40,7 @@ export const sectionOverview = buildSection({
         buildCustomField({
           id: 'overview.currentLicense',
           component: 'CurrentLicense',
-        }),        
+        }),
         buildDividerField({}),
         buildDescriptionField({
           id: 'overview.deliveryTitle',

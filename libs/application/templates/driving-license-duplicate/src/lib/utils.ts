@@ -32,9 +32,7 @@ export const requirementsMet = (
   if (allowFakeCondition(YES)(answers)) {
     return !(photo === NO)
   }
-  return (
-    !!photo || (Array.isArray(thjodskraPhoto) && !!thjodskraPhoto.length)
-  )
+  return !!photo || (Array.isArray(thjodskraPhoto) && !!thjodskraPhoto.length)
 }
 
 export const allowFakeCondition =

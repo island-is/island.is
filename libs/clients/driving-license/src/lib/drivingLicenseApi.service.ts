@@ -17,7 +17,11 @@ import {
   Remark,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
-import { PracticePermitDto, DriverLicenseWithoutImagesDto, ImagesFromThjodskraDto } from '../v5'
+import {
+  PracticePermitDto,
+  DriverLicenseWithoutImagesDto,
+  ImagesFromThjodskraDto,
+} from '../v5'
 
 @Injectable()
 export class DrivingLicenseApi {
@@ -589,7 +593,13 @@ export class DrivingLicenseApi {
     pickUpLicense: boolean
     imageBiometricsId: string | null
   }): Promise<number> {
-    const { districtId, token, stolenOrLost, pickUpLicense, imageBiometricsId } = params
+    const {
+      districtId,
+      token,
+      stolenOrLost,
+      pickUpLicense,
+      imageBiometricsId,
+    } = params
     return await this.v5.apiDrivinglicenseV5ApplicationsNewCollaborativePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -599,7 +609,7 @@ export class DrivingLicenseApi {
         licenseStolenOrLost: stolenOrLost,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
         pickUpLicense,
-        imageBiometricsId
+        imageBiometricsId,
       },
     })
   }
@@ -650,9 +660,7 @@ export class DrivingLicenseApi {
     }
   }
 
-  async getHasQualityScannedPhoto(params: {
-    token: string
-  }): Promise<boolean> {
+  async getHasQualityScannedPhoto(params: { token: string }): Promise<boolean> {
     const res =
       await this.imageApiV5.apiImagecontrollerV5HasqualityscannedphotoGet({
         apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,

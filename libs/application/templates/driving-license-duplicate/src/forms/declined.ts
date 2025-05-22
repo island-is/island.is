@@ -6,7 +6,6 @@ import {
   getValueViaPath,
   buildAlertMessageField,
   buildKeyValueField,
-  buildAccordionField,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'

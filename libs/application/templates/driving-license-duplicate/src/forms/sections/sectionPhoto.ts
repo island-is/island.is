@@ -34,7 +34,7 @@ export const sectionPhoto = buildSection({
             ) {
               photoOptions.push({
                 value: 'fakePhoto',
-                label: 'Ég staðfesti að nota fakeData mynd',
+                label: m.useFakeImage,
                 illustration: createPhotoComponent('fakePhoto'),
               })
             } else {
@@ -48,7 +48,7 @@ export const sectionPhoto = buildSection({
               if (qualityPhoto) {
                 photoOptions.push({
                   value: 'qualityPhoto',
-                  label: 'Ég staðfesti að nota núverandi mynd í ökuskírteini',
+                  label: m.useDriversLicenseImage,
                   illustration: createPhotoComponent(qualityPhoto),
                 })
               }
@@ -68,7 +68,7 @@ export const sectionPhoto = buildSection({
                 photos.forEach((photo) => {
                   photoOptions.push({
                     value: photo.biometricId,
-                    label: 'Ég staðfesti að nota núverandi mynd í vegabréfi',
+                    label: m.usePassportImage,
                     illustration: photo.content
                       ? createPhotoComponent(photo.content)
                       : undefined,

@@ -110,6 +110,23 @@ export const m = defineMessages({
       'Hér fyrir neðan eru upplýsingar um þig og þín ökuréttindi og þær myndir sem hægt er að nota í ökuskírteinið.',
     description: 'Some description',
   },
+  useFakeImage: {
+    id: 'dld.application:useFakeImage',
+    defaultMessage: 'Ég staðfesti að nota fakeData mynd',
+    description: 'Some description',
+  },
+  useDriversLicenseImage: {
+    id: 'dld.application:useDriversLicenseImage',
+    defaultMessage:
+      'Ég staðfesti að nota núverandi mynd úr ökuskírteinaskrá í ökuskírteinið',
+    description: 'Some description',
+  },
+  usePassportImage: {
+    id: 'dld.application:usePassportImage',
+    defaultMessage:
+      'Ég staðfesti að nota núverandi mynd úr vegabréfa- og nafnskírteinaskrá í ökuskírteinið',
+    description: 'Some description',
+  },
 
   /* rejected Section */
   rejected: {

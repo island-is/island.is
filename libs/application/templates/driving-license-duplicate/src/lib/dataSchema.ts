@@ -7,7 +7,7 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   nationalId: z.string(),
   name: z.string(),
-  selectLicensePhoto: z.string().min(1),   
+  selectLicensePhoto: z.string().min(1),
   delivery: z
     .object({
       deliveryMethod: z.enum([Delivery.SEND_HOME, Delivery.PICKUP]).optional(),
