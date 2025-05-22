@@ -14,6 +14,8 @@ defaults:
 
 jobs:
   actionlint:
+    # Only run on changes to .github/*
+    if: contains(github.event.pull_request.files, '.github/')
     runs-on: arc-shared
     env:
       ACTIONLINT_VERSION: '1.7.7'
@@ -54,6 +56,16 @@ jobs:
           path: ${{ env.ACTIONLINT_DIR }}
           key: actionlint-${{ env.ACTIONLINT_VERSION }}
 
+  collect:
+    runs-on: arc-shared
+    if: ${{ !cancelled() }}
+    needs: [actionlint]
+    steps:
       - name: Meta success
-        if: ${{ success() }}
-        run: echo "✅ actionlint ran successfully."
+        run: |
+          for job in ${{ needs.actionlint.result }}; do
+            if [[ "$job" == "failure" ]]; then
+              exit 1
+            fi
+          done
+          echo "✅ actionlint ran successfully."
