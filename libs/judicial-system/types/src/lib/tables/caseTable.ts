@@ -1,4 +1,8 @@
-import { InstitutionUser, isCourtOfAppealsUser } from '../user'
+import {
+  InstitutionUser,
+  isCourtOfAppealsUser,
+  isPrisonAdminUser,
+} from '../user'
 import {
   CaseTableColumn,
   CaseTableColumnKey,
@@ -9,6 +13,10 @@ import {
 export enum CaseTableType {
   COURT_OF_APPEALS_IN_PROGRESS = 'COURT_OF_APPEALS_IN_PROGRESS',
   COURT_OF_APPEALS_COMPLETED = 'COURT_OF_APPEALS_COMPLETED',
+  PRISON_ADMIN_ACTIVE = 'PRISON_ADMIN_ACTIVE',
+  PRISON_ADMIN_DONE = 'PRISON_ADMIN_DONE',
+  PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN = 'PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN',
+  PRISON_ADMIN_INDICTMENT_REGISTERED_RULING = 'PRISON_ADMIN_INDICTMENT_REGISTERED_RULING',
 }
 
 export const getCaseTableType = (
@@ -21,6 +29,19 @@ export const getCaseTableType = (
         return CaseTableType.COURT_OF_APPEALS_IN_PROGRESS
       case 'afgreidd-mal':
         return CaseTableType.COURT_OF_APPEALS_COMPLETED
+    }
+  }
+
+  if (isPrisonAdminUser(user)) {
+    switch (route) {
+      case 'virk-mal':
+        return CaseTableType.PRISON_ADMIN_ACTIVE
+      case 'lokid':
+        return CaseTableType.PRISON_ADMIN_DONE
+      case 'mal-til-fullnustu':
+        return CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN
+      case 'skradir-domar':
+        return CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING
     }
   }
 }
@@ -63,7 +84,73 @@ const courtOfAppealsCompleted: CaseTable = {
   columns: pickColumns(courtOfAppealsCompletedColumnKeys),
 }
 
+const prisonAdminActiveColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'rulingDate',
+  'restrictionCaseState',
+  'validFromTo',
+]
+
+const prisonAdminActive: CaseTable = {
+  title: 'Virk mál',
+  columnKeys: prisonAdminActiveColumnKeys,
+  columns: pickColumns(prisonAdminActiveColumnKeys),
+}
+
+const prisonAdminDoneColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'rulingDate',
+  'restrictionCaseState',
+  'validFromTo',
+]
+
+const prisonAdminDone: CaseTable = {
+  title: 'Lokið',
+  columnKeys: prisonAdminDoneColumnKeys,
+  columns: pickColumns(prisonAdminDoneColumnKeys),
+}
+
+const prisonAdminIndictmentSentToPrisonAdminColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'rulingType',
+  'punishmentType',
+  'prisonAdminReceivalDate',
+  'prisonAdminState',
+]
+
+const prisonAdminIndictmentSentToPrisonAdmin: CaseTable = {
+  title: 'Mál til fullnustu',
+  columnKeys: prisonAdminIndictmentSentToPrisonAdminColumnKeys,
+  columns: pickColumns(prisonAdminIndictmentSentToPrisonAdminColumnKeys),
+}
+
+const prisonAdminIndictmentRegisteredRulingColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'rulingType',
+  'punishmentType',
+  'prisonAdminReceivalDate',
+  'prisonAdminState',
+]
+
+const prisonAdminIndictmentRegisteredRuling: CaseTable = {
+  title: 'Skráðir dómar',
+  columnKeys: prisonAdminIndictmentRegisteredRulingColumnKeys,
+  columns: pickColumns(prisonAdminIndictmentRegisteredRulingColumnKeys),
+}
+
 export const caseTables: { [key in CaseTableType]: CaseTable } = {
   COURT_OF_APPEALS_IN_PROGRESS: courtOfAppealsInProgress,
   COURT_OF_APPEALS_COMPLETED: courtOfAppealsCompleted,
+  PRISON_ADMIN_ACTIVE: prisonAdminActive,
+  PRISON_ADMIN_DONE: prisonAdminDone,
+  PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN:
+    prisonAdminIndictmentSentToPrisonAdmin,
+  PRISON_ADMIN_INDICTMENT_REGISTERED_RULING:
+    prisonAdminIndictmentRegisteredRuling,
 }
