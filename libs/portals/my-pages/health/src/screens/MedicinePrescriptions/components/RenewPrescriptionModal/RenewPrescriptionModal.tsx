@@ -1,3 +1,4 @@
+import { HealthDirectoratePrescription } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -7,23 +8,24 @@ import {
   ModalBase,
   Text,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
 import cn from 'classnames'
 import React, { useState } from 'react'
 import { messages } from '../../../../lib/messages'
-import { HealthCenter, HealthCenterData } from '../../../../utils/mockData'
-import * as styles from './RenewPrescriptionModal.css'
-import { HealthDirectoratePrescription } from '@island.is/api/schema'
-import NestedInfoLines from '../../../../components/NestedInfoLines/NestedInfoLines'
+import { HealthCenter } from '../../../../utils/mockData'
 import { usePostPrescriptionRenewalMutation } from '../../Prescriptions.generated'
-import { Problem } from '@island.is/react-spa/shared'
+import * as styles from './RenewPrescriptionModal.css'
+import { PrescriptionItem } from '../../../../utils/types'
 
 interface Props {
   id: string
   activePrescription: HealthDirectoratePrescription
   toggleClose?: boolean
   isVisible: boolean
+  setVisible: (isVisible: boolean) => void
+  setActivePrescription: (prescription: PrescriptionItem | null) => void
 }
 
 interface RenewFormData {
@@ -36,6 +38,8 @@ const RenewPrescriptionModal: React.FC<Props> = ({
   activePrescription,
   toggleClose,
   isVisible,
+  setVisible,
+  setActivePrescription,
 }) => {
   const { formatMessage } = useLocale()
   const [error, setError] = useState()
@@ -74,10 +78,12 @@ const RenewPrescriptionModal: React.FC<Props> = ({
 
   const closeModal = () => {
     setModalVisible(false)
+    setVisible(false)
+    setActivePrescription(null)
   }
 
   const submitForm = async () => {
-    // TODO: Implement form submission when service is ready
+    // TODO: Improve form submission when service is ready
     if (
       activePrescription.category === undefined ||
       activePrescription.id === undefined
@@ -90,12 +96,12 @@ const RenewPrescriptionModal: React.FC<Props> = ({
         input: {
           id: activePrescription.id,
           medCardDrugCategory: activePrescription.category ?? '',
-          medCardDrugId: activePrescription.id,
+          medCardDrugId: activePrescription.medCardDrugId ?? '',
           prescribedItemId: activePrescription.id,
         },
       },
     })
-    setModalVisible(false)
+    closeModal()
   }
 
   return (

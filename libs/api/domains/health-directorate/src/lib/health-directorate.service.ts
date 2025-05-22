@@ -259,6 +259,7 @@ export class HealthDirectorateService {
           url: item.productUrl,
           quantity: item.productQuantity?.toString(),
           prescriberName: item.prescriberName,
+          medCardDrugId: item.medCardDrugId,
           issueDate: item.issueDate,
           expiryDate: item.expiryDate,
           dosageInstructions: item.dosageInstructions,
@@ -307,7 +308,7 @@ export class HealthDirectorateService {
     // TODO: FIX WHEN RESPONSE BODY IS READY FROM CLIENT
     await this.healthApi
       .postRenewalPrescription(auth, input.id, {
-        medCardDrugId: input.medCardDrugId,
+        medCardDrugId: input.medCardDrugId ?? input.id,
         medCardDrugCategory: parsedInput.medCardDrugCategory,
         prescribedItemId: parsedInput.prescribedItemId,
       })

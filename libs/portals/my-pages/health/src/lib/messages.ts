@@ -540,6 +540,10 @@ export const messages = defineMessages({
     defaultMessage: 'Nánari skýring',
     id: 'sp.health:extra-detail',
   },
+  fetchMore: {
+    defaultMessage: 'Sækja meira',
+    id: 'sp.health:fetch-more',
+  },
   fetchDocument: {
     defaultMessage: 'Sækja skjal',
     id: 'sp.health:fetch-document',

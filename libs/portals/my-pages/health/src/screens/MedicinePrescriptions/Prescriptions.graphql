@@ -18,6 +18,7 @@ query GetMedicinePrescriptions($locale: String) {
       renewalBlockedReason
       renewalStatus
       amountRemaining
+      medCardDrugId
       dispensations {
         id
         agentName

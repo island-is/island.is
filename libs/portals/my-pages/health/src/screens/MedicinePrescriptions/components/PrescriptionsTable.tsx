@@ -1,7 +1,4 @@
-import {
-  HealthDirectoratePrescription,
-  HealthDirectoratePrescriptionDocument,
-} from '@island.is/api/schema'
+import { HealthDirectoratePrescription } from '@island.is/api/schema'
 import { Box, Icon, LoadingDots, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatDate, SortableTable } from '@island.is/portals/my-pages/core'
@@ -9,14 +6,11 @@ import React, { useEffect, useState } from 'react'
 import DispensingContainer from '../../../components/DispensingContainer/DispensingContainer'
 import NestedInfoLines from '../../../components/NestedInfoLines/NestedInfoLines'
 import { messages } from '../../../lib/messages'
-import RenewPrescriptionModal from './RenewPrescriptionModal/RenewPrescriptionModal'
+import { PrescriptionItem } from '../../../utils/types'
 import { useGetPrescriptionDocumentsLazyQuery } from '../Prescriptions.generated'
+import RenewPrescriptionModal from './RenewPrescriptionModal/RenewPrescriptionModal'
 
 const STRING_MAX_LENGTH = 22
-
-interface PrescriptionItem extends HealthDirectoratePrescription {
-  documents?: HealthDirectoratePrescriptionDocument[]
-}
 
 interface Props {
   data?: HealthDirectoratePrescription[]
@@ -77,6 +71,8 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
     }
   }
 
+  console.log('activePrescription', activePrescription)
+  console.log('is Modal open? ', openModal)
   return (
     <>
       <SortableTable
@@ -103,7 +99,7 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
             process: item?.amountRemaining ?? '',
             validTo: formatDate(item?.expiryDate) ?? '',
             status: undefined,
-            lastNode: true //item?.isRenewable
+            lastNode: true //item?.isRenewable // TODO: Add this back when the API is ready
               ? {
                   type: 'action',
                   label: formatMessage(messages.renew),
@@ -235,6 +231,10 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
           activePrescription={activePrescription}
           toggleClose={openModal}
           isVisible={openModal}
+          setVisible={(visible: boolean) => setOpenModal(visible)}
+          setActivePrescription={(prescription: PrescriptionItem | null) =>
+            setActivePrescription(prescription)
+          }
         />
       )}
     </>

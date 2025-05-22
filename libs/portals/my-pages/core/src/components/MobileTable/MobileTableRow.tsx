@@ -72,6 +72,9 @@ const MobileTableRow: React.FC<Props> = ({
         {!inner && (tableRow.children || tableRow.onExpandCallback) && (
           <Box marginLeft={1}>
             <Button
+              title="Expand"
+              role="button"
+              name="expand-button"
               circle
               icon={extended ? 'remove' : 'add'}
               onClick={() => {

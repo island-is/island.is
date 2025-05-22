@@ -82,8 +82,9 @@ export const SortableTable = (props: SortableTableProps) => {
   useEffect(() => {
     const headerItems = Array.from(
       new Set(
-        props.items.flatMap(({ id, tag, lastNode, ...restItems }) =>
-          Object.keys(restItems),
+        props.items.flatMap(
+          ({ id, tag, lastNode, onExpandCallback, ...restItems }) =>
+            Object.keys(restItems),
         ),
       ),
     )
