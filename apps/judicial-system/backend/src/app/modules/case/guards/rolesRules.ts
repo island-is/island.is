@@ -2,6 +2,7 @@ import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   CaseTransition,
   CaseType,
+  isPrisonAdminUser,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -196,6 +197,27 @@ export const defenderUpdateRule: RolesRule = {
   role: UserRole.DEFENDER,
   type: RulesType.FIELD,
   dtoFields: limitedAccessFields,
+}
+
+// Allows prison admin to update a specific set of fields
+export const prisonSystemAdminUpdateRule: RolesRule = {
+  role: UserRole.PRISON_SYSTEM_STAFF,
+  type: RulesType.FIELD,
+  dtoFields: [
+    'isRegisteredInPrisonSystem',
+    'caseModifiedExplanation',
+    'isolationToDate',
+    'validToDate',
+  ],
+  canActivate(request) {
+    const user: User = request.user?.currentUser
+    // Deny if something is missing or if the user is not a prison admin
+    if (!user || !isPrisonAdminUser(user)) {
+      return false
+    }
+
+    return true
+  },
 }
 
 // Allows prosecutors to transition cases
@@ -406,5 +428,26 @@ export const districtCourtJudgeSignRulingRule: RolesRule = {
     }
 
     return user.id === theCase.judgeId
+  },
+}
+
+// Allows prison system admins to access ruling PDFs in custody and parole revocation cases
+export const prisonSystemAdminRulingPdfRule: RolesRule = {
+  role: UserRole.PRISON_SYSTEM_STAFF,
+  type: RulesType.BASIC,
+  canActivate: (request) => {
+    const user: User = request.user?.currentUser
+    const theCase: Case = request.case
+
+    // Deny if something is missing or if the user is not a prison admin
+    if (!user || !theCase || !isPrisonAdminUser(user)) {
+      return false
+    }
+
+    // Allow the case is a custody or parole revocation case
+    return (
+      theCase.type === CaseType.CUSTODY ||
+      theCase.type === CaseType.PAROLE_REVOCATION
+    )
   },
 }

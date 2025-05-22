@@ -13,6 +13,7 @@ import { auditTrailModuleConfig } from './auditTrail.config'
 export enum AuditedAction {
   LOGIN = 'LOGIN',
   GET_CASES = 'GET_CASES',
+  GET_CASES_STATISTICS = 'GET_CASES_STATISTICS',
   GET_CASE = 'GET_CASE',
   GET_CONNECTED_CASES = 'GET_CONNECTED_CASES',
   GET_INDICTMENTS = 'GET_INDICTMENTS',
@@ -69,6 +70,7 @@ export enum AuditedAction {
   CREATE_VICTIM = 'CREATE_VICTIM',
   UPDATE_VICTIM = 'UPDATE_VICTIM',
   DELETE_VICTIM = 'DELETE_VICTIM',
+  GET_CASE_TABLE = 'GET_CASE_TABLE',
 }
 
 @Injectable()

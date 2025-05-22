@@ -104,6 +104,7 @@ mutation LimitedAccessUpdateCase($input: UpdateCaseInput!) {
     prosecutorStatementDate
     defendantStatementDate
     appealReceivedByCourtDate
+    isRegisteredInPrisonSystem
     appealCaseNumber
     appealAssistant {
       id

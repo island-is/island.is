@@ -48,13 +48,15 @@ export class InternalSubpoenaController {
   ) {}
 
   @UseGuards(PoliceSubpoenaExistsGuard)
-  @Patch('subpoena/:subpoenaId')
+  @Patch('subpoena/:policeSubpoenaId')
   updateSubpoena(
-    @Param('subpoenaId') subpoenaId: string,
+    @Param('policeSubpoenaId') policeSubpoenaId: string,
     @CurrentSubpoena() subpoena: Subpoena,
     @Body() update: UpdateSubpoenaDto,
   ): Promise<Subpoena> {
-    this.logger.debug(`Updating subpoena by subpoena id ${subpoenaId}`)
+    this.logger.debug(
+      `Updating subpoena by police subpoena id ${policeSubpoenaId}`,
+    )
 
     return this.subpoenaService.update(subpoena, update)
   }
@@ -96,7 +98,7 @@ export class InternalSubpoenaController {
         deliveredToPolice: results.delivered,
         subpoenaId: subpoena.id,
         subpoenaCreated: subpoena.created,
-        policeSubpoenaId: currentSubpoena.subpoenaId,
+        policeSubpoenaId: currentSubpoena.policeSubpoenaId,
         subpoenaHash: currentSubpoena.hash,
         subpoenaDeliveredToPolice: new Date(),
         indictmentHash: theCase.indictmentHash,

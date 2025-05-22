@@ -14,6 +14,10 @@ export enum PaymentServiceCode {
   PaymentFlowAlreadyPaid = 'PaymentFlowAlreadyPaid',
   CouldNotVerifyCallback = 'CouldNotVerifyCallback',
   CouldNotCreatePaymentConfirmation = 'CouldNotCreatePaymentConfirmation',
+  PaymentFlowAmountMismatch = 'PaymentFlowAmountMismatch',
+  ChargeItemCodesNotFound = 'ChargeItemCodesNotFound',
+  UpstreamNotificationFailure = 'UpstreamNotificationFailure',
+  UnknownPaymentServiceError = 'UnknownPaymentServiceError',
 }
 
 export enum CardErrorCode {
@@ -43,6 +47,8 @@ export enum CardErrorCode {
   GenericDecline = 'GenericDecline',
   VerificationDeadlineExceeded = 'VerificationDeadlineExceeded',
   VerificationCancelledByUser = 'VerificationCancelledByUser',
+  VerificationFailed = 'VerificationFailed',
+  VerificationCallbackFailed = 'VerificationCallbackFailed',
   RefundedBecauseOfSystemError = 'RefundedBecauseOfSystemError',
   UnknownCardError = 'UnknownCardError',
 }
@@ -52,3 +58,9 @@ export enum InvoiceErrorCode {
   InvoiceAlreadyExists = 'InvoiceAlreadyExists',
   UnknownInvoiceError = 'UnknownInvoiceError',
 }
+
+export type PaymentErrorCode =
+  | FjsErrorCode
+  | CardErrorCode
+  | InvoiceErrorCode
+  | PaymentServiceCode
