@@ -316,8 +316,6 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
-    console.log('PROGRAMS TO BE DISPLAYED', programsToBeDisplayed)
-
     return programsToBeDisplayed.sort(
       (a, b) => Number(a.error) - Number(b.error),
     )
