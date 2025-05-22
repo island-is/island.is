@@ -15,7 +15,7 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
-import { LGBaseEntity } from '../lib/types'
+import { LGBaseEntity } from '../utils/types'
 
 export const DraftForm: Form = buildForm({
   id: 'DraftForm',

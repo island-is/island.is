@@ -17,7 +17,7 @@ import {
   getErrorViaPath,
   getValueViaPath,
 } from '@island.is/application/core'
-import { LGFieldBaseProps } from '../lib/types'
+import { LGFieldBaseProps } from '../utils/types'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useUserInfo } from '@island.is/react-spa/bff'

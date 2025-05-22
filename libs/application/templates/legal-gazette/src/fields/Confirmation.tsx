@@ -6,7 +6,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { LGFieldBaseProps } from '../lib/types'
+import { LGFieldBaseProps } from '../utils/types'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'

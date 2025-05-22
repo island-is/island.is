@@ -1,4 +1,4 @@
-import { LGFieldBaseProps } from '../lib/types'
+import { LGFieldBaseProps } from '../utils/types'
 import { AdvertDisplay } from '../components/advert-display/AdvertDisplay'
 import { ApplicationStatus } from '@island.is/application/types'
 import format from 'date-fns/format'

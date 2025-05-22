@@ -13,34 +13,17 @@ import {
 import { assign } from 'xstate'
 import { legalGazetteDataSchema } from './dataSchema'
 import { CodeOwners } from '@island.is/shared/constants'
-import { LegalGazetteAPIActions, LegalGazetteStates } from './constants'
+import {
+  LegalGazetteAPIActions,
+  LegalGazetteEvents,
+  LegalGazetteRoles,
+  LegalGazetteStates,
+} from '../utils/constants'
 import { m } from './messages'
-import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
+import { pruneAfterDays } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import set from 'lodash/set'
-import { didSubmitSuccessfully } from './utils'
-
-export type LegalGazetteEvents =
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ASSIGN }
-  | { type: DefaultEvents.EDIT }
-
-enum Roles {
-  APPLICANT = 'applicant',
-  ASSIGNEE = 'assignee',
-}
-
-const getApplicationName = (application: Application) => {
-  const caption = getValueViaPath(
-    application.answers,
-    'application.caption',
-    '',
-  )
-
-  return `Lögbirtingarblaðið${caption ? ` - ${caption}` : ''}`
-}
+import { didSubmitSuccessfully, getApplicationName } from '../utils/utils'
 
 const LegalGazetteApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -79,7 +62,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(7),
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: LegalGazetteRoles.APPLICANT,
               formLoader: () =>
                 import('../forms/RequirementsForm').then((module) =>
                   Promise.resolve(module.RequirementsForm),
@@ -92,7 +75,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               delete: true,
             },
             {
-              id: Roles.ASSIGNEE,
+              id: LegalGazetteRoles.ASSIGNEE,
               read: 'all',
               write: 'all',
             },
@@ -122,7 +105,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
           },
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: LegalGazetteRoles.APPLICANT,
               formLoader: () =>
                 import('../forms/DraftForm').then((module) =>
                   Promise.resolve(module.DraftForm),
@@ -132,7 +115,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               delete: true,
             },
             {
-              id: Roles.ASSIGNEE,
+              id: LegalGazetteRoles.ASSIGNEE,
               read: 'all',
               write: 'all',
             },
@@ -156,9 +139,6 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               target: LegalGazetteStates.SUBMITTED,
               cond: didSubmitSuccessfully,
             },
-            {
-              target: LegalGazetteStates.SUBMITTED_FAILED,
-            },
           ],
         },
       },
@@ -179,7 +159,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
           },
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: LegalGazetteRoles.APPLICANT,
               formLoader: () =>
                 import('../forms/SubmittedForm').then((module) =>
                   Promise.resolve(module.SubmittedForm),
@@ -189,7 +169,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               delete: false,
             },
             {
-              id: Roles.ASSIGNEE,
+              id: LegalGazetteRoles.ASSIGNEE,
               read: 'all',
               write: 'all',
             },
@@ -202,58 +182,6 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
           [DefaultEvents.REJECT]: {
             target: LegalGazetteStates.REJECTED,
           },
-        },
-      },
-      [LegalGazetteStates.SUBMITTED_FAILED]: {
-        meta: {
-          name: 'Staðfesting',
-          progress: 1,
-          status: 'inprogress',
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: false,
-          },
-          actionCard: {
-            tag: {
-              label: 'Villa við innsendingu',
-              variant: 'red',
-            },
-          },
-          onExit: defineTemplateApi({
-            action: LegalGazetteAPIActions.submitApplication,
-            triggerEvent: DefaultEvents.SUBMIT,
-            shouldPersistToExternalData: true,
-            externalDataId: 'successfullyPosted',
-            throwOnError: false,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/SubmittedFailed').then((module) =>
-                  Promise.resolve(module.SubmittedFailed),
-                ),
-              write: 'all',
-              read: 'all',
-              delete: true,
-            },
-            {
-              id: Roles.ASSIGNEE,
-              read: 'all',
-              write: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: [
-            {
-              target: LegalGazetteStates.SUBMITTED,
-              cond: didSubmitSuccessfully,
-            },
-            {
-              target: LegalGazetteStates.SUBMITTED_FAILED,
-            },
-          ],
         },
       },
       [LegalGazetteStates.APPROVED]: {
@@ -270,7 +198,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
           },
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: LegalGazetteRoles.APPLICANT,
               formLoader: () =>
                 import('../forms/ApprovedForm').then((module) =>
                   Promise.resolve(module.ApprovedForm),
@@ -280,7 +208,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               delete: true,
             },
             {
-              id: Roles.ASSIGNEE,
+              id: LegalGazetteRoles.ASSIGNEE,
               read: 'all',
               write: 'all',
             },
@@ -301,7 +229,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
           },
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: LegalGazetteRoles.APPLICANT,
               formLoader: () =>
                 import('../forms/RejectedForm').then((module) =>
                   Promise.resolve(module.RejectedForm),
@@ -311,7 +239,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               delete: true,
             },
             {
-              id: Roles.ASSIGNEE,
+              id: LegalGazetteRoles.ASSIGNEE,
               read: 'all',
               write: 'all',
             },
@@ -322,10 +250,10 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
   },
   mapUserToRole(id: string, application: Application) {
     if (id === application.applicant) {
-      return Roles.APPLICANT
+      return LegalGazetteRoles.APPLICANT
     }
     if (application.assignees.includes(id)) {
-      return Roles.ASSIGNEE
+      return LegalGazetteRoles.ASSIGNEE
     }
     return undefined
   },

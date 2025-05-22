@@ -1,6 +1,6 @@
 import { Application, FieldBaseProps } from '@island.is/application/types'
 import { z } from 'zod'
-import { legalGazetteDataSchema } from './dataSchema'
+import { legalGazetteDataSchema } from '../lib/dataSchema'
 
 export type Override<T1, T2> = Omit<T1, keyof T2> & T2
 

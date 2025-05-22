@@ -1,7 +1,19 @@
-# application-templates-legal-gazette
+# Legal gazette application
 
-This library was generated with [Nx](https://nx.dev).
+## About
 
-## Running unit tests
+Almenn umsókn fyrir Lögbirtingablaðið
 
-Run `nx test application-templates-legal-gazette` to execute the unit tests via [Jest](https://jestjs.io).
+## URLs
+
+- [Dev](https://beta.dev01.devland.is/umsoknir/logbirtingarblad)
+- [Staging]()
+- [Production](https://island.is/umsoknir/logbirtingarblad)
+
+## Project owner
+
+- Dómsmálaráðuneytið
+
+## Code owners and maintainers
+
+- [Hugsmiðjan]

@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { LGFieldBaseProps } from '../lib/types'
+import { LGFieldBaseProps } from '../utils/types'
 import { DefaultEvents } from '@island.is/application/types'
 import { Button, Inline, Select, toast } from '@island.is/island-ui/core'
 import { useState } from 'react'

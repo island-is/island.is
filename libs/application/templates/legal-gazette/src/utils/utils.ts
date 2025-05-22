@@ -1,5 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationContext } from '@island.is/application/types'
+import { Application, ApplicationContext } from '@island.is/application/types'
 
 export const isWeekday = (date: Date) => {
   const day = date.getDay()
@@ -27,4 +27,14 @@ export const didSubmitSuccessfully = (context: ApplicationContext) => {
   )
 
   return success === true
+}
+
+export const getApplicationName = (application: Application) => {
+  const caption = getValueViaPath(
+    application.answers,
+    'application.caption',
+    '',
+  )
+
+  return `Lögbirtingarblaðið${caption ? ` - ${caption}` : ''}`
 }

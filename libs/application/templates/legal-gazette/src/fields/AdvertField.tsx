@@ -2,7 +2,7 @@ import { HTMLEditor } from '../components/html-editor/HTMLEditor'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { useFormContext } from 'react-hook-form'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { LGFieldBaseProps } from '../lib/types'
+import { LGFieldBaseProps } from '../utils/types'
 
 export const AdvertField = ({ application, errors }: LGFieldBaseProps) => {
   const { setValue, clearErrors, trigger } = useFormContext()
