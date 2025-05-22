@@ -321,8 +321,8 @@ export class ActorUserProfileController {
         },
       },
       this.userProfileService.updateActorProfileEmail({
-        toNationalId: user.actor.nationalId,
-        fromNationalId: user.nationalId,
+        toNationalId: user.nationalId,
+        fromNationalId: user.actor.nationalId,
         ...actorProfile,
       }),
     )

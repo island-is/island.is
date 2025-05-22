@@ -1,40 +1,45 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
-import { Op } from 'sequelize'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isEmail } from 'class-validator'
 import addMonths from 'date-fns/addMonths'
+import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
-import { isDefined, isSearchTermValid } from '@island.is/shared/utils'
-import { AttemptFailed, NoContentException } from '@island.is/nest/problem'
-import type { ConfigType } from '@island.is/nest/config'
 import {
   DelegationsApi,
   DelegationsControllerGetDelegationRecordsDirectionEnum,
 } from '@island.is/clients/auth/delegation-api'
+import type { ConfigType } from '@island.is/nest/config'
+import { AttemptFailed, NoContentException } from '@island.is/nest/problem'
+import { isDefined, isSearchTermValid } from '@island.is/shared/utils'
 
-import { VerificationService } from '../user-profile/verification.service'
-import { UserProfile } from '../user-profile/userProfile.model'
-import { formatPhoneNumber } from '../utils/format-phone-number'
-import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
-import { UserProfileDto } from './dto/user-profile.dto'
-import { IslykillService } from './islykill.service'
-import { DataStatus } from '../user-profile/types/dataStatusTypes'
-import { NudgeType } from '../types/nudge-type'
-import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
-import { ClientType } from '../types/ClientType'
+import { DocumentsScope } from '@island.is/auth/scopes'
+import { uuid } from 'uuidv4'
 import { UserProfileConfig } from '../../config'
-import { ActorProfile } from './models/actor-profile.model'
+import { ClientType } from '../types/ClientType'
+import { NudgeType } from '../types/nudge-type'
+import { DataStatus } from '../user-profile/types/dataStatusTypes'
+import { UserProfile } from '../user-profile/userProfile.model'
+import { VerificationService } from '../user-profile/verification.service'
+import { formatPhoneNumber } from '../utils/format-phone-number'
+import { ActorProfileEmailDto } from './dto/actor-profile-email.dto'
 import {
+  ActorProfileDetailsDto,
   ActorProfileDto,
   MeActorProfileDto,
   PaginatedActorProfileDto,
-  ActorProfileDetailsDto,
 } from './dto/actor-profile.dto'
-import { DocumentsScope } from '@island.is/auth/scopes'
+import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
+import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
+import { UserProfileDto } from './dto/user-profile.dto'
+import { IslykillService } from './islykill.service'
+import { ActorProfile } from './models/actor-profile.model'
 import { Emails } from './models/emails.model'
-import { uuid } from 'uuidv4'
-import { ActorProfileEmailDto } from './dto/actor-profile-email.dto'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
@@ -628,21 +633,39 @@ export class UserProfileService {
         toNationalId,
         fromNationalId: incomingDelegations.data.map((d) => d.fromNationalId),
       },
+      include: [
+        {
+          model: Emails,
+          as: 'emails',
+          attributes: ['email', 'emailStatus'],
+        },
+      ],
     })
 
-    const actorProfiles = incomingDelegations.data.map((delegation) => {
-      const emailPreference = emailPreferences.find(
-        (preference) => preference.fromNationalId === delegation.fromNationalId,
-      )
+    const actorProfiles = await Promise.all(
+      incomingDelegations.data.map(async (delegation) => {
+        const emailPreference = emailPreferences.find(
+          (preference) =>
+            preference.fromNationalId === delegation.fromNationalId,
+        )
 
-      // return email preference if it exists, otherwise return default true
-      return (
-        emailPreference?.toDto() ?? {
-          fromNationalId: delegation.fromNationalId,
-          emailNotifications: true,
+        if (!emailPreference) {
+          const userProfile = await this.findById(
+            delegation.fromNationalId,
+            true,
+            ClientType.FIRST_PARTY,
+          )
+          return {
+            fromNationalId: delegation.fromNationalId,
+            emailNotifications: true,
+            email: userProfile.email,
+            emailVerified: userProfile.emailVerified,
+          }
         }
-      )
-    })
+
+        return emailPreference?.toDto()
+      }),
+    )
 
     return {
       data: actorProfiles,
@@ -682,18 +705,46 @@ export class UserProfileService {
         toNationalId,
         fromNationalId,
       },
+      include: [
+        {
+          model: Emails,
+          as: 'emails',
+          attributes: ['email', 'emailStatus'],
+        },
+      ],
     })
 
-    return {
+    const actorProfile = {
       fromNationalId,
-      emailNotifications: emailPreferences?.emailNotifications ?? true,
-      email: userProfile.email,
-      emailVerified: userProfile.emailVerified,
+      ...(emailPreferences
+        ? {
+            emailNotifications: emailPreferences.emailNotifications,
+            email: emailPreferences.emails?.email,
+            emailVerified:
+              emailPreferences.emails?.emailStatus === DataStatus.VERIFIED,
+          }
+        : {
+            emailNotifications: true,
+            email: userProfile.email,
+            emailVerified: userProfile.emailVerified,
+          }),
       documentNotifications: userProfile.documentNotifications,
       locale: userProfile.locale,
     }
+
+    return actorProfile
   }
 
+  /**
+   * Creates or updates an actor profile with the specified preferences
+   * @param toNationalId - The national ID of the delegation recipient
+   * @param fromNationalId - The national ID of the delegation sender
+   * @param emailNotifications - Optional flag to enable/disable email notifications
+   * @param emailsId - Optional ID of the email record to associate with the profile
+   * @returns Promise<MeActorProfileDto> - The created/updated actor profile
+   * @throws NoContentException if delegation doesn't exist
+   * @throws Error if email record doesn't exist or profile creation fails
+   */
   async createOrUpdateActorProfile({
     toNationalId,
     fromNationalId,
@@ -705,24 +756,33 @@ export class UserProfileService {
     emailNotifications?: boolean
     emailsId?: string
   }): Promise<MeActorProfileDto> {
+    // Verify delegation exists
     const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+    const delegationExists = incomingDelegations.data.some(
+      (d) => d.fromNationalId === fromNationalId,
+    )
 
-    // if the delegation does not exist, throw an error
-    if (
-      !incomingDelegations.data.some((d) => d.fromNationalId === fromNationalId)
-    ) {
+    if (!delegationExists) {
       throw new NoContentException()
     }
 
+    // Initialize email-related variables
+    let email = null
+    let emailStatus = DataStatus.NOT_DEFINED
+
     try {
-      // Validate emailsId exists if provided
+      // If emailsId provided, validate and get email details
       if (emailsId) {
         const emailRecord = await this.emailModel.findByPk(emailsId)
         if (!emailRecord) {
           throw new Error(`Email record with ID ${emailsId} does not exist`)
         }
+
+        email = emailRecord.email
+        emailStatus = emailRecord.emailStatus
       }
 
+      // Create or update the actor profile
       const [profile] = await this.delegationPreference.upsert({
         toNationalId,
         fromNationalId,
@@ -730,9 +790,23 @@ export class UserProfileService {
         emailsId,
       })
 
-      return profile.toDto()
+      if (!profile) {
+        throw new Error(
+          'Actor profile does not exist, and could not be created',
+        )
+      }
+
+      // Return the updated profile details
+      return {
+        fromNationalId,
+        emailNotifications: emailNotifications ?? true,
+        email,
+        emailsId: profile.emailsId,
+        emailVerified: emailStatus === DataStatus.VERIFIED,
+      } as MeActorProfileDto
     } catch (error) {
-      console.log('error', error)
+      // Log and rethrow any errors
+      console.error('Error in createOrUpdateActorProfile:', error)
       throw error
     }
   }
@@ -768,10 +842,20 @@ export class UserProfileService {
     }
 
     // Get the actor profile
-    const actorProfile = await this.actorProfileModel.findOne({
+    const [actorProfile] = await this.actorProfileModel.findOrCreate({
       where: {
         toNationalId,
         fromNationalId,
+      },
+      defaults: {
+        toNationalId,
+        fromNationalId,
+        emailNotifications: true,
+        lastNudge: date,
+        nextNudge: addMonths(
+          date,
+          nudgeType === NudgeType.NUDGE ? NUDGE_INTERVAL : SKIP_INTERVAL,
+        ),
       },
     })
 
@@ -816,38 +900,53 @@ export class UserProfileService {
       },
     })
 
-    if (!actorProfile) {
-      throw new BadRequestException('Actor profile does not exist')
-    }
+    if (actorProfile) {
+      let email = null
+      let emailStatus = DataStatus.NOT_DEFINED
 
-    let email = null
-    let emailStatus = DataStatus.NOT_DEFINED
+      if (actorProfile.emailsId) {
+        const emailByActorId = await this.emailModel.findOne({
+          where: { id: actorProfile.emailsId },
+        })
 
-    if (actorProfile.emailsId) {
-      const emailByActorId = await this.emailModel.findOne({
-        where: { id: actorProfile.emailsId },
-      })
+        if (emailByActorId) {
+          email = emailByActorId.email
+          emailStatus = emailByActorId.emailStatus
+        }
+      }
+      // Get the user name for the actor by using the national id
 
-      if (emailByActorId) {
-        email = emailByActorId.email
-        emailStatus = emailByActorId.emailStatus
+      return {
+        email,
+        emailStatus,
+        emailVerified: emailStatus === DataStatus.VERIFIED,
+        needsNudge: this.checkNeedsNudge({
+          email,
+          emailStatus,
+          nextNudge: actorProfile.nextNudge,
+          shouldValidatePhoneNumber: false,
+        }),
+        nationalId: fromNationalId,
+        emailNotifications: actorProfile.emailNotifications,
       }
     }
 
-    // Get the user name for the actor by using the national id
+    // If the actor profile does not exist, return a default actor profile with user profile email
+    const userProfile = await this.findById(
+      toNationalId,
+      true,
+      ClientType.FIRST_PARTY,
+    )
 
     return {
-      email,
-      emailStatus,
-      emailVerified: emailStatus === DataStatus.VERIFIED,
-      needsNudge: this.checkNeedsNudge({
-        email,
-        emailStatus,
-        nextNudge: actorProfile.nextNudge,
-        shouldValidatePhoneNumber: false,
-      }),
+      email: userProfile.email,
+      emailStatus: userProfile.emailVerified
+        ? DataStatus.VERIFIED
+        : DataStatus.NOT_VERIFIED,
+      emailVerified: userProfile.emailVerified,
+      needsNudge: false,
       nationalId: fromNationalId,
-      emailNotifications: actorProfile.emailNotifications,
+      emailNotifications: true,
     }
   }
 
@@ -870,10 +969,20 @@ export class UserProfileService {
     emailVerificationCode?: string
     emailNotifications?: boolean
   }): Promise<ActorProfileEmailDto> {
+    // Verify the delegation exists first
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+    const delegation = incomingDelegations.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('Delegation does not exist')
+    }
+
     let emailRecord: Emails | null = null
     let emailStatus = DataStatus.NOT_DEFINED
 
-    await this.sequelize.transaction(async (transaction) => {
+    return await this.sequelize.transaction(async (transaction) => {
       // Look for existing email
       if (isDefined(email)) {
         // Empty email strings should be rejected
@@ -938,7 +1047,7 @@ export class UserProfileService {
               id: uuid(),
               email,
               primary: false,
-              nationalId: fromNationalId,
+              nationalId: toNationalId,
               emailStatus: shouldVerifyEmail
                 ? DataStatus.VERIFIED
                 : DataStatus.NOT_VERIFIED,
@@ -982,29 +1091,20 @@ export class UserProfileService {
         }
 
         await actorProfile.update(updateData, { transaction })
+      } else {
+        throw new InternalServerErrorException(
+          'Actor profile does not exist and could not be created',
+        )
       }
+
+      return {
+        email: emailRecord?.email ?? '',
+        emailStatus,
+        needsNudge: false,
+        nationalId: fromNationalId,
+        emailNotifications: actorProfile.emailNotifications ?? true,
+      } as ActorProfileEmailDto
     })
-
-    // Return the updated actor profile
-    const actorProfile = await this.actorProfileModel.findOne({
-      where: {
-        toNationalId,
-        fromNationalId,
-      },
-    })
-
-    // Use type assertion for emailRecord
-    const typedEmailRecord = emailRecord as unknown as { email?: string | null }
-    const emailStr = typedEmailRecord?.email || ''
-
-    const result = {
-      email: emailStr,
-      emailStatus,
-      needsNudge: false, // Reset nudge status since we just updated
-      nationalId: toNationalId,
-      emailNotifications: actorProfile?.emailNotifications ?? true,
-    }
-    return result
   }
 
   /**

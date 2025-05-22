@@ -11,6 +11,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 import { MeActorProfileDto } from '../dto/actor-profile.dto'
 import { Emails } from './emails.model'
+import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 @Table({
   tableName: 'actor_profile',
@@ -104,6 +105,8 @@ export class ActorProfile extends Model {
       fromNationalId: this.fromNationalId,
       emailNotifications: this.emailNotifications,
       emailsId: this.emailsId || null,
+      email: this.emails?.email || null,
+      emailVerified: this.emails?.emailStatus === DataStatus.VERIFIED,
     }
   }
 }

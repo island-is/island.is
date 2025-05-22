@@ -25,6 +25,16 @@ export class MeActorProfileDto {
   @IsOptional()
   @IsUUID(4)
   readonly emailsId?: string | null
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly email?: string | null
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  readonly emailVerified?: boolean | null
 }
 
 export class ActorProfileDto {

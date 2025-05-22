@@ -300,10 +300,18 @@ describe('UserProfileController', () => {
       it('should return 200 and the extended actor profile if user profile exists', async () => {
         await fixtureFactory.createUserProfile(testUserProfile)
 
+        const newEmail = await fixtureFactory.createEmail({
+          email: faker.internet.email(),
+          emailStatus: DataStatus.VERIFIED,
+          primary: false,
+          nationalId: testUserProfile.nationalId,
+        })
+
         await fixtureFactory.createActorProfile({
           toNationalId: testUserProfile.nationalId,
           fromNationalId: testNationalId1,
           emailNotifications: false,
+          emailsId: newEmail.id,
         })
 
         // Act
@@ -317,10 +325,10 @@ describe('UserProfileController', () => {
         expect(res.body).toStrictEqual({
           fromNationalId: testNationalId1,
           emailNotifications: false,
-          email: testUserProfile.emails[0].email,
+          email: newEmail.email,
           documentNotifications: testUserProfile.documentNotifications,
           locale: testUserProfile.locale,
-          emailVerified: false,
+          emailVerified: newEmail.emailStatus === DataStatus.VERIFIED,
         })
 
         expect(

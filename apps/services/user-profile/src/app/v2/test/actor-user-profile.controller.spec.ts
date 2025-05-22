@@ -33,6 +33,7 @@ const MIGRATION_DATE = new Date('2024-05-10')
 const testUserProfileEmail = {
   email: faker.internet.email(),
   primary: true,
+  emailStatus: DataStatus.VERIFIED,
 }
 const testUserProfile = {
   nationalId: createNationalId(),
@@ -256,18 +257,50 @@ describe('GET v2/actor/actor-profile', () => {
     })
   })
 
-  it('should return 400 when actor profile does not exist', async () => {
+  it('should return 200 when actor profile does not exist', async () => {
     // No actor profile in the database
 
     // Act
     const res = await server.get('/v2/actor/actor-profile')
 
     // Assert
-    expect(res.status).toEqual(400)
+    expect(res.status).toEqual(200)
     expect(res.body).toMatchObject({
-      title: 'Bad Request',
-      status: 400,
-      detail: 'Actor profile does not exist',
+      email: null,
+      emailStatus: DataStatus.NOT_VERIFIED,
+      emailVerified: false,
+      needsNudge: false,
+      nationalId: testUserProfile.nationalId,
+      emailNotifications: true,
+    })
+  })
+
+  it('should return 200 when actor profile does not exist with userProfile defaults', async () => {
+    // Create a user profile for the actor with a verified email
+    const userProfile = await fixtureFactory.createUserProfile({
+      nationalId: testNationalId1,
+      emails: [
+        {
+          email: 'test@example.com',
+          primary: true,
+          emailStatus: DataStatus.VERIFIED,
+        },
+      ],
+    })
+
+    // Act
+    const res = await server.get('/v2/actor/actor-profile')
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toMatchObject({
+      email: userProfile.emails?.[0].email,
+      emailStatus: userProfile.emails?.[0].emailStatus,
+      emailVerified:
+        userProfile.emails?.[0].emailStatus === DataStatus.VERIFIED,
+      needsNudge: false,
+      nationalId: testUserProfile.nationalId,
+      emailNotifications: true,
     })
   })
 
@@ -677,7 +710,7 @@ describe('POST /v2/actor/actor-profile/nudge', () => {
     })
   })
 
-  it('should return 400 when actor profile does not exist', async () => {
+  it('should return 200 when actor profile does not exist and should create a new one', async () => {
     // Arrange - No actor profile in database
 
     // Act
@@ -689,12 +722,20 @@ describe('POST /v2/actor/actor-profile/nudge', () => {
       })
 
     // Assert
-    expect(res.status).toEqual(400)
-    expect(res.body).toMatchObject({
-      title: 'Bad Request',
-      status: 400,
-      detail: 'Actor profile does not exist',
+    expect(res.status).toEqual(200)
+
+    const actorProfile = await actorProfileModel.findOne({
+      where: {
+        toNationalId: testNationalId1,
+        fromNationalId: testUserProfile.nationalId,
+      },
     })
+
+    expect(actorProfile).not.toBeNull()
+    if (!actorProfile) return // Type guard for TypeScript
+    expect(actorProfile.emailNotifications).toEqual(true)
+    expect(actorProfile.lastNudge).not.toBeNull()
+    expect(actorProfile.nextNudge).not.toBeNull()
   })
 
   it('should return 400 when user does not have an actor property', async () => {
@@ -824,6 +865,8 @@ describe('GET v2/actor/actor-profiles', () => {
     // Assert
     expect(res.status).toEqual(200)
     expect(res.body.data[0]).toStrictEqual({
+      email: email1.email,
+      emailVerified: email1.emailStatus === DataStatus.VERIFIED,
       fromNationalId: testNationalId1,
       emailNotifications: false,
       emailsId: email1.id,
@@ -832,6 +875,8 @@ describe('GET v2/actor/actor-profiles', () => {
     expect(res.body.data[1]).toStrictEqual({
       fromNationalId: testNationalId2,
       emailNotifications: true,
+      email: null,
+      emailVerified: false,
     })
 
     expect(
@@ -953,11 +998,15 @@ describe('GET v2/actor/actor-profiles', () => {
       fromNationalId: testNationalId1,
       emailNotifications: false,
       emailsId: email1.id,
+      email: email1.email,
+      emailVerified: email1.emailStatus === DataStatus.VERIFIED,
     })
     expect(res.body.data[1]).toStrictEqual({
       fromNationalId: testNationalId2,
       emailNotifications: true,
       emailsId: email2.id,
+      email: email2.email,
+      emailVerified: email2.emailStatus === DataStatus.VERIFIED,
     })
   })
 
@@ -1018,14 +1067,17 @@ describe('GET v2/actor/actor-profiles', () => {
     // Assert
     expect(res.status).toEqual(200)
     expect(res.body.data).toHaveLength(2)
-    expect(res.body.data[0]).toStrictEqual({
+    expect(res.body.data[0]).toMatchObject({
       fromNationalId: testNationalId1,
       emailNotifications: false,
-      emailsId: null,
+      email: null,
+      emailVerified: false,
     })
-    expect(res.body.data[1]).toStrictEqual({
+    expect(res.body.data[1]).toMatchObject({
       fromNationalId: testNationalId2,
       emailNotifications: true,
+      email: null,
+      emailVerified: false,
     })
 
     // Verify it used the correct parameters
@@ -1322,8 +1374,8 @@ describe('PATCH /v2/actor/actor-profile', () => {
       .mockResolvedValue({
         data: [
           {
-            toNationalId: testNationalId1,
-            fromNationalId: testUserProfile.nationalId,
+            toNationalId: testUserProfile.nationalId,
+            fromNationalId: testNationalId1,
             subjectId: null,
             type: 'delegation',
           },
@@ -1391,8 +1443,8 @@ describe('PATCH /v2/actor/actor-profile', () => {
     // Verify actor profile created
     const actorProfile = await actorProfileModel.findOne({
       where: {
-        toNationalId: testNationalId1,
-        fromNationalId: testUserProfile.nationalId,
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId1,
       },
     })
     expect(actorProfile).not.toBeNull()
@@ -1435,8 +1487,8 @@ describe('PATCH /v2/actor/actor-profile', () => {
     // Verify actor profile created with reference to email
     const actorProfile = await actorProfileModel.findOne({
       where: {
-        toNationalId: testNationalId1,
-        fromNationalId: testUserProfile.nationalId,
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId1,
       },
     })
     expect(actorProfile).not.toBeNull()
@@ -1448,8 +1500,8 @@ describe('PATCH /v2/actor/actor-profile', () => {
     // Arrange - Create actor profile
     await actorProfileModel.create({
       id: uuid(),
-      toNationalId: testNationalId1,
-      fromNationalId: testUserProfile.nationalId,
+      toNationalId: testUserProfile.nationalId,
+      fromNationalId: testNationalId1,
       emailNotifications: false,
     })
 
@@ -1482,8 +1534,8 @@ describe('PATCH /v2/actor/actor-profile', () => {
     // Verify actor profile updated
     const actorProfile = await actorProfileModel.findOne({
       where: {
-        toNationalId: testNationalId1,
-        fromNationalId: testUserProfile.nationalId,
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId1,
       },
     })
     expect(actorProfile).not.toBeNull()
@@ -1495,16 +1547,16 @@ describe('PATCH /v2/actor/actor-profile', () => {
     // Arrange - Create actor profile first
     await actorProfileModel.create({
       id: uuid(),
-      toNationalId: testNationalId1,
-      fromNationalId: testUserProfile.nationalId,
+      toNationalId: testUserProfile.nationalId,
+      fromNationalId: testNationalId1,
       emailNotifications: false,
     })
 
     // Check if email_id is null
     const actorProfileWithNullEmailId = await actorProfileModel.findOne({
       where: {
-        toNationalId: testNationalId1,
-        fromNationalId: testUserProfile.nationalId,
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId1,
       },
     })
 
@@ -1526,8 +1578,8 @@ describe('PATCH /v2/actor/actor-profile', () => {
     // Verify actor profile updated
     const actorProfile = await actorProfileModel.findOne({
       where: {
-        toNationalId: testNationalId1,
-        fromNationalId: testUserProfile.nationalId,
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId1,
       },
     })
     expect(actorProfile).not.toBeNull()
@@ -1576,8 +1628,8 @@ describe('PATCH /v2/actor/actor-profile', () => {
 
     await actorProfileModel.create({
       id: uuid(),
-      toNationalId: testNationalId1,
-      fromNationalId: testUserProfile.nationalId,
+      toNationalId: testUserProfile.nationalId,
+      fromNationalId: testNationalId1,
       emailNotifications: true,
       lastNudge: initialLastNudge,
       nextNudge: initialNextNudge,
@@ -1594,8 +1646,8 @@ describe('PATCH /v2/actor/actor-profile', () => {
     // Verify nudge dates were updated
     const actorProfile = await actorProfileModel.findOne({
       where: {
-        toNationalId: testNationalId1,
-        fromNationalId: testUserProfile.nationalId,
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId1,
       },
     })
     expect(actorProfile).not.toBeNull()
@@ -1618,8 +1670,8 @@ describe('PATCH /v2/actor/actor-profile', () => {
     // Arrange - Create actor profile first with specific emailNotifications value
     await actorProfileModel.create({
       id: uuid(),
-      toNationalId: testNationalId1,
-      fromNationalId: testUserProfile.nationalId,
+      toNationalId: testUserProfile.nationalId,
+      fromNationalId: testNationalId1,
       emailNotifications: false, // Set to false initially
     })
 
@@ -1643,8 +1695,8 @@ describe('PATCH /v2/actor/actor-profile', () => {
     // Verify actor profile updated
     const actorProfile = await actorProfileModel.findOne({
       where: {
-        toNationalId: testNationalId1,
-        fromNationalId: testUserProfile.nationalId,
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId1,
       },
     })
     expect(actorProfile).not.toBeNull()
@@ -1709,6 +1761,20 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
   let testEmailsId = uuid()
   let testEmail2Id = uuid()
 
+  const email1Data = {
+    email: 'test@example.com',
+    primary: true,
+    emailStatus: DataStatus.VERIFIED,
+    nationalId: testNationalId1,
+  }
+
+  const email2Data = {
+    email: 'test2@example.com',
+    primary: false,
+    emailStatus: DataStatus.VERIFIED,
+    nationalId: testNationalId1,
+  }
+
   beforeAll(async () => {
     app = await setupApp({
       AppModule,
@@ -1764,19 +1830,8 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
       emails: [],
     })
 
-    const email1 = await fixtureFactory.createEmail({
-      email: 'test@example.com',
-      primary: true,
-      emailStatus: DataStatus.VERIFIED,
-      nationalId: testNationalId1,
-    })
-
-    const email2 = await fixtureFactory.createEmail({
-      email: 'test2@example.com',
-      primary: false,
-      emailStatus: DataStatus.VERIFIED,
-      nationalId: testNationalId1,
-    })
+    const email1 = await fixtureFactory.createEmail(email1Data)
+    const email2 = await fixtureFactory.createEmail(email2Data)
 
     testEmailsId = email1.id
     testEmail2Id = email2.id
@@ -1852,6 +1907,8 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
       fromNationalId: testNationalId1,
       emailNotifications: false,
       emailsId: testEmail2Id,
+      email: email2Data.email,
+      emailVerified: email2Data.emailStatus === DataStatus.VERIFIED,
     })
 
     const actorProfile = await delegationPreferenceModel.findAll({
@@ -1883,6 +1940,8 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
       fromNationalId: testNationalId1,
       emailNotifications: false,
       emailsId: testEmailsId,
+      email: email1Data.email,
+      emailVerified: email1Data.emailStatus === DataStatus.VERIFIED,
     })
 
     const actorProfile = await delegationPreferenceModel.findAll({
@@ -1920,6 +1979,8 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
       fromNationalId: testNationalId1,
       emailNotifications: true,
       emailsId: testEmail2Id,
+      email: email2Data.email,
+      emailVerified: email2Data.emailStatus === DataStatus.VERIFIED,
     })
 
     const actorProfile = await delegationPreferenceModel.findAll({

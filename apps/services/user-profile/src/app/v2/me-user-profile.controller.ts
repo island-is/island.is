@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Patch,
+  Headers,
   Post,
   UseGuards,
 } from '@nestjs/common'
@@ -154,9 +155,17 @@ export class MeUserProfileController {
     )
   }
 
-  @Patch('/actor-profile')
+  @Patch('/actor-profile/.from-national-id')
   @Scopes(ApiScope.internal)
   @Documentation({
+    request: {
+      header: {
+        'X-Param-From-National-Id': {
+          required: true,
+          description: 'National id of the user that granted the delegation',
+        },
+      },
+    },
     description:
       'Update or create an actor profile with email information for the current user',
     response: {
@@ -166,25 +175,22 @@ export class MeUserProfileController {
   })
   updateActorProfileEmail(
     @CurrentUser() user: User,
+    @Headers('X-Param-From-National-Id') fromNationalId: string,
     @Body() actorProfile: UpdateActorProfileEmailDto,
   ): Promise<ActorProfileEmailDto> {
-    if (!user.actor?.nationalId) {
-      throw new BadRequestException('User has no actor profile')
-    }
-
     return this.auditService.auditPromise(
       {
         auth: user,
         namespace,
         action: 'updateActorProfileEmail',
-        resources: `${user.nationalId}:${user.actor.nationalId}`,
+        resources: user.nationalId,
         meta: {
           fields: Object.keys(actorProfile),
         },
       },
       this.userProfileService.updateActorProfileEmail({
-        toNationalId: user.actor.nationalId,
-        fromNationalId: user.nationalId,
+        toNationalId: user.nationalId,
+        fromNationalId,
         ...actorProfile,
       }),
     )
