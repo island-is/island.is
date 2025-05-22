@@ -59,13 +59,6 @@ export class UserProfileService extends BaseTemplateApiService {
         throw error
       })
 
-    if (isRunningOnEnvironment('local')) {
-      return {
-        email: 'mockEmail@island.is',
-        mobilePhoneNumber: '9999999',
-      }
-    }
-
     /// Temporary dependency on íslykill for bank info retrieval via FJS API.
     /// A refactor is planned to integrate bank info directly from FJS API to eliminate íslykill dependency.
     const bankInfo = await this.getBankInfoFromIslykill(auth)
