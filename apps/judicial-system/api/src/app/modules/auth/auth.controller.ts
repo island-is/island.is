@@ -39,6 +39,7 @@ import {
   IDS_ID_TOKEN_NAME,
   IDS_REFRESH_TOKEN_NAME,
   PRISON_CASES_ROUTE,
+  REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
   USERS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
@@ -421,7 +422,7 @@ export class AuthController {
       })
       res.cookie(this.refreshToken.name, refreshToken, {
         ...this.refreshToken.options,
-        maxAge: EXPIRES_IN_MILLISECONDS,
+        maxAge: REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
       })
     } else {
       this.clearCookies(res, [this.idToken])

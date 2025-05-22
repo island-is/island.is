@@ -444,7 +444,7 @@ const useS3Upload = (
       async ({ id, name: defendantName, nationalId, noNationalId }) => {
         const name = `Sakavottord${nationalId ? `_${nationalId}` : ''}.pdf`
         const commonFileProps = {
-          // add a temp tame for error handling
+          // add a temp name for error handling
           id: `${name}-${uuid()}`,
           name,
           category: CaseFileCategory.CRIMINAL_RECORD,
