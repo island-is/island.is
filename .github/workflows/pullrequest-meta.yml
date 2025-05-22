@@ -55,6 +55,9 @@ jobs:
           path: ${{ env.ACTIONLINT_DIR }}
           key: actionlint-${{ env.ACTIONLINT_VERSION }}
 
+      - name: Announce actionlint success
+        run: echo "✅ actionlint ran successfully."
+
   collect:
     runs-on: arc-shared
     if: ${{ !cancelled() }}
@@ -64,7 +67,8 @@ jobs:
         run: |
           for job in ${{ needs.actionlint.result }}; do
             if [[ "$job" == "failure" ]]; then
+              echo "❌ meta workflow failed!"
               exit 1
             fi
           done
-          echo "✅ actionlint ran successfully."
+          echo "✅ meta workflow ran successfully."
