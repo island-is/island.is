@@ -178,5 +178,29 @@ export const healthNavigation: PortalNavigationItem = {
       name: m.bloodtype,
       path: HealthPaths.HealthBloodtype,
     },
+    {
+      name: messages.referrals,
+      path: HealthPaths.HealthReferrals,
+      searchTags: [s.healthReferrals],
+      children: [
+        {
+          name: messages.singleReferral,
+          path: HealthPaths.HealthReferralsDetail,
+          navHide: true,
+        },
+      ],
+    },
+    {
+      name: messages.waitlists,
+      path: HealthPaths.HealthWaitlists,
+      searchTags: [s.healthWaiting],
+      children: [
+        {
+          name: messages.singleWaitlist,
+          path: HealthPaths.HealthWaitlistsDetail,
+          navHide: true,
+        },
+      ],
+    },
   ],
 }

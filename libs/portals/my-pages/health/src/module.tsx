@@ -6,76 +6,86 @@ import { Navigate } from 'react-router-dom'
 import { messages as hm } from './lib/messages'
 import { HealthPaths } from './lib/paths'
 
-const HealthOverview = lazy(
-  () => import('./screens/HealthOverview/HealthOverview'),
+const HealthOverview = lazy(() =>
+  import('./screens/HealthOverview/HealthOverview'),
 )
-const TherapiesPhysical = lazy(
-  () => import('./screens/Therapies/TherapiesPhysical'),
+const TherapiesPhysical = lazy(() =>
+  import('./screens/Therapies/TherapiesPhysical'),
 )
-const TherapiesSpeech = lazy(
-  () => import('./screens/Therapies/TherapiesSpeech'),
+const TherapiesSpeech = lazy(() =>
+  import('./screens/Therapies/TherapiesSpeech'),
 )
-const TherapiesOccupational = lazy(
-  () => import('./screens/Therapies/TherapiesOccupational'),
+const TherapiesOccupational = lazy(() =>
+  import('./screens/Therapies/TherapiesOccupational'),
 )
 
-const AidsAndNutrition = lazy(
-  () => import('./screens/AidsAndNutrition/AidsAndNutrition'),
+const AidsAndNutrition = lazy(() =>
+  import('./screens/AidsAndNutrition/AidsAndNutrition'),
 )
 const Dentists = lazy(() => import('./screens/Dentists/Dentists'))
 
 const HealthCenter = lazy(() => import('./screens/HealthCenter/HealthCenter'))
 
-const MedicinePurchase = lazy(
-  () => import('./screens/Medicine/MedicinePurchase'),
+const MedicinePurchase = lazy(() =>
+  import('./screens/Medicine/MedicinePurchase'),
 )
 
 const MedicineLicence = lazy(() => import('./screens/Medicine/MedicineLicense'))
 
-const MedicineCalculator = lazy(
-  () => import('./screens/MedicineCalculator/MedicineCalculator'),
+const MedicineCalculator = lazy(() =>
+  import('./screens/MedicineCalculator/MedicineCalculator'),
 )
 
-const MedicinePrescriptions = lazy(
-  () => import('./screens/MedicinePrescriptions/MedicinePrescriptions'),
+const MedicinePrescriptions = lazy(() =>
+  import('./screens/MedicinePrescriptions/MedicinePrescriptions'),
 )
-const MedicinePrescriptionHistory = lazy(
-  () => import('./screens/MedicinePrescriptions/MedicinePrescriptionHistory'),
+const MedicinePrescriptionHistory = lazy(() =>
+  import('./screens/MedicinePrescriptions/MedicinePrescriptionHistory'),
 )
-const HealthCenterRegistration = lazy(
-  () => import('./screens/HealthCenterRegistration/HealthCenterRegistration'),
-)
-
-const DentistRegistration = lazy(
-  () => import('./screens/DentistRegistration/DentistRegistration'),
+const HealthCenterRegistration = lazy(() =>
+  import('./screens/HealthCenterRegistration/HealthCenterRegistration'),
 )
 
-const MedicineCertificate = lazy(
-  () => import('./screens/MedicineCertificate/MedicineCertificate'),
+const DentistRegistration = lazy(() =>
+  import('./screens/DentistRegistration/DentistRegistration'),
 )
 
-const MedicineDelegation = lazy(
-  () => import('./screens/MedicineDelegation/MedicineDelegation'),
+const MedicineCertificate = lazy(() =>
+  import('./screens/MedicineCertificate/MedicineCertificate'),
 )
 
-const PaymentParticipation = lazy(
-  () => import('./screens/Payments/PaymentParticipation'),
+const MedicineDelegation = lazy(() =>
+  import('./screens/MedicineDelegation/MedicineDelegation'),
+)
+
+const PaymentParticipation = lazy(() =>
+  import('./screens/Payments/PaymentParticipation'),
 )
 const PaymentOverview = lazy(() => import('./screens/Payments/PaymentOverview'))
 
-const OrganDonation = lazy(
-  () => import('./screens/OrganDonation/OrganDonation'),
+const OrganDonation = lazy(() =>
+  import('./screens/OrganDonation/OrganDonation'),
 )
 
-const OrganDonationRegistration = lazy(
-  () => import('./screens/OrganDonation/components/RegistrationForm'),
+const OrganDonationRegistration = lazy(() =>
+  import('./screens/OrganDonation/components/RegistrationForm'),
 )
 
-const Vaccinations = lazy(
-  () => import('./screens/Vaccinations/VaccinationsWrapper'),
+const Vaccinations = lazy(() =>
+  import('./screens/Vaccinations/VaccinationsWrapper'),
 )
 
 const Bloodtype = lazy(() => import('./screens/Bloodtype/Bloodtype'))
+
+const Referrals = lazy(() => import('./screens/Referrals/Referrals'))
+
+const ReferralsDetail = lazy(() =>
+  import('./screens/Referrals/ReferralsDetail'),
+)
+
+const Waitlist = lazy(() => import('./screens/Waitlists/Waitlists'))
+
+const WaitlistDetail = lazy(() => import('./screens/Waitlists/WaitlistsDetail'))
 
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
@@ -262,6 +272,42 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthBloodtype,
       enabled: userInfo.scopes.includes(ApiScope.internal),
       element: <Bloodtype />,
+    },
+    {
+      name: hm.referrals,
+      path: HealthPaths.HealthReferrals,
+      key: 'Referrals',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <Referrals />,
+    },
+    {
+      name: hm.referrals,
+      path: HealthPaths.HealthReferralsDetail,
+      key: 'Referrals',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <ReferralsDetail />,
+    },
+    {
+      name: hm.waitlists,
+      path: HealthPaths.HealthWaitlists,
+      key: 'HealthWaitlists',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <Waitlist />,
+    },
+    {
+      name: hm.waitlists,
+      path: HealthPaths.HealthWaitlistsDetail,
+      key: 'HealthWaitlists',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <WaitlistDetail />,
     },
   ],
 }

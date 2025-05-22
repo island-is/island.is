@@ -1,8 +1,4 @@
-import {
-  Application,
-  Field,
-  RecordObject,
-} from '@island.is/application/types'
+import { Application, Field, RecordObject } from '@island.is/application/types'
 import {
   Box,
   GridColumn,
