@@ -186,6 +186,75 @@
         "tags": ["Prescriptions"]
       }
     },
+    "/v1/me/prescriptions/{id}/renew": {
+      "post": {
+        "description": "Renew a user's prescription",
+        "operationId": "MePrescriptionController_renewPrescription_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The prescription id",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrescriptionRenewalRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      }
+    },
     "/v1/me/prescriptions/dispensations": {
       "get": {
         "description": "Get user's dispensation history",
@@ -736,6 +805,14 @@
         },
         "tags": ["Organ donation"]
       }
+    },
+    "/v1/me/questionnaires": {
+      "get": {
+        "operationId": "QuestionnaireController_findAll_v1",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["Questionnaire"]
+      }
     }
   },
   "info": {
@@ -808,9 +885,10 @@
         "properties": {
           "name": { "type": "string" },
           "profession": { "type": "string" },
-          "department": { "type": "string" }
+          "department": { "type": "string" },
+          "institution": { "type": "string" }
         },
-        "required": ["name", "profession", "department"]
+        "required": ["name", "profession", "department", "institution"]
       },
       "ReferralDto": {
         "type": "object",
@@ -823,6 +901,8 @@
           "stateValue": { "type": "number" },
           "stateDisplay": { "type": "string" },
           "assignedProviderId": { "type": "string" },
+          "fromInstitute": { "type": "string" },
+          "toInstitute": { "type": "string" },
           "reasonForReferral": { "type": "string" },
           "fromContactInfo": {
             "$ref": "#/components/schemas/ReferralContactInfoDto"
@@ -871,10 +951,12 @@
         "properties": {
           "prescribedItemId": { "type": "number" },
           "prescriptionId": { "type": "number" },
+          "medCardDrugId": { "type": "string" },
           "prescriberId": { "type": "string" },
           "prescriberName": { "type": "string" },
           "issueDate": { "format": "date-time", "type": "string" },
           "expiryDate": { "format": "date-time", "type": "string" },
+          "nextDispensationDate": { "format": "date-time", "type": "string" },
           "productId": { "type": "string" },
           "productName": { "type": "string" },
           "productType": {
@@ -901,7 +983,8 @@
               "pendingRequest",
               "rejectedRequest",
               "notFullyDispensed",
-              "isRegiment"
+              "isRegiment",
+              "noMedCard"
             ]
           },
           "renewalStatus": { "type": "number", "enum": [0, 1, 2] },
@@ -918,15 +1001,26 @@
         "required": [
           "prescribedItemId",
           "prescriptionId",
+          "medCardDrugId",
           "prescriberId",
           "prescriberName",
           "issueDate",
           "expiryDate",
+          "nextDispensationDate",
           "productId",
           "isRenewable",
           "isFullyDispensed",
           "dispensations"
         ]
+      },
+      "PrescriptionRenewalRequestDto": {
+        "type": "object",
+        "properties": {
+          "prescribedItemId": { "type": "number" },
+          "medCardDrugId": { "type": "string" },
+          "medCardDrugCategory": { "type": "number" }
+        },
+        "required": ["prescribedItemId", "medCardDrugId"]
       },
       "DispensationHistoryItemDto": {
         "type": "object",
