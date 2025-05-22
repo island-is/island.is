@@ -292,7 +292,7 @@ export class AuthController {
 
       this.clearCookies(res)
 
-      res.redirect('/?villa=innskraning-gomul')
+      res.redirect('/?villa=innskraning-villa')
 
       return
     }
