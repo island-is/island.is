@@ -80,7 +80,7 @@ async function main() {
     )
   }
 
-  const skipCodegen = args.includes('--skip-codegen')
+  const skipCodegen = [outputFileName, ...args].includes('--skip-codegen')
 
   if (skipCodegen) {
     console.log('Skipping codegen command...')
