@@ -4,6 +4,7 @@ export const authModuleConfig = defineConfig({
   name: 'AuthModule',
   load: (env) => ({
     production: env.optional('NODE_ENV') === 'production',
+    // TODO: requesting support from the ids team to set the absolute expiry for the refresh token
     scope: env.required('AUTH_IDS_SCOPE', 'openid profile offline_access'),
     clientId: env.required(
       'AUTH_IDS_CLIENT_ID',

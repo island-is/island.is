@@ -217,10 +217,6 @@ export class AuthController {
 
       const idsTokens = await this.authService.fetchIdsToken(code, codeVerifier)
 
-      // TEMP: for testing
-      // const idsTokens = await this.authService.refreshToken(temp.refresh_token)
-      // console.log({ idsTokens })
-
       const verifiedUserToken = await this.authService.verifyIdsToken(
         idsTokens.id_token,
       )
@@ -256,6 +252,53 @@ export class AuthController {
     res.redirect('/?villa=innskraning-ogild')
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('token-refresh')
+  async tokenRefresh(@Res() res: Response, @Req() req: Request) {
+    try {
+      this.logger.debug('Handling token expiry')
+
+      const accessToken = req.cookies[IDS_ACCESS_TOKEN_NAME]
+      if (!this.authService.isTokenExpired(accessToken)) {
+        this.logger.debug('Token is valid')
+        res.status(200).send()
+        return
+      }
+      const refreshToken = req.cookies[IDS_REFRESH_TOKEN_NAME]
+      const idsTokens = await this.authService.refreshToken(refreshToken)
+
+      // maybe we don't need to verify again?
+      const verifiedUserToken = await this.authService.verifyIdsToken(
+        idsTokens.id_token,
+      )
+      if (!verifiedUserToken) {
+        throw new Error('Invalid id token')
+      }
+
+      const newAccessToken = idsTokens.access_token
+      const newRefreshToken = idsTokens.refresh_token
+      if (newAccessToken && newRefreshToken) {
+        res.cookie(this.accessToken.name, newAccessToken, {
+          ...this.accessToken.options,
+        })
+        res.cookie(this.refreshToken.name, newRefreshToken, {
+          ...this.refreshToken.options,
+          maxAge: EXPIRES_IN_MILLISECONDS,
+        })
+      }
+      this.logger.debug('Token refresh successful')
+      res.status(200).send()
+    } catch (error) {
+      this.logger.error('Handling token expiry failed:', { error })
+
+      this.clearCookies(res)
+
+      res.redirect('/?villa=innskraning-gomul')
+
+      return
+    }
+  }
+
   @Get('callback')
   deprecatedAuth(@Res() res: Response) {
     this.logger.debug(
@@ -275,6 +318,7 @@ export class AuthController {
 
     this.clearCookies(res)
 
+    // TODO: revoke the tokens from ids or is this sufficient?
     if (idToken) {
       res.redirect(
         `${this.config.issuer}/connect/endsession?id_token_hint=${idToken}&post_logout_redirect_uri=${this.config.logoutRedirectUri}`,

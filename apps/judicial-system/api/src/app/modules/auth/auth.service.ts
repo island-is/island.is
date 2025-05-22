@@ -73,6 +73,24 @@ export class AuthService {
     }
   }
 
+  getExpiry(token: string) {
+    const decodedToken = jwt.decode(token, { complete: true })
+    if (decodedToken && typeof decodedToken === 'object') {
+      const payload = decodedToken.payload
+      if (payload && 'exp' in payload) {
+        const expiredTimestamp = payload['exp']
+        return expiredTimestamp
+      }
+    }
+    return undefined
+  }
+
+  isTokenExpired(token: string) {
+    const currentTime = Math.floor(Date.now() / 1000)
+    const expiredTimestamp = this.getExpiry(token)
+    return expiredTimestamp && expiredTimestamp < currentTime
+  }
+
   async verifyIdsToken(token: string) {
     try {
       const secretClient = jwksClient({

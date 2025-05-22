@@ -27,3 +27,18 @@ export const activate = async (userId: string) => {
 export const getFeature = async (name: string): Promise<boolean> => {
   return await (await fetch(`/api/feature/${name}`)).json()
 }
+
+// TEMP: Initial implementation to trigger token refresh manually in the client.
+// Ideally it should be handled in a middleware like BFF
+export const prepareRequest = async () => {
+  const token = Cookie.get(CSRF_COOKIE_NAME)
+  const options = token ? { headers: { authorization: `Bearer ${token}` } } : {}
+
+  // check if tokens stored in the session cookie are expired
+  // and if expired auth api handles the refresh
+  const res = await fetch(`/api/auth/token-refresh`, options)
+  if (res.ok) {
+    return { success: true }
+  }
+  return { success: false }
+}
