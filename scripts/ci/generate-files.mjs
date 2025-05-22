@@ -138,8 +138,11 @@ async function main() {
   }
 
   if (missingFiles.length > 0) {
+    // GitHub log group
+    console.log('::group::Missing files')
     console.log('\nMissing files or patterns:')
     missingFiles.forEach((file) => console.log(file))
+    console.log('::endgroup::')
   }
 }
 
