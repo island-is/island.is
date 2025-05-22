@@ -9,7 +9,7 @@ inputs:
   cache-path:
     description: 'Cache path'
     required: false
-    default: ${{ runner.temp }}
+    default: .cache/generated-files
 
 runs:
   using: 'composite'
@@ -27,6 +27,7 @@ runs:
         echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_OUTPUT"
         echo "Generated files will be stored in $GENERATED_FILES_PATH"
         echo "CACHE_KEY=$CACHE_KEY"
+        mkdir -p "$CACHE_PATH"
 
     - name: INFO
       working-directory: ${{ inputs.working-directory }}
