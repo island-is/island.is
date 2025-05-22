@@ -9,7 +9,7 @@ export const overviewMessages = defineMessages({
   description: {
     id: 'fca.application:overview.description',
     defaultMessage:
-      'Vinsamlegast farðu vel yfir að allar upplýsingar séu rétt skráðar inn áður en umsóknin er send inn tið Húsnæðis og mannviskjastofnunar.',
+      'Vinsamlegast farðu vel yfir að allar upplýsingar séu rétt skráðar inn áður en umsóknin er send inn til Húsnæðis og mannvirkjastofnunar.',
     description: 'Overview description',
   },
   name: {
@@ -46,5 +46,15 @@ export const overviewMessages = defineMessages({
     id: 'fca.application:phoneNumber',
     defaultMessage: 'Símanúmer',
     description: 'Phone number',
+  },
+  realEstateId: {
+    id: 'fca.application:realEstateId',
+    defaultMessage: 'Fasteignarnúmer',
+    description: 'Real estate ID',
+  },
+  useageUnits: {
+    id: 'fca.application:useageUnits',
+    defaultMessage: 'Notkunareiningar til að endurmeta',
+    description: 'Useage units',
   },
 })

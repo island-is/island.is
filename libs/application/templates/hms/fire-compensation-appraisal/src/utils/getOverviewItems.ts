@@ -8,6 +8,7 @@ import * as m from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { formatPhoneNumber } from './utils'
 import { FileType } from '../types.ts'
+import { Fasteign } from '@island.is/clients/assets'
 
 export const personalInformationOverviewItems = (
   answers: FormValue,
@@ -92,13 +93,34 @@ export const realEstateOverviewItems = (
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const realEstateId = getValueViaPath<string>(answers, 'realEstate')
-  const useageUnits = getValueViaPath<Array<string>>(answers, 'useageUnit')
+  const properties = getValueViaPath<Array<Fasteign>>(
+    externalData,
+    'getProperties.data',
+  )
+  const property = properties?.find(
+    (property) => property.fasteignanumer === realEstateId,
+  )
+  const useageUnits = property?.notkunareiningar
+
   console.log(externalData)
   return [
     {
       width: 'full',
-      keyText: m.realEstateMessages.title,
-      valueText: getValueViaPath<string>(answers, 'realEstate') ?? '',
+      keyText: m.overviewMessages.address,
+      valueText: property?.sjalfgefidStadfang?.birtingStutt ?? '',
+    },
+    {
+      width: 'full',
+      keyText: m.overviewMessages.realEstateId,
+      valueText: property?.fasteignanumer ?? '',
+    },
+    {
+      width: 'full',
+      keyText: m.overviewMessages.useageUnits,
+      valueText:
+        useageUnits?.notkunareiningar
+          ?.map((unit) => unit.notkunBirting)
+          .join(', ') ?? '',
     },
   ]
 }

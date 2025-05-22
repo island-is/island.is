@@ -24,7 +24,7 @@ export const overviewSection = buildSection({
         buildOverviewField({
           id: 'personalInformationOverview',
           title: m.personalInformationMessages.title,
-          backId: 'personalInformation',
+          backId: 'applicant',
           items: personalInformationOverviewItems,
         }),
         buildOverviewField({
