@@ -22,7 +22,7 @@ runs:
         CACHE_PATH: ${{ inputs.cache-path }}
       run: |
         node ./scripts/ci/generate-files.mjs --skip-codegen
-        CACHE_KEY=${{ hashFiles('generated_files.txt') }}
+        CACHE_KEY=${{ hashFiles('generated_files_list.txt') }}
         GENERATED_FILES_PATH=$CACHE_PATH/$CACHE_KEY
         echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_OUTPUT"
         echo "Generated files will be stored in $GENERATED_FILES_PATH"
