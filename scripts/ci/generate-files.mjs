@@ -80,6 +80,9 @@ async function main() {
     )
   }
 
+  // If we're skipping codegen, we don't need the filename, hence, we also
+  // need to search in the "filename" for flags to allow e.g.
+  // `node ./generate-files.mjs --skip-codegen`
   const skipCodegen = [outputFileName, ...args].includes('--skip-codegen')
 
   if (skipCodegen) {
