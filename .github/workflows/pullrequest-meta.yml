@@ -1,4 +1,9 @@
 name: Lint PR meta
+# This check should run independently of all other workflows, since this
+# is linting the workflows themselves. If the workflow running `actionlint`
+# is broken (e.g. syntax error), `actionlint` won't lint it and report,
+# and the workflow fails silently (the GitHub UI surfaces this poorly).
+
 on:
   pull_request:
     types:
