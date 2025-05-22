@@ -113,9 +113,6 @@ export const Item = ({
 
   const id = `${dataId}[${index}].${itemId}`
   const activeValues = index >= 0 && values ? values[index] : undefined
-  console.log('index', index)
-  console.log('values', values)
-  console.log('activeValues', activeValues)
   let watchedValues: string | (string | undefined)[] | undefined
   if (updateValueObj) {
     const watchedValuesId =

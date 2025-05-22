@@ -14,7 +14,10 @@ import {
   DriversLicense,
   DrivingLicenseApi,
 } from '@island.is/clients/driving-license'
-import { VmstUnemploymentClientService } from '@island.is/clients/vmst-unemployment'
+import {
+  GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel,
+  VmstUnemploymentClientService,
+} from '@island.is/clients/vmst-unemployment'
 
 @Injectable()
 export class UnemploymentBenefitsService extends BaseTemplateApiService {
@@ -63,10 +66,10 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     })
   }
 
-  async getEmptyApplication() {
+  async getEmptyApplication(): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel> {
     const results =
       await this.vmstUnemploymentClientService.getEmptyApplication()
-    console.log('results', results)
-    return null
+    // console.log('results', results)
+    return results
   }
 }

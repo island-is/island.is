@@ -1,12 +1,14 @@
 import {
-  buildDescriptionField,
   buildFieldsRepeaterField,
   buildMultiField,
-  buildRepeater,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { applicant as applicantMessages } from '../../../lib/messages'
-import { Application } from '@island.is/application/types'
+import {
+  ApplicantChildCustodyInformation,
+  Application,
+} from '@island.is/application/types'
 
 export const familyInformationSubSection = buildSubSection({
   id: 'familyInformationSubSection',
@@ -19,18 +21,77 @@ export const familyInformationSubSection = buildSubSection({
         buildFieldsRepeaterField({
           id: 'familyInformation.children',
           minRows: 2,
+          title: applicantMessages.labels.dependentChildren,
+          titleVariant: 'h5',
+          marginTop: 0,
+          formTitleNumbering: 'none',
+          hideAddItemButton: true,
           fields: {
             name: {
-              label: 'Nafn barns',
+              label: applicantMessages.labels.childName,
               type: 'text',
               readonly: true,
               component: 'input',
+              width: 'half',
+              defaultValue: (
+                application: Application,
+                _activeField: Record<string, string>,
+                index: number,
+              ) => {
+                const children =
+                  getValueViaPath<ApplicantChildCustodyInformation[]>(
+                    application.externalData,
+                    'childrenCustodyInformation.data',
+                  ) ?? []
+                return children[index]?.fullName ?? ''
+              },
             },
             nationalId: {
-              label: 'Kennitala barns',
+              label: applicantMessages.labels.childNationalId,
               type: 'text',
+              format: '######-####',
               readonly: true,
               component: 'input',
+              width: 'half',
+              defaultValue: (
+                application: Application,
+                _activeField: Record<string, string>,
+                index: number,
+              ) => {
+                const children =
+                  getValueViaPath<ApplicantChildCustodyInformation[]>(
+                    application.externalData,
+                    'childrenCustodyInformation.data',
+                  ) ?? []
+                return children[index]?.nationalId ?? ''
+              },
+            },
+          },
+        }),
+        buildFieldsRepeaterField({
+          id: 'familyInformation.additionalChildren',
+          minRows: 0,
+          title: applicantMessages.labels.moreDependentChildren,
+          titleVariant: 'h5',
+          description:
+            applicantMessages.labels.moreDependentChildrenDescription,
+          marginTop: 4,
+          formTitleNumbering: 'none',
+          addItemButtonText:
+            applicantMessages.labels.moreDependentChildrenButton,
+          fields: {
+            nationalId: {
+              label: applicantMessages.labels.childNationalId,
+              type: 'text',
+              format: '######-####',
+              component: 'input',
+              width: 'half',
+            },
+            name: {
+              label: applicantMessages.labels.childName,
+              type: 'text',
+              component: 'input',
+              width: 'half',
             },
           },
         }),

@@ -187,7 +187,7 @@ export const FieldsRepeaterFormField = ({
               </Fragment>
             ))}
           </GridRow>
-          {hideAddItemButton && (
+          {!hideAddItemButton && (
             <Box display="flex" justifyContent="flexEnd">
               {numberOfItems > minRowsValue && (
                 <Box marginRight={2}>

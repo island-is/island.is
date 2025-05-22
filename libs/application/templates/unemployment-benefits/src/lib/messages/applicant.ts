@@ -60,6 +60,37 @@ export const applicant = {
       defaultMessage: 'Þjónustuskrifstofa',
       description: 'service office label',
     },
+    dependentChildren: {
+      id: 'vmst.ub.application:applicant.labels.dependentChildren',
+      defaultMessage: 'Börn á framfæri',
+      description: 'dependent children label',
+    },
+    childName: {
+      id: 'vmst.ub.application:applicant.labels.childName',
+      defaultMessage: 'Nafn barns',
+      description: 'child name label',
+    },
+    childNationalId: {
+      id: 'vmst.ub.application:applicant.labels.childNationalId',
+      defaultMessage: 'Kennitala barns',
+      description: 'child nationalId label',
+    },
+    moreDependentChildren: {
+      id: 'vmst.ub.application:applicant.labels.moreDependentChildren',
+      defaultMessage: 'Fleiri börn á framfæri?',
+      description: 'more dependent children label',
+    },
+    moreDependentChildrenDescription: {
+      id: 'vmst.ub.application:applicant.labels.moreDependentChildrenDescription',
+      defaultMessage:
+        'Ef fleiri börn en skráð eru hér að ofan eru á þínu framfæri geturðu bætt þeim við hérna í listann',
+      description: 'more dependent children description',
+    },
+    moreDependentChildrenButton: {
+      id: 'vmst.ub.application:applicant.labels.moreDependentChildrenButton',
+      defaultMessage: 'Bæta við barni á framfæri',
+      description: 'more dependent children button label',
+    },
   }),
   personalInformation: defineMessages({
     sectionTitle: {
@@ -91,8 +122,16 @@ export const applicant = {
     },
     pageDescription: {
       id: 'vmst.ub.application:applicant.informationChangeAgreement.pageDescription#markdown',
-      defaultMessage:
-        'Það er mjög mikilvægt að láta vita af öllum breytingum á þínum högum. Þar undir fellur:',
+      defaultMessage: `Það er mjög mikilvægt að láta vita af öllum breytingum á þínum högum. Þar undir fellur:
+        \n* Breyttu heimilisfangi, símanúmeri og netfangi.
+        \n* Breytingar skal tilkynna á „Mínum síðum“.
+        \n\nEinnig þarf að tilkynna aðrar breytingar sem geta haft áhrif á greiðslu bóta, þar undir fellur:
+        \n* Vinna
+        \n* Tekjur
+        \n* Nám
+        \n* Veikindi, starfshæfni
+        \n* Fæðingarorlof
+        \n\n[Sjá nánar á Vinnumálastofnun.is](https://island.is/s/vinnumalastofnun)`,
       description: 'information agreement page description',
     },
   }),

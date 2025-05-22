@@ -52,6 +52,23 @@ const applicantInformationSchema = z
     },
   )
 
+const familyInformationSchema = z.object({
+  children: z.array(
+    z.object({
+      name: z.string().min(1),
+      nationalId: z.string().min(1),
+    }),
+  ),
+  additionalChildren: z
+    .array(
+      z.object({
+        name: z.string().optional(),
+        nationalId: z.string().optional(),
+      }),
+    )
+    .optional(),
+})
+
 const currentJobSchema = z.object({
   employer: z
     .object({
@@ -149,6 +166,7 @@ const introductoryMeetingSchema = z.object({
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema,
+  familyInformation: familyInformationSchema,
   currentSituation: currentSituationSchema,
   jobWishes: jobWishesSchema,
   currentStudies: currentStudiesSchema,

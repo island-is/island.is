@@ -1,6 +1,7 @@
 import {
   AuthApi,
   Configuration,
+  GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel,
   UnemploymentApplicationApi,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -60,7 +61,7 @@ export class VmstUnemploymentClientService {
     }
   }
 
-  async getEmptyApplication(): Promise<any> {
+  async getEmptyApplication(): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel> {
     const api = await this.create()
 
     const response =
