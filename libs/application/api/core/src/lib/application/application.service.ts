@@ -397,4 +397,17 @@ export class ApplicationService {
   async delete(id: string) {
     return this.applicationModel.destroy({ where: { id } })
   }
+
+  async softDelete(id: string) {
+    return this.applicationModel.update(
+      {
+        isListed: false,
+        userDeleted: true,
+        userDeletedAt: new Date(),
+        externalData: {},
+        answers: {},
+      },
+      { where: { id } },
+    )
+  }
 }

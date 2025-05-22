@@ -40,19 +40,19 @@ const courtOfAppealsCompletedWhereOptions = {
   appeal_state: CaseAppealState.COMPLETED,
 }
 
-const prisonAdminSharedWhereOptions = {
+const prisonSharedWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
   state: CaseState.ACCEPTED,
 }
 
-const prisonAdminActiveWhereOptions = {
-  ...prisonAdminSharedWhereOptions,
+const prisonActiveWhereOptions = {
+  ...prisonSharedWhereOptions,
   valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
 }
 
-const prisonAdminDoneWhereOptions = {
-  ...prisonAdminSharedWhereOptions,
+const prisonDoneWhereOptions = {
+  ...prisonSharedWhereOptions,
   valid_to_date: { [Op.lt]: fn('NOW') },
 }
 
@@ -256,8 +256,8 @@ export const caseTableWhereOptions: Record<CaseTableType, WhereOptions> = {
     courtOfAppealsInProgressWhereOptions,
   [CaseTableType.COURT_OF_APPEALS_COMPLETED]:
     courtOfAppealsCompletedWhereOptions,
-  [CaseTableType.PRISON_ACTIVE]: prisonAdminActiveWhereOptions,
-  [CaseTableType.PRISON_DONE]: prisonAdminDoneWhereOptions,
+  [CaseTableType.PRISON_ACTIVE]: prisonActiveWhereOptions,
+  [CaseTableType.PRISON_DONE]: prisonDoneWhereOptions,
   [CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN]:
     prisonAdminIndictmentSentToPrisonAdminWhereOptions,
   [CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING]:
