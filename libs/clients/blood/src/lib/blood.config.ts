@@ -2,8 +2,9 @@ import { defineConfig } from '@island.is/nest/config'
 import * as z from 'zod'
 
 const schema = z.object({
-  baseUrl: z.string().url(),
+  baseUrl: z.string(),
   apiKey: z.string(),
+  scope: z.array(z.string()),
 })
 
 export const BloodClientConfig = defineConfig<z.infer<typeof schema>>({
@@ -11,11 +12,13 @@ export const BloodClientConfig = defineConfig<z.infer<typeof schema>>({
   schema,
   load(env) {
     return {
+      //TODO: GET CORRECT PROD XROAD PATH
       baseUrl: env.required(
-        'LSH_BLOOD_URL',
-        'https://externalpatientdev.landspitali.is',
+        'XROAD_LSH_PATH',
+        'IS-DEV/GOV/10022/Landspitali-Protected/external-patient-api-v1',
       ),
       apiKey: env.required('LSH_BLOOD_API_KEY', ''),
+      scope: [],
     }
   },
 })

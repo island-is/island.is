@@ -1528,11 +1528,12 @@ export const messages = defineMessages({
   },
   bloodtypeDesc: {
     id: 'sp.health:bloodtype-desc',
-    defaultMessage: 'Hér sérð þú blóðflokk þinn ............................. ',
+    defaultMessage:
+      'Hér sérð þú blóðflokk þinn samkvæmt upplýsingum úr skrám Landspítala.',
   },
-  readAboutBloodtype: {
-    id: 'sp.health:read-about-bloodtype',
-    defaultMessage: 'Lesa um blóðflokk',
+  readAboutBloodtypes: {
+    id: 'sp.health:read-about-bloodtypes',
+    defaultMessage: 'Lesa um blóðflokka',
   },
   bloodtypeLink: {
     id: 'sp.health:bloodtype-link',
@@ -1541,9 +1542,5 @@ export const messages = defineMessages({
   registered: {
     id: 'sp.health:registered',
     defaultMessage: 'Skráð',
-  },
-  organization: {
-    id: 'sp.health:organization',
-    defaultMessage: 'Stofnun',
   },
 })

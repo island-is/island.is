@@ -18,8 +18,7 @@ import { BloodService } from './blood.service'
 export class BloodResolver {
   constructor(private readonly service: BloodService) {}
 
-  //TODO: check if scope needed
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @Query(() => BloodType, {
     name: 'rightsPortalBloodType',
     nullable: true,

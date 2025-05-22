@@ -30,12 +30,11 @@ const ReferencesDetail: React.FC = () => {
       title={formatMessage(messages.bloodtype)}
       intro={formatMessage(messages.bloodtypeDesc)}
       serviceProviderSlug={LANDLAEKNIR_SLUG}
-      // TODO: Add tooltip
       marginBottom={6}
       buttonGroup={[
         <LinkButton
           to={formatMessage(messages.bloodtypeLink)}
-          text={formatMessage(messages.readAboutBloodtype)}
+          text={formatMessage(messages.readAboutBloodtypes)}
           variant="utility"
           icon="open"
         />,
