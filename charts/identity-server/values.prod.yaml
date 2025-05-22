@@ -43,6 +43,7 @@ auth-admin-web:
   ingress:
     primary-alb:
       annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -50,7 +51,6 @@ auth-admin-web:
         - host: 'innskra.island.is'
           paths:
             - '/admin'
-      ingressClassName: 'nginx-external-alb'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -152,6 +152,7 @@ identity-server:
   ingress:
     primary-alb:
       annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -159,7 +160,6 @@ identity-server:
         - host: 'innskra.island.is'
           paths:
             - '/'
-      ingressClassName: 'nginx-external-alb'
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -275,13 +275,13 @@ services-auth-admin-api:
   ingress:
     primary-alb:
       annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'innskra.island.is'
           paths:
             - '/backend'
-      ingressClassName: 'nginx-external-alb'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -380,12 +380,12 @@ services-auth-delegation-api:
   ingress:
     internal-alb:
       annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'auth-delegation-api.internal.innskra.island.is'
           paths:
             - '/'
-      ingressClassName: 'nginx-internal-alb'
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -671,12 +671,12 @@ services-auth-personal-representative:
   ingress:
     primary-alb:
       annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'personal-representative-xrd.internal.innskra.island.is'
           paths:
             - '/'
-      ingressClassName: 'nginx-internal-alb'
   namespace: 'personal-representative'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -740,12 +740,12 @@ services-auth-personal-representative-public:
   ingress:
     primary-alb:
       annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'personal-representative-public-xrd.internal.innskra.island.is'
           paths:
             - '/'
-      ingressClassName: 'nginx-internal-alb'
   namespace: 'personal-representative'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -835,6 +835,7 @@ services-auth-public-api:
   ingress:
     primary-alb:
       annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
@@ -844,7 +845,6 @@ services-auth-public-api:
         - host: 'innskra.island.is'
           paths:
             - '/api(/|$)(.*)'
-      ingressClassName: 'nginx-external-alb'
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1

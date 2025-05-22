@@ -46,12 +46,12 @@ image:
 ingress:
   primary-alb:
     annotations:
+      kubernetes.io/ingress.class: 'nginx-external-alb'
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
       - host: 'contentful-entry-tagger-service.island.is'
         paths:
           - '/'
-    ingressClassName: 'nginx-external-alb'
 namespace: 'contentful-entry-tagger'
 podDisruptionBudget:
   maxUnavailable: 1

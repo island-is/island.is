@@ -52,6 +52,7 @@ image:
 ingress:
   primary-alb:
     annotations:
+      kubernetes.io/ingress.class: 'nginx-external-alb'
       nginx.ingress.kubernetes.io/configuration-snippet: 'rewrite /$ https://beta.dev01.devland.is/loftbru; rewrite /en$ https://beta.dev01.devland.is/en/lower-airfares-for-residents-in-rural-areas;'
       nginx.ingress.kubernetes.io/proxy-buffer-size: '16k'
       nginx.ingress.kubernetes.io/proxy-buffering: 'on'
@@ -65,7 +66,6 @@ ingress:
       - host: 'loftbru-cf.dev01.devland.is'
         paths:
           - '/'
-    ingressClassName: 'nginx-external-alb'
 namespace: 'air-discount-scheme'
 podDisruptionBudget:
   maxUnavailable: 1

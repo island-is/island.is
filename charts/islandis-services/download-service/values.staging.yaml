@@ -76,13 +76,13 @@ image:
 ingress:
   primary-alb:
     annotations:
+      kubernetes.io/ingress.class: 'nginx-external-alb'
       nginx.ingress.kubernetes.io/enable-global-auth: 'false'
       nginx.ingress.kubernetes.io/service-upstream: 'true'
     hosts:
       - host: 'api.staging01.devland.is'
         paths:
           - '/download'
-    ingressClassName: 'nginx-external-alb'
 namespace: 'download-service'
 podDisruptionBudget:
   maxUnavailable: 1
