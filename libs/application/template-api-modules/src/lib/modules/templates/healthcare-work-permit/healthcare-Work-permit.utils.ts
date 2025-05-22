@@ -11,25 +11,11 @@ export type StudentGraduations = {
 export const mapSecondarySchoolStudentTrack = (
   innaDiplomas: InlineResponse200 | null,
 ): StudentGraduations[] => {
-  if (!innaDiplomas || !innaDiplomas?.items)
-    return [
-      {
-        studyProgram: 'Sjúkraliði',
-        programId: 'SJbrú',
-        graduationDate: new Date('2024.01.01'),
-        schoolName: 'VMA',
-      },
-      {
-        studyProgram: 'Rafvirki',
-        programId: 'RAF',
-        graduationDate: new Date(),
-        schoolName: 'VMA',
-      },
-    ]
+  if (!innaDiplomas || !innaDiplomas?.items) return []
 
   return innaDiplomas.items.map(
-    ({ diplomaDate, diplomaCode, diplomaName, organisation }) => ({
-      studyProgram: diplomaName,
+    ({ diplomaDate, diplomaCode, diplomaLongName, organisation }) => ({
+      studyProgram: diplomaLongName,
       programId: diplomaCode,
       graduationDate: diplomaDate ? new Date(diplomaDate) : undefined,
       schoolName: organisation,

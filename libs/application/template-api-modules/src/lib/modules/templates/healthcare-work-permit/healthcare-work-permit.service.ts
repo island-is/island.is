@@ -22,7 +22,6 @@ import {
 } from '@island.is/clients/health-directorate'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
-  StudentTrackDto,
   UniversityCareersClientService,
   UniversityId,
 } from '@island.is/clients/university-careers'
@@ -269,7 +268,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
         }
         let error = true
         let errorMsg: string | Message = ''
-        // This program give permit on its own.
+        // This program gives permit on its own.
         if (!graduationDate || !currentPermitProgram?.educationValidFrom) {
           error = true
           errorMsg = information.labels.selectWorkPermit.restrictionDataError
