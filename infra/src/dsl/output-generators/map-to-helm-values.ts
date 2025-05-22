@@ -364,8 +364,8 @@ function serializeIngress(
   const className =
     ingressConf.public ?? true ? 'nginx-external-alb' : 'nginx-internal-alb'
   return {
-    ingressClassName: className,
     annotations: {
+      'kubernetes.io/ingress.class': className,
       'nginx.ingress.kubernetes.io/service-upstream':
         ingressConf.serviceUpstream ?? true ? 'true' : 'false',
       ...ingressConf.extraAnnotations,
