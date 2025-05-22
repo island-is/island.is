@@ -41,6 +41,12 @@ export const involvedParty = {
         'Ekki tókst að sækja stofnanir fyrir aðganginn þinn, ef þú telur þig eiga að hafa aðgang, vinsamlegast hafðu samband við ritstjóra Stjórnartíðnda.',
       description: 'Error message',
     },
+    messageForbidden: {
+      id: 'ojoi.application:original.error.messageForbidden',
+      defaultMessage:
+        'Innskráður notandi hefur ekki aðgang að umsókn, ef þú telur þig eiga að hafa aðgang, vinsamlegast hafðu samband við ritstjóra Stjórnartíðnda.',
+      description: 'Error message forbidden',
+    },
     noDataTitle: {
       id: 'ojoi.application:original.error.noDataTitle',
       defaultMessage: 'Engar stofnanir',

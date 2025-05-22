@@ -87,7 +87,11 @@ export const InvolvedPartyScreen = ({
               <AlertMessage
                 type="error"
                 title={f(involvedParty.errors.title)}
-                message={f(involvedParty.errors.message)}
+                message={
+                  error.graphQLErrors?.[0].message === 'Forbidden'
+                    ? f(involvedParty.errors.messageForbidden)
+                    : f(involvedParty.errors.message)
+                }
               />
             )}
           </Stack>
