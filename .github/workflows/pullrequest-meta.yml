@@ -16,7 +16,7 @@ jobs:
   actionlint:
     runs-on: arc-shared
     env:
-      ACTIONLINT_VERSION: '1.7.7'
+      ACTIONLINT_VERSION: '1.7.6'
       ACTIONLINT_FMT_URL: 'https://github.com/rhysd/actionlint/releases/download/v%s/actionlint_%s_linux_amd64.tar.gz'
       ACTIONLINT_DIR: '.cache/actionlint'
       ACTIONLINT_BIN: '.cache/actionlint/actionlint'
@@ -44,7 +44,15 @@ jobs:
           chmod +x "${ACTIONLINT_BIN}"
 
       - name: Run actionlint
+        id: run-actionlint
         run: ${{ env.ACTIONLINT_BIN }}
+
+      - name: Cache actionlint binary (save)
+        if: steps.cache-actionlint.outputs.cache-hit != 'true' && failure()
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.ACTIONLINT_DIR }}
+          key: actionlint-${{ env.ACTIONLINT_VERSION }}
 
       - name: Meta success
         if: ${{ success() }}
