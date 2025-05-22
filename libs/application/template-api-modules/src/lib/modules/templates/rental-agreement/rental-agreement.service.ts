@@ -99,31 +99,69 @@ export class RentalAgreementService extends BaseTemplateApiService {
       otherCostItems,
     } = applicationAnswers(answers)
 
-    const landlordsArray = landlords?.map((landlord) => {
-      return {
-        nationalId: landlord.nationalIdWithName.nationalId,
-        name: landlord.nationalIdWithName.name,
-        email: landlord.email,
-        phone: formatPhoneNumber(landlord.phone),
-        address: landlord.address,
-        isRepresentative: Boolean(
-          landlord.isRepresentative.includes('isRepresentative'),
-        ),
-      }
-    })
+    // TODO: Use when we can send real data to Taktikal
+    // const landlordsArray = landlords?.map((landlord) => {
+    //   return {
+    //     nationalId: landlord.nationalIdWithName.nationalId,
+    //     name: landlord.nationalIdWithName.name,
+    //     email: landlord.email,
+    //     phone: formatPhoneNumber(landlord.phone),
+    //     address: landlord.address,
+    //     isRepresentative: Boolean(
+    //       landlord.isRepresentative.includes('isRepresentative'),
+    //     ),
+    //   }
+    // })
+    // const tenantsArray = tenants?.map((tenant) => {
+    //   return {
+    //     nationalId: tenant.nationalIdWithName.nationalId,
+    //     name: tenant.nationalIdWithName.name,
+    //     email: tenant.email,
+    //     phone: formatPhoneNumber(tenant.phone),
+    //     address: tenant.address,
+    //     isRepresentative: Boolean(
+    //       tenant.isRepresentative.includes('isRepresentative'),
+    //     ),
+    //   }
+    // })
 
-    const tenantsArray = tenants?.map((tenant) => {
-      return {
-        nationalId: tenant.nationalIdWithName.nationalId,
-        name: tenant.nationalIdWithName.name,
-        email: tenant.email,
-        phone: formatPhoneNumber(tenant.phone),
-        address: tenant.address,
-        isRepresentative: Boolean(
-          tenant.isRepresentative.includes('isRepresentative'),
-        ),
-      }
-    })
+    // TODO: Remove when we can send real data to Taktikal
+    const landlordsArray = [
+      {
+        nationalId: '5000101886',
+        name: 'Undirritari Björn Egilsson',
+        email: 'heba@kolibri.is',
+        phone: '1111111',
+        address: 'Valshlíð 6',
+        isRepresentative: false,
+      },
+      {
+        nationalId: '6000101991',
+        name: 'Sigrún prófari Helgadóttir',
+        email: 'dadi@kolibri.is',
+        phone: '3333333',
+        address: 'Krummahólar 2',
+        isRepresentative: true,
+      },
+    ]
+    const tenantsArray = [
+      {
+        nationalId: '6000101990',
+        name: 'Undirritari Jónsson',
+        email: 'addi@kolibri.is',
+        phone: '2222222',
+        address: 'Reyrengi 55',
+        isRepresentative: false,
+      },
+      {
+        nationalId: '6000101992',
+        name: 'Dagný prófari Bjarkadóttir',
+        email: 'arni@arnij.com',
+        phone: '4444444',
+        address: 'Engimýri 3',
+        isRepresentative: true,
+      },
+    ]
 
     const propertyId =
       units && units.length > 0 ? units[0].propertyCode ?? null : null
@@ -296,11 +334,6 @@ export class RentalAgreementService extends BaseTemplateApiService {
         },
       },
     }
-
-    console.log(
-      '-------------------- Data sent to HMS Rental Service --------------------: ',
-      newApplication,
-    )
 
     return await this.homeApiWithAuth(auth)
       .contractPost({
