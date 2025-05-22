@@ -152,22 +152,19 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
         if (examinee.medicalCertificate?.content) {
           const fileUrl = await this.getUrlForAttachment(
             examinee.medicalCertificate.content,
+            application.id,
           )
           return {
             ...examinee,
             medicalCertificate: {
               ...examinee.medicalCertificate,
-              url: fileUrl,
+              content: fileUrl,
             },
           }
         }
         return examinee // Return as-is if there's no content
       }),
     )
-
-    console.log('CERT URLS', examineesRequestWithCertificateUrl)
-
-    throw new Error()
 
     const payload = {
       xCorrelationID: application.id,
@@ -180,8 +177,8 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
         instructors: instructorsRequest,
         paymentInfo: paymentInfoRequest,
         contact: {
-          //phoneNumber: examLocation.phone,
-          //email: examLocation.email,
+          phoneNumber: examLocation.phone,
+          email: examLocation.email,
         },
       },
     }
@@ -207,8 +204,29 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     }
   }
 
-  private async getUrlForAttachment(attachment: string): Promise<string> {
-    const url = await this.s3Service.getPresignedUrl(attachment, 300000)
-    return url
+  private async getUrlForAttachment(
+    attachment: string,
+    applicationId: string,
+  ): Promise<string> {
+    try {
+      const url = await this.s3Service.getPresignedUrl(
+        {
+          bucket:
+            process.env.APPLICATION_ATTAHMENT_BUCKET ||
+            'island-is-dev-storage-application-system',
+          key: `${applicationId}/${attachment}`,
+        },
+        300000,
+      )
+      return url
+    } catch (e) {
+      throw new TemplateApiError(
+        {
+          summary: shared.application.submissionError,
+          title: shared.application.submissionErrorTitle,
+        },
+        400,
+      )
+    }
   }
 }
