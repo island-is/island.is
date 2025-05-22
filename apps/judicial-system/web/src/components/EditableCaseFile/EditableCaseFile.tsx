@@ -46,6 +46,7 @@ interface Props {
   onRetry?: (file: TUploadFile) => void
   onStartEditing: () => void
   onStopEditing: () => void
+  onPointerDown?: () => void
 }
 
 const EditableCaseFile: FC<Props> = (props) => {

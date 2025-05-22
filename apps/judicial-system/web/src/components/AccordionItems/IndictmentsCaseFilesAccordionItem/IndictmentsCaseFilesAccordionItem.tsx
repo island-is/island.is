@@ -236,11 +236,14 @@ const CaseFile: FC<CaseFileProps> = (props) => {
       className={styles.reorderItem}
       dragListener={false}
       dragControls={controls}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      drag
+      // onPointerDown={handlePointerDown}
+      // onPointerUp={handlePointerUp}
+      // drag
     >
-      {caseFile.isHeading &&
+      <span onPointerDown={(e) => controls.start(e)}>
+        {caseFile.displayText}
+      </span>
+      {/* {caseFile.isHeading &&
       caseFile.chapter !== undefined &&
       caseFile.chapter !== null ? (
         renderChapter(caseFile.chapter, caseFile.displayText)
@@ -252,16 +255,18 @@ const CaseFile: FC<CaseFileProps> = (props) => {
           <Text>{caseFile.displayText?.split('|')[1]}</Text>
         </Box>
       ) : (
-        <EditableCaseFile
-          caseFile={caseFile}
-          enableDrag
-          onDelete={onDelete}
-          onOpen={onOpen}
-          onRename={onRename}
-          onStartEditing={() => setEditCount((count) => count + 1)}
-          onStopEditing={() => setEditCount((count) => count - 1)}
-        />
-      )}
+        <div onPointerDown={(evt) => controls.start(evt)}>
+          <EditableCaseFile
+            caseFile={caseFile}
+            enableDrag
+            onDelete={onDelete}
+            onOpen={onOpen}
+            onRename={onRename}
+            onStartEditing={() => setEditCount((count) => count + 1)}
+            onStopEditing={() => setEditCount((count) => count - 1)}
+          />
+        </div>
+      )} */}
     </Reorder.Item>
   )
 }
@@ -289,54 +294,54 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
   useEffect(() => {
     setReorderableItems([
       ...sortedFilesInChapter(0, caseFiles),
-      {
-        id: uuid(),
-        displayText: formatMessage(strings.chapterInvesitgationProcess),
-        chapter: 1,
-        isHeading: true,
-        isDivider: false,
-      },
+      // {
+      //   id: uuid(),
+      //   displayText: formatMessage(strings.chapterInvesitgationProcess),
+      //   chapter: 1,
+      //   isHeading: true,
+      //   isDivider: false,
+      // },
       ...sortedFilesInChapter(1, caseFiles),
-      {
-        id: uuid(),
-        displayText: formatMessage(strings.chapterWitnesses),
-        chapter: 2,
-        isHeading: true,
-        isDivider: false,
-      },
+      // {
+      //   id: uuid(),
+      //   displayText: formatMessage(strings.chapterWitnesses),
+      //   chapter: 2,
+      //   isHeading: true,
+      //   isDivider: false,
+      // },
       ...sortedFilesInChapter(2, caseFiles),
-      {
-        id: uuid(),
-        displayText: formatMessage(strings.chapterDefendant),
-        chapter: 3,
-        isHeading: true,
-        isDivider: false,
-      },
+      // {
+      //   id: uuid(),
+      //   displayText: formatMessage(strings.chapterDefendant),
+      //   chapter: 3,
+      //   isHeading: true,
+      //   isDivider: false,
+      // },
       ...sortedFilesInChapter(3, caseFiles),
-      {
-        id: uuid(),
-        displayText: formatMessage(strings.chapterCaseFiles),
-        chapter: 4,
-        isHeading: true,
-        isDivider: false,
-      },
+      // {
+      //   id: uuid(),
+      //   displayText: formatMessage(strings.chapterCaseFiles),
+      //   chapter: 4,
+      //   isHeading: true,
+      //   isDivider: false,
+      // },
       ...sortedFilesInChapter(4, caseFiles),
-      {
-        id: uuid(),
-        displayText: formatMessage(strings.chapterElectronicDocuments),
-        chapter: 5,
-        isHeading: true,
-        isDivider: false,
-      },
+      // {
+      //   id: uuid(),
+      //   displayText: formatMessage(strings.chapterElectronicDocuments),
+      //   chapter: 5,
+      //   isHeading: true,
+      //   isDivider: false,
+      // },
       ...sortedFilesInChapter(5, caseFiles),
-      {
-        id: uuid(),
-        displayText: `${formatMessage(
-          strings.unorderedFilesTitle,
-        )}|${formatMessage(strings.unorderedFilesExplanation)}`,
-        isHeading: false,
-        isDivider: true,
-      },
+      // {
+      //   id: uuid(),
+      //   displayText: `${formatMessage(
+      //     strings.unorderedFilesTitle,
+      //   )}|${formatMessage(strings.unorderedFilesExplanation)}`,
+      //   isHeading: false,
+      //   isDivider: true,
+      // },
       ...caseFiles
         .filter(
           (caseFile) =>
@@ -481,7 +486,18 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
           onReorder={setReorderableItems}
           className={styles.reorderGroup}
         >
-          {reorderableItems.map((item) => {
+          {reorderableItems.map((item) => (
+            <CaseFile
+              key={item.id}
+              caseFile={item}
+              onReorder={handleReorder}
+              onOpen={onOpen}
+              onRename={handleRename}
+              onDelete={handleDelete}
+              setEditCount={setEditCount}
+            />
+          ))}
+          {/* {reorderableItems.map((item) => {
             return (
               <Box key={item.id} marginBottom={2}>
                 <CaseFile
@@ -494,7 +510,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
                 />
               </Box>
             )
-          })}
+          })} */}
         </Reorder.Group>
         <AnimatePresence>
           {reorderableItems.length > 0 &&
