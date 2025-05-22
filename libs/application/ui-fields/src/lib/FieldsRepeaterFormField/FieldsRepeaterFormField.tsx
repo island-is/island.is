@@ -49,6 +49,7 @@ export const FieldsRepeaterFormField = ({
     addItemButtonText = coreMessages.buttonAdd,
     minRows = 1,
     maxRows,
+    hideAddItemButton = false,
   } = data
 
   const { control, getValues, setValue } = useFormContext()
@@ -186,33 +187,39 @@ export const FieldsRepeaterFormField = ({
               </Fragment>
             ))}
           </GridRow>
-          <Box display="flex" justifyContent="flexEnd">
-            {numberOfItems > minRowsValue && (
-              <Box marginRight={2}>
-                <Button
-                  variant="ghost"
-                  colorScheme="destructive"
-                  type="button"
-                  onClick={handleRemoveItem}
-                >
-                  {formatText(
-                    removeItemButtonText,
-                    updatedApplication,
-                    formatMessage,
-                  )}
-                </Button>
-              </Box>
-            )}
-            <Button
-              variant="ghost"
-              type="button"
-              onClick={handleNewItem}
-              icon="add"
-              disabled={!maxRowsValue ? false : numberOfItems >= maxRowsValue}
-            >
-              {formatText(addItemButtonText, updatedApplication, formatMessage)}
-            </Button>
-          </Box>
+          {hideAddItemButton && (
+            <Box display="flex" justifyContent="flexEnd">
+              {numberOfItems > minRowsValue && (
+                <Box marginRight={2}>
+                  <Button
+                    variant="ghost"
+                    colorScheme="destructive"
+                    type="button"
+                    onClick={handleRemoveItem}
+                  >
+                    {formatText(
+                      removeItemButtonText,
+                      updatedApplication,
+                      formatMessage,
+                    )}
+                  </Button>
+                </Box>
+              )}
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={handleNewItem}
+                icon="add"
+                disabled={!maxRowsValue ? false : numberOfItems >= maxRowsValue}
+              >
+                {formatText(
+                  addItemButtonText,
+                  updatedApplication,
+                  formatMessage,
+                )}
+              </Button>
+            </Box>
+          )}
         </Stack>
         {error && typeof error === 'string' && (
           <Box marginTop={3}>

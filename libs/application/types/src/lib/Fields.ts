@@ -108,6 +108,14 @@ type MaybeWithAnswersAndExternalData<T> =
   | T
   | ((formValue: FormValue, externalData: ExternalData) => T)
 
+type MaybeWithApplicationAndActiveFieldAndIndex<T> =
+  | T
+  | ((
+      application: Application,
+      activeField?: Record<string, string>,
+      index?: number,
+    ) => T)
+
 export type RepeaterOptionValue = string | readonly string[] | undefined | null
 
 export type RepeaterItem = {
@@ -142,7 +150,7 @@ export type RepeaterItem = {
   readonly?: MaybeWithApplicationAndActiveField<boolean>
   disabled?: MaybeWithApplicationAndActiveField<boolean>
   isClearable?: MaybeWithApplicationAndActiveField<boolean>
-  defaultValue?: MaybeWithApplicationAndActiveField<unknown>
+  defaultValue?: MaybeWithApplicationAndActiveFieldAndIndex<unknown>
   index?: MaybeWithApplicationAndActiveField<number>
   updateValueObj?: {
     valueModifier: (
@@ -762,6 +770,7 @@ export type FieldsRepeaterField = BaseField & {
   removeItemButtonText?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
+  hideAddItemButton?: boolean
   fields: Record<string, RepeaterItem>
   /**
    * Maximum rows that can be added to the table.
