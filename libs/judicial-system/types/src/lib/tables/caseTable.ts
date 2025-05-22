@@ -103,7 +103,7 @@ const prisonAdminActiveColumnKeys: CaseTableColumnKey[] = [
   'validFromTo',
 ]
 
-const prisonAdminActive: CaseTable = {
+const prisonActive: CaseTable = {
   title: 'Virk mál',
   columnKeys: prisonAdminActiveColumnKeys,
   columns: pickColumns(prisonAdminActiveColumnKeys),
@@ -118,7 +118,7 @@ const prisonAdminDoneColumnKeys: CaseTableColumnKey[] = [
   'validFromTo',
 ]
 
-const prisonAdminDone: CaseTable = {
+const prisonDone: CaseTable = {
   title: 'Lokið',
   columnKeys: prisonAdminDoneColumnKeys,
   columns: pickColumns(prisonAdminDoneColumnKeys),
@@ -157,8 +157,8 @@ const prisonAdminIndictmentRegisteredRuling: CaseTable = {
 export const caseTables: { [key in CaseTableType]: CaseTable } = {
   COURT_OF_APPEALS_IN_PROGRESS: courtOfAppealsInProgress,
   COURT_OF_APPEALS_COMPLETED: courtOfAppealsCompleted,
-  PRISON_ACTIVE: prisonAdminActive,
-  PRISON_DONE: prisonAdminDone,
+  PRISON_ACTIVE: prisonActive,
+  PRISON_DONE: prisonDone,
   PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN:
     prisonAdminIndictmentSentToPrisonAdmin,
   PRISON_ADMIN_INDICTMENT_REGISTERED_RULING:

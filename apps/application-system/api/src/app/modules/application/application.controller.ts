@@ -992,6 +992,8 @@ export class ApplicationController {
       )
     }
 
+    this.logger.info(`Deleting application ${id} as requested by user`)
+
     const template = await getApplicationTemplateByTypeId(
       existingApplication.typeId,
     )
@@ -1047,12 +1049,7 @@ export class ApplicationController {
 
     await this.fileService.deleteAttachmentsForApplication(existingApplication)
 
-    // delete history for application
-    await this.historyService.deleteHistoryByApplicationId(
-      existingApplication.id,
-    )
-
-    await this.applicationService.delete(existingApplication.id)
+    await this.applicationService.softDelete(existingApplication.id)
 
     this.auditService.audit({
       auth: user,
