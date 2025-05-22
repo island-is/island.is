@@ -7,7 +7,7 @@ name: Lint CI meta
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    paths: [.github/workflows, infra, scripts]
+    paths: ['.github/workflows/**', 'infra/**', 'scripts/**']
 
 defaults:
   run:
