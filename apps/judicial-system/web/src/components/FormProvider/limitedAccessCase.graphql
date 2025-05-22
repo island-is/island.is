@@ -62,7 +62,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         defenderNationalId
         caseId
         defendantId
-        subpoenaId
+        policeSubpoenaId
       }
     }
     defenderName
@@ -181,7 +181,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     postponedIndefinitelyExplanation
     indictmentDecision
     indictmentRulingDecision
-    indictmentCompletedDate
     indictmentReviewDecision
     indictmentVerdictViewedByAll
     indictmentVerdictAppealDeadlineExpired
@@ -281,5 +280,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     }
     isCompletedWithoutRuling
     caseSentToCourtDate
+    isRegisteredInPrisonSystem
   }
 }

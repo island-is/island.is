@@ -9,11 +9,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
-  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
-    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
-    slug: InstitutionTypes.STAFRAENT_ISLAND,
-    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
-  },
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
@@ -25,6 +20,21 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.EXAMPLE_PAYMENT]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
@@ -148,11 +158,6 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
-  },
-  [ApplicationTypes.EXAMPLE_PAYMENT]: {
-    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
-    slug: InstitutionTypes.STAFRAENT_ISLAND,
-    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
@@ -413,6 +418,11 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.RENTAL_AGREEMENT]: {
+    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
   },
   [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,

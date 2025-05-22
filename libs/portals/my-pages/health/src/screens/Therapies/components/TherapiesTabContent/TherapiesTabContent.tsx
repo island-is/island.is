@@ -136,7 +136,9 @@ export const TherapiesTabContent = ({
         <Divider />
       </Stack>
       <FootNote type={data?.[0]?.id.toString()} />
-      {link && linkText && <LinkButton to={link} text={linkText} />}
+      {link && linkText && (
+        <LinkButton to={link} text={linkText} variant="text" />
+      )}
     </Box>
   )
 }

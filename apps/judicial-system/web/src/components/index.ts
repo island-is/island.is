@@ -14,7 +14,10 @@ export {
 export { default as ConnectedCaseFilesAccordionItem } from './AccordionItems/ConnectedCaseFilesAccordionItem/ConnectedCaseFilesAccordionItem'
 export { default as CommentsAccordionItem } from './AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
-export { default as ContextMenu } from './ContextMenu/ContextMenu'
+export {
+  default as ContextMenu,
+  useContextMenu,
+} from './ContextMenu/ContextMenu'
 export {
   CourtArrangements,
   useCourtArrangements,
@@ -97,7 +100,7 @@ export { default as CaseResentExplanation } from './CaseResentExplanation/CaseRe
 export { AlertBanner } from './AlertBanner'
 export { default as RulingDateLabel } from './DateLabel/RulingDateLabel'
 export { default as DateLabel } from './DateLabel/DateLabel'
-export { default as SharedPageLayout } from './SharedPageLayout/SharedPageLayout'
+export { default as CasesLayout } from './Layouts/CasesLayout'
 export { default as ReopenModal } from './ReopenModal/ReopenModal'
 export { default as RulingModifiedModal } from './RulingModifiedModal/RulingModifiedModal'
 export { default as CommentsInput } from './CommentsInput/CommentsInput'
@@ -122,3 +125,4 @@ export { default as RequestAppealRulingNotToBePublishedCheckbox } from './Reques
 export { LawyerRegistryProvider } from './LawyerRegistryProvider/LawyerRegistryProvider'
 export { default as RequiredStar } from './RequiredStar/RequiredStar'
 export { VictimInfo } from './VictimInfo/VictimInfo'
+export { LabelValue } from './LabelValue/LabelValue'

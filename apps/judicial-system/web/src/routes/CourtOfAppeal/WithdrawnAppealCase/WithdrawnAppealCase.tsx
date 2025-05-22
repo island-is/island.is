@@ -20,7 +20,7 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import CaseNumberInput from '../components/CaseNumberInput/CaseNumberInput'
+import { CaseNumberInput } from '../components'
 import { strings } from './WithdrawnAppealCase.strings'
 
 const WithdrawnAppealCase = () => {
@@ -59,11 +59,12 @@ const WithdrawnAppealCase = () => {
             {'\n'}
           </Text>
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            name="appealCourtRecord"
+            files={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.APPEAL_COURT_RECORD,
             )}
             accept={'application/pdf'}
-            header={formatMessage(strings.uploadBoxTitle)}
+            title={formatMessage(strings.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {
               fileEndings: '.pdf',
             })}

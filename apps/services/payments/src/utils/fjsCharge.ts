@@ -30,6 +30,7 @@ export const generateChargeFJSPayload = ({
   systemId,
   payInfo,
   returnUrl = '',
+  totalPrice,
 }: GenerateChargeFJSPayloadInput): Charge => {
   const chargeItemSubjectId = paymentFlow.chargeItemSubjectId
     ? paymentFlow.chargeItemSubjectId
@@ -40,7 +41,7 @@ export const generateChargeFJSPayload = ({
     chargeItemSubject: chargeItemSubjectId.substring(0, 22),
     chargeType: charges[0].chargeType,
     charges: charges.map((charge) => ({
-      amount: charge.priceAmount,
+      amount: totalPrice,
       chargeItemCode: charge.chargeItemCode,
       priceAmount: charge.priceAmount,
       quantity: charge.quantity,

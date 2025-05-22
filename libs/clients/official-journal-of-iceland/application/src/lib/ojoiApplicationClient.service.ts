@@ -221,6 +221,19 @@ export class OfficialJournalOfIcelandApplicationClientService {
     }
   }
 
+  async getMyUserInfo(auth: Auth) {
+    try {
+      const data = await this.ojoiApplicationApiWithAuth(auth).getMyUserInfo()
+      return data
+    } catch (error) {
+      this.logger.warn('Failed to get my user info', {
+        error,
+        category: LOG_CATEGORY,
+      })
+      throw error
+    }
+  }
+
   async getApplicationCase(
     params: GetApplicationCaseRequest,
     auth: Auth,
