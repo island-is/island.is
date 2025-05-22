@@ -1,4 +1,4 @@
-name: Lint PR meta
+name: Lint CI meta
 # This check should run independently of all other workflows, since this
 # is linting the workflows themselves. If the workflow running `actionlint`
 # is broken (e.g. syntax error), `actionlint` won't lint it and report,
@@ -72,8 +72,8 @@ jobs:
         run: |
           for job in ${{ needs.actionlint.result }}; do
             if [[ "$job" == "failure" ]]; then
-              echo "❌ meta workflow failed!"
+              echo "::error title=infra workflow::❌ meta workflow failed!"
               exit 1
             fi
           done
-          echo "✅ meta workflow ran successfully."
+          echo "::info title=meta::✅ meta workflow ran successfully."
