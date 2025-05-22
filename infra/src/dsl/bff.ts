@@ -50,8 +50,8 @@ export const bffConfig = ({
     const domain = ctx.featureDeploymentName
       ? `${ctx.featureDeploymentName}-beta.${ctx.env.domain}`
       : ctx.env.type === 'prod'
-        ? ctx.env.domain
-        : `beta.${ctx.env.domain}`
+      ? ctx.env.domain
+      : `beta.${ctx.env.domain}`
 
     return `https://${domain}`
   }

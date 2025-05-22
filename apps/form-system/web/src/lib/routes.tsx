@@ -3,6 +3,7 @@ import { HeaderInfoProvider } from '../context/HeaderInfoProvider'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 import { Layout } from '../components/Layout/Layout'
+import { NotFound } from '@island.is/portals/core'
 
 export const BASE_PATH = '/form'
 
@@ -30,7 +31,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '*',
-        element: <>Dummy</>
+        element: <NotFound />
       }
     ]
   }

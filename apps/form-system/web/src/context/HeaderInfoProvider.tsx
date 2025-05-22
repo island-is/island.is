@@ -36,5 +36,13 @@ export const HeaderInfoProvider = ({ children }: { children: ReactNode }) => {
   )
 }
 
-export const useHeaderInfo = () => useContext(HeaderInfoContext)
+export const useHeaderInfo = (): HeaderInfoProvider => {  
+  const context = useContext(HeaderInfoContext);  
+
+  if (!context) {  
+    throw new Error('useHeaderInfo must be used within a HeaderInfoProvider');  
+  }  
+
+  return context;  
+}
 

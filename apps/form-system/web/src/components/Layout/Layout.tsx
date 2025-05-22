@@ -1,9 +1,9 @@
-import React, { FC } from 'react'
+import { PropsWithChildren } from 'react'
 import { Box, GridContainer, Header } from '@island.is/island-ui/core'
 import { useHeaderInfo } from '../../context/HeaderInfoProvider'
 import { UserMenu } from '@island.is/shared/components'
 
-export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
+export const Layout = ({ children }: PropsWithChildren) => {
   const { info } = useHeaderInfo()
 
   return (

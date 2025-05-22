@@ -9,7 +9,7 @@ import { BASE_PATH } from '../lib/routes'
 import { isMockMode } from '../mocks'
 import { Router } from '../components/Router/Router'
 import { environment } from '../environments'
-
+import { ApplicationErrorBoundary } from '@island.is/portals/core'
 
 const mockedInitialState = isMockMode
   ? createMockedInitialState({
@@ -24,12 +24,13 @@ export const App = () => (
         applicationBasePath={BASE_PATH}
         mockedInitialState={mockedInitialState}
       >
-        <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-          <Router />
-        </FeatureFlagProvider>
+        <ApplicationErrorBoundary>
+          <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+            <Router />
+          </FeatureFlagProvider>
+        </ApplicationErrorBoundary>
       </BffProvider>
     </LocaleProvider>
   </ApolloProvider>
 )
 
-export default App

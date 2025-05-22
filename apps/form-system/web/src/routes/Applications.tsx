@@ -5,11 +5,11 @@ import { Button } from "@island.is/island-ui/core"
 
 
 interface Params {
-  slug: string
+  slug?: string
 }
 
 export const Applications = () => {
-  const { slug } = useParams() as unknown as Params
+  const { slug } = useParams() as Params
   const navigate = useNavigate()
 
   const [createApplicationMutation] = useMutation(
@@ -32,7 +32,6 @@ export const Applications = () => {
         }
       }
     })
-    console.log(app)
     if (app) {
       navigate(`../${slug}/${app.data.createFormSystemApplication.id}`)
     }
