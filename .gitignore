@@ -56,7 +56,6 @@ testem.log
 /typings
 /debug.log
 *.log
-/bin
 
 # System Files
 .DS_Store
