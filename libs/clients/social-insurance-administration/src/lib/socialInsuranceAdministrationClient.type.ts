@@ -138,6 +138,8 @@ export enum DocumentTypeEnum {
   HOUSE_RENT_ALLOWANCE = 'houseRentAllowance',
   EXPECTING_CHILD = 'expectingChild',
   DEATH_CERTIFICATE = 'deathCertificate',
+  UNION_SICK_PAY = ' unionSickPay',
+  IS_STUDYING = 'isStudying',
 }
 
 export type IncomePlanStatus = 'Accepted' | 'Cancelled' | 'InProgress'

@@ -387,13 +387,11 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     calculatedRemunerationDate,
     isPartTimeEmployed,
     isStudying,
-    isStudyingFileUpload,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
     unionNationalId,
-    unionSickPayFileUpload,
     rehabilitationPlanConfirmation,
     comment,
     questionnaire,
@@ -593,9 +591,10 @@ export const getEmployers = (employers: Employer[]): Array<TrWebEmployer> => {
 
   return employersInfo
 }
-function getYesNoNotApplicableValue(
+
+export const getYesNoNotApplicableValue = (
   hasUtilizedEmployeeSickPayRights: string,
-): number | null {
+): number | null => {
   switch (hasUtilizedEmployeeSickPayRights) {
     case YES:
       return 1

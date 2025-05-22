@@ -42,6 +42,8 @@ import {
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
 
+import { getApplicationAnswers as getMARPApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
+
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
 @Injectable()
@@ -384,6 +386,37 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
+  private async getMARPAttachments(
+    application: Application,
+  ): Promise<Attachment[]> {
+    const { isStudyingFileUpload, unionSickPayFileUpload } =
+      getMARPApplicationAnswers(application.answers)
+
+    const attachments: Attachment[] = []
+
+    if (isStudyingFileUpload && isStudyingFileUpload.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.IS_STUDYING,
+          isStudyingFileUpload,
+        )),
+      )
+    }
+
+    if (unionSickPayFileUpload && unionSickPayFileUpload.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.UNION_SICK_PAY,
+          unionSickPayFileUpload,
+        )),
+      )
+    }
+
+    return attachments
+  }
+
   async getPdf(key: string): Promise<string> {
     const fileContent = await this.s3Service.getFileContent(
       { bucket: this.config.templateApi.attachmentBucket, key },
@@ -492,14 +525,13 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       application.typeId ===
       ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS
     ) {
-      const attachments = await this.getDBAttachments(application)
+      const attachments = await this.getMARPAttachments(application)
 
       const marpDTO = transformApplicationToMedicalAndRehabilitationPaymentsDTO(
         application,
         attachments,
       )
 
-      console.log('marpDTO', marpDTO)
       const response = await this.siaClientService.sendApplication(
         auth,
         marpDTO,
