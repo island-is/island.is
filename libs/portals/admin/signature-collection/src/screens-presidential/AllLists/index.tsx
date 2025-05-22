@@ -32,9 +32,8 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import ListInfo from '../../shared-components/listInfoAlert'
 import EmptyState from '../../shared-components/emptyState'
-import ReviewCandidates from './components/reviewCandidates'
+import ReviewCandidates from './reviewCandidates'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import CreateCollection from '../../shared-components/createCollection'
@@ -136,29 +135,6 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             imgPosition="right"
             imgHiddenBelow="sm"
           />
-          {collectionStatus !== CollectionStatus.InitialActive && (
-            <ListInfo
-              type={
-                collectionStatus === CollectionStatus.InReview && !hasInReview
-                  ? 'success'
-                  : undefined
-              }
-              message={formatMessage(
-                collectionStatus === CollectionStatus.InInitialReview
-                  ? hasInReview
-                    ? m.signatureCollectionInInitialReview
-                    : m.signatureCollectionProcessing
-                  : collectionStatus === CollectionStatus.Processed
-                  ? m.signatureCollectionProcessed
-                  : collectionStatus === CollectionStatus.Active
-                  ? m.signatureCollectionActive
-                  : collectionStatus === CollectionStatus.InReview &&
-                    hasInReview
-                  ? m.signatureCollectionInReview
-                  : m.signatureCollectionReviewDone,
-              )}
-            />
-          )}
           <GridRow marginBottom={5}>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <FilterInput
@@ -279,26 +255,19 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                               }
                             : undefined
                         }
-                        cta={
-                          (allowedToProcess &&
-                            collectionStatus !==
-                              CollectionStatus.InitialActive) ||
-                          !allowedToProcess
-                            ? {
-                                label: formatMessage(m.viewList),
-                                variant: 'text',
-                                icon: 'arrowForward',
-                                onClick: () => {
-                                  navigate(
-                                    SignatureCollectionPaths.PresidentialList.replace(
-                                      ':listId',
-                                      list.id,
-                                    ),
-                                  )
-                                },
-                              }
-                            : undefined
-                        }
+                        cta={{
+                          label: formatMessage(m.viewList),
+                          variant: 'text',
+                          icon: 'arrowForward',
+                          onClick: () => {
+                            navigate(
+                              SignatureCollectionPaths.PresidentialList.replace(
+                                ':listId',
+                                list.id,
+                              ),
+                            )
+                          },
+                        }}
                       />
                     )
                   })}
