@@ -76,15 +76,17 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
       getValueViaPath<string>(answers, 'delivery.district') ?? ''
 
     // Get the selected photo option
-    const selectedPhotoValue =
+    const selectedPhoto =
       getValueViaPath<string>(answers, 'selectLicensePhoto') ?? ''
 
     // If selected photo is qualityPhoto (frá ökuskírteini) or empty, set to null
     // Otherwise, use the biometricId from national registry photo
     const imageBiometricsId =
-      !selectedPhotoValue || selectedPhotoValue === 'qualityPhoto'
+      !selectedPhoto ||
+      selectedPhoto === 'qualityPhoto' ||
+      selectedPhoto === 'fakePhoto'
         ? null
-        : selectedPhotoValue
+        : selectedPhoto
 
     await this.drivingLicenseService
       .drivingLicenseDuplicateSubmission({

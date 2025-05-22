@@ -41,10 +41,11 @@ export const sectionFakeData = buildSubSection({
               label: 'Nei',
             },
             {
-              value: 'IgnoreQualityPhotoAndSignature',
-              label: 'Nei, nema sneiða framhjá QualityPhoto og undirskrift',
+              value: 'IgnoreQualityPhoto',
+              label: 'Nei, nema sneiða framhjá QualityPhoto',
             },
           ],
+          marginBottom: 3,
         }),
         buildRadioField({
           id: 'fakeData.currentLicense',
@@ -86,24 +87,7 @@ export const sectionFakeData = buildSubSection({
         }),
         buildRadioField({
           id: 'fakeData.qualityPhoto',
-          title: 'Með gilt QualityPhoto?',
-          width: 'half',
-          condition: allowFakeCondition(YES),
-          options: [
-            {
-              value: YES,
-              label: 'Já',
-            },
-            {
-              value: NO,
-              label: 'Nei',
-            },
-          ],
-          marginBottom: 3,
-        }),
-        buildRadioField({
-          id: 'fakeData.qualitySignature',
-          title: 'Með gilt QualitySignature?',
+          title: 'Með ljósmynd í ökuskírteinaskrá og skilríkjaskrá?',
           width: 'half',
           condition: allowFakeCondition(YES),
           options: [

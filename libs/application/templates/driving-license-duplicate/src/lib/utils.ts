@@ -11,18 +11,16 @@ export const requirementsMet = (
   externalData: ExternalData,
 ): boolean => {
   // We have the ignore option because some Gervimenn actually do have
-  // license data but never do they have photo/signature data.
+  // license data but never do they have photo data.
   // This way we ignore this requirement in order to test data
   // from the api when needed
   if (allowFakeCondition(IGNORE)(answers)) {
     return true
   }
   let photoPath = 'qualityPhoto.data.hasQualityPhoto'
-  let signaturePath = 'qualitySignature.data.hasQualitySignature'
 
   if (allowFakeCondition(YES)(answers)) {
     photoPath = 'fakeData.qualityPhoto'
-    signaturePath = 'fakeData.qualitySignature'
   }
 
   const photo = getValueViaPath({ ...externalData, ...answers }, photoPath)
@@ -30,16 +28,12 @@ export const requirementsMet = (
     externalData,
     'allPhotosFromThjodskra.data.images',
   )
-  const signature = getValueViaPath(
-    { ...externalData, ...answers },
-    signaturePath,
-  )
+
   if (allowFakeCondition(YES)(answers)) {
-    return !(photo === NO || signature === NO)
+    return !(photo === NO)
   }
   return (
-    (!!photo && !!signature) ||
-    (Array.isArray(thjodskraPhoto) && !!thjodskraPhoto.length)
+    !!photo || (Array.isArray(thjodskraPhoto) && !!thjodskraPhoto.length)
   )
 }
 

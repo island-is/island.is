@@ -93,25 +93,21 @@ export const m = defineMessages({
     defaultMessage: 'Ökuréttindi',
     description: 'Some description',
   },
-  signatureAndImageAlert: {
-    id: 'dld.application:information.signatureAndImageAlert',
+  imageAlert: {
+    id: 'dld.application:imageAlert',
     defaultMessage:
       'Ef þú þarft að uppfæra mynd eða undirskrift, þá þarft þú að fara til Sýslumanns til þess að gera það.',
     description: 'Some description',
   },
-  signatureAndImage: {
-    id: 'dld.application:information.signatureAndImage',
-    defaultMessage: 'Undirskrift og mynd',
-    description: 'Some description',
-  },
-  signature: {
-    id: 'dld.application:information.signature',
-    defaultMessage: 'Undirskrift á skrá',
-    description: 'Some description',
-  },
   image: {
-    id: 'dld.application:information.Mynd',
-    defaultMessage: 'Mynd á skrá',
+    id: 'dld.application:image',
+    defaultMessage: 'Mynd í ökuskírteini',
+    description: 'Some description',
+  },
+  imageDescription: {
+    id: 'dld.application:imageDescription',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um þig og þín ökuréttindi og þær myndir sem hægt er að nota í ökuskírteinið.',
     description: 'Some description',
   },
 
@@ -137,17 +133,6 @@ export const m = defineMessages({
     defaultMessage: 'Það sem vantar fyrir umsókn',
     description: 'Some description',
   },
-  rejectedSignatureTitle: {
-    id: 'dld.application:rejected.signature.title',
-    defaultMessage: 'Undirskrift ekki til á skrá',
-    description: 'Some description',
-  },
-  rejectedSignatureMessage: {
-    id: 'dld.application:rejected.signature.message',
-    defaultMessage:
-      'Undirskrift ekki til í ökuskírteinaskrá og þarf því að koma til Sýslumanns og skrifa undir.',
-    description: 'Some description',
-  },
   rejectedImageTitle: {
     id: 'dld.application:rejected.image.title',
     defaultMessage: 'Ljósmynd í ökuskírteini ekki gæðamerkt',
@@ -157,6 +142,17 @@ export const m = defineMessages({
     id: 'dld.application:rejected.image.message',
     defaultMessage:
       'Núverandi ljósmynd þín í ökuskírteinaskrá stenst ekki gæðakröfur og þarf því að koma með nýja ljósmynd.',
+    description: 'Some description',
+  },
+  rejectedImageTitleNew: {
+    id: 'dld.application:rejectedImageTitleNew',
+    defaultMessage: 'Ljósmynd í ökuskírteinaskrá og skilríkjaskrá',
+    description: 'Some description',
+  },
+  rejectedImageMessageNew: {
+    id: 'dld.application:rejectedImageMessageNew#markdown',
+    defaultMessage:
+      'Núverandi ljósmynd í ökuskírteinaskrá uppfyllir ekki gæðakröfur og ekki er til mynd í skilríkjaskrá sem uppfyllir skilyrði. Það þarf að mæta með passamynd á ljósmyndapappír (4,5cm x 3,5cm) til næsta sýslumannsembættis og leggja inn umsókn á staðnum.',
     description: 'Some description',
   },
 
@@ -293,10 +289,10 @@ export const m = defineMessages({
     defaultMessage:
       'Vinsamlegast farið yfir undirskrift og mynd. Ef nafn hefur breyst frá því að síðast var sótt um skírteini mun það stöðva umsókn. Fara þarf með nýja mynd eða veita nýja undirskrift hjá Sýslumanni ef svo ber undir.',
   },
-  confirmSignatureAndPhoto: {
-    id: 'dld.application:confirmSignatureAndPhoto',
+  confirmPhoto: {
+    id: 'dld.application:confirmPhoto',
     defaultMessage: 'Ég staðfesti að ofangreindar upplýsingar séu réttar.',
-    description: 'Text for confirmation of signature and photo',
+    description: 'Text for confirmation photo',
   },
   requiredCheckmark: {
     id: 'dld.application:requiredCheckmark',

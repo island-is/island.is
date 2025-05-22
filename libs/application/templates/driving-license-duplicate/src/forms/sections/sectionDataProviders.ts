@@ -8,7 +8,6 @@ import {
   CurrentLicenseApi,
   JurisdictionApi,
   QualityPhotoApi,
-  QualitySignatureApi,
   AllPhotosFromThjodskraApi,
 } from '@island.is/application/types'
 import {
@@ -38,9 +37,6 @@ export const sectionDataProviders = buildSection({
           provider: QualityPhotoApi,
           title: m.dataCollectionQualityPhotoTitle,
           subTitle: m.dataCollectionQualityPhotoSubtitle,
-        }),
-        buildDataProviderItem({
-          provider: QualitySignatureApi,
         }),
         buildDataProviderItem({
           provider: AllPhotosFromThjodskraApi,
