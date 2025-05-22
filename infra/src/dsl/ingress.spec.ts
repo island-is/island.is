@@ -41,15 +41,15 @@ describe('Ingress definitions', () => {
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
-        ingressClassName: 'nginx-external-alb',
         annotations: {
+          'kubernetes.io/ingress.class': 'nginx-external-alb',
           'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [{ host: 'a.staging01.devland.is', paths: ['/api'] }],
       },
       'internal-alb': {
-        ingressClassName: 'nginx-external-alb',
         annotations: {
+          'kubernetes.io/ingress.class': 'nginx-external-alb',
           'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [{ host: 'b.staging01.devland.is', paths: ['/'] }],
@@ -78,8 +78,8 @@ describe('Ingress definitions', () => {
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
-        ingressClassName: 'nginx-external-alb',
         annotations: {
+          'kubernetes.io/ingress.class': 'nginx-external-alb',
           'nginx.ingress.kubernetes.io/service-upstream': 'true',
           A: 'B',
         },
@@ -115,8 +115,8 @@ describe('Ingress definitions', () => {
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
-        ingressClassName: 'nginx-external-alb',
         annotations: {
+          'kubernetes.io/ingress.class': 'nginx-external-alb',
           'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [{ host: 'notmissing-staging01.devland.is', paths: ['/api'] }],
@@ -140,8 +140,8 @@ describe('Ingress definitions', () => {
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
-        ingressClassName: 'nginx-internal-alb',
         annotations: {
+          'kubernetes.io/ingress.class': 'nginx-internal-alb',
           'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [{ host: '007.internal.staging01.devland.is', paths: ['/api'] }],
@@ -170,8 +170,8 @@ describe('Ingress definitions', () => {
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
-        ingressClassName: 'nginx-internal-alb',
         annotations: {
+          'kubernetes.io/ingress.class': 'nginx-internal-alb',
           'nginx.ingress.kubernetes.io/service-upstream': 'true',
           'nginx.ingress.kubernetes.io/foo': 'true',
         },
@@ -204,8 +204,8 @@ describe('Ingress definitions', () => {
 
     expect(result.serviceDef[0].ingress).toEqual({
       'primary-alb': {
-        ingressClassName: 'nginx-internal-alb',
         annotations: {
+          'kubernetes.io/ingress.class': 'nginx-internal-alb',
           'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [
