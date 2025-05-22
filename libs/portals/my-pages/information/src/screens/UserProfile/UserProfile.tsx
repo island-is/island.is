@@ -1,4 +1,4 @@
-import { ActorProfileScope, UserProfileScope } from '@island.is/auth/scopes'
+import { UserProfileScope } from '@island.is/auth/scopes'
 import { useLocale } from '@island.is/localization'
 import {
   ISLANDIS_SLUG,
@@ -9,24 +9,12 @@ import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import ProfileForm from '../../components/PersonalInformation/Forms/ProfileForm/ProfileForm'
 import { msg } from '../../lib/messages'
-import { Box } from '@island.is/island-ui/core'
-import { AccessDenied } from '@island.is/portals/core'
 
 const UserProfile = () => {
   const { data } = useUserProfile()
   const { formatMessage } = useLocale()
   const { scopes, profile } = useUserInfo()
-
-  const isActor = !!profile?.actor
   const hasUserProfileWriteScope = scopes.includes(UserProfileScope.write)
-
-  if (!hasUserProfileWriteScope && !isActor) {
-    return (
-      <Box paddingY={1}>
-        <AccessDenied />
-      </Box>
-    )
-  }
 
   return (
     <>
@@ -41,7 +29,7 @@ const UserProfile = () => {
         showIntroText={false}
         showDetails={!!data}
         title={profile.name || ''}
-        isActor={isActor}
+        hasUserProfileWriteScope={hasUserProfileWriteScope}
       />
     </>
   )

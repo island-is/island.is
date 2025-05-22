@@ -48,7 +48,7 @@ interface ProfileFormProps {
   showIntroTitle?: boolean
   showIntroText?: boolean
   setFormLoading?: (isLoading: boolean) => void
-  isActor?: boolean
+  hasUserProfileWriteScope?: boolean
 }
 
 export const ProfileForm = ({
@@ -60,7 +60,7 @@ export const ProfileForm = ({
   setFormLoading,
   showIntroTitle,
   showIntroText = true,
-  isActor,
+  hasUserProfileWriteScope,
 }: ProfileFormProps) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
@@ -232,7 +232,7 @@ export const ProfileForm = ({
             )}
           </InputSection>
 
-          {!isActor && (
+          {hasUserProfileWriteScope && (
             <>
               <InputSection
                 title={formatMessage(m.telNumber)}
