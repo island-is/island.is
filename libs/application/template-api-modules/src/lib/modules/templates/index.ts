@@ -1,6 +1,7 @@
-
 import { FireCompensationAppraisalModule } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.module'
 import { FireCompensationAppraisalService } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.service'
+import { ExampleAuthDelegationModule } from './examples/example-auth-delegation/example-auth-delegation.module'
+import { ExampleAuthDelegationService } from './examples/example-auth-delegation/example-auth-delegation.service'
 import { ReferenceTemplateModule } from './reference-template/reference-template.module'
 import { ReferenceTemplateService } from './reference-template/reference-template.service'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
@@ -242,6 +243,7 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  ExampleAuthDelegationModule,
   RentalAgreementModule,
   FireCompensationAppraisalModule,
             ]
@@ -325,6 +327,7 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  ExampleAuthDelegationService,
   RentalAgreementService,
   FireCompensationAppraisalService,
             ]
