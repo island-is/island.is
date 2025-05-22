@@ -164,7 +164,7 @@ export interface UnionSickPay {
 
 export interface Answer {
   questionId: string
-  answer: string
+  answer: number
 }
 export interface SelfAssessment {
   hadAssistance: boolean

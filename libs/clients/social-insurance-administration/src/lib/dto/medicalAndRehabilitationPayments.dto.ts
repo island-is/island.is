@@ -23,4 +23,6 @@ export interface MedicalAndRehabilitationPaymentsDTO {
   unionSickPay?: UnionSickPay
   selfAssessment?: SelfAssessment
   uploads?: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>
+  baseCertificateReference: string
+  rehabilitationPlanReference: string
 }
