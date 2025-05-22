@@ -1,0 +1,22 @@
+name: Lint PR meta/self
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+
+jobs:
+  actions:
+    name: Lint GHA
+    runs-on: arc-shared
+    steps:
+      - uses: actions/checkout@v4
+      - uses: raven-actions/actionlint@v2
+        with:
+          pyflakes: false
+      - name: Meta success
+        run: echo "SUCCESS"
