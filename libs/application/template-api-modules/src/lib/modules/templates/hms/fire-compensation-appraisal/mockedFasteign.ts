@@ -1,9 +1,49 @@
 import { Fasteign } from '@island.is/clients/assets'
 
+const getMockedNotkunareining = (
+  notkunBirting: string,
+  brunabotamat: number,
+) => {
+  return {
+    birtStaerdMaelieining: 'm²',
+    notkunareininganumer: '010101',
+    fasteignanumer: 'F12345',
+    stadfang: {
+      birtingStutt: 'RVK',
+      birting: 'Reykjavík',
+      landeignarnumer: 1234,
+      sveitarfelagBirting: 'Reykjavík',
+      postnumer: 113,
+      stadfanganumer: 1234,
+    },
+    merking: 'SomeValue',
+    notkunBirting,
+    skyring: 'SomeDescription',
+    byggingararBirting: 'SomeYear',
+    birtStaerd: 100,
+    fasteignamat: {
+      gildandiFasteignamat: 50000000,
+      fyrirhugadFasteignamat: 55000000,
+      gildandiMannvirkjamat: 30000000,
+      fyrirhugadMannvirkjamat: 35000000,
+      gildandiLodarhlutamat: 20000000,
+      fyrirhugadLodarhlutamat: 25000000,
+      gildandiAr: 2024,
+      fyrirhugadAr: 2025,
+    },
+    brunabotamat,
+  }
+}
+
+type NotkunarValues = {
+  notkunBirting: string
+  brunabotamat: number
+}
+
 export const getMockedFasteign = (
   birting: string,
   fasteignanumer: string,
-  brunabotamat: number,
+  notkunareiningar: Array<NotkunarValues>,
 ): Fasteign => {
   return {
     fasteignanumer,
@@ -52,35 +92,9 @@ export const getMockedFasteign = (
     },
     notkunareiningar: {
       notkunareiningar: [
-        {
-          birtStaerdMaelieining: 'm²',
-          notkunareininganumer: '010101',
-          fasteignanumer: 'F12345',
-          stadfang: {
-            birtingStutt: 'RVK',
-            birting: 'Reykjavík',
-            landeignarnumer: 1234,
-            sveitarfelagBirting: 'Reykjavík',
-            postnumer: 113,
-            stadfanganumer: 1234,
-          },
-          merking: 'SomeValue',
-          notkunBirting: 'SomeUsage',
-          skyring: 'SomeDescription',
-          byggingararBirting: 'SomeYear',
-          birtStaerd: 100,
-          fasteignamat: {
-            gildandiFasteignamat: 50000000,
-            fyrirhugadFasteignamat: 55000000,
-            gildandiMannvirkjamat: 30000000,
-            fyrirhugadMannvirkjamat: 35000000,
-            gildandiLodarhlutamat: 20000000,
-            fyrirhugadLodarhlutamat: 25000000,
-            gildandiAr: 2024,
-            fyrirhugadAr: 2025,
-          },
-          brunabotamat,
-        },
+        ...notkunareiningar.map((notkun) =>
+          getMockedNotkunareining(notkun.notkunBirting, notkun.brunabotamat),
+        ),
       ],
     },
   }

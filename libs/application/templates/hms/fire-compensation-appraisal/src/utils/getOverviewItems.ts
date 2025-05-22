@@ -89,8 +89,11 @@ export const changesOverviewItems = (
 
 export const realEstateOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const realEstateId = getValueViaPath<string>(answers, 'realEstate')
+  const useageUnits = getValueViaPath<Array<string>>(answers, 'useageUnit')
+  console.log(externalData)
   return [
     {
       width: 'full',

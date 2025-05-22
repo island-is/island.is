@@ -27,9 +27,18 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
 
   mockGetProperties(): Array<Fasteign> {
     return [
-      getMockedFasteign('Vesturhóp 34, 240 Grindavík', 'F12345', 100000000),
-      getMockedFasteign('Mosarimi 2, 112 Reykjavík', 'F54321', 70000000),
-      getMockedFasteign('Dúfnahólar 10, 105 Reykjavík', 'F98765', 50000000),
+      getMockedFasteign('Vesturhóp 34, 240 Grindavík', 'F12345', [
+        { notkunBirting: 'Íbúð á hæð', brunabotamat: 100000000 },
+      ]),
+      getMockedFasteign('Mosarimi 2, 112 Reykjavík', 'F54321', [
+        { notkunBirting: 'Íbúðarhúsalóð', brunabotamat: 70000000 },
+        { notkunBirting: 'Íbúð í kjallara', brunabotamat: 912040000 },
+      ]),
+      getMockedFasteign('Dúfnahólar 10, 105 Reykjavík', 'F98765', [
+        { notkunBirting: 'Íbúðarhúsalóð', brunabotamat: 50000000 },
+        { notkunBirting: 'Fjós', brunabotamat: 7300000 },
+        { notkunBirting: 'Skemma', brunabotamat: 8600000 },
+      ]),
     ]
   }
 

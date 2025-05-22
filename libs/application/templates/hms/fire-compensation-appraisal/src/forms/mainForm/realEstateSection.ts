@@ -2,21 +2,21 @@ import {
   buildMultiField,
   buildSection,
   buildSelectField,
+  buildCheckboxField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { Fasteign } from '@island.is/clients/assets'
+import { notkunareiningarOptions } from '../../utils/notkunareiningarUtils'
+import * as m from '../../lib/messages/realEstateMessages'
 
 export const realEstateSection = buildSection({
   id: 'realEstateSection',
   title: 'Fasteign',
   children: [
     buildMultiField({
-      condition: (answers, externalData) => {
-        console.log(externalData)
-        return true
-      },
       id: 'realEstate',
-      title: 'Fasteign',
+      title: m.realEstateMessages.title,
+      description: m.realEstateMessages.description,
       children: [
         buildSelectField({
           id: 'realEstate',
@@ -34,6 +34,20 @@ export const realEstateSection = buildSection({
               })) ?? []
             )
           },
+          clearOnChange: ['useageUnit'],
+          marginBottom: 4,
+        }),
+        buildCheckboxField({
+          condition: (answers) => {
+            const selectedRealEstateId = getValueViaPath<string>(
+              answers,
+              'realEstate',
+            )
+            return selectedRealEstateId !== undefined
+          },
+          id: 'useageUnit',
+          title: 'Notkunareining',
+          options: notkunareiningarOptions,
         }),
       ],
     }),
