@@ -28,6 +28,7 @@ export const chargeItemCodeRadioOptions = ({
     paymentCatalog: { data },
   },
 }: Application) => {
+  console.log('data', data)
   return (data as PaymentCatalogItem[]).map(
     ({ chargeItemCode, chargeItemName, performingOrgID, priceAmount }) => {
       return {

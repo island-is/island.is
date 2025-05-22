@@ -5,7 +5,7 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
+import { DefaultEvents, PaymentCatalogApi } from '@island.is/application/types'
 import { UserProfileApi } from '@island.is/application/types'
 import { NationalRegistryApi, propertiesApi } from '../../dataProviders'
 
@@ -31,6 +31,11 @@ export const externalDataSection = buildSection({
           provider: propertiesApi,
           title: 'Properties',
           subTitle: 'Properties',
+        }),
+        buildDataProviderItem({
+          provider: PaymentCatalogApi,
+          title: 'Payment catalog',
+          subTitle: 'Payment catalog',
         }),
       ],
       submitField: buildSubmitField({

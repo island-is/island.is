@@ -101,10 +101,8 @@ export const realEstateOverviewItems = (
   const property = properties?.find(
     (property) => property.fasteignanumer === realEstateId,
   )
-  console.log('Property: ', property)
   const selectedUseageUnits =
     getValueViaPath<string[]>(answers, 'useageUnits') || []
-  console.log(answers)
   const displayUseageUnits = property?.notkunareiningar?.notkunareiningar
     ?.filter((unit) =>
       selectedUseageUnits.includes(unit.notkunareininganumer ?? ''),

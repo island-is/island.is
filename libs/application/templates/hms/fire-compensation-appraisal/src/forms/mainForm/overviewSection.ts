@@ -11,7 +11,7 @@ import {
   changesOverviewItems,
 } from '../../utils/getOverviewItems'
 import * as m from '../../lib/messages'
-
+import { DefaultEvents } from '@island.is/application/types'
 export const overviewSection = buildSection({
   id: 'overviewSection',
   title: m.overviewMessages.title,
@@ -49,12 +49,12 @@ export const overviewSection = buildSection({
 
         buildSubmitField({
           id: 'submit',
-          title: 'Submit',
+          title: m.overviewMessages.pay,
           refetchApplicationAfterSubmit: true,
           actions: [
             {
-              event: 'SUBMIT',
-              name: 'Submit',
+              event: DefaultEvents.PAYMENT,
+              name: m.overviewMessages.pay,
               type: 'primary',
             },
           ],

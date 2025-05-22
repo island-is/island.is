@@ -10,6 +10,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   InstitutionTypes,
+  PaymentCatalogApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -20,6 +21,11 @@ import {
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { NationalRegistryApi, propertiesApi } from '../dataProviders'
+import { buildPaymentState } from '@island.is/application/utils'
+import { InstitutionNationalIds } from '@island.is/application/types'
+import { getCodes } from '../utils/paymentUtils'
+import * as m from '../lib/messages'
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -50,11 +56,20 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.Prerequisites),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, NationalRegistryApi, propertiesApi],
+              api: [
+                UserProfileApi,
+                NationalRegistryApi,
+                propertiesApi,
+                PaymentCatalogApi,
+              ],
               delete: true,
             },
           ],
@@ -79,7 +94,11 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.MainForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.overviewMessages.pay,
+                  type: 'primary',
+                },
               ],
               write: 'all',
               read: 'all',
@@ -88,12 +107,16 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED,
+          [DefaultEvents.PAYMENT]: {
+            target: States.PAYMENT,
           },
         },
       },
-      [States.COMPLETED]: {
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItems: getCodes,
+      }),
+      [States.DONE]: {
         meta: {
           name: 'Completed form',
           progress: 1,

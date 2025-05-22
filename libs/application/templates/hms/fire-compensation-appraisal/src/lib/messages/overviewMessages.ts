@@ -57,4 +57,9 @@ export const overviewMessages = defineMessages({
     defaultMessage: 'Notkunareiningar til að endurmeta',
     description: 'Useage units',
   },
+  pay: {
+    id: 'fca.application:pay',
+    defaultMessage: 'Greiða',
+    description: 'Pay',
+  },
 })
