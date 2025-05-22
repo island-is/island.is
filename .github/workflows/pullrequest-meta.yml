@@ -1,4 +1,4 @@
-name: Lint PR meta/self
+name: Lint PR meta
 on:
   pull_request:
     types:
