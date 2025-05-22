@@ -30,7 +30,6 @@ env:
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
   RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
   AWS_REGION: eu-west-1
-  GENERATED_FILES: ${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
