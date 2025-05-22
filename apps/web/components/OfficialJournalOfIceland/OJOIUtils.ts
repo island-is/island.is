@@ -1,6 +1,5 @@
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import sortBy from 'lodash/sortBy'
 
 import { StringOption as Option } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
@@ -46,19 +45,19 @@ export type EntityOption = Option & {
   department?: OfficialJournalOfIcelandAdvertEntity
 }
 
+type Entity =
+  | OfficialJournalOfIcelandAdvertEntity
+  | OfficialJournalOfIcelandAdvertType
+  | OfficialJournalOfIcelandAdvertCategory
+  | OfficialJournalOfIcelandAdvertMainCategory
+
 export const mapEntityToOptions = (
-  entities?: Array<
-    | OfficialJournalOfIcelandAdvertEntity
-    | OfficialJournalOfIcelandAdvertType
-    | OfficialJournalOfIcelandAdvertCategory
-    | OfficialJournalOfIcelandAdvertMainCategory
-  >,
+  entities?: Array<Entity>,
 ): EntityOption[] => {
   if (!entities) {
     return []
   }
-  const sortedEntities = sortBy(entities, (d) => d.title.trim())
-
+  const sortedEntities = entities.sort(sortAlpha<Entity>('title'))
   return sortedEntities.map((e) => {
     if (e.__typename === 'OfficialJournalOfIcelandAdvertCategory') {
       return {

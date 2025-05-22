@@ -1,6 +1,7 @@
 query PrisonCases {
   cases {
     id
+    created
     type
     decision
     state

@@ -28,6 +28,11 @@ export const financeNavigation: PortalNavigationItem = {
           path: FinancePaths.FinanceTransactionCategories,
         },
         {
+          name: m.financeTransactionsVehiclesMileage,
+          description: m.financeTransactionsVehicleMileageDescription,
+          path: FinancePaths.FinanceTransactionVehicleMileage,
+        },
+        {
           name: m.financeTransactionPeriods,
           description: m.financeTransactionPeriodsDescription,
           path: FinancePaths.FinanceTransactionPeriods,

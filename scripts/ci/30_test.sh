@@ -59,9 +59,7 @@ yarn nx run-many \
   --projects "${AFFECTED_PROJECTS}" \
   --target test \
   --parallel="${NX_PARALLEL}" \
-  --verbose \
   --no-watchman \
-  --debug \
   --ci \
   --detectLeaks=false \
   --passWithNoTests \

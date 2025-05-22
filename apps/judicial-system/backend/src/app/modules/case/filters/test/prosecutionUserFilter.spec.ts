@@ -182,7 +182,10 @@ describe('prosecusion user PROSECUTOR', () => {
   const user = {
     id: uuid(),
     role: UserRole.PROSECUTOR,
-    institution: { id: uuid(), type: InstitutionType.PROSECUTORS_OFFICE },
+    institution: {
+      id: uuid(),
+      type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+    },
   } as User
 
   describe.each([
@@ -200,7 +203,10 @@ describe.each(prosecutionRoles.filter((role) => role !== UserRole.PROSECUTOR))(
     const user = {
       id: uuid(),
       role,
-      institution: { id: uuid(), type: InstitutionType.PROSECUTORS_OFFICE },
+      institution: {
+        id: uuid(),
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+      },
     } as User
 
     const accessibleCaseTypes = indictmentCases

@@ -34,7 +34,7 @@ const Landing = () => {
   const { user, eligibleUsers } = useContext(UserContext)
 
   useEffect(() => {
-    if (eligibleUsers && eligibleUsers.length === 1) {
+    if (user && eligibleUsers && eligibleUsers.length === 1) {
       const redirectRoute = isDefenceUser(user)
         ? DEFENDER_CASES_ROUTE
         : isPrisonStaffUser(user)

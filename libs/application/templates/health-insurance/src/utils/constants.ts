@@ -1,4 +1,4 @@
-export enum API_MODULE {
+export enum ApiModule {
   sendApplyHealthInsuranceApplication = 'sendApplyHealthInsuranceApplication',
 }
 

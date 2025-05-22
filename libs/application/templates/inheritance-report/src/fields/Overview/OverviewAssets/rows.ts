@@ -4,20 +4,28 @@ import {
   formatCurrency,
 } from '@island.is/application/ui-components'
 import { m } from '../../../lib/messages'
+import { roundedValueToNumber, valueToNumber } from '../../../lib/utils/helpers'
 import {
-  roundedValueToNumber,
-  valueToNumber,
-  hasYes,
-} from '../../../lib/utils/helpers'
-import { EstateAssets } from '../../../types'
+  BankAccountsData,
+  GunsData,
+  Inventory,
+  Money,
+  OtherAssetsData,
+  RealEstateData,
+  StocksData,
+  VehiclesData,
+} from '../../../types'
 import { RowType, RowItemsType } from './types'
 import { format as formatNationalId } from 'kennitala'
 import { PREPAID_INHERITANCE } from '../../../lib/constants'
+import { getValueViaPath, hasYes } from '@island.is/application/core'
 
 export const getRealEstateDataRow = (answers: FormValue): RowType[] => {
-  const values = (
-    answers.assets as unknown as EstateAssets
-  )?.realEstate?.data?.filter((item) => item.enabled)
+  const realEstateData = getValueViaPath<Array<RealEstateData>>(
+    answers,
+    'assets.realEstate.data',
+  )
+  const values = realEstateData?.filter((item) => item.enabled)
 
   const data = (values ?? []).map((item) => {
     const propertyValuation = roundedValueToNumber(item.propertyValuation)
@@ -54,9 +62,11 @@ export const getRealEstateDataRow = (answers: FormValue): RowType[] => {
 }
 
 export const getVehiclesDataRow = (answers: FormValue): RowType[] => {
-  const values = (
-    answers.assets as unknown as EstateAssets
-  )?.vehicles?.data.filter((item) => item.enabled)
+  const vehiclesData = getValueViaPath<Array<VehiclesData>>(
+    answers,
+    'assets.vehicles.data',
+  )
+  const values = vehiclesData?.filter((item) => item.enabled)
 
   const data = (values ?? []).map((item) => {
     const propertyValuation = roundedValueToNumber(item.propertyValuation)
@@ -88,9 +98,8 @@ export const getVehiclesDataRow = (answers: FormValue): RowType[] => {
 }
 
 export const getGunsDataRow = (answers: FormValue): RowType[] => {
-  const values = (answers.assets as unknown as EstateAssets)?.guns?.data.filter(
-    (item) => item.enabled,
-  )
+  const gunsData = getValueViaPath<Array<GunsData>>(answers, 'assets.guns.data')
+  const values = gunsData?.filter((item) => item.enabled)
 
   const data = (values ?? []).map((item) => {
     const propertyValuation = roundedValueToNumber(item.propertyValuation)
@@ -122,7 +131,7 @@ export const getGunsDataRow = (answers: FormValue): RowType[] => {
 }
 
 export const getInventoryDataRow = (answers: FormValue): RowType[] => {
-  const values = (answers.assets as unknown as EstateAssets)?.inventory
+  const values = getValueViaPath<Inventory>(answers, 'assets.inventory')
 
   const items: RowItemsType = []
 
@@ -151,9 +160,11 @@ export const getInventoryDataRow = (answers: FormValue): RowType[] => {
 }
 
 export const getStocksDataRow = (answers: FormValue): RowType[] => {
-  const values = (
-    answers.assets as unknown as EstateAssets
-  )?.stocks?.data.filter((item) => item.enabled)
+  const stocksData = getValueViaPath<Array<StocksData>>(
+    answers,
+    'assets.stocks.data',
+  )
+  const values = stocksData?.filter((item) => item.enabled)
 
   const data = (values ?? []).map((item) => {
     const items: RowItemsType = [
@@ -191,9 +202,11 @@ export const getStocksDataRow = (answers: FormValue): RowType[] => {
 }
 
 export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
-  const values = (
-    answers.assets as unknown as EstateAssets
-  )?.bankAccounts?.data.filter((item) => item.enabled)
+  const bankAccountsData = getValueViaPath<Array<BankAccountsData>>(
+    answers,
+    'assets.bankAccounts.data',
+  )
+  const values = bankAccountsData?.filter((item) => item.enabled)
 
   const data = (values ?? []).map((item) => {
     const propertyValuation = roundedValueToNumber(item.propertyValuation)
@@ -231,8 +244,10 @@ export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
 }
 
 export const getOtherAssetsDataRow = (answers: FormValue): RowType[] => {
-  const values = (answers.assets as unknown as EstateAssets)?.otherAssets?.data
-  const isPrePaid = answers.applicationFor === PREPAID_INHERITANCE
+  const values = getValueViaPath<Array<OtherAssetsData>>(
+    answers,
+    'assets.otherAssets.data',
+  )
 
   const data = (values ?? []).map((item) => {
     const value = roundedValueToNumber(item.value)
@@ -262,7 +277,7 @@ export const getOtherAssetsDataRow = (answers: FormValue): RowType[] => {
 }
 
 export const getMoneyDataRow = (answers: FormValue): RowType[] => {
-  const values = (answers.assets as unknown as EstateAssets)?.money
+  const values = getValueViaPath<Money>(answers, 'assets.money')
   const items: RowItemsType = []
   return [
     {

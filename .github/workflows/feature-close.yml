@@ -1,0 +1,54 @@
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - closed
+      - unlabeled
+      - auto_merge_enabled
+
+jobs:
+  close_feature:
+    runs-on: arc-runners
+    if: ${{ github.event.label.name == 'deploy-feature' }}
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
+      - name: Get token
+        id: get-token
+        shell: bash
+        env:
+          APP_ID: ${{ secrets.HELM_VALUES_APP_ID }}
+          PRIVATE_KEY: ${{ secrets.HELM_VALUES_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
+          
+      - name: Prepare feature deployment tag
+        uses: ./.github/actions/feature-checkout
+        id: prepare-docker-tag
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+
+      - name: Dispatch workflow to helm-values repository
+        env:
+          HELM_VALUES_TOKEN: ${{ steps.get-token.outputs.token }}
+          FEATURE_NAME: ${{ env.FEATURE_NAME }}
+        run: |
+          repo_owner="island-is"
+          repository="helm-values"
+          echo "Dispatch workflow for feature name: $FEATURE_NAME"
+          curl -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer $HELM_VALUES_TOKEN" \
+          "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
+          -d "{\"event_type\":\"destroy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}}"

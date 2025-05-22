@@ -211,6 +211,8 @@ export const Services: EnvironmentServices = {
     bffAdminPortalService,
     bffServicePortalService,
     unicornApp,
+    paymentsWebApp,
+    paymentsService,
   ],
   staging: [
     appSystemApi,
@@ -248,6 +250,8 @@ export const Services: EnvironmentServices = {
     bffServicePortalService,
     bffAdminPortalService,
     unicornApp,
+    paymentsWebApp,
+    paymentsService,
   ],
   dev: [
     appSystemApi,
@@ -308,4 +312,6 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   searchIndexer,
   contentfulApps,
   githubActionsCache,
+  xroadCollector,
+  nameRegistryBackend,
 ]

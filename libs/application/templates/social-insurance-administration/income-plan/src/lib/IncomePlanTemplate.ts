@@ -39,7 +39,7 @@ import {
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
-import { INCOME, ISK, RatioType } from './constants'
+import { INCOME, RatioType } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationAnswers,

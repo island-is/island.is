@@ -1,4 +1,8 @@
-import { Institution, InstitutionType } from './institution'
+import {
+  Institution,
+  InstitutionType,
+  prosecutorsOfficeTypes,
+} from './institution'
 
 export enum UserRole {
   PROSECUTOR = 'PROSECUTOR', // sækjandi
@@ -11,6 +15,7 @@ export enum UserRole {
   COURT_OF_APPEALS_REGISTRAR = 'COURT_OF_APPEALS_REGISTRAR', // dómritari
   COURT_OF_APPEALS_ASSISTANT = 'COURT_OF_APPEALS_ASSISTANT', // aðstoðarmaður dómara
   PRISON_SYSTEM_STAFF = 'PRISON_SYSTEM_STAFF', // fangelsismálastarfsmaður
+  LOCAL_ADMIN = 'LOCAL_ADMIN',
   ADMIN = 'ADMIN', // Does not exist in the database // notendaumsjón
   DEFENDER = 'DEFENDER', // Does not exist in the database // verjandi
 }
@@ -41,6 +46,8 @@ interface InstitutionUser {
   } | null
 }
 
+const prosecutionOfficeTypes: string[] = prosecutorsOfficeTypes
+
 export const prosecutionRoles: string[] = [
   UserRole.PROSECUTOR,
   UserRole.PROSECUTOR_REPRESENTATIVE,
@@ -50,28 +57,32 @@ export const isProsecutionUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
       prosecutionRoles.includes(user.role) &&
-      user.institution?.type === InstitutionType.PROSECUTORS_OFFICE,
+      user.institution?.type &&
+      prosecutionOfficeTypes.includes(user.institution.type),
   )
 }
 
-export const isPublicProsecutor = (user?: InstitutionUser): boolean => {
+const publicProsecutionRoles: string[] = [UserRole.PROSECUTOR]
+
+export const isPublicProsecutionUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
-      user.role === UserRole.PROSECUTOR &&
-      user.institution?.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e', // TODO: Create a new institution type to avoid hardcoding
+      publicProsecutionRoles.includes(user.role) &&
+      user.institution?.type === InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
   )
 }
 
-export const publicProsecutorRoles: string[] = [
+export const publicProsecutionOfficeRoles: string[] = [
   UserRole.PUBLIC_PROSECUTOR_STAFF,
 ]
 
-export const isPublicProsecutorUser = (user?: InstitutionUser): boolean => {
+export const isPublicProsecutionOfficeUser = (
+  user?: InstitutionUser,
+): boolean => {
   return Boolean(
     user?.role &&
-      publicProsecutorRoles.includes(user.role) &&
-      user.institution?.type === InstitutionType.PROSECUTORS_OFFICE &&
-      user.institution?.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e', // TODO: Create a new institution type to avoid hardcoding
+      publicProsecutionOfficeRoles.includes(user.role) &&
+      user.institution?.type === InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
   )
 }
 
@@ -128,7 +139,16 @@ export const isPrisonStaffUser = (user?: InstitutionUser): boolean =>
       user.institution?.type === InstitutionType.PRISON,
   )
 
+// Currently, we have a single defender user roles for all legal representative scenarios in the system
 export const defenceRoles: string[] = [UserRole.DEFENDER]
+
+// Defender sub roles are inferred based on how legal representative is assigned to the case.
+// It is currently used to simplify rendering for the defender responsibility in a given case.
+export enum DefenderSubRole {
+  DEFENDANT_DEFENDER = 'DEFENDANT_DEFENDER',
+  CIVIL_CLAIMANT_LEGAL_SPOKESPERSON = 'CIVIL_CLAIMANT_LEGAL_SPOKESPERSON',
+  VICTIM_LAWYER = 'VICTIM_LAWYER',
+}
 
 export const isDefenceUser = (user?: InstitutionUser): boolean => {
   return Boolean(user?.role && defenceRoles.includes(user.role))
@@ -140,12 +160,19 @@ export const isAdminUser = (user?: InstitutionUser): boolean => {
   return Boolean(user?.role && adminRoles.includes(user.role))
 }
 
+const localAdminRoles: string[] = [UserRole.LOCAL_ADMIN]
+
+export const isLocalAdminUser = (user?: InstitutionUser): boolean => {
+  return Boolean(user?.role && localAdminRoles.includes(user.role))
+}
+
 export const isCoreUser = (user?: InstitutionUser): boolean => {
   return (
     isProsecutionUser(user) ||
-    isPublicProsecutorUser(user) ||
+    isPublicProsecutionOfficeUser(user) ||
     isDistrictCourtUser(user) ||
     isCourtOfAppealsUser(user) ||
-    isPrisonSystemUser(user)
+    isPrisonSystemUser(user) ||
+    isLocalAdminUser(user)
   )
 }
