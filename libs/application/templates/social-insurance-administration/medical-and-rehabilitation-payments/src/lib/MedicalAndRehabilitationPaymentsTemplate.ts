@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import {
   defaultIncomeTypes,
+  Actions,
   Events,
   INCOME,
   RatioType,
@@ -25,6 +26,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
   FormModes,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
@@ -135,6 +137,12 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
               logMessage: coreHistoryMessages.applicationSent,
             },
           },
+          onExit: defineTemplateApi({
+            action: Actions.SEND_APPLICATION,
+            namespace: 'SocialInsuranceAdministration',
+            triggerEvent: DefaultEvents.SUBMIT,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

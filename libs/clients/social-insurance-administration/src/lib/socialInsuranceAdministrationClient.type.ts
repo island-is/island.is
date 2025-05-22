@@ -138,6 +138,35 @@ export enum DocumentTypeEnum {
   HOUSE_RENT_ALLOWANCE = 'houseRentAllowance',
   EXPECTING_CHILD = 'expectingChild',
   DEATH_CERTIFICATE = 'deathCertificate',
+  UNION_SICK_PAY = ' unionSickPay',
+  IS_STUDYING = 'isStudying',
 }
 
 export type IncomePlanStatus = 'Accepted' | 'Cancelled' | 'InProgress'
+
+export interface Occupation {
+  isSelfEmployed: boolean
+  isStudying: boolean
+  isPartTimeEmployed: boolean
+  calculatedRemunerationDate: string
+}
+
+export interface EmployeeSickPay {
+  hasUtilizedEmployeeSickPayRights: number | null
+  employeeSickPayEndDate?: string
+}
+
+export interface UnionSickPay {
+  hasUtilizedUnionSickPayRights: number | null
+  unionNationalId?: string
+  unionSickPayEndDate?: string
+}
+
+export interface Answer {
+  questionId: string
+  answer: number
+}
+export interface SelfAssessment {
+  hadAssistance: boolean
+  answers: Answer[]
+}
