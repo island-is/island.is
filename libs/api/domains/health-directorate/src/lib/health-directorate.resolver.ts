@@ -24,11 +24,15 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
+import { HealthDirectorateReferralInput } from './dto/referral.input'
+import { HealthDirectorateWaitlistInput } from './dto/waitlist.input'
 import { HealthDirectorateService } from './health-directorate.service'
 import { DonorInput, Organ, OrganDonation } from './models/organ-donation.model'
 import { Prescriptions } from './models/prescriptions.model'
+import { ReferralDetail } from './models/referral.model'
 import { Referrals } from './models/referrals.model'
 import { Vaccinations } from './models/vaccinations.model'
+import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlists } from './models/waitlists.model'
 import { MedicineHistory } from './models/medicineHistory.model'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
@@ -48,7 +52,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateOrganDonation',
   })
   @Audit()
-  @Scopes(ApiScope.healthOrganDonation)
+  @Scopes(ApiScope.healthOrganDonation, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async getDonorStatus(
     @Args('locale', { type: () => String, nullable: true })
@@ -74,7 +78,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateOrganDonationUpdateDonorStatus',
   })
   @Audit()
-  @Scopes(ApiScope.healthOrganDonation)
+  @Scopes(ApiScope.healthOrganDonation, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async updateDonorStatus(
     @Args('input') input: DonorInput,
@@ -90,7 +94,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateVaccinations',
   })
   @Audit()
-  @Scopes(ApiScope.healthVaccinations)
+  @Scopes(ApiScope.healthVaccinations, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthVaccinationsPageEnabled)
   getVaccinations(
     @Args('locale', { type: () => String, nullable: true })
@@ -105,7 +109,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateWaitlists',
   })
   @Audit()
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthWaitlistsPageEnabled)
   getWaitlists(
     @Args('locale', { type: () => String, nullable: true })
@@ -115,12 +119,28 @@ export class HealthDirectorateResolver {
     return this.api.getWaitlists(user, locale)
   }
 
+  /* Waitlist */
+  @Query(() => WaitlistDetail, {
+    name: 'healthDirectorateWaitlist',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthWaitlistsPageEnabled)
+  getWaitlist(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: HealthDirectorateWaitlistInput,
+    @CurrentUser() user: User,
+  ): Promise<WaitlistDetail | null> {
+    return this.api.getWaitlist(user, locale, input.id)
+  }
+
   /* Referrals */
   @Query(() => Referrals, {
     name: 'healthDirectorateReferrals',
   })
   @Audit()
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthReferralsPageEnabled)
   getReferrals(
     @Args('locale', { type: () => String, nullable: true })
@@ -130,12 +150,28 @@ export class HealthDirectorateResolver {
     return this.api.getReferrals(user, locale)
   }
 
+  /* Referral */
+  @Query(() => ReferralDetail, {
+    name: 'healthDirectorateReferral',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthReferralsPageEnabled)
+  getReferral(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: HealthDirectorateReferralInput,
+    @CurrentUser() user: User,
+  ): Promise<ReferralDetail | null> {
+    return this.api.getReferral(user, locale, input.id)
+  }
+
   /* Prescriptions */
   @Query(() => Prescriptions, {
     name: 'healthDirectoratePrescriptions',
   })
   @Audit()
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getPrescriptions(
     @Args('locale', { type: () => String, nullable: true })

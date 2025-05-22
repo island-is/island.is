@@ -35,6 +35,8 @@ import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import isNumber from 'lodash/isNumber'
+import { ReferralDetail } from './models/referral.model'
+import { WaitlistDetail } from './models/waitlist.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -174,6 +176,25 @@ export class HealthDirectorateService {
     return { waitlists }
   }
 
+  /* Waitlist */
+  async getWaitlist(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<WaitlistDetail | null> {
+    const data = await this.getWaitlists(auth, locale)
+
+    if (!data) {
+      return null
+    }
+
+    const waitlist: Waitlist | undefined = data.waitlists.find(
+      (item) => item.id === id,
+    )
+
+    return { data: waitlist }
+  }
+
   /* Referrals */
   async getReferrals(auth: Auth, locale: Locale): Promise<Referrals | null> {
     const data = await this.healthApi.getReferrals(auth, locale)
@@ -197,6 +218,25 @@ export class HealthDirectorateService {
       }) ?? []
 
     return { referrals }
+  }
+
+  /* Referral */
+  async getReferral(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<ReferralDetail | null> {
+    const data = await this.getReferrals(auth, locale)
+
+    if (!data) {
+      return null
+    }
+
+    const referral: Referral | undefined = data.referrals.find(
+      (item) => item.id === id,
+    )
+
+    return { data: referral }
   }
 
   /* Prescriptions */
