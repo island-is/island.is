@@ -303,11 +303,21 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  async allPhotosFromThjodskra({ auth }: TemplateApiModuleActionProps) {
+async allPhotosFromThjodskra({ auth }: TemplateApiModuleActionProps) {
+  try {
     return await this.drivingLicenseService.getAllPhotosFromThjodskra({
       token: auth.authorization,
     })
+  } catch (error) {
+    throw new TemplateApiError(
+      {
+        title: coreErrorMessages.failedDataProvider,
+        summary: coreErrorMessages.errorDataProvider,
+      },
+      400,
+    )
   }
+}
 
   async jurisdictions(): Promise<Jurisdiction[]> {
     return await this.drivingLicenseService.getListOfJurisdictions()
