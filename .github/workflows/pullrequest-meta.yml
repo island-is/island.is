@@ -7,6 +7,7 @@ name: Lint PR meta
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths: [.github/workflows, infra, scripts]
 
 defaults:
   run:
@@ -14,8 +15,6 @@ defaults:
 
 jobs:
   actionlint:
-    # Only run on changes to .github/*
-    if: contains(github.event.pull_request.files, '.github/')
     runs-on: arc-shared
     env:
       ACTIONLINT_VERSION: '1.7.7'
