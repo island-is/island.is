@@ -15,13 +15,37 @@ defaults:
     shell: bash -euo pipefail {0}
 
 jobs:
-  actions:
-    name: Lint GHA
+  actionlint:
     runs-on: arc-shared
+    env:
+      ACTIONLINT_VERSION: '1.7.7'
+      ACTIONLINT_FMT_URL: 'https://github.com/rhysd/actionlint/releases/download/v%s/actionlint_%s_linux_amd64.tar.gz'
+      ACTIONLINT_DIR: '.cache/actionlint'
+      ACTIONLINT_BIN: '.cache/actionlint/actionlint'
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: raven-actions/actionlint@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache actionlint binary
+        id: cache-actionlint
+        uses: actions/cache@v4
         with:
-          pyflakes: false
+          path: ${{ env.ACTIONLINT_DIR }}
+          key: actionlint-${{ env.ACTIONLINT_VERSION }}
+
+      - name: Download and extract actionlint
+        if: steps.cache-actionlint.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "${ACTIONLINT_DIR}"
+          URL=$(printf "${ACTIONLINT_FMT_URL}" "$ACTIONLINT_VERSION" "$ACTIONLINT_VERSION")
+          curl -sSL "$URL" -o "${ACTIONLINT_DIR}/actionlint.tar.gz"
+          tar -xzf "${ACTIONLINT_DIR}/actionlint.tar.gz" -C "${ACTIONLINT_DIR}"
+          rm "${ACTIONLINT_DIR}/actionlint.tar.gz"
+          chmod +x "${ACTIONLINT_BIN}"
+
+      - name: Run actionlint
+        run: ${{ env.ACTIONLINT_BIN }}
+
       - name: Meta success
         run: echo "SUCCESS"
