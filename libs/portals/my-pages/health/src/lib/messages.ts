@@ -1026,12 +1026,16 @@ export const messages = defineMessages({
   },
   overviewIntro: {
     defaultMessage:
-      'Hér fyrir neðan eru þín gögn sem hafa verið sótt frá þjóðskrá. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
+      'Hér getur þú séð yfirlit yfir grunnupplýsingar þínar í Heilsu, tímabókanir, skráningar, stöðu á listum og mælingar.',
     id: 'sp.health:overview-intro',
   },
   overviewTitle: {
     defaultMessage: 'Yfirlit',
     id: 'sp.health:overview-title',
+  },
+  healthOverview: {
+    id: 'sp.health:health-overview',
+    defaultMessage: 'Heilsuyfirlit',
   },
   paymentDocument: {
     defaultMessage: 'Greiðsluskjal',
