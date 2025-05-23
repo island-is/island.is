@@ -14,7 +14,7 @@ import {
   PaymentPlanApi,
   PensionCalculatorApi,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
-  TrWebApiServicesDomainMedicalDocumentsModelsRehabilitationPlan,
+  TrWebExternalModelsServicePortalRehabilitationPlan,
   TrWebApiServicesDomainUnionsModelsUnionDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
@@ -209,7 +209,7 @@ export class SocialInsuranceAdministrationClientService {
 
   async getRehabilitationPlan(
     user: User,
-  ): Promise<TrWebApiServicesDomainMedicalDocumentsModelsRehabilitationPlan> {
+  ): Promise<TrWebExternalModelsServicePortalRehabilitationPlan> {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsRehabilitationplanGet()
