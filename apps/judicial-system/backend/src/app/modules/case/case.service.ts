@@ -185,6 +185,7 @@ export interface UpdateCase
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
     | 'hasCivilClaims'
+    | 'isRegisteredInPrisonSystem'
   > {
   type?: CaseType
   state?: CaseState
@@ -950,6 +951,12 @@ export class CaseService {
         caseId: theCase.id,
       })
     }
+
+    messages.push({
+      type: MessageType.DELIVERY_TO_COURT_SIGNED_COURT_RECORD,
+      user,
+      caseId: theCase.id,
+    })
 
     return this.messageService.sendMessagesToQueue(messages)
   }
