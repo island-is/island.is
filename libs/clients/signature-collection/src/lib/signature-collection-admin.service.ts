@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common'
-import { MedmaeliBulkItemDTO } from '../../gen/fetch'
+import { KosningApi, MedmaeliBulkItemDTO } from '../../gen/fetch'
 import {
   GetListInput,
   CreateListInput,
   BulkUploadInput,
   ReasonKey,
 } from './signature-collection.types'
-import { Collection } from './types/collection.dto'
+import { Collection, CollectionType } from './types/collection.dto'
 import { getSlug, List, ListStatus, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { CandidateLookup } from './types/user.dto'
@@ -38,12 +38,14 @@ type Api =
   | AdminSignatureApi
   | AdminCandidateApi
   | AdminApi
+  | KosningApi
 
 @Injectable()
 export class SignatureCollectionAdminClientService {
   constructor(
     private listsApi: AdminListApi,
     private collectionsApi: AdminCollectionApi,
+    private electionsApi: KosningApi,
     private sharedService: SignatureCollectionSharedClientService,
     private candidateApi: AdminCandidateApi,
     private adminApi: AdminApi,
@@ -53,15 +55,28 @@ export class SignatureCollectionAdminClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(auth: Auth): Promise<Collection> {
+  async currentCollection(auth: Auth): Promise<Collection[]> {
     return await this.sharedService.currentCollection(
-      this.getApiWithAuth(this.collectionsApi, auth),
+      this.getApiWithAuth(this.electionsApi, auth),
+    )
+  }
+
+  async getLatestCollectionForType(
+    auth: Auth,
+    collectionType: CollectionType,
+  ): Promise<Collection> {
+    return await this.sharedService.getLatestCollectionForType(
+      this.getApiWithAuth(this.electionsApi, auth),
+      collectionType,
     )
   }
 
   async listStatus(listId: string, auth: Auth): Promise<ListStatus> {
     const list = await this.getList(listId, auth)
-    const { status } = await this.currentCollection(auth)
+    const { status } = await this.getLatestCollectionForType(
+      auth,
+      list.collectionType,
+    )
     return this.sharedService.getListStatus(list, status)
   }
 
@@ -106,6 +121,7 @@ export class SignatureCollectionAdminClientService {
       listId,
       this.getApiWithAuth(this.listsApi, auth),
       this.getApiWithAuth(this.candidateApi, auth),
+      this.getApiWithAuth(this.collectionsApi, auth),
     )
   }
 
@@ -117,10 +133,13 @@ export class SignatureCollectionAdminClientService {
   }
 
   async createListsAdmin(
-    { collectionId, owner, areas }: CreateListInput,
+    { collectionId, owner, areas, collectionType }: CreateListInput,
     auth: Auth,
   ): Promise<Slug> {
-    const { id, areas: collectionAreas } = await this.currentCollection(auth)
+    const {
+      id,
+      areas: collectionAreas,
+    } = await this.getLatestCollectionForType(auth, collectionType)
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id) {
       throw new Error('Collection id input wrong')
@@ -194,10 +213,14 @@ export class SignatureCollectionAdminClientService {
 
   async candidateLookup(
     nationalId: string,
+    collectionType: CollectionType,
     auth: Auth,
   ): Promise<CandidateLookup> {
-    const collection = await this.currentCollection(auth)
-    const { id, collectionType, areas } = collection
+    const collection = await this.getLatestCollectionForType(
+      auth,
+      collectionType,
+    )
+    const { id, areas } = collection
     const user = await this.getApiWithAuth(
       this.adminApi,
       auth,
@@ -212,14 +235,16 @@ export class SignatureCollectionAdminClientService {
         ? user.medmaelalistar?.map((list) => mapListBase(list))
         : []
 
-    const { success: canCreate, reasons: canCreateInfo } =
-      this.sharedService.canCreate({
-        requirementsMet: user.maFrambod,
-        canCreateInfo: user.maFrambodInfo,
-        ownedLists,
-        collectionType,
-        areas,
-      })
+    const {
+      success: canCreate,
+      reasons: canCreateInfo,
+    } = this.sharedService.canCreate({
+      requirementsMet: user.maFrambod,
+      canCreateInfo: user.maFrambodInfo,
+      ownedLists,
+      collectionType,
+      areas,
+    })
 
     return {
       nationalId: user.kennitala ?? '',
