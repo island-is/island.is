@@ -8,6 +8,8 @@ import {
   DefaultEvents,
   InstitutionNationalIds,
   defineTemplateApi,
+  UserProfileApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 
 import { assign } from 'xstate'
@@ -23,7 +25,11 @@ import { m } from './messages'
 import { pruneAfterDays } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import set from 'lodash/set'
-import { didSubmitSuccessfully, getApplicationName } from '../utils/utils'
+import {
+  didSubmitSuccessfully,
+  getApplicationName,
+  getUserInfo,
+} from '../utils/utils'
 
 const LegalGazetteApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -49,6 +55,18 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
 
         return context
       }),
+      setCommunicationChannels: assign((context) => {
+        const { application } = context
+        const userInfo = getUserInfo(application.externalData)
+
+        if (!userInfo) return context
+
+        set(application.answers, 'communication.channels', [
+          { email: userInfo.email, phone: userInfo.phone },
+        ])
+
+        return context
+      }),
     },
   },
   stateMachineConfig: {
@@ -70,6 +88,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
+              api: [UserProfileApi, NationalRegistryUserApi],
               write: 'all',
               read: 'all',
               delete: true,
@@ -88,7 +107,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
         },
       },
       [LegalGazetteStates.DRAFT]: {
-        entry: 'assignToInstitution',
+        entry: ['assignToInstitution', 'setCommunicationChannels'],
         meta: {
           name: 'Uppsetning',
           progress: 0.5,

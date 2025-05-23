@@ -3,11 +3,12 @@ import {
   buildMultiField,
   buildDescriptionField,
   buildAlertMessageField,
-  buildCustomField,
   buildSubmitField,
   coreMessages,
+  buildOverviewField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { getConfirmationOverview } from '../../utils/utils'
 
 export const confirmationSection = buildSection({
   id: 'confirmation',
@@ -29,9 +30,11 @@ export const confirmationSection = buildSection({
           message: m.draft.sections.confirmation.infoMessage,
           marginBottom: [3, 4, 5],
         }),
-        buildCustomField({
-          id: 'confirmation.confirmation',
-          component: 'Confirmation',
+        buildOverviewField({
+          id: 'confirmation.overview',
+          titleVariant: 'h4',
+          title: '',
+          items: getConfirmationOverview,
         }),
         buildSubmitField({
           id: 'submit',

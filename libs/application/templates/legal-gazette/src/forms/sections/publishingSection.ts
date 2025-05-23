@@ -80,9 +80,6 @@ export const publishingSection = buildSection({
           editButtonTooltipText: m.draft.sections.communication.editButton,
           editField: true,
           maxRows: 10,
-          // getStaticTableData: (_application) => {
-          // fetch communication channels when implemented
-          // },
           fields: {
             email: {
               component: 'input',

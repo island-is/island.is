@@ -7,8 +7,16 @@ import {
   buildCheckboxField,
   buildDescriptionField,
   YesOrNoEnum,
+  buildDataProviderItem,
+  buildExternalDataProvider,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  DefaultEvents,
+  Form,
+  FormModes,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const RequirementsForm: Form = buildForm({
@@ -17,6 +25,24 @@ export const RequirementsForm: Form = buildForm({
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
+    buildSection({
+      children: [
+        buildExternalDataProvider({
+          id: 'approveExternalData',
+          title: 'Almenn umsókn Lögbirtingablaðsins',
+          dataProviders: [
+            buildDataProviderItem({
+              provider: UserProfileApi,
+              title: 'Netfang og símanúmer úr þínum stillingum',
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistryUserApi,
+              title: 'Grunnupplýsingar frá Þjóðskrá',
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       title: m.requirements.approval.sectionTitle,
       children: [
@@ -45,6 +71,7 @@ export const RequirementsForm: Form = buildForm({
               id: 'prerequisites.description_five',
               description: m.requirements.approval.introPartFive,
             }),
+
             buildCheckboxField({
               id: 'requirements.approval',
               marginTop: 5,

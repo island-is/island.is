@@ -412,6 +412,12 @@ export const m = {
         },
       }),
       confirmation: defineMessages({
+        category: {
+          id: 'lg.application:draft.confirmation.category',
+          defaultMessage: 'Tegund auglýsingar',
+          description:
+            'Titill á tegund auglýsingar fyrir staðfestingu auglýsingar',
+        },
         sectionTitle: {
           id: 'lg.application:draft.confirmation.sectionTitle',
           defaultMessage: 'Staðfesting',

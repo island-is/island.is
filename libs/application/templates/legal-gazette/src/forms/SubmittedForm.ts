@@ -51,17 +51,8 @@ export const SubmittedForm: Form = buildForm({
               alertType: 'success',
             }),
             buildCustomField({
-              id: 'submitted.confirmation',
-              component: 'Confirmation',
-            }),
-            buildCustomField({
-              id: 'submitted.success.createOrOverview',
-              component: 'CreateOrOverview',
-            }),
-            buildCustomField({
-              condition: () => process.env.NODE_ENV === 'development',
-              id: 'submitted.success.SubmitApplication',
-              component: 'SubmitApplication',
+              id: 'confirmation.preview',
+              component: 'AdvertPreview',
             }),
           ],
         }),
