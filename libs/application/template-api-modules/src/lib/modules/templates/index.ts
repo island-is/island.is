@@ -1,5 +1,7 @@
 import { ExampleFolderStructureAndConventionsModule } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.module'
 import { ExampleFolderStructureAndConventionsService } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.service'
+import { ExampleAuthDelegationModule } from './examples/example-auth-delegation/example-auth-delegation.module'
+import { ExampleAuthDelegationService } from './examples/example-auth-delegation/example-auth-delegation.service'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
 import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 import { ExampleCommonActionsModule } from './examples/example-common-actions/example-common-actions.module'
@@ -239,6 +241,7 @@ export const modules = [
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
   ExampleFolderStructureAndConventionsModule,
+  ExampleAuthDelegationModule,
   RentalAgreementModule,
 ]
 
@@ -321,5 +324,6 @@ export const services = [
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
   ExampleFolderStructureAndConventionsService,
+  ExampleAuthDelegationService,
   RentalAgreementService,
 ]

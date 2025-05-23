@@ -175,6 +175,17 @@ export const rentalAmount = defineMessages({
   },
 
   // Error messages
+  tooHighNumberError: {
+    id: 'ra.application:rentalAmount.tooHighNumberError',
+    defaultMessage: 'Leiguverð má ekki vera hærra en 1.500.000 kr.',
+    description: 'Rental amount too high number error',
+  },
+  tooLowNumberError: {
+    id: 'ra.application:rentalAmount.tooLowNumberError',
+    defaultMessage: 'Leiguverð má ekki vera lægra en 15.000 kr.',
+    description: 'Rental amount too low number error',
+  },
+
   indexTypesRequiredError: {
     id: 'ra.application:rentalAmount.indexTypesRequiredError',
     defaultMessage: 'Veldu tegund vísitölu',

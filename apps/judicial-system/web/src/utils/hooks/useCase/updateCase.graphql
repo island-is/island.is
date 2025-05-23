@@ -224,5 +224,8 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     mergeCase {
       id
     }
+    caseRepresentatives {
+      name
+    }
   }
 }

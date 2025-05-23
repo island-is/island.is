@@ -387,6 +387,9 @@
       ],
       "@island.is/application/templates/example-folder-structure": [
         "libs/application/templates/example-folder-structure/src/index.ts"
+
+      "@island.is/application/templates/examples/example-auth-delegation": [
+        "libs/application/templates/examples/example-auth-delegation/src/index.ts"
       ],
       "@island.is/application/templates/examples/example-common-actions": [
         "libs/application/templates/examples/example-common-actions/src/index.ts"

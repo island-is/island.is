@@ -1,8 +1,8 @@
 import { ApplicationTypes } from '@island.is/application/types'
 
 const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
-  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: () =>
-    import('@island.is/application/templates/examples/example-state-transfers'),
+  [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: () =>
+    import('@island.is/application/templates/examples/example-auth-delegation'),
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: () =>
     import('@island.is/application/templates/examples/example-common-actions'),
   [ApplicationTypes.EXAMPLE_INPUTS]: () =>
@@ -13,6 +13,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/examples/example-folder-structure-and-conventions'
     ),
+  [ApplicationTypes.EXAMPLE_PAYMENT]: () =>
+    import('@island.is/application/templates/examples/example-payment'),
+  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: () =>
+    import('@island.is/application/templates/examples/example-state-transfers'),
   [ApplicationTypes.ESTATE]: () =>
     import('@island.is/application/templates/estate'),
   [ApplicationTypes.PARENTAL_LEAVE]: () =>
@@ -63,8 +67,6 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/financial-aid'),
   [ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]: () =>
     import('@island.is/application/templates/driving-instructor-registrations'),
-  [ApplicationTypes.EXAMPLE_PAYMENT]: () =>
-    import('@island.is/application/templates/examples/example-payment'),
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: () =>
     import('@island.is/application/templates/driving-school-confirmation'),
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: () =>
