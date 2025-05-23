@@ -35,18 +35,18 @@ export const overviewSection = buildSection({
           items: realEstateOverviewItems,
         }),
         buildOverviewField({
+          id: 'photoOverview',
+          title: m.photoMessages.title,
+          backId: 'photoMultiField',
+          attachments: photoOverviewItems,
+        }),
+        buildOverviewField({
           id: 'changesOverview',
           title: m.changesMessages.title,
           backId: 'appraisalMethod',
           items: changesOverviewItems,
         }),
 
-        buildOverviewField({
-          id: 'photoOverview',
-          title: m.photoMessages.title,
-          backId: 'photoMultiField',
-          attachments: photoOverviewItems,
-        }),
         buildSubmitField({
           id: 'submit',
           title: m.overviewMessages.pay,
