@@ -15,8 +15,7 @@ runs:
     - name: Corepack
       shell: bash
       working-directory: ${{ inputs.working-directory }}
-      run: |
-        corepack enable
+      run: corepack enable
 
     - name: Check node version
       working-directory: ${{ inputs.working-directory }}
@@ -28,39 +27,28 @@ runs:
         ls -l "$(which node)"
 
     - name: Set cache key
-      working-directory: ${{ inputs.working-directory }}
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       id: set-cache-key
       run: |
-        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
+        echo "CACHE_KEY=${{ runner.os }}-deps-root-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
+        echo "CACHE_KEY_INFRA=${{ runner.os }}-deps-infra-${{ hashFiles('infra/yarn.lock') }}-1" >> $GITHUB_OUTPUT
 
-    - name: Get Yarn Cache Directory Path
+    - name: Get Yarn Cache Directory Path (root)
+      id: yarn-cache-dir-path
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      id: yarn-cache-dir-path
       run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-    - name: Restore Dependencies Cache
-      uses: runs-on/cache/restore@v4
-      id: restore-cache
-      with:
-        path: |
-          ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          ${{ env.CYPRESS_CACHE_FOLDER }}
-        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
-      env:
-        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE }}
-        CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
-
-    - name: Yarn install
-      working-directory: ${{ inputs.working-directory }}
+    - name: Get Yarn Cache Directory Path (infra)
+      id: yarn-cache-dir-path-infra
+      working-directory: ./infra
       shell: bash
-      run: |
-        yarn install --immutable
+      run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-    - name: Cache Dependencies
-      uses: runs-on/cache/save@v4
-      if: steps.restore-cache.outputs.cache-hit != 'true'
+    - name: Restore Dependencies Cache (root)
+      uses: actions/cache/restore@v4
+      id: restore-cache-root
       with:
         path: |
           ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -69,3 +57,42 @@ runs:
       env:
         RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE }}
         CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
+
+    - name: Restore Dependencies Cache (infra)
+      uses: actions/cache/restore@v4
+      id: restore-cache-infra
+      with:
+        path: ${{ steps.yarn-cache-dir-path-infra.outputs.dir }}
+        key: ${{ steps.set-cache-key.outputs.CACHE_KEY_INFRA }}
+      env:
+        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE }}
+
+    - name: Yarn install (root)
+      working-directory: ${{ inputs.working-directory }}
+      if: steps.restore-cache-root.outputs.cache-hit != 'true'
+      shell: bash
+      run: yarn install --immutable
+
+    - name: Yarn install (infra)
+      working-directory: ./infra
+      if: steps.restore-cache-infra.outputs.cache-hit != 'true'
+      shell: bash
+      run: yarn install --immutable
+
+    - name: Cache Dependencies (root)
+      uses: actions/cache/save@v4
+      if: steps.restore-cache-root.outputs.cache-hit != 'true'
+      with:
+        path: |
+          ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          ${{ env.CYPRESS_CACHE_FOLDER }}
+        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+      env:
+        CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
+
+    - name: Cache Dependencies (infra)
+      uses: actions/cache/save@v4
+      if: steps.restore-cache-infra.outputs.cache-hit != 'true'
+      with:
+        path: ${{ steps.yarn-cache-dir-path-infra.outputs.dir }}
+        key: ${{ steps.set-cache-key.outputs.CACHE_KEY_INFRA }}
