@@ -37,8 +37,5 @@ export const prepareRequest = async () => {
   // check if tokens stored in the session cookie are expired
   // and if expired auth api handles the refresh
   const res = await fetch(`/api/auth/token-refresh`, options)
-  if (res.ok) {
-    return { success: true }
-  }
-  return { success: false }
+  return { success: res.ok }
 }

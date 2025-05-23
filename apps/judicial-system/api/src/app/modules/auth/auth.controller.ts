@@ -267,7 +267,6 @@ export class AuthController {
       const refreshToken = req.cookies[IDS_REFRESH_TOKEN_NAME]
       const idsTokens = await this.authService.refreshToken(refreshToken)
 
-      // maybe we don't need to verify again?
       const verifiedUserToken = await this.authService.verifyIdsToken(
         idsTokens.id_token,
       )
