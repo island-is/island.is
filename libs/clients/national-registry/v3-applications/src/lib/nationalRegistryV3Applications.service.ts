@@ -74,10 +74,4 @@ export class NationalRegistryV3ApplicationsClientService {
       return null
     }
   }
-
-  async getLegalResidence(auth: User): Promise<LogheimiliDTO> {
-    return await this.einstaklingarApiWithAuth(
-      auth,
-    ).einstaklingarKennitalaLogheimiliGet({ kennitala: auth.nationalId })
-  }
 }
