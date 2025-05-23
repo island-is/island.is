@@ -20,6 +20,7 @@ export interface NationalRegistrySpouseV3 {
   maritalStatus: string
   maritalDescription: string
   lastModified?: Date | null
+  birthplace?: NationalRegistryBirthplace | null
   address?: Address | null
   citizenship?: {
     code: string | null
