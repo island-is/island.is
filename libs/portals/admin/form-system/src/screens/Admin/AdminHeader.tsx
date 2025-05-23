@@ -54,7 +54,6 @@ export const AdminHeader = (props: Props) => {
             label={formatMessage(m.organization)}
             options={organizations}
             size="sm"
-            defaultValue={organizations.find((org) => org.isSelected)}
             value={organizations.find(
               (org) => org.value === control.organizationNationalId,
             )}
