@@ -43,12 +43,7 @@ const FormMultiField: FC<
   setFieldLoadingState,
   setSubmitButtonDisabled,
 }) => {
-  const {
-    description,
-    children,
-    space = 0,
-    descriptionSpacing = description ? 3 : 4,
-  } = multiField
+  const { description, children, space = 0 } = multiField
   const { formatMessage } = useLocale()
   return (
     <GridRow>
@@ -74,7 +69,7 @@ const FormMultiField: FC<
 
           FieldDescription already has a mb of 1 so set it to 3(+1) else 4.
       */}
-      <Box width="full" marginTop={descriptionSpacing} />
+      <Box width="full" marginTop={description ? 3 : 4} />
       {/*
         Todo:
         The following "section" is for accessibility scoping of controls. Due to CSS configuration I am unable to make this work

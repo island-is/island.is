@@ -136,7 +136,6 @@ export interface MultiField extends FormItem {
   isPartOfRepeater?: boolean
   readonly description?: FormText
   space?: BoxProps['paddingTop']
-  descriptionSpacing?: BoxProps['paddingTop']
 }
 
 export interface ExternalDataProvider extends FormItem {

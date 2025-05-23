@@ -49,7 +49,6 @@ export const RequirementsForm: Form = buildForm({
         buildMultiField({
           id: 'prerequisites.fields',
           title: m.requirements.approval.formTitle,
-          descriptionSpacing: 0,
           children: [
             buildDescriptionField({
               id: 'prerequisites.description_one',
