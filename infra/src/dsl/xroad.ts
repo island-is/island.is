@@ -90,8 +90,18 @@ export const JudicialSystem = new XroadConf({
       staging: '5309672079',
       prod: '5309672079',
     },
+    XROAD_DMR_MEMBER_CODE: {
+      dev: '10014',
+      staging: '5804170510',
+      prod: '5804170510',
+    },
     XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1',
     XROAD_POLICE_API_PATH: '/Logreglan-Private/rettarvarsla-v1',
+    XROAD_DMR_CRIMINAL_RECORD_API_PATH: {
+      dev: '/DMR-Protected/sakaskra-dev',
+      staging: '/DMR-Protected/sakaskra-dev',
+      prod: '/DMR-Protected/sakaskra',
+    },
   },
   secrets: {
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT',

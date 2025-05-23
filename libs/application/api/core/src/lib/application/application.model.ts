@@ -114,6 +114,22 @@ export class Application extends Model {
   isListed!: boolean
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  userDeleted!: boolean
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiPropertyOptional()
+  userDeletedAt?: Date
+
+  @Column({
     type: DataType.DATE,
     allowNull: true,
     defaultValue: null,
