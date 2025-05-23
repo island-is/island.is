@@ -9,6 +9,7 @@ import {
 import { m } from '../../lib/messages'
 import { requirementsMet } from '../../lib/utils'
 import { createPhotoComponent } from '../../fields/CreatePhoto'
+import { IGNORE } from '../../lib/constants'
 
 export const sectionPhoto = buildSection({
   id: 'photo',
@@ -30,7 +31,8 @@ export const sectionPhoto = buildSection({
             const photoOptions = []
 
             if (
-              getValueViaPath<string>(answers, 'fakeData.useFakeData') === YES
+              getValueViaPath(answers, 'fakeData.useFakeData') === YES ||
+              getValueViaPath(answers, 'fakeData.useFakeData') === IGNORE
             ) {
               photoOptions.push({
                 value: 'fakePhoto',
