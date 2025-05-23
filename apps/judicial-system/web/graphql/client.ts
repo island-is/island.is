@@ -7,7 +7,9 @@ import retryLink from './retryLink'
 
 const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 
-const cache = new InMemoryCache({ possibleTypes: {} })
+const cache = new InMemoryCache({
+  possibleTypes: {},
+})
 
 const client = new ApolloClient({
   name: 'judicial-system-web-client',
