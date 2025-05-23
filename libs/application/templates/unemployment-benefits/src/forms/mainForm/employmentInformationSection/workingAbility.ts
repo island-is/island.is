@@ -53,6 +53,11 @@ export const workingAbilitySubSection = buildSubSection({
           id: 'workingAbility.medicalReport',
           title:
             employmentMessages.workingAbility.labels.partTimeFileUploadLabel,
+          uploadHeader:
+            employmentMessages.workingAbility.labels.partTimeFileUploadLabel,
+          uploadDescription:
+            employmentMessages.workingAbility.labels
+              .partTimeFileUploadDescription,
           condition: needsMedicalReport,
         }),
       ],

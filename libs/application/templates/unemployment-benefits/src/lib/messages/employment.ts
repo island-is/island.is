@@ -226,7 +226,14 @@ export const employment = {
     },
     pageDescription: {
       id: 'vmst.ub.application:employment.concurrentWorkAgreement.pageDescription#markdown',
-      defaultMessage: `Það er vel hægt að taka að sér vinnu samhliða greiðslu úr atvinnuleysistryggingasjóði.\n  Ef þú færð vinnu þarftu að láta vita áður en þú byrjar í vinnunni. Það gerir þú á „Mínum síðum“ með aðgerðinni „Tilkynning um vinnu eða tekjur.“ Atvinnuleysistryggingar eru ekki greiddar þá daga sem þú sinnir verktakavinnu. Ef þú tekur að þér vinnu sem verktaki á eigin kennitölu verður þú að tilkynna á „Mínum síðum“ um þá daga sem vinna/verkefni stendur yfir. Það gerir þú á „Mínum síðum“ með aðgerðinni „Tilkynna vinnu eða tekjur.“\nEf þú vilt nánari upplýsingar þá getur þú smellt hér.`,
+      defaultMessage: `Það er vel hægt að taka að sér vinnu samhliða greiðslu úr atvinnuleysistryggingasjóði.
+      \nEf þú færð vinnu þarftu að láta vita áður en þú byrjar í vinnunni. Það gerir þú á „Mínum síðum“ með 
+      aðgerðinni „Tilkynning um vinnu eða tekjur.“ 
+      \nAtvinnuleysistryggingar eru ekki greiddar þá daga sem þú 
+      sinnir verktakavinnu. Ef þú tekur að þér vinnu sem verktaki á eigin kennitölu verður þú að tilkynna 
+      á „Mínum síðum“ um þá daga sem vinna/verkefni stendur yfir. Það gerir þú á „Mínum síðum“ með aðgerðinni 
+      „Tilkynna vinnu eða tekjur.“
+      \n[Nánari upplýsingar](https://island.is/atvinnuleysisbaetur/hvad-hefur-ahrif-a-greidslur)`,
       description: 'Concurrent work agreement page description',
     },
   }),
@@ -279,6 +286,11 @@ export const employment = {
         id: 'vmst.ub.application:employment.workingAbility.labels.partTimeFileUploadLabel',
         defaultMessage: 'Læknisvottorð',
         description: 'Working ability part time file upload label',
+      },
+      partTimeFileUploadDescription: {
+        id: 'vmst.ub.application:employment.workingAbility.labels.partTimeFileUploadDescription',
+        defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
+        description: 'Working ability part time file upload description',
       },
     }),
   },
@@ -379,7 +391,17 @@ export const employment = {
     },
     pageDescription: {
       id: 'vmst.ub.application:employment.lossOfRightsAgreement.pageDescription#markdown',
-      defaultMessage: `Það er mögulegt að missa áunninn bótarétt.\nKynntu þér vel reglur og skyldur atvinnuleitenda. Ef reglur eru brotnar eða ekki farið eftir þeim áttu á hættu að missa bætur í ákveðinn tíma. Það á meðal annars við ef þú:`,
+      defaultMessage: `Kynntu þér vel reglur og skyldur atvinnuleitenda. Við brot á reglum eða 
+      ekki farið eftir þeim áttu á hættu að missa bætur í ákveðinn tíma. Það á meðal annars við ef þú:
+      \n* Hafnar þátttöku í vinnumarkaðsúrræðum
+      \n* Ferð til útlanda án þess að tilkynna það fyrirfram
+      \n* Ert í námi án námssamnings
+      \n* Uppfyllir ekki mætingarskyldu í úrræði
+      \n* Segir sjálf/ur upp starfi
+      \n* Ef það er ekki hægt að ná í þig
+      \n* Ef þú tilkynnir ekki um vinnu samhliða því að vera á bótum 
+      \n* Ert með opna laungreiðendaskrá og/eða lögskráningu
+      \n\nSjáðu nánar á [vef Vinnumálastofnunar](https://island.is/atvinnuleysisbaetur) undir kaflanum: Atvinnuleysisbætur - biðtími og viðurlög.`,
       description: 'Loss of rights agreementpage description',
     },
   }),
