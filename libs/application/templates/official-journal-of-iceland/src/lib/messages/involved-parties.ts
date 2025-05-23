@@ -38,13 +38,13 @@ export const involvedParty = {
     message: {
       id: 'ojoi.application:original.error.message',
       defaultMessage:
-        'Ekki tókst að sækja stofnanir fyrir aðganginn þinn, ef þú telur þig eiga að hafa aðgang, vinsamlegast hafðu samband við ritstjóra Stjórnartíðnda.',
+        'Ekki tókst að sækja stofnanir fyrir aðganginn þinn, ef þú telur þig eiga að hafa aðgang, vinsamlegast hafðu samband við ritstjóra Stjórnartíðinda.',
       description: 'Error message',
     },
     messageForbidden: {
       id: 'ojoi.application:original.error.messageForbidden',
       defaultMessage:
-        'Innskráður notandi hefur ekki aðgang að umsókn, ef þú telur þig eiga að hafa aðgang, vinsamlegast hafðu samband við ritstjóra Stjórnartíðnda.',
+        'Innskráður notandi hefur ekki aðgang að umsókn, ef þú telur þig eiga að hafa aðgang, vinsamlegast hafðu samband við ritstjóra Stjórnartíðinda.',
       description: 'Error message forbidden',
     },
     noDataTitle: {
@@ -55,7 +55,7 @@ export const involvedParty = {
     noDataMessage: {
       id: 'ojoi.application:original.error.noDataMessage',
       defaultMessage:
-        'Notandinn er ekki tengdur neinum stofnunum, vinsamlegast hafðu samband við ritstjóra Stjórnartíðnda.',
+        'Notandinn er ekki tengdur neinum stofnunum, vinsamlegast hafðu samband við ritstjóra Stjórnartíðinda.',
       description: 'No data message',
     },
   }),
