@@ -249,8 +249,15 @@ const validFromTo: CaseTableCellGenerator = {
 
 const rulingDate: CaseTableCellGenerator = {
   attributes: ['rulingDate'],
-  generate: (c: Case): StringGroupValue | undefined =>
-    c.rulingDate ? { s: [formatDate(c.rulingDate) ?? ''] } : undefined,
+  generate: (c: Case): StringGroupValue | undefined => {
+    const rulingDate = formatDate(c.rulingDate)
+
+    if (!rulingDate) {
+      return undefined
+    }
+
+    return { s: [rulingDate] }
+  },
 }
 
 const restrictionCaseState: CaseTableCellGenerator = {
@@ -357,18 +364,22 @@ const prisonAdminReceivalDate: CaseTableCellGenerator = {
     },
   },
   generate: (c: Case): StringGroupValue | undefined => {
-    if (c.defendants && c.defendants.length > 0) {
-      const dateOpened = DefendantEventLog.getDefendantEventLogTypeDate(
-        DefendantEventType.OPENED_BY_PRISON_ADMIN,
-        c.defendants[0].eventLogs,
-      )
-
-      if (dateOpened) {
-        return { s: [formatDate(dateOpened) ?? ''] }
-      }
+    if (!c.defendants || c.defendants.length === 0) {
+      return undefined
     }
 
-    return undefined
+    const dateOpened = DefendantEventLog.getDefendantEventLogTypeDate(
+      DefendantEventType.OPENED_BY_PRISON_ADMIN,
+      c.defendants[0].eventLogs,
+    )
+
+    const receivalDate = formatDate(dateOpened)
+
+    if (!receivalDate) {
+      return undefined
+    }
+
+    return { s: [receivalDate] }
   },
 }
 
@@ -392,15 +403,17 @@ const prisonAdminState: CaseTableCellGenerator = {
     },
   },
   generate: (c: Case): TagValue => {
-    if (c.defendants && c.defendants.length > 0) {
-      const dateOpened = DefendantEventLog.getDefendantEventLogTypeDate(
-        DefendantEventType.OPENED_BY_PRISON_ADMIN,
-        c.defendants[0].eventLogs,
-      )
+    if (!c.defendants || c.defendants.length === 0) {
+      return { color: 'red', text: 'Óþekkt' } // This should never happen
+    }
 
-      if (dateOpened) {
-        return { color: 'blue', text: 'Móttekið' }
-      }
+    const dateOpened = DefendantEventLog.getDefendantEventLogTypeDate(
+      DefendantEventType.OPENED_BY_PRISON_ADMIN,
+      c.defendants[0].eventLogs,
+    )
+
+    if (dateOpened) {
+      return { color: 'blue', text: 'Móttekið' }
     }
 
     return { color: 'purple', text: 'Nýtt' }
@@ -503,26 +516,30 @@ const sentToPrisonAdminDate: CaseTableCellGenerator = {
     },
   },
   generate: (c: Case): StringGroupValue | undefined => {
-    if (c.defendants && c.defendants.length > 0) {
-      const dateSent = c.defendants.reduce<Date | undefined>((firstSent, d) => {
-        const dateSent = DefendantEventLog.getDefendantEventLogTypeDate(
-          DefendantEventType.SENT_TO_PRISON_ADMIN,
-          d.eventLogs,
-        )
-
-        if (dateSent && (!firstSent || firstSent > dateSent)) {
-          return dateSent
-        }
-
-        return firstSent
-      }, undefined)
-
-      if (dateSent) {
-        return { s: [formatDate(dateSent) ?? ''] }
-      }
+    if (!c.defendants) {
+      return undefined
     }
 
-    return undefined
+    const dateSent = c.defendants.reduce<Date | undefined>((firstSent, d) => {
+      const dateSent = DefendantEventLog.getDefendantEventLogTypeDate(
+        DefendantEventType.SENT_TO_PRISON_ADMIN,
+        d.eventLogs,
+      )
+
+      if (dateSent && (!firstSent || firstSent > dateSent)) {
+        return dateSent
+      }
+
+      return firstSent
+    }, undefined)
+
+    const sentToPrisonAdminDate = formatDate(dateSent)
+
+    if (!sentToPrisonAdminDate) {
+      return undefined
+    }
+
+    return { s: [sentToPrisonAdminDate] }
   },
 }
 
