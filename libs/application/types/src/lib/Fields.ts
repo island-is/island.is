@@ -436,7 +436,6 @@ export interface SelectField extends InputField {
   backgroundColor?: InputBackgroundColor
   isMulti?: boolean
   isClearable?: boolean
-  size?: 'sm' | 'md' | 'xs' | undefined
 }
 
 export interface CompanySearchField extends InputField {

@@ -223,7 +223,6 @@ export const buildSelectField = (
     isMulti,
     isClearable,
     required,
-    size = 'md',
   } = data
   return {
     ...extractCommonFields(data),
@@ -237,7 +236,6 @@ export const buildSelectField = (
     isMulti,
     isClearable,
     backgroundColor,
-    size,
   }
 }
 
