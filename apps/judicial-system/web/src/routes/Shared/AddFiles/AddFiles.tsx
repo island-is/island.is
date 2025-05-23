@@ -121,7 +121,7 @@ const AddFiles: FC = () => {
 
   const addFiles = (files: FileWithPreviewURL[]) => {
     const { selectedCaseRepresentative } = fileRepresentative
-    console.log('addfiles', files)
+
     addUploadFiles(
       files,
       {

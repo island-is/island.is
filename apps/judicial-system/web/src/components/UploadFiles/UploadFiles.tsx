@@ -1,12 +1,11 @@
-import { Dispatch, FC, SetStateAction, useCallback, useContext } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useIntl } from 'react-intl'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 
-import { TUploadFile, useFileList } from '../../utils/hooks'
+import { TUploadFile } from '../../utils/hooks'
 import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
-import { FormContext } from '../FormProvider/FormProvider'
 import { strings } from './UploadFiles.strings'
 import * as styles from './UploadFiles.css'
 
@@ -34,10 +33,7 @@ const UploadFiles: FC<Props> = (props) => {
     setEditCount,
     isBottomComponent,
   } = props
-  const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
-
-  const { onOpen } = useFileList({ caseId: workingCase.id })
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -50,8 +46,6 @@ const UploadFiles: FC<Props> = (props) => {
         toFileWithPreview(file),
       )
 
-      console.log('acceptedFilesWithPreviewURL', acceptedFilesWithPreviewURL)
-
       onChange(acceptedFilesWithPreviewURL)
     },
     [onChange],
@@ -61,8 +55,6 @@ const UploadFiles: FC<Props> = (props) => {
     accept: ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'],
     onDrop,
   })
-
-  console.log('files', files)
 
   return (
     <div
