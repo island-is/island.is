@@ -186,6 +186,7 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          YARN_NPM_REGISTRY_SERVER: ${{ secrets.YARN_NPM_REGISTRY_SERVER }}
       - name: Ensure generated files (fetch cache)
         id: cache
         uses: runs-on/cache/restore@v4
