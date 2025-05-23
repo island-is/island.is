@@ -4,7 +4,7 @@ import { InstitutionContentfulIds } from './InstitutionContentfulIds'
 import { InstitutionNationalIds } from './InstitutionNationalIds'
 
 export const institutionMapper = {
-  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
+  [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
@@ -14,7 +14,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
-
   [ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
@@ -35,7 +34,7 @@ export const institutionMapper = {
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
-  [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: {
+  [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,

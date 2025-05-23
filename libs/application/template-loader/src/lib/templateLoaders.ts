@@ -5,14 +5,14 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/examples/example-auth-delegation'),
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: () =>
     import('@island.is/application/templates/examples/example-common-actions'),
-  [ApplicationTypes.EXAMPLE_INPUTS]: () =>
-    import('@island.is/application/templates/examples/example-inputs'),
-  [ApplicationTypes.EXAMPLE_NO_INPUTS]: () =>
-    import('@island.is/application/templates/examples/example-no-inputs'),
   [ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS]: () =>
     import(
       '@island.is/application/templates/examples/example-folder-structure-and-conventions'
     ),
+  [ApplicationTypes.EXAMPLE_INPUTS]: () =>
+    import('@island.is/application/templates/examples/example-inputs'),
+  [ApplicationTypes.EXAMPLE_NO_INPUTS]: () =>
+    import('@island.is/application/templates/examples/example-no-inputs'),
   [ApplicationTypes.EXAMPLE_PAYMENT]: () =>
     import('@island.is/application/templates/examples/example-payment'),
   [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: () =>
