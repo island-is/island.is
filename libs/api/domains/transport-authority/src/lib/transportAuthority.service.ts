@@ -29,6 +29,7 @@ import {
   VehiclePlateOrderChecksByPermno,
   PlateOrderValidation,
   BasicVehicleInformation,
+  VehicleValidation,
 } from './graphql/models'
 import { ApolloError } from 'apollo-server-express'
 import { CoOwnerChangeAnswers } from './graphql/dto/coOwnerChangeAnswers.input'
@@ -436,7 +437,7 @@ export class TransportAuthorityApi {
     return this.vehiclePlateRenewalClient.getPlateAvailability(regno)
   }
 
-  async getBasicVehicleInfoByPermno(
+  async getMyBasicVehicleInfoByPermno(
     auth: User,
     permno: string,
   ): Promise<BasicVehicleInformation | null | ApolloError> {
@@ -448,5 +449,40 @@ export class TransportAuthorityApi {
       make: vehicle.make,
       color: vehicle.colorName,
     }
+  }
+
+  async getBasicVehicleInfoByPermno(
+    auth: User,
+    permno: string,
+  ): Promise<BasicVehicleInformation | null> {
+    try {
+      const vehicle = await this.vehiclesApiWithAuth(
+        auth,
+      ).basicVehicleInformationGet({
+        clientPersidno: auth.nationalId,
+        permno: permno,
+      })
+
+      const model = vehicle.make
+      const subModel = [vehicle.vehcom, vehicle.speccom]
+        .filter(Boolean)
+        .join(' ')
+
+      return {
+        permno: vehicle.permno,
+        // Note: subModel (vehcom+speccom) has already been added to this field
+        make: `${model} ${subModel}`,
+        color: vehicle.color,
+      }
+    } catch (e) {
+      return null
+    }
+  }
+
+  async getVehicleExemptionForTransportationValidation(
+    auth: User,
+    permno: string,
+  ): Promise<VehicleValidation | null> {
+    return { errorMessages: [] } //TODOx
   }
 }

@@ -52,6 +52,7 @@ import {
   TitleVariants,
   OverviewField,
   CopyLinkField,
+  AsyncVehicleTextField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -1216,5 +1217,31 @@ export const buildCopyLinkField = (
     type: FieldTypes.COPY_LINK,
     component: FieldComponents.COPY_LINK,
     children: undefined,
+  }
+}
+
+export const buildAsyncVehicleTextField = (
+  data: Omit<AsyncVehicleTextField, 'type' | 'component' | 'children'>,
+): AsyncVehicleTextField => {
+  const {
+    required,
+    loadValidation,
+    permnoLabel,
+    makeAndColorLabel,
+    errorTitle,
+    fallbackErrorMessage,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.ASYNC_VEHICLE_TEXT,
+    component: FieldComponents.ASYNC_VEHICLE_TEXT,
+    required,
+    loadValidation,
+    permnoLabel,
+    makeAndColorLabel,
+    errorTitle,
+    fallbackErrorMessage,
   }
 }

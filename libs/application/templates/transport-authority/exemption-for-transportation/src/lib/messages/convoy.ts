@@ -41,4 +41,16 @@ export const convoy = {
       description: 'Trailer make and color label',
     },
   }),
+  error: defineMessages({
+    alertTitle: {
+      id: 'ta.eft.application:convoy.error.alertTitle',
+      defaultMessage: 'Athugið',
+      description: 'Convoy error alert title',
+    },
+    fallbackErrorMessage: {
+      id: 'ta.eft.application:convoy.error.fallbackErrorMessage',
+      defaultMessage: 'Það kom upp villa',
+      description: 'Convoy error fallback alert message',
+    },
+  }),
 }
