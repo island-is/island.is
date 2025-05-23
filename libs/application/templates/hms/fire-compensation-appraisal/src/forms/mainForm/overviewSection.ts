@@ -13,10 +13,18 @@ import {
 import * as m from '../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
 export const overviewSection = buildSection({
+  condition: (_answers, externalData) => {
+    console.log('externalData: ', externalData)
+    return true
+  },
   id: 'overviewSection',
   title: m.overviewMessages.title,
   children: [
     buildMultiField({
+      condition: (_answers, externalData) => {
+        console.log('externalData: ', externalData)
+        return true
+      },
       id: 'overviewSection',
       title: m.overviewMessages.title,
       description: m.overviewMessages.description,
@@ -46,7 +54,6 @@ export const overviewSection = buildSection({
           backId: 'photoMultiField',
           attachments: photoOverviewItems,
         }),
-
         buildSubmitField({
           id: 'submit',
           title: m.overviewMessages.pay,

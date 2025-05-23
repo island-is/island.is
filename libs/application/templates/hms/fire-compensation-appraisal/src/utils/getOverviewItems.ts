@@ -64,7 +64,7 @@ export const changesOverviewItems = (
 ): Array<KeyValueItem> => {
   return [
     {
-      width: 'full',
+      width: 'half',
       keyText: m.changesMessages.becauseOfRenovations,
       valueText: getValueViaPath<string>(answers, 'appraisalMethod')?.includes(
         'renovations',
@@ -73,7 +73,7 @@ export const changesOverviewItems = (
         : m.miscMessages.no,
     },
     {
-      width: 'full',
+      width: 'half',
       keyText: m.changesMessages.becauseOfAdditions,
       valueText: getValueViaPath<string>(answers, 'appraisalMethod')?.includes(
         'additions',

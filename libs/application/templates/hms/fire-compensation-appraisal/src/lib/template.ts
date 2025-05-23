@@ -32,7 +32,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.FIRE_COMPENSATION_APPRAISAL,
-  name: 'fire-compensation-appraisal template',
+  name: 'Endurmat brunabótamats',
   codeOwner: CodeOwners.NordaApplications,
   institution: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
   translationNamespaces: [
