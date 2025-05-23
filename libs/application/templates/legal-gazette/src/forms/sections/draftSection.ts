@@ -28,13 +28,12 @@ export const draftSection = buildSection({
           id: 'application.categoryId',
           title: m.draft.sections.advert.categoryInput,
           options: ({ externalData }) => {
-            const categories = getValueViaPath<LGBaseEntity[]>(
-              externalData,
-              'categories.data',
-              [],
-            )
-
-            if (!categories) return []
+            const categories =
+              getValueViaPath<LGBaseEntity[]>(
+                externalData,
+                'categories.data',
+                [],
+              ) ?? []
 
             return categories.map((c) => ({ label: c.title, value: c.id }))
           },

@@ -82,6 +82,34 @@ export const m = {
       description: 'Villa sem kemur upp ef ekki tókst að búa til umsókn',
     },
   }),
+  dataproviders: {
+    provider: defineMessages({
+      title: {
+        id: 'lg.application:dataproviders.provider.title',
+        defaultMessage: 'Almenn umsókn Lögbirtingablaðsins',
+        description: 'Heiti á veitu',
+      },
+    }),
+    nationalRegistry: defineMessages({
+      title: {
+        id: 'lg.application:nationalRegistry.title',
+        defaultMessage: 'Almenn umsókn Lögbirtingablaðsins',
+        description: 'Heiti á þjóðskrá',
+      },
+      description: {
+        id: 'lg.application:nationalRegistry.description',
+        defaultMessage: 'Sækir upplýsingar um notanda úr þjóðskrá',
+        description: 'Lýsing á þjóðskrá',
+      },
+    }),
+    userProfile: defineMessages({
+      title: {
+        id: 'lg.application:userProfile.description',
+        defaultMessage: 'Sækir upplýsingar um notanda úr stillingum',
+        description: 'Lýsing á notendaprófílnum',
+      },
+    }),
+  },
   requirements: {
     approval: defineMessages({
       sectionTitle: {

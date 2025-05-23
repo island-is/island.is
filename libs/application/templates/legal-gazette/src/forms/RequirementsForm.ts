@@ -29,15 +29,15 @@ export const RequirementsForm: Form = buildForm({
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'Almenn umsókn Lögbirtingablaðsins',
+          title: m.dataproviders.provider.title,
           dataProviders: [
             buildDataProviderItem({
               provider: UserProfileApi,
-              title: 'Netfang og símanúmer úr þínum stillingum',
+              title: m.dataproviders.userProfile.title,
             }),
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
-              title: 'Grunnupplýsingar frá Þjóðskrá',
+              title: m.dataproviders.nationalRegistry.title,
             }),
           ],
         }),
