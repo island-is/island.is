@@ -51,7 +51,6 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     marginTop,
     marginBottom,
     clearOnChange,
-    size,
     tempDisabled,
   } = field
   const { formatMessage, lang } = useLocale()
@@ -171,7 +170,6 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
               ? formatText(placeholder, application, formatMessage)
               : undefined
           }
-          size={size}
           error={error}
           onChange={onChange}
           clearOnChange={clearOnChange}

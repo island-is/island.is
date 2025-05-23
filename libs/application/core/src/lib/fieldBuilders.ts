@@ -139,7 +139,6 @@ export const buildDateField = (
     backgroundColor = 'blue',
     required,
     readOnly,
-    size,
     tempDisabled,
   } = data
   return {
@@ -156,7 +155,6 @@ export const buildDateField = (
     backgroundColor,
     required,
     readOnly,
-    size,
     tempDisabled,
   }
 }
