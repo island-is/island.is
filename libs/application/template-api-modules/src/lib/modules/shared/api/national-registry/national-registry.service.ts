@@ -437,6 +437,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
         maritalDescription: cohabitationInfo?.cohabitationCodeDescription,
         lastModified: cohabitationInfo.lastModified,
         citizenship: spouseIndividual?.citizenship,
+        address: spouseIndividual?.address,
       }
     )
   }
