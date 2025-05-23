@@ -8,24 +8,54 @@ export const employment = {
       description: 'employment information section title',
     },
   }),
-  reasonForJobSearch: defineMessages({
-    sectionTitle: {
-      id: 'vmst.ub.application:employment.reasonForJobSearch.sectionTitle',
-      defaultMessage: 'Ástæða atvinnuleitar',
-      description: 'applicant reason for job search section title',
-    },
-    pageTitle: {
-      id: 'vmst.ub.application:employment.reasonForJobSearch.pageTitle',
-      defaultMessage: 'Ástæða atvinnuleitar',
-      description: 'Reason for job search page description',
-    },
-    pageDescription: {
-      id: 'vmst.ub.application:employment.reasonForJobSearch.pageDescription',
-      defaultMessage:
-        'Amet posuere morbi purus orci rhoncus duis. Eu turpis imperdiet magna quam gravida arcu non aliquam tincidunt. Hac imperdiet erat sit ut sit sagittis lectus molestie. Ultricies lacus eget velit elit.',
-      description: 'Reason for job search page description',
-    },
-  }),
+  reasonForJobSearch: {
+    general: defineMessages({
+      sectionTitle: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.sectionTitle',
+        defaultMessage: 'Ástæða atvinnuleitar',
+        description: 'applicant reason for job search section title',
+      },
+      pageTitle: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.pageTitle',
+        defaultMessage: 'Ástæða atvinnuleitar',
+        description: 'Reason for job search page description',
+      },
+    }),
+    labels: defineMessages({
+      reasonForJobSearchDescription: {
+        id: 'vmst.ub.application:employment.labels.reasonForJobSearchDescription',
+        defaultMessage:
+          'Hver er ástæða þess að þú ert í atvinnuleit/ert ekki í starfi?',
+        description: 'Reason for job search dropdown description',
+      },
+      reasonForJobSearchLabel: {
+        id: 'vmst.ub.application:employment.labels.reasonForJobSearchLabel',
+        defaultMessage: 'Ástæða atvinnuleitar',
+        description: 'Reason for job search dropdown label',
+      },
+      reasonForJobSearchPlaceholder: {
+        id: 'vmst.ub.application:employment.labels.reasonForJobSearchPlaceholder',
+        defaultMessage: 'Veldu möguleika',
+        description: 'Reason for job search dropdown placeholder',
+      },
+      furtherExplanationLabel: {
+        id: 'vmst.ub.application:employment.labels.furtherExplanationLabel',
+        defaultMessage: 'Nánari skýringar',
+        description: 'Further explanation label',
+      },
+      additionalReasonForJobSearchDescription: {
+        id: 'vmst.ub.application:employment.labels.additionalReasonForJobSearchDescription',
+        defaultMessage:
+          'Hér getur þú sett inn frekari skýringar um ástæður atvinnuleysis:',
+        description: 'Additional reason for job search dropdown description',
+      },
+      additionalReasonForJobSearchLabel: {
+        id: 'vmst.ub.application:employment.labels.additionalReasonForJobSearchLabel',
+        defaultMessage: 'Skýringar á atvinnuleysi',
+        description: 'Additional reason for job search textarea description',
+      },
+    }),
+  },
   yourRightsAgreement: defineMessages({
     sectionTitle: {
       id: 'vmst.ub.application:employment.yourRightsAgreement.sectionTitle',
@@ -34,13 +64,21 @@ export const employment = {
     },
     pageTitle: {
       id: 'vmst.ub.application:employment.yourRightsAgreement.pageTitle',
-      defaultMessage: 'Þín réttindi og skyldur á meðan þú ert í atvinnuleit',
+      defaultMessage: 'Réttindi og skyldur á meðan þú ert í atvinnuleit',
       description: 'Your rights agreement page description',
     },
     pageDescription: {
       id: 'vmst.ub.application:employment.yourRightsAgreement.pageDescription#markdown',
-      defaultMessage:
-        'Áður en þú staðfestir umsókn þína um atvinnuleysistryggingar er nauðsynlegt að þú kynnir þér eftirfarandi reglur um réttindi og skyldur umsækjenda um atvinnuleysistryggingar. Launafólk og þeir sem hafa verið sjálfstætt starfandi á aldrinum 18-70 ára eiga rétt á atvinnuleysisbótum að því tilskildu að þeir hafi áunnið sér bótarétt og uppfylli skilyrði laga um atvinnuleysistryggingar og vinnumarkaðsaðgerðir svo sem þau:',
+      defaultMessage: `Áður en þú staðfestir umsókn um atvinnuleysisbætur er nauðsynlegt að 
+        þú kynnir þér eftirfarandi reglur um réttindi og skyldur umsækjenda um atvinnuleysisbætur. 
+        \nLaunafólk og þau sem hafa verið sjálfstætt starfandi á aldrinum 18-70 ára eiga 
+        rétt á atvinnuleysisbótum að því tilskildu að þeir hafi áunnið sér bótarétt og 
+        uppfylli skilyrði laga um atvinnuleysisbætur og vinnumarkaðsaðgerðir svo sem þau:
+        \n* Að vera atvinnulaus
+        \n* Að vera búsett/ur og staddur á Íslandi
+        \n* Að vera virk/ur í atvinnuleit
+        \n* Að vera vinnufær
+        \n* Að vera reiðubúin/n/ð að ráða sig til almennra starfa`,
       description: 'Your rights agreement page description',
     },
   }),

@@ -69,6 +69,7 @@ export const currentSituationSubSection = buildSubSection({
             employmentMessages.currentSituation.labels
               .reasonForUnemploymentLabel,
           variant: 'textarea',
+          rows: 6,
           condition: isUnemployed,
         }),
 
