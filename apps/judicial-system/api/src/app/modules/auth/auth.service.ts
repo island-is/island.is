@@ -73,6 +73,27 @@ export class AuthService {
     }
   }
 
+  async revokeRefreshToken(token: string) {
+    const requestBody = new URLSearchParams({
+      client_id: this.config.clientId,
+      client_secret: this.config.clientSecret,
+      redirect_uri: this.config.redirectUri,
+      token,
+      token_type_hint: 'refresh_token',
+    })
+
+    const response = await fetch(`${this.config.issuer}/connect/revocation`, {
+      method: 'POST',
+      body: requestBody,
+    })
+
+    if (!response.ok) {
+      throw new UnauthorizedException(
+        `Failed to revoke refresh token: ${response.status} - ${response.statusText}`,
+      )
+    }
+  }
+
   getExpiry(token: string) {
     const decodedToken = jwt.decode(token, { complete: true })
     if (decodedToken && typeof decodedToken === 'object') {

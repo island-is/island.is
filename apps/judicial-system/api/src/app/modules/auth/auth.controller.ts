@@ -258,13 +258,13 @@ export class AuthController {
     try {
       this.logger.debug('Handling token expiry')
 
-      const accessToken = req.cookies[IDS_ACCESS_TOKEN_NAME]
+      const accessToken = req.cookies[this.idToken.name]
       if (!this.authService.isTokenExpired(accessToken)) {
         this.logger.debug('Token is valid')
         res.status(200).send()
         return
       }
-      const refreshToken = req.cookies[IDS_REFRESH_TOKEN_NAME]
+      const refreshToken = req.cookies[this.refreshToken.name]
       const idsTokens = await this.authService.refreshToken(refreshToken)
 
       const verifiedUserToken = await this.authService.verifyIdsToken(
@@ -314,6 +314,9 @@ export class AuthController {
     this.logger.debug('Received logout request')
 
     const idToken = req.cookies[this.idToken.name]
+    const refreshToken = req.cookies[this.refreshToken.name]
+
+    this.authService.revokeRefreshToken(refreshToken)
 
     this.clearCookies(res)
 
