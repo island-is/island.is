@@ -5,6 +5,7 @@ import {
   ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   ApiProtectedV1PensionCalculatorPostRequest,
+  ApiProtectedV1QuestionnairesSelfassessmentGetRequest,
   ApplicantApi,
   ApplicationApi,
   DeathBenefitsApi,
@@ -13,8 +14,10 @@ import {
   MedicalDocumentsApi,
   PaymentPlanApi,
   PensionCalculatorApi,
+  QuestionnairesApi,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
   TrWebApiServicesDomainMedicalDocumentsModelsRehabilitationPlan,
+  TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
   TrWebApiServicesDomainUnionsModelsUnionDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
@@ -42,6 +45,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly incomePlanApi: IncomePlanApi,
     private readonly generalApi: GeneralApi,
     private readonly medicalDocumentsApi: MedicalDocumentsApi,
+    private readonly questionnairesApi: QuestionnairesApi,
   ) {}
 
   private applicationApiWithAuth = (user: User) =>
@@ -70,6 +74,9 @@ export class SocialInsuranceAdministrationClientService {
 
   private medicalDocumentsApiWithAuth = (user: User) =>
     this.medicalDocumentsApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private questionnairesApiWithAuth = (user: User) =>
+    this.questionnairesApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   getPaymentPlan(
     user: User,
@@ -213,5 +220,16 @@ export class SocialInsuranceAdministrationClientService {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsRehabilitationplanGet()
+  }
+
+  async getSelfAssessmentQuestionnaire(
+    user: User,
+    languages: ApiProtectedV1QuestionnairesSelfassessmentGetRequest,
+  ): Promise<
+    Array<TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto>
+  > {
+    return this.questionnairesApiWithAuth(
+      user,
+    ).apiProtectedV1QuestionnairesSelfassessmentGet(languages)
   }
 }
