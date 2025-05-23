@@ -1,7 +1,13 @@
-import { ReactNode, useContext } from 'react'
+import { FC, ReactNode, useContext } from 'react'
 import { useRouter } from 'next/router'
 
-import { Box, Tag, TagVariant, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Tag,
+  TagVariant,
+  Text,
+} from '@island.is/island-ui/core'
 import { caseTables, getCaseTableType } from '@island.is/judicial-system/types'
 import {
   CasesLayout,
@@ -11,7 +17,10 @@ import {
   useContextMenu,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { GenericTable } from '@island.is/judicial-system-web/src/components/Table'
+import {
+  GenericTable,
+  TableSkeleton,
+} from '@island.is/judicial-system-web/src/components/Table'
 import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
 import {
   CaseTableCell,
@@ -156,16 +165,16 @@ const render = (cell: CaseTableCell): ReactNode => {
   }
 }
 
-const CaseTable = () => {
+const CaseTable: FC = () => {
   const router = useRouter()
-  const { user } = useContext(UserContext)
+  const { user, hasError } = useContext(UserContext)
   const { openCaseInNewTabMenuItem } = useContextMenu()
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
 
   const type = getCaseTableType(user, router.asPath.split('/').pop())
 
-  const { data, loading } = useCaseTableQuery({
+  const { data, loading, error } = useCaseTableQuery({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     variables: { input: { type: type! } },
     skip: !type,
@@ -177,40 +186,77 @@ const CaseTable = () => {
 
   const caseTableData = data?.caseTable
 
+  const errorMessage = (
+    <div className={styles.infoContainer}>
+      <AlertMessage
+        type="error"
+        title="Ekki tókst að sækja málalista"
+        message="Ekki tókst að ná sambandi við Réttarvörslugátt. Atvikið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar."
+      />
+    </div>
+  )
+
   return (
     <CasesLayout>
       <PageHeader title="Málatafla" />
       <div className={styles.logoContainer}>
         <Logo />
       </div>
-      {table && (
-        <>
-          <SectionHeading title={table.title} />
-          {!loading && caseTableData && (
-            <GenericTable
-              tableId={type}
-              columns={table.columns.map((column) => ({
-                title: column.title,
-                compare,
-                render,
-              }))}
-              rows={caseTableData.rows.map((row) => ({
-                id: row.caseId,
-                cells: row.cells,
-              }))}
-              generateContextMenuItems={(id) => {
-                return [openCaseInNewTabMenuItem(id)]
-              }}
-              loadingIndicator={LoadingIndicator}
-              rowIdBeingOpened={isOpeningCaseId}
-              showLoading={showLoading}
-              onClick={(id) => {
-                handleOpenCase(id)
-              }}
+      {/* If we cannot get the user, then we cannot determine which table to show and only show an error message */}
+      {hasError && errorMessage}
+      {user && // Wait until we have a user
+        (table ? (
+          <>
+            <SectionHeading title={table.title} />
+            {loading ? (
+              <TableSkeleton />
+            ) : error ? (
+              /* If we cannot get the table contents, then we show an error message after the table title */
+              errorMessage
+            ) : (
+              caseTableData &&
+              (caseTableData.rows.length > 0 ? (
+                <GenericTable
+                  tableId={type}
+                  columns={table.columns.map((column) => ({
+                    title: column.title,
+                    compare,
+                    render,
+                  }))}
+                  rows={caseTableData.rows.map((row) => ({
+                    id: row.caseId,
+                    cells: row.cells,
+                  }))}
+                  generateContextMenuItems={(id) => {
+                    return [openCaseInNewTabMenuItem(id)]
+                  }}
+                  loadingIndicator={LoadingIndicator}
+                  rowIdBeingOpened={isOpeningCaseId}
+                  showLoading={showLoading}
+                  onClick={(id) => {
+                    handleOpenCase(id)
+                  }}
+                />
+              ) : (
+                <div className={styles.infoContainer}>
+                  <AlertMessage
+                    type="info"
+                    title="Engin mál fundust"
+                    message="Engin mál fundust í þessum flokki"
+                  />
+                </div>
+              ))
+            )}
+          </>
+        ) : (
+          /* If we cannot determine which table to show, then the user does not have access to the current route */
+          <div className={styles.infoContainer}>
+            <AlertMessage
+              type="error"
+              title="Þú hefur ekki aðgang að þessum málalista"
             />
-          )}
-        </>
-      )}
+          </div>
+        ))}
     </CasesLayout>
   )
 }
