@@ -1,5 +1,6 @@
 export enum ApplicationTypes {
   EXAMPLE = 'ExampleForm',
+  EXAMPLE_AUTH_DELEGATION = 'ExampleAuthDelegation',
   EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
   EXAMPLE_INPUTS = 'ExampleInputs',
   EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
@@ -82,6 +83,7 @@ export enum ApplicationTypes {
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
   WORK_ACCIDENT_NOTIFICATION = 'WorkAccidentNotification',
   MACHINE_REGISTRATION = 'MachineRegistration',
+  RENTAL_AGREEMENT = 'RentalAgreement',
   SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
@@ -107,6 +109,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
     slug: 'example-payment',
     translation: 'ep.application',
+  },
+  [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: {
+    slug: 'example-auth-delegation',
+    translation: 'exad.application',
   },
   [ApplicationTypes.EXAMPLE_STATE_TRANSFERS]: {
     slug: 'example-state-transfers',
@@ -423,6 +429,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.MACHINE_REGISTRATION]: {
     slug: 'nyskraning-taekis',
     translation: ['aosh.rnm.application'],
+  },
+  [ApplicationTypes.RENTAL_AGREEMENT]: {
+    slug: 'leigusamningur',
+    translation: 'ra.application',
   },
   [ApplicationTypes.SEMINAR_REGISTRATION]: {
     slug: 'vinnueftirlitid-namskeid',

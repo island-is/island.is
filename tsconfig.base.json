@@ -119,6 +119,7 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/hms": ["libs/api/domains/hms/src/index.ts"],
       "@island.is/api/domains/hms-loans": [
         "libs/api/domains/hms-loans/src/index.ts"
       ],
@@ -252,7 +253,7 @@
         "libs/api/domains/work-machines/src/index.ts"
       ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
-      "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
+      "@island.is/api/mocks/native": ["libs/api/mocks/src/native.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
@@ -384,6 +385,9 @@
       "@island.is/application/templates/european-health-insurance-card": [
         "libs/application/templates/european-health-insurance-card/src/index.ts"
       ],
+      "@island.is/application/templates/examples/example-auth-delegation": [
+        "libs/application/templates/examples/example-auth-delegation/src/index.ts"
+      ],
       "@island.is/application/templates/examples/example-common-actions": [
         "libs/application/templates/examples/example-common-actions/src/index.ts"
       ],
@@ -512,6 +516,9 @@
       ],
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
+      ],
+      "@island.is/application/templates/rental-agreement": [
+        "libs/application/templates/rental-agreement/src/index.ts"
       ],
       "@island.is/application/templates/secondary-school": [
         "libs/application/templates/secondary-school/src/index.ts"
@@ -705,6 +712,7 @@
       "@island.is/clients/health-directorate": [
         "libs/clients/health-directorate/src/index.ts"
       ],
+      "@island.is/clients/hms": ["libs/clients/hms/src/index.ts"],
       "@island.is/clients/hms-housing-benefits": [
         "libs/clients/hms-housing-benefits/src/index.ts"
       ],
