@@ -69,13 +69,11 @@ runs:
 
     - name: Yarn install (root)
       working-directory: ${{ inputs.working-directory }}
-      if: steps.restore-cache-root.outputs.cache-hit != 'true'
       shell: bash
       run: yarn install --immutable
 
     - name: Yarn install (infra)
       working-directory: ./infra
-      if: steps.restore-cache-infra.outputs.cache-hit != 'true'
       shell: bash
       run: yarn install --immutable
 
