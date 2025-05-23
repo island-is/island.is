@@ -99,7 +99,7 @@ export class AuthController {
   }
 
   // TEMP: To begin with we will store the two tokens in the session cookie as we do with other tokens.
-  // The plan is then to move it to a more secure storage.
+  // In the future based on usage, we might consider storing it not in the session cookie
   private readonly accessToken: Cookie = {
     name: IDS_ACCESS_TOKEN_NAME,
     options: this.defaultCookieOptions,
