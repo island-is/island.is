@@ -69,7 +69,6 @@ import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComp
 import { DigitalIcelandFooter } from './Themes/DigitalIcelandTheme/DigitalIcelandFooter'
 import { FiskistofaDefaultHeader } from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
-import { FjarsyslaRikisinsFooter } from './Themes/FjarsyslaRikisinsTheme'
 import { GevFooter } from './Themes/GevTheme'
 import { HeilbrigdisstofnunAusturlandsFooter } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
 import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
@@ -684,15 +683,6 @@ export const OrganizationFooter: React.FC<
           title={organization.title}
           footerItems={organization.footerItems}
           logo={organization.logo?.url}
-        />
-      )
-      break
-    case 'fjarsysla-rikisins':
-    case 'the-financial-management-authority':
-      OrganizationFooterComponent = (
-        <FjarsyslaRikisinsFooter
-          namespace={namespace}
-          title={organization.title}
         />
       )
       break

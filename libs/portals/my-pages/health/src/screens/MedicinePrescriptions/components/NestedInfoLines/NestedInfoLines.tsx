@@ -22,7 +22,8 @@ const NestedInfoLines: React.FC<Props> = ({
 }) => {
   return (
     <Box
-      padding={[0, 0, 1, 3, 3]}
+      padding={[0, 0, 1, 3]}
+      paddingBottom={0}
       background={backgroundColor === 'blue' ? 'blue100' : 'white'}
     >
       {label && (
