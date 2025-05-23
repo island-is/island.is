@@ -11,7 +11,6 @@ import { formatDate } from '../../../utils'
 import { Routes } from '../../../lib/constants'
 import {
   NationalRegistryIndividual,
-  NationalRegistrySpouse,
   NationalRegistrySpouseV3,
 } from '@island.is/application/types'
 
