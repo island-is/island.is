@@ -449,6 +449,7 @@ const useS3Upload = (
           id: `${name}-${uuid()}`,
           name,
           category: CaseFileCategory.CRIMINAL_RECORD,
+          status: FileUploadStatus.uploading,
           percent: 0,
         }
 
