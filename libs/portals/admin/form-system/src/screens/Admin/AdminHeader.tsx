@@ -23,6 +23,10 @@ export const AdminHeader = (props: Props) => {
   const { organizations, onOrganizationChange } = props
   const { control } = useContext(ControlContext)
 
+  if (!control) {
+    console.log('AdminHeader must be used within ControlContext')
+  }
+
   return (
     <Box marginBottom={4} marginLeft={2}>
       <Row>

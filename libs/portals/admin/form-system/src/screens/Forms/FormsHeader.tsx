@@ -36,6 +36,10 @@ export const FormsHeader = (props: Props) => {
   const { formatMessage } = useIntl()
   const { control } = useContext(ControlContext)
 
+  if (!control) {
+    console.log('FormsHeader must be used within ControlContext')
+  }
+
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM, {
     onCompleted: (newFormData) => {
       if (newFormData?.createFormSystemForm?.form) {

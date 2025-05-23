@@ -24,6 +24,10 @@ export const ApplicationsHeader = (props: Props) => {
   const { formatMessage } = useIntl()
   const { control } = useContext(ControlContext)
 
+  if (!control) {
+    console.log('ApplicationsHeader must be used within ControlContext')
+  }
+
   return (
     <Box marginBottom={4} marginLeft={2}>
       <Row>
