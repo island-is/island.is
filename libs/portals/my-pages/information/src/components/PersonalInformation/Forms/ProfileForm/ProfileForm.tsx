@@ -81,8 +81,7 @@ export const ProfileForm = ({
     return (
       orderBy(
         userProfile?.emails?.filter((item) => item.email),
-        ['primary'],
-        ['desc'],
+        ['email'],
       ) ?? []
     )
   }, [userProfile?.emails])

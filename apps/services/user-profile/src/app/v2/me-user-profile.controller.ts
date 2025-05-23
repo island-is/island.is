@@ -232,16 +232,16 @@ export class MeUserProfileController {
     )
   }
 
-  @Patch('/actor-profile/.from-national-id')
+  @Patch('/actor-profile/set-email-by-id/.from-national-id')
   @Scopes(ApiScope.internal)
   @Documentation({
     description: 'Update an actor profile with email id for the current user',
     response: { status: 200, type: ActorProfileDetailsDto },
   })
-  updateActorProfileEmailById(
+  setActorProfileEmailById(
     @CurrentUser() user: User,
-    @Param('from-national-id') fromNationalId: string,
-    @Body() dto: SetActorProfileEmailDto,
+    @Headers('X-Param-From-National-Id') fromNationalId: string,
+    @Body() body: SetActorProfileEmailDto,
   ): Promise<ActorProfileDetailsDto> {
     if (!user.actor?.nationalId) {
       throw new BadRequestException('User has no actor profile')
@@ -254,13 +254,13 @@ export class MeUserProfileController {
         action: 'updateActorProfileEmailById',
         resources: `${user.nationalId}:${user.actor.nationalId}`,
         meta: {
-          emailsId: dto.emailsId,
+          emailsId: body.emailsId,
         },
       },
       this.userProfileService.setActorProfileEmail({
         toNationalId: user.nationalId,
         fromNationalId,
-        emailsId: dto.emailsId,
+        emailsId: body.emailsId,
       }),
     )
   }

@@ -1,0 +1,10 @@
+mutation UserProfileSetActorProfileEmail($input: SetActorProfileEmailInput!) {
+  userProfileSetActorProfileEmail(input: $input) {
+    email
+    emailStatus
+    needsNudge
+    nationalId
+    emailNotifications
+    emailVerified
+  }
+}

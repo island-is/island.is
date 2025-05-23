@@ -1,4 +1,4 @@
-query ActorProfiles {
+query UserProfileActorProfiles {
   userProfileActorProfiles {
     data {
       fromNationalId

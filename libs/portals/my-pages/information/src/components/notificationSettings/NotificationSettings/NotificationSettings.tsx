@@ -68,7 +68,10 @@ export const NotificationSettings = () => {
     try {
       await updateUserProfile({
         variables: {
-          input: newSettings,
+          input: {
+            documentNotifications: newSettings.documentNotifications,
+            canNudge: newSettings.canNudge,
+          },
         },
       })
     } catch {

@@ -5,8 +5,8 @@ import { useLocale } from '@island.is/localization'
 import { UserProfileActorProfile } from '@island.is/api/schema'
 import { toast } from '@island.is/island-ui/core'
 import { mNotifications } from '../../../lib/messages'
-import { useUpdateActorProfileMutation } from '../ActorNotificationSettings/userProfileUpdateActorProfile.generated'
 import { SettingsCard } from './SettingsCard/SettingsCard'
+import { useUserProfileUpdateActorProfileMutation } from './userProfileUpdateActorProfile.mutation.generated'
 
 interface ActorProfileSettingsCardProps {
   profile: UserProfileActorProfile
@@ -16,7 +16,8 @@ export const ActorProfileSettingsCard = ({
   profile: initialProfile,
 }: ActorProfileSettingsCardProps) => {
   const { formatMessage } = useLocale()
-  const [updateActorProfile] = useUpdateActorProfileMutation()
+  const [userProfileUpdateActorProfile] =
+    useUserProfileUpdateActorProfileMutation()
   const [profile, setProfile] = useState(initialProfile)
 
   const onChange = async (active: boolean) => {
@@ -25,7 +26,7 @@ export const ActorProfileSettingsCard = ({
     setProfile(newProfile)
 
     try {
-      await updateActorProfile({
+      await userProfileUpdateActorProfile({
         variables: {
           input: {
             fromNationalId: profile.fromNationalId,

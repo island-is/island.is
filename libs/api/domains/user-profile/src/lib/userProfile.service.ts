@@ -19,6 +19,7 @@ import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UserProfile } from './userProfile.model'
 import { UserProfileServiceV2 } from './V2/userProfile.service'
 import { UpdateActorProfileEmailInput } from './dto/updateActorProfileEmail.input'
+import { SetActorProfileEmailInput } from './dto/setActorProfileEmail.input'
 
 @Injectable()
 export class UserProfileService {
@@ -137,17 +138,20 @@ export class UserProfileService {
     return this.userProfileServiceV2.getUserProfiles(user, query)
   }
 
-  async updateActorProfileEmail(
-    input: UpdateActorProfileEmailInput,
-    user: User,
-  ) {
-    return this.userProfileServiceV2.updateActorProfileEmail(input, user)
-  }
-
   async getUserProfileByNationalId(user: User, nationalId: string) {
     return this.userProfileServiceV2.getUserProfileByNationalId(
       user,
       nationalId,
+    )
+  }
+
+  async userProfileSetActorProfileEmailById(
+    input: SetActorProfileEmailInput,
+    user: User,
+  ) {
+    return this.userProfileServiceV2.userProfileSetActorProfileEmailById(
+      input,
+      user,
     )
   }
 

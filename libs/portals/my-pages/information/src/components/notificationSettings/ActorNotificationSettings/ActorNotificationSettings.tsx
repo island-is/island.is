@@ -14,10 +14,10 @@ import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 import { Problem } from '@island.is/react-spa/shared'
 import { ActorProfileEmails } from '../ActorProfileEmails/ActorProfileEmails'
 import * as styles from './ActorNotificationSettings.css'
-import { useActorProfilesQuery } from './userProfileActorProfiles.query.generated'
+import { useUserProfileActorProfilesQuery } from './userProfileActorProfiles.query.generated'
 
 export const ActorNotificationSettings = () => {
-  const { data, loading, error } = useActorProfilesQuery()
+  const { data, loading, error } = useUserProfileActorProfilesQuery()
   const { formatMessage } = useLocale()
 
   const getContent = () => {

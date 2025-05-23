@@ -15,6 +15,7 @@ import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { DeleteTokenResponse } from './dto/deleteTokenResponse'
+import { SetActorProfileEmailInput } from './dto/setActorProfileEmail.input'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
@@ -24,19 +25,16 @@ import {
   EmailsDataLoader,
   EmailsLoader,
 } from './modules/user-emails/emails.loader'
-import { UserEmailsService } from './modules/user-emails/userEmails.service'
 import { Response } from './response.model'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
+import { ActorProfileDetails } from './dto/actorProfileDetails'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => UserProfile)
 export class UserProfileResolver {
-  constructor(
-    private readonly userProfileService: UserProfileService,
-    private readonly userEmailService: UserEmailsService,
-  ) {}
+  constructor(private readonly userProfileService: UserProfileService) {}
 
   @Query(() => UserProfile, { nullable: true })
   getUserProfile(
@@ -114,6 +112,19 @@ export class UserProfileResolver {
   async confirmNudge(@CurrentUser() user: User): Promise<boolean> {
     await this.userProfileService.confirmNudge(user)
     return true
+  }
+
+  @Mutation(() => ActorProfileDetails, {
+    name: 'userProfileSetActorProfileEmail',
+  })
+  async setActorProfileEmail(
+    @Args('input') input: SetActorProfileEmailInput,
+    @CurrentUser() user: User,
+  ): Promise<ActorProfileDetails> {
+    return this.userProfileService.userProfileSetActorProfileEmailById(
+      input,
+      user,
+    )
   }
 
   @ResolveField('emails', () => [Email], { nullable: true })

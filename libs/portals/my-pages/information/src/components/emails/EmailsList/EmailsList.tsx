@@ -11,7 +11,7 @@ import {
   client,
 } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { useSetActorProfileEmailMutation } from './SetActorProfileEmail.mutation.generated'
+import { useUserProfileSetActorProfileEmailMutation } from './UserProfileSetActorProfileEmail.mutation.generated'
 
 type EmailsListProps = {
   items: Email[]
@@ -53,7 +53,7 @@ export const EmailsList = ({ items }: EmailsListProps) => {
     },
   })
 
-  const [setActorProfileEmail] = useSetActorProfileEmailMutation({
+  const [setActorProfileEmail] = useUserProfileSetActorProfileEmailMutation({
     onCompleted: (data) => {
       if (data.userProfileSetActorProfileEmail) {
         refreshEmailList()

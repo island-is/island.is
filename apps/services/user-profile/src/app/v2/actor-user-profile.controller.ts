@@ -15,7 +15,6 @@ import {
   Controller,
   Get,
   Headers,
-  Param,
   Patch,
   Post,
   UseGuards,
@@ -223,14 +222,14 @@ export class ActorUserProfileController {
     )
   }
 
-  @Patch('/actor-profile/:fromNationalId')
+  @Patch('/actor-profile/set-email-by-id/.from-national-id')
   @Documentation({
     description: 'Update an actor profile with email id for the current user',
     response: { status: 200, type: ActorProfileDetailsDto },
   })
   updateActorProfileEmailById(
     @CurrentUser() user: User,
-    @Param('fromNationalId') fromNationalId: string,
+    @Headers('X-Param-From-National-Id') fromNationalId: string,
     @Body() dto: SetActorProfileEmailDto,
   ): Promise<ActorProfileDetailsDto> {
     if (!user.actor?.nationalId) {

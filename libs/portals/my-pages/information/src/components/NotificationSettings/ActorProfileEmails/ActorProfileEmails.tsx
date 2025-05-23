@@ -11,8 +11,8 @@ import { Email, useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { useCallback, useMemo, useState } from 'react'
 import { emailsMsg } from '../../../lib/messages'
 import { ProfileEmailForm } from '../../emails/ProfileEmailForm/ProfileEmailForm'
-import { useUpdateActorProfileEmailMutation } from '../ActorNotificationSettings/userProfileUpdateActorProfileEmail.generated'
 import * as styles from './ActorProfileEmails.css'
+import { useUserProfileSetActorProfileEmailMutation } from './userProfileSetActorProfileEmail.mutation.generated'
 
 type EmailOption = Option<string> & { id: string }
 
@@ -43,9 +43,9 @@ export const ActorProfileEmails = ({
     }
   }, [userProfile, selectedEmailId])
 
-  const [updateActorProfileEmail] = useUpdateActorProfileEmailMutation({
+  const [setActorProfileEmail] = useUserProfileSetActorProfileEmailMutation({
     onCompleted: (data) => {
-      if (data.userProfileUpdateActorProfileEmail) {
+      if (data.userProfileSetActorProfileEmail) {
         toast.success(formatMessage(emailsMsg.emailSetActorProfileSuccess))
         refetch()
       }
@@ -60,11 +60,10 @@ export const ActorProfileEmails = ({
       return
     }
 
-    updateActorProfileEmail({
+    setActorProfileEmail({
       variables: {
         input: {
-          emailsId: option.id,
-          fromNationalId: userProfile.nationalId,
+          emailId: option.id,
         },
       },
     })
