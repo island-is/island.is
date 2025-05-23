@@ -11,7 +11,7 @@ import { formatDate } from '../../../utils'
 import { Routes } from '../../../lib/constants'
 import {
   NationalRegistryIndividual,
-  NationalRegistrySpouseV3,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 
 export const MaritalStatusSubSection = buildSubSection({
@@ -52,7 +52,7 @@ export const MaritalStatusSubSection = buildSubSection({
       externalData,
       'spouseDetails.data',
       undefined,
-    ) as NationalRegistrySpouseV3 | undefined
+    ) as NationalRegistrySpouse | undefined
 
     const maritalStatus = spouseDetails?.maritalStatus
     const hasSpouse = !!spouseDetails?.nationalId
@@ -83,7 +83,7 @@ export const MaritalStatusSubSection = buildSubSection({
               externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
             const maritalStatus = spouseDetails?.maritalStatus
 
             const isMarried = maritalStatus === '3'
@@ -111,7 +111,7 @@ export const MaritalStatusSubSection = buildSubSection({
               externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
             const maritalStatus = spouseDetails?.maritalStatus
 
             const isMarried = maritalStatus === '3'
@@ -122,7 +122,7 @@ export const MaritalStatusSubSection = buildSubSection({
               application.externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
 
             return spouseDetails?.lastModified
               ? formatDate(new Date(spouseDetails.lastModified))
@@ -141,7 +141,7 @@ export const MaritalStatusSubSection = buildSubSection({
               externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
             const maritalStatus = spouseDetails?.maritalStatus
             const hasSpouse = !!spouseDetails?.nationalId
 
@@ -170,7 +170,7 @@ export const MaritalStatusSubSection = buildSubSection({
               externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
             const maritalStatus = spouseDetails?.maritalStatus
             const hasSpouse = !!spouseDetails?.nationalId
 
@@ -182,7 +182,7 @@ export const MaritalStatusSubSection = buildSubSection({
               application.externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
 
             return spouseDetails?.lastModified
               ? formatDate(new Date(spouseDetails.lastModified))
@@ -202,7 +202,7 @@ export const MaritalStatusSubSection = buildSubSection({
               application.externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
 
             return spouseDetails?.nationalId
           },
@@ -218,7 +218,7 @@ export const MaritalStatusSubSection = buildSubSection({
               application.externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
 
             return spouseDetails?.name
           },
@@ -234,7 +234,7 @@ export const MaritalStatusSubSection = buildSubSection({
               application.externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
 
             return spouseDetails?.birthplace?.location
               ? spouseDetails?.birthplace?.location
@@ -252,7 +252,7 @@ export const MaritalStatusSubSection = buildSubSection({
               application.externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
 
             return spouseDetails?.citizenship?.name
               ? spouseDetails?.citizenship?.name
@@ -285,7 +285,7 @@ export const MaritalStatusSubSection = buildSubSection({
               externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
 
             const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
             const mySpouseAddressCombination = `${spouseDetails?.address?.streetAddress}, ${spouseDetails?.address?.postalCode} ${spouseDetails?.address?.city}`
@@ -303,7 +303,7 @@ export const MaritalStatusSubSection = buildSubSection({
               application.externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
 
             return `${spouseDetails?.address?.streetAddress}, ${spouseDetails?.address?.postalCode} ${spouseDetails?.address?.city}`
           },
@@ -318,7 +318,7 @@ export const MaritalStatusSubSection = buildSubSection({
               externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
 
             const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
             const mySpouseAddressCombination = `${spouseDetails?.address?.streetAddress}, ${spouseDetails?.address?.postalCode} ${spouseDetails?.address?.city}`
@@ -341,7 +341,7 @@ export const MaritalStatusSubSection = buildSubSection({
               externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
 
             const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
             const mySpouseAddressCombination = `${spouseDetails?.address?.streetAddress}, ${spouseDetails?.address?.postalCode} ${spouseDetails?.address?.city}`
@@ -365,7 +365,7 @@ export const MaritalStatusSubSection = buildSubSection({
               externalData,
               'spouseDetails.data',
               undefined,
-            ) as NationalRegistrySpouseV3 | undefined
+            ) as NationalRegistrySpouse | undefined
 
             const myAddressCombination = `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
             const mySpouseAddressCombination = `${spouseDetails?.address?.streetAddress}, ${spouseDetails?.address?.postalCode} ${spouseDetails?.address?.city}`
