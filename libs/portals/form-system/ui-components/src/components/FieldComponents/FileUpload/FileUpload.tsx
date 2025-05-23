@@ -7,25 +7,60 @@ import {
   UploadFile,
   InputFileUpload
 } from '@island.is/island-ui/core'
-import { useCallback, useState } from 'react'
+import { Dispatch, useCallback, useState } from 'react'
 import { uuid } from 'uuidv4'
 import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
 import { fileTypes } from '../../../lib/fileTypes'
 import { m, webMessages } from '../../../lib/messages'
+import { useMutation } from '@apollo/client'
+import { CREATE_UPLOAD_URL } from '@island.is/form-system/graphql'
+import { uploadFileToS3 } from '../../../hooks/S3Upload/S3Upload'
+import { Action } from '../../../lib'
+import { url } from 'inspector'
 
 interface Props {
   item: FormSystemField
   hasError?: boolean
+  dispatch?: Dispatch<Action>
   lang?: 'is' | 'en'
   applicationId?: string
 }
 
-export const FileUpload = ({ item, hasError, lang = 'is' }: Props) => {
+export const FileUpload = ({ item, hasError, lang = 'is', dispatch }: Props) => {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [error, setError] = useState<string | undefined>(hasError ? 'error' : undefined)
   const { formatMessage } = useIntl()
   const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
+
+  const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
+
+  const uploadFileFlow = async (file: UploadFile) => {
+    try {
+      const { data } = await createUploadUrl({
+        variables: {
+          filename: file.name
+        }
+      })
+
+      const {
+        createUploadUrl: { url, fields }
+      } = data
+
+      const response = await uploadFileToS3(file, url, fields)
+      const responseUrl = `${response.url}/${fields.key}`
+
+      // TODO: add dispatch function to store the file
+
+
+      return Promise.resolve({ key: fields.key, url: responseUrl })
+    } catch (e) {
+      console.error('Error uploading file', e)
+      return Promise.reject()
+    }
+
+
+  }
 
   const onChange = useCallback((selectedFiles: File[]) => {
     if (files.length + selectedFiles.length > (item?.fieldSettings?.maxFiles ?? 1)) {
@@ -48,6 +83,7 @@ export const FileUpload = ({ item, hasError, lang = 'is' }: Props) => {
     setFiles((prev) => [...prev, ...uploadFiles])
 
     //Upload files to S3 missing here
+
 
   }, [files, item, types, formatMessage])
 
