@@ -25,7 +25,7 @@ export const ApplicationsHeader = (props: Props) => {
   const { control } = useContext(ControlContext)
 
   if (!control) {
-    console.log('ApplicationsHeader must be used within ControlContext')
+    throw new Error('ApplicationsHeader must be used within ControlContext')
   }
 
   return (

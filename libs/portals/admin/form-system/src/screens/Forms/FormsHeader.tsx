@@ -37,7 +37,7 @@ export const FormsHeader = (props: Props) => {
   const { control } = useContext(ControlContext)
 
   if (!control) {
-    console.log('FormsHeader must be used within ControlContext')
+    throw new Error('FormsHeader must be used within ControlContext')
   }
 
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM, {

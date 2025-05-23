@@ -24,7 +24,7 @@ export const AdminHeader = (props: Props) => {
   const { control } = useContext(ControlContext)
 
   if (!control) {
-    console.log('AdminHeader must be used within ControlContext')
+    throw new Error('AdminHeader must be used within ControlContext')
   }
 
   return (
