@@ -18,6 +18,10 @@ export interface NationalRegistrySpouseV3 {
   name: string
   nationalId: string
   maritalStatus: string
+  maritalDescription: string
   lastModified?: Date | null
-  address?: Address | null
+  citizenship?: {
+    code: string | null
+    name: string | null
+  } | null
 }

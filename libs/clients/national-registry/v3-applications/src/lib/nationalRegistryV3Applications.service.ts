@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common'
 
 import { BirthdayIndividual, mapBirthdayIndividual } from './mappers'
-import {
-  EinstaklingarApi,
-  HjuskapurDTO,
-  IslandIsApi,
-  LogheimiliDTO,
-} from '../../gen/fetch'
+import { EinstaklingarApi, IslandIsApi, LogheimiliDTO } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   CohabitationDto,
   formatCohabitationDtoV3FromHju,
   formatCohabitationDtoV3FromSam,
 } from './types/cohabitation.dto'
+import {
+  formatResidenceEntryDto,
+  ResidenceEntryDto,
+} from './types/residence-history-entry.dto'
 
 @Injectable()
 export class NationalRegistryV3ApplicationsClientService {
@@ -43,12 +42,18 @@ export class NationalRegistryV3ApplicationsClientService {
     )
   }
 
-  async getSpouse(auth: User): Promise<HjuskapurDTO> {
-    return await this.einstaklingarApiWithAuth(
+  async getResidenceHistory(
+    nationalId: string,
+    auth: User,
+  ): Promise<ResidenceEntryDto[] | null> {
+    const res = await this.einstaklingarApiWithAuth(
       auth,
-    ).einstaklingarKennitalaHjuskapurGet({
-      kennitala: auth.nationalId,
+    ).einstaklingarKennitalaBusetusagaGet({
+      kennitala: nationalId,
     })
+    return res
+      .map((x) => formatResidenceEntryDto(x))
+      .filter((x): x is ResidenceEntryDto => x !== null)
   }
 
   async getCohabitationInfo(

@@ -81,7 +81,7 @@ export const MaritalStatusSubSection = buildSubSection({
               undefined,
             )
 
-            return spouseInformation?.maritalStatus
+            return spouseInformation?.maritalDescription
           },
         }),
         buildTextField({
@@ -136,38 +136,22 @@ export const MaritalStatusSubSection = buildSubSection({
             return spouseDetails?.name
           },
         }),
-        // buildTextField({
-        //   id: 'maritalStatus.citizenship',
-        //   title: information.labels.maritalStatus.spouseCitizenship,
-        //   backgroundColor: 'white',
-        //   width: 'half',
-        //   readOnly: true,
-        //   defaultValue: (application: Application) => {
-        //     const spouseDetails = getValueViaPath<NationalRegistrySpouseV3>(
-        //       application.externalData,
-        //       'spouseDetails.data',
-        //       undefined,
-        //     )
-
-        //     return spouseDetails?.citizenship?.name
-        //       ? spouseDetails?.citizenship?.name
-        //       : ''
-        //   },
-        // }),
         buildTextField({
-          id: 'maritalStatus.applicantAddress',
-          title: information.labels.maritalStatus.applicantAddress,
+          id: 'maritalStatus.citizenship',
+          title: information.labels.maritalStatus.spouseCitizenship,
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const individual = getValueViaPath<NationalRegistryIndividual>(
+            const spouseDetails = getValueViaPath<NationalRegistrySpouseV3>(
               application.externalData,
-              'individual.data',
+              'spouseDetails.data',
               undefined,
             )
 
-            return `${individual?.address?.streetAddress}, ${individual?.address?.postalCode} ${individual?.address?.city}`
+            return spouseDetails?.citizenship?.name
+              ? spouseDetails?.citizenship?.name
+              : ''
           },
         }),
       ],

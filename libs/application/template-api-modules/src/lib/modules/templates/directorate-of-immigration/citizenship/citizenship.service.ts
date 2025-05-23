@@ -9,7 +9,8 @@ import {
   ApplicationWithAttachments,
   NationalRegistryBirthplace,
   NationalRegistryIndividual,
-  NationalRegistrySpouse,
+  NationalRegistryResidenceHistory,
+  NationalRegistrySpouseV3,
 } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
@@ -129,13 +130,43 @@ export class CitizenshipService extends BaseTemplateApiService {
 
   async getResidenceInIcelandLastChangeDate({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Date | null | undefined> {
-    const newResidence = await this.nationalRegistryV3Api.getLegalResidence(
-      auth,
-    )
-    console.log('newResidence', newResidence)
+  }: TemplateApiModuleActionProps): Promise<Date | null> {
+    // get residence history
+    const residenceHistory: NationalRegistryResidenceHistory[] | null =
+      await this.nationalRegistryV3Api.getResidenceHistory(
+        auth.nationalId,
+        auth,
+      )
 
-    return newResidence?.breytt
+    if (!residenceHistory) return null
+
+    // sort residence history so newest items are first, and if two items have the same date,
+    // then the Iceland item will be first
+    const countryIceland = 'IS'
+    const sortedResidenceHistory = residenceHistory
+      .filter((x) => x.dateOfChange)
+      .sort((a, b) =>
+        a.dateOfChange && b.dateOfChange && a.dateOfChange !== b.dateOfChange
+          ? a.dateOfChange > b.dateOfChange
+            ? -1
+            : 1
+          : a.country === countryIceland
+          ? -1
+          : 1,
+      )
+
+    // get the oldest change date for Iceland, where user did not move to another
+    // country in between
+    let lastChangeDate: Date | null = null
+    for (let i = 0; i < sortedResidenceHistory.length; i++) {
+      if (sortedResidenceHistory[i].country === countryIceland) {
+        lastChangeDate = sortedResidenceHistory[i].dateOfChange
+      } else {
+        break
+      }
+    }
+
+    return lastChangeDate
   }
 
   async validateApplication({
@@ -194,7 +225,7 @@ export class CitizenshipService extends BaseTemplateApiService {
     const nationalRegistryBirthplace = application.externalData.birthplace
       ?.data as NationalRegistryBirthplace | undefined
     const spouseDetails = application.externalData.spouseDetails?.data as
-      | NationalRegistrySpouse
+      | NationalRegistrySpouseV3
       | undefined
     const childrenCustodyInformation = application.externalData
       .childrenCustodyInformation?.data as
@@ -297,16 +328,16 @@ export class CitizenshipService extends BaseTemplateApiService {
         citizenshipCode: individual?.citizenship?.code,
         residenceInIcelandLastChangeDate: residenceInIcelandLastChangeDate,
         birthCountry: nationalRegistryBirthplace?.municipalityName,
-        maritalStatus: individual?.maritalTitle?.description || '',
+        maritalStatus:
+          spouseDetails?.maritalDescription ||
+          individual?.maritalTitle?.description ||
+          '',
         dateOfMaritalStatus: spouseDetails?.lastModified,
         spouse: spouseDetails?.nationalId
           ? {
               nationalId: spouseDetails.nationalId,
               name: spouseDetails.name,
-              birthCountry: spouseDetails.birthplace?.location,
               citizenshipCode: spouseDetails.citizenship?.code,
-              address: spouseDetails.address?.streetAddress,
-              reasonDifferentAddress: answers.maritalStatus?.explanation,
             }
           : undefined,
         parents: filteredParents || [],
