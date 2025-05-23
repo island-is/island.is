@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import { BirthdayIndividual, mapBirthdayIndividual } from './mappers'
-import { EinstaklingarApi, IslandIsApi, LogheimiliDTO } from '../../gen/fetch'
+import { EinstaklingarApi, IslandIsApi } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   CohabitationDto,

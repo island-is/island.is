@@ -9,10 +9,7 @@ import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
 import { formatDate } from '../../../utils'
 import { Routes } from '../../../lib/constants'
-import {
-  NationalRegistryIndividual,
-  NationalRegistrySpouseV3,
-} from '@island.is/application/types'
+import { NationalRegistrySpouseV3 } from '@island.is/application/types'
 
 export const MaritalStatusSubSection = buildSubSection({
   id: Routes.MARITALSTATUS,
