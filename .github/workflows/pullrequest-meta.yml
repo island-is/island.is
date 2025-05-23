@@ -6,7 +6,7 @@ name: Lint CI meta
 
 on:
   pull_request:
-    paths: ['.github/**', '!.github/CODEOWNERS']
+    paths: ['.github/**/*.yml', '.github/**/*.yaml', '!.github/CODEOWNERS']
 
 defaults:
   run:
