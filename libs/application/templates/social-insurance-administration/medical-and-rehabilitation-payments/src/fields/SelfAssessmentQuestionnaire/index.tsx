@@ -29,7 +29,7 @@ export const SelfAssessmentQuestionnaire: FC<FieldBaseProps> = ({
   const { formatMessage, lang: locale } = useLocale()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
-  const { selfAssessmentQuestionnaireQuestions } = getApplicationExternalData(
+  const { selfAssessmentQuestionnaire } = getApplicationExternalData(
     application.externalData,
   )
   const { questionnaire } = getApplicationAnswers(application.answers)
@@ -37,6 +37,15 @@ export const SelfAssessmentQuestionnaire: FC<FieldBaseProps> = ({
   const [currentIndex, setCurrentIndex] = useState<number>(0)
   const [questionnaireAnswers, setQuestionnaireAnswers] =
     useState<SelfAssessmentQuestionnaireAnswers[]>(questionnaire)
+
+  const selfAssessmentQuestionnaireQuestions =
+    selfAssessmentQuestionnaire.find(
+      (questionnaire) => questionnaire.language.toLowerCase() === locale,
+    )?.questions ??
+    selfAssessmentQuestionnaire.find(
+      (questionnaire) => questionnaire.language.toLowerCase() === 'is',
+    )?.questions ??
+    []
 
   useEffect(() => {
     // Disable next button until finished answering the questionnaire
@@ -128,7 +137,7 @@ export const SelfAssessmentQuestionnaire: FC<FieldBaseProps> = ({
       <Box display="flex" flexDirection="column" marginBottom={4}>
         <Box display="flex" alignItems="center" justifyContent="spaceBetween">
           <Text variant="h3" as="h3">
-            {selfAssessmentQuestionnaireQuestions[currentIndex].title}
+            {selfAssessmentQuestionnaireQuestions[currentIndex].questionTitle}
           </Text>
           <Text variant="eyebrow" color="purple400">
             {formatTextWithLocale(
@@ -147,7 +156,7 @@ export const SelfAssessmentQuestionnaire: FC<FieldBaseProps> = ({
           </Text>
         </Box>
         <Text marginTop={1}>
-          {selfAssessmentQuestionnaireQuestions[currentIndex].description}
+          {selfAssessmentQuestionnaireQuestions[currentIndex].question}
         </Text>
       </Box>
 

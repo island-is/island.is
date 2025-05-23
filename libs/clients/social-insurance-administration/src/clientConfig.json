@@ -2681,13 +2681,12 @@
     "/api/protected/v1/Questionnaires/selfassessment": {
       "get": {
         "tags": ["Questionnaires"],
-        "summary": "Returns a self assessment questionnaire (ísl. sjálfsmat)",
+        "summary": "Returns a self assessment questionnaire (ísl. sjálfsmat)\n<param name=\"languages\">A list of questionnaire languages to return. Defaults to \"IS\", \"EN\"</param>",
         "parameters": [
           {
-            "name": "language",
+            "name": "languages",
             "in": "query",
-            "description": "An optional language code which defaults to 'IS'",
-            "schema": { "type": "string", "default": "IS" }
+            "schema": { "type": "array", "items": { "type": "string" } }
           }
         ],
         "responses": {
@@ -2776,17 +2775,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  }
                 }
               }
             }
@@ -3628,6 +3636,7 @@
         "type": "object",
         "properties": {
           "questionCode": { "type": "string", "nullable": true },
+          "questionTitle": { "type": "string", "nullable": true },
           "question": { "type": "string", "nullable": true },
           "icfCode": { "type": "string", "nullable": true }
         },
@@ -3647,7 +3656,8 @@
               "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionDto"
             },
             "nullable": true
-          }
+          },
+          "language": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },

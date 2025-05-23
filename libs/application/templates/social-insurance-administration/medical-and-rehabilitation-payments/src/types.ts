@@ -1,7 +1,7 @@
 export interface SelfAssessmentQuestionnaireQuestions {
   icfCode: string
-  title: string
-  description: string
+  questionTitle: string
+  question: string
   questionCode: string
 }
 
@@ -12,6 +12,7 @@ export interface SelfAssessmentQuestionnaire {
   versionNumber: string
   questionnaireCode: string
   questionnaireName: string
+  language: string
 }
 
 export interface SelfAssessmentQuestionnaireAnswers {
