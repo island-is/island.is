@@ -1,6 +1,5 @@
-import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import {
-  Answer,
   Application,
   ApplicationContext,
   ExternalData,
