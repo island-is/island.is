@@ -99,69 +99,30 @@ export class RentalAgreementService extends BaseTemplateApiService {
       otherCostItems,
     } = applicationAnswers(answers)
 
-    // TODO: Use when we can send real data to Taktikal
-    // const landlordsArray = landlords?.map((landlord) => {
-    //   return {
-    //     nationalId: landlord.nationalIdWithName.nationalId,
-    //     name: landlord.nationalIdWithName.name,
-    //     email: landlord.email,
-    //     phone: formatPhoneNumber(landlord.phone),
-    //     address: landlord.address,
-    //     isRepresentative: Boolean(
-    //       landlord.isRepresentative.includes('isRepresentative'),
-    //     ),
-    //   }
-    // })
-    // const tenantsArray = tenants?.map((tenant) => {
-    //   return {
-    //     nationalId: tenant.nationalIdWithName.nationalId,
-    //     name: tenant.nationalIdWithName.name,
-    //     email: tenant.email,
-    //     phone: formatPhoneNumber(tenant.phone),
-    //     address: tenant.address,
-    //     isRepresentative: Boolean(
-    //       tenant.isRepresentative.includes('isRepresentative'),
-    //     ),
-    //   }
-    // })
-
-    // TODO: Remove when we can send real data to Taktikal
-    const landlordsArray = [
-      {
-        nationalId: '5000101886',
-        name: 'Undirritari Björn Egilsson',
-        email: 'heba@kolibri.is',
-        phone: '1111111',
-        address: 'Valshlíð 6',
-        isRepresentative: false,
-      },
-      {
-        nationalId: '6000101991',
-        name: 'Sigrún prófari Helgadóttir',
-        email: 'dadi@kolibri.is',
-        phone: '3333333',
-        address: 'Krummahólar 2',
-        isRepresentative: true,
-      },
-    ]
-    const tenantsArray = [
-      {
-        nationalId: '6000101990',
-        name: 'Undirritari Jónsson',
-        email: 'addi@kolibri.is',
-        phone: '2222222',
-        address: 'Reyrengi 55',
-        isRepresentative: false,
-      },
-      {
-        nationalId: '6000101992',
-        name: 'Dagný prófari Bjarkadóttir',
-        email: 'arni@arnij.com',
-        phone: '4444444',
-        address: 'Engimýri 3',
-        isRepresentative: true,
-      },
-    ]
+    const landlordsArray = landlords?.map((landlord) => {
+      return {
+        nationalId: landlord.nationalIdWithName.nationalId,
+        name: landlord.nationalIdWithName.name,
+        email: landlord.email,
+        phone: formatPhoneNumber(landlord.phone),
+        address: landlord.address,
+        isRepresentative: Boolean(
+          landlord.isRepresentative.includes('isRepresentative'),
+        ),
+      }
+    })
+    const tenantsArray = tenants?.map((tenant) => {
+      return {
+        nationalId: tenant.nationalIdWithName.nationalId,
+        name: tenant.nationalIdWithName.name,
+        email: tenant.email,
+        phone: formatPhoneNumber(tenant.phone),
+        address: tenant.address,
+        isRepresentative: Boolean(
+          tenant.isRepresentative.includes('isRepresentative'),
+        ),
+      }
+    })
 
     const propertyId =
       units && units.length > 0 ? units[0].propertyCode ?? null : null
@@ -228,7 +189,7 @@ export class RentalAgreementService extends BaseTemplateApiService {
         zip: searchResults?.postalCode?.toString() ?? null,
         propertyId: propertyId?.toString() ?? null,
         appraisalUnits: appraisalUnits ?? null,
-        part: 'Whole' as PropertyPart, // Whole | Part // TODO: How should this be handled? We are not asking about this in the application
+        part: 'Whole' as PropertyPart, // Whole | Part // TODO: Check how this should be handled. We are not asking for this in the application.
         type: categoryType as PropertyType,
         specialGroup:
           categoryClass === RentalHousingCategoryClass.SPECIAL_GROUPS
@@ -238,9 +199,9 @@ export class RentalAgreementService extends BaseTemplateApiService {
       lease: {
         description: description,
         rules: rules,
-        condition: conditionDescription || 'See files for info', // TODO: Check if this is ok?
+        condition: conditionDescription || 'See files for info',
         inspectorType: inspector as InspectorType,
-        hasInspectionFiles: files && files.length > 0 ? true : false,
+        hasInspectionFiles: files && files.length > 0,
         indipendantInspector: inspectorName,
         fireProtections: {
           fireBlanket: parseToNumber(fireBlanket || '0'),
@@ -250,7 +211,7 @@ export class RentalAgreementService extends BaseTemplateApiService {
         },
         startDate: startDate ? new Date(startDate) : undefined,
         endDate: endDate ? new Date(endDate) : null,
-        isFixedTerm: endDate ? true : false,
+        isFixedTerm: Boolean(endDate),
         rent: {
           amount: parseToNumber(rentalAmount || '0'),
           index:
@@ -340,9 +301,10 @@ export class RentalAgreementService extends BaseTemplateApiService {
         leaseApplication: newApplication,
       })
       .catch((error) => {
-        console.log('Error sending application to HMS Rental Service: ', error)
+        const errorMessage = `Error sending application ${id} to HMS Rental Service`
+        console.error(errorMessage, error)
 
-        throw new Error('Error sending application to HMS Rental Service')
+        throw new Error(`${errorMessage}: ${error.message || 'Unknown error'}`)
       })
   }
 }

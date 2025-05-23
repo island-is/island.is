@@ -1,6 +1,11 @@
-import { Application, ApplicationFileInput } from '@island.is/api/schema'
-import { AddressProps, ApplicantsInfo, CostField, Unit } from './types'
 import { getValueViaPath } from '@island.is/application/core'
+import { Application, ApplicationFileInput } from '@island.is/api/schema'
+import {
+  ApplicantsInfo,
+  AddressProps,
+  CostField,
+  Unit,
+} from '../../../../../../templates/rental-agreement/src/utils/types'
 
 export const formatPhoneNumber = (phone: string) => {
   return phone

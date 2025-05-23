@@ -28,8 +28,9 @@ export type CostField = {
 
 export type ApplicantsInfo = {
   nationalIdWithName: { name: string; nationalId: string }
-  email: string
   phone: string
+  address: string
+  email: string
   isRepresentative: string[]
 }
 
