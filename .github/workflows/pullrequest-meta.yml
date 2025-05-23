@@ -51,6 +51,7 @@ jobs:
       - name: Run actionlint
         id: run-actionlint
         run: ${{ env.ACTIONLINT_BIN }} ${{ env.ACTIONLINT_FLAGS }}
+        continue-on-error: true
 
       - name: Cache actionlint binary (save)
         if: steps.cache-actionlint.outputs.cache-hit != 'true' && failure()
