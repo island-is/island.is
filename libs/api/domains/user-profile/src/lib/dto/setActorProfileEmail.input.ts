@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType()
+@InputType('SetActorProfileEmailInput')
 export class SetActorProfileEmailInput {
   @Field(() => String)
   emailId!: string

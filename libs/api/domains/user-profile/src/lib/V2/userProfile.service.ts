@@ -20,9 +20,9 @@ import { UpdateUserProfileInput } from '../dto/updateUserProfileInput'
 import { IslykillService } from '../islykill.service'
 import { DeleteIslykillSettings } from '../models/deleteIslykillSettings.model'
 import { UserProfile } from '../userProfile.model'
-import { UpdateActorProfileEmailInput } from '../dto/updateActorProfileEmail.input'
 import { ActorProfileDetails } from '../dto/actorProfileDetails'
 import { SetActorProfileEmailInput } from '../dto/setActorProfileEmail.input'
+import { UserProfileSetActorProfileEmailInput } from '../dto/userProfileSetActorProfileEmail.input'
 
 @Injectable()
 export class UserProfileServiceV2 {
@@ -207,13 +207,23 @@ export class UserProfileServiceV2 {
   }
 
   async userProfileSetActorProfileEmailById(
-    input: SetActorProfileEmailInput,
+    input: UserProfileSetActorProfileEmailInput,
     user: User,
   ) {
     return this.v2MeUserProfileApiWithAuth(
       user,
     ).meUserProfileControllerSetActorProfileEmailById({
-      xParamFromNationalId: user.nationalId,
+      xParamFromNationalId: input.fromNationalId,
+      setActorProfileEmailDto: {
+        emailsId: input.emailId,
+      },
+    })
+  }
+
+  async setActorProfileEmail(input: SetActorProfileEmailInput, user: User) {
+    return this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerSetActorProfileEmail({
       setActorProfileEmailDto: {
         emailsId: input.emailId,
       },

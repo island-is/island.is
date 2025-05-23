@@ -73,7 +73,7 @@ export const ActorNotificationSettings = () => {
           >
             <Box display="flex" flexDirection="column" rowGap={3}>
               <ActorProfileSettingsCard profile={actorProfile} />
-              <ActorProfileEmails selectedEmailId={actorProfile?.emailsId} />
+              <ActorProfileEmails profile={actorProfile} />
             </Box>
           </NotificationSettingsCard>
         ))}

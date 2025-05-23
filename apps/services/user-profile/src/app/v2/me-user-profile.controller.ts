@@ -243,16 +243,12 @@ export class MeUserProfileController {
     @Headers('X-Param-From-National-Id') fromNationalId: string,
     @Body() body: SetActorProfileEmailDto,
   ): Promise<ActorProfileDetailsDto> {
-    if (!user.actor?.nationalId) {
-      throw new BadRequestException('User has no actor profile')
-    }
-
     return this.auditService.auditPromise(
       {
         auth: user,
         namespace,
         action: 'updateActorProfileEmailById',
-        resources: `${user.nationalId}:${user.actor.nationalId}`,
+        resources: `${user.nationalId}:${fromNationalId}`,
         meta: {
           emailsId: body.emailsId,
         },

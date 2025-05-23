@@ -10,12 +10,12 @@ import {
 } from '@island.is/auth-nest-tools'
 
 import { EmailsDto } from '@island.is/clients/user-profile'
+import { ActorProfileDetails } from './dto/actorProfileDetails'
 import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { DeleteTokenResponse } from './dto/deleteTokenResponse'
-import { SetActorProfileEmailInput } from './dto/setActorProfileEmail.input'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
@@ -29,7 +29,7 @@ import { Response } from './response.model'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
-import { ActorProfileDetails } from './dto/actorProfileDetails'
+import { UserProfileSetActorProfileEmailInput } from './dto/userProfileSetActorProfileEmail.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => UserProfile)
@@ -118,7 +118,7 @@ export class UserProfileResolver {
     name: 'userProfileSetActorProfileEmail',
   })
   async setActorProfileEmail(
-    @Args('input') input: SetActorProfileEmailInput,
+    @Args('input') input: UserProfileSetActorProfileEmailInput,
     @CurrentUser() user: User,
   ): Promise<ActorProfileDetails> {
     return this.userProfileService.userProfileSetActorProfileEmailById(

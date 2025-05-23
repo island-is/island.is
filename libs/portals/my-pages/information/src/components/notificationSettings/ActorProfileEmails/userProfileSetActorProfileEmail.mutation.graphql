@@ -1,7 +1,7 @@
-mutation UserProfileSetActorProfileEmail($input: SetActorProfileEmailInput!) {
+mutation UserProfileSetActorProfileEmail(
+  $input: UserProfileSetActorProfileEmailInput!
+) {
   userProfileSetActorProfileEmail(input: $input) {
     email
-    nationalId
-    emailNotifications
   }
 }

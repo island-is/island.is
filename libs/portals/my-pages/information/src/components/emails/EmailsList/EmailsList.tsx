@@ -1,17 +1,17 @@
 import { Email } from '@island.is/api/schema'
 import { Box, toast } from '@island.is/island-ui/core'
-import { useIntl } from 'react-intl'
-import { emailsMsg } from '../../../lib/messages'
-import { EmailCard, EmailCardTag, EmailCta } from '../EmailCard/EmailCard'
-import { useDeleteEmailMutation } from './DeleteEmail.mutation.generated'
-import { useSetPrimaryEmailMutation } from './SetPrimaryEmail.mutation.generated'
 import {
   DataStatus,
   USER_PROFILE,
   client,
 } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { useUserProfileSetActorProfileEmailMutation } from './UserProfileSetActorProfileEmail.mutation.generated'
+import { useIntl } from 'react-intl'
+import { emailsMsg } from '../../../lib/messages'
+import { EmailCard, EmailCardTag, EmailCta } from '../EmailCard/EmailCard'
+import { useDeleteEmailMutation } from './deleteEmail.mutation.generated'
+import { useSetActorProfileEmailMutation } from './setActorProfileEmail.mutation.generated'
+import { useSetPrimaryEmailMutation } from './setPrimaryEmail.mutation.generated'
 
 type EmailsListProps = {
   items: Email[]
@@ -53,15 +53,15 @@ export const EmailsList = ({ items }: EmailsListProps) => {
     },
   })
 
-  const [setActorProfileEmail] = useUserProfileSetActorProfileEmailMutation({
+  const [setActorProfileEmail] = useSetActorProfileEmailMutation({
     onCompleted: (data) => {
-      if (data.userProfileSetActorProfileEmail) {
+      if (data.setActorProfileEmail) {
         refreshEmailList()
         toast.success(formatMessage(emailsMsg.emailSetActorProfileSuccess))
       }
     },
     onError: () => {
-      toast.error(formatMessage(emailsMsg.emailMakePrimaryError))
+      toast.error(formatMessage(emailsMsg.emailSetActorProfileError))
     },
   })
 
@@ -94,6 +94,12 @@ export const EmailsList = ({ items }: EmailsListProps) => {
           label: formatMessage(emailsMsg.connectEmailToDelegation),
           emailId: item.id,
           onClick(emailId: string) {
+            const fromNationalId = userInfo.profile?.actor?.nationalId
+
+            if (!fromNationalId) {
+              return
+            }
+
             setActorProfileEmail({
               variables: {
                 input: {

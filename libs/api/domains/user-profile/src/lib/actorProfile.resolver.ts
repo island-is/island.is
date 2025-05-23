@@ -15,9 +15,9 @@ import {
 } from '@island.is/auth-nest-tools'
 import { IdentityClientService } from '@island.is/clients/identity'
 
-import { UserProfileServiceV2 } from './V2/userProfile.service'
 import { ActorProfile, ActorProfileResponse } from './dto/actorProfile'
 import { ActorProfileDetails } from './dto/actorProfileDetails'
+import { SetActorProfileEmailInput } from './dto/setActorProfileEmail.input'
 import { UpdateActorProfileInput } from './dto/updateActorProfileInput'
 import { UserProfileService } from './userProfile.service'
 
@@ -25,19 +25,18 @@ import { UserProfileService } from './userProfile.service'
 @Resolver(() => ActorProfile)
 export class ActorProfileResolver {
   constructor(
-    private readonly userProfileServiceV2: UserProfileServiceV2,
-    private readonly userUserProfileService: UserProfileService,
+    private readonly userProfileService: UserProfileService,
     private identityService: IdentityClientService,
   ) {}
 
   @Query(() => ActorProfileResponse, { name: 'userProfileActorProfiles' })
   actorProfiles(@CurrentUser() user: User): Promise<ActorProfileResponse> {
-    return this.userUserProfileService.getActorProfiles(user)
+    return this.userProfileService.getActorProfiles(user)
   }
 
   @Query(() => ActorProfileDetails, { name: 'userProfileActorProfile' })
   actorProfile(@CurrentUser() user: User): Promise<ActorProfileDetails> {
-    return this.userProfileServiceV2.getActorProfile(user)
+    return this.userProfileService.getActorProfile(user)
   }
 
   @Mutation(() => ActorProfile, {
@@ -47,7 +46,17 @@ export class ActorProfileResolver {
     @Args('input') input: UpdateActorProfileInput,
     @CurrentUser() user: User,
   ): Promise<ActorProfile> {
-    return this.userUserProfileService.updateActorProfile(input, user)
+    return this.userProfileService.updateActorProfile(input, user)
+  }
+
+  @Mutation(() => ActorProfileDetails, {
+    name: 'setActorProfileEmail',
+  })
+  async setActorProfileEmail(
+    @Args('input') input: SetActorProfileEmailInput,
+    @CurrentUser() user: User,
+  ): Promise<ActorProfileDetails> {
+    return this.userProfileService.setActorProfileEmail(input, user)
   }
 
   @ResolveField('fromName', () => String, { nullable: true })
