@@ -2,7 +2,7 @@ export interface CaseTableColumn {
   title: string
 }
 
-const caseNumber: CaseTableColumn = { title: 'Málsnrúmer' }
+const caseNumber: CaseTableColumn = { title: 'Málsnúmer' }
 const defendants: CaseTableColumn = { title: 'Varnaraðili' }
 const caseType: CaseTableColumn = { title: 'Tegund' }
 const appealState: CaseTableColumn = { title: 'Staða' }

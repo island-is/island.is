@@ -72,7 +72,7 @@ const prisonAdminTableGroups: CaseTableGroup[] = [
         type: CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING,
         route: 'skradir-domar',
         title: 'Skráðir dómar',
-        description: 'Mál sem hafa verið skráð',
+        description: 'Mál sem hafa verið skráð.',
       },
     ],
   },
