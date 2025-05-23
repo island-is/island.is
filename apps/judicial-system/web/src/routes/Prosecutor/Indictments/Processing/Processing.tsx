@@ -1,12 +1,4 @@
-import {
-  FC,
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { FC, Fragment, useCallback, useContext, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -15,7 +7,6 @@ import {
   Button,
   InputFileUpload,
   RadioButton,
-  Text,
 } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
@@ -34,7 +25,6 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  Case,
   CaseFileCategory,
   CaseState,
   CaseTransition,
