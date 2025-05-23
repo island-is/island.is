@@ -1543,4 +1543,16 @@ export const messages = defineMessages({
     id: 'sp.health:prescription-pdf',
     defaultMessage: 'Skoða fylgiseðil',
   },
+  errorFetchingUrl: {
+    id: 'sp.health:error-fetching-url',
+    defaultMessage: 'Villa kom upp við að sækja skjal',
+  },
+  fylgiskjalNr: {
+    id: 'sp.health:fylgiskjal-nr',
+    defaultMessage: 'Fylgiskjal {arg}',
+  },
+  openFylgiskjalNr: {
+    id: 'sp.health:open-fylgiskjal-nr',
+    defaultMessage: 'Opna fylgiskjal {arg}',
+  },
 })

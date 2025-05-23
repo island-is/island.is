@@ -62,7 +62,7 @@ export const NestedLines = ({ data, width = 'full' }: Props) => {
                         text={item.value?.toString() ?? ''}
                         to={item.href ?? ''}
                         variant="text"
-                      ></LinkButton>
+                      />
                     ) : item.type === 'action' && item.action ? (
                       <Button
                         as="span"
@@ -72,6 +72,7 @@ export const NestedLines = ({ data, width = 'full' }: Props) => {
                         icon="open"
                         iconType="outline"
                         onClick={item.action}
+                        title={item.value?.toString() ?? ''}
                       >
                         {item.value}
                       </Button>

@@ -19,11 +19,11 @@ interface Props {
 
 const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
   const { formatMessage } = useLocale()
-
   const [activePrescription, setActivePrescription] =
     useState<PrescriptionItem | null>(null)
   const [openModal, setOpenModal] = useState(false)
   const [pdfLoading, setPdfLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [prescriptions, setPrescriptions] = useState<
     Array<PrescriptionItem> | undefined
   >(data)
@@ -42,9 +42,7 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
 
     try {
       const response = await getDocuments({ variables: { input: { id } } })
-
       const currentPrescription = prescriptions?.find((item) => item.id === id)
-
       const documents =
         response.data?.healthDirectoratePrescriptionDocuments.documents
 
@@ -66,13 +64,12 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
       }
     } catch (error) {
       console.error('Error fetching URL:', error)
+      setError(formatMessage(messages.errorFetchingUrl))
     } finally {
       setPdfLoading(false)
     }
   }
 
-  console.log('activePrescription', activePrescription)
-  console.log('is Modal open? ', openModal)
   return (
     <>
       <SortableTable
@@ -99,7 +96,10 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
             process: item?.amountRemaining ?? '',
             validTo: formatDate(item?.expiryDate) ?? '',
             status: undefined,
-            lastNode: true //item?.isRenewable // TODO: Add this back when the API is ready
+            // ------------------------------------- //
+            // TODO: Add this back when the API is ready
+            // ------------------------------------- //
+            lastNode: true //item?.isRenewable
               ? {
                   type: 'action',
                   label: formatMessage(messages.renew),
@@ -144,10 +144,13 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                             href: item?.url ?? '',
                             type: 'link',
                           },
-
                           ...(item.documents?.map((doc, index) => ({
-                            title: `Fylgiskjal ${index + 1}`,
-                            value: `Opna fylgiskjal ${index + 1}`,
+                            title: formatMessage(messages.fylgiskjalNr, {
+                              arg: index + 1,
+                            }),
+                            value: formatMessage(messages.openFylgiskjalNr, {
+                              arg: index + 1,
+                            }),
                             type: 'link' as const,
                             href: doc.url ?? '',
                           })) ?? []),

@@ -186,7 +186,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectoratePrescriptionDocuments',
   })
   @Audit()
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getPrescriptionDocuments(
     @Args('input') input: MedicinePrescriptionDocumentsInput,
@@ -201,7 +201,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectoratePrescriptionRenewal',
   })
   @Audit()
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   postPrescriptionRenewal(
     @Args('input') input: HealthDirectorateRenewalInput,
@@ -215,7 +215,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateMedicineHistory',
   })
   @Audit()
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getMedicineHistory(
     @Args('locale', { type: () => String, nullable: true })
@@ -230,7 +230,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateMedicineDispensationsATC',
   })
   @Audit()
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getMedicineHistoryForATC(
     @Args('locale', { type: () => String, nullable: true })
