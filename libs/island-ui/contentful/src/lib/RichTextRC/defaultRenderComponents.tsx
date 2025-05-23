@@ -19,6 +19,7 @@ import { SectionWithVideo } from '../SectionWithVideo/SectionWithVideo'
 import { TeamList } from '../TeamList/TeamList'
 import { ContactUs } from '../ContactUs/ContactUs'
 import { Location } from '../Location/Location'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 export const renderConnectedComponent = (slice) => {
@@ -43,7 +44,13 @@ export const renderConnectedComponent = (slice) => {
     case 'Lögmenn/Lawyers':
       return <LawyersList slice={slice} />
     case 'Meðmælalistar/SignatureLists':
-      return <SignatureLists slice={slice} />
+      // TODO: Urgent! Determine how to propagate the type
+      return (
+        <SignatureLists
+          slice={slice}
+          collectionType={SignatureCollectionCollectionType.OtherUnknown}
+        />
+      )
     default:
       break
   }
