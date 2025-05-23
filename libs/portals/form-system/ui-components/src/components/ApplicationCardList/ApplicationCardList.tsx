@@ -52,8 +52,7 @@ export const ApplicationList = ({
               application={application}
               focused={focus}
             />
-          ))
-        }
+          ))}
       </Stack>
       {applications.length > pageSize ? (
         <Box marginTop={4}>

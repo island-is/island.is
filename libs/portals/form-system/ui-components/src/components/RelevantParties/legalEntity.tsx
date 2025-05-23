@@ -1,8 +1,8 @@
-import { FormSystemApplicant } from "@island.is/api/schema"
-import { NationalIdField } from "./components/nationalIdField"
-import { Input, Stack, Box, Text } from "@island.is/island-ui/core"
+import { FormSystemApplicant } from '@island.is/api/schema'
+import { NationalIdField } from './components/nationalIdField'
+import { Input, Stack, Box, Text } from '@island.is/island-ui/core'
 import { m, webMessages } from '@island.is/form-system/ui'
-import { useIntl } from "react-intl"
+import { useIntl } from 'react-intl'
 
 interface Props {
   applicantType: FormSystemApplicant
@@ -23,13 +23,13 @@ export const LegalEntity = ({ applicantType, lang }: Props) => {
           label={formatMessage(m.address)}
           name="address"
           placeholder={formatMessage(m.address)}
-          backgroundColor='blue'
+          backgroundColor="blue"
         />
         <Input
           label={formatMessage(webMessages.postalCode)}
           name="postalCode"
           placeholder={formatMessage(webMessages.postalCode)}
-          backgroundColor='blue'
+          backgroundColor="blue"
         />
       </Stack>
     </Box>

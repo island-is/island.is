@@ -38,7 +38,7 @@ import {
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class FormsResolver {
-  constructor(private readonly formsService: FormsService) { }
+  constructor(private readonly formsService: FormsService) {}
 
   @Mutation(() => FormResponse, {
     name: 'createFormSystemForm',

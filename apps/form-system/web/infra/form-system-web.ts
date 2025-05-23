@@ -1,4 +1,9 @@
-import { CodeOwners, ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  CodeOwners,
+  ref,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 
 const serviceName = 'form-system-web'
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>

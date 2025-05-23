@@ -526,7 +526,7 @@ export const m = defineMessages({
   nationalId: {
     id: 'portals-admin.form-system:national-id',
     defaultMessage: 'Kennitala',
-    description: 'National ID'
+    description: 'National ID',
   },
 })
 
@@ -564,8 +564,10 @@ export const webMessages = defineMessages({
   },
   myPagesDescription: {
     id: 'form-system:my-pages-description',
-    defaultMessage: 'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
-    description: 'Information about phone number and email to facilitate the application process',
+    defaultMessage:
+      'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
+    description:
+      'Information about phone number and email to facilitate the application process',
   },
   continue: {
     id: 'form-system:continue',
@@ -580,12 +582,12 @@ export const webMessages = defineMessages({
   postalCode: {
     id: 'form-system:postal-code',
     defaultMessage: 'Póstnúmer',
-    description: 'Postal code'
+    description: 'Postal code',
   },
   fullName: {
     id: 'form-system:full-name',
     defaultMessage: 'Fullt nafn',
-    description: 'Full name'
+    description: 'Full name',
   },
   open: {
     id: 'form-system:open',
@@ -611,6 +613,5 @@ export const webMessages = defineMessages({
     id: 'form-system:upload-box-description',
     defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
     description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
-  }
-
+  },
 })

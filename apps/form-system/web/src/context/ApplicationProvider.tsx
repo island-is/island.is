@@ -1,9 +1,20 @@
-import { createContext, Dispatch, useContext, useReducer, useEffect, useMemo } from "react"
-import { FormSystemApplication, FormSystemSection } from "@island.is/api/schema"
-import { applicationReducer, initialReducer, initialState } from "../reducers/applicationReducer"
+import {
+  createContext,
+  Dispatch,
+  useContext,
+  useReducer,
+  useEffect,
+  useMemo,
+} from 'react'
+import { FormSystemApplication, FormSystemSection } from '@island.is/api/schema'
+import {
+  applicationReducer,
+  initialReducer,
+  initialState,
+} from '../reducers/applicationReducer'
 import { Action, ApplicationState } from '@island.is/form-system/ui'
-import { Form } from "../components/Form/Form"
-import { fieldReducer } from "../reducers/fieldReducer"
+import { Form } from '../components/Form/Form'
+import { fieldReducer } from '../reducers/fieldReducer'
 
 interface ApplicationContextProvider {
   state: ApplicationState
@@ -22,19 +33,24 @@ const reducers = (state: ApplicationState, action: Action) => {
   return fieldReducer(newState, action)
 }
 
-export const ApplicationProvider: React.FC<{ application: FormSystemApplication }> = ({ application }) => {
+export const ApplicationProvider: React.FC<{
+  application: FormSystemApplication
+}> = ({ application }) => {
   const app = useMemo(() => application, [application])
-  const [state, dispatch] = useReducer(reducers, {
-    ...initialState,
-    application: app,
-  }, initialReducer)
+  const [state, dispatch] = useReducer(
+    reducers,
+    {
+      ...initialState,
+      application: app,
+    },
+    initialReducer,
+  )
 
-  const contextValue = useMemo(() => ({ state, dispatch }), [state]);
+  const contextValue = useMemo(() => ({ state, dispatch }), [state])
 
   useEffect(() => {
-    console.log("state", state)
+    console.log('state', state)
   }, [state])
-
 
   return (
     <ApplicationContext.Provider value={contextValue}>

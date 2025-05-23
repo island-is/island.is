@@ -12,7 +12,6 @@ import { Screen } from '../Screen/Screen'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { useEffect, useState } from 'react'
 
-
 export const Form = () => {
   const { setInfo } = useHeaderInfo()
   const { state } = useApplicationContext()
@@ -64,7 +63,9 @@ export const Form = () => {
                 className={styles.sidebarInner}
               >
                 <FormStepper
-                  sections={(state.sections ?? []).filter((section): section is FormSystemSection => section !== null)}
+                  sections={(state.sections ?? []).filter(
+                    (section): section is FormSystemSection => section !== null,
+                  )}
                   currentSection={state.currentSection}
                   currentScreen={state.currentScreen}
                 />

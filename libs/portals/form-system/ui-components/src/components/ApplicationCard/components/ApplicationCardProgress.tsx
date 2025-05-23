@@ -21,7 +21,7 @@ interface Props {
 const DraftProgressMeter = ({
   application,
   onOpenApplication,
-  shouldShowCardButtons = true
+  shouldShowCardButtons = true,
 }: Props) => {
   const { status } = application
   const { formatMessage } = useLocale()
@@ -66,7 +66,7 @@ const DraftProgressMeter = ({
 const DefaultProgressMeter = ({
   application,
   onOpenApplication,
-  shouldShowCardButtons = true
+  shouldShowCardButtons = true,
 }: Props) => {
   const { status } = application
   const { formatMessage } = useLocale()

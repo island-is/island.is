@@ -29,9 +29,9 @@ import { SectionTypes } from '@island.is/form-system/enums'
 type ActiveItemActions =
   | { type: 'SET_ACTIVE_ITEM'; payload: { activeItem: ActiveItem } }
   | {
-    type: 'SET_ACTIVE_LIST_ITEM'
-    payload: { listItem: FormSystemListItem | null }
-  }
+      type: 'SET_ACTIVE_LIST_ITEM'
+      payload: { listItem: FormSystemListItem | null }
+    }
 
 type ScreenActions =
   | { type: 'ADD_SCREEN'; payload: { screen: FormSystemScreen } }
@@ -41,21 +41,21 @@ type FieldActions =
   | { type: 'ADD_FIELD'; payload: { field: FormSystemField } }
   | { type: 'REMOVE_FIELD'; payload: { id: string } }
   | {
-    type: 'CHANGE_FIELD_TYPE'
-    payload: {
-      newValue: string
-      fieldSettings: FormSystemFieldSettings
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'CHANGE_FIELD_TYPE'
+      payload: {
+        newValue: string
+        fieldSettings: FormSystemFieldSettings
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'CHANGE_DESCRIPTION'
-    payload: { lang: 'en' | 'is'; newValue: string }
-  }
+      type: 'CHANGE_DESCRIPTION'
+      payload: { lang: 'en' | 'is'; newValue: string }
+    }
   | {
-    type: 'CHANGE_IS_REQUIRED'
-    payload: { update: (updatedActiveItem?: ActiveItem) => void }
-  }
+      type: 'CHANGE_IS_REQUIRED'
+      payload: { update: (updatedActiveItem?: ActiveItem) => void }
+    }
 
 type SectionActions =
   | { type: 'ADD_SECTION'; payload: { section: FormSystemSection } }
@@ -63,135 +63,135 @@ type SectionActions =
 
 type DndActions =
   | {
-    type: 'SECTION_OVER_SECTION'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'SECTION_OVER_SECTION'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'SCREEN_OVER_SECTION'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'SCREEN_OVER_SECTION'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'SCREEN_OVER_SCREEN'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'SCREEN_OVER_SCREEN'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'FIELD_OVER_SCREEN'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'FIELD_OVER_SCREEN'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'FIELD_OVER_FIELD'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'FIELD_OVER_FIELD'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'LIST_ITEM_OVER_LIST_ITEM'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'LIST_ITEM_OVER_LIST_ITEM'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
 
 type ChangeActions =
   | { type: 'CHANGE_NAME'; payload: { lang: 'en' | 'is'; newValue: string } }
   | {
-    type: 'CHANGE_FORM_NAME'
-    payload: { lang: 'en' | 'is'; newValue: string }
-  }
+      type: 'CHANGE_FORM_NAME'
+      payload: { lang: 'en' | 'is'; newValue: string }
+    }
   | {
-    type: 'CHANGE_ORGANIZATION_DISPLAY_NAME'
-    payload: { lang: 'en' | 'is'; newValue: string }
-  }
+      type: 'CHANGE_ORGANIZATION_DISPLAY_NAME'
+      payload: { lang: 'en' | 'is'; newValue: string }
+    }
   | {
-    type: 'CHANGE_ORGANIZATION_NATIONAL_ID'
-    payload: { newValue: string }
-  }
+      type: 'CHANGE_ORGANIZATION_NATIONAL_ID'
+      payload: { newValue: string }
+    }
   | {
-    type: 'CHANGE_SLUG'
-    payload: { newValue: string }
-  }
+      type: 'CHANGE_SLUG'
+      payload: { newValue: string }
+    }
   | { type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
-    type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
-    payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
-  }
+      type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
   | { type: 'CHANGE_FORM_SETTINGS'; payload: { newForm: FormSystemForm } }
   | {
-    type: 'TOGGLE_DEPENDENCY'
-    payload: {
-      activeId: string
-      itemId: string
-      update: (updatedForm: FormSystemForm) => void
+      type: 'TOGGLE_DEPENDENCY'
+      payload: {
+        activeId: string
+        itemId: string
+        update: (updatedForm: FormSystemForm) => void
+      }
     }
-  }
   | {
-    type: 'TOGGLE_MULTI_SET'
-    payload: {
-      checked: boolean
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'TOGGLE_MULTI_SET'
+      payload: {
+        checked: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'CHANGE_CERTIFICATION'
-    payload: {
-      certificate: FormSystemFormCertificationTypeDto
-      checked: boolean
+      type: 'CHANGE_CERTIFICATION'
+      payload: {
+        certificate: FormSystemFormCertificationTypeDto
+        checked: boolean
+      }
     }
-  }
 
 type InputSettingsActions =
   | {
-    type: 'SET_MESSAGE_WITH_LINK_SETTINGS'
-    payload: {
-      property: 'buttonText' | 'url' | 'hasLink'
-      value?: string
-      checked?: boolean
-      lang?: 'is' | 'en'
-      update?: (updatedActiveItem?: ActiveItem) => void
+      type: 'SET_MESSAGE_WITH_LINK_SETTINGS'
+      payload: {
+        property: 'buttonText' | 'url' | 'hasLink'
+        value?: string
+        checked?: boolean
+        lang?: 'is' | 'en'
+        update?: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'SET_FILE_UPLOAD_SETTINGS'
-    payload: {
-      property: 'isMulti' | 'fileMaxSize' | 'maxFiles' | 'fileTypes'
-      checked?: boolean
-      value?: string | number
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'SET_FILE_UPLOAD_SETTINGS'
+      payload: {
+        property: 'isMulti' | 'fileMaxSize' | 'maxFiles' | 'fileTypes'
+        checked?: boolean
+        value?: string | number
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'SET_FIELD_SETTINGS'
-    payload: {
-      property: 'isLarge'
-      value: boolean
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'SET_FIELD_SETTINGS'
+      payload: {
+        property: 'isLarge'
+        value: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'SET_LIST_ITEM_SELECTED'
-    payload: {
-      id: UniqueIdentifier
+      type: 'SET_LIST_ITEM_SELECTED'
+      payload: {
+        id: UniqueIdentifier
+      }
     }
-  }
   | {
-    type: 'REMOVE_LIST_ITEM'
-    payload: {
-      id: UniqueIdentifier
+      type: 'REMOVE_LIST_ITEM'
+      payload: {
+        id: UniqueIdentifier
+      }
     }
-  }
   | {
-    type: 'CHANGE_LIST_ITEM'
-    payload: {
-      property: 'label' | 'description'
-      lang: 'is' | 'en'
-      value: string
-      id: UniqueIdentifier
+      type: 'CHANGE_LIST_ITEM'
+      payload: {
+        property: 'label' | 'description'
+        lang: 'is' | 'en'
+        value: string
+        id: UniqueIdentifier
+      }
     }
-  }
   | { type: 'ADD_LIST_ITEM'; payload: { newListItem: FormSystemListItem } }
   | {
-    type: 'SET_LIST_TYPE'
-    payload: {
-      listType: string
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'SET_LIST_TYPE'
+      payload: {
+        listType: string
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
 
 export type ControlAction =
   | ActiveItemActions
@@ -644,11 +644,11 @@ export const controlReducer = (
           [property]: property === 'hasLink' ? checked : value,
           ...(property === 'buttonText'
             ? {
-              buttonText: {
-                ...field.fieldSettings?.buttonText,
-                [lang]: value,
-              },
-            }
+                buttonText: {
+                  ...field.fieldSettings?.buttonText,
+                  [lang]: value,
+                },
+              }
             : {}),
         },
       }
@@ -687,8 +687,8 @@ export const controlReducer = (
             property === 'fileTypes'
               ? updateFileTypesArray()
               : property === 'isMulti'
-                ? checked
-                : value,
+              ? checked
+              : value,
         },
       }
       update({ type: 'Field', data: newField })

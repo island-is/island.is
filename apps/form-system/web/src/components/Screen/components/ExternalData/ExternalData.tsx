@@ -1,8 +1,8 @@
-import { Box, Checkbox, Icon, Stack, Text } from "@island.is/island-ui/core"
-import { Markdown } from "../../../../../../../../libs/shared/components/src"
-import { useApplicationContext } from "../../../../context/ApplicationProvider"
-import { webMessages } from "@island.is/form-system/ui"
-import { useIntl } from "react-intl"
+import { Box, Checkbox, Icon, Stack, Text } from '@island.is/island-ui/core'
+import { Markdown } from '../../../../../../../../libs/shared/components/src'
+import { useApplicationContext } from '../../../../context/ApplicationProvider'
+import { webMessages } from '@island.is/form-system/ui'
+import { useIntl } from 'react-intl'
 
 interface Props {
   setExternalDataAgreement: (value: boolean) => void
@@ -38,24 +38,34 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
       <Box marginBottom={5}>
         <Stack space={2}>
           <div>
-            <Text variant='h4' color="blue400">{formatMessage(webMessages.icelandicRegistryTitle)}</Text>
-            <Text><Markdown>{formatMessage(webMessages.icelandicRegistryDescription)}</Markdown></Text>
+            <Text variant="h4" color="blue400">
+              {formatMessage(webMessages.icelandicRegistryTitle)}
+            </Text>
+            <Text>
+              <Markdown>
+                {formatMessage(webMessages.icelandicRegistryDescription)}
+              </Markdown>
+            </Text>
           </div>
           <div>
-            <Text variant='h4' color="blue400">{formatMessage(webMessages.myPagesTitle)}</Text>
-            <Text><Markdown>{formatMessage(webMessages.myPagesDescription)}</Markdown></Text>
+            <Text variant="h4" color="blue400">
+              {formatMessage(webMessages.myPagesTitle)}
+            </Text>
+            <Text>
+              <Markdown>
+                {formatMessage(webMessages.myPagesDescription)}
+              </Markdown>
+            </Text>
           </div>
 
-          {certificationTypes?.map(certificationType => (
+          {certificationTypes?.map((certificationType) => (
             <div>
               <Text variant="h4" color="blue400">
                 {certificationType?.certificationTypeId}
               </Text>
 
               <Text>
-                <Markdown>
-                  {certificationType?.id ?? ''}
-                </Markdown>
+                <Markdown>{certificationType?.id ?? ''}</Markdown>
               </Text>
             </div>
           ))}

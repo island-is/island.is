@@ -1,3 +1,1 @@
-export const formSystemScopes = [
-  'api_resource.scope',
-]
+export const formSystemScopes = ['api_resource.scope']

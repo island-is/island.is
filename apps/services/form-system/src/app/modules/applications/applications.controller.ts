@@ -40,7 +40,7 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
-  constructor(private readonly applicationsService: ApplicationsService) { }
+  constructor(private readonly applicationsService: ApplicationsService) {}
 
   @ApiOperation({ summary: 'Get an application by id' })
   @ApiOkResponse({
@@ -101,7 +101,7 @@ export class ApplicationsController {
   @ApiOperation({ summary: 'validate and save input values of a screen' })
   @ApiCreatedResponse({
     description: 'validate and save input values of a screen',
-    type: ScreenValidationResponse
+    type: ScreenValidationResponse,
   })
   @ApiParam({ name: 'screenId', type: String })
   @ApiBody({ type: ApplicationDto })

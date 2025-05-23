@@ -13,8 +13,14 @@ interface Props {
   currentScreen?: Current<FormSystemScreen>
 }
 
-export const FormStepper = ({ sections, currentSection, currentScreen }: Props) => {
-  const filteredSections = sections.filter((section) => section.sectionType !== SectionTypes.PREMISES)
+export const FormStepper = ({
+  sections,
+  currentSection,
+  currentScreen,
+}: Props) => {
+  const filteredSections = sections.filter(
+    (section) => section.sectionType !== SectionTypes.PREMISES,
+  )
   if (currentSection.index === 0) return null
 
   return (
@@ -27,7 +33,17 @@ export const FormStepper = ({ sections, currentSection, currentScreen }: Props) 
           isActive={section.id === currentSection?.data?.id}
           key={section?.id}
           subSections={section?.screens?.map((screen, screenIndex) => {
-            return <Text key={screenIndex} variant={screen?.id === currentScreen?.data?.id ? "h5" : "default"}> {screen?.name?.is ?? ''}</Text>
+            return (
+              <Text
+                key={screenIndex}
+                variant={
+                  screen?.id === currentScreen?.data?.id ? 'h5' : 'default'
+                }
+              >
+                {' '}
+                {screen?.name?.is ?? ''}
+              </Text>
+            )
           })}
         />
       ))}

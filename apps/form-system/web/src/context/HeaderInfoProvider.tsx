@@ -1,4 +1,11 @@
-import { createContext, Dispatch, SetStateAction, useContext, useState, ReactNode } from "react"
+import {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useState,
+  ReactNode,
+} from 'react'
 
 interface FormInfo {
   applicationName?: string
@@ -28,7 +35,7 @@ export const HeaderInfoProvider = ({ children }: { children: ReactNode }) => {
     <HeaderInfoContext.Provider
       value={{
         info,
-        setInfo
+        setInfo,
       }}
     >
       {children}
@@ -37,4 +44,3 @@ export const HeaderInfoProvider = ({ children }: { children: ReactNode }) => {
 }
 
 export const useHeaderInfo = () => useContext(HeaderInfoContext)
-

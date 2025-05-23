@@ -8,7 +8,10 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { ApplicationsService } from './applications.service'
-import { Application, SubmitScreenResponse } from '../../models/applications.model'
+import {
+  Application,
+  SubmitScreenResponse,
+} from '../../models/applications.model'
 import {
   CreateApplicationInput,
   GetApplicationInput,
@@ -22,7 +25,7 @@ import { Screen } from '../../models/screen.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ApplicationsResolver {
-  constructor(private readonly applicationsService: ApplicationsService) { }
+  constructor(private readonly applicationsService: ApplicationsService) {}
 
   @Query(() => Application, {
     name: 'formSystemApplication',
@@ -81,7 +84,7 @@ export class ApplicationsResolver {
   // }
 
   @Mutation(() => Boolean, {
-    name: 'updateFormSystemApplication'
+    name: 'updateFormSystemApplication',
   })
   async updateApplication(
     @Args('input', { type: () => UpdateApplicationInput })
@@ -92,7 +95,7 @@ export class ApplicationsResolver {
   }
 
   @Mutation(() => Screen, {
-    name: 'saveFormSystemScreen'
+    name: 'saveFormSystemScreen',
   })
   async saveScreen(
     @Args('input', { type: () => SubmitScreenInput })

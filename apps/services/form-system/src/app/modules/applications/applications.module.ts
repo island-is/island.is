@@ -32,7 +32,7 @@ import { Section } from '../sections/models/section.model'
       OrganizationUrl,
       Screen,
       Field,
-      Section
+      Section,
     ]),
   ],
   controllers: [ApplicationsController],
@@ -46,4 +46,4 @@ import { Section } from '../sections/models/section.model'
   ],
   exports: [ApplicationsService],
 })
-export class ApplicationsModule { }
+export class ApplicationsModule {}

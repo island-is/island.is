@@ -14,7 +14,7 @@ export class ScreensService {
   constructor(
     @InjectModel(Screen)
     private readonly screenModel: typeof Screen,
-  ) { }
+  ) {}
 
   async create(createScreenDto: CreateScreenDto): Promise<ScreenDto> {
     const screen = createScreenDto as Screen

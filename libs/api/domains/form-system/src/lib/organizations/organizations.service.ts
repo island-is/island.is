@@ -21,7 +21,7 @@ export class OrganizationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private organizationsApi: OrganizationsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

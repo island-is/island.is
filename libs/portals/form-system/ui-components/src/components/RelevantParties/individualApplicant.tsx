@@ -1,8 +1,15 @@
-import { FormSystemApplicant } from "@island.is/api/schema"
-import { GridColumn, GridRow, Input, Stack, Box, Text } from "@island.is/island-ui/core"
-import { useIntl } from "react-intl"
+import { FormSystemApplicant } from '@island.is/api/schema'
+import {
+  GridColumn,
+  GridRow,
+  Input,
+  Stack,
+  Box,
+  Text,
+} from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
 import { m, webMessages } from '@island.is/form-system/ui'
-import { NationalIdField } from "./components/nationalIdField"
+import { NationalIdField } from './components/nationalIdField'
 
 interface Props {
   applicantType: FormSystemApplicant
@@ -43,16 +50,16 @@ export const IndividualApplicant = ({ applicantType, lang }: Props) => {
           label={formatMessage(m.email)}
           name="email"
           placeholder="Email"
-          onChange={() => { }}
-          backgroundColor='blue'
+          onChange={() => {}}
+          backgroundColor="blue"
           required={true}
         />
         <Input
           label={formatMessage(m.phoneNumber)}
           name="phone"
           placeholder={formatMessage(m.phoneNumber)}
-          onChange={() => { }}
-          backgroundColor='blue'
+          onChange={() => {}}
+          backgroundColor="blue"
           required={true}
         />
       </Stack>

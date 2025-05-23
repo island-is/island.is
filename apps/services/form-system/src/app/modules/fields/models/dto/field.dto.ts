@@ -3,7 +3,13 @@ import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FieldSettings } from '../../../../dataTypes/fieldSettings/fieldSettings.model'
 import { ListItemDto } from '../../../listItems/models/dto/listItem.dto'
 import { ValueDto } from '../../../applications/models/dto/value.dto'
-import { IsBoolean, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class FieldDto {

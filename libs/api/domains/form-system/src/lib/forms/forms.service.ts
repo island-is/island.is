@@ -27,7 +27,7 @@ export class FormsService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private formsService: FormsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

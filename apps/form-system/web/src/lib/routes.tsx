@@ -23,18 +23,18 @@ export const routes: RouteObject[] = [
         children: [
           {
             path: '/:slug',
-            element: <Applications />
+            element: <Applications />,
           },
           {
             path: '/:slug/:id',
-            element: <Application />
-          }
-        ]
+            element: <Application />,
+          },
+        ],
       },
       {
         path: '*',
-        element: <>hoho</>
-      }
-    ]
-  }
+        element: <>hoho</>,
+      },
+    ],
+  },
 ]

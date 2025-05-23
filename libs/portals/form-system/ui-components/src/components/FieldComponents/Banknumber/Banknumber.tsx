@@ -2,7 +2,7 @@ import {
   GridRow as Row,
   GridColumn as Column,
   Input,
-  Text
+  Text,
 } from '@island.is/island-ui/core'
 import { Dispatch, useEffect, useRef, useState } from 'react'
 import { FormSystemField } from '@island.is/api/schema'
@@ -18,7 +18,12 @@ interface Props {
   lang?: 'is' | 'en'
 }
 
-export const Banknumber = ({ item, dispatch, hasError, lang = 'is' }: Props) => {
+export const Banknumber = ({
+  item,
+  dispatch,
+  hasError,
+  lang = 'is',
+}: Props) => {
   const [bank, setBank] = useState<string>('')
   const [ledger, setLedger] = useState<string>('')
   const [account, setAccount] = useState<string>('')
@@ -114,7 +119,7 @@ export const Banknumber = ({ item, dispatch, hasError, lang = 'is' }: Props) => 
             onChange={(e) => handleChange(0, e.target.value)}
             onBlur={(e) => setBank(addLeadingZeros(e.target.value, 4))}
             required={item?.isRequired ?? false}
-            backgroundColor='blue'
+            backgroundColor="blue"
             hasError={hasError}
           />
         </Column>
@@ -133,7 +138,7 @@ export const Banknumber = ({ item, dispatch, hasError, lang = 'is' }: Props) => 
             onChange={(e) => handleChange(1, e.target.value)}
             onBlur={(e) => setLedger(addLeadingZeros(e.target.value, 2))}
             required={item?.isRequired ?? false}
-            backgroundColor='blue'
+            backgroundColor="blue"
             hasError={hasError}
           />
         </Column>
@@ -151,7 +156,7 @@ export const Banknumber = ({ item, dispatch, hasError, lang = 'is' }: Props) => 
             onChange={(e) => handleChange(2, e.target.value)}
             onBlur={(e) => setAccount(addLeadingZeros(e.target.value, 6))}
             required={item?.isRequired ?? false}
-            backgroundColor='blue'
+            backgroundColor="blue"
             hasError={hasError}
           />
         </Column>

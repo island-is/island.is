@@ -13,9 +13,9 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
           info={
             info.applicationName && info.organisationName
               ? {
-                title: info.organisationName,
-                description: info.applicationName,
-              }
+                  title: info.organisationName,
+                  description: info.applicationName,
+                }
               : undefined
           }
           headerItems={<UserMenu showDropdownLanguage small />}

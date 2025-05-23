@@ -23,7 +23,7 @@ export class ListItemsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private listItemsApi: ListItemsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

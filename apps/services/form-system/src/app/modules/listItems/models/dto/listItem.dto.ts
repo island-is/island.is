@@ -1,6 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { IsBoolean, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class ListItemDto {

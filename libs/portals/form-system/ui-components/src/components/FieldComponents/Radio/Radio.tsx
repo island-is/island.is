@@ -1,5 +1,11 @@
 import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
-import { RadioButton, Text, Box, Inline, InputError } from '@island.is/island-ui/core'
+import {
+  RadioButton,
+  Text,
+  Box,
+  Inline,
+  InputError,
+} from '@island.is/island-ui/core'
 import { Dispatch, useEffect, useState } from 'react'
 import { getValue } from '../../../lib/getValue'
 import { Action } from '../../../lib'
@@ -19,29 +25,25 @@ export const Radio = ({ item, dispatch, lang, hasError }: Props) => {
   const language = lang ?? 'is'
 
   useEffect(() => {
-    setRadioChecked(radioButtons?.map((rb) => rb.label?.is === value ? true : false) ?? [])
+    setRadioChecked(
+      radioButtons?.map((rb) => (rb.label?.is === value ? true : false)) ?? [],
+    )
   }, [radioButtons])
 
   const handleChange = (index: number) => {
-    setRadioChecked((prev) =>
-      prev.map((rb, i) => (i === index ? true : false)),
-    )
+    setRadioChecked((prev) => prev.map((rb, i) => (i === index ? true : false)))
     if (!dispatch) return
     dispatch({
       type: 'SET_LIST_VALUE',
       payload: {
         id: item.id,
         value: radioButtons[index].label?.is,
-      }
+      },
     })
   }
 
   const radioButton = (rb: FormSystemListItem, index: number) => (
-    <Box
-      width="half"
-      padding={1}
-      onClick={(e) => handleChange(index)}
-    >
+    <Box width="half" padding={1} onClick={(e) => handleChange(index)}>
       <RadioButton
         label={rb?.label?.[language]}
         tooltip={

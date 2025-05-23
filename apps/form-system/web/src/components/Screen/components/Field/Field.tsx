@@ -1,9 +1,24 @@
-import { Banknumber, Checkbox, CurrencyField, DatePicker, Email, FieldTypesEnum, FileUpload, List, MessageWithLink, NationalId, PhoneNumber, PropertyNumber, Radio, TextInput, TimeInput } from '@island.is/form-system/ui'
+import {
+  Banknumber,
+  Checkbox,
+  CurrencyField,
+  DatePicker,
+  Email,
+  FieldTypesEnum,
+  FileUpload,
+  List,
+  MessageWithLink,
+  NationalId,
+  PhoneNumber,
+  PropertyNumber,
+  Radio,
+  TextInput,
+  TimeInput,
+} from '@island.is/form-system/ui'
 import { FormSystemField } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 import { useLocale } from '@island.is/localization'
-
 
 interface Props {
   field: FormSystemField
@@ -16,11 +31,11 @@ export const Field = ({ field, hasError }: Props) => {
     item: field,
     hasError,
     dispatch,
-    lang
+    lang,
   }
 
   return (
-    <Box marginTop={4} >
+    <Box marginTop={4}>
       {field.fieldType === FieldTypesEnum.BANK_ACCOUNT && (
         <Banknumber {...fieldItems} />
       )}
@@ -33,12 +48,8 @@ export const Field = ({ field, hasError }: Props) => {
       {field.fieldType === FieldTypesEnum.ISK_NUMBERBOX && (
         <CurrencyField {...fieldItems} />
       )}
-      {field.fieldType === FieldTypesEnum.EMAIL && (
-        <Email {...fieldItems} />
-      )}
-      {field.fieldType === FieldTypesEnum.FILE && (
-        <FileUpload item={field} />
-      )}
+      {field.fieldType === FieldTypesEnum.EMAIL && <Email {...fieldItems} />}
+      {field.fieldType === FieldTypesEnum.FILE && <FileUpload item={field} />}
       {field.fieldType === FieldTypesEnum.NATIONAL_ID && (
         <NationalId {...fieldItems} /> // TODO: need to implement fetching name from nationalId
       )}

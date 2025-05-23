@@ -19,8 +19,8 @@ export interface IControlContext {
   control: ControlState
   controlDispatch: Dispatch<ControlAction>
   certificationTypes:
-  | Maybe<Maybe<FormSystemFormCertificationType>[]>
-  | undefined
+    | Maybe<Maybe<FormSystemFormCertificationType>[]>
+    | undefined
   fieldTypes: Maybe<Maybe<FormSystemFieldType>[]> | undefined
   listTypes: Maybe<Maybe<FormSystemListType>[]> | undefined
   setInSettings: Dispatch<boolean>

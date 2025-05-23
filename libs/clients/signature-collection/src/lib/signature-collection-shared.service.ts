@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import {
   FrambodApi,
   MedmaelalistarApi,
+  KosningApi,
   MedmaelasofnunApi,
 } from '../../gen/fetch'
 import { CanCreateInput, GetListInput } from './signature-collection.types'
@@ -9,44 +10,82 @@ import {
   Collection,
   CollectionStatus,
   CollectionType,
+  getCollectionTypeFromNumber,
+  getNumberFromCollectionType,
   mapCollection,
 } from './types/collection.dto'
 import { List, ListStatus, mapList } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
-import { AdminCandidateApi, AdminCollectionApi, AdminListApi } from './apis'
+import { AdminCandidateApi, AdminListApi } from './apis'
 import { Success, mapReasons } from './types/success.dto'
 
-type CollectionApi = MedmaelasofnunApi | AdminCollectionApi
 type ListApi = MedmaelalistarApi | AdminListApi
 type CandidateApi = FrambodApi | AdminCandidateApi
+type ElectionApi = KosningApi
+type CollectionApi = MedmaelasofnunApi
 
 @Injectable()
 export class SignatureCollectionSharedClientService {
-  async currentCollection(api: CollectionApi): Promise<Collection> {
-    // includeInactive: false will return collections as active until electionday for collection has passed
-    const res = await api.medmaelasofnunGet({
-      includeInactive: true,
+  async getLatestCollectionForType(
+    api: ElectionApi,
+    collectionType: CollectionType,
+  ): Promise<Collection> {
+    const baseRes = await api.kosningGet({
+      hasSofnun: true,
+      onlyActive: true,
     })
+    const collections = await Promise.all(
+      baseRes
+        .filter(
+          (election) =>
+            Boolean(election.id) &&
+            election.kosningTegundNr ===
+              getNumberFromCollectionType(collectionType),
+        )
+        .map(async ({ id }) => {
+          const iD = id ?? 0 // Filter already applied but typing not catching up
+          return await api.kosningIDSofnunListGet({ iD })
+        }),
+    )
 
-    // Note: In the future, we may want to consider adding an optional parameter
-    //       for filtering on CollectionType, as we may have multiple
-    //       collections running at the same time. (not projected to happen currently)
-    //       So keep CollectionType in mind if you're working on this
-    //       for that reason, future programmer.
-    const current = (
-      res
+    const orderedCollections = (
+      collections
+        .flatMap((_) => _)
         .map(mapCollection)
         .filter(
           (collection) =>
             collection?.isSignatureCollection &&
             collection.startTime < new Date(),
         ) as Collection[]
-    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
+    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))
 
-    if (!current) {
+    if (!orderedCollections.length) {
+      throw new Error('No current collection for selected type')
+    }
+
+    return orderedCollections[0]
+  }
+
+  async currentCollection(api: ElectionApi): Promise<Collection[]> {
+    // includeInactive: false will return collections as active until electionday for collection has passed
+    const baseRes = await api.kosningGet({
+      hasSofnun: true,
+      onlyActive: true,
+    })
+
+    const collections = await Promise.all(
+      baseRes
+        .filter((election) => Boolean(election.id))
+        .map(async ({ id }) => {
+          const iD = id ?? 0 // Filter already applied but typing not catching up
+          return await api.kosningIDSofnunListGet({ iD })
+        }),
+    )
+
+    if (!collections.length) {
       throw new Error('No current collection')
     }
-    return current
+    return collections.flatMap((_) => _).map(mapCollection)
   }
 
   async getLists(
@@ -67,11 +106,20 @@ export class SignatureCollectionSharedClientService {
     listId: string,
     listApi: ListApi,
     candidateApi: CandidateApi,
+    collectionApi: CollectionApi,
   ): Promise<List> {
     try {
       const list = await listApi.medmaelalistarIDGet({
         iD: parseInt(listId),
       })
+
+      const collection = await collectionApi.medmaelasofnunIDGet({
+        iD: list.medmaelasofnunID ?? 0,
+      })
+
+      const collectionType = getCollectionTypeFromNumber(
+        collection.kosning?.kosningTegundNr ?? 0,
+      )
 
       if (!list.frambod?.id) {
         throw new Error(
@@ -81,7 +129,7 @@ export class SignatureCollectionSharedClientService {
       const { umbodList } = await candidateApi.frambodIDGet({
         iD: list.frambod?.id,
       })
-      return mapList(list, umbodList)
+      return mapList(list, collectionType, umbodList)
     } catch (error) {
       throw new NotFoundException('List not found')
     }

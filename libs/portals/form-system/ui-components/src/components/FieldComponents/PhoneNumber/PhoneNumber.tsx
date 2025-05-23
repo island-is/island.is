@@ -18,11 +18,20 @@ interface Props {
   hasError?: boolean
 }
 
-export const PhoneNumber = ({ item, dispatch, hasError, lang = 'is' }: Props) => {
+export const PhoneNumber = ({
+  item,
+  dispatch,
+  hasError,
+  lang = 'is',
+}: Props) => {
   const { locale, formatMessage } = useIntl()
-  const [phoneNumber, setPhoneNumber] = useState<string>(getValue(item, 'phoneNumber'))
+  const [phoneNumber, setPhoneNumber] = useState<string>(
+    getValue(item, 'phoneNumber'),
+  )
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setPhoneNumber(e.target.value)
     if (!dispatch) return
     dispatch({
@@ -34,7 +43,6 @@ export const PhoneNumber = ({ item, dispatch, hasError, lang = 'is' }: Props) =>
     })
   }
 
-
   return (
     <Row>
       <Column>
@@ -44,7 +52,7 @@ export const PhoneNumber = ({ item, dispatch, hasError, lang = 'is' }: Props) =>
           name={item.id ?? ''}
           locale={locale as Locale}
           required={item.isRequired ?? false}
-          backgroundColor='blue'
+          backgroundColor="blue"
           value={phoneNumber}
           onChange={handleChange}
           hasError={!!hasError}

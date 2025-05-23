@@ -25,12 +25,13 @@ export const useUploadFiles = (files: UploadFile[] | null) => {
     (file) => file.status === FileUploadStatus.error,
   )
 
-  const addUploadFile = (file: UploadFile) => setUploadFiles((prev) => [...prev, file])
+  const addUploadFile = (file: UploadFile) =>
+    setUploadFiles((prev) => [...prev, file])
 
   const addUploadFiles = (
     files: File[],
     overRides?: Partial<TUploadFile>,
-    setUserGeneratedFilename = false
+    setUserGeneratedFilename = false,
   ) => {
     const uploadFiles: TUploadFile[] = files.map((file) => ({
       id: `${file.name}-${uuid()}`,
@@ -40,7 +41,7 @@ export const useUploadFiles = (files: UploadFile[] | null) => {
       percent: 0,
       originalFileObj: file,
       userGeneratedFileName: setUserGeneratedFilename ? file.name : undefined,
-      ...overRides
+      ...overRides,
     }))
 
     setUploadFiles((prev) => [...uploadFiles, ...prev])
@@ -49,9 +50,11 @@ export const useUploadFiles = (files: UploadFile[] | null) => {
   }
 
   const updateUploadFile = (file: TUploadFile, newId?: string) => {
-    setUploadFiles((prev) => prev.map((f) =>
-      f.id === file.id ? { ...f, ...file, id: newId ?? file.id } : f,
-    ))
+    setUploadFiles((prev) =>
+      prev.map((f) =>
+        f.id === file.id ? { ...f, ...file, id: newId ?? file.id } : f,
+      ),
+    )
   }
 
   const removeUploadFile = (file: TUploadFile) =>
@@ -64,16 +67,11 @@ export const useUploadFiles = (files: UploadFile[] | null) => {
     addUploadFile,
     addUploadFiles,
     updateUploadFile,
-    removeUploadFile
+    removeUploadFile,
   }
 }
 
-export const useS3Upload = (
-  fieldId: string,
-  file: UploadFile
-) => {
-
-}
+export const useS3Upload = (fieldId: string, file: UploadFile) => {}
 
 export const uploadFileToS3 = (
   file: UploadFile,

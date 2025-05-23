@@ -19,6 +19,7 @@ import {
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { api } from '../../services'
 import { UserContext } from '../UserProvider/UserProvider'
 import { CaseQuery, useCaseLazyQuery } from './case.generated'
 import {
@@ -170,6 +171,17 @@ const FormProvider = ({ children }: Props) => {
   )
 
   useEffect(() => {
+    // This is hacky, we need to find a better fix but it's just to stop the endless loop
+    // of login attempts if the user is unauthorized
+    const searchParams = new URLSearchParams(window.location.search)
+    const villa = searchParams.get('villa')
+
+    if (!isAuthenticated && !villa) {
+      window.location.assign(
+        `${api.apiUrl}/api/auth/login?redirectRoute=${window.location.pathname}`,
+      )
+    }
+
     if (
       limitedAccess !== undefined && // Wait until limitedAccess is defined
       id &&

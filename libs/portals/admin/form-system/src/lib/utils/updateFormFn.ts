@@ -14,11 +14,11 @@ export const updateFormFn = async (
   updateForm: (
     options?:
       | MutationFunctionOptions<
-        any,
-        OperationVariables,
-        DefaultContext,
-        ApolloCache<any>
-      >
+          any,
+          OperationVariables,
+          DefaultContext,
+          ApolloCache<any>
+        >
       | undefined,
   ) => Promise<any>,
   updatedForm?: FormSystemForm,

@@ -23,7 +23,7 @@ export class SectionsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private sectionsService: SectionsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

@@ -21,7 +21,7 @@ import {
 export class FormApplicantTypesResolver {
   constructor(
     private readonly formApplicantTypesService: FormApplicantTypesService,
-  ) { }
+  ) {}
 
   @Mutation(() => FormApplicantType, {
     name: 'createFormSystemApplicantType',

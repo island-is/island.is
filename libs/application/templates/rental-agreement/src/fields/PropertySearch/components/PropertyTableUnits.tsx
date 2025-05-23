@@ -11,8 +11,8 @@ import {
   input,
   inputError,
   sizeInput,
-  roomsInput,
   tableCellFastNum,
+  noInputArrows,
 } from '../propertySearch.css'
 import { registerProperty } from '../../../lib/messages'
 
@@ -49,6 +49,11 @@ export const PropertyTableUnits = ({
 }: PropertyUnitsProps) => {
   const { formatMessage } = useLocale()
 
+  // Prevent scrolling from changing the number input value
+  const preventScrollChange = (event: React.WheelEvent<HTMLInputElement>) => {
+    event.currentTarget.blur()
+  }
+
   const sizeInputError =
     unitInputErrorMessage ===
       formatMessage(registerProperty.search.changedSizeTooLargeError) ||
@@ -57,7 +62,9 @@ export const PropertyTableUnits = ({
 
   const roomsInputError =
     unitInputErrorMessage ===
-    formatMessage(registerProperty.search.numOfRoomsMinimumError)
+      formatMessage(registerProperty.search.numOfRoomsMinimumError) ||
+    unitInputErrorMessage ===
+      formatMessage(registerProperty.search.numOfRoomsMaximumError)
 
   return (
     <tr key={unitCode}>
@@ -114,7 +121,7 @@ export const PropertyTableUnits = ({
               }}
             >
               <input
-                className={`${input} ${sizeInput} ${
+                className={`${input} ${sizeInput} ${noInputArrows} ${
                   checkedUnits && sizeInputError ? inputError : ''
                 }`}
                 type="number"
@@ -123,6 +130,7 @@ export const PropertyTableUnits = ({
                 step={0.1}
                 value={unitSizeValue}
                 onChange={onUnitSizeChange}
+                onWheel={preventScrollChange}
                 disabled={isUnitSizeDisabled}
               />
               <span>{sizeUnit}</span>
@@ -134,7 +142,7 @@ export const PropertyTableUnits = ({
             }}
           >
             <input
-              className={`${input} ${roomsInput} ${
+              className={`${input} ${noInputArrows} ${
                 checkedUnits && roomsInputError ? inputError : ''
               }`}
               type="number"
@@ -142,6 +150,7 @@ export const PropertyTableUnits = ({
               min={0}
               value={numOfRoomsValue}
               onChange={onUnitRoomsChange}
+              onWheel={preventScrollChange}
               disabled={isNumOfRoomsDisabled}
             />
           </T.Data>

@@ -1,62 +1,62 @@
-import { FormSystemField, FormSystemValue } from "@island.is/api/schema"
-import { FieldTypesEnum } from "./enums"
+import { FormSystemField, FormSystemValue } from '@island.is/api/schema'
+import { FieldTypesEnum } from './enums'
 
 type FieldTypeMapping = {
   [FieldTypesEnum.TEXTBOX]: {
     text?: FormSystemValue['text']
-  },
+  }
   [FieldTypesEnum.EMAIL]: {
     email?: FormSystemValue['email']
-  },
+  }
   [FieldTypesEnum.PHONE_NUMBER]: {
     phoneNumber?: FormSystemValue['phoneNumber']
-  },
+  }
   [FieldTypesEnum.NATIONAL_ID]: {
-    nationalId?: FormSystemValue['nationalId'],
+    nationalId?: FormSystemValue['nationalId']
     name?: FormSystemValue['name']
-  },
+  }
   [FieldTypesEnum.BANK_ACCOUNT]: {
     bankAccount?: FormSystemValue['bankAccount']
-  },
+  }
   [FieldTypesEnum.ISK_NUMBERBOX]: {
     iskNumber?: FormSystemValue['iskNumber']
-  },
+  }
   [FieldTypesEnum.DATE_PICKER]: {
     date?: FormSystemValue['date']
-  },
+  }
   [FieldTypesEnum.CHECKBOX]: {
     checkboxValue?: FormSystemValue['checkboxValue']
-  },
+  }
   [FieldTypesEnum.RADIO_BUTTONS]: {
     listValue?: FormSystemValue['listValue']
-  },
+  }
   [FieldTypesEnum.DROPDOWN_LIST]: {
     listValue?: FormSystemValue['listValue']
-  },
+  }
   [FieldTypesEnum.TIME_INPUT]: {
     time?: FormSystemValue['time']
-  },
+  }
   [FieldTypesEnum.MESSAGE]: {
     text?: FormSystemValue['text']
-  },
+  }
   [FieldTypesEnum.PROPERTY_NUMBER]: {
-    propertyNumber?: FormSystemValue['propertyNumber'],
-    address?: FormSystemValue['address'],
-    municipality?: FormSystemValue['municipality'],
+    propertyNumber?: FormSystemValue['propertyNumber']
+    address?: FormSystemValue['address']
+    municipality?: FormSystemValue['municipality']
     postalCode?: FormSystemValue['postalCode']
-  },
+  }
   [FieldTypesEnum.FILE]: {
-    s3Key?: FormSystemValue['s3Key'],
+    s3Key?: FormSystemValue['s3Key']
     s3Url?: FormSystemValue['s3Url']
-  },
+  }
   [FieldTypesEnum.NUMBERBOX]: {
     number?: FormSystemValue['number']
-  },
+  }
   [FieldTypesEnum.ISK_SUMBOX]: {
     iskNumber?: FormSystemValue['iskNumber']
   }
   [FieldTypesEnum.PAYER]: {
-    name?: FormSystemValue['name'],
+    name?: FormSystemValue['name']
     nationalId?: FormSystemValue['nationalId']
   }
   [FieldTypesEnum.PAYMENT]: {
@@ -64,7 +64,9 @@ type FieldTypeMapping = {
   }
 }
 
-const getInitialJsonForField = <T extends keyof FieldTypeMapping>(fieldType: T): FieldTypeMapping[T] => {
+const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
+  fieldType: T,
+): FieldTypeMapping[T] => {
   switch (fieldType) {
     case FieldTypesEnum.TEXTBOX:
       return { text: undefined } as FieldTypeMapping[T]
@@ -91,7 +93,12 @@ const getInitialJsonForField = <T extends keyof FieldTypeMapping>(fieldType: T):
     case FieldTypesEnum.MESSAGE:
       return { text: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.PROPERTY_NUMBER:
-      return { propertyNumber: undefined, address: undefined, municipality: undefined, postalCode: undefined } as FieldTypeMapping[T]
+      return {
+        propertyNumber: undefined,
+        address: undefined,
+        municipality: undefined,
+        postalCode: undefined,
+      } as FieldTypeMapping[T]
     case FieldTypesEnum.FILE:
       return { s3Key: undefined, s3Url: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.NUMBERBOX:
@@ -107,7 +114,9 @@ const getInitialJsonForField = <T extends keyof FieldTypeMapping>(fieldType: T):
   }
 }
 
-const removeNullProperties = <T extends Record<string, unknown>>(obj: T): Partial<T> =>
+const removeNullProperties = <T extends Record<string, unknown>>(
+  obj: T,
+): Partial<T> =>
   (Object.entries(obj) as [keyof T, unknown][]).reduce((acc, [key, value]) => {
     if (value !== null) {
       acc[key as keyof T] = value as T[keyof T]
@@ -116,11 +125,12 @@ const removeNullProperties = <T extends Record<string, unknown>>(obj: T): Partia
   }, {} as Partial<T>)
 
 export const initializeField = (field: FormSystemField): FormSystemField => {
-  const defaultJson = getInitialJsonForField(field.fieldType as keyof FieldTypeMapping)
+  const defaultJson = getInitialJsonForField(
+    field.fieldType as keyof FieldTypeMapping,
+  )
   const existingValue = (field.values && field.values[0]) || {}
   const cleanedJson = removeNullProperties(existingValue.json || {})
   const mergedJson = { ...defaultJson, ...cleanedJson }
   const updatedValue = { ...existingValue, json: mergedJson }
   return { ...field, values: [updatedValue] }
 }
-

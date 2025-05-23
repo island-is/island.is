@@ -24,7 +24,7 @@ export class ScreensService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private screensApi: ScreensApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

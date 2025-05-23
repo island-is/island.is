@@ -44,7 +44,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isCourtOfAppealRulingStepFieldsValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
+import { CaseNumbers } from '../components'
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
 const CourtOfAppealRuling = () => {

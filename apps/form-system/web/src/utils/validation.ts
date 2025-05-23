@@ -1,22 +1,22 @@
-import { ApplicationState, FieldTypesEnum } from "@island.is/form-system/ui"
-import { FormSystemField, FormSystemValue } from "@island.is/api/schema"
+import { ApplicationState, FieldTypesEnum } from '@island.is/form-system/ui'
+import { FormSystemField, FormSystemValue } from '@island.is/api/schema'
 
-export const validateScreen = (
-  state: ApplicationState
-): string[] => {
-
+export const validateScreen = (state: ApplicationState): string[] => {
   const { currentScreen } = state
   if (!currentScreen) return []
   const { data } = currentScreen
   const requiredFields = data?.fields?.filter((field) => field?.isRequired)
-  const errors = requiredFields?.filter((field): field is FormSystemField => field !== null && hasError(field)).map((field) => field.id) ?? []
+  const errors =
+    requiredFields
+      ?.filter(
+        (field): field is FormSystemField => field !== null && hasError(field),
+      )
+      .map((field) => field.id) ?? []
 
   return errors
 }
 
-const hasError = (
-  field: FormSystemField
-): boolean => {
+const hasError = (field: FormSystemField): boolean => {
   const { fieldType } = field
   const value = field?.values?.[0]?.json as FormSystemValue
   if (!value) return true
@@ -28,7 +28,7 @@ const hasError = (
       return !validateBanknumber(value?.bankAccount ?? '')
     }
     case FieldTypesEnum.TEXTBOX: {
-      return (value.text === '' || !value.text)
+      return value.text === '' || !value.text
     }
     case FieldTypesEnum.EMAIL: {
       return !validateEmail(value?.email ?? '')
@@ -102,5 +102,12 @@ const validateNationalId = (nationalId?: string, name?: string) => {
 
 const validatePropertyNumber = (value: FormSystemValue) => {
   const { propertyNumber, address, postalCode, municipality } = value
-  return (!propertyNumber || !address || !municipality || propertyNumber === '' || address === '' || municipality === '')
+  return (
+    !propertyNumber ||
+    !address ||
+    !municipality ||
+    propertyNumber === '' ||
+    address === '' ||
+    municipality === ''
+  )
 }

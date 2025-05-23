@@ -12,7 +12,9 @@ interface Props {
 export const TextInput = ({ item, dispatch }: Props) => {
   const { fieldSettings } = item
   const [value, setValue] = useState<string>(getValue(item, 'text') ?? '')
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setValue(e.target.value)
     if (!dispatch) return
     dispatch({
@@ -30,7 +32,7 @@ export const TextInput = ({ item, dispatch }: Props) => {
       name="text"
       textarea={fieldSettings?.isLarge ?? false}
       required={item.isRequired ?? false}
-      backgroundColor='blue'
+      backgroundColor="blue"
       value={value}
       onChange={handleChange}
     />

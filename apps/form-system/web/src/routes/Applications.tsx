@@ -1,8 +1,11 @@
-import { useNavigate, useParams } from "react-router-dom"
-import { CREATE_APPLICATION, GET_APPLICATIONS } from "@island.is/form-system/graphql"
-import { useMutation, useQuery, useLazyQuery } from "@apollo/client"
-import { useEffect, useState } from "react"
-import { FormSystemApplication } from "@island.is/api/schema"
+import { useNavigate, useParams } from 'react-router-dom'
+import {
+  CREATE_APPLICATION,
+  GET_APPLICATIONS,
+} from '@island.is/form-system/graphql'
+import { useMutation, useQuery, useLazyQuery } from '@apollo/client'
+import { useEffect, useState } from 'react'
+import { FormSystemApplication } from '@island.is/api/schema'
 import {
   Text,
   Box,
@@ -10,9 +13,9 @@ import {
   Button,
   GridContainer,
   Inline,
-  Stack
+  Stack,
 } from '@island.is/island-ui/core'
-import { ApplicationList } from "@island.is/form-system/ui"
+import { ApplicationList } from '@island.is/form-system/ui'
 
 interface Params {
   slug: string
@@ -24,13 +27,15 @@ export const Applications = () => {
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
   //const { formatMessage } = useLocale()
   const [createApplicationMutation, { error: createError }] = useMutation(
-    CREATE_APPLICATION, {
-    onCompleted({ createApplication }) {
-      if (slug) {
-        console.log(createApplication)
-      }
-    }
-  })
+    CREATE_APPLICATION,
+    {
+      onCompleted({ createApplication }) {
+        if (slug) {
+          console.log(createApplication)
+        }
+      },
+    },
+  )
 
   // const [getApplications] = useLazyQuery(GET_APPLICATIONS, {
   //   onCompleted({ getApplications }) {
@@ -46,10 +51,10 @@ export const Applications = () => {
         input: {
           slug: slug,
           createApplicationDto: {
-            isTest: false
-          }
-        }
-      }
+            isTest: false,
+          },
+        },
+      },
     })
     if (app) {
       navigate(`../${slug}/${app.data.createFormSystemApplication.id}`)
@@ -63,17 +68,20 @@ export const Applications = () => {
         input: {
           slug: slug,
           createApplicationDto: {
-            isTest: false
-          }
-        }
-      }
+            isTest: false,
+          },
+        },
+      },
     })
-    setApplications([app.data.createFormSystemApplication, app.data.createFormSystemApplication, app.data.createFormSystemApplication])
-
+    setApplications([
+      app.data.createFormSystemApplication,
+      app.data.createFormSystemApplication,
+      app.data.createFormSystemApplication,
+    ])
   }
 
   console.log('slug', slug)
-  // Check whether the user has opened this form before and if so, show all the applications 
+  // Check whether the user has opened this form before and if so, show all the applications
   // const applications = []
   // Assuming the user has not opened this form before, create a new application
 
@@ -90,11 +98,9 @@ export const Applications = () => {
       <Box marginTop={4}>
         <Page>
           <GridContainer>
-            {applications.length > 0 &&
-              <ApplicationList
-                applications={applications}
-              />
-            }
+            {applications.length > 0 && (
+              <ApplicationList applications={applications} />
+            )}
           </GridContainer>
         </Page>
       </Box>

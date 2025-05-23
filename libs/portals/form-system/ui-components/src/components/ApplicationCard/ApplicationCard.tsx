@@ -7,17 +7,14 @@ import { ApplicationCardTag } from './components/ApplicationCardTag'
 import { ApplicationCardDelete } from './components/ApplicationCardDelete'
 import * as styles from './ApplicationCard.css'
 import { ApplicationCardProgress } from './components/ApplicationCardProgress'
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams } from 'react-router-dom'
 
 interface Props {
   application: FormSystemApplication
   focused?: boolean
 }
 
-export const ApplicationCard = ({
-  application,
-  focused = false,
-}: Props) => {
+export const ApplicationCard = ({ application, focused = false }: Props) => {
   const { modified, status } = application
   const { slug } = useParams()
   const navigate = useNavigate()
@@ -25,7 +22,7 @@ export const ApplicationCard = ({
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
   const heading = application?.formName?.[locale]
   const logo = false // Do we implement logos?
-  const description = "Description" // Do we implement descriptions?
+  const description = 'Description' // Do we implement descriptions?
 
   const openApplication = () => {
     navigate(`../${slug}/${application.id}`)
@@ -36,7 +33,7 @@ export const ApplicationCard = ({
     <Box
       display="flex"
       flexDirection="column"
-      borderColor={focused ? "mint400" : "blue200"}
+      borderColor={focused ? 'mint400' : 'blue200'}
       borderRadius="large"
       borderWidth="standard"
       paddingX={[3, 3, 4]}
@@ -55,16 +52,14 @@ export const ApplicationCard = ({
             <Icon icon="time" size="medium" type="outline" color="blue400" />
           </Box>
           <Box display="flex" justifyContent="center">
-            <Text variant="small">
-              {format(new Date(), formattedDate)}
-            </Text>
+            <Text variant="small">{format(new Date(), formattedDate)}</Text>
           </Box>
         </Box>
         <Inline alignY="center" justifyContent="flexEnd" space={1}>
           <ApplicationCardTag />
           <ApplicationCardDelete
             application={application}
-            onDelete={() => { }}
+            onDelete={() => {}}
           />
         </Inline>
       </Box>
@@ -93,16 +88,15 @@ export const ApplicationCard = ({
           </Box>
         )}
 
-        {description && (
-          <Text paddingTop={heading ? 1 : 0}>{description}</Text>
-        )}
+        {description && <Text paddingTop={heading ? 1 : 0}>{description}</Text>}
       </Box>
-      {shouldRenderProgress &&
+      {shouldRenderProgress && (
         <ApplicationCardProgress
           application={application}
           onOpenApplication={openApplication}
           shouldShowCardButtons={true}
-        />}
+        />
+      )}
     </Box>
   )
 }

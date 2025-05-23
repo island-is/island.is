@@ -32,7 +32,7 @@ export const CurrencyField = ({ item, dispatch, hasError }: Props) => {
       payload: {
         value: formattedValue,
         id: item.id,
-      }
+      },
     })
   }
 
@@ -45,7 +45,7 @@ export const CurrencyField = ({ item, dispatch, hasError }: Props) => {
           value={currency}
           onChange={handleCurrencyChange}
           required={item?.isRequired ?? false}
-          backgroundColor='blue'
+          backgroundColor="blue"
           hasError={!!hasError}
         />
       </Column>

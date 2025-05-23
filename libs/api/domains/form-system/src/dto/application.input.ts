@@ -103,7 +103,6 @@ export class UpdateApplicationDependenciesInput {
   completed?: string[]
 }
 
-
 @InputType('UpdateFormSystemApplicationDtoInput')
 export class UpdateApplicationDtoInput {
   @Field(() => [DependencyInput], { nullable: true })
@@ -130,7 +129,6 @@ export class SubmitScreenDtoInput {
   @Field(() => ScreenInput, { nullable: true })
   screenDto?: ScreenInput
 }
-
 
 @InputType('SubmitFormSystemScreenInput')
 export class SubmitScreenInput {

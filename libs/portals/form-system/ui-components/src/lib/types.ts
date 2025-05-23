@@ -1,4 +1,3 @@
-
 export type PropertyNumberType = {
   propertyNumber: string
   address: string

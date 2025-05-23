@@ -25,7 +25,10 @@ import nationalRegistryLogo from '../../assets/nationalRegistry.svg'
 import { useState } from 'react'
 import { useSignatureCollectionSignatureLookupQuery } from './findSignature.generated'
 import { SkeletonSingleRow } from '../shared-components/compareLists/skeleton'
-import { CollectionStatus } from '@island.is/api/schema'
+import {
+  CollectionStatus,
+  SignatureCollectionCollectionType,
+} from '@island.is/api/schema'
 import ActionCompleteCollectionProcessing from '../shared-components/completeCollectionProcessing'
 
 const ParliamentaryRoot = ({
@@ -227,6 +230,9 @@ const ParliamentaryRoot = ({
               {(collectionStatus === CollectionStatus.InitialActive ||
                 collectionStatus === CollectionStatus.InInitialReview) && (
                 <ActionCompleteCollectionProcessing
+                  collectionType={
+                    SignatureCollectionCollectionType.Parliamentary
+                  }
                   collectionId={collection?.id}
                   canProcess={
                     !!allLists.length &&

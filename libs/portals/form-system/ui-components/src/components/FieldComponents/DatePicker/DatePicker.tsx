@@ -7,7 +7,6 @@ import { useIntl } from 'react-intl'
 import { getValue } from '../../../lib/getValue'
 import { parseISO } from 'date-fns'
 
-
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
@@ -15,7 +14,9 @@ interface Props {
   hasError?: boolean
 }
 export const DatePicker = ({ item, dispatch, lang, hasError }: Props) => {
-  const [value, setValue] = useState<Date | null>(parseISO(getValue(item, 'date')) ?? null)
+  const [value, setValue] = useState<Date | null>(
+    parseISO(getValue(item, 'date')) ?? null,
+  )
   const { formatMessage } = useIntl()
   const handleChange = (date: Date) => {
     setValue(date)
@@ -32,7 +33,7 @@ export const DatePicker = ({ item, dispatch, lang, hasError }: Props) => {
     <DatePickerCore
       label={item.name[lang] ?? ''}
       placeholderText={formatMessage(m.chooseDate)}
-      backgroundColor='blue'
+      backgroundColor="blue"
       handleChange={handleChange}
       selected={value}
       required={item.isRequired}

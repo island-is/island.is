@@ -1,4 +1,9 @@
-import { Input, Stack, GridColumn as Column, GridRow as Row } from '@island.is/island-ui/core'
+import {
+  Input,
+  Stack,
+  GridColumn as Column,
+  GridRow as Row,
+} from '@island.is/island-ui/core'
 import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
@@ -14,10 +19,14 @@ interface Props {
 
 export const NationalId = ({ item, dispatch, hasError }: Props) => {
   const { formatMessage } = useIntl()
-  const [nationalId, setNationalId] = useState<string>(getValue(item, 'nationalId'))
+  const [nationalId, setNationalId] = useState<string>(
+    getValue(item, 'nationalId'),
+  )
   const [name, setName] = useState<string>(getValue(item, 'name'))
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     let raw = e.target.value
     let digits = raw.replace(/\D/g, '')
 
@@ -28,9 +37,8 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
       digits = digits.slice(0, 10)
     }
 
-    let value = digits.length > 6
-      ? digits.slice(0, 6) + '-' + digits.slice(6)
-      : digits
+    let value =
+      digits.length > 6 ? digits.slice(0, 6) + '-' + digits.slice(6) : digits
 
     setNationalId(value)
     if (!dispatch) return
@@ -44,7 +52,6 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
   }
 
   return (
-
     <Stack space={2}>
       <Row>
         <Column span="5/10">
@@ -52,7 +59,7 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
             label={formatMessage(m.nationalId)}
             name="kennitala"
             required={item?.isRequired ?? false}
-            backgroundColor='blue'
+            backgroundColor="blue"
             value={nationalId}
             onChange={handleChange}
             hasError={!!hasError}
@@ -61,10 +68,14 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
       </Row>
       <Row>
         <Column span="10/10">
-          <Input label={formatMessage(m.namePerson)} name="nafn" disabled value={name} />
+          <Input
+            label={formatMessage(m.namePerson)}
+            name="nafn"
+            disabled
+            value={name}
+          />
         </Column>
       </Row>
     </Stack>
-
   )
 }

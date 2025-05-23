@@ -1,9 +1,9 @@
-import { Box, Button, GridColumn } from "@island.is/island-ui/core"
+import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import * as styles from './Footer.css'
-import { useApplicationContext } from "../../context/ApplicationProvider"
-import { useIntl } from "react-intl"
-import { webMessages } from "@island.is/form-system/ui"
-import { SAVE_SCREEN, SUBMIT_SCREEN } from "@island.is/form-system/graphql"
+import { useApplicationContext } from '../../context/ApplicationProvider'
+import { useIntl } from 'react-intl'
+import { webMessages } from '@island.is/form-system/ui'
+import { SAVE_SCREEN, SUBMIT_SCREEN } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
 
 interface Props {
@@ -25,15 +25,14 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
   const submitScreen = useMutation(SAVE_SCREEN)
 
-  const handleIncrement = () => dispatch({
-    type: "INCREMENT",
-    payload: {
-      submitScreen
-    }
-  })
-  const handleDecrement = () => dispatch({ type: "DECREMENT" })
-
-
+  const handleIncrement = () =>
+    dispatch({
+      type: 'INCREMENT',
+      payload: {
+        submitScreen,
+      },
+    })
+  const handleDecrement = () => dispatch({ type: 'DECREMENT' })
 
   return (
     <Box marginTop={7} className={styles.buttonContainer}>
@@ -58,32 +57,30 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               {continueButtonText}
             </Button>
           </Box>
-          {
-            state.currentSection.index > 1 && (
-              <Box display="inlineFlex" padding={2} paddingLeft="none">
-                <Button
-                  icon="arrowBack"
-                  variant="ghost"
-                  onClick={() => {
-                    // if (state.currentScreen?.data) {
-                    //   submitScreen({
-                    //     variables: {
-                    //       input: {
-                    //         screenId: state.currentScreen?.data.id,
-                    //         applicationDto: state.application,
-                    //       }
-                    //     },
-                    //     errorPolicy: 'all'
-                    //   })
-                    // }
-                    handleDecrement()
-                  }}
-                >
-                  {formatMessage(webMessages.back)}
-                </Button>
-              </Box>
-            )
-          }
+          {state.currentSection.index > 1 && (
+            <Box display="inlineFlex" padding={2} paddingLeft="none">
+              <Button
+                icon="arrowBack"
+                variant="ghost"
+                onClick={() => {
+                  // if (state.currentScreen?.data) {
+                  //   submitScreen({
+                  //     variables: {
+                  //       input: {
+                  //         screenId: state.currentScreen?.data.id,
+                  //         applicationDto: state.application,
+                  //       }
+                  //     },
+                  //     errorPolicy: 'all'
+                  //   })
+                  // }
+                  handleDecrement()
+                }}
+              >
+                {formatMessage(webMessages.back)}
+              </Button>
+            </Box>
+          )}
         </Box>
       </GridColumn>
     </Box>

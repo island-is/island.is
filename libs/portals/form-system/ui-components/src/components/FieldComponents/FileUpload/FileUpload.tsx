@@ -5,7 +5,7 @@ import {
   FileUploadStatus,
   toast,
   UploadFile,
-  InputFileUpload
+  InputFileUpload,
 } from '@island.is/island-ui/core'
 import { Dispatch, useCallback, useState } from 'react'
 import { uuid } from 'uuidv4'
@@ -27,9 +27,16 @@ interface Props {
   applicationId?: string
 }
 
-export const FileUpload = ({ item, hasError, lang = 'is', dispatch }: Props) => {
+export const FileUpload = ({
+  item,
+  hasError,
+  lang = 'is',
+  dispatch,
+}: Props) => {
   const [files, setFiles] = useState<UploadFile[]>([])
-  const [error, setError] = useState<string | undefined>(hasError ? 'error' : undefined)
+  const [error, setError] = useState<string | undefined>(
+    hasError ? 'error' : undefined,
+  )
   const { formatMessage } = useIntl()
   const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
 
@@ -39,12 +46,12 @@ export const FileUpload = ({ item, hasError, lang = 'is', dispatch }: Props) => 
     try {
       const { data } = await createUploadUrl({
         variables: {
-          filename: file.name
-        }
+          filename: file.name,
+        },
       })
 
       const {
-        createUploadUrl: { url, fields }
+        createUploadUrl: { url, fields },
       } = data
 
       const response = await uploadFileToS3(file, url, fields)
@@ -52,45 +59,52 @@ export const FileUpload = ({ item, hasError, lang = 'is', dispatch }: Props) => 
 
       // TODO: add dispatch function to store the file
 
-
       return Promise.resolve({ key: fields.key, url: responseUrl })
     } catch (e) {
       console.error('Error uploading file', e)
       return Promise.reject()
     }
-
-
   }
 
-  const onChange = useCallback((selectedFiles: File[]) => {
-    if (files.length + selectedFiles.length > (item?.fieldSettings?.maxFiles ?? 1)) {
-      setError(`${formatMessage(m.maxFileError)} ${item.fieldSettings?.maxFiles ?? 1}`)
-      return
-    }
+  const onChange = useCallback(
+    (selectedFiles: File[]) => {
+      if (
+        files.length + selectedFiles.length >
+        (item?.fieldSettings?.maxFiles ?? 1)
+      ) {
+        setError(
+          `${formatMessage(m.maxFileError)} ${
+            item.fieldSettings?.maxFiles ?? 1
+          }`,
+        )
+        return
+      }
 
-    setError(undefined)
+      setError(undefined)
 
-    const uploadFiles = selectedFiles.map((file) => ({
-      id: `${file.name}-${uuid()}`,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      status: FileUploadStatus.uploading,
-      percent: 0,
-      originalFileObj: file,
-    }))
+      const uploadFiles = selectedFiles.map((file) => ({
+        id: `${file.name}-${uuid()}`,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        status: FileUploadStatus.uploading,
+        percent: 0,
+        originalFileObj: file,
+      }))
 
-    setFiles((prev) => [...prev, ...uploadFiles])
+      setFiles((prev) => [...prev, ...uploadFiles])
 
-    //Upload files to S3 missing here
-
-
-  }, [files, item, types, formatMessage])
+      //Upload files to S3 missing here
+    },
+    [files, item, types, formatMessage],
+  )
 
   const updateFile = useCallback((file: UploadFile, newId?: string) => {
-    setFiles(prev => prev.map(f =>
-      f.id === file.id ? { ...f, ...file, id: newId ?? file.id } : f
-    ))
+    setFiles((prev) =>
+      prev.map((f) =>
+        f.id === file.id ? { ...f, ...file, id: newId ?? file.id } : f,
+      ),
+    )
   }, [])
 
   // TODO: add handleRetry
@@ -126,7 +140,9 @@ export const FileUpload = ({ item, hasError, lang = 'is', dispatch }: Props) => 
 }
 
 export const OldFileUpload = ({ item, hasError, lang = 'is' }: Props) => {
-  const [error, setError] = useState<string | undefined>(hasError ? 'error' : undefined)
+  const [error, setError] = useState<string | undefined>(
+    hasError ? 'error' : undefined,
+  )
   const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
   const { formatMessage } = useIntl()
   const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
@@ -169,7 +185,8 @@ export const OldFileUpload = ({ item, hasError, lang = 'is' }: Props) => {
         onRemove={onRemove}
         errorMessage={error}
         accept={
-          types?.map((t: string) => fileTypes[t as keyof typeof fileTypes]) ?? []
+          types?.map((t: string) => fileTypes[t as keyof typeof fileTypes]) ??
+          []
         }
         showFileSize
         maxSize={item?.fieldSettings?.fileMaxSize ?? 1}

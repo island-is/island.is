@@ -7,4 +7,4 @@ export const CREATE_UPLOAD_URL = gql`
       fields
     }
   }
-` 
+`

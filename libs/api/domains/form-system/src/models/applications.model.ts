@@ -16,7 +16,6 @@ export class ApplicationEventDto {
 
   @Field(() => Date, { nullable: true })
   created?: Date
-
 }
 
 @ObjectType('FormSystemApplication')

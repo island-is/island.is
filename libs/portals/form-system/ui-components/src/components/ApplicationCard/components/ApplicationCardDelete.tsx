@@ -3,7 +3,6 @@ import { coreMessages } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { FormSystemApplication } from '@island.is/api/schema'
 
-
 interface Props {
   application: FormSystemApplication
   onDelete?: () => void
@@ -18,7 +17,7 @@ export const ApplicationCardDelete = ({ application, onDelete }: Props) => {
       baseId="delete_dialog"
       title={formatMessage(coreMessages.deleteApplicationDialogTitle)}
       description={formatMessage(
-        coreMessages.deleteApplicationDialogDescription
+        coreMessages.deleteApplicationDialogDescription,
       )}
       ariaLabel={formatMessage(coreMessages.deleteApplicationDialogTitle)}
       img={
@@ -36,7 +35,7 @@ export const ApplicationCardDelete = ({ application, onDelete }: Props) => {
           </Box>
         </Tag>
       }
-      onConfirm={() => { }}
+      onConfirm={() => {}}
       buttonTextConfirm={formatMessage(
         coreMessages.deleteApplicationDialogConfirmLabel,
       )}

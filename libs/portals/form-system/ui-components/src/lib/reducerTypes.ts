@@ -1,4 +1,8 @@
-import { FormSystemApplication, FormSystemScreen, FormSystemSection } from "@island.is/api/schema"
+import {
+  FormSystemApplication,
+  FormSystemScreen,
+  FormSystemSection,
+} from '@island.is/api/schema'
 
 export interface ApplicationState {
   application: FormSystemApplication
@@ -22,7 +26,7 @@ export interface Action {
 }
 
 export interface FieldActions {
-  type: 'LIST_VALUE',
+  type: 'LIST_VALUE'
   payload: {
     value: string
   }

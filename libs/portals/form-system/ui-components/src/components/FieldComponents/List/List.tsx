@@ -49,10 +49,10 @@ export const List = ({ item, dispatch, lang = 'is', hasError }: Props) => {
       required={item.isRequired ?? false}
       placeholder={
         listTypePlaceholder[
-        item.fieldSettings?.listType as keyof typeof listTypePlaceholder
+          item.fieldSettings?.listType as keyof typeof listTypePlaceholder
         ] ?? 'Select an option'
       }
-      backgroundColor='blue'
+      backgroundColor="blue"
       onChange={(e) => {
         if (!dispatch) return
         dispatch({

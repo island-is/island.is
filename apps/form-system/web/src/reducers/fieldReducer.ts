@@ -1,9 +1,9 @@
-import { Action, ApplicationState } from "@island.is/form-system/ui"
-import { setFieldValue } from "./reducerUtils"
+import { Action, ApplicationState } from '@island.is/form-system/ui'
+import { setFieldValue } from './reducerUtils'
 
 export const fieldReducer = (
   state: ApplicationState,
-  action: Action
+  action: Action,
 ): ApplicationState => {
   switch (action.type) {
     case 'SET_LIST_VALUE': {
@@ -54,11 +54,11 @@ export const fieldReducer = (
 const setMultipleFieldValues = (
   state: ApplicationState,
   id: string,
-  values: Record<string, any>
+  values: Record<string, any>,
 ): ApplicationState => {
   return Object.entries(values).reduce(
     (acc, [fieldName, fieldValue]) =>
       setFieldValue(acc, fieldName, id, fieldValue),
-    state
+    state,
   )
 }

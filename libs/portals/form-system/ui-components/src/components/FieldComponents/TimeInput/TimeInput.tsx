@@ -47,7 +47,7 @@ export const TimeInput = ({ item }: Props) => {
             }
           })}
           size="xs"
-          backgroundColor='blue'
+          backgroundColor="blue"
         />
       </Column>
       <Box style={{ lineHeight: '90px' }}>:</Box>
@@ -60,7 +60,7 @@ export const TimeInput = ({ item }: Props) => {
           size="xs"
           isSearchable
           isDisabled={item?.fieldSettings?.timeInterval === '1'}
-          backgroundColor='blue'
+          backgroundColor="blue"
         />
       </Column>
     </Row>

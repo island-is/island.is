@@ -19,7 +19,7 @@ export class CertificationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private certificationsApi: FormCertificationTypesApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

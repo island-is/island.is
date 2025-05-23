@@ -1,7 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FieldDto } from '../../../fields/models/dto/field.dto'
-import { IsBoolean, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class ScreenDto {

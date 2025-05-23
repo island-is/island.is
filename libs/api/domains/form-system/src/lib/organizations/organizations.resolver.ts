@@ -19,7 +19,7 @@ import { OrganizationAdmin } from '../../models/organizationAdmin.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class OrganizationsResolver {
-  constructor(private readonly organizationsService: OrganizationsService) { }
+  constructor(private readonly organizationsService: OrganizationsService) {}
 
   @Query(() => Organization, {
     name: 'formSystemOrganization',

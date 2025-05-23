@@ -21,6 +21,7 @@ import {
 } from './identityAndCanSignLookup.generated'
 import { useSignatureCollectionAdminUploadPaperSignatureMutation } from './uploadPaperSignee.generated'
 import { useRevalidator } from 'react-router-dom'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 export const PaperSignees = ({ listId }: { listId: string }) => {
   useNamespaces('sp.signatureCollection')
@@ -43,6 +44,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
     useSignatureCollectionAdminCanSignInfoQuery({
       variables: {
         input: {
+          collectionType: SignatureCollectionCollectionType.Parliamentary,
           signeeNationalId: nationalIdInput,
           listId,
         },

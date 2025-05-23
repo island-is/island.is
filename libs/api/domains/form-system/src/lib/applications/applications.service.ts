@@ -27,7 +27,7 @@ export class ApplicationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private applicationsApi: ApplicationsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -103,7 +103,9 @@ export class ApplicationsService {
   }
 
   async saveScreen(auth: User, input: SubmitScreenInput): Promise<Screen> {
-    const response = await this.applicationsApiWithAuth(auth).applicationsControllerSaveScreen(
+    const response = await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerSaveScreen(
       input as ApplicationsControllerSaveScreenRequest,
     )
     return response

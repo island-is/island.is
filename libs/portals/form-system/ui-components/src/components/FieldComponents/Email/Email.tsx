@@ -15,7 +15,12 @@ interface Props {
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
-export const Email = ({ item, dispatch, lang = 'is', hasError: otherError }: Props) => {
+export const Email = ({
+  item,
+  dispatch,
+  lang = 'is',
+  hasError: otherError,
+}: Props) => {
   const initialEmail = getValue(item, 'email')
   const [email, setEmail] = useState(initialEmail)
   const [hasError, setHasError] = useState(false)
@@ -38,7 +43,7 @@ export const Email = ({ item, dispatch, lang = 'is', hasError: otherError }: Pro
         },
       })
     },
-    [dispatch, item.id, validateEmail]
+    [dispatch, item.id, validateEmail],
   )
 
   const handleBlur = useCallback(() => {

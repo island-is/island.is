@@ -53,8 +53,7 @@ export class ApplicationsService {
     @InjectModel(Screen) private screenModel: typeof Screen,
     @InjectModel(Field) private fieldModel: typeof Field,
     @InjectModel(Section) private sectionModel: typeof Section,
-
-  ) { }
+  ) {}
 
   async create(
     slug: string,
@@ -472,7 +471,9 @@ export class ApplicationsService {
     const application = await this.applicationModel.findByPk(applicationId)
 
     if (!application) {
-      throw new NotFoundException(`Application with id '${applicationId}' not found`)
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
     }
 
     if (screenDto.fields) {
@@ -485,9 +486,9 @@ export class ApplicationsService {
                 where: {
                   fieldId: field.id,
                   applicationId: applicationId,
-                  id: value.id
-                }
-              }
+                  id: value.id,
+                },
+              },
             )
           }
         }
@@ -496,27 +497,25 @@ export class ApplicationsService {
 
     await application.update({
       ...application,
-      completed: [...application.completed ?? [], screen.id]
+      completed: [...(application.completed ?? []), screen.id],
     })
     const lastScreen = await this.screenModel.findOne({
       where: { sectionId: screen.sectionId },
-      order: [['displayOrder', 'DESC']]
+      order: [['displayOrder', 'DESC']],
     })
     if (lastScreen && lastScreen.id === screenId) {
       await application.update({
         ...application,
-        completed: [...application.completed ?? [], screen.sectionId]
+        completed: [...(application.completed ?? []), screen.sectionId],
       })
     }
 
     const screenResult = await this.screenModel.findByPk(screenId, {
-      include: [
-        { model: this.fieldModel, include: [this.valueModel] }
-      ]
+      include: [{ model: this.fieldModel, include: [this.valueModel] }],
     })
 
     if (!screenResult) {
-      throw new NotFoundException(`Screen with id '${screenId}' not found`);
+      throw new NotFoundException(`Screen with id '${screenId}' not found`)
     }
     return screenResult as unknown as ScreenDto
   }

@@ -54,4 +54,4 @@ import { CmsModule } from '@island.is/cms'
   exports: [],
   imports: [FormSystemClientModule, LoggingModule],
 })
-export class FormSystemModule { }
+export class FormSystemModule {}
