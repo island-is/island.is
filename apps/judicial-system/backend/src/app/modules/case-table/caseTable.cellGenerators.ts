@@ -16,6 +16,7 @@ import {
   CaseTableColumnKey,
   CaseType,
   DefendantEventType,
+  EventType,
   getIndictmentAppealDeadlineDate,
   getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
@@ -30,6 +31,7 @@ import {
 import { Case } from '../case/models/case.model'
 import { DateLog } from '../case/models/dateLog.model'
 import { Defendant, DefendantEventLog } from '../defendant'
+import { EventLog } from '../event-log/models/eventLog.model'
 import { User } from '../user'
 import {
   CaseTableCellValue,
@@ -247,13 +249,53 @@ const validFromTo: CaseTableCellGenerator = {
       : undefined,
 }
 
+const caseSentToCourtDate: CaseTableCellGenerator = {
+  includes: {
+    eventLogs: {
+      model: EventLog,
+      attributes: ['created', 'eventType'],
+      order: [['created', 'DESC']],
+      where: {
+        eventType: [EventType.CASE_SENT_TO_COURT],
+      },
+      separate: true,
+    },
+  },
+  generate: (c: Case): StringGroupValue | undefined => {
+    const caseSentToCourtEvent = EventLog.caseSentToCourtEvent(c.eventLogs)
+
+    return caseSentToCourtEvent
+      ? { s: [formatDate(caseSentToCourtEvent.created) ?? ''] }
+      : undefined
+  },
+}
+
+const arraignmentDate: CaseTableCellGenerator = {
+  includes: {
+    dateLogs: {
+      model: DateLog,
+      attributes: ['date', 'dateType'],
+      order: [['created', 'DESC']],
+      separate: true,
+    },
+  },
+  generate: (c: Case): StringGroupValue | undefined => {
+    const arraignmentDateLog = DateLog.arraignmentDate(c.dateLogs)?.date
+    const courtDateLog = DateLog.courtDate(c.dateLogs)?.date
+    const arraignmentDate = arraignmentDateLog ?? courtDateLog
+    return arraignmentDate
+      ? { s: [formatDate(arraignmentDate) ?? ''] }
+      : undefined
+  },
+}
+
 const rulingDate: CaseTableCellGenerator = {
   attributes: ['rulingDate'],
   generate: (c: Case): StringGroupValue | undefined =>
     c.rulingDate ? { s: [formatDate(c.rulingDate) ?? ''] } : undefined,
 }
 
-const restrictionCaseState: CaseTableCellGenerator = {
+const requestCaseState: CaseTableCellGenerator = {
   includes: {
     dateLogs: {
       model: DateLog,
@@ -568,7 +610,7 @@ export const caseTableCellGenerators: Record<
   courtOfAppealsHead,
   validFromTo,
   rulingDate,
-  restrictionCaseState,
+  requestCaseState,
   rulingType,
   punishmentType,
   prisonAdminReceivalDate,
@@ -578,4 +620,6 @@ export const caseTableCellGenerators: Record<
   indictmentReviewer,
   sentToPrisonAdminDate,
   indictmentReviewDecision,
+  caseSentToCourtDate,
+  arraignmentDate,
 }

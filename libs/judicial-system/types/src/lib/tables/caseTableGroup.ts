@@ -1,6 +1,7 @@
 import {
   InstitutionUser,
   isCourtOfAppealsUser,
+  isDistrictCourtUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
   isPublicProsecutionOfficeUser,
@@ -18,6 +19,33 @@ interface CaseTableGroup {
   title: string
   tables: CaseTableDescriptor[]
 }
+
+const districtCourtTableGroups: CaseTableGroup[] = [
+  {
+    title: 'Rannsóknarmál',
+    tables: [
+      {
+        type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS,
+        route: 'mal-i-vinnslu',
+        title: 'Rannsóknarmál í vinnslu',
+        description: 'Ný mál, móttekin mál og mál á dagskrá.',
+      },
+      {
+        type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED,
+        route: 'kaerd-mal',
+        title: 'Kærur til Landsréttar',
+        description:
+          'Úrskurðir sem búið er að kæra en á eftir að senda til Landsréttar.',
+      },
+      {
+        type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED,
+        route: 'afgreidd-mal',
+        title: 'Afgreidd rannsóknarmál',
+        description: 'Mál sem búið er að ljúka.',
+      }
+    ],
+  },
+]
 
 const courtOfAppealsTableGroups: CaseTableGroup[] = [
   {
@@ -127,6 +155,9 @@ const publicProsecutorsOfficeTableGroups: CaseTableGroup[] = [
 export const getCaseTableGroups = (
   user: InstitutionUser | undefined,
 ): CaseTableGroup[] => {
+  if (isDistrictCourtUser(user)) {
+    return districtCourtTableGroups
+  }
   if (isCourtOfAppealsUser(user)) {
     return courtOfAppealsTableGroups
   }

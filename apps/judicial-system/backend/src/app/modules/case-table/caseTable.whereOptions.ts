@@ -15,6 +15,26 @@ import {
   ServiceRequirement,
 } from '@island.is/judicial-system/types'
 
+const districtCourtRequestCasesInProgressWhereOptions = {
+  is_archived: false,
+  type: [...restrictionCases, ...investigationCases],
+  state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED],
+}
+
+const districtCourtRequestCasesAppealedWhereOptions = {
+  is_archived: false,
+  type: [...restrictionCases, ...investigationCases],
+  state: completedRequestCaseStates,
+  appeal_state: [CaseAppealState.APPEALED],
+}
+
+const districtCourtRequestCasesCompletedWhereOptions = {
+  is_archived: false,
+  type: [...restrictionCases, ...investigationCases],
+  state: completedRequestCaseStates,
+  appeal_state: { [Op.not]: CaseAppealState.APPEALED },
+}
+
 const courtOfAppealsSharedWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
@@ -256,6 +276,12 @@ export const caseTableWhereOptions: Record<CaseTableType, WhereOptions> = {
     courtOfAppealsInProgressWhereOptions,
   [CaseTableType.COURT_OF_APPEALS_COMPLETED]:
     courtOfAppealsCompletedWhereOptions,
+  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS]:
+    districtCourtRequestCasesInProgressWhereOptions,
+  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED]:
+    districtCourtRequestCasesAppealedWhereOptions,
+  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED]:
+    districtCourtRequestCasesCompletedWhereOptions,
   [CaseTableType.PRISON_ACTIVE]: prisonActiveWhereOptions,
   [CaseTableType.PRISON_DONE]: prisonDoneWhereOptions,
   [CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN]:
