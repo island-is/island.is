@@ -21,6 +21,7 @@ import { IslykillService } from '../islykill.service'
 import { DeleteIslykillSettings } from '../models/deleteIslykillSettings.model'
 import { UserProfile } from '../userProfile.model'
 import { UpdateActorProfileEmailInput } from '../dto/updateActorProfileEmail.input'
+import { ActorProfileDetails } from '../dto/actorProfileDetails'
 
 @Injectable()
 export class UserProfileServiceV2 {
@@ -117,10 +118,16 @@ export class UserProfileServiceV2 {
     })
   }
 
-  async getActorProfiles(user: User): Promise<ActorProfileResponse> {
-    return this.v2MeUserProfileApiWithAuth(
+  async getActorProfile(user: User): Promise<ActorProfileDetails> {
+    return this.v2ActorApiWithAuth(
       user,
-    ).meUserProfileControllerGetActorProfiles()
+    ).actorUserProfileControllerGetSingleActorProfile()
+  }
+
+  async getActorProfiles(user: User): Promise<ActorProfileResponse> {
+    return this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerGetActorProfiles()
   }
 
   async updateActorProfile(

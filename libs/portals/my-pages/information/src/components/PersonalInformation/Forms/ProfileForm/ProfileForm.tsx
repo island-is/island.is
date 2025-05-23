@@ -17,6 +17,7 @@ import {
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
 
+import { UserProfileScope } from '@island.is/auth/scopes'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import orderBy from 'lodash/orderBy'
 import { FormattedMessage } from 'react-intl'
@@ -48,7 +49,6 @@ interface ProfileFormProps {
   showIntroTitle?: boolean
   showIntroText?: boolean
   setFormLoading?: (isLoading: boolean) => void
-  hasUserProfileWriteScope?: boolean
 }
 
 export const ProfileForm = ({
@@ -60,10 +60,11 @@ export const ProfileForm = ({
   setFormLoading,
   showIntroTitle,
   showIntroText = true,
-  hasUserProfileWriteScope,
 }: ProfileFormProps) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
+  const { scopes } = useUserInfo()
+  const hasUserProfileWriteScope = scopes.includes(UserProfileScope.write)
 
   const [telDirty, setTelDirty] = useState(true)
   const [internalLoading, setInternalLoading] = useState(false)

@@ -22,11 +22,13 @@ import { SetActorProfileEmailInput } from './dto/setActorProfileEmail.input'
 import { UserEmailsService } from './modules/user-emails/userEmails.service'
 import { UpdateActorProfileEmailInput } from './dto/updateActorProfileEmail.input'
 import { ActorProfileDetails } from './dto/actorProfileDetails'
+import { UserProfileServiceV2 } from './V2/userProfile.service'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ActorProfile)
 export class ActorProfileResolver {
   constructor(
+    private readonly userProfileServiceV2: UserProfileServiceV2,
     private readonly userUserProfileService: UserProfileService,
     private readonly userEmailsService: UserEmailsService,
     private identityService: IdentityClientService,
@@ -35,6 +37,11 @@ export class ActorProfileResolver {
   @Query(() => ActorProfileResponse, { name: 'userProfileActorProfiles' })
   actorProfiles(@CurrentUser() user: User): Promise<ActorProfileResponse> {
     return this.userUserProfileService.getActorProfiles(user)
+  }
+
+  @Query(() => ActorProfileDetails, { name: 'userProfileActorProfile' })
+  actorProfile(@CurrentUser() user: User): Promise<ActorProfileDetails> {
+    return this.userProfileServiceV2.getActorProfile(user)
   }
 
   @Mutation(() => ActorProfile, {

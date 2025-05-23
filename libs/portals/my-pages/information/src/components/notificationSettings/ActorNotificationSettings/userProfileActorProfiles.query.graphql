@@ -4,6 +4,7 @@ query ActorProfiles {
       fromNationalId
       fromName
       emailNotifications
+      emailsId
     }
   }
 }

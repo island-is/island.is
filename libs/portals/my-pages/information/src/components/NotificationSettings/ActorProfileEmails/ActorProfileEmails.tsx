@@ -11,7 +11,7 @@ import { Email, useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { useCallback, useMemo, useState } from 'react'
 import { emailsMsg } from '../../../lib/messages'
 import { ProfileEmailForm } from '../../emails/ProfileEmailForm/ProfileEmailForm'
-import { useUpdateActorProfileEmailMutation } from '../ActorProfilesNotificationSettings/userProfileUpdateActorProfileEmail.generated'
+import { useUpdateActorProfileEmailMutation } from '../ActorNotificationSettings/userProfileUpdateActorProfileEmail.generated'
 import * as styles from './ActorProfileEmails.css'
 
 type EmailOption = Option<string> & { id: string }
@@ -22,20 +22,26 @@ const mapEmailsToOptions = (email: Email): EmailOption => ({
   value: email.email ?? '',
 })
 
-export const ActorProfileEmails = () => {
+type ActorProfileEmailsProps = {
+  selectedEmailId?: string | null
+}
+
+export const ActorProfileEmails = ({
+  selectedEmailId,
+}: ActorProfileEmailsProps) => {
   const { formatMessage } = useLocale()
   const [showEmailForm, setShowEmailForm] = useState(false)
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
 
   const { options, connectedOption } = useMemo(() => {
     const emails = userProfile?.emails ?? []
-    const connected = emails.find((email) => email.isConnectedToActorProfile)
+    const connected = emails.find((email) => email.id === selectedEmailId)
 
     return {
       options: emails.filter(({ email }) => email).map(mapEmailsToOptions),
       connectedOption: connected ? mapEmailsToOptions(connected) : undefined,
     }
-  }, [userProfile])
+  }, [userProfile, selectedEmailId])
 
   const [updateActorProfileEmail] = useUpdateActorProfileEmailMutation({
     onCompleted: (data) => {

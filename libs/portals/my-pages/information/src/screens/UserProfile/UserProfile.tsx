@@ -1,4 +1,3 @@
-import { UserProfileScope } from '@island.is/auth/scopes'
 import { useLocale } from '@island.is/localization'
 import {
   ISLANDIS_SLUG,
@@ -13,8 +12,7 @@ import { msg } from '../../lib/messages'
 const UserProfile = () => {
   const { data } = useUserProfile()
   const { formatMessage } = useLocale()
-  const { scopes, profile } = useUserInfo()
-  const hasUserProfileWriteScope = scopes.includes(UserProfileScope.write)
+  const { profile } = useUserInfo()
 
   return (
     <>
@@ -29,7 +27,6 @@ const UserProfile = () => {
         showIntroText={false}
         showDetails={!!data}
         title={profile.name || ''}
-        hasUserProfileWriteScope={hasUserProfileWriteScope}
       />
     </>
   )

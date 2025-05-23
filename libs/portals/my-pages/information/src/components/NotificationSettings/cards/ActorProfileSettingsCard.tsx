@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { UserProfileActorProfile } from '@island.is/api/schema'
 import { toast } from '@island.is/island-ui/core'
 import { mNotifications } from '../../../lib/messages'
-import { useUpdateActorProfileMutation } from '../ActorProfilesNotificationSettings/userProfileUpdateActorProfile.generated'
+import { useUpdateActorProfileMutation } from '../ActorNotificationSettings/userProfileUpdateActorProfile.generated'
 import { SettingsCard } from './SettingsCard/SettingsCard'
 
 interface ActorProfileSettingsCardProps {

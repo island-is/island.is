@@ -6,69 +6,62 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
-import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { usePaperMail } from '../../../hooks/usePaperMail'
 import { mNotifications } from '../../../lib/messages'
+import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 import { SettingsCard } from '../cards/SettingsCard/SettingsCard'
-import {
-  useUpdateUserProfileSettingsMutation,
-  useUserProfileSettingsQuery,
-} from './getUserProfile.query.generated'
+import { useUpdateActorProfileMutation } from './updateActorProfile.mutation.generated'
+import { useUserProfileActorProfileQuery } from './userProfileActorProfile.query.generated'
 
-type UserProfileNotificationSettings = {
-  documentNotifications: boolean
-  canNudge: boolean
+type Settings = {
+  emailNotifications: boolean
   wantsPaper: boolean
 }
 
-export const UserProfileNotificationSettings = () => {
+export const ActorProfileNotificationSettings = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
-  const {
-    data: userProfile,
-    loading,
-    error: fetchError,
-  } = useUserProfileSettingsQuery()
-  const [updateUserProfile] = useUpdateUserProfileSettingsMutation()
+  const { data, loading, error } = useUserProfileActorProfileQuery()
+
+  const [updateActorProfile] = useUpdateActorProfileMutation()
   const {
     wantsPaper,
     postPaperMailMutation,
     loading: paperMailLoading,
   } = usePaperMail()
 
-  const [settings, setSettings] = useState<UserProfileNotificationSettings>({
-    documentNotifications:
-      userProfile?.getUserProfile?.documentNotifications ?? true,
-    canNudge: userProfile?.getUserProfile?.canNudge ?? true,
+  const [settings, setSettings] = useState<Settings>({
+    emailNotifications:
+      data?.userProfileActorProfile.emailNotifications ?? true,
     wantsPaper: wantsPaper ?? false,
   })
 
   useEffect(() => {
-    if (userProfile?.getUserProfile) {
+    if (data?.userProfileActorProfile) {
       setSettings({
         ...settings,
-        documentNotifications:
-          userProfile?.getUserProfile.documentNotifications,
-        canNudge: userProfile?.getUserProfile.canNudge ?? true,
+        emailNotifications: data.userProfileActorProfile.emailNotifications,
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userProfile])
+  }, [data])
 
-  const onChange = async (
-    updatedSettings: Partial<UserProfileNotificationSettings>,
-  ) => {
+  const onChange = async (updatedSettings: Partial<Settings>) => {
     const oldSettings = { ...settings }
     const newSettings = { ...settings, ...updatedSettings }
+
     setSettings(newSettings)
 
     try {
-      await updateUserProfile({
+      await updateActorProfile({
         variables: {
-          input: newSettings,
+          input: {
+            emailNotifications: newSettings.emailNotifications,
+            fromNationalId: userInfo?.profile.nationalId,
+          },
         },
       })
     } catch {
@@ -94,8 +87,8 @@ export const UserProfileNotificationSettings = () => {
     return <SkeletonLoader borderRadius="large" height={473} />
   }
 
-  if (fetchError) {
-    return <Problem error={fetchError} size="small" />
+  if (error) {
+    return <Problem error={error} size="small" />
   }
 
   return (
@@ -107,16 +100,8 @@ export const UserProfileNotificationSettings = () => {
           toggleLabel={formatMessage(
             mNotifications.emailNotificationsAriaLabel,
           )}
-          checked={settings.canNudge}
-          onChange={(active) => onChange({ canNudge: active })}
-        />
-        <Divider />
-        <SettingsCard
-          title={formatMessage(mNotifications.appNotifications)}
-          subtitle={formatMessage(mNotifications.appNotificationsDescription)}
-          toggleLabel={formatMessage(mNotifications.appNotificationsAriaLabel)}
-          checked={settings.documentNotifications}
-          onChange={(active) => onChange({ documentNotifications: active })}
+          checked={settings.emailNotifications}
+          onChange={(active) => onChange({ emailNotifications: active })}
         />
         <Divider />
         <SettingsCard

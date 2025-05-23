@@ -13,10 +13,10 @@ import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 
 import { Problem } from '@island.is/react-spa/shared'
 import { ActorProfileEmails } from '../ActorProfileEmails/ActorProfileEmails'
-import * as styles from './ActorProfilesNotificationSettings.css'
+import * as styles from './ActorNotificationSettings.css'
 import { useActorProfilesQuery } from './userProfileActorProfiles.query.generated'
 
-export const ActorProfilesNotificationSettings = () => {
+export const ActorNotificationSettings = () => {
   const { data, loading, error } = useActorProfilesQuery()
   const { formatMessage } = useLocale()
 
@@ -73,7 +73,7 @@ export const ActorProfilesNotificationSettings = () => {
           >
             <Box display="flex" flexDirection="column" rowGap={3}>
               <ActorProfileSettingsCard profile={actorProfile} />
-              <ActorProfileEmails />
+              <ActorProfileEmails selectedEmailId={actorProfile?.emailsId} />
             </Box>
           </NotificationSettingsCard>
         ))}

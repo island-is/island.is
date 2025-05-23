@@ -13,25 +13,25 @@ import { Locale } from '../../user-profile/types/localeTypes'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 export class MeActorProfileDto {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   @IsString()
   readonly fromNationalId!: string
 
-  @ApiProperty()
+  @ApiProperty({ type: Boolean })
   @IsBoolean()
   emailNotifications!: boolean
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String, nullable: true })
   @IsOptional()
   @IsUUID(4)
   readonly emailsId?: string | null
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String, nullable: true })
   @IsOptional()
   @IsString()
   readonly email?: string | null
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean, nullable: true })
   @IsOptional()
   @IsBoolean()
   readonly emailVerified?: boolean | null

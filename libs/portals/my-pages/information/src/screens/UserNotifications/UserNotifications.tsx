@@ -5,13 +5,17 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 
-import { ActorProfilesNotificationSettings } from '../../components/NotificationSettings/ActorProfilesNotificationSettings/ActorProfilesNotificationSettings'
-import { UserProfileNotificationSettings } from '../../components/NotificationSettings/UserProfileNotificationSettings/UserProfileNotificationSettings'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { ActorNotificationSettings } from '../../components/notificationSettings/ActorNotificationSettings/ActorNotificationSettings'
+import { NotificationSettings } from '../../components/notificationSettings/NotificationSettings/NotificationSettings'
 import { mNotifications } from '../../lib/messages'
+import { ActorProfileNotificationSettings } from '../../components/notificationSettings/ActorProfileNotificationSettings/ActorProfileNotificationSettings'
 
 const UserProfile = () => {
   useNamespaces('sp.notifications')
   const { formatMessage } = useLocale()
+  const { profile } = useUserInfo()
+  const isActor = !!profile?.actor
 
   return (
     <>
@@ -22,8 +26,14 @@ const UserProfile = () => {
         serviceProviderTooltip={formatMessage(m.userProfileTooltip)}
         serviceProviderSlug={ISLANDIS_SLUG}
       />
-      <UserProfileNotificationSettings />
-      <ActorProfilesNotificationSettings />
+      {isActor ? (
+        <ActorProfileNotificationSettings />
+      ) : (
+        <>
+          <NotificationSettings />
+          <ActorNotificationSettings />
+        </>
+      )}
     </>
   )
 }
