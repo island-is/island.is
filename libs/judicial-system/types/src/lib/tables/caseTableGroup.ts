@@ -41,8 +41,8 @@ const districtCourtTableGroups: CaseTableGroup[] = [
         type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED,
         route: 'afgreidd-mal',
         title: 'Afgreidd rannsóknarmál',
-        description: 'Mál sem búið er að ljúka.',
-      }
+        description: 'Rannsóknarmál sem búið er að ljúka.',
+      },
     ],
   },
 ]

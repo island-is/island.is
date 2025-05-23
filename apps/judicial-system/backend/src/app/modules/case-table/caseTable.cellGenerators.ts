@@ -309,7 +309,12 @@ const arraignmentDate: CaseTableCellGenerator = {
     const courtDateLog = DateLog.courtDate(c.dateLogs)?.date
     const arraignmentDate = arraignmentDateLog ?? courtDateLog
     return arraignmentDate
-      ? { s: [formatDate(arraignmentDate) ?? ''] }
+      ? {
+          s: [
+            `${capitalize(formatDate(arraignmentDate, 'EEE d. MMMM yyyy'))}`,
+            `kl. ${formatDate(arraignmentDate, 'HH:mm') ?? ''}`,
+          ],
+        }
       : undefined
   },
 }
