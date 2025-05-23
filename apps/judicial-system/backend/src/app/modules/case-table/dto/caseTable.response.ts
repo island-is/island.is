@@ -4,9 +4,17 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger'
 
+export class StringValue {
+  @ApiProperty({ type: String, description: 'The string value' })
+  readonly str!: string
+
+  @ApiProperty({ type: String, description: 'The cell sort value' })
+  readonly sortValue!: string
+}
+
 export class StringGroupValue {
   @ApiProperty({ type: [String], description: 'The string values' })
-  readonly s!: string[]
+  readonly strList!: string[]
 }
 
 export class TagValue {
@@ -25,11 +33,16 @@ export class TagPairValue {
   readonly secondTag?: TagValue
 }
 
-export type CaseTableCellValue = StringGroupValue | TagValue | TagPairValue
+export type CaseTableCellValue =
+  | StringValue
+  | StringGroupValue
+  | TagValue
+  | TagPairValue
 
 export class CaseTableCell {
   @ApiPropertyOptional({
     oneOf: [
+      { $ref: getSchemaPath(StringValue) },
       { $ref: getSchemaPath(StringGroupValue) },
       { $ref: getSchemaPath(TagValue) },
       { $ref: getSchemaPath(TagPairValue) },

@@ -16,6 +16,7 @@ import TagContainer from '@island.is/judicial-system-web/src/components/Tags/Tag
 import {
   CaseTableCell,
   StringGroupValue,
+  StringValue,
   TagPairValue,
   TagValue,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -29,9 +30,13 @@ const hasCellValue = (cell: CaseTableCell): boolean => {
   return cell.value !== null && cell.value !== undefined
 }
 
+const compareString = (a: StringValue, b: StringValue) => {
+  return compareLocaleIS(a.sortValue, b.sortValue)
+}
+
 const compareStringGroup = (a: StringGroupValue, b: StringGroupValue) => {
-  const aValue = a.s
-  const bValue = b.s
+  const aValue = a.strList
+  const bValue = b.strList
 
   for (let i = 0; i < aValue.length; i++) {
     if (aValue[i] === bValue[i]) {
@@ -85,6 +90,8 @@ const compare = (a: CaseTableCell, b: CaseTableCell): number => {
   }
 
   switch (aValue.__typename) {
+    case 'StringValue':
+      return compareString(aValue, bValue as StringValue)
     case 'StringGroupValue':
       return compareStringGroup(aValue, bValue as StringGroupValue)
     case 'TagValue':
@@ -97,8 +104,16 @@ const compare = (a: CaseTableCell, b: CaseTableCell): number => {
   }
 }
 
+const renderString = (value: StringValue) => {
+  return (
+    <Text as="span" variant="small">
+      {value.str}
+    </Text>
+  )
+}
+
 const renderStringGroup = (value: StringGroupValue) => {
-  const strings = value.s.filter((v) => v !== '')
+  const strings = value.strList.filter((v) => v !== '')
   const length = strings.length
 
   return (
@@ -144,6 +159,8 @@ const render = (cell: CaseTableCell): ReactNode => {
   const value = cell.value
 
   switch (value.__typename) {
+    case 'StringValue':
+      return renderString(value)
     case 'StringGroupValue':
       return renderStringGroup(value)
     case 'TagValue':

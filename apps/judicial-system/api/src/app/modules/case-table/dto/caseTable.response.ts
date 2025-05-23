@@ -13,9 +13,18 @@ registerEnumType(CaseTableType, {
 })
 
 @ObjectType()
+class StringValue {
+  @Field(() => String, { description: 'The string value' })
+  readonly str!: string
+
+  @Field(() => String, { description: 'The cell sort value' })
+  readonly sortValue!: string
+}
+
+@ObjectType()
 class StringGroupValue {
   @Field(() => [String], { description: 'The string values' })
-  readonly s!: string[]
+  readonly strList!: string[]
 }
 
 @ObjectType()
@@ -41,17 +50,24 @@ export class TagPairValue {
 
 const CaseTableCellValue = createUnionType({
   name: 'CaseTableCellValue',
-  types: () => [StringGroupValue, TagValue, TagPairValue] as const,
+  types: () => [StringValue, StringGroupValue, TagValue, TagPairValue] as const,
   resolveType(value) {
-    if ('s' in value) {
+    if ('str' in value) {
+      return StringValue
+    }
+
+    if ('strList' in value) {
       return StringGroupValue
     }
+
     if ('color' in value && 'text' in value) {
       return TagValue
     }
+
     if ('firstTag' in value) {
       return TagPairValue
     }
+
     // This should never happen, but if it does, we return null
     return null
   },
