@@ -3,8 +3,9 @@ import { useLocale } from '@island.is/localization'
 
 import { PaymentCompleteIcon } from '../../components/PaymentCompleteIcon'
 import { threeDSecure } from '../../messages'
+import { withLocale } from '../../i18n/withLocale'
 
-export default function ThreeDSecureSuccessPage() {
+function ThreeDSecureSuccessPage() {
   const { formatMessage } = useLocale()
 
   return (
@@ -34,3 +35,5 @@ export default function ThreeDSecureSuccessPage() {
     </div>
   )
 }
+
+export default withLocale(ThreeDSecureSuccessPage)

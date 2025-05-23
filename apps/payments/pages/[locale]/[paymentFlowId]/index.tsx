@@ -42,6 +42,7 @@ import { PaymentReceipt } from '../../../components/PaymentReceipt'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import { InvoiceReceipt } from '../../../components/InvoiceReceipt'
 import { usePaymentOrchestration } from '../../../hooks/usePaymentOrchestration'
+import { withLocale } from '../../../i18n/withLocale'
 
 interface PaymentPageProps {
   locale: string
@@ -170,7 +171,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   }
 }
 
-export default function PaymentPage({
+function PaymentPage({
   paymentFlow,
   organization,
   productInformation,
@@ -362,3 +363,5 @@ export default function PaymentPage({
     </>
   )
 }
+
+export default withLocale(PaymentPage)
