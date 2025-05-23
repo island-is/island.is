@@ -35,8 +35,11 @@ import {
   CSRF_COOKIE_NAME,
   DEFENDER_CASES_ROUTE,
   EXPIRES_IN_MILLISECONDS,
+  IDS_ACCESS_TOKEN_NAME,
   IDS_ID_TOKEN_NAME,
+  IDS_REFRESH_TOKEN_NAME,
   PRISON_CASES_ROUTE,
+  REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
   USERS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
@@ -95,6 +98,18 @@ export class AuthController {
     options: this.defaultCookieOptions,
   }
 
+  // TEMP: To begin with we will store the two tokens in the session cookie as we do with other tokens.
+  // In the future based on usage, we might consider storing it not in the session cookie
+  private readonly accessToken: Cookie = {
+    name: IDS_ACCESS_TOKEN_NAME,
+    options: this.defaultCookieOptions,
+  }
+
+  private readonly refreshToken: Cookie = {
+    name: IDS_REFRESH_TOKEN_NAME,
+    options: this.defaultCookieOptions,
+  }
+
   constructor(
     private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
@@ -122,12 +137,12 @@ export class AuthController {
       if (this.config.allowAuthBypass && nationalId) {
         this.logger.debug(`Logging in using development mode`)
 
-        await this.redirectAuthenticatedUser(
+        await this.redirectAuthenticatedUser({
           nationalId,
           res,
           userId,
-          redirectRoute,
-        )
+          requestedRedirectRoute: redirectRoute,
+        })
 
         return
       }
@@ -209,14 +224,16 @@ export class AuthController {
       if (verifiedUserToken) {
         this.logger.debug('Token verification successful')
 
-        await this.redirectAuthenticatedUser(
-          verifiedUserToken.nationalId,
+        await this.redirectAuthenticatedUser({
+          nationalId: verifiedUserToken.nationalId,
           res,
           userId,
-          redirectRoute,
-          idsTokens.id_token,
-          new Entropy({ bits: 128 }).string(),
-        )
+          requestedRedirectRoute: redirectRoute,
+          idToken: idsTokens.id_token,
+          csrfToken: new Entropy({ bits: 128 }).string(),
+          accessToken: idsTokens.access_token,
+          refreshToken: idsTokens.refresh_token,
+        })
 
         return
       }
@@ -347,14 +364,25 @@ export class AuthController {
     cookies.forEach((cookie) => clearCookie(cookie))
   }
 
-  private async redirectAuthenticatedUser(
-    nationalId: string,
-    res: Response,
-    userId?: string,
-    requestedRedirectRoute?: string,
-    idToken?: string,
-    csrfToken?: string,
-  ) {
+  private async redirectAuthenticatedUser({
+    nationalId,
+    res,
+    userId,
+    requestedRedirectRoute,
+    idToken,
+    csrfToken,
+    accessToken,
+    refreshToken,
+  }: {
+    nationalId: string
+    res: Response
+    userId?: string
+    requestedRedirectRoute?: string
+    idToken?: string
+    csrfToken?: string
+    accessToken?: string
+    refreshToken?: string
+  }) {
     const eligibleUsers = await this.authService.findEligibleUsersByNationalId(
       nationalId,
     )
@@ -394,6 +422,14 @@ export class AuthController {
       res.cookie(this.idToken.name, idToken, {
         ...this.idToken.options,
         maxAge: EXPIRES_IN_MILLISECONDS,
+      })
+      // expires in 5 minutes, can't be overridden
+      res.cookie(this.accessToken.name, accessToken, {
+        ...this.accessToken.options,
+      })
+      res.cookie(this.refreshToken.name, refreshToken, {
+        ...this.refreshToken.options,
+        maxAge: REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
       })
     } else {
       this.clearCookies(res, [this.idToken])
