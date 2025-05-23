@@ -214,6 +214,31 @@ const appealState: CaseTableCellGenerator = {
     generateAppealStateTag(c, user),
 }
 
+// Same as appealState but with a different title
+const appealCaseState = appealState
+
+const requestCaseState: CaseTableCellGenerator = {
+  includes: {
+    dateLogs: {
+      model: DateLog,
+      attributes: ['date'],
+      order: [['created', 'DESC']],
+      separate: true,
+    },
+  },
+  attributes: [
+    'state',
+    'validToDate',
+    'type',
+    'appealState',
+    'appealRulingDecision',
+    'appealCaseNumber',
+    'appealReceivedByCourtDate',
+  ],
+  generate: (c: Case, user: TUser): TagValue | undefined =>
+    generateRequestCaseStateTag(c, user),
+}
+
 const courtOfAppealsHead: CaseTableCellGenerator = {
   includes: {
     appealJudge1: {
@@ -293,30 +318,6 @@ const rulingDate: CaseTableCellGenerator = {
   attributes: ['rulingDate'],
   generate: (c: Case): StringGroupValue | undefined =>
     c.rulingDate ? { s: [formatDate(c.rulingDate) ?? ''] } : undefined,
-}
-
-const requestCaseState: CaseTableCellGenerator = {
-  includes: {
-    dateLogs: {
-      model: DateLog,
-      attributes: ['date'],
-      order: [['created', 'DESC']],
-      separate: true,
-    },
-  },
-  attributes: [
-    'state',
-    'validToDate',
-    'type',
-    'appealState',
-    'appealRulingDecision',
-    'appealCaseNumber',
-    'appealReceivedByCourtDate',
-  ],
-  generate: (c: Case, user: TUser): TagPairValue | undefined => ({
-    firstTag: generateRequestCaseStateTag(c, user),
-    secondTag: generateAppealStateTag(c, user),
-  }),
 }
 
 const rulingType: CaseTableCellGenerator = {
@@ -611,6 +612,7 @@ export const caseTableCellGenerators: Record<
   validFromTo,
   rulingDate,
   requestCaseState,
+  appealCaseState,
   rulingType,
   punishmentType,
   prisonAdminReceivalDate,

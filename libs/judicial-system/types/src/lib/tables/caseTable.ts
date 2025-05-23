@@ -141,7 +141,7 @@ const districtCourtRequestCasesCompletedColumnKeys: CaseTableColumnKey[] = [
   'caseType',
   'caseSentToCourtDate',
   'requestCaseState',
-  'appealState',
+  'appealCaseState',
   'validFromTo',
 ]
 
@@ -183,6 +183,7 @@ const prisonAdminActiveColumnKeys: CaseTableColumnKey[] = [
   'caseType',
   'rulingDate',
   'requestCaseState',
+  'appealCaseState',
   'validFromTo',
 ]
 
@@ -198,6 +199,7 @@ const prisonAdminDoneColumnKeys: CaseTableColumnKey[] = [
   'caseType',
   'rulingDate',
   'requestCaseState',
+  'appealCaseState',
   'validFromTo',
 ]
 

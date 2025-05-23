@@ -10,6 +10,7 @@ const courtOfAppealsHead: CaseTableColumn = { title: 'Dómsformaður' }
 const validFromTo: CaseTableColumn = { title: 'Gildistími' }
 const rulingDate: CaseTableColumn = { title: 'Úrskurðardagur' }
 const requestCaseState: CaseTableColumn = { title: 'Staða' }
+const appealCaseState: CaseTableColumn = { title: 'Landsréttur' }
 const rulingType: CaseTableColumn = { title: 'Tegund' }
 const punishmentType: CaseTableColumn = { title: 'Refsitegund' }
 const prisonAdminReceivalDate: CaseTableColumn = { title: 'Móttökudagsetning' }
@@ -33,6 +34,7 @@ export const caseTableColumns = {
   validFromTo,
   rulingDate,
   requestCaseState,
+  appealCaseState,
   rulingType,
   punishmentType,
   prisonAdminReceivalDate,
