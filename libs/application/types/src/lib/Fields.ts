@@ -482,7 +482,6 @@ export interface TextField extends InputField {
   suffix?: string
   rows?: number
   tooltip?: FormText
-  size?: InputProps['size']
   onChange?: (...event: any[]) => void
 }
 

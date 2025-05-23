@@ -20,9 +20,10 @@ export const publishingSection = buildSection({
       description: m.draft.sections.publishing.formIntro,
       children: [
         buildRadioField({
-          id: 'publishing.radio',
+          id: 'publishing.withSpecificDates',
           title: m.draft.sections.publishing.datePickerType,
           description: m.draft.sections.publishing.datePickerDescription,
+          defaultValue: YesOrNoEnum.YES,
           largeButtons: false,
           options: [
             {
@@ -39,12 +40,13 @@ export const publishingSection = buildSection({
           condition: (answers) => {
             const checked = getValueViaPath<YesOrNoEnum>(
               answers,
-              'publishing.radio',
+              'publishing.withSpecificDates',
             )
 
             return checked ? checked === YesOrNoEnum.YES : false
           },
           id: 'publishing.dates',
+          defaultValue: [],
           titleVariant: 'h4',
           addItemButtonText: m.draft.sections.publishing.dateRepeaterAddButton,
           removeItemButtonText:

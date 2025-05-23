@@ -6,6 +6,7 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { LegalGazetteClientService } from '@island.is/clients/legal-gazette'
 import { legalGazetteDataSchema } from '@island.is/application/templates/legal-gazette'
+import { YesOrNoEnum } from '@island.is/application/core'
 
 const LOGGING_CATEGORY = 'LegalGazetteTemplateService'
 
@@ -67,7 +68,10 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
         email: ch.email,
         phone: ch.phone ?? '',
       })),
-      publishingDates: publishing.dates.map(({ date }) => date),
+      publishingDates:
+        publishing.withSpecificDates === YesOrNoEnum.YES
+          ? publishing.dates.map(({ date }) => date)
+          : [],
     }
 
     try {

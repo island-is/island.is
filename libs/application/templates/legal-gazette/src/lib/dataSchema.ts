@@ -37,6 +37,7 @@ export const legalGazetteDataSchema = z.object({
     }),
   }),
   publishing: z.object({
+    withSpecificDates: z.nativeEnum(YesOrNoEnum),
     dates: z.array(z.object({ date: z.string() })),
   }),
   communication: z.object({

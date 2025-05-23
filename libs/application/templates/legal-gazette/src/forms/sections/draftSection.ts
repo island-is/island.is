@@ -44,7 +44,6 @@ export const draftSection = buildSection({
           minLength: 1,
           required: true,
           title: m.draft.sections.advert.captionInput,
-          size: 'sm',
           marginBottom: [2, 3, 4],
         }),
         buildCustomField({
@@ -64,14 +63,12 @@ export const draftSection = buildSection({
           title: m.draft.sections.signature.location,
           width: 'half',
           backgroundColor: 'blue',
-          size: 'sm',
         }),
         buildDateField({
           required: true,
           id: 'signature.date',
           title: m.draft.sections.signature.date,
           width: 'half',
-          size: 'sm',
           backgroundColor: 'blue',
           placeholder: () => {
             const now = new Date()
@@ -85,7 +82,6 @@ export const draftSection = buildSection({
           title: m.draft.sections.signature.name,
           width: 'half',
           backgroundColor: 'blue',
-          size: 'sm',
         }),
       ],
     }),
