@@ -47,7 +47,7 @@ runs:
       run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
     - name: Restore Dependencies Cache (root)
-      uses: actions/cache/restore@v4
+      uses: runs-on/cache/restore@v4
       id: restore-cache-root
       with:
         path: |
@@ -59,7 +59,7 @@ runs:
         CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
 
     - name: Restore Dependencies Cache (infra)
-      uses: actions/cache/restore@v4
+      uses: runs-on/cache/restore@v4
       id: restore-cache-infra
       with:
         path: ${{ steps.yarn-cache-dir-path-infra.outputs.dir }}
@@ -78,7 +78,7 @@ runs:
       run: yarn install --immutable
 
     - name: Cache Dependencies (root)
-      uses: actions/cache/save@v4
+      uses: runs-on/cache/save@v4
       if: steps.restore-cache-root.outputs.cache-hit != 'true'
       with:
         path: |
@@ -89,7 +89,7 @@ runs:
         CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
 
     - name: Cache Dependencies (infra)
-      uses: actions/cache/save@v4
+      uses: runs-on/cache/save@v4
       if: steps.restore-cache-infra.outputs.cache-hit != 'true'
       with:
         path: ${{ steps.yarn-cache-dir-path-infra.outputs.dir }}
