@@ -225,6 +225,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       id
     }
     caseRepresentatives {
+      nationalId
       name
       caseFileCategory
     }
