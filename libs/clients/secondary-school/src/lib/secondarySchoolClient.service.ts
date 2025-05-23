@@ -143,7 +143,7 @@ export class SecondarySchoolClient {
       schoolChoices: application.schools.map((school) => ({
         priority: school.priority,
         schoolId: school.schoolId,
-        programmeChoice: school.programs.map((program) => ({
+        programmeChoices: school.programs.map((program) => ({
           priority: program.priority,
           programmeId: program.programId,
         })),

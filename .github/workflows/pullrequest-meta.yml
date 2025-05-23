@@ -1,0 +1,79 @@
+name: Lint CI meta
+# This check should run independently of all other workflows, since this
+# is linting the workflows themselves. If the workflow running `actionlint`
+# is broken (e.g. syntax error), `actionlint` won't lint it and report,
+# and the workflow fails silently (the GitHub UI surfaces this poorly).
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths: ['.github/workflows/**', 'infra/**', 'scripts/**']
+
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+
+jobs:
+  actionlint:
+    runs-on: arc-shared
+    env:
+      ACTIONLINT_VERSION: '1.7.7'
+      ACTIONLINT_FMT_URL: 'https://github.com/rhysd/actionlint/releases/download/v%s/actionlint_%s_linux_amd64.tar.gz'
+      ACTIONLINT_DIR: '.cache/actionlint'
+      ACTIONLINT_BIN: '.cache/actionlint/actionlint'
+      # See https://github.com/rhysd/actionlint/blob/v1.7.7/docs/usage.md#example-error-annotation-on-github-actions
+      # for format rationale
+      ACTIONLINT_FLAGS: >-
+        --format '{{range $err := .}}::error file={{$err.Filepath}},line={{$err.Line}},col={{$err.Column}}::{{$err.Message}}%0A```%0A{{replace $err.Snippet "\\n" "%0A"}}%0A```\n{{end}}'
+        --ignore SC2016
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache actionlint binary
+        id: cache-actionlint
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.ACTIONLINT_DIR }}
+          key: actionlint-${{ env.ACTIONLINT_VERSION }}
+
+      - name: Download and extract actionlint
+        if: steps.cache-actionlint.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "${ACTIONLINT_DIR}"
+          URL=$(printf "${ACTIONLINT_FMT_URL}" "$ACTIONLINT_VERSION" "$ACTIONLINT_VERSION")
+          echo "Downloading $URL"
+          curl -fsSL "$URL" -o "${ACTIONLINT_DIR}/actionlint.tar.gz"
+          tar -xzf "${ACTIONLINT_DIR}/actionlint.tar.gz" -C "${ACTIONLINT_DIR}"
+          rm "${ACTIONLINT_DIR}/actionlint.tar.gz"
+          chmod +x "${ACTIONLINT_BIN}"
+
+      - name: Run actionlint
+        id: run-actionlint
+        run: ${{ env.ACTIONLINT_BIN }} ${{ env.ACTIONLINT_FLAGS }}
+
+      - name: Cache actionlint binary (save)
+        if: steps.cache-actionlint.outputs.cache-hit != 'true' && failure()
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.ACTIONLINT_DIR }}
+          key: actionlint-${{ env.ACTIONLINT_VERSION }}
+
+      - name: Announce actionlint success
+        run: echo "✅ actionlint ran successfully."
+
+  collect:
+    runs-on: arc-shared
+    if: ${{ !cancelled() }}
+    needs: [actionlint]
+    steps:
+      - name: Meta success
+        run: |
+          for job in ${{ needs.actionlint.result }}; do
+            if [[ "$job" == "failure" ]]; then
+              echo "::error title=infra workflow::❌ meta workflow failed!"
+              exit 1
+            fi
+          done
+          echo "::info title=meta::✅ meta workflow ran successfully."
