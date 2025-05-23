@@ -237,16 +237,33 @@ const FreighSchema = z
 
 const ConvoyItemSchema = z.object({
   vehicle: z.object({
-    permno: z.string(),
-    makeAndColor: z.string(),
-    error: z.string().optional(),
+    permno: z.string().length(5),
+    makeAndColor: z.string().min(1),
+    hasError: z.boolean().refine((v) => v !== true),
   }),
   trailer: z
     .object({
-      permno: z.string(),
-      makeAndColor: z.string(),
-      error: z.string(),
+      permno: z.string().optional(),
+      makeAndColor: z.string().optional(),
+      hasError: z
+        .boolean()
+        .refine((v) => v !== true)
+        .optional(),
     })
+    .refine(
+      ({ permno }) => {
+        if (!permno) return true
+        return permno.length === 5
+      },
+      { path: ['permno'] },
+    )
+    .refine(
+      ({ permno, makeAndColor }) => {
+        if (!permno) return true
+        return !!makeAndColor
+      },
+      { path: ['makeAndColor'] },
+    )
     .optional(),
 })
 

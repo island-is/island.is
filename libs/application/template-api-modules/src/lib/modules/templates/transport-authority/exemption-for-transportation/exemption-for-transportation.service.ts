@@ -3,44 +3,25 @@ import { SharedTemplateApiService } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { ApplicationRules } from '../../secondary-school/types'
+import {
+  ExemptionForTransportationClient,
+  ExemptionRules,
+} from '@island.is/clients/transport-authority/exemption-for-transportation'
 
 @Injectable()
 export class ExemptionForTransportationService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly exemptionForTransportationClient: ExemptionForTransportationClient,
   ) {
     super(ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION)
   }
 
-  async getApplicationRules({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<ApplicationRules> {
-    //TODOy get from API
-    return {
-      policeEscort: {
-        height: 5.5,
-        width: 3.5,
-        length: 30.0,
-      },
-      shortTermMeasurementLimitations: {
-        maxHeight: 15.0,
-        maxWidth: 15.0,
-        maxLength: 35.0,
-        maxWeight: 200.0,
-        maxTotalLength: 50.0,
-      },
-      longTermMeasurementLimitations: {
-        maxHeight: 10.0,
-        maxWidth: 12.0,
-        maxLength: 30.0,
-        maxWeight: 100.0,
-        maxTotalLength: 35.0,
-      },
-    }
+  async getExemptionRules(): Promise<ExemptionRules> {
+    return this.exemptionForTransportationClient.getRules()
   }
 
-  async submitApplication() {
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     console.log('TODO')
   }
 }

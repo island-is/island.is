@@ -819,6 +819,9 @@
       "@island.is/clients/transport-authority/digital-tachograph-drivers-card": [
         "libs/clients/transport-authority/digital-tachograph-drivers-card/src/index.ts"
       ],
+      "@island.is/clients/transport-authority/exemption-for-transportation": [
+        "libs/clients/transport-authority/exemption-for-transportation/src/index.ts"
+      ],
       "@island.is/clients/transport-authority/vehicle-codetables": [
         "libs/clients/transport-authority/vehicle-codetables/src/index.ts"
       ],

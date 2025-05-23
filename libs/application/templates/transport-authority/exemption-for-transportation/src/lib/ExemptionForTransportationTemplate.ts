@@ -29,7 +29,7 @@ import {
 } from './messages'
 import { Features } from '@island.is/feature-flags'
 import {
-  ApplicationRulesApi,
+  ExemptionRulesApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '../dataProviders'
@@ -94,11 +94,7 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [
-                NationalRegistryUserApi,
-                UserProfileApi,
-                ApplicationRulesApi,
-              ],
+              api: [NationalRegistryUserApi, UserProfileApi, ExemptionRulesApi],
               delete: true,
             },
           ],

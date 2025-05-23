@@ -1230,6 +1230,7 @@ export const buildAsyncVehicleTextField = (
     makeAndColorLabel,
     errorTitle,
     fallbackErrorMessage,
+    validationFailedErrorMessage,
   } = data
 
   return {
@@ -1243,5 +1244,6 @@ export const buildAsyncVehicleTextField = (
     makeAndColorLabel,
     errorTitle,
     fallbackErrorMessage,
+    validationFailedErrorMessage,
   }
 }

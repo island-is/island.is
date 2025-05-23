@@ -990,6 +990,7 @@ export interface AsyncVehicleTextField extends InputField {
   makeAndColorLabel?: FormText
   errorTitle?: FormText
   fallbackErrorMessage?: FormText
+  validationFailedErrorMessage?: FormText
 }
 
 export type Field =

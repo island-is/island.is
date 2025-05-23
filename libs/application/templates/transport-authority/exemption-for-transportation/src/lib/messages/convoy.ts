@@ -47,10 +47,26 @@ export const convoy = {
       defaultMessage: 'Athugið',
       description: 'Convoy error alert title',
     },
+    isNotInOrder: {
+      id: 'ta.eft.application:convoy.error.isNotInOrder',
+      defaultMessage: 'Ökutæki er ekki í lagi',
+      description: 'Convoy error vehicle is not in order alert message',
+    },
+    isNotInspected: {
+      id: 'ta.eft.application:convoy.error.isNotInspected',
+      defaultMessage: 'Ökutæki er ekki skoðað',
+      description: 'Convoy error vehicle is not inspected alert message',
+    },
     fallbackErrorMessage: {
       id: 'ta.eft.application:convoy.error.fallbackErrorMessage',
       defaultMessage: 'Það kom upp villa',
       description: 'Convoy error fallback alert message',
+    },
+    validationFailedErrorMessage: {
+      id: 'ta.eft.application:convoy.error.validationFailedErrorMessage',
+      defaultMessage:
+        'Það kom upp villa við að athuga hvort ökutæki sé leyfilegt',
+      description: 'Convoy error validation failed alert message',
     },
   }),
 }

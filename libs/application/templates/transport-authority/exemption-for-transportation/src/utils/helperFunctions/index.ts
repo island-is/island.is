@@ -1,5 +1,5 @@
 export * from './format'
-export * from './getApplicationRules'
+export * from './getExemptionRules'
 export * from './getExemptionType'
 export * from './getFreightItem'
 export * from './getOverviewItems'

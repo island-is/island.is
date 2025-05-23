@@ -28,7 +28,7 @@ import {
   PlateAvailability,
   PlateOrderValidation,
   BasicVehicleInformation,
-  VehicleValidation,
+  ExemptionValidation,
 } from './models'
 import { CoOwnerChangeAnswers } from './dto/coOwnerChangeAnswers.input'
 
@@ -191,17 +191,19 @@ export class MainResolver {
   }
 
   @Scopes(ApiScope.samgongustofaVehicles)
-  @Query(() => VehicleValidation, {
-    name: 'vehicleExemptionForTransportationValidation',
+  @Query(() => ExemptionValidation, {
+    name: 'vehicleExemptionValidation',
     nullable: true,
   })
-  async getVehicleExemptionForTransportationValidation(
+  async getVehicleExemptionValidation(
     @Args('permno', { type: () => String }) permno: string,
+    @Args('isTrailer', { type: () => Boolean }) isTrailer: boolean,
     @CurrentUser() user: User,
   ) {
-    return await this.transportAuthorityApi.getVehicleExemptionForTransportationValidation(
+    return await this.transportAuthorityApi.getVehicleExemptionValidation(
       user,
       permno,
+      isTrailer,
     )
   }
 }

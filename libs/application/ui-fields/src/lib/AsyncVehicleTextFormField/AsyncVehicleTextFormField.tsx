@@ -5,8 +5,6 @@ import {
   BulletList,
   GridColumn,
   GridRow,
-  Input,
-  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
@@ -18,12 +16,11 @@ import {
   coreErrorMessages,
   formatText,
   formatTextWithLocale,
-  getValueViaPath,
+  getErrorViaPath,
 } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
-import { FC, useEffect, useState } from 'react'
-// import { extractDetails } from './utils'
-import { VehicleDetails, VehicleValidation } from './types'
+import { FC, useState } from 'react'
+import { VehicleValidation } from './types'
 import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { gql, useApolloClient, useLazyQuery } from '@apollo/client'
@@ -38,11 +35,12 @@ interface Props extends FieldBaseProps {
 export const AsyncVehicleTextFormField: FC<React.PropsWithChildren<Props>> = ({
   application,
   field,
+  errors,
 }) => {
-  const { loadValidation } = field
   const INPUT_MAX_LENGTH = 5
   const permnoField = `${field.id}.permno`
   const makeAndColorField = `${field.id}.makeAndColor`
+  const hasErrorField = `${field.id}.hasError`
 
   const { setValue } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
@@ -50,10 +48,7 @@ export const AsyncVehicleTextFormField: FC<React.PropsWithChildren<Props>> = ({
 
   const [isLoadingValidation, setIsLoadingValidation] = useState(false)
   const [vehicleValidation, setVehicleValidation] =
-    useState<VehicleValidation | null>(
-      null, //TODOx initialize from answers
-    )
-
+    useState<VehicleValidation | null>(null)
   const [permnoInput, setPermnoInput] = useState('')
 
   const [loadVehicleDetails, { data, loading: isLoadingDetails }] =
@@ -70,15 +65,12 @@ export const AsyncVehicleTextFormField: FC<React.PropsWithChildren<Props>> = ({
       `,
       {
         onCompleted: (data) => {
-          console.log('data', data)
           const permno = data?.vehicleBasicInfoByPermno?.permno
           const make = data?.vehicleBasicInfoByPermno?.make || ''
           const color = data?.vehicleBasicInfoByPermno?.color || ''
           if (permno) {
-            setValue(permnoField, permno)
             setValue(makeAndColorField, `${make} ${color}`)
           } else {
-            setValue(permnoField, '')
             setValue(makeAndColorField, '')
           }
         },
@@ -88,31 +80,37 @@ export const AsyncVehicleTextFormField: FC<React.PropsWithChildren<Props>> = ({
   const loadVehicleValidation = async (permno: string) => {
     setIsLoadingValidation(true)
     try {
-      const response = await loadValidation({
+      const response = await field.loadValidation({
         application,
         apolloClient,
         permno: permno,
       })
-      setVehicleValidation(response as VehicleValidation)
+      const validation = response as VehicleValidation
+
+      setValue(hasErrorField, !!validation.errorMessages?.length)
+      setVehicleValidation(validation)
     } catch (error) {
       console.error('error', error)
-      setVehicleValidation(null)
+      setValue(hasErrorField, true)
+      setVehicleValidation({
+        errorMessages: [field.validationFailedErrorMessage || ''],
+      })
     } finally {
       setIsLoadingValidation(false)
     }
   }
 
-  // fetch and update vehicle info when user has entered a valid permno
-  useEffect(() => {
-    if (permnoInput.length !== INPUT_MAX_LENGTH) {
-      return //TODO should clear otherwise?
+  const onChangePermno = (permnoVal: string) => {
+    setPermnoInput(permnoVal)
+    if (permnoVal.length !== INPUT_MAX_LENGTH) {
+      setValue(makeAndColorField, '')
+      setValue(hasErrorField, false)
+      setVehicleValidation(null)
+    } else {
+      loadVehicleDetails({ variables: { permno: permnoVal } })
+      loadVehicleValidation(permnoVal)
     }
-    loadVehicleDetails({ variables: { permno: permnoInput } })
-    loadVehicleValidation(permnoInput)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [permnoInput, loadVehicleDetails])
-
-  const hasError = !!vehicleValidation?.errorMessages?.length
+  }
 
   return (
     <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
@@ -133,9 +131,10 @@ export const AsyncVehicleTextFormField: FC<React.PropsWithChildren<Props>> = ({
             required={buildFieldRequired(application, field.required)}
             maxLength={INPUT_MAX_LENGTH}
             onChange={debounce(async (v) => {
-              setPermnoInput(v.target.value.replace(/\W/g, ''))
+              onChangePermno(v.target.value.replace(/\W/g, ''))
             })}
             loading={isLoadingDetails || isLoadingValidation}
+            error={errors && getErrorViaPath(errors, permnoField)}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
@@ -151,6 +150,7 @@ export const AsyncVehicleTextFormField: FC<React.PropsWithChildren<Props>> = ({
               )
             }
             error={
+              permnoInput.length === INPUT_MAX_LENGTH &&
               data?.vehicleBasicInfoByPermno === null
                 ? formatMessage(coreErrorMessages.vehicleNotFoundForPermno)
                 : undefined
@@ -160,7 +160,7 @@ export const AsyncVehicleTextFormField: FC<React.PropsWithChildren<Props>> = ({
         </GridColumn>
       </GridRow>
 
-      {hasError && (
+      {!!vehicleValidation?.errorMessages?.length && (
         <Box paddingTop={3}>
           <AlertMessage
             type="error"

@@ -5,8 +5,8 @@ export {
   UserProfileApi,
 } from '@island.is/application/types'
 
-export const ApplicationRulesApi = defineTemplateApi({
-  action: 'getApplicationRules',
-  externalDataId: 'applicationRules',
+export const ExemptionRulesApi = defineTemplateApi({
+  action: 'getExemptionRules',
+  externalDataId: 'exemptionRules',
   namespace: 'ExemptionForTransportation',
 })

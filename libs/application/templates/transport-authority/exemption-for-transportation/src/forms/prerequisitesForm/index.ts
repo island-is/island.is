@@ -10,7 +10,7 @@ import { DefaultEvents } from '@island.is/application/types'
 import { FormModes } from '@island.is/application/types'
 import { Logo } from '../../assets/Logo'
 import {
-  ApplicationRulesApi,
+  ExemptionRulesApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '../../dataProviders'
@@ -43,7 +43,7 @@ export const Prerequisites = buildForm({
               subTitle: externalData.userProfile.subTitle,
             }),
             buildDataProviderItem({
-              provider: ApplicationRulesApi,
+              provider: ExemptionRulesApi,
             }),
           ],
           submitField: buildSubmitField({

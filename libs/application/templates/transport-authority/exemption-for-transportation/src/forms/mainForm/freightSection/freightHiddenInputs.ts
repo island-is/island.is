@@ -1,9 +1,6 @@
 import { buildHiddenInput } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import {
-  getApplicationRulesLimitations,
-  getExemptionType,
-} from '../../../utils'
+import { getExemptionRulesLimitations, getExemptionType } from '../../../utils'
 
 export const FreightHiddenInputs = [
   buildHiddenInput({
@@ -15,7 +12,7 @@ export const FreightHiddenInputs = [
   buildHiddenInput({
     id: 'freight.limit.maxLength',
     defaultValue: (application: Application) => {
-      return getApplicationRulesLimitations(
+      return getExemptionRulesLimitations(
         application.externalData,
         application.answers,
       )?.maxLength
@@ -24,7 +21,7 @@ export const FreightHiddenInputs = [
   buildHiddenInput({
     id: 'freight.limit.maxWeight',
     defaultValue: (application: Application) => {
-      return getApplicationRulesLimitations(
+      return getExemptionRulesLimitations(
         application.externalData,
         application.answers,
       )?.maxWeight
@@ -33,7 +30,7 @@ export const FreightHiddenInputs = [
   buildHiddenInput({
     id: 'freight.limit.maxHeight',
     defaultValue: (application: Application) => {
-      return getApplicationRulesLimitations(
+      return getExemptionRulesLimitations(
         application.externalData,
         application.answers,
       )?.maxHeight
@@ -42,7 +39,7 @@ export const FreightHiddenInputs = [
   buildHiddenInput({
     id: 'freight.limit.maxWidth',
     defaultValue: (application: Application) => {
-      return getApplicationRulesLimitations(
+      return getExemptionRulesLimitations(
         application.externalData,
         application.answers,
       )?.maxWidth
@@ -51,7 +48,7 @@ export const FreightHiddenInputs = [
   buildHiddenInput({
     id: 'freight.limit.maxTotalLength',
     defaultValue: (application: Application) => {
-      return getApplicationRulesLimitations(
+      return getExemptionRulesLimitations(
         application.externalData,
         application.answers,
       )?.maxTotalLength

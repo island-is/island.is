@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class VehicleValidationMessage {
+export class ExemptionValidationMessage {
   @Field(() => String, { nullable: true })
   errorNo?: string | null
 
@@ -10,7 +10,13 @@ export class VehicleValidationMessage {
 }
 
 @ObjectType()
-export class VehicleValidation {
-  @Field(() => [VehicleValidationMessage], { nullable: true })
-  errorMessages?: VehicleValidationMessage[] | null
+export class ExemptionValidation {
+  @Field(() => Boolean)
+  isInspected!: boolean
+
+  @Field(() => Boolean)
+  isInOrder!: boolean
+
+  @Field(() => [ExemptionValidationMessage], { nullable: true })
+  errorMessages?: ExemptionValidationMessage[] | null
 }

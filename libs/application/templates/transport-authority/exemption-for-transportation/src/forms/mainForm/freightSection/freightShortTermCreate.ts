@@ -10,7 +10,7 @@ import { freight } from '../../../lib/messages'
 import { ExemptionFor } from '../../../shared'
 import {
   formatNumber,
-  getApplicationRules,
+  getExemptionRules,
   isExemptionTypeShortTerm,
 } from '../../../utils'
 import { FreightHiddenInputs } from './freightHiddenInputs'
@@ -92,21 +92,21 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       alertType: 'info',
       title: freight.create.policeEscortAlertTitle,
       message: (application) => {
-        const rules = getApplicationRules(application.externalData)
+        const rules = getExemptionRules(application.externalData)
         return {
           ...freight.create.policeEscortAlertMessage,
           values: {
-            maxLength: formatNumber(rules?.policeEscort.length),
-            maxHeight: formatNumber(rules?.policeEscort.height),
-            maxWidth: formatNumber(rules?.policeEscort.width),
+            maxLength: formatNumber(rules?.policeEscort.maxLength),
+            maxHeight: formatNumber(rules?.policeEscort.maxHeight),
+            maxWidth: formatNumber(rules?.policeEscort.maxWidth),
           },
         }
       },
       condition: (answers, externalData) => {
-        const rules = getApplicationRules(externalData)
-        const maxHeight = rules?.policeEscort.height
-        const maxWidth = rules?.policeEscort.width
-        const maxLength = rules?.policeEscort.length
+        const rules = getExemptionRules(externalData)
+        const maxHeight = rules?.policeEscort.maxHeight
+        const maxWidth = rules?.policeEscort.maxWidth
+        const maxLength = rules?.policeEscort.maxLength
         const height = getValueViaPath<string>(
           answers,
           'freight.items.0.height',

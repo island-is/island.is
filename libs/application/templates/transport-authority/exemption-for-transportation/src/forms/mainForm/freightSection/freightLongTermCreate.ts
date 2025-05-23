@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/core'
 import { freight } from '../../../lib/messages'
 import {
-  getApplicationRules,
+  getExemptionRules,
   getFreightItems,
   isExemptionTypeLongTerm,
   MAX_CNT_FREIGHT,
@@ -77,8 +77,8 @@ export const FreightLongTermCreateSubSection = buildSubSection({
             const showEmptyListError = !freightItems?.length
 
             // Police escort error
-            const maxLength = getApplicationRules(application.externalData)
-              ?.policeEscort.length
+            const maxLength = getExemptionRules(application.externalData)
+              ?.policeEscort.maxLength
             const invalidFreightIndex = freightItems.findIndex(
               (x) => x.length && maxLength && Number(x.length) > maxLength,
             )
@@ -105,7 +105,7 @@ export const FreightLongTermCreateSubSection = buildSubSection({
 
             // Police escort error
             const maxLength =
-              getApplicationRules(externalData)?.policeEscort.length
+              getExemptionRules(externalData)?.policeEscort.maxLength
             const invalidFreightIndex = freightItems.findIndex(
               (x) => x.length && maxLength && Number(x.length) > maxLength,
             )
