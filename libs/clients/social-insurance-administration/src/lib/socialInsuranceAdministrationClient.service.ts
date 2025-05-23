@@ -207,7 +207,7 @@ export class SocialInsuranceAdministrationClientService {
     return this.genaralApiWithAuth(user).apiProtectedV1GeneralUnionsGet()
   }
 
-  async getRehabilitationplan(
+  async getRehabilitationPlan(
     user: User,
   ): Promise<TrWebApiServicesDomainMedicalDocumentsModelsRehabilitationPlan> {
     return this.medicalDocumentsApiWithAuth(

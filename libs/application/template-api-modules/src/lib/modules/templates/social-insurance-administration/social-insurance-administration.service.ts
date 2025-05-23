@@ -602,9 +602,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return await this.siaClientService.getIncomePlanConditions(auth)
   }
 
-  async getQuestionnairesSelfAssessment({
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async getSelfAssessmentQuestionnaire({ auth }: TemplateApiModuleActionProps) {
     // TODO: Get Questionnaire from TR
 
     return {
@@ -814,9 +812,5 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         },
       ],
     }
-  }
-
-  async getRehabilitationplan({ auth }: TemplateApiModuleActionProps) {
-    return await this.siaClientService.getRehabilitationplan(auth)
   }
 }
