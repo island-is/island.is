@@ -14,12 +14,12 @@ import {
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  CasesLayout,
   ContextMenu,
   Logo,
   Modal,
   PageHeader,
   SectionHeading,
-  SharedPageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
@@ -257,7 +257,7 @@ export const Cases: FC = () => {
 
   return (
     <>
-      <SharedPageLayout>
+      <CasesLayout>
         <PageHeader title={formatMessage(titles.shared.cases)} />
         <div className={styles.logoContainer}>
           <Logo />
@@ -371,7 +371,7 @@ export const Cases: FC = () => {
             )}
           </>
         )}
-      </SharedPageLayout>
+      </CasesLayout>
       {modalVisible !== undefined && (
         <Modal
           title={formatMessage(m.activeRequests.deleteCaseModal.title)}
