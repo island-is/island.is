@@ -39,6 +39,7 @@ import {
   IDS_ID_TOKEN_NAME,
   IDS_REFRESH_TOKEN_NAME,
   PRISON_CASES_ROUTE,
+  REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
   USERS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
@@ -98,7 +99,7 @@ export class AuthController {
   }
 
   // TEMP: To begin with we will store the two tokens in the session cookie as we do with other tokens.
-  // The plan is then to move it to a more secure storage.
+  // In the future based on usage, we might consider storing it not in the session cookie
   private readonly accessToken: Cookie = {
     name: IDS_ACCESS_TOKEN_NAME,
     options: this.defaultCookieOptions,
@@ -439,6 +440,13 @@ export class AuthController {
 
       this.clearCookies(res)
 
+      this.authService.createEventLog({
+        eventType: csrfToken
+          ? EventType.LOGIN_UNAUTHORIZED
+          : EventType.LOGIN_BYPASS_UNAUTHORIZED,
+        nationalId,
+      })
+
       res.redirect('/?villa=innskraning-ekki-notandi')
 
       return
@@ -469,7 +477,7 @@ export class AuthController {
       })
       res.cookie(this.refreshToken.name, refreshToken, {
         ...this.refreshToken.options,
-        maxAge: EXPIRES_IN_MILLISECONDS,
+        maxAge: REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
       })
     } else {
       this.clearCookies(res, [this.idToken])

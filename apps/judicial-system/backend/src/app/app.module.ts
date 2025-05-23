@@ -18,6 +18,7 @@ import {
   awsS3ModuleConfig,
   CaseModule,
   caseModuleConfig,
+  CaseTableModule,
   courtModuleConfig,
   CriminalRecordModule,
   criminalRecordModuleConfig,
@@ -57,6 +58,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     EventLogModule,
     SubpoenaModule,
     VictimModule,
+    CaseTableModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
