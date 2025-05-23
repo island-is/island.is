@@ -14,13 +14,16 @@ import {
   capitalize,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { CrimeScene, IndictmentSubtype } from '@island.is/judicial-system/types'
+import { CrimeScene } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { IndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  IndictmentCount,
+  IndictmentSubtype,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,

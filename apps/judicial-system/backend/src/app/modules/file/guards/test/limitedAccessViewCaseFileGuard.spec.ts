@@ -160,6 +160,9 @@ describe('Limited Access View Case File Guard', () => {
           CaseFileCategory.COST_BREAKDOWN,
           CaseFileCategory.CASE_FILE,
           CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
           CaseFileCategory.DEFENDANT_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIM,
         ]
@@ -622,7 +625,7 @@ describe('Limited Access View Case File Guard', () => {
         describe.each([
           ...prosecutionRoles.map((role) => [
             role,
-            InstitutionType.PROSECUTORS_OFFICE,
+            InstitutionType.POLICE_PROSECUTORS_OFFICE,
           ]),
           ...districtCourtRoles.map((role) => [
             role,

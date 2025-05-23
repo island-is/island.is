@@ -298,11 +298,14 @@ api:
     LICENSE_SERVICE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     LOG_LEVEL: 'info'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://financial-aid-backend'
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=2880 --enable-source-maps -r dd-trace/init'
+    PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     RANNIS_GRANTS_URL: 'https://sjodir.rannis.is/statistics/fund_schedule.php'
     REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
     SEND_FROM_EMAIL: 'island@island.is'
@@ -351,6 +354,8 @@ api:
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
     XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/husbot-v1'
     XROAD_HMS_LOANS_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1'
+    XROAD_HMS_PROPERTY_SEARCH_CLIENT_HEADER: 'IS/GOV/5501692829/island-is-client'
+    XROAD_HMS_PROPERTY_SEARCH_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v2'
     XROAD_HOLAR_UNIVERSITY_PATH: 'IS/EDU/5001694359/Holar-Protected/brautskraning-v1'
     XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/calc-v1'
     XROAD_HUNTING_LICENSE_PATH: 'IS/GOV/7010022880/Umhverfisstofnun-Protected/api'
@@ -413,6 +418,8 @@ api:
     - 'portals-admin'
     - 'service-portal'
     - 'portals-my-pages'
+    - 'services-payments'
+    - 'payments'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -518,6 +525,7 @@ api:
     LICENSE_SERVICE_BARCODE_SECRET_KEY: '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY'
     MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
+    PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET: '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET'
     PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
     PKPASS_API_URL: '/k8s/api/PKPASS_API_URL'
     PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES'
@@ -608,6 +616,8 @@ application-system-api:
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
@@ -615,6 +625,8 @@ application-system-api:
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     NOVA_USERNAME: 'IslandIs_User_Production'
+    PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
+    PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
     RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -693,6 +705,7 @@ application-system-api:
   files:
     - 'islyklar.p12'
   grantNamespaces:
+    - 'services-payments'
     - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
@@ -846,6 +859,8 @@ application-system-api-worker:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
+    PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
+    PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
@@ -861,6 +876,7 @@ application-system-api-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
+    - 'services-payments'
     - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
@@ -1366,6 +1382,8 @@ endorsement-system-api:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
@@ -1737,6 +1755,79 @@ namespaces:
     - 'contentful-entry-tagger'
     - 'portals-my-pages'
     - 'unicorn-app'
+    - 'payments'
+    - 'services-payments'
+payments:
+  enabled: true
+  env:
+    API_EXTERNAL_BASEPATH: 'https://island.is'
+    API_INTERNAL_BASEPATH: 'http://api.islandis.svc.cluster.local'
+    BASEPATH: '/greida'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
+    - 'islandis'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/payments'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
+      hosts:
+        - host: 'island.is'
+          paths:
+            - '/greida'
+        - host: 'www.island.is'
+          paths:
+            - '/greida'
+  namespace: 'payments'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  pvcs: []
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET: '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET'
+    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
+    SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 portals-admin:
   enabled: true
   env:
@@ -1815,6 +1906,8 @@ regulations-admin-backend:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
@@ -2116,6 +2209,8 @@ service-portal-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
@@ -2481,6 +2576,132 @@ services-documents:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-documents/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+services-payments:
+  enabled: true
+  env:
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
+    DB_EXTENSIONS: 'uuid-ossp'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_payments'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'services_payments'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    PAYMENTS_WEB_URL: 'https://island.is/greida'
+    REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    XROAD_BASE_PATH: 'http://securityserver.island.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+    XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
+    XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
+  grantNamespaces:
+    - 'application-system'
+    - 'nginx-ingress-internal'
+    - 'islandis'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payments'
+  ingress:
+    internal-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
+      hosts:
+        - host: 'services-payments.internal.island.is'
+          paths:
+            - '/'
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
+      hosts:
+        - host: 'services-payments-xrd.internal.island.is'
+          paths:
+            - '/'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        name: 'migrations'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      DB_EXTENSIONS: 'uuid-ossp'
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'services_payments'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_USER: 'services_payments'
+      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    secrets:
+      DB_PASS: '/k8s/services-payments/DB_PASSWORD'
+  namespace: 'services-payments'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  pvcs: []
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-payments/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-payments/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
+    PAYMENTS_GATEWAY_API_HEADER_KEY: '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_KEY'
+    PAYMENTS_GATEWAY_API_HEADER_VALUE: '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_VALUE'
+    PAYMENTS_GATEWAY_API_SECRET: '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET'
+    PAYMENTS_GATEWAY_API_URL: '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL'
+    PAYMENTS_GATEWAY_SYSTEM_CALLING: '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING'
+    PAYMENTS_TOKEN_SIGNING_ALGORITHM: '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_ALGORITHM'
+    PAYMENTS_TOKEN_SIGNING_SECRET: '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -3114,6 +3335,8 @@ user-notification:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
@@ -3207,6 +3430,106 @@ user-notification:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/user-notification'
     create: true
     name: 'user-notification'
+user-notification-birthday-worker:
+  args:
+    - '--no-experimental-fetch'
+    - 'main.js'
+    - '--job=worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.island.is'
+    AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
+    CODE_OWNER: 'juni'
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'user_notification'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'user_notification'
+    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    EMAIL_FROM_ADDRESS: 'noreply@island.is'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
+    MAIN_QUEUE_NAME: 'user-notification'
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    REDIS_USE_SSL: 'true'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    SERVICE_PORTAL_BFF_LOGIN_URL: 'https://island.is/bff/login'
+    SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
+    USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
+    XROAD_BASE_PATH: 'http://securityserver.island.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+    XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+    - 'identity-server-delegation'
+    - 'application-system'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+  namespace: 'user-notification'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  schedule: '@midnight'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
+    DB_PASS: '/k8s/user-notification/DB_PASSWORD'
+    FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
+    IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/user-notification-birthday-worker'
+    create: true
+    name: 'user-notification-birthday-worker'
 user-notification-cleanup-worker:
   args:
     - '--no-experimental-fetch'
@@ -3326,6 +3649,8 @@ user-notification-worker:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'

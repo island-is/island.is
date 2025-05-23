@@ -11,13 +11,12 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseType,
   isCompletedCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 
-import { CaseListEntry, CaseState } from '../../graphql/schema'
+import { CaseListEntry, CaseState, CaseType } from '../../graphql/schema'
 import MobileCase from '../../routes/Shared/Cases/MobileCase'
 import {
   directionType,
@@ -332,9 +331,8 @@ const Table: FC<TableProps> = (props) => {
                       </motion.div>
                     ) : (
                       <ContextMenu
-                        menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
                         items={generateContextMenuItems(row)}
-                        disclosure={
+                        render={
                           <motion.div
                             className={styles.smallContainer}
                             key={row.id}

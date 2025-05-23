@@ -231,9 +231,11 @@ export class InternalCaseService {
   private async uploadCourtRecordPdfToCourt(
     theCase: Case,
     user: TUser,
+    buffer?: Buffer,
   ): Promise<boolean> {
     try {
-      const pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+      const pdf =
+        buffer || (await getCourtRecordPdfAsBuffer(theCase, this.formatMessage))
 
       const fileName = this.formatMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -330,6 +332,22 @@ export class InternalCaseService {
       })
   }
 
+  private async deliverSignedCourtRecordPdfToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<boolean> {
+    return this.getSignedCourtRecordPdf(theCase)
+      .then((pdf) => this.uploadCourtRecordPdfToCourt(theCase, user, pdf))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to deliver the signed court record for case ${theCase.id} to court`,
+          { reason },
+        )
+
+        return false
+      })
+  }
+
   async create(caseToCreate: InternalCreateCaseDto): Promise<Case> {
     const users = await this.userService
       .findByNationalId(caseToCreate.prosecutorNationalId)
@@ -383,6 +401,7 @@ export class InternalCaseService {
             theCase.id,
             {
               nationalId: caseToCreate.accusedNationalId,
+              dateOfBirth: caseToCreate.accusedDOB,
               name: caseToCreate.accusedName,
               gender: caseToCreate.accusedGender,
               address: (caseToCreate.accusedAddress || '').trim(),
@@ -834,6 +853,17 @@ export class InternalCaseService {
     await this.refreshFormatMessage()
 
     return this.deliverSignedRulingPdfToCourt(theCase, user).then(
+      (delivered) => ({ delivered }),
+    )
+  }
+
+  async deliverSignedCourtRecordToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    await this.refreshFormatMessage()
+
+    return this.deliverSignedCourtRecordPdfToCourt(theCase, user).then(
       (delivered) => ({ delivered }),
     )
   }

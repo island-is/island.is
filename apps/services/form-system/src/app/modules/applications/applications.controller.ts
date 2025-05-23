@@ -47,11 +47,7 @@ export class ApplicationsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Get(':id')
-  async getApplication(
-    @Param('id') id: string,
-    @CurrentUser()
-    user: User,
-  ): Promise<ApplicationDto> {
+  async getApplication(@Param('id') id: string): Promise<ApplicationDto> {
     return await this.applicationsService.getApplication(id)
   }
 
@@ -86,8 +82,6 @@ export class ApplicationsController {
   async update(
     @Param('id') id: string,
     @Body() updateApplicationDto: UpdateApplicationDto,
-    @CurrentUser()
-    user: User,
   ): Promise<void> {
     await this.applicationsService.update(id, updateApplicationDto)
   }
@@ -98,11 +92,7 @@ export class ApplicationsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Post('submit/:id')
-  async submit(
-    @Param('id') id: string,
-    @CurrentUser()
-    user: User,
-  ): Promise<void> {
+  async submit(@Param('id') id: string): Promise<void> {
     await this.applicationsService.submit(id)
   }
 
@@ -116,8 +106,6 @@ export class ApplicationsController {
   async submitScreen(
     @Param('screenId') screenId: string,
     @Body() applicationDto: ApplicationDto,
-    @CurrentUser()
-    user: User,
   ): Promise<ScreenValidationResponse> {
     return await this.applicationsService.submitScreen(screenId, applicationDto)
   }
@@ -134,36 +122,9 @@ export class ApplicationsController {
     @Query('page') page: number,
     @Query('limit') limit: number,
     @Query('isTest') isTest: boolean,
-    @CurrentUser()
-    user: User,
   ): Promise<ApplicationListDto> {
     return await this.applicationsService.findAllByOrganization(
       organizationId,
-      page,
-      limit,
-      isTest,
-    )
-  }
-
-  @ApiOperation({
-    summary: 'Get all applications of the same type belonging to user',
-  })
-  @ApiOkResponse({
-    type: ApplicationListDto,
-    description: 'Get all applications of the same type belonging to user',
-  })
-  @ApiParam({ name: 'formId', type: String })
-  @Get('form/:formId')
-  async findAllByTypeAndUser(
-    @Param('formId') formId: string,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-    @Query('isTest') isTest: boolean,
-    @CurrentUser()
-    user: User,
-  ): Promise<ApplicationListDto> {
-    return await this.applicationsService.findAllByTypeAndUser(
-      formId,
       page,
       limit,
       isTest,

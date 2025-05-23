@@ -19,7 +19,8 @@ import {
   DELETE_LIST_ITEM,
   UPDATE_LIST_ITEM,
 } from '@island.is/form-system/graphql'
-import { FieldTypesEnum, m } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 
 interface Props {
   listItem: FormSystemListItem

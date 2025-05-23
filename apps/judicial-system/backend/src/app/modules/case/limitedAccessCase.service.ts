@@ -50,6 +50,7 @@ import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Subpoena } from '../subpoena'
 import { User } from '../user'
+import { Victim } from '../victim'
 import { Case } from './models/case.model'
 import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
@@ -116,6 +117,7 @@ export const attributes: (keyof Case)[] = [
   'indictmentReviewerId',
   'hasCivilClaims',
   'isCompletedWithoutRuling',
+  'isRegisteredInPrisonSystem',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -126,6 +128,7 @@ export interface LimitedAccessUpdateCase
     | 'defendantStatementDate'
     | 'openedByDefender'
     | 'appealRulingDecision'
+    | 'isRegisteredInPrisonSystem'
   > {}
 
 export const include: Includeable[] = [
@@ -210,6 +213,11 @@ export const include: Includeable[] = [
     separate: true,
   },
   {
+    model: Victim,
+    as: 'victims',
+    required: false,
+  },
+  {
     model: IndictmentCount,
     as: 'indictmentCounts',
     required: false,
@@ -250,6 +258,9 @@ export const include: Includeable[] = [
         CaseFileCategory.CASE_FILE,
         CaseFileCategory.PROSECUTOR_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
         CaseFileCategory.CIVIL_CLAIM,
         CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
       ],
@@ -299,6 +310,9 @@ export const include: Includeable[] = [
               CaseFileCategory.CRIMINAL_RECORD_UPDATE,
               CaseFileCategory.CASE_FILE,
               CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.DEFENDANT_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIM,
             ],
@@ -310,6 +324,13 @@ export const include: Includeable[] = [
       { model: User, as: 'judge' },
       { model: Institution, as: 'prosecutorsOffice' },
     ],
+    separate: true,
+  },
+  {
+    model: Victim,
+    as: 'victims',
+    required: false,
+    order: [['created', 'ASC']],
     separate: true,
   },
 ]

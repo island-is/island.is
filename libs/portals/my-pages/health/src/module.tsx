@@ -79,6 +79,16 @@ const Insurance = lazy(() =>
   import('./screens/HealthInsurance/HealthInsurance'),
 )
 
+const Referrals = lazy(() => import('./screens/Referrals/Referrals'))
+
+const ReferralsDetail = lazy(() =>
+  import('./screens/Referrals/ReferralsDetail'),
+)
+
+const Waitlist = lazy(() => import('./screens/Waitlists/Waitlists'))
+
+const WaitlistDetail = lazy(() => import('./screens/Waitlists/WaitlistsDetail'))
+
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 export const healthModule: PortalModule = {
@@ -264,6 +274,42 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthInsurance,
       enabled: userInfo.scopes.includes(ApiScope.healthRightsStatus),
       element: <Insurance />,
+    },
+    {
+      name: hm.referrals,
+      path: HealthPaths.HealthReferrals,
+      key: 'Referrals',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <Referrals />,
+    },
+    {
+      name: hm.referrals,
+      path: HealthPaths.HealthReferralsDetail,
+      key: 'Referrals',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <ReferralsDetail />,
+    },
+    {
+      name: hm.waitlists,
+      path: HealthPaths.HealthWaitlists,
+      key: 'HealthWaitlists',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <Waitlist />,
+    },
+    {
+      name: hm.waitlists,
+      path: HealthPaths.HealthWaitlistsDetail,
+      key: 'HealthWaitlists',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <WaitlistDetail />,
     },
   ],
 }

@@ -59,5 +59,3 @@ export class Application {
   @Field(() => [Section], { nullable: 'itemsAndList' })
   sections?: Section[]
 }
-
-

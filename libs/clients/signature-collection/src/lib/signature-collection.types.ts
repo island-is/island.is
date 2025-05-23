@@ -1,5 +1,6 @@
 import { EinstaklingurMaFrambodInfo, MedmaeliDTO } from '../../gen/fetch'
 import { Area } from './types/area.dto'
+import { CollectionType } from './types/collection.dto'
 import { ListBase } from './types/list.dto'
 import { Signature } from './types/signature.dto'
 
@@ -28,6 +29,7 @@ export interface AreaInput {
 export interface CreateListInput {
   collectionId: string
   owner: OwnerInput
+  collectionType: CollectionType
   areas?: AreaInput[]
 }
 
@@ -35,6 +37,7 @@ export interface CreateListInput {
 export interface AddListsInput {
   collectionId: string
   candidateId: string
+  collectionType: CollectionType
   areas?: AreaInput[]
 }
 
@@ -65,7 +68,7 @@ export interface BulkUploadInput {
 export interface CanCreateInput {
   requirementsMet?: boolean
   canCreateInfo?: EinstaklingurMaFrambodInfo
-  isPresidential: boolean
+  collectionType: CollectionType
   isActive?: boolean
   ownedLists: ListBase[]
   areas: Area[]

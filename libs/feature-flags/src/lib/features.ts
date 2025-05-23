@@ -28,9 +28,11 @@ export enum Features {
   deathBenefits = 'isdeathbenefitsapplicationenabled',
   FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',
   IncomePlanEnabled = 'isIncomePlanEnabled',
+  rentalAgreement = 'isRentalAgreementEnabled',
   SeminarRegistrationEnabled = 'isSeminarRegistrationEnabled',
   TrainingLicenseOnAWorkMachineEnabled = 'isTrainingLicenseOnAWorkMachineEnabled',
   SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
+  pensionSupplementEnabled = 'isPensionSupplementEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -51,8 +53,7 @@ export enum Features {
   healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
   isIDSAdminSsoSettingEnabled = 'isIDSAdminSsoSettingEnabled',
 
-  //Occupational License Health directorate fetch enabled
-  occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
+  isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
 
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
@@ -104,6 +105,10 @@ export enum Features {
   // Single sign on passkeys
   isPasskeyRegistrationEnabled = 'isPasskeyRegistrationEnabled',
   isPasskeyAuthEnabled = 'isPasskeyAuthEnabled',
+
+  // Islandis Payment
+  isIslandisPaymentEnabled = 'islandisPayment',
+  useIslandisPaymentForApplicationSystem = 'useIslandisPaymentForApplicationSystem',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',

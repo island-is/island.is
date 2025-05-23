@@ -3,6 +3,14 @@ import { z } from 'zod'
 import { ApplicantType } from '../shared/constants'
 import { errors } from './messages'
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
+export type File = z.infer<typeof FileSchema>
+
 export const HealthInsuranceDeclarationSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema(),
@@ -52,21 +60,16 @@ export const HealthInsuranceDeclarationSchema = z.object({
       }
       return true
     }),
-  educationConfirmationFileUploadField: z
-    .object({
-      name: z.string(),
-      key: z.string(),
-      url: z.string().optional(),
-    })
-    .array()
-    .refine((v) => v.length > 0),
+  educationConfirmationFileUploadField: FileSchema.array().refine(
+    (v) => v.length > 0,
+  ),
   period: z
     .object({
-      dateFieldTo: z
+      dateFieldFrom: z
         .string()
         .min(1)
         .refine((v) => !!v && v.trim().length > 0),
-      dateFieldFrom: z
+      dateFieldTo: z
         .string()
         .min(1)
         .refine((v) => !!v && v.trim().length > 0),

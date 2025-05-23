@@ -45,7 +45,10 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
-import { SLICE_SPACING, STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
+import {
+  SLICE_SPACING,
+  STICKY_NAV_MAX_WIDTH_LG,
+} from '@island.is/web/constants'
 import { GlobalContext } from '@island.is/web/context'
 import {
   Image,
@@ -66,7 +69,6 @@ import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComp
 import { DigitalIcelandFooter } from './Themes/DigitalIcelandTheme/DigitalIcelandFooter'
 import { FiskistofaDefaultHeader } from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
-import { FjarsyslaRikisinsFooter } from './Themes/FjarsyslaRikisinsTheme'
 import { GevFooter } from './Themes/GevTheme'
 import { HeilbrigdisstofnunAusturlandsFooter } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
 import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
@@ -684,15 +686,6 @@ export const OrganizationFooter: React.FC<
         />
       )
       break
-    case 'fjarsysla-rikisins':
-    case 'the-financial-management-authority':
-      OrganizationFooterComponent = (
-        <FjarsyslaRikisinsFooter
-          namespace={namespace}
-          title={organization.title}
-        />
-      )
-      break
     case 'hve':
       OrganizationFooterComponent = (
         <HveFooter
@@ -1132,7 +1125,7 @@ export const OrganizationWrapper: React.FC<
                           card.image?.url ||
                           'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
 
-                        imageUrl += `?w=${STICKY_NAV_MAX_WIDTH}`
+                        imageUrl += `?w=${STICKY_NAV_MAX_WIDTH_LG}`
 
                         return (
                           <ProfileCard

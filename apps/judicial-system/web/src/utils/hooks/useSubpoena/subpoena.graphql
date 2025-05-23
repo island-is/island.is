@@ -9,6 +9,6 @@ query Subpoena($input: SubpoenaQueryInput!) {
     defenderNationalId
     caseId
     defendantId
-    subpoenaId
+    policeSubpoenaId
   }
 }

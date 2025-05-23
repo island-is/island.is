@@ -17,7 +17,12 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger'
 
 import {
   DokobitError,
@@ -50,6 +55,7 @@ import {
 
 import { nowFactory } from '../../factories'
 import {
+  adminRule,
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
@@ -102,6 +108,7 @@ import {
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { Case } from './models/case.model'
+import { CaseStatistics } from './models/caseStatistics.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
@@ -286,14 +293,6 @@ export class CaseController {
           `Cannot remove or move main police case number ${mainPoliceCaseNumber}`,
         )
       }
-    }
-
-    const hasCourtIdUpdate =
-      theCase.courtId && update.courtId && theCase.courtId !== update.courtId
-    if (hasCourtIdUpdate) {
-      update.courtCaseNumber = null
-      update.judgeId = null
-      update.registrarId = null
     }
 
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
@@ -900,5 +899,25 @@ export class CaseController {
     this.logger.debug(`Creating a court case for case ${caseId}`)
 
     return this.caseService.createCourtCase(theCase, user)
+  }
+
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @RolesRules(adminRule)
+  @Get('cases/statistics')
+  @ApiOkResponse({
+    type: CaseStatistics,
+    description: 'Gets court centered statistics for cases',
+  })
+  @ApiQuery({ name: 'fromDate', required: false, type: String })
+  @ApiQuery({ name: 'toDate', required: false, type: String })
+  @ApiQuery({ name: 'institutionId', required: false, type: String })
+  getStatistics(
+    @Query('fromDate') fromDate?: Date,
+    @Query('toDate') toDate?: Date,
+    @Query('institutionId') institutionId?: string,
+  ): Promise<CaseStatistics> {
+    this.logger.debug('Getting statistics for all cases')
+
+    return this.caseService.getCaseStatistics(fromDate, toDate, institutionId)
   }
 }

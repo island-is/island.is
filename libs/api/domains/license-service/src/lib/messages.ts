@@ -33,6 +33,18 @@ export const m = defineMessages({
     id: 'api.license-service:passport',
     defaultMessage: 'Vegabréf',
   },
+  identityDocument: {
+    id: 'api.license-service:identity-document',
+    defaultMessage: 'Nafnskírteini',
+  },
+  identityDocumentTravelLicense: {
+    id: 'api.license-service:identity-document-travel-license',
+    defaultMessage: 'Nafnskírteini sem ferðaskilríki',
+  },
+  identityDocumentNotTravelLicense: {
+    id: 'api.license-service:identity-document-not-travel-license',
+    defaultMessage: 'Nafnskírteini ekki sem ferðaskilríki',
+  },
   pCard: {
     id: 'api.license-service:p-card',
     defaultMessage: 'P-kort',
@@ -132,6 +144,10 @@ export const m = defineMessages({
   type: {
     id: 'api.license-service:type',
     defaultMessage: 'Tegund',
+  },
+  licenseType: {
+    id: 'api.license-service:license-type',
+    defaultMessage: 'Tegund skírteinis',
   },
   name: {
     id: 'api.license-service:name',
@@ -254,6 +270,16 @@ export const m = defineMessages({
     defaultMessage:
       'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða. Þeir sem hyggast ferðast utan EES verða að hafa vegabréf sem gilda í amk 6 mánuði frá áætluðum ferðalokum.',
   },
+  invalidIdentityDocumentText: {
+    id: 'api.license-service:identity-document-invalid-text',
+    defaultMessage:
+      'Athugið að nafnskírteinið er ógilt og þarf að sækja um nýtt',
+  },
+  expiringIdentityDocumentText: {
+    id: 'api.license-service:identity-document-expiring-text',
+    defaultMessage:
+      'Athugið að nafnskírteinið þitt mun renna út innan næstu 6 mánaða.',
+  },
   renewPassport: {
     id: 'api.license-service:passport-renew',
     defaultMessage: 'Endurnýja vegabréf',
@@ -269,6 +295,18 @@ export const m = defineMessages({
   applyPassportUrl: {
     id: 'api.license-service:passport-apply-url',
     defaultMessage: 'https://island.is/vegabref',
+  },
+  identityDocumentDescription: {
+    id: 'api.license-service:identity-document-description',
+    defaultMessage: 'Hér birtast upplýsingar um nafnskírteini þitt.',
+  },
+  identityDocumentApplyUrl: {
+    id: 'api.license-service:identity-document-apply-url',
+    defaultMessage: 'https://island.is/saekja-um-nafnskirteini',
+  },
+  identityDocumentNumberDisplay: {
+    id: 'api.license-service:identity-document-number-display',
+    defaultMessage: 'Númer nafnskírteinis: {arg}',
   },
   passportNumberDisplay: {
     id: 'api.license-service:passport-number-display',
@@ -372,5 +410,9 @@ export const m = defineMessages({
   noValidPassport: {
     id: 'api.license-service:no-valid-passport',
     defaultMessage: 'Engin gild vegabréf',
+  },
+  noValidIdentityDocument: {
+    id: 'api.license-service:no-valid-identity-document',
+    defaultMessage: 'Engin gild nafnskírteini',
   },
 })

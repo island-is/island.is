@@ -14,7 +14,7 @@ import { LanguageType } from '../../../dataTypes/languageType.model'
 import { Value } from '../../applications/models/value.model'
 import { FieldSettings } from '../../../dataTypes/fieldSettings/fieldSettings.model'
 import { ListItem } from '../../listItems/models/listItem.model'
-import { FieldTypesEnum } from '../../../dataTypes/fieldTypes/fieldTypes.enum'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 
 @Table({ tableName: 'field' })
 export class Field extends Model<Field> {

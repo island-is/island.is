@@ -16,11 +16,11 @@ import { getBirthday } from './helpers/getBirthday'
 import { MailAction } from './models/v2/bulkMailAction.input'
 import { Category } from './models/v2/category.model'
 import {
-  Action,
   Document,
   DocumentPageNumber,
   PaginatedDocuments,
 } from './models/v2/document.model'
+import { Action } from './models/v2/actions'
 import { FileType } from './models/v2/documentContent.model'
 import { DocumentsInput } from './models/v2/documents.input'
 import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'

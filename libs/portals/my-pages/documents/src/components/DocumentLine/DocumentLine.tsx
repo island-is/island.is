@@ -25,7 +25,7 @@ import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import {
   useDocumentConfirmActionsLazyQuery,
   useGetDocumentInboxLineV3LazyQuery,
-} from '../../screens/Overview/Overview.generated'
+} from '../../queries/Overview.generated'
 import { messages } from '../../utils/messages'
 import { FavAndStash } from '../FavAndStash/FavAndStash'
 import UrgentTag from '../UrgentTag/UrgentTag'
@@ -34,6 +34,7 @@ import * as styles from './DocumentLine.css'
 
 interface Props {
   documentLine: DocumentV2
+  hasInitialFocus?: boolean
   img?: string
   setSelectLine?: (id: string) => void
   active: boolean
@@ -45,6 +46,7 @@ interface Props {
 
 export const DocumentLine: FC<Props> = ({
   documentLine,
+  hasInitialFocus = false,
   img,
   setSelectLine,
   active,
@@ -53,7 +55,7 @@ export const DocumentLine: FC<Props> = ({
   bookmarked,
   selected,
 }) => {
-  const [hasFocusOrHover, setHasFocusOrHover] = useState(false)
+  const [hasFocusOrHover, setHasFocusOrHover] = useState(hasInitialFocus)
   const [hasAvatarFocus, setHasAvatarFocus] = useState(false)
   const [modalData, setModalData] = useState<{
     title: string
@@ -145,8 +147,6 @@ export const DocumentLine: FC<Props> = ({
     fetchPolicy: 'no-cache',
   })
 
-  //TODO: When merged with V2
-  //refactor queries and move to shared file instead of importing from screens
   const [getDocument, { loading: fileLoading }] =
     useGetDocumentInboxLineV3LazyQuery({
       variables: {
@@ -260,7 +260,9 @@ export const DocumentLine: FC<Props> = ({
 
   const confirmActionCaller = (confirmed: boolean | null) => {
     confirmAction({
-      variables: { input: { id: documentLine.id, confirmed: confirmed } },
+      variables: {
+        input: { id: documentLine.id, confirmed: confirmed },
+      },
     })
   }
   const unread = !documentLine.opened && !localRead.includes(documentLine.id)
@@ -338,7 +340,7 @@ export const DocumentLine: FC<Props> = ({
                 subject: documentLine.subject,
               })}
               type="button"
-              id={active ? `button-${documentLine.id}` : undefined}
+              id={`button-${documentLine.id}`}
               className={styles.docLineButton}
             >
               <Text

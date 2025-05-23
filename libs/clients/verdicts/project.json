@@ -33,7 +33,7 @@
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/verdicts/gen/fetch/gopro -i libs/clients/verdicts/src/goproClientConfig.json --skip-validate-spec",
-          "yarn openapi-generator -o libs/clients/verdicts/gen/fetch/supreme-court -i libs/clients/verdicts/src/supremeCourtClientConfig.yaml --skip-validate-spec"
+          "yarn openapi-generator -o libs/clients/verdicts/gen/fetch/supreme-court -i libs/clients/verdicts/src/supremeCourtClientConfig.yaml"
         ]
       },
       "outputs": [

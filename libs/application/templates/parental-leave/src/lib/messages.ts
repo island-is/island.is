@@ -2733,8 +2733,9 @@ export const errorMessages = defineMessages({
   startDateInThePast: {
     id: 'pl.application:errors.start.date.in.the.past',
     defaultMessage:
-      'icel-trans: "Start date is in the past. The form will not be sent!"',
-    description: 'Start date is in the past. The form will not be sent!',
+      'Upphafsdagur fæðingarorlofs er lengra aftur í tímann en þrír mánuðir. Ekki er hægt að halda áfram með umsókn án breytinga.',
+    description:
+      'Start date is more than 3 months in the past. It is not possible to continue without editing the period.',
   },
   missingMultipleBirthsAnswer: {
     id: 'pl.application:errors.missing.multiple.births.answer',

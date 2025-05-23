@@ -3,7 +3,7 @@ import { NextPageContext } from 'next'
 import NextError, { ErrorProps as NextErrorProps } from 'next/error'
 
 import { withLocale } from '../i18n'
-import { NotFound } from '@island.is/skilavottord-web/components'
+import { Alert, AlertType } from '@island.is/skilavottord-web/components'
 
 type PropTypes = {
   err: Error
@@ -14,12 +14,12 @@ type ErrorProps = {
   isSSRReadyToRender: boolean
 } & NextErrorProps
 
-function CustomError({ isSSRReadyToRender, err }: PropTypes) {
+const CustomError = ({ isSSRReadyToRender, err }: PropTypes) => {
   if (!isSSRReadyToRender && err) {
     console.error(err)
   }
 
-  return <NotFound />
+  return <Alert type={AlertType.NOT_FOUND} />
 }
 
 CustomError.getInitialProps = async (

@@ -12,13 +12,14 @@ import {
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isProsecutionUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCurrentUserQuery } from './currentUser.generated'
 
 interface UserProvider {
+  isLoading?: boolean
   isAuthenticated?: boolean
   limitedAccess?: boolean
   user?: User
@@ -41,6 +42,7 @@ export const UserProvider: FC<PropsWithChildren<Props>> = ({
 }) => {
   const [user, setUser] = useState<User>()
   const [eligibleUsers, setEligibleUsers] = useState<User[]>()
+  const [isLoading, setIsLoading] = useState(true)
 
   const isAuthenticated =
     authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME))
@@ -59,6 +61,7 @@ export const UserProvider: FC<PropsWithChildren<Props>> = ({
     const currentUser = data.currentUser
 
     if (currentUser.user) {
+      setIsLoading(false)
       setUser(currentUser.user)
       userRef.current = currentUser.user
     }
@@ -70,15 +73,16 @@ export const UserProvider: FC<PropsWithChildren<Props>> = ({
   return (
     <UserContext.Provider
       value={{
+        isLoading,
         isAuthenticated,
-        user: user,
-        eligibleUsers: eligibleUsers,
+        user,
+        eligibleUsers,
         limitedAccess:
           user && // Needed for e2e tests as they do not have a logged in user
           !isProsecutionUser(user) &&
           !isDistrictCourtUser(user) &&
           !isCourtOfAppealsUser(user) &&
-          !isPublicProsecutorUser(user),
+          !isPublicProsecutionOfficeUser(user),
       }}
     >
       {children}

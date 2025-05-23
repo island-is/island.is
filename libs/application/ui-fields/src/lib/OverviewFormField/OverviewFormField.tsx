@@ -11,6 +11,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FileItem } from './FileItem'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { SpanType } from '@island.is/island-ui/core/types'
 
 interface Props extends FieldBaseProps {
   field: OverviewField
@@ -21,7 +23,12 @@ export const OverviewFormField = ({
   application,
   goToScreen,
 }: Props) => {
-  const items = field?.items?.(application.answers, application.externalData)
+  const userInfo = useUserInfo()
+  const items = field?.items?.(
+    application.answers,
+    application.externalData,
+    userInfo?.profile?.nationalId,
+  )
   const attachments = field?.attachments?.(
     application.answers,
     application.externalData,
@@ -42,7 +49,13 @@ export const OverviewFormField = ({
     >
       <ReviewGroup
         isLast={!field.bottomLine}
-        editAction={() => changeScreens(field.backId ?? '')}
+        editAction={() =>
+          changeScreens(
+            typeof field.backId === 'function'
+              ? field.backId(application.answers) ?? ''
+              : field.backId ?? '',
+          )
+        }
         isEditable={field.backId !== undefined}
       >
         <Box marginRight={12}>
@@ -75,24 +88,29 @@ export const OverviewFormField = ({
         <GridRow>
           {items &&
             items?.map((item, i) => {
+              const span: SpanType | undefined =
+                item.width === 'full'
+                  ? field.title || field.description
+                    ? ['12/12', '12/12', '12/12', '12/12']
+                    : ['10/12', '10/12', '10/12', '10/12']
+                  : item.width === 'half'
+                  ? ['9/12', '9/12', '9/12', '5/12']
+                  : undefined
+
               if (!item.keyText && !item.valueText) {
                 return (
-                  <GridColumn span={['12/12', '12/12', '12/12', '12/12']} />
+                  <GridColumn span={span}>
+                    {item.lineAboveKeyText && (
+                      <Box paddingBottom={3}>
+                        <Divider weight="black" thickness="thick" />
+                      </Box>
+                    )}
+                  </GridColumn>
                 )
               }
+
               return (
-                <GridColumn
-                  key={i}
-                  span={
-                    item.width === 'full'
-                      ? field.title || field.description
-                        ? ['12/12', '12/12', '12/12', '12/12']
-                        : ['10/12', '10/12', '10/12', '10/12']
-                      : item.width === 'half'
-                      ? ['9/12', '9/12', '9/12', '5/12']
-                      : undefined
-                  }
-                >
+                <GridColumn key={i} span={span}>
                   <Box paddingBottom={3}>
                     {item.lineAboveKeyText && (
                       <Box paddingBottom={2}>

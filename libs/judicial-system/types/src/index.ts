@@ -12,7 +12,14 @@ export {
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
-export { InstitutionType } from './lib/institution'
+
+export {
+  InstitutionType,
+  prosecutorsOfficeTypes,
+  isProsecutorsOffice,
+} from './lib/institution'
+export type { Institution } from './lib/institution'
+
 export {
   CaseNotificationType,
   SubpoenaNotificationType,
@@ -25,24 +32,27 @@ export {
   EventNotificationType,
   notificationTypes,
 } from './lib/notification'
-export type { Institution } from './lib/institution'
+
 export {
   EventType,
   eventTypes,
   DefendantEventType,
   defendantEventTypes,
 } from './lib/eventLog'
+
 export { DateType, dateTypes } from './lib/dateLog'
+
 export { StringType, stringTypes } from './lib/caseString'
 
-export { CaseFileState, CaseFileCategory } from './lib/file'
+export { CaseFileState, CaseFileCategory, HashAlgorithm } from './lib/file'
 
 export {
   UserRole,
+  DefenderSubRole,
   prosecutionRoles,
   isProsecutionUser,
-  publicProsecutorRoles,
-  isPublicProsecutorUser,
+  publicProsecutionOfficeRoles,
+  isPublicProsecutionOfficeUser,
   districtCourtRoles,
   isDistrictCourtUser,
   courtOfAppealsRoles,
@@ -55,7 +65,9 @@ export {
   isAdminUser,
   isCoreUser,
   isPrisonAdminUser,
-  isPublicProsecutor,
+  isPublicProsecutionUser,
+  getAdminUserInstitutionScope,
+  getAdminUserInstitutionUserRoles,
 } from './lib/user'
 export type { User } from './lib/user'
 
@@ -77,6 +89,7 @@ export {
   CaseAppealRulingDecision,
   CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
+  RequestSharedWhen,
   SessionArrangements,
   indictmentCases,
   restrictionCases,
@@ -122,11 +135,18 @@ export {
   IndictmentCountOffense,
   offenseSubstances,
 } from './lib/indictmentCount'
+export type { SubstanceMap } from './lib/indictmentCount'
 
 export { Substance } from './lib/substances'
 
 export { type Lawyer, mapToLawyer } from './lib/lawyer'
 
-export type { SubstanceMap } from './lib/indictmentCount'
+export { type CourtDocument } from './lib/courtDocument'
 
-export type { CourtDocument } from './lib/courtDocument'
+export { type CaseTableColumnKey } from './lib/tables/caseTableColumn'
+export {
+  CaseTableType,
+  getCaseTableType,
+  caseTables,
+} from './lib/tables/caseTable'
+export { getCaseTableGroups } from './lib/tables/caseTableGroup'

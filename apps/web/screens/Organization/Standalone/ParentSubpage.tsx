@@ -21,7 +21,7 @@ import {
   QueryGetOrganizationSubpageArgs,
   QueryGetOrganizationSubpageByIdArgs,
 } from '@island.is/web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks'
+import { linkResolver, useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useI18n } from '@island.is/web/i18n'
 import { StandaloneLayout } from '@island.is/web/layouts/organization/standalone'
@@ -145,6 +145,7 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
   locale,
   query,
   organizationPage,
+  res,
 }) => {
   const [organizationPageSlug, parentSubpageSlug, subpageSlug] = (query.slugs ??
     []) as string[]
@@ -224,6 +225,13 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
 
   const subpageLink = getOrganizationParentSubpage.childLinks[selectedIndex]
 
+  if (!subpageLink) {
+    throw new CustomNextError(
+      404,
+      'Subpage belonging to an organization parent subpage was not found',
+    )
+  }
+
   const subpage = !subpageLink.id
     ? (
         await apolloClient.query<Query, QueryGetOrganizationSubpageArgs>({
@@ -254,6 +262,19 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
       404,
       'Subpage belonging to an organization parent subpage was not found',
     )
+  }
+
+  if (res && !subpageSlug) {
+    res.writeHead(302, {
+      Location: encodeURI(
+        linkResolver(
+          'organizationparentsubpagechild',
+          [organizationPageSlug, parentSubpageSlug, subpage.slug],
+          locale as ContentLanguage,
+        ).href,
+      ),
+    })
+    res.end()
   }
 
   const tableOfContentHeadings = getOrganizationParentSubpage.childLinks.map(

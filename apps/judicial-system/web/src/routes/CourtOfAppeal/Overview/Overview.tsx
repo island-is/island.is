@@ -23,8 +23,7 @@ import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/h
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { shouldUseAppealWithdrawnRoutes } from '@island.is/judicial-system-web/src/utils/utils'
 
-import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
-import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { overview as strings } from './Overview.strings'
 
 const CourtOfAppealOverview = () => {
@@ -46,6 +45,8 @@ const CourtOfAppealOverview = () => {
     judge,
     registrar,
     caseType,
+    victims,
+    showItem,
   } = useInfoCardItems()
 
   const handleNavigationTo = (destination: string) =>
@@ -88,6 +89,14 @@ const CourtOfAppealOverview = () => {
                   id: 'defendants-section',
                   items: [defendants(workingCase.type)],
                 },
+                ...(showItem(victims)
+                  ? [
+                      {
+                        id: 'victims-section',
+                        items: [victims],
+                      },
+                    ]
+                  : []),
                 {
                   id: 'case-info-section',
                   items: [

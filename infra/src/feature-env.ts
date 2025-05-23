@@ -1,4 +1,4 @@
-import yargs from 'yargs'
+import yargs, { ArgumentsCamelCase } from 'yargs'
 import AWS from 'aws-sdk'
 import { Envs } from './environments'
 import {
@@ -19,6 +19,7 @@ import {
 } from './dsl/exports/helm'
 import { ServiceBuilder } from './dsl/dsl'
 import { logger } from './logging'
+import fs from 'fs'
 
 type ChartName = 'islandis' | 'identity-server'
 
@@ -27,7 +28,7 @@ const charts: { [name in ChartName]: EnvironmentServices } = {
   'identity-server': IDSServices,
 }
 
-interface Arguments {
+interface Arguments extends ArgumentsCamelCase {
   feature: string
   images: string
   chart: ChartName
@@ -95,7 +96,14 @@ const parseArguments = (argv: Arguments) => {
       .sort()
       .filter((x) => !affectedSet.has(x)),
   })
-  return { habitat, affectedServices, env }
+  return {
+    habitat,
+    affectedServices,
+    env,
+    skipAppName: argv.skipAppName as boolean,
+    writeDest: argv.writeDest as string,
+    disableNsGrants: argv.disableNsGrants as boolean,
+  }
 }
 
 const buildIngressComment = (data: HelmService[]): string =>
@@ -126,44 +134,144 @@ const deployedComment = (
 }
 
 yargs(process.argv.slice(2))
-  .command(
-    'values',
-    'get helm values file',
-    () => {},
-    async (argv: Arguments) => {
-      const { habitat, affectedServices, env } = parseArguments(argv)
+  .command({
+    command: 'values',
+    describe: 'get helm values file',
+    builder: (yargs) => {
+      return yargs
+        .option('withMocks', {
+          type: 'string',
+          description: 'Include mocks in the values file',
+          default: 'false',
+        })
+        .option('skipAppName', {
+          type: 'boolean',
+          description: 'Skip app name in the values file',
+          default: false,
+        })
+        .option('writeDest', {
+          type: 'string',
+          description:
+            'Template location where to write files to for down stream apps',
+          default: '',
+        })
+        .option('disableNsGrants', {
+          type: 'boolean',
+          description: 'Disable namespace grants in rendered output',
+          default: false,
+        })
+    },
+    handler: async (argv) => {
+      const typedArgv = argv as unknown as Arguments
+      const {
+        habitat,
+        affectedServices,
+        env,
+        skipAppName,
+        writeDest,
+        disableNsGrants,
+      } = parseArguments(typedArgv)
+      let { included: featureYaml } = await getFeatureAffectedServices(
+        habitat,
+        affectedServices.slice(),
+        ExcludedFeatureDeploymentServices,
+        env,
+      )
+
+      featureYaml.map(async (svc) => {
+        if (disableNsGrants) {
+          svc.serviceDef.grantNamespacesEnabled = false
+        }
+
+        const svcString = await renderHelmValueFileContent(
+          env,
+          habitat,
+          [svc],
+          (typedArgv.withMocks ?? 'false') === 'true'
+            ? 'with-mocks'
+            : 'no-mocks',
+          skipAppName,
+        )
+
+        if (writeDest != '') {
+          try {
+            fs.mkdirSync(`${writeDest}/${svc.name()}`, { recursive: true })
+            console.log(
+              `writing file to directory: ${writeDest}/${svc.name()}/values.yaml`,
+            )
+            fs.writeFileSync(
+              `${writeDest}/${svc.name()}/values.yaml`,
+              svcString,
+            )
+          } catch (error) {
+            console.log(`Failed to write values file for ${svc.name()}:`, error)
+            throw new Error(`Failed to write values file for ${svc.name()}`)
+          }
+        } else {
+          writeToOutput(svcString, typedArgv.output)
+        }
+      })
+    },
+  })
+  .command({
+    command: 'downstream',
+    describe: 'get downstream services',
+    builder: () => {
+      return yargs
+    },
+    handler: async (argv) => {
+      const typedArgv = argv as unknown as Arguments
+      const {
+        habitat,
+        affectedServices,
+        env,
+        skipAppName,
+        writeDest,
+        disableNsGrants,
+      } = parseArguments(typedArgv)
       const { included: featureYaml } = await getFeatureAffectedServices(
         habitat,
         affectedServices.slice(),
         ExcludedFeatureDeploymentServices,
         env,
       )
-      await writeToOutput(
-        await renderHelmValueFileContent(
-          env,
-          habitat,
-          featureYaml,
-          (argv.withMocks ?? 'false') === 'true' ? 'with-mocks' : 'no-mocks',
+
+      const affectedServiceNames = affectedServices.map((svc) => svc.name())
+
+      const formattedList = featureYaml
+        .map((svc) => svc.name())
+        .filter((name) => !affectedServiceNames.includes(name))
+
+      // BFF hack since the service name is not equal to the nx app name
+      const correctedFormattedList = Array.from(
+        new Set(
+          formattedList.map((name) => {
+            if (name.includes('services-bff-portals')) {
+              return 'services-bff'
+            } else {
+              return name
+            }
+          }),
         ),
-        argv.output,
-      )
+      ).toString()
+
+      writeToOutput(correctedFormattedList, typedArgv.output)
     },
-  )
-  .command(
-    'ingress-comment',
-    'get helm values file',
-    () => {},
-    async (argv: Arguments) => {
-      const { habitat, affectedServices, env } = parseArguments(argv)
-      const {
-        included: featureYaml,
-        excluded,
-      } = await getFeatureAffectedServices(
-        habitat,
-        affectedServices.slice(),
-        ExcludedFeatureDeploymentServices,
-        env,
-      )
+  })
+  .command({
+    command: 'ingress-comment',
+    describe: 'get helm values file',
+    builder: (yargs) => yargs,
+    handler: async (argv) => {
+      const typedArgv = argv as unknown as Arguments
+      const { habitat, affectedServices, env } = parseArguments(typedArgv)
+      const { included: featureYaml, excluded } =
+        await getFeatureAffectedServices(
+          habitat,
+          affectedServices.slice(),
+          ExcludedFeatureDeploymentServices,
+          env,
+        )
       const ingressComment = buildComment(
         (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
           .services,
@@ -171,30 +279,71 @@ yargs(process.argv.slice(2))
       const includedServicesComment = deployedComment(featureYaml, excluded)
       await writeToOutput(
         `${ingressComment}\n\n${includedServicesComment}`,
-        argv.output,
+        typedArgv.output,
       )
     },
-  )
-  .command(
-    'jobs',
-    'get kubernetes jobs to bootstrap feature environment',
-    (yargs) => {
-      yargs.option('jobImage', {
-        type: 'string',
-        description: 'Image to run feature bootstrapping jobs',
-        demandOption: true,
-      })
+  })
+  .command({
+    command: 'jobs',
+    describe: 'get kubernetes jobs to bootstrap feature environment',
+    builder: (yargs) => {
+      return yargs
+        .option('jobImage', {
+          type: 'string',
+          description: 'Image to run feature bootstrapping jobs',
+          demandOption: true,
+        })
+        .option('writeDest', {
+          type: 'string',
+          description:
+            'Template location where to write files to for down stream apps',
+          default: '',
+        })
     },
-    async (argv: Arguments) => {
-      const { affectedServices, env } = parseArguments(argv)
+    handler: async (argv) => {
+      const typedArgv = argv as unknown as Arguments
+      const { affectedServices, env, writeDest } = parseArguments(typedArgv)
       const featureYaml = await renderHelmJobForFeature(
         env,
-        argv.jobImage!,
+        typedArgv.jobImage!,
         affectedServices,
       )
-      await writeToOutput(dumpJobYaml(featureYaml), argv.output)
+
+      if (
+        featureYaml.spec.template.spec.containers.length <= 0 ||
+        affectedServices.length <= 0
+      ) {
+        return
+      }
+
+      const svcString = dumpJobYaml(featureYaml)
+
+      if (writeDest != '') {
+        try {
+          fs.mkdirSync(`${writeDest}/${affectedServices[0].name()}`, {
+            recursive: true,
+          })
+          console.log(
+            `writing file to: ${writeDest}/${affectedServices[0].name()}/bootstrap-fd-job.yaml}`,
+          )
+          fs.writeFileSync(
+            `${writeDest}/${affectedServices[0].name()}/bootstrap-fd-job.yaml`,
+            svcString,
+          )
+        } catch (error) {
+          console.log(
+            `Failed to write values file for ${affectedServices[0].name()}:`,
+            error,
+          )
+          throw new Error(
+            `Failed to write values for ${affectedServices[0].name()}`,
+          )
+        }
+      } else {
+        await writeToOutput(svcString, typedArgv.output)
+      }
     },
-  )
+  })
   .options({
     feature: {
       type: 'string',
@@ -208,7 +357,7 @@ yargs(process.argv.slice(2))
         'List of comma separated Docker image names that have changed',
     },
     chart: {
-      choices: ['islandis', 'identity-server'],
+      choices: ['islandis', 'identity-server'] as const,
       demandOption: true,
       description: 'Name of the umbrella chart to use',
     },

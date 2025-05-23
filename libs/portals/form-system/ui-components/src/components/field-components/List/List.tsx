@@ -1,5 +1,4 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { useEffect, useState } from 'react'
 import { Select } from '@island.is/island-ui/core'
 
 interface Props {
@@ -19,13 +18,7 @@ const listTypePlaceholder = {
 }
 
 export const List = ({ item }: Props) => {
-  const [listItems, setListItems] = useState<ListItem[]>([])
-
-  const mapToListItems = (items: any[]): ListItem[] =>
-    items?.map((item) => ({
-      label: item?.label?.is ?? '',
-      value: item?.label?.is ?? '',
-    })) ?? []
+  const listItems: ListItem[] = []
 
   return (
     <Select
@@ -35,7 +28,7 @@ export const List = ({ item }: Props) => {
       required={item.isRequired ?? false}
       placeholder={
         listTypePlaceholder[
-        item.fieldSettings?.listType as keyof typeof listTypePlaceholder
+          item.fieldSettings?.listType as keyof typeof listTypePlaceholder
         ] ?? 'Select an option'
       }
     />

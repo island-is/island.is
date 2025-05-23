@@ -941,17 +941,17 @@ export const m = defineMessages({
     description: 'C1 group title',
   },
   groupTitleC: {
-    id: 'dl.application:groupTitleC1',
+    id: 'dl.application:groupTitleC',
     defaultMessage: 'Vörubíll og eftirvagn (C og CE)',
     description: 'C1 group title',
   },
   groupTitleD1: {
-    id: 'dl.application:groupTitleC1',
+    id: 'dl.application:groupTitleD1',
     defaultMessage: 'Lítil rúta og eftirvagn (D1 og D1E)',
     description: 'C1 group title',
   },
   groupTitleD: {
-    id: 'dl.application:groupTitleC1',
+    id: 'dl.application:groupTitleD',
     defaultMessage: 'Stór rúta og eftirvagn (D og DE)',
     description: 'C1 group title',
   },

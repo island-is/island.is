@@ -1,0 +1,20 @@
+{
+  "name": "api-domains-payments",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/payments/src",
+  "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/api/domains/payments/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/payments"]
+    }
+  }
+}

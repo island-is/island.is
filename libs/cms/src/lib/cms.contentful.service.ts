@@ -93,6 +93,15 @@ import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import { NewsList } from './models/newsList.model'
 import { GetCmsNewsInput } from './dto/getNews.input'
+import {
+  GetBloodDonationRestrictionDetailsInput,
+  GetBloodDonationRestrictionsInput,
+} from './dto/getBloodDonationRestrictions.input'
+import {
+  BloodDonationRestrictionList,
+  mapBloodDonationRestrictionDetails,
+  mapBloodDonationRestrictionListItem,
+} from './models/bloodDonationRestriction.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -206,12 +215,13 @@ export class CmsContentfulService {
 
   async getOrganizationTitles(
     organizationKeys: string[],
+    searchByField: keyof types.IOrganizationFields,
     locale?: 'en' | 'is',
   ): Promise<Array<string | null>> {
     const params = {
       ['content_type']: 'organization',
-      select: 'fields.title,fields.referenceIdentifier',
-      'fields.referenceIdentifier[in]': organizationKeys.join(','),
+      select: `fields.title,fields.${searchByField}`,
+      [`fields.${searchByField}[in]`]: organizationKeys.join(','),
     }
 
     const result = await this.contentfulRepository
@@ -223,7 +233,7 @@ export class CmsContentfulService {
         return null
       } else {
         const organization = result.items.find(
-          (item) => item.fields.referenceIdentifier === key,
+          (item) => item.fields[searchByField] === key,
         )
 
         const title = organization?.fields.title || organization?.fields.title
@@ -332,6 +342,22 @@ export class CmsContentfulService {
     return this.getOrganizationBy('kennitala', nationalId, lang, true)
   }
 
+  async getOrganizationByEntryId(
+    entryId: string,
+  ): Promise<Organization | null> {
+    const params = {
+      ['content_type']: 'organization',
+      include: 5,
+      limit: 1,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntry<types.IOrganizationFields>(entryId, null, params)
+      .catch(errorHandler('getOrganizationByEntryId'))
+
+    return result ? mapOrganization(result as types.IOrganization) : null
+  }
+
   async getOrganizationPage(
     slug: string,
     lang: string,
@@ -364,6 +390,7 @@ export class CmsContentfulService {
       'fields.slug': slug,
       'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
       'fields.organizationPage.fields.slug': organizationSlug,
+      'fields.organizationParentSubpage[exists]': false,
       limit: 1,
     }
     const result = await this.contentfulRepository
@@ -1132,6 +1159,52 @@ export class CmsContentfulService {
       .catch(errorHandler('getGenericTag'))
 
     return (result.items as types.IGenericTag[]).map(mapGenericTag)
+  }
+
+  async getBloodDonationRestrictions(
+    input: GetBloodDonationRestrictionsInput,
+  ): Promise<BloodDonationRestrictionList> {
+    const itemsPerPage = 10
+    const currentPage = input.page ?? 1
+
+    const response = await this.contentfulRepository.getLocalizedEntries(
+      input.lang,
+      {
+        content_type: 'bloodDonationRestriction',
+        limit: itemsPerPage,
+        skip: (currentPage - 1) * itemsPerPage,
+        'fields.title[exists]': true,
+      },
+    )
+
+    return {
+      total: response.total,
+      items: (response.items as types.IBloodDonationRestriction[]).map(
+        mapBloodDonationRestrictionListItem,
+      ),
+      input,
+    }
+  }
+
+  async getBloodDonationRestrictionDetails(
+    input: GetBloodDonationRestrictionDetailsInput,
+  ) {
+    const response = await this.contentfulRepository.getLocalizedEntries(
+      input.lang,
+      {
+        content_type: 'bloodDonationRestriction',
+        'sys.id': input.id,
+        limit: 1,
+      },
+    )
+
+    if (response.items.length === 0) {
+      return null
+    }
+
+    return mapBloodDonationRestrictionDetails(
+      response.items[0] as types.IBloodDonationRestriction,
+    )
   }
 
   async getOrganizationParentSubpage(input: GetOrganizationParentSubpageInput) {

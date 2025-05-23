@@ -78,6 +78,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.SecondarySchool.translation,
   ],
   dataSchema: SecondarySchoolSchema,
+  allowMultipleApplicationsInDraft: false,
   featureFlag: Features.SecondarySchoolEnabled,
   allowedDelegations: [
     {
@@ -175,6 +176,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [SchoolsApi],
             },
           ],
         },
@@ -209,6 +211,10 @@ const template: ApplicationTemplate<
               {
                 onEvent: ApplicationEvents.REVIEW_COMPLETED,
                 logMessage: applicationHistoryMessages.reviewFinished,
+              },
+              {
+                onEvent: ApplicationEvents.APPLICATION_DISMISSED,
+                logMessage: applicationHistoryMessages.applicationDismissed,
               },
             ],
           },
@@ -262,6 +268,11 @@ const template: ApplicationTemplate<
                   name: overview.buttons.received,
                   type: 'primary',
                 },
+                {
+                  event: ApplicationEvents.APPLICATION_DISMISSED,
+                  name: overview.buttons.dismissed,
+                  type: 'primary',
+                },
               ],
             },
           ],
@@ -269,8 +280,13 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
           [DefaultEvents.ABORT]: { target: States.SUBMITTED },
-          [ApplicationEvents.REVIEW_STARTED]: { target: States.IN_REVIEW },
+          [ApplicationEvents.REVIEW_STARTED]: {
+            target: States.IN_REVIEW_FROM_EDIT,
+          },
           [ApplicationEvents.REVIEW_COMPLETED]: { target: States.COMPLETED },
+          [ApplicationEvents.APPLICATION_DISMISSED]: {
+            target: States.DISMISSED,
+          },
         },
       },
       [States.SUBMITTED]: {
@@ -311,6 +327,10 @@ const template: ApplicationTemplate<
                 onEvent: ApplicationEvents.REVIEW_COMPLETED,
                 logMessage: applicationHistoryMessages.reviewFinished,
               },
+              {
+                onEvent: ApplicationEvents.APPLICATION_DISMISSED,
+                logMessage: applicationHistoryMessages.applicationDismissed,
+              },
             ],
           },
           roles: [
@@ -348,6 +368,11 @@ const template: ApplicationTemplate<
                   name: overview.buttons.received,
                   type: 'primary',
                 },
+                {
+                  event: ApplicationEvents.APPLICATION_DISMISSED,
+                  name: overview.buttons.dismissed,
+                  type: 'primary',
+                },
               ],
             },
           ],
@@ -356,6 +381,9 @@ const template: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.EDIT },
           [ApplicationEvents.REVIEW_STARTED]: { target: States.IN_REVIEW },
           [ApplicationEvents.REVIEW_COMPLETED]: { target: States.COMPLETED },
+          [ApplicationEvents.APPLICATION_DISMISSED]: {
+            target: States.DISMISSED,
+          },
         },
       },
       [States.IN_REVIEW]: {
@@ -382,8 +410,16 @@ const template: ApplicationTemplate<
             },
             historyLogs: [
               {
+                onEvent: ApplicationEvents.REVIEW_WITHDRAWN,
+                logMessage: applicationHistoryMessages.reviewWithdrawn,
+              },
+              {
                 onEvent: ApplicationEvents.REVIEW_COMPLETED,
                 logMessage: applicationHistoryMessages.reviewFinished,
+              },
+              {
+                onEvent: ApplicationEvents.APPLICATION_DISMISSED,
+                logMessage: applicationHistoryMessages.applicationDismissed,
               },
             ],
           },
@@ -402,8 +438,18 @@ const template: ApplicationTemplate<
               write: 'all',
               actions: [
                 {
+                  event: ApplicationEvents.REVIEW_WITHDRAWN,
+                  name: overview.buttons.withdrawn,
+                  type: 'primary',
+                },
+                {
                   event: ApplicationEvents.REVIEW_COMPLETED,
                   name: overview.buttons.received,
+                  type: 'primary',
+                },
+                {
+                  event: ApplicationEvents.APPLICATION_DISMISSED,
+                  name: overview.buttons.dismissed,
                   type: 'primary',
                 },
               ],
@@ -411,7 +457,89 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
+          [ApplicationEvents.REVIEW_WITHDRAWN]: { target: States.SUBMITTED },
           [ApplicationEvents.REVIEW_COMPLETED]: { target: States.COMPLETED },
+          [ApplicationEvents.APPLICATION_DISMISSED]: {
+            target: States.DISMISSED,
+          },
+        },
+      },
+      [States.IN_REVIEW_FROM_EDIT]: {
+        entry: ['assignToInstitution'],
+        exit: ['clearAssignees'],
+        meta: {
+          name: applicationMessage.stateMetaNameInReview.defaultMessage,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              pruneInDaysAfterRegistrationCloses(application, 3 * 30),
+          },
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardInReview,
+              variant: 'blueberry',
+            },
+            pendingAction: {
+              title: applicationPendingActionMessages.inReviewTitle,
+              content: applicationPendingActionMessages.inReviewDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: ApplicationEvents.REVIEW_WITHDRAWN,
+                logMessage: applicationHistoryMessages.reviewWithdrawn,
+              },
+              {
+                onEvent: ApplicationEvents.REVIEW_COMPLETED,
+                logMessage: applicationHistoryMessages.reviewFinished,
+              },
+              {
+                onEvent: ApplicationEvents.APPLICATION_DISMISSED,
+                logMessage: applicationHistoryMessages.applicationDismissed,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: ApplicationEvents.REVIEW_WITHDRAWN,
+                  name: overview.buttons.withdrawn,
+                  type: 'primary',
+                },
+                {
+                  event: ApplicationEvents.REVIEW_COMPLETED,
+                  name: overview.buttons.received,
+                  type: 'primary',
+                },
+                {
+                  event: ApplicationEvents.APPLICATION_DISMISSED,
+                  name: overview.buttons.dismissed,
+                  type: 'primary',
+                },
+              ],
+            },
+          ],
+        },
+        on: {
+          [ApplicationEvents.REVIEW_WITHDRAWN]: { target: States.EDIT },
+          [ApplicationEvents.REVIEW_COMPLETED]: { target: States.COMPLETED },
+          [ApplicationEvents.APPLICATION_DISMISSED]: {
+            target: States.DISMISSED,
+          },
         },
       },
       [States.COMPLETED]: {
@@ -446,6 +574,24 @@ const template: ApplicationTemplate<
               read: 'all',
             },
           ],
+        },
+      },
+      [States.DISMISSED]: {
+        meta: {
+          name: applicationMessage.stateMetaNameDismissed.defaultMessage,
+          status: FormModes.COMPLETED,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: (application: Application) =>
+              pruneInDaysAfterRegistrationCloses(application, 3 * 30),
+          },
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardDismissed,
+              variant: 'blueberry',
+            },
+          },
         },
       },
     },

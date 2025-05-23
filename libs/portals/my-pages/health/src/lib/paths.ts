@@ -40,4 +40,10 @@ export enum HealthPaths {
   HealthVaccinations = '/heilsa/bolusetningar',
   HealthVaccinationsGeneral = '/heilsa/bolusetningar/almennar',
   HealthVaccinationsOther = '/heilsa/bolusetningar/adrar',
+
+  HealthReferrals = '/heilsa/tilvisanir',
+  HealthReferralsDetail = '/heilsa/tilvisanir/:id',
+
+  HealthWaitlists = '/heilsa/bidlistar',
+  HealthWaitlistsDetail = '/heilsa/bidlistar/:id',
 }

@@ -10,6 +10,10 @@ export const m = {
       id: 'web.ojoi:breadcrumb.help',
       defaultMessage: 'Leiðbeiningar',
     },
+    about: {
+      id: 'web.ojoi:breadcrumb.about',
+      defaultMessage: 'Um stjórnartíðindi',
+    },
   }),
   general: defineMessages({
     seeMore: {
@@ -31,6 +35,10 @@ export const m = {
       id: 'web.ojoi:home.featuredImage',
       defaultMessage:
         'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
+    },
+    readMore: {
+      id: 'web.ojoi:home.readMore',
+      defaultMessage: 'Lesa meira',
     },
 
     inputPlaceholder: {
@@ -288,7 +296,7 @@ export const m = {
     },
     signatureDate: {
       id: 'web.ojoi:advert.signatureDate',
-      defaultMessage: 'Skráningardagur',
+      defaultMessage: 'Undirritunardagur',
     },
     publicationDate: {
       id: 'web.ojoi:advert.publicationDate',
@@ -371,6 +379,16 @@ export const m = {
     title: {
       id: 'web.ojoi:help.title',
       defaultMessage: 'Leiðbeiningar fyrir Stjórnartíðindi',
+    },
+  }),
+  about: defineMessages({
+    title: {
+      id: 'web.ojoi:about.title',
+      defaultMessage: 'Um stjórnartíðindi',
+    },
+    description: {
+      id: 'web.ojoi:about.description',
+      defaultMessage: 'Einhver lýsing',
     },
   }),
 }

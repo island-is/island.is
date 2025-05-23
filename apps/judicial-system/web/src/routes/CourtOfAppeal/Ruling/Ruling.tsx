@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
+  FileUploadStatus,
   Input,
   InputFileUpload,
   RadioButton,
@@ -43,7 +44,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isCourtOfAppealRulingStepFieldsValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
+import { CaseNumbers } from '../components'
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
 const CourtOfAppealRuling = () => {
@@ -102,7 +103,7 @@ const CourtOfAppealRuling = () => {
       uploadFiles.some(
         (file) =>
           file.category === CaseFileCategory.APPEAL_RULING &&
-          file.status === 'done',
+          file.status === FileUploadStatus.done,
       ))
 
   const handleRulingDecisionChange = (
@@ -214,12 +215,13 @@ const CourtOfAppealRuling = () => {
           <Box marginBottom={10}>
             <SectionHeading title={formatMessage(strings.courtRecordHeading)} />
             <InputFileUpload
-              fileList={uploadFiles.filter(
+              name="appealCourtRecord"
+              files={uploadFiles.filter(
                 (file) =>
                   file.category === CaseFileCategory.APPEAL_COURT_RECORD,
               )}
               accept="application/pdf"
-              header={formatMessage(strings.inputFieldLabel)}
+              title={formatMessage(strings.inputFieldLabel)}
               description={formatMessage(core.uploadBoxDescription, {
                 fileEndings: '.pdf',
               })}
@@ -341,11 +343,12 @@ const CourtOfAppealRuling = () => {
                 required
               />
               <InputFileUpload
-                fileList={uploadFiles.filter(
+                name="appealRuling"
+                files={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.APPEAL_RULING,
                 )}
                 accept="application/pdf"
-                header={formatMessage(strings.inputFieldLabel)}
+                title={formatMessage(strings.inputFieldLabel)}
                 description={formatMessage(core.uploadBoxDescription, {
                   fileEndings: '.pdf',
                 })}

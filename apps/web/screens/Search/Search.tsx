@@ -84,6 +84,21 @@ import { ActionType, initialState, reducer } from './Search.state'
 
 const PERPAGE = 10
 
+const ALL_TYPES: `${SearchableContentTypes}`[] = [
+  'webArticle',
+  'webLifeEventPage',
+  'webDigitalIcelandService',
+  'webDigitalIcelandCommunityPage',
+  'webSubArticle',
+  'webLink',
+  'webNews',
+  'webOrganizationSubpage',
+  'webOrganizationPage',
+  'webProjectPage',
+  'webManual',
+  'webManualChapterItem',
+]
+
 type SearchQueryFilters = {
   category: string
   type: string
@@ -321,6 +336,10 @@ const Search: Screen<CategoryProps> = ({
         item.manualChapter.slug,
         item.id,
       ])
+    }
+
+    if (item.__typename === 'OrganizationSubpage' && item.url.length === 3) {
+      return linkResolver('organizationparentsubpagechild', item.url)
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -847,25 +866,11 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     // @ts-ignore make web strict
     (x: SearchableContentTypes) => x,
   )
-  const allTypes: `${SearchableContentTypes}`[] = [
-    'webArticle',
-    'webLifeEventPage',
-    'webDigitalIcelandService',
-    'webDigitalIcelandCommunityPage',
-    'webSubArticle',
-    'webLink',
-    'webNews',
-    'webOrganizationSubpage',
-    'webOrganizationPage',
-    'webProjectPage',
-    'webManual',
-    'webManualChapterItem',
-  ]
 
   const ensureContentTypeExists = (
     types: string[],
   ): types is SearchableContentTypes[] =>
-    !!types.length && allTypes.every((type) => allTypes.includes(type))
+    !!types.length && ALL_TYPES.every((type) => ALL_TYPES.includes(type))
 
   const [
     {
@@ -886,8 +891,8 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
           queryString,
           types: types.length
             ? types
-            : ensureContentTypeExists(allTypes)
-            ? allTypes
+            : ensureContentTypeExists(ALL_TYPES)
+            ? ALL_TYPES
             : [],
           ...(tags.length && { tags }),
           ...countTag,
@@ -910,7 +915,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
             'organization' as SearchableTags,
             'processentry' as SearchableTags,
           ],
-          types: ensureContentTypeExists(allTypes) ? allTypes : [],
+          types: ensureContentTypeExists(ALL_TYPES) ? ALL_TYPES : [],
           countTypes: true,
           countProcessEntry: true,
         },
@@ -997,6 +1002,7 @@ const EnglishResultsLink: FC<
         query: {
           queryString: q,
           language: 'en' as ContentLanguage,
+          types: ALL_TYPES as SearchableContentTypes[],
         },
       },
     })

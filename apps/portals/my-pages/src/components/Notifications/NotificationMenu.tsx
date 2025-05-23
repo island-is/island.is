@@ -14,7 +14,7 @@ import {
   InformationPaths,
 } from '@island.is/portals/my-pages/information'
 import { sharedMessages } from '@island.is/shared/translations'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import { m } from '@island.is/portals/my-pages/core'
@@ -22,6 +22,7 @@ import NotificationLine from './NotificationLine'
 import cn from 'classnames'
 import * as styles from './Notifications.css'
 import * as mStyles from '../Sidemenu/Sidemenu.css'
+import { CloseButton } from '../Button/CloseButton/CloseButton'
 
 interface Props {
   closeNotificationMenu: () => void
@@ -35,7 +36,6 @@ const NotificationMenu = ({
   rightPosition,
   data,
 }: Props): ReactElement | null => {
-  useNamespaces(['service.portal'])
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
 
@@ -45,16 +45,6 @@ const NotificationMenu = ({
   const onClose = () => {
     closeNotificationMenu()
   }
-
-  const closeButton = (
-    <button
-      className={mStyles.closeButton}
-      onClick={onClose}
-      aria-label={formatMessage(sharedMessages.close)}
-    >
-      <Icon icon="close" color="blue600" />
-    </button>
-  )
 
   const content = (
     <Box display="flex" justifyContent="flexEnd">
@@ -140,7 +130,12 @@ const NotificationMenu = ({
             </Box>
           </Box>
         </Box>
-        <Hidden below="md">{closeButton}</Hidden>
+        <Hidden below="md">
+          <CloseButton
+            onClick={onClose}
+            aria-label={formatMessage(sharedMessages.close)}
+          />
+        </Hidden>
       </Box>
     </Box>
   )

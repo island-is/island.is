@@ -12,9 +12,12 @@ import {
   SyslumennService,
   SyslumennClientModule,
 } from '@island.is/clients/syslumenn'
-import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
 import { ConfigService } from '@nestjs/config'
-import { defineConfig, ConfigModule } from '@island.is/nest/config'
+import {
+  defineConfig,
+  ConfigModule,
+  IdsClientConfig,
+} from '@island.is/nest/config'
 import { createApplication } from '@island.is/application/testing'
 
 const config = defineConfig({
@@ -36,7 +39,10 @@ describe('CriminalRecordSubmissionService', () => {
     const module = await Test.createTestingModule({
       imports: [
         SyslumennClientModule,
-        ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [config, IdsClientConfig],
+        }),
       ],
       providers: [
         {
@@ -49,14 +55,6 @@ describe('CriminalRecordSubmissionService', () => {
         },
         SyslumennService,
         AdapterService,
-        {
-          provide: CriminalRecordService,
-          useClass: jest.fn(() => ({
-            async newCriminalRecord() {
-              return { success: true }
-            },
-          })),
-        },
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,

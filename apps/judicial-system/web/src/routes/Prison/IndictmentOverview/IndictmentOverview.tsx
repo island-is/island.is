@@ -1,10 +1,16 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  ButtonTypes,
+  IconMapIcon,
+  RadioButton,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { PunishmentType } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -22,9 +28,11 @@ import { useSentToPrisonAdminDate } from '@island.is/judicial-system-web/src/com
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  PunishmentType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
+  useCase,
   useDefendants,
   useFileList,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -34,6 +42,9 @@ import { strings } from './IndictmentOverview.strings'
 const IndictmentOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+
+  const { updateCase, isUpdatingCase } = useCase()
+
   const { formatMessage } = useIntl()
   const { limitedAccessUpdateDefendant, updateDefendantState } = useDefendants()
 
@@ -81,6 +92,44 @@ const IndictmentOverview = () => {
     ? CaseFileCategory.RULING
     : CaseFileCategory.COURT_RECORD
 
+  const savePunishmentType = async () => {
+    const updatedCase = await updateCase(workingCase.id, {
+      isRegisteredInPrisonSystem: !workingCase.isRegisteredInPrisonSystem,
+    })
+
+    if (!updatedCase) {
+      toast.error('Tókst ekki að skrá í fangelsiskerfi')
+      return
+    }
+
+    toast.success(
+      !updatedCase.isRegisteredInPrisonSystem
+        ? 'Dómur afskráður'
+        : 'Dómur skráður',
+    )
+
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      isRegisteredInPrisonSystem: updatedCase.isRegisteredInPrisonSystem,
+    }))
+  }
+
+  const footerNextButtonText: {
+    title: string
+    colorScheme: ButtonTypes['colorScheme']
+    icon: IconMapIcon
+  } = !workingCase?.isRegisteredInPrisonSystem
+    ? {
+        title: 'Dómur skráður',
+        colorScheme: 'default',
+        icon: 'checkmark',
+      }
+    : {
+        title: 'Afskrá dóm',
+        colorScheme: 'destructive',
+        icon: 'close',
+      }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -106,10 +155,10 @@ const IndictmentOverview = () => {
               </Text>
             </Box>
           )}
-          {workingCase.indictmentCompletedDate && (
+          {workingCase.rulingDate && (
             <Text variant="h4" as="h3">
               {formatMessage(strings.indictmentCompletedTitle, {
-                date: formatDate(workingCase.indictmentCompletedDate, 'PPP'),
+                date: formatDate(workingCase.rulingDate, 'PPP'),
               })}
             </Text>
           )}
@@ -252,11 +301,29 @@ const IndictmentOverview = () => {
                 )}
               />
             </Box>
+            <RadioButton
+              id="punishment-type-other"
+              name="punishmentTypeOther"
+              checked={hasPunishmentType(PunishmentType.OTHER)}
+              onChange={() => {
+                onChange(PunishmentType.OTHER)
+              }}
+              large
+              backgroundColor="white"
+              label="Annað"
+            />
           </BlueBox>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
-        <FormFooter previousUrl={constants.PRISON_CASES_ROUTE} hideNextButton />
+        <FormFooter
+          previousUrl={constants.PRISON_CASES_ROUTE}
+          nextButtonText={footerNextButtonText.title}
+          onNextButtonClick={savePunishmentType}
+          nextButtonColorScheme={footerNextButtonText.colorScheme}
+          nextButtonIcon={footerNextButtonText.icon}
+          nextIsLoading={isUpdatingCase}
+        />
       </FormContentContainer>
     </PageLayout>
   )

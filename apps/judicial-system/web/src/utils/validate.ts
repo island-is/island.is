@@ -1,6 +1,5 @@
 // TODO: Add tests
 import {
-  IndictmentSubtype,
   isIndictmentCase,
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
@@ -16,8 +15,10 @@ import {
   IndictmentCount,
   IndictmentCountOffense,
   IndictmentDecision,
+  IndictmentSubtype,
   SessionArrangements,
   User,
+  Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isBusiness } from './utils'
@@ -161,6 +162,21 @@ const someDefendantIsInvalid = (workingCase: Case): boolean => {
   )
 }
 
+const areVictimsValid = (victims?: Victim[] | null): boolean => {
+  if (!victims) return true
+
+  return victims?.every((victim) => {
+    return validate([
+      [
+        victim.nationalId,
+        victim.hasNationalId ? ['empty', 'national-id'] : ['date-of-birth'],
+      ],
+      [victim.name, ['empty']],
+      [victim.lawyerAccessToRequest, victim.lawyerNationalId ? ['empty'] : []],
+    ]).isValid
+  })
+}
+
 export const isDefendantStepValidRC = (
   workingCase: Case,
   policeCaseNumbers?: string[] | null,
@@ -195,6 +211,7 @@ export const isDefendantStepValidIC = (
       policeCaseNumbers.length > 0 &&
       workingCase.type === caseType &&
       !someDefendantIsInvalid(workingCase) &&
+      areVictimsValid(workingCase.victims) &&
       (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
         : true) &&
@@ -508,7 +525,11 @@ export const isSubpoenaStepValid = (
       ],
     ]).isValid &&
     Boolean(
-      workingCase.defendants?.every((defendant) => defendant.subpoenaType),
+      workingCase.defendants?.every((defendant) =>
+        defendant.isAlternativeService
+          ? defendant.alternativeServiceDescription
+          : defendant.subpoenaType,
+      ),
     )
   )
 }

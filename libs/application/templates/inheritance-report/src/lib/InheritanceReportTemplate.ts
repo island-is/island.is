@@ -1,6 +1,5 @@
 import {
   coreHistoryMessages,
-  EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {

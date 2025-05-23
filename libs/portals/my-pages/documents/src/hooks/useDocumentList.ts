@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useDocumentContext } from '../screens/Overview/DocumentContext'
-import { useDocumentsV3Query } from '../screens/Overview/Overview.generated'
+import { useDocumentsV3Query } from '../queries/Overview.generated'
 
 export const pageSize = 10
 

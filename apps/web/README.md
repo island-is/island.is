@@ -82,10 +82,10 @@ yarn start web
 
 This starts a server on `localhost:4200`
 
-### To update translation namespaces in Contentful
+### To update a translation namespace in Contentful
 
 ```bash
-yarn nx extract-strings web
+yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'relative/path/to/file/containing/translations'
 ```
 
 Currently, in this project, only the `Custom Page` content type utilizes the `Translation Namespace` content type for translations

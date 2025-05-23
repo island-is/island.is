@@ -8,12 +8,12 @@ import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { ARE_INDIVIDUALS_VALID_QUERY } from '../graphql/queries'
 import { ParticipantWithValidation } from '../shared/types'
-import { participants as participantMessages } from '../lib/messages'
 
 export const submitTableForm = async (
   application: Application,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tableItems: Array<any>,
-  apolloClient: ApolloClient<Object>,
+  apolloClient: ApolloClient<object>,
 ) => {
   const courseID =
     getValueViaPath<string>(application.answers, 'initialQuery', '') ?? ''
@@ -86,7 +86,8 @@ export const submitTableForm = async (
   if (emailAlreadyExists > 0) {
     dictionaryOfItems.push({
       path: 'participantValidityError',
-      value: 'Netfang er þegar skráð',
+      value:
+        'Netfang er nú þegar skráð. Ekki er hægt að skrá tvo með sama netfangi. Þú getur eytt þátttakanda út og skráð aftur með öðru netfangi.',
     })
   }
 
@@ -100,6 +101,10 @@ export const submitTableForm = async (
     dictionaryOfItems.push({
       path: 'participantValidityError',
       value: '',
+    })
+    dictionaryOfItems.push({
+      path: 'participantFinishedValidation',
+      value: 'true',
     })
   }
 
