@@ -1,4 +1,5 @@
 import {
+  AddCommentCommand,
   AuthenticationType,
   CustomersApi,
   CustomersListDocumentsOrderEnum,
@@ -57,7 +58,6 @@ export class DocumentsClientV2Service {
         documents: [],
       }
     }
-
     const inputObject = sanitizeObject({
       ...input,
       kennitala: input.nationalId,
@@ -72,7 +72,12 @@ export class DocumentsClientV2Service {
       sortBy: input.sortBy
         ? CustomersListDocumentsSortByEnum[input.sortBy]
         : undefined,
-      opened: input.opened ? 'true' : 'false',
+      opened:
+        input.opened === true
+          ? 'true'
+          : input.opened === false
+          ? 'false'
+          : undefined,
     })
 
     const documents = await this.api.customersListDocuments(inputObject)
@@ -93,7 +98,6 @@ export class DocumentsClientV2Service {
   async getCustomersDocument(
     customerId: string,
     documentId: string,
-    locale?: string,
     includeDocument?: boolean,
   ): Promise<DocumentDto | null> {
     const document = await this.api.customersDocument({
@@ -246,5 +250,19 @@ export class DocumentsClientV2Service {
       success: true,
       ids: documentIds,
     }
+  }
+
+  async postTicket(
+    nationalID: string,
+    documentId: string,
+    input: AddCommentCommand,
+  ) {
+    return await this.api.apiMailV1CustomersKennitalaMessagesMessageIdCommentsPost(
+      {
+        addCommentCommand: input,
+        kennitala: nationalID,
+        messageId: documentId,
+      },
+    )
   }
 }
