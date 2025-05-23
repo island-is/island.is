@@ -63,16 +63,16 @@ export class ApplicationService {
     startDate: string,
     endDate: string,
   ): Promise<ApplicationsStatistics[]> {
-    const query = `SELECT
-        type_id as typeid,
-        COUNT(*) as count,
+    const query = `SELECT 
+        type_id as typeid, 
+        COUNT(*) as count, 	
         COUNT(*) FILTER (WHERE status = 'draft') AS draft,
-        COUNT(*) FILTER (WHERE status = 'inprogress') AS inprogress,
-        COUNT(*) FILTER (WHERE status = 'completed') AS completed,
-        COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,
-        COUNT(*) FILTER (WHERE status = 'approved') AS approved
-      FROM public.application
-      WHERE modified BETWEEN :startDate AND :endDate
+        COUNT(*) FILTER (WHERE status = 'inprogress') AS inprogress,    
+        COUNT(*) FILTER (WHERE status = 'completed') AS completed,	
+        COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,	
+        COUNT(*) FILTER (WHERE status = 'approved') AS approved 
+      FROM public.application 
+      WHERE modified BETWEEN :startDate AND :endDate 
       GROUP BY typeid;`
 
     return this.sequelize.query<ApplicationsStatistics>(query, {
