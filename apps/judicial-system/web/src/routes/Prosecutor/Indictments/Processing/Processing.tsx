@@ -7,7 +7,6 @@ import {
   Button,
   InputFileUpload,
   RadioButton,
-  Text,
 } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
@@ -25,7 +24,6 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 import {
   CaseFileCategory,
   CaseState,
@@ -226,16 +224,16 @@ const Processing: FC = () => {
                 defendantCount: workingCase.defendants.length,
               })}
               heading="h2"
+              tooltip="Hægt er að velja afstöðu sakbornings til að flýta fyrir úthlutun máls"
             />
             {workingCase.defendants.map((defendant) => (
               <Box marginBottom={2} key={defendant.id}>
                 <BlueBox>
-                  <Text variant="h4" marginBottom={3}>
-                    {`${formatMessage(strings.defendantName, {
-                      name: defendant.name,
-                    })} `}
-                    <RequiredStar />
-                  </Text>
+                  <SectionHeading
+                    title={`Ákærði ${defendant.name}`}
+                    variant="h4"
+                    required
+                  />
                   <div className={styles.grid}>
                     <RadioButton
                       id={`defendant-${defendant.id}-plea-decision-guilty`}
@@ -249,7 +247,7 @@ const Processing: FC = () => {
                       }}
                       large
                       backgroundColor="white"
-                      label={formatMessage(strings.pleaGuilty)}
+                      label="Játar sök"
                     />
                     <RadioButton
                       id={`defendant-${defendant.id}-plea-decision-not-guilty`}
@@ -265,7 +263,7 @@ const Processing: FC = () => {
                       }}
                       large
                       backgroundColor="white"
-                      label={formatMessage(strings.pleaNotGuilty)}
+                      label="Neitar sök í einu eða fleiri sakarefnum"
                     />
                     <RadioButton
                       id={`defendant-${defendant.id}-plea-decision-no-plea`}
@@ -281,7 +279,7 @@ const Processing: FC = () => {
                       }}
                       large
                       backgroundColor="white"
-                      label={formatMessage(strings.pleaNoPlea)}
+                      label="Tjáir sig ekki / óljóst"
                     />
                   </div>
                 </BlueBox>
