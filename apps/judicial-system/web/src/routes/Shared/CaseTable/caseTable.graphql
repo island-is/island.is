@@ -6,8 +6,12 @@ query CaseTable($input: CaseTableQueryInput!) {
       cells {
         value {
           __typename
+          ... on StringValue {
+            str
+            sortValue
+          }
           ... on StringGroupValue {
-            s
+            strList
           }
           ... on TagValue {
             color

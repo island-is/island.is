@@ -36,6 +36,7 @@ import { User } from '../user'
 import {
   CaseTableCellValue,
   StringGroupValue,
+  StringValue,
   TagPairValue,
   TagValue,
 } from './dto/caseTable.response'
@@ -155,7 +156,7 @@ const generateRequestCaseStateTag = (c: Case, user: TUser): TagValue => {
 const caseNumber: CaseTableCellGenerator = {
   attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
   generate: (c: Case): StringGroupValue => ({
-    s: [
+    strList: [
       c.appealCaseNumber ?? '',
       c.courtCaseNumber ?? '',
       c.policeCaseNumbers.length > 1
@@ -163,6 +164,17 @@ const caseNumber: CaseTableCellGenerator = {
         : c.policeCaseNumbers[0],
     ],
   }),
+}
+
+const generateDate = (date: Date | undefined): StringValue | undefined => {
+  const rulingDate = formatDate(date, 'd.M.yyyy')
+  const sortValue = formatDate(date, 'yyyyMMdd')
+
+  if (!rulingDate || !sortValue) {
+    return undefined
+  }
+
+  return { str: rulingDate, sortValue: sortValue }
 }
 
 const defendants: CaseTableCellGenerator = {
@@ -177,7 +189,7 @@ const defendants: CaseTableCellGenerator = {
   generate: (c: Case): StringGroupValue | undefined =>
     c.defendants && c.defendants.length > 0
       ? {
-          s: [
+          strList: [
             c.defendants[0].name ?? '',
             c.defendants.length > 1
               ? `+ ${c.defendants.length - 1}`
@@ -190,7 +202,7 @@ const defendants: CaseTableCellGenerator = {
 const caseType: CaseTableCellGenerator = {
   attributes: ['type', 'decision', 'parentCaseId'],
   generate: (c: Case): StringGroupValue => ({
-    s: [
+    strList: [
       capitalize(
         formatCaseType(
           c.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
@@ -248,7 +260,7 @@ const courtOfAppealsHead: CaseTableCellGenerator = {
   },
   generate: (c: Case): StringGroupValue | undefined =>
     c.appealJudge1
-      ? { s: [getInitials(c.appealJudge1.name) ?? ''] }
+      ? { strList: [getInitials(c.appealJudge1.name) ?? ''] }
       : undefined,
 }
 
@@ -264,13 +276,13 @@ const validFromTo: CaseTableCellGenerator = {
     isRestrictionCase(c.type) && c.state === CaseState.ACCEPTED && c.validToDate
       ? c.initialRulingDate || c.rulingDate
         ? {
-            s: [
+            strList: [
               `${formatDate(c.initialRulingDate ?? c.rulingDate) ?? ''} - ${
                 formatDate(c.validToDate) ?? ''
               }`,
             ],
           }
-        : { s: [formatDate(c.validToDate) ?? ''] }
+        : { strList: [formatDate(c.validToDate) ?? ''] }
       : undefined,
 }
 
@@ -297,15 +309,7 @@ const caseSentToCourtDate: CaseTableCellGenerator = {
 
 const rulingDate: CaseTableCellGenerator = {
   attributes: ['rulingDate'],
-  generate: (c: Case): StringGroupValue | undefined => {
-    const rulingDate = formatDate(c.rulingDate)
-
-    if (!rulingDate) {
-      return undefined
-    }
-
-    return { s: [rulingDate] }
-  },
+  generate: (c: Case): StringValue | undefined => generateDate(c.rulingDate),
 }
 
 const arraignmentDate: CaseTableCellGenerator = {
@@ -411,7 +415,7 @@ const prisonAdminReceivalDate: CaseTableCellGenerator = {
       separate: true,
     },
   },
-  generate: (c: Case): StringGroupValue | undefined => {
+  generate: (c: Case): StringValue | undefined => {
     if (!c.defendants || c.defendants.length === 0) {
       return undefined
     }
@@ -421,13 +425,7 @@ const prisonAdminReceivalDate: CaseTableCellGenerator = {
       c.defendants[0].eventLogs,
     )
 
-    const receivalDate = formatDate(dateOpened)
-
-    if (!receivalDate) {
-      return undefined
-    }
-
-    return { s: [receivalDate] }
+    return generateDate(dateOpened)
   },
 }
 
@@ -470,23 +468,17 @@ const prisonAdminState: CaseTableCellGenerator = {
 
 const indictmentAppealDeadline: CaseTableCellGenerator = {
   attributes: ['rulingDate', 'indictmentRulingDecision'],
-  generate: (c: Case): StringGroupValue | undefined => {
+  generate: (c: Case): StringValue | undefined => {
     if (!c.rulingDate) {
       return undefined
     }
 
-    const indictmentAppealDeadline = formatDate(
-      getIndictmentAppealDeadlineDate(
-        c.rulingDate,
-        c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
-      ),
+    const deadlineDate = getIndictmentAppealDeadlineDate(
+      c.rulingDate,
+      c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
     )
 
-    if (!indictmentAppealDeadline) {
-      return undefined
-    }
-
-    return { s: [indictmentAppealDeadline] }
+    return generateDate(deadlineDate)
   },
 }
 
@@ -536,7 +528,9 @@ const indictmentReviewer: CaseTableCellGenerator = {
     },
   },
   generate: (c: Case): StringGroupValue | undefined =>
-    c.indictmentReviewer?.name ? { s: [c.indictmentReviewer.name] } : undefined,
+    c.indictmentReviewer?.name
+      ? { strList: [c.indictmentReviewer.name] }
+      : undefined,
 }
 
 const sentToPrisonAdminDate: CaseTableCellGenerator = {
@@ -558,7 +552,7 @@ const sentToPrisonAdminDate: CaseTableCellGenerator = {
       separate: true,
     },
   },
-  generate: (c: Case): StringGroupValue | undefined => {
+  generate: (c: Case): StringValue | undefined => {
     if (!c.defendants) {
       return undefined
     }
@@ -576,13 +570,7 @@ const sentToPrisonAdminDate: CaseTableCellGenerator = {
       return firstSent
     }, undefined)
 
-    const sentToPrisonAdminDate = formatDate(dateSent)
-
-    if (!sentToPrisonAdminDate) {
-      return undefined
-    }
-
-    return { s: [sentToPrisonAdminDate] }
+    return generateDate(dateSent)
   },
 }
 
