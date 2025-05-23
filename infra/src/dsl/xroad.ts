@@ -99,8 +99,7 @@ export const JudicialSystem = new XroadConf({
     XROAD_POLICE_API_PATH: '/Logreglan-Private/rettarvarsla-v1',
     XROAD_DMR_CRIMINAL_RECORD_API_PATH: {
       dev: '/DMR-Protected/sakaskra-dev',
-      // TODO: need to verify
-      staging: '/DMR-Protected/sakaskra',
+      staging: '/DMR-Protected/sakaskra-dev',
       prod: '/DMR-Protected/sakaskra',
     },
   },
