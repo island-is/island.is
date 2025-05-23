@@ -42,7 +42,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
   } = useQuery<SiaRehabilitationPlanQuery>(siaRehabilitationPlanQuery)
 
   setBeforeSubmitCallback?.(async () => {
-    if (rehabilitationPlanError) {
+    if (loading || rehabilitationPlanError) {
       return [false, '']
     }
     return [true, null]
