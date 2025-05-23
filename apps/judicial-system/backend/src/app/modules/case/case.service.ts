@@ -951,6 +951,12 @@ export class CaseService {
       })
     }
 
+    messages.push({
+      type: MessageType.DELIVERY_TO_COURT_SIGNED_COURT_RECORD,
+      user,
+      caseId: theCase.id,
+    })
+
     return this.messageService.sendMessagesToQueue(messages)
   }
   private addMessagesForSignedRulingToQueue(
