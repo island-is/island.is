@@ -39,11 +39,11 @@ export const Confirmation = ({ application }: LGFieldBaseProps) => {
   const firstDate = application.answers.publishing.dates[0]
 
   const publicationDate = firstDate
-    ? format(new Date(firstDate), 'dd.MM.yyyy')
+    ? format(new Date(firstDate.date), 'dd.MM.yyyy')
     : format(addDays(new Date(), 14), 'dd.MM.yyyy')
 
-  const allPublicationDates = application.answers.publishing.dates.map((date) =>
-    format(new Date(date), 'dd.MM.yyyy'),
+  const allPublicationDates = application.answers.publishing.dates.map(
+    ({ date }) => format(new Date(date), 'dd.MM.yyyy'),
   )
 
   const allCommunicationChannels =

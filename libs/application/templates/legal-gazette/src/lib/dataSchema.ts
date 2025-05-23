@@ -37,7 +37,7 @@ export const legalGazetteDataSchema = z.object({
     }),
   }),
   publishing: z.object({
-    dates: z.array(z.string()),
+    dates: z.array(z.object({ date: z.string() })),
   }),
   communication: z.object({
     channels: z

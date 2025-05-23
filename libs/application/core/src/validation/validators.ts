@@ -80,6 +80,7 @@ export const validateAnswers = ({
   formatMessage: FormatMessage
   currentScreenFields?: string[]
 }): ValidationRecord | undefined => {
+  console.log(answers)
   try {
     if (dataSchema instanceof ZodEffects) {
       // cases where zod schema has a refinement on the schema object, needs to be defined partial
@@ -90,6 +91,7 @@ export const validateAnswers = ({
     }
   } catch (e) {
     const zodErrors: ZodIssue[] = e.errors
+    console.log(zodErrors)
     return populateError(zodErrors, e.path, formatMessage, currentScreenFields)
   }
   return undefined

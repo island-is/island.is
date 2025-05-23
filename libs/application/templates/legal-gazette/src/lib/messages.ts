@@ -377,6 +377,16 @@ export const m = {
           defaultMessage: 'Vista breytingar',
           description: 'Titill á takka fyrir tengilið',
         },
+        removeButton: {
+          id: 'lg.application:draft.communication.removeButton',
+          defaultMessage: 'Fjarlægja samskiptaleið',
+          description: 'Titill á takka fyrir samskiptaleið',
+        },
+        editButton: {
+          id: 'lg.application:draft.communication.editButton',
+          defaultMessage: 'Breyta samskiptaleið',
+          description: 'Titill á takka fyrir samskiptaleið',
+        },
       }),
       preview: defineMessages({
         sectionTitle: {

@@ -67,7 +67,7 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
         email: ch.email,
         phone: ch.phone ?? '',
       })),
-      publishingDates: publishing.dates,
+      publishingDates: publishing.dates.map(({ date }) => date),
     }
 
     try {
