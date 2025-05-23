@@ -104,7 +104,7 @@ export const FormsHeader = (props: Props) => {
             <Box>
               <Select
                 name="organizations"
-                label="stofnun"
+                label={formatMessage(m.organization)}
                 options={organizations}
                 size="sm"
                 defaultValue={organizations.find((org) => org.isSelected)}
