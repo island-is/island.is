@@ -24,7 +24,6 @@ export const incomePlanInstructionsSubSection = buildSubSection({
             socialInsuranceAdministrationMessage.incomePlanInstructions
               .instructions,
           space: 0,
-          doesNotRequireAnswer: false,
         }),
       ],
     }),

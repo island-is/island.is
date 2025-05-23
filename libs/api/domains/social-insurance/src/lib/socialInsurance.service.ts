@@ -3,6 +3,7 @@ import { handle404 } from '@island.is/clients/middlewares'
 import {
   IncomePlanStatus as IncomeStatus,
   SocialInsuranceAdministrationClientService,
+  TrWebExternalModelsServicePortalRehabilitationPlan,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -230,5 +231,11 @@ export class SocialInsuranceService {
 
   getUnions(user: User) {
     return this.socialInsuranceApi.getUnions(user)
+  }
+
+  async getRehabilitationPlan(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalRehabilitationPlan> {
+    return await this.socialInsuranceApi.getRehabilitationPlan(user)
   }
 }
