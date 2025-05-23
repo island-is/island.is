@@ -99,9 +99,28 @@ const rentalPeriod = z
     const start = data.startDate ? new Date(data.startDate) : ''
     const end = data.endDate ? new Date(data.endDate) : ''
     const isDefiniteChecked = data.isDefinite?.includes(YesOrNoEnum.YES)
+
+    if (start) {
+      const oneYearFromNow = new Date()
+      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1)
+
+      if (
+        start instanceof Date &&
+        !isNaN(start.getTime()) &&
+        start.getTime() > oneYearFromNow.getTime()
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['startDate'],
+          params: m.rentalPeriod.errorStartDateTooFarInFuture,
+        })
+      }
+    }
+
     if (!isDefiniteChecked) {
       return
     }
+
     if (!data.endDate || !data.endDate.trim().length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
