@@ -116,13 +116,13 @@ export const m = defineMessages({
     description: 'Some description',
   },
   useDriversLicenseImage: {
-    id: 'dld.application:useDriversLicenseImage',
+    id: 'dld.application:useDriversLicenseImage#markdown',
     defaultMessage:
       'Ég staðfesti að nota núverandi mynd úr ökuskírteinaskrá í ökuskírteinið',
     description: 'Some description',
   },
   usePassportImage: {
-    id: 'dld.application:usePassportImage',
+    id: 'dld.application:usePassportImage#markdown',
     defaultMessage:
       'Ég staðfesti að nota núverandi mynd úr vegabréfa- og nafnskírteinaskrá í ökuskírteinið',
     description: 'Some description',

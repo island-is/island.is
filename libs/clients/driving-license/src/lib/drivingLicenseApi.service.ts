@@ -675,11 +675,13 @@ export class DrivingLicenseApi {
     token: string
   }): Promise<ImagesFromThjodskraDto> {
     const res =
-      await this.imageApiV5.apiImagecontrollerV5FromnationalregistryGet({
-        apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
-        apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-        jwttoken: params.token.replace('Bearer ', ''),
-      })
+      await this.imageApiV5.apiImagecontrollerV5FromnationalregistryWithagerestrictionGet(
+        {
+          apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+          apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+          jwttoken: params.token.replace('Bearer ', ''),
+        },
+      )
 
     return res
   }

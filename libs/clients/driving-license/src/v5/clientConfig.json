@@ -643,6 +643,70 @@
         }
       }
     },
+    "/api/imagecontroller/v5/fromnationalregistry/withagerestriction": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Get for all images from thjodskra",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesFromThjodskraDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesFromThjodskraDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesFromThjodskraDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/imagecontroller/v5/hasqualityscannedphoto": {
       "get": {
         "tags": ["Image"],
