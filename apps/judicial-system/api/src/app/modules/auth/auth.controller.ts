@@ -317,7 +317,6 @@ export class AuthController {
 
     this.clearCookies(res)
 
-    // TODO: revoke the tokens from ids or is this sufficient?
     if (idToken) {
       res.redirect(
         `${this.config.issuer}/connect/endsession?id_token_hint=${idToken}&post_logout_redirect_uri=${this.config.logoutRedirectUri}`,
