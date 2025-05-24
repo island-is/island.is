@@ -248,7 +248,6 @@ codemagic.yaml                                                                  
 /libs/application/templates/institution-collaboration/                                                    @island-is/norda @island-is/fuglar
 /libs/application/templates/login-service/                                                                @island-is/norda
 /libs/application/templates/public-debt-payment-plan/                                                     @island-is/norda
-/libs/application/templates/reference-template/                                                           @island-is/norda
 
 /libs/application/template-api-modules/src/lib/modules/templates/accident-notification/                   @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/children-residence-change-v2/            @island-is/norda

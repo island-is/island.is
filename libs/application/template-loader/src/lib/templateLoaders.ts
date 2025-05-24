@@ -1,12 +1,14 @@
 import { ApplicationTypes } from '@island.is/application/types'
 
 const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
-  [ApplicationTypes.EXAMPLE]: () =>
-    import('@island.is/application/templates/reference-template'),
   [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: () =>
     import('@island.is/application/templates/examples/example-auth-delegation'),
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: () =>
     import('@island.is/application/templates/examples/example-common-actions'),
+  [ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS]: () =>
+    import(
+      '@island.is/application/templates/examples/example-folder-structure-and-conventions'
+    ),
   [ApplicationTypes.EXAMPLE_INPUTS]: () =>
     import('@island.is/application/templates/examples/example-inputs'),
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: () =>

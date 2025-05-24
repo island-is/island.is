@@ -32,7 +32,7 @@ export const application = factory<Application>({
   assignees: [],
   applicantActors: [],
   state: 'draft',
-  typeId: 'ExampleForm',
+  typeId: 'ExampleCommonActions',
   answers: [],
   externalData: {},
   status: () => faker.random.arrayElement(status),
