@@ -1,6 +1,12 @@
 import { FC, ReactNode } from 'react'
 
-import { Box, ResponsiveProp, Space, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  ResponsiveProp,
+  Space,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
 
 import RequiredStar from '../RequiredStar/RequiredStar'
 
@@ -9,7 +15,7 @@ type Heading = 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
 interface Props {
   title: string
   required?: boolean
-  tooltip?: ReactNode
+  tooltip?: ReactNode | string
   description?: ReactNode | string
   marginBottom?: ResponsiveProp<Space | 'auto'>
   heading?: Heading
@@ -31,7 +37,11 @@ const SectionHeading: FC<Props> = ({
       {required && ' '}
       {required && <RequiredStar />}
       {tooltip && ' '}
-      {tooltip && <Box component="span">{tooltip}</Box>}
+      {tooltip && typeof tooltip === 'string' ? (
+        <Tooltip text={tooltip} />
+      ) : (
+        tooltip
+      )}
     </Text>
     {description && (
       <Box component="span" marginTop={1}>
