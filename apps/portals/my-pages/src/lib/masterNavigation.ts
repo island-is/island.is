@@ -5,6 +5,7 @@ import { financeNavigation } from '@island.is/portals/my-pages/finance'
 import { applicationsNavigation } from '@island.is/portals/my-pages/applications'
 import { assetsNavigation } from '@island.is/portals/my-pages/assets'
 import { educationNavigation } from '@island.is/portals/my-pages/education'
+import { educationNavigationV2 } from '@island.is/portals/my-pages/education-v2'
 import {
   companyNavigation,
   informationNavigation,
@@ -58,6 +59,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     occupationalLicensesNavigation,
     airDiscountNavigation,
     educationNavigation,
+    educationNavigationV2,
     lawAndOrderNavigation,
   ],
 }
