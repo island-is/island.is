@@ -171,6 +171,18 @@ export const DocumentProviderOrganisationForm: FC<
             hasError={errors?.phoneNumber !== undefined}
             errorMessage={errors?.phoneNumber?.message ?? ''}
           />
+          <DocumentProviderInput
+            control={control}
+            name="zendesk"
+            defaultValue={organisation?.zendeskId || ''}
+            label={formatMessage(m.SingleProviderInstitutionZendeskIdLabel)}
+            placeholder={formatMessage(
+              m.SingleProviderInstitutionZendeskIdPlaceholder,
+            )}
+            hasError={errors?.zendeskId !== undefined}
+            errorMessage={errors?.zendeskId?.message ?? ''}
+          />
+
           <Box
             display="flex"
             justifyContent="flexEnd"
