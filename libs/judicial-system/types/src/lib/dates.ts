@@ -16,6 +16,7 @@ export const getIndictmentAppealDeadlineDate = (
     ? FINE_APPEAL_WINDOW_DAYS
     : VERDICT_APPEAL_WINDOW_DAYS
   const deadlineDate = addDays(baseDate, windowDays)
+
   return endOfDay(deadlineDate)
 }
 

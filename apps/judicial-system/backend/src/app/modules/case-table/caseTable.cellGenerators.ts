@@ -16,10 +16,14 @@ import {
   CaseTableColumnKey,
   CaseType,
   DefendantEventType,
+  getIndictmentAppealDeadlineDate,
+  getIndictmentVerdictAppealDeadlineStatus,
+  IndictmentCaseReviewDecision,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isRestrictionCase,
   PunishmentType,
+  ServiceRequirement,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -332,6 +336,7 @@ const punishmentType: CaseTableCellGenerator = {
     }
   },
 }
+
 const prisonAdminReceivalDate: CaseTableCellGenerator = {
   includes: {
     defendants: {
@@ -402,6 +407,151 @@ const prisonAdminState: CaseTableCellGenerator = {
   },
 }
 
+const indictmentAppealDeadline: CaseTableCellGenerator = {
+  attributes: ['rulingDate', 'indictmentRulingDecision'],
+  generate: (c: Case): StringGroupValue | undefined => {
+    if (!c.rulingDate) {
+      return undefined
+    }
+
+    const indictmentAppealDeadline = formatDate(
+      getIndictmentAppealDeadlineDate(
+        c.rulingDate,
+        c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
+      ),
+    )
+
+    if (!indictmentAppealDeadline) {
+      return undefined
+    }
+
+    return { s: [indictmentAppealDeadline] }
+  },
+}
+
+const subpoenaServiceState: CaseTableCellGenerator = {
+  attributes: ['rulingDate', 'indictmentRulingDecision'],
+  includes: {
+    defendants: {
+      model: Defendant,
+      attributes: ['serviceRequirement', 'verdictViewDate'],
+      order: [['created', 'ASC']],
+      separate: true,
+    },
+  },
+  generate: (c: Case): TagValue | undefined => {
+    if (c.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING) {
+      return undefined
+    }
+
+    const verdictInfo = c.defendants?.map<[boolean, Date | undefined]>((d) => [
+      true,
+      d.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+        ? c.rulingDate
+        : d.verdictViewDate,
+    ])
+    const [
+      indictmentVerdictViewedByAll,
+      indictmentVerdictAppealDeadlineExpired,
+    ] = getIndictmentVerdictAppealDeadlineStatus(verdictInfo, false)
+
+    if (!indictmentVerdictViewedByAll) {
+      return { color: 'red', text: 'Óbirt' }
+    }
+
+    if (indictmentVerdictAppealDeadlineExpired) {
+      return { color: 'mint', text: 'Frestur liðinn' }
+    }
+
+    return { color: 'blue', text: 'Á fresti' }
+  },
+}
+
+const indictmentReviewer: CaseTableCellGenerator = {
+  includes: {
+    indictmentReviewer: {
+      model: User,
+      attributes: ['name'],
+    },
+  },
+  generate: (c: Case): StringGroupValue | undefined =>
+    c.indictmentReviewer?.name ? { s: [c.indictmentReviewer.name] } : undefined,
+}
+
+const sentToPrisonAdminDate: CaseTableCellGenerator = {
+  includes: {
+    defendants: {
+      model: Defendant,
+      order: [['created', 'ASC']],
+      includes: {
+        eventLogs: {
+          model: DefendantEventLog,
+          attributes: ['created', 'eventType'],
+          order: [['created', 'DESC']],
+          where: {
+            eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+          },
+          separate: true,
+        },
+      },
+      separate: true,
+    },
+  },
+  generate: (c: Case): StringGroupValue | undefined => {
+    if (c.defendants && c.defendants.length > 0) {
+      const dateSent = c.defendants.reduce<Date | undefined>((firstSent, d) => {
+        const dateSent = DefendantEventLog.getDefendantEventLogTypeDate(
+          DefendantEventType.SENT_TO_PRISON_ADMIN,
+          d.eventLogs,
+        )
+
+        if (dateSent && (!firstSent || firstSent > dateSent)) {
+          return dateSent
+        }
+
+        return firstSent
+      }, undefined)
+
+      if (dateSent) {
+        return { s: [formatDate(dateSent) ?? ''] }
+      }
+    }
+
+    return undefined
+  },
+}
+
+const indictmentReviewDecision: CaseTableCellGenerator = {
+  attributes: ['indictmentReviewDecision'],
+  includes: {
+    defendants: {
+      model: Defendant,
+      attributes: ['verdictAppealDate'],
+      order: [['created', 'ASC']],
+      separate: true,
+    },
+  },
+  generate: (c: Case): TagPairValue => {
+    const firstTag = {
+      color: 'darkerBlue',
+      text:
+        c.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL
+          ? c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+            ? 'Kæra'
+            : 'Áfrýja'
+          : 'Una',
+    }
+
+    const defendantAppealed = c.defendants?.some((d) => d.verdictAppealDate)
+
+    const secondTag = defendantAppealed
+      ? { color: 'red', text: 'Ákærði áfrýjar' }
+      : undefined
+
+    return { firstTag, secondTag }
+  },
+}
+
 export const caseTableCellGenerators: Record<
   CaseTableColumnKey,
   CaseTableCellGenerator
@@ -418,4 +568,9 @@ export const caseTableCellGenerators: Record<
   punishmentType,
   prisonAdminReceivalDate,
   prisonAdminState,
+  indictmentAppealDeadline,
+  subpoenaServiceState,
+  indictmentReviewer,
+  sentToPrisonAdminDate,
+  indictmentReviewDecision,
 }

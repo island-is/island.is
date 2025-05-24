@@ -3,6 +3,7 @@ import {
   isCourtOfAppealsUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
+  isPublicProsecutionOfficeUser,
 } from '../user'
 import { CaseTableType } from './caseTable'
 
@@ -79,6 +80,50 @@ const prisonAdminTableGroups: CaseTableGroup[] = [
 
 const prisonStaffTableGroups: CaseTableGroup[] = [prisonSystemRequestCaseGroup]
 
+const publicProsecutorsOfficeTableGroups: CaseTableGroup[] = [
+  {
+    title: 'Sakamál',
+    tables: [
+      {
+        type: CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_NEW,
+        route: 'ny-mal',
+        title: 'Ný mál',
+        description: 'Ný mál sem á eftir að úthluta í yfirlestur.',
+      },
+      {
+        type: CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW,
+        route: 'mal-i-yfirlestri',
+        title: 'Mál í yfirlestri',
+        description: 'Mál sem eru í yfirlestri hjá saksóknara.',
+      },
+      {
+        type: CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_REVIEWED,
+        route: 'yfirlesin-mal',
+        title: 'Yfirlesin mál',
+        description: 'Mál sem hafa verið lesin yfir og eru óbirt eða á fresti.',
+      },
+      {
+        type: CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED,
+        route: 'frestur-lidinn',
+        title: 'Frestur liðinn',
+        description: 'Áfrýjunarfrestur liðinn.',
+      },
+      {
+        type: CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN,
+        route: 'mal-i-fullnustu',
+        title: 'Mál í fullnustu',
+        description: 'Mál sem hafa verið send í fullnustu.',
+      },
+      {
+        type: CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED,
+        route: 'afryjud-mal',
+        title: 'Áfrýjuð mál',
+        description: 'Mál sem hefur verið áfrýjað.',
+      },
+    ],
+  },
+]
+
 export const getCaseTableGroups = (
   user: InstitutionUser | undefined,
 ): CaseTableGroup[] => {
@@ -92,6 +137,10 @@ export const getCaseTableGroups = (
 
   if (isPrisonStaffUser(user)) {
     return prisonStaffTableGroups
+  }
+
+  if (isPublicProsecutionOfficeUser(user)) {
+    return publicProsecutorsOfficeTableGroups
   }
 
   return []
