@@ -7,10 +7,8 @@ import { m } from '../../lib/messages'
 import {
   CurrentLicenseApi,
   JurisdictionApi,
-  NationalRegistryUserApi,
   QualityPhotoApi,
-  QualitySignatureApi,
-  UserProfileApi,
+  AllPhotosFromThjodskraApi,
 } from '@island.is/application/types'
 import {
   DuplicateEligibilityApi,
@@ -31,7 +29,7 @@ export const sectionDataProviders = buildSection({
       enableMockPayment: true,
       dataProviders: [
         buildDataProviderItem({
-          provider: NationalRegistryUserApi,
+          // provider: NationalRegistryUserApi,
           title: m.dataCollectionNationalRegistryTitle,
           subTitle: m.dataCollectionNationalRegistrySubtitle,
         }),
@@ -41,13 +39,13 @@ export const sectionDataProviders = buildSection({
           subTitle: m.dataCollectionQualityPhotoSubtitle,
         }),
         buildDataProviderItem({
-          provider: QualitySignatureApi,
+          provider: AllPhotosFromThjodskraApi,
         }),
         buildDataProviderItem({
           provider: DuplicateEligibilityApi,
         }),
         buildDataProviderItem({
-          provider: UserProfileApi,
+          // provider: UserProfileApi,
           title: m.dataCollectionUserProfileTitle,
           subTitle: m.dataCollectionUserProfileSubtitle,
         }),
