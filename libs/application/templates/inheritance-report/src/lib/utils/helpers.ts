@@ -30,11 +30,9 @@ export const getEstateDataFromApplication = (
 ): { inheritanceReportInfo?: InheritanceReportInfo } => {
   const selectedEstate = application.answers.estateInfoSelection
 
-  const estateData = (
-    application.externalData.syslumennOnEntry?.data as {
-      inheritanceReportInfos?: Array<InheritanceReportInfo>
-    }
-  ).inheritanceReportInfos?.find(
+  const estateData = (application.externalData.syslumennOnEntry?.data as {
+    inheritanceReportInfos?: Array<InheritanceReportInfo>
+  }).inheritanceReportInfos?.find(
     (estate) => estate.caseNumber === selectedEstate,
   )
 
@@ -134,10 +132,14 @@ export const valueToNumber = (value: unknown, delimiter = '.'): number => {
   }
 
   if (typeof value === 'string' && value.length > 0) {
-    const regex = new RegExp(`[^${delimiter}\\d]+`, 'g')
+    const regex = new RegExp(`[^-${delimiter}\\d]+`, 'g')
     const regex2 = new RegExp(`(?<=\\${delimiter}.*)\\${delimiter}`, 'g')
+    const regex3 = new RegExp('(?!^)-', 'g')
 
-    const parsed = value.replace(regex, '').replace(regex2, '')
+    const parsed = value
+      .replace(regex, '')
+      .replace(regex2, '')
+      .replace(regex3, '')
     return parseFloat(parsed.replace(delimiter, '.'))
   }
 
