@@ -44,9 +44,13 @@ export class Dispensation {
   @Field(() => Date, { nullable: true })
   lastDispensationDate?: Date
 
+  @Field(() => Date, { nullable: true })
+  nextDispensationDate?: Date
+
   @Field()
   count!: number
 
-  @Field(() => [DispensedItem])
-  items!: DispensedItem[]
+  // TODO: Check if this should be nullable when service fixes
+  @Field(() => [DispensedItem], { nullable: true })
+  items?: DispensedItem[]
 }

@@ -32,6 +32,9 @@ export class Prescription {
   @Field({ nullable: true })
   prescriberName?: string
 
+  @Field({ nullable: true })
+  medCardDrugId?: string
+
   @Field(() => Date)
   issueDate!: Date
 
