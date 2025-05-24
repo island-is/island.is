@@ -1,0 +1,71 @@
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  InfoLine,
+  InfoLineStack,
+  IntroWrapper,
+  LANDLAEKNIR_SLUG,
+  LinkButton,
+  formatDate,
+} from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
+import React from 'react'
+import { useParams } from 'react-router-dom'
+import { messages } from '../../lib/messages'
+import { useBloodTypeQuery } from './Bloodtype.generated'
+
+type UseParams = {
+  id: string
+}
+
+const ReferencesDetail: React.FC = () => {
+  useNamespaces('sp.health')
+  const { formatMessage } = useLocale()
+
+  const { data, loading, error } = useBloodTypeQuery()
+
+  const bloodType = data?.rightsPortalBloodType
+
+  return (
+    <IntroWrapper
+      title={formatMessage(messages.bloodtype)}
+      intro={formatMessage(messages.bloodtypeDesc)}
+      serviceProviderSlug={LANDLAEKNIR_SLUG}
+      marginBottom={6}
+      buttonGroup={[
+        <LinkButton
+          to={formatMessage(messages.bloodtypeLink)}
+          text={formatMessage(messages.readAboutBloodtypes)}
+          variant="utility"
+          icon="open"
+        />,
+      ]}
+    >
+      {error && !loading && (
+        <Problem error={{ name: 'ee', message: 'error' }} noBorder={false} />
+      )}
+      {!error && (
+        <InfoLineStack space={1}>
+          <InfoLine
+            label={formatMessage(messages.bloodtype)}
+            content={bloodType?.type}
+            loading={loading}
+          />
+          <InfoLine
+            label={formatMessage(messages.registered)}
+            content={
+              bloodType?.registered ? formatDate(bloodType.registered) : ''
+            }
+            loading={loading}
+          />
+          <InfoLine
+            label={formatMessage(messages.organization)}
+            content={'Landspítalinn'}
+            loading={loading}
+          />
+        </InfoLineStack>
+      )}
+    </IntroWrapper>
+  )
+}
+
+export default ReferencesDetail

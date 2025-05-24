@@ -55,6 +55,7 @@ import {
   WorkAccidents,
   WorkMachines,
   SecondarySchool,
+  LSH,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -287,6 +288,11 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      LSH_BLOOD_URL: {
+        dev: 'https://externalpatientdev.landspitali.is',
+        staging: 'https://externalpatientdev.landspitali.is',
+        prod: 'TODO',
+      },
     })
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
@@ -401,6 +407,7 @@ export const serviceSetup = (services: {
         '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET',
       VERDICTS_GOPRO_USERNAME: '/k8s/api/VERDICTS_GOPRO_USERNAME',
       VERDICTS_GOPRO_PASSWORD: '/k8s/api/VERDICTS_GOPRO_PASSWORD',
+      LSH_BLOOD_API_KEY: '/k8s/api/LSH_BLOOD_API_KEY',
     })
     .xroad(
       AdrAndMachine,
@@ -458,6 +465,7 @@ export const serviceSetup = (services: {
       WorkAccidents,
       SeminarsVer,
       SecondarySchool,
+      LSH,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
