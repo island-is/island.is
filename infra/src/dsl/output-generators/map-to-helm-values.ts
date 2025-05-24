@@ -285,7 +285,7 @@ export const getPostgresExtensions = (extensions: string[] | undefined) =>
   extensions ? extensions.join(',') : ''
 
 export const resolveDbHost = (
-  service: ServiceDefinitionForEnv,
+  _service: ServiceDefinitionForEnv,
   env: EnvironmentConfig,
   host?: string,
 ) => {
@@ -318,7 +318,7 @@ const getPostgresInfoForFeature = (feature: string, postgres: PostgresInfo) => {
 
 function serializePostgres(
   serviceDef: ServiceDefinitionForEnv,
-  deployment: ReferenceResolver,
+  _deployment: ReferenceResolver,
   envConf: EnvironmentConfig,
   service: ServiceDefinitionForEnv,
   postgres: PostgresInfoForEnv,
@@ -348,26 +348,26 @@ function serializePostgres(
 }
 
 function serializeIngress(
-  serviceDef: ServiceDefinitionForEnv,
+  _serviceDef: ServiceDefinitionForEnv,
   ingressConf: IngressForEnv,
   env: EnvironmentConfig,
-) {
-  const hosts = (
-    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
+): NonNullable<HelmService['ingress']>[string] {
+  const hosts = (typeof ingressConf.host === 'string'
+    ? [ingressConf.host]
+    : ingressConf.host
   ).map((host) =>
     ingressConf.public ?? true
       ? hostFullName(host, env)
       : internalHostFullName(host, env),
   )
 
+  const className =
+    ingressConf.public ?? true ? 'nginx-external-alb' : 'nginx-internal-alb'
   return {
     annotations: {
+      'kubernetes.io/ingress.class': className,
       'nginx.ingress.kubernetes.io/service-upstream':
         ingressConf.serviceUpstream ?? true ? 'true' : 'false',
-      'kubernetes.io/ingress.class':
-        ingressConf.public ?? true
-          ? 'nginx-external-alb'
-          : 'nginx-internal-alb',
       ...ingressConf.extraAnnotations,
     },
     hosts: hosts.map((host) => ({
@@ -520,7 +520,7 @@ function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
     // Set feature-deployment prefix for URLs
-    Object.entries(s.ingress).forEach(([name, ingress]) => {
+    Object.values(s.ingress).forEach((ingress) => {
       if (!Array.isArray(ingress.host.dev)) {
         ingress.host.dev = [ingress.host.dev]
       }
@@ -548,7 +548,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
     service: ServiceDefinitionForEnv,
     deployment: ReferenceResolver,
     env: EnvironmentConfig,
-    featureDeployment?: string,
+    _featureDeployment?: string,
   ): Promise<SerializeSuccess<HelmService> | SerializeErrors> {
     return serializeService(service, deployment, env)
   },
