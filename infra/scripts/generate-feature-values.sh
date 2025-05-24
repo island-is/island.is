@@ -31,3 +31,11 @@ yarn feature-env \
   --images "$IMAGE" \
   --dockertag "$DOCKER_TAG" \
   --writeDest "${FEATURE_DIR}/${FEATURE_NAME}"
+
+yarn feature-env \
+  cleanup \
+  --feature "$FEATURE_NAME" \
+  --images "$IMAGE" \
+  --chart islandis \
+  --cleanupImage "${ECR_REPO}:${DOCKER_TAG}" \
+  --writeDest "${FEATURE_DIR}/${FEATURE_NAME}"
