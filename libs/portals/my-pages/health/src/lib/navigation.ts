@@ -30,14 +30,19 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthTherapies,
       children: [
         {
-          name: messages.physicalTherapy,
-          path: HealthPaths.HealthTherapiesPhysical,
-          navHide: true,
+          name: messages.healthOverview,
+          path: HealthPaths.HealthOverview,
         },
         {
-          name: messages.speechTherapy,
-          path: HealthPaths.HealthTherapiesSpeech,
-          navHide: true,
+          name: messages.healthCenter,
+          path: HealthPaths.HealthCenter,
+          children: [
+            {
+              name: messages.healthCenterRegistrationTitle,
+              path: HealthPaths.HealthCenterRegistration,
+              navHide: true,
+            },
+          ],
         },
         {
           name: messages.occupationalTherapy,
@@ -92,6 +97,7 @@ export const healthNavigation: PortalNavigationItem = {
         },
       ],
     },
+
     {
       name: m.medicine,
       path: HealthPaths.HealthMedicine,
@@ -168,8 +174,38 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthOrganDonation,
       children: [
         {
-          name: messages.changeRegistration,
-          path: HealthPaths.HealthOrganDonationRegistration,
+          name: messages.paymentParticipation,
+          path: HealthPaths.HealthPaymentParticipation,
+          navHide: true,
+        },
+        {
+          name: messages.paymentOverview,
+          path: HealthPaths.HealthPaymentOverview,
+          navHide: true,
+        },
+      ],
+    },
+    {
+      name: m.aidsAndNutrition,
+      path: HealthPaths.HealthAidsAndNutrition,
+    },
+    {
+      name: m.therapies,
+      path: HealthPaths.HealthTherapies,
+      children: [
+        {
+          name: messages.physicalTherapy,
+          path: HealthPaths.HealthTherapiesPhysical,
+          navHide: true,
+        },
+        {
+          name: messages.speechTherapy,
+          path: HealthPaths.HealthTherapiesSpeech,
+          navHide: true,
+        },
+        {
+          name: messages.occupationalTherapy,
+          path: HealthPaths.HealthTherapiesOccupational,
           navHide: true,
         },
       ],

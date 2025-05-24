@@ -75,6 +75,10 @@ const Vaccinations = lazy(() =>
   import('./screens/Vaccinations/VaccinationsWrapper'),
 )
 
+const Insurance = lazy(() =>
+  import('./screens/HealthInsurance/HealthInsurance'),
+)
+
 const Referrals = lazy(() => import('./screens/Referrals/Referrals'))
 
 const ReferralsDetail = lazy(() =>
@@ -264,6 +268,12 @@ export const healthModule: PortalModule = {
       key: 'HealthVaccinations',
       enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <Vaccinations />,
+    },
+    {
+      name: hm.hasHealthInsurance,
+      path: HealthPaths.HealthInsurance,
+      enabled: userInfo.scopes.includes(ApiScope.healthRightsStatus),
+      element: <Insurance />,
     },
     {
       name: hm.referrals,
