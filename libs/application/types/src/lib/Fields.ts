@@ -5,6 +5,7 @@ import type {
   DatePickerProps,
   IconProps,
   InputBackgroundColor,
+  InputProps,
   SpanType,
 } from '@island.is/island-ui/core/types'
 import {
@@ -411,6 +412,7 @@ export interface DescriptionField extends BaseField {
   titleTooltip?: FormText
   space?: BoxProps['paddingTop']
   titleVariant?: TitleVariants
+  showFieldName?: boolean
 }
 
 export interface RadioField extends InputField {

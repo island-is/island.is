@@ -213,6 +213,7 @@ codemagic.yaml                                                                  
 /libs/clients/grants/                                                                                     @island-is/hugsmidjan
 /libs/clients/hms-loans/                                                                                  @island-is/hugsmidjan
 /libs/clients/official-journal-of-iceland/                                                                @island-is/hugsmidjan
+/libs/clients/legal-gazette/                                                                              @island-is/hugsmidjan
 /libs/clients/hms-housing-benefits/                                                                       @island-is/hugsmidjan
 /apps/services/license-api/                                                                               @island-is/hugsmidjan
 /apps/services/cms-importer/                                                                              @island-is/hugsmidjan
@@ -225,7 +226,9 @@ codemagic.yaml                                                                  
 /libs/clients/mms/grade                                                                                   @island-is/hugsmidjan
 /libs/portals/admin/air-discount-scheme                                                                   @island-is/hugsmidjan
 /libs/application/templates/official-journal-of-iceland/                                                  @island-is/hugsmidjan
+/libs/application/templates/legal-gazette/                                                                @island-is/hugsmidjan
 /libs/application/template-api-modules/src/lib/modules/templates/official-journal-of-iceland/             @island-is/hugsmidjan
+/libs/application/template-api-modules/src/lib/modules/templates/legal-gazette/                           @island-is/hugsmidjan
 /libs/clients/judicial-system-sp/                                                                         @island-is/hugsmidjan
 
 /libs/application/templates/accident-notification/                                                        @island-is/norda

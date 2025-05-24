@@ -3,7 +3,7 @@ import { GraphQLError } from 'graphql'
 import { ZodObject } from 'zod'
 import { MessageDescriptor } from 'react-intl'
 
-import type { BoxProps } from '@island.is/island-ui/core/types'
+import type { BoxProps, ResponsiveProp } from '@island.is/island-ui/core/types'
 
 import { Field, RecordObject, SubmitField } from './Fields'
 import { Condition } from './Condition'
