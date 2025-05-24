@@ -113,11 +113,14 @@ export const defaultRenderNodeObject: RenderNode = {
       {children}
     </Box>
   ),
-  [BLOCKS.PARAGRAPH]: (_node, children) => (
-    <Box component="p" className={getTextStyles({}) + ' ' + styles.paragraph}>
-      {children}
-    </Box>
-  ),
+  [BLOCKS.PARAGRAPH]: (_node, children) => {
+    if (getInnerText(children).length === 0) return null
+    return (
+      <Box component="p" className={getTextStyles({}) + ' ' + styles.paragraph}>
+        {children}
+      </Box>
+    )
+  },
   [BLOCKS.OL_LIST]: (_node, children) => (
     // An extra box container was added due to counter not resetting
     <Box>
