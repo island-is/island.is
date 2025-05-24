@@ -3,7 +3,7 @@ import { ApplicationsLoaderResponse } from '@island.is/form-system/graphql'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { useState } from 'react'
-import { ApplicationsHeader } from '../../components/Headers/ApplicationsHeader'
+import { ApplicationsHeader } from './ApplicationsHeader'
 
 export const Applications = () => {
   const { organizations, isAdmin } =

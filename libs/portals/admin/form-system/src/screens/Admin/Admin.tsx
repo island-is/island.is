@@ -5,13 +5,16 @@ import {
   GET_ORGANIZATION_ADMIN,
 } from '@island.is/form-system/graphql'
 import { useLazyQuery } from '@apollo/client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AdminHeader } from './AdminHeader'
 import { PermissionsList } from '../../components/Admin/PermissionsList'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
+import { useContext } from 'react'
+import { ControlContext } from '../../context/ControlContext'
 
 export const Admin = () => {
+  const { control } = useContext(ControlContext)
   const { formatMessage } = useIntl()
   const [getAdminQuery] = useLazyQuery(GET_ORGANIZATION_ADMIN, {
     fetchPolicy: 'no-cache',
@@ -75,6 +78,12 @@ export const Admin = () => {
       )
     }
   }
+
+  useEffect(() => {
+    if (control.organizationNationalId) {
+      handleOrganizationChange({ value: control.organizationNationalId })
+    }
+  }, [])
 
   const tabs = [
     {
