@@ -1,0 +1,41 @@
+import {
+  CurrentUser,
+  IdsUserGuard,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import { UseGuards } from '@nestjs/common'
+import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql'
+import { Audit } from '@island.is/nest/audit'
+import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
+import { WorkMachinesService } from '../workMachines.service'
+import { Model } from '../models/model.model'
+import { SubCategory } from '../models/subCategory.model'
+import { TechInfoItem } from '../models/techInfoItem.model'
+import { GetWorkMachineSubCategoryTechInfoItemsInput } from '../dto/getSubCategoriesTechItems.input'
+import { type ModelSubCategory } from '../dto/modelCategory.dto'
+
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@Resolver(() => SubCategory)
+@Audit({ namespace: '@island.is/api/work-machines' })
+export class SubCategoryResolver {
+  constructor(private readonly workMachinesService: WorkMachinesService) {}
+
+  @ResolveField('techInfoItems', () => [TechInfoItem], { nullable: true })
+  async resolveTechInfoItems(
+    @CurrentUser() user: User,
+    @Parent() category: ModelSubCategory,
+  ): Promise<Array<Model> | undefined> {
+    if (!category.parentCategoryName || !category.name) {
+      return []
+    }
+
+    return await this.workMachinesService.getTechnicalInfoInputs(
+      user,
+      category.parentCategoryName,
+      category.name,
+      category.locale,
+      category.correlationId,
+    )
+  }
+}
