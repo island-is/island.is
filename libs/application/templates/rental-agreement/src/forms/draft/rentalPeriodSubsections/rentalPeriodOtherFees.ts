@@ -9,10 +9,7 @@ import {
   buildCustomField,
   YesOrNoEnum,
 } from '@island.is/application/core'
-import {
-  getOtherFeesHousingFundPayeeOptions,
-  getOtherFeesPayeeOptions,
-} from '../../../utils/utils'
+import { getOtherFeesPayeeOptions } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
 import {
   electricityCostPayedByTenant,
@@ -35,7 +32,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           id: 'otherFees.housingFund',
           title: otherFees.housingFundTitle,
           clearOnChange: ['otherFees.housingFundAmount'],
-          options: getOtherFeesHousingFundPayeeOptions,
+          options: getOtherFeesPayeeOptions,
           width: 'half',
           space: 1,
         }),

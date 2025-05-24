@@ -6,7 +6,7 @@ import { filterNonRepresentativesAndMapInfo } from './utils'
 export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
   const {
     application,
-    options: { email },
+    options: { email, locale },
   } = props
 
   const applicationCreator = {
@@ -74,6 +74,14 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
 
   const allRecipients = [...landlords, ...tenants]
 
+  const subject =
+    locale === 'is' ? 'Drög að húsaleigusamningi' : 'Draft of rental agreement'
+  const intro = locale === 'is' ? 'Góðan dag.' : 'Hello.'
+  const introText =
+    locale === 'is'
+      ? 'Vinsamlegast lestu yfir leigusamninginn hér að neðan. Ef þú ert með athugasemdir við innihald hans væri best að þú svaraðir þessum tölvupósti með þeim.'
+      : 'Please read the rental agreement below. If you have any comments on its content, it would be best if you replied to this email with them.'
+
   return {
     from: {
       name: email.sender,
@@ -84,22 +92,22 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
       address: applicationCreator.email,
     },
     to: allRecipients,
-    subject: 'Drög að húsaleigusamningi',
+    subject: `${subject}`,
     template: {
-      title: 'Drög að húsaleigusamningi',
+      title: `${subject}`,
       body: [
         {
           component: 'Heading',
-          context: { copy: 'Drög að húsaleigusamningi', align: 'left' },
+          context: { copy: `${subject}`, align: 'left' },
         },
         {
           component: 'Copy',
           context: {
             copy:
               `<br/>` +
-              `<span>Góðan dag.</span>` +
+              `<span>${intro}</span>` +
               `<br/>` +
-              `<span>Vinsamlegast lestu yfir leigusamninginn hér að neðan. Ef þú ert með athugasemdir við innihald hans væri best að þú svaraðir þessum tölvupósti með þeim.</span>` +
+              `<span>${introText}</span>` +
               `<br/><br/>`,
             align: 'left',
             small: true,

@@ -6,7 +6,6 @@ import { EMAIL_REGEX, getValueViaPath } from '@island.is/application/core'
 import { Application, StateLifeCycle } from '@island.is/application/types'
 import { ApplicantsInfo, CostField } from './types'
 import {
-  UserRole,
   RentalAmountIndexTypes,
   RentalHousingCategoryClass,
   RentalHousingCategoryClassGroup,
@@ -289,17 +288,6 @@ export const getOtherFeesPayeeOptions = () => [
   },
 ]
 
-export const getOtherFeesHousingFundPayeeOptions = () => [
-  {
-    value: OtherFeesPayeeOptions.LANDLORD_OR_NOT_APPLICABLE,
-    label: m.otherFees.housingFundPayedByLandlordLabel,
-  },
-  {
-    value: OtherFeesPayeeOptions.TENANT,
-    label: m.otherFees.paidByTenantLabel,
-  },
-]
-
 export const getPaymentMethodOptions = () => [
   {
     value: RentalPaymentMethodOptions.BANK_TRANSFER,
@@ -323,16 +311,5 @@ export const getNextStepInReviewOptions = () => [
   {
     value: NextStepInReviewOptions.EDIT_APPLICATION,
     label: m.inReview.reviewInfo.nextStepToEditButtonText,
-  },
-]
-
-export const getUserRoleOptions = [
-  {
-    label: m.userRole.landlordOptionLabel,
-    value: UserRole.LANDLORD,
-  },
-  {
-    label: m.userRole.tenantOptionLabel,
-    value: UserRole.TENANT,
   },
 ]

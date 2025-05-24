@@ -50,7 +50,7 @@ export const RentalHousingFireProtections = buildSubSection({
         }),
         buildTextField({
           id: 'fireProtections.emergencyExits',
-          title: housingFireProtections.exitsLabel,
+          title: housingFireProtections.exitsTitle,
           placeholder: '0',
           width: 'half',
           maxLength: 1,

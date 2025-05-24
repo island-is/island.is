@@ -10,8 +10,7 @@ import {
   RentalPaymentMethodOptions,
   SecurityDepositTypeOptions,
 } from './enums'
-import { CostField, SelectOption, Unit } from './types'
-import { AddressProps } from '../fields/PropertySearch'
+import { AddressProps, CostField, SelectOption, Unit } from './types'
 
 // Utility function to get the label of a select option based on its value
 export const getOptionLabel = (
