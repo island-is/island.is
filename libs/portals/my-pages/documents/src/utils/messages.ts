@@ -116,6 +116,42 @@ export const messages = defineMessages({
     id: 'sp.documents:search-label',
     defaultMessage: 'Leita',
   },
+  caseNumber: {
+    id: 'sp.documents:case-number',
+    defaultMessage: 'Málsnúmer:',
+  },
+  caseNumberShort: {
+    id: 'sp.documents:case-number-short',
+    defaultMessage: 'Málsnr.',
+  },
+  sentToEmail: {
+    id: 'sp.documents:sent-to-email',
+    defaultMessage: 'Sent á tölvupóstfang',
+  },
+  message: {
+    id: 'sp.documents:message',
+    defaultMessage: 'Skilaboð',
+  },
+  fromWithArgs: {
+    id: 'sp.documents:from-with-args',
+    defaultMessage: 'Frá: {senderName}',
+  },
+  toWithArgs: {
+    id: 'sp.documents:to-with-args',
+    defaultMessage: 'Til: {receiverName}',
+  },
+  titleWord: {
+    id: 'sp.documents:title-word',
+    defaultMessage: 'Titill',
+  },
+  pleaseRegisterEmail: {
+    id: 'sp.documents:please-register-email',
+    defaultMessage: 'Vinsamlegast skráðu tölvupóstfang',
+  },
+  showAllRepliesWithArgs: {
+    id: 'sp.documents:show-all-replies-with-args',
+    defaultMessage: 'Sýna öll samskipti ({repliesLength})',
+  },
   zoomIn: {
     id: 'sp.documents:zoom-in',
     defaultMessage: 'Auka þysjunarstig í {arg} ',
@@ -135,5 +171,19 @@ export const messages = defineMessages({
   closeExpandedModal: {
     id: 'sp.documents:close',
     defaultMessage: 'Loka módal með stækkuðu skjali',
+  },
+  replySent: {
+    id: 'sp.documents:reply-sent',
+    defaultMessage:
+      'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}.',
+  },
+  sendMessage: {
+    id: 'sp.documents:send-message',
+    defaultMessage: 'Senda skilaboð',
+  },
+  closedForReplies: {
+    id: 'sp.documents:closed-for-replies',
+    defaultMessage:
+      'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
   },
 })
