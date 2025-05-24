@@ -1942,6 +1942,10 @@ export const m = defineMessages({
     id: 'service.portal:sort-by',
     defaultMessage: 'Raða eftir',
   },
+  showResults: {
+    id: 'service.portal:show-results',
+    defaultMessage: 'Sýna niðurstöður',
+  },
 })
 
 export const searchTagsMessages = defineMessages({
