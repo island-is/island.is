@@ -58,6 +58,9 @@ export class AidOrNutrition {
   @Field()
   expiring!: boolean
 
+  @Field({ nullable: true })
+  valid?: boolean
+
   @Field(() => AidOrNutritionRenewalStatus, { nullable: true })
   renewalStatus?: AidOrNutritionRenewalStatus
 }

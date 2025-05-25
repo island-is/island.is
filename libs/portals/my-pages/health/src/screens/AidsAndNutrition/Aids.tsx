@@ -1,4 +1,7 @@
-import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
+import {
+  RightsPortalAidOrNutrition,
+  RightsPortalAidOrNutritionRenewalStatus,
+} from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
@@ -69,7 +72,7 @@ const Aids = ({ data }: Props) => {
             insuranceRatio: formatMessage(messages.insuranceRatio),
             availableRefund: formatMessage(messages.availableRefund),
             nextAvailableRefund: formatMessage(messages.nextAvailableRefund),
-            lastNode: formatMessage(messages.renew),
+            renewal: formatMessage(messages.renew),
           }}
           defaultSortByKey="aidsName"
           mobileTitleKey="aidsName"
@@ -84,13 +87,33 @@ const Aids = ({ data }: Props) => {
               : '',
             availableRefund: rowItem.available ?? '',
             nextAvailableRefund: rowItem.nextAllowedMonth ?? '',
-            lastNode: rowItem.expiring
-              ? {
-                  type: 'info',
-                  label: formatMessage(messages.timeRemainingOfRefund),
-                  icon: { icon: 'time', type: 'outline' },
-                }
-              : undefined,
+            renewal: undefined,
+            lastNode:
+              rowItem.renewalStatus ===
+              RightsPortalAidOrNutritionRenewalStatus.RENEWAL_IN_PROGRESS
+                ? {
+                    type: 'info',
+                    label: 'Í vinnslu',
+                    text: 'Í vinnslu',
+                  }
+                : rowItem.renewalStatus ===
+                  RightsPortalAidOrNutritionRenewalStatus.VALID
+                ? {
+                    type: 'text',
+                    label: 'Í gildi',
+                  }
+                : RightsPortalAidOrNutritionRenewalStatus.VALID_FOR_RENEWAL
+                ? {
+                    type: 'action',
+                    label: 'Endurnýja',
+                    action: () => alert('Endurnýja'),
+                    icon: { icon: 'arrowForward', type: 'outline' },
+                  }
+                : {
+                    type: 'text',
+                    label: 'LABEL',
+                    text: 'TEXT',
+                  },
             children: (
               <NestedInfoLines
                 data={generateFoldedValues(rowItem)}
