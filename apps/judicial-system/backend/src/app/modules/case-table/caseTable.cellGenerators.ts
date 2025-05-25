@@ -272,18 +272,28 @@ const validFromTo: CaseTableCellGenerator = {
     'rulingDate',
     'validToDate',
   ],
-  generate: (c: Case): StringGroupValue | undefined =>
-    isRestrictionCase(c.type) && c.state === CaseState.ACCEPTED && c.validToDate
-      ? c.initialRulingDate || c.rulingDate
-        ? {
-            strList: [
-              `${formatDate(c.initialRulingDate ?? c.rulingDate) ?? ''} - ${
-                formatDate(c.validToDate) ?? ''
-              }`,
-            ],
-          }
-        : { strList: [formatDate(c.validToDate) ?? ''] }
-      : undefined,
+  generate: (c: Case): StringValue | undefined => {
+    if (!isRestrictionCase(c.type) || c.state !== CaseState.ACCEPTED) {
+      return undefined
+    }
+
+    const endDate = generateDate(c.validToDate)
+
+    if (!endDate) {
+      return undefined
+    }
+
+    const startDate = generateDate(c.initialRulingDate ?? c.rulingDate)
+
+    if (!startDate) {
+      return endDate
+    }
+
+    return {
+      str: `${startDate.str} - ${endDate.str}`,
+      sortValue: `${endDate.sortValue}${startDate.sortValue}`,
+    }
+  },
 }
 
 const caseSentToCourtDate: CaseTableCellGenerator = {
