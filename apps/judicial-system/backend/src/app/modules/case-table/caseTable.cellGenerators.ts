@@ -165,14 +165,14 @@ const caseNumber: CaseTableCellGenerator = {
 }
 
 const generateDate = (date: Date | undefined): StringValue | undefined => {
-  const rulingDate = formatDate(date, 'd.M.yyyy')
+  const dateValue = formatDate(date, 'd.M.yyyy')
   const sortValue = formatDate(date, 'yyyyMMdd')
 
-  if (!rulingDate || !sortValue) {
+  if (!dateValue || !sortValue) {
     return undefined
   }
 
-  return { str: rulingDate, sortValue: sortValue }
+  return { str: dateValue, sortValue: sortValue }
 }
 
 const defendants: CaseTableCellGenerator = {
