@@ -424,8 +424,8 @@ export const NationalRegistry = new XroadConf({
   env: {
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
-      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
-      prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
     },
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
       dev: json([
@@ -439,7 +439,7 @@ export const NationalRegistry = new XroadConf({
       ]),
     },
     // Deprecated:
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1',
     XROAD_TJODSKRA_MEMBER_CODE: {
       prod: '6503760649',
       dev: '10001',
