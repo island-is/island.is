@@ -1,9 +1,13 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import { SignatureCollectionOwnerInput } from './owner.input'
 import { SignatureCollectionAreaInput } from './area.input'
+import { CollectionType } from '@island.is/clients/signature-collection'
+import { SignatureCollectionCollectionTypeInput } from './collectionType.input'
+
+registerEnumType(CollectionType, { name: 'SignatureCollectionCollectionType' })
 
 @InputType()
-export class SignatureCollectionListInput {
+export class SignatureCollectionListInput extends SignatureCollectionCollectionTypeInput {
   @Field()
   collectionId!: string
 

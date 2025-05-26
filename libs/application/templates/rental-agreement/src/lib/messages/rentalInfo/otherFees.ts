@@ -169,6 +169,18 @@ export const otherFees = defineMessages({
     defaultMessage: 'Þú verður að slá inn mánaðarlega upphæð fyrir hússjóð',
     description: 'Error message when housing fund amount is empty',
   },
+  errorHousingFundTooLow: {
+    id: 'ra.application:dataSchema.errorHousingFundTooLow',
+    defaultMessage:
+      'Mánaðarleg upphæð fyrir hússjóð má ekki vera lægri en 1 kr.',
+    description: 'Error message when housing fund amount is too low',
+  },
+  errorHousingFundTooHigh: {
+    id: 'ra.application:dataSchema.errorHousingFundTooHigh',
+    defaultMessage:
+      'Mánaðarleg upphæð fyrir hússjóð má ekki vera hærri en 999.999 kr.',
+    description: 'Error message when housing fund amount is too high',
+  },
   errorMeterNumberEmpty: {
     id: 'ra.application:dataSchema.errorMeterNumberEmpty',
     defaultMessage: 'Númer mælis þarf að vera skráð',

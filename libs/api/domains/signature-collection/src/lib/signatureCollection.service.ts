@@ -8,6 +8,7 @@ import {
 import { SignatureCollectionSignature } from './models/signature.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import {
+  CollectionType,
   ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
@@ -33,8 +34,16 @@ export class SignatureCollectionService {
     }
   }
 
-  async currentCollection(): Promise<SignatureCollection> {
+  async currentCollection(): Promise<SignatureCollection[]> {
     return await this.signatureCollectionClientService.currentCollection()
+  }
+
+  async getLatestCollectionForType(
+    collectionType: CollectionType,
+  ): Promise<SignatureCollection> {
+    return await this.signatureCollectionClientService.getLatestCollectionForType(
+      collectionType,
+    )
   }
 
   async allOpenLists({
@@ -98,8 +107,12 @@ export class SignatureCollectionService {
 
   async signedList(
     user: User,
+    collectionType: CollectionType,
   ): Promise<SignatureCollectionSignedList[] | null> {
-    return await this.signatureCollectionClientService.getSignedList(user)
+    return await this.signatureCollectionClientService.getSignedList(
+      collectionType,
+      user,
+    )
   }
 
   async signatures(
@@ -114,10 +127,12 @@ export class SignatureCollectionService {
 
   async signee(
     user: User,
+    collectionType: CollectionType,
     nationalId?: string,
   ): Promise<SignatureCollectionSignee> {
     return await this.signatureCollectionClientService.getSignee(
       user,
+      collectionType,
       nationalId,
     )
   }
@@ -125,8 +140,13 @@ export class SignatureCollectionService {
   async unsign(
     listId: string,
     user: User,
+    collectionType: CollectionType,
   ): Promise<SignatureCollectionSuccess> {
-    return await this.signatureCollectionClientService.unsignList(listId, user)
+    return await this.signatureCollectionClientService.unsignList(
+      listId,
+      collectionType,
+      user,
+    )
   }
 
   async cancel(
@@ -161,11 +181,11 @@ export class SignatureCollectionService {
     input: SignatureCollectionCanSignFromPaperInput,
     signee: SignatureCollectionSignee,
   ): Promise<boolean> {
-    const signatureSignee =
-      await this.signatureCollectionClientService.getSignee(
-        user,
-        input.signeeNationalId,
-      )
+    const signatureSignee = await this.signatureCollectionClientService.getSignee(
+      user,
+      input.collectionType,
+      input.signeeNationalId,
+    )
     const list = await this.list(input.listId, user, signee)
     // Current signatures should not prevent paper signatures
     const canSign =

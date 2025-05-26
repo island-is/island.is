@@ -58,6 +58,7 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.JSON,
     allowNull: true,
+    defaultValue: new LanguageType(),
   })
   organizationDisplayName?: LanguageType
 

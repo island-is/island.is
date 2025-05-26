@@ -2,13 +2,14 @@ import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
 import {
   SignatureCollection,
+  SignatureCollectionCollectionType,
   SignatureCollectionListBase,
 } from '@island.is/api/schema'
 import { Query } from '@island.is/api/schema'
 
-export const GetCurrentCollection = gql`
-  query currentCollection {
-    signatureCollectionCurrent {
+export const GetLatestCollectionForType = gql`
+  query currentCollection($input: SignatureCollectionCollectionTypeInput) {
+    signatureCollectionLatestForType(input: $input) {
       id
       endTime
       startTime
@@ -49,9 +50,17 @@ export const GetOpenLists = gql`
   }
 `
 
-export const useGetCurrentCollection = () => {
-  const { data, loading } = useQuery<Query>(GetCurrentCollection)
-  const collection = data?.signatureCollectionCurrent as SignatureCollection
+export const useGetLatestCollectionForType = (
+  collectionType: SignatureCollectionCollectionType,
+) => {
+  const { data, loading } = useQuery<Query>(GetLatestCollectionForType, {
+    variables: {
+      input: {
+        collectionType,
+      },
+    },
+  })
+  const collection = data?.signatureCollectionLatestForType as SignatureCollection
 
   return { collection, loading }
 }
@@ -63,8 +72,7 @@ export const useGetOpenLists = (collection: SignatureCollection) => {
     },
     skip: !collection || collection.isActive,
   })
-  const openLists =
-    data?.signatureCollectionAllOpenLists as SignatureCollectionListBase[]
+  const openLists = data?.signatureCollectionAllOpenLists as SignatureCollectionListBase[]
 
   return { openLists, openListsLoading }
 }

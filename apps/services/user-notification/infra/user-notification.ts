@@ -220,6 +220,16 @@ export const userNotificationBirthdayWorkerSetup = (services: {
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '384Mi',
+      },
+      requests: {
+        cpu: '150m',
+        memory: '256Mi',
+      },
+    })
     .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .extraAttributes({
       dev: { schedule: '0 12 * * *' }, // 12 at noon every day

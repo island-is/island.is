@@ -90,7 +90,13 @@ export const Cases: FC = () => {
           <Text as="h1" variant="h1" marginBottom={1}>
             {formatMessage(m.casesTitle)}
           </Text>
-          <Text as="h4"> {formatMessage(m.casesSubtitle)}</Text>
+          <Text as="h4">
+            Hér er yfirlit yfir mál sem þú átt aðild að í umboði skjólstæðinga.
+          </Text>
+          <Text as="h4">
+            Eins og stendur eru einungis umferðarlagabrot í sakamálum í
+            Réttarvörslugátt.
+          </Text>
         </Box>
       )}
 

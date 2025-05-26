@@ -42,6 +42,22 @@ export const rentalAmount = z
         path: ['amount'],
       })
     }
+    if (numericAmount !== undefined && numericAmount > 1500000) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.rentalAmount.tooHighNumberError,
+        path: ['amount'],
+      })
+    }
+    if (numericAmount !== undefined && numericAmount < 15000) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.rentalAmount.tooLowNumberError,
+        path: ['amount'],
+      })
+    }
 
     if (data.isIndexConnected?.includes(YesOrNoEnum.YES) && !data.indexTypes) {
       ctx.addIssue({

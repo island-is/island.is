@@ -23,6 +23,9 @@ export class OrganizationParentSubpage {
   @Field()
   title!: string
 
+  @Field(() => String, { nullable: true })
+  shortTitle?: string
+
   @CacheField(() => [OrganizationSubpageLink])
   childLinks!: OrganizationSubpageLink[]
 }
@@ -34,6 +37,7 @@ export const mapOrganizationParentSubpage = ({
   return {
     id: sys.id,
     title: fields.title,
+    shortTitle: fields.shortTitle ?? '',
     childLinks:
       fields.pages
         ?.filter(

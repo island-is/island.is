@@ -166,7 +166,7 @@ export const BaseSettings = () => {
             onBlur={async (e) => {
               if (e.target.value !== focus) {
                 const response: UpdateFormResponse = await formUpdate()
-                if (response.errors) {
+                if (response && response.errors) {
                   setErrorMsg(response.errors[0].message as string)
                 } else {
                   setErrorMsg('')

@@ -1,6 +1,9 @@
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { useLoaderData } from 'react-router-dom'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import {
+  SignatureCollectionCollectionType,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -101,6 +104,7 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               <ActionExtendDeadline
                 listId={list.id}
                 endTime={list.endTime}
+                collectionType={SignatureCollectionCollectionType.Presidential}
                 allowedToProcess={
                   allowedToProcess && listStatus === ListStatus.Extendable
                 }
@@ -110,6 +114,9 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 <>
                   <PaperUpload listId={list.id} listStatus={listStatus} />
                   <ActionReviewComplete
+                    collectionType={
+                      SignatureCollectionCollectionType.Presidential
+                    }
                     listId={list.id}
                     listStatus={listStatus}
                   />

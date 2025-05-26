@@ -179,7 +179,7 @@ export const FieldTypes: FieldType[] = [
     isCommon: true,
   },
   {
-    id: FieldTypesEnum.CANDITATE,
+    id: FieldTypesEnum.CANDIDATE,
     name: { is: 'Frambjóðandi', en: 'Candidate' },
     description: {
       is: 'Frambjóðandi í kosningum',

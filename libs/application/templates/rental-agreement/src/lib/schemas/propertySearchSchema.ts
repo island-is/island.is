@@ -73,6 +73,14 @@ export const registerProperty = z
           path: ['searchresults.units'],
         })
       }
+      if (totalRooms > 20) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.registerProperty.search.numOfRoomsMaximumError,
+          path: ['searchresults.units'],
+        })
+      }
 
       const totalChangedSize = data.searchresults.units.reduce(
         (sum, unit) => sum + (unit.changedSize || 0),

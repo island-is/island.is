@@ -198,6 +198,9 @@ export const getPayloadFromMd = ({
 }
 
 export function mapToCardErrorCode(originalCode: string): CardErrorCode {
+  // Only the first two characters are used to map the error code
+  const firstTwoCharacters = originalCode?.slice(0, 2)
+
   const errorCodeMap: Record<string, CardErrorCode> = {
     '51': CardErrorCode.InsufficientFunds,
     '54': CardErrorCode.ExpiredCard,
@@ -222,7 +225,7 @@ export function mapToCardErrorCode(originalCode: string): CardErrorCode {
   }
 
   // Return the mapped value or the default
-  return errorCodeMap[originalCode] || CardErrorCode.GenericDecline
+  return errorCodeMap[firstTwoCharacters] || CardErrorCode.GenericDecline
 }
 
 export const generateCardChargeFJSPayload = ({

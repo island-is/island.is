@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { SignatureCollection } from './models/collection.model'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
-import { SignatureCollectionManagerClientService } from '@island.is/clients/signature-collection'
+import {
+  CollectionType,
+  SignatureCollectionManagerClientService,
+} from '@island.is/clients/signature-collection'
 import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionListStatus } from './models/status.model'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
@@ -13,8 +16,18 @@ export class SignatureCollectionManagerService {
     private signatureCollectionClientService: SignatureCollectionManagerClientService,
   ) {}
 
-  async currentCollection(user: User): Promise<SignatureCollection> {
+  async currentCollection(user: User): Promise<SignatureCollection[]> {
     return await this.signatureCollectionClientService.currentCollection(user)
+  }
+
+  async getLatestCollectionForType(
+    user: User,
+    collectionType: CollectionType,
+  ): Promise<SignatureCollection> {
+    return await this.signatureCollectionClientService.getLatestCollectionForType(
+      user,
+      collectionType,
+    )
   }
 
   async allLists(

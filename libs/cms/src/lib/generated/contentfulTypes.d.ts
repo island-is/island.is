@@ -3412,6 +3412,9 @@ export interface IOrganizationParentSubpageFields {
   /** Displayed Title */
   title: string
 
+  /** Short Title */
+  shortTitle?: string | undefined
+
   /** Slug */
   slug?: string | undefined
 

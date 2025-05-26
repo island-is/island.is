@@ -1,6 +1,6 @@
 import { FC, ReactNode, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-import { AnimatePresence } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {
@@ -656,15 +656,22 @@ export const SignedVerdictOverview: FC = () => {
             onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
           />
         )}
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {isModifyingDates && (
-            <ModifyDatesModal
-              workingCase={workingCase}
-              onSubmit={onModifyDatesSubmit}
-              isSendingNotification={isSendingNotification}
-              isUpdatingCase={isUpdatingCase}
-              setIsModifyingDates={setIsModifyingDates}
-            />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              key="modify-dates-modal"
+            >
+              <ModifyDatesModal
+                workingCase={workingCase}
+                onSubmit={onModifyDatesSubmit}
+                isSendingNotification={isSendingNotification}
+                isUpdatingCase={isUpdatingCase}
+                closeModal={() => setIsModifyingDates(false)}
+              />
+            </motion.div>
           )}
         </AnimatePresence>
         {requestCourtRecordSignatureResponse && (
