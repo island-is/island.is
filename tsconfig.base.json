@@ -424,12 +424,6 @@
       "@island.is/application/templates/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
       ],
-      "@island.is/application/templates/financial-statements-inao": [
-        "libs/application/templates/financial-statements-inao/src/index.ts"
-      ],
-      "@island.is/application/templates/financial-statements-inao/types": [
-        "libs/application/templates/financial-statements-inao/src/types.ts"
-      ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
       ],
