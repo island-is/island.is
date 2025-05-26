@@ -258,10 +258,15 @@ const courtOfAppealsHead: CaseTableCellGenerator = {
       attributes: ['name'],
     },
   },
-  generate: (c: Case): StringGroupValue | undefined =>
-    c.appealJudge1
-      ? { strList: [getInitials(c.appealJudge1.name) ?? ''] }
-      : undefined,
+  generate: (c: Case): StringValue | undefined => {
+    const initials = getInitials(c.appealJudge1?.name)
+
+    if (!initials) {
+      return undefined
+    }
+
+    return { str: initials, sortValue: initials }
+  },
 }
 
 const validFromTo: CaseTableCellGenerator = {
@@ -527,10 +532,15 @@ const indictmentReviewer: CaseTableCellGenerator = {
       attributes: ['name'],
     },
   },
-  generate: (c: Case): StringGroupValue | undefined =>
-    c.indictmentReviewer?.name
-      ? { strList: [c.indictmentReviewer.name] }
-      : undefined,
+  generate: (c: Case): StringValue | undefined => {
+    const indictmentReviewerName = c.indictmentReviewer?.name.trim()
+
+    if (!indictmentReviewerName) {
+      return undefined
+    }
+
+    return { str: indictmentReviewerName, sortValue: indictmentReviewerName }
+  },
 }
 
 const sentToPrisonAdminDate: CaseTableCellGenerator = {
