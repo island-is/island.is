@@ -179,6 +179,7 @@ const districtCourtIndictmentsNewColumnKeys: CaseTableColumnKey[] = [
 ]
 const districtCourtIndictmentsNew: CaseTable = {
   title: 'Bíða úthlutunar',
+  hasMyCasesFilter: true,
   columnKeys: districtCourtIndictmentsNewColumnKeys,
   columns: pickColumns(districtCourtIndictmentsNewColumnKeys),
 }
@@ -192,6 +193,7 @@ const districtCourtIndictmentsReceivedColumnKeys: CaseTableColumnKey[] = [
 
 const districtCourtIndictmentsReceived: CaseTable = {
   title: 'Móttekin sakamál',
+  hasMyCasesFilter: true,
   columnKeys: districtCourtIndictmentsReceivedColumnKeys,
   columns: pickColumns(districtCourtIndictmentsReceivedColumnKeys),
 }
@@ -207,6 +209,7 @@ const districtCourtIndictmentsInProgressColumnKeys: CaseTableColumnKey[] = [
 
 const districtCourtIndictmentsInProgress: CaseTable = {
   title: 'Sakamál í vinnslu',
+  hasMyCasesFilter: true,
   columnKeys: districtCourtIndictmentsInProgressColumnKeys,
   columns: pickColumns(districtCourtIndictmentsInProgressColumnKeys),
 }
@@ -219,6 +222,7 @@ const districtCourtIndictmentsFinalizingColumnKeys: CaseTableColumnKey[] = [
 ]
 const districtCourtIndictmentsFinalizing: CaseTable = {
   title: 'Sakamál í frágangi',
+  hasMyCasesFilter: true,
   columnKeys: districtCourtIndictmentsFinalizingColumnKeys,
   columns: pickColumns(districtCourtIndictmentsFinalizingColumnKeys),
 }
@@ -231,6 +235,7 @@ const districtCourtIndictmentsCompletedColumnKeys: CaseTableColumnKey[] = [
 ]
 const districtCourtIndictmentsCompleted: CaseTable = {
   title: 'Afgreidd sakamál',
+  hasMyCasesFilter: true,
   columnKeys: districtCourtIndictmentsCompletedColumnKeys,
   columns: pickColumns(districtCourtIndictmentsCompletedColumnKeys),
 }
