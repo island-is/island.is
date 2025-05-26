@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer'
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsOptional,
@@ -8,7 +9,7 @@ import {
   MaxLength,
 } from 'class-validator'
 
-import { ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { DefenderChoice, Gender } from '@island.is/judicial-system/types'
 

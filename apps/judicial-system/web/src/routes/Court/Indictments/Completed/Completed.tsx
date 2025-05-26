@@ -41,6 +41,7 @@ import {
   CaseIndictmentRulingDecision,
   EventType,
   ServiceRequirement,
+  UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useDefendants,
@@ -51,10 +52,11 @@ import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEvent
 
 import strings from './Completed.strings'
 import * as styles from './Completed.css'
+interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
 
 const Completed: FC = () => {
   const { formatMessage } = useIntl()
-  const { setAndSendDefendantToServer } = useDefendants()
+  const { setAndSendDefendantToServer, updateDefendantState } = useDefendants()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
@@ -69,6 +71,10 @@ const Completed: FC = () => {
   const isSentToPublicProsecutor = workingCase.eventLogs?.some(
     (log) => log.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
   )
+
+  const handleUpdateDefendantState = (update: UpdateDefendant) => {
+    updateDefendantState({ caseId: workingCase.id, ...update }, setWorkingCase)
+  }
 
   const handleNextButtonClick = useCallback(async () => {
     const uploadResult = await handleUpload(
@@ -385,24 +391,36 @@ const Completed: FC = () => {
                             label="Leiðbeiningar um endurupptöku útivistarmála"
                             large
                             filled
+                            checked={defendant?.informationForDefendant?.includes(
+                              'Leiðbeiningar um endurupptöku útivistarmála',
+                            )}
                           />
                           <Box marginBottom={marginSpaceBetweenButtons} />
                           <Checkbox
                             label="Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti"
                             large
                             filled
+                            checked={defendant?.informationForDefendant?.includes(
+                              'Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti',
+                            )}
                           />
                           <Box marginBottom={marginSpaceBetweenButtons} />
                           <Checkbox
                             label="Þýðing skilorðsbundinnar refsingar og skilorðsrofs"
                             large
                             filled
+                            checked={defendant?.informationForDefendant?.includes(
+                              'Þýðing skilorðsbundinnar refsingar og skilorðsrofs',
+                            )}
                           />
                           <Box marginBottom={marginSpaceBetweenButtons} />
                           <Checkbox
                             label="Þýðing sviptingu ökuréttinda"
                             large
                             filled
+                            checked={defendant?.informationForDefendant?.includes(
+                              'Þýðing sviptingu ökuréttinda',
+                            )}
                           />
 
                           <Box marginBottom={marginSpaceBetweenButtons} />
@@ -410,6 +428,9 @@ const Completed: FC = () => {
                             label="Þýðing vararefsingu fésekta"
                             large
                             filled
+                            checked={defendant?.informationForDefendant?.includes(
+                              'Þýðing vararefsingu fésekta',
+                            )}
                           />
 
                           <Box marginBottom={marginSpaceBetweenButtons} />
@@ -417,6 +438,9 @@ const Completed: FC = () => {
                             label="Upplýsingar um skilyrði og umsókn um samfélagsþjónustu"
                             large
                             filled
+                            checked={defendant?.informationForDefendant?.includes(
+                              'Upplýsingar um skilyrði og umsókn um samfélagsþjónustu',
+                            )}
                           />
 
                           <Box marginBottom={marginSpaceBetweenButtons} />
@@ -424,6 +448,9 @@ const Completed: FC = () => {
                             label="Upplýsingar um greiðslu sekta, sakarkostnaðar og bóta"
                             large
                             filled
+                            checked={defendant?.informationForDefendant?.includes(
+                              'Upplýsingar um greiðslu sekta, sakarkostnaðar og bóta',
+                            )}
                           />
 
                           <Box marginBottom={marginSpaceBetweenButtons} />
@@ -431,6 +458,9 @@ const Completed: FC = () => {
                             label="Upplýsingar um upptöku muna/efna"
                             large
                             filled
+                            checked={defendant?.informationForDefendant?.includes(
+                              'Upplýsingar um upptöku muna/efna',
+                            )}
                           />
                         </BlueBox>
                         <Box marginBottom={5} />
@@ -443,9 +473,14 @@ const Completed: FC = () => {
                           data-testid="sessionBookings"
                           name="sessionBookings"
                           label={'Dómsorð'}
-                          value={''}
+                          value={defendant.verdictForDefendant || ''}
                           placeholder={'Hvert er dómsorðið?'}
-                          // onChange={(event) => console.log(event.target.value)}
+                          onChange={(event) =>
+                            handleUpdateDefendantState({
+                              defendantId: defendant.id,
+                              verdictForDefendant: event.target.value,
+                            })
+                          }
                           textarea
                           rows={8}
                           autoExpand={{ on: true, maxHeight: 600 }}

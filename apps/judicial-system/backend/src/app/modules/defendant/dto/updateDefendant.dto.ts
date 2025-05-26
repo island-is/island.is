@@ -1,5 +1,6 @@
 import { Transform, Type } from 'class-transformer'
 import {
+  IsArray,
   IsBoolean,
   IsDate,
   IsEnum,
@@ -9,7 +10,7 @@ import {
   MaxLength,
 } from 'class-validator'
 
-import { ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   DefendantPlea,
@@ -169,4 +170,15 @@ export class UpdateDefendantDto {
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly alternativeServiceDescription?: string
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @ApiPropertyOptional({ type: String, isArray: true })
+  readonly informationForDefendant?: string[]
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly verdictForDefendant?: string
 }

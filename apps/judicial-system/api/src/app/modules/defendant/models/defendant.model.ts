@@ -126,4 +126,10 @@ export class Defendant {
 
   @Field(() => String, { nullable: true })
   readonly alternativeServiceDescription?: string
+
+  @Field(() => String, { nullable: true })
+  readonly verdictForDefendant?: string
+
+  @Field(() => [String], { nullable: true })
+  readonly informationForDefendant?: string[]
 }
