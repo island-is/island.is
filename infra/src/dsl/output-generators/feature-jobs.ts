@@ -128,7 +128,7 @@ export const generateCleanUpForFeature = async (
             env: [
               {
               name: 'FEATURE_NAME',
-              value: feature,
+              value: env.feature,
               },
               {
               name: 'PGHOST',
