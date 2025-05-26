@@ -2,6 +2,8 @@ import {
   InstitutionUser,
   isCourtOfAppealsUser,
   isPrisonAdminUser,
+  isPrisonStaffUser,
+  isPublicProsecutionOfficeUser,
 } from '../user'
 import {
   CaseTableColumn,
@@ -13,10 +15,16 @@ import {
 export enum CaseTableType {
   COURT_OF_APPEALS_IN_PROGRESS = 'COURT_OF_APPEALS_IN_PROGRESS',
   COURT_OF_APPEALS_COMPLETED = 'COURT_OF_APPEALS_COMPLETED',
-  PRISON_ADMIN_ACTIVE = 'PRISON_ADMIN_ACTIVE',
-  PRISON_ADMIN_DONE = 'PRISON_ADMIN_DONE',
+  PRISON_ACTIVE = 'PRISON_ACTIVE',
+  PRISON_DONE = 'PRISON_DONE',
   PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN = 'PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN',
   PRISON_ADMIN_INDICTMENT_REGISTERED_RULING = 'PRISON_ADMIN_INDICTMENT_REGISTERED_RULING',
+  PROSECUTORS_OFFICE_INDICTMENT_NEW = 'PROSECUTORS_OFFICE_INDICTMENT_NEW',
+  PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW = 'PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW',
+  PROSECUTORS_OFFICE_INDICTMENT_REVIEWED = 'PROSECUTORS_OFFICE_INDICTMENT_REVIEWED',
+  PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED = 'PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED',
+  PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN = 'PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN',
+  PROSECUTORS_OFFICE_INDICTMENT_APPEALED = 'PROSECUTORS_OFFICE_INDICTMENT_APPEALED',
 }
 
 export const getCaseTableType = (
@@ -35,13 +43,39 @@ export const getCaseTableType = (
   if (isPrisonAdminUser(user)) {
     switch (route) {
       case 'virk-mal':
-        return CaseTableType.PRISON_ADMIN_ACTIVE
+        return CaseTableType.PRISON_ACTIVE
       case 'lokid':
-        return CaseTableType.PRISON_ADMIN_DONE
+        return CaseTableType.PRISON_DONE
       case 'mal-til-fullnustu':
         return CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN
       case 'skradir-domar':
         return CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING
+    }
+  }
+
+  if (isPrisonStaffUser(user)) {
+    switch (route) {
+      case 'virk-mal':
+        return CaseTableType.PRISON_ACTIVE
+      case 'lokid':
+        return CaseTableType.PRISON_DONE
+    }
+  }
+
+  if (isPublicProsecutionOfficeUser(user)) {
+    switch (route) {
+      case 'ny-mal':
+        return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_NEW
+      case 'mal-i-yfirlestri':
+        return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW
+      case 'yfirlesin-mal':
+        return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_REVIEWED
+      case 'frestur-lidinn':
+        return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED
+      case 'mal-i-fullnustu':
+        return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN
+      case 'afryjud-mal':
+        return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED
     }
   }
 }
@@ -93,7 +127,7 @@ const prisonAdminActiveColumnKeys: CaseTableColumnKey[] = [
   'validFromTo',
 ]
 
-const prisonAdminActive: CaseTable = {
+const prisonActive: CaseTable = {
   title: 'Virk mál',
   columnKeys: prisonAdminActiveColumnKeys,
   columns: pickColumns(prisonAdminActiveColumnKeys),
@@ -108,7 +142,7 @@ const prisonAdminDoneColumnKeys: CaseTableColumnKey[] = [
   'validFromTo',
 ]
 
-const prisonAdminDone: CaseTable = {
+const prisonDone: CaseTable = {
   title: 'Lokið',
   columnKeys: prisonAdminDoneColumnKeys,
   columns: pickColumns(prisonAdminDoneColumnKeys),
@@ -144,13 +178,91 @@ const prisonAdminIndictmentRegisteredRuling: CaseTable = {
   columns: pickColumns(prisonAdminIndictmentRegisteredRulingColumnKeys),
 }
 
+const prosecutorsOfficeIndictmentNewColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'rulingType',
+  'indictmentAppealDeadline',
+]
+const prosecutorsOfficeIndictmentNew: CaseTable = {
+  title: 'Ný mál',
+  columnKeys: prosecutorsOfficeIndictmentNewColumnKeys,
+  columns: pickColumns(prosecutorsOfficeIndictmentNewColumnKeys),
+}
+
+const prosecutorsOfficeIndictmentInReviewColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'rulingType',
+  'subpoenaServiceState',
+  'indictmentReviewer',
+  'indictmentAppealDeadline',
+]
+const prosecutorsOfficeIndictmentInReview: CaseTable = {
+  title: 'Mál í yfirlestri',
+  columnKeys: prosecutorsOfficeIndictmentInReviewColumnKeys,
+  columns: pickColumns(prosecutorsOfficeIndictmentInReviewColumnKeys),
+}
+
+const prosecutorsOfficeIndictmentReviewedColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'rulingType',
+  'subpoenaServiceState',
+]
+const prosecutorsOfficeIndictmentReviewed: CaseTable = {
+  title: 'Yfirlesin mál',
+  columnKeys: prosecutorsOfficeIndictmentReviewedColumnKeys,
+  columns: pickColumns(prosecutorsOfficeIndictmentReviewedColumnKeys),
+}
+
+const prosecutorsOfficeIndictmentAppealPeriodExpiredColumnKeys: CaseTableColumnKey[] =
+  ['caseNumber', 'defendants', 'rulingType']
+const prosecutorsOfficeIndictmentAppealPeriodExpired: CaseTable = {
+  title: 'Frestur liðinn',
+  columnKeys: prosecutorsOfficeIndictmentAppealPeriodExpiredColumnKeys,
+  columns: pickColumns(
+    prosecutorsOfficeIndictmentAppealPeriodExpiredColumnKeys,
+  ),
+}
+
+const prosecutorsOfficeIndictmentSentToPrisonAdminColumnKeys: CaseTableColumnKey[] =
+  ['caseNumber', 'defendants', 'rulingType', 'sentToPrisonAdminDate']
+
+const prosecutorsOfficeIndictmentSentToPrisonAdmin: CaseTable = {
+  title: 'Mál í fullnustu',
+  columnKeys: prosecutorsOfficeIndictmentSentToPrisonAdminColumnKeys,
+  columns: pickColumns(prosecutorsOfficeIndictmentSentToPrisonAdminColumnKeys),
+}
+
+const prosecutorsOfficeIndictmentAppealedColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'rulingType',
+  'indictmentReviewDecision',
+  'subpoenaServiceState',
+]
+const prosecutorsOfficeIndictmentAppealed: CaseTable = {
+  title: 'Áfrýjuð mál',
+  columnKeys: prosecutorsOfficeIndictmentAppealedColumnKeys,
+  columns: pickColumns(prosecutorsOfficeIndictmentAppealedColumnKeys),
+}
+
 export const caseTables: { [key in CaseTableType]: CaseTable } = {
   COURT_OF_APPEALS_IN_PROGRESS: courtOfAppealsInProgress,
   COURT_OF_APPEALS_COMPLETED: courtOfAppealsCompleted,
-  PRISON_ADMIN_ACTIVE: prisonAdminActive,
-  PRISON_ADMIN_DONE: prisonAdminDone,
+  PRISON_ACTIVE: prisonActive,
+  PRISON_DONE: prisonDone,
   PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN:
     prisonAdminIndictmentSentToPrisonAdmin,
   PRISON_ADMIN_INDICTMENT_REGISTERED_RULING:
     prisonAdminIndictmentRegisteredRuling,
+  PROSECUTORS_OFFICE_INDICTMENT_NEW: prosecutorsOfficeIndictmentNew,
+  PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW: prosecutorsOfficeIndictmentInReview,
+  PROSECUTORS_OFFICE_INDICTMENT_REVIEWED: prosecutorsOfficeIndictmentReviewed,
+  PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED:
+    prosecutorsOfficeIndictmentAppealPeriodExpired,
+  PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN:
+    prosecutorsOfficeIndictmentSentToPrisonAdmin,
+  PROSECUTORS_OFFICE_INDICTMENT_APPEALED: prosecutorsOfficeIndictmentAppealed,
 }
