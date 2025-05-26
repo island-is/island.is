@@ -402,8 +402,8 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       phonenumber: applicantPhonenumber,
     },
     period: {
-      year: new Date().getFullYear(),
-      month: new Date().getMonth(),
+      year: new Date().getFullYear(), //TODO:
+      month: new Date().getMonth(), //TODO:
     },
     comment,
     applicationId: application.id,
