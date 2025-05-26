@@ -28,7 +28,7 @@ export const PageCard = ({ headerSlot, bodySlot }: PageCardWrapperProps) => {
 
   const changeLanguageHandler = (lang: Locale) => {
     changeLanguage(lang)
-    router.push(getPath(lang === 'is' ? 'en' : 'is', path))
+    router.replace(getPath(lang === 'is' ? 'en' : 'is', path))
   }
 
   const path = usePathname()
