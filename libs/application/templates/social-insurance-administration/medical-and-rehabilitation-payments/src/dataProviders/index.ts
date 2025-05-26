@@ -44,7 +44,7 @@ export const SocialInsuranceAdministrationIncomePlanConditionsApi =
 
 export const SocialInsuranceAdministrationQuestionnairesApi = defineTemplateApi(
   {
-    action: 'getQuestionnairesSelfAssessment',
+    action: 'getSelfAssessmentQuestionnaire',
     externalDataId: 'socialInsuranceAdministrationQuestionnairesSelfAssessment',
     namespace: 'SocialInsuranceAdministration',
   },

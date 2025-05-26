@@ -452,168 +452,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description: 'Job title',
     },
 
-    // Information
-    information: {
-      id: 'marp.application:rehabilitation.plan.information',
-      defaultMessage: 'Upplýsingar',
-      description: 'Information',
-    },
-    informationCurrentPosition: {
-      id: 'marp.application:rehabilitation.plan.information.current.position',
-      defaultMessage: 'Staða umsækjanda gagnvart vinnumarkaði eða námi í dag',
-      description:
-        'The applicant’s current position in relation to the labour market or study.',
-    },
-    informationApplyingFor: {
-      id: 'marp.application:rehabilitation.plan.information.applying.for',
-      defaultMessage: 'Sótt er um',
-      description: 'Applying for',
-    },
-    informationProgress: {
-      id: 'marp.application:rehabilitation.plan.information.progress',
-      defaultMessage: 'Hver var framvinda fyrri endurhæfingartímabils?',
-      description:
-        'What was the progress of the previous rehabilitation period',
-    },
-    informationrExplanationOfProgress: {
-      id: 'marp.application:rehabilitation.plan.information.explanation.of.progress',
-      defaultMessage:
-        'Nánari útskýring á framvindu fyrri endurhæfingartímabils',
-      description:
-        'Further explanation of the progress of the previous rehabilitation period',
-    },
-    informationAttendance: {
-      id: 'marp.application:rehabilitation.plan.information.attendance',
-      defaultMessage:
-        'Hvernig hefur umsækjandi sinnt endurhæfingarúrræðum á fyrra endurhæfingartímabili?',
-      description:
-        'How has the applicant’s attendance to rehabilitation measures during the previous rehabilitation period been',
-    },
-    informationExplanationOfAttendance: {
-      id: 'marp.application:rehabilitation.plan.information.explanation.of.attendance',
-      defaultMessage:
-        'Nánari útskýring varðandi mætingar í endurhæfingarúrræði á fyrra tímabili',
-      description:
-        'Further explanation regarding attendance to rehabilitation measures during the previous rehabilitation period',
-    },
-    informationChange: {
-      id: 'marp.application:rehabilitation.plan.information.change',
-      defaultMessage:
-        'Varð breyting á þeim endurhæfingarúrræðum eða stefnu sem lögð var upp með í fyrri áætlun?',
-      description:
-        'Was there any change to the rehabilitation measures or direction that were established in the previous plan?',
-    },
-    informationExplanationOfChange: {
-      id: 'marp.application:rehabilitation.plan.information.explanation.of.change',
-      defaultMessage: 'Nánari útskýring á þeim breytingum og ástæðum þeirra',
-      description: 'Further explanation of those changes and their reasons',
-    },
-
-    // Comprehensive assessment
-    comprehensiveAssessment: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment',
-      defaultMessage:
-        'Heildrænt mat á færni umsækjanda í daglegu lífi og þátttöku',
-      description:
-        'A comprehensive assessment of the applicant’s skills and participation in everyday life',
-    },
-    comprehensiveAssessmentTooltip: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.tooltip',
-      defaultMessage:
-        'Lagt er mat á færniskerðingu umsækjanda og áhrif hennar á getu hans til að sinna eftirfarandi þáttum er varða virkni, þátttöku og sjálfstæði eins og staða hans er í dag með hjálpartækjum ef við á.',
-      description:
-        'The applicant’s current skills impairment and its impact on their ability to perform the following factors related to activity, participation and independence, with assistive devices if applicable, is assessed.',
-    },
-    comprehensiveAssessmentLearningAndApplyingKnowledge: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.learning.and.applying.knowledge',
-      defaultMessage: 'Nám og beiting þekkingar',
-      description: 'Learning and applying knowledge',
-    },
-    comprehensiveAssessmentGeneralTasksAndRequirements: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.general.tasks.and.requirements',
-      defaultMessage: 'Almenn verkefni og kröfur',
-      description: 'General tasks and requirements',
-    },
-    comprehensiveAssessmentGeneralTasksAndRequirementsTooltip: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.general.tasks.and.requirements.tooltip',
-      defaultMessage:
-        'Hvernig gengur umsækjanda að skipuleggja og framkvæma athafnir í daglegu lífi t.d. að stýra tíma, klára það sem byrjað er á og takast á við streitu og álag?',
-      description:
-        'How is the applicant at planning and performing tasks in their daily life, e.g. managing time, finishing what they started and managing stress and pressure?',
-    },
-    comprehensiveAssessmentCommunicationAndRelationships: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.communication.and.relationships',
-      defaultMessage: 'Samskipti og tengsl',
-      description: 'Communication and relationships',
-    },
-    comprehensiveAssessmentCommunicationAndRelationshipsTooltip: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.communication.and.relationships.tooltip',
-      defaultMessage:
-        'Hvernig gengur umsækjanda að eiga í samskiptum, byggja upp tengsl og viðhalda þeim, við fjölskyldu, vini, samstarfsfélaga eða aðra?',
-      description:
-        'How is the applicant at communicating, building and maintaining relationships with family, friends, collegues or others?',
-    },
-    comprehensiveAssessmentMobility: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.mobility',
-      defaultMessage: 'Hreyfanleiki',
-      description: 'Mobility',
-    },
-    comprehensiveAssessmentMobilityTooltip: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.mobility.tooltip',
-      defaultMessage:
-        'Hvernig gengur umsækjanda að flytja sig/fara á milli staða, t.d. við að ganga, halda jafnvægi og færa sig til?',
-      description:
-        'How is the applicant at moving between places, e.g. at walking, balacing and moving.',
-    },
-    comprehensiveAssessmentSelfCare: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.self.care',
-      defaultMessage: 'Eigin umsjá / sjálfsumönnun',
-      description: 'Self-care',
-    },
-    comprehensiveAssessmentSelfCareTooltip: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.self.care.tooltip',
-      defaultMessage:
-        'Hvernig gengur umsækjanda að sinna eigin umsjá, t.d. að þvo sér, klæða og sinna persónulegu hreinlæti?',
-      description:
-        'How is the applicant at performing their own self-care, e.g. washing, dressing themselves and maintaining personal hygiene.',
-    },
-    comprehensiveAssessmentDomesticLife: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.domestic.life',
-      defaultMessage: 'Heimilislíf',
-      description: 'Domestic life',
-    },
-    comprehensiveAssessmentDomesticLifeTooltip: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.domestic.life.tooltip',
-      defaultMessage:
-        'Hvernig gengur umsækjanda að sinna heimilislífi t.d. að elda mat og þrífa húsnæði?',
-      description:
-        'How is the applicant at handling household chores, e.g. cooking food and cleaning the house?',
-    },
-    comprehensiveAssessmentDailyLife: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.daily.life',
-      defaultMessage: 'Meginsvið daglegs lífs',
-      description: 'Daily life',
-    },
-    comprehensiveAssessmentDailyLifeTooltip: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.daily.life.tooltip',
-      defaultMessage:
-        'Hvernig gengur umsækjanda að taka þátt í námi, starfi eða öðrum verkefnum sem tengjast starfsþjálfun eða vinnu?',
-      description:
-        'How is the applicant at undertaking study, a job or other activities related to vocational training or work?',
-    },
-    comprehensiveAssessmentLeisureAndInterests: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.leisure.and.interests',
-      defaultMessage: 'Frístundir og áhugamál',
-      description: 'Leisure and interests',
-    },
-    comprehensiveAssessmentLeisureAndInterestsTooltip: {
-      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.leisure.and.interests.tooltip',
-      defaultMessage:
-        'Hvernig gengur umsækjanda að taka þátt í tómstundum, félagsstörfum eða öðrum viðburðum utan heimilis?',
-      description:
-        'How is the applicant at participating in leisure activities, social activities or other events outside of the home.',
-    },
-
     // Rehabilitation objective
     rehabilitationObjective: {
       id: 'marp.application:rehabilitation.plan.rehabilitation.objective',
@@ -647,10 +485,10 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'A physical impairment refers to problem or disruption of the physical function or body structure. The impairment may be caused by illness, injury or other physical trauma. Such impairment may affect mobility, posture, sensation, strength, pain or other physical abilities and thus limit the person’s ability to perform daily activities. Goals can contribute to increased physical activity, ability and well-being in everyday life.',
     },
-    rehabilitationObjectiveResources: {
-      id: 'marp.application:rehabilitation.plan.rehabilitation.objective.resources',
-      defaultMessage: 'Úrræði',
-      description: 'Resources',
+    rehabilitationObjectivePhysicalHealthResources: {
+      id: 'marp.application:rehabilitation.plan.rehabilitation.objective.physical.health.resources',
+      defaultMessage: 'Úrræði fyrir líkamlega heilsu',
+      description: 'Resources for physical health',
     },
     rehabilitationObjectiveMentalHealthGoals: {
       id: 'marp.application:rehabilitation.plan.rehabilitation.objective.mental.health.goals',
@@ -664,6 +502,11 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'Mental impairment refers to problems or deviation in the functionality of the mind or emotions. The impairment may be caused by illness, injury or other trauma. Such impairments include problems with sensation, emotional balance, focus, memory, communication or adjustment, and thus limit the person’s ability to perform daily activities. Goals can contribute to increased mental balance, well-being and independence.',
     },
+    rehabilitationObjectiveMentalHealthResources: {
+      id: 'marp.application:rehabilitation.plan.rehabilitation.objective.mental.health.resources',
+      defaultMessage: 'Úrræði fyrir andlega heilsu',
+      description: 'Resources for mental health',
+    },
     rehabilitationObjectiveActivityAndParticipationGoals: {
       id: 'marp.application:rehabilitation.plan.rehabilitation.objective.activity.and.participation.goals',
       defaultMessage: 'Markmið tengd virkni og þátttöku',
@@ -676,10 +519,17 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'Activity and participation impairment refers to the ability to participate in society and carry out daily activities. The impairment may be caused by illness, injury, other trauma or environmental factors. Such impairment may include limitations in the ability to perform or fulfil roles within a family, leisure, study, work or other social settings. Goals can contribute to the development of skills to cope with daily life, increase social participation and independence, help deal with social settings and the increase the ability to study/work.',
     },
+    rehabilitationObjectiveActivityAndParticipationResources: {
+      id: 'marp.application:rehabilitation.plan.rehabilitation.objective.activity.and.participation.resources',
+      defaultMessage: 'Úrræði fyrir virkni og þátttöku',
+      description: 'Resources for activity and participation',
+    },
     confirm: {
       id: 'marp.application:rehabilitation.plan.confirm',
-      defaultMessage: 'Ég staðfesti að ég hef lesið ofangreindar upplýsingar.',
-      description: 'I confirm that I have read the above information.',
+      defaultMessage:
+        'Ég staðfesti að ofangreindar upplýsingar eru réttar og skil að virk þátttaka mín í áætlaðri meðferð eða endurhæfingu er forsenda sjúkra- og endurhæfingargreiðslna frá TR.',
+      description:
+        'I confirm that the above information is correct and understand that my active participation in the planned treatment or rehabilitation is a prerequisite for receiving medical and rehabilitation payments from TR.',
     },
   }),
 

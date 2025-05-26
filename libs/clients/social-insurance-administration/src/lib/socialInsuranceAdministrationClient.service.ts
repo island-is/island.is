@@ -14,6 +14,7 @@ import {
   PaymentPlanApi,
   PensionCalculatorApi,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
+  TrWebExternalModelsServicePortalRehabilitationPlan,
   TrWebApiServicesDomainUnionsModelsUnionDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
@@ -24,7 +25,6 @@ import {
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
-  TrWebExternalModelsServicePortalRehabilitationPlan,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
@@ -207,7 +207,7 @@ export class SocialInsuranceAdministrationClientService {
     return this.genaralApiWithAuth(user).apiProtectedV1GeneralUnionsGet()
   }
 
-  async getRehabilitationplan(
+  async getRehabilitationPlan(
     user: User,
   ): Promise<TrWebExternalModelsServicePortalRehabilitationPlan> {
     return this.medicalDocumentsApiWithAuth(
