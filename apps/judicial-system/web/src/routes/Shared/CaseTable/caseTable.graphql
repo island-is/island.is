@@ -3,6 +3,7 @@ query CaseTable($input: CaseTableQueryInput!) {
     rowCount
     rows {
       caseId
+      isMyCase
       cells {
         value {
           __typename

@@ -87,6 +87,11 @@ class CaseTableRow {
   @Field(() => String, { description: 'The row case id' })
   readonly caseId!: string
 
+  @Field(() => Boolean, {
+    description: 'Indicates if the case belongs to the current user',
+  })
+  readonly isMyCase!: boolean
+
   @Field(() => [CaseTableCell], { description: 'The row cells' })
   readonly cells!: CaseTableCell[]
 }
