@@ -373,7 +373,6 @@ export const transformApplicationToIncomePlanDTO = (
 
 export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
   application: Application,
-  uploads: Attachment[],
 ): MedicalAndRehabilitationPaymentsDTO => {
   const {
     applicantPhonenumber,
@@ -445,7 +444,6 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
         answer: +question.answer === 5 ? null : +question.answer,
       })),
     },
-    uploads,
   }
 
   return marpDTO
