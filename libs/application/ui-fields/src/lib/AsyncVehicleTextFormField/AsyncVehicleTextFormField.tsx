@@ -80,15 +80,20 @@ export const AsyncVehicleTextFormField: FC<React.PropsWithChildren<Props>> = ({
   const loadVehicleValidation = async (permno: string) => {
     setIsLoadingValidation(true)
     try {
-      const response = await field.loadValidation({
-        application,
-        apolloClient,
-        permno: permno,
-      })
-      const validation = response as VehicleValidation
+      if (field.loadValidation) {
+        const response = await field.loadValidation({
+          application,
+          apolloClient,
+          permno: permno,
+        })
+        const validation = response as VehicleValidation
 
-      setValue(hasErrorField, !!validation.errorMessages?.length)
-      setVehicleValidation(validation)
+        setValue(hasErrorField, !!validation.errorMessages?.length)
+        setVehicleValidation(validation)
+      } else {
+        setValue(hasErrorField, false)
+        setVehicleValidation(null)
+      }
     } catch (error) {
       console.error('error', error)
       setValue(hasErrorField, true)

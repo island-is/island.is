@@ -983,7 +983,7 @@ export interface CopyLinkField extends BaseField {
 export interface AsyncVehicleTextField extends InputField {
   readonly type: FieldTypes.ASYNC_VEHICLE_TEXT
   component: FieldComponents.ASYNC_VEHICLE_TEXT
-  loadValidation: (c: AsyncVehicleTextContext) => Promise<{
+  loadValidation?: (c: AsyncVehicleTextContext) => Promise<{
     errorMessages?: FormText[]
   }>
   permnoLabel?: FormText
