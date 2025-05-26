@@ -34,17 +34,6 @@ export const m = defineMessages({
       'Við munum sækja skráningu þína úr ökuskírteinaskrá til að athuga hvort þú hafir sannarlega ökukennararéttindi.',
     description: 'Data provider subtitle',
   },
-  dataCollectionNoRightsError: {
-    id: 'dir.application:dataCollectionNoRightsError',
-    defaultMessage:
-      'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá. Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða',
-    description: 'Data provider no teaching rights error',
-  },
-  dataCollectionNoConnection: {
-    id: 'dir.application:dataCollectionNoConnection',
-    defaultMessage: 'Náði ekki sambandi við vefþjónustu',
-    description: 'Data provider no connection',
-  },
 
   /* Students Overview Table Section */
   studentsOverviewSideTitle: {
@@ -164,50 +153,20 @@ export const m = defineMessages({
     defaultMessage: 'Kennslustundum lokið',
     description: 'Student complete hours',
   },
-  viewStudentPracticeDrivingTitle: {
-    id: 'dir.application:viewStudentPracticeDrivingTitle',
-    defaultMessage: 'Æfingarakstursleyfi',
-    description: 'Student complete hours',
-  },
   viewStudentPracticeDrivingButton: {
     id: 'dir.application:viewStudentPracticeDrivingButton',
     defaultMessage: 'Veita æfingarakstursleyfi',
     description: 'Student complete hours',
   },
-  viewStudentYes: {
-    id: 'dir.application:viewStudentYes',
-    defaultMessage: 'Já',
-    description: 'Student complete hours',
+  studentMayPracticeAlertTitle: {
+    id: 'dir.application:studentMayPracticeAlertTitle',
+    defaultMessage: 'Æfingaakstur staðfestur',
+    description: '',
   },
-  viewStudentNo: {
-    id: 'dir.application:viewStudentNo',
-    defaultMessage: 'Nei',
-    description: 'Student complete hours',
-  },
-  viewStudentCompleteSchools: {
-    id: 'dir.application:viewStudentCompleteSchools',
-    defaultMessage: 'Ökuskólum lokið',
-    description: 'Student complete schools',
-  },
-  viewStudentExamsComplete: {
-    id: 'dir.application:viewStudentExamsComplete',
-    defaultMessage: 'Prófum lokið',
-    description: 'Student complete exams',
-  },
-  viewStudentExamsFailed: {
-    id: 'dir.application:viewStudentExamsFailed',
-    defaultMessage: 'Fallin próf',
-    description: 'Student failed exams',
-  },
-  viewStudentNoCompleteSchools: {
-    id: 'dir.application:viewStudentNoCompleteSchools',
-    defaultMessage: 'Engum ökuskóla lokið',
-    description: 'Student complete schools',
-  },
-  viewStudentNoExamsComplete: {
-    id: 'dir.application:viewStudentNoExamsComplete',
-    defaultMessage: 'Engu prófi lokið',
-    description: 'Student complete exams',
+  studentMayPracticeAlertMessage: {
+    id: 'dir.application:studentMayPracticeAlertMessage',
+    defaultMessage: 'Auka texti ef þarf',
+    description: '',
   },
   viewStudentRegisterDrivingLesson: {
     id: 'dir.application:viewStudentRegisterDrivingLesson',
@@ -234,25 +193,20 @@ export const m = defineMessages({
     defaultMessage: 'Veldu dagsetningu',
     description: 'Datepicker placeholder',
   },
-  viewStudentRegisterButton: {
-    id: 'dir.application:viewStudentRegisterButton',
-    defaultMessage: 'Vista',
-    description: 'Register button',
-  },
-  viewStudentEditButton: {
-    id: 'dir.application:viewStudentEditButton',
-    defaultMessage: 'Breyta',
-    description: 'Edit button',
-  },
-  viewStudentRegistrationTableTitle: {
-    id: 'dir.application:viewStudentRegistrationTableTitle',
-    defaultMessage: 'Fyrri skráningar ökunema',
-    description: 'Table title',
-  },
   viewStudentDeleteRegistration: {
     id: 'dir.application:viewStudentDeleteRegistration',
     defaultMessage: 'Eyða skráningu',
     description: 'Delete registration button',
+  },
+  saveEditRegistration: {
+    id: 'dir.application:saveEditRegistration',
+    defaultMessage: "Breyta",
+    description: '',
+  },
+  saveStudentRegistration: {
+    id: 'dir.application:saveStudentRegistration',
+    defaultMessage: "Vista skráða ökutíma",
+    description: '',
   },
   viewStudentEditRegistration: {
     id: 'dir.application:viewStudentEditRegistration',
@@ -274,6 +228,56 @@ export const m = defineMessages({
     defaultMessage: 'Mínútur',
     description: 'Table header col 3',
   },
+  schoolsTitle: {
+    id: 'dir.application:schoolsTitle',
+    defaultMessage: 'Ökuskólar',
+    description: '',
+  },
+  schoolDate: {
+    id: 'dir.application:schoolDate',
+    defaultMessage: 'Dags.',
+    description: '',
+  },
+  school: {
+    id: 'dir.application:school',
+    defaultMessage: 'Skóli',
+    description: '',
+  },
+  schoolStatus: {
+    id: 'dir.application:schoolStatus',
+    defaultMessage: 'Staða',
+    description: '',
+  },
+  completedTests: {
+    id: 'dir.application:completedTests',
+    defaultMessage: 'Próf',
+    description: '',
+  },
+  completedTestDate: {
+    id: 'dir.application:completedTestDate',
+    defaultMessage: 'Dags.',
+    description: '',
+  },
+  completedTestType: {
+    id: 'dir.application:completedTestType',
+    defaultMessage: 'Tegund',
+    description: '',
+  },
+  completedTestResult: {
+    id: 'dir.application:completedTestResult',
+    defaultMessage: 'Staða',
+    description: '',
+  },
+  statusPass: {
+    id: 'dir.application:statusPass',
+    defaultMessage: 'Lokið',
+    description: '',
+  },
+  statusFail: {
+    id: 'dir.application:statusFail',
+    defaultMessage: 'Fallið',
+    description: '',
+  },
   viewStudentGoBackToOverviewButton: {
     id: 'dir.application:viewStudentGoBackToOverviewButton',
     defaultMessage: 'Til baka',
@@ -287,11 +291,6 @@ export const m = defineMessages({
   errorOnGettingStudentTitle: {
     id: 'dir.application:errorOnGettingStudentTitle',
     defaultMessage: 'Ökunemi fannst ekki eða er ekki með virka ökunámsbók.',
-    description: 'Error on input minutes',
-  },
-  errorOnGettingStudentSubtitle: {
-    id: 'dir.application:errorOnGettingStudentSubtitle',
-    defaultMessage: 'Vinsamlega hafðu samband við næsta sýslumannsembætti',
     description: 'Error on input minutes',
   },
   errorOnInputMinutes: {

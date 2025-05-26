@@ -93,7 +93,7 @@ const StudentsOverview: FC<
   )
 
   return (
-    <Box marginBottom={10}>
+    <Box marginBottom={8}>
       <Text variant="h2" marginBottom={3}>
         {showStudentOverview
           ? formatMessage(m.studentsOverviewTitle)

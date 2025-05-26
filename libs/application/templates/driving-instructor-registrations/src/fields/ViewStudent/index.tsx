@@ -11,10 +11,10 @@ import {
   GridRow,
   GridColumn,
   AlertMessage,
-  BulletList,
-  Bullet,
   Stack,
   Icon,
+  Tag,
+  Divider,
 } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { minutesOfDriving, minutesSelection } from '../../lib/constants'
@@ -54,7 +54,6 @@ const ViewStudent = ({
   licenseCategory,
 }: Props) => {
   const { formatMessage } = useLocale()
-
   const {
     data: studentDataResponse,
     loading: loadingStudentsBook,
@@ -257,29 +256,16 @@ const ViewStudent = ({
       (school) => school.schoolTypeId === 1,
     )
 
-  const getExamString = ({
-    name,
-    examDate,
-    status,
-  }: {
-    name: string
-    examDate?: string
-    status?: string
-  }) =>
-    `${name}${
-      examDate ? ` - ${format(new Date(examDate), 'dd.MM.yyyy')}` : ''
-    }${status ? ` - ${status}` : ''}`
-
   return (
     <GridContainer>
       {!error &&
       !loadingStudentsBook &&
       student &&
       Object.entries(student).length > 0 ? (
-        <Stack space={[0, 5]}>
-          <GridRow marginBottom={[2, 0]}>
+        <Stack space={5}>
+          <GridRow>
             {/* Name */}
-            <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 0]}>
+            <GridColumn span={['12/12', '6/12']} paddingBottom={[5, 0]}>
               <Text variant="h4">{formatMessage(m.viewStudentName)}</Text>
               <Text variant="default">{student.name}</Text>
             </GridColumn>
@@ -291,148 +277,39 @@ const ViewStudent = ({
               </Text>
             </GridColumn>
           </GridRow>
-
-          {doesStudentBelongToUser && (
+          <GridRow>
+            {/* Completed hours */}
+            <GridColumn span={['12/12', '6/12']}>
+              <Text variant="h4">
+                {formatMessage(m.viewStudentCompleteHours)}
+              </Text>
+              <Text variant="default">
+                {student.book?.totalLessonCount % 2 === 0
+                  ? student.book?.totalLessonCount
+                  : student.book?.totalLessonCount.toFixed(2) ?? 0}
+              </Text>
+            </GridColumn>
+          </GridRow>
+          {student.book?.practiceDriving ? (
+            /* Has permission for practice driving */
             <>
-              {licenseCategory !== 'BE' && (
-                <GridRow>
-                  {/* Completed schools */}
-                  <GridColumn span={['12/12', '6/12']}>
-                    <Text variant="h4">
-                      {formatMessage(m.viewStudentCompleteSchools)}
-                    </Text>
-                    {completedSchools.length > 0 ? (
-                      completedSchools?.map((school, key) => {
-                        const textStr = getExamString({
-                          name: school.schoolTypeName,
-                          examDate: school.examDate,
-                          status: school.statusName,
-                        })
-                        return (
-                          <BulletList type="ul" color="dark300">
-                            <Bullet>
-                              <Text key={key} variant="default">
-                                {textStr}
-                              </Text>
-                            </Bullet>
-                          </BulletList>
-                        )
-                      })
-                    ) : (
-                      <BulletList type="ul" color="dark300">
-                        <Bullet>
-                          <Text variant="default">
-                            {formatMessage(m.viewStudentNoCompleteSchools)}
-                          </Text>
-                        </Bullet>
-                      </BulletList>
-                    )}
-                  </GridColumn>
-
-                  {/* Has permission for practice driving */}
-                  <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 0]}>
-                    <Text variant="h4">
-                      {formatMessage(m.viewStudentPracticeDrivingTitle)}
-                    </Text>
-                    <Text variant="default">
-                      {student.book?.practiceDriving
-                        ? formatMessage(m.viewStudentYes)
-                        : formatMessage(m.viewStudentNo)}
-                    </Text>
-                  </GridColumn>
-                </GridRow>
-              )}
-
-              <GridRow className={styles.hideRow}>
-                {/* Completed exams */}
-                <GridColumn span={['12/12', '6/12']}>
-                  <Text variant="h4">
-                    {formatMessage(m.viewStudentExamsComplete)}
-                  </Text>
-                  {student.book?.testResults.filter(
-                    (result) => result.hasPassed,
-                  ).length > 0 ? (
-                    student.book?.testResults
-                      .filter((result) => result.hasPassed)
-                      .map((test, key) => {
-                        const textStr = getExamString({
-                          name: test.testTypeName,
-                          examDate: test.examDate,
-                        })
-                        return (
-                          <BulletList type="ul" color="dark300">
-                            <Bullet>
-                              <Text key={key} variant="default">
-                                {textStr}
-                              </Text>
-                            </Bullet>
-                          </BulletList>
-                        )
-                      })
-                  ) : (
-                    <BulletList type="ul" color="dark300">
-                      <Bullet>
-                        <Text variant="default">
-                          {formatMessage(m.viewStudentNoExamsComplete)}
-                        </Text>
-                      </Bullet>
-                    </BulletList>
-                  )}
-                </GridColumn>
-
-                {/* Failed exams */}
-                <GridColumn span={['12/12', '6/12']}>
-                  <Text variant="h4">
-                    {formatMessage(m.viewStudentExamsFailed)}
-                  </Text>
-                  {student.book?.testResults.filter(
-                    (result) => !result.hasPassed,
-                  ).length > 0 ? (
-                    student.book?.testResults.map((test, key) => {
-                      const textStr = getExamString({
-                        name: test.testTypeName,
-                        examDate: test.examDate,
-                      })
-                      return (
-                        <BulletList type="ul" color="dark300">
-                          <Bullet>
-                            <Text key={key} variant="default">
-                              {textStr}
-                            </Text>
-                          </Bullet>
-                        </BulletList>
-                      )
-                    })
-                  ) : (
-                    <BulletList type="ul" color="dark300">
-                      <Bullet>
-                        <Text variant="default">
-                          {formatMessage(m.viewStudentNoExamsComplete)}
-                        </Text>
-                      </Bullet>
-                    </BulletList>
-                  )}
-                </GridColumn>
-
-                {/* Completed hours */}
-                <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 0]}>
-                  <Text variant="h4">
-                    {formatMessage(m.viewStudentCompleteHours)}
-                  </Text>
-                  <Text variant="default">
-                    {student.book?.totalLessonCount % 2 === 0
-                      ? student.book?.totalLessonCount
-                      : student.book?.totalLessonCount.toFixed(2) ?? 0}
-                  </Text>
+              <GridRow>
+                <GridColumn span="12/12">
+                  <AlertMessage
+                    type="success"
+                    title={formatMessage(m.studentMayPracticeAlertTitle)}
+                    message={formatMessage(m.studentMayPracticeAlertMessage)}
+                  />
                 </GridColumn>
               </GridRow>
-              {/* Allow practice driving button */}
-              {isAllowPracticeDrivingVisible(student) && (
-                <GridRow marginBottom={[7, 3]}>
-                  <GridColumn span={['12/12', '4/12']}>
+              <Divider />
+            </>
+          ) : (
+            isAllowPracticeDrivingVisible(student) && (
+              <>
+                <GridRow>
+                  <GridColumn>
                     <Button
-                      fluid
-                      size="medium"
                       loading={loadingAllow}
                       onClick={() => allowPracticeDriving(student.nationalId)}
                     >
@@ -440,19 +317,19 @@ const ViewStudent = ({
                     </Button>
                   </GridColumn>
                 </GridRow>
-              )}
-            </>
+                <Divider />
+              </>
+            )
           )}
-
           {/* Minutes section */}
           <GridRow>
-            <GridColumn span={'12/12'} paddingBottom={2}>
+            <GridColumn paddingBottom={2} span="12/12">
               <Text variant="h3">
                 {formatMessage(m.viewStudentRegisterDrivingLesson)}
               </Text>
             </GridColumn>
-            <GridColumn span={'12/12'} paddingBottom={2}>
-              <Text variant="h4">
+            <GridColumn paddingBottom={2} span="12/12">
+              <Text variant="h5">
                 {formatMessage(m.viewStudentRegisterMinutes)}
               </Text>
             </GridColumn>
@@ -461,8 +338,8 @@ const ViewStudent = ({
               return (
                 <GridColumn
                   key={'radioButton-' + index}
-                  span={['6/12', '2/12']}
-                  paddingBottom={[3, 0]}
+                  span={['6/12', '6/12', '6/12', '3/12']}
+                  paddingBottom={3}
                 >
                   <RadioButton
                     name={'options-' + index}
@@ -477,7 +354,7 @@ const ViewStudent = ({
                 </GridColumn>
               )
             })}
-            <GridColumn span={['12/12', '3/12']}>
+            <GridColumn span="12/12">
               <Input
                 label={formatMessage(m.viewStudentInputMinutesLabel)}
                 type="number"
@@ -499,42 +376,34 @@ const ViewStudent = ({
               />
             </GridColumn>
           </GridRow>
-
           {/* Date of the driving lesson */}
-          <GridRow marginBottom={[7, 3]}>
-            <GridColumn
-              span={['12/12', '5/12']}
-              paddingBottom={[3, 0]}
-              paddingTop={[3, 0]}
-            >
-              <Text variant="h4" marginBottom={2}>
+          <GridRow marginBottom={3}>
+            <GridColumn paddingBottom={3} span="12/12">
+              <Text variant="h5" marginBottom={2}>
                 {formatMessage(m.viewStudentSelectDateLabel)}
               </Text>
               <DatePicker
-                size="xs"
                 hasError={dateError}
                 errorMessage={formatMessage(m.errorOnMissingDate)}
                 handleChange={(date) => {
                   setDate(format(date, 'yyyy-MM-dd'))
                   setDateError(false)
                 }}
-                label=""
+                label={formatMessage(m.viewStudentSelectDateLabel)}
                 locale="is"
                 placeholderText={formatMessage(
                   m.viewStudentSelectDatePlaceholder,
                 )}
                 maxDate={new Date()}
-                required
                 selected={date ? new Date(date) : null}
               />
             </GridColumn>
-            <GridColumn
-              span={editingRegistration ? ['6/12', '2/12'] : ['12/12', '2/12']}
-            >
+            <GridColumn>
               <Box display="flex" alignItems="flexEnd" height="full">
                 <Button
-                  size="medium"
-                  fluid
+                  variant="ghost"
+                  icon={editingRegistration ? 'checkmark' : undefined}
+                  iconType="outline"
                   loading={
                     loadingRegistration || loadingEdition || loadingStudentsBook
                   }
@@ -546,21 +415,21 @@ const ViewStudent = ({
                       : setDateError(true)
                   }
                 >
-                  {!editingRegistration
-                    ? formatMessage(m.viewStudentRegisterButton)
-                    : formatMessage(m.viewStudentEditButton)}
+                  {editingRegistration
+                    ? formatMessage(m.saveEditRegistration)
+                    : formatMessage(m.saveStudentRegistration)}
                 </Button>
               </Box>
             </GridColumn>
-            <GridColumn span={['6/12', '3/12']}>
+            <GridColumn>
               <Box display="flex" alignItems="flexEnd" height="full">
                 {editingRegistration && (
                   <Button
-                    size="medium"
-                    loading={loadingDeletion || loadingStudentsBook}
-                    colorScheme="destructive"
                     variant="ghost"
                     icon="trash"
+                    iconType="outline"
+                    loading={loadingDeletion || loadingStudentsBook}
+                    colorScheme="destructive"
                     onClick={() => deleteRegistration(editingRegistration.id)}
                   >
                     {formatMessage(m.viewStudentDeleteRegistration)}
@@ -569,21 +438,16 @@ const ViewStudent = ({
               </Box>
             </GridColumn>
           </GridRow>
-
-          <GridRow marginBottom={5}>
-            <GridColumn span={'12/12'} paddingBottom={2}>
-              <Text variant="h4">
-                {formatMessage(m.viewStudentRegistrationTableTitle)}
-              </Text>
-            </GridColumn>
-            <GridColumn span={'12/12'}>
+          {/* Registered hours */}
+          <GridRow>
+            <GridColumn span="12/12">
               <T.Table box={{ overflow: 'hidden' }}>
                 <T.Head>
                   <T.Row>
-                    <T.HeadData style={styles.tableStyles}>
+                    <T.HeadData style={styles.tableStyles} width="25%">
                       {formatMessage(m.viewStudentTableHeaderCol1)}
                     </T.HeadData>
-                    <T.HeadData style={styles.tableStyles}>
+                    <T.HeadData style={styles.tableStyles} width="40%">
                       {formatMessage(m.viewStudentTableHeaderCol2)}
                     </T.HeadData>
                     <T.HeadData style={styles.tableStyles}>
@@ -648,12 +512,6 @@ const ViewStudent = ({
                                     <Button
                                       variant="text"
                                       size="small"
-                                      icon={
-                                        editingRegistration &&
-                                        editingRegistration.id === entry.id
-                                          ? 'close'
-                                          : undefined
-                                      }
                                       onClick={() => {
                                         setEditingRegistration(
                                           editingRegistration
@@ -667,7 +525,7 @@ const ViewStudent = ({
                                     >
                                       {editingRegistration &&
                                       editingRegistration.id === entry.id
-                                        ? ''
+                                        ? 'Hætta'
                                         : formatMessage(
                                             m.viewStudentEditRegistration,
                                           )}
@@ -697,7 +555,108 @@ const ViewStudent = ({
               </T.Table>
             </GridColumn>
           </GridRow>
-
+          {doesStudentBelongToUser && (
+            <>
+              {licenseCategory !== 'BE' && (
+                /* Completed schools */
+                <GridRow>
+                  <GridColumn span="12/12">
+                    <Text variant="h3" marginBottom={2}>
+                      {formatMessage(m.schoolsTitle)}
+                    </Text>
+                    <T.Table box={{ overflow: 'hidden' }}>
+                      <T.Head>
+                        <T.Row>
+                          <T.HeadData style={styles.tableStyles} width="25%">
+                            {formatMessage(m.schoolDate)}
+                          </T.HeadData>
+                          <T.HeadData style={styles.tableStyles} width="40%">
+                            {formatMessage(m.school)}
+                          </T.HeadData>
+                          <T.HeadData style={styles.tableStyles}>
+                            {formatMessage(m.schoolStatus)}
+                          </T.HeadData>
+                        </T.Row>
+                      </T.Head>
+                      <T.Body>
+                        {completedSchools.length > 0 &&
+                          completedSchools?.map((school, key) => {
+                            return (
+                              <T.Row key={key}>
+                                <T.Data style={styles.tableStyles}>
+                                  {format(
+                                    new Date(school.examDate),
+                                    'dd.MM.yyyy',
+                                  )}
+                                </T.Data>
+                                <T.Data style={styles.tableStyles}>
+                                  {school.schoolTypeName}
+                                </T.Data>
+                                <T.Data style={styles.tableStyles}>
+                                  <Tag
+                                    variant={
+                                      school.statusName ===
+                                      formatMessage(m.statusPass)
+                                        ? 'mint'
+                                        : 'blueberry'
+                                    }
+                                  >
+                                    {school.statusName}
+                                  </Tag>
+                                </T.Data>
+                              </T.Row>
+                            )
+                          })}
+                      </T.Body>
+                    </T.Table>
+                  </GridColumn>
+                </GridRow>
+              )}
+              {/* Completed exams */}
+              <GridRow>
+                <GridColumn span="12/12">
+                  <Text variant="h3" marginBottom={2}>
+                    {formatMessage(m.completedTests)}
+                  </Text>
+                  <T.Table box={{ overflow: 'hidden' }}>
+                    <T.Head>
+                      <T.Row>
+                        <T.HeadData style={styles.tableStyles} width="25%">
+                          {formatMessage(m.completedTestDate)}
+                        </T.HeadData>
+                        <T.HeadData style={styles.tableStyles} width="40%">
+                          {formatMessage(m.completedTestType)}
+                        </T.HeadData>
+                        <T.HeadData style={styles.tableStyles}>
+                          {formatMessage(m.completedTestResult)}
+                        </T.HeadData>
+                      </T.Row>
+                    </T.Head>
+                    <T.Body>
+                      {student.book?.testResults.length > 0 &&
+                        student.book?.testResults.map((test, key) => {
+                          return (
+                            <T.Row key={key}>
+                              <T.Data style={styles.tableStyles}>
+                                {format(new Date(test.examDate), 'dd.MM.yyyy')}
+                              </T.Data>
+                              <T.Data style={styles.tableStyles}>
+                                {test.testTypeName}
+                              </T.Data>
+                              <T.Data style={styles.tableStyles}>
+                                <Tag variant={test.hasPassed ? 'mint' : 'rose'}>
+                                  {test.hasPassed ? 'Lokið' : 'Fallið'}
+                                </Tag>
+                              </T.Data>
+                            </T.Row>
+                          )
+                        })}
+                    </T.Body>
+                  </T.Table>
+                </GridColumn>
+              </GridRow>
+            </>
+          )}
           <GridRow>
             <GridColumn>
               <Button variant="ghost" preTextIcon="arrowBack" onClick={goBack}>
