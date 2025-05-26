@@ -20,8 +20,8 @@ import {
   RequestSignatureInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
-import { Modal } from '..'
+import { Modal } from '../..'
+import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
 import {
   RequestRulingSignatureMutation,
   useRequestRulingSignatureMutation,
