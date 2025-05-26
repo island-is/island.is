@@ -82,9 +82,6 @@ export const Applications = () => {
   // const applications = []
   // Assuming the user has not opened this form before, create a new application
 
-  useEffect(() => {
-    console.log(applications)
-  }, [applications])
 
   return (
     <>

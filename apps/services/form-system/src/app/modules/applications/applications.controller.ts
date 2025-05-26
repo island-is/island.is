@@ -35,8 +35,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@UseGuards(IdsUserGuard)
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
