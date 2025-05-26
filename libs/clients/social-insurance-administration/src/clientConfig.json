@@ -475,6 +475,102 @@
         }
       }
     },
+    "/api/protected/v1/Applicant/medicalandrehabilitationpayments/type": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Returns the type of medical and rehabilitation payments application that the applicant is eligible to apply for based on\ninformation from their base certificate (ísl. grunnvottorð), rehabilitation plan (ísl. endurhæfingaráætlun) etc.",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/Application/{applicationType}": {
       "post": {
         "tags": ["Application"],
@@ -1166,6 +1262,123 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Unions.Models.UnionDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/General/educationalinstitutions": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Returns a list of Educational Institutions",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EducationalInstitutionsDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EducationalInstitutionsDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EducationalInstitutionsDto"
                   }
                 }
               }
@@ -1957,17 +2170,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.BaseCertificate"
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.BaseCertificate"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.BaseCertificate"
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.BaseCertificate"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.BaseCertificate"
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.BaseCertificate"
                 }
               }
             }
@@ -2065,17 +2278,125 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.RehabilitationPlan"
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RehabilitationPlan"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.RehabilitationPlan"
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RehabilitationPlan"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.RehabilitationPlan"
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RehabilitationPlan"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/MedicalDocuments/disabilitypensioncertificate": {
+      "get": {
+        "tags": ["MedicalDocuments"],
+        "summary": "Returns a disability pension certificate (ísl. vottorð um örorku / samþætt sérfræðimat) for the logged-in user if it exists, 404 otherwise.",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.DisabilityPensionCertificate"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.DisabilityPensionCertificate"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.DisabilityPensionCertificate"
                 }
               }
             }
@@ -3228,6 +3549,15 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EducationalInstitutionsDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto": {
         "type": "object",
         "properties": {
@@ -3321,314 +3651,6 @@
         "properties": {
           "month": { "type": "integer", "format": "int32" },
           "amount": { "type": "number", "format": "double", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.BaseCertificate": {
-        "type": "object",
-        "properties": {
-          "individual": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.Individual"
-          },
-          "doctor": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.Doctor"
-          },
-          "supervisionPeriod": { "type": "string", "nullable": true },
-          "lastExaminationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "certificateDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "disabilityDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "diagnoses": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.Diagnosis"
-          },
-          "previousHealthHistory": { "type": "string", "nullable": true },
-          "currentStatus": { "type": "string", "nullable": true },
-          "physicalDifficulty": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.Difficulty"
-          },
-          "mentalDifficulty": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.Difficulty"
-          },
-          "activityParticipationDifficulty": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.Difficulty"
-          },
-          "other": { "type": "string", "nullable": true },
-          "confirmation": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.Confirmation"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.ComprehensiveEvaluation": {
-        "type": "object",
-        "properties": {
-          "learningAndApplyingKnowledge": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "generalTasksAndDemands": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "communicationAndRelationships": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "mobility": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "selfCare": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "domesticLife": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "mainDailyLifeAreas": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "leisureAndHobbies": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.Confirmation": {
-        "type": "object",
-        "properties": {
-          "type": { "type": "integer", "format": "int32", "nullable": true },
-          "treatmentMeasures": {
-            "type": "array",
-            "items": { "type": "string" },
-            "nullable": true
-          },
-          "explanation": { "type": "string", "nullable": true },
-          "progress": { "type": "string", "nullable": true },
-          "estimatedDuration": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.EstimatedDuration"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.Diagnosis": {
-        "type": "object",
-        "properties": {
-          "icd": {
-            "type": "array",
-            "items": { "type": "string" },
-            "nullable": true
-          },
-          "others": {
-            "type": "array",
-            "items": { "type": "string" },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.Difficulty": {
-        "type": "object",
-        "properties": {
-          "value": { "type": "integer", "format": "int32", "nullable": true },
-          "explanation": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.Doctor": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string", "nullable": true },
-          "doctorNumber": { "type": "string", "nullable": true },
-          "phoneNumber": { "type": "string", "nullable": true },
-          "email": { "type": "string", "nullable": true },
-          "residence": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.EstimatedDuration": {
-        "type": "object",
-        "properties": {
-          "start": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "end": { "type": "string", "format": "date-time", "nullable": true },
-          "months": { "type": "integer", "format": "int32", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.FirstEvaluation": {
-        "type": "object",
-        "properties": {
-          "applicantStatus": { "type": "string", "nullable": true },
-          "previousMedicalOrRehab": { "type": "string", "nullable": true },
-          "attitudeTowardsWork": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.FollowUpEvaluation": {
-        "type": "object",
-        "properties": {
-          "rehabilitationProgress": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "rehabilitationProgressDetails": {
-            "type": "string",
-            "nullable": true
-          },
-          "rehabilitationMeasuresProgress": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "rehabilitationMeasuresProgressDetails": {
-            "type": "string",
-            "nullable": true
-          },
-          "rehabilitationChanges": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "rehabilitationChangesDetails": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicantCircumstancesChanges": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "applicantCircumstancesChangesDetails": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.HealthGoals": {
-        "type": "object",
-        "properties": {
-          "goalDescription": { "type": "string", "nullable": true },
-          "measures": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.Individual": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string", "nullable": true },
-          "nationalId": { "type": "string", "nullable": true },
-          "address": { "type": "string", "nullable": true },
-          "postalCode": { "type": "string", "nullable": true },
-          "city": { "type": "string", "nullable": true },
-          "phoneNumber": { "type": "string", "nullable": true },
-          "email": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.Person": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string", "nullable": true },
-          "nationalId": { "type": "string", "nullable": true },
-          "address": { "type": "string", "nullable": true },
-          "postalCode": { "type": "string", "nullable": true },
-          "city": { "type": "string", "nullable": true },
-          "phoneNumber": { "type": "string", "nullable": true },
-          "email": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.RehabilitationPlan": {
-        "type": "object",
-        "properties": {
-          "person": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.Person"
-          },
-          "serviceProvider": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.ServiceProvider"
-          },
-          "applicantEmploymentStatus": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "firstEvaluation": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.FirstEvaluation"
-          },
-          "followUpEvaluation": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.FollowUpEvaluation"
-          },
-          "comprehensiveEvaluation": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.ComprehensiveEvaluation"
-          },
-          "startDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "plannedEndDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "rehabilitationFocusAndStrategy": {
-            "type": "string",
-            "nullable": true
-          },
-          "physicalHealthGoals": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.HealthGoals"
-          },
-          "mentalHealthGoals": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.HealthGoals"
-          },
-          "activityAndParticipationGoals": {
-            "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.MedicalDocuments.Models.HealthGoals"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.MedicalDocuments.Models.ServiceProvider": {
-        "type": "object",
-        "properties": {
-          "serviceProviderName": { "type": "string", "nullable": true },
-          "coordinatorName": { "type": "string", "nullable": true },
-          "coordinatorNationalId": { "type": "string", "nullable": true },
-          "coordinatorTitle": { "type": "string", "nullable": true },
-          "workplace": { "type": "string", "nullable": true },
-          "phoneNumber": { "type": "string", "nullable": true },
-          "email": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -4569,6 +4591,411 @@
             "description": "Upphæð á ári",
             "format": "double"
           }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.BaseCertificate": {
+        "type": "object",
+        "properties": {
+          "referenceId": { "type": "string", "nullable": true },
+          "individual": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Individual"
+          },
+          "doctor": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Doctor"
+          },
+          "supervisionPeriod": { "type": "string", "nullable": true },
+          "lastExaminationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "certificateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "disabilityDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "diagnoses": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Diagnosis"
+          },
+          "previousHealthHistory": { "type": "string", "nullable": true },
+          "currentStatus": { "type": "string", "nullable": true },
+          "physicalDifficulty": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Difficulty"
+          },
+          "mentalDifficulty": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Difficulty"
+          },
+          "activityParticipationDifficulty": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Difficulty"
+          },
+          "other": { "type": "string", "nullable": true },
+          "confirmation": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Confirmation"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.CertificateInformation": {
+        "type": "object",
+        "properties": {
+          "doctorName": { "type": "string", "nullable": true },
+          "position": { "type": "string", "nullable": true },
+          "institution": { "type": "string", "nullable": true },
+          "submissionDate": { "type": "string", "format": "date-time" },
+          "hasCompletedFunctionalAssessment": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.ComprehensiveEvaluation": {
+        "type": "object",
+        "properties": {
+          "learningAndApplyingKnowledge": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "generalTasksAndDemands": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "communicationAndRelationships": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "mobility": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "selfCare": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "domesticLife": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "mainDailyLifeAreas": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "leisureAndHobbies": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.Confirmation": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "integer", "format": "int32", "nullable": true },
+          "treatmentMeasures": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          },
+          "explanation": { "type": "string", "nullable": true },
+          "progress": { "type": "string", "nullable": true },
+          "estimatedDuration": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EstimatedDuration"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.Diagnosis": {
+        "type": "object",
+        "properties": {
+          "icd": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          },
+          "others": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.Difficulty": {
+        "type": "object",
+        "properties": {
+          "value": { "type": "integer", "format": "int32", "nullable": true },
+          "explanation": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.DisabilityPensionCertificate": {
+        "type": "object",
+        "properties": {
+          "individual": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Individual"
+          },
+          "referenceId": { "type": "string", "nullable": true },
+          "impairments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Impairment"
+            },
+            "nullable": true
+          },
+          "environmentalFactors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnvironmentalFactor"
+            },
+            "nullable": true
+          },
+          "certificate": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.CertificateInformation"
+          },
+          "healthAssessment": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.HealthAssessment"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.Doctor": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "licenseNumber": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "workplace": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.EnvironmentalCategory": {
+        "enum": [0, 1, 2, 3, 4, 5],
+        "type": "integer",
+        "format": "int32"
+      },
+      "TrWeb.External.Models.ServicePortal.EnvironmentalFactor": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnvironmentalCategory"
+          },
+          "keyNumber": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.EstimatedDuration": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "end": { "type": "string", "format": "date-time", "nullable": true },
+          "months": { "type": "integer", "format": "int32", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.FirstEvaluation": {
+        "type": "object",
+        "properties": {
+          "applicantStatus": { "type": "string", "nullable": true },
+          "previousMedicalOrRehab": { "type": "string", "nullable": true },
+          "attitudeTowardsWork": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.FollowUpEvaluation": {
+        "type": "object",
+        "properties": {
+          "rehabilitationProgress": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "rehabilitationProgressDetails": {
+            "type": "string",
+            "nullable": true
+          },
+          "rehabilitationMeasuresProgress": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "rehabilitationMeasuresProgressDetails": {
+            "type": "string",
+            "nullable": true
+          },
+          "rehabilitationChanges": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "rehabilitationChangesDetails": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicantCircumstancesChanges": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "applicantCircumstancesChangesDetails": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.Function": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "nullable": true },
+          "keyNumber": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.HealthAssessment": {
+        "type": "object",
+        "properties": {
+          "recentHealthChanges": { "type": "string", "nullable": true },
+          "healthProgress": { "type": "string", "nullable": true },
+          "condition": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.HealthGoals": {
+        "type": "object",
+        "properties": {
+          "goalDescription": { "type": "string", "nullable": true },
+          "measures": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.Impairment": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ImpairmentType"
+          },
+          "functions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Function"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.ImpairmentType": {
+        "enum": [0, 1],
+        "type": "integer",
+        "format": "int32"
+      },
+      "TrWeb.External.Models.ServicePortal.Individual": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.Person": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.RehabilitationPlan": {
+        "type": "object",
+        "properties": {
+          "person": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Person"
+          },
+          "serviceProvider": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ServiceProvider"
+          },
+          "applicantEmploymentStatus": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "firstEvaluation": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.FirstEvaluation"
+          },
+          "followUpEvaluation": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.FollowUpEvaluation"
+          },
+          "comprehensiveEvaluation": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ComprehensiveEvaluation"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "plannedEndDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rehabilitationFocusAndStrategy": {
+            "type": "string",
+            "nullable": true
+          },
+          "physicalHealthGoals": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.HealthGoals"
+          },
+          "mentalHealthGoals": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.HealthGoals"
+          },
+          "activityAndParticipationGoals": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.HealthGoals"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.ServiceProvider": {
+        "type": "object",
+        "properties": {
+          "serviceProviderName": { "type": "string", "nullable": true },
+          "coordinatorName": { "type": "string", "nullable": true },
+          "coordinatorNationalId": { "type": "string", "nullable": true },
+          "coordinatorTitle": { "type": "string", "nullable": true },
+          "workplace": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
