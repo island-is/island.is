@@ -184,6 +184,7 @@ export interface UpdateCase
     | 'mergeCaseId'
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
+    | 'isRegisteredInPrisonSystem'
   > {
   type?: CaseType
   state?: CaseState
@@ -862,6 +863,9 @@ export class CaseService {
       CaseFileCategory.PROSECUTOR_CASE_FILE,
       CaseFileCategory.DEFENDANT_CASE_FILE,
       CaseFileCategory.CIVIL_CLAIM,
+      CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+      CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+      CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
     ]
 
     const deliverCaseFileToCourtMessages =
@@ -946,6 +950,12 @@ export class CaseService {
         caseId: theCase.id,
       })
     }
+
+    messages.push({
+      type: MessageType.DELIVERY_TO_COURT_SIGNED_COURT_RECORD,
+      user,
+      caseId: theCase.id,
+    })
 
     return this.messageService.sendMessagesToQueue(messages)
   }
@@ -1360,20 +1370,6 @@ export class CaseService {
     )
   }
 
-  private addMessagesForNewCourtDateToQueue(
-    theCase: Case,
-    user: TUser,
-  ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
-      {
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.COURT_DATE },
-      },
-    ])
-  }
-
   private addMessagesForNewSubpoenasToQueue(
     theCase: Case,
     updatedCase: Case,
@@ -1660,8 +1656,11 @@ export class CaseService {
         updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
 
       if (hasUpdatedArraignmentDate || hasUpdatedCourtDate) {
-        // New arraignment date or new court date
-        await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
+        await this.eventLogService.createWithUser(
+          EventType.COURT_DATE_SCHEDULED,
+          theCase.id,
+          user,
+        )
       }
 
       if (hasUpdatedArraignmentDate) {
