@@ -8,23 +8,11 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 import {
-  CASES_ROUTE,
-  COURT_OF_APPEAL_CASES_ROUTE,
-  DEFENDER_CASES_ROUTE,
-  PRISON_CASES_ROUTE,
-  USERS_ROUTE,
-} from '@island.is/judicial-system/consts'
-import {
-  isAdminUser,
-  isCourtOfAppealsUser,
-  isDefenceUser,
-  isPrisonStaffUser,
-} from '@island.is/judicial-system/types'
-import {
   PageHeader,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 
+import { getUserDashboardRoute } from '../lib'
 import Login from './Login/Login'
 import SelectUser from './SelectUser/SelectUser'
 import * as styles from './Landing.css'
@@ -32,20 +20,11 @@ import * as styles from './Landing.css'
 const Landing = () => {
   const router = useRouter()
   const { user, eligibleUsers } = useContext(UserContext)
+  console.log({ user })
 
   useEffect(() => {
     if (user && eligibleUsers && eligibleUsers.length === 1) {
-      const redirectRoute = isDefenceUser(user)
-        ? DEFENDER_CASES_ROUTE
-        : isPrisonStaffUser(user)
-        ? PRISON_CASES_ROUTE
-        : isCourtOfAppealsUser(user)
-        ? COURT_OF_APPEAL_CASES_ROUTE
-        : isAdminUser(user)
-        ? USERS_ROUTE
-        : CASES_ROUTE
-
-      router.push(redirectRoute)
+      router.push(getUserDashboardRoute(user))
     }
   }, [eligibleUsers, router, user])
 
