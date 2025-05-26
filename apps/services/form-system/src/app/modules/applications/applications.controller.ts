@@ -27,11 +27,8 @@ import { ScreenValidationResponse } from '../../dataTypes/validationResponse.mod
 import {
   CurrentUser,
   IdsUserGuard,
-  Scopes,
-  ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
-import { ApiScope } from '@island.is/auth/scopes'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 

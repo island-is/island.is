@@ -3,7 +3,7 @@ import {
   CREATE_APPLICATION,
 } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { FormSystemApplication } from '@island.is/api/schema'
 import {
   Box,
