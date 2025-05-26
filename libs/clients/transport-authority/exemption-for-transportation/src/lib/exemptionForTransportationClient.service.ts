@@ -61,7 +61,7 @@ export class ExemptionForTransportationClient {
         shouldBeTrailer,
       })
       return {
-        isInspected: true, //TODOx is always false ??? result.inspected || false,
+        isInspected: result.inspected || false,
         isInOrder: result.isInOrder || false,
         errorMessages: [],
       }
@@ -70,7 +70,9 @@ export class ExemptionForTransportationClient {
         return {
           isInspected: true,
           isInOrder: true,
-          errorMessages: [{ defaultMessage: e.body.detail }],
+          errorMessages: [
+            { errorNo: e.body.title, defaultMessage: e.body.detail },
+          ],
         }
       } else {
         throw e

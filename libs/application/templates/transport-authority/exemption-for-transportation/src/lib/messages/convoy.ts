@@ -47,15 +47,43 @@ export const convoy = {
       defaultMessage: 'Athugið',
       description: 'Convoy error alert title',
     },
-    isNotInOrder: {
-      id: 'ta.eft.application:convoy.error.isNotInOrder',
+    notInOrder: {
+      id: 'ta.eft.application:convoy.error.notInOrder',
       defaultMessage: 'Ökutæki er ekki í lagi',
       description: 'Convoy error vehicle is not in order alert message',
     },
-    isNotInspected: {
-      id: 'ta.eft.application:convoy.error.isNotInspected',
+    notInspected: {
+      id: 'ta.eft.application:convoy.error.notInspected',
       defaultMessage: 'Ökutæki er ekki skoðað',
       description: 'Convoy error vehicle is not inspected alert message',
+    },
+    notInAllowedGroup: {
+      id: 'ta.eft.application:convoy.error.notInAllowedGroup',
+      defaultMessage: 'Ökutæki ekki í leyfðum ökutækjaflokki',
+      description: 'Convoy error vehicle is not in allowed group alert message',
+    },
+    notInAllowedUseGroup: {
+      id: 'ta.eft.application:convoy.error.notInAllowedUseGroup',
+      defaultMessage: 'Ökutæki er ekki í leyfðum notkunarflokki',
+      description:
+        'Convoy error vehicle is not in allowed use group alert message',
+    },
+    notTrailer: {
+      id: 'ta.eft.application:convoy.error.notTrailer',
+      defaultMessage:
+        'Ætti að vera eftirvagn, en þetta bílnúmer er ekki fyrir eftirvagn',
+      description: 'Convoy error vehicle is not a trailer alert message',
+    },
+    shouldNotBeTrailer: {
+      id: 'ta.eft.application:convoy.error.shouldNotBeTrailer',
+      defaultMessage:
+        'Ætti að vera ökutæki, en þetta bílnúm er fyrir eftirvagn',
+      description: 'Convoy error vehicle should not be a trailer alert message',
+    },
+    notFound: {
+      id: 'ta.eft.application:convoy.error.notFound',
+      defaultMessage: 'Ökutæki fannst ekki',
+      description: 'Convoy error vehicle is not found alert message',
     },
     fallbackErrorMessage: {
       id: 'ta.eft.application:convoy.error.fallbackErrorMessage',

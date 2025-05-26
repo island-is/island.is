@@ -26,17 +26,25 @@ export const loadValidation = async (
   })
   const validation = data.vehicleExemptionValidation
 
-  let errorMessages: FormText[] = []
-  if (!validation.isInOrder) {
-    errorMessages.push(convoy.error.isNotInOrder)
+  const errorMessages: FormText[] = [
+    ...(!validation.isInOrder ? [convoy.error.notInOrder] : []),
+    ...(!validation.isInspected ? [convoy.error.notInspected] : []),
+  ]
+
+  const errorMap: Record<string, FormText> = {
+    VEHICLE_NOT_IN_ALLOWED_GROUP: convoy.error.notInAllowedGroup,
+    VEHICLE_NOT_IN_ALLOWED_USE_GROUP: convoy.error.notInAllowedUseGroup,
+    VEHICLE_NOT_TRAILER: convoy.error.notTrailer,
+    VEHICLE_SHOULD_NOT_BE_TRAILER: convoy.error.shouldNotBeTrailer,
+    VEHICLE_NOT_FOUND: convoy.error.notFound,
   }
-  if (!validation.isInspected) {
-    errorMessages.push(convoy.error.isNotInspected)
-  }
-  if (validation.errorMessages) {
-    errorMessages = errorMessages.concat(
-      validation.errorMessages.map((x) => x.defaultMessage),
-    )
+  const validationMessages = validation.errorMessages || []
+  for (const { errorNo, defaultMessage } of validationMessages) {
+    if (errorNo && errorMap[errorNo]) {
+      errorMessages.push(errorMap[errorNo])
+    } else if (defaultMessage) {
+      errorMessages.push(defaultMessage)
+    }
   }
 
   return { errorMessages }
