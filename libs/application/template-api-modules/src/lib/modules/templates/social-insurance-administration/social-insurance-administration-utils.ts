@@ -408,9 +408,9 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     },
     comment,
     applicationId: application.id,
-    // domesticBankInfo: {
-    //   bank,
-    // },
+    domesticBankInfo: {
+      bank,
+    },
     taxInfo: {
       personalAllowance: YES === personalAllowance,
       personalAllowanceUsage:
@@ -427,7 +427,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       hasUtilizedEmployeeSickPayRights: getYesNoNotApplicableValue(
         hasUtilizedEmployeeSickPayRights,
       ),
-      employeeSickPayEndDate: '2025-04-30T17:03:31.383Z',
+      employeeSickPayEndDate,
     },
     unionSickPay: {
       hasUtilizedUnionSickPayRights: getYesNoNotApplicableValue(
@@ -436,13 +436,13 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       unionNationalId,
       unionSickPayEndDate,
     },
-    baseCertificateReference: 'test',
-    rehabilitationPlanReference: 'test',
+    baseCertificateReference: 'test', //TODO:
+    rehabilitationPlanReference: 'test', //TODO:
     selfAssessment: {
-      hadAssistance: true,
+      hadAssistance: true, //TODO:
       answers: questionnaire.map((question) => ({
         questionId: question.questionId,
-        answer: +question.answer,
+        answer: +question.answer === 5 ? null : +question.answer,
       })),
     },
     uploads,
