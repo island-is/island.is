@@ -16,11 +16,7 @@ import {
   YES,
   NO,
 } from '@island.is/application/core'
-import {
-  Comparators,
-  Form,
-  FormModes,
-} from '@island.is/application/types'
+import { Comparators, Form, FormModes } from '@island.is/application/types'
 import { applicantInformationMessages } from '@island.is/application/ui-forms'
 import * as m from '../lib/messages'
 import {
