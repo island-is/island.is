@@ -34,6 +34,7 @@ import { WithLinkWrapper } from './components/Inputs/WithLinkWrapper'
 import { OnboardingIntro } from './components/Intro'
 import { useConfirmNudgeMutation } from './confirmNudge.generated'
 import { DropModalType } from './types/form'
+import { useScopeAccess } from '../../../../hooks/useScopeAccess'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -63,8 +64,7 @@ export const ProfileForm = ({
 }: ProfileFormProps) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { scopes } = useUserInfo()
-  const hasUserProfileWriteScope = scopes.includes(UserProfileScope.write)
+  const { hasUserProfileWrite } = useScopeAccess()
 
   const [telDirty, setTelDirty] = useState(true)
   const [internalLoading, setInternalLoading] = useState(false)
@@ -203,6 +203,7 @@ export const ProfileForm = ({
                 }}
               />
             }
+            divider={hasUserProfileWrite}
           >
             {userLoading && emails ? (
               <SkeletonLoader
@@ -215,7 +216,9 @@ export const ProfileForm = ({
               <Box display="flex" flexDirection="column" rowGap={2}>
                 {emails.length > 0 && <EmailsList items={emails} />}
                 {emails.length === 0 || showEmailForm ? (
-                  <ProfileEmailForm />
+                  <ProfileEmailForm
+                    onAddSuccess={() => setShowEmailForm(false)}
+                  />
                 ) : (
                   <Box marginTop={1}>
                     <Button
@@ -232,7 +235,7 @@ export const ProfileForm = ({
             )}
           </InputSection>
 
-          {hasUserProfileWriteScope && (
+          {hasUserProfileWrite && (
             <>
               <InputSection
                 title={formatMessage(m.telNumber)}

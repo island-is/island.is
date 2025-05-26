@@ -9,12 +9,12 @@ import { useEffect, useState } from 'react'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
+import { useActorProfile } from '../../../hooks/useActorProfile'
 import { usePaperMail } from '../../../hooks/usePaperMail'
 import { mNotifications } from '../../../lib/messages'
 import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 import { SettingsCard } from '../cards/SettingsCard/SettingsCard'
 import { useUpdateActorProfileMutation } from './updateActorProfile.mutation.generated'
-import { useUserProfileActorProfileQuery } from './userProfileActorProfile.query.generated'
 
 type Settings = {
   emailNotifications: boolean
@@ -24,7 +24,7 @@ type Settings = {
 export const ActorProfileNotificationSettings = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useUserProfileActorProfileQuery()
+  const { data: actorProfile, loading, error } = useActorProfile()
 
   const [updateActorProfile] = useUpdateActorProfileMutation()
   const {
@@ -34,20 +34,19 @@ export const ActorProfileNotificationSettings = () => {
   } = usePaperMail()
 
   const [settings, setSettings] = useState<Settings>({
-    emailNotifications:
-      data?.userProfileActorProfile.emailNotifications ?? true,
+    emailNotifications: actorProfile?.emailNotifications ?? true,
     wantsPaper: wantsPaper ?? false,
   })
 
   useEffect(() => {
-    if (data?.userProfileActorProfile) {
+    if (actorProfile) {
       setSettings({
         ...settings,
-        emailNotifications: data.userProfileActorProfile.emailNotifications,
+        emailNotifications: actorProfile.emailNotifications,
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data])
+  }, [actorProfile])
 
   const onChange = async (updatedSettings: Partial<Settings>) => {
     const oldSettings = { ...settings }
