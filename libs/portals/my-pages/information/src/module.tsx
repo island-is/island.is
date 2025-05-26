@@ -29,32 +29,38 @@ const UserNotificationsSettings = lazy(() =>
   import('./screens/UserNotifications/UserNotifications'),
 )
 
-const sharedRoutes = (scopes: string[], isCompany = false) => [
-  {
-    name: isCompany ? m.settings : m.mySettings,
-    path: InformationPaths.SettingsOld,
-    enabled: scopes.includes(UserProfileScope.write),
-    element: <Navigate to={InformationPaths.Settings} replace />,
-  },
-  {
-    name: isCompany ? m.settings : m.mySettings,
-    path: InformationPaths.Settings,
-    enabled: scopes.includes(UserProfileScope.read),
-    element: <UserProfileSettings />,
-  },
-  {
-    name: m.userInfo,
-    path: InformationPaths.SettingsNotifications,
-    enabled: scopes.includes(UserProfileScope.read),
-    element: <UserNotificationsSettings />,
-  },
-  {
-    name: 'Notifications',
-    path: InformationPaths.Notifications,
-    enabled: scopes.includes(DocumentsScope.main),
-    element: <Notifications />,
-  },
-]
+const sharedRoutes = (scopes: string[], isCompany = false) => {
+  const isSettingsEnabled =
+    scopes.includes(UserProfileScope.read) &&
+    scopes.includes(DocumentsScope.main)
+
+  return [
+    {
+      name: isCompany ? m.settings : m.mySettings,
+      path: InformationPaths.SettingsOld,
+      enabled: isSettingsEnabled,
+      element: <Navigate to={InformationPaths.Settings} replace />,
+    },
+    {
+      name: isCompany ? m.settings : m.mySettings,
+      path: InformationPaths.Settings,
+      enabled: isSettingsEnabled,
+      element: <UserProfileSettings />,
+    },
+    {
+      name: m.userInfo,
+      path: InformationPaths.SettingsNotifications,
+      enabled: isSettingsEnabled,
+      element: <UserNotificationsSettings />,
+    },
+    {
+      name: 'Notifications',
+      path: InformationPaths.Notifications,
+      enabled: scopes.includes(DocumentsScope.main),
+      element: <Notifications />,
+    },
+  ]
+}
 
 export const informationModule: PortalModule = {
   name: 'Upplýsingar',
