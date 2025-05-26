@@ -245,6 +245,28 @@ export class FileService {
     return this.awsS3Service.getObject(theCase.type, file.key)
   }
 
+  mimeTypeToExtension: Record<string, string> = {
+    'application/pdf': '.pdf',
+    'image/jpeg': '.jpg',
+    'image/png': '.png',
+  }
+
+  private buildValidFilename = (baseName: string, mimeType: string): string => {
+    const ext = this.mimeTypeToExtension[mimeType]
+
+    if (!ext) {
+      return baseName
+    }
+
+    const lowerBase = baseName.toLowerCase()
+
+    const alreadyHasValidExt = Object.values(this.mimeTypeToExtension).some(
+      (knownExt) => lowerBase.endsWith(knownExt),
+    )
+
+    return alreadyHasValidExt ? baseName : `${baseName}${ext}`
+  }
+
   private async throttleUpload(
     file: CaseFile,
     theCase: Case,
@@ -255,8 +277,18 @@ export class FileService {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    const content = await this.getCaseFileFromS3(theCase, file)
+    const rawFileName =
+      theCase.caseFiles
+        ?.find((f) => f.key === file.key)
+        ?.userGeneratedFilename?.trim() || file.name
 
+    // We need to do this because if there is no file extension in
+    // the file name, the court file upload fails.
+    // This also handles adding .jpg to files with .jpeg endings
+    // (because the court system also rejects .jpeg)
+    const fileName = this.buildValidFilename(rawFileName, file.type)
+
+    const content = await this.getCaseFileFromS3(theCase, file)
     const courtDocumentFolder = this.getCourtDocumentFolder(file)
 
     return this.courtService.createDocument(
@@ -265,8 +297,8 @@ export class FileService {
       theCase.courtId,
       theCase.courtCaseNumber,
       courtDocumentFolder,
-      file.name,
-      file.name,
+      fileName,
+      fileName,
       file.type,
       content,
     )
@@ -357,6 +389,9 @@ export class FileService {
       [
         CaseFileCategory.PROSECUTOR_CASE_FILE,
         CaseFileCategory.DEFENDANT_CASE_FILE,
+        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
       ].includes(file.category)
     ) {
       const messages: Message[] = []

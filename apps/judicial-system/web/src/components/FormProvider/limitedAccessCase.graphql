@@ -280,5 +280,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     }
     isCompletedWithoutRuling
     caseSentToCourtDate
+    isRegisteredInPrisonSystem
   }
 }

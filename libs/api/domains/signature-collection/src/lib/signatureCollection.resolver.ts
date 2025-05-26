@@ -33,6 +33,7 @@ import {
 } from './models'
 import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
+import { SignatureCollectionCollectionTypeInput } from './dto/collectionType.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
@@ -51,9 +52,19 @@ export class SignatureCollectionResolver {
   }
 
   @BypassAuth()
-  @Query(() => SignatureCollection)
-  async signatureCollectionCurrent(): Promise<SignatureCollection> {
+  @Query(() => [SignatureCollection])
+  async signatureCollectionCurrent(): Promise<SignatureCollection[]> {
     return this.signatureCollectionService.currentCollection()
+  }
+
+  @BypassAuth()
+  @Query(() => SignatureCollection)
+  async signatureCollectionLatestForType(
+    @Args('input') input: SignatureCollectionCollectionTypeInput,
+  ) {
+    return this.signatureCollectionService.getLatestCollectionForType(
+      input.collectionType,
+    )
   }
 
   @BypassAuth()
@@ -105,9 +116,13 @@ export class SignatureCollectionResolver {
   @Query(() => [SignatureCollectionSignedList], { nullable: true })
   @Audit()
   async signatureCollectionSignedList(
+    @Args('input') input: SignatureCollectionCollectionTypeInput,
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionSignedList[] | null> {
-    return this.signatureCollectionService.signedList(user)
+    return this.signatureCollectionService.signedList(
+      user,
+      input.collectionType,
+    )
   }
 
   @Scopes(ApiScope.signatureCollection)
@@ -155,7 +170,11 @@ export class SignatureCollectionResolver {
     @CurrentUser() user: User,
     @Args('input') input: SignatureCollectionListIdInput,
   ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.unsign(input.listId, user)
+    return this.signatureCollectionService.unsign(
+      input.listId,
+      user,
+      input.collectionType,
+    )
   }
 
   @Scopes(ApiScope.signatureCollection)

@@ -38,6 +38,7 @@ import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
 import { OccupationalLicensesModule } from '@island.is/api/domains/occupational-licenses'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
+import { ApiDomainsHmsModule } from '@island.is/api/domains/hms'
 import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
 import { HousingBenefitsModule } from '@island.is/api/domains/housing-benefits'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
@@ -211,6 +212,7 @@ import { VerdictsClientConfig } from '@island.is/clients/verdicts'
 import { VerdictsModule } from '@island.is/api/domains/verdicts'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
+import { HmsConfig } from '@island.is/clients/hms'
 
 const environment = getConfig
 
@@ -322,6 +324,7 @@ const environment = getConfig
     VehiclesModule,
     RightsPortalModule,
     AssetsModule,
+    ApiDomainsHmsModule,
     HmsLoansModule,
     HousingBenefitsModule,
     PassportModule,
@@ -382,6 +385,7 @@ const environment = getConfig
         DownloadServiceConfig,
         HuntingLicenseClientConfig,
         FeatureFlagConfig,
+        HmsConfig,
         HmsLoansClientConfig,
         HousingBenefitsConfig,
         FinanceClientConfig,
