@@ -90,8 +90,18 @@ export const JudicialSystem = new XroadConf({
       staging: '5309672079',
       prod: '5309672079',
     },
+    XROAD_DMR_MEMBER_CODE: {
+      dev: '10014',
+      staging: '5804170510',
+      prod: '5804170510',
+    },
     XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1',
     XROAD_POLICE_API_PATH: '/Logreglan-Private/rettarvarsla-v1',
+    XROAD_DMR_CRIMINAL_RECORD_API_PATH: {
+      dev: '/DMR-Protected/sakaskra-dev',
+      staging: '/DMR-Protected/sakaskra-dev',
+      prod: '/DMR-Protected/sakaskra',
+    },
   },
   secrets: {
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT',
@@ -424,8 +434,8 @@ export const NationalRegistry = new XroadConf({
   env: {
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
-      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
-      prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
     },
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
       dev: json([
@@ -439,7 +449,7 @@ export const NationalRegistry = new XroadConf({
       ]),
     },
     // Deprecated:
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1',
     XROAD_TJODSKRA_MEMBER_CODE: {
       prod: '6503760649',
       dev: '10001',
