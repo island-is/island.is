@@ -111,7 +111,7 @@ export const EmailsList = ({ items }: EmailsListProps) => {
       },
     }
 
-    const ctaList: EmailCta[] = [deleteEmailCta]
+    const ctaList: EmailCta[] = []
 
     if (isActor) {
       ctaList.push(connectToDelegationCta)
@@ -119,28 +119,38 @@ export const EmailsList = ({ items }: EmailsListProps) => {
       ctaList.push(makePrimaryCta)
     }
 
+    ctaList.push(deleteEmailCta)
+
     return ctaList
   }
 
-  const getTag = (email: Email): EmailCardTag | undefined => {
+  const getTags = (email: Email): EmailCardTag[] => {
+    const tags: EmailCardTag[] = []
+
     if (isActor) {
       if (
         email.isConnectedToActorProfile &&
         email.email === actorProfileEmail
       ) {
-        return 'connected_to_delegation'
+        tags.push('connected_to_delegation')
       }
 
-      return undefined
+      return tags
     }
 
     if (email.primary) {
-      return 'primary'
-    } else if (email.isConnectedToActorProfile) {
-      return 'connected_to_delegation'
-    } else if (email.emailStatus === DataStatus.NotVerified) {
-      return 'not_verified'
+      tags.push('primary')
     }
+
+    if (email.isConnectedToActorProfile) {
+      tags.push('connected_to_delegation')
+    }
+
+    if (email.emailStatus === DataStatus.NotVerified) {
+      tags.push('not_verified')
+    }
+
+    return tags
   }
 
   return (
@@ -149,7 +159,7 @@ export const EmailsList = ({ items }: EmailsListProps) => {
         <EmailCard
           key={item.id}
           title={item.email}
-          tag={getTag(item)}
+          tags={getTags(item)}
           ctaList={createCtaList(item)}
         />
       ))}

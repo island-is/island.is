@@ -20,14 +20,14 @@ export type EmailCardTag =
 type EmailCardProps = {
   title?: string | null
   ctaList?: EmailCta[]
-  tag?: EmailCardTag
+  tags?: EmailCardTag[]
 }
 
-export const EmailCard = ({ title, ctaList, tag }: EmailCardProps) => {
+export const EmailCard = ({ title, ctaList, tags }: EmailCardProps) => {
   const popover = usePopoverState()
   const { formatMessage } = useIntl()
 
-  const getTagProps = (): TagProps => {
+  const getTagProps = (tag: EmailCardTag): TagProps => {
     switch (tag) {
       case 'not_verified':
         return {
@@ -57,13 +57,27 @@ export const EmailCard = ({ title, ctaList, tag }: EmailCardProps) => {
       borderWidth="standard"
       paddingX={[3, 3, 4]}
       paddingY={3}
+      overflow="hidden"
     >
       <Box display="flex" justifyContent="spaceBetween" alignItems="center">
-        <Box display="flex" alignItems="center" columnGap={2}>
-          <Text variant="h4" color="dark400">
+        <Box
+          display="flex"
+          alignItems={['flexStart', 'flexStart', 'center']}
+          columnGap={2}
+          flexWrap="wrap"
+          flexDirection={['column', 'column', 'row']}
+          rowGap={1}
+        >
+          <Text variant="h4" color="dark400" truncate>
             {title || 'Not set'}
           </Text>
-          {tag && <Tag {...getTagProps()} />}
+          {tags && (
+            <Box display="flex" columnGap={2}>
+              {tags.map((tag) => (
+                <Tag {...getTagProps(tag)} />
+              ))}
+            </Box>
+          )}
         </Box>
         {ctaList && (
           <>
