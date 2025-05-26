@@ -2,8 +2,9 @@ import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
+import { applicationAnswers } from '../../shared'
 import { Routes, OtherFeesPayeeOptions } from '../../utils/enums'
-import { extractOtherFeesData, getOptionLabel } from '../../utils/summaryUtils'
+import { getOptionLabel } from '../../utils/summaryUtils'
 import {
   filterEmptyCostItems,
   formatCurrency,
@@ -27,10 +28,9 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
   const { answers } = application
 
   const {
-    housingFund,
-    electricityCost,
-    heatingCost,
-    otherCosts,
+    housingFundPayee,
+    electricityCostPayee,
+    heatingCostPayee,
     otherCostItems,
     electricityCostMeterStatusDate,
     heatingCostMeterStatusDate,
@@ -39,12 +39,13 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
     electricityCostMeterStatus,
     heatingCostMeterNumber,
     heatingCostMeterStatus,
-  } = extractOtherFeesData(answers)
+  } = applicationAnswers(answers)
 
-  const tenantPaysHouseFund = housingFund === OtherFeesPayeeOptions.TENANT
-  const tenantPaysElectricity = electricityCost === OtherFeesPayeeOptions.TENANT
-  const tenantPaysHeating = heatingCost === OtherFeesPayeeOptions.TENANT
-  const tenantPaysOtherFees = !!otherCosts && otherCosts.length > 0
+  const tenantPaysHouseFund = housingFundPayee === OtherFeesPayeeOptions.TENANT
+  const tenantPaysElectricity =
+    electricityCostPayee === OtherFeesPayeeOptions.TENANT
+  const tenantPaysHeating = heatingCostPayee === OtherFeesPayeeOptions.TENANT
+  const tenantPaysOtherFees = !!otherCostItems && otherCostItems.length > 0
   const isOtherCostItems = Array.isArray(otherCostItems) ? otherCostItems : []
 
   return (
@@ -61,7 +62,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
           <KeyValue
             label={summary.electricityCostLabel}
             value={getOptionLabel(
-              electricityCost || '',
+              electricityCostPayee || '',
               getOtherFeesPayeeOptions,
               '',
             )}
@@ -71,7 +72,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
           <KeyValue
             label={summary.heatingCostLabel}
             value={getOptionLabel(
-              heatingCost || '',
+              heatingCostPayee || '',
               getOtherFeesPayeeOptions,
               '',
             )}
@@ -81,7 +82,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
           <KeyValue
             label={summary.houseFundLabel}
             value={getOptionLabel(
-              housingFund || '',
+              housingFundPayee || '',
               getOtherFeesPayeeOptions,
               '',
             )}

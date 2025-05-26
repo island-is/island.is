@@ -2,12 +2,15 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { EMAIL_REGEX, getValueViaPath } from '@island.is/application/core'
-import { Application, StateLifeCycle } from '@island.is/application/types'
-import { ApplicantsInfo, CostField } from './types'
+import { EMAIL_REGEX } from '@island.is/application/core'
+import { StateLifeCycle } from '@island.is/application/types'
+import {
+  ApplicantsInfo,
+  CostField,
+  RentalHousingCategoryClass,
+} from '../shared'
 import {
   RentalAmountIndexTypes,
-  RentalHousingCategoryClass,
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
@@ -102,50 +105,6 @@ export const formatCurrency = (answer: string) =>
 export const parseCurrency = (value: string): number | undefined => {
   const numeric = value.replace(/[^\d]/g, '')
   return numeric ? Number(numeric) : undefined
-}
-
-export const extractApplicationAnswers = (answers: Application['answers']) => {
-  return {
-    landlords: getValueViaPath<ApplicantsInfo[]>(answers, 'landlordInfo.table'),
-    tenants: getValueViaPath<ApplicantsInfo[]>(answers, 'tenantInfo.table'),
-    propertyTypeOptions: getValueViaPath<RentalHousingCategoryTypes>(
-      answers,
-      'registerProperty.categoryType',
-    ),
-    propertyClassOptions: getValueViaPath<RentalHousingCategoryClass>(
-      answers,
-      'registerProperty.categoryClass',
-    ),
-    inspectorOptions: getValueViaPath<RentalHousingConditionInspector>(
-      answers,
-      'condition.inspector',
-    ),
-    rentalAmountIndexTypesOptions: getValueViaPath<RentalAmountIndexTypes>(
-      answers,
-      'rentalAmount.indexTypes',
-    ),
-    rentalAmountPaymentDateOptions:
-      getValueViaPath<RentalAmountPaymentDateOptions>(
-        answers,
-        'rentalAmount.paymentDateOptions',
-      ),
-    otherFeesHousingFund: getValueViaPath<OtherFeesPayeeOptions>(
-      answers,
-      'otherFees.housingFund',
-    ),
-    otherFeesElectricityCost: getValueViaPath<OtherFeesPayeeOptions>(
-      answers,
-      'otherFees.electricityCost',
-    ),
-    otherFeesHeatingCost: getValueViaPath<OtherFeesPayeeOptions>(
-      answers,
-      'otherFees.heatingCost',
-    ),
-    nextStepInReviewOptions: getValueViaPath<NextStepInReviewOptions>(
-      answers,
-      'reviewInfo.applicationReview.nextStepOptions',
-    ),
-  }
 }
 
 export const getPropertyTypeOptions = () => [

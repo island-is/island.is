@@ -6,9 +6,9 @@ import {
   FormValue,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
+import { RentalHousingCategoryClass, CostField } from '../shared'
 import {
   OtherFeesPayeeOptions,
-  RentalHousingCategoryClass,
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
@@ -19,20 +19,6 @@ import {
 export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.EDIT }
 
 export type StatusProvider = 'failure' | 'success'
-
-export type CostField = {
-  description: string
-  amount?: number
-  hasError?: boolean
-}
-
-export type ApplicantsInfo = {
-  nationalIdWithName: { name: string; nationalId: string }
-  phone: string
-  address: string
-  email: string
-  isRepresentative: string[]
-}
 
 export type SelectOption = {
   value: string

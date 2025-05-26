@@ -15,12 +15,15 @@ import {
   SecurityDepositType,
   SpecialGroup,
 } from '@island.is/clients/hms-rental-agreement'
+import {
+  RentalHousingCategoryClass,
+  applicationAnswers,
+} from '@island.is/application/templates/rental-agreement'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { RentalHousingCategoryClass } from '../../../../../../../application/templates/rental-agreement/src/utils/enums'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { generateRentalAgreementEmail } from './rental-agreement-email'
-import { applicationAnswers, formatPhoneNumber } from './utils'
+import { formatPhoneNumber } from './utils'
 
 @Injectable()
 export class RentalAgreementService extends BaseTemplateApiService {

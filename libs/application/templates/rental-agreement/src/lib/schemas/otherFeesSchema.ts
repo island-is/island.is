@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { YesOrNoEnum } from '@island.is/application/core'
+import { CostField } from '../../shared'
 import {
   hasInvalidCostItems,
   isValidMeterNumber,
@@ -7,7 +8,6 @@ import {
   parseCurrency,
 } from '../../utils/utils'
 import { OtherFeesPayeeOptions } from '../../utils/enums'
-import { CostField } from '../../utils/types'
 import * as m from '../messages'
 
 const otherCostItemsSchema = z.object({

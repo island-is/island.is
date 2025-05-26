@@ -47,11 +47,6 @@ export enum RentalHousingCategoryTypes {
   COMMERCIAL = 'Commercial',
 }
 
-export enum RentalHousingCategoryClass {
-  GENERAL_MARKET = 'generalMarket',
-  SPECIAL_GROUPS = 'specialGroups',
-}
-
 export enum RentalHousingCategoryClassGroup {
   STUDENT_HOUSING = 'Student',
   SENIOR_CITIZEN_HOUSING = 'Elderly',
