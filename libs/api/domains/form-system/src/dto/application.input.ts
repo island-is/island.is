@@ -15,6 +15,21 @@ export class GetApplicationInput {
   id?: string
 }
 
+@InputType('FormSystemApplicationsInput')
+export class ApplicationsInput {
+  @Field(() => String, { nullable: true })
+  organizationNationalId?: string
+
+  @Field(() => Number, { nullable: true })
+  page?: Number
+
+  @Field(() => Number, { nullable: true })
+  limit?: Number
+
+  @Field(() => Boolean, { nullable: false })
+  isTest!: boolean
+}
+
 @InputType('SubmitFormSystemScreenInput')
 export class SubmitScreenInput {
   @Field(() => String, { nullable: true })
