@@ -1,12 +1,11 @@
 import { UploadFile } from '@island.is/island-ui/core'
 import { YesOrNoEnum } from '@island.is/application/core'
-import { HmsSearchAddress, Unit as OriginalUnit } from '@island.is/api/schema'
 import {
   DefaultEvents,
   FormValue,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
-import { RentalHousingCategoryClass, CostField } from '../shared'
+import { RentalHousingCategoryClass, CostField, AddressProps } from '../shared'
 import {
   OtherFeesPayeeOptions,
   RentalHousingCategoryClassGroup,
@@ -35,17 +34,6 @@ export interface ExternalData {
     date: string
     status: StatusProvider
   }
-}
-
-export interface AddressProps extends HmsSearchAddress {
-  label: string
-  value: string
-}
-
-export interface Unit extends OriginalUnit {
-  checked?: boolean
-  changedSize?: number
-  numOfRooms?: number
 }
 
 export interface ApplicationAnswers {

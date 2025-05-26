@@ -10,7 +10,7 @@ import {
 import { Application } from '@island.is/application/types'
 import { SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
-import { Unit } from '../../../utils/types'
+import { Unit } from '../../../shared'
 import { specialProvisions } from '../../../lib/messages'
 
 export const RentalHousingSpecialProvisions = buildSubSection({

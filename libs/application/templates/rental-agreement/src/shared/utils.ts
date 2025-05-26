@@ -1,7 +1,6 @@
 import { Application, ApplicationFileInput } from '@island.is/api/schema'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
-import { ApplicantsInfo, CostField } from './types'
-import { AddressProps, Unit } from '../utils/types'
+import { ApplicantsInfo, Unit, CostField, AddressProps } from './types'
 import { NextStepInReviewOptions } from '../utils/enums'
 
 export const applicationAnswers = (answers: Application['answers']) => {

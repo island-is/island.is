@@ -20,11 +20,11 @@ import {
   HmsPropertyInfo,
   HmsPropertyInfoInput,
 } from '@island.is/api/schema'
+import { AddressProps, Unit } from '../../shared'
 import { PropertyTableHeader } from './components/PropertyTableHeader'
 import { PropertyTableRow } from './components/PropertyTableRow'
 import { PropertyTableUnits } from './components/PropertyTableUnits'
 import { registerProperty } from '../../lib/messages'
-import { AddressProps, Unit } from '../../utils/types'
 
 interface Props extends FieldBaseProps {
   field: CustomField
