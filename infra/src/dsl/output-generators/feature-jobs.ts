@@ -117,6 +117,7 @@ export const generateCleanUpForFeature = async (
         .filter((id) => id)
         .map((info) => {
           const host = resolveDbHost(service, env, info?.host)
+          const feature = env.feature
           const extensions = getPostgresExtensions(
             service.initContainers?.postgres?.extensions,
           )
@@ -128,7 +129,7 @@ export const generateCleanUpForFeature = async (
             env: [
               {
               name: 'FEATURE_NAME',
-              value: env.feature,
+              value: feature,
               },
               {
               name: 'PGHOST',
