@@ -1,11 +1,10 @@
 import {
-  buildAsyncVehicleTextField,
+  buildVehiclePermnoWithInfoField,
   buildMultiField,
   buildRadioField,
 } from '@island.is/application/core'
 import { convoy } from '../../../lib/messages'
-import { isExemptionTypeShortTerm } from '../../../utils'
-import { loadValidation } from '../../../utils/helperFunctions/loadValidation'
+import { isExemptionTypeShortTerm, loadValidation } from '../../../utils'
 import { DollyType } from '../../../shared'
 
 export const ConvoyShortTermMultiField = buildMultiField({
@@ -16,7 +15,7 @@ export const ConvoyShortTermMultiField = buildMultiField({
   title: convoy.general.pageTitle,
   description: convoy.general.description,
   children: [
-    buildAsyncVehicleTextField({
+    buildVehiclePermnoWithInfoField({
       id: 'convoy.items[0].vehicle',
       width: 'full',
       required: true,
@@ -28,7 +27,7 @@ export const ConvoyShortTermMultiField = buildMultiField({
       fallbackErrorMessage: convoy.error.fallbackErrorMessage,
       validationFailedErrorMessage: convoy.error.validationFailedErrorMessage,
     }),
-    buildAsyncVehicleTextField({
+    buildVehiclePermnoWithInfoField({
       id: 'convoy.items[0].trailer',
       width: 'full',
       required: false,

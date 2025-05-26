@@ -8,6 +8,7 @@ import {
   HiddenInputField,
   RepeaterItem,
   RepeaterOptionValue,
+  VehiclePermnoWithInfoField,
 } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -28,6 +29,7 @@ import { useApolloClient } from '@apollo/client'
 import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
 import { AlertMessageFormField } from '../AlertMessageFormField/AlertMessageFormField'
 import * as styles from './TableRepeaterItem.css'
+import { VehiclePermnoWithInfoFormField } from '../VehiclePermnoWithInfoFormField/VehiclePermnoWithInfoFormField'
 
 interface ItemFieldProps {
   application: Application
@@ -102,6 +104,8 @@ export const Item = ({
     Component = HiddenInputFormField
   } else if (component === 'alertMessage') {
     Component = AlertMessageFormField
+  } else if (component === 'vehiclePermnoWithInfo') {
+    Component = VehiclePermnoWithInfoFormField
   } else {
     Component = componentMapper[component]
   }
@@ -362,6 +366,23 @@ export const Item = ({
     }
   }
 
+  let vehiclePermnoWithInfoProps: VehiclePermnoWithInfoField | undefined
+  if (component === 'vehiclePermnoWithInfo') {
+    vehiclePermnoWithInfoProps = {
+      id: id,
+      type: FieldTypes.VEHICLE_PERMNO_WITH_INFO,
+      component: FieldComponents.VEHICLE_PERMNO_WITH_INFO,
+      children: undefined,
+      required: item.required,
+      loadValidation: item.loadValidation,
+      permnoLabel: item.permnoLabel,
+      makeAndColorLabel: item.makeAndColorLabel,
+      errorTitle: item.errorTitle,
+      fallbackErrorMessage: item.fallbackErrorMessage,
+      validationFailedErrorMessage: item.validationFailedErrorMessage,
+    }
+  }
+
   if (
     typeof condition === 'function'
       ? condition && !condition(application, activeValues)
@@ -408,9 +429,20 @@ export const Item = ({
           }}
         />
       )}
+      {component === 'vehiclePermnoWithInfo' && vehiclePermnoWithInfoProps && (
+        <VehiclePermnoWithInfoFormField
+          application={application}
+          field={{
+            ...vehiclePermnoWithInfoProps,
+          }}
+        />
+      )}
       {!(component === 'selectAsync' && selectAsyncProps) &&
         !(component === 'hiddenInput' && hiddenInputProps) &&
-        !(component === 'alertMessage' && alertMessageProps) && (
+        !(component === 'alertMessage' && alertMessageProps) &&
+        !(
+          component === 'vehiclePermnoWithInfo' && vehiclePermnoWithInfoProps
+        ) && (
           <Component
             id={id}
             name={id}

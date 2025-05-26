@@ -8,7 +8,7 @@ export const convoySection = buildSection({
   title: convoy.general.sectionTitle,
   children: [
     // Short-term
-    ConvoyShortTermMultiField,
+    // ConvoyShortTermMultiField,
 
     // Long-term
     ConvoyLongTermMultiField,

@@ -60,7 +60,7 @@ export type AsyncSelectContext = {
   selectedValues?: string[]
 }
 
-export type AsyncVehicleTextContext = {
+export type VehiclePermnoWithInfoContext = {
   application: Application
   apolloClient: ApolloClient<object>
   permno: string
@@ -89,6 +89,7 @@ export type RepeaterFields =
   | 'selectAsync'
   | 'hiddenInput'
   | 'alertMessage'
+  | 'vehiclePermnoWithInfo'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -238,6 +239,17 @@ export type RepeaterItem = {
       marginBottom?: BoxProps['marginBottom']
       marginTop?: BoxProps['marginTop']
     }
+  | {
+      component: 'vehiclePermnoWithInfo'
+      loadValidation?: (c: VehiclePermnoWithInfoContext) => Promise<{
+        errorMessages?: FormText[]
+      }>
+      permnoLabel?: FormText
+      makeAndColorLabel?: FormText
+      errorTitle?: FormText
+      fallbackErrorMessage?: FormText
+      validationFailedErrorMessage?: FormText
+    }
 )
 
 export type AlertMessageLink = {
@@ -339,7 +351,7 @@ export enum FieldTypes {
   TITLE = 'TITLE',
   OVERVIEW = 'OVERVIEW',
   COPY_LINK = 'COPY_LINK',
-  ASYNC_VEHICLE_TEXT = 'ASYNC_VEHICLE_TEXT',
+  VEHICLE_PERMNO_WITH_INFO = 'VEHICLE_PERMNO_WITH_INFO',
 }
 
 export enum FieldComponents {
@@ -382,7 +394,7 @@ export enum FieldComponents {
   TITLE = 'TitleFormField',
   OVERVIEW = 'OverviewFormField',
   COPY_LINK = 'CopyLinkFormField',
-  ASYNC_VEHICLE_TEXT = 'AsyncVehicleTextFormField',
+  VEHICLE_PERMNO_WITH_INFO = 'VehiclePermnoWithInfoFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -752,7 +764,7 @@ export type TableRepeaterField = BaseField & {
      * if not provided it will be auto generated from the fields
      */
     rows?: string[]
-    format?: Record<string, (value: string) => string | StaticText>
+    format?: Record<string, (value: string, index: number) => string | StaticText>
   }
   initActiveFieldIfEmpty?: boolean
 }
@@ -980,10 +992,10 @@ export interface CopyLinkField extends BaseField {
   semiBoldLink?: boolean
 }
 
-export interface AsyncVehicleTextField extends InputField {
-  readonly type: FieldTypes.ASYNC_VEHICLE_TEXT
-  component: FieldComponents.ASYNC_VEHICLE_TEXT
-  loadValidation?: (c: AsyncVehicleTextContext) => Promise<{
+export interface VehiclePermnoWithInfoField extends InputField {
+  readonly type: FieldTypes.VEHICLE_PERMNO_WITH_INFO
+  component: FieldComponents.VEHICLE_PERMNO_WITH_INFO
+  loadValidation?: (c: VehiclePermnoWithInfoContext) => Promise<{
     errorMessages?: FormText[]
   }>
   permnoLabel?: FormText
@@ -1035,4 +1047,4 @@ export type Field =
   | TitleField
   | OverviewField
   | CopyLinkField
-  | AsyncVehicleTextField
+  | VehiclePermnoWithInfoField

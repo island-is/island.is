@@ -8,7 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
-  AsyncVehicleTextField,
+  VehiclePermnoWithInfoField,
   FieldBaseProps,
 } from '@island.is/application/types'
 import {
@@ -29,14 +29,12 @@ import { GET_VEHICLE_BASIC_INFO_BY_PERMNO } from './graphql/queries'
 import debounce from 'lodash/debounce'
 
 interface Props extends FieldBaseProps {
-  field: AsyncVehicleTextField
+  field: VehiclePermnoWithInfoField
 }
 
-export const AsyncVehicleTextFormField: FC<React.PropsWithChildren<Props>> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const VehiclePermnoWithInfoFormField: FC<
+  React.PropsWithChildren<Props>
+> = ({ application, field, errors }) => {
   const INPUT_MAX_LENGTH = 5
   const permnoField = `${field.id}.permno`
   const makeAndColorField = `${field.id}.makeAndColor`

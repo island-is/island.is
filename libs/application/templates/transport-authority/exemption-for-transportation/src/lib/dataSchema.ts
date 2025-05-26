@@ -248,10 +248,7 @@ const ConvoyItemSchema = z.object({
     .object({
       permno: z.string().optional(),
       makeAndColor: z.string().optional(),
-      hasError: z
-        .boolean()
-        .refine((v) => v !== true)
-        .optional(),
+      hasError: z.boolean().optional(),
     })
     .refine(
       ({ permno }) => {
@@ -267,6 +264,10 @@ const ConvoyItemSchema = z.object({
       },
       { path: ['makeAndColor'] },
     )
+    .refine(({ permno, hasError }) => {
+      if (!permno) return true
+      return hasError !== true
+    })
     .optional(),
   dollyType: z.nativeEnum(DollyType),
 })

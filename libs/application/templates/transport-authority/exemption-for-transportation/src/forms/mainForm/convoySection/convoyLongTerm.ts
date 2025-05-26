@@ -3,7 +3,12 @@ import {
   buildTableRepeaterField,
 } from '@island.is/application/core'
 import { convoy } from '../../../lib/messages'
-import { isExemptionTypeLongTerm, MAX_CNT_CONVOY } from '../../../utils'
+import {
+  isExemptionTypeLongTerm,
+  loadValidation,
+  MAX_CNT_CONVOY,
+} from '../../../utils'
+import { DollyType } from '../../../shared'
 
 export const ConvoyLongTermMultiField = buildMultiField({
   id: 'convoyLongTermMultiField',
@@ -25,17 +30,54 @@ export const ConvoyLongTermMultiField = buildMultiField({
       initActiveFieldIfEmpty: true,
       table: {
         header: [
-          convoy.labels.convoyNumber,
-          convoy.labels.vehiclePermno,
-          convoy.labels.trailerPermno,
+          convoy.labels.convoyNumberTableHeader,
+          convoy.labels.vehicleTableHeader,
+          convoy.labels.trailerTableHeader,
         ],
+        format: {
+          index: (_, index) => {
+            return {
+              ...convoy.labels.convoyNumber,
+              values: { number: index + 1 },
+            }
+          },
+        },
+        rows: ['index', 'vehicle.permno', 'trailer.permno'],
       },
       fields: {
+        index: {
+          component: 'hiddenInput',
+        },
         vehicle: {
-          component: 'input',
-          label: convoy.labels.vehiclePermno,
+          component: 'vehiclePermnoWithInfo',
           width: 'full',
           required: true,
+          loadValidation: ({ apolloClient, permno }) =>
+            loadValidation(permno, false, apolloClient),
+          permnoLabel: convoy.labels.vehiclePermno,
+          makeAndColorLabel: convoy.labels.vehicleMakeAndColor,
+          errorTitle: convoy.error.alertTitle,
+          fallbackErrorMessage: convoy.error.fallbackErrorMessage,
+          validationFailedErrorMessage:
+            convoy.error.validationFailedErrorMessage,
+        },
+        trailer: {
+          component: 'vehiclePermnoWithInfo',
+          label: convoy.labels.trailerPermno,
+          width: 'full',
+          loadValidation: ({ apolloClient, permno }) =>
+            loadValidation(permno, true, apolloClient),
+          permnoLabel: convoy.labels.trailerPermno,
+          makeAndColorLabel: convoy.labels.trailerMakeAndColor,
+          errorTitle: convoy.error.alertTitle,
+          fallbackErrorMessage: convoy.error.fallbackErrorMessage,
+          validationFailedErrorMessage:
+            convoy.error.validationFailedErrorMessage,
+        },
+        dollyType: {
+          component: 'hiddenInput',
+          defaultValue: DollyType.NONE,
+          displayInTable: false,
         },
       },
     }),

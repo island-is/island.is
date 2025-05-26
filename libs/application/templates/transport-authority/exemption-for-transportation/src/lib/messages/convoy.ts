@@ -20,11 +20,6 @@ export const convoy = {
     },
   }),
   labels: defineMessages({
-    convoyNumber: {
-      id: 'ta.eft.application:convoy.labels.convoyNumber',
-      defaultMessage: 'Vagnlest #',
-      description: 'Convoy number label',
-    },
     vehiclePermno: {
       id: 'ta.eft.application:convoy.labels.vehiclePermno',
       defaultMessage: 'Fastanúmer ökutækis',
@@ -64,6 +59,26 @@ export const convoy = {
       id: 'ta.eft.application:convoy.labels.editItemButtonTooltipText',
       defaultMessage: 'Breyta vagnlest',
       description: 'Edit item in convoy table button tooltip text',
+    },
+    convoyNumberTableHeader: {
+      id: 'ta.eft.application:convoy.labels.convoyNumberTableHeader',
+      defaultMessage: 'Vagnlest',
+      description: 'Convoy number table header label',
+    },
+    vehicleTableHeader: {
+      id: 'ta.eft.application:convoy.labels.vehicleTableHeader',
+      defaultMessage: 'Ökutæki',
+      description: 'Vehicle table header label',
+    },
+    trailerTableHeader: {
+      id: 'ta.eft.application:convoy.labels.trailerTableHeader',
+      defaultMessage: 'Eftirvagn',
+      description: 'Trailer table header label',
+    },
+    convoyNumber: {
+      id: 'ta.eft.application:convoy.labels.convoyNumber',
+      defaultMessage: 'Vagnlest {number}',
+      description: 'Convoy number label',
     },
   }),
   error: defineMessages({

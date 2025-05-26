@@ -52,7 +52,7 @@ import {
   TitleVariants,
   OverviewField,
   CopyLinkField,
-  AsyncVehicleTextField,
+  VehiclePermnoWithInfoField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -1220,9 +1220,9 @@ export const buildCopyLinkField = (
   }
 }
 
-export const buildAsyncVehicleTextField = (
-  data: Omit<AsyncVehicleTextField, 'type' | 'component' | 'children'>,
-): AsyncVehicleTextField => {
+export const buildVehiclePermnoWithInfoField = (
+  data: Omit<VehiclePermnoWithInfoField, 'type' | 'component' | 'children'>,
+): VehiclePermnoWithInfoField => {
   const {
     required,
     loadValidation,
@@ -1236,8 +1236,8 @@ export const buildAsyncVehicleTextField = (
   return {
     ...extractCommonFields(data),
     children: undefined,
-    type: FieldTypes.ASYNC_VEHICLE_TEXT,
-    component: FieldComponents.ASYNC_VEHICLE_TEXT,
+    type: FieldTypes.VEHICLE_PERMNO_WITH_INFO,
+    component: FieldComponents.VEHICLE_PERMNO_WITH_INFO,
     required,
     loadValidation,
     permnoLabel,
