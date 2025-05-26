@@ -52,10 +52,10 @@ export const overviewMessages = defineMessages({
     defaultMessage: 'Fasteignarnúmer',
     description: 'Real estate ID',
   },
-  useageUnits: {
-    id: 'fca.application:useageUnits',
+  usageUnits: {
+    id: 'fca.application:usageUnits',
     defaultMessage: 'Notkunareiningar til að endurmeta',
-    description: 'Useage units',
+    description: 'Usage units',
   },
   pay: {
     id: 'fca.application:pay',

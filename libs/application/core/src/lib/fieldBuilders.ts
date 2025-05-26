@@ -52,7 +52,6 @@ import {
   TitleVariants,
   OverviewField,
   CopyLinkField,
-  FormValue,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'

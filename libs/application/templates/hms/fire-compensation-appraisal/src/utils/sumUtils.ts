@@ -2,12 +2,12 @@ import { getValueViaPath } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { Fasteign } from '@island.is/clients/assets'
 
-export const sumUseageUnitsFireCompensation = (
+export const sumUsageUnitsFireCompensation = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
   const realEstateId = getValueViaPath<string>(answers, 'realEstate')
-  const useageUnits = getValueViaPath<Array<string>>(answers, 'useageUnits')
+  const usageUnits = getValueViaPath<Array<string>>(answers, 'usageUnits')
   const properties = getValueViaPath<Array<Fasteign>>(
     externalData,
     'getProperties.data',
@@ -17,15 +17,15 @@ export const sumUseageUnitsFireCompensation = (
     (property) => property.fasteignanumer === realEstateId,
   )
 
-  const useageUnitsFireAppraisal =
+  const usageUnitsFireAppraisal =
     property?.notkunareiningar?.notkunareiningar?.map((unit) => {
-      if (useageUnits?.includes(unit.notkunareininganumer ?? '')) {
+      if (usageUnits?.includes(unit.notkunareininganumer ?? '')) {
         return unit.brunabotamat
       }
       return 0
     })
 
-  const total = useageUnitsFireAppraisal?.reduce((acc, curr) => {
+  const total = usageUnitsFireAppraisal?.reduce((acc, curr) => {
     return (acc ?? 0) + (curr ?? 0)
   }, 0)
 

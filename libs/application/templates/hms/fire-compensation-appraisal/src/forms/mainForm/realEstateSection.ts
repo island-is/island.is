@@ -10,10 +10,10 @@ import { Fasteign } from '@island.is/clients/assets'
 import { notkunareiningarOptions } from '../../utils/notkunareiningarUtils'
 import * as m from '../../lib/messages/realEstateMessages'
 import {
-  sumUseageUnitsFireCompensation,
+  sumUsageUnitsFireCompensation,
   totalFireCompensation,
 } from '../../utils/sumUtils'
-import { useageUnitsCondition } from '../../utils/conditionUtils'
+import { usageUnitsCondition } from '../../utils/conditionUtils'
 
 export const realEstateSection = buildSection({
   id: 'realEstateSection',
@@ -40,25 +40,25 @@ export const realEstateSection = buildSection({
               })) ?? []
             )
           },
-          clearOnChange: ['useageUnits'],
+          clearOnChange: ['usageUnits'],
           marginBottom: 4,
         }),
         buildCheckboxField({
-          condition: useageUnitsCondition,
-          id: 'useageUnits',
-          title: m.realEstateMessages.useageUnit,
+          condition: usageUnitsCondition,
+          id: 'usageUnits',
+          title: m.realEstateMessages.usageUnit,
           options: notkunareiningarOptions,
         }),
         buildDisplayField({
-          condition: useageUnitsCondition,
-          id: 'useageUnitsFireCompensation',
-          label: m.realEstateMessages.useageUnitsFireCompensation,
+          condition: usageUnitsCondition,
+          id: 'usageUnitsFireCompensation',
+          label: m.realEstateMessages.usageUnitsFireCompensation,
           variant: 'currency',
           rightAlign: true,
-          value: sumUseageUnitsFireCompensation,
+          value: sumUsageUnitsFireCompensation,
         }),
         buildDisplayField({
-          condition: useageUnitsCondition,
+          condition: usageUnitsCondition,
           id: 'totalFireCompensation',
           label: m.realEstateMessages.totalFireCompensation,
           variant: 'currency',

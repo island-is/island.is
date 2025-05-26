@@ -101,16 +101,16 @@ export const realEstateOverviewItems = (
   const property = properties?.find(
     (property) => property.fasteignanumer === realEstateId,
   )
-  const selectedUseageUnits =
-    getValueViaPath<string[]>(answers, 'useageUnits') || []
-  const displayUseageUnits = property?.notkunareiningar?.notkunareiningar
+  const selectedUsageUnits =
+    getValueViaPath<string[]>(answers, 'usageUnits') || []
+  const displayUsageUnits = property?.notkunareiningar?.notkunareiningar
     ?.filter((unit) =>
-      selectedUseageUnits.includes(unit.notkunareininganumer ?? ''),
+      selectedUsageUnits.includes(unit.notkunareininganumer ?? ''),
     )
     .map((unit) => unit.notkunBirting)
 
-  const useageUnitsFireCompensation = parseInt(
-    getValueViaPath<string>(answers, 'useageUnitsFireCompensation') ?? '0',
+  const usageUnitsFireCompensation = parseInt(
+    getValueViaPath<string>(answers, 'usageUnitsFireCompensation') ?? '0',
   )
 
   return [
@@ -126,13 +126,13 @@ export const realEstateOverviewItems = (
     },
     {
       width: 'half',
-      keyText: m.overviewMessages.useageUnits,
-      valueText: displayUseageUnits?.join(', ') ?? '',
+      keyText: m.overviewMessages.usageUnits,
+      valueText: displayUsageUnits?.join(', ') ?? '',
     },
     {
       width: 'half',
-      keyText: m.realEstateMessages.useageUnitsFireCompensation,
-      valueText: formatCurrency(useageUnitsFireCompensation),
+      keyText: m.realEstateMessages.usageUnitsFireCompensation,
+      valueText: formatCurrency(usageUnitsFireCompensation),
     },
   ]
 }
