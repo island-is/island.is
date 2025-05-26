@@ -5,9 +5,11 @@ import { overviewSection } from './overviewSection'
 import { changesSection } from './changesSection'
 import { realEstateSection } from './realEstateSection'
 import { photoSection } from './photoSection'
+import HmsLogo from '../../assets/HmsLogo'
 
 export const MainForm = buildForm({
   id: 'MainForm',
+  logo: HmsLogo,
   mode: FormModes.DRAFT,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
