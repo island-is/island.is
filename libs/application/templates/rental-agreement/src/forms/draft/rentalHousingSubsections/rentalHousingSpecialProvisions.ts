@@ -10,7 +10,7 @@ import {
 import { Application } from '@island.is/application/types'
 import { SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
-import { Unit } from '../../../shared'
+import { PropertyUnit } from '../../../shared'
 import { specialProvisions } from '../../../lib/messages'
 
 export const RentalHousingSpecialProvisions = buildSubSection({
@@ -31,7 +31,7 @@ export const RentalHousingSpecialProvisions = buildSubSection({
           alertType: 'warning',
           message: specialProvisions.housingInfo.warningBanner,
           condition: (answers) => {
-            const units = getValueViaPath<Unit[]>(
+            const units = getValueViaPath<PropertyUnit[]>(
               answers,
               'registerProperty.searchresults.units',
               [],
@@ -58,7 +58,7 @@ export const RentalHousingSpecialProvisions = buildSubSection({
           rows: 8,
           required: (application: Application) => {
             const answers = application.answers
-            const units = getValueViaPath<Unit[]>(
+            const units = getValueViaPath<PropertyUnit[]>(
               answers,
               'registerProperty.searchresults.units',
               [],

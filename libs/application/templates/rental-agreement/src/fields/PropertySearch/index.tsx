@@ -20,7 +20,7 @@ import {
   HmsPropertyInfo,
   HmsPropertyInfoInput,
 } from '@island.is/api/schema'
-import { AddressProps, Unit } from '../../shared'
+import { AddressProps, PropertyUnit } from '../../shared'
 import { PropertyTableHeader } from './components/PropertyTableHeader'
 import { PropertyTableRow } from './components/PropertyTableRow'
 import { PropertyTableUnits } from './components/PropertyTableUnits'
@@ -200,13 +200,13 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   })
 
   interface StoredValueUnits {
-    units?: Unit[]
+    units?: PropertyUnit[]
   }
 
   const restoreTableExpanded = (storedValue: StoredValueUnits) => {
     if (!storedValue?.units) return {}
     return storedValue.units.reduce(
-      (acc: Record<string, boolean>, unit: Unit) => {
+      (acc: Record<string, boolean>, unit: PropertyUnit) => {
         if (unit.checked && unit.propertyCode) {
           acc[unit.propertyCode] = true
         }
@@ -219,7 +219,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const restoreCheckedUnits = (storedValue: StoredValueUnits) => {
     if (!storedValue?.units) return {}
     return storedValue.units.reduce(
-      (acc: Record<string, boolean>, unit: Unit) => {
+      (acc: Record<string, boolean>, unit: PropertyUnit) => {
         const unitKey = `${unit.propertyCode}_${unit.unitCode}`
         acc[unitKey] = unit.checked || false
         return acc
@@ -230,7 +230,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const restoreRoomsValue = (storedValue: StoredValueUnits) => {
     if (!storedValue?.units) return {}
     return storedValue.units.reduce(
-      (acc: Record<string, number>, unit: Unit) => {
+      (acc: Record<string, number>, unit: PropertyUnit) => {
         const unitKey = `${unit.propertyCode}_${unit.unitCode}`
         acc[unitKey] = unit.numOfRooms || 0
         return acc
@@ -241,7 +241,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const restoreSizeValue = (storedValue: StoredValueUnits) => {
     if (!storedValue?.units) return {}
     return storedValue.units.reduce(
-      (acc: Record<string, number>, unit: Unit) => {
+      (acc: Record<string, number>, unit: PropertyUnit) => {
         const unitKey = `${unit.propertyCode}_${unit.unitCode}`
         acc[unitKey] = unit.changedSize || 0
         return acc
@@ -257,7 +257,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     }))
   }
 
-  const handleCheckboxChange = (unit: Unit, checked: boolean) => {
+  const handleCheckboxChange = (unit: PropertyUnit, checked: boolean) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
     const chosenUnits = checked
       ? [
@@ -269,7 +269,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
             changedSize: unitSizeChangedValue[unitKey] ?? unit.size,
           },
         ]
-      : (storedValue?.units || []).filter((u: Unit) => {
+      : (storedValue?.units || []).filter((u: PropertyUnit) => {
           const storedUnitKey = `${u.propertyCode}_${u.unitCode}`
           return storedUnitKey !== unitKey
         })
@@ -285,14 +285,14 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     setCheckedUnits(updateCheckedUnits)
   }
 
-  const handleUnitSizeChange = (unit: Unit, value: number) => {
+  const handleUnitSizeChange = (unit: PropertyUnit, value: number) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
     setUnitSizeChangedValue((prev) => {
       const newValues = {
         ...prev,
         [unitKey]: value,
       }
-      const updatedUnits = (storedValue?.units || []).map((u: Unit) => {
+      const updatedUnits = (storedValue?.units || []).map((u: PropertyUnit) => {
         if (
           u.propertyCode === unit.propertyCode &&
           u.unitCode === unit.unitCode
@@ -312,14 +312,14 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     })
   }
 
-  const handleUnitRoomsChange = (unit: Unit, value: number) => {
+  const handleUnitRoomsChange = (unit: PropertyUnit, value: number) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
     setNumOfRoomsValue((prev) => {
       const newValues = {
         ...prev,
         [unitKey]: value,
       }
-      const updatedUnits = (storedValue?.units || []).map((u: Unit) => {
+      const updatedUnits = (storedValue?.units || []).map((u: PropertyUnit) => {
         if (
           u.propertyCode === unit.propertyCode &&
           u.unitCode === unit.unitCode

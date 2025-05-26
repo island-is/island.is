@@ -1,6 +1,6 @@
 import { Application, ApplicationFileInput } from '@island.is/api/schema'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
-import { ApplicantsInfo, Unit, CostField, AddressProps } from './types'
+import { ApplicantsInfo, PropertyUnit, CostField, AddressProps } from './types'
 import { NextStepInReviewOptions } from '../utils/enums'
 
 export const applicationAnswers = (answers: Application['answers']) => {
@@ -19,7 +19,7 @@ export const applicationAnswers = (answers: Application['answers']) => {
       'registerProperty.searchresults.label',
     ),
     units:
-      getValueViaPath<Unit[]>(
+      getValueViaPath<PropertyUnit[]>(
         answers,
         'registerProperty.searchresults.units',
       ) || [],

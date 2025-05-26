@@ -1,4 +1,4 @@
-import { HmsSearchAddress, Unit as OriginalUnit } from '@island.is/api/schema'
+import { HmsSearchAddress, Unit } from '@island.is/api/schema'
 
 export type ApplicantsInfo = {
   nationalIdWithName: { name: string; nationalId: string }
@@ -14,7 +14,7 @@ export type CostField = {
   hasError?: boolean
 }
 
-export interface Unit extends OriginalUnit {
+export interface PropertyUnit extends Unit {
   checked?: boolean
   changedSize?: number
   numOfRooms?: number
