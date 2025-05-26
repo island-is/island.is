@@ -1,3 +1,5 @@
+import { ExampleAuthDelegationModule } from './examples/example-auth-delegation/example-auth-delegation.module'
+import { ExampleAuthDelegationService } from './examples/example-auth-delegation/example-auth-delegation.service'
 import { ReferenceTemplateModule } from './reference-template/reference-template.module'
 import { ReferenceTemplateService } from './reference-template/reference-template.service'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
@@ -241,6 +243,7 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  ExampleAuthDelegationModule,
   RentalAgreementModule,
   ExemptionForTransportationModule,
 ]
@@ -324,6 +327,7 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  ExampleAuthDelegationService,
   RentalAgreementService,
   ExemptionForTransportationService,
 ]

@@ -32,6 +32,7 @@ export enum Features {
   SeminarRegistrationEnabled = 'isSeminarRegistrationEnabled',
   TrainingLicenseOnAWorkMachineEnabled = 'isTrainingLicenseOnAWorkMachineEnabled',
   SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
+  pensionSupplementEnabled = 'isPensionSupplementEnabled',
   ExemptionForTransportation = 'isExemptionForTransportationEnabled',
 
   // Application System Delegations active

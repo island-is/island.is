@@ -45,23 +45,17 @@ export const cases = {
         defaultMessage: 'Virkt gæsluvarðhald og farbann',
         description: 'Notaður sem titill í fyrsta málalista á heimaskjá FMST.',
       },
-      infoContainerTitle: {
-        id: 'judicial.system.core:cases.active_requests.prison_staff_users.info_container_title',
-        defaultMessage: 'Engin mál fundust.',
-        description:
-          'Notaður sem titill í upplýsingasvæði sem segir að engin mál fundust á heimaskjá fangelsisstarfsmanna.',
-      },
-      infoContainerText: {
-        id: 'judicial.system.core:cases.active_requests.prison_staff_users.info_container_text',
-        defaultMessage: 'Engar samþykktar kröfur fundust.',
-        description:
-          'Notaður sem texti í upplýsingasvæði sem segir að engin mál fundust á heimaskjá fangelsisstarfsmanna.',
-      },
       prisonAdminIndictmentCaseTitle: {
         id: 'judicial.system.core:cases.active_requests.prison_staff_users.prison_admin_indictment_case_title',
         defaultMessage: 'Mál til fullnustu',
         description:
           'Notaður sem titill á málalista yfir mál til fullnustu hjá FMST.',
+      },
+      prisonAdminIndictmentCaseTitleRegisteredCases: {
+        id: 'judicial.system.core:cases.active_requests.prison_staff_users.prison_admin_indictment_case_title_registered_cases',
+        defaultMessage: 'Skráðir dómar',
+        description:
+          'Notaður sem titill á málalista yfir mál sem eru skráðir hjá FMST.',
       },
     }),
     deleteCaseModal: defineMessages({

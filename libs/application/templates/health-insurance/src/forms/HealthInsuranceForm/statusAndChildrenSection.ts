@@ -10,10 +10,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages/messages'
-import {
-  EmploymentStatus,
-  FILE_SIZE_LIMIT,
-} from '../../utils/constants'
+import { EmploymentStatus, FILE_SIZE_LIMIT } from '../../utils/constants'
 import { getYesNoOptions, statusTypeOptions } from '../../utils/options'
 import { Application } from '@island.is/application/types'
 import { ExternalDataNationalRegistry } from '../../utils/types'
