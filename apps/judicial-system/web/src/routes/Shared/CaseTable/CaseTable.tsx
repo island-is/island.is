@@ -1,9 +1,10 @@
-import { FC, ReactNode, useContext } from 'react'
+import { FC, ReactNode, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
   AlertMessage,
   Box,
+  Checkbox,
   Tag,
   TagVariant,
   Text,
@@ -188,6 +189,7 @@ const CaseTable: FC = () => {
   const { openCaseInNewTabMenuItem } = useContextMenu()
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
+  const [showOnlyMyCases, setShowOnlyMyCases] = useState(false)
 
   const type = getCaseTableType(user, router.asPath.split('/').pop())
 
@@ -224,7 +226,20 @@ const CaseTable: FC = () => {
       {user && // Wait until we have a user
         (table ? (
           <>
-            <SectionHeading title={table.title} />
+            <Box display="flex" alignItems="center">
+              <SectionHeading title={table.title} />
+              {table.hasMyCasesFilter && (
+                <Box marginBottom={3} marginLeft={'auto'}>
+                  <Checkbox
+                    label="Mín mál"
+                    checked={showOnlyMyCases}
+                    onChange={(e) => {
+                      setShowOnlyMyCases(e.target.checked)
+                    }}
+                  />
+                </Box>
+              )}
+            </Box>
             {loading ? (
               <TableSkeleton />
             ) : error ? (
@@ -240,10 +255,12 @@ const CaseTable: FC = () => {
                     compare,
                     render,
                   }))}
-                  rows={caseTableData.rows.map((row) => ({
-                    id: row.caseId,
-                    cells: row.cells,
-                  }))}
+                  rows={caseTableData.rows
+                    .filter((row) => !showOnlyMyCases || row.isMyCase)
+                    .map((row) => ({
+                      id: row.caseId,
+                      cells: row.cells,
+                    }))}
                   generateContextMenuItems={(id) => {
                     return [openCaseInNewTabMenuItem(id)]
                   }}

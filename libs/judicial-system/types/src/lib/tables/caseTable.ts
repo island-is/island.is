@@ -96,6 +96,7 @@ export const getCaseTableType = (
 
 interface CaseTable {
   title: string
+  hasMyCasesFilter: boolean
   columnKeys: CaseTableColumnKey[]
   columns: CaseTableColumn[]
 }
@@ -117,6 +118,7 @@ const districtCourtRequestCasesInProgressColumnKeys: CaseTableColumnKey[] = [
 
 const districtCourtRequestCasesInProgress: CaseTable = {
   title: 'Mál í vinnslu',
+  hasMyCasesFilter: true,
   columnKeys: districtCourtRequestCasesInProgressColumnKeys,
   columns: pickColumns(districtCourtRequestCasesInProgressColumnKeys),
 }
@@ -131,6 +133,7 @@ const districtCourtRequestCasesAppealedColumnKeys: CaseTableColumnKey[] = [
 ]
 const districtCourtRequestCasesAppealed: CaseTable = {
   title: 'Kærur til Landsréttar',
+  hasMyCasesFilter: true,
   columnKeys: districtCourtRequestCasesAppealedColumnKeys,
   columns: pickColumns(districtCourtRequestCasesAppealedColumnKeys),
 }
@@ -147,6 +150,7 @@ const districtCourtRequestCasesCompletedColumnKeys: CaseTableColumnKey[] = [
 
 const districtCourtRequestCasesCompleted: CaseTable = {
   title: 'Afgreidd rannsóknarmál',
+  hasMyCasesFilter: true,
   columnKeys: districtCourtRequestCasesCompletedColumnKeys,
   columns: pickColumns(districtCourtRequestCasesCompletedColumnKeys),
 }
@@ -160,6 +164,7 @@ const courtOfAppealsInProgressColumnKeys: CaseTableColumnKey[] = [
 ]
 const courtOfAppealsInProgress: CaseTable = {
   title: 'Mál í vinnslu',
+  hasMyCasesFilter: false,
   columnKeys: courtOfAppealsInProgressColumnKeys,
   columns: pickColumns(courtOfAppealsInProgressColumnKeys),
 }
@@ -173,6 +178,7 @@ const courtOfAppealsCompletedColumnKeys: CaseTableColumnKey[] = [
 ]
 const courtOfAppealsCompleted: CaseTable = {
   title: 'Afgreidd mál',
+  hasMyCasesFilter: false,
   columnKeys: courtOfAppealsCompletedColumnKeys,
   columns: pickColumns(courtOfAppealsCompletedColumnKeys),
 }
@@ -189,6 +195,7 @@ const prisonAdminActiveColumnKeys: CaseTableColumnKey[] = [
 
 const prisonActive: CaseTable = {
   title: 'Virk mál',
+  hasMyCasesFilter: false,
   columnKeys: prisonAdminActiveColumnKeys,
   columns: pickColumns(prisonAdminActiveColumnKeys),
 }
@@ -205,6 +212,7 @@ const prisonAdminDoneColumnKeys: CaseTableColumnKey[] = [
 
 const prisonDone: CaseTable = {
   title: 'Lokið',
+  hasMyCasesFilter: false,
   columnKeys: prisonAdminDoneColumnKeys,
   columns: pickColumns(prisonAdminDoneColumnKeys),
 }
@@ -220,6 +228,7 @@ const prisonAdminIndictmentSentToPrisonAdminColumnKeys: CaseTableColumnKey[] = [
 
 const prisonAdminIndictmentSentToPrisonAdmin: CaseTable = {
   title: 'Mál til fullnustu',
+  hasMyCasesFilter: false,
   columnKeys: prisonAdminIndictmentSentToPrisonAdminColumnKeys,
   columns: pickColumns(prisonAdminIndictmentSentToPrisonAdminColumnKeys),
 }
@@ -235,6 +244,7 @@ const prisonAdminIndictmentRegisteredRulingColumnKeys: CaseTableColumnKey[] = [
 
 const prisonAdminIndictmentRegisteredRuling: CaseTable = {
   title: 'Skráðir dómar',
+  hasMyCasesFilter: false,
   columnKeys: prisonAdminIndictmentRegisteredRulingColumnKeys,
   columns: pickColumns(prisonAdminIndictmentRegisteredRulingColumnKeys),
 }
@@ -247,6 +257,7 @@ const prosecutorsOfficeIndictmentNewColumnKeys: CaseTableColumnKey[] = [
 ]
 const prosecutorsOfficeIndictmentNew: CaseTable = {
   title: 'Ný mál',
+  hasMyCasesFilter: false,
   columnKeys: prosecutorsOfficeIndictmentNewColumnKeys,
   columns: pickColumns(prosecutorsOfficeIndictmentNewColumnKeys),
 }
@@ -261,6 +272,7 @@ const prosecutorsOfficeIndictmentInReviewColumnKeys: CaseTableColumnKey[] = [
 ]
 const prosecutorsOfficeIndictmentInReview: CaseTable = {
   title: 'Mál í yfirlestri',
+  hasMyCasesFilter: false,
   columnKeys: prosecutorsOfficeIndictmentInReviewColumnKeys,
   columns: pickColumns(prosecutorsOfficeIndictmentInReviewColumnKeys),
 }
@@ -273,6 +285,7 @@ const prosecutorsOfficeIndictmentReviewedColumnKeys: CaseTableColumnKey[] = [
 ]
 const prosecutorsOfficeIndictmentReviewed: CaseTable = {
   title: 'Yfirlesin mál',
+  hasMyCasesFilter: false,
   columnKeys: prosecutorsOfficeIndictmentReviewedColumnKeys,
   columns: pickColumns(prosecutorsOfficeIndictmentReviewedColumnKeys),
 }
@@ -281,6 +294,7 @@ const prosecutorsOfficeIndictmentAppealPeriodExpiredColumnKeys: CaseTableColumnK
   ['caseNumber', 'defendants', 'rulingType']
 const prosecutorsOfficeIndictmentAppealPeriodExpired: CaseTable = {
   title: 'Frestur liðinn',
+  hasMyCasesFilter: false,
   columnKeys: prosecutorsOfficeIndictmentAppealPeriodExpiredColumnKeys,
   columns: pickColumns(
     prosecutorsOfficeIndictmentAppealPeriodExpiredColumnKeys,
@@ -292,6 +306,7 @@ const prosecutorsOfficeIndictmentSentToPrisonAdminColumnKeys: CaseTableColumnKey
 
 const prosecutorsOfficeIndictmentSentToPrisonAdmin: CaseTable = {
   title: 'Mál í fullnustu',
+  hasMyCasesFilter: false,
   columnKeys: prosecutorsOfficeIndictmentSentToPrisonAdminColumnKeys,
   columns: pickColumns(prosecutorsOfficeIndictmentSentToPrisonAdminColumnKeys),
 }
@@ -305,6 +320,7 @@ const prosecutorsOfficeIndictmentAppealedColumnKeys: CaseTableColumnKey[] = [
 ]
 const prosecutorsOfficeIndictmentAppealed: CaseTable = {
   title: 'Áfrýjuð mál',
+  hasMyCasesFilter: false,
   columnKeys: prosecutorsOfficeIndictmentAppealedColumnKeys,
   columns: pickColumns(prosecutorsOfficeIndictmentAppealedColumnKeys),
 }
