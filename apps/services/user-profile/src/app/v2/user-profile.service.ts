@@ -7,7 +7,7 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 import { isEmail } from 'class-validator'
 import addMonths from 'date-fns/addMonths'
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -40,6 +40,7 @@ import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
 import { ActorProfile } from './models/actor-profile.model'
 import { Emails } from './models/emails.model'
+import kennitala from 'kennitala'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
@@ -540,6 +541,38 @@ export class UserProfileService {
     })
   }
 
+  async findOrCreateUserProfile(nationalId: string, transaction?: Transaction) {
+    // Check if nationalId is valid
+    if (!kennitala.isValid(nationalId)) {
+      throw new BadRequestException('Invalid national ID')
+    }
+
+    // Check if user profile already exists
+    const userProfile = await this.userProfileModel.findOne({
+      where: { nationalId },
+      transaction,
+      useMaster: true,
+    })
+
+    if (userProfile) {
+      return userProfile
+    }
+
+    return await this.userProfileModel
+      .create(
+        {
+          nationalId,
+          email: '',
+          emailStatus: DataStatus.EMPTY,
+        },
+        { transaction, useMaster: true },
+      )
+      .catch((error) => {
+        console.log('Error creating user profile', error)
+        throw error
+      })
+  }
+
   /**
    * Sets the specified email as the primary email for the user.
    * Also updates the lastNudge and nextNudge dates on the user profile.
@@ -627,7 +660,6 @@ export class UserProfileService {
     toNationalId: string,
   ): Promise<PaginatedActorProfileDto> {
     const incomingDelegations = await this.getIncomingDelegations(toNationalId)
-
     const emailPreferences = await this.delegationPreference.findAll({
       where: {
         toNationalId,

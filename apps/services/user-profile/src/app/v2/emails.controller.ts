@@ -1,11 +1,13 @@
 import type { User } from '@island.is/auth-nest-tools'
 import {
+  ActorScopes,
+  CurrentActor,
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { UserProfileScope } from '@island.is/auth/scopes'
+import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 import {
@@ -25,7 +27,7 @@ import { EmailsService } from './emails.service'
 const namespace = '@island.is/user-profile/v2/emails'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(UserProfileScope.read)
+@ActorScopes(UserProfileScope.read)
 @ApiTags('v2/me/emails')
 @ApiSecurity('oauth2', [])
 @Controller({
@@ -40,6 +42,7 @@ export class EmailsController {
   ) {}
 
   @Get('/')
+  @ActorScopes(UserProfileScope.read)
   @Documentation({
     description: 'Get email list for national id',
     response: { status: 200, type: [EmailsDto] },
@@ -56,20 +59,18 @@ export class EmailsController {
   @Audit<EmailsDto[]>({
     resources: (emails) => emails.map((email) => email.id),
   })
-  async findAllByNationalId(@CurrentUser() user: User): Promise<EmailsDto[]> {
-    return this.emailsService.findAllByNationalId(
-      user.actor?.nationalId ?? user.nationalId,
-    )
+  async findAllByNationalId(@CurrentActor() user: User): Promise<EmailsDto[]> {
+    return this.emailsService.findAllByNationalId(user.nationalId)
   }
 
   @Post('/')
-  @Scopes(UserProfileScope.write)
+  @ActorScopes(UserProfileScope.read)
   @Documentation({
     description: "Add a new email to the user's email list",
     response: { status: 200, type: EmailsDto },
   })
   async createEmail(
-    @CurrentUser() user: User,
+    @CurrentActor() user: User,
     @Body() input: CreateEmailDto,
   ): Promise<EmailsDto> {
     return this.auditService.auditPromise(
@@ -82,16 +83,12 @@ export class EmailsController {
           email: input.email,
         },
       },
-      this.emailsService.createEmail(
-        user.actor?.nationalId ?? user.nationalId,
-        input.email,
-        input.code,
-      ),
+      this.emailsService.createEmail(user.nationalId, input.email, input.code),
     )
   }
 
   @Delete('/:emailId')
-  @Scopes(UserProfileScope.write)
+  @ActorScopes(UserProfileScope.read)
   @Documentation({
     description: "Remove an email from the user's emails list",
     response: { status: 200, type: Boolean },
@@ -106,7 +103,7 @@ export class EmailsController {
     },
   })
   async deleteEmail(
-    @CurrentUser() user: User,
+    @CurrentActor() user: User,
     @Param('emailId') emailId: string,
   ): Promise<boolean> {
     return this.auditService.auditPromise(
@@ -119,10 +116,7 @@ export class EmailsController {
           emailId,
         },
       },
-      this.emailsService.deleteEmail(
-        user.actor?.nationalId ?? user.nationalId,
-        emailId,
-      ),
+      this.emailsService.deleteEmail(user.nationalId, emailId),
     )
   }
 }

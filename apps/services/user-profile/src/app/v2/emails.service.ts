@@ -1,13 +1,15 @@
+import { AttemptFailed } from '@island.is/nest/problem'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import kennitala from 'kennitala'
-import { Emails } from './models/emails.model'
-import { BadRequestException, Injectable } from '@nestjs/common'
-import { EmailsDto } from './dto/emails.dto'
-import { VerificationService } from '../user-profile/verification.service'
-import { AttemptFailed } from '@island.is/nest/problem'
-import { DataStatus } from '../user-profile/types/dataStatusTypes'
+import { Sequelize } from 'sequelize-typescript'
 import { uuid } from 'uuidv4'
+import { DataStatus } from '../user-profile/types/dataStatusTypes'
+import { VerificationService } from '../user-profile/verification.service'
+import { EmailsDto } from './dto/emails.dto'
 import { ActorProfile } from './models/actor-profile.model'
+import { Emails } from './models/emails.model'
+import { UserProfileService } from './user-profile.service'
 
 @Injectable()
 export class EmailsService {
@@ -17,6 +19,8 @@ export class EmailsService {
     @InjectModel(ActorProfile)
     private readonly actorProfileModel: typeof ActorProfile,
     private readonly verificationService: VerificationService,
+    private readonly userProfileService: UserProfileService,
+    private readonly sequelize: Sequelize,
   ) {}
 
   /**
@@ -72,35 +76,54 @@ export class EmailsService {
     email: string,
     code: string,
   ): Promise<EmailsDto> {
-    this.validateRequiredFields(nationalId, email, code)
-    this.validateNationalId(nationalId)
+    return await this.sequelize.transaction(async (transaction) => {
+      this.validateRequiredFields(nationalId, email, code)
+      this.validateNationalId(nationalId)
 
-    // Verify the email code
-    await this.verifyEmailCode(nationalId, email, code)
+      // Verify the email code
+      await this.verifyEmailCode(nationalId, email, code)
 
-    // Check for existing email
-    await this.checkEmailExists(nationalId, email)
+      // Check for existing email
+      await this.checkEmailExists(nationalId, email)
 
-    // Create the email record
-    const emailRecord = await this.emailsModel.create({
-      id: uuid(),
-      email,
-      primary: false,
-      nationalId,
-      emailStatus: DataStatus.VERIFIED,
+      // Create user profile if it doesn't exist
+      const userProfile = await this.userProfileService.findOrCreateUserProfile(
+        nationalId,
+        transaction,
+      )
+
+      if (!userProfile) {
+        throw new BadRequestException('User profile not found')
+      }
+
+      // Create the email record
+      const emailRecord = await this.emailsModel.create(
+        {
+          id: uuid(),
+          email,
+          primary: false,
+          nationalId,
+          emailStatus: DataStatus.VERIFIED,
+        },
+        { transaction, useMaster: true },
+      )
+
+      // Check if this email is connected to any actor profile
+      const connectedEmailIds = await this.getConnectedEmailIds([
+        emailRecord.id,
+      ])
+      const isConnectedToActorProfile = connectedEmailIds.includes(
+        emailRecord.id,
+      )
+
+      return {
+        id: emailRecord.id,
+        email: emailRecord.email ?? null,
+        primary: emailRecord.primary,
+        emailStatus: emailRecord.emailStatus,
+        isConnectedToActorProfile,
+      }
     })
-
-    // Check if this email is connected to any actor profile
-    const connectedEmailIds = await this.getConnectedEmailIds([emailRecord.id])
-    const isConnectedToActorProfile = connectedEmailIds.includes(emailRecord.id)
-
-    return {
-      id: emailRecord.id,
-      email: emailRecord.email ?? null,
-      primary: emailRecord.primary,
-      emailStatus: emailRecord.emailStatus,
-      isConnectedToActorProfile,
-    }
   }
 
   /**

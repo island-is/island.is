@@ -11,7 +11,7 @@ import { FixtureFactory } from '../../../../test/fixture-factory'
 import { Emails } from '../models/emails.model'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
-import { UserProfileScope } from '@island.is/auth/scopes'
+import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
 import { getModelToken } from '@nestjs/sequelize'
 import kennitala from 'kennitala'
 import { UserProfile } from '../../user-profile/userProfile.model'
@@ -35,7 +35,7 @@ const testUserProfile = {
 const actorNationalId = createNationalId()
 const actorEmail = faker.internet.email()
 
-describe('Me emails controller', () => {
+describe('Emails controller', () => {
   let app: TestApp
   let server: SuperTest<Test>
   let actorApp: TestApp
@@ -55,9 +55,10 @@ describe('Me emails controller', () => {
     app = await setupApp({
       AppModule,
       SequelizeConfigService,
+      dbType: 'postgres',
       user: createCurrentUser({
         nationalId: testUserProfile.nationalId,
-        scope: [UserProfileScope.read, UserProfileScope.write],
+        scope: [UserProfileScope.read],
       }),
     })
 
@@ -65,14 +66,15 @@ describe('Me emails controller', () => {
     actorApp = await setupApp({
       AppModule,
       SequelizeConfigService,
+      dbType: 'postgres',
       user: {
         ...createCurrentUser({
           nationalId: actorNationalId,
-          scope: [UserProfileScope.read, UserProfileScope.write],
+          scope: [UserProfileScope.read],
         }),
         actor: {
           nationalId: testUserProfile.nationalId,
-          scope: [UserProfileScope.read, UserProfileScope.write],
+          scope: [UserProfileScope.read],
         },
       },
     })
@@ -314,6 +316,7 @@ describe('Me emails controller', () => {
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         email: 'test@example.com',
+        emailStatus: 'VERIFIED',
       })
 
       const emailInDb = await emailsModel.findOne({
@@ -321,7 +324,9 @@ describe('Me emails controller', () => {
           nationalId: testUserProfile.nationalId,
           email: 'test@example.com',
         },
+        useMaster: true,
       })
+
       expect(emailInDb).toBeTruthy()
       expect(emailInDb?.email).toBe('test@example.com')
       expect(emailInDb?.emailStatus).toBe('VERIFIED')
