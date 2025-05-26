@@ -15,3 +15,13 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
 }
+
+export enum UploadSelection {
+  MULTI = 'multiSelection',
+  SINGLE = 'singleSelection'
+}
+
+export enum CategorySelection {
+  DAYRATE = 'dayRate',
+  KMRATE = 'KmRate'
+}

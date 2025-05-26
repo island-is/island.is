@@ -1,1 +1,5 @@
-// Populate this file with the data providers you need
+export {
+    NationalRegistryUserApi,
+    UserProfileApi,
+    
+  } from '@island.is/application/types'

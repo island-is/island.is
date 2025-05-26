@@ -333,6 +333,7 @@ export enum FieldTypes {
   TITLE = 'TITLE',
   OVERVIEW = 'OVERVIEW',
   COPY_LINK = 'COPY_LINK',
+  DOWNLOAD_FILE_BUTTON = 'DOWNLOAD_FILE_BUTTON'
 }
 
 export enum FieldComponents {
@@ -375,6 +376,7 @@ export enum FieldComponents {
   TITLE = 'TitleFormField',
   OVERVIEW = 'OverviewFormField',
   COPY_LINK = 'CopyLinkFormField',
+  DOWNLOAD_FILE_BUTTON = 'DownloadFileButtonFormField'
 }
 
 export interface CheckboxField extends InputField {
@@ -656,6 +658,17 @@ export interface PdfLinkButtonField extends BaseField {
   setViewPdfFile?: (file: { base64: string; filename: string }) => void
   viewPdfFile?: boolean
   downloadButtonTitle?: StaticText
+}
+
+export interface DownloadFileButtonField extends BaseField {
+  readonly type: FieldTypes.DOWNLOAD_FILE_BUTTON
+  component: FieldComponents.DOWNLOAD_FILE_BUTTON
+  buttonTitle?: string
+  getFileContent?: () => {
+    base64Content: string
+    fileType: string
+    filename: string
+  }
 }
 
 export interface NationalIdWithNameField extends InputField {
@@ -1009,3 +1022,4 @@ export type Field =
   | TitleField
   | OverviewField
   | CopyLinkField
+  | DownloadFileButtonField

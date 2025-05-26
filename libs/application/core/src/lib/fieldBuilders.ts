@@ -52,6 +52,7 @@ import {
   TitleVariants,
   OverviewField,
   CopyLinkField,
+  DownloadFileButtonField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -430,6 +431,22 @@ export const buildDividerField = (data: {
     condition,
     marginTop,
     marginBottom,
+  }
+}
+
+export const buildDownloadFileButtonField = (
+  data: Omit<DownloadFileButtonField, 'type' | 'component' | 'children'>,
+): DownloadFileButtonField => {
+  const {
+    getFileContent
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.DOWNLOAD_FILE_BUTTON,
+    component: FieldComponents.DOWNLOAD_FILE_BUTTON,
+    getFileContent
   }
 }
 

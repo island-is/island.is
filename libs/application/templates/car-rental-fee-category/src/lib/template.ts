@@ -9,6 +9,7 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -24,10 +25,10 @@ const template: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.CAR_RENTAL_FEE_CATEGORY, // TODO: Change to the correct type
+  type: ApplicationTypes.CAR_RENTAL_FEE_CATEGORY,
   name: 'car-rental-fee-category template',
-  codeOwner: CodeOwners.NordaApplications, // TODO: Change to the correct code owner
-  institution: 'Stafrænt Ísland', // TODO: Change to the correct institution
+  codeOwner: CodeOwners.NordaApplications,
+  institution: 'Skatturinn', // TODO: Change to the correct institution
   translationNamespaces: [ApplicationConfigurations.CarRentalFeeCategory.translation], // TODO: Change to the correct translation namespace
   dataSchema,
   stateMachineConfig: {
@@ -68,6 +69,12 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: [
+            defineTemplateApi({
+              action: 'createApplication',
+              order: 1,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
