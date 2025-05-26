@@ -37,6 +37,10 @@ export interface User {
   latestLogin?: string
   loginCount?: number
 }
+export interface UserDescriptor {
+  name?: string
+  institution?: { name?: string }
+}
 
 export interface InstitutionUser {
   id?: string | null
@@ -63,6 +67,14 @@ export const isProsecutionUser = (user?: InstitutionUser): boolean => {
       prosecutionOfficeTypes.includes(user.institution.type),
   )
 }
+
+export const getContactInformation = (user: {
+  name: string
+  email: string
+}) => ({
+  name: user.name,
+  email: user.email,
+})
 
 const publicProsecutionRoles: string[] = [UserRole.PROSECUTOR]
 
