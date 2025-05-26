@@ -24,11 +24,8 @@ export const AdvertField = ({ application, errors }: LGFieldBaseProps) => {
     setValue('application.html', base64)
   }
 
-  const base64 = getValueViaPath(
-    application.answers,
-    'application.html',
-    '',
-  ) as string
+  const base64 =
+    getValueViaPath<string>(application.answers, 'application.html') ?? ''
 
   const defaultHtml = Buffer.from(base64, 'base64').toString(
     'utf-8',

@@ -97,13 +97,5 @@ export const RequirementsForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      title: m.requirements.legalEntity.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      title: m.requirements.advertType.sectionTitle,
-      children: [],
-    }),
   ],
 })

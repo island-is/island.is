@@ -13,30 +13,6 @@ export const ApprovedForm: Form = buildForm({
   mode: FormModes.APPROVED,
   children: [
     buildSection({
-      title: m.requirements.approval.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'draft.section',
-      title: m.draft.sections.advert.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'publishing',
-      title: m.draft.sections.publishing.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'preview',
-      title: m.draft.sections.preview.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirmation',
-      title: m.draft.sections.confirmation.sectionTitle,
-      children: [],
-    }),
-    buildSection({
       id: 'approved.section',
       title: m.approved.sectionTitle,
       children: [
