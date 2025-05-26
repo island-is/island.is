@@ -15,6 +15,25 @@ import {
   ServiceRequirement,
 } from '@island.is/judicial-system/types'
 
+const buildSubpoenaExistsCondition = (exists = true) =>
+  Sequelize.literal(`
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      FROM subpoena
+      WHERE subpoena.case_id = "Case".id
+    )
+  `)
+
+const buildEventLogExistsCondition = (eventType: EventType, exists = true) =>
+  Sequelize.literal(`
+     ${exists ? '' : 'NOT'} EXISTS (
+        SELECT 1
+        FROM event_log
+        WHERE event_log.case_id = "Case".id
+          AND event_log.event_type = '${eventType}'
+      )
+    `)
+
 const districtCourtRequestCasesInProgressWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
@@ -49,15 +68,6 @@ const districtCourtIndictmentsSharedWhereOptions = {
   type: indictmentCases,
 }
 
-const buildSubpoenaExistsCondition = (exists = true) =>
-  Sequelize.literal(`
-    ${exists ? '' : 'NOT'} EXISTS (
-      SELECT 1
-      FROM subpoena
-      WHERE subpoena.case_id = "Case".id
-    )
-  `)
-
 const districtCourtIndictmentsReceivedWhereOptions = {
   ...districtCourtIndictmentsSharedWhereOptions,
   state: CaseState.RECEIVED,
@@ -85,7 +95,12 @@ const districtCourtIndictmentsFinalizingWhereOptions = {
       CaseIndictmentRulingDecision.FINE,
     ],
   },
-  indictment_reviewer_id: null,
+  [Op.and]: [
+    buildEventLogExistsCondition(
+      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      false,
+    ),
+  ],
 }
 
 const districtCourtIndictmentsCompletedWhereOptions = {
