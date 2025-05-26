@@ -15,6 +15,25 @@ import {
   ServiceRequirement,
 } from '@island.is/judicial-system/types'
 
+const buildSubpoenaExistsCondition = (exists = true) =>
+  Sequelize.literal(`
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      FROM subpoena
+      WHERE subpoena.case_id = "Case".id
+    )
+  `)
+
+const buildEventLogExistsCondition = (eventType: EventType, exists = true) =>
+  Sequelize.literal(`
+     ${exists ? '' : 'NOT'} EXISTS (
+        SELECT 1
+        FROM event_log
+        WHERE event_log.case_id = "Case".id
+          AND event_log.event_type = '${eventType}'
+      )
+    `)
+
 const districtCourtRequestCasesInProgressWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
@@ -33,6 +52,60 @@ const districtCourtRequestCasesCompletedWhereOptions = {
   type: [...restrictionCases, ...investigationCases],
   state: completedRequestCaseStates,
   appeal_state: { [Op.not]: CaseAppealState.APPEALED },
+}
+
+const districtCourtIndictmentsNewWhereOptions = {
+  is_archived: false,
+  type: indictmentCases,
+  state: {
+    [Op.or]: [CaseState.SUBMITTED, CaseState.RECEIVED],
+  },
+  judge_id: null,
+}
+
+const districtCourtIndictmentsSharedWhereOptions = {
+  is_archived: false,
+  type: indictmentCases,
+}
+
+const districtCourtIndictmentsReceivedWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  state: CaseState.RECEIVED,
+  [Op.and]: [buildSubpoenaExistsCondition(false)],
+}
+const districtCourtIndictmentsInProgressWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  [Op.or]: [
+    {
+      state: CaseState.RECEIVED,
+      [Op.and]: [buildSubpoenaExistsCondition(true)],
+    },
+    {
+      state: CaseState.WAITING_FOR_CANCELLATION,
+    },
+  ],
+}
+
+const districtCourtIndictmentsFinalizingWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  state: CaseState.COMPLETED,
+  indictment_ruling_decision: {
+    [Op.or]: [
+      CaseIndictmentRulingDecision.RULING,
+      CaseIndictmentRulingDecision.FINE,
+    ],
+  },
+  [Op.and]: [
+    buildEventLogExistsCondition(
+      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      false,
+    ),
+  ],
+}
+
+const districtCourtIndictmentsCompletedWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  state: CaseState.COMPLETED,
 }
 
 const courtOfAppealsSharedWhereOptions = {
@@ -280,6 +353,16 @@ export const caseTableWhereOptions: Record<CaseTableType, WhereOptions> = {
     districtCourtRequestCasesInProgressWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED]:
     districtCourtRequestCasesAppealedWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_NEW]:
+    districtCourtIndictmentsNewWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_RECEIVED]:
+    districtCourtIndictmentsReceivedWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS]:
+    districtCourtIndictmentsInProgressWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING]:
+    districtCourtIndictmentsFinalizingWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED]:
+    districtCourtIndictmentsCompletedWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED]:
     districtCourtRequestCasesCompletedWhereOptions,
   [CaseTableType.PRISON_ACTIVE]: prisonActiveWhereOptions,
