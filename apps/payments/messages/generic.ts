@@ -56,6 +56,16 @@ export const generic = defineMessages({
     defaultMessage: 'Nafn',
     description: 'Name',
   },
+  toggleLanguageToEnglish: {
+    id: 'payments:generic.toggleLanguageToEnglish',
+    defaultMessage: 'Skipta yfir á ensku',
+    description: 'Switch to English',
+  },
+  toggleLanguageToIcelandic: {
+    id: 'payments:generic.toggleLanguageToIcelandic',
+    defaultMessage: 'Skipta yfir á íslensku',
+    description: 'Switch to Icelandic',
+  },
 })
 
 export const genericError = defineMessages({

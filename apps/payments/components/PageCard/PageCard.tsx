@@ -80,6 +80,11 @@ export const PageCard = ({ headerSlot, bodySlot }: PageCardWrapperProps) => {
                 onClick={() =>
                   changeLanguageHandler(locale === 'is' ? 'en' : 'is')
                 }
+                aria-label={formatMessage(
+                  locale === 'is'
+                    ? generic.toggleLanguageToEnglish
+                    : generic.toggleLanguageToIcelandic,
+                )}
               >
                 {formatMessage(
                   locale === 'en'
