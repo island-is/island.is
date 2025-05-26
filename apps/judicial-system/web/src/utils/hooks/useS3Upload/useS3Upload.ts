@@ -11,6 +11,7 @@ import {
   Defendant,
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { api } from '@island.is/judicial-system-web/src/services'
 
 import {
   CreateCivilClaimantFileMutation,
@@ -448,6 +449,7 @@ const useS3Upload = (
           id: `${name}-${uuid()}`,
           name,
           category: CaseFileCategory.CRIMINAL_RECORD,
+          status: FileUploadStatus.uploading,
           percent: 0,
         }
 
@@ -456,13 +458,18 @@ const useS3Upload = (
         }
 
         try {
+          // TEMP: this is a temp step while we incorporate required token handling
+          // for criminal record endpoint asa middleware
+          const { success } = await api.prepareRequest()
+          if (!success) {
+            throw Error('Failed to prepare upload criminal record request')
+          }
           // fetch criminal record and upload it to S3 in the backend
           const { data: criminalRecordFile } = await uploadCriminalRecordFile({
             variables: {
               input: { caseId, defendantId: id },
             },
           })
-
           if (!criminalRecordFile) {
             throw Error('Failed to upload criminal record to S3')
           }

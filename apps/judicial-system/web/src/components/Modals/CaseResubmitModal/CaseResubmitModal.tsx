@@ -7,7 +7,7 @@ import {
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { Modal } from '..'
+import { Modal } from '../..'
 import { strings } from './CaseResubmitModal.strings'
 
 interface Props {
