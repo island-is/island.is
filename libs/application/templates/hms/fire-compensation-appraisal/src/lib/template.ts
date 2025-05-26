@@ -10,7 +10,6 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   InstitutionTypes,
-  PaymentCatalogApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -64,12 +63,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [
-                UserProfileApi,
-                NationalRegistryApi,
-                propertiesApi,
-                PaymentCatalogApi,
-              ],
+              api: [UserProfileApi, NationalRegistryApi, propertiesApi],
               delete: true,
             },
           ],

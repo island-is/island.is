@@ -1,3 +1,4 @@
+export * from './prereqMessages'
 export * from './confirmReadMessages'
 export * from './personalInformationMessages'
 export * from './changesMessages'

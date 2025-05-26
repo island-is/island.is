@@ -141,7 +141,7 @@ export const photoOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<AttachmentItem> => {
-  const photos = getValueViaPath<Array<FileType>>(answers, 'photo')
+  const photos = getValueViaPath<Array<FileType>>(answers, 'photos')
 
   return (
     photos?.map((photo) => ({

@@ -15,8 +15,7 @@ export const photoSection = buildSection({
       description: m.photoMessages.description,
       children: [
         buildFileUploadField({
-          id: 'photo',
-          title: 'Mynd',
+          id: 'photos',
           uploadMultiple: true,
         }),
       ],

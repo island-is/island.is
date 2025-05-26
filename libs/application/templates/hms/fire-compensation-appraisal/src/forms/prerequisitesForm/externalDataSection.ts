@@ -5,37 +5,33 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { DefaultEvents, PaymentCatalogApi } from '@island.is/application/types'
+import { DefaultEvents } from '@island.is/application/types'
 import { UserProfileApi } from '@island.is/application/types'
 import { NationalRegistryApi, propertiesApi } from '../../dataProviders'
+import * as m from '../../lib/messages'
 
 export const externalDataSection = buildSection({
   id: 'conditions',
-  tabTitle: 'Forkröfur',
+  tabTitle: m.prereqMessages.tabTitle,
   children: [
     buildExternalDataProvider({
       id: 'approveExternalData',
-      title: 'External data',
+      title: m.prereqMessages.prereqTitle,
       dataProviders: [
         buildDataProviderItem({
           provider: UserProfileApi,
-          title: 'User profile',
-          subTitle: 'User profile',
+          title: m.prereqMessages.userProfileTitle,
+          subTitle: m.prereqMessages.userProfileSubtitle,
         }),
         buildDataProviderItem({
           provider: NationalRegistryApi,
-          title: 'National registry',
-          subTitle: 'National registry',
+          title: m.prereqMessages.nationalRegistryTitle,
+          subTitle: m.prereqMessages.nationalRegistrySubtitle,
         }),
         buildDataProviderItem({
           provider: propertiesApi,
-          title: 'Properties',
-          subTitle: 'Properties',
-        }),
-        buildDataProviderItem({
-          provider: PaymentCatalogApi,
-          title: 'Payment catalog',
-          subTitle: 'Payment catalog',
+          title: m.prereqMessages.propertiesTitle,
+          subTitle: m.prereqMessages.propertiesSubtitle,
         }),
       ],
       submitField: buildSubmitField({
