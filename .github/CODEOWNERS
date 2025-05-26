@@ -236,7 +236,6 @@ codemagic.yaml                                                                  
 /libs/application/templates/document-provider-onboarding/                                                 @island-is/norda
 /libs/application/templates/family-matters/children-residence-change-v2                                   @island-is/norda
 /libs/application/templates/financial-aid/                                                                @island-is/norda
-/libs/application/templates/financial-statements-inao/                                                    @island-is/norda
 /libs/application/templates/funding-government-projects/                                                  @island-is/norda
 /libs/application/templates/general-fishing-license/                                                      @island-is/norda
 /libs/application/templates/grindavik-housing-buyout/                                                     @island-is/norda
@@ -260,7 +259,6 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-cemetery/            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-individual-election/ @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-political-party/     @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/financial-statements-inao                @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/             @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/                 @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/grindavik-housing-buyout/                @island-is/norda
