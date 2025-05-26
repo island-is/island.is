@@ -20,6 +20,11 @@ export const convoy = {
     },
   }),
   labels: defineMessages({
+    convoyNumber: {
+      id: 'ta.eft.application:convoy.labels.convoyNumber',
+      defaultMessage: 'Vagnlest #',
+      description: 'Convoy number label',
+    },
     vehiclePermno: {
       id: 'ta.eft.application:convoy.labels.vehiclePermno',
       defaultMessage: 'Fastanúmer ökutækis',
@@ -39,6 +44,26 @@ export const convoy = {
       id: 'ta.eft.application:convoy.labels.trailerMakeAndColor',
       defaultMessage: 'Tegund og litur eftirvagns',
       description: 'Trailer make and color label',
+    },
+    addItemButtonText: {
+      id: 'ta.eft.application:convoy.labels.addItemButtonText',
+      defaultMessage: 'Bæta við vagnlest',
+      description: 'Add item to convoy table button text',
+    },
+    saveItemButtonText: {
+      id: 'ta.eft.application:convoy.labels.saveItemButtonText',
+      defaultMessage: 'Skrá vagnlest',
+      description: 'Save item to convoy table button text',
+    },
+    removeItemButtonTooltipText: {
+      id: 'ta.eft.application:convoy.labels.removeItemTooltipText',
+      defaultMessage: 'Eyða vagnlest',
+      description: 'Remove item in convoy table button tooltip text',
+    },
+    editItemButtonTooltipText: {
+      id: 'ta.eft.application:convoy.labels.editItemButtonTooltipText',
+      defaultMessage: 'Breyta vagnlest',
+      description: 'Edit item in convoy table button tooltip text',
     },
   }),
   error: defineMessages({
@@ -95,6 +120,28 @@ export const convoy = {
       defaultMessage:
         'Það kom upp villa við að athuga hvort ökutæki sé leyfilegt',
       description: 'Convoy error validation failed alert message',
+    },
+  }),
+  dollyType: defineMessages({
+    subtitle: {
+      id: 'ta.eft.application:convoy.dollyType.subtitle',
+      defaultMessage: 'Aukaásar',
+      description: 'Convoy dolly type',
+    },
+    noneOptionTitle: {
+      id: 'ta.eft.application:convoy.dollyType.noneOptionTitle',
+      defaultMessage: 'Ekkert dollý',
+      description: 'No dolly option title',
+    },
+    singleOptionTitle: {
+      id: 'ta.eft.application:convoy.dollyType.singleOptionTitle',
+      defaultMessage: 'Einfalt dollý',
+      description: 'Single dolly option title',
+    },
+    doubleOptionTitle: {
+      id: 'ta.eft.application:convoy.dollyType.doubleOptionTitle',
+      defaultMessage: 'Tvöfalt dollý',
+      description: 'Double dolly option title',
     },
   }),
 }

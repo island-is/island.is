@@ -17,8 +17,10 @@ export class ExemptionForTransportationService extends BaseTemplateApiService {
     super(ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION)
   }
 
-  async getExemptionRules(): Promise<ExemptionRules> {
-    return this.exemptionForTransportationClient.getRules()
+  async getExemptionRules({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<ExemptionRules> {
+    return this.exemptionForTransportationClient.getRules(auth)
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {

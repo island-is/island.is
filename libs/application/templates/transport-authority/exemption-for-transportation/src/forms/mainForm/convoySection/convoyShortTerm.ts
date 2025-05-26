@@ -1,10 +1,12 @@
 import {
   buildAsyncVehicleTextField,
   buildMultiField,
+  buildRadioField,
 } from '@island.is/application/core'
 import { convoy } from '../../../lib/messages'
 import { isExemptionTypeShortTerm } from '../../../utils'
 import { loadValidation } from '../../../utils/helperFunctions/loadValidation'
+import { DollyType } from '../../../shared'
 
 export const ConvoyShortTermMultiField = buildMultiField({
   id: 'convoyShortTermMultiField',
@@ -37,6 +39,27 @@ export const ConvoyShortTermMultiField = buildMultiField({
       errorTitle: convoy.error.alertTitle,
       fallbackErrorMessage: convoy.error.fallbackErrorMessage,
       validationFailedErrorMessage: convoy.error.validationFailedErrorMessage,
+    }),
+    buildRadioField({
+      id: 'convoy.items[0].dollyType',
+      title: convoy.dollyType.subtitle,
+      required: true,
+      marginTop: 2,
+      options: [
+        {
+          value: DollyType.NONE,
+          label: convoy.dollyType.noneOptionTitle,
+        },
+        {
+          value: DollyType.SINGLE,
+          label: convoy.dollyType.singleOptionTitle,
+        },
+        {
+          value: DollyType.DOUBLE,
+          label: convoy.dollyType.doubleOptionTitle,
+        },
+      ],
+      width: 'full',
     }),
   ],
 })

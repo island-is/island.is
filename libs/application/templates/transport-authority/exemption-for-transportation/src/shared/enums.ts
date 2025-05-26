@@ -9,3 +9,9 @@ export enum ExemptionFor {
   LENGTH = 'LENGTH',
   WEIGHT = 'WEIGHT',
 }
+
+export enum DollyType {
+  NONE = 'NONE',
+  SINGLE = 'SINGLE',
+  DOUBLE = 'DOUBLE',
+}

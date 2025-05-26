@@ -14,8 +14,10 @@ export class ExemptionForTransportationClient {
     return this.permitApplicationApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  public async getRules(): Promise<ExemptionRules> {
-    const result = await this.permitApplicationApi.applicationsRulesGet({
+  public async getRules(auth: User): Promise<ExemptionRules> {
+    const result = await this.permitApplicationApiWithAuth(
+      auth,
+    ).applicationsRulesGet({
       apiVersion: '1.0',
       apiVersion2: '1.0',
     })

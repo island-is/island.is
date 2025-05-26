@@ -2,7 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { YES } from '@island.is/application/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { ExemptionFor, ExemptionType } from '../shared'
+import { DollyType, ExemptionFor, ExemptionType } from '../shared'
 import { error } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
@@ -164,7 +164,8 @@ const FreighSchema = z
   )
   .refine(
     ({ exemptionPeriodType, limit, items }) => {
-      if (exemptionPeriodType === ExemptionType.SHORT_TERM) return true
+      // Since height is validated in the pairing part for long-term
+      if (exemptionPeriodType === ExemptionType.LONG_TERM) return true
 
       const invalidItemIndex = getInvalidFreightItemIndex(
         items.map((x) => x.height),
@@ -188,7 +189,8 @@ const FreighSchema = z
   )
   .refine(
     ({ exemptionPeriodType, limit, items }) => {
-      if (exemptionPeriodType === ExemptionType.SHORT_TERM) return true
+      // Since width is validated in the pairing part for long-term
+      if (exemptionPeriodType === ExemptionType.LONG_TERM) return true
 
       const invalidItemIndex = getInvalidFreightItemIndex(
         items.map((x) => x.width),
@@ -212,7 +214,8 @@ const FreighSchema = z
   )
   .refine(
     ({ exemptionPeriodType, limit, items }) => {
-      if (exemptionPeriodType === ExemptionType.SHORT_TERM) return true
+      // Since totalLength is validated in the pairing part for long-term
+      if (exemptionPeriodType === ExemptionType.LONG_TERM) return true
 
       const invalidItemIndex = getInvalidFreightItemIndex(
         items.map((x) => x.totalLength),
@@ -265,6 +268,7 @@ const ConvoyItemSchema = z.object({
       { path: ['makeAndColor'] },
     )
     .optional(),
+  dollyType: z.nativeEnum(DollyType),
 })
 
 const ConvoySchema = z.object({
