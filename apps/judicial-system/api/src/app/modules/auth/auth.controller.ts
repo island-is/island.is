@@ -252,6 +252,52 @@ export class AuthController {
     res.redirect('/?villa=innskraning-ogild')
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('token-refresh')
+  async tokenRefresh(@Res() res: Response, @Req() req: Request) {
+    try {
+      this.logger.debug('Handling token expiry')
+
+      const accessToken = req.cookies[this.idToken.name]
+      if (!this.authService.isTokenExpired(accessToken)) {
+        this.logger.debug('Token is valid')
+        res.status(200).send()
+        return
+      }
+      const refreshToken = req.cookies[this.refreshToken.name]
+      const idsTokens = await this.authService.refreshToken(refreshToken)
+
+      const verifiedUserToken = await this.authService.verifyIdsToken(
+        idsTokens.id_token,
+      )
+      if (!verifiedUserToken) {
+        throw new Error('Invalid id token')
+      }
+
+      const newAccessToken = idsTokens.access_token
+      const newRefreshToken = idsTokens.refresh_token
+      if (newAccessToken && newRefreshToken) {
+        res.cookie(this.accessToken.name, newAccessToken, {
+          ...this.accessToken.options,
+        })
+        res.cookie(this.refreshToken.name, newRefreshToken, {
+          ...this.refreshToken.options,
+          maxAge: EXPIRES_IN_MILLISECONDS,
+        })
+      }
+      this.logger.debug('Token refresh successful')
+      res.status(200).send()
+    } catch (error) {
+      this.logger.error('Handling token expiry failed:', { error })
+
+      this.clearCookies(res)
+
+      res.redirect('/?villa=innskraning-villa')
+
+      return
+    }
+  }
+
   @Get('callback')
   deprecatedAuth(@Res() res: Response) {
     this.logger.debug(
@@ -268,6 +314,9 @@ export class AuthController {
     this.logger.debug('Received logout request')
 
     const idToken = req.cookies[this.idToken.name]
+    const refreshToken = req.cookies[this.refreshToken.name]
+
+    this.authService.revokeRefreshToken(refreshToken)
 
     this.clearCookies(res)
 
