@@ -36,8 +36,6 @@ import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { FinancialAidService } from './financial-aid/financial-aid.service'
 import { FinancialStatementCemeteryTemplateModule } from './financial-statement-cemetery/financial-statement-cemetery.module'
 import { FinancialStatementCemeteryTemplateService } from './financial-statement-cemetery/financial-statement-cemetery.service'
-import { FinancialStatementsInaoTemplateModule } from './financial-statements-inao/financial-statements-inao.module'
-import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
 import { FinancialStatementIndividualElectionModule } from './financial-statement-individual-election/financial-statement-individual-election.module'
 import { FinancialStatementIndividualElectionService } from './financial-statement-individual-election/financial-statement-individual-election.service'
 import { FinancialStatementPoliticalPartyTemplateModule } from './financial-statement-political-party/financial-statement-political-party.modules'
@@ -192,7 +190,6 @@ export const modules = [
   PassportModule,
   OperatingLicenseModule,
   FinancialStatementCemeteryTemplateModule,
-  FinancialStatementsInaoTemplateModule,
   FinancialStatementIndividualElectionModule,
   FinancialStatementPoliticalPartyTemplateModule,
   NoDebtCertificateModule,
@@ -275,7 +272,6 @@ export const services = [
   PassportService,
   OperatingLicenseService,
   FinancialStatementCemeteryTemplateService,
-  FinancialStatementsInaoTemplateService,
   FinancialStatementIndividualElectionService,
   FinancialStatementPoliticalPartyTemplateService,
   MarriageConditionsSubmissionService,
