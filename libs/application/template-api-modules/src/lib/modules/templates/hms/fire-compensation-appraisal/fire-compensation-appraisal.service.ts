@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
 import { NotificationsService } from '../../../../notification/notifications.service'
@@ -7,11 +7,14 @@ import { TemplateApiModuleActionProps } from '../../../..'
 import { Fasteign, FasteignirApi } from '@island.is/clients/assets'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { getMockedFasteign } from './mockedFasteign'
+import { mockGetProperties } from './mockedFasteign'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
     private propertiesApi: FasteignirApi,
@@ -25,68 +28,32 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     )
   }
 
-  mockGetProperties(): Array<Fasteign> {
-    return [
-      getMockedFasteign('Vesturhóp 34, 240 Grindavík', 'F12345', [
-        {
-          notkunBirting: 'Íbúð á hæð',
-          brunabotamat: 100000000,
-          notkunareininganumer: '010101',
-        },
-      ]),
-      getMockedFasteign('Mosarimi 2, 112 Reykjavík', 'F54321', [
-        {
-          notkunBirting: 'Íbúðarhúsalóð',
-          brunabotamat: 70000000,
-          notkunareininganumer: '010102',
-        },
-        {
-          notkunBirting: 'Íbúð í kjallara',
-          brunabotamat: 91204000,
-          notkunareininganumer: '010103',
-        },
-      ]),
-      getMockedFasteign('Dúfnahólar 10, 105 Reykjavík', 'F98765', [
-        {
-          notkunBirting: 'Íbúðarhúsalóð',
-          brunabotamat: 50000000,
-          notkunareininganumer: '010104',
-        },
-        {
-          notkunBirting: 'Fjós',
-          brunabotamat: 7300000,
-          notkunareininganumer: '010105',
-        },
-        {
-          notkunBirting: 'Skemma',
-          brunabotamat: 8600000,
-          notkunareininganumer: '010106',
-        },
-      ]),
-    ]
-  }
-
   async getProperties({ auth }: TemplateApiModuleActionProps) {
     let properties: Array<Fasteign> = []
 
     // Mock for dev, since there is no dev service for the propertiesApi
     if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
-      properties = this.mockGetProperties()
+      properties = mockGetProperties()
     }
     // If on prod we fetch a list of all the fasteignanúmer for kennitala and then
     // fetch each property individually with the full data.
     else {
-      const simpleProperties = await this.getRealEstatesWithAuth(
-        auth,
-      ).fasteignirGetFasteignir({ kennitala: auth.nationalId })
+      try {
+        const simpleProperties = await this.getRealEstatesWithAuth(
+          auth,
+        ).fasteignirGetFasteignir({ kennitala: auth.nationalId })
 
-      properties = await Promise.all(
-        simpleProperties?.fasteignir?.map((property) => {
-          return this.propertiesApi.fasteignirGetFasteign({
-            fasteignanumer: property.fasteignanumer ?? '',
-          })
-        }) ?? [],
-      )
+        properties = await Promise.all(
+          simpleProperties?.fasteignir?.map((property) => {
+            return this.propertiesApi.fasteignirGetFasteign({
+              fasteignanumer: property.fasteignanumer ?? '',
+            })
+          }) ?? [],
+        )
+      } catch (e) {
+        this.logger.error('Failed to fetch properties:', e)
+        throw new Error('Villa kom upp við að sækja eignir')
+      }
     }
 
     return properties

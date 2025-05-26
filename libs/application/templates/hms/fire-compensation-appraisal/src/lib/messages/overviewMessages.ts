@@ -13,7 +13,7 @@ export const overviewMessages = defineMessages({
     description: 'Overview description',
   },
   name: {
-    id: 'fca.application:yes',
+    id: 'fca.application:name',
     defaultMessage: 'Fullt nafn',
     description: 'Name',
   },

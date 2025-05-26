@@ -49,10 +49,10 @@ export const CheckboxFormField = ({
   } = field
   const { formatMessage, lang: locale } = useLocale()
   const { watch } = useFormContext()
-  console.log(watch())
   const finalOptions = useMemo(() => {
     const updatedApplication = { ...application, answers: watch() }
     return buildFieldOptions(options, updatedApplication, field, locale)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch(), options, application, locale])
 
   return (

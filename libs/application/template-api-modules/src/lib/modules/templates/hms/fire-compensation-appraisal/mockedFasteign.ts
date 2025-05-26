@@ -105,3 +105,44 @@ export const getMockedFasteign = (
     },
   }
 }
+
+export const mockGetProperties = (): Array<Fasteign> => {
+  return [
+    getMockedFasteign('Vesturhóp 34, 240 Grindavík', 'F12345', [
+      {
+        notkunBirting: 'Íbúð á hæð',
+        brunabotamat: 100000000,
+        notkunareininganumer: '010101',
+      },
+    ]),
+    getMockedFasteign('Mosarimi 2, 112 Reykjavík', 'F54321', [
+      {
+        notkunBirting: 'Íbúðarhúsalóð',
+        brunabotamat: 70000000,
+        notkunareininganumer: '010102',
+      },
+      {
+        notkunBirting: 'Íbúð í kjallara',
+        brunabotamat: 91204000,
+        notkunareininganumer: '010103',
+      },
+    ]),
+    getMockedFasteign('Dúfnahólar 10, 105 Reykjavík', 'F98765', [
+      {
+        notkunBirting: 'Íbúðarhúsalóð',
+        brunabotamat: 50000000,
+        notkunareininganumer: '010104',
+      },
+      {
+        notkunBirting: 'Fjós',
+        brunabotamat: 7300000,
+        notkunareininganumer: '010105',
+      },
+      {
+        notkunBirting: 'Skemma',
+        brunabotamat: 8600000,
+        notkunareininganumer: '010106',
+      },
+    ]),
+  ]
+}
