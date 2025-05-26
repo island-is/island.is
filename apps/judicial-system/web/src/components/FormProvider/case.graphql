@@ -33,6 +33,8 @@ query Case($input: CaseQueryInput!) {
       verdictAppealDecision
       verdictAppealDate
       isVerdictAppealDeadlineExpired
+      verdictForDefendant
+      informationForDefendant
       subpoenaType
       isSentToPrisonAdmin
       sentToPrisonAdminDate

@@ -41,7 +41,6 @@ import {
   CaseIndictmentRulingDecision,
   EventType,
   ServiceRequirement,
-  UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useDefendants,
@@ -52,11 +51,10 @@ import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEvent
 
 import strings from './Completed.strings'
 import * as styles from './Completed.css'
-interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
 
 const Completed: FC = () => {
   const { formatMessage } = useIntl()
-  const { setAndSendDefendantToServer, updateDefendantState } = useDefendants()
+  const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
@@ -71,10 +69,6 @@ const Completed: FC = () => {
   const isSentToPublicProsecutor = workingCase.eventLogs?.some(
     (log) => log.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
   )
-
-  const handleUpdateDefendantState = (update: UpdateDefendant) => {
-    updateDefendantState({ caseId: workingCase.id, ...update }, setWorkingCase)
-  }
 
   const handleNextButtonClick = useCallback(async () => {
     const uploadResult = await handleUpload(
@@ -168,6 +162,41 @@ const Completed: FC = () => {
     workingCase.mergedCases && workingCase.mergedCases.length > 0
 
   const marginSpaceBetweenButtons = 2
+
+  const defendantCheckboxes = [
+    {
+      label: 'Leiðbeiningar um endurupptöku útivistarmála',
+      value: 'instructionsOnReopeningOutOfCourtCases',
+    },
+    {
+      label: 'Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti',
+      value: 'informationOnAppealToCourtOfAppeals',
+    },
+    {
+      label: 'Þýðing skilorðsbundinnar refsingar og skilorðsrofs',
+      value: 'conditionalSentenceAndBreachOfProbationTranslation',
+    },
+    {
+      label: 'Þýðing sviptingu ökuréttinda',
+      value: 'drivingRightsRevokedTranslation',
+    },
+    {
+      label: 'Þýðing vararefsingu fésekta',
+      value: 'alternativeFinesTranslation',
+    },
+    {
+      label: 'Upplýsingar um skilyrði og umsókn um samfélagsþjónustu',
+      value: 'communityService',
+    },
+    {
+      label: 'Upplýsingar um greiðslu sekta, sakarkostnaðar og bóta',
+      value: 'finesAndCosts',
+    },
+    {
+      label: 'Upplýsingar um upptöku muna/efna',
+      value: 'itemConfiscation',
+    },
+  ]
 
   return (
     <PageLayout
@@ -270,6 +299,8 @@ const Completed: FC = () => {
                               caseId: workingCase.id,
                               serviceRequirement:
                                 ServiceRequirement.NOT_APPLICABLE,
+                              informationForDefendant: [],
+                              verdictForDefendant: null,
                             },
                             setWorkingCase,
                           )
@@ -322,6 +353,8 @@ const Completed: FC = () => {
                             caseId: workingCase.id,
                             serviceRequirement: ServiceRequirement.NOT_REQUIRED,
                             verdictAppealDecision: null,
+                            informationForDefendant: [],
+                            verdictForDefendant: null,
                           },
                           setWorkingCase,
                         )
@@ -387,81 +420,44 @@ const Completed: FC = () => {
                           dómfellda um við birtingu dómsins.
                         </Text>
                         <BlueBox>
-                          <Checkbox
-                            label="Leiðbeiningar um endurupptöku útivistarmála"
-                            large
-                            filled
-                            checked={defendant?.informationForDefendant?.includes(
-                              'Leiðbeiningar um endurupptöku útivistarmála',
-                            )}
-                          />
-                          <Box marginBottom={marginSpaceBetweenButtons} />
-                          <Checkbox
-                            label="Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti"
-                            large
-                            filled
-                            checked={defendant?.informationForDefendant?.includes(
-                              'Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti',
-                            )}
-                          />
-                          <Box marginBottom={marginSpaceBetweenButtons} />
-                          <Checkbox
-                            label="Þýðing skilorðsbundinnar refsingar og skilorðsrofs"
-                            large
-                            filled
-                            checked={defendant?.informationForDefendant?.includes(
-                              'Þýðing skilorðsbundinnar refsingar og skilorðsrofs',
-                            )}
-                          />
-                          <Box marginBottom={marginSpaceBetweenButtons} />
-                          <Checkbox
-                            label="Þýðing sviptingu ökuréttinda"
-                            large
-                            filled
-                            checked={defendant?.informationForDefendant?.includes(
-                              'Þýðing sviptingu ökuréttinda',
-                            )}
-                          />
-
-                          <Box marginBottom={marginSpaceBetweenButtons} />
-                          <Checkbox
-                            label="Þýðing vararefsingu fésekta"
-                            large
-                            filled
-                            checked={defendant?.informationForDefendant?.includes(
-                              'Þýðing vararefsingu fésekta',
-                            )}
-                          />
-
-                          <Box marginBottom={marginSpaceBetweenButtons} />
-                          <Checkbox
-                            label="Upplýsingar um skilyrði og umsókn um samfélagsþjónustu"
-                            large
-                            filled
-                            checked={defendant?.informationForDefendant?.includes(
-                              'Upplýsingar um skilyrði og umsókn um samfélagsþjónustu',
-                            )}
-                          />
-
-                          <Box marginBottom={marginSpaceBetweenButtons} />
-                          <Checkbox
-                            label="Upplýsingar um greiðslu sekta, sakarkostnaðar og bóta"
-                            large
-                            filled
-                            checked={defendant?.informationForDefendant?.includes(
-                              'Upplýsingar um greiðslu sekta, sakarkostnaðar og bóta',
-                            )}
-                          />
-
-                          <Box marginBottom={marginSpaceBetweenButtons} />
-                          <Checkbox
-                            label="Upplýsingar um upptöku muna/efna"
-                            large
-                            filled
-                            checked={defendant?.informationForDefendant?.includes(
-                              'Upplýsingar um upptöku muna/efna',
-                            )}
-                          />
+                          {defendantCheckboxes.map((checkbox) => (
+                            <>
+                              <Checkbox
+                                label={checkbox.label}
+                                key={checkbox.value}
+                                id={checkbox.value}
+                                name={checkbox.value}
+                                checked={defendant?.informationForDefendant?.includes(
+                                  checkbox.value,
+                                )}
+                                large
+                                filled
+                                onChange={(target) => {
+                                  setAndSendDefendantToServer(
+                                    {
+                                      defendantId: defendant.id,
+                                      caseId: workingCase.id,
+                                      informationForDefendant: target.target
+                                        .checked
+                                        ? [
+                                            ...(defendant.informationForDefendant ||
+                                              []),
+                                            checkbox.value,
+                                          ]
+                                        : (
+                                            defendant.informationForDefendant ||
+                                            []
+                                          ).filter(
+                                            (item) => item !== checkbox.value,
+                                          ),
+                                    },
+                                    setWorkingCase,
+                                  )
+                                }}
+                              />
+                              <Box marginBottom={marginSpaceBetweenButtons} />
+                            </>
+                          ))}
                         </BlueBox>
                         <Box marginBottom={5} />
                         <SectionHeading
@@ -476,10 +472,14 @@ const Completed: FC = () => {
                           value={defendant.verdictForDefendant || ''}
                           placeholder={'Hvert er dómsorðið?'}
                           onChange={(event) =>
-                            handleUpdateDefendantState({
-                              defendantId: defendant.id,
-                              verdictForDefendant: event.target.value,
-                            })
+                            setAndSendDefendantToServer(
+                              {
+                                defendantId: defendant.id,
+                                caseId: workingCase.id,
+                                verdictForDefendant: event.target.value,
+                              },
+                              setWorkingCase,
+                            )
                           }
                           textarea
                           rows={8}
