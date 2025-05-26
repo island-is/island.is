@@ -12,6 +12,10 @@ import { PublicVehicleSearchApi, VehicleSearchApi } from '../../gen/fetch'
     ...publicApiProviders,
     VehiclesClientService,
   ],
-  exports: [VehiclesClientService, VehicleSearchApi, PublicVehicleSearchApi],
+  exports: [
+    VehiclesClientService,
+    VehicleSearchApi,
+    PublicVehicleSearchApi,
+  ],
 })
 export class VehiclesClientModule {}

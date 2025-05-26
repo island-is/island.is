@@ -72,11 +72,13 @@ export class SignatureListCreationService extends BaseTemplateApiService {
     const collectionType = getCollectionTypeFromApplicationType(
       application.typeId,
     )
-    const { canCreate, canCreateInfo } =
-      await this.signatureCollectionClientService.getSignee(
-        auth,
-        collectionType,
-      )
+    const {
+      canCreate,
+      canCreateInfo,
+    } = await this.signatureCollectionClientService.getSignee(
+      auth,
+      collectionType,
+    )
 
     if (canCreate) {
       return true

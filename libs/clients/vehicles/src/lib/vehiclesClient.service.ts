@@ -14,7 +14,7 @@ export class VehiclesClientService {
   constructor(
     private readonly vehiclesSearchApi: VehicleSearchApi,
     private readonly excelApi: ExcelApi,
-    private readonly pdfApi: PdfApi,
+    private readonly pdfApi: PdfApi
   ) {}
 
   private vehiclesApiWithAuth = (user: User) =>
@@ -23,7 +23,7 @@ export class VehiclesClientService {
   private excelApiWithAuth = (user: User) =>
     this.excelApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  private pdfApiWithAuth = (user: User) =>
+    private pdfApiWithAuth = (user: User) =>
     this.pdfApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   getVehicles = async (
@@ -47,18 +47,10 @@ export class VehiclesClientService {
     return mapVehicleResponseDto(res)
   }
 
-  vehicleReport = async (
-    user: User,
-    { vehicleId }: VehicleHistoryInput,
-  ): Promise<Blob> =>
-    this.pdfApiWithAuth(user).vehicleReportPdfGet({ permno: vehicleId })
+  vehicleReport = async (user: User, {vehicleId}: VehicleHistoryInput): Promise<Blob> => this.pdfApiWithAuth(user).vehicleReportPdfGet({permno: vehicleId})
 
-  ownershipReportExcel = async (user: User): Promise<Blob> =>
-    this.excelApiWithAuth(user).ownershipReportExcelGet()
+  ownershipReportExcel = async (user: User): Promise<Blob> => this.excelApiWithAuth(user).ownershipReportExcelGet()
 
-  ownershipReportPdf = (
-    user: User,
-    { personNationalId }: OwnershipReportInput,
-  ): Promise<Blob> =>
-    this.pdfApiWithAuth(user).ownershipReportPdfGet({ ssn: personNationalId })
+  ownershipReportPdf = (user: User, {personNationalId}: OwnershipReportInput): Promise<Blob> => this.pdfApiWithAuth(user).ownershipReportPdfGet({ssn:personNationalId})
+
 }

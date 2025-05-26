@@ -19,8 +19,10 @@ const ActionCompleteCollectionProcessing = ({
   const { formatMessage } = useLocale()
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
 
-  const [processCollectionMutation, { loading }] =
-    useProcessCollectionMutation()
+  const [
+    processCollectionMutation,
+    { loading },
+  ] = useProcessCollectionMutation()
   const { revalidate } = useRevalidator()
 
   const completeProcessing = async () => {

@@ -29,7 +29,7 @@ interface Props {
   focus?: boolean
 }
 
-export const ApplicationList = ({
+const ApplicationList = ({
   organizations,
   applications,
   onClick,

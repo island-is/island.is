@@ -1,3 +1,3 @@
-export interface OwnershipReportInput {
-  personNationalId?: string
+ export interface OwnershipReportInput {
+  personNationalId?: string;
 }

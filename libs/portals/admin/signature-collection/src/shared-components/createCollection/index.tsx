@@ -44,8 +44,10 @@ const CreateCollection = ({
   const [canCreate, setCanCreate] = useState(true)
   const [canCreateErrorReason, setCanCreateErrorReason] = useState('')
 
-  const [candidateLookup, { loading: loadingCandidate }] =
-    useCandidateLookupLazyQuery()
+  const [
+    candidateLookup,
+    { loading: loadingCandidate },
+  ] = useCandidateLookupLazyQuery()
   const [createCollection, { loading }] = useCreateCollectionMutation({
     variables: {
       input: {
@@ -90,8 +92,11 @@ const CreateCollection = ({
         },
       }).then((res) => {
         if (res.data?.signatureCollectionAdminCandidateLookup?.name) {
-          const { name, canCreate, canCreateInfo } =
-            res.data.signatureCollectionAdminCandidateLookup
+          const {
+            name,
+            canCreate,
+            canCreateInfo,
+          } = res.data.signatureCollectionAdminCandidateLookup
 
           setName(name)
           setCanCreate(canCreate)
@@ -152,7 +157,7 @@ const CreateCollection = ({
           <GridColumn span="10/12" offset="1/12">
             <Stack space={3}>
               <InputController
-                control={control as unknown as Control}
+                control={(control as unknown) as Control}
                 type="tel"
                 id="candidateNationalId"
                 label={formatMessage(m.candidateNationalId)}

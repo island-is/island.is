@@ -1,5 +1,5 @@
 import { EmailTemplateGenerator } from '../../../../types'
-import { logger } from '@island.is/logging'
+import {logger} from "@island.is/logging";
 
 export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
   props,

@@ -44,8 +44,11 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { allLists, collectionStatus, collection } =
-    useLoaderData() as ListsLoaderReturn
+  const {
+    allLists,
+    collectionStatus,
+    collection,
+  } = useLoaderData() as ListsLoaderReturn
 
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)

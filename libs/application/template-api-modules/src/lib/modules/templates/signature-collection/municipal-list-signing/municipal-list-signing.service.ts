@@ -86,11 +86,9 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
 
   async getList({ auth, application }: TemplateApiModuleActionProps) {
     // Returns the list user is trying to sign, in the apporiate area
-    const areaId = (
-      application.externalData.canSign.data as {
-        area: { id: string }
-      }
-    ).area?.id
+    const areaId = (application.externalData.canSign.data as {
+      area: { id: string }
+    }).area?.id
 
     if (!areaId) {
       // If no area user will be stopped by can sign above
@@ -98,8 +96,10 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
     }
     const ownerId = application.answers.initialQuery as string
     // Check if user got correct ownerId, if not user has to pick list
-    const isCandidateId =
-      await this.signatureCollectionClientService.isCandidateId(ownerId, auth)
+    const isCandidateId = await this.signatureCollectionClientService.isCandidateId(
+      ownerId,
+      auth,
+    )
 
     // If initialQuery is not defined return all list for area
     const lists = await this.signatureCollectionClientService.getLists({
