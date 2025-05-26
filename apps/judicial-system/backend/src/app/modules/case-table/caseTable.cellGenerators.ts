@@ -312,7 +312,7 @@ const caseSentToCourtDate: CaseTableCellGenerator = {
     const caseSentToCourtEvent = EventLog.caseSentToCourtEvent(c.eventLogs)
 
     return caseSentToCourtEvent
-      ? { s: [formatDate(caseSentToCourtEvent.created) ?? ''] }
+      ? { strList: [formatDate(caseSentToCourtEvent.created) ?? ''] }
       : undefined
   },
 }
@@ -337,7 +337,7 @@ const arraignmentDate: CaseTableCellGenerator = {
     const arraignmentDate = arraignmentDateLog ?? courtDateLog
     return arraignmentDate
       ? {
-          s: [
+          strList: [
             `${capitalize(formatDate(arraignmentDate, 'EEE d. MMMM yyyy'))}`,
             `kl. ${formatDate(arraignmentDate, 'HH:mm') ?? ''}`,
           ],
