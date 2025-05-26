@@ -85,6 +85,13 @@ export const registerProperty = {
       description:
         'Error message when number of rooms is less than one in search results',
     },
+    numOfRoomsMaximumError: {
+      id: 'ra.application:registerProperty.search.numOfRoomsMaximumError',
+      defaultMessage:
+        'Heildarfjöldi herbergja leigðra eininga getur ekki verið fleiri en 20',
+      description:
+        'Error message when number of rooms is larger than max in search results',
+    },
     changedSizeTooLargeError: {
       id: 'ra.application:registerProperty.search.changedSizeTooLargeError',
       defaultMessage:

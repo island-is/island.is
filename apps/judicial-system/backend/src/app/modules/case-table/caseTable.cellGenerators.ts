@@ -488,25 +488,20 @@ const subpoenaServiceState: CaseTableCellGenerator = {
     },
   },
   generate: (c: Case): TagValue | undefined => {
-    const isFine =
-      c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-
-    if (isFine) {
+    if (c.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING) {
       return undefined
     }
 
-    const isRuling =
-      c.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
     const verdictInfo = c.defendants?.map<[boolean, Date | undefined]>((d) => [
-      isRuling || isFine,
-      isFine || d.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+      true,
+      d.serviceRequirement === ServiceRequirement.NOT_REQUIRED
         ? c.rulingDate
         : d.verdictViewDate,
     ])
     const [
       indictmentVerdictViewedByAll,
       indictmentVerdictAppealDeadlineExpired,
-    ] = getIndictmentVerdictAppealDeadlineStatus(verdictInfo, isFine)
+    ] = getIndictmentVerdictAppealDeadlineStatus(verdictInfo, false)
 
     if (!indictmentVerdictViewedByAll) {
       return { color: 'red', text: 'Óbirt' }
