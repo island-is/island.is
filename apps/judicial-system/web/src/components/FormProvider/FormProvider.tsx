@@ -171,7 +171,7 @@ const FormProvider = ({ children }: Props) => {
   )
 
   useEffect(() => {
-    // This is hacky, we need to find a better fix but it's just to stop the endless loop
+    // This is hacky, we need to find a better fix but it's just to stop the endless loop 
     // of login attempts if the user is unauthorized
     const searchParams = new URLSearchParams(window.location.search)
     const villa = searchParams.get('villa')

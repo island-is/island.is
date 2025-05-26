@@ -1,14 +1,6 @@
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
-import {
-  Controller,
-  Header,
-  Inject,
-  Param,
-  Post,
-  Res,
-  UseGuards,
-} from '@nestjs/common'
+import { Controller, Header, Inject, Param, Post, Res, UseGuards } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
 
@@ -18,7 +10,7 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { VehiclesClientService } from '@island.is/clients/vehicles'
+import {  VehiclesClientService } from '@island.is/clients/vehicles'
 import { AuditService } from '@island.is/nest/audit'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
@@ -29,7 +21,7 @@ export class VehicleController {
   constructor(
     private readonly auditService: AuditService,
     private readonly vehicleService: VehiclesClientService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger
   ) {}
 
   @Post('/history/:permno')
@@ -43,9 +35,7 @@ export class VehicleController {
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
-    const documentResponse = await this.vehicleService.vehicleReport(user, {
-      vehicleId: permno,
-    })
+    const documentResponse = await this.vehicleService.vehicleReport(user, {vehicleId: permno})
 
     if (documentResponse) {
       this.auditService.audit({
@@ -71,27 +61,21 @@ export class VehicleController {
     return res.end()
   }
 
+
   @Post('/ownership/excel')
-  @Header(
-    'Content-Type',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  )
+  @Header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   @Header('Pragma', 'no-cache')
   @Header('Cache-Control', 'no-cache')
   @Header('Cache-Control', 'nmax-age=0')
   @ApiOkResponse({
-    content: {
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {},
-    },
+    content: { 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {} },
     description: 'Get an excel export from the work machines service',
   })
   async getVehicleOwnershipExcel(
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
-    const documentResponse = await this.vehicleService.ownershipReportExcel(
-      user,
-    )
+    const documentResponse = await this.vehicleService.ownershipReportExcel(user)
 
     if (documentResponse) {
       this.auditService.audit({
@@ -101,6 +85,7 @@ export class VehicleController {
 
       const contentArrayBuffer = await documentResponse.arrayBuffer()
       const buffer = Buffer.from(contentArrayBuffer)
+
 
       res.header('Content-length', buffer.length.toString())
       res.header(
@@ -123,10 +108,7 @@ export class VehicleController {
     @CurrentUser() user: User,
     @Res() res: Response,
   ) {
-    const documentResponse = await this.vehicleService.ownershipReportPdf(
-      user,
-      { personNationalId: ssn },
-    )
+    const documentResponse = await this.vehicleService.ownershipReportPdf(user, {personNationalId: ssn})
 
     if (documentResponse) {
       this.auditService.audit({
@@ -134,6 +116,7 @@ export class VehicleController {
         auth: user,
         resources: ssn,
       })
+
 
       const contentArrayBuffer = await documentResponse.arrayBuffer()
       const buffer = Buffer.from(contentArrayBuffer)
@@ -151,4 +134,5 @@ export class VehicleController {
     }
     return res.end()
   }
+
 }
