@@ -64,11 +64,11 @@
     },
     "@nx/react": {
       "application": {
-        "babel": true,
         "style": "scss",
         "linter": "eslint",
         "bundler": "webpack",
-        "pascalCaseFiles": true
+        "pascalCaseFiles": true,
+        "babel": true
       },
       "component": {
         "style": "scss"
