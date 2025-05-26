@@ -56,7 +56,7 @@ export const ProfileEmailForm = ({
     })
   }
 
-  const onNoCodeReceivedCallback = useCallback(async () => {
+  const onNoCodeReceivedCallback = useCallback(async (email: string) => {
     if (email) {
       await verifyEmail(email)
     }

@@ -25,7 +25,7 @@ type VerifyTemplateProps = {
     label: string
     onClick(): void
   }
-  onNoCodeReceivedCallback(): Promise<void>
+  onNoCodeReceivedCallback(email: string): Promise<void>
   onSubmitCallback(input: VerifyTemplateInput): Promise<void>
   email: string
   loading: boolean
@@ -81,7 +81,7 @@ export const VerifyTemplate = ({
 
   const onNoCodeReceived = async () => {
     setNoCodeReceivedLoading(true)
-    await onNoCodeReceivedCallback()
+    await onNoCodeReceivedCallback(email)
 
     // Delay the toast to give the user a chance to see the loading state and prevent spamming the button
     setTimeout(() => {
