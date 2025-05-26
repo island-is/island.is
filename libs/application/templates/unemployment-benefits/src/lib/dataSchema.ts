@@ -138,7 +138,7 @@ const educationHistorySchema = z
 
 const drivingLicenseSchema = z.object({
   drivingLicenseType: z.array(z.string()).optional(),
-  workMachineRights: z.array(z.string()).optional(),
+  heavyMachineryLicenses: z.array(z.string()).optional(),
 })
 
 const languageSkillsSchema = z.object({
@@ -163,6 +163,10 @@ const introductoryMeetingSchema = z.object({
   language: z.string(),
 })
 
+const payoutSchema = z.object({
+  bankNumber: z.string().optional(),
+})
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema,
@@ -176,6 +180,7 @@ export const dataSchema = z.object({
   euresJobSearch: euresSchema,
   resume: resumeSchema,
   employmentHistory: EmploymentHistorySchema,
+  payout: payoutSchema,
   informationChangeAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES)),
