@@ -29,25 +29,27 @@ export const applicationToCaseRequest = async (
   attachments: DocumentInfo[],
 ): Promise<CreateCaseRequest> => {
   const answers = application.answers as ComplaintsToAlthingiOmbudsmanAnswers
+  const contacts = gatherContacts(answers)
   return {
     category: 'Kvörtun',
     subject: 'Kvörtun frá ísland.is',
     template: 'Kvörtun',
-    contacts: gatherContacts(answers),
+    contacts,
     documents: attachments,
+    metadata: [{
+      name: 'GenderMod',
+      value: contacts[0].gender,
+    }]
   }
 }
 
 const getContactInfo = (
   answers: ComplaintsToAlthingiOmbudsmanAnswers,
 ): ComplainerContactInfo => {
-  let contact: typeof answers.applicant & { gender?: GenderAnswerOptions }
-  if (answers.complainedFor.decision == ComplainedForTypes.SOMEONEELSE) {
-    contact = answers.complainedForInformation as typeof answers.applicant & { gender?: GenderAnswerOptions }
-  } else {
-    contact = answers.applicant
-  }
-  
+  const contact = answers.complainedFor.decision === ComplainedForTypes.SOMEONEELSE
+    ? answers.complainedForInformation
+    : answers.applicant
+
   return {
     name: contact.name,
     nationalId: contact.nationalId,
@@ -57,7 +59,7 @@ const getContactInfo = (
     phone: contact.phoneNumber ?? '',
     postalCode: contact.postalCode,
     city: contact.city,
-    gender: contact.gender
+    gender: 'gender' in contact ? contact.gender : undefined
   }
 }
 

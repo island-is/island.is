@@ -49,11 +49,11 @@ import {
 import {
   ComplainedForTypes,
   ComplaineeTypes,
-  GenderAnswerOptions,
   OmbudsmanComplaintTypeEnum,
   UPLOAD_ACCEPT,
 } from '../shared/constants'
 import {
+  genderOptions,
   getComplaintType,
   isDecisionDateOlderThanYear,
   isGovernmentComplainee,
@@ -159,28 +159,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             buildSelectField({
               id: 'complainedForInformation.gender',
               title: information.aboutTheComplainer.gender,
-              options: [
-                {
-                  label: information.aboutTheComplainer.genderOptionFemale,
-                  value: GenderAnswerOptions.FEMALE,
-                },
-                {
-                  label: information.aboutTheComplainer.genderOptionMale,
-                  value: GenderAnswerOptions.MALE,
-                },
-                {
-                  label: information.aboutTheComplainer.genderOptionNonbinary,
-                  value: GenderAnswerOptions.NONBINARY,
-                },
-                {
-                  label: information.aboutTheComplainer.genderOptionOther,
-                  value: GenderAnswerOptions.OTHER,
-                },
-                {
-                  label: information.aboutTheComplainer.genderOptionDeclinedToAnswer,
-                  value: GenderAnswerOptions.DECLINED,
-                },
-              ],
+              options: genderOptions,
             }),
             buildAlertMessageField({
               id: 'complainedForInformation.genderJustification',
