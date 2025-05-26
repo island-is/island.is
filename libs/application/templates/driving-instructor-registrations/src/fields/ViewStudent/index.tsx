@@ -12,7 +12,6 @@ import {
   GridColumn,
   AlertMessage,
   Stack,
-  Icon,
   Tag,
   Divider,
 } from '@island.is/island-ui/core'
@@ -178,9 +177,7 @@ const ViewStudent = ({
     })
 
     if (res) {
-      setNewRegId(
-        res.data.drivingLicenseBookCreatePracticalDrivingLesson.id.toUpperCase(),
-      )
+      setNewRegId(res.data.drivingLicenseBookCreatePracticalDrivingLesson.id)
       resetFields('save')
     }
   }
@@ -204,7 +201,7 @@ const ViewStudent = ({
       res &&
       res.data.drivingLicenseBookUpdatePracticalDrivingLesson.success
     ) {
-      setNewRegId(editingRegistration?.id?.toUpperCase())
+      setNewRegId(editingRegistration?.id)
       resetFields('edit')
     }
   }
@@ -343,6 +340,7 @@ const ViewStudent = ({
                 >
                   <RadioButton
                     name={'options-' + index}
+                    backgroundColor="blue"
                     label={item.label}
                     value={item.value}
                     checked={item.value === minutes && !minutesInputActive}
@@ -359,6 +357,7 @@ const ViewStudent = ({
                 label={formatMessage(m.viewStudentInputMinutesLabel)}
                 type="number"
                 name="mínútur"
+                backgroundColor="blue"
                 value={
                   (minutesSelection.includes(minutes) && !minutesInputActive) ||
                   minutes === 0
@@ -391,6 +390,7 @@ const ViewStudent = ({
                 }}
                 label={formatMessage(m.viewStudentSelectDateLabel)}
                 locale="is"
+                backgroundColor="blue"
                 placeholderText={formatMessage(
                   m.viewStudentSelectDatePlaceholder,
                 )}
@@ -444,13 +444,24 @@ const ViewStudent = ({
               <T.Table box={{ overflow: 'hidden' }}>
                 <T.Head>
                   <T.Row>
-                    <T.HeadData style={styles.tableStyles} width="25%">
+                    <T.HeadData
+                      style={styles.tableStyles}
+                      width="25%"
+                      text={{ variant: 'eyebrow' }}
+                    >
                       {formatMessage(m.viewStudentTableHeaderCol1)}
                     </T.HeadData>
-                    <T.HeadData style={styles.tableStyles} width="40%">
+                    <T.HeadData
+                      style={styles.tableStyles}
+                      width="40%"
+                      text={{ variant: 'eyebrow' }}
+                    >
                       {formatMessage(m.viewStudentTableHeaderCol2)}
                     </T.HeadData>
-                    <T.HeadData style={styles.tableStyles}>
+                    <T.HeadData
+                      style={styles.tableStyles}
+                      text={{ variant: 'eyebrow' }}
+                    >
                       {formatMessage(m.viewStudentTableHeaderCol3)}
                     </T.HeadData>
                     <T.HeadData
@@ -530,19 +541,6 @@ const ViewStudent = ({
                                             m.viewStudentEditRegistration,
                                           )}
                                     </Button>
-                                    {newRegId &&
-                                      entry.id === newRegId &&
-                                      !loadingStudentsBook && (
-                                        <Box
-                                          paddingLeft={3}
-                                          className={styles.showSuccessIcon}
-                                        >
-                                          <Icon
-                                            icon="checkmarkCircle"
-                                            color="mint400"
-                                          />
-                                        </Box>
-                                      )}
                                   </Box>
                                 )}
                               </T.Data>
@@ -567,13 +565,24 @@ const ViewStudent = ({
                     <T.Table box={{ overflow: 'hidden' }}>
                       <T.Head>
                         <T.Row>
-                          <T.HeadData style={styles.tableStyles} width="25%">
+                          <T.HeadData
+                            style={styles.tableStyles}
+                            width="25%"
+                            text={{ variant: 'eyebrow' }}
+                          >
                             {formatMessage(m.schoolDate)}
                           </T.HeadData>
-                          <T.HeadData style={styles.tableStyles} width="40%">
+                          <T.HeadData
+                            style={styles.tableStyles}
+                            width="40%"
+                            text={{ variant: 'eyebrow' }}
+                          >
                             {formatMessage(m.school)}
                           </T.HeadData>
-                          <T.HeadData style={styles.tableStyles}>
+                          <T.HeadData
+                            style={styles.tableStyles}
+                            text={{ variant: 'eyebrow' }}
+                          >
                             {formatMessage(m.schoolStatus)}
                           </T.HeadData>
                         </T.Row>
@@ -621,13 +630,24 @@ const ViewStudent = ({
                   <T.Table box={{ overflow: 'hidden' }}>
                     <T.Head>
                       <T.Row>
-                        <T.HeadData style={styles.tableStyles} width="25%">
+                        <T.HeadData
+                          style={styles.tableStyles}
+                          width="25%"
+                          text={{ variant: 'eyebrow' }}
+                        >
                           {formatMessage(m.completedTestDate)}
                         </T.HeadData>
-                        <T.HeadData style={styles.tableStyles} width="40%">
+                        <T.HeadData
+                          style={styles.tableStyles}
+                          width="40%"
+                          text={{ variant: 'eyebrow' }}
+                        >
                           {formatMessage(m.completedTestType)}
                         </T.HeadData>
-                        <T.HeadData style={styles.tableStyles}>
+                        <T.HeadData
+                          style={styles.tableStyles}
+                          text={{ variant: 'eyebrow' }}
+                        >
                           {formatMessage(m.completedTestResult)}
                         </T.HeadData>
                       </T.Row>

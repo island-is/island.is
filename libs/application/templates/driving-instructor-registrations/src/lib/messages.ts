@@ -200,12 +200,12 @@ export const m = defineMessages({
   },
   saveEditRegistration: {
     id: 'dir.application:saveEditRegistration',
-    defaultMessage: "Breyta",
+    defaultMessage: 'Breyta',
     description: '',
   },
   saveStudentRegistration: {
     id: 'dir.application:saveStudentRegistration',
-    defaultMessage: "Vista skráða ökutíma",
+    defaultMessage: 'Vista skráða ökutíma',
     description: '',
   },
   viewStudentEditRegistration: {
