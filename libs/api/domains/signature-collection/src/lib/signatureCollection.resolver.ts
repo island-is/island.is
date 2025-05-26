@@ -58,6 +58,16 @@ export class SignatureCollectionResolver {
   }
 
   @BypassAuth()
+  @Query(() => SignatureCollection)
+  async signatureCollectionLatestForType(
+    @Args('input') input: SignatureCollectionCollectionTypeInput,
+  ) {
+    return this.signatureCollectionService.getLatestCollectionForType(
+      input.collectionType,
+    )
+  }
+
+  @BypassAuth()
   @Query(() => [SignatureCollectionListBase])
   async signatureCollectionAllOpenLists(
     @Args('input') input: SignatureCollectionIdInput,

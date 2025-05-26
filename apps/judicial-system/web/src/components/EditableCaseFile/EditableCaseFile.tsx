@@ -35,6 +35,7 @@ export interface TEditableCaseFile {
   canEdit?: boolean
   status?: FileUploadStatus
   size?: number | null
+  submissionDate?: string | null
 }
 
 interface Props {
@@ -61,16 +62,20 @@ const EditableCaseFile: FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const [ref, { width }] = useMeasure<HTMLDivElement>()
+
+  const initialDate =
+    caseFile.displayDate || caseFile.submissionDate || caseFile.created
+  const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
+
+  const [editedDisplayDate, setEditedDisplayDate] = useState<
+    string | undefined
+  >(formatDate(initialDate))
+
   const [isEditing, setIsEditing] = useState<boolean>(false)
 
   const [editedFilename, setEditedFilename] = useState<
     string | undefined | null
   >(caseFile.userGeneratedFilename)
-
-  const [editedDisplayDate, setEditedDisplayDate] = useState<
-    string | undefined
-  >(formatDate(caseFile.displayDate ?? caseFile.created) ?? undefined)
-  const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
 
   const handleEditFileButtonClick = () => {
     const trimmedFilename = editedFilename?.trim()
