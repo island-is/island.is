@@ -35,6 +35,58 @@ const districtCourtRequestCasesCompletedWhereOptions = {
   appeal_state: { [Op.not]: CaseAppealState.APPEALED },
 }
 
+const districtCourtIndictmentsNewWhereOptions = {
+  is_archived: false,
+  type: indictmentCases,
+  state: {
+    [Op.or]: [CaseState.SUBMITTED, CaseState.RECEIVED],
+  },
+  judge_id: null,
+}
+
+const districtCourtIndictmentsSharedWhereOptions = {
+  is_archived: false,
+  type: indictmentCases,
+}
+
+const buildSubpoenaExistsCondition = (exists = true) =>
+  Sequelize.literal(`
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      FROM subpoena
+      WHERE subpoena.case_id = "Case".id
+    )
+  `)
+
+const districtCourtIndictmentsReceivedWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  state: CaseState.RECEIVED,
+  [Op.and]: [buildSubpoenaExistsCondition(false)],
+}
+const districtCourtIndictmentsInProgressWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  judge_id: { [Op.not]: null },
+  state: CaseState.RECEIVED,
+  [Op.and]: [buildSubpoenaExistsCondition(true)],
+}
+
+const districtCourtIndictmentsFinalizingWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  state: CaseState.COMPLETED,
+}
+
+const districtCourtIndictmentsCompletedWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  state: CaseState.COMPLETED,
+  indictment_ruling_decision: {
+    [Op.or]: [
+      CaseIndictmentRulingDecision.RULING,
+      CaseIndictmentRulingDecision.FINE,
+    ],
+  },
+  indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
+}
+
 const courtOfAppealsSharedWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
@@ -280,6 +332,16 @@ export const caseTableWhereOptions: Record<CaseTableType, WhereOptions> = {
     districtCourtRequestCasesInProgressWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED]:
     districtCourtRequestCasesAppealedWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_NEW]:
+    districtCourtIndictmentsNewWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_RECEIVED]:
+    districtCourtIndictmentsReceivedWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS]:
+    districtCourtIndictmentsInProgressWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING]:
+    districtCourtIndictmentsFinalizingWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED]:
+    districtCourtIndictmentsCompletedWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED]:
     districtCourtRequestCasesCompletedWhereOptions,
   [CaseTableType.PRISON_ACTIVE]: prisonActiveWhereOptions,
