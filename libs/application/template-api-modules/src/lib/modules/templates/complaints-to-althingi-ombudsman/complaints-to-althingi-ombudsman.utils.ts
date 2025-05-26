@@ -1,7 +1,6 @@
 import {
   ComplaintsToAlthingiOmbudsmanAnswers,
   ComplainedForTypes,
-  GenderAnswerOptions,
 } from '@island.is/application/templates/complaints-to-althingi-ombudsman'
 import { Application } from '@island.is/application/types'
 import {
