@@ -27,11 +27,9 @@ import { ScreenValidationResponse } from '../../dataTypes/validationResponse.mod
 import {
   CurrentUser,
   IdsUserGuard,
-  Scopes,
   ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
-import { ApiScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
