@@ -473,7 +473,7 @@ const indictmentArraignmentDate: CaseTableCellGenerator = {
       return courtDateLog &&
         c.indictmentDecision === IndictmentDecision.SCHEDULING
         ? {
-            s: [
+            strList: [
               `${capitalize(formatDate(courtDateLog, 'EEE d. MMMM yyyy'))}`,
               `kl. ${formatDate(courtDateLog, 'HH:mm') ?? ''}`,
             ],
@@ -484,7 +484,7 @@ const indictmentArraignmentDate: CaseTableCellGenerator = {
     const arraignmentDateLog = DateLog.arraignmentDate(c.dateLogs)?.date
     return arraignmentDateLog
       ? {
-          s: [
+          strList: [
             `${capitalize(formatDate(arraignmentDateLog, 'EEE d. MMMM yyyy'))}`,
             `kl. ${formatDate(arraignmentDateLog, 'HH:mm') ?? ''}`,
           ],
