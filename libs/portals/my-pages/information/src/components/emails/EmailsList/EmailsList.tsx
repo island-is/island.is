@@ -111,16 +111,12 @@ export const EmailsList = ({ items }: EmailsListProps) => {
       },
     }
 
-    const ctaList: EmailCta[] = []
+    const ctaList: EmailCta[] = [deleteEmailCta]
 
     if (isActor) {
       ctaList.push(connectToDelegationCta)
     } else if (!item.primary) {
       ctaList.push(makePrimaryCta)
-    }
-
-    if (hasUserProfileWrite) {
-      ctaList.push(deleteEmailCta)
     }
 
     return ctaList
@@ -140,6 +136,8 @@ export const EmailsList = ({ items }: EmailsListProps) => {
 
     if (email.primary) {
       return 'primary'
+    } else if (email.isConnectedToActorProfile) {
+      return 'connected_to_delegation'
     } else if (email.emailStatus === DataStatus.NotVerified) {
       return 'not_verified'
     }
