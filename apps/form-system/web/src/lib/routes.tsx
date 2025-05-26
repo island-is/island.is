@@ -1,9 +1,9 @@
 import { Outlet, RouteObject } from 'react-router-dom'
-import { UserProfileLocale } from '@island.is/shared/components'
 import { HeaderInfoProvider } from '../context/HeaderInfoProvider'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 import { Layout } from '../components/Layout/Layout'
+import { NotFound } from '@island.is/portals/core'
 
 export const BASE_PATH = '/form'
 
@@ -11,7 +11,6 @@ export const routes: RouteObject[] = [
   {
     element: (
       <HeaderInfoProvider>
-        {/* <UserProfileLocale /> */}
         <Layout>
           <Outlet />
         </Layout>
@@ -19,7 +18,7 @@ export const routes: RouteObject[] = [
     ),
     children: [
       {
-        errorElement: <></>,
+        // errorElement: <></>,  TODO: Add error element
         children: [
           {
             path: '/:slug',
@@ -33,7 +32,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '*',
-        element: <>hoho</>,
+        element: <NotFound />,
       },
     ],
   },

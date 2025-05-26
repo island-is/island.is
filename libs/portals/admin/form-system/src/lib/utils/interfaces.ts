@@ -6,7 +6,6 @@ import {
   FormSystemLanguageType,
   FormSystemLanguageTypeInput,
 } from '@island.is/api/schema'
-import { Icon } from '../../../../../../island-ui/core/src/lib/IconRC/iconMap'
 
 export enum NavbarSelectStatus {
   OFF = 'Off',

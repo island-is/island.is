@@ -8,7 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { m, webMessages } from '@island.is/form-system/ui'
+import { m, webMessages } from '../../lib/messages'
 import { NationalIdField } from './components/nationalIdField'
 
 interface Props {
@@ -50,7 +50,6 @@ export const IndividualApplicant = ({ applicantType, lang }: Props) => {
           label={formatMessage(m.email)}
           name="email"
           placeholder="Email"
-          onChange={() => {}}
           backgroundColor="blue"
           required={true}
         />
@@ -58,7 +57,6 @@ export const IndividualApplicant = ({ applicantType, lang }: Props) => {
           label={formatMessage(m.phoneNumber)}
           name="phone"
           placeholder={formatMessage(m.phoneNumber)}
-          onChange={() => {}}
           backgroundColor="blue"
           required={true}
         />

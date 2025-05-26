@@ -8,8 +8,7 @@ interface Props {
   onDelete?: () => void
 }
 
-export const ApplicationCardDelete = ({ application, onDelete }: Props) => {
-  const { id } = application
+export const ApplicationCardDelete = ({ application: _application }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -35,7 +34,6 @@ export const ApplicationCardDelete = ({ application, onDelete }: Props) => {
           </Box>
         </Tag>
       }
-      onConfirm={() => {}}
       buttonTextConfirm={formatMessage(
         coreMessages.deleteApplicationDialogConfirmLabel,
       )}

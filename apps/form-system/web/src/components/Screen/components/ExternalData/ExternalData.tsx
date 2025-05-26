@@ -1,8 +1,8 @@
 import { Box, Checkbox, Icon, Stack, Text } from '@island.is/island-ui/core'
-import { Markdown } from '../../../../../../../../libs/shared/components/src'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 import { webMessages } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
+import { Markdown } from '@island.is/shared/components'
 
 interface Props {
   setExternalDataAgreement: (value: boolean) => void

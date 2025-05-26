@@ -40,7 +40,7 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
-  constructor(private readonly applicationsService: ApplicationsService) {}
+  constructor(private readonly applicationsService: ApplicationsService) { }
 
   @ApiOperation({ summary: 'Get an application by id' })
   @ApiOkResponse({
@@ -135,6 +135,7 @@ export class ApplicationsController {
     )
   }
 
+  // Not sure whether this is needed or whether we should try to fix the issues we were having.....
   // @ApiOperation({
   //   summary: 'Get all applications of the same type belonging to user',
   // })
@@ -170,7 +171,6 @@ export class ApplicationsController {
   async saveScreen(
     @Param('screenId') screenId: string,
     @Body() screenDto: SubmitScreenDto,
-    @CurrentUser() user: User,
   ): Promise<ScreenDto> {
     return await this.applicationsService.saveScreen(screenId, screenDto)
   }

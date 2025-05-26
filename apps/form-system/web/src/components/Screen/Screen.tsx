@@ -5,7 +5,7 @@ import { SectionTypes } from '@island.is/form-system/ui'
 import { ExternalData } from './components/ExternalData/ExternalData'
 import { Field } from './components/Field/Field'
 import { useState } from 'react'
-import { useLocale } from '../../../../../../libs/localization/src'
+import { useLocale } from '@island.is/localization'
 import { Applicants } from './components/Applicants/Applicants'
 import { FormSystemApplicant } from '@island.is/api/schema'
 
@@ -56,7 +56,7 @@ export const Screen = () => {
             .map((field, index) => {
               return (
                 <Field
-                  field={field!}
+                  field={field}
                   key={index}
                   hasError={state.errors?.includes(field.id) ?? false}
                 />

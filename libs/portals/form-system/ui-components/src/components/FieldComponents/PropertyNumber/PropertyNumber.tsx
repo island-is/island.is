@@ -32,8 +32,6 @@ const emptyProperty: PropertyNumberType = {
 export const PropertyNumber = ({
   item,
   dispatch,
-  hasError,
-  lang = 'is',
 }: Props) => {
   const { formatMessage } = useIntl()
   const [hasCustomPropertyNumber, setCustomPropertyNumber] = useState(false)

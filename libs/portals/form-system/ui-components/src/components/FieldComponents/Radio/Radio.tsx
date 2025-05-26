@@ -9,7 +9,6 @@ import {
 import { Dispatch, useEffect, useState } from 'react'
 import { getValue } from '../../../lib/getValue'
 import { Action } from '../../../lib'
-import { theme } from '@island.is/island-ui/theme'
 
 interface Props {
   item: FormSystemField
@@ -28,7 +27,7 @@ export const Radio = ({ item, dispatch, lang, hasError }: Props) => {
     setRadioChecked(
       radioButtons?.map((rb) => (rb.label?.is === value ? true : false)) ?? [],
     )
-  }, [radioButtons])
+  }, [radioButtons, value])
 
   const handleChange = (index: number) => {
     setRadioChecked((prev) => prev.map((rb, i) => (i === index ? true : false)))
@@ -40,10 +39,11 @@ export const Radio = ({ item, dispatch, lang, hasError }: Props) => {
         value: radioButtons[index].label?.is,
       },
     })
+    setValue(radioButtons[index].label?.is ?? '')
   }
 
   const radioButton = (rb: FormSystemListItem, index: number) => (
-    <Box width="half" padding={1} onClick={(e) => handleChange(index)}>
+    <Box width="half" padding={1} onClick={() => handleChange(index)}>
       <RadioButton
         label={rb?.label?.[language]}
         tooltip={

@@ -2,10 +2,10 @@ import { FormSystemField } from '@island.is/api/schema'
 import { Dispatch, useState } from 'react'
 import { Action } from '../../../lib'
 import { DatePicker as DatePickerCore } from '@island.is/island-ui/core'
-import { m } from '@island.is/form-system/ui'
+import { m } from '../../../lib/messages'
 import { useIntl } from 'react-intl'
 import { getValue } from '../../../lib/getValue'
-import { parseISO } from 'date-fns'
+import { parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 
 interface Props {
   item: FormSystemField

@@ -43,7 +43,7 @@ export const Email = ({
         },
       })
     },
-    [dispatch, item.id, validateEmail],
+    [dispatch, item.id],
   )
 
   const handleBlur = useCallback(() => {

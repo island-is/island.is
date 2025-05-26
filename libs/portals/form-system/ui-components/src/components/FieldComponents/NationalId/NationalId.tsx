@@ -22,12 +22,13 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
   const [nationalId, setNationalId] = useState<string>(
     getValue(item, 'nationalId'),
   )
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [name, setName] = useState<string>(getValue(item, 'name'))
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    let raw = e.target.value
+    const raw = e.target.value
     let digits = raw.replace(/\D/g, '')
 
     // Last character must be a digit, hyphen or backspace
@@ -37,7 +38,7 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
       digits = digits.slice(0, 10)
     }
 
-    let value =
+    const value =
       digits.length > 6 ? digits.slice(0, 6) + '-' + digits.slice(6) : digits
 
     setNationalId(value)

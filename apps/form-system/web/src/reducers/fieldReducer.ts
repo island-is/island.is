@@ -54,6 +54,7 @@ export const fieldReducer = (
 const setMultipleFieldValues = (
   state: ApplicationState,
   id: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   values: Record<string, any>,
 ): ApplicationState => {
   return Object.entries(values).reduce(

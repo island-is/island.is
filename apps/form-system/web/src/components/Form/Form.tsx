@@ -10,7 +10,7 @@ import { FormStepper } from '@island.is/form-system/ui'
 import { FormSystemSection } from '@island.is/api/schema'
 import { Screen } from '../Screen/Screen'
 import { useApplicationContext } from '../../context/ApplicationProvider'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 export const Form = () => {
   const { setInfo } = useHeaderInfo()

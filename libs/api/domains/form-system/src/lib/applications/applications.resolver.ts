@@ -10,7 +10,6 @@ import {
 import { ApplicationsService } from './applications.service'
 import {
   Application,
-  SubmitScreenResponse,
 } from '../../models/applications.model'
 import {
   CreateApplicationInput,
@@ -25,7 +24,7 @@ import { Screen } from '../../models/screen.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ApplicationsResolver {
-  constructor(private readonly applicationsService: ApplicationsService) {}
+  constructor(private readonly applicationsService: ApplicationsService) { }
 
   @Query(() => Application, {
     name: 'formSystemApplication',

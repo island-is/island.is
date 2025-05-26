@@ -3,7 +3,7 @@ import * as styles from './Footer.css'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { useIntl } from 'react-intl'
 import { webMessages } from '@island.is/form-system/ui'
-import { SAVE_SCREEN, SUBMIT_SCREEN } from '@island.is/form-system/graphql'
+import { SAVE_SCREEN } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
 
 interface Props {

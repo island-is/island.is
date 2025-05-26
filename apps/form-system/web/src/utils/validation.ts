@@ -59,7 +59,7 @@ const hasError = (field: FormSystemField): boolean => {
       return !value?.time
     }
     case FieldTypesEnum.FILE: {
-      return !value?.s3Key || !value?.s3Url
+      return !value?.s3Key
     }
     default: {
       return false
@@ -92,7 +92,7 @@ const validatePhoneNumber = (value?: string) => {
 // TODO: Currently only validates nationalId, needs implementation once connection has been made to the national registry
 const validateNationalId = (nationalId?: string, name?: string) => {
   // if (!nationalId || !name) return false
-  if (!nationalId) return false
+  if (!nationalId || !name) return false
   const nationalIdRegex = /^\d{6}-\d{4}$/
 
   if (!nationalIdRegex.test(nationalId)) return false
@@ -101,7 +101,7 @@ const validateNationalId = (nationalId?: string, name?: string) => {
 }
 
 const validatePropertyNumber = (value: FormSystemValue) => {
-  const { propertyNumber, address, postalCode, municipality } = value
+  const { propertyNumber, address, municipality } = value
   return (
     !propertyNumber ||
     !address ||

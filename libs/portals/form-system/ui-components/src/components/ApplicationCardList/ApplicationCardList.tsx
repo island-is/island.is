@@ -19,7 +19,6 @@ interface Props {
 
 export const ApplicationList = ({
   applications,
-  onClick,
   refetch,
   focus = false,
 }: Props) => {
@@ -51,6 +50,7 @@ export const ApplicationList = ({
               key={application.id}
               application={application}
               focused={focus}
+              onDelete={onApplicationDelete}
             />
           ))}
       </Stack>

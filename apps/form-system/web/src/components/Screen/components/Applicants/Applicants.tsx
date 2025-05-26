@@ -30,6 +30,7 @@ export const Applicants = ({ applicantTypes }: Props) => {
         ) {
           return <LegalEntity applicantType={applicantType} lang={lang} />
         }
+        return null
       })}
     </>
   )

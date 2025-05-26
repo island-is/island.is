@@ -1,7 +1,7 @@
 import { FormSystemApplicant } from '@island.is/api/schema'
 import { Input, Stack, Box, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { m, webMessages } from '@island.is/form-system/ui'
+import { m, webMessages } from '../../lib/messages'
 import { NationalIdField } from './components/nationalIdField'
 
 interface Props {

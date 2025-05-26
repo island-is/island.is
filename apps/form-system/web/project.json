@@ -3,11 +3,15 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/form-system/web/src",
   "projectType": "application",
-  "tags": ["scope:application-system-web"],
+  "tags": [
+    "scope:form-system"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
@@ -20,7 +24,9 @@
           "apps/form-system/web/src/favicon.ico",
           "apps/form-system/web/src/assets"
         ],
-        "styles": ["apps/form-system/web/src/styles.scss"],
+        "styles": [
+          "apps/form-system/web/src/styles.scss"
+        ],
         "scripts": [],
         "webpackConfig": "apps/form-system/web/webpack.config.js"
       },
@@ -65,7 +71,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "apps/form-system/web/jest.config.ts"
       }
@@ -73,7 +81,9 @@
     "start-bff": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn infra run-local-env services-bff-portals-my-pages"],
+        "commands": [
+          "yarn infra run-local-env services-bff-portals-my-pages"
+        ],
         "cwd": "infra"
       }
     },
@@ -90,7 +100,9 @@
     "mock": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["API_MOCKS=true yarn start form-system-web"]
+        "commands": [
+          "API_MOCKS=true yarn start form-system-web"
+        ]
       }
     }
   }

@@ -1,11 +1,9 @@
-import { m, webMessages } from '@island.is/form-system/ui'
+import { m, webMessages } from '../../../lib/messages'
 import {
   GridColumn,
   GridRow,
   Input,
-  Stack,
   Box,
-  Text,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 

@@ -1,32 +1,28 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   CREATE_APPLICATION,
-  GET_APPLICATIONS,
 } from '@island.is/form-system/graphql'
-import { useMutation, useQuery, useLazyQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { useEffect, useState } from 'react'
 import { FormSystemApplication } from '@island.is/api/schema'
 import {
-  Text,
   Box,
   Page,
   Button,
   GridContainer,
   Inline,
-  Stack,
 } from '@island.is/island-ui/core'
 import { ApplicationList } from '@island.is/form-system/ui'
 
 interface Params {
-  slug: string
+  slug?: string
 }
 
 export const Applications = () => {
-  const { slug } = useParams() as unknown as Params
+  const { slug } = useParams() as Params
   const navigate = useNavigate()
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
-  //const { formatMessage } = useLocale()
-  const [createApplicationMutation, { error: createError }] = useMutation(
+  const [createApplicationMutation] = useMutation(
     CREATE_APPLICATION,
     {
       onCompleted({ createApplication }) {
@@ -37,6 +33,7 @@ export const Applications = () => {
     },
   )
 
+  // TODO: Uncomment when the endpoint is ready
   // const [getApplications] = useLazyQuery(GET_APPLICATIONS, {
   //   onCompleted({ getApplications }) {
   //     if (slug) {

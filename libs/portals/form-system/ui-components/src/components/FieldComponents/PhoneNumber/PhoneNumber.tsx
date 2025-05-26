@@ -5,7 +5,6 @@ import {
   PhoneInput,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { m } from '../../../lib/messages'
 import { Dispatch, useState } from 'react'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
@@ -24,7 +23,7 @@ export const PhoneNumber = ({
   hasError,
   lang = 'is',
 }: Props) => {
-  const { locale, formatMessage } = useIntl()
+  const { locale } = useIntl()
   const [phoneNumber, setPhoneNumber] = useState<string>(
     getValue(item, 'phoneNumber'),
   )

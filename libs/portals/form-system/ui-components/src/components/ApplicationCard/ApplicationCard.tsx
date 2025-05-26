@@ -2,7 +2,7 @@ import { Box, Icon, Inline, Text } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 import { useLocale } from '@island.is/localization'
 import { FormSystemApplication } from '@island.is/api/schema'
-import { dateFormat } from '../../../../../../shared/constants/src'
+import { dateFormat } from '@island.is/shared/constants'
 import { ApplicationCardTag } from './components/ApplicationCardTag'
 import { ApplicationCardDelete } from './components/ApplicationCardDelete'
 import * as styles from './ApplicationCard.css'
@@ -11,14 +11,15 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 interface Props {
   application: FormSystemApplication
+  onDelete: () => void
   focused?: boolean
 }
 
-export const ApplicationCard = ({ application, focused = false }: Props) => {
-  const { modified, status } = application
+export const ApplicationCard = ({ application, focused = false, onDelete }: Props) => {
+  const { status } = application
   const { slug } = useParams()
   const navigate = useNavigate()
-  const { lang: locale, formatMessage } = useLocale()
+  const { lang: locale } = useLocale()
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
   const heading = application?.formName?.[locale]
   const logo = false // Do we implement logos?
@@ -59,7 +60,7 @@ export const ApplicationCard = ({ application, focused = false }: Props) => {
           <ApplicationCardTag />
           <ApplicationCardDelete
             application={application}
-            onDelete={() => {}}
+            onDelete={onDelete}
           />
         </Inline>
       </Box>

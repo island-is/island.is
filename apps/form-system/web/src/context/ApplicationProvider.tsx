@@ -6,7 +6,7 @@ import {
   useEffect,
   useMemo,
 } from 'react'
-import { FormSystemApplication, FormSystemSection } from '@island.is/api/schema'
+import { FormSystemApplication } from '@island.is/api/schema'
 import {
   applicationReducer,
   initialReducer,
