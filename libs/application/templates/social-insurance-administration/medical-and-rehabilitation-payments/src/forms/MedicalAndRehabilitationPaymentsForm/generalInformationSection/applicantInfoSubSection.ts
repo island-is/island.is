@@ -83,7 +83,7 @@ export const applicantInfoSubSection = buildSubSection({
           title: socialInsuranceAdministrationMessage.info.applicantEmail,
           width: 'half',
           variant: 'email',
-          disabled: false,
+          disabled: true,
           defaultValue: (application: Application) => {
             const { userProfileEmail } = getApplicationExternalData(
               application.externalData,
