@@ -1,9 +1,7 @@
 import { GetServerSideProps } from 'next'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
 
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Link, LinkV2 } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'
@@ -176,7 +174,6 @@ function PaymentPage({
   organization,
   productInformation,
 }: PaymentPageProps) {
-  const router = useRouter()
   const methods = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -251,11 +248,11 @@ function PaymentPage({
               />
 
               <Box marginTop={4} width="full">
-                <Link href={paymentFlow.returnUrl ?? 'https://island.is'}>
-                  <Button fluid>
+                <LinkV2 href={paymentFlow.returnUrl ?? 'https://island.is'}>
+                  <Button fluid unfocusable>
                     {formatMessage(generic.buttonFinishAndReturn)}
                   </Button>
-                </Link>
+                </LinkV2>
               </Box>
             </>
           }
@@ -314,19 +311,11 @@ function PaymentPage({
                       : formatMessage(invoice.create)}
                   </Button>
                   <Box display="flex" justifyContent="center">
-                    <Button
-                      variant="text"
-                      disabled={overallIsSubmitting}
-                      onClick={() => {
-                        if (!overallIsSubmitting) {
-                          router.push(
-                            paymentFlow.returnUrl ?? 'https://island.is',
-                          )
-                        }
-                      }}
-                    >
-                      {formatMessage(generic.buttonCancel)}
-                    </Button>
+                    <LinkV2 href={paymentFlow.returnUrl ?? 'https://island.is'}>
+                      <Button unfocusable variant="text">
+                        {formatMessage(generic.buttonCancel)}
+                      </Button>
+                    </LinkV2>
                   </Box>
                 </Box>
               </form>
