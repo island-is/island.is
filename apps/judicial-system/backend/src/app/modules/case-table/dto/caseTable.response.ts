@@ -56,6 +56,12 @@ class CaseTableRow {
   @ApiProperty({ type: String, description: 'The row case id' })
   readonly caseId!: string
 
+  @ApiProperty({
+    type: Boolean,
+    description: 'Indicates if the case belongs to the current user',
+  })
+  readonly isMyCase!: boolean
+
   @ApiProperty({ type: [CaseTableCell], description: 'The row cells' })
   readonly cells!: CaseTableCell[]
 }

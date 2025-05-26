@@ -151,6 +151,17 @@ const generateRequestCaseStateTag = (c: Case, user: TUser): TagValue => {
   }
 }
 
+const generateDate = (date: Date | undefined): StringValue | undefined => {
+  const dateValue = formatDate(date, 'd.M.yyyy')
+  const sortValue = formatDate(date, 'yyyyMMdd')
+
+  if (!dateValue || !sortValue) {
+    return undefined
+  }
+
+  return { str: dateValue, sortValue: sortValue }
+}
+
 const caseNumber: CaseTableCellGenerator = {
   attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
   generate: (c: Case): StringGroupValue => ({
@@ -162,17 +173,6 @@ const caseNumber: CaseTableCellGenerator = {
         : c.policeCaseNumbers[0],
     ],
   }),
-}
-
-const generateDate = (date: Date | undefined): StringValue | undefined => {
-  const dateValue = formatDate(date, 'd.M.yyyy')
-  const sortValue = formatDate(date, 'yyyyMMdd')
-
-  if (!dateValue || !sortValue) {
-    return undefined
-  }
-
-  return { str: dateValue, sortValue: sortValue }
 }
 
 const defendants: CaseTableCellGenerator = {
