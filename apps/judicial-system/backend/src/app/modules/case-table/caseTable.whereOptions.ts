@@ -65,17 +65,18 @@ const districtCourtIndictmentsReceivedWhereOptions = {
 }
 const districtCourtIndictmentsInProgressWhereOptions = {
   ...districtCourtIndictmentsSharedWhereOptions,
-  judge_id: { [Op.not]: null },
-  state: CaseState.RECEIVED,
-  [Op.and]: [buildSubpoenaExistsCondition(true)],
+  [Op.or]: [
+    {
+      state: CaseState.RECEIVED,
+      [Op.and]: [buildSubpoenaExistsCondition(true)],
+    },
+    {
+      state: CaseState.WAITING_FOR_CANCELLATION,
+    },
+  ],
 }
 
 const districtCourtIndictmentsFinalizingWhereOptions = {
-  ...districtCourtIndictmentsSharedWhereOptions,
-  state: CaseState.COMPLETED,
-}
-
-const districtCourtIndictmentsCompletedWhereOptions = {
   ...districtCourtIndictmentsSharedWhereOptions,
   state: CaseState.COMPLETED,
   indictment_ruling_decision: {
@@ -84,7 +85,12 @@ const districtCourtIndictmentsCompletedWhereOptions = {
       CaseIndictmentRulingDecision.FINE,
     ],
   },
-  indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
+  indictment_reviewer_id: null,
+}
+
+const districtCourtIndictmentsCompletedWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  state: CaseState.COMPLETED,
 }
 
 const courtOfAppealsSharedWhereOptions = {
