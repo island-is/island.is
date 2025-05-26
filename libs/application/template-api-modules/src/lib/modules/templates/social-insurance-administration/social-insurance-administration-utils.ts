@@ -441,7 +441,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       hadAssistance: true, //TODO:
       answers: questionnaire.map((question) => ({
         questionId: question.questionId,
-        answer: +question.answer === 5 ? null : +question.answer,
+        answer: +question.answer === 5 ? -1 : +question.answer, //TODO: TR teymið er ekki klárt hvort að við eigum að senda -1 eða null
       })),
     },
   }
