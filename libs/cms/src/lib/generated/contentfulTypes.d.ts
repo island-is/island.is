@@ -2452,11 +2452,19 @@ export interface ILink extends Entry<ILinkFields> {
 }
 
 export interface ILinkedPageFields {
+  /** Internal Title */
+  internalTitle: string
+
   /** Title */
   title: string
 
   /** page */
-  page: IArticle | IArticleCategory | INews
+  page:
+    | IArticle
+    | IArticleCategory
+    | INews
+    | IOrganizationSubpage
+    | IOrganizationParentSubpage
 }
 
 export interface ILinkedPage extends Entry<ILinkedPageFields> {
@@ -3017,7 +3025,7 @@ export interface IOneColumnTextFields {
   content?: Document | undefined
 
   /** Link */
-  link?: ILink | undefined
+  link?: ILink | ILinkedPage | undefined
 
   /** Divider On Top */
   dividerOnTop?: boolean | undefined
@@ -3403,6 +3411,9 @@ export interface IOrganizationParentSubpageFields {
 
   /** Displayed Title */
   title: string
+
+  /** Short Title */
+  shortTitle?: string | undefined
 
   /** Slug */
   slug?: string | undefined

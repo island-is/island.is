@@ -49,6 +49,8 @@ env:
   XROAD_CLIENT_ID: 'IS-DEV/GOV/10014/Rettarvorslugatt-Client'
   XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1'
   XROAD_COURT_MEMBER_CODE: '10019'
+  XROAD_DMR_CRIMINAL_RECORD_API_PATH: '/DMR-Protected/sakaskra-dev'
+  XROAD_DMR_MEMBER_CODE: '10014'
   XROAD_POLICE_API_PATH: '/Logreglan-Private/rettarvarsla-v1'
   XROAD_POLICE_MEMBER_CODE: '10005'
   XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
@@ -71,8 +73,8 @@ hpa:
       cpuAverageUtilization: 90
       nginxRequestsIrate: 5
     replicas:
-      max: 10
-      min: 2
+      max: 3
+      min: 1
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
 initContainer:
@@ -105,9 +107,9 @@ podSecurityContext:
   fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 2
-  max: 10
-  min: 2
+  default: 1
+  max: 3
+  min: 1
 resources:
   limits:
     cpu: '400m'

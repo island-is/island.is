@@ -144,6 +144,9 @@ codemagic.yaml                                                                  
 # /libs/api/domains/municipalities-financial-aid                                                            @island-is/kolibri-robin-hood
 # /libs/clients/municipalities-financial-aid                                                                @island-is/kolibri-robin-hood
 
+/libs/clients/hms/                                                                                        @island-is/kolibri-kotid
+/libs/api/domains/hms/                                                                                    @island-is/kolibri-kotid
+
 /apps/download-service/                                                                                   @island-is/hugsmidjan
 /apps/portals/my-pages*/                                                                                  @island-is/hugsmidjan
 /apps/services/regulations-admin-backend/                                                                 @island-is/hugsmidjan
@@ -232,7 +235,6 @@ codemagic.yaml                                                                  
 /libs/application/templates/document-provider-onboarding/                                                 @island-is/norda
 /libs/application/templates/family-matters/children-residence-change-v2                                   @island-is/norda
 /libs/application/templates/financial-aid/                                                                @island-is/norda
-/libs/application/templates/financial-statements-inao/                                                    @island-is/norda
 /libs/application/templates/funding-government-projects/                                                  @island-is/norda
 /libs/application/templates/general-fishing-license/                                                      @island-is/norda
 /libs/application/templates/grindavik-housing-buyout/                                                     @island-is/norda
@@ -256,7 +258,6 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-cemetery/            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-individual-election/ @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-political-party/     @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/financial-statements-inao                @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/             @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/                 @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/grindavik-housing-buyout/                @island-is/norda
