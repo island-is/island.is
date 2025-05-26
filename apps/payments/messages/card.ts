@@ -257,6 +257,18 @@ export const cardError = defineMessages({
       'Kortinu hefur verið lokað vegna öryggisbrests. Hafðu samband við kortaútgefanda.',
     description: 'Security violation description',
   },
+  refundedBecauseOfSystemErrorTitle: {
+    id: 'payments:cardError.refundedBecauseOfSystemErrorTitle',
+    defaultMessage: 'Greiðsla endurgreidd',
+    description: 'Payment refunded',
+  },
+  refundedBecauseOfSystemError: {
+    id: 'payments:cardError.refundedBecauseOfSystemError',
+    defaultMessage:
+      'Greiðslan fór í gegn en var endurgreidd vegna kerfisvillu. Vinsamlegast reyndu aftur.',
+    description:
+      'Payment was refunded due to a system error. Please try again.',
+  },
   additionalAuthenticationRequiredTitle: {
     id: 'payments:cardError.additionalAuthenticationRequiredTitle',
     defaultMessage: 'Viðbótarauðkenning krafist',
