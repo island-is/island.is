@@ -268,23 +268,23 @@ export class ActorUserProfileController {
     response: { status: 200, type: MeActorProfileDto },
   })
   createOrUpdateActorProfile(
-    @CurrentUser() user: User,
+    @CurrentActor() actor: User,
     @Headers('X-Param-From-National-Id') fromNationalId: string,
     @Body() actorProfile: PatchActorProfileDto,
   ): Promise<MeActorProfileDto> {
     return this.auditService.auditPromise(
       {
-        auth: user,
+        auth: actor,
         namespace,
         action: 'patch',
-        resources: user.nationalId,
+        resources: actor.nationalId,
         meta: {
           fromNationalId,
           fields: Object.keys(actorProfile),
         },
       },
       this.userProfileService.createOrUpdateActorProfile({
-        toNationalId: user.nationalId,
+        toNationalId: actor.nationalId,
         fromNationalId,
         emailNotifications: actorProfile.emailNotifications,
         emailsId: actorProfile.emailsId,
