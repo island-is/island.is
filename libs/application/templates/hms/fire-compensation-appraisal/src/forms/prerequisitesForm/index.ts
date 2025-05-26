@@ -10,5 +10,6 @@ export const Prerequisites = buildForm({
   mode: FormModes.NOT_STARTED,
   logo: HmsLogo,
   renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [confirmReadSection, externalDataSection],
 })

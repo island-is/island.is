@@ -32,7 +32,7 @@ export const changesSection = buildSection({
           ],
         }),
         buildDescriptionField({
-          id: 'description',
+          id: 'descriptionDescription',
           title: m.changesMessages.descriptionOfChanges,
           titleVariant: 'h4',
         }),
