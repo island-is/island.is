@@ -21,10 +21,10 @@ export class ApplicationsInput {
   organizationNationalId?: string
 
   @Field(() => Number, { nullable: true })
-  page?: Number
+  page?: number
 
   @Field(() => Number, { nullable: true })
-  limit?: Number
+  limit?: number
 
   @Field(() => Boolean, { nullable: false })
   isTest!: boolean
