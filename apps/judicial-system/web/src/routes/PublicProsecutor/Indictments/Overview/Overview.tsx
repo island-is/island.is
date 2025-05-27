@@ -4,7 +4,10 @@ import { useRouter } from 'next/router'
 
 import { Box, Button, Option, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  getStandardUserDashboardRoute,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -21,6 +24,7 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
 import {
@@ -50,6 +54,7 @@ type VisibleModal = {
 }
 
 export const Overview = () => {
+  const { user } = useContext(UserContext)
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
@@ -297,7 +302,7 @@ export const Overview = () => {
         {!workingCase.indictmentReviewDecision ? (
           <FormFooter
             nextButtonIcon="arrowForward"
-            previousUrl={constants.CASES_ROUTE}
+            previousUrl={getStandardUserDashboardRoute(user)}
             nextIsLoading={isLoadingWorkingCase}
             nextIsDisabled={
               !selectedIndictmentReviewer ||
@@ -310,7 +315,7 @@ export const Overview = () => {
           />
         ) : (
           <FormFooter
-            previousUrl={constants.CASES_ROUTE}
+            previousUrl={getStandardUserDashboardRoute(user)}
             nextIsLoading={isLoadingWorkingCase}
             nextIsDisabled={!isReviewedDecisionChanged}
             onNextButtonClick={() =>
@@ -328,7 +333,7 @@ export const Overview = () => {
             reviewer: selectedIndictmentReviewer?.label,
           })}
           secondaryButtonText={fm(core.back)}
-          onSecondaryButtonClick={() => router.push(constants.CASES_ROUTE)}
+          onSecondaryButtonClick={() => router.push(getStandardUserDashboardRoute(user))}
         />
       )}
       {modalVisible?.type === 'REVOKE_SEND_TO_PRISON_ADMIN' && (

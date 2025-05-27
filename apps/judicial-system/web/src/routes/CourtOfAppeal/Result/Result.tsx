@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { AlertBanner, AlertMessage, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
   CaseFilesAccordionItem,
@@ -163,7 +164,7 @@ const CourtOfAppealResult = () => {
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
-            previousUrl={constants.COURT_OF_APPEAL_CASES_ROUTE}
+            previousUrl={getStandardUserDashboardRoute(user)}
             nextButtonText={formatMessage(strings.nextButtonText)}
             onNextButtonClick={() => setModalVisible('reopenCase')}
           />

@@ -7,12 +7,12 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
+import { getUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   PageHeader,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 
-import { getUserDashboardRoute } from '../lib'
 import Login from './Login/Login'
 import SelectUser from './SelectUser/SelectUser'
 import * as styles from './Landing.css'
@@ -20,7 +20,6 @@ import * as styles from './Landing.css'
 const Landing = () => {
   const router = useRouter()
   const { user, eligibleUsers } = useContext(UserContext)
-  console.log({ user })
 
   useEffect(() => {
     if (user && eligibleUsers && eligibleUsers.length === 1) {
