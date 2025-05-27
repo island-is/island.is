@@ -63,6 +63,7 @@ export class NotificationService {
 
           // We still want to send the defender a link to the case even if
           // the judge chooses not to send a calendar invitation
+          // Note: This is only relevant for non-indictment cases
           messages = [
             this.getNotificationMessage(
               CaseNotificationType.ADVOCATE_ASSIGNED,
