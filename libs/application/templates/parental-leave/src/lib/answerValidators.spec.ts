@@ -50,7 +50,7 @@ const createBaseApplication = (): Application => ({
   id: '',
   modified: new Date(),
   state: '',
-  typeId: ApplicationTypes.EXAMPLE,
+  typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
   status: ApplicationStatus.IN_PROGRESS,
 })
 
