@@ -81,7 +81,7 @@ export class FormsResolver {
     return this.formsService.getAllForms(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => UpdateFormResponse, {
     name: 'updateFormSystemForm',
     nullable: true,
   })
