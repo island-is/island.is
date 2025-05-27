@@ -392,6 +392,9 @@
       "@island.is/application/templates/examples/example-common-actions": [
         "libs/application/templates/examples/example-common-actions/src/index.ts"
       ],
+      "@island.is/application/templates/examples/example-folder-structure-and-conventions": [
+        "libs/application/templates/examples/example-folder-structure-and-conventions/src/index.ts"
+      ],
       "@island.is/application/templates/examples/example-inputs": [
         "libs/application/templates/examples/example-inputs/src/index.ts"
       ],
@@ -508,9 +511,6 @@
       ],
       "@island.is/application/templates/public-debt-payment-plan": [
         "libs/application/templates/public-debt-payment-plan/src/index.ts"
-      ],
-      "@island.is/application/templates/reference-template": [
-        "libs/application/templates/reference-template/src/index.ts"
       ],
       "@island.is/application/templates/rental-agreement": [
         "libs/application/templates/rental-agreement/src/index.ts"
@@ -1191,9 +1191,6 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
-      ],
-      "application/templates/examples/example-no-inputs": [
-        "libs/application/templates/examples/example-no-inputs/src/index.ts"
       ],
       "application/templates/inao/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
