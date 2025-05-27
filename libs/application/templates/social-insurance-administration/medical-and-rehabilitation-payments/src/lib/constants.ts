@@ -18,3 +18,41 @@ export enum AttachmentTypes {
 
 export type NotApplicable = typeof NOT_APPLICABLE
 export const NOT_APPLICABLE = 'notApplicable'
+
+export const selfAssessmentOptions = [
+  {
+    label:
+      medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+        .noDifficultyOption,
+    value: '0',
+  },
+  {
+    label:
+      medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+        .minorDifficultyOption,
+    value: '1',
+  },
+  {
+    label:
+      medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+        .moderateDifficultyOption,
+    value: '2',
+  },
+  {
+    label:
+      medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+        .majorDifficultyOption,
+    value: '3',
+  },
+  {
+    label:
+      medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+        .completeInabilityOption,
+    value: '4',
+  },
+  {
+    label:
+      medicalAndRehabilitationPaymentsFormMessage.selfAssessment.noAnswerOption,
+    value: '5',
+  },
+]

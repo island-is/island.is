@@ -17,6 +17,9 @@ import {
 } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 
+import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
+import { SiaUnionsQuery } from '../../../../../core/src/types/schema'
+
 export const unionSickPaySubSection = buildSubSection({
   id: 'unionSickPaySubSection',
   title:
@@ -107,18 +110,19 @@ export const unionSickPaySubSection = buildSubSection({
               hasUtilizedUnionSickPayRights === NO
             )
           },
-          loadOptions: async () => {
-            return [
-              // TODO: Here we need to get the data from the API
-              {
-                label: 'VR',
-                value: 'vr',
-              },
-              {
-                label: 'FIT',
-                value: 'fit',
-              },
-            ]
+          loadOptions: async ({ apolloClient }) => {
+            const { data } = await apolloClient.query<SiaUnionsQuery>({
+              query: siaUnionsQuery,
+            })
+
+            return (
+              data?.siaGetUnions
+                ?.map(({ name, nationalId }) => ({
+                  value: nationalId || '',
+                  label: name || '',
+                }))
+                .sort((a, b) => a.label.localeCompare(b.label)) ?? []
+            )
           },
         }),
         buildDescriptionField({

@@ -19,9 +19,11 @@ import { Attachments } from './review-groups/Attachments'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { Comment } from './review-groups/Comment'
 import { EmployeeSickPay } from './review-groups/EmployeeSickPay'
+import { IncomePlan } from './review-groups/IncomePlan'
 import { Payment } from './review-groups/Payment'
 import { Questions } from './review-groups/Questions'
 import { RehabilitationPlan } from './review-groups/RehabilitationPlan'
+import { SelfAssessmentQuestionnaire } from './review-groups/SelfAssessmentQuestionnaire'
 import { UnionSickPay } from './review-groups/UnionSickPay'
 import { SelfAssessmentQuestionsOne } from './review-groups/SelfAssessmentQuestionsOne'
 
@@ -166,10 +168,12 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <BaseInformation {...childProps} />
       <Payment {...childProps} />
+      <IncomePlan {...childProps} />
       <Questions {...childProps} />
       <EmployeeSickPay {...childProps} />
       <UnionSickPay {...childProps} />
       <RehabilitationPlan />
+      <SelfAssessmentQuestionnaire {...childProps} />
       <SelfAssessmentQuestionsOne {...childProps} />
       <Comment {...childProps} />
       <Attachments {...childProps} />
