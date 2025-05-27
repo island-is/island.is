@@ -83,7 +83,7 @@ import {
 } from './syslumennClient.utils'
 import type { ConfigType } from '@island.is/nest/config'
 import { IdsClientConfig } from '@island.is/nest/config'
-import {logger} from "@island.is/logging";
+import { logger } from '@island.is/logging'
 
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 @Injectable()
@@ -406,7 +406,7 @@ export class SyslumennService {
         vedbandayfirlitSkeyti: {
           audkenni: id,
           fastanumer: cleanPropertyNumber(assetId),
-          tegundAndlags: assetType as unknown as VedbondTegundAndlags,
+          tegundAndlags: (assetType as unknown) as VedbondTegundAndlags,
         },
       })
       .catch((e) => {
@@ -706,7 +706,18 @@ export class SyslumennService {
 
   async checkCriminalRecord(auth: Auth) {
     const { api } = await this.createApiWithAuth(auth)
-    return await api.kannaSakavottordAuthGet()
+    console.log('Sending with headers', {
+      'islandis-token': auth.authorization,
+    })
+    return await api
+      .withMiddleware({
+        pre: async (context) => {
+          context.init.headers = Object.assign({}, context.init.headers, {
+            'islandis-token': auth.authorization,
+          })
+        },
+      })
+      .kannaSakavottordAuthGet()
   }
 
   async uploadDataCriminalRecord(
@@ -717,7 +728,6 @@ export class SyslumennService {
     uploadDataName: string,
     uploadDataId?: string,
   ): Promise<DataUploadResponse> {
-
     logger.info('AfgreidaSakavottord Starting uploadProcess')
     const { api } = await this.createApiWithAuth(auth)
 
