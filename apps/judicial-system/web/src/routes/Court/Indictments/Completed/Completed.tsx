@@ -9,7 +9,6 @@ import {
   Box,
   Checkbox,
   FileUploadStatus,
-  Input,
   InputFileUpload,
   RadioButton,
   Text,
@@ -33,6 +32,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RulingInput,
   SectionHeading,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
@@ -44,6 +44,7 @@ import {
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  useCase,
   useDefendants,
   useS3Upload,
   useUploadFiles,
@@ -58,6 +59,7 @@ const Completed: FC = () => {
   const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+
   const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
     useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
@@ -466,27 +468,12 @@ const Completed: FC = () => {
         {features?.includes(Feature.SERVICE_PORTAL) && (
           <Box marginBottom={5}>
             <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
-            <Input
-              data-testid="sessionBookings"
-              name="sessionBookings"
-              label={'Dómsorð'}
-              value={''}
-              placeholder={'Hvert er dómsorðið?'}
-              onChange={
-                (event) => console.log(event.target.value)
-                // setAndSendDefendantToServer(
-                //   {
-                //     defendantId: defendant.id,
-                //     caseId: workingCase.id,
-                //     verdictForDefendant: event.target.value,
-                //   },
-                //   setWorkingCase,
-                // )
-              }
-              textarea
+            <RulingInput
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
               rows={8}
-              autoExpand={{ on: true, maxHeight: 600 }}
-              required={true}
+              label="Dómsorð"
+              placeholder="Hvert er dómsorðið?"
             />
           </Box>
         )}
