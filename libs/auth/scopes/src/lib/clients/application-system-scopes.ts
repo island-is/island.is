@@ -12,6 +12,7 @@ export const applicationSystemScopes = [
   ApiScope.carRecycling,
   ApiScope.energyFunds,
   ApiScope.fishingLicense,
+  ApiScope.icelandHealth,
   ApiScope.internal,
   ApiScope.internalProcuring,
   ApiScope.licenses,
