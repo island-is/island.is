@@ -6,17 +6,22 @@ import { handle4xx } from '../../utils/errorHandler'
 import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
+  ApplicationsControllerFindAllByOrganizationRequest,
   ApplicationsControllerGetApplicationRequest,
   ApplicationsControllerSubmitRequest,
   ApplicationsControllerSubmitScreenRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
+  ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
   SubmitScreenInput,
 } from '../../dto/application.input'
-import { Application } from '../../models/applications.model'
+import {
+  Application,
+  ApplicationResponse,
+} from '../../models/applications.model'
 import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 
 @Injectable()
@@ -63,6 +68,20 @@ export class ApplicationsService {
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
 
     return response as Application
+  }
+
+  async getApplications(
+    auth: User,
+    input: ApplicationsInput,
+  ): Promise<ApplicationResponse> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerFindAllByOrganization(
+        input as ApplicationsControllerFindAllByOrganizationRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get applications'),
+      )
+    return response as ApplicationResponse
   }
 
   async updateDependencies(

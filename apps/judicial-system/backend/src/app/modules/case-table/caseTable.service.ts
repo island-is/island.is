@@ -102,7 +102,7 @@ export class CaseTableService {
     const cases = await this.caseModel.findAll({
       attributes,
       include,
-      where: caseTableWhereOptions[type],
+      where: caseTableWhereOptions[type](user),
     })
 
     return {

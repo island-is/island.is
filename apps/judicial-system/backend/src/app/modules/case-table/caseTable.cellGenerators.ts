@@ -4,6 +4,7 @@ import {
   capitalize,
   formatCaseType,
   formatDate,
+  getAllReadableIndictmentSubtypes,
   getAppealResultTextByValue,
   getInitials,
 } from '@island.is/judicial-system/formatters'
@@ -21,6 +22,7 @@ import {
   getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
+  IndictmentSubtypeMap,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isPublicProsecutionOfficeUser,
@@ -259,6 +261,35 @@ const generateIndictmentRulingDecisionTag = (
   }
 }
 
+const generateIndictmentCaseType = (
+  indictmentSubtypes?: IndictmentSubtypeMap | null,
+): string | undefined => {
+  if (!indictmentSubtypes) return undefined
+
+  const labels =
+    getAllReadableIndictmentSubtypes(indictmentSubtypes).map(capitalize)
+
+  if (labels.length === 0) return undefined
+
+  return labels.length === 1 ? labels[0] : `${labels[0]} +${labels.length - 1}`
+}
+
+const generateRequestCaseType = (
+  type: CaseType,
+  decision?: CaseDecision | null,
+  parentCaseId?: string | null,
+): string[] => {
+  const formatted = capitalize(
+    formatCaseType(
+      decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+        ? CaseType.CUSTODY
+        : type,
+    ),
+  )
+
+  return [formatted, parentCaseId ? 'Framlenging' : ''].filter(Boolean)
+}
+
 const caseNumber: CaseTableCellGenerator = {
   attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
   generate: (c: Case): StringGroupValue => ({
@@ -294,20 +325,16 @@ const defendants: CaseTableCellGenerator = {
       : undefined,
 }
 
-const caseType: CaseTableCellGenerator = {
-  attributes: ['type', 'decision', 'parentCaseId'],
-  generate: (c: Case): StringGroupValue => ({
-    strList: [
-      capitalize(
-        formatCaseType(
-          c.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.CUSTODY
-            : c.type,
-        ),
-      ),
-      c.parentCaseId ? 'Framlenging' : '',
-    ],
-  }),
+export const caseType: CaseTableCellGenerator = {
+  attributes: ['type', 'decision', 'parentCaseId', 'indictmentSubtypes'],
+  generate: (c: Case) => {
+    if (c.type === CaseType.INDICTMENT) {
+      const display = generateIndictmentCaseType(c.indictmentSubtypes)
+      return display ? { s: [display] } : undefined
+    }
+
+    return { s: generateRequestCaseType(c.type, c.decision, c.parentCaseId) }
+  },
 }
 
 const appealState: CaseTableCellGenerator = {
