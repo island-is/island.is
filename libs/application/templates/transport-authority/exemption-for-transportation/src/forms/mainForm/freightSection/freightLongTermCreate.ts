@@ -82,11 +82,11 @@ export const FreightLongTermCreateSubSection = buildSubSection({
             const invalidFreightIndex = freightItems.findIndex(
               (x) => x.length && maxLength && Number(x.length) > maxLength,
             )
-            const showPoliceEscorError = invalidFreightIndex !== -1
+            const showPoliceEscortError = invalidFreightIndex !== -1
 
             if (showEmptyListError)
               return freight.create.errorEmptyListAlertMessageMessage
-            else if (showPoliceEscorError)
+            else if (showPoliceEscortError)
               return {
                 ...freight.create.errorPoliceEscortAlertMessageMessage,
                 values: {
@@ -109,9 +109,9 @@ export const FreightLongTermCreateSubSection = buildSubSection({
             const invalidFreightIndex = freightItems.findIndex(
               (x) => x.length && maxLength && Number(x.length) > maxLength,
             )
-            const showPoliceEscorError = invalidFreightIndex !== -1
+            const showPoliceEscortError = invalidFreightIndex !== -1
 
-            return showEmptyListError || showPoliceEscorError
+            return showEmptyListError || showPoliceEscortError
           },
           shouldBlockInSetBeforeSubmitCallback: true,
         }),
