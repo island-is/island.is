@@ -103,6 +103,9 @@ export class PropertyInfo {
 
   @Field(() => [AppraisalUnit], { nullable: true })
   readonly appraisalUnits?: AppraisalUnit[]
+
+  @Field(() => String, { nullable: true })
+  readonly test?: string
 }
 
 @ObjectType('HmsPropertyInfos')
