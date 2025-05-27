@@ -300,10 +300,20 @@ const FineCardList = ({
                               }}
                             >
                               <Inline alignY="center" space={0}>
-                                <Text lineHeight="md" variant="small">
-                                  {fine.amountSelected}/
-                                  {fine.maxAmountThatCanBeSelected ?? 1}
-                                </Text>
+                                <Box
+                                  style={{
+                                    visibility:
+                                      typeof fine.maxAmountThatCanBeSelected ===
+                                        'number' && fine.amountSelected > 0
+                                        ? 'visible'
+                                        : 'hidden',
+                                  }}
+                                >
+                                  <Text lineHeight="md" variant="small">
+                                    {fine.amountSelected}/
+                                    {fine.maxAmountThatCanBeSelected ?? 1}
+                                  </Text>
+                                </Box>
                                 <Icon
                                   icon="checkmark"
                                   size="medium"
