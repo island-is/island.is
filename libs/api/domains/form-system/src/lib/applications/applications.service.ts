@@ -74,11 +74,13 @@ export class ApplicationsService {
     auth: User,
     input: ApplicationsInput,
   ): Promise<ApplicationResponse> {
-    const response = await this.applicationsApiWithAuth(
-      auth,
-    ).applicationsControllerFindAllByOrganization(
-      input as ApplicationsControllerFindAllByOrganizationRequest,
-    )
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerFindAllByOrganization(
+        input as ApplicationsControllerFindAllByOrganizationRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get applications'),
+      )
     return response as ApplicationResponse
   }
 

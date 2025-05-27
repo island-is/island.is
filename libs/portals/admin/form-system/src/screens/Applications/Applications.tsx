@@ -54,7 +54,7 @@ export const Applications = () => {
     if (isAdmin && control.organizationNationalId) {
       handleOrganizationChange({ value: control.organizationNationalId })
     }
-  }, [])
+  }, [control.organizationNationalId])
 
   return (
     <>
@@ -65,7 +65,7 @@ export const Applications = () => {
       />
       <Box marginTop={5}></Box>
       <ApplicationsTableHeader />
-      {applications &&
+      {applicationsState &&
         applicationsState?.map((a) => (
           <ApplicationsTableRow
             key={a?.id}

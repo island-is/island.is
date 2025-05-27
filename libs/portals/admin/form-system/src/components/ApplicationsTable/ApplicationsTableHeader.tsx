@@ -15,11 +15,11 @@ export const ApplicationsTableHeader = () => {
       <Row>
         <Column span="4/12">
           <Box paddingLeft={2}>
-            <Text variant="medium">innsend</Text>
+            <Text variant="medium">{formatMessage(m.submitted)}</Text>
           </Box>
         </Column>
         <Column span="4/12">
-          <Text variant="medium">kennitala</Text>
+          <Text variant="medium">{formatMessage(m.nationalId)}</Text>
         </Column>
         <Column span="4/12">
           <Text variant="medium">{formatMessage(m.state)}</Text>

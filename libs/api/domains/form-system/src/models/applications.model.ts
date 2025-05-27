@@ -2,7 +2,6 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { Section } from './section.model'
 import { LanguageType } from './languageType.model'
 import { Dependency } from './form.model'
-import { NumberAttributeValue } from 'aws-sdk/clients/dynamodbstreams'
 import { Option } from './option.model'
 
 @ObjectType('FormSystemApplicationEventDto')
@@ -23,7 +22,7 @@ export class ApplicationResponse {
   applications?: Application[]
 
   @Field(() => Number, { nullable: true })
-  total?: NumberAttributeValue
+  total?: Number
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]

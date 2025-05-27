@@ -10,6 +10,7 @@ interface Props {
   id?: string | null
   submittedAt?: Date
   status?: string | null
+  nationalId?: string | null
 }
 
 interface ColumnTextProps {
@@ -22,7 +23,12 @@ const ColumnText = ({ text }: ColumnTextProps) => (
   </Box>
 )
 
-export const ApplicationsTableRow = ({ id, submittedAt, status }: Props) => {
+export const ApplicationsTableRow = ({
+  id,
+  submittedAt,
+  status,
+  nationalId,
+}: Props) => {
   const { formatDate } = useIntl()
   return (
     <Row key={id}>
@@ -36,9 +42,7 @@ export const ApplicationsTableRow = ({ id, submittedAt, status }: Props) => {
         />
       </Column>
       <Column span="4/12">
-        <ColumnText
-          text="1234567890" // Placeholder for national ID, replace with actual data if available
-        />
+        <ColumnText text={nationalId ?? 'N/A'} />{' '}
       </Column>
       <Column span="4/12">
         <ColumnText text={status ?? 'UNKNOWN'} />

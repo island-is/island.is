@@ -296,7 +296,7 @@ export class ApplicationsService {
             ({
               value: org.nationalId,
               label: org.name.is,
-              isSelected: org.nationalId === organizationId,
+              isSelected: org.nationalId === organizationNationalId,
             } as Option),
         ),
       )
