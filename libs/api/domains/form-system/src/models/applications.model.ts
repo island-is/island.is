@@ -5,6 +5,8 @@ import { Dependency } from './form.model'
 import { ValueDto } from './value.model'
 import { FormCertificationTypeDto } from './certification.model'
 import { FormApplicantTypeDto } from './applicant.model'
+import { Option } from './option.model'
+
 
 @ObjectType('FormSystemApplicationEventDto')
 export class ApplicationEventDto {
@@ -16,6 +18,18 @@ export class ApplicationEventDto {
 
   @Field(() => Date, { nullable: true })
   created?: Date
+}
+
+@ObjectType('FormSystemApplicationResponse')
+export class ApplicationResponse {
+  @Field(() => [Application], { nullable: 'itemsAndList' })
+  applications?: Application[]
+
+  @Field(() => Number, { nullable: true })
+  total?: number
+
+  @Field(() => [Option], { nullable: 'itemsAndList' })
+  organizations?: Option[]
 }
 
 @ObjectType('FormSystemApplication')

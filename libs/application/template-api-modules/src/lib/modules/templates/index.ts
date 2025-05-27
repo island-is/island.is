@@ -1,7 +1,7 @@
+import { ExampleFolderStructureAndConventionsModule } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.module'
+import { ExampleFolderStructureAndConventionsService } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.service'
 import { ExampleAuthDelegationModule } from './examples/example-auth-delegation/example-auth-delegation.module'
 import { ExampleAuthDelegationService } from './examples/example-auth-delegation/example-auth-delegation.service'
-import { ReferenceTemplateModule } from './reference-template/reference-template.module'
-import { ReferenceTemplateService } from './reference-template/reference-template.service'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
 import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 import { ExampleCommonActionsModule } from './examples/example-common-actions/example-common-actions.module'
@@ -156,13 +156,14 @@ import { SecondarySchoolModule } from './secondary-school/secondary-school.modul
 import { SecondarySchoolService } from './secondary-school/secondary-school.service'
 import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.module'
 import { TrainingLicenseOnAWorkMachineTemplateService } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service'
+import { PracticalExamTemplateModule } from './aosh/practical-exam/practical-exam.module'
+import { PracticalExamTemplateService } from './aosh/practical-exam/practical-exam.service'
 import { RentalAgreementModule } from './rental-agreement/rental-agreement.module'
 import { RentalAgreementService } from './rental-agreement/rental-agreement.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
 export const modules = [
-  ReferenceTemplateModule,
   ExampleCommonActionsModule,
   ExampleStateTransfersModule,
   ExampleInputsModule,
@@ -238,12 +239,13 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  PracticalExamTemplateModule,
+  ExampleFolderStructureAndConventionsModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
 ]
 
 export const services = [
-  ReferenceTemplateService,
   ExampleCommonActionsService,
   ExampleStateTransfersService,
   ExampleInputsService,
@@ -320,6 +322,8 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  PracticalExamTemplateService,
+  ExampleFolderStructureAndConventionsService,
   ExampleAuthDelegationService,
   RentalAgreementService,
 ]

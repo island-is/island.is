@@ -12,6 +12,11 @@ import {
   Application,
 } from '../../models/applications.model'
 import {
+  Application,
+  ApplicationResponse,
+} from '../../models/applications.model'
+import {
+  ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
   SubmitScreenInput,
@@ -37,7 +42,20 @@ export class ApplicationsResolver {
     return this.applicationsService.getApplication(user, input)
   }
 
+
   @Mutation(() => Application, {
+  @Query(() => ApplicationResponse, {
+    name: 'formSystemApplications',
+  })
+  async getApplications(
+    @Args('input', { type: () => ApplicationsInput })
+    input: ApplicationsInput,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationResponse> {
+    return this.applicationsService.getApplications(user, input)
+  }
+
+  @Mutation(() => Boolean, {
     name: 'createFormSystemApplication',
   })
   async createApplication(
