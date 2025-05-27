@@ -146,7 +146,7 @@ export interface Occupation {
   isSelfEmployed: boolean
   isStudying: boolean
   isPartTimeEmployed: boolean
-  calculatedRemunerationDate: string
+  calculatedRemunerationDate?: string
 }
 
 export interface EmployeeSickPay {

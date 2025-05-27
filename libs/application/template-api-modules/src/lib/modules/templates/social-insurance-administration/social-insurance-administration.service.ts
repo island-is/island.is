@@ -25,7 +25,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { Inject, Injectable } from '@nestjs/common'
+import { ConsoleLogger, Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
@@ -41,8 +41,6 @@ import {
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
-
-import { getApplicationAnswers as getMARPApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 

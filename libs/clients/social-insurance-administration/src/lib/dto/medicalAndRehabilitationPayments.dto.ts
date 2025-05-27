@@ -1,4 +1,3 @@
-import { TrWebCommonsExternalPortalsApiModelsDocumentsDocument } from '../..'
 import {
   ApplicantInfo,
   DomesticBankInfo,
@@ -22,7 +21,6 @@ export interface MedicalAndRehabilitationPaymentsDTO {
   employeeSickPay?: EmployeeSickPay
   unionSickPay?: UnionSickPay
   selfAssessment?: SelfAssessment
-  uploads?: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>
   baseCertificateReference: string
   rehabilitationPlanReference: string
 }

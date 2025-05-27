@@ -378,6 +378,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     applicantPhonenumber,
     applicantEmail,
     bank,
+    paymentInfo,
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
@@ -391,10 +392,11 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
     unionNationalId,
-    rehabilitationPlanConfirmation,
     comment,
     questionnaire,
   } = getMARPApplicationAnswers(application.answers)
+
+  const { bankInfo } = getASFTEApplicationExternalData(application.externalData)
 
   const marpDTO: MedicalAndRehabilitationPaymentsDTO = {
     applicantInfo: {
@@ -402,14 +404,16 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       phonenumber: applicantPhonenumber,
     },
     period: {
-      year: new Date().getFullYear(), //TODO:
-      month: new Date().getMonth(), //TODO:
+      year: new Date().getFullYear(), //TODO: remove when backend is ready
+      month: new Date().getMonth(), //TODO: remove when backend is ready
     },
     comment,
     applicationId: application.id,
-    domesticBankInfo: {
-      bank,
-    },
+    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
+      domesticBankInfo: {
+        bank: formatBank(bank),
+      },
+    }),
     taxInfo: {
       personalAllowance: YES === personalAllowance,
       personalAllowanceUsage:
@@ -420,20 +424,28 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       isSelfEmployed: YES === isSelfEmployed,
       isStudying: YES === isStudying,
       isPartTimeEmployed: YES === isPartTimeEmployed,
-      calculatedRemunerationDate,
+      ...(YES === isSelfEmployed && {
+        calculatedRemunerationDate,
+      }),
     },
     employeeSickPay: {
       hasUtilizedEmployeeSickPayRights: getYesNoNotApplicableValue(
         hasUtilizedEmployeeSickPayRights,
       ),
-      employeeSickPayEndDate,
+      ...((hasUtilizedEmployeeSickPayRights === YES ||
+        hasUtilizedEmployeeSickPayRights === NO) && {
+        employeeSickPayEndDate,
+      }),
     },
     unionSickPay: {
       hasUtilizedUnionSickPayRights: getYesNoNotApplicableValue(
         hasUtilizedUnionSickPayRights,
       ),
-      unionNationalId,
-      unionSickPayEndDate,
+      ...((hasUtilizedUnionSickPayRights === YES ||
+        hasUtilizedEmployeeSickPayRights === NO) && {
+        unionNationalId,
+        unionSickPayEndDate,
+      }),
     },
     baseCertificateReference: 'test', //TODO:
     rehabilitationPlanReference: 'test', //TODO:
