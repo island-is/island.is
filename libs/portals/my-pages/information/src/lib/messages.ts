@@ -599,9 +599,9 @@ export const emailsMsg = defineMessages({
     id: 'ids:validate-two-factor-error',
     defaultMessage: 'Kóði er ekki á réttu formi',
   },
-  twoFactorError: {
-    id: 'ids:two-factor-error',
-    defaultMessage: 'Kóði er ekki réttur',
+  noAttemptsLeftError: {
+    id: 'ids:no-attempts-left-error',
+    defaultMessage: 'Engar tilraunir eftir.',
   },
   emailAlreadyExists: {
     id: 'ids:email-already-exists',

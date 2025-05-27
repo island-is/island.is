@@ -66,7 +66,7 @@ export const VerifyTemplate = ({
         if (remainingAttempts > 0) {
           return undefined
         } else if (remainingAttempts === 0) {
-          return formatMessage(emailsMsg.twoFactorError)
+          return formatMessage(emailsMsg.noAttemptsLeftError)
         }
       } else if (
         problem.status === 400 &&

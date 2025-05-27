@@ -15,6 +15,7 @@ import { mNotifications } from '../../../lib/messages'
 import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 import { SettingsCard } from '../cards/SettingsCard/SettingsCard'
 import { useUpdateActorProfileMutation } from './updateActorProfile.mutation.generated'
+import { safeAwait } from '@island.is/shared/utils'
 
 type Settings = {
   emailNotifications: boolean
@@ -54,32 +55,38 @@ export const ActorProfileNotificationSettings = () => {
 
     setSettings(newSettings)
 
-    try {
-      await updateActorProfile({
+    const { error } = await safeAwait(
+      updateActorProfile({
         variables: {
           input: {
             emailNotifications: newSettings.emailNotifications,
             fromNationalId: userInfo?.profile.nationalId,
           },
         },
-      })
-    } catch {
+      }),
+    )
+
+    if (error) {
       setSettings(oldSettings)
       toast.error(formatMessage(mNotifications.updateError))
     }
   }
 
   const onPaperMailChange = async (active: boolean) => {
-    try {
-      await postPaperMailMutation({
+    const { error } = await safeAwait(
+      postPaperMailMutation({
         variables: {
           input: { wantsPaper: active },
         },
-      })
-      setSettings({ ...settings, wantsPaper: active })
-    } catch {
+      }),
+    )
+
+    if (error) {
       toast.error(formatMessage(mNotifications.updateError))
+      return
     }
+
+    setSettings({ ...settings, wantsPaper: active })
   }
 
   if (loading || paperMailLoading) {
