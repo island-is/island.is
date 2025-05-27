@@ -36,6 +36,8 @@ const buildEventLogExistsCondition = (eventType: EventType, exists = true) =>
       )
     `)
 
+// District Court Request Cases
+
 const districtCourtRequestCasesSharedWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
@@ -57,6 +59,9 @@ const districtCourtRequestCasesCompletedWhereOptions = {
   state: completedRequestCaseStates,
   appeal_state: { [Op.not]: CaseAppealState.APPEALED },
 }
+
+// District Court Indictments
+
 const districtCourtIndictmentsSharedWhereOptions = {
   is_archived: false,
   type: indictmentCases,
@@ -110,6 +115,8 @@ const districtCourtIndictmentsCompletedWhereOptions = {
   state: CaseState.COMPLETED,
 }
 
+// Court of Appeals Cases
+
 const courtOfAppealsSharedWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
@@ -135,6 +142,8 @@ const courtOfAppealsCompletedWhereOptions = {
   appeal_state: CaseAppealState.COMPLETED,
 }
 
+// Prison System Request Cases
+
 const prisonSharedWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
@@ -150,6 +159,8 @@ const prisonDoneWhereOptions = {
   ...prisonSharedWhereOptions,
   valid_to_date: { [Op.lt]: fn('NOW') },
 }
+
+// Prison Admin Indictments
 
 const prisonAdminIndictmentSharedWhereOptions = {
   is_archived: false,
@@ -180,6 +191,8 @@ const prisonAdminIndictmentRegisteredRulingWhereOptions = {
   ...prisonAdminIndictmentSharedWhereOptions,
   is_registered_in_prison_system: true,
 }
+
+// Prosecutor's Office Indictments
 
 const prosecutorsOfficeIndictmentSharedWhereOptions = {
   is_archived: false,
