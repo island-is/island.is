@@ -57,7 +57,7 @@ const extractPropertyInfo = (
   ),
 })
 
-const extractPrivisionsAndCondition = (
+const extractProvisionsAndCondition = (
   answers: Application['answers'],
 ): ProvisionsAndConditionSection => ({
   description: getValueViaPath<string>(
@@ -236,7 +236,7 @@ export const applicationAnswers = (
   return {
     ...extractParticipants(answers),
     ...extractPropertyInfo(answers),
-    ...extractPrivisionsAndCondition(answers),
+    ...extractProvisionsAndCondition(answers),
     ...extractFireProtection(answers),
     ...extractRentalPeriod(answers),
     ...extractRentalAmount(answers),

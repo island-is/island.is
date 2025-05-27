@@ -31,12 +31,12 @@ export type AddressProps = HmsSearchAddress & {
   value: string
 }
 
-export interface ParticipantsSection {
+export type ParticipantsSection = {
   landlords: ApplicantsInfo[]
   tenants: ApplicantsInfo[]
 }
 
-export interface PropertySection {
+export type PropertySection = {
   searchResults: AddressProps | undefined
   searchResultLabel: string | undefined
   units: PropertyUnit[]
@@ -45,7 +45,7 @@ export interface PropertySection {
   categoryClassGroup: string | undefined
 }
 
-export interface ProvisionsAndConditionSection {
+export type ProvisionsAndConditionSection = {
   description: string | undefined
   rules: string | undefined
   conditionDescription: string | undefined
@@ -54,20 +54,20 @@ export interface ProvisionsAndConditionSection {
   files: ApplicationFileInput[] | undefined
 }
 
-export interface FireProtectionSection {
+export type FireProtectionSection = {
   fireBlanket: string | undefined
   smokeDetectors: string | undefined
   fireExtinguisher: string | undefined
   emergencyExits: string | undefined
 }
 
-export interface RentalPeriodSection {
+export type RentalPeriodSection = {
   startDate: string | undefined
   endDate: string | undefined
   isDefinite: string | undefined
 }
 
-export interface RentalAmountSection {
+export type RentalAmountSection = {
   rentalAmount: string | undefined
   isIndexConnected: string | undefined
   indexType: string | undefined
@@ -80,7 +80,7 @@ export interface RentalAmountSection {
   securityDepositRequired: YesOrNoEnum | undefined
 }
 
-export interface SecurityDepositSection {
+export type SecurityDepositSection = {
   securityDepositType: string | undefined
   bankGuaranteeInfo: string | undefined
   thirdPartyGuaranteeInfo: string | undefined
@@ -92,7 +92,7 @@ export interface SecurityDepositSection {
   securityAmountCalculated: string | undefined
 }
 
-export interface OtherFeesSection {
+export type OtherFeesSection = {
   housingFundPayee: string | undefined
   housingFundAmount: string | undefined
   electricityCostPayee: string | undefined
@@ -106,17 +106,16 @@ export interface OtherFeesSection {
   otherCostItems: CostField[] | undefined
 }
 
-export interface ReviewSection {
+export type ReviewSection = {
   nextStepInReviewOptions: NextStepInReviewOptions | undefined
 }
 
-export interface RentalAgreementAnswers
-  extends ParticipantsSection,
-    PropertySection,
-    ProvisionsAndConditionSection,
-    FireProtectionSection,
-    RentalPeriodSection,
-    RentalAmountSection,
-    SecurityDepositSection,
-    OtherFeesSection,
-    ReviewSection {}
+export type RentalAgreementAnswers = ParticipantsSection &
+  PropertySection &
+  ProvisionsAndConditionSection &
+  FireProtectionSection &
+  RentalPeriodSection &
+  RentalAmountSection &
+  SecurityDepositSection &
+  OtherFeesSection &
+  ReviewSection
