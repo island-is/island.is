@@ -195,6 +195,7 @@ const FineCardList = ({
             variant="text"
             size="small"
             onClick={calculate}
+            disabled={price === 0}
           >
             {formatMessage(m.fines.calculate)}
           </Button>
