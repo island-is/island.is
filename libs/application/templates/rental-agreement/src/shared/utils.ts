@@ -1,5 +1,5 @@
-import { Application, ApplicationFileInput } from '@island.is/api/schema'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import {
   ApplicantsInfo,
   PropertyUnit,
@@ -15,6 +15,7 @@ import {
   RentalPeriodSection,
   FireProtectionSection,
   ProvisionsAndConditionSection,
+  Files,
 } from './types'
 import { NextStepInReviewOptions } from '../utils/enums'
 
@@ -71,10 +72,7 @@ const extractProvisionsAndCondition = (
   ),
   inspector: getValueViaPath<string>(answers, 'condition.inspector'),
   inspectorName: getValueViaPath<string>(answers, 'condition.inspectorName'),
-  files: getValueViaPath<ApplicationFileInput[]>(
-    answers,
-    'condition.resultsFiles',
-  ),
+  files: getValueViaPath<Files[]>(answers, 'condition.resultsFiles'),
 })
 
 const extractFireProtection = (

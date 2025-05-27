@@ -1,8 +1,3 @@
-import {
-  ApplicationFileInput,
-  HmsSearchAddress,
-  Unit,
-} from '@island.is/api/schema'
 import { YesOrNoEnum } from '@island.is/application/core'
 import { NextStepInReviewOptions } from '../utils/enums'
 
@@ -20,23 +15,48 @@ export type CostField = {
   hasError?: boolean
 }
 
-export type PropertyUnit = Unit & {
+export type Files = {
+  name: string
+  key: string
+  url: string
+}
+
+export interface PropertyUnit {
+  appraisalUnitCode?: number
+  propertyValue?: number
+  propertyCode?: number
+  propertyUsageDescription?: string
+  unitCode?: string
+  addressCode?: number
+  address?: string
+  fireInsuranceValuation?: number
+  size?: number
+  sizeUnit?: string
   checked?: boolean
   changedSize?: number
   numOfRooms?: number
 }
 
-export type AddressProps = HmsSearchAddress & {
+export interface AddressProps {
+  addressCode?: number
+  address?: string
+  municipalityName?: string
+  municipalityCode?: number
+  postalCode?: number
+  landCode?: number
+  streetName?: string
+  streetNumber?: number
+  numOfConnectedProperties?: number
   label: string
   value: string
 }
 
-export type ParticipantsSection = {
+export interface ParticipantsSection {
   landlords: ApplicantsInfo[]
   tenants: ApplicantsInfo[]
 }
 
-export type PropertySection = {
+export interface PropertySection {
   searchResults: AddressProps | undefined
   searchResultLabel: string | undefined
   units: PropertyUnit[]
@@ -45,29 +65,29 @@ export type PropertySection = {
   categoryClassGroup: string | undefined
 }
 
-export type ProvisionsAndConditionSection = {
+export interface ProvisionsAndConditionSection {
   description: string | undefined
   rules: string | undefined
   conditionDescription: string | undefined
   inspector: string | undefined
   inspectorName: string | undefined
-  files: ApplicationFileInput[] | undefined
+  files: Files[] | undefined
 }
 
-export type FireProtectionSection = {
+export interface FireProtectionSection {
   fireBlanket: string | undefined
   smokeDetectors: string | undefined
   fireExtinguisher: string | undefined
   emergencyExits: string | undefined
 }
 
-export type RentalPeriodSection = {
+export interface RentalPeriodSection {
   startDate: string | undefined
   endDate: string | undefined
   isDefinite: string | undefined
 }
 
-export type RentalAmountSection = {
+export interface RentalAmountSection {
   rentalAmount: string | undefined
   isIndexConnected: string | undefined
   indexType: string | undefined
@@ -80,7 +100,7 @@ export type RentalAmountSection = {
   securityDepositRequired: YesOrNoEnum | undefined
 }
 
-export type SecurityDepositSection = {
+export interface SecurityDepositSection {
   securityDepositType: string | undefined
   bankGuaranteeInfo: string | undefined
   thirdPartyGuaranteeInfo: string | undefined
@@ -92,7 +112,7 @@ export type SecurityDepositSection = {
   securityAmountCalculated: string | undefined
 }
 
-export type OtherFeesSection = {
+export interface OtherFeesSection {
   housingFundPayee: string | undefined
   housingFundAmount: string | undefined
   electricityCostPayee: string | undefined
@@ -106,16 +126,17 @@ export type OtherFeesSection = {
   otherCostItems: CostField[] | undefined
 }
 
-export type ReviewSection = {
+export interface ReviewSection {
   nextStepInReviewOptions: NextStepInReviewOptions | undefined
 }
 
-export type RentalAgreementAnswers = ParticipantsSection &
-  PropertySection &
-  ProvisionsAndConditionSection &
-  FireProtectionSection &
-  RentalPeriodSection &
-  RentalAmountSection &
-  SecurityDepositSection &
-  OtherFeesSection &
-  ReviewSection
+export interface RentalAgreementAnswers
+  extends ParticipantsSection,
+    PropertySection,
+    ProvisionsAndConditionSection,
+    FireProtectionSection,
+    RentalPeriodSection,
+    RentalAmountSection,
+    SecurityDepositSection,
+    OtherFeesSection,
+    ReviewSection {}
