@@ -1,7 +1,7 @@
 export enum ApplicationTypes {
-  EXAMPLE = 'ExampleForm',
   EXAMPLE_AUTH_DELEGATION = 'ExampleAuthDelegation',
   EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
+  EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS = 'ExampleFolderStructureAndConventions',
   EXAMPLE_INPUTS = 'ExampleInputs',
   EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
   EXAMPLE_PAYMENT = 'ExamplePayment',
@@ -89,13 +89,13 @@ export enum ApplicationTypes {
 }
 
 export const ApplicationConfigurations = {
-  [ApplicationTypes.EXAMPLE]: {
-    slug: 'example',
-    translation: 'example.application',
-  },
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
     slug: 'example-common-actions',
     translation: 'eca.application',
+  },
+  [ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS]: {
+    slug: 'example-folder-structure-and-conventions',
+    translation: 'exfsc.application',
   },
   [ApplicationTypes.EXAMPLE_INPUTS]: {
     slug: 'example-inputs',
