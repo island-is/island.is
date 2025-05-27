@@ -14,7 +14,7 @@ export const ApiConfiguration = {
       fetchApi: createEnhancedFetch({
         name: 'clients-vmst-unemployment',
         organizationSlug: 'vinnumalastofnun',
-        // ...config.fetch,
+        ...config.fetch,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {

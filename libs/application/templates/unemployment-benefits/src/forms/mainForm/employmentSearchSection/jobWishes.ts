@@ -76,20 +76,11 @@ export const jobWishesSubSection = buildSubSection({
           isMulti: true,
           options: (application) => {
             // TODO: get locations from externalData when service is ready
-            const locations = getValueViaPath<{ name: string }[]>(
-              application.externalData,
-              'locations',
-            ) ?? [
-              {
-                name: 'Suðurnes',
-              },
-              {
-                name: 'Höfuðborgasvæði',
-              },
-              {
-                name: 'Vestfirðir',
-              },
-            ]
+            const locations =
+              getValueViaPath<{ name: string }[]>(
+                application.externalData,
+                'unemploymentApplication.data.supportData.serviceAreas',
+              ) || []
             return locations.map((location) => ({
               value: location.name,
               label: location.name,

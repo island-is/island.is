@@ -8,7 +8,7 @@ import { languageSkillsSubSection } from './languageSkills'
 import { euresJobSearchSubSection } from './euresJobSearch'
 import { resumeSubSection } from './resume'
 import { employmentSearchConfirmationAgreementSubSection } from './employmentSearchConfirmationAgreement'
-import { introductoryMeetingAgreementSubSection } from './introductoryMeetingAgreement'
+import { introductoryMeetingSubSection } from './introductoryMeeting'
 
 export const employmentSearchSection = buildSection({
   id: 'employmentSearchSection',
@@ -22,6 +22,6 @@ export const employmentSearchSection = buildSection({
     euresJobSearchSubSection,
     resumeSubSection,
     employmentSearchConfirmationAgreementSubSection,
-    introductoryMeetingAgreementSubSection,
+    introductoryMeetingSubSection,
   ],
 })

@@ -67,9 +67,13 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     })
   }
 
-  async getEmptyApplication(): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto | null> {
+  async getEmptyApplication({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto | null> {
     const results =
-      await this.vmstUnemploymentClientService.getEmptyApplication()
+      await this.vmstUnemploymentClientService.getEmptyApplication(auth)
+
+    console.log('results', results)
     // This also comes from result, might want to do something with this!
     // canApply: true
     // errorMessage: ""

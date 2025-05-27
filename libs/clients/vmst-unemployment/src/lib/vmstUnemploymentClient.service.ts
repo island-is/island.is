@@ -1,6 +1,7 @@
 import {
   AuthApi,
   Configuration,
+  GaldurApplicationApplicationsUnemploymentApplicationsCommandsConfirmCreateUnemploymentApplicationConfirmCreateUnemploymentApplicationCommand,
   GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel,
   UnemploymentApplicationApi,
 } from '../../gen/fetch'
@@ -61,11 +62,15 @@ export class VmstUnemploymentClientService {
     }
   }
 
-  async getEmptyApplication(): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel> {
+  async getEmptyApplication(
+    auth: User,
+  ): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel> {
     const api = await this.create()
 
     const response =
-      await api.unemploymentApplicationGetEmptyUnemploymentApplication()
+      await api.unemploymentApplicationGetEmptyUnemploymentApplicationWithProfile(
+        { applicantSSN: auth.nationalId },
+      )
     return response
   }
 }
