@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Button, Option, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 import {
   getStandardUserDashboardRoute,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
@@ -333,7 +332,9 @@ export const Overview = () => {
             reviewer: selectedIndictmentReviewer?.label,
           })}
           secondaryButtonText={fm(core.back)}
-          onSecondaryButtonClick={() => router.push(getStandardUserDashboardRoute(user))}
+          onSecondaryButtonClick={() =>
+            router.push(getStandardUserDashboardRoute(user))
+          }
         />
       )}
       {modalVisible?.type === 'REVOKE_SEND_TO_PRISON_ADMIN' && (

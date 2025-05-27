@@ -70,9 +70,8 @@ export {
   getAdminUserInstitutionScope,
   getAdminUserInstitutionUserRoles,
   hasCaseGroupListsEnabled,
-  InstitutionUser,
 } from './lib/user'
-export type { User, UserDescriptor } from './lib/user'
+export type { User, UserDescriptor, InstitutionUser } from './lib/user'
 
 export {
   CaseOrigin,
