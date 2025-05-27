@@ -103,26 +103,24 @@ const courtOfAppealsTableGroups: CaseTableGroup[] = [
   },
 ]
 
-const prisonSystemRequestCaseGroup = {
-  title: 'Rannsóknarmál',
-  tables: [
-    {
-      type: CaseTableType.PRISON_ACTIVE,
-      route: 'virk-mal',
-      title: 'Virk mál',
-      description: 'Virk gæsluvarðhöld og farbönn.',
-    },
-    {
-      type: CaseTableType.PRISON_DONE,
-      route: 'lokid',
-      title: 'Lokið',
-      description: 'Gæsluvarðhöld og farbönn sem er lokið.',
-    },
-  ],
-}
-
 const prisonAdminTableGroups: CaseTableGroup[] = [
-  prisonSystemRequestCaseGroup,
+  {
+    title: 'Rannsóknarmál',
+    tables: [
+      {
+        type: CaseTableType.PRISON_ADMIN_ACTIVE,
+        route: 'virk-mal',
+        title: 'Virk mál',
+        description: 'Virk gæsluvarðhöld og farbönn.',
+      },
+      {
+        type: CaseTableType.PRISON_ADMIN_DONE,
+        route: 'lokid',
+        title: 'Lokið',
+        description: 'Gæsluvarðhöld og farbönn sem er lokið.',
+      },
+    ],
+  },
   {
     title: 'Sakamál',
     tables: [
@@ -142,7 +140,25 @@ const prisonAdminTableGroups: CaseTableGroup[] = [
   },
 ]
 
-const prisonStaffTableGroups: CaseTableGroup[] = [prisonSystemRequestCaseGroup]
+const prisonStaffTableGroups: CaseTableGroup[] = [
+  {
+    title: 'Rannsóknarmál',
+    tables: [
+      {
+        type: CaseTableType.PRISON_ACTIVE,
+        route: 'virk-mal',
+        title: 'Virk mál',
+        description: 'Virk gæsluvarðhöld.',
+      },
+      {
+        type: CaseTableType.PRISON_DONE,
+        route: 'lokid',
+        title: 'Lokið',
+        description: 'Gæsluvarðhöld sem er lokið.',
+      },
+    ],
+  },
+]
 
 const publicProsecutorsOfficeTableGroups: CaseTableGroup[] = [
   {
