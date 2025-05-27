@@ -9,14 +9,17 @@ import {
 } from '../..//verify/VerifyTemplate/VerifyTemplate'
 import { Modal } from '../../Modal/Modal'
 import { AddEmail } from '../AddEmail/AddEmail'
-import { useAddEmailMutation } from './addEmail.mutation.generated'
+import {
+  AddEmailMutation,
+  useAddEmailMutation,
+} from './addEmail.mutation.generated'
 import { useCreateEmailVerificationMutation } from './createEmailVerification.mutation.generated'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
 import { client } from '@island.is/portals/my-pages/graphql'
 
 type ProfileEmailFormProps = {
   onCancel?(): void
-  onAddSuccess?(): void
+  onAddSuccess?(data: AddEmailMutation['userEmailsAddEmail']): void
 }
 
 export const ProfileEmailForm = ({
@@ -37,7 +40,7 @@ export const ProfileEmailForm = ({
     onCompleted: (data) => {
       if (data.userEmailsAddEmail) {
         setOpenModal(false)
-        onAddSuccess?.()
+        onAddSuccess?.(data.userEmailsAddEmail)
         client.refetchQueries({
           include: [USER_PROFILE],
         })

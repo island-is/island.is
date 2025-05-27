@@ -15,9 +15,15 @@ import { Problem } from '@island.is/react-spa/shared'
 import { ActorProfileEmails } from '../ActorProfileEmails/ActorProfileEmails'
 import * as styles from './ActorNotificationSettings.css'
 import { useUserProfileActorProfilesQuery } from './userProfileActorProfiles.query.generated'
+import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 
 export const ActorNotificationSettings = () => {
   const { data, loading, error } = useUserProfileActorProfilesQuery()
+  const {
+    data: userProfile,
+    loading: userLoading,
+    error: userProfileError,
+  } = useUserProfile()
   const { formatMessage } = useLocale()
 
   const getContent = () => {
@@ -73,7 +79,16 @@ export const ActorNotificationSettings = () => {
           >
             <Box display="flex" flexDirection="column" rowGap={3}>
               <ActorProfileSettingsCard profile={actorProfile} />
-              <ActorProfileEmails profile={actorProfile} />
+              {userLoading ? (
+                <SkeletonLoader borderRadius="large" height={88} />
+              ) : userProfileError ? (
+                <Problem error={userProfileError} size="small" />
+              ) : userProfile ? (
+                <ActorProfileEmails
+                  actorProfile={actorProfile}
+                  userProfile={userProfile}
+                />
+              ) : null}
             </Box>
           </NotificationSettingsCard>
         ))}

@@ -72,11 +72,15 @@ export const VerifyFooter = forwardRef<HTMLButtonElement, VerifyFooterProps>(
       >
         {button && (
           <Button
-            {...omit(button, ['onClick', 'ariaLabelLoading'])}
+            {...omit(button, [
+              'onClick',
+              'ariaLabelLoading',
+              'ariaLabelButtonDisabled',
+            ])}
             onClick={handleButtonClick}
             {...(ariaLabel &&
               button.ariaLabelLoading && {
-                ariaLabelLoading: button.ariaLabelLoading,
+                'aria-busy': button.ariaLabelLoading,
               })}
             {...(ariaLabel &&
               button.disabled && {

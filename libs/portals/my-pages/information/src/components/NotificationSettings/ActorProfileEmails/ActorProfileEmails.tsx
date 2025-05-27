@@ -1,20 +1,14 @@
-import {
-  Box,
-  Button,
-  Option,
-  Select,
-  SkeletonLoader,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Button, Option, Select, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   Email,
+  UserProfile,
   UserProfileActorProfile,
-  useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { emailsMsg } from '../../../lib/messages'
 import { ProfileEmailForm } from '../../emails/ProfileEmailForm/ProfileEmailForm'
+import { AddEmailMutation } from '../../emails/ProfileEmailForm/addEmail.mutation.generated'
 import * as styles from './ActorProfileEmails.css'
 import { useUserProfileSetActorProfileEmailMutation } from './userProfileSetActorProfileEmail.mutation.generated'
 
@@ -26,31 +20,40 @@ const mapEmailsToOptions = (email: Email): EmailOption => ({
   value: email.email ?? '',
 })
 
-type ActorProfileEmailsProps = {
-  profile: UserProfileActorProfile
+type IdFilter = { id: string; email?: never }
+type EmailFilter = { email: string; id?: never }
+
+const getSelectedOption = (emails: Email[], filter: IdFilter | EmailFilter) => {
+  const option = emails.find(
+    (email) => email.id === filter.id || email.email === filter.email,
+  )
+
+  if (!option) {
+    return null
+  }
+
+  return mapEmailsToOptions(option)
 }
 
-export const ActorProfileEmails = ({ profile }: ActorProfileEmailsProps) => {
+type ActorProfileEmailsProps = {
+  actorProfile: UserProfileActorProfile
+  userProfile: UserProfile
+}
+
+export const ActorProfileEmails = ({
+  actorProfile,
+  userProfile,
+}: ActorProfileEmailsProps) => {
   const { formatMessage } = useLocale()
   const [showEmailForm, setShowEmailForm] = useState(false)
-  const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
+  const emails = userProfile.emails
+  const [selectedOption, setSelectedOption] = useState<EmailOption | null>(null)
 
-  const { options, connectedOption } = useMemo(() => {
-    const emails = userProfile?.emails ?? []
-    const connected = emails.find((email) => email.id === profile.emailsId)
-
-    return {
-      options: emails.filter(({ email }) => email).map(mapEmailsToOptions),
-      connectedOption: connected ? mapEmailsToOptions(connected) : undefined,
-    }
-  }, [userProfile, profile.emailsId])
-
-  const [userProfileSetActorProfileEmail] =
+  const [userProfileSetActorProfileEmail, { data: setActorProfileEmailData }] =
     useUserProfileSetActorProfileEmailMutation({
       onCompleted: (data) => {
         if (data.userProfileSetActorProfileEmail) {
           toast.success(formatMessage(emailsMsg.emailSetActorProfileSuccess))
-          refetch()
         }
       },
       onError: () => {
@@ -58,16 +61,39 @@ export const ActorProfileEmails = ({ profile }: ActorProfileEmailsProps) => {
       },
     })
 
+  const currentEmailId =
+    setActorProfileEmailData?.userProfileSetActorProfileEmail?.email
+
+  const options = useMemo(
+    () => emails?.filter(({ email }) => email).map(mapEmailsToOptions),
+    [emails],
+  )
+
+  useEffect(() => {
+    const emailsFilter = currentEmailId
+      ? { email: currentEmailId }
+      : actorProfile.emailsId
+      ? { id: actorProfile.emailsId }
+      : null
+
+    if (!emails || !emailsFilter) {
+      return
+    }
+
+    setSelectedOption(getSelectedOption(emails, emailsFilter))
+  }, [emails, currentEmailId, actorProfile.emailsId])
+
   const handleEmailChange = (option: EmailOption | null) => {
     if (!option?.id || !userProfile?.nationalId) {
       return
     }
 
+    setSelectedOption(option)
     userProfileSetActorProfileEmail({
       variables: {
         input: {
           emailId: option.id,
-          fromNationalId: profile.fromNationalId,
+          fromNationalId: actorProfile.fromNationalId,
         },
       },
     })
@@ -77,25 +103,36 @@ export const ActorProfileEmails = ({ profile }: ActorProfileEmailsProps) => {
     setShowEmailForm(false)
   }, [])
 
-  if (userLoading) {
-    return <SkeletonLoader borderRadius="large" height={88} />
-  }
+  const onAddSuccess = useCallback(
+    (data: AddEmailMutation['userEmailsAddEmail']) => {
+      userProfileSetActorProfileEmail({
+        variables: {
+          input: {
+            emailId: data.id,
+            fromNationalId: actorProfile.fromNationalId,
+          },
+        },
+      }).finally(hideEmailForm)
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [actorProfile.fromNationalId],
+  )
 
-  const hasEmails = options.length > 0
+  const hasEmails = options && options.length > 0
 
   return (
     <Box>
       {showEmailForm ? (
         <ProfileEmailForm
           onCancel={hideEmailForm}
-          onAddSuccess={hideEmailForm}
+          onAddSuccess={onAddSuccess}
         />
       ) : (
         <div className={styles.selectWrapper}>
           {hasEmails && (
             <Select
               options={options}
-              defaultValue={connectedOption}
+              value={selectedOption}
               size="sm"
               onChange={(option) => handleEmailChange(option as EmailOption)}
             />

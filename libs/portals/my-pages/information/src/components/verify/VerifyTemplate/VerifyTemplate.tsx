@@ -86,7 +86,6 @@ export const VerifyTemplate = ({
     // Delay the toast to give the user a chance to see the loading state and prevent spamming the button
     setTimeout(() => {
       toast.success(formatMessage(emailsMsg.codeSentSuccess))
-
       setNoCodeReceivedLoading(false)
     }, 3000)
   }
