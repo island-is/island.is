@@ -300,7 +300,6 @@ const Completed: FC = () => {
                               serviceRequirement:
                                 ServiceRequirement.NOT_APPLICABLE,
                               informationForDefendant: [],
-                              verdictForDefendant: null,
                             },
                             setWorkingCase,
                           )
@@ -353,7 +352,6 @@ const Completed: FC = () => {
                             serviceRequirement: ServiceRequirement.NOT_REQUIRED,
                             verdictAppealDecision: null,
                             informationForDefendant: [],
-                            verdictForDefendant: null,
                           },
                           setWorkingCase,
                         )
@@ -457,39 +455,39 @@ const Completed: FC = () => {
                             </React.Fragment>
                           ))}
                         </BlueBox>
-                        <Box marginBottom={5} />
-                        <SectionHeading
-                          title={'Dómsorð'}
-                          marginBottom={2}
-                          heading="h4"
-                        />
-                        <Input
-                          data-testid="sessionBookings"
-                          name="sessionBookings"
-                          label={'Dómsorð'}
-                          value={defendant.verdictForDefendant || ''}
-                          placeholder={'Hvert er dómsorðið?'}
-                          onChange={(event) =>
-                            setAndSendDefendantToServer(
-                              {
-                                defendantId: defendant.id,
-                                caseId: workingCase.id,
-                                verdictForDefendant: event.target.value,
-                              },
-                              setWorkingCase,
-                            )
-                          }
-                          textarea
-                          rows={8}
-                          autoExpand={{ on: true, maxHeight: 600 }}
-                          required={true}
-                        />
                       </Box>
                     )}
                   </AnimatePresence>
                 )}
               </React.Fragment>
             ))}
+          </Box>
+        )}
+        {features?.includes(Feature.SERVICE_PORTAL) && (
+          <Box marginBottom={5}>
+            <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
+            <Input
+              data-testid="sessionBookings"
+              name="sessionBookings"
+              label={'Dómsorð'}
+              value={''}
+              placeholder={'Hvert er dómsorðið?'}
+              onChange={
+                (event) => console.log(event.target.value)
+                // setAndSendDefendantToServer(
+                //   {
+                //     defendantId: defendant.id,
+                //     caseId: workingCase.id,
+                //     verdictForDefendant: event.target.value,
+                //   },
+                //   setWorkingCase,
+                // )
+              }
+              textarea
+              rows={8}
+              autoExpand={{ on: true, maxHeight: 600 }}
+              required={true}
+            />
           </Box>
         )}
       </FormContentContainer>

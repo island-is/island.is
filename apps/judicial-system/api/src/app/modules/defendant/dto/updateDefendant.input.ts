@@ -139,11 +139,6 @@ export class UpdateDefendantInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly verdictForDefendant?: string
-
-  @Allow()
-  @IsOptional()
   @Field(() => [String], { nullable: true })
   readonly informationForDefendant?: string[]
 }

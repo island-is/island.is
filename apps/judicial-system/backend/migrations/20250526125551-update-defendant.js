@@ -14,15 +14,6 @@ module.exports = {
           },
           { transaction: t },
         ),
-        queryInterface.addColumn(
-          'defendant',
-          'verdict_for_defendant',
-          {
-            type: Sequelize.TEXT,
-            allowNull: true,
-          },
-          { transaction: t },
-        ),
       ]),
     )
   },
@@ -31,9 +22,6 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
         queryInterface.removeColumn('defendant', 'information_for_defendant', {
-          transaction: t,
-        }),
-        queryInterface.removeColumn('defendant', 'verdict_for_defendant', {
           transaction: t,
         }),
       ]),

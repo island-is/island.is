@@ -176,9 +176,4 @@ export class UpdateDefendantDto {
   @IsString({ each: true })
   @ApiPropertyOptional({ type: String, isArray: true })
   readonly informationForDefendant?: string[]
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly verdictForDefendant?: string
 }

@@ -236,10 +236,6 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: String })
   alternativeServiceDescription?: string
 
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  verdictForDefendant?: string
-
   @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: false })
   @ApiProperty({ type: String, isArray: true })
   informationForDefendant!: string[]
