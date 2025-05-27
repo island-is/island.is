@@ -20,9 +20,6 @@ export const selfAssessmentQuestionsThreeSubSection = buildSubSection({
       id: 'selfAssessmentQuestionsThree',
       title:
         medicalAndRehabilitationPaymentsFormMessage.selfAssessment.sectionTitle,
-      description:
-        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .sectionDescription,
       children: [
         buildDescriptionField({
           id: 'selfAssessment.mainProblemDescriptionField',
