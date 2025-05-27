@@ -5,11 +5,13 @@ import { emailsMsg } from '../../lib/messages'
 import * as styles from './Modal.css'
 
 type ModalProps = {
+  baseId: string
   isVisible: boolean
   onClose(): void
 }
 
 export const Modal = ({
+  baseId,
   isVisible,
   onClose,
   children,
@@ -18,7 +20,7 @@ export const Modal = ({
 
   return (
     <ModalBase
-      baseId="service-portal-notification-menu"
+      baseId={baseId}
       isVisible={isVisible}
       modalLabel={formatMessage(emailsMsg.verificationCodeButtonAria)}
       removeOnClose

@@ -125,7 +125,11 @@ export const ProfileEmailForm = ({
         error={!!error}
         onCancel={onCancel}
       />
-      <Modal isVisible={openModal && !!email} onClose={handleCloseModal}>
+      <Modal
+        baseId="service-portal-profile-email-form"
+        isVisible={openModal && !!email}
+        onClose={handleCloseModal}
+      >
         {email && (
           <VerifyTemplate
             loading={addEmailLoading}
