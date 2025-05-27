@@ -42,7 +42,6 @@ export const ConvoyLongTermMultiField = buildMultiField({
             }
           },
         },
-        rows: ['index', 'vehicle.permno', 'trailer.permno'],
       },
       fields: {
         index: {
