@@ -5,6 +5,7 @@ import {
   buildFieldsRepeaterField,
   buildMultiField,
   buildRadioField,
+  buildSelectField,
   buildSubSection,
   buildTextField,
   coreMessages,
@@ -14,6 +15,7 @@ import {
 } from '@island.is/application/core'
 import { employment as employmentMessages } from '../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
+import { isIndependent, workOnOwnSSN } from '../../../utils'
 
 export const employmentHistorySubSection = buildSubSection({
   id: 'employmentHistorySubSection',
@@ -29,6 +31,7 @@ export const employmentHistorySubSection = buildSubSection({
           title:
             employmentMessages.employmentHistory.labels.independentCheckbox,
           width: 'half',
+          marginBottom: 2,
           options: [
             {
               value: YES,
@@ -40,10 +43,12 @@ export const employmentHistorySubSection = buildSubSection({
             },
           ],
         }),
+        /* IS NOT INDEPENDENT */
         buildDescriptionField({
-          id: 'employmentHistoryIndependentDescription',
+          id: 'employmentHistoryNotIndependentDescription',
           title: employmentMessages.employmentHistory.labels.lastJobLabel,
           titleVariant: 'h5',
+          condition: (answers) => !isIndependent(answers),
         }),
         buildTextField({
           id: 'employmentHistory.lastJob.companyNationalId',
@@ -51,32 +56,105 @@ export const employmentHistorySubSection = buildSubSection({
             employmentMessages.employmentHistory.labels
               .lastJobCompanyNationalId,
           width: 'half',
+          readOnly: true,
+          condition: (answers) => !isIndependent(answers),
         }),
         buildTextField({
           id: 'employmentHistory.lastJob.companyName',
           title: employmentMessages.employmentHistory.labels.lastJobCompanyName,
           width: 'half',
+          condition: (answers) => !isIndependent(answers),
         }),
         buildTextField({
-          // TODO this should be a select field
+          // TODO: this should maybe be a select field
           id: 'employmentHistory.lastJob.title',
           title: employmentMessages.employmentHistory.labels.lastJobTitle,
           width: 'half',
+          readOnly: true,
+          condition: (answers) => !isIndependent(answers),
         }),
         buildTextField({
           id: 'employmentHistory.lastJob.percentage',
           title: employmentMessages.employmentHistory.labels.lastJobPercentage,
           width: 'half',
+          variant: 'number',
+          suffix: '%',
+          condition: (answers) => !isIndependent(answers),
         }),
         buildDateField({
           id: 'employmentHistory.lastJob.startDate',
           title: employmentMessages.employmentHistory.labels.lastJobStartDate,
           width: 'half',
+          condition: (answers) => !isIndependent(answers),
         }),
         buildDateField({
           id: 'employmentHistory.lastJob.endDate',
           title: employmentMessages.employmentHistory.labels.lastJobEndDate,
           width: 'half',
+          condition: (answers) => !isIndependent(answers),
+        }),
+        /* IS INDEPENDENT */
+        buildRadioField({
+          id: 'employmentHistory.workOnOwnSSN',
+          title: employmentMessages.employmentHistory.labels.workOnOwnSSN,
+          width: 'half',
+          options: [
+            {
+              value: YES,
+              label: coreMessages.radioYes,
+            },
+            {
+              value: NO,
+              label: coreMessages.radioNo,
+            },
+          ],
+          condition: (answers) => isIndependent(answers),
+        }),
+        buildAlertMessageField({
+          id: 'employmentHistoryIndependentAlertMessage',
+          message:
+            employmentMessages.employmentHistory.labels.workOnOwnSSNAlert,
+          alertType: 'info',
+          condition: (answers) =>
+            isIndependent(answers) && workOnOwnSSN(answers),
+        }),
+        buildDescriptionField({
+          id: 'employmentHistoryPreviousJobsDescription',
+          title: employmentMessages.employmentHistory.labels.howLongOnOwnSSN,
+          titleVariant: 'h5',
+          condition: (answers) =>
+            isIndependent(answers) && workOnOwnSSN(answers),
+        }),
+        // TODO: Get from service
+        buildTextField({
+          id: 'employmentHistory.ownSSNJob.title',
+          title: employmentMessages.employmentHistory.labels.lastJobTitle,
+          width: 'half',
+          condition: (answers) =>
+            isIndependent(answers) && workOnOwnSSN(answers),
+        }),
+        buildTextField({
+          id: 'employmentHistory.ownSSNJob.percentage',
+          title: employmentMessages.employmentHistory.labels.lastJobPercentage,
+          width: 'half',
+          variant: 'number',
+          suffix: '%',
+          condition: (answers) =>
+            isIndependent(answers) && workOnOwnSSN(answers),
+        }),
+        buildDateField({
+          id: 'employmentHistory.ownSSNJob.startDate',
+          title: employmentMessages.employmentHistory.labels.lastJobStartDate,
+          width: 'half',
+          condition: (answers) =>
+            isIndependent(answers) && workOnOwnSSN(answers),
+        }),
+        buildDateField({
+          id: 'employmentHistory.ownSSNJob.endDate',
+          title: employmentMessages.employmentHistory.labels.lastOldJobEndDate,
+          width: 'half',
+          condition: (answers) =>
+            isIndependent(answers) && workOnOwnSSN(answers),
         }),
         buildAlertMessageField({
           id: 'employmentHistoryAlertMessage',
@@ -84,9 +162,14 @@ export const employmentHistorySubSection = buildSubSection({
             employmentMessages.employmentHistory.labels.lastJobAlertInformation,
           alertType: 'warning',
         }),
+        /* OLD JOBS */
+
         buildFieldsRepeaterField({
           id: 'employmentHistory.previousJobs',
           minRows: 0,
+          marginTop: 0,
+          title: employmentMessages.employmentHistory.labels.lastJobs,
+          titleVariant: 'h5',
           width: 'full',
           formTitleNumbering: 'none',
           addItemButtonText: employmentMessages.employmentHistory.labels.addJob,
@@ -95,26 +178,28 @@ export const employmentHistorySubSection = buildSubSection({
               component: 'nationalIdWithName',
               required: true,
             },
-            jobTitle: {
+            title: {
               component: 'input',
-              label: employmentMessages.employmentHistory.labels.lastJobTitle,
+              label:
+                employmentMessages.employmentHistory.labels.lastOldJobEndDate,
               width: 'half',
               type: 'text',
             },
-            jobPercentage: {
+            percentage: {
               component: 'input',
               label:
                 employmentMessages.employmentHistory.labels.lastJobPercentage,
               width: 'half',
-              type: 'text',
+              type: 'number',
+              suffix: '%',
             },
-            jobStartDate: {
+            startDate: {
               component: 'date',
               label:
                 employmentMessages.employmentHistory.labels.lastJobStartDate,
               width: 'half',
             },
-            jobEndDate: {
+            endDate: {
               component: 'date',
               label: employmentMessages.employmentHistory.labels.lastJobEndDate,
               width: 'half',
