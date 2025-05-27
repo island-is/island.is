@@ -4,7 +4,7 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 export const useScopeAccess = () => {
   const { scopes } = useUserInfo()
 
-  const hasUserProfileWrite = scopes.includes(UserProfileScope.write)
+  const hasUserProfileWriteScope = scopes.includes(UserProfileScope.write)
 
-  return { hasUserProfileWrite }
+  return { hasUserProfileWriteScope }
 }

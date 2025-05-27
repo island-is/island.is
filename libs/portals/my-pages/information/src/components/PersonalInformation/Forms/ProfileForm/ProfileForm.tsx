@@ -17,10 +17,10 @@ import {
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
 
-import { UserProfileScope } from '@island.is/auth/scopes'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import orderBy from 'lodash/orderBy'
 import { FormattedMessage } from 'react-intl'
+import { useScopeAccess } from '../../../../hooks/useScopeAccess'
 import { emailsMsg, msg } from '../../../../lib/messages'
 import { InformationPaths } from '../../../../lib/paths'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
@@ -34,7 +34,6 @@ import { WithLinkWrapper } from './components/Inputs/WithLinkWrapper'
 import { OnboardingIntro } from './components/Intro'
 import { useConfirmNudgeMutation } from './confirmNudge.generated'
 import { DropModalType } from './types/form'
-import { useScopeAccess } from '../../../../hooks/useScopeAccess'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -64,7 +63,7 @@ export const ProfileForm = ({
 }: ProfileFormProps) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { hasUserProfileWrite } = useScopeAccess()
+  const { hasUserProfileWriteScope } = useScopeAccess()
 
   const [telDirty, setTelDirty] = useState(true)
   const [internalLoading, setInternalLoading] = useState(false)
@@ -203,7 +202,7 @@ export const ProfileForm = ({
                 }}
               />
             }
-            divider={hasUserProfileWrite}
+            divider={hasUserProfileWriteScope}
           >
             {userLoading && emails ? (
               <SkeletonLoader
@@ -235,7 +234,7 @@ export const ProfileForm = ({
             )}
           </InputSection>
 
-          {hasUserProfileWrite && (
+          {hasUserProfileWriteScope && (
             <>
               <InputSection
                 title={formatMessage(m.telNumber)}
