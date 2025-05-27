@@ -6,6 +6,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  InformationForDefendant,
   PunishmentType,
   ServiceRequirement,
   SubpoenaType,
@@ -139,6 +140,6 @@ export class UpdateDefendantInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => [String], { nullable: true })
-  readonly informationForDefendant?: string[]
+  @Field(() => [InformationForDefendant], { nullable: true })
+  readonly informationForDefendant?: InformationForDefendant[]
 }

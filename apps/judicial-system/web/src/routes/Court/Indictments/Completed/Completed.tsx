@@ -15,6 +15,7 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { InformationForDefendant } from '@island.is/judicial-system/types'
 import { Feature } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -169,35 +170,37 @@ const Completed: FC = () => {
   const defendantCheckboxes = [
     {
       label: 'Leiðbeiningar um endurupptöku útivistarmála',
-      value: 'instructionsOnReopeningOutOfCourtCases',
+      value:
+        InformationForDefendant.INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES,
     },
     {
       label: 'Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti',
-      value: 'informationOnAppealToCourtOfAppeals',
+      value: InformationForDefendant.INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS,
     },
     {
       label: 'Þýðing skilorðsbundinnar refsingar og skilorðsrofs',
-      value: 'conditionalSentenceAndBreachOfProbationTranslation',
+      value:
+        InformationForDefendant.CONDITIONAL_SENTENCE_AND_BREACH_OF_PROBATION_TRANSLATION,
     },
     {
       label: 'Þýðing sviptingu ökuréttinda',
-      value: 'drivingRightsRevokedTranslation',
+      value: InformationForDefendant.DRIVING_RIGHTS_REVOKED_TRANSLATION,
     },
     {
       label: 'Þýðing vararefsingu fésekta',
-      value: 'alternativeFinesTranslation',
+      value: InformationForDefendant.ALTERNATIVE_FINES_TRANSLATION,
     },
     {
       label: 'Upplýsingar um skilyrði og umsókn um samfélagsþjónustu',
-      value: 'communityService',
+      value: InformationForDefendant.COMMUNITY_SERVICE,
     },
     {
       label: 'Upplýsingar um greiðslu sekta, sakarkostnaðar og bóta',
-      value: 'finesAndCosts',
+      value: InformationForDefendant.FINES_AND_COSTS,
     },
     {
       label: 'Upplýsingar um upptöku muna/efna',
-      value: 'itemConfiscation',
+      value: InformationForDefendant.ITEM_CONFISCATION,
     },
   ]
 

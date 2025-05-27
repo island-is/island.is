@@ -16,6 +16,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  InformationForDefendant,
   PunishmentType,
   ServiceRequirement,
   SubpoenaType,
@@ -173,7 +174,7 @@ export class UpdateDefendantDto {
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  @ApiPropertyOptional({ type: String, isArray: true })
-  readonly informationForDefendant?: string[]
+  @IsEnum(InformationForDefendant, { each: true })
+  @ApiPropertyOptional({ enum: InformationForDefendant, isArray: true })
+  readonly informationForDefendant?: InformationForDefendant[]
 }

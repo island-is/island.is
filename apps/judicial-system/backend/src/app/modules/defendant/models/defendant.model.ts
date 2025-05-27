@@ -17,6 +17,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  InformationForDefendant,
   PunishmentType,
   ServiceRequirement,
   SubpoenaType,
@@ -236,7 +237,11 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: String })
   alternativeServiceDescription?: string
 
-  @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: false })
-  @ApiProperty({ type: String, isArray: true })
-  informationForDefendant!: string[]
+  @Column({
+    type: DataType.ARRAY(DataType.ENUM),
+    allowNull: true,
+    values: Object.values(InformationForDefendant),
+  })
+  @ApiPropertyOptional({ enum: InformationForDefendant, isArray: true })
+  informationForDefendant?: InformationForDefendant[]
 }
