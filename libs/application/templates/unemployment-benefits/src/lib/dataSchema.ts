@@ -99,7 +99,17 @@ const jobWishesSchema = z.object({
 })
 
 const EmploymentHistorySchema = z.object({
+  isIndependent: z
+    .nativeEnum(YesOrNoEnum)
+    .refine((v) => Object.values(YesOrNoEnum).includes(v)),
   lastJob: z.object({
+    title: z.string().optional(),
+    percentage: z.string().optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+  }),
+  workOnOwnSSN: z.nativeEnum(YesOrNoEnum).optional(),
+  ownSSNJob: z.object({
     title: z.string().optional(),
     percentage: z.string().optional(),
     startDate: z.string().optional(),
@@ -107,14 +117,19 @@ const EmploymentHistorySchema = z.object({
   }),
   previousJobs: z.array(
     z.object({
-      company: z.string().optional(),
-      jobTitle: z.string().optional(),
-      jobPercentage: z.string().optional(),
-      jobStartDate: z.string().optional(),
-      jobEndDate: z.string().optional(),
+      company: z.object({
+        nationalId: z.string().optional(),
+        name: z.string().optional(),
+      }),
+      title: z.string().optional(),
+      percentage: z.string().optional(),
+      startDate: z.string().optional(),
+      endDate: z.string().optional(),
     }),
   ),
-  hasWorkedEes: z.string(),
+  hasWorkedEes: z
+    .nativeEnum(YesOrNoEnum)
+    .refine((v) => Object.values(YesOrNoEnum).includes(v)),
 })
 
 const currentStudiesSchema = z

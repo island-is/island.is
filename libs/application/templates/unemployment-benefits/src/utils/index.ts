@@ -1,3 +1,5 @@
 export * from './getEmploymentStatuses'
 export * from './getOverviewItems'
 export * from './isOtherAddressChecked'
+export * from './isIndependent'
+export * from './workOnOwnSSN'

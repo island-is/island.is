@@ -309,7 +309,7 @@ export const employment = {
       pageDescription: {
         id: 'vmst.ub.application:employment.employmentHistory.general.pageDescription',
         defaultMessage:
-          'Greiðsla atvinnuleysisbóta miðast við áunninn rétt þinn. Því er mikilvægt að skila inn sem ítarlegustum upplýsingum um atvinnusögu þína. Til að fá fullar bætur þarftu að hafa unnið samtals í 12 mánuði í 100% starfi innan síðustu þriggja ára.',
+          'Greiðsla atvinnuleysisbóta miðast við áunninn rétt þinn. Bótaréttur miðast við fyrri vinnusögu. Til þess að eiga rétt á 100% bótum þarftu að hafa verið í 100% starfi í samtals 12 mánuði á síðustu þremur árum.',
         description: 'Employment history page description',
       },
     }),
@@ -351,8 +351,13 @@ export const employment = {
       },
       lastJobEndDate: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobEndDate',
-        defaultMessage: 'Hvernig lýkur uppsagnafresti þínum',
+        defaultMessage: 'Hvenær lýkur uppsagnafresti þínum',
         description: 'Last job end date label',
+      },
+      lastOldJobEndDate: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastOldJobEndDate',
+        defaultMessage: 'Lauk störfum',
+        description: 'Last old job end date label',
       },
       lastJobAlertInformation: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobAlertInformation',
@@ -365,6 +370,11 @@ export const employment = {
         defaultMessage: 'Bæta við starfi',
         description: 'Add job button label',
       },
+      lastJobs: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobs',
+        defaultMessage: 'Fyrri störf',
+        description: 'Last jobs label',
+      },
       radioEesLabel: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.radioEesLabel',
         defaultMessage: 'Hefurðu unnið á EES svæðinu síðastliðin 5 ár?',
@@ -375,6 +385,28 @@ export const employment = {
         defaultMessage:
           'Þjónustufulltrúi Vinnumálastofnunar mun hafa samband við þig varðandi störf erlendis ef þörf er á.',
         description: 'EES country alert information label',
+      },
+      workOnOwnSSN: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.workOnOwnSSN',
+        defaultMessage: 'Starfaðir þú á eigin kennitölu?',
+        description: 'Work on own ssn label',
+      },
+      workOnOwnSSNAlert: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.workOnOwnSSNAlert',
+        defaultMessage:
+          'Þú þarft að tilkynna um stöðvun rekstrar til Skattsins með eyðublaði RSK 5.04. Þú þarft ekki að senda afrit af tilkynningunni til Vinnumálastofnunar.',
+        description: 'Work on own ssn alert information label',
+      },
+      howLongOnOwnSSN: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.howLongOnOwnSSN',
+        defaultMessage: 'Hversu lengi hefurðu starfað á eigin kennitölu?',
+        description: 'How long on own ssn label',
+      },
+      ownSSNAlertInformation: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.ownSSNAlertInformation',
+        defaultMessage:
+          'Upplýsingarnar hér að ofan gefa ekki rétt á 100% bótahlutfalli. Til að hækka bótahlutfall geturðu bætt við starfi. Athugaðu að til að fá 100% bætur þarftu að hafa unnið 100% starf í samtals 12 mánuði innan síðustu þriggja ára. ',
+        description: 'Own SSN alert information label',
       },
     }),
   },
