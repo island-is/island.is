@@ -23,6 +23,11 @@ const mapEmailsToOptions = (email: Email): EmailOption => ({
 type IdFilter = { id: string; email?: never }
 type EmailFilter = { email: string; id?: never }
 
+/**
+ * Get the selected option from a list of emails based on the filter
+ * @param emails - List of emails to search through
+ * @param filter - Filter to use to find the selected option
+ */
 const getSelectedOption = (emails: Email[], filter: IdFilter | EmailFilter) => {
   const option = emails.find(
     (email) => email.id === filter.id || email.email === filter.email,
@@ -80,9 +85,13 @@ export const ActorProfileEmails = ({
       return
     }
 
+    // Set the selected option based on the filter (either email id or email address)
     setSelectedOption(getSelectedOption(emails, emailsFilter))
   }, [emails, currentEmailId, actorProfile.emailsId])
 
+  /**
+   * Sets the selected option state and updates actor profile email.
+   */
   const handleEmailChange = (option: EmailOption | null) => {
     if (!option?.id || !userProfile?.nationalId) {
       return
