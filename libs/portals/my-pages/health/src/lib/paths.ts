@@ -7,10 +7,22 @@ export enum HealthPaths {
   HealthDentists = '/heilsa/grunnupplysingar/tannlaeknar',
   HealthDentistRegistration = '/heilsa/grunnupplysingar/tannlaeknar/skraning',
 
+  HealthDentistsOld = '/heilsa/tannlaeknar',
+  HealthDentistRegistrationOld = '/heilsa/tannlaeknar/skraning',
+
   HealthOrganDonation = '/heilsa/grunnupplysingar/liffaeragjof',
   HealthOrganDonationRegistration = '/heilsa/grunnupplysingar/liffaeragjof/skraning',
 
+  HealthOrganDonationOld = '/heilsa/liffaeragjof',
+  HealthOrganDonationRegistrationOld = '/heilsa/liffaeragjof/skraning',
+
   HealthInsurance = '/heilsa/grunnupplysingar/sjukratryggingar',
+
+  HealthCenter = '/heilsa/grunnupplysingar/heilsugaesla',
+  HealthCenterRegistration = '/heilsa/grunnupplysingar/heilsugaesla/skraning',
+
+  HealthCenterOld = '/heilsa/heilsugaesla',
+  HealthCenterRegistrationOld = '/heilsa/heilsugaesla/skraning',
 
   HealthTherapies = '/heilsa/thjalfun',
   HealthTherapiesPhysical = '/heilsa/thjalfun/sjukrathjalfun',
@@ -33,9 +45,6 @@ export enum HealthPaths {
   HealthMedicinePrescriptionOverview = '/heilsa/lyf/lyfjaavisanir/yfirlit',
   HealthMedicinePrescriptionHistory = '/heilsa/lyf/lyfjasaga',
   HealthMedicineDelegation = '/heilsa/lyf/lyfjaumbod',
-
-  HealthCenter = '/heilsa/grunnupplysingar/heilsugaesla',
-  HealthCenterRegistration = '/heilsa/grunnupplysingar/heilsugaesla/skraning',
 
   HealthVaccinations = '/heilsa/bolusetningar',
   HealthVaccinationsGeneral = '/heilsa/bolusetningar/almennar',

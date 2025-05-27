@@ -30,8 +30,9 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
         label={formatMessage(messages.payments)}
         pathname={pathname}
         items={
-          healthNavigation.children?.find((itm) => itm.name === m.payments)
-            ?.children ?? []
+          healthNavigation.children?.find(
+            (itm) => itm.name === messages.paymentsAndRights,
+          )?.children ?? []
         }
       />
 

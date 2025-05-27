@@ -288,6 +288,14 @@ export const messages = defineMessages({
     defaultMessage: 'Sjúkratrygging',
     id: 'sp.health:has-health-insurance',
   },
+  hasHealthInsuranceIntro: {
+    defaultMessage: 'Sjúkratryggingar Íslands lýsitexti',
+    id: 'sp.health:has-health-insurance',
+  },
+  healthCenter: {
+    defaultMessage: 'Heilsugæsla',
+    id: 'sp.health:health-center',
+  },
   healthCenterDescription: {
     defaultMessage:
       'Allir sjúkratryggðir á Íslandi eiga að vera skráðir á heilsugæslustöð. Hér fyrir neðan sérð þú á hvaða stöð eða hjá hvaða sjálfstætt starfandi heimilislækni þú ert skráð/ur.',
@@ -1067,6 +1075,10 @@ export const messages = defineMessages({
     defaultMessage: 'Greiðslur',
     id: 'sp.health:payments',
   },
+  paymentsAndRights: {
+    defaultMessage: 'Greiðslur og réttindi',
+    id: 'sp.health:payments-and-rights',
+  },
   paymentsIntro: {
     defaultMessage:
       'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum.',
@@ -1525,5 +1537,13 @@ export const messages = defineMessages({
   yourPayment: {
     defaultMessage: 'Greiðsla þín',
     id: 'sp.health:your-payment',
+  },
+  basicInformation: {
+    defaultMessage: 'Grunnupplýsingar',
+    id: 'sp.health:basic-information',
+  },
+  myHealthOverview: {
+    defaultMessage: 'Mitt heilsuyfirlit',
+    id: 'sp.health:my-health-overview',
   },
 })
