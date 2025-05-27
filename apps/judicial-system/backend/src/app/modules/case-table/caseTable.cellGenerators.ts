@@ -468,28 +468,37 @@ const indictmentArraignmentDate: CaseTableCellGenerator = {
     },
   },
   generate: (c: Case): StringGroupValue | undefined => {
+    let date: Date | undefined
+
     if (c.indictmentDecision) {
-      const courtDateLog = DateLog.courtDate(c.dateLogs)?.date
-      return courtDateLog &&
-        c.indictmentDecision === IndictmentDecision.SCHEDULING
-        ? {
-            strList: [
-              `${capitalize(formatDate(courtDateLog, 'EEE d. MMMM yyyy'))}`,
-              `kl. ${formatDate(courtDateLog, 'HH:mm') ?? ''}`,
-            ],
-          }
-        : undefined
+      // Arraignment is completed
+      if (c.indictmentDecision !== IndictmentDecision.SCHEDULING) {
+        // A court date is not scheduled
+        return undefined
+      }
+
+      // A court date should be scheduled
+      date = DateLog.courtDate(c.dateLogs)?.date
+    } else {
+      // An arraignment may be scheduled
+      date = DateLog.arraignmentDate(c.dateLogs)?.date
     }
 
-    const arraignmentDateLog = DateLog.arraignmentDate(c.dateLogs)?.date
-    return arraignmentDateLog
-      ? {
-          strList: [
-            `${capitalize(formatDate(arraignmentDateLog, 'EEE d. MMMM yyyy'))}`,
-            `kl. ${formatDate(arraignmentDateLog, 'HH:mm') ?? ''}`,
-          ],
-        }
-      : undefined
+    const datePart = formatDate(date, 'EEE d. MMMM yyyy')
+
+    if (!datePart) {
+      // No date part, so we return undefined
+      return undefined
+    }
+
+    const timePart = formatDate(date, 'HH:mm')
+
+    if (!timePart) {
+      // This should never happen, but if it does, we return the court date only
+      return { strList: [`${capitalize(datePart)}`] }
+    }
+
+    return { strList: [`${capitalize(datePart)}`, `kl. ${timePart}`] }
   },
 }
 
