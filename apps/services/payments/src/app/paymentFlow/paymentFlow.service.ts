@@ -167,7 +167,7 @@ export class PaymentFlowService {
 
       filteredChargeInformation.push({
         ...product,
-        priceAmount: price * matchingCharge.quantity,
+        priceAmount: price,
         quantity: matchingCharge.quantity,
       })
     }
@@ -179,7 +179,7 @@ export class PaymentFlowService {
     return {
       firstProductTitle: filteredChargeInformation?.[0]?.chargeItemName ?? null,
       totalPrice: filteredChargeInformation.reduce(
-        (acc, charge) => acc + charge.priceAmount,
+        (acc, charge) => acc + charge.priceAmount * charge.quantity,
         0,
       ),
       catalogItems: filteredChargeInformation,

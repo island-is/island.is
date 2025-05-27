@@ -1,5 +1,7 @@
-import { ReferenceTemplateModule } from './reference-template/reference-template.module'
-import { ReferenceTemplateService } from './reference-template/reference-template.service'
+import { ExampleFolderStructureAndConventionsModule } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.module'
+import { ExampleFolderStructureAndConventionsService } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.service'
+import { ExampleAuthDelegationModule } from './examples/example-auth-delegation/example-auth-delegation.module'
+import { ExampleAuthDelegationService } from './examples/example-auth-delegation/example-auth-delegation.service'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
 import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 import { ExampleCommonActionsModule } from './examples/example-common-actions/example-common-actions.module'
@@ -34,8 +36,6 @@ import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { FinancialAidService } from './financial-aid/financial-aid.service'
 import { FinancialStatementCemeteryTemplateModule } from './financial-statement-cemetery/financial-statement-cemetery.module'
 import { FinancialStatementCemeteryTemplateService } from './financial-statement-cemetery/financial-statement-cemetery.service'
-import { FinancialStatementsInaoTemplateModule } from './financial-statements-inao/financial-statements-inao.module'
-import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
 import { FinancialStatementIndividualElectionModule } from './financial-statement-individual-election/financial-statement-individual-election.module'
 import { FinancialStatementIndividualElectionService } from './financial-statement-individual-election/financial-statement-individual-election.service'
 import { FinancialStatementPoliticalPartyTemplateModule } from './financial-statement-political-party/financial-statement-political-party.modules'
@@ -162,7 +162,6 @@ import { RentalAgreementService } from './rental-agreement/rental-agreement.serv
 export const dynamicModules = [GeneralPetitionModule]
 
 export const modules = [
-  ReferenceTemplateModule,
   ExampleCommonActionsModule,
   ExampleStateTransfersModule,
   ExampleInputsModule,
@@ -190,7 +189,6 @@ export const modules = [
   PassportModule,
   OperatingLicenseModule,
   FinancialStatementCemeteryTemplateModule,
-  FinancialStatementsInaoTemplateModule,
   FinancialStatementIndividualElectionModule,
   FinancialStatementPoliticalPartyTemplateModule,
   NoDebtCertificateModule,
@@ -239,11 +237,12 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  ExampleFolderStructureAndConventionsModule,
+  ExampleAuthDelegationModule,
   RentalAgreementModule,
 ]
 
 export const services = [
-  ReferenceTemplateService,
   ExampleCommonActionsService,
   ExampleStateTransfersService,
   ExampleInputsService,
@@ -272,7 +271,6 @@ export const services = [
   PassportService,
   OperatingLicenseService,
   FinancialStatementCemeteryTemplateService,
-  FinancialStatementsInaoTemplateService,
   FinancialStatementIndividualElectionService,
   FinancialStatementPoliticalPartyTemplateService,
   MarriageConditionsSubmissionService,
@@ -321,5 +319,7 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  ExampleFolderStructureAndConventionsService,
+  ExampleAuthDelegationService,
   RentalAgreementService,
 ]

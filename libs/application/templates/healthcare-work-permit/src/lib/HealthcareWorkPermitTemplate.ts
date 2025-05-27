@@ -25,6 +25,7 @@ import {
   EmbaettiLandlaeknisPaymentCatalogApi,
   HealtcareLicenesApi,
   ProcessPermitsApi,
+  InnaApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { HealthcareWorkPermitSchema } from './dataSchema'
@@ -90,6 +91,7 @@ const template: ApplicationTemplate<
                 EmbaettiLandlaeknisPaymentCatalogApi,
                 HealtcareLicenesApi,
                 ProcessPermitsApi,
+                InnaApi,
               ],
             },
           ],
