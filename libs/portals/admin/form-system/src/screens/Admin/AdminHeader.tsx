@@ -9,6 +9,8 @@ import { useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../lib/paths'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
+import { useContext } from 'react'
+import { ControlContext } from '../../context/ControlContext'
 
 interface Props {
   organizations: Option<string>[]
@@ -19,6 +21,11 @@ export const AdminHeader = (props: Props) => {
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
   const { organizations, onOrganizationChange } = props
+  const { control } = useContext(ControlContext)
+
+  if (!control) {
+    throw new Error('AdminHeader must be used within ControlContext')
+  }
 
   return (
     <Box marginBottom={4} marginLeft={2}>
@@ -51,9 +58,12 @@ export const AdminHeader = (props: Props) => {
             label={formatMessage(m.organization)}
             options={organizations}
             size="sm"
-            defaultValue={organizations.find((org) => org.isSelected)}
+            value={organizations.find(
+              (org) => org.value === control.organizationNationalId,
+            )}
             onChange={async (selected) => {
               if (selected) {
+                control.organizationNationalId = selected.value
                 onOrganizationChange({ value: selected.value })
               }
             }}
