@@ -327,13 +327,15 @@ const defendants: CaseTableCellGenerator = {
 
 export const caseType: CaseTableCellGenerator = {
   attributes: ['type', 'decision', 'parentCaseId', 'indictmentSubtypes'],
-  generate: (c: Case) => {
+  generate: (c: Case): StringGroupValue | undefined => {
     if (c.type === CaseType.INDICTMENT) {
       const display = generateIndictmentCaseType(c.indictmentSubtypes)
-      return display ? { s: [display] } : undefined
+      return display ? { strList: [display] } : undefined
     }
 
-    return { s: generateRequestCaseType(c.type, c.decision, c.parentCaseId) }
+    return {
+      strList: generateRequestCaseType(c.type, c.decision, c.parentCaseId),
+    }
   },
 }
 
