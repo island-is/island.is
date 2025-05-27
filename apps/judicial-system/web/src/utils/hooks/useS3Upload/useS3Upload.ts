@@ -9,8 +9,10 @@ import {
   CaseFile,
   CaseFileCategory,
   CreateFileInput,
+  Defendant,
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { api } from '@island.is/judicial-system-web/src/services'
 
 import {
   CreateCivilClaimantFileMutation,
@@ -52,6 +54,7 @@ import {
   LimitedAccessDeleteFileMutation,
   useLimitedAccessDeleteFileMutation,
 } from './limitedAccessDeleteFile.generated'
+import { useUploadCriminalRecordFileMutation } from './uploadCriminalRecordFile.generated'
 import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generated'
 import { strings } from './useS3Upload.strings'
 
@@ -238,6 +241,7 @@ const useS3Upload = (
   const [deleteFile] = useDeleteFileMutation()
   const [limitedAccessDeleteFile] = useLimitedAccessDeleteFileMutation()
   const [uploadPoliceCaseFile] = useUploadPoliceCaseFileMutation()
+  const [uploadCriminalRecordFile] = useUploadCriminalRecordFileMutation()
 
   const getPresignedPost = useCallback(
     async (file: TUploadFile) => {
@@ -435,6 +439,81 @@ const useS3Upload = (
     [getPresignedPost, addFileToCaseState, formatMessage],
   )
 
+  const handleUploadCriminalRecord = (
+    defendants: Defendant[],
+    addUploadFile: (file: TUploadFile) => void,
+    updateFile: (file: TUploadFile, newId?: string) => void,
+  ) => {
+    const promises = defendants.map(
+      async ({ id, name: defendantName, nationalId, noNationalId }) => {
+        const name = `Sakavottord${nationalId ? `_${nationalId}` : ''}.pdf`
+        const commonFileProps = {
+          // add a temp name for error handling
+          id: `${name}-${uuid()}`,
+          name,
+          category: CaseFileCategory.CRIMINAL_RECORD,
+          status: FileUploadStatus.uploading,
+          percent: 0,
+        }
+
+        if (!noNationalId) {
+          addUploadFile(commonFileProps)
+        }
+
+        try {
+          // TEMP: this is a temp step while we incorporate required token handling
+          // for criminal record endpoint asa middleware
+          const { success } = await api.prepareRequest()
+          if (!success) {
+            throw Error('Failed to prepare upload criminal record request')
+          }
+          // fetch criminal record and upload it to S3 in the backend
+          const { data: criminalRecordFile } = await uploadCriminalRecordFile({
+            variables: {
+              input: { caseId, defendantId: id },
+            },
+          })
+          if (!criminalRecordFile) {
+            throw Error('Failed to upload criminal record to S3')
+          }
+
+          const fileProps = {
+            ...commonFileProps,
+            name: criminalRecordFile.uploadCriminalRecordFile.name,
+            key: criminalRecordFile.uploadCriminalRecordFile.key,
+            size: criminalRecordFile.uploadCriminalRecordFile.size,
+            type: criminalRecordFile.uploadCriminalRecordFile.type,
+            defendantId: id,
+          }
+          // create the case file in the backend
+          const fileId = await addFileToCaseState(fileProps)
+
+          // update the client state with the newly fetched file
+          updateFile(
+            {
+              ...fileProps,
+              percent: 100,
+              status: FileUploadStatus.done,
+            },
+            fileId,
+          )
+        } catch (error) {
+          if (noNationalId) {
+            toast.error(`Ákærði: ${defendantName} er ekki með kennitölu`)
+          } else {
+            toast.error(formatMessage(strings.uploadFailed))
+            updateFile({
+              ...commonFileProps,
+              percent: 0,
+              status: FileUploadStatus.error,
+            })
+          }
+        }
+      },
+    )
+    return Promise.all(promises)
+  }
+
   const handleUploadFromPolice = useCallback(
     (
       files: TUploadFile[],
@@ -551,6 +630,7 @@ const useS3Upload = (
     handleRetry,
     handleRemove,
     handleUploadFromPolice,
+    handleUploadCriminalRecord,
   }
 }
 
