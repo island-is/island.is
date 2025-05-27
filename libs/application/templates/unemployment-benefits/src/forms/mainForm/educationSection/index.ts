@@ -13,7 +13,6 @@ import {
 import { education as educationMessages } from '../../../lib/messages'
 import { EducationType } from '../../../shared'
 import { isCurrentlyStudying } from '../../../utils/educationInformation'
-import { FormValue } from '@island.is/application/types'
 
 export const educationSection = buildSection({
   id: 'educationSection',

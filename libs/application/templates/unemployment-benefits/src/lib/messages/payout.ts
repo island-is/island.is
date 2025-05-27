@@ -20,6 +20,46 @@ export const payout = {
       defaultMessage: 'Greiðsluupplýsingar',
       description: 'payout page description',
     },
+    accountLabel: {
+      id: 'vmst.ub.application:payout.payoutInformation.accountLabel',
+      defaultMessage: 'Reikningsupplýsingar',
+      description: 'payout account label',
+    },
+    accountBankNumber: {
+      id: 'vmst.ub.application:payout.payoutInformation.accountBankNumber',
+      defaultMessage: 'Banki',
+      description: 'payout account bank label',
+    },
+    accountTypeNumber: {
+      id: 'vmst.ub.application:payout.payoutInformation.accountTypeNumber',
+      defaultMessage: 'HB',
+      description: 'payout account type number label',
+    },
+    accountNumber: {
+      id: 'vmst.ub.application:payout.payoutInformation.accountNumber',
+      defaultMessage: 'Reikningsnúmer',
+      description: 'payout account number label',
+    },
+    unionLabel: {
+      id: 'vmst.ub.application:payout.payoutInformation.unionLabel',
+      defaultMessage: 'Stéttarfélag',
+      description: 'payout union label',
+    },
+    pensionFundLabel: {
+      id: 'vmst.ub.application:payout.payoutInformation.pensionFundLabel',
+      defaultMessage: 'Lífeyrissjóður',
+      description: 'payout pension fund label',
+    },
+    privatePensionFundLabel: {
+      id: 'vmst.ub.application:payout.payoutInformation.privatePensionFundLabel',
+      defaultMessage: 'Séreignarsjóður',
+      description: 'payout private pension fund label',
+    },
+    privatePensionFundPercentageLabel: {
+      id: 'vmst.ub.application:payout.payoutInformation.privatePensionFundPercentageLabel',
+      defaultMessage: 'Hlutfall',
+      description: 'payout private pension fund percentage label',
+    },
   }),
   taxDiscount: defineMessages({
     sectionTitle: {

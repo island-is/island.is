@@ -151,10 +151,10 @@ export const employmentSearch = {
       defaultMessage: 'Tegund ökuréttinda',
       description: 'Driving licence type label',
     },
-    workMachineRights: {
-      id: 'vmst.ub.application:employmentSearch.drivingLicense.workMachineRights',
+    heavyMachineryLicenses: {
+      id: 'vmst.ub.application:employmentSearch.drivingLicense.heavyMachineryLicenses',
       defaultMessage: 'Vinnuvélaréttindi',
-      description: 'Work Machine rights label',
+      description: 'Heavy machinery licenses rights label',
     },
   }),
   languageSkills: defineMessages({
@@ -279,35 +279,35 @@ gerðar aðgengilegar atvinnurekendum innan EES sem leita að starfsfólki með 
       description: 'Employment search confirmation agreement page description',
     },
   }),
-  introductoryMeetingAgreement: defineMessages({
+  introductoryMeeting: defineMessages({
     sectionTitle: {
-      id: 'vmst.ub.application:employmentSearch.introductoryMeetingAgreement.sectionTitle',
+      id: 'vmst.ub.application:employmentSearch.introductoryMeeting.sectionTitle',
       defaultMessage: 'Kynningarfundur',
       description: 'Intoductory meeting agreement section title',
     },
     pageTitle: {
-      id: 'vmst.ub.application:employmentSearch.introductoryMeetingAgreement.pageTitle',
+      id: 'vmst.ub.application:employmentSearch.introductoryMeeting.pageTitle',
       defaultMessage: 'Kynningarfundur',
       description: 'Intoductory meeting agreement page description',
     },
     pageDescription: {
-      id: 'vmst.ub.application:employmentSearch.introductoryMeetingAgreement.pageDescription#markdown',
+      id: 'vmst.ub.application:employmentSearch.introductoryMeeting.pageDescription#markdown',
       defaultMessage: `Þegar umsókn hefur verið samþykkt þá færðu boð á kynningarfund. Á fundinum er farið yfir réttindi og skyldur atvinnuleitenda. Það er skyldumæting og Vinnumálastofnun sendir þér boðun í gegnum Mínar síður.`,
       description: 'Intoductory meeting agreement page description',
     },
     languageQuestion: {
-      id: 'vmst.ub.application:employmentSearch.introductoryMeetingAgreement.languageQuestion',
+      id: 'vmst.ub.application:employmentSearch.introductoryMeeting.languageQuestion',
       defaultMessage:
         'Á hvaða tungumáli hentar þér best að hlusta á kynninguna?',
       description: 'Language question label',
     },
     languageLabel: {
-      id: 'vmst.ub.application:employmentSearch.introductoryMeetingAgreement.languageLabel',
+      id: 'vmst.ub.application:employmentSearch.introductoryMeeting.languageLabel',
       defaultMessage: 'Tungumál',
       description: 'Language label',
     },
     languagePlaceholder: {
-      id: 'vmst.ub.application:employmentSearch.introductoryMeetingAgreement.languagePlaceholder',
+      id: 'vmst.ub.application:employmentSearch.introductoryMeeting.languagePlaceholder',
       defaultMessage: 'Veldu tungumál',
       description: 'Language placeholder',
     },

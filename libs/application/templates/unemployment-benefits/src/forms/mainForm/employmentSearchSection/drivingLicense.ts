@@ -22,18 +22,11 @@ export const drivingLicenseSubSection = buildSubSection({
             employmentSearchMessages.drivingLicense.drivingLicenseTypeLabel,
           isMulti: true,
           options: (application) => {
-            // TODO: get drivingLicenseTypes from externalData when service is ready
-            const drivingLicenseTypes = getValueViaPath<{ name: string }[]>(
-              application.externalData,
-              'drivingLicenseTypes',
-            ) ?? [
-              {
-                name: 'Ökuréttindi B',
-              },
-              {
-                name: 'Ökuréttindi BE',
-              },
-            ]
+            const drivingLicenseTypes =
+              getValueViaPath<{ name: string }[]>(
+                application.externalData,
+                'unemploymentApplication.data.supportData.drivingLicenseTypes',
+              ) || []
             return drivingLicenseTypes.map((type) => ({
               value: type.name,
               label: type.name,
@@ -41,26 +34,16 @@ export const drivingLicenseSubSection = buildSubSection({
           },
         }),
         buildSelectField({
-          id: 'drivingLicense.workMachineRights',
-          title: employmentSearchMessages.drivingLicense.workMachineRights,
+          id: 'drivingLicense.heavyMachineryLicenses',
+          title: employmentSearchMessages.drivingLicense.heavyMachineryLicenses,
           isMulti: true,
           options: (application) => {
-            // TODO: get workMachineRights from externalData when service is ready
-            const workMachineRights = getValueViaPath<{ name: string }[]>(
-              application.externalData,
-              'workMachineRights',
-            ) ?? [
-              {
-                name: 'Vinnuvélaréttindi 1',
-              },
-              {
-                name: 'Vinnuvélaréttindi 2',
-              },
-              {
-                name: 'Vinnuvélaréttindi 3',
-              },
-            ]
-            return workMachineRights.map((right) => ({
+            const heavyMachineryLicenses =
+              getValueViaPath<{ name: string }[]>(
+                application.externalData,
+                'unemploymentApplication.data.supportData.heavyMachineryLicenses',
+              ) || []
+            return heavyMachineryLicenses.map((right) => ({
               value: right.name,
               label: right.name,
             }))
