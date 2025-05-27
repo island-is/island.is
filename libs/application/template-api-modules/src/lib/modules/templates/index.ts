@@ -1,7 +1,7 @@
+import { ExampleFolderStructureAndConventionsModule } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.module'
+import { ExampleFolderStructureAndConventionsService } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.service'
 import { ExampleAuthDelegationModule } from './examples/example-auth-delegation/example-auth-delegation.module'
 import { ExampleAuthDelegationService } from './examples/example-auth-delegation/example-auth-delegation.service'
-import { ReferenceTemplateModule } from './reference-template/reference-template.module'
-import { ReferenceTemplateService } from './reference-template/reference-template.service'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
 import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 import { ExampleCommonActionsModule } from './examples/example-common-actions/example-common-actions.module'
@@ -164,7 +164,6 @@ import { RentalAgreementService } from './rental-agreement/rental-agreement.serv
 export const dynamicModules = [GeneralPetitionModule]
 
 export const modules = [
-  ReferenceTemplateModule,
   ExampleCommonActionsModule,
   ExampleStateTransfersModule,
   ExampleInputsModule,
@@ -241,12 +240,12 @@ export const modules = [
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
   PracticalExamTemplateModule,
+  ExampleFolderStructureAndConventionsModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
 ]
 
 export const services = [
-  ReferenceTemplateService,
   ExampleCommonActionsService,
   ExampleStateTransfersService,
   ExampleInputsService,
@@ -324,6 +323,7 @@ export const services = [
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
   PracticalExamTemplateService,
+  ExampleFolderStructureAndConventionsService,
   ExampleAuthDelegationService,
   RentalAgreementService,
 ]
