@@ -31,13 +31,10 @@ export const DesktopOverview: FC<Props> = ({
 
   const {
     activeDocument,
-    replyable,
-    replies,
-    setReplies,
-    setReplyOpen,
+    replyState,
     hideDocument,
     setHideDocument,
-    closedForMoreReplies,
+    setReplyState,
   } = useDocumentContext()
   const { activeArchive } = useDocumentList()
 
@@ -66,13 +63,16 @@ export const DesktopOverview: FC<Props> = ({
 
   const toggleReply = (id?: string | null) => {
     const updatedReplies: Reply = {
-      ...replies,
+      ...replyState?.replies,
       comments:
-        replies?.comments?.map((reply) =>
+        replyState?.replies?.comments?.map((reply) =>
           reply.id === id ? { ...reply, hide: !reply.hide } : reply,
         ) || [],
     }
-    setReplies(updatedReplies)
+    setReplyState((prev) => ({
+      ...prev,
+      replies: updatedReplies,
+    }))
   }
 
   const toggleDocument = () => {
@@ -102,8 +102,9 @@ export const DesktopOverview: FC<Props> = ({
         actionBar={{
           archived: activeArchive,
           bookmarked: activeBookmark,
-          isReplyable: replyable,
-          onReply: () => setReplyOpen(true),
+          isReplyable: replyState?.replyable,
+          onReply: () =>
+            setReplyState((prev) => ({ ...prev, replyOpen: true })),
         }}
         actions={activeDocument.actions}
         onClick={toggleDocument}

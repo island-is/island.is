@@ -1,6 +1,6 @@
 import { Box } from '@island.is/island-ui/core'
-import * as styles from '../OverviewDisplay/OverviewDisplay.css'
-import ReplyContainer from '../Reply/ReplyContainer'
+import * as styles from '../../OverviewDisplay/OverviewDisplay.css'
+import ReplyContainer from '../ReplyContainer'
 
 export const MobileReply = () => {
   return (

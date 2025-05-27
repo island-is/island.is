@@ -132,6 +132,10 @@ export const messages = defineMessages({
     id: 'sp.documents:message',
     defaultMessage: 'Skilaboð',
   },
+  from: {
+    id: 'sp.documents:from',
+    defaultMessage: 'Frá',
+  },
   fromWithArgs: {
     id: 'sp.documents:from-with-args',
     defaultMessage: 'Frá: {senderName}',
@@ -185,5 +189,22 @@ export const messages = defineMessages({
     id: 'sp.documents:closed-for-replies',
     defaultMessage:
       'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
+  },
+  replySentError: {
+    id: 'sp.documents:reply-sent-error',
+    defaultMessage:
+      'Ekki tókst að senda skilaboð, vinsamlegast reynið aftur síðar.',
+  },
+  replySentShort: {
+    id: 'sp.documents:reply-sent',
+    defaultMessage: 'Skilaboð send',
+  },
+  replyCannotBeEmpty: {
+    id: 'sp.documents:reply-cannot-be-empty',
+    defaultMessage: 'Skilaboð mega ekki vera tóm',
+  },
+  reply: {
+    id: 'sp.documents:reply-cannot-be-empty',
+    defaultMessage: 'Skilaboð mega ekki vera tóm',
   },
 })

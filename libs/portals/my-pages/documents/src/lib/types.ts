@@ -39,3 +39,11 @@ export interface Reply extends DocumentTicket {
 export interface PostReply extends DocumentReply {
   body: string
 }
+
+export interface ReplyState {
+  replyable?: boolean
+  replyOpen?: boolean
+  replies?: Reply
+  reply?: PostReply
+  closedForMoreReplies?: boolean
+}

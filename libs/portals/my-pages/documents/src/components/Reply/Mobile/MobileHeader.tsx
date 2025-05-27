@@ -1,9 +1,10 @@
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { LinkResolver } from '@island.is/portals/my-pages/core'
 import { InformationPaths } from '@island.is/portals/my-pages/information'
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { messages } from '../../utils/messages'
+import { messages } from '../../../utils/messages'
+import * as styles from '../Reply.css'
 
 interface ReplyHeaderMobileProps {
   title: string
@@ -20,7 +21,6 @@ const ReplyHeaderMobile: React.FC<ReplyHeaderMobileProps> = ({
   hasEmail,
   displayEmail,
 }) => {
-  const navigate = useNavigate()
   const { formatMessage } = useLocale()
   return (
     <Box marginBottom={2}>
@@ -28,7 +28,7 @@ const ReplyHeaderMobile: React.FC<ReplyHeaderMobileProps> = ({
         <Text fontWeight="medium">{title}</Text>
       </Box>
       <Divider />
-      <Box paddingY={1} paddingX={2}>
+      <Box paddingY="p2" paddingX={2}>
         <Text variant="medium">{to}</Text>
       </Box>
       <Divider />
@@ -41,24 +41,31 @@ const ReplyHeaderMobile: React.FC<ReplyHeaderMobileProps> = ({
       >
         {displayEmail &&
           (hasEmail ? (
-            <Text variant="medium"> {from}</Text>
+            <Text variant="medium">{from}</Text>
           ) : (
             <>
               <Text variant="medium">
                 {' '}
-                {formatMessage(messages.fromWithArgs, { senderName: '' })}
+                {formatMessage(messages.from)}
+                {': '}
               </Text>
-              <Button
-                variant="text"
-                icon="pencil"
-                iconType="outline"
-                size="small"
-                onClick={() => {
-                  navigate(InformationPaths.Settings)
-                }}
+
+              <LinkResolver
+                className={styles.link}
+                href={InformationPaths.Settings}
               >
-                {formatMessage(messages.pleaseRegisterEmail)}
-              </Button>
+                <Button
+                  icon="pencil"
+                  iconType="outline"
+                  size="small"
+                  type="text"
+                  variant="text"
+                  as="span"
+                  unfocusable
+                >
+                  {formatMessage(messages.pleaseRegisterEmail)}
+                </Button>
+              </LinkResolver>
             </>
           ))}
       </Box>

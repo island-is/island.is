@@ -6,7 +6,8 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../utils/messages'
 import * as styles from './Reply.css'
-import ReplyHeaderMobile from './ReplyHeaderMobile'
+import ReplyHeaderMobile from './Mobile/MobileHeader'
+import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 
 interface ReplyHeaderProps {
   initials: string
@@ -34,8 +35,9 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
+  const { replyState } = useDocumentContext()
 
-  if (isMobile && !caseNumber)
+  if (isMobile && replyState?.replyOpen)
     return (
       <ReplyHeaderMobile
         title={title}
@@ -73,7 +75,7 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
           flexDirection={'column'}
           marginLeft={2}
           justifyContent="center"
-          width="full"
+          width={isMobile ? 'full' : undefined}
         >
           <Text
             variant={isMobile ? 'default' : 'eyebrow'}

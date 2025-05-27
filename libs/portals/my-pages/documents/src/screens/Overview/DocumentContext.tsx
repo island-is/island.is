@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react'
 import { useLoaderData } from 'react-router-dom'
-import { ActiveDocumentType2, PostReply, Reply } from '../../lib/types'
+import { ActiveDocumentType2, ReplyState } from '../../lib/types'
 import { defaultFilterValues, FilterValuesType } from '../../utils/types'
 
 type SelectedLineType = Array<string>
@@ -26,11 +26,7 @@ export type DocumentsStateProps = {
   docLoading: boolean
   documentDisplayError?: string
   localRead: string[]
-  closedForMoreReplies?: boolean
-  replyable: boolean
-  replies?: Reply
-  replyOpen: boolean
-  reply?: PostReply
+  replyState?: ReplyState
 
   setSelectedLines: Dispatch<SetStateAction<SelectedLineType>>
   setActiveDocument: Dispatch<SetStateAction<ActiveDocumentStateType>>
@@ -43,11 +39,7 @@ export type DocumentsStateProps = {
   setDocLoading: Dispatch<SetStateAction<boolean>>
   setDocumentDisplayError: Dispatch<SetStateAction<string | undefined>>
   setLocalRead: Dispatch<SetStateAction<string[]>>
-  setClosedForMoreReplies: Dispatch<SetStateAction<boolean | undefined>>
-  setReplyable: Dispatch<SetStateAction<boolean>>
-  setReplies: Dispatch<SetStateAction<Reply | undefined>>
-  setReplyOpen: Dispatch<SetStateAction<boolean>>
-  setReply: Dispatch<SetStateAction<PostReply | undefined>>
+  setReplyState: Dispatch<SetStateAction<ReplyState | undefined>>
 }
 
 export const DocumentsContext = createContext<DocumentsStateProps>({
@@ -62,11 +54,7 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   docLoading: false,
   documentDisplayError: undefined,
   localRead: [],
-  replyable: false,
-  replies: undefined,
-  replyOpen: false,
-  reply: undefined,
-  closedForMoreReplies: undefined,
+  replyState: undefined,
 
   setSelectedLines: () => undefined,
   setActiveDocument: () => undefined,
@@ -79,11 +67,7 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   setDocLoading: () => undefined,
   setDocumentDisplayError: () => undefined,
   setLocalRead: () => undefined,
-  setReplyable: () => undefined,
-  setReplies: () => undefined,
-  setReplyOpen: () => undefined,
-  setReply: () => undefined,
-  setClosedForMoreReplies: () => undefined,
+  setReplyState: () => undefined,
 })
 
 export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
@@ -107,13 +91,10 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
   const [docLoading, setDocLoading] = useState(false)
   const [documentDisplayError, setDocumentDisplayError] = useState<string>()
   const [localRead, setLocalRead] = useState<string[]>([])
-  const [replyable, setReplyable] = useState<boolean>(false)
-  const [replyOpen, setReplyOpen] = useState<boolean>(false)
-  const [replies, setReplies] = useState<Reply>()
-  const [reply, setReply] = useState<PostReply | undefined>(undefined)
-  const [closedForMoreReplies, setClosedForMoreReplies] = useState<
-    boolean | undefined
-  >(undefined)
+
+  const [replyState, setReplyState] = useState<ReplyState | undefined>(
+    undefined,
+  )
 
   return (
     <DocumentsContext.Provider
@@ -129,11 +110,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         docLoading,
         documentDisplayError,
         localRead,
-        replyable,
-        replies,
-        replyOpen,
-        reply,
-        closedForMoreReplies,
+        replyState,
 
         setSelectedLines,
         setActiveDocument,
@@ -146,11 +123,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         setDocLoading,
         setDocumentDisplayError,
         setLocalRead,
-        setReplyable,
-        setReplies,
-        setReplyOpen,
-        setReply,
-        setClosedForMoreReplies,
+        setReplyState,
       }}
     >
       {children}

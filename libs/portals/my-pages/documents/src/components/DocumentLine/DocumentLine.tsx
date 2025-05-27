@@ -85,11 +85,7 @@ export const DocumentLine: FC<Props> = ({
     setDocumentDisplayError,
     setDocLoading,
     setLocalRead,
-    setReplyable,
-    setReplies,
-    setReplyOpen,
-    setReply,
-    setClosedForMoreReplies,
+    setReplyState,
     categoriesAvailable,
     localRead,
   } = useDocumentContext()
@@ -182,13 +178,9 @@ export const DocumentLine: FC<Props> = ({
             displayPdf(docContent, actions, alert)
             setDocumentDisplayError(undefined)
             setLocalRead([...localRead, documentLine.id])
-            setReplyable(data?.documentV2?.replyable ?? false)
-            setReplyOpen(false)
-            setReply(undefined)
+            const replyable = data?.documentV2?.replyable ?? false
+
             if (data?.documentV2?.ticket) {
-              setClosedForMoreReplies(
-                data?.documentV2?.closedForMoreReplies ?? undefined,
-              )
               const reply: Reply = {
                 id: data.documentV2?.ticket?.id,
                 createdDate: data.documentV2?.ticket?.createdDate,
@@ -209,13 +201,19 @@ export const DocumentLine: FC<Props> = ({
                     } else
                       return {
                         ...item,
-                        hide: true,
+                        hide: false, // true, //TODO check if it should still be collapsable
                       }
                   },
                 ),
               }
-
-              setReplies(reply)
+              setReplyState((prevState) => ({
+                ...prevState,
+                replies: reply,
+                replyable,
+                closedForMoreReplies:
+                  data?.documentV2?.closedForMoreReplies ?? false,
+                replyOpen: prevState?.replyOpen ?? false, // Ensure replyOpen is explicitly set to a boolean
+              }))
             }
           } else {
             setDocumentDisplayError(formatMessage(messages.documentErrorLoad))

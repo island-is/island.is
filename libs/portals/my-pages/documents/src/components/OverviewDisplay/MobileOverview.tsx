@@ -12,7 +12,7 @@ import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
 import { DocumentActionBar } from '../DocumentActionBar/DocumentActionBar'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import * as styles from './OverviewDisplay.css'
-import MobileReply from '../Reply/MobileReply'
+import MobileReply from '../Reply/Mobile/MobileReply'
 import cn from 'classnames'
 
 interface Props {
@@ -30,7 +30,7 @@ export const MobileOverview: FC<Props> = ({
 }) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
-  const { activeDocument, replyable, replyOpen, setReplyOpen, hideDocument } =
+  const { activeDocument, replyState, hideDocument, setReplyState } =
     useDocumentContext()
   const [scrollingDown, setScrollingDown] = useState(false)
   const scrollDirection = useScrollDirection()
@@ -61,11 +61,13 @@ export const MobileOverview: FC<Props> = ({
         <DocumentActionBar
           onGoBack={onPressBack}
           bookmarked={activeBookmark}
-          isReplyable={replyable}
-          onReply={() => setReplyOpen(true)}
+          isReplyable={replyState?.replyable}
+          onReply={() =>
+            setReplyState((prev) => ({ ...prev, replyOpen: true }))
+          }
         />
       </Box>
-      {!replyOpen && (
+      {!replyState?.replyOpen && (
         <Box className={styles.modalContent}>
           <DocumentHeader
             avatar={activeDocument.img}

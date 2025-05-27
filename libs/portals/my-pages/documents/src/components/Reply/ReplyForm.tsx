@@ -20,7 +20,7 @@ interface FormData {
 
 const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
   const methods = useForm<FormData>()
-  const { activeDocument, setReply } = useDocumentContext()
+  const { activeDocument, setReplyState } = useDocumentContext()
   const { data: userProfile } = useUserProfile()
   const { profile } = useUserInfo()
   const { formatMessage } = useLocale()
@@ -28,28 +28,29 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
 
   const [postReply, { loading: postReplyLoading }] = useReplyMutation({
     onError: () => {
-      toast.error(
-        'Ekki tókst að senda skilaboð, vinsamlegast reynið aftur síðar.',
-      )
+      toast.error(formatMessage(messages.replySentError))
     },
     onCompleted: (response) => {
       toast.success('Skilaboð send')
       successfulSubmit()
-      setReply({
-        id: response.documentsV2Reply?.id ?? undefined,
-        email: response.documentsV2Reply?.email ?? '',
-        body: methods.getValues('reply') ?? '',
-      })
+      setReplyState((prev) => ({
+        ...prev,
+        reply: {
+          id: response.documentsV2Reply?.id ?? undefined,
+          email: response.documentsV2Reply?.email ?? '',
+          body: methods.getValues('reply') ?? '',
+        },
+      }))
     },
   })
 
   const handleSubmitForm = (data: FormData) => {
     if (data.reply === '') {
-      methods.setError('reply', { message: 'Skilaboð mega ekki vera tóm' })
+      methods.setError('reply', {
+        message: formatMessage(messages.replyCannotBeEmpty),
+      })
     } else if (activeDocument?.id === undefined) {
-      toast.error(
-        'Ekki tókst að senda skilaboð, vinsamlegast reynið aftur síðar.',
-      )
+      toast.error(formatMessage(messages.replySentError))
     } else {
       postReply({
         variables: {
@@ -57,7 +58,7 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
             documentId: activeDocument.id,
             body: data.reply,
             reguesterEmail:
-              profile.email ?? userProfile?.email ?? 'disa@hugsmidjan.is',
+              profile.email ?? userProfile?.email ?? 'disa@hugsmidjan.is', // TODO: REMOVE AFTER TESTING
             subject: activeDocument?.subject,
             reguesterName: profile.name,
           },

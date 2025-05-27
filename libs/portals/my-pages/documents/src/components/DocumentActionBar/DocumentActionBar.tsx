@@ -41,7 +41,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
     loading,
   } = useMailAction()
 
-  const { activeDocument, replyOpen, setReplyOpen } = useDocumentContext()
+  const { activeDocument, replyState, setReplyState } = useDocumentContext()
   const { fetchObject, refetch } = useDocumentList()
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
@@ -150,7 +150,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
     })
   }
 
-  const hideActions = !isMobile || (!replyOpen && isMobile) //Display only if desktop or replyOpen is false and isMobile
+  const hideActions = !isMobile || (!replyState?.replyOpen && isMobile) //Display only if desktop or replyOpen is false and isMobile
 
   return (
     <>
@@ -249,13 +249,15 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
           ></DropdownMenu>
         </Tooltip>
       )}
-      {replyOpen && isMobile && (
+      {replyState?.replyOpen && isMobile && (
         <Box>
           <Button
             circle
             icon="close"
             colorScheme="light"
-            onClick={() => setReplyOpen(false)}
+            onClick={() =>
+              setReplyState((prev) => ({ ...prev, replyOpen: false }))
+            }
           />
         </Box>
       )}

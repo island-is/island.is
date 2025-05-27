@@ -35,3 +35,8 @@ export const caseNumberDivider = style({
     },
   }),
 })
+
+export const link = style({
+  paddingLeft: theme.spacing[1],
+  paddingBottom: 6,
+})
