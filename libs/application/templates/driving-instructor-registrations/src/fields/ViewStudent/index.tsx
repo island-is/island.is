@@ -530,13 +530,23 @@ const ViewStudent = ({
                                             : entry,
                                         )
                                         setNewRegId(undefined)
-                                        setMinutes(entry.lessonTime)
-                                        setDate(entry.registerDate)
+                                        setMinutes(
+                                          editingRegistration
+                                            ? 0
+                                            : entry.lessonTime,
+                                        )
+                                        setDate(
+                                          editingRegistration
+                                            ? ''
+                                            : entry.registerDate,
+                                        )
                                       }}
                                     >
                                       {editingRegistration &&
                                       editingRegistration.id === entry.id
-                                        ? 'Hætta'
+                                        ? formatMessage(
+                                            m.stopEditingRegistration,
+                                          )
                                         : formatMessage(
                                             m.viewStudentEditRegistration,
                                           )}

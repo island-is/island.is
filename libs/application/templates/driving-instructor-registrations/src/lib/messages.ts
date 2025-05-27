@@ -213,6 +213,11 @@ export const m = defineMessages({
     defaultMessage: 'Breyta',
     description: 'Edit registration button',
   },
+  stopEditingRegistration: {
+    id: 'dir.application:stopEditingRegistration',
+    defaultMessage: 'Hætta',
+    description: '',
+  },
   viewStudentTableHeaderCol1: {
     id: 'dir.application:viewStudentTableHeaderCol1',
     defaultMessage: 'Dags.',
