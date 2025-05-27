@@ -283,7 +283,13 @@ const FineCardList = ({
                       flexDirection="column"
                       userSelect="none"
                     >
-                      <Box display="flex" flexDirection="column" rowGap={1}>
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        rowGap={1}
+                        justifyContent="spaceBetween"
+                        height="full"
+                      >
                         <Box display="flex" flexDirection="column" rowGap={1}>
                           <Inline
                             justifyContent="spaceBetween"
