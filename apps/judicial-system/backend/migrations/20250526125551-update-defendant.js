@@ -9,8 +9,7 @@ module.exports = {
           'information_for_defendant',
           {
             type: Sequelize.ARRAY(Sequelize.STRING),
-            defaultValue: [],
-            allowNull: false,
+            allowNull: true,
           },
           { transaction: t },
         ),
