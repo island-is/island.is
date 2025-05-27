@@ -25,6 +25,8 @@ import {
   IndictmentSubtypeMap,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
+  isPrisonSystemUser,
+  isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isRestrictionCase,
   PunishmentType,
@@ -307,18 +309,97 @@ const generateRequestCaseType = (
   return [formatted, parentCaseId ? 'Framlenging' : ''].filter(Boolean)
 }
 
+const getAppealCaseNumberSortValue = (appealCaseNumber: string): string => {
+  const parts = appealCaseNumber.split('/')
+
+  if (parts.length < 2) {
+    return '000000000'
+  }
+
+  const year = parts[1] // Assume its 4 digits
+  const number = parts[0].padStart(5, '0') // Assume its no more than 5 digits
+
+  return `${year}${number}`
+}
+
+const getCourtCaseNumberSortValue = (courtCaseNumber: string): string => {
+  const parts = courtCaseNumber.slice(2).split('/') // Assume the number starts with 'R-' or 'S-'
+
+  if (parts.length < 2) {
+    return '000000000'
+  }
+
+  const year = parts[1] // Assume its 4 digits
+  const number = parts[0].padStart(5, '0') // Assume its no more than 5 digits
+
+  return `${year}${number}`
+}
+
+const getPoliceCaseNumberSortValue = (policeCaseNumber: string): string => {
+  const parts = policeCaseNumber.split('-')
+
+  if (parts.length < 3) {
+    return '0000000000000000'
+  }
+
+  const year = parts[1] // Assume its 4 digits
+  const prefix = parts[0] // Assume its 3 digits
+  const numParts = parts[2].split(' +') // Check for additional police case numbers
+  const number = numParts[0].padStart(6, '0') // Assume its no more than 6 digits
+  const postfix = numParts.length === 1 ? '000' : numParts[1].padStart(3, '0') // Assume no more than 999 additional police case numbers
+
+  return `${year}${prefix}${number}${postfix}`
+}
+
+const generateCaseNumberSortValue = (
+  appealCaseNumber: string,
+  courtCaseNumber: string,
+  policeCaseNumber: string,
+  user: TUser,
+): string | undefined => {
+  if (isProsecutionUser(user) || isDistrictCourtUser(user)) {
+    return `${getCourtCaseNumberSortValue(
+      courtCaseNumber,
+    )}${getPoliceCaseNumberSortValue(policeCaseNumber)}`
+  }
+
+  if (isPublicProsecutionOfficeUser(user) || isPrisonSystemUser(user)) {
+    return getCourtCaseNumberSortValue(courtCaseNumber)
+  }
+
+  if (isCourtOfAppealsUser(user)) {
+    return `${getAppealCaseNumberSortValue(
+      appealCaseNumber,
+    )}${getCourtCaseNumberSortValue(courtCaseNumber)}`
+  }
+
+  return undefined
+}
+
 const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
   attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
-  generate: (c: Case): CaseTableCell<StringGroupValue> =>
-    generateCell({
-      strList: [
-        c.appealCaseNumber ?? '',
-        c.courtCaseNumber ?? '',
-        c.policeCaseNumbers.length > 1
+  generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
+    const appealCaseNumber = c.appealCaseNumber ?? ''
+    const courtCaseNumber = c.courtCaseNumber ?? ''
+    const policeCaseNumber =
+      c.policeCaseNumbers.length > 0
+        ? c.policeCaseNumbers.length > 1
           ? `${c.policeCaseNumbers[0]} +${c.policeCaseNumbers.length - 1}`
-          : c.policeCaseNumbers[0],
-      ],
-    }),
+          : c.policeCaseNumbers[0]
+        : ''
+
+    const sortValue = generateCaseNumberSortValue(
+      appealCaseNumber,
+      courtCaseNumber,
+      policeCaseNumber,
+      user,
+    )
+
+    return generateCell(
+      { strList: [appealCaseNumber, courtCaseNumber, policeCaseNumber] },
+      sortValue,
+    )
+  },
 }
 
 const defendants: CaseTableCellGenerator<StringGroupValue> = {
@@ -618,9 +699,7 @@ const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
           order: [['created', 'DESC']],
-          where: {
-            eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-          },
+          where: { eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN },
           separate: true,
         },
       },
@@ -651,9 +730,7 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
           order: [['created', 'DESC']],
-          where: {
-            eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-          },
+          where: { eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN },
           separate: true,
         },
       },
@@ -763,9 +840,7 @@ const sentToPrisonAdminDate: CaseTableCellGenerator<StringValue> = {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
           order: [['created', 'DESC']],
-          where: {
-            eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-          },
+          where: { eventType: DefendantEventType.SENT_TO_PRISON_ADMIN },
           separate: true,
         },
       },

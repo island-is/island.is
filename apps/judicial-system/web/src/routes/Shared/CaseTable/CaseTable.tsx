@@ -106,6 +106,10 @@ const compare = (a: CaseTableCell, b: CaseTableCell): number => {
     case 'StringValue':
       return compareString(a.sortValue, b.sortValue)
     case 'StringGroupValue':
+      if (a.sortValue && b.sortValue) {
+        return compareString(a.sortValue, b.sortValue)
+      }
+      // Temporary fallback until all cells use sort values
       return compareStringGroup(aValue, bValue as StringGroupValue)
     case 'TagValue':
       return compareTag(aValue, bValue as TagValue)
