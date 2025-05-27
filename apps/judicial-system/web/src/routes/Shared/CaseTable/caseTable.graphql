@@ -9,7 +9,6 @@ query CaseTable($input: CaseTableQueryInput!) {
           __typename
           ... on StringValue {
             str
-            sortValue
           }
           ... on StringGroupValue {
             strList
@@ -29,6 +28,7 @@ query CaseTable($input: CaseTableQueryInput!) {
             }
           }
         }
+        sortValue
       }
     }
   }

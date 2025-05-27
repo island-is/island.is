@@ -110,9 +110,9 @@ export class CaseTableService {
       rows: cases.map((c) => ({
         caseId: c.id,
         isMyCase: isMyCase(c, user),
-        cells: caseTableCellKeys.map((k) => ({
-          value: caseTableCellGenerators[k].generate(c, user),
-        })),
+        cells: caseTableCellKeys.map((k) =>
+          caseTableCellGenerators[k].generate(c, user),
+        ),
       })),
     }
   }
