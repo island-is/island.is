@@ -101,6 +101,12 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/payments/messages/*.ts'"
+      }
+    },
     "docker-next": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
     }

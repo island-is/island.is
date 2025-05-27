@@ -1,11 +1,13 @@
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 import { Box, LinkV2, Logo } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
+import { useLocale } from '@island.is/localization'
+
+import { PageCenter } from '../PageCenter/PageCenter'
+import { generic } from '../../messages'
 
 import * as styles from './PageCard.css'
-import { PageCenter } from '../PageCenter/PageCenter'
-import { useLocale } from '@island.is/localization'
-import { generic } from '../../messages'
 
 type PageCardWrapperProps = {
   headerSlot: React.ReactNode
@@ -21,7 +23,13 @@ const getPath = (currentLocale: string, currentPath: string) => {
 }
 
 export const PageCard = ({ headerSlot, bodySlot }: PageCardWrapperProps) => {
-  const { locale, formatMessage } = useLocale()
+  const { locale, formatMessage, changeLanguage } = useLocale()
+  const router = useRouter()
+
+  const changeLanguageHandler = (lang: Locale) => {
+    changeLanguage(lang)
+    router.replace(getPath(lang === 'is' ? 'en' : 'is', path))
+  }
 
   const path = usePathname()
 
@@ -66,17 +74,24 @@ export const PageCard = ({ headerSlot, bodySlot }: PageCardWrapperProps) => {
               <Logo width={87} />
             </LinkV2>
             <Box display="flex" columnGap={2}>
-              <LinkV2
-                href={getPath(locale, path)}
-                color="blue400"
+              <button
+                type="button"
                 className={styles.link}
+                onClick={() =>
+                  changeLanguageHandler(locale === 'is' ? 'en' : 'is')
+                }
+                aria-label={formatMessage(
+                  locale === 'is'
+                    ? generic.toggleLanguageToEnglish
+                    : generic.toggleLanguageToIcelandic,
+                )}
               >
                 {formatMessage(
                   locale === 'en'
                     ? generic.footerLocaleIS
                     : generic.footerLocaleEN,
                 )}
-              </LinkV2>
+              </button>
               <span className={styles.linkSeparator} />
               <LinkV2
                 href={
