@@ -302,6 +302,9 @@
       "@island.is/application/templates/aosh/deregister-machine": [
         "libs/application/templates/aosh/deregister-machine/src/index.ts"
       ],
+      "@island.is/application/templates/aosh/practical-exam": [
+        "libs/application/templates/aosh/practical-exam/src/index.ts"
+      ],
       "@island.is/application/templates/aosh/register-new-machine": [
         "libs/application/templates/aosh/register-new-machine/src/index.ts"
       ],
@@ -777,6 +780,9 @@
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
       ],
+      "@island.is/clients/practical-exams-ver": [
+        "libs/clients/practical-exams-ver/src/index.ts"
+      ],
       "@island.is/clients/payments": ["libs/clients/payments/src/index.ts"],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
@@ -1191,6 +1197,12 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
+      ],
+      "@island.is/api/domains/practical-exams": [
+        "libs/api/domains/practical-exams/src/index.ts"
+      ],
+      "application/templates/examples/example-no-inputs": [
+        "libs/application/templates/examples/example-no-inputs/src/index.ts"
       ],
       "application/templates/inao/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"

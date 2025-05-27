@@ -386,6 +386,10 @@ codemagic.yaml                                                                  
 /libs/api/domains/seminars-ver/                                                                           @island-is/origo
 /libs/clients/seminars-ver/                                                                               @island-is/origo
 
+/libs/clients/practical-exams-ver                                                                         @island-is/origo
+/libs/api/domains/practical-exams                                                                         @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/aosh/practical-exam                      @island-is/origo
+
 /libs/application/templates/id-card/                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/id-card/                                 @island-is/origo
 
@@ -427,6 +431,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/aosh/training-license-on-a-work-machine                                       @island-is/origo
 /libs/application/templates/aosh/transfer-of-machine-ownership                                            @island-is/origo
 /libs/application/templates/aosh/work-accident-notification                                               @island-is/origo
+/libs/application/templates/aosh/practical-exam                                                           @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/aosh                                     @island-is/origo
 
 /libs/application/templates/healthcare-license-certificate/                                               @island-is/origo

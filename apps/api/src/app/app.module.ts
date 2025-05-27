@@ -79,6 +79,7 @@ import {
   WatsonAssistantChatModule,
 } from '@island.is/api/domains/watson-assistant-chat'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
+import { PracticalExamsModule } from '@island.is/api/domains/practical-exams'
 import { SeminarsModule } from '@island.is/api/domains/seminars-ver'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
@@ -152,6 +153,7 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
 import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
 import { WorkAccidentClientConfig } from '@island.is/clients/work-accident-ver'
+import { PracticalExamsClientConfig } from '@island.is/clients/practical-exams-ver'
 
 import {
   ConfigModule,
@@ -354,6 +356,7 @@ const environment = getConfig
     HealthDirectorateModule,
     VerdictsModule,
     SecondarySchoolApiModule,
+    PracticalExamsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -455,6 +458,7 @@ const environment = getConfig
         HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
         WorkAccidentClientConfig,
+        PracticalExamsClientConfig,
         ZendeskServiceConfig,
         emailModuleConfig,
         VerdictsClientConfig,
