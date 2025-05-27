@@ -206,7 +206,7 @@ export class ApplicationsService {
     const application = await this.applicationModel.findByPk(id)
 
     if (!application) {
-      throw new NotFoundException(`Application with id '${id}' not found`)
+      throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
     application.submittedAt = new Date()
