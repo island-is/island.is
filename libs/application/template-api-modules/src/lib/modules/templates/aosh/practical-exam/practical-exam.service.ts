@@ -29,13 +29,19 @@ import {
   externalData,
   shared,
 } from '@island.is/application/templates/aosh/practical-exam'
+<<<<<<< HEAD
 import { S3Service } from '@island.is/nest/aws'
+=======
+>>>>>>> origin/main
 @Injectable()
 export class PracticalExamTemplateService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly practicalExamClientService: PracticalExamsClientService,
+<<<<<<< HEAD
     private readonly s3Service: S3Service,
+=======
+>>>>>>> origin/main
   ) {
     super(ApplicationTypes.PRACTICAL_EXAM)
   }
@@ -147,6 +153,7 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     )
     const examineesRequest = mapExaminees(examinees, examCategories)
 
+<<<<<<< HEAD
     const examineesRequestWithCertificateUrl = await Promise.all(
       examineesRequest.map(async (examinee) => {
         if (examinee.medicalCertificate?.content) {
@@ -166,6 +173,8 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
       }),
     )
 
+=======
+>>>>>>> origin/main
     const payload = {
       xCorrelationID: application.id,
       workMachineExamRegistrationCreateDto: {
@@ -173,7 +182,11 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
           address: examAddress,
           postalCode: examPostalCode,
         },
+<<<<<<< HEAD
         examees: examineesRequestWithCertificateUrl,
+=======
+        examees: examineesRequest,
+>>>>>>> origin/main
         instructors: instructorsRequest,
         paymentInfo: paymentInfoRequest,
         contact: {
@@ -203,6 +216,7 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
       )
     }
   }
+<<<<<<< HEAD
 
   private async getUrlForAttachment(
     attachment: string,
@@ -229,4 +243,6 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
       )
     }
   }
+=======
+>>>>>>> origin/main
 }

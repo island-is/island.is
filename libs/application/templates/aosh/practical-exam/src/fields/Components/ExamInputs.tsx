@@ -179,9 +179,15 @@ export const ExamInputs: FC<
       shouldShowUpload &&
       (!medicalCert ||
         !medicalCert.medicalCertificate ||
+<<<<<<< HEAD
         !medicalCert.medicalCertificate[0] ||
         !medicalCert.medicalCertificate[0].key ||
         !medicalCert.medicalCertificate[0].name)
+=======
+        !medicalCert.medicalCertificate.content ||
+        !medicalCert.medicalCertificate.name ||
+        !medicalCert.medicalCertificate.type)
+>>>>>>> origin/main
     ) {
       // No MedicalCertificate uploader
 
