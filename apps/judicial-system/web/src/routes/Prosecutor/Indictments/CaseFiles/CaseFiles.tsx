@@ -30,7 +30,6 @@ const CaseFiles = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { features } = useContext(FeatureContext)
   const {
     uploadFiles,
     allFilesDoneOrError,
