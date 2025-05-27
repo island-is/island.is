@@ -19,7 +19,6 @@ export const MockableVinnueftirlitidPaymentCatalogApi =
     params: {
       organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
       enableMockPayment: true,
-<<<<<<< HEAD
       mockPaymentCatalog: [
         {
           performingOrgID: InstitutionNationalIds.VINNUEFTIRLITID,
@@ -36,8 +35,6 @@ export const MockableVinnueftirlitidPaymentCatalogApi =
           priceAmount: 8640,
         },
       ],
-=======
->>>>>>> origin/main
     },
     externalDataId: 'payment',
   })

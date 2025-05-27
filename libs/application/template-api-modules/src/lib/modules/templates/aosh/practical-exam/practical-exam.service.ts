@@ -29,19 +29,13 @@ import {
   externalData,
   shared,
 } from '@island.is/application/templates/aosh/practical-exam'
-<<<<<<< HEAD
 import { S3Service } from '@island.is/nest/aws'
-=======
->>>>>>> origin/main
 @Injectable()
 export class PracticalExamTemplateService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly practicalExamClientService: PracticalExamsClientService,
-<<<<<<< HEAD
     private readonly s3Service: S3Service,
-=======
->>>>>>> origin/main
   ) {
     super(ApplicationTypes.PRACTICAL_EXAM)
   }

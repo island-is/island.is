@@ -6,17 +6,11 @@ import {
   PracticalExamsClientModule,
   PracticalExamsClientConfig,
 } from '@island.is/clients/practical-exams-ver'
-<<<<<<< HEAD
 import { AwsModule } from '@island.is/nest/aws'
 @Module({
   imports: [
     SharedTemplateAPIModule,
     AwsModule,
-=======
-@Module({
-  imports: [
-    SharedTemplateAPIModule,
->>>>>>> origin/main
     PracticalExamsClientModule,
     ConfigModule.forRoot({
       isGlobal: true,

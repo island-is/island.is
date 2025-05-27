@@ -240,11 +240,8 @@ export const modules = [
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
   PracticalExamTemplateModule,
-<<<<<<< HEAD
-=======
   ExampleFolderStructureAndConventionsModule,
   ExampleAuthDelegationModule,
->>>>>>> origin/main
   RentalAgreementModule,
 ]
 
@@ -326,10 +323,7 @@ export const services = [
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
   PracticalExamTemplateService,
-<<<<<<< HEAD
-=======
   ExampleFolderStructureAndConventionsService,
   ExampleAuthDelegationService,
->>>>>>> origin/main
   RentalAgreementService,
 ]

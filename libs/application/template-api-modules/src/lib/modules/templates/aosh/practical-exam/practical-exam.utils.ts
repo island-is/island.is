@@ -6,10 +6,7 @@ import {
   Instructors,
   PaymentArrangement,
   Information,
-<<<<<<< HEAD
   shared,
-=======
->>>>>>> origin/main
 } from '@island.is/application/templates/aosh/practical-exam'
 import { FormValue } from '@island.is/application/types'
 import {
@@ -20,10 +17,7 @@ import {
   PaymentInfoRequest,
   PaymentOptions,
 } from './types'
-<<<<<<< HEAD
 import { TemplateApiError } from '@island.is/nest/problem'
-=======
->>>>>>> origin/main
 
 export const getExamLocation = (
   answers: FormValue,

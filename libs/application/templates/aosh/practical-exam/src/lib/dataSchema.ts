@@ -278,7 +278,6 @@ const ExamCategorySchema = z.object({
   doesntHaveToPayLicenseFee: z.boolean(),
   nationalId: z.string().optional(),
   medicalCertificate: z
-<<<<<<< HEAD
     .array(
       z
         .object({
@@ -287,13 +286,6 @@ const ExamCategorySchema = z.object({
         })
         .optional(),
     )
-=======
-    .object({
-      content: z.string(),
-      name: z.string(),
-      type: z.string(),
-    })
->>>>>>> origin/main
     .optional(),
 })
 

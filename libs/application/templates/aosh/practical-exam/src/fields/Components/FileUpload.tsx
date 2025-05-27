@@ -11,10 +11,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { examCategories } from '../../lib/messages'
 import { FC, useState } from 'react'
 import { FILE_SIZE_LIMIT } from '../../lib/constants'
-<<<<<<< HEAD
 import { FileUploadController } from '@island.is/application/ui-components'
-=======
->>>>>>> origin/main
 
 type ExamFileUploadProps = {
   showFileUpload: boolean
@@ -26,11 +23,7 @@ export const FileUpload: FC<
   React.PropsWithChildren<FieldBaseProps & ExamFileUploadProps>
 > = ({ application, showFileUpload, idx, chosenMedicalCategories }) => {
   const { formatMessage } = useLocale()
-<<<<<<< HEAD
   const { setValue, getValues } = useFormContext()
-=======
-  const { setValue } = useFormContext()
->>>>>>> origin/main
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isError, setIsError] = useState<boolean>(false)
   const [fileState, setFileState] = useState<Array<UploadFileDeprecated>>([])
