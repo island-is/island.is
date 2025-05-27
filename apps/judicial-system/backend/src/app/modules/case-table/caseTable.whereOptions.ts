@@ -36,38 +36,38 @@ const buildEventLogExistsCondition = (eventType: EventType, exists = true) =>
       )
     `)
 
-const districtCourtRequestCasesInProgressWhereOptions = {
+const districtCourtRequestCasesSharedWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
+}
+
+const districtCourtRequestCasesInProgressWhereOptions = {
+  ...districtCourtRequestCasesSharedWhereOptions,
   state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED],
 }
 
 const districtCourtRequestCasesAppealedWhereOptions = {
-  is_archived: false,
-  type: [...restrictionCases, ...investigationCases],
+  ...districtCourtRequestCasesSharedWhereOptions,
   state: completedRequestCaseStates,
   appeal_state: [CaseAppealState.APPEALED],
 }
 
 const districtCourtRequestCasesCompletedWhereOptions = {
-  is_archived: false,
-  type: [...restrictionCases, ...investigationCases],
+  ...districtCourtRequestCasesSharedWhereOptions,
   state: completedRequestCaseStates,
   appeal_state: { [Op.not]: CaseAppealState.APPEALED },
 }
-
-const districtCourtIndictmentsNewWhereOptions = {
+const districtCourtIndictmentsSharedWhereOptions = {
   is_archived: false,
   type: indictmentCases,
+}
+
+const districtCourtIndictmentsNewWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
   state: {
     [Op.or]: [CaseState.SUBMITTED, CaseState.RECEIVED],
   },
   judge_id: null,
-}
-
-const districtCourtIndictmentsSharedWhereOptions = {
-  is_archived: false,
-  type: indictmentCases,
 }
 
 const districtCourtIndictmentsReceivedWhereOptions = {
