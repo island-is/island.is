@@ -1037,7 +1037,7 @@ export class UserProfileService {
                 email,
                 hash: emailVerificationCode!,
               },
-              fromNationalId,
+              toNationalId,
               { transaction, maxTries: 3 },
             )
 
@@ -1059,6 +1059,7 @@ export class UserProfileService {
         emailRecord = await this.emailModel.findOne({
           where: {
             email,
+            nationalId: toNationalId,
           },
           transaction,
           useMaster: true,

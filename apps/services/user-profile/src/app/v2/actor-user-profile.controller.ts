@@ -191,18 +191,18 @@ export class ActorUserProfileController {
     response: { status: 200 },
   })
   async createVerification(
-    @CurrentUser() user: User,
+    @CurrentActor() actor: User,
     @Body() input: CreateVerificationDto,
   ) {
     const validateInputs = async () => {
       if (input.email && !input.mobilePhoneNumber) {
         await this.userProfileService.createEmailVerification({
-          nationalId: user.actor?.nationalId ?? user.nationalId,
+          nationalId: actor.nationalId,
           email: input.email,
         })
       } else if (input.mobilePhoneNumber && !input.email) {
         await this.userProfileService.createSmsVerification({
-          nationalId: user.nationalId,
+          nationalId: actor.nationalId,
           mobilePhoneNumber: input.mobilePhoneNumber,
         })
       } else {
@@ -213,10 +213,10 @@ export class ActorUserProfileController {
     }
     return this.auditService.auditPromise(
       {
-        auth: user,
+        auth: actor,
         namespace,
         action: 'createVerification',
-        resources: user.nationalId,
+        resources: actor.nationalId,
       },
       validateInputs(),
     )
@@ -320,8 +320,8 @@ export class ActorUserProfileController {
         },
       },
       this.userProfileService.updateActorProfileEmail({
-        toNationalId: user.nationalId,
-        fromNationalId: user.actor.nationalId,
+        toNationalId: user.actor.nationalId,
+        fromNationalId: user.nationalId,
         ...actorProfile,
       }),
     )

@@ -1309,6 +1309,7 @@ describe('PATCH /v2/actor/actor-profile/email', () => {
     })
   })
 })
+
 describe('PATCH /v2/actor/actor-profile', () => {
   let app: TestApp
   let server: SuperTest<Test>
@@ -1327,10 +1328,10 @@ describe('PATCH /v2/actor/actor-profile', () => {
       AppModule,
       SequelizeConfigService,
       user: createCurrentUser({
-        nationalId: testUserProfile.nationalId,
+        nationalId: testNationalId1,
         scope: [UserProfileScope.read],
         actor: {
-          nationalId: testNationalId1,
+          nationalId: testUserProfile.nationalId,
           scope: [UserProfileScope.read],
         },
       }),
