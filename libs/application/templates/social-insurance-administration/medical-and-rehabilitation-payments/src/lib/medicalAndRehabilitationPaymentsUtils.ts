@@ -13,7 +13,7 @@ import {
 import { Application } from '@island.is/application/types'
 import {
   SelfAssessmentQuestionnaireAnswers,
-  SelfAssessmentQuestionnaireQuestions,
+  SelfAssessmentQuestionnaire,
 } from '../types'
 import {
   AttachmentLabel,
@@ -222,10 +222,10 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIncomePlanConditions.data',
   ) as IncomePlanConditions
 
-  const selfAssessmentQuestionnaireQuestions = getValueViaPath(
+  const selfAssessmentQuestionnaire = getValueViaPath(
     externalData,
-    'socialInsuranceAdministrationQuestionnairesSelfAssessment.data.questions',
-  ) as SelfAssessmentQuestionnaireQuestions[]
+    'socialInsuranceAdministrationQuestionnairesSelfAssessment.data',
+  ) as SelfAssessmentQuestionnaire[]
 
   return {
     applicantName,
@@ -244,7 +244,7 @@ export const getApplicationExternalData = (
     categorizedIncomeTypes,
     currencies,
     incomePlanConditions,
-    selfAssessmentQuestionnaireQuestions,
+    selfAssessmentQuestionnaire,
   }
 }
 
