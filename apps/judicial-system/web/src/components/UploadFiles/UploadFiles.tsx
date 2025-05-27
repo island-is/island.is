@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useCallback } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useIntl } from 'react-intl'
 
@@ -55,6 +55,17 @@ const UploadFiles: FC<Props> = (props) => {
     accept: ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'],
     onDrop,
   })
+
+  useEffect(() => {
+    return () => {
+      // Cleanup object URLs when component unmounts
+      files.forEach((file) => {
+        if (file.previewUrl) {
+          URL.revokeObjectURL(file.previewUrl)
+        }
+      })
+    }
+  }, [files])
 
   return (
     <div
