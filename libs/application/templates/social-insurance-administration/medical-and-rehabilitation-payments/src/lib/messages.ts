@@ -601,6 +601,40 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Ljúka sjálfsmati',
       description: 'Complete self-assessment',
     },
+
+    // Questions Three
+    mainProblemTitle: {
+      id: 'marp.application:self.assessment.main.problem.title',
+      defaultMessage: 'Hver er helsti vandi sem leiðir til óvinnufærni?',
+      description: 'What is the main problem that leads to incapacity?',
+    },
+    mainProblem: {
+      id: 'marp.application:self.assessment.main.problem',
+      defaultMessage: 'Helsti vandi',
+      description: 'Main problem',
+    },
+    hasPreviouslyReceivedRehabilitationOrTreatment: {
+      id: 'marp.application:self.assessment.has.previously.received.rehabilitation.or.treatment',
+      defaultMessage:
+        'Hefur þú áður tekið þátt í endurhæfingu eða meðferð vegna vandans sem veldur óvinnufærni?',
+      description:
+        'Have you previously received rehabilitation or treatment for the problem causing your incapacity?',
+    },
+    previousRehabilitationOrTreatment: {
+      id: 'marp.application:self.assessment.previous.rehabilitation.or.treatment',
+      defaultMessage: 'Hvaða endurhæfingu eða meðferð hefur þú tekið þátt í?',
+      description: 'What rehabilitation or treatment have you received?',
+    },
+    previousRehabilitationSuccessful: {
+      id: 'marp.application:self.assessment.previous.rehabilitation.successful',
+      defaultMessage: 'Hefur fyrri endurhæfing skilað þér árangri?',
+      description: 'Was the previous rehabilitation successful?',
+    },
+    previousRehabilitationSuccessfulFurtherExplanations: {
+      id: 'marp.application:self.assessment.previous.rehabilitation.successful.further.explanations',
+      defaultMessage: 'Skráðu inn frekari skýringar',
+      description: 'List further explanations',
+    },
   }),
 
   overview: defineMessages({
