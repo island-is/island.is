@@ -278,7 +278,10 @@ const FineCardList = ({
                           onClick()
                         }
                       }}
-                      onClick={onClick}
+                      onClick={(ev) => {
+                        onClick()
+                        ev.currentTarget.blur()
+                      }}
                       display="flex"
                       flexDirection="column"
                       userSelect="none"
