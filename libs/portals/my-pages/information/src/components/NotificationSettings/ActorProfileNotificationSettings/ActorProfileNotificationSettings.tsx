@@ -73,7 +73,11 @@ export const ActorProfileNotificationSettings = () => {
   }
 
   const onPaperMailChange = async (active: boolean) => {
-    const { error } = await safeAwait(
+    const oldSettings = { ...settings }
+    const newSettings = { ...settings, wantsPaper: active }
+    setSettings(newSettings)
+
+    const { error, data } = await safeAwait(
       postPaperMailMutation({
         variables: {
           input: { wantsPaper: active },
@@ -83,10 +87,15 @@ export const ActorProfileNotificationSettings = () => {
 
     if (error) {
       toast.error(formatMessage(mNotifications.updateError))
+      setSettings(oldSettings)
       return
     }
 
-    setSettings({ ...settings, wantsPaper: active })
+    setSettings({
+      ...settings,
+      wantsPaper:
+        data?.data?.postPaperMailInfo?.wantsPaper ?? oldSettings.wantsPaper,
+    })
   }
 
   if (loading || paperMailLoading) {

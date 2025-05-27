@@ -73,8 +73,8 @@ export const EmailCard = ({ title, ctaList, tags }: EmailCardProps) => {
           </Text>
           {tags && (
             <Box display="flex" columnGap={2}>
-              {tags.map((tag) => (
-                <Tag {...getTagProps(tag)} />
+              {tags.map((tag, index) => (
+                <Tag key={`${tag}-${index}`} {...getTagProps(tag)} />
               ))}
             </Box>
           )}

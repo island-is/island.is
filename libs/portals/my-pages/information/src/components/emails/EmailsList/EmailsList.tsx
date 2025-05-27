@@ -13,7 +13,6 @@ import { EmailCard, EmailCardTag, EmailCta } from '../EmailCard/EmailCard'
 import { useDeleteEmailMutation } from './deleteEmail.mutation.generated'
 import { useSetActorProfileEmailMutation } from './setActorProfileEmail.mutation.generated'
 import { useSetPrimaryEmailMutation } from './setPrimaryEmail.mutation.generated'
-import { useScopeAccess } from '../../../hooks/useScopeAccess'
 
 type EmailsListProps = {
   items: Email[]
@@ -24,7 +23,6 @@ export const EmailsList = ({ items }: EmailsListProps) => {
   const userInfo = useUserInfo()
   const { data: actorProfile, refetch: refetchActorProfile } = useActorProfile()
   const actorProfileEmail = actorProfile?.email
-  const { hasUserProfileWrite } = useScopeAccess()
   const isActor = !!userInfo?.profile?.actor?.nationalId
 
   const refreshEmailList = () => {
@@ -155,9 +153,9 @@ export const EmailsList = ({ items }: EmailsListProps) => {
 
   return (
     <Box display="flex" flexDirection="column" rowGap={2}>
-      {items.map((item) => (
+      {items.map((item, index) => (
         <EmailCard
-          key={item.id}
+          key={`${item.id}-${index}`}
           title={item.email}
           tags={getTags(item)}
           ctaList={createCtaList(item)}
