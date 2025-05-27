@@ -8,6 +8,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Icon,
   Inline,
   Input,
   Stack,
@@ -278,10 +279,39 @@ const FineCardList = ({
                         }
                       }}
                       onClick={onClick}
+                      display="flex"
+                      flexDirection="column"
+                      userSelect="none"
                     >
                       <Box display="flex" flexDirection="column" rowGap={1}>
                         <Box display="flex" flexDirection="column" rowGap={1}>
-                          <Text variant="small">{fine.law}</Text>
+                          <Inline
+                            justifyContent="spaceBetween"
+                            alignY="center"
+                            space={1}
+                          >
+                            <Text variant="small">{fine.law}</Text>
+                            <Box
+                              style={{
+                                visibility:
+                                  fine.amountSelected > 0
+                                    ? 'visible'
+                                    : 'hidden',
+                              }}
+                            >
+                              <Inline alignY="center" space={0}>
+                                <Text lineHeight="md" variant="small">
+                                  {fine.amountSelected}/
+                                  {fine.maxAmountThatCanBeSelected ?? 1}
+                                </Text>
+                                <Icon
+                                  icon="checkmark"
+                                  size="medium"
+                                  color="blue400"
+                                />
+                              </Inline>
+                            </Box>
+                          </Inline>
                           <Text variant="h4">{fine.title}</Text>
                           <Text variant="small">{fine.subtitle}</Text>
                         </Box>
