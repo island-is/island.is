@@ -8,7 +8,7 @@ export const selfAssessmentSection = buildSection({
   title:
     medicalAndRehabilitationPaymentsFormMessage.selfAssessment.sectionTitle,
   children: [
-    selfAssessmentQuestionnaireSubSection,
     selfAssessmentQuestionsOneSubSection,
+    selfAssessmentQuestionnaireSubSection,
   ],
 })
