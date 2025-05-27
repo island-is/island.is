@@ -1,4 +1,5 @@
 import { FC, useCallback, useContext, useState } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
@@ -267,9 +268,8 @@ const Completed: FC = () => {
               required
             />
             {workingCase.defendants?.map((defendant, index) => (
-              <>
+              <React.Fragment key={defendant.id}>
                 <Box
-                  key={defendant.id}
                   component="section"
                   marginBottom={
                     workingCase.defendants &&
@@ -333,10 +333,9 @@ const Completed: FC = () => {
                         }}
                         large
                         backgroundColor="white"
-                        label={
-                          formatMessage(strings.serviceRequirementRequired) +
-                          ' asdas'
-                        }
+                        label={formatMessage(
+                          strings.serviceRequirementRequired,
+                        )}
                       />
                     </Box>
                     <RadioButton
@@ -421,10 +420,9 @@ const Completed: FC = () => {
                         </Text>
                         <BlueBox>
                           {defendantCheckboxes.map((checkbox) => (
-                            <>
+                            <React.Fragment key={checkbox.value}>
                               <Checkbox
                                 label={checkbox.label}
-                                key={checkbox.value}
                                 id={checkbox.value}
                                 name={checkbox.value}
                                 checked={defendant?.informationForDefendant?.includes(
@@ -456,7 +454,7 @@ const Completed: FC = () => {
                                 }}
                               />
                               <Box marginBottom={marginSpaceBetweenButtons} />
-                            </>
+                            </React.Fragment>
                           ))}
                         </BlueBox>
                         <Box marginBottom={5} />
@@ -490,7 +488,7 @@ const Completed: FC = () => {
                     )}
                   </AnimatePresence>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </Box>
         )}
