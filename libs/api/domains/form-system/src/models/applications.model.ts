@@ -22,7 +22,7 @@ export class ApplicationResponse {
   applications?: Application[]
 
   @Field(() => Number, { nullable: true })
-  total?: Number
+  total?: number
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]
