@@ -70,7 +70,7 @@ const FindStudentModal = ({
       justifyContent="flexEnd"
       alignItems="flexEnd"
     >
-      <Box display="flex" justifyContent={["flexEnd", "center", "center"]}>
+      <Box display="flex" justifyContent={['flexEnd', 'center', 'center']}>
         <ModalBase
           isVisible={isModalOpen}
           baseId="myDialog"

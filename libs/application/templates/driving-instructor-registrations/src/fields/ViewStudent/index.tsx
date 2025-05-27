@@ -341,7 +341,7 @@ const ViewStudent = ({
                   <RadioButton
                     name={'options-' + index}
                     backgroundColor="blue"
-                    label={item.label}
+                    label={item.label + ' mín'}
                     value={item.value}
                     checked={item.value === minutes && !minutesInputActive}
                     onChange={() => {
@@ -559,9 +559,17 @@ const ViewStudent = ({
                 /* Completed schools */
                 <GridRow>
                   <GridColumn span="12/12">
-                    <Text variant="h3" marginBottom={2}>
-                      {formatMessage(m.schoolsTitle)}
-                    </Text>
+                    <Box
+                      display="flex"
+                      justifyContent="spaceBetween"
+                      alignItems="flexEnd"
+                      marginBottom={2}
+                    >
+                      <Text variant="h3">{formatMessage(m.schoolsTitle)}</Text>
+                      <Text fontWeight="regular">
+                        {completedSchools.length + ' skráningar'}
+                      </Text>
+                    </Box>
                     <T.Table box={{ overflow: 'hidden' }}>
                       <T.Head>
                         <T.Row>
@@ -624,9 +632,17 @@ const ViewStudent = ({
               {/* Completed exams */}
               <GridRow>
                 <GridColumn span="12/12">
-                  <Text variant="h3" marginBottom={2}>
-                    {formatMessage(m.completedTests)}
-                  </Text>
+                  <Box
+                    display="flex"
+                    justifyContent="spaceBetween"
+                    alignItems="flexEnd"
+                    marginBottom={2}
+                  >
+                    <Text variant="h3">{formatMessage(m.completedTests)}</Text>
+                    <Text fontWeight="regular">
+                      {student.book?.testResults?.length + ' skráningar'}
+                    </Text>
+                  </Box>
                   <T.Table box={{ overflow: 'hidden' }}>
                     <T.Head>
                       <T.Row>
