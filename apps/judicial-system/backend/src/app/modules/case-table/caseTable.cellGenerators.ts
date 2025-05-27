@@ -411,30 +411,40 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
       separate: true,
     },
   },
-  generate: (c: Case): CaseTableCell<StringGroupValue> =>
-    c.defendants && c.defendants.length > 0
-      ? generateCell({
-          strList: [
-            c.defendants[0].name ?? '',
-            c.defendants.length > 1
-              ? `+ ${c.defendants.length - 1}`
-              : c.defendants[0].nationalId ?? '',
-          ],
-        })
-      : generateCell(),
+  generate: (c: Case): CaseTableCell<StringGroupValue> => {
+    if (!c.defendants || c.defendants.length === 0) {
+      return generateCell()
+    }
+
+    const strList = [
+      c.defendants[0].name ?? '',
+      c.defendants.length > 1
+        ? `+ ${c.defendants.length - 1}`
+        : c.defendants[0].nationalId ?? '',
+    ]
+
+    return generateCell({ strList }, strList.join(''))
+  },
 }
 
 export const caseType: CaseTableCellGenerator<StringGroupValue> = {
   attributes: ['type', 'decision', 'parentCaseId', 'indictmentSubtypes'],
   generate: (c: Case): CaseTableCell<StringGroupValue> => {
     if (c.type === CaseType.INDICTMENT) {
-      const display = generateIndictmentCaseType(c.indictmentSubtypes)
-      return display ? generateCell({ strList: [display] }) : generateCell()
+      const indictmentType = generateIndictmentCaseType(c.indictmentSubtypes)
+
+      return indictmentType
+        ? generateCell({ strList: [indictmentType] }, indictmentType)
+        : generateCell()
     }
 
-    return generateCell({
-      strList: generateRequestCaseType(c.type, c.decision, c.parentCaseId),
-    })
+    const requestType = generateRequestCaseType(
+      c.type,
+      c.decision,
+      c.parentCaseId,
+    )
+
+    return generateCell({ strList: requestType }, requestType.join(''))
   },
 }
 
@@ -613,8 +623,9 @@ const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
     }
 
     const datePart = formatDate(date, 'EEE d. MMMM yyyy')
+    const sortValue = formatDate(date, 'yyyyMMddHHmm')
 
-    if (!datePart) {
+    if (!datePart || !sortValue) {
       // No date part, so we return undefined
       return generateCell()
     }
@@ -623,12 +634,13 @@ const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
 
     if (!timePart) {
       // This should never happen, but if it does, we return the court date only
-      return generateCell({ strList: [`${capitalize(datePart)}`] })
+      return generateCell({ strList: [`${capitalize(datePart)}`] }, sortValue)
     }
 
-    return generateCell({
-      strList: [`${capitalize(datePart)}`, `kl. ${timePart}`],
-    })
+    return generateCell(
+      { strList: [`${capitalize(datePart)}`, `kl. ${timePart}`] },
+      sortValue,
+    )
   },
 }
 
