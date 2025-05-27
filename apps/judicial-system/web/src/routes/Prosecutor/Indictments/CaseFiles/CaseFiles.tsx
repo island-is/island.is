@@ -53,10 +53,6 @@ const CaseFiles = () => {
     [workingCase.id],
   )
 
-  const isCriminalRecordsEndpointEnabled = features.includes(
-    Feature.CRIMINAL_RECORD_ENDPOINT,
-  )
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -76,26 +72,24 @@ const CaseFiles = () => {
             title={formatMessage(strings.caseFiles.criminalRecordSection)}
             heading="h2"
           />
-          {isCriminalRecordsEndpointEnabled ? (
-            <Box marginBottom={3}>
-              <Button
-                variant="text"
-                onClick={() => {
-                  if (!workingCase.defendants) {
-                    return
-                  }
-                  handleUploadCriminalRecord(
-                    workingCase.defendants,
-                    addUploadFile,
-                    updateUploadFile,
-                  )
-                }}
-                size="small"
-              >
-                Sækja sakavottorð til sakaskrár
-              </Button>
-            </Box>
-          ) : null}
+          <Box marginBottom={3}>
+            <Button
+              variant="text"
+              onClick={() => {
+                if (!workingCase.defendants) {
+                  return
+                }
+                handleUploadCriminalRecord(
+                  workingCase.defendants,
+                  addUploadFile,
+                  updateUploadFile,
+                )
+              }}
+              size="small"
+            >
+              Sækja sakavottorð til sakaskrár
+            </Button>
+          </Box>
           <InputFileUpload
             name="criminalRecord"
             files={uploadFiles.filter(
