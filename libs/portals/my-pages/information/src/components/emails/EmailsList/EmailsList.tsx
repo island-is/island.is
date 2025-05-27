@@ -156,7 +156,7 @@ export const EmailsList = ({ items }: EmailsListProps) => {
       {items.map((item, index) => (
         <EmailCard
           key={`${item.id}-${index}`}
-          title={item.email}
+          title={item.email ?? ''}
           tags={getTags(item)}
           ctaList={createCtaList(item)}
         />

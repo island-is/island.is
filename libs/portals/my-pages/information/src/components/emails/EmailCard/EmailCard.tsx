@@ -18,7 +18,7 @@ export type EmailCardTag =
   | 'connected_to_delegation'
 
 type EmailCardProps = {
-  title?: string | null
+  title: string
   ctaList?: EmailCta[]
   tags?: EmailCardTag[]
 }
@@ -69,7 +69,7 @@ export const EmailCard = ({ title, ctaList, tags }: EmailCardProps) => {
           rowGap={1}
         >
           <Text variant="h4" color="dark400" truncate>
-            {title || 'Not set'}
+            {title}
           </Text>
           {tags && (
             <Box display="flex" columnGap={2}>

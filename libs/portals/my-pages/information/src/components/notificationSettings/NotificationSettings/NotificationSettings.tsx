@@ -17,6 +17,7 @@ import {
   useUpdateUserProfileSettingsMutation,
   useUserProfileSettingsQuery,
 } from './getUserProfile.query.generated'
+import { safeAwait } from '@island.is/shared/utils'
 
 type UserProfileNotificationSettings = {
   documentNotifications: boolean
@@ -65,32 +66,42 @@ export const NotificationSettings = () => {
     const newSettings = { ...settings, ...updatedSettings }
     setSettings(newSettings)
 
-    try {
-      await updateUserProfile({
+    const { error } = await safeAwait(
+      updateUserProfile({
         variables: {
           input: {
             documentNotifications: newSettings.documentNotifications,
             canNudge: newSettings.canNudge,
           },
         },
-      })
-    } catch {
+      }),
+    )
+
+    if (error) {
       setSettings(oldSettings)
       toast.error(formatMessage(mNotifications.updateError))
     }
   }
 
   const onPaperMailChange = async (active: boolean) => {
-    try {
-      await postPaperMailMutation({
+    const { data, error } = await safeAwait(
+      postPaperMailMutation({
         variables: {
           input: { wantsPaper: active },
         },
-      })
-      setSettings({ ...settings, wantsPaper: active })
-    } catch {
+      }),
+    )
+
+    if (error) {
       toast.error(formatMessage(mNotifications.updateError))
+      return
     }
+
+    setSettings({
+      ...settings,
+      wantsPaper:
+        data?.data?.postPaperMailInfo?.wantsPaper ?? settings.wantsPaper,
+    })
   }
 
   if (loading || paperMailLoading) {
