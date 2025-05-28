@@ -124,8 +124,8 @@ const FineCalculatorDetails = ({
           </Table.HeadData>
         </Table.Head>
         <Table.Body>
-          {selectedFines.map((fine) => (
-            <Table.Row>
+          {selectedFines.map((fine, index) => (
+            <Table.Row key={index}>
               <Table.Data>
                 {fine.law} {fine.title} x {fine.amountSelected}
               </Table.Data>
