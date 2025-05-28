@@ -9,6 +9,7 @@ import {
   IsOptional,
   IsString,
   ValidateNested,
+  IsArray
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
@@ -58,14 +59,16 @@ export class FieldDto {
   fieldType!: string
 
   @IsOptional()
+  @IsArray()
   @ApiPropertyOptional({ type: [ListItemDto] })
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => ListItemDto)
   list?: ListItemDto[]
 
   @IsOptional()
+  @IsArray()
   @ApiPropertyOptional({ type: [ValueDto] })
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => ValueDto)
   values?: ValueDto[]
 }

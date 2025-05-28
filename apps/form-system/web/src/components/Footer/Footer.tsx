@@ -62,20 +62,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               <Button
                 icon="arrowBack"
                 variant="ghost"
-                onClick={() => {
-                  // if (state.currentScreen?.data) {
-                  //   submitScreen({
-                  //     variables: {
-                  //       input: {
-                  //         screenId: state.currentScreen?.data.id,
-                  //         applicationDto: state.application,
-                  //       }
-                  //     },
-                  //     errorPolicy: 'all'
-                  //   })
-                  // }
-                  handleDecrement()
-                }}
+                onClick={handleDecrement}
               >
                 {formatMessage(webMessages.back)}
               </Button>

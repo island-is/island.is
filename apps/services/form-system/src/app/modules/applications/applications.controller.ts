@@ -107,7 +107,6 @@ export class ApplicationsController {
     @Param('screenId') screenId: string,
     @Body() applicationDto: ApplicationDto,
   ): Promise<ScreenValidationResponse> {
-    console.log('application', JSON.stringify(applicationDto, null, 2))
     return await this.applicationsService.submitScreen(screenId, applicationDto)
   }
 
@@ -131,32 +130,6 @@ export class ApplicationsController {
       isTest,
     )
   }
-
-  // Not sure whether this is needed or whether we should try to fix the issues we were having.....
-  // @ApiOperation({
-  //   summary: 'Get all applications of the same type belonging to user',
-  // })
-  // @ApiOkResponse({
-  //   type: ApplicationListDto,
-  //   description: 'Get all applications of the same type belonging to user',
-  // })
-  // @ApiParam({ name: 'formId', type: String })
-  // @Get('form/:formId')
-  // async findAllByTypeAndUser(
-  //   @Param('formId') formId: string,
-  //   @Query('page') page: number,
-  //   @Query('limit') limit: number,
-  //   @Query('isTest') isTest: boolean,
-  //   @CurrentUser()
-  //   user: User,
-  // ): Promise<ApplicationListDto> {
-  //   return await this.applicationsService.findAllByTypeAndUser(
-  //     formId,
-  //     page,
-  //     limit,
-  //     isTest,
-  //   )
-  // }
 
   @ApiOperation({ summary: 'Save screen data' })
   @ApiCreatedResponse({

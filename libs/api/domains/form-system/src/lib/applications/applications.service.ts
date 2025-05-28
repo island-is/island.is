@@ -104,14 +104,6 @@ export class ApplicationsService {
     )
   }
 
-  // async submitScreen(auth: User, input: SubmitScreenInput): Promise<SubmitScreenResponse> {
-  //   const response = await this.applicationsApiWithAuth(auth).applicationsControllerSubmitScreen(
-  //     input as ApplicationsControllerSubmitScreenRequest,
-  //   )
-
-  //   return response as SubmitScreenResponse
-  // }
-
   async updateApplication(
     auth: User,
     input: UpdateApplicationInput,

@@ -14,9 +14,15 @@ interface Props {
   hasError?: boolean
 }
 export const DatePicker = ({ item, dispatch, lang, hasError }: Props) => {
-  const [value, setValue] = useState<Date | null>(
-    getValue(item, 'date') ? parseISO(getValue(item, 'date')) : null
-  )
+  const [value, setValue] = useState<Date | null>(() => {
+    const dateValue = getValue(item, 'date')
+    if (!dateValue) return null
+    try {
+      return parseISO(dateValue)
+    } catch {
+      return null
+    }
+  })
   const { formatMessage } = useIntl()
   const handleChange = (date: Date) => {
     setValue(date)

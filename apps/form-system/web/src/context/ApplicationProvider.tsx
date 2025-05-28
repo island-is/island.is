@@ -48,10 +48,6 @@ export const ApplicationProvider: React.FC<{
 
   const contextValue = useMemo(() => ({ state, dispatch }), [state])
 
-  useEffect(() => {
-    console.log('state', state)
-  }, [state])
-
   return (
     <ApplicationContext.Provider value={contextValue}>
       <Form />

@@ -51,7 +51,7 @@ export class ApplicationsResolver {
     return this.applicationsService.getApplications(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => Application, {
     name: 'createFormSystemApplication',
   })
   async createApplication(

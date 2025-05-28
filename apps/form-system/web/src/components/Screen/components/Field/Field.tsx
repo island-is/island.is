@@ -24,6 +24,24 @@ interface Props {
   field: FormSystemField
   hasError: boolean
 }
+
+const FIELD_COMPONENT_MAP = {
+  [FieldTypesEnum.BANK_ACCOUNT]: Banknumber,
+  [FieldTypesEnum.CHECKBOX]: Checkbox,
+  [FieldTypesEnum.ISK_NUMBERBOX]: CurrencyField,
+  [FieldTypesEnum.EMAIL]: Email,
+  [FieldTypesEnum.FILE]: FileUpload,
+  [FieldTypesEnum.NATIONAL_ID]: NationalId,
+  [FieldTypesEnum.PHONE_NUMBER]: PhoneNumber,
+  [FieldTypesEnum.PROPERTY_NUMBER]: PropertyNumber,
+  [FieldTypesEnum.RADIO_BUTTONS]: Radio,
+  [FieldTypesEnum.TEXTBOX]: TextInput,
+  [FieldTypesEnum.TIME_INPUT]: TimeInput,
+  [FieldTypesEnum.DROPDOWN_LIST]: List,
+  [FieldTypesEnum.DATE_PICKER]: DatePicker,
+  [FieldTypesEnum.MESSAGE]: MessageWithLink,
+} as const
+
 export const Field = ({ field, hasError }: Props) => {
   const { lang } = useLocale()
   const { dispatch } = useApplicationContext()
@@ -34,46 +52,13 @@ export const Field = ({ field, hasError }: Props) => {
     lang,
   }
 
+  const FieldComponent = field.fieldType != null
+    ? (FIELD_COMPONENT_MAP[field.fieldType as keyof typeof FIELD_COMPONENT_MAP] as React.ElementType)
+    : undefined
+
   return (
     <Box marginTop={4}>
-      {field.fieldType === FieldTypesEnum.BANK_ACCOUNT && (
-        <Banknumber {...fieldItems} />
-      )}
-      {field.fieldType === FieldTypesEnum.CHECKBOX && (
-        <Checkbox {...fieldItems} />
-      )}
-      {field.fieldType === FieldTypesEnum.MESSAGE && (
-        <MessageWithLink item={field} />
-      )}
-      {field.fieldType === FieldTypesEnum.ISK_NUMBERBOX && (
-        <CurrencyField {...fieldItems} />
-      )}
-      {field.fieldType === FieldTypesEnum.EMAIL && <Email {...fieldItems} />}
-      {field.fieldType === FieldTypesEnum.FILE && <FileUpload item={field} />}
-      {field.fieldType === FieldTypesEnum.NATIONAL_ID && (
-        <NationalId {...fieldItems} /> // TODO: need to implement fetching name from nationalId
-      )}
-      {field.fieldType === FieldTypesEnum.PHONE_NUMBER && (
-        <PhoneNumber {...fieldItems} /> // TODO: need to find out how the country code can be extracted from PhoneInput
-      )}
-      {field.fieldType === FieldTypesEnum.PROPERTY_NUMBER && (
-        <PropertyNumber {...fieldItems} />
-      )}
-      {field.fieldType === FieldTypesEnum.RADIO_BUTTONS && (
-        <Radio {...fieldItems} />
-      )}
-      {field.fieldType === FieldTypesEnum.TEXTBOX && (
-        <TextInput {...fieldItems} />
-      )}
-      {field.fieldType === FieldTypesEnum.TIME_INPUT && (
-        <TimeInput item={field} />
-      )}
-      {field.fieldType === FieldTypesEnum.DROPDOWN_LIST && (
-        <List {...fieldItems} />
-      )}
-      {field.fieldType === FieldTypesEnum.DATE_PICKER && (
-        <DatePicker {...fieldItems} />
-      )}
+      {FieldComponent ? <FieldComponent {...fieldItems} /> : null}
     </Box>
   )
 }

@@ -59,7 +59,7 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
           </div>
 
           {certificationTypes?.map((certificationType) => (
-            <div>
+            <div key={certificationType?.id}>
               <Text variant="h4" color="blue400">
                 {certificationType?.certificationTypeId}
               </Text>

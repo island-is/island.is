@@ -53,7 +53,7 @@ export const ApplicationCard = ({ application, focused = false, onDelete }: Prop
             <Icon icon="time" size="medium" type="outline" color="blue400" />
           </Box>
           <Box display="flex" justifyContent="center">
-            <Text variant="small">{format(new Date(), formattedDate)}</Text>
+            <Text variant="small">{format(new Date(application.created || application.modified), formattedDate)}</Text>
           </Box>
         </Box>
         <Inline alignY="center" justifyContent="flexEnd" space={1}>

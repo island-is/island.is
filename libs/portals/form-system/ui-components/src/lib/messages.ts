@@ -532,6 +532,11 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'National ID',
   },
+  basicErrorMessage: {
+    id: 'form-system:basic-error-message',
+    defaultMessage: 'Villa kom upp',
+    description: 'Basic error message',
+  }
 })
 
 export const webMessages = defineMessages({

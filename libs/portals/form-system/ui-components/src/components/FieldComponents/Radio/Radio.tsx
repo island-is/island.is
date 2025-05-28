@@ -9,6 +9,8 @@ import {
 import { Dispatch, useEffect, useState } from 'react'
 import { getValue } from '../../../lib/getValue'
 import { Action } from '../../../lib'
+import { useIntl } from 'react-intl'
+import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
@@ -22,6 +24,7 @@ export const Radio = ({ item, dispatch, lang, hasError }: Props) => {
   const [value, setValue] = useState<string>(getValue(item, 'listValue'))
   const [radioChecked, setRadioChecked] = useState<boolean[]>([])
   const language = lang ?? 'is'
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     setRadioChecked(
@@ -69,7 +72,7 @@ export const Radio = ({ item, dispatch, lang, hasError }: Props) => {
           </Text>
         )}
       </Inline>
-      {hasError && <InputError errorMessage="error" />}
+      {hasError && <InputError errorMessage={formatMessage(m.basicErrorMessage)} />}
       <Box
         marginTop={2}
         marginBottom={2}

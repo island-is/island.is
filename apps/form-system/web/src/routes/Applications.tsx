@@ -43,22 +43,28 @@ export const Applications = () => {
   // })
 
   const createApplication = async () => {
-    const app = await createApplicationMutation({
-      variables: {
-        input: {
-          slug: slug,
-          createApplicationDto: {
-            isTest: false,
+    try {
+      const app = await createApplicationMutation({
+        variables: {
+          input: {
+            slug: slug,
+            createApplicationDto: {
+              isTest: false,
+            },
           },
         },
-      },
-    })
-    if (app) {
-      navigate(`../${slug}/${app.data.createFormSystemApplication.id}`)
+      })
+      if (app.data?.createFormSystemApplication?.id) {
+        navigate(`../${slug}/${app.data.createFormSystemApplication.id}`)
+      }
+      return app
+    } catch (error) {
+      console.error('Error creating application:', error)
+      return null
     }
-    return app
   }
 
+  // This is a dummy to demonstrate how it looks when there are multiple applications for a form
   const getApplications = async () => {
     const app = await createApplicationMutation({
       variables: {
@@ -77,7 +83,6 @@ export const Applications = () => {
     ])
   }
 
-  console.log('slug', slug)
   // Check whether the user has opened this form before and if so, show all the applications
   // const applications = []
   // Assuming the user has not opened this form before, create a new application

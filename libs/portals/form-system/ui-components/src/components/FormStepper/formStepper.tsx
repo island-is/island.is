@@ -35,7 +35,7 @@ export const FormStepper = ({
           subSections={section?.screens?.map((screen, screenIndex) => {
             return (
               <Text
-                key={screenIndex}
+                key={screen?.id}
                 variant={
                   screen?.id === currentScreen?.data?.id ? 'h5' : 'default'
                 }

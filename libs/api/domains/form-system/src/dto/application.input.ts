@@ -43,12 +43,6 @@ export class ApplicationsInput {
   isTest!: boolean
 }
 
-@InputType('SubmitFormSystemScreenInput')
-export class SubmitScreenInput {
-  @Field(() => String, { nullable: true })
-  screenId?: string
-}
-
 @InputType('FormSystemApplicationEventDtoInput')
 export class ApplicationEventDtoInput {
   @Field(() => Date, { nullable: true })

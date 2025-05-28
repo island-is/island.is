@@ -2,7 +2,7 @@ import { getStaticEnv } from '@island.is/shared/utils'
 
 const devConfig = {
   production: false,
-  featureFlagSdkKey: 'YcfYCOwBTUeI04mWOWpPdA/KgCHhUk0_k2BdiKMaNh3qA',
+  featureFlagSdkKey: getStaticEnv('SI_PUBLIC_CONFIGCAT_SDK_KEY') ?? 'dev-fallback-key',
   DD_LOGS_CLIENT_TOKEN: 'unknown',
   APP_VERSION: 'unknown',
   ENVIRONMENT: 'unknown',
@@ -17,6 +17,6 @@ const prodConfig = {
 }
 
 export default getStaticEnv('PROD_MODE') === 'true' ||
-process.env.NODE_ENV === 'production'
+  process.env.NODE_ENV === 'production'
   ? prodConfig
   : devConfig

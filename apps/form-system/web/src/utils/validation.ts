@@ -46,7 +46,6 @@ const hasError = (field: FormSystemField): boolean => {
       return !validatePropertyNumber(value)
     }
     case FieldTypesEnum.RADIO_BUTTONS: {
-      console.log(value.listValue)
       return !value?.listValue
     }
     case FieldTypesEnum.DROPDOWN_LIST: {

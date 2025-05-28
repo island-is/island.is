@@ -78,7 +78,6 @@ export const incrementWithScreens = (
     }
   }
 
-  console.log('Submitting screen', state.currentScreen?.data)
   submitScreen({
     variables: {
       input: {
@@ -89,6 +88,8 @@ export const incrementWithScreens = (
         },
       },
     },
+  }).catch((error) => {
+    console.error('Error submitting screen:', error)
   })
 
   if (currentScreenIndex === maxScreenIndex) {

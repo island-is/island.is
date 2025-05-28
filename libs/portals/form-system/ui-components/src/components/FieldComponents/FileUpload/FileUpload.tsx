@@ -22,6 +22,7 @@ interface Props {
   applicationId?: string
 }
 
+// This component is still very much a WIP
 export const FileUpload = ({
   item,
   hasError,
