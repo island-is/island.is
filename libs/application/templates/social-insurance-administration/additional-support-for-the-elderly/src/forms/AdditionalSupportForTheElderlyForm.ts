@@ -199,7 +199,8 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
     }),
     buildSection({
       id: 'higherPayments',
-      title: additionalSupportForTheElderyFormMessage.info.higherPaymentsCohabTitle,
+      title:
+        additionalSupportForTheElderyFormMessage.info.higherPaymentsCohabTitle,
       children: [
         buildMultiField({
           id: 'higherPayments',
@@ -208,16 +209,20 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
               application.externalData,
             )
             return cohabitants.length === 0
-              ? additionalSupportForTheElderyFormMessage.info.higherPaymentsTitle
-              : additionalSupportForTheElderyFormMessage.info.higherPaymentsCohabTitle
+              ? additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsTitle
+              : additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsCohabTitle
           },
           description: (application: Application) => {
             const { cohabitants } = getApplicationExternalData(
               application.externalData,
             )
             return cohabitants.length === 0
-              ? additionalSupportForTheElderyFormMessage.info.higherPaymentsDescription
-              : additionalSupportForTheElderyFormMessage.info.higherPaymentsCohabDescription
+              ? additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsDescription
+              : additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsCohabDescription
           },
           children: [
             buildRadioField({
@@ -225,18 +230,14 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
               options: getYesNoOptions(),
               width: 'half',
               condition: (_, externalData) => {
-                const { cohabitants } = getApplicationExternalData(
-                  externalData,
-                )
+                const { cohabitants } = getApplicationExternalData(externalData)
                 return cohabitants.length === 0
               },
             }),
             buildDescriptionField({
               id: 'higherPayments.text',
               condition: (_, externalData) => {
-                const { cohabitants } = getApplicationExternalData(
-                  externalData,
-                )
+                const { cohabitants } = getApplicationExternalData(externalData)
                 return cohabitants.length > 0
               },
             }),

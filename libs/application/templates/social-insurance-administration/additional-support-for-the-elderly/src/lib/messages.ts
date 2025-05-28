@@ -67,8 +67,10 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     },
     higherPaymentsDescription: {
       id: 'asfte.application:info.higher.payments.description',
-      defaultMessage: 'Þeir sem búa einir og deila ekki eldunar- eða salernisaðstöðu með öðrum geta átt rétt á hærri greiðslum. Samkvæmt Þjóðskrá býrð þú ein/n. Vilt þú sækja um?',
-      description: 'Those who live alone and do not share cooking or bathroom facilities with others may be entitled to higher payments. According to Registers Iceland you live alone. Would you like to apply?',
+      defaultMessage:
+        'Þeir sem búa einir og deila ekki eldunar- eða salernisaðstöðu með öðrum geta átt rétt á hærri greiðslum. Samkvæmt Þjóðskrá býrð þú ein/n. Vilt þú sækja um?',
+      description:
+        'Those who live alone and do not share cooking or bathroom facilities with others may be entitled to higher payments. According to Registers Iceland you live alone. Would you like to apply?',
     },
     higherPaymentsCohabTitle: {
       id: 'asfte.application:info.higher.payments.cohab.title',
@@ -77,8 +79,10 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     },
     higherPaymentsCohabDescription: {
       id: 'asfte.application:info.higher.payments.cohab.description',
-      defaultMessage: 'Þeir sem búa einir og deila ekki eldunar- eða salernisaðstöðu með öðrum geta átt rétt á hærri greiðslum. Samkvæmt Þjóðskrá býrð þú ekki ein/n. Breytist aðstæður þínar getur þú sótt aftur um félagslegan viðbótarstuðning með hærri greiðslum, eftir að þú hefur uppfært skráningu þína í Þjóðskrá.',
-      description: 'Those who live alone and do not share cooking or bathroom facilities with others may be entitled to higher payments. According to Registers Iceland you do not live alone. Should your circumstances change, you can re-apply for additional support for the elderly and receive higher payments, after you have changed your cohabitation information at Registers Iceland.',
+      defaultMessage:
+        'Þeir sem búa einir og deila ekki eldunar- eða salernisaðstöðu með öðrum geta átt rétt á hærri greiðslum. Samkvæmt Þjóðskrá býrð þú ekki ein/n. Breytist aðstæður þínar getur þú sótt aftur um félagslegan viðbótarstuðning með hærri greiðslum, eftir að þú hefur uppfært skráningu þína í Þjóðskrá.',
+      description:
+        'Those who live alone and do not share cooking or bathroom facilities with others may be entitled to higher payments. According to Registers Iceland you do not live alone. Should your circumstances change, you can re-apply for additional support for the elderly and receive higher payments, after you have changed your cohabitation information at Registers Iceland.',
     },
   }),
 

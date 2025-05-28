@@ -90,7 +90,7 @@ export const dataSchema = z.object({
     ),
   higherPayments: z.object({
     question: z.enum([YES, NO]),
-  }),  
+  }),
   infoCheckbox: z.array(z.enum([YES])).nonempty(),
 })
 
