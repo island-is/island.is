@@ -24,6 +24,7 @@ import { Payment } from './review-groups/Payment'
 import { Questions } from './review-groups/Questions'
 import { RehabilitationPlan } from './review-groups/RehabilitationPlan'
 import { SelfAssessmentQuestionnaire } from './review-groups/SelfAssessmentQuestionnaire'
+import { SelfAssessmentQuestionsThree } from './review-groups/SelfAssessmentQuestionsThree'
 import { UnionSickPay } from './review-groups/UnionSickPay'
 import { SelfAssessmentQuestionsOne } from './review-groups/SelfAssessmentQuestionsOne'
 
@@ -173,6 +174,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <EmployeeSickPay {...childProps} />
       <UnionSickPay {...childProps} />
       <RehabilitationPlan />
+      <SelfAssessmentQuestionsThree {...childProps} />
       <SelfAssessmentQuestionnaire {...childProps} />
       <SelfAssessmentQuestionsOne {...childProps} />
       <Comment {...childProps} />

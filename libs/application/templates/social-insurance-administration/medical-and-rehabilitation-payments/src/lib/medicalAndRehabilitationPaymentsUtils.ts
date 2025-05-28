@@ -13,7 +13,7 @@ import {
 import { Application } from '@island.is/application/types'
 import {
   SelfAssessmentQuestionnaireAnswers,
-  SelfAssessmentQuestionnaireQuestions,
+  SelfAssessmentQuestionnaire,
 } from '../types'
 import {
   AttachmentLabel,
@@ -127,6 +127,31 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     [],
   ) as SelfAssessmentQuestionnaireAnswers[]
 
+  const mainProblem = getValueViaPath(
+    answers,
+    'selfAssessment.mainProblem',
+  ) as string
+
+  const hasPreviouslyReceivedRehabilitationOrTreatment = getValueViaPath(
+    answers,
+    'selfAssessment.hasPreviouslyReceivedRehabilitationOrTreatment',
+  ) as YesOrNo
+
+  const previousRehabilitationOrTreatment = getValueViaPath(
+    answers,
+    'selfAssessment.previousRehabilitationOrTreatment',
+  ) as string
+
+  const previousRehabilitationSuccessful = getValueViaPath(
+    answers,
+    'selfAssessment.previousRehabilitationSuccessful',
+  ) as YesOrNo
+
+  const previousRehabilitationSuccessfulFurtherExplanations = getValueViaPath(
+    answers,
+    'selfAssessment.previousRehabilitationSuccessfulFurtherExplanations',
+  ) as string
+
   return {
     applicantPhonenumber,
     bank,
@@ -150,6 +175,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     highestLevelOfEducation,
     comment,
     questionnaire,
+    mainProblem,
+    hasPreviouslyReceivedRehabilitationOrTreatment,
+    previousRehabilitationOrTreatment,
+    previousRehabilitationSuccessful,
+    previousRehabilitationSuccessfulFurtherExplanations,
   }
 }
 
@@ -234,10 +264,10 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIncomePlanConditions.data',
   ) as IncomePlanConditions
 
-  const selfAssessmentQuestionnaireQuestions = getValueViaPath(
+  const selfAssessmentQuestionnaire = getValueViaPath(
     externalData,
-    'socialInsuranceAdministrationQuestionnairesSelfAssessment.data.questions',
-  ) as SelfAssessmentQuestionnaireQuestions[]
+    'socialInsuranceAdministrationQuestionnairesSelfAssessment.data',
+  ) as SelfAssessmentQuestionnaire[]
 
   return {
     applicantName,
@@ -256,7 +286,7 @@ export const getApplicationExternalData = (
     categorizedIncomeTypes,
     currencies,
     incomePlanConditions,
-    selfAssessmentQuestionnaireQuestions,
+    selfAssessmentQuestionnaire,
   }
 }
 

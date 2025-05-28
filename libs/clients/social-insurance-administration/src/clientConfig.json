@@ -3096,17 +3096,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  }
                 }
               }
             }
