@@ -132,11 +132,13 @@ jobs:
         shell: bash
         env:
           MAIN_BRANCH: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
+          RUN_MERGE_QUEUE_INPUT: ${{ inputs.run_merge_queue }}
+          GITHUB_CURRENT_SHA: ${{ github.sha }}
+          NX_HEAD_FROM_ENV: ${{ env.NX_HEAD }}
+          NX_BASE_FROM_ENV: ${{ env.NX_BASE }}
         run: |
-          
-          RUN_MERGE_QUEUE="${{ inputs.run_merge_queue }}"
-          if [[ "$RUN_MERGE_QUEUE" == "true" ]]; then # Reverted to original syntax, as the previous fix attempt did not resolve the SC2193 issue. This might be a false positive or indicate that 'inputs.run_merge_queue' is never 'true'. Further investigation into workflow input usage might be needed. TODO: SC2193
-            # In merge que we always want to use the last
+          if [[ "$RUN_MERGE_QUEUE_INPUT" == "true" ]]; then
+            # In merge queue we always want to use the last
             # commit as head - last commit sha is alway succesful
             # since else it won't get merged!
             # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
@@ -144,31 +146,31 @@ jobs:
             #
             # If we do not do this we will get the wrong base sha
             # :(
-            NX_HEAD=${{ github.sha }}
+            NX_HEAD="$GITHUB_CURRENT_SHA"
             NX_BASE=$(git rev-parse HEAD^1)
-            echo NX_HEAD="$NX_HEAD" >> "$GITHUB_OUTPUT"
-            echo NX_BASE="$NX_BASE" >> "$GITHUB_OUTPUT"
-            echo HEAD="$NX_HEAD" >> "$GITHUB_ENV"
-            echo BASE="$NX_BASE" >> "$GITHUB_ENV"
+            echo "NX_HEAD=$NX_HEAD" >> "$GITHUB_OUTPUT"
+            echo "NX_BASE=$NX_BASE" >> "$GITHUB_OUTPUT"
+            echo "HEAD=$NX_HEAD" >> "$GITHUB_ENV"
+            echo "BASE=$NX_BASE" >> "$GITHUB_ENV"
             exit 0
           fi
-          echo NX_HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_OUTPUT"
-          echo NX_BASE="${{ env.NX_BASE }}" >> "$GITHUB_OUTPUT"
+          echo "NX_HEAD=$NX_HEAD_FROM_ENV" >> "$GITHUB_OUTPUT"
+          echo "NX_BASE=$NX_BASE_FROM_ENV" >> "$GITHUB_OUTPUT"
           # NOTE: we reference BASE and HEAD elsewhere
-          echo HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_ENV"
-          echo BASE="${{ env.NX_BASE }}" >> "$GITHUB_ENV"
-          if [[ "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == release/* ]]; then
-          echo SKIP_JUDICIAL="true" >> "$GITHUB_OUTPUT"
-          echo SKIP_JUDICIAL="true" >> "$GITHUB_ENV"
-          export SKIP_JUDICIAL="true"
+          echo "HEAD=$NX_HEAD_FROM_ENV" >> "$GITHUB_ENV"
+          echo "BASE=$NX_BASE_FROM_ENV" >> "$GITHUB_ENV"
+          if [[ "$MAIN_BRANCH" == release/* ]]; then
+            echo "SKIP_JUDICIAL=true" >> "$GITHUB_OUTPUT"
+            echo "SKIP_JUDICIAL=true" >> "$GITHUB_ENV"
+            export SKIP_JUDICIAL="true"
           else
-          echo SKIP_JUDICIAL="false" >> "$GITHUB_OUTPUT"
-          echo SKIP_JUDICIAL="false" >> "$GITHUB_ENV"
-          export SKIP_JUDICIAL="false"
+            echo "SKIP_JUDICIAL=false" >> "$GITHUB_OUTPUT"
+            echo "SKIP_JUDICIAL=false" >> "$GITHUB_ENV"
+            export SKIP_JUDICIAL="false"
           fi
-          echo Skipping judicial: $SKIP_JUDICIAL
-          echo "Current base SHA is ${{ env.NX_BASE }} and head SHA is ${{ env.NX_HEAD }}"
-          echo "{\"base_sha\": \"${{ env.NX_BASE }}\", \"head_sha\":\"${{ env.NX_HEAD }}\"}" > event.json
+          echo "Skipping judicial: $SKIP_JUDICIAL"
+          echo "Current base SHA is $NX_BASE_FROM_ENV and head SHA is $NX_HEAD_FROM_ENV"
+          echo "{\"base_sha\": \"$NX_BASE_FROM_ENV\", \"head_sha\":\"$NX_HEAD_FROM_ENV\"}" > event.json
 
       - name: Git bot config
         id: git-bot-config
