@@ -24,6 +24,7 @@ import {
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useDefendants,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -46,6 +47,9 @@ const SendToPrisonAdmin: FC = () => {
     workingCase.id,
     defendantId,
   )
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
   const { updateDefendant, isUpdatingDefendant } = useDefendants()
   const { uploadFiles, removeUploadFile, addUploadFiles, updateUploadFile } =
     useUploadFiles()
@@ -140,6 +144,7 @@ const SendToPrisonAdmin: FC = () => {
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
             onChange={handleFileUpload}
             onRemove={handleRemoveFile}
+            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
           />
         </Box>
       </FormContentContainer>
