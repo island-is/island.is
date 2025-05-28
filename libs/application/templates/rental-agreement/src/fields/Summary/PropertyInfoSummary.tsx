@@ -6,7 +6,7 @@ import {
   getPropertyTypeOptions,
   getPropertyClassGroupOptions,
   getEmergencyExitOptions,
-  getRentalPropetySize,
+  getRentalPropertySize,
 } from '../../utils/utils'
 import {
   Routes,
@@ -79,7 +79,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
     ?.reduce((total, unit) => total + (unit.numOfRooms || 0), 0)
     .toString()
 
-  const propertySize = getRentalPropetySize(searchResultUnits).toString()
+  const propertySize = getRentalPropertySize(searchResultUnits).toString()
 
   return (
     <SummaryCard cardLabel={formatMessage(summary.propertyInfoHeader)}>

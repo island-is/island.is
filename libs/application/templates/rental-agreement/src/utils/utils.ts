@@ -106,7 +106,7 @@ export const parseCurrency = (value: string): number | undefined => {
   return numeric ? Number(numeric) : undefined
 }
 
-export const getRentalPropetySize = (units: Unit[]) =>
+export const getRentalPropertySize = (units: Unit[]) =>
   units.reduce(
     (total, unit) =>
       total +

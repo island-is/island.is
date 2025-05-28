@@ -8,7 +8,7 @@ import { registerProperty } from './schemas/propertySearchSchema'
 import { otherFees } from './schemas/otherFeesSchema'
 import { securityDeposit } from './schemas/securityDepositSchema'
 import { rentalAmount } from './schemas/rentalAmountSchema'
-import { getRentalPropetySize } from '../utils/utils'
+import { getRentalPropertySize } from '../utils/utils'
 import { Unit } from '../utils/types'
 import * as m from './messages'
 
@@ -156,7 +156,7 @@ const fireProtections = z
       .optional(),
   })
   .superRefine((data, ctx) => {
-    const propertySize = getRentalPropetySize(
+    const propertySize = getRentalPropertySize(
       (data.propertySize as Unit[]) || [],
     )
     const numberOfSmokeDetectors = Number(data.smokeDetectors)
