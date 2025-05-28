@@ -57,12 +57,27 @@ const getJailTimeForAmount = (
 ): number => {
   if (amount === 0) return 0
   const descendingOrderedMappings = [...jailTimeMappings].sort((a, b) => {
-    return a.days - b.days
+    return b.days - a.days
   })
-  const mapping = descendingOrderedMappings.find(
-    (m) => typeof m.maxAmount !== 'number' || amount <= m.maxAmount,
-  )
-  return mapping?.days ?? 0
+
+  let days = 0
+
+  for (const mapping of descendingOrderedMappings) {
+    if (typeof mapping.maxAmount !== 'number') {
+      days = mapping.days
+    } else if (amount <= mapping.maxAmount) {
+      days = mapping.days
+    }
+  }
+
+  return days
+}
+
+const calculateTotalPoints = (fines: FineState[]): number => {
+  return fines.reduce((acc, fine) => {
+    const amount = fine.amountSelected > 1 ? 1 : fine.amountSelected
+    return acc + fine.points * amount
+  }, 0)
 }
 
 const FineCalculatorDetails = ({
@@ -79,10 +94,7 @@ const FineCalculatorDetails = ({
     0,
   )
 
-  const totalPoints = selectedFines.reduce((acc, fine) => {
-    const amount = fine.amountSelected > 1 ? 1 : fine.amountSelected
-    return acc + fine.points * amount
-  }, 0)
+  const totalPoints = calculateTotalPoints(selectedFines)
 
   const jailTime = getJailTimeForAmount(
     totalFine,
@@ -100,7 +112,7 @@ const FineCalculatorDetails = ({
         >
           {formatMessage(m.results.goBack)}
         </Button>
-        {jailTime > 0 && (
+        {jailTime > 0 && Boolean(slice.configJson?.showJailTime) && (
           <Box paddingLeft={3}>
             <Text variant="small" fontWeight="semiBold">
               {formatMessage(m.results.jailTime, { days: jailTime })}
@@ -181,10 +193,7 @@ const FineCardList = ({
     (acc, fine) => acc + fine.price * fine.amountSelected,
     0,
   )
-  const points = fines.reduce((acc, fine) => {
-    const amount = fine.amountSelected > 1 ? 1 : fine.amountSelected
-    return acc + fine.points * amount
-  }, 0)
+  const points = calculateTotalPoints(fines)
 
   return (
     <Stack space={8}>
