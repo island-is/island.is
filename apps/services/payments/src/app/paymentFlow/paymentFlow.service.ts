@@ -182,7 +182,6 @@ export class PaymentFlowService {
         `[${organisationId}] Failed to create payment flow: charge item codes not found`,
         {
           charges: charges.map((c) => c.chargeItemCode),
-          catalogItems: item.map((i) => i.chargeItemCode),
           filteredCharges: filteredChargeInformation.map(
             (c) => c.chargeItemCode,
           ),
