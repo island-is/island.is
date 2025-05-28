@@ -256,7 +256,7 @@ jobs:
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             # NOTE: validate the jq command to trigger failure
-            echo "$CHUNKS" | jq -r 'map(.projects) | join(",")'
+            echo "$CHUNKS" | jq -er 'map(.projects) | join(",")'
             IMAGES=$(echo "$CHUNKS" | jq -r 'map(.projects) | join(",")')
             echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
           fi
