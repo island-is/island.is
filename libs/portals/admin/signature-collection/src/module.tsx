@@ -2,7 +2,7 @@ import { PortalModule } from '@island.is/portals/core'
 import { lazy } from 'react'
 import { m } from './lib/messages'
 import { SignatureCollectionPaths } from './lib/paths'
-import { listsLoader } from './loaders/AllLists.loader'
+import { municipalListsLoader, parliamentaryListsLoader, presidentialListsLoader } from './loaders/AllLists.loader'
 import { listLoader } from './loaders/List.loader'
 import { allowedScopes } from './lib/utils'
 import { AdminPortalScope } from '@island.is/auth/scopes'
@@ -42,7 +42,7 @@ export const signatureCollectionModule: PortalModule = {
           )}
         />
       ),
-      loader: listsLoader(props),
+      loader: parliamentaryListsLoader(props),
     },
     {
       name: m.signatureListsConstituencyTitle,
@@ -54,7 +54,7 @@ export const signatureCollectionModule: PortalModule = {
           )}
         />
       ),
-      loader: listsLoader(props),
+      loader: parliamentaryListsLoader(props),
     },
     {
       name: m.singleList,
@@ -80,7 +80,7 @@ export const signatureCollectionModule: PortalModule = {
           )}
         />
       ),
-      loader: listsLoader(props),
+      loader: presidentialListsLoader(props),
     },
     {
       name: m.singleList,
@@ -100,13 +100,13 @@ export const signatureCollectionModule: PortalModule = {
       name: m.municipalCollectionTitle,
       path: SignatureCollectionPaths.MunicipalRoot,
       element: <AllMunicipalities />,
-      loader: listsLoader(props),
+      loader: municipalListsLoader(props),
     },
     {
       name: m.municipalCollectionTitle,
       path: SignatureCollectionPaths.SingleMunicipality,
       element: <Municipality />,
-      loader: listsLoader(props),
+      loader: municipalListsLoader(props),
     },
     {
       name: m.municipalCollectionTitle,
