@@ -70,35 +70,11 @@ jobs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       NODE_IMAGE_VERSION: ${{ steps.nodejs_image.outputs.NODE_IMAGE_VERSION }}
-      LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base_step.outputs.LAST_GOOD_BUILD_DOCKER_TAG || '' }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
-      node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash || '' }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-      CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY || '' }}
 
     steps:
-      - name: Set LAST_GOOD_BUILD_DOCKER_TAG
-        id: git_nx_base_step
-        run: echo "LAST_GOOD_BUILD_DOCKER_TAG=placeholder" >> "$GITHUB_OUTPUT"
-        # TODO: Verify if this step ID change affects any other references in the workflow
-
-      - name: Placeholder for calculate_node_modules_hash
-        id: calculate_node_modules_hash
-        run: echo "node-modules-hash=placeholder" >> "$GITHUB_OUTPUT"
-
-      - name: Placeholder for set-cache-key
-        id: set-cache-key
-        run: echo "CACHE_KEY=placeholder" >> "$GITHUB_OUTPUT"
-
-      - name: Placeholder for matrix-output
-        id: matrix-output
-        run: echo "json=placeholder" >> "$GITHUB_OUTPUT"
-
-      - name: Placeholder for infra-node-modules
-        id: infra-node-modules
-        run: echo "cache-hit=false" >> "$GITHUB_OUTPUT"
-
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -117,9 +93,7 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_RELEASE == 'true'
         id: git_nx_base_prerelease
         uses: ./.github/actions/prerelease-checkout
-        # TODO: This step ID was changed to avoid duplicate with git_nx_base_step - verify references
 
-      # NOTE: checkout main
       - name: Checkout main branch
         if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
         run: |
