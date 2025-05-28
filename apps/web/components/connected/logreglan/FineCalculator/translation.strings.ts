@@ -17,10 +17,15 @@ export const m = {
       defaultMessage: 'Punktar: ',
       description: 'Punktar: ',
     },
-    pointsPostfix: {
-      id: 'web.logreglan.fineCalculator:fines.pointsPostfix',
+    pointsPostfixPlural: {
+      id: 'web.logreglan.fineCalculator:fines.pointsPostfixPlural',
       defaultMessage: ' punktar',
       description: ' punktar',
+    },
+    pointsPostfixSingular: {
+      id: 'web.logreglan.fineCalculator:fines.pointsPostfixSingular',
+      defaultMessage: ' punktur',
+      description: ' punktur',
     },
     countPostfix: {
       id: 'web.logreglan.fineCalculator:fines.countPostfix',

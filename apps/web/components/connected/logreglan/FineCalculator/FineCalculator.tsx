@@ -214,7 +214,9 @@ const FineCardList = ({
               </Text>
               <Text textAlign="right" variant="h5">
                 {points}
-                {formatMessage(m.fines.pointsPostfix)}
+                {points === 1
+                  ? formatMessage(m.fines.pointsPostfixSingular)
+                  : formatMessage(m.fines.pointsPostfixPlural)}
               </Text>
               <Text textAlign="right" variant="h5">
                 {fines.reduce(
@@ -240,8 +242,14 @@ const FineCardList = ({
         <GridContainer>
           <GridRow rowGap={2}>
             {fines
-              .filter((fine) =>
-                fine.title.toLowerCase().includes(searchValue.toLowerCase()),
+              .filter(
+                (fine) =>
+                  fine.title
+                    .toLowerCase()
+                    .includes(searchValue.toLowerCase()) ||
+                  fine.subtitle
+                    .toLowerCase()
+                    .includes(searchValue.toLowerCase()),
               )
               .map((fine, index) => {
                 const onClick = () => {
