@@ -33,6 +33,7 @@ export enum Features {
   SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
   PracticalExamEnabled = 'isPracticalExamEnabled',
   pensionSupplementEnabled = 'isPensionSupplementEnabled',
+  ExemptionForTransportation = 'isExemptionForTransportationEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

@@ -160,6 +160,8 @@ import { PracticalExamTemplateModule } from './aosh/practical-exam/practical-exa
 import { PracticalExamTemplateService } from './aosh/practical-exam/practical-exam.service'
 import { RentalAgreementModule } from './rental-agreement/rental-agreement.module'
 import { RentalAgreementService } from './rental-agreement/rental-agreement.service'
+import { ExemptionForTransportationModule } from './transport-authority/exemption-for-transportation/exemption-for-transportation.module'
+import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -243,6 +245,7 @@ export const modules = [
   ExampleFolderStructureAndConventionsModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
+  ExemptionForTransportationModule,
 ]
 
 export const services = [
@@ -326,4 +329,5 @@ export const services = [
   ExampleFolderStructureAndConventionsService,
   ExampleAuthDelegationService,
   RentalAgreementService,
+  ExemptionForTransportationService,
 ]

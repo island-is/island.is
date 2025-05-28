@@ -119,7 +119,15 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
             variant !== 'textarea' && variant !== 'currency' ? variant : 'text'
           }
           format={format}
-          suffix={suffix}
+          suffix={
+            suffix &&
+            formatTextWithLocale(
+              suffix,
+              application,
+              locale as Locale,
+              formatMessage,
+            )
+          }
           defaultValue={getDefaultValue(field, application)}
           backgroundColor={backgroundColor}
           rows={rows}
