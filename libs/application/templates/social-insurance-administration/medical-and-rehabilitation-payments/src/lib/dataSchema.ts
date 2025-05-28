@@ -261,14 +261,59 @@ export const dataSchema = z.object({
   rehabilitationPlanConfirmation: z
     .array(z.string())
     .refine((v) => v.includes(YES)),
-  selfAssessment: z.object({
-    questionnaire: z.array(
-      z.object({
-        answer: z.string(),
-        questionId: z.string(),
-      }),
+  selfAssessment: z
+    .object({
+      mainProblem: z.string().min(1).optional(),
+      hasPreviouslyReceivedRehabilitationOrTreatment: z
+        .enum([YES, NO])
+        .optional(),
+      previousRehabilitationOrTreatment: z.string().optional(),
+      previousRehabilitationSuccessful: z.string().optional(),
+      previousRehabilitationSuccessfulFurtherExplanations: z
+        .string()
+        .optional(),
+      questionnaire: z
+        .array(
+          z.object({
+            answer: z.string(),
+            questionId: z.string(),
+          }),
+        )
+        .optional(),
+    })
+    .refine(
+      ({
+        hasPreviouslyReceivedRehabilitationOrTreatment,
+        previousRehabilitationOrTreatment,
+      }) =>
+        hasPreviouslyReceivedRehabilitationOrTreatment === YES
+          ? !!previousRehabilitationOrTreatment
+          : true,
+      { path: ['previousRehabilitationOrTreatment'] },
+    )
+    .refine(
+      ({
+        hasPreviouslyReceivedRehabilitationOrTreatment,
+        previousRehabilitationSuccessful,
+      }) =>
+        hasPreviouslyReceivedRehabilitationOrTreatment === YES
+          ? !!previousRehabilitationSuccessful
+          : true,
+      { path: ['previousRehabilitationSuccessful'] },
+    )
+    .refine(
+      ({
+        hasPreviouslyReceivedRehabilitationOrTreatment,
+        previousRehabilitationSuccessful,
+        previousRehabilitationSuccessfulFurtherExplanations,
+      }) =>
+        hasPreviouslyReceivedRehabilitationOrTreatment === YES &&
+        (previousRehabilitationSuccessful === YES ||
+          previousRehabilitationSuccessful === NO)
+          ? !!previousRehabilitationSuccessfulFurtherExplanations
+          : true,
+      { path: ['previousRehabilitationSuccessfulFurtherExplanations'] },
     ),
-  }),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
