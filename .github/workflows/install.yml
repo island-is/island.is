@@ -134,8 +134,8 @@ jobs:
           MAIN_BRANCH: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
           RUN_MERGE_QUEUE_INPUT: ${{ inputs.run_merge_queue }}
           GITHUB_CURRENT_SHA: ${{ github.sha }}
-          NX_HEAD_FROM_ENV: ${{ env.NX_HEAD }}
-          NX_BASE_FROM_ENV: ${{ env.NX_BASE }}
+          NX_HEAD: ${{ env.NX_HEAD }}
+          NX_BASE: ${{ env.NX_BASE }}
         run: |
           if [[ "$RUN_MERGE_QUEUE_INPUT" == "true" ]]; then
             # In merge queue we always want to use the last
@@ -154,11 +154,11 @@ jobs:
             echo "BASE=$NX_BASE" >> "$GITHUB_ENV"
             exit 0
           fi
-          echo "NX_HEAD=$NX_HEAD_FROM_ENV" >> "$GITHUB_OUTPUT"
-          echo "NX_BASE=$NX_BASE_FROM_ENV" >> "$GITHUB_OUTPUT"
+          echo "NX_HEAD=$NX_HEAD" >> "$GITHUB_OUTPUT"
+          echo "NX_BASE=$NX_BASE" >> "$GITHUB_OUTPUT"
           # NOTE: we reference BASE and HEAD elsewhere
-          echo "HEAD=$NX_HEAD_FROM_ENV" >> "$GITHUB_ENV"
-          echo "BASE=$NX_BASE_FROM_ENV" >> "$GITHUB_ENV"
+          echo "HEAD=$NX_HEAD" >> "$GITHUB_ENV"
+          echo "BASE=$NX_BASE" >> "$GITHUB_ENV"
           if [[ "$MAIN_BRANCH" == release/* ]]; then
             echo "SKIP_JUDICIAL=true" >> "$GITHUB_OUTPUT"
             echo "SKIP_JUDICIAL=true" >> "$GITHUB_ENV"
