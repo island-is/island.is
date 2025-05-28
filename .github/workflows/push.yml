@@ -236,16 +236,15 @@ jobs:
           HEAD_SHA: ${{ env.HEAD }}
         run: |
           set -euo pipefail
-          AFFECTED_TARGETS="$(yarn nx show projects --affected --base "$BASE_SHA" --head "$HEAD_SHA" --json | jq -r '. | join(",")')"
-          cd infra
-          ADDITIONAL_PROJECTS="$(yarn feature-env downstream --feature tmp --images "$AFFECTED_TARGETS" --chart islandis)"
-          cd ..
+          AFFECTED_TARGETS="$(yarn nx show projects --affected --base "$BASE_SHA" --head "$HEAD_SHA" --json | jq -r 'join(",")')"
+          ADDITIONAL_PROJECTS="$( (cd infra && yarn feature-env downstream --feature tmp --images "$AFFECTED_TARGETS" --chart islandis) )"
           echo "Additional Projects: $ADDITIONAL_PROJECTS"
+          export ADDITIONAL_PROJECTS # Export for use in generate-docker-chunks.sh
 
           # Split ADDITIONAL_PROJECTS into an array to correctly pass multiple arguments
-          # This addresses SC2046 by ensuring proper word splitting for the script.
-          IFS=',' read -r -a ADDITIONAL_PROJECTS_ARRAY <<< "$ADDITIONAL_PROJECTS"
-          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "${ADDITIONAL_PROJECTS_ARRAY[@]}" "docker-express" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
+          # The ADDITIONAL_PROJECTS variable is exported for use by generate-docker-chunks.sh
+          # The script expects positional arguments to be the docker targets.
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"
