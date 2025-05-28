@@ -263,8 +263,8 @@ export const dataSchema = z.object({
     .refine((v) => v.includes(YES)),
   selfAssessment: z
     .object({
-      hadAssistance: z.enum([YES, NO]),
-      highestLevelOfEducation: z.string(),
+      hadAssistance: z.enum([YES, NO]).optional(),
+      highestLevelOfEducation: z.string().optional(),
       mainProblem: z.string().min(1).optional(),
       hasPreviouslyReceivedRehabilitationOrTreatment: z
         .enum([YES, NO])

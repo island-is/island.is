@@ -174,9 +174,9 @@ export const Review: FC<ReviewScreenProps> = ({
       <EmployeeSickPay {...childProps} />
       <UnionSickPay {...childProps} />
       <RehabilitationPlan />
+      <SelfAssessmentQuestionsOne {...childProps} />
       <SelfAssessmentQuestionsThree {...childProps} />
       <SelfAssessmentQuestionnaire {...childProps} />
-      <SelfAssessmentQuestionsOne {...childProps} />
       <Comment {...childProps} />
       <Attachments {...childProps} />
     </>
