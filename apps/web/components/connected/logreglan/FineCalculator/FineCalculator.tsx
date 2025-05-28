@@ -21,7 +21,7 @@ import { formatCurrency } from '@island.is/web/utils/currency'
 import { m } from './translation.strings'
 import * as styles from './FineCalculator.css'
 
-const QUARTER_OF_FINE_MULTIPLIER = 0.75
+const QUARTER_OFF_FINE_MULTIPLIER = 0.75
 
 interface JailTimeMapping {
   maxAmount?: number
@@ -145,7 +145,7 @@ const FineCalculatorDetails = ({
                 {formatCurrency(fine.price)}
               </Table.Data>
               <Table.Data align="right">
-                {formatCurrency(fine.price * QUARTER_OF_FINE_MULTIPLIER)}
+                {formatCurrency(fine.price * QUARTER_OFF_FINE_MULTIPLIER)}
               </Table.Data>
               <Table.Data align="right">{fine.points}</Table.Data>
             </Table.Row>
@@ -160,7 +160,7 @@ const FineCalculatorDetails = ({
               {formatCurrency(totalFine)}
             </Table.Data>
             <Table.Data align="right" text={{ fontWeight: 'semiBold' }}>
-              {formatCurrency(totalFine * QUARTER_OF_FINE_MULTIPLIER)}
+              {formatCurrency(totalFine * QUARTER_OFF_FINE_MULTIPLIER)}
             </Table.Data>
             <Table.Data align="right" text={{ fontWeight: 'semiBold' }}>
               {totalPoints}
