@@ -249,7 +249,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const htmlStyles = useHtmlStyles()
   const { openBrowser } = useBrowser()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
-  const [accessToken, setAccessToken] = useState<string>()
   const [error, setError] = useState(false)
   const [showConfirmedAlert, setShowConfirmedAlert] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -353,7 +352,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     (hasAlert && !hasConfirmation) ||
     (hasActions && !showConfirmedAlert && !hasConfirmation)
 
-  const loading = docRes.loading || !accessToken
+  const loading = docRes.loading
   const fileTypeLoaded = !!Document?.content?.type
   const hasError = error || docRes.error
 
@@ -433,21 +432,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     markDocumentAsRead()
   }, [Document.id])
 
-  useEffect(() => {
-    const { authorizeResult, refresh } = authStore.getState()
-    const isExpired =
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      new Date(authorizeResult?.accessTokenExpirationDate ?? 0).getTime() <
-      Date.now()
-    if (isExpired) {
-      refresh().then(() => {
-        setAccessToken(authStore.getState().authorizeResult?.accessToken)
-      })
-    } else {
-      setAccessToken(authorizeResult?.accessToken)
-    }
-  }, [])
-
   const fadeAnim = useRef(new Animated.Value(0)).current
 
   React.useEffect(() => {
@@ -526,7 +510,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               />
             ) : hasPdf ? (
               <PdfWrapper>
-                {visible && accessToken && (
+                {visible && (
                   <PdfViewer
                     url={`data:application/pdf;base64,${Document.content?.value}`}
                     subject={Document.subject}
@@ -556,7 +540,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             ))}
         </Animated.View>
 
-        {(!loaded || !accessToken || hasError) && (
+        {(!loaded || hasError) && (
           <View
             style={[
               StyleSheet.absoluteFill,
