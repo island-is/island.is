@@ -45,7 +45,6 @@ import {
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  useCase,
   useDefendants,
   useFileList,
   useS3Upload,
