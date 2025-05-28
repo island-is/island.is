@@ -310,43 +310,55 @@ const generateRequestCaseType = (
 }
 
 const getAppealCaseNumberSortValue = (appealCaseNumber: string): string => {
-  const parts = appealCaseNumber.split('/')
+  const [num, year] = appealCaseNumber.split('/') // Assume the number is of the form xxxxx/yyyy
 
-  if (parts.length < 2) {
+  if (!num || !year) {
+    // Either the case does not yet have an appeal case number or it is malformed
+    // In both cases we return a default value
     return '000000000'
   }
 
-  const year = parts[1] // Assume its 4 digits
-  const number = parts[0].padStart(5, '0') // Assume its no more than 5 digits
+  // Assume year is 4 digits
+  // Assume num is no more than 5 digits
+  const number = num.padStart(5, '0')
 
   return `${year}${number}`
 }
 
 const getCourtCaseNumberSortValue = (courtCaseNumber: string): string => {
-  const parts = courtCaseNumber.slice(2).split('/') // Assume the number starts with 'R-' or 'S-'
+  // Assume the number starts with 'R-' or 'S-'
+  const [num, year] = courtCaseNumber.slice(2).split('/')
 
-  if (parts.length < 2) {
+  if (!num || !year) {
+    // Either the case does not yet have a court case number or it is malformed
+    // In both cases we return a default value
     return '000000000'
   }
 
-  const year = parts[1] // Assume its 4 digits
-  const number = parts[0].padStart(5, '0') // Assume its no more than 5 digits
+  // Assume year is 4 digits
+  // Assume num is no more than 5 digits
+  const number = num.padStart(5, '0')
 
   return `${year}${number}`
 }
 
 const getPoliceCaseNumberSortValue = (policeCaseNumber: string): string => {
-  const parts = policeCaseNumber.split('-')
+  const [prefix, year, numParts] = policeCaseNumber.split('-')
 
-  if (parts.length < 3) {
+  if (!prefix || !year || !numParts) {
+    // Either the case does not yet have a police case number or it is malformed
+    // In both cases we return a default value
     return '0000000000000000'
   }
 
-  const year = parts[1] // Assume its 4 digits
-  const prefix = parts[0] // Assume its 3 digits
-  const numParts = parts[2].split(' +') // Check for additional police case numbers
-  const number = numParts[0].padStart(6, '0') // Assume its no more than 6 digits
-  const postfix = numParts.length === 1 ? '000' : numParts[1].padStart(3, '0') // Assume no more than 999 additional police case numbers
+  const [num, post] = numParts.split(' +') // Check for additional police case numbers
+
+  // Assume prefix 3 digits
+  // Assume year 4 digits
+  // Assume num is no more than 6 digits
+  // Assume no more than 999 additional police case numbers
+  const number = num.padStart(6, '0') // Assume its no more than 6 digits
+  const postfix = post ? post.padStart(3, '0') : '000'
 
   return `${year}${prefix}${number}${postfix}`
 }
