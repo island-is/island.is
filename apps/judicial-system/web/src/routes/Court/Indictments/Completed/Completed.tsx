@@ -47,6 +47,7 @@ import {
 import {
   useCase,
   useDefendants,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -65,6 +66,10 @@ const Completed: FC = () => {
     useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
+
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
 
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const [modalVisible, setModalVisible] =
@@ -263,6 +268,7 @@ const Completed: FC = () => {
               })}
               onChange={handleCriminalRecordUpdateUpload}
               onRemove={handleRemoveFile}
+              onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
             />
           </Box>
         )}
