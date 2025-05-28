@@ -91,7 +91,7 @@ jobs:
 
       - name: Prepare pre-release
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_RELEASE == 'true'
-        id: git_nx_base_prerelease
+        id: git_nx_base
         uses: ./.github/actions/prerelease-checkout
 
       - name: Checkout main branch
