@@ -14,7 +14,9 @@ const createCharge = (
 describe('processCharges', () => {
   it('should return an empty array if input is empty or null', () => {
     expect(processCharges([])).toEqual([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(processCharges(null as any)).toEqual([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(processCharges(undefined as any)).toEqual([])
   })
 
