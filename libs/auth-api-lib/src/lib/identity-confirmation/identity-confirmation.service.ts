@@ -56,8 +56,6 @@ export class IdentityConfirmationService {
 
     const link = this.generateLink(identityConfirmation.id)
 
-    console.log('LINK================', link)
-
     switch (type) {
       case IdentityConfirmationType.EMAIL:
         await this.sendViaEmail(id, link, lang)
