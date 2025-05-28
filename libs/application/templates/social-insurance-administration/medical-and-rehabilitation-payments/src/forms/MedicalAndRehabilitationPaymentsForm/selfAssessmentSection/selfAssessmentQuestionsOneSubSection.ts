@@ -10,6 +10,8 @@ import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messag
 
 export const selfAssessmentQuestionsOneSubSection = buildSubSection({
   id: 'selfAssessmentQuestionsOneSubSection',
+  tabTitle:
+    medicalAndRehabilitationPaymentsFormMessage.selfAssessment.sectionTitle,
   children: [
     buildMultiField({
       id: 'selfAssessmentQuestionsOne',
