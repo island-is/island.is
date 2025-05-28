@@ -23,9 +23,9 @@ export enum DefendantPlea {
 }
 
 export enum ServiceRequirement {
-  REQUIRED = 'REQUIRED',
-  NOT_REQUIRED = 'NOT_REQUIRED',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
+  REQUIRED = 'REQUIRED', // Ruling must be served
+  NOT_REQUIRED = 'NOT_REQUIRED', // Ruling does not need to be served
+  NOT_APPLICABLE = 'NOT_APPLICABLE', // Defendant was present in court
 }
 
 export enum ServiceStatus {

@@ -13,7 +13,7 @@ import {
   CaseTransition,
 } from '../../../graphql/schema'
 import { useCase } from '../../../utils/hooks'
-import Modal from '../../Modal/Modal'
+import Modal from '../../Modals/Modal/Modal'
 import { UserContext } from '../../UserProvider/UserProvider'
 import { strings } from './WithdrawAppealMenuOption.strings'
 
