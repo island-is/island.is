@@ -39,13 +39,13 @@ jobs:
         id: fetch-pr
         run: |
           COMMIT_SHA="${{ github.event.workflow_run.head_commit.id }}"
-          if ! PR_NUMBER=$(bash ./scripts/ci/get-pr.sh "${COMMIT_SHA}"); then # Fixed: SC2086: Double quote to prevent globbing and word splitting. TODO: Re-evaluate if this fix is correct, as the original issue was on line 40, not 42.
+          if ! PR_NUMBER=$(bash ./scripts/ci/get-pr.sh "${COMMIT_SHA}"); then
             echo "Error: Failed to get PR number for commit $COMMIT_SHA"
             exit 1
           fi
 
           if [ -n "$PR_NUMBER" ]; then
-            echo "PR_NUMBER=$PR_NUMBER" >> "$GITHUB_OUTPUT" # Fixed: SC2086: Double quote to prevent globbing and word splitting.
+            echo "PR_NUMBER=$PR_NUMBER" >> "$GITHUB_OUTPUT"
           else
             echo "No merged PR found for commit $COMMIT_SHA."
           fi
@@ -79,8 +79,8 @@ jobs:
       - name: Execute PR revert
         if: ${{ vars.ENABLE_PR_REVERT == 'true' }}
         run: |
-          REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${PR_NUMBER}") # Fixed: SC2086: Double quote to prevent globbing and word splitting.
-          gh pr edit "$REVERT_PR" --add-label "automerge,high priority" # Fixed: SC2086: Double quote to prevent globbing and word splitting.
+          REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${PR_NUMBER}")
+          gh pr edit "$REVERT_PR" --add-label "automerge,high priority"
 
   manual-revert-pr:
     name: Manual PR revert
@@ -95,5 +95,5 @@ jobs:
       - name: Execute PR revert
         if: ${{ vars.ENABLE_PR_REVERT == 'true' }}
         run: |
-          REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${{ github.event.pull_request.number }}") # Fixed: SC2086: Double quote to prevent globbing and word splitting.
-          gh pr edit "$REVERT_PR" --add-label "automerge,high priority" # Fixed: SC2086: Double quote to prevent globbing and word splitting.
+          REVERT_PR=$(bash ./scripts/ci/revert-pr.sh "${{ github.event.pull_request.number }}")
+          gh pr edit "$REVERT_PR" --add-label "automerge,high priority"

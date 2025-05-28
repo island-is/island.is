@@ -404,7 +404,7 @@ jobs:
       - name: Notify about deploy-feature label
         if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
-          echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> "$GITHUB_STEP_SUMMARY" # TODO: Fix SC2086: Double quote to prevent globbing and word splitting [shellcheck]
+          echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> "$GITHUB_STEP_SUMMARY"
           exit 1
 
       - name: Collect

@@ -313,7 +313,7 @@ jobs:
             echo DOCKER_TYPE="$DOCKER_TYPE"
             echo APP_HOME="$APP_HOME"
             echo APP_DIST_HOME="$APP_DIST_HOME"
-          } >> "$GITHUB_ENV" # Fixed: SC2129: Combined multiple redirects into a single block.
+          } >> "$GITHUB_ENV"
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -472,7 +472,7 @@ jobs:
             echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}"
             docker run --rm "${DOCKER_REGISTRY}/helm-config:$DOCKER_TAG" ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME"
             echo 'EOF'
-          } >> "$GITHUB_ENV" # Fixed: SC2129: Combined multiple redirects into a single block.
+          } >> "$GITHUB_ENV"
         env:
           PUBLISH: 'true'
 
