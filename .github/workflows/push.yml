@@ -1,6 +1,9 @@
 name: Monorepo pipeline - build and deploy
 
 on:
+  push:
+    branches:
+      - 'pre-release/**'
   workflow_dispatch:
   pull_request:
     types:
@@ -39,7 +42,7 @@ env:
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
@@ -164,7 +167,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Install infra modules
         working-directory: infra
@@ -299,7 +302,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Set id for matrix
         run: |
@@ -358,7 +361,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Building Docker images
         continue-on-error: true
@@ -429,7 +432,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Docker build image
         working-directory: infra
@@ -501,7 +504,7 @@ jobs:
         uses: ./monorepo/.github/actions/setup-yarn
         with:
           working-directory: monorepo
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Install infra modules
         if: steps.infra-node-modules.outputs.cache-hit != 'true'

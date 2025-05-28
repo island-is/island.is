@@ -28,7 +28,7 @@ env:
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
@@ -67,7 +67,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -100,7 +100,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -119,6 +119,7 @@ jobs:
           ' | tee -a "$GITHUB_OUTPUT"
 
       - name: Verify that projects have some tests
+        if: ${{ steps.unicorn.outputs.projects != '' }}
         env:
           projects: ${{ steps.unicorn.outputs.projects }}
         run: |
@@ -159,7 +160,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -179,7 +180,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -219,7 +220,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -252,7 +253,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Run lintfix
         id: lintfix
@@ -288,7 +289,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -304,6 +305,9 @@ jobs:
             (grep -oP '(?<=✖ )(\d+)(?= problems)' || echo '0') | # Find number of problems
             awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
             tee -a "$GITHUB_OUTPUT" # Finally create output
+          echo "::group::Lints"
+          cat "$lints"
+          echo "::endgroup::"
 
       # Checkout for linting base
       - uses: actions/checkout@v4
@@ -324,6 +328,9 @@ jobs:
             (grep -oP '(?<=✖ )(\d+)(?= problems)' || echo '0') | # Find number of problems
             awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
             tee -a "$GITHUB_OUTPUT" # Finally create output
+          echo "::group::Lints"
+          cat "$lints"
+          echo "::endgroup::"
 
       - name: No new lints
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
@@ -341,7 +348,7 @@ jobs:
           done
           NEW_LINTS=$(comm -13 "${BASE_LINT_FILE}_files.out" "${HEAD_LINT_FILE}_files.out" | wc -l) || { echo "Failed comparing output files"; exit 1; }
           COUNT_DIFF=$(( HEAD_LINT_COUNT - BASE_LINT_COUNT )) || :
-          if (( COUNT_DIFF <= 0 && NEW_LINTS == 0 )); then
+          if (( NEW_LINTS == 0 )); then
             echo "Lint count has not increased (𝚫=$COUNT_DIFF)"
             exit 0
           fi
@@ -372,7 +379,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps

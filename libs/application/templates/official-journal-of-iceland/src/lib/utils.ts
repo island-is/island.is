@@ -57,6 +57,13 @@ const getNextWorkday = (date: Date) => {
   return nextDay
 }
 
+export const isDateNotBeforeToday = (dateStr: string) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // start of the day
+  const date = new Date(dateStr)
+  return date >= today
+}
+
 const addWorkDays = (date: Date, days: number) => {
   let result = new Date(date)
   while (days > 0) {
