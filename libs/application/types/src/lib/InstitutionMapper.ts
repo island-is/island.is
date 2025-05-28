@@ -4,12 +4,17 @@ import { InstitutionContentfulIds } from './InstitutionContentfulIds'
 import { InstitutionNationalIds } from './InstitutionNationalIds'
 
 export const institutionMapper = {
-  [ApplicationTypes.EXAMPLE]: {
+  [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
@@ -25,11 +30,6 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
-    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
-    slug: InstitutionTypes.STAFRAENT_ISLAND,
-    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
-  },
-  [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
@@ -175,11 +175,6 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.FJARSYSLA_RIKISINS,
   },
   [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
-    nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
-    slug: InstitutionTypes.RIKISENDURSKODUN,
-    contentfulId: InstitutionContentfulIds.RIKISENDURSKODUN,
-  },
-  [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
     slug: InstitutionTypes.RIKISENDURSKODUN,
     contentfulId: InstitutionContentfulIds.RIKISENDURSKODUN,
@@ -430,6 +425,11 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
   },
   [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.PRACTICAL_EXAM]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,

@@ -11,6 +11,6 @@ Annual financial statement for cemeteries, should be handed in before the 1. of 
 Financial statements that should he handed in with in three months of an election that individuals take part in.
 This is for example elections for president, parlament, local goverments or primaries for political parties.
 
-## Financial-statements-political-party
+## Financial-statement-political-party
 
 Annual financial statements for political parties, should be handed in before 31. of October each year.
