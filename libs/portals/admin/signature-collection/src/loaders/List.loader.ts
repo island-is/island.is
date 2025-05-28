@@ -17,7 +17,6 @@ import {
   ListStatusQuery,
 } from './listGraphql/getListStatus.generated'
 
-// Helper function for creating list loaders with specific collection types
 const createListLoader = (collectionType: SignatureCollectionCollectionType): WrappedLoaderFn => 
 ({ client }) => {
   return async ({
@@ -80,6 +79,3 @@ export const presidentialListLoader: WrappedLoaderFn =
 // Municipal List Loader
 export const municipalListLoader: WrappedLoaderFn = 
   createListLoader(SignatureCollectionCollectionType.LocalGovernmental)
-
-// For backward compatibility
-export const listLoader = parliamentaryListLoader

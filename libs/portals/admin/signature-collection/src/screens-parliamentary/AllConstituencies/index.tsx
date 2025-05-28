@@ -13,23 +13,21 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
-import { signatureCollectionNavigation } from '../lib/navigation'
-import { m } from '../lib/messages'
+import { signatureCollectionNavigation } from '../../lib/navigation'
+import { m } from '../../lib/messages'
 import { useLoaderData, useNavigate } from 'react-router-dom'
-import { SignatureCollectionPaths } from '../lib/paths'
-import CompareLists from '../shared-components/compareLists'
-import { ListsLoaderReturn } from '../loaders/AllLists.loader'
+import { SignatureCollectionPaths } from '../../lib/paths'
+import CompareLists from '../../shared-components/compareLists'
+import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import electionsCommitteeLogo from '../../assets/electionsCommittee.svg'
-import nationalRegistryLogo from '../../assets/nationalRegistry.svg'
 import { useState } from 'react'
 import { useSignatureCollectionSignatureLookupQuery } from './findSignature.generated'
-import { SkeletonSingleRow } from '../shared-components/compareLists/skeleton'
+import { SkeletonSingleRow } from '../../shared-components/compareLists/skeleton'
 import {
   CollectionStatus,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
-import ActionCompleteCollectionProcessing from '../shared-components/completeCollectionProcessing'
-import DownloadReports from '../shared-components/downloadReports'
+import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 
 const ParliamentaryRoot = () => {
   const { formatMessage } = useLocale()
@@ -100,11 +98,6 @@ const ParliamentaryRoot = () => {
                 backgroundColor="blue"
               />
             </Box>
-            {/*<DownloadReports
-                areas={collection.areas}
-                collectionId={collection?.id}
-              />
-            */}
           </Box>
           {loading && (
             <Box marginBottom={6}>
