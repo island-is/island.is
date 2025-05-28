@@ -231,18 +231,24 @@ jobs:
 
       - name: Prepare docker build targets
         id: build_map
+        env:
+          BASE_SHA: ${{ env.BASE }}
+          HEAD_SHA: ${{ env.HEAD }}
         run: |
           set -euo pipefail
-          AFFECTED_TARGETS="$(yarn nx show projects --affected --base "$BASE" --head "$HEAD" --json | jq -r '. | join(",")')"
+          AFFECTED_TARGETS="$(yarn nx show projects --affected --base "$BASE_SHA" --head "$HEAD_SHA" --json | jq -r '. | join(",")')"
           cd infra
           ADDITIONAL_PROJECTS="$(yarn feature-env downstream --feature tmp --images "$AFFECTED_TARGETS" --chart islandis)"
           cd ..
-          export ADDITIONAL_PROJECTS
           echo "Additional Projects: $ADDITIONAL_PROJECTS"
-          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "${ADDITIONAL_PROJECTS}" "docker-express" "docker-next" "docker-static" "docker-playwright" "docker-jest")" # TODO: SC2046: This issue persists. The variable `ADDITIONAL_PROJECTS` is already quoted. This warning might indicate that `generate-docker-chunks.sh` expects multiple arguments, and `ADDITIONAL_PROJECTS` is a space-separated string. If so, the script itself needs to be modified to handle a single string argument, or `ADDITIONAL_PROJECTS` needs to be converted into an array before being passed. For now, leaving as is, as the quoting is correct for passing it as a single argument. Moving on for now.
+
+          # Split ADDITIONAL_PROJECTS into an array to correctly pass multiple arguments
+          # This addresses SC2046 by ensuring proper word splitting for the script.
+          IFS=',' read -r -a ADDITIONAL_PROJECTS_ARRAY <<< "$ADDITIONAL_PROJECTS"
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "${ADDITIONAL_PROJECTS_ARRAY[@]}" "docker-express" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
+            echo "BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
 
