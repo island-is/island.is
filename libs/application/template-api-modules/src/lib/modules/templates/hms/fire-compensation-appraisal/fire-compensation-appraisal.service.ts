@@ -10,6 +10,8 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { mockGetProperties } from './mockedFasteign'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { getValueViaPath } from '@island.is/application/core'
+import { paymentForAppraisal } from './utls'
 
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
@@ -57,6 +59,45 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     }
 
     return properties
+  }
+
+  async calculateAmount(props: TemplateApiModuleActionProps) {
+    const { application } = props
+
+    try {
+      const properties = await this.getProperties(props)
+
+      const selectedRealEstateId = getValueViaPath<string>(
+        application.answers,
+        'realEstate',
+      )
+      const selectedUsageUnits = getValueViaPath<Array<string>>(
+        application.answers,
+        'usageUnits',
+      )
+
+      const property = properties.find(
+        (property) => property.fasteignanumer === selectedRealEstateId,
+      )
+
+      const usageUnitsFireAppraisal =
+        property?.notkunareiningar?.notkunareiningar?.map((unit) => {
+          if (selectedUsageUnits?.includes(unit.notkunareininganumer ?? '')) {
+            return unit.brunabotamat
+          }
+          return 0
+        })
+
+      const selectedUnitsFireAppraisal =
+        usageUnitsFireAppraisal?.reduce((acc, curr) => {
+          return (acc ?? 0) + (curr ?? 0)
+        }, 0) ?? 0
+
+      return paymentForAppraisal(selectedUnitsFireAppraisal)
+    } catch (e) {
+      this.logger.error('Failed to calculate amount:', e)
+      throw new Error('Villa kom upp við að reikna út núverandi brunabótamat')
+    }
   }
 
   async createApplication() {

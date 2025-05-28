@@ -14,6 +14,10 @@ import * as m from '../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
 
 export const overviewSection = buildSection({
+  condition: (application) => {
+    console.log('application: ', application)
+    return true
+  },
   id: 'overviewSection',
   title: m.overviewMessages.title,
   children: [

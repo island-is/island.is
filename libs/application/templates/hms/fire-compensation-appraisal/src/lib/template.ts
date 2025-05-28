@@ -9,10 +9,10 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
-  InstitutionTypes,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
-import { CodeOwners } from '@island.is/shared/constants'
+import { ChargeItemCode, CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
@@ -22,8 +22,9 @@ import { assign } from 'xstate'
 import { NationalRegistryApi, propertiesApi } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { InstitutionNationalIds } from '@island.is/application/types'
-import { getCodes } from '../utils/paymentUtils'
 import * as m from '../lib/messages'
+import { TemplateApiActions } from '../types'
+import { getChargeItems } from '../utils/paymentUtils'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -33,7 +34,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.FIRE_COMPENSATION_APPRAISAL,
   name: 'Endurmat brunabótamats',
   codeOwner: CodeOwners.NordaApplications,
-  institution: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+  institution: m.miscMessages.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.FireCompensationAppraisal.translation,
   ],
@@ -107,8 +108,14 @@ const template: ApplicationTemplate<
         },
       },
       [States.PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItems: getCodes,
+        onEntry: [
+          defineTemplateApi({
+            action: TemplateApiActions.calculateAmount,
+            order: 1,
+          }),
+        ],
+        organizationId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+        chargeItems: getChargeItems,
       }),
       [States.DONE]: {
         meta: {

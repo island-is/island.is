@@ -11,4 +11,9 @@ export const miscMessages = defineMessages({
     defaultMessage: 'Nei',
     description: 'No',
   },
+  institutionName: {
+    id: 'fca.application:institution',
+    defaultMessage: 'Húsnæðis og mannvirkjastofnun',
+    description: 'Institution name',
+  },
 })

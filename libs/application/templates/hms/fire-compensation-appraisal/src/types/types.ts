@@ -3,3 +3,7 @@ export type FileType = {
   name: string
   key: string
 }
+
+export enum TemplateApiActions {
+  calculateAmount = 'calculateAmount',
+}
