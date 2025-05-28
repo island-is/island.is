@@ -204,6 +204,7 @@ export class ApplicationService {
       [Op.or]: [
         { applicant: { [Op.eq]: nationalId } },
         { assignees: { [Op.contains]: [nationalId] } },
+        ...(actor ? [{ applicantActors: { [Op.contains]: [actor] } }] : []),
       ],
     }
 
