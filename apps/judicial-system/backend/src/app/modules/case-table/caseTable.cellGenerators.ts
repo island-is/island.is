@@ -85,34 +85,14 @@ interface CaseTableCellGenerator {
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000
 
-const getFormattedIndictmentArraignmentDate = (
-  theCase: Case,
-): StringGroupValue | undefined => {
-  if (theCase.indictmentDecision === IndictmentDecision.SCHEDULING) {
-    const courtDate = DateLog.courtDate(theCase.dateLogs)?.date
-
-    if (courtDate) {
-      return {
-        s: [
-          `${capitalize(formatDate(courtDate, 'EEE d. MMMM yyyy'))}`,
-          `kl. ${formatDate(courtDate, 'HH:mm') ?? ''}`,
-        ],
-      }
-    }
+const getIndictmentCourtDate = (c: Case): Date | undefined => {
+  if (c.indictmentDecision) {
+    return c.indictmentDecision === IndictmentDecision.SCHEDULING
+      ? DateLog.courtDate(c.dateLogs)?.date
+      : undefined
   }
 
-  const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)?.date
-
-  if (arraignmentDate) {
-    return {
-      s: [
-        `${capitalize(formatDate(arraignmentDate, 'EEE d. MMMM yyyy'))}`,
-        `kl. ${formatDate(arraignmentDate, 'HH:mm') ?? ''}`,
-      ],
-    }
-  }
-
-  return undefined
+  return DateLog.arraignmentDate(c.dateLogs)?.date
 }
 
 const generateAppealStateTag = (c: Case, user: TUser): TagValue | undefined => {
@@ -194,7 +174,7 @@ const generateIndictmentCaseStateTag = (c: Case, user: TUser): TagValue => {
     indictmentReviewerId,
   } = c
 
-  const courtDate = DateLog.courtDate(c.dateLogs)?.date
+  const courtDate = getIndictmentCourtDate(c)
 
   switch (state) {
     case CaseState.NEW:
@@ -505,25 +485,13 @@ const indictmentArraignmentDate: CaseTableCellGenerator = {
     },
   },
   generate: (c: Case): StringGroupValue | undefined => {
-    if (c.indictmentDecision) {
-      const courtDateLog = DateLog.courtDate(c.dateLogs)?.date
-      return courtDateLog &&
-        c.indictmentDecision === IndictmentDecision.SCHEDULING
-        ? {
-            s: [
-              `${capitalize(formatDate(courtDateLog, 'EEE d. MMMM yyyy'))}`,
-              `kl. ${formatDate(courtDateLog, 'HH:mm') ?? ''}`,
-            ],
-          }
-        : undefined
-    }
+    const courtDate = getIndictmentCourtDate(c)
 
-    const arraignmentDateLog = DateLog.arraignmentDate(c.dateLogs)?.date
-    return arraignmentDateLog
+    return courtDate
       ? {
           s: [
-            `${capitalize(formatDate(arraignmentDateLog, 'EEE d. MMMM yyyy'))}`,
-            `kl. ${formatDate(arraignmentDateLog, 'HH:mm') ?? ''}`,
+            `${capitalize(formatDate(courtDate, 'EEE d. MMMM yyyy'))}`,
+            `kl. ${formatDate(courtDate, 'HH:mm') ?? ''}`,
           ],
         }
       : undefined
