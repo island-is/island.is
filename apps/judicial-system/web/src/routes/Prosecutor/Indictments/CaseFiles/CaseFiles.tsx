@@ -20,6 +20,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -39,6 +40,10 @@ const CaseFiles = () => {
     updateUploadFile,
     removeUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
+
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
 
   const {
     handleUploadCriminalRecord,
@@ -112,6 +117,7 @@ const CaseFiles = () => {
                 updateUploadFile,
               )
             }
+            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
@@ -137,6 +143,7 @@ const CaseFiles = () => {
                 updateUploadFile,
               )
             }
+            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
@@ -160,6 +167,7 @@ const CaseFiles = () => {
                 updateUploadFile,
               )
             }
+            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
