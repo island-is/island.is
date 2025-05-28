@@ -17,7 +17,7 @@ export const Default = () => (
       id: 'application1',
       modified: new Date(),
       status: ApplicationStatus.DRAFT,
-      typeId: ApplicationTypes.EXAMPLE,
+      typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       name: 'Example Application',
       progress: 0.4,
       actionCard: {
@@ -36,7 +36,7 @@ export const Completed = () => (
       id: 'application2',
       modified: new Date(),
       status: ApplicationStatus.COMPLETED,
-      typeId: ApplicationTypes.EXAMPLE,
+      typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       name: 'Example Application',
       progress: 1,
       actionCard: {
@@ -55,7 +55,7 @@ export const WithHistory = () => (
       id: 'application3',
       modified: new Date(),
       status: ApplicationStatus.IN_PROGRESS,
-      typeId: ApplicationTypes.EXAMPLE,
+      typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       name: 'Example Application',
       progress: 1,
       actionCard: {
