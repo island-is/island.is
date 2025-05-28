@@ -47,8 +47,8 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: 'CRIMINAL_RECORD_ENDPOINT',
-        prod: 'CRIMINAL_RECORD_ENDPOINT',
+        staging: '',
+        prod: '',
       },
     })
     .secrets({
