@@ -2041,6 +2041,14 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:health-shorter',
     defaultMessage: 'Sjúkra',
   },
+  healthReferrals: {
+    id: 'sp.search.tags:health-referrals',
+    defaultMessage: 'Vísanir',
+  },
+  healthWaiting: {
+    id: 'sp.search.tags:health-waitlist',
+    defaultMessage: 'Bíða',
+  },
   licensesAlternative: {
     id: 'sp.search.tags:licenses-alternative',
     defaultMessage: 'Skilríki',

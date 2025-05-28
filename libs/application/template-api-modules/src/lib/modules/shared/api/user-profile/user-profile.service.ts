@@ -21,7 +21,10 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
-import { BankinfoClientService, formatBankInfo } from '@island.is/clients/fjs/bankinfo'
+import {
+  BankinfoClientService,
+  formatBankInfo,
+} from '@island.is/clients/fjs/bankinfo'
 
 @Injectable()
 @CodeOwner(CodeOwners.NordaApplications)
@@ -58,7 +61,17 @@ export class UserProfileService extends BaseTemplateApiService {
         throw error
       })
 
-    const bankInfoRes = await this.bankinfoClientService.getBankAccountsForNationalId(auth.nationalId)
+    if (isRunningOnEnvironment('local') && !mobilePhoneNumber && !email) {
+      return {
+        email: 'mockEmail@island.is',
+        mobilePhoneNumber: '9999999',
+      }
+    }
+
+    const bankInfoRes =
+      await this.bankinfoClientService.getBankAccountsForNationalId(
+        auth.nationalId,
+      )
 
     if (bankInfoRes && params?.validateBankInformation) {
       if (!bankInfoRes?.bankAccountInfo || bankInfoRes.error) {
@@ -73,7 +86,9 @@ export class UserProfileService extends BaseTemplateApiService {
       }
     }
 
-    const bankInfo = bankInfoRes ? formatBankInfo(bankInfoRes.bankAccountInfo) : undefined
+    const bankInfo = bankInfoRes
+      ? formatBankInfo(bankInfoRes.bankAccountInfo)
+      : undefined
 
     const isActor = !!auth.actor?.nationalId
     const emailIsInvalid =
@@ -134,7 +149,6 @@ export class UserProfileService extends BaseTemplateApiService {
     const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
     return phone && phone.isValid()
   }
-
 
   private getIDSLink(
     application: ApplicationWithAttachments,

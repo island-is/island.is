@@ -485,7 +485,8 @@ export const m = defineMessages({
   },
   allowSSODescription: {
     id: 'ap.ids-admin:allow-sso-description',
-    defaultMessage: 'Allow users to sign in with the same session on other applications using the island.is authentication service.',
+    defaultMessage:
+      'Allow users to sign in with the same session on other applications using the island.is authentication service.',
   },
   singleSession: {
     id: 'ap.ids-admin:single-session',

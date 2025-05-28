@@ -7,16 +7,15 @@ import {
 } from '@nestjs/common'
 
 import { Case } from '../../case'
+import { IndictmentCount } from '../models/indictmentCount.model'
 
 @Injectable()
 export class OffenseExistsGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
     const theCase: Case = request.case
-    const indictmentCountId = request.params.indictmentCountId
-    const indictmentCount = theCase.indictmentCounts?.find(
-      (indictmentCount) => indictmentCount.id === indictmentCountId,
-    )
+    const indictmentCount: IndictmentCount = request.indictmentCount
+
     if (!indictmentCount) {
       throw new BadRequestException('Missing indictment count')
     }
@@ -31,7 +30,7 @@ export class OffenseExistsGuard implements CanActivate {
     )
     if (!offense) {
       throw new NotFoundException(
-        `Offense ${offenseId} of indictment count ${indictmentCountId} of case ${theCase.id} does not exist`,
+        `Offense ${offenseId} of indictment count ${indictmentCount.id} of case ${theCase.id} does not exist`,
       )
     }
     request.offense = offense

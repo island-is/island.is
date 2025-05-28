@@ -213,6 +213,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     isAppealCustodyIsolation
     appealIsolationToDate
     requestAppealRulingNotToBePublished
+    isRegisteredInPrisonSystem
     prosecutorsOffice {
       id
       name
@@ -222,6 +223,16 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     indictmentDecision
     mergeCase {
       id
+    }
+    civilClaimants {
+      id
+      name
+      nationalId
+    }
+    caseRepresentatives {
+      nationalId
+      name
+      caseFileCategory
     }
   }
 }
