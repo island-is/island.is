@@ -85,6 +85,36 @@ interface CaseTableCellGenerator {
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000
 
+const getFormattedIndictmentArraignmentDate = (
+  theCase: Case,
+): StringGroupValue | undefined => {
+  if (theCase.indictmentDecision === IndictmentDecision.SCHEDULING) {
+    const courtDate = DateLog.courtDate(theCase.dateLogs)?.date
+
+    if (courtDate) {
+      return {
+        s: [
+          `${capitalize(formatDate(courtDate, 'EEE d. MMMM yyyy'))}`,
+          `kl. ${formatDate(courtDate, 'HH:mm') ?? ''}`,
+        ],
+      }
+    }
+  }
+
+  const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)?.date
+
+  if (arraignmentDate) {
+    return {
+      s: [
+        `${capitalize(formatDate(arraignmentDate, 'EEE d. MMMM yyyy'))}`,
+        `kl. ${formatDate(arraignmentDate, 'HH:mm') ?? ''}`,
+      ],
+    }
+  }
+
+  return undefined
+}
+
 const generateAppealStateTag = (c: Case, user: TUser): TagValue | undefined => {
   switch (c.appealState) {
     case CaseAppealState.WITHDRAWN:
@@ -251,7 +281,7 @@ const generateIndictmentRulingDecisionTag = (
 
 const generateIndictmentCaseType = (
   indictmentSubtypes?: IndictmentSubtypeMap | null,
-): string | undefined => {
+): string[] | undefined => {
   if (!indictmentSubtypes) return undefined
 
   const labels =
@@ -259,7 +289,9 @@ const generateIndictmentCaseType = (
 
   if (labels.length === 0) return undefined
 
-  return labels.length === 1 ? labels[0] : `${labels[0]} +${labels.length - 1}`
+  return labels.length === 1
+    ? [labels[0]]
+    : [`${labels[0]}`, `+${labels.length - 1}`]
 }
 
 const generateRequestCaseType = (
@@ -318,7 +350,7 @@ export const caseType: CaseTableCellGenerator = {
   generate: (c: Case) => {
     if (c.type === CaseType.INDICTMENT) {
       const display = generateIndictmentCaseType(c.indictmentSubtypes)
-      return display ? { s: [display] } : undefined
+      return display ? { s: display } : undefined
     }
 
     return { s: generateRequestCaseType(c.type, c.decision, c.parentCaseId) }
