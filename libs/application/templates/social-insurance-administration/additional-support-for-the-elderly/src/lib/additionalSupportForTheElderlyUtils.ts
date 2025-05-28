@@ -196,6 +196,11 @@ export const getAttachments = (application: Application) => {
   return attachments
 }
 
+export const hasNoCohabitants = (application: Application) => {
+  const { cohabitants } = getApplicationExternalData(application.externalData)
+  return cohabitants.length === 0
+}
+
 // returns available years. Available period is
 // 3 months back in time and 6 months in the future.
 export const getAvailableYears = () => {
