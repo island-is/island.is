@@ -166,8 +166,8 @@ jobs:
             export SKIP_JUDICIAL="false"
           fi
           echo "Skipping judicial: $SKIP_JUDICIAL"
-          echo "Current base SHA is $NX_BASE_FROM_ENV and head SHA is $NX_HEAD_FROM_ENV"
-          echo "{\"base_sha\": \"$NX_BASE_FROM_ENV\", \"head_sha\":\"$NX_HEAD_FROM_ENV\"}" > event.json
+          echo "Current base SHA is $NX_BASE and head SHA is $NX_HEAD"
+          echo "{\"base_sha\": \"$NX_BASE\", \"head_sha\":\"$NX_HEAD\"}" > event.json
 
       - name: Git bot config
         id: git-bot-config
