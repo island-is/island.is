@@ -317,6 +317,9 @@
       "@island.is/application/templates/aosh/deregister-machine": [
         "libs/application/templates/aosh/deregister-machine/src/index.ts"
       ],
+      "@island.is/application/templates/aosh/practical-exam": [
+        "libs/application/templates/aosh/practical-exam/src/index.ts"
+      ],
       "@island.is/application/templates/aosh/register-new-machine": [
         "libs/application/templates/aosh/register-new-machine/src/index.ts"
       ],
@@ -401,8 +404,14 @@
       "@island.is/application/templates/european-health-insurance-card": [
         "libs/application/templates/european-health-insurance-card/src/index.ts"
       ],
+      "@island.is/application/templates/examples/example-auth-delegation": [
+        "libs/application/templates/examples/example-auth-delegation/src/index.ts"
+      ],
       "@island.is/application/templates/examples/example-common-actions": [
         "libs/application/templates/examples/example-common-actions/src/index.ts"
+      ],
+      "@island.is/application/templates/examples/example-folder-structure-and-conventions": [
+        "libs/application/templates/examples/example-folder-structure-and-conventions/src/index.ts"
       ],
       "@island.is/application/templates/examples/example-inputs": [
         "libs/application/templates/examples/example-inputs/src/index.ts"
@@ -433,12 +442,6 @@
       ],
       "@island.is/application/templates/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
-      ],
-      "@island.is/application/templates/financial-statements-inao": [
-        "libs/application/templates/financial-statements-inao/src/index.ts"
-      ],
-      "@island.is/application/templates/financial-statements-inao/types": [
-        "libs/application/templates/financial-statements-inao/src/types.ts"
       ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
@@ -526,9 +529,6 @@
       ],
       "@island.is/application/templates/public-debt-payment-plan": [
         "libs/application/templates/public-debt-payment-plan/src/index.ts"
-      ],
-      "@island.is/application/templates/reference-template": [
-        "libs/application/templates/reference-template/src/index.ts"
       ],
       "@island.is/application/templates/rental-agreement": [
         "libs/application/templates/rental-agreement/src/index.ts"
@@ -842,9 +842,10 @@
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
       ],
-      "@island.is/clients/payments": [
-        "libs/clients/payments/src/index.ts"
+      "@island.is/clients/practical-exams-ver": [
+        "libs/clients/practical-exams-ver/src/index.ts"
       ],
+      "@island.is/clients/payments": ["libs/clients/payments/src/index.ts"],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
@@ -1408,6 +1409,9 @@
       ],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
+      ],
+      "@island.is/api/domains/practical-exams": [
+        "libs/api/domains/practical-exams/src/index.ts"
       ],
       "application/templates/examples/example-no-inputs": [
         "libs/application/templates/examples/example-no-inputs/src/index.ts"

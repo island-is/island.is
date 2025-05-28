@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Checkbox, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -11,8 +12,8 @@ import {
   input,
   inputError,
   sizeInput,
-  roomsInput,
   tableCellFastNum,
+  noInputArrows,
 } from '../propertySearch.css'
 import { registerProperty } from '../../../lib/messages'
 
@@ -48,6 +49,13 @@ export const PropertyTableUnits = ({
   onUnitRoomsChange,
 }: PropertyUnitsProps) => {
   const { formatMessage } = useLocale()
+  const [isRoomsFocused, setIsRoomsFocused] = useState(false)
+  const [isUnitsFocused, setIsUnitsFocused] = useState(false)
+
+  // Prevent scrolling from changing the number input value
+  const preventScrollChange = (event: React.WheelEvent<HTMLInputElement>) => {
+    event.currentTarget.blur()
+  }
 
   const sizeInputError =
     unitInputErrorMessage ===
@@ -57,7 +65,9 @@ export const PropertyTableUnits = ({
 
   const roomsInputError =
     unitInputErrorMessage ===
-    formatMessage(registerProperty.search.numOfRoomsMinimumError)
+      formatMessage(registerProperty.search.numOfRoomsMinimumError) ||
+    unitInputErrorMessage ===
+      formatMessage(registerProperty.search.numOfRoomsMaximumError)
 
   return (
     <tr key={unitCode}>
@@ -114,15 +124,20 @@ export const PropertyTableUnits = ({
               }}
             >
               <input
-                className={`${input} ${sizeInput} ${
+                className={`${input} ${sizeInput} ${noInputArrows} ${
                   checkedUnits && sizeInputError ? inputError : ''
                 }`}
                 type="number"
                 name="propertySize"
                 min={0}
                 step={0.1}
-                value={unitSizeValue}
+                value={
+                  isUnitsFocused && unitSizeValue === 0 ? '' : unitSizeValue
+                }
+                onFocus={() => setIsUnitsFocused(true)}
+                onBlur={() => setIsUnitsFocused(false)}
                 onChange={onUnitSizeChange}
+                onWheel={preventScrollChange}
                 disabled={isUnitSizeDisabled}
               />
               <span>{sizeUnit}</span>
@@ -134,14 +149,19 @@ export const PropertyTableUnits = ({
             }}
           >
             <input
-              className={`${input} ${roomsInput} ${
+              className={`${input} ${noInputArrows} ${
                 checkedUnits && roomsInputError ? inputError : ''
               }`}
               type="number"
               name="numOfRooms"
               min={0}
-              value={numOfRoomsValue}
+              value={
+                isRoomsFocused && numOfRoomsValue === 0 ? '' : numOfRoomsValue
+              }
+              onFocus={() => setIsRoomsFocused(true)}
+              onBlur={() => setIsRoomsFocused(false)}
               onChange={onUnitRoomsChange}
+              onWheel={preventScrollChange}
               disabled={isNumOfRoomsDisabled}
             />
           </T.Data>

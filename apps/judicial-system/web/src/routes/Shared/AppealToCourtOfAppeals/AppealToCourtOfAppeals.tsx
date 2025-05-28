@@ -34,6 +34,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -56,6 +57,9 @@ const AppealToCourtOfAppeals = () => {
     updateUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
   const { transitionCase, isTransitioningCase } = useCase()
 
   const appealBriefType = !isDefenceUser(user)
@@ -140,6 +144,7 @@ const AppealToCourtOfAppeals = () => {
             onRemove={(file) => {
               handleRemoveFile(file)
             }}
+            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
           />
@@ -171,6 +176,7 @@ const AppealToCourtOfAppeals = () => {
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
             onChange={(files) => handleChange(files, appealCaseFilesType)}
             onRemove={(file) => handleRemoveFile(file)}
+            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
           />
