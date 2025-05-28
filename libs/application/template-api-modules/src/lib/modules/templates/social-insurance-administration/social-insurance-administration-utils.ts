@@ -209,7 +209,7 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
       taxLevel: +taxLevel,
     },
     livesAloneUserReply: YES === higherPayments,
-    livesAloneNationalRegistryData: hasCohabitants(application),
+    livesAloneNationalRegistryData: livesAlone(application),
     period: {
       year: +selectedYear,
       month: getMonthNumber(selectedMonth),
@@ -437,7 +437,7 @@ export const shouldDistributeIncomeByMonth = (application: Application) => {
   return hasUnevenIncome
 }
 
-export const hasCohabitants = (application: Application) => {
+export const livesAlone = (application: Application) => {
   const { cohabitants } = getASFTEApplicationExternalData(
     application.externalData,
   )

@@ -37,6 +37,7 @@ import {
   getApplicationExternalData,
   getAvailableMonths,
   getAvailableYears,
+  hasNoCohabitants,
 } from '../lib/additionalSupportForTheElderlyUtils'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 
@@ -205,20 +206,14 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         buildMultiField({
           id: 'higherPayments',
           title: (application: Application) => {
-            const { cohabitants } = getApplicationExternalData(
-              application.externalData,
-            )
-            return cohabitants.length === 0
+            return hasNoCohabitants(application)
               ? additionalSupportForTheElderyFormMessage.info
                   .higherPaymentsTitle
               : additionalSupportForTheElderyFormMessage.info
                   .higherPaymentsCohabTitle
           },
           description: (application: Application) => {
-            const { cohabitants } = getApplicationExternalData(
-              application.externalData,
-            )
-            return cohabitants.length === 0
+            return hasNoCohabitants(application)
               ? additionalSupportForTheElderyFormMessage.info
                   .higherPaymentsDescription
               : additionalSupportForTheElderyFormMessage.info
@@ -230,15 +225,13 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
               options: getYesNoOptions(),
               width: 'half',
               condition: (_, externalData) => {
-                const { cohabitants } = getApplicationExternalData(externalData)
-                return cohabitants.length === 0
+                return hasNoCohabitants({ externalData } as Application)
               },
             }),
             buildDescriptionField({
               id: 'higherPayments.text',
               condition: (_, externalData) => {
-                const { cohabitants } = getApplicationExternalData(externalData)
-                return cohabitants.length > 0
+                return !hasNoCohabitants({ externalData } as Application)
               },
             }),
           ],
