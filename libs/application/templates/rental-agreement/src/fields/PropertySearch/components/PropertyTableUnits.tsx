@@ -62,7 +62,9 @@ export const PropertyTableUnits = ({
 
   const roomsInputError =
     unitInputErrorMessage ===
-    formatMessage(registerProperty.search.numOfRoomsMinimumError)
+      formatMessage(registerProperty.search.numOfRoomsMinimumError) ||
+    unitInputErrorMessage ===
+      formatMessage(registerProperty.search.numOfRoomsMaximumError)
 
   return (
     <tr key={unitCode}>

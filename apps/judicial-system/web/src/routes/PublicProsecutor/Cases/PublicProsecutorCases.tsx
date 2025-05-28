@@ -5,9 +5,9 @@ import { AlertMessage } from '@island.is/island-ui/core'
 import { isCompletedCase } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
+  CasesLayout,
   Logo,
   PageHeader,
-  SharedPageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseIndictmentRulingDecision,
@@ -56,7 +56,7 @@ export const PublicProsecutorCases: FC = () => {
   }, [resCases])
 
   return (
-    <SharedPageLayout>
+    <CasesLayout>
       <PageHeader title={formatMessage(titles.shared.cases)} />
       <div className={styles.logoContainer}>
         <Logo />
@@ -75,7 +75,7 @@ export const PublicProsecutorCases: FC = () => {
           <CasesReviewComplete cases={reviewedCases} loading={loading} />
         </>
       )}
-    </SharedPageLayout>
+    </CasesLayout>
   )
 }
 
