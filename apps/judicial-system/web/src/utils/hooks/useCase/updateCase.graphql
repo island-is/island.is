@@ -224,6 +224,11 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     mergeCase {
       id
     }
+    civilClaimants {
+      id
+      name
+      nationalId
+    }
     caseRepresentatives {
       nationalId
       name

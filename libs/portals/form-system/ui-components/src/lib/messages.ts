@@ -514,6 +514,10 @@ export const m = defineMessages({
     id: 'portals-admin-form-system:total-amount',
     defaultMessage: 'Heildarupphæð',
   },
+  submitted: {
+    id: 'portals-admin-form-system:submitted',
+    defaultMessage: 'Innsend',
+  },
   // Error messages
   invalidEmail: {
     id: 'portals-admin.form-system:invalid-email',

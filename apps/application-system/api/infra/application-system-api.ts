@@ -47,6 +47,7 @@ import {
   WorkAccidents,
   NationalRegistryB2C,
   SecondarySchool,
+  PracticalExams,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
@@ -268,8 +269,8 @@ export const serviceSetup = (services: {
         prod: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1',
       },
       XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: {
-        dev: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
-        staging: 'IS-TEST/GOV/10047/UA-Protected/kvortun-v1/',
+        dev: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1',
+        staging: 'IS-TEST/GOV/10047/UA-Protected/kvortun-v1',
         prod: 'IS/GOV/5605882089/UA-Protected/kvortun-v1',
       },
       NOVA_ACCEPT_UNAUTHORIZED: {
@@ -353,6 +354,7 @@ export const serviceSetup = (services: {
       HealthDirectorateOrganDonation,
       WorkAccidents,
       SecondarySchool,
+      PracticalExams,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',

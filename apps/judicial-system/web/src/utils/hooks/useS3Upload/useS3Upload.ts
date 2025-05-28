@@ -4,6 +4,7 @@ import { uuid } from 'uuidv4'
 
 import { FileUploadStatus, toast, UploadFile } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
+import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
   CaseFile,
   CaseFileCategory,
@@ -69,6 +70,7 @@ export interface TUploadFile extends UploadFile {
   userGeneratedFilename?: string | null
   submissionDate?: string | null
   fileRepresentative?: string | null
+  previewUrl?: string | null
 }
 
 export interface UploadFileState {
@@ -117,7 +119,7 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
     setUploadFiles((previous) => [file, ...previous])
 
   const addUploadFiles = (
-    files: File[],
+    files: FileWithPreviewURL[],
     overRides?: Partial<TUploadFile>,
     setUserGeneratedFilename = false,
   ) => {
@@ -132,6 +134,7 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
       percent: 0,
       originalFileObj: file,
       userGeneratedFilename: setUserGeneratedFilename ? file.name : undefined,
+      previewUrl: file.previewUrl,
       ...overRides,
     }))
 

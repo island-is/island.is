@@ -23,12 +23,13 @@ import {
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
 import { ApplicationEvent } from './models/applicationEvent.model'
-import { ApplicationListDto } from './models/dto/applicationList.dto'
+import { ApplicationResponseDto } from './models/dto/application.response.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { User } from '@island.is/auth-nest-tools'
 import { Applicant } from '../applicants/models/applicant.model'
 import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
+import { Option } from '../../dataTypes/option.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -205,7 +206,7 @@ export class ApplicationsService {
     const application = await this.applicationModel.findByPk(id)
 
     if (!application) {
-      throw new NotFoundException(`Application with id '${id}' not found`)
+      throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
     application.submittedAt = new Date()
@@ -225,11 +226,18 @@ export class ApplicationsService {
   }
 
   async findAllByOrganization(
-    organizationId: string,
+    organizationNationalId: string,
     page: number,
     limit: number,
     isTest: boolean,
-  ): Promise<ApplicationListDto> {
+  ): Promise<ApplicationResponseDto> {
+    const organization = await this.organizationModel.findOne({
+      where: { nationalId: organizationNationalId },
+      attributes: ['id'],
+    })
+
+    const organizationId = organization?.id
+
     const offset = (page - 1) * limit
     const { count: total, rows: data } =
       await this.applicationModel.findAndCountAll({
@@ -275,10 +283,24 @@ export class ApplicationsService {
       }),
     )
 
-    const applicationList = new ApplicationListDto()
-    applicationList.applications = applicationMinimalDtos
-    applicationList.total = total
-    return applicationList
+    const applicationResponseDto = new ApplicationResponseDto()
+    applicationResponseDto.applications = applicationMinimalDtos
+    applicationResponseDto.total = total
+    applicationResponseDto.organizations = await this.organizationModel
+      .findAll({
+        attributes: ['nationalId', 'name'],
+      })
+      .then((organizations) =>
+        organizations.map(
+          (org) =>
+            ({
+              value: org.nationalId,
+              label: org.name.is,
+              isSelected: org.nationalId === organizationNationalId,
+            } as Option),
+        ),
+      )
+    return applicationResponseDto
   }
 
   async getApplication(applicationId: string): Promise<ApplicationDto> {

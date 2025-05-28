@@ -1,18 +1,21 @@
-import { Dispatch, FC, SetStateAction, useCallback, useContext } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useIntl } from 'react-intl'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 
-import { TUploadFile, useFileList } from '../../utils/hooks'
+import { TUploadFile } from '../../utils/hooks'
 import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
-import { FormContext } from '../FormProvider/FormProvider'
 import { strings } from './UploadFiles.strings'
 import * as styles from './UploadFiles.css'
 
+export interface FileWithPreviewURL extends File {
+  previewUrl?: string
+}
+
 interface Props {
   files: TUploadFile[]
-  onChange: (files: File[]) => void
+  onChange: (files: FileWithPreviewURL[]) => void
   onRetry?: (file: TUploadFile) => void
   onDelete: (file: TUploadFile) => void
   onRename: (fileId: string, newName: string, newDisplayDate: string) => void
@@ -30,14 +33,20 @@ const UploadFiles: FC<Props> = (props) => {
     setEditCount,
     isBottomComponent,
   } = props
-  const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
-
-  const { onOpen } = useFileList({ caseId: workingCase.id })
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      onChange(acceptedFiles)
+      const toFileWithPreview = (file: File): FileWithPreviewURL => {
+        const previewUrl = URL.createObjectURL(file)
+        return Object.assign(file, { previewUrl })
+      }
+
+      const acceptedFilesWithPreviewURL = acceptedFiles.map((file) =>
+        toFileWithPreview(file),
+      )
+
+      onChange(acceptedFilesWithPreviewURL)
     },
     [onChange],
   )
@@ -46,6 +55,17 @@ const UploadFiles: FC<Props> = (props) => {
     accept: ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'],
     onDrop,
   })
+
+  useEffect(() => {
+    return () => {
+      // Cleanup object URLs when component unmounts
+      files.forEach((file) => {
+        if (file.previewUrl) {
+          URL.revokeObjectURL(file.previewUrl)
+        }
+      })
+    }
+  }, [files])
 
   return (
     <div
@@ -80,8 +100,9 @@ const UploadFiles: FC<Props> = (props) => {
               ...file,
               id: file.id ?? '',
               canEdit: file.percent === 0,
+              canOpen: true,
             }}
-            onOpen={onOpen}
+            onOpen={() => file.previewUrl && window.open(file.previewUrl)}
             onRename={onRename}
             onDelete={onDelete}
             onRetry={onRetry}

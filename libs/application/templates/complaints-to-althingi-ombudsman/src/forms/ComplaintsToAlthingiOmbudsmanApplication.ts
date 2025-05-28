@@ -3,12 +3,14 @@ import {
   buildCustomField,
   buildDateField,
   buildDescriptionField,
+  buildDividerField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
   buildPhoneField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildSubmitField,
   buildSubSection,
   buildTextField,
@@ -51,6 +53,7 @@ import {
   UPLOAD_ACCEPT,
 } from '../shared/constants'
 import {
+  genderOptions,
   getComplaintType,
   isDecisionDateOlderThanYear,
   isGovernmentComplainee,
@@ -151,6 +154,17 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               width: 'half',
               backgroundColor: 'blue',
               defaultValue: '',
+            }),
+            buildDividerField({marginTop: 2}),
+            buildSelectField({
+              id: 'complainedForInformation.gender',
+              title: information.aboutTheComplainer.gender,
+              options: genderOptions,
+            }),
+            buildAlertMessageField({
+              id: 'complainedForInformation.genderJustification',
+              message: information.aboutTheComplainer.genderJustification,
+              alertType: 'info',
             }),
             buildDescriptionField({
               id: 'complainedForInformation.titleField',
