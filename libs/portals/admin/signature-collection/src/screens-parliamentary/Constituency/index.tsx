@@ -36,17 +36,17 @@ import {
   SignatureCollectionList,
 } from '@island.is/api/schema'
 
-export const Constituency = ({
-  allowedToProcess,
-}: {
-  allowedToProcess: boolean
-}) => {
+export const Constituency = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { revalidate } = useRevalidator()
 
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+
+  console.log('HERE',collection, allLists)
   const { constituencyName } = useParams() as { constituencyName: string }
+
+  console.log('HERE2', constituencyName)
 
   const constituencyLists = allLists.filter(
     (list) => list.area.name === constituencyName,
@@ -117,9 +117,7 @@ export const Constituency = ({
             }
             imgPosition="right"
             imgHiddenBelow="sm"
-            img={
-              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
-            }
+            img={electionsCommitteeLogo}
           />
           <GridRow>
             <GridColumn span={'12/12'}>
@@ -165,9 +163,7 @@ export const Constituency = ({
                         )
                       },
                     }}
-                    tag={
-                      allowedToProcess
-                        ? {
+                    tag={{
                             ...getTagConfig(list),
                             renderTag: (cld) => (
                               <Box
@@ -248,7 +244,6 @@ export const Constituency = ({
                               </Box>
                             ),
                           }
-                        : undefined
                     }
                   />
                 ))}

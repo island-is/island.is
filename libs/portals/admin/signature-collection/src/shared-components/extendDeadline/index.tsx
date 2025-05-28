@@ -20,13 +20,11 @@ import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 const ActionExtendDeadline = ({
   listId,
   endTime,
-  allowedToProcess,
   collectionType,
 }: {
   listId: string
   endTime: string
   collectionType: SignatureCollectionCollectionType
-  allowedToProcess?: boolean
 }) => {
   const { formatMessage } = useLocale()
   const [modalChangeDateIsOpen, setModalChangeDateIsOpen] = useState(false)

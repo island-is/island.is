@@ -36,10 +36,10 @@ const ListActions = () => {
 
         <Stack space={8}>
           <DownloadReports areas={[]} collectionId={''} />
-          <ActionLockList listId={list?.id} />
-          <ActionReviewComplete listId={list?.id} listStatus={listStatus} />
-          <ActionExtendDeadline listId={list?.id} endTime={list?.endTime} />
-          <RemoveCandidate />
+          {/*<ActionLockList listId={list?.id} listStatus={listStatus} collectionType={SignatureCollectionCollectionType.Municipal} />*/}
+          {/*<ActionReviewComplete listId={list?.id} listStatus={listStatus} />*/}
+          {/*<ActionExtendDeadline listId={list?.id} endTime={list?.endTime} />*/}
+          {/*<RemoveCandidate />*/}
         </Stack>
       </Drawer>
     </Box>

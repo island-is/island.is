@@ -3,14 +3,11 @@ import { lazy } from 'react'
 import { m } from './lib/messages'
 import { SignatureCollectionPaths } from './lib/paths'
 import { municipalListsLoader, parliamentaryListsLoader, presidentialListsLoader } from './loaders/AllLists.loader'
-import { listLoader } from './loaders/List.loader'
+import { parliamentaryListLoader, presidentialListLoader, municipalListLoader } from './loaders/List.loader'
 import { allowedScopes } from './lib/utils'
-import { AdminPortalScope } from '@island.is/auth/scopes'
 
 /* parliamentary */
-const ParliamentaryRoot = lazy(() =>
-  import('./screens-parliamentary/Constituency'),
-)
+const ParliamentaryRoot = lazy(() => import('./screens-parliamentary'))
 const ParliamentaryConstituency = lazy(() =>
   import('./screens-parliamentary/Constituency'),
 )
@@ -36,11 +33,7 @@ export const signatureCollectionModule: PortalModule = {
       name: m.signatureListsTitle,
       path: SignatureCollectionPaths.ParliamentaryRoot,
       element: (
-        <ParliamentaryRoot
-          allowedToProcess={props.userInfo.scopes.some(
-            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
-          )}
-        />
+        <ParliamentaryRoot />
       ),
       loader: parliamentaryListsLoader(props),
     },
@@ -48,11 +41,7 @@ export const signatureCollectionModule: PortalModule = {
       name: m.signatureListsConstituencyTitle,
       path: SignatureCollectionPaths.ParliamentaryConstituency,
       element: (
-        <ParliamentaryConstituency
-          allowedToProcess={props.userInfo.scopes.some(
-            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
-          )}
-        />
+        <ParliamentaryConstituency />
       ),
       loader: parliamentaryListsLoader(props),
     },
@@ -60,13 +49,9 @@ export const signatureCollectionModule: PortalModule = {
       name: m.singleList,
       path: SignatureCollectionPaths.ParliamentaryConstituencyList,
       element: (
-        <ParliamentaryList
-          allowedToProcess={props.userInfo.scopes.some(
-            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
-          )}
-        />
+        <ParliamentaryList />
       ),
-      loader: listLoader(props),
+      loader: parliamentaryListLoader(props),
     },
 
     /* ------ Presidential ------ */
@@ -74,11 +59,7 @@ export const signatureCollectionModule: PortalModule = {
       name: m.signatureListsTitle,
       path: SignatureCollectionPaths.PresidentialLists,
       element: (
-        <AllLists
-          allowedToProcess={props.userInfo.scopes.some(
-            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
-          )}
-        />
+        <AllLists />
       ),
       loader: presidentialListsLoader(props),
     },
@@ -86,13 +67,9 @@ export const signatureCollectionModule: PortalModule = {
       name: m.singleList,
       path: SignatureCollectionPaths.PresidentialList,
       element: (
-        <List
-          allowedToProcess={props.userInfo.scopes.some(
-            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
-          )}
-        />
+        <List />
       ),
-      loader: listLoader(props),
+      loader: presidentialListLoader(props),
     },
 
     /* ------ Municipal ------ */
@@ -112,7 +89,7 @@ export const signatureCollectionModule: PortalModule = {
       name: m.municipalCollectionTitle,
       path: SignatureCollectionPaths.MunicipalList,
       element: <MunicipalList />,
-      loader: listLoader(props),
+      loader: municipalListLoader(props),
     },
   ],
 }

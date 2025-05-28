@@ -39,7 +39,7 @@ import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import CreateCollection from '../../shared-components/createCollection'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 
-const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
+const Lists = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
@@ -133,7 +133,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             title={formatMessage(m.signatureListsTitlePresidential)}
             intro={formatMessage(m.signatureListsIntro)}
             img={
-              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+              electionsCommitteeLogo
             }
             imgPosition="right"
             imgHiddenBelow="sm"
@@ -201,7 +201,6 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                   />
                 </Filter>
                 {lists?.length > 0 &&
-                  allowedToProcess &&
                   collectionStatus === CollectionStatus.InInitialReview && (
                     <CreateCollection
                       collectionId={collection?.id}
@@ -315,7 +314,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 />
               </Box>
             )}
-          {lists?.length > 0 && allowedToProcess && (
+          {lists?.length > 0 && (
             <Box>
               {(collectionStatus === CollectionStatus.InInitialReview ||
                 collectionStatus === CollectionStatus.InReview) && (

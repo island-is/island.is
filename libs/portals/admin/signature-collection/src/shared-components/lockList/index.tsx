@@ -13,7 +13,6 @@ import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useRevalidator } from 'react-router-dom'
 import {
-  ListStatus,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 import { useSignatureCollectionLockListMutation } from './lockList.generated'
@@ -21,11 +20,9 @@ import { m } from '../../lib/messages'
 
 const ActionLockList = ({
   listId,
-  listStatus,
   collectionType,
 }: {
   listId: string
-  listStatus: string
   collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()

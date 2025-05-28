@@ -1,7 +1,6 @@
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { useLoaderData } from 'react-router-dom'
 import {
-  SignatureCollectionCollectionType,
   SignatureCollectionList,
 } from '@island.is/api/schema'
 import { signatureCollectionNavigation } from '../../lib/navigation'
@@ -16,13 +15,10 @@ import {
 } from '@island.is/island-ui/core'
 import PaperUpload from './components/paperUpload'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
-import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { format as formatNationalId } from 'kennitala'
-import { ListStatus } from '../../lib/utils'
 import Signees from '../../shared-components/signees'
-import ActionExtendDeadline from '../../shared-components/extendDeadline'
 
-export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
+export const List = () => {
   const { list, listStatus } = useLoaderData() as {
     list: SignatureCollectionList
     listStatus: string
@@ -50,16 +46,8 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             <>
               <IntroHeader
                 title={list.title}
-                intro={
-                  allowedToProcess
-                    ? formatMessage(m.singleListIntro)
-                    : formatMessage(m.singleListIntroManage)
-                }
-                img={
-                  allowedToProcess
-                    ? electionsCommitteeLogo
-                    : nationalRegistryLogo
-                }
+                intro={formatMessage(m.singleListIntro)}
+                img={electionsCommitteeLogo}
                 imgPosition="right"
                 imgHiddenBelow="sm"
                 marginBottom={3}
@@ -84,27 +72,20 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                   {formatNationalId(list.candidate.nationalId)}
                 </Text>
               </Box>
-              <ActionExtendDeadline
+              <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
+              <PaperUpload listId={list.id} listStatus={listStatus} />
+              {/*<ActionExtendDeadline
                 listId={list.id}
                 endTime={list.endTime}
                 collectionType={SignatureCollectionCollectionType.Presidential}
-                allowedToProcess={
-                  allowedToProcess && listStatus === ListStatus.Extendable
-                }
-              />
-              <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
-              {allowedToProcess && (
-                <>
-                  <PaperUpload listId={list.id} listStatus={listStatus} />
-                  {/*<ActionReviewComplete
+              />*/}
+              {/*<ActionReviewComplete
                     collectionType={
                       SignatureCollectionCollectionType.Presidential
                     }
                     listId={list.id}
                     listStatus={listStatus}
                   />*/}
-                </>
-              )}
             </>
           )}
         </GridColumn>
