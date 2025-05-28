@@ -63,17 +63,11 @@ export const mapCategoriesWithInstructor = (
       }
     })
 
-<<<<<<< HEAD
     const type =
       examCategories[index]?.medicalCertificate?.[0]?.key.split('.')[1] || '' // TODO Make safer
     const name = examCategories[index]?.medicalCertificate?.[0]?.name || ''
     const content = examCategories[index]?.medicalCertificate?.[0]?.key || ''
 
-=======
-    const type = examCategories[index]?.medicalCertificate?.type || ''
-    const name = examCategories[index]?.medicalCertificate?.name || ''
-    const content = examCategories[index]?.medicalCertificate?.content || ''
->>>>>>> origin/main
     return {
       categoriesAndInstructors: catAndInstructor || [],
       medicalCertificate: {
@@ -109,7 +103,6 @@ export const mapPaymentArrangement = (
     paymentArrangement?.paymentOptions === PaymentOptions.cashOnDelivery
 
   if (isIndividual || !paymentArrangement) {
-<<<<<<< HEAD
     if (!chargeId) {
       throw new TemplateApiError(
         {
@@ -120,8 +113,6 @@ export const mapPaymentArrangement = (
       )
     }
 
-=======
->>>>>>> origin/main
     return {
       payerNationalId: information.nationalId || '',
       payerName: information.name || '',
@@ -146,11 +137,7 @@ export const mapPaymentArrangement = (
 export const mapExaminees = (
   examinees: Examinees,
   examCategories: CategoryInstructorAndMedicalCertRequest[],
-<<<<<<< HEAD
 ): ExamineesRequest[] => {
-=======
-): ExamineesRequest[] | undefined => {
->>>>>>> origin/main
   return examinees.map((examinee, index) => {
     const { nationalId, email, phone, countryIssuer, licenseNumber } = examinee
     return {

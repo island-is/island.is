@@ -30,12 +30,17 @@ import {
   shared,
 } from '@island.is/application/templates/aosh/practical-exam'
 import { S3Service } from '@island.is/nest/aws'
+import { sharedModuleConfig } from '../../../shared'
+import { ConfigType } from '@nestjs/config'
+
 @Injectable()
 export class PracticalExamTemplateService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly practicalExamClientService: PracticalExamsClientService,
     private readonly s3Service: S3Service,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
   ) {
     super(ApplicationTypes.PRACTICAL_EXAM)
   }
@@ -147,7 +152,6 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     )
     const examineesRequest = mapExaminees(examinees, examCategories)
 
-<<<<<<< HEAD
     const examineesRequestWithCertificateUrl = await Promise.all(
       examineesRequest.map(async (examinee) => {
         if (examinee.medicalCertificate?.content) {
@@ -167,8 +171,6 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
       }),
     )
 
-=======
->>>>>>> origin/main
     const payload = {
       xCorrelationID: application.id,
       workMachineExamRegistrationCreateDto: {
@@ -176,11 +178,7 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
           address: examAddress,
           postalCode: examPostalCode,
         },
-<<<<<<< HEAD
         examees: examineesRequestWithCertificateUrl,
-=======
-        examees: examineesRequest,
->>>>>>> origin/main
         instructors: instructorsRequest,
         paymentInfo: paymentInfoRequest,
         contact: {
@@ -210,7 +208,6 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
       )
     }
   }
-<<<<<<< HEAD
 
   private async getUrlForAttachment(
     attachment: string,
@@ -219,9 +216,7 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     try {
       const url = await this.s3Service.getPresignedUrl(
         {
-          bucket:
-            process.env.APPLICATION_ATTAHMENT_BUCKET ||
-            'island-is-dev-storage-application-system',
+          bucket: this.config.templateApi.attachmentBucket,
           key: `${applicationId}/${attachment}`,
         },
         300000,
@@ -237,6 +232,4 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
       )
     }
   }
-=======
->>>>>>> origin/main
 }
