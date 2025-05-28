@@ -7,9 +7,6 @@ import {
 export class StringValue {
   @ApiProperty({ type: String, description: 'The string value' })
   readonly str!: string
-
-  @ApiProperty({ type: String, description: 'The cell sort value' })
-  readonly sortValue!: string
 }
 
 export class StringGroupValue {
@@ -50,6 +47,9 @@ export class CaseTableCell {
     description: 'The cell value',
   })
   readonly value?: CaseTableCellValue
+
+  @ApiPropertyOptional({ type: String, description: 'The cell sort value' })
+  readonly sortValue?: string
 }
 
 class CaseTableRow {

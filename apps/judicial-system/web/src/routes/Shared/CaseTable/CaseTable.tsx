@@ -40,8 +40,11 @@ const hasCellValue = (cell: CaseTableCell): boolean => {
   return cell.value !== null && cell.value !== undefined
 }
 
-const compareString = (a: StringValue, b: StringValue) => {
-  return compareLocaleIS(a.sortValue, b.sortValue)
+const compareString = (
+  a: string | undefined | null,
+  b: string | undefined | null,
+) => {
+  return compareLocaleIS(a, b)
 }
 
 const compareStringGroup = (a: StringGroupValue, b: StringGroupValue) => {
@@ -101,7 +104,7 @@ const compare = (a: CaseTableCell, b: CaseTableCell): number => {
 
   switch (aValue.__typename) {
     case 'StringValue':
-      return compareString(aValue, bValue as StringValue)
+      return compareString(a.sortValue, b.sortValue)
     case 'StringGroupValue':
       return compareStringGroup(aValue, bValue as StringGroupValue)
     case 'TagValue':

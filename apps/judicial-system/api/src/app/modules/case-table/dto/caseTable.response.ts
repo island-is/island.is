@@ -16,9 +16,6 @@ registerEnumType(CaseTableType, {
 class StringValue {
   @Field(() => String, { description: 'The string value' })
   readonly str!: string
-
-  @Field(() => String, { description: 'The cell sort value' })
-  readonly sortValue!: string
 }
 
 @ObjectType()
@@ -80,6 +77,9 @@ class CaseTableCell {
     nullable: true,
   })
   readonly value?: typeof CaseTableCellValue
+
+  @Field(() => String, { description: 'The cell sort value', nullable: true })
+  readonly sortValue?: string
 }
 
 @ObjectType()
