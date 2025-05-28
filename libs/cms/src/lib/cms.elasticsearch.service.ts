@@ -1375,6 +1375,15 @@ export class CmsElasticsearchService {
 
     const size = 10
 
+    let sort = [
+      { _score: { order: SortDirection.DESC } },
+      { 'title.sort': { order: SortDirection.ASC } },
+    ]
+
+    if (queryString.length === 0) {
+      sort = [{ 'title.sort': { order: SortDirection.ASC } }]
+    }
+
     const response: ApiResponse<SearchResponse<MappedData>> =
       await this.elasticService.findByQuery(index, {
         query: {
@@ -1382,7 +1391,7 @@ export class CmsElasticsearchService {
             must,
           },
         },
-        sort: [{ _score: { order: SortDirection.DESC } }],
+        sort,
         size,
         from: ((input.page ?? 1) - 1) * size,
       })
