@@ -63,7 +63,7 @@ jobs:
       actions: read
       contents: read
     outputs:
-      json: ${{ steps.matrix-output.outputs.json }}
+      json: ${{ steps.dockerargs.outputs.json }}
     env:
       # Just so this is not an unassigned variable
       AFFECTED_ALL: ''
@@ -89,10 +89,12 @@ jobs:
           DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
           APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
           APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
-          echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
-          echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
-          echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
-          echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
+          {
+            echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS"
+            echo "DOCKER_TYPE=$DOCKER_TYPE"
+            echo "APP_HOME=$APP_HOME"
+            echo "APP_DIST_HOME=$APP_DIST_HOME"
+          } >> "$GITHUB_ENV"
         continue-on-error: true
       - name: checkout
         uses: actions/checkout@v4

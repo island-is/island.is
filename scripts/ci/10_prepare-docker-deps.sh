@@ -5,7 +5,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
-source "$DIR"/09_load-buildkit-driver.sh
+source "$(dirname "$0")"/09_load-buildkit-driver.sh
 
 mkdir -p "$PROJECT_ROOT"/cache
 

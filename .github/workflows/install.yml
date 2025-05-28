@@ -103,7 +103,7 @@ jobs:
         id: set-outputs
         run: |
           echo "DEPLOY_FEATURE: $DEPLOY_FEATURE"
-          echo DEPLOY_FEATURE="$DEPLOY_FEATURE" >> $GITHUB_OUTPUT
+          echo "DEPLOY_FEATURE=${DEPLOY_FEATURE}" >> "$GITHUB_OUTPUT"
 
       - name: checkout
         uses: actions/checkout@v4
@@ -119,7 +119,7 @@ jobs:
         env:
           RAW_REF: ${{ inputs.main_branch }}
         run: |
-          echo "MAIN_BRANCH=${RAW_REF#refs/heads/}" >> $GITHUB_OUTPUT
+          echo "MAIN_BRANCH=${RAW_REF#refs/heads/}" >> "$GITHUB_OUTPUT"
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}"
       - name: Derive appropriate SHAs
         if: ${{ inputs.run_merge_queue == false }}
@@ -133,7 +133,9 @@ jobs:
         env:
           MAIN_BRANCH: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
         run: |
-          if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
+          
+          RUN_MERGE_QUEUE="${{ inputs.run_merge_queue }}"
+          if [[ "$RUN_MERGE_QUEUE" == "true" ]]; then # Reverted to original syntax, as the previous fix attempt did not resolve the SC2193 issue. This might be a false positive or indicate that 'inputs.run_merge_queue' is never 'true'. Further investigation into workflow input usage might be needed. TODO: SC2193
             # In merge que we always want to use the last
             # commit as head - last commit sha is alway succesful
             # since else it won't get merged!
@@ -142,8 +144,8 @@ jobs:
             #
             # If we do not do this we will get the wrong base sha
             # :(
-            export NX_HEAD=${{ github.sha }}
-            export NX_BASE=$(git rev-parse HEAD^1)
+            NX_HEAD=${{ github.sha }}
+            NX_BASE=$(git rev-parse HEAD^1)
             echo NX_HEAD="$NX_HEAD" >> "$GITHUB_OUTPUT"
             echo NX_BASE="$NX_BASE" >> "$GITHUB_OUTPUT"
             echo HEAD="$NX_HEAD" >> "$GITHUB_ENV"
@@ -248,10 +250,10 @@ jobs:
         if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
+            echo "BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
 

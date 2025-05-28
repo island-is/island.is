@@ -40,8 +40,8 @@ jobs:
       - name: Check unicorn affected
         id: unicorn_affected
         run: |
-          echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
-          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
+          echo "Comparing nx affected for \"${{ env.NX_HEAD }}\" using \"${{ env.NX_BASE }}\" as base branch" # TODO: Fix SC2046: Quote this to prevent word splitting [shellcheck]
+          echo "IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }")" >> "$GITHUB_OUTPUT" # TODO: Fix SC2046: Quote this to prevent word splitting [shellcheck]
 
       - name: Results
         run: |
@@ -51,8 +51,8 @@ jobs:
         if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
         id: get_latest_release
         run: |
-          LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs $(git branch -r))"
-          echo LATEST_RELEASE=$LATEST_RELEASE >> "$GITHUB_OUTPUT"
+          LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs "$(git branch -r)")" # TODO: Fix SC2086: Double quote to prevent globbing and word splitting [shellcheck]
+          echo "LATEST_RELEASE=$LATEST_RELEASE" >> "$GITHUB_OUTPUT" # TODO: Fix SC2086: Double quote to prevent globbing and word splitting [shellcheck]
 
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
 
@@ -63,20 +63,26 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           PR_BRANCH: cherry-picks/${{ github.head_ref}}
           TARGET_BRANCH: release/${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }} (automated)"
-          echo ${{ github.event.pull_request.merge_commit_sha }}
-          echo ${{ github.head_ref}}
-          git checkout $TARGET_BRANCH
-          git checkout -b $PR_BRANCH
-          git cherry-pick -x ${{ github.event.pull_request.merge_commit_sha }}
-          git commit --allow-empty -am "chore: automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
-          git push --set-upstream origin $PR_BRANCH
+          MERGE_COMMIT_SHA="${{ github.event.pull_request.merge_commit_sha }}"
+          HEAD_REF_VAR="${HEAD_REF}"
+          TARGET_BRANCH_VAR="${TARGET_BRANCH}"
+          PR_BRANCH_VAR="${PR_BRANCH}"
+
+          echo "${MERGE_COMMIT_SHA}"
+          echo "${HEAD_REF_VAR}"
+          git checkout "${TARGET_BRANCH_VAR}"
+          git checkout -b "${PR_BRANCH_VAR}"
+          git cherry-pick -x "${MERGE_COMMIT_SHA}"
+          git commit --allow-empty -am "chore: automated cherry-pick of ${MERGE_COMMIT_SHA}"
+          git push --set-upstream origin "${PR_BRANCH_VAR}"
           echo "new branch created"
-          PR=$(gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "chore: automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
-          echo "$PR created"
-          echo PR=$PR >> "$GITHUB_OUTPUT"
+          PR=$(gh pr create -B "${TARGET_BRANCH_VAR}" -H "${PR_BRANCH_VAR}" --title "chore: automated cherry-pick of ${MERGE_COMMIT_SHA}" --body "Automated cherry-pick of ${MERGE_COMMIT_SHA}")
+          echo "${PR} created"
+          echo "PR=${PR}" >> "$GITHUB_OUTPUT"
 
       - name: Send slack message
         if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
