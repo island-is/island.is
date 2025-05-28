@@ -6,7 +6,7 @@ import { Action } from '../../../lib'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  lang: 'is' | 'en'
+  lang?: 'is' | 'en'
   hasError?: boolean
 }
 
