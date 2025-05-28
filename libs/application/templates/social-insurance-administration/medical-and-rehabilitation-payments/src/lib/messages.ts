@@ -601,6 +601,33 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Ljúka sjálfsmati',
       description: 'Complete self-assessment',
     },
+    sectionDescription: {
+      id: 'marp.application:self.assessment.section.description',
+      defaultMessage:
+        'Þessi sjálfsmatslisti er ætlaður til að meta þína eigin upplifun af færni til daglegra athafna og þátttöku í endurhæfingu/viðurkenndri meðferð. Markmiðið er að fá betri innsýn í hvernig þú metur þína getu og hvort endurhæfing/viðurkennd meðferð sé að skila tilætluðum árangri.\n\nListinn samanstendur af spurningum um líkamlega, andlega og félagslega færni sem og þátttöku í daglegu lífi, starfi eða frístundum.\n\nVinsamlegast svaraðu eftir bestu  getu og í samræmi við núverandi stöðu. Ef þú þarft aðstoð við að svara þá er í lagi að fá hjálp, helst frá einhverjum sem þekkir þig vel.',
+      description:
+        'This self-assessment list is intended to assess your own experience of the ability to perform daily activities and participate in rehabilitation/recognized treatment. The goal is to gain better insight into how you assess your ability and whether rehabilitation/recognized treatment is achieving the desired results.\n\nThe list consists of questions about physical, mental and social skills as well as participation in daily life, work or leisure activities.\n\nPlease answer to the best of your ability and in accordance with your current status. If you need help answering, it is okay to get help, preferably from someone who knows you well.',
+    },
+    hadAssistance: {
+      id: 'marp.application:self.assessment.had.assistance',
+      defaultMessage: 'Ég fæ aðstoð við að svara sjálfsmatinu',
+      description: 'I get an assistance to answer the self-assessment',
+    },
+    highestlevelOfEducationDescription: {
+      id: 'marp.application:self.assessment.highest.level.of.education.description',
+      defaultMessage: 'Hvert er hæsta námsstig sem þú hefur lokið?',
+      description: 'What is the highest level of education you have completed?',
+    },
+    levelOfEducationTitle: {
+      id: 'marp.application:self.assessment.level.of.education.title',
+      defaultMessage: 'Námsstig',
+      description: 'Level of education',
+    },
+    levelOfEducationPlaceholder: {
+      id: 'marp.application:self.assessment.level.of.education.placeholder',
+      defaultMessage: 'Veldu námsstig',
+      description: 'Select a level of education',
+    },
 
     // Questions Three
     mainProblemTitle: {
