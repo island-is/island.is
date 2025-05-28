@@ -536,10 +536,10 @@ jobs:
           RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Install infra modules
-        id: install-infra-modules # Added ID to make its outputs accessible
+        id: install-infra-modules
         working-directory: monorepo/infra
         run: |
-          corepack enable && CI=true yarn install --immutable # Removed 'if' condition referencing undefined 'cache-hit' output.
+          corepack enable && CI=true yarn install --immutable
 
       - name: Generate islandis feature-deployment charts for ArgoCD
         working-directory: monorepo/infra
