@@ -135,7 +135,6 @@ export const employeeSubSection = (index: number) =>
                 })),
               ]
             },
-
             required: true,
           }),
           buildDescriptionField({
