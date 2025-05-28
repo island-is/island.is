@@ -18,9 +18,6 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: arc-shared
     timeout-minutes: 10
-    outputs:
-      IS_UNICORN: ${{ steps.unicorn_affected.outputs.IS_UNICORN }}
-      LATEST_RELEASE: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,8 +37,8 @@ jobs:
       - name: Check unicorn affected
         id: unicorn_affected
         run: |
-          echo "Comparing nx affected for \"${{ env.NX_HEAD }}\" using \"${{ env.NX_BASE }}\" as base branch" # TODO: Fix SC2046: Quote this to prevent word splitting [shellcheck]
-          echo "IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }")" >> "$GITHUB_OUTPUT" # TODO: Fix SC2046: Quote this to prevent word splitting [shellcheck]
+          echo "Comparing nx affected for \"${{ env.NX_HEAD }}\" using \"${{ env.NX_BASE }}\" as base branch"
+          echo "IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }")" >> "$GITHUB_OUTPUT"
 
       - name: Results
         run: |
@@ -51,8 +48,8 @@ jobs:
         if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
         id: get_latest_release
         run: |
-          LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs "$(git branch -r)")" # TODO: Fix SC2086: Double quote to prevent globbing and word splitting [shellcheck]
-          echo "LATEST_RELEASE=$LATEST_RELEASE" >> "$GITHUB_OUTPUT" # TODO: Fix SC2086: Double quote to prevent globbing and word splitting [shellcheck]
+          LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs "$(git branch -r)")"
+          echo "LATEST_RELEASE=$LATEST_RELEASE" >> "$GITHUB_OUTPUT"
 
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
 
@@ -61,26 +58,24 @@ jobs:
         id: create_pr
         env:
           GITHUB_TOKEN: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
-          PR_BRANCH: cherry-picks/${{ github.head_ref}}
+          PR_BRANCH: cherry-picks/${{ env.HEAD_REF }}
           TARGET_BRANCH: release/${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
           HEAD_REF: ${{ github.head_ref }}
+          MERGE_COMMIT_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          ACTOR: ${{ github.actor }}
+          LATEST_RELEASE: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
         run: |
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git config --global user.name "${{ github.actor }} (automated)"
-          MERGE_COMMIT_SHA="${{ github.event.pull_request.merge_commit_sha }}"
-          HEAD_REF_VAR="${HEAD_REF}"
-          TARGET_BRANCH_VAR="${TARGET_BRANCH}"
-          PR_BRANCH_VAR="${PR_BRANCH}"
-
+          git config --global user.email "${ACTOR}@users.noreply.github.com"
+          git config --global user.name "${ACTOR} (automated)"
           echo "${MERGE_COMMIT_SHA}"
-          echo "${HEAD_REF_VAR}"
-          git checkout "${TARGET_BRANCH_VAR}"
-          git checkout -b "${PR_BRANCH_VAR}"
+          echo "${HEAD_REF}"
+          git checkout "${TARGET_BRANCH}"
+          git checkout -b "${PR_BRANCH}"
           git cherry-pick -x "${MERGE_COMMIT_SHA}"
           git commit --allow-empty -am "chore: automated cherry-pick of ${MERGE_COMMIT_SHA}"
-          git push --set-upstream origin "${PR_BRANCH_VAR}"
+          git push --set-upstream origin "${PR_BRANCH}"
           echo "new branch created"
-          PR=$(gh pr create -B "${TARGET_BRANCH_VAR}" -H "${PR_BRANCH_VAR}" --title "chore: automated cherry-pick of ${MERGE_COMMIT_SHA}" --body "Automated cherry-pick of ${MERGE_COMMIT_SHA}")
+          PR=$(gh pr create -B "${TARGET_BRANCH}" -H "${PR_BRANCH}" --title "chore: automated cherry-pick of ${MERGE_COMMIT_SHA}" --body "Automated cherry-pick of ${MERGE_COMMIT_SHA}")
           echo "${PR} created"
           echo "PR=${PR}" >> "$GITHUB_OUTPUT"
 
