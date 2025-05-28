@@ -93,6 +93,7 @@ import { DigitalIcelandStatistics } from '../components/connected/DigitalIceland
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { FineCalculator } from '../components/connected/logreglan/FineCalculator/FineCalculator'
+import { SpeedMeasurementCalculator } from '../components/connected/logreglan/SpeedMeasurementCalculator'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
@@ -230,6 +231,9 @@ export const webRenderConnectedComponent = (
       break
     case 'Police/FineCalculator':
       connectedComponent = <FineCalculator slice={slice} />
+      break
+    case 'Police/SpeedMeasurementCalculator':
+      connectedComponent = <SpeedMeasurementCalculator slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)
