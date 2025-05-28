@@ -90,6 +90,16 @@ interface CaseTableCellGenerator<T> {
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000
 
+const getIndictmentCourtDate = (c: Case): Date | undefined => {
+  if (c.indictmentDecision) {
+    return c.indictmentDecision === IndictmentDecision.SCHEDULING
+      ? DateLog.courtDate(c.dateLogs)?.date
+      : undefined
+  }
+
+  return DateLog.arraignmentDate(c.dateLogs)?.date
+}
+
 const generateCell = <T>(value?: T, sortValue?: string): CaseTableCell<T> => {
   return { value, sortValue }
 }
@@ -251,7 +261,7 @@ const generateIndictmentCaseStateTag = (
     indictmentReviewerId,
   } = c
 
-  const courtDate = DateLog.courtDate(c.dateLogs)?.date
+  const courtDate = getIndictmentCourtDate(c)
 
   switch (state) {
     case CaseState.NEW:
@@ -280,7 +290,7 @@ const generateIndictmentCaseStateTag = (
 
 const generateIndictmentCaseType = (
   indictmentSubtypes: IndictmentSubtypeMap | undefined,
-): string | undefined => {
+): string[] | undefined => {
   if (!indictmentSubtypes) return undefined
 
   const labels =
@@ -288,7 +298,9 @@ const generateIndictmentCaseType = (
 
   if (labels.length === 0) return undefined
 
-  return labels.length === 1 ? labels[0] : `${labels[0]} +${labels.length - 1}`
+  return labels.length === 1
+    ? [labels[0]]
+    : [`${labels[0]}`, `+${labels.length - 1}`]
 }
 
 const generateRequestCaseType = (
@@ -348,7 +360,8 @@ export const caseType: CaseTableCellGenerator<StringGroupValue> = {
   generate: (c: Case): CaseTableCell<StringGroupValue> => {
     if (c.type === CaseType.INDICTMENT) {
       const display = generateIndictmentCaseType(c.indictmentSubtypes)
-      return display ? generateCell({ strList: [display] }) : generateCell()
+
+      return display ? generateCell({ strList: display }) : generateCell()
     }
 
     return generateCell({
@@ -515,30 +528,16 @@ const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
     },
   },
   generate: (c: Case): CaseTableCell<StringGroupValue> => {
-    let date: Date | undefined
+    const courtDate = getIndictmentCourtDate(c)
 
-    if (c.indictmentDecision) {
-      // Arraignment is completed
-      if (c.indictmentDecision !== IndictmentDecision.SCHEDULING) {
-        // A court date is not scheduled
-        return generateCell()
-      }
-
-      // A court date should be scheduled
-      date = DateLog.courtDate(c.dateLogs)?.date
-    } else {
-      // An arraignment may be scheduled
-      date = DateLog.arraignmentDate(c.dateLogs)?.date
-    }
-
-    const datePart = formatDate(date, 'EEE d. MMMM yyyy')
+    const datePart = formatDate(courtDate, 'EEE d. MMMM yyyy')
 
     if (!datePart) {
       // No date part, so we return undefined
       return generateCell()
     }
 
-    const timePart = formatDate(date, 'HH:mm')
+    const timePart = formatDate(courtDate, 'HH:mm')
 
     if (!timePart) {
       // This should never happen, but if it does, we return the court date only
