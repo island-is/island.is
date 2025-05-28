@@ -185,8 +185,7 @@ export class PaymentFlowService {
       this.logger.error(
         `[${organisationId}] Failed to create payment flow: charge item codes not found in FJS catalog or other mismatch.`,
         {
-          originalCharges: charges.map((c) => c.chargeItemCode),
-          processedCharges: charges.map((c) => c.chargeItemCode),
+          inputCharges: charges.map((c) => c.chargeItemCode),
           filteredCharges: filteredChargeInformation.map(
             (c) => c.chargeItemCode,
           ),
