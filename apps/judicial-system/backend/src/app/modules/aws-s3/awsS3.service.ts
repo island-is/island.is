@@ -93,19 +93,28 @@ export class AwsS3Service {
       )
   }
 
-  private async putObjectToS3(key: string, content: string): Promise<string> {
+  private async putObjectToS3(
+    key: string,
+    content: string | Buffer,
+  ): Promise<string> {
+    const Body =
+      typeof content === 'string' ? Buffer.from(content, 'binary') : content
     return this.s3
       .putObject({
         Bucket: this.config.bucket,
         Key: key,
-        Body: Buffer.from(content, 'binary'),
+        Body,
         ContentType: 'application/pdf',
       })
       .promise()
       .then(() => key)
   }
 
-  putObject(caseType: CaseType, key: string, content: string): Promise<string> {
+  putObject(
+    caseType: CaseType,
+    key: string,
+    content: string | Buffer,
+  ): Promise<string> {
     return this.putObjectToS3(formatS3Key(caseType, key), content)
   }
 

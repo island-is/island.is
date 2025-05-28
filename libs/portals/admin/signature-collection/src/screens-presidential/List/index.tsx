@@ -1,6 +1,9 @@
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { useLoaderData } from 'react-router-dom'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import {
+  SignatureCollectionCollectionType,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -16,7 +19,6 @@ import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { format as formatNationalId } from 'kennitala'
 import { ListStatus } from '../../lib/utils'
-import ActionReviewComplete from '../../shared-components/completeListReview'
 import Signees from '../../shared-components/signees'
 import ActionExtendDeadline from '../../shared-components/extendDeadline'
 
@@ -82,25 +84,25 @@ export const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                   {formatNationalId(list.candidate.nationalId)}
                 </Text>
               </Box>
-              <Box marginBottom={5}>
-                <ActionExtendDeadline
-                  listId={list.id}
-                  endTime={list.endTime}
-                  allowedToProcess={
-                    allowedToProcess && listStatus === ListStatus.Extendable
-                  }
-                />
-              </Box>
+              <ActionExtendDeadline
+                listId={list.id}
+                endTime={list.endTime}
+                collectionType={SignatureCollectionCollectionType.Presidential}
+                allowedToProcess={
+                  allowedToProcess && listStatus === ListStatus.Extendable
+                }
+              />
               <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
               {allowedToProcess && (
                 <>
                   <PaperUpload listId={list.id} listStatus={listStatus} />
-                  <Box marginTop={10}>
-                    <ActionReviewComplete
-                      listId={list.id}
-                      listStatus={listStatus}
-                    />
-                  </Box>
+                  {/*<ActionReviewComplete
+                    collectionType={
+                      SignatureCollectionCollectionType.Presidential
+                    }
+                    listId={list.id}
+                    listStatus={listStatus}
+                  />*/}
                 </>
               )}
             </>

@@ -144,6 +144,9 @@ codemagic.yaml                                                                  
 # /libs/api/domains/municipalities-financial-aid                                                            @island-is/kolibri-robin-hood
 # /libs/clients/municipalities-financial-aid                                                                @island-is/kolibri-robin-hood
 
+/libs/clients/hms/                                                                                        @island-is/kolibri-kotid
+/libs/api/domains/hms/                                                                                    @island-is/kolibri-kotid
+
 /apps/download-service/                                                                                   @island-is/hugsmidjan
 /apps/portals/my-pages*/                                                                                  @island-is/hugsmidjan
 /apps/services/regulations-admin-backend/                                                                 @island-is/hugsmidjan
@@ -232,7 +235,6 @@ codemagic.yaml                                                                  
 /libs/application/templates/document-provider-onboarding/                                                 @island-is/norda
 /libs/application/templates/family-matters/children-residence-change-v2                                   @island-is/norda
 /libs/application/templates/financial-aid/                                                                @island-is/norda
-/libs/application/templates/financial-statements-inao/                                                    @island-is/norda
 /libs/application/templates/funding-government-projects/                                                  @island-is/norda
 /libs/application/templates/general-fishing-license/                                                      @island-is/norda
 /libs/application/templates/grindavik-housing-buyout/                                                     @island-is/norda
@@ -245,7 +247,6 @@ codemagic.yaml                                                                  
 /libs/application/templates/institution-collaboration/                                                    @island-is/norda @island-is/fuglar
 /libs/application/templates/login-service/                                                                @island-is/norda
 /libs/application/templates/public-debt-payment-plan/                                                     @island-is/norda
-/libs/application/templates/reference-template/                                                           @island-is/norda
 
 /libs/application/template-api-modules/src/lib/modules/templates/accident-notification/                   @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/children-residence-change-v2/            @island-is/norda
@@ -256,7 +257,6 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-cemetery/            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-individual-election/ @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statement-political-party/     @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/financial-statements-inao                @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/funding-government-projects/             @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/                 @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/grindavik-housing-buyout/                @island-is/norda
@@ -385,6 +385,10 @@ codemagic.yaml                                                                  
 /libs/api/domains/seminars-ver/                                                                           @island-is/origo
 /libs/clients/seminars-ver/                                                                               @island-is/origo
 
+/libs/clients/practical-exams-ver                                                                         @island-is/origo
+/libs/api/domains/practical-exams                                                                         @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/aosh/practical-exam                      @island-is/origo
+
 /libs/application/templates/id-card/                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/id-card/                                 @island-is/origo
 
@@ -426,6 +430,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/aosh/training-license-on-a-work-machine                                       @island-is/origo
 /libs/application/templates/aosh/transfer-of-machine-ownership                                            @island-is/origo
 /libs/application/templates/aosh/work-accident-notification                                               @island-is/origo
+/libs/application/templates/aosh/practical-exam                                                           @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/aosh                                     @island-is/origo
 
 /libs/application/templates/healthcare-license-certificate/                                               @island-is/origo

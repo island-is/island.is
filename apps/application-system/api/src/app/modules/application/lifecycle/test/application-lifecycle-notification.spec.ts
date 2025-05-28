@@ -63,7 +63,7 @@ describe('ApplicationLifeCycleService', () => {
     it('should return notification when all required fields are present', async () => {
       const mockApplication = {
         id: '123',
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         state: 'draft',
         applicant: 'user123',
         answers: {},
@@ -115,7 +115,7 @@ describe('ApplicationLifeCycleService', () => {
     it('should handle function-based pruneMessage', async () => {
       const mockApplication = {
         id: '123',
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         state: 'draft',
         applicant: 'user123',
         answers: {},
@@ -167,7 +167,7 @@ describe('ApplicationLifeCycleService', () => {
     it('should return null when required fields are missing', async () => {
       const mockApplication = {
         id: '123',
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         state: 'draft',
         applicant: 'user123',
         answers: {},
@@ -311,7 +311,7 @@ describe('ApplicationLifeCycleService', () => {
     it('should handle malformed pruneMessage function', async () => {
       const mockApplication = {
         id: '123',
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         state: 'draft',
         applicant: 'user123',
         answers: {},

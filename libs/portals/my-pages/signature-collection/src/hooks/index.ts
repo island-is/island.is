@@ -179,8 +179,9 @@ export const useGetCanSign = (
 }
 
 export const useGetCollectors = () => {
-  const { data: getCollectorsData, loading: loadingCollectors } =
-    useQuery(GetCollectors)
+  const { data: getCollectorsData, loading: loadingCollectors } = useQuery(
+    GetCollectors,
+  )
   const collectors =
     (getCollectorsData?.signatureCollectionCollectors as SignatureCollectionCollector[]) ??
     []

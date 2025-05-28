@@ -43,8 +43,11 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { allLists, collectionStatus, collection } =
-    useLoaderData() as ListsLoaderReturn
+  const {
+    allLists,
+    collectionStatus,
+    collection,
+  } = useLoaderData() as ListsLoaderReturn
 
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
@@ -202,6 +205,9 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                   collectionStatus === CollectionStatus.InInitialReview && (
                     <CreateCollection
                       collectionId={collection?.id}
+                      collectionType={
+                        SignatureCollectionCollectionType.Presidential
+                      }
                       areaId={undefined}
                     />
                   )}
@@ -319,6 +325,9 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               {!hasInReview &&
                 collectionStatus === CollectionStatus.InInitialReview && (
                   <ActionCompleteCollectionProcessing
+                    collectionType={
+                      SignatureCollectionCollectionType.Presidential
+                    }
                     collectionId={collection?.id}
                   />
                 )}

@@ -1,8 +1,7 @@
-import React from 'react'
-
-import { Box, Icon, IconProps } from '@island.is/island-ui/core'
+import { FocusableBox, Box, Icon, IconProps } from '@island.is/island-ui/core'
 
 import * as styles from './UserMenu.css'
+import { ElementType } from 'react'
 
 interface UserDropdownItemProps {
   text: string
@@ -17,14 +16,26 @@ export const UserDropdownItem = ({
   link,
   onClick,
 }: UserDropdownItemProps) => {
+  const extraProps = {
+    link: {
+      rel: 'noreferrer noopener',
+      href: link,
+    },
+    button: {
+      component: 'button' as ElementType,
+    },
+  }
+
   return (
-    <Box
+    <FocusableBox
       display="flex"
       height="full"
       alignItems="center"
+      className={styles.dropdownItem}
       onClick={onClick}
       cursor="pointer"
       padding={1}
+      {...extraProps[link ? 'link' : 'button']}
     >
       <Box display="flex" alignItems="center" marginRight={2}>
         <Icon
@@ -34,18 +45,7 @@ export const UserDropdownItem = ({
           color={'blue400'}
         />
       </Box>
-
-      {link ? (
-        <a
-          href={link}
-          className={styles.delegationName}
-          rel="noreferrer noopener"
-        >
-          {text}
-        </a>
-      ) : (
-        <button className={styles.delegationName}>{text}</button>
-      )}
-    </Box>
+      <Box className={styles.delegationName}>{text}</Box>
+    </FocusableBox>
   )
 }

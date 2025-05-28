@@ -1,4 +1,5 @@
 import {
+  adminInstitutionScope,
   Institution,
   InstitutionType,
   prosecutorsOfficeTypes,
@@ -36,8 +37,12 @@ export interface User {
   latestLogin?: string
   loginCount?: number
 }
+export interface UserDescriptor {
+  name?: string
+  institution?: { name?: string }
+}
 
-interface InstitutionUser {
+export interface InstitutionUser {
   id?: string | null
   role?: string | null
   institution?: {
@@ -48,19 +53,28 @@ interface InstitutionUser {
 
 const prosecutionOfficeTypes: string[] = prosecutorsOfficeTypes
 
-export const prosecutionRoles: string[] = [
+export const prosecutionRoles: UserRole[] = [
   UserRole.PROSECUTOR,
   UserRole.PROSECUTOR_REPRESENTATIVE,
 ]
+const prosecutionsRolesStrings: string[] = prosecutionRoles
 
 export const isProsecutionUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
-      prosecutionRoles.includes(user.role) &&
+      prosecutionsRolesStrings.includes(user.role) &&
       user.institution?.type &&
       prosecutionOfficeTypes.includes(user.institution.type),
   )
 }
+
+export const getContactInformation = (user: {
+  name: string
+  email: string
+}) => ({
+  name: user.name,
+  email: user.email,
+})
 
 const publicProsecutionRoles: string[] = [UserRole.PROSECUTOR]
 
@@ -72,54 +86,59 @@ export const isPublicProsecutionUser = (user?: InstitutionUser): boolean => {
   )
 }
 
-export const publicProsecutionOfficeRoles: string[] = [
+export const publicProsecutionOfficeRoles: UserRole[] = [
   UserRole.PUBLIC_PROSECUTOR_STAFF,
 ]
+const publicProsecutionOfficeRolesStrings: string[] =
+  publicProsecutionOfficeRoles
 
 export const isPublicProsecutionOfficeUser = (
   user?: InstitutionUser,
 ): boolean => {
   return Boolean(
     user?.role &&
-      publicProsecutionOfficeRoles.includes(user.role) &&
+      publicProsecutionOfficeRolesStrings.includes(user.role) &&
       user.institution?.type === InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
   )
 }
 
-export const districtCourtRoles: string[] = [
+export const districtCourtRoles: UserRole[] = [
   UserRole.DISTRICT_COURT_JUDGE,
   UserRole.DISTRICT_COURT_REGISTRAR,
   UserRole.DISTRICT_COURT_ASSISTANT,
 ]
+const districtCourtRolesStrings: string[] = districtCourtRoles
 
 export const isDistrictCourtUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
-      districtCourtRoles.includes(user.role) &&
+      districtCourtRolesStrings.includes(user.role) &&
       user.institution?.type === InstitutionType.DISTRICT_COURT,
   )
 }
 
-export const courtOfAppealsRoles: string[] = [
+export const courtOfAppealsRoles: UserRole[] = [
   UserRole.COURT_OF_APPEALS_JUDGE,
   UserRole.COURT_OF_APPEALS_REGISTRAR,
   UserRole.COURT_OF_APPEALS_ASSISTANT,
 ]
+const courtOfAppealsRolesStrings: string[] = courtOfAppealsRoles
 
 export const isCourtOfAppealsUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
-      courtOfAppealsRoles.includes(user.role) &&
+      courtOfAppealsRolesStrings.includes(user.role) &&
       user.institution?.type === InstitutionType.COURT_OF_APPEALS,
   )
 }
 
-export const prisonSystemRoles: string[] = [UserRole.PRISON_SYSTEM_STAFF]
+export const prisonSystemRoles: UserRole[] = [UserRole.PRISON_SYSTEM_STAFF]
+const prisonSystemRolesStrings: string[] = prisonSystemRoles
 
 export const isPrisonSystemUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
-      prisonSystemRoles.includes(user.role) &&
+      prisonSystemRolesStrings.includes(user.role) &&
       (user.institution?.type === InstitutionType.PRISON ||
         user.institution?.type === InstitutionType.PRISON_ADMIN),
   )
@@ -128,14 +147,14 @@ export const isPrisonSystemUser = (user?: InstitutionUser): boolean => {
 export const isPrisonAdminUser = (user?: InstitutionUser): boolean =>
   Boolean(
     user?.role &&
-      prisonSystemRoles.includes(user.role) &&
+      prisonSystemRolesStrings.includes(user.role) &&
       user.institution?.type === InstitutionType.PRISON_ADMIN,
   )
 
 export const isPrisonStaffUser = (user?: InstitutionUser): boolean =>
   Boolean(
     user?.role &&
-      prisonSystemRoles.includes(user.role) &&
+      prisonSystemRolesStrings.includes(user.role) &&
       user.institution?.type === InstitutionType.PRISON,
   )
 
@@ -154,16 +173,25 @@ export const isDefenceUser = (user?: InstitutionUser): boolean => {
   return Boolean(user?.role && defenceRoles.includes(user.role))
 }
 
-const adminRoles: string[] = [UserRole.ADMIN]
+const superAdminRoles: string[] = [UserRole.ADMIN]
 
-export const isAdminUser = (user?: InstitutionUser): boolean => {
-  return Boolean(user?.role && adminRoles.includes(user.role))
+const isSuperAdminUser = (user?: InstitutionUser): boolean => {
+  return Boolean(user?.role && superAdminRoles.includes(user.role))
 }
 
-const localAdminRoles: string[] = [UserRole.LOCAL_ADMIN]
+const localAdminRoles: UserRole[] = [UserRole.LOCAL_ADMIN]
+const localAdminRolesStrings: string[] = localAdminRoles
 
-export const isLocalAdminUser = (user?: InstitutionUser): boolean => {
-  return Boolean(user?.role && localAdminRoles.includes(user.role))
+const isLocalAdminUser = (user?: InstitutionUser): boolean => {
+  return Boolean(
+    user?.role &&
+      localAdminRolesStrings.includes(user.role) &&
+      user.institution,
+  )
+}
+
+export const isAdminUser = (user?: InstitutionUser): boolean => {
+  return isSuperAdminUser(user) || isLocalAdminUser(user)
 }
 
 export const isCoreUser = (user?: InstitutionUser): boolean => {
@@ -175,4 +203,56 @@ export const isCoreUser = (user?: InstitutionUser): boolean => {
     isPrisonSystemUser(user) ||
     isLocalAdminUser(user)
   )
+}
+
+export const getAdminUserInstitutionScope = (
+  user?: InstitutionUser,
+): InstitutionType[] => {
+  if (!user) {
+    return []
+  }
+
+  if (isSuperAdminUser(user)) {
+    return Object.values(InstitutionType)
+  }
+
+  if (isLocalAdminUser(user)) {
+    return adminInstitutionScope[user.institution?.type as InstitutionType]
+  }
+
+  return []
+}
+
+const institutionUserRoles: { [key in InstitutionType]: UserRole[] } = {
+  [InstitutionType.POLICE_PROSECUTORS_OFFICE]: prosecutionRoles,
+  [InstitutionType.DISTRICT_PROSECUTORS_OFFICE]: prosecutionRoles,
+  [InstitutionType.PUBLIC_PROSECUTORS_OFFICE]: [
+    ...prosecutionRoles,
+    ...publicProsecutionOfficeRoles,
+  ],
+  [InstitutionType.DISTRICT_COURT]: districtCourtRoles,
+  [InstitutionType.COURT_OF_APPEALS]: courtOfAppealsRoles,
+  [InstitutionType.PRISON]: prisonSystemRoles,
+  [InstitutionType.PRISON_ADMIN]: prisonSystemRoles,
+  [InstitutionType.NATIONAL_COMMISSIONERS_OFFICE]: [],
+  [InstitutionType.COURT_ADMINISTRATION_OFFICE]: [],
+}
+
+export const getAdminUserInstitutionUserRoles = (
+  user?: InstitutionUser,
+  institutionType?: InstitutionType,
+): UserRole[] => {
+  if (!user || !institutionType) {
+    return []
+  }
+
+  if (!getAdminUserInstitutionScope(user).includes(institutionType)) {
+    return []
+  }
+
+  if (isSuperAdminUser(user)) {
+    return institutionUserRoles[institutionType].concat(localAdminRoles)
+  }
+
+  return institutionUserRoles[institutionType]
 }

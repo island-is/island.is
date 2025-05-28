@@ -7,7 +7,10 @@ import {
 } from '@island.is/application/core'
 import {
   Actions,
+  defaultIncomeTypes,
   Events,
+  INCOME,
+  RatioType,
   Roles,
   States,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -24,10 +27,11 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  UserProfileApi,
   defineTemplateApi,
+  UserProfileApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
+import { CodeOwners } from '@island.is/shared/constants'
+import isEmpty from 'lodash/isEmpty'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
@@ -39,21 +43,17 @@ import {
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
-import { INCOME, RatioType } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   isEligible,
-  defaultIncomeTypes,
 } from './incomePlanUtils'
 import {
   historyMessages,
   incomePlanFormMessage,
   statesMessages,
 } from './messages'
-import { CodeOwners } from '@island.is/shared/constants'
-import isEmpty from 'lodash/isEmpty'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -64,7 +64,6 @@ const IncomePlanTemplate: ApplicationTemplate<
   name: incomePlanFormMessage.shared.applicationTitle,
   codeOwner: CodeOwners.Deloitte,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  featureFlag: Features.IncomePlanEnabled,
   translationNamespaces: ApplicationConfigurations.IncomePlan.translation,
   dataSchema,
   allowMultipleApplicationsInDraft: false,

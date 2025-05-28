@@ -7,6 +7,7 @@ import { MessageModule } from '@island.is/judicial-system/message'
 
 import { AwsS3Module, CaseModule, CourtModule, UserModule } from '../index'
 import { CaseFile } from './models/file.model'
+import { CriminalRecordModule } from './criminalRecord.module'
 import { FileController } from './file.controller'
 import { FileService } from './file.service'
 import { InternalFileController } from './internalFile.controller'
@@ -16,6 +17,7 @@ import { LimitedAccessFileController } from './limitedAccessFile.controller'
   imports: [
     CmsTranslationsModule,
     MessageModule,
+    CriminalRecordModule,
     forwardRef(() => UserModule),
     forwardRef(() => CaseModule),
     forwardRef(() => CourtModule),

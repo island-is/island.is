@@ -30,8 +30,11 @@ import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useSignatureCollectionAdminRemoveListMutation } from './removeList.generated'
 import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
-import { SignatureCollectionList } from '@island.is/api/schema'
 import { getTagConfig } from '../../lib/utils'
+import {
+  SignatureCollectionCollectionType,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 
 export const Constituency = ({
   allowedToProcess,
@@ -52,10 +55,13 @@ export const Constituency = ({
   const areaId = collection.areas.find((a) => a.name === constituencyName)?.id
 
   const countCandidatesLists = (allLists: SignatureCollectionList[]) => {
-    return allLists?.reduce((acc: any, list: SignatureCollectionList) => {
-      acc[list.candidate.id] = (acc[list.candidate.id] || 0) + 1
-      return acc
-    }, {})
+    return allLists?.reduce(
+      (acc: Record<string, number>, list: SignatureCollectionList) => {
+        acc[list.candidate.id] = (acc[list.candidate.id] || 0) + 1
+        return acc
+      },
+      {},
+    )
   }
 
   const candidatesListCount = countCandidatesLists(allLists)
@@ -130,6 +136,9 @@ export const Constituency = ({
                 </Text>
                 <CreateCollection
                   collectionId={collection?.id}
+                  collectionType={
+                    SignatureCollectionCollectionType.Parliamentary
+                  }
                   areaId={areaId}
                 />
               </Box>
@@ -200,6 +209,8 @@ export const Constituency = ({
                                       variables: {
                                         input: {
                                           listId: list.id,
+                                          collectionType:
+                                            SignatureCollectionCollectionType.Parliamentary,
                                         },
                                       },
                                     })

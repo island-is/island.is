@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { type Dispatch, type SetStateAction, useMemo, useState } from 'react'
 import { useDebounce } from 'react-use'
 import dynamic from 'next/dynamic'
 import { type EditorExtensionSDK } from '@contentful/app-sdk'
@@ -8,6 +8,7 @@ import {
   FormControl,
   MenuItem,
   Select,
+  Text,
 } from '@contentful/f36-components'
 import { PlusIcon } from '@contentful/f36-icons'
 import { useSDK } from '@contentful/react-apps-toolkit'
@@ -49,9 +50,15 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
   }
 }
 
-const generateUniqueId = (linkData: LinkData): string => {
+const generateUniqueId = (
+  linkData: LinkData,
+  isEnglishLocale?: boolean,
+): string => {
+  const categoryItemKey = isEnglishLocale
+    ? 'categoryCardItemsEn'
+    : 'categoryCardItems'
   let highestId = 0
-  for (const { id } of linkData.categoryCardItems) {
+  for (const { id } of linkData[categoryItemKey] ?? []) {
     if (Number(id) > highestId) highestId = Number(id)
   }
   return String(highestId + 1)
@@ -70,6 +77,109 @@ interface LinkData {
     description: string
     href: string
   }[]
+  categoryCardItemsEn: LinkData['categoryCardItems']
+}
+
+interface CategoryCardItemWrapperProps {
+  categoryCardItems: LinkData['categoryCardItems']
+  sdk: EditorExtensionSDK
+  setLinkData: Dispatch<SetStateAction<LinkData>>
+  localeName: string
+  isEnglishLocale?: boolean
+}
+
+const CategoryCardItemWrapper = ({
+  categoryCardItems,
+  setLinkData,
+  sdk,
+  localeName,
+  isEnglishLocale = false,
+}: CategoryCardItemWrapperProps) => {
+  const categoryItemKey = isEnglishLocale
+    ? 'categoryCardItemsEn'
+    : 'categoryCardItems'
+  return (
+    <FormControl>
+      <FormControl.Label>
+        Overview Links <Text fontSize="fontSizeS"> | {localeName}</Text>
+      </FormControl.Label>
+      <CustomSortableContext
+        containerClassName={styles.itemContainer}
+        items={categoryCardItems}
+        updateItems={(updatedItems: LinkData['categoryCardItems']) => {
+          setLinkData((prevLinkData) => ({
+            ...prevLinkData,
+            [categoryItemKey]: updatedItems,
+          }))
+        }}
+        renderItem={(item: LinkData['categoryCardItems'][number]) => {
+          const onEdit = async () => {
+            const updatedItem = await sdk.dialogs.openCurrentApp({
+              parameters: {
+                state: item,
+              },
+              minHeight: 400,
+            })
+            setLinkData((prevLinkData) => ({
+              ...prevLinkData,
+              [categoryItemKey]: (prevLinkData[categoryItemKey] ?? []).map(
+                (prevItem) => {
+                  if (prevItem.id !== item.id) return prevItem
+                  return updatedItem
+                },
+              ),
+            }))
+          }
+          return (
+            <SortableEntryCard
+              key={item.id}
+              id={item.id}
+              contentType="Category Card"
+              title={item.title || 'Untitled'}
+              description={item.description}
+              onClick={onEdit}
+              actions={[
+                <MenuItem key="edit" onClick={onEdit}>
+                  Edit
+                </MenuItem>,
+                <MenuItem
+                  key="remove"
+                  onClick={() => {
+                    setLinkData((prevLinkData) => ({
+                      ...prevLinkData,
+                      [categoryItemKey]: (
+                        prevLinkData[categoryItemKey] ?? []
+                      ).filter(({ id }) => item.id !== id),
+                    }))
+                  }}
+                >
+                  Remove
+                </MenuItem>,
+              ]}
+            />
+          )
+        }}
+      />
+      <div className={styles.createCategoryCardButtonContainer}>
+        <Button
+          startIcon={<PlusIcon />}
+          onClick={() => {
+            setLinkData((prevLinkData) => ({
+              ...prevLinkData,
+              [categoryItemKey]: (prevLinkData[categoryItemKey] ?? []).concat({
+                id: generateUniqueId(prevLinkData, isEnglishLocale),
+                title: '',
+                description: '',
+                href: '',
+              }),
+            }))
+          }}
+        >
+          Create new card
+        </Button>
+      </div>
+    </FormControl>
+  )
 }
 
 const DEBOUNCE_TIME_IN_MS = 100
@@ -84,6 +194,7 @@ export const OverviewLinksEditor = () => {
     sdk.entry.fields.linkData.getValue() || {
       variant: LinkDataVariant.IntroLinkImage,
       categoryCardItems: [],
+      categoryCardItemsEn: [],
     },
   )
 
@@ -157,84 +268,21 @@ export const OverviewLinksEditor = () => {
       )}
 
       {linkData.variant === LinkDataVariant.CategoryCard && (
-        <FormControl>
-          <FormControl.Label>Overview Links</FormControl.Label>
-          <CustomSortableContext
-            containerClassName={styles.itemContainer}
-            items={linkData.categoryCardItems}
-            updateItems={(updatedItems: LinkData['categoryCardItems']) => {
-              setLinkData((prevLinkData) => ({
-                ...prevLinkData,
-                categoryCardItems: updatedItems,
-              }))
-            }}
-            renderItem={(item: LinkData['categoryCardItems'][number]) => (
-              <SortableEntryCard
-                key={item.id}
-                id={item.id}
-                contentType="Category Card"
-                title={item.title || 'Untitled'}
-                description={item.description}
-                actions={[
-                  <MenuItem
-                    key="edit"
-                    onClick={async () => {
-                      const updatedItem = await sdk.dialogs.openCurrentApp({
-                        parameters: {
-                          state: item,
-                        },
-                        minHeight: 400,
-                      })
-                      setLinkData((prevLinkData) => ({
-                        ...prevLinkData,
-                        categoryCardItems: prevLinkData.categoryCardItems.map(
-                          (prevItem) => {
-                            if (prevItem.id !== item.id) return prevItem
-                            return updatedItem
-                          },
-                        ),
-                      }))
-                    }}
-                  >
-                    Edit
-                  </MenuItem>,
-                  <MenuItem
-                    key="remove"
-                    onClick={() => {
-                      setLinkData((prevLinkData) => ({
-                        ...prevLinkData,
-                        categoryCardItems:
-                          prevLinkData.categoryCardItems.filter(
-                            ({ id }) => item.id !== id,
-                          ),
-                      }))
-                    }}
-                  >
-                    Remove
-                  </MenuItem>,
-                ]}
-              />
-            )}
+        <div>
+          <CategoryCardItemWrapper
+            categoryCardItems={linkData.categoryCardItems}
+            sdk={sdk}
+            setLinkData={setLinkData}
+            localeName={sdk.locales.names['is-IS']}
           />
-          <div className={styles.createCategoryCardButtonContainer}>
-            <Button
-              startIcon={<PlusIcon />}
-              onClick={() => {
-                setLinkData((prevLinkData) => ({
-                  ...prevLinkData,
-                  categoryCardItems: prevLinkData.categoryCardItems.concat({
-                    id: generateUniqueId(prevLinkData),
-                    title: '',
-                    description: '',
-                    href: '',
-                  }),
-                }))
-              }}
-            >
-              Create new card
-            </Button>
-          </div>
-        </FormControl>
+          <CategoryCardItemWrapper
+            categoryCardItems={linkData.categoryCardItemsEn ?? []}
+            sdk={sdk}
+            setLinkData={setLinkData}
+            localeName={sdk.locales.names['en']}
+            isEnglishLocale={true}
+          />
+        </div>
       )}
 
       {linkData.variant === LinkDataVariant.CategoryCard && (
