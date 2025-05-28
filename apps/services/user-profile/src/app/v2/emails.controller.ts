@@ -31,7 +31,7 @@ const namespace = '@island.is/user-profile/v2/emails'
 @ApiTags('v2/me/emails')
 @ApiSecurity('oauth2', [])
 @Controller({
-  path: 'me/emails',
+  path: 'actor/emails',
   version: ['2'],
 })
 @Audit({ namespace })

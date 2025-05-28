@@ -129,7 +129,7 @@ describe('Emails controller', () => {
     await actorApp.cleanUp()
   })
 
-  describe('GET /v2/me/emails', () => {
+  describe('GET /v2/actor/emails', () => {
     beforeEach(() => {
       jest.spyOn(kennitala, 'isValid').mockReturnValue(true)
     })
@@ -138,7 +138,7 @@ describe('Emails controller', () => {
       await fixtureFactory.createUserProfile({ ...testUserProfile, emails: [] })
 
       const res = await server.get(
-        `/v2/me/emails?nationalId=${testUserProfile.nationalId}`,
+        `/v2/actor/emails?nationalId=${testUserProfile.nationalId}`,
       )
 
       expect(res.status).toEqual(200)
@@ -149,7 +149,7 @@ describe('Emails controller', () => {
       await fixtureFactory.createUserProfile(testUserProfile)
 
       const res = await server.get(
-        `/v2/me/emails?nationalId=${testUserProfile.nationalId}`,
+        `/v2/actor/emails?nationalId=${testUserProfile.nationalId}`,
       )
 
       expect(res.status).toEqual(200)
@@ -181,7 +181,7 @@ describe('Emails controller', () => {
       })
 
       const res = await server.get(
-        `/v2/me/emails?nationalId=${testUserProfile.nationalId}`,
+        `/v2/actor/emails?nationalId=${testUserProfile.nationalId}`,
       )
 
       expect(res.status).toEqual(200)
@@ -202,7 +202,7 @@ describe('Emails controller', () => {
         nationalId: invalidNationalId,
       })
 
-      const res = await server.get('/v2/me/emails')
+      const res = await server.get('/v2/actor/emails')
 
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
@@ -238,7 +238,7 @@ describe('Emails controller', () => {
       })
 
       const res = await server.get(
-        `/v2/me/emails?nationalId=${testUserProfile.nationalId}`,
+        `/v2/actor/emails?nationalId=${testUserProfile.nationalId}`,
       )
 
       expect(res.status).toEqual(200)
@@ -276,7 +276,7 @@ describe('Emails controller', () => {
       })
 
       // Actor should get emails for user.actor.nationalId
-      const res = await actorServer.get('/v2/me/emails')
+      const res = await actorServer.get('/v2/actor/emails')
 
       expect(res.status).toEqual(200)
       expect(res.body).toHaveLength(1)
@@ -291,7 +291,7 @@ describe('Emails controller', () => {
     })
   })
 
-  describe('POST /v2/me/emails', () => {
+  describe('POST /v2/actor/emails', () => {
     beforeEach(() => {
       jest.spyOn(kennitala, 'isValid').mockReturnValue(true)
     })
@@ -308,7 +308,7 @@ describe('Emails controller', () => {
     it('should successfully create new email', async () => {
       await setupEmailVerification()
 
-      const res = await server.post('/v2/me/emails').send({
+      const res = await server.post('/v2/actor/emails').send({
         email: 'test@example.com',
         code: '123',
       } as CreateEmailDto)
@@ -335,7 +335,7 @@ describe('Emails controller', () => {
     it('should return 400 for mismatched verification code', async () => {
       await setupEmailVerification()
 
-      const res = await server.post('/v2/me/emails').send({
+      const res = await server.post('/v2/actor/emails').send({
         email: 'test@example.com',
         code: 'wrong-code',
       } as CreateEmailDto)
@@ -346,7 +346,7 @@ describe('Emails controller', () => {
     it('should return 400 for unverified email', async () => {
       await setupEmailVerification()
 
-      const res = await server.post('/v2/me/emails').send({
+      const res = await server.post('/v2/actor/emails').send({
         email: 'wrong-email@example.com',
         code: '123',
       } as CreateEmailDto)
@@ -365,7 +365,7 @@ describe('Emails controller', () => {
         hash: '123',
       })
 
-      const res = await server.post('/v2/me/emails').send({
+      const res = await server.post('/v2/actor/emails').send({
         email: 'test@example.com',
         code: '123',
       } as CreateEmailDto)
@@ -409,7 +409,7 @@ describe('Emails controller', () => {
       })
 
       // Actor creates email for target user
-      const res = await actorServer.post('/v2/me/emails').send({
+      const res = await actorServer.post('/v2/actor/emails').send({
         email: 'actor-verified@example.com',
         code: 'actor123',
       } as CreateEmailDto)
@@ -438,7 +438,7 @@ describe('Emails controller', () => {
     })
   })
 
-  describe('DELETE /v2/me/emails/:emailId', () => {
+  describe('DELETE /v2/actor/emails/:emailId', () => {
     beforeEach(() => {
       jest.spyOn(kennitala, 'isValid').mockReturnValue(true)
     })
@@ -462,7 +462,7 @@ describe('Emails controller', () => {
       })
       expect(emailBeforeDeletion).not.toBeNull()
 
-      const res = await server.delete(`/v2/me/emails/${emailToDelete.id}`)
+      const res = await server.delete(`/v2/actor/emails/${emailToDelete.id}`)
 
       expect(res.status).toEqual(200)
       expect(res.body).toBeTruthy()
@@ -495,7 +495,7 @@ describe('Emails controller', () => {
         primary: true,
       })
 
-      const res = await server.delete(`/v2/me/emails/${primaryEmail.id}`)
+      const res = await server.delete(`/v2/actor/emails/${primaryEmail.id}`)
 
       expect(res.status).toEqual(200)
       expect(res.body).toBeTruthy()
@@ -525,7 +525,7 @@ describe('Emails controller', () => {
       })
 
       const nonExistentEmailId = '12345678-1234-1234-1234-123456789012'
-      const res = await server.delete(`/v2/me/emails/${nonExistentEmailId}`)
+      const res = await server.delete(`/v2/actor/emails/${nonExistentEmailId}`)
 
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
@@ -562,7 +562,7 @@ describe('Emails controller', () => {
       })
 
       // Attempt to delete the other user's email
-      const res = await server.delete(`/v2/me/emails/${otherUserEmail.id}`)
+      const res = await server.delete(`/v2/actor/emails/${otherUserEmail.id}`)
 
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
@@ -624,7 +624,7 @@ describe('Emails controller', () => {
 
       // Actor deletes email for target user
       const res = await actorServer.delete(
-        `/v2/me/emails/${targetUserEmail.id}`,
+        `/v2/actor/emails/${targetUserEmail.id}`,
       )
 
       expect(res.status).toEqual(200)
