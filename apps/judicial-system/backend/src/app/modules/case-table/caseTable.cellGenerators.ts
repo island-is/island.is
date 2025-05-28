@@ -388,7 +388,7 @@ const requestCaseState: CaseTableCellGenerator<TagValue> = {
   includes: {
     dateLogs: {
       model: DateLog,
-      attributes: ['date'],
+      attributes: ['date', 'dateType'],
       order: [['created', 'DESC']],
       separate: true,
     },
