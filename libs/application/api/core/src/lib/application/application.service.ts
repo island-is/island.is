@@ -194,7 +194,6 @@ export class ApplicationService {
     nationalId: string,
     typeId?: string,
     status?: string,
-    actor?: string,
     showPruned?: boolean,
   ): Promise<Application[]> {
     const typeIds = typeId?.split(',')
