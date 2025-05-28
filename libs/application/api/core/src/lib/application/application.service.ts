@@ -200,21 +200,13 @@ export class ApplicationService {
     const typeIds = typeId?.split(',')
     const statuses = status?.split(',')
 
-    const applicantAccessConditions: WhereOptions = actor
-      ? {
-          // Delegation Is active we get applications for the delegator AND where we are one of the actors
-          [Op.and]: [
-            { applicant: { [Op.eq]: nationalId } },
-            { applicantActors: { [Op.contains]: [actor] } },
-          ],
-        }
-      : {
-          // Delegation Is not active we get applications for the nationalId OR where we are one of the assignees
-          [Op.or]: [
-            { applicant: { [Op.eq]: nationalId } },
-            { assignees: { [Op.contains]: [nationalId] } },
-          ],
-        }
+    const applicantAccessConditions: WhereOptions = {
+      [Op.or]: [
+        { applicant: { [Op.eq]: nationalId } },
+        { assignees: { [Op.contains]: [nationalId] } },
+        ...(actor ? [{ applicantActors: { [Op.contains]: [actor] } }] : []),
+      ],
+    }
 
     return this.applicationModel.findAll({
       where: {
