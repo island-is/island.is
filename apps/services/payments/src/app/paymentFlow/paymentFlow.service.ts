@@ -116,6 +116,13 @@ export class PaymentFlowService {
         })),
       )
 
+      this.logger.info(
+        `[${paymentFlow.id}] Payment flow created [${paymentFlow.organisationId}]`,
+        {
+          charges: paymentInfo.charges.map((c) => c.chargeItemCode),
+        },
+      )
+
       return {
         urls: {
           is: `${environment.paymentsWeb.origin}/is/${paymentFlow.id}`,
