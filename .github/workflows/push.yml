@@ -285,7 +285,7 @@ jobs:
       actions: read
       contents: read
     outputs:
-      json: ${{ needs.prepare.outputs.build_chunks || '' }} # Fixed: The 'prepare' job outputs 'build_chunks', not 'CHUNKS'.
+      json: ${{ needs.prepare.outputs.build_chunks || '' }}
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
