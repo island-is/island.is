@@ -1,6 +1,22 @@
 import { YesOrNoEnum } from '@island.is/application/core'
 import { NextStepInReviewOptions } from '../utils/enums'
 
+export type Maybe<T> = T | null
+
+export type Scalars = {
+  ID: string
+  String: string
+  Boolean: boolean
+  Int: number
+  Float: number
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+  DateTime: any
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSON: any
+  /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSONObject: any
+}
+
 export type ApplicantsInfo = {
   nationalIdWithName: { name: string; nationalId: string }
   phone: string
@@ -22,33 +38,33 @@ export type Files = {
 }
 
 export interface PropertyUnit {
-  appraisalUnitCode?: number
-  propertyValue?: number
-  propertyCode?: number
-  propertyUsageDescription?: string
-  unitCode?: string
-  addressCode?: number
-  address?: string
-  fireInsuranceValuation?: number
-  size?: number
-  sizeUnit?: string
+  address?: Maybe<Scalars['String']>
+  addressCode?: Maybe<Scalars['Float']>
+  appraisalUnitCode?: Maybe<Scalars['Float']>
+  fireInsuranceValuation?: Maybe<Scalars['Float']>
+  propertyCode?: Maybe<Scalars['Float']>
+  propertyUsageDescription?: Maybe<Scalars['String']>
+  propertyValue?: Maybe<Scalars['Float']>
+  size?: Maybe<Scalars['Float']>
+  sizeUnit?: Maybe<Scalars['String']>
+  unitCode?: Maybe<Scalars['String']>
   checked?: boolean
   changedSize?: number
   numOfRooms?: number
 }
 
 export interface AddressProps {
-  addressCode?: number
-  address?: string
-  municipalityName?: string
-  municipalityCode?: number
-  postalCode?: number
-  landCode?: number
-  streetName?: string
-  streetNumber?: number
-  numOfConnectedProperties?: number
   label: string
   value: string
+  address?: Maybe<Scalars['String']>
+  addressCode?: Maybe<Scalars['Float']>
+  landCode?: Maybe<Scalars['Float']>
+  municipalityCode?: Maybe<Scalars['Float']>
+  municipalityName?: Maybe<Scalars['String']>
+  numOfConnectedProperties?: Maybe<Scalars['Float']>
+  postalCode?: Maybe<Scalars['Float']>
+  streetName?: Maybe<Scalars['String']>
+  streetNumber?: Maybe<Scalars['Float']>
 }
 
 export interface ParticipantsSection {
