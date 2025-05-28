@@ -231,12 +231,9 @@ jobs:
 
       - name: Prepare docker build targets
         id: build_map
-        env:
-          BASE_SHA: ${{ env.BASE }}
-          HEAD_SHA: ${{ env.HEAD }}
         run: |
           set -euo pipefail
-          AFFECTED_TARGETS="$(yarn nx show projects --affected --base "$BASE_SHA" --head "$HEAD_SHA" --json | jq -r 'join(",")')"
+          AFFECTED_TARGETS="$(yarn nx show projects --affected --base "$NX_BASE" --head "$NX_HEAD" --json | jq -r 'join(",")')"
           ADDITIONAL_PROJECTS="$( (cd infra && yarn feature-env downstream --feature tmp --images "$AFFECTED_TARGETS" --chart islandis) )"
           echo "Additional Projects: $ADDITIONAL_PROJECTS"
           export ADDITIONAL_PROJECTS # Export for use in generate-docker-chunks.sh
