@@ -62,8 +62,6 @@ jobs:
     permissions:
       actions: read
       contents: read
-    outputs:
-      json: ${{ steps.dockerargs.outputs.json }}
     env:
       # Just so this is not an unassigned variable
       AFFECTED_ALL: ''
