@@ -10,9 +10,6 @@ import {
 import { ApplicationsService } from './applications.service'
 import {
   Application,
-} from '../../models/applications.model'
-import {
-  Application,
   ApplicationResponse,
 } from '../../models/applications.model'
 import {
@@ -43,7 +40,6 @@ export class ApplicationsResolver {
   }
 
 
-  @Mutation(() => Application, {
   @Query(() => ApplicationResponse, {
     name: 'formSystemApplications',
   })
