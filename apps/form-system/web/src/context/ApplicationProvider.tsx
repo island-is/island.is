@@ -3,7 +3,6 @@ import {
   Dispatch,
   useContext,
   useReducer,
-  useEffect,
   useMemo,
 } from 'react'
 import { FormSystemApplication } from '@island.is/api/schema'
