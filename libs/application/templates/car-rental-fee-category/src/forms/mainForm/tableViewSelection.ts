@@ -12,13 +12,13 @@ import { UploadSelection } from '../../utils/constants'
   
   export const tableViewSelectionSection = buildSection({
     condition: (answers) => {
-      const uploadSelectionValue = getValueViaPath<Array<string>>(
-        answers,
-        'singleOrMultiSelectionRadio',
-      )
-  
-      return uploadSelectionValue ? uploadSelectionValue[0] === UploadSelection.SINGLE : false
-    },
+        const uploadSelectionValue = getValueViaPath<string>(
+          answers,
+          'singleOrMultiSelectionRadio',
+        )
+    
+        return uploadSelectionValue ? uploadSelectionValue === UploadSelection.SINGLE : false
+      },
     id: 'tableViewSelectionSection',
     title: 'Skrá gjald',
     children: [

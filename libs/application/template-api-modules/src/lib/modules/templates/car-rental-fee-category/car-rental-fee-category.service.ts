@@ -7,6 +7,7 @@ import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
 import subYears from 'date-fns/subYears'
+import { RskRentalDayRateClient } from '@island.is/clients-rental-day-rate'
 
 @Injectable()
 export class CarRentalFeeCategoryService extends BaseTemplateApiService {
@@ -14,12 +15,17 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
     private readonly vehiclesApi: VehicleSearchApi,
+    private readonly rentalDayRateClient: RskRentalDayRateClient
   ) {
     super(ApplicationTypes.CAR_RENTAL_FEE_CATEGORY)
   }
 
   private vehiclesApiWithAuth(auth: Auth) {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private rentalsApiWithAuth(auth: Auth) {
+    return this.rentalDayRateClient.defaultApiWithAuth(auth)
   }
 
   async createApplication({
@@ -31,6 +37,10 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
       showOwned: true,
       showCoowned: true,
       showOperated: true,
+    })
+
+    const y = await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdGet({
+      entityId: auth.nationalId
     })
 
     console.log('data', x)
