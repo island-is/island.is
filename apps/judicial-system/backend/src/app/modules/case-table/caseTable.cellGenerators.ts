@@ -4,6 +4,7 @@ import {
   capitalize,
   formatCaseType,
   formatDate,
+  getAllReadableIndictmentSubtypes,
   getAppealResultTextByValue,
   getInitials,
 } from '@island.is/judicial-system/formatters'
@@ -16,11 +17,15 @@ import {
   CaseTableColumnKey,
   CaseType,
   DefendantEventType,
+  EventType,
   getIndictmentAppealDeadlineDate,
   getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
+  IndictmentDecision,
+  IndictmentSubtypeMap,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
+  isPublicProsecutionOfficeUser,
   isRestrictionCase,
   PunishmentType,
   ServiceRequirement,
@@ -30,6 +35,7 @@ import {
 import { Case } from '../case/models/case.model'
 import { DateLog } from '../case/models/dateLog.model'
 import { Defendant, DefendantEventLog } from '../defendant'
+import { EventLog } from '../event-log/models/eventLog.model'
 import { User } from '../user'
 import {
   CaseTableCellValue,
@@ -78,6 +84,16 @@ interface CaseTableCellGenerator {
 }
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000
+
+const getIndictmentCourtDate = (c: Case): Date | undefined => {
+  if (c.indictmentDecision) {
+    return c.indictmentDecision === IndictmentDecision.SCHEDULING
+      ? DateLog.courtDate(c.dateLogs)?.date
+      : undefined
+  }
+
+  return DateLog.arraignmentDate(c.dateLogs)?.date
+}
 
 const generateAppealStateTag = (c: Case, user: TUser): TagValue | undefined => {
   switch (c.appealState) {
@@ -150,6 +166,130 @@ const generateRequestCaseStateTag = (c: Case, user: TUser): TagValue => {
   }
 }
 
+const generateIndictmentCaseStateTag = (c: Case, user: TUser): TagValue => {
+  const {
+    state,
+    indictmentRulingDecision,
+    indictmentDecision,
+    indictmentReviewerId,
+  } = c
+
+  const courtDate = getIndictmentCourtDate(c)
+
+  switch (state) {
+    case CaseState.NEW:
+    case CaseState.DRAFT:
+    case CaseState.WAITING_FOR_CONFIRMATION:
+      return { color: 'red', text: 'Drög' }
+    case CaseState.SUBMITTED:
+      return {
+        color: 'purple',
+        text: isDistrictCourtUser(user) ? 'Nýtt' : 'Sent',
+      }
+    case CaseState.RECEIVED:
+      return generateReceivedIndictmentStateTag(indictmentDecision, courtDate)
+    case CaseState.COMPLETED:
+      return generateCompletedIndictmentStateTag(
+        user,
+        indictmentRulingDecision,
+        indictmentReviewerId ? true : false,
+      )
+    case CaseState.WAITING_FOR_CANCELLATION:
+      return {
+        color: 'rose',
+        text: 'Afturkallað',
+      }
+    default:
+      return { color: 'white', text: 'Óþekkt' }
+  }
+}
+
+const generateReceivedIndictmentStateTag = (
+  indictmentDecision?: IndictmentDecision | null,
+  courtDate?: Date | string | null,
+): TagValue => {
+  switch (indictmentDecision) {
+    case IndictmentDecision.POSTPONING:
+    case IndictmentDecision.SCHEDULING:
+    case IndictmentDecision.COMPLETING:
+      return { color: 'mint', text: 'Á dagskrá' }
+    case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+      return { color: 'mint', text: 'Dómtekið' }
+    case IndictmentDecision.REDISTRIBUTING:
+      return { color: 'blue', text: 'Endurúthlutun' }
+    default:
+      return courtDate
+        ? { color: 'mint', text: 'Á dagskrá' }
+        : { color: 'blueberry', text: 'Móttekið' }
+  }
+}
+
+const generateCompletedIndictmentStateTag = (
+  user?: TUser,
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null,
+  isInReview?: boolean,
+): TagValue => {
+  if (isPublicProsecutionOfficeUser(user)) {
+    return {
+      color: isInReview ? 'mint' : 'purple',
+      text: isInReview ? 'Í yfirlestri' : 'Nýtt',
+    }
+  }
+  return generateIndictmentRulingDecisionTag(indictmentRulingDecision)
+}
+
+const generateIndictmentRulingDecisionTag = (
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null,
+): TagValue => {
+  switch (indictmentRulingDecision) {
+    case CaseIndictmentRulingDecision.FINE:
+      return { color: 'mint', text: 'Viðurlagaákvörðun' }
+    case CaseIndictmentRulingDecision.CANCELLATION:
+      return { color: 'rose', text: 'Niðurfelling' }
+    case CaseIndictmentRulingDecision.MERGE:
+      return { color: 'rose', text: 'Sameinað' }
+    case CaseIndictmentRulingDecision.DISMISSAL:
+      return { color: 'blue', text: 'Frávísun' }
+    case CaseIndictmentRulingDecision.RULING:
+      return { color: 'darkerBlue', text: 'Dómur' }
+    case CaseIndictmentRulingDecision.WITHDRAWAL:
+      return { color: 'rose', text: 'Afturkallað' }
+    default:
+      return { color: 'darkerBlue', text: 'Lokið' }
+  }
+}
+
+const generateIndictmentCaseType = (
+  indictmentSubtypes?: IndictmentSubtypeMap | null,
+): string[] | undefined => {
+  if (!indictmentSubtypes) return undefined
+
+  const labels =
+    getAllReadableIndictmentSubtypes(indictmentSubtypes).map(capitalize)
+
+  if (labels.length === 0) return undefined
+
+  return labels.length === 1
+    ? [labels[0]]
+    : [`${labels[0]}`, `+${labels.length - 1}`]
+}
+
+const generateRequestCaseType = (
+  type: CaseType,
+  decision?: CaseDecision | null,
+  parentCaseId?: string | null,
+): string[] => {
+  const formatted = capitalize(
+    formatCaseType(
+      decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+        ? CaseType.CUSTODY
+        : type,
+    ),
+  )
+
+  return [formatted, parentCaseId ? 'Framlenging' : ''].filter(Boolean)
+}
+
 const caseNumber: CaseTableCellGenerator = {
   attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
   generate: (c: Case): StringGroupValue => ({
@@ -185,20 +325,16 @@ const defendants: CaseTableCellGenerator = {
       : undefined,
 }
 
-const caseType: CaseTableCellGenerator = {
-  attributes: ['type', 'decision', 'parentCaseId'],
-  generate: (c: Case): StringGroupValue => ({
-    s: [
-      capitalize(
-        formatCaseType(
-          c.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.CUSTODY
-            : c.type,
-        ),
-      ),
-      c.parentCaseId ? 'Framlenging' : '',
-    ],
-  }),
+export const caseType: CaseTableCellGenerator = {
+  attributes: ['type', 'decision', 'parentCaseId', 'indictmentSubtypes'],
+  generate: (c: Case) => {
+    if (c.type === CaseType.INDICTMENT) {
+      const display = generateIndictmentCaseType(c.indictmentSubtypes)
+      return display ? { s: display } : undefined
+    }
+
+    return { s: generateRequestCaseType(c.type, c.decision, c.parentCaseId) }
+  },
 }
 
 const appealState: CaseTableCellGenerator = {
@@ -210,6 +346,50 @@ const appealState: CaseTableCellGenerator = {
   ],
   generate: (c: Case, user: TUser): TagValue | undefined =>
     generateAppealStateTag(c, user),
+}
+
+// Same as appealState but with a different title
+const appealCaseState = appealState
+
+const requestCaseState: CaseTableCellGenerator = {
+  includes: {
+    dateLogs: {
+      model: DateLog,
+      attributes: ['date'],
+      order: [['created', 'DESC']],
+      separate: true,
+    },
+  },
+  attributes: [
+    'state',
+    'validToDate',
+    'type',
+    'appealState',
+    'appealRulingDecision',
+    'appealCaseNumber',
+    'appealReceivedByCourtDate',
+  ],
+  generate: (c: Case, user: TUser): TagValue | undefined =>
+    generateRequestCaseStateTag(c, user),
+}
+
+const indictmentCaseState: CaseTableCellGenerator = {
+  attributes: [
+    'state',
+    'indictmentDecision',
+    'indictmentRulingDecision',
+    'indictmentReviewerId',
+  ],
+  includes: {
+    dateLogs: {
+      model: DateLog,
+      attributes: ['date'],
+      order: [['created', 'DESC']],
+      separate: true,
+    },
+  },
+  generate: (c: Case, user: TUser): TagValue | undefined =>
+    generateIndictmentCaseStateTag(c, user),
 }
 
 const courtOfAppealsHead: CaseTableCellGenerator = {
@@ -247,34 +427,81 @@ const validFromTo: CaseTableCellGenerator = {
       : undefined,
 }
 
-const rulingDate: CaseTableCellGenerator = {
-  attributes: ['rulingDate'],
-  generate: (c: Case): StringGroupValue | undefined =>
-    c.rulingDate ? { s: [formatDate(c.rulingDate) ?? ''] } : undefined,
+const caseSentToCourtDate: CaseTableCellGenerator = {
+  includes: {
+    eventLogs: {
+      model: EventLog,
+      attributes: ['created', 'eventType'],
+      order: [['created', 'DESC']],
+      where: {
+        eventType: [
+          EventType.CASE_SENT_TO_COURT,
+          EventType.INDICTMENT_CONFIRMED,
+        ],
+      },
+      separate: true,
+    },
+  },
+  generate: (c: Case): StringGroupValue | undefined => {
+    const caseSentToCourtEvent = EventLog.caseSentToCourtEvent(c.eventLogs)
+
+    return caseSentToCourtEvent
+      ? { s: [formatDate(caseSentToCourtEvent.created) ?? ''] }
+      : undefined
+  },
 }
 
-const restrictionCaseState: CaseTableCellGenerator = {
+const arraignmentDate: CaseTableCellGenerator = {
   includes: {
     dateLogs: {
       model: DateLog,
-      attributes: ['date'],
+      attributes: ['date', 'dateType'],
       order: [['created', 'DESC']],
       separate: true,
     },
   },
-  attributes: [
-    'state',
-    'validToDate',
-    'type',
-    'appealState',
-    'appealRulingDecision',
-    'appealCaseNumber',
-    'appealReceivedByCourtDate',
-  ],
-  generate: (c: Case, user: TUser): TagPairValue | undefined => ({
-    firstTag: generateRequestCaseStateTag(c, user),
-    secondTag: generateAppealStateTag(c, user),
-  }),
+  generate: (c: Case): StringGroupValue | undefined => {
+    const arraignmentDateLog = DateLog.arraignmentDate(c.dateLogs)?.date
+    const courtDateLog = DateLog.courtDate(c.dateLogs)?.date
+    const arraignmentDate = arraignmentDateLog ?? courtDateLog
+    return arraignmentDate
+      ? {
+          s: [
+            `${capitalize(formatDate(arraignmentDate, 'EEE d. MMMM yyyy'))}`,
+            `kl. ${formatDate(arraignmentDate, 'HH:mm') ?? ''}`,
+          ],
+        }
+      : undefined
+  },
+}
+
+const indictmentArraignmentDate: CaseTableCellGenerator = {
+  includes: {
+    dateLogs: {
+      model: DateLog,
+      attributes: ['date', 'dateType'],
+      order: [['created', 'DESC']],
+      separate: true,
+    },
+  },
+  generate: (c: Case): StringGroupValue | undefined => {
+    const courtDate = getIndictmentCourtDate(c)
+
+    return courtDate
+      ? {
+          s: [
+            `${capitalize(formatDate(courtDate, 'EEE d. MMMM yyyy'))}`,
+            `kl. ${formatDate(courtDate, 'HH:mm') ?? ''}`,
+          ],
+        }
+      : undefined
+  },
+}
+
+const rulingDate: CaseTableCellGenerator = {
+  attributes: ['rulingDate'],
+  generate: (c: Case): StringGroupValue | undefined =>
+    c.rulingDate ? { s: [formatDate(c.rulingDate) ?? ''] } : undefined,
 }
 
 const rulingType: CaseTableCellGenerator = {
@@ -521,6 +748,12 @@ const sentToPrisonAdminDate: CaseTableCellGenerator = {
   },
 }
 
+const indictmentRulingDecision: CaseTableCellGenerator = {
+  attributes: ['indictmentRulingDecision'],
+  generate: (c: Case): TagValue | undefined =>
+    generateIndictmentRulingDecisionTag(c.indictmentRulingDecision),
+}
+
 const indictmentReviewDecision: CaseTableCellGenerator = {
   attributes: ['indictmentReviewDecision'],
   includes: {
@@ -563,7 +796,8 @@ export const caseTableCellGenerators: Record<
   courtOfAppealsHead,
   validFromTo,
   rulingDate,
-  restrictionCaseState,
+  requestCaseState,
+  appealCaseState,
   rulingType,
   punishmentType,
   prisonAdminReceivalDate,
@@ -573,4 +807,9 @@ export const caseTableCellGenerators: Record<
   indictmentReviewer,
   sentToPrisonAdminDate,
   indictmentReviewDecision,
+  caseSentToCourtDate,
+  arraignmentDate,
+  indictmentCaseState,
+  indictmentArraignmentDate,
+  indictmentRulingDecision,
 }
