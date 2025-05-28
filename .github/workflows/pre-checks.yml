@@ -17,8 +17,6 @@ on:
         value: ${{ jobs.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE:
         value: ${{ jobs.should-run.outputs.PRE_RELEASE }}
-      CACHE_KEY:
-        value: ${{ jobs.should-run.outputs.CACHE_KEY }}
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
@@ -62,7 +60,6 @@ jobs:
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
-      CACHE_KEY: ${{ steps.git-base-branch.outputs.CACHE_KEY }}
     steps:
       - name: Get git branch
         id: git-branch
