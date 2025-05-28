@@ -5,10 +5,8 @@ import router from 'next/router'
 import { Box, Button, InputFileUpload } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
-import { Feature } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
