@@ -64,7 +64,7 @@ export const mapCategoriesWithInstructor = (
     })
 
     const type =
-      examCategories[index]?.medicalCertificate?.[0]?.key.split('.')[1] || '' // TODO Make safer
+      examCategories[index]?.medicalCertificate?.[0]?.key.split('.')[1] || ''
     const name = examCategories[index]?.medicalCertificate?.[0]?.name || ''
     const content = examCategories[index]?.medicalCertificate?.[0]?.key || ''
 
