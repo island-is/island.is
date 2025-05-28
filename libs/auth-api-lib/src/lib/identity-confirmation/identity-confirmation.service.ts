@@ -30,13 +30,7 @@ export class IdentityConfirmationService {
     private readonly zendeskService: ZendeskService,
     private readonly smsService: SmsService,
     private nationalRegistryClient: NationalRegistryV3ClientService,
-  ) {
-    this.identityConfirmation({
-      id: '93',
-      type: IdentityConfirmationType.EMAIL,
-      lang: 'is',
-    })
-  }
+  ) {}
 
   async identityConfirmation({
     id,
