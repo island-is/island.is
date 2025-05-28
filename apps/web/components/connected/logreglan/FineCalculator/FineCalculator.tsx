@@ -39,6 +39,7 @@ interface Fine {
 
 interface FineState extends Fine {
   amountSelected: number
+  id: number
 }
 
 interface FineCalculatorProps {
@@ -136,8 +137,8 @@ const FineCalculatorDetails = ({
           </Table.HeadData>
         </Table.Head>
         <Table.Body>
-          {selectedFines.map((fine, index) => (
-            <Table.Row key={index}>
+          {selectedFines.map((fine) => (
+            <Table.Row key={fine.id}>
               <Table.Data>
                 {fine.law} {fine.title} x {fine.amountSelected}
               </Table.Data>
@@ -185,7 +186,6 @@ const FineCardList = ({
   searchValue,
   calculate,
   setFines,
-
   setSearchValue,
 }: FineCardListProps) => {
   const { formatMessage } = useIntl()
@@ -260,11 +260,11 @@ const FineCardList = ({
                     .toLowerCase()
                     .includes(searchValue.toLowerCase()),
               )
-              .map((fine, index) => {
+              .map((fine) => {
                 const onClick = () => {
                   setFines((prev) =>
-                    prev.map((f, i) => {
-                      if (i !== index) return f
+                    prev.map((f) => {
+                      if (f.id !== fine.id) return f
                       return {
                         ...f,
                         amountSelected:
@@ -276,7 +276,7 @@ const FineCardList = ({
                 }
                 return (
                   <GridColumn
-                    key={index}
+                    key={fine.id}
                     span={['1/1', '1/2', '1/1', '1/2', '1/3']}
                   >
                     <FocusableBox
@@ -377,9 +377,10 @@ export const FineCalculator = ({ slice }: FineCalculatorProps) => {
   const [showDetails, setShowDetails] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const [fines, setFines] = useState<FineState[]>(
-    slice.json?.fines?.map((fine: Fine) => ({
+    slice.json?.fines?.map((fine: Fine, index: number) => ({
       ...fine,
       amountSelected: 0,
+      id: index,
     })) ?? [],
   )
 
