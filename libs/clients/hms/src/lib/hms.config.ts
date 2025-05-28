@@ -26,16 +26,3 @@ export const HmsConfig = defineConfig<z.infer<typeof schema>>({
     }
   },
 })
-
-// -------------- Leiguskrá --------------
-// DEV
-// Header: X-Road-Client : IS-DEV/GOV/10000/island-is-client
-// Leigusamningar: /r1/IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1
-
-// STAGE
-// Header: X-Road-Client : IS-TEST/GOV/5501692829/test-client
-// Leigusamningar: /r1/IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1
-
-// PROD
-// Header: X-Road-Client : IS/GOV/5501692829/island-is-client
-// Leigusamningar: ??
