@@ -209,8 +209,8 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     appealConclusion
     appealRulingDecision
     appealRulingModifiedHistory
-    appealValidToDate
     isAppealCustodyIsolation
+    appealValidToDate
     appealIsolationToDate
     requestAppealRulingNotToBePublished
     isRegisteredInPrisonSystem

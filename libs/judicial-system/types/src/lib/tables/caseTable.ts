@@ -1,6 +1,7 @@
 import {
   InstitutionUser,
   isCourtOfAppealsUser,
+  isDistrictCourtUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
   isPublicProsecutionOfficeUser,
@@ -15,6 +16,14 @@ import {
 export enum CaseTableType {
   COURT_OF_APPEALS_IN_PROGRESS = 'COURT_OF_APPEALS_IN_PROGRESS',
   COURT_OF_APPEALS_COMPLETED = 'COURT_OF_APPEALS_COMPLETED',
+  DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS = 'DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS',
+  DISTRICT_COURT_REQUEST_CASES_APPEALED = 'DISTRICT_COURT_REQUEST_CASES_APPEALED',
+  DISTRICT_COURT_REQUEST_CASES_COMPLETED = 'DISTRICT_COURT_REQUEST_CASES_COMPLETED',
+  DISTRICT_COURT_INDICTMENTS_NEW = 'DISTRICT_COURT_INDICTMENTS_NEW',
+  DISTRICT_COURT_INDICTMENTS_RECEIVED = 'DISTRICT_COURT_INDICTMENTS_RECEIVED',
+  DISTRICT_COURT_INDICTMENTS_IN_PROGRESS = 'DISTRICT_COURT_INDICTMENTS_IN_PROGRESS',
+  DISTRICT_COURT_INDICTMENTS_FINALIZING = 'DISTRICT_COURT_INDICTMENTS_FINALIZING',
+  DISTRICT_COURT_INDICTMENTS_COMPLETED = 'DISTRICT_COURT_INDICTMENTS_COMPLETED',
   PRISON_ACTIVE = 'PRISON_ACTIVE',
   PRISON_DONE = 'PRISON_DONE',
   PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN = 'PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN',
@@ -31,6 +40,26 @@ export const getCaseTableType = (
   user: InstitutionUser | undefined,
   route: string | undefined,
 ): CaseTableType | undefined => {
+  if (isDistrictCourtUser(user)) {
+    switch (route) {
+      case 'mal-i-vinnslu':
+        return CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS
+      case 'kaerd-mal':
+        return CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED
+      case 'afgreidd-mal':
+        return CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED
+      case 'ny-sakamal':
+        return CaseTableType.DISTRICT_COURT_INDICTMENTS_NEW
+      case 'mottekin-sakamal':
+        return CaseTableType.DISTRICT_COURT_INDICTMENTS_RECEIVED
+      case 'sakamal-i-vinnslu':
+        return CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS
+      case 'sakamal-i-fragangi':
+        return CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING
+      case 'afgreidd-sakamal':
+        return CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED
+    }
+  }
   if (isCourtOfAppealsUser(user)) {
     switch (route) {
       case 'mal-i-vinnslu':
@@ -92,6 +121,116 @@ const pickColumns = (
   return keys.map((key) => caseTableColumns[key])
 }
 
+const districtCourtRequestCasesInProgressColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'caseSentToCourtDate',
+  'requestCaseState',
+  'arraignmentDate',
+]
+
+const districtCourtRequestCasesInProgress: CaseTable = {
+  title: 'Mál í vinnslu',
+  columnKeys: districtCourtRequestCasesInProgressColumnKeys,
+  columns: pickColumns(districtCourtRequestCasesInProgressColumnKeys),
+}
+
+const districtCourtRequestCasesAppealedColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'caseSentToCourtDate',
+  'requestCaseState',
+  'validFromTo',
+]
+const districtCourtRequestCasesAppealed: CaseTable = {
+  title: 'Kærur til Landsréttar',
+  columnKeys: districtCourtRequestCasesAppealedColumnKeys,
+  columns: pickColumns(districtCourtRequestCasesAppealedColumnKeys),
+}
+
+const districtCourtRequestCasesCompletedColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'caseSentToCourtDate',
+  'requestCaseState',
+  'appealCaseState',
+  'validFromTo',
+]
+
+const districtCourtRequestCasesCompleted: CaseTable = {
+  title: 'Afgreidd rannsóknarmál',
+  columnKeys: districtCourtRequestCasesCompletedColumnKeys,
+  columns: pickColumns(districtCourtRequestCasesCompletedColumnKeys),
+}
+
+const districtCourtIndictmentsNewColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'caseSentToCourtDate',
+  'indictmentCaseState',
+]
+const districtCourtIndictmentsNew: CaseTable = {
+  title: 'Bíða úthlutunar',
+  columnKeys: districtCourtIndictmentsNewColumnKeys,
+  columns: pickColumns(districtCourtIndictmentsNewColumnKeys),
+}
+
+const districtCourtIndictmentsReceivedColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'caseSentToCourtDate',
+]
+
+const districtCourtIndictmentsReceived: CaseTable = {
+  title: 'Móttekin sakamál',
+  columnKeys: districtCourtIndictmentsReceivedColumnKeys,
+  columns: pickColumns(districtCourtIndictmentsReceivedColumnKeys),
+}
+
+const districtCourtIndictmentsInProgressColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'caseSentToCourtDate',
+  'indictmentCaseState',
+  'indictmentArraignmentDate',
+]
+
+const districtCourtIndictmentsInProgress: CaseTable = {
+  title: 'Sakamál í vinnslu',
+  columnKeys: districtCourtIndictmentsInProgressColumnKeys,
+  columns: pickColumns(districtCourtIndictmentsInProgressColumnKeys),
+}
+const districtCourtIndictmentsFinalizingColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'caseSentToCourtDate',
+  'indictmentRulingDecision',
+]
+const districtCourtIndictmentsFinalizing: CaseTable = {
+  title: 'Sakamál í frágangi',
+  columnKeys: districtCourtIndictmentsFinalizingColumnKeys,
+  columns: pickColumns(districtCourtIndictmentsFinalizingColumnKeys),
+}
+const districtCourtIndictmentsCompletedColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'caseSentToCourtDate',
+  'indictmentRulingDecision',
+]
+const districtCourtIndictmentsCompleted: CaseTable = {
+  title: 'Afgreidd sakamál',
+  columnKeys: districtCourtIndictmentsCompletedColumnKeys,
+  columns: pickColumns(districtCourtIndictmentsCompletedColumnKeys),
+}
+
 const courtOfAppealsInProgressColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
@@ -99,6 +238,7 @@ const courtOfAppealsInProgressColumnKeys: CaseTableColumnKey[] = [
   'appealState',
   'courtOfAppealsHead',
 ]
+
 const courtOfAppealsInProgress: CaseTable = {
   title: 'Mál í vinnslu',
   columnKeys: courtOfAppealsInProgressColumnKeys,
@@ -123,7 +263,8 @@ const prisonAdminActiveColumnKeys: CaseTableColumnKey[] = [
   'defendants',
   'caseType',
   'rulingDate',
-  'restrictionCaseState',
+  'requestCaseState',
+  'appealCaseState',
   'validFromTo',
 ]
 
@@ -138,7 +279,8 @@ const prisonAdminDoneColumnKeys: CaseTableColumnKey[] = [
   'defendants',
   'caseType',
   'rulingDate',
-  'restrictionCaseState',
+  'requestCaseState',
+  'appealCaseState',
   'validFromTo',
 ]
 
@@ -251,6 +393,14 @@ const prosecutorsOfficeIndictmentAppealed: CaseTable = {
 export const caseTables: { [key in CaseTableType]: CaseTable } = {
   COURT_OF_APPEALS_IN_PROGRESS: courtOfAppealsInProgress,
   COURT_OF_APPEALS_COMPLETED: courtOfAppealsCompleted,
+  DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS: districtCourtRequestCasesInProgress,
+  DISTRICT_COURT_REQUEST_CASES_APPEALED: districtCourtRequestCasesAppealed,
+  DISTRICT_COURT_REQUEST_CASES_COMPLETED: districtCourtRequestCasesCompleted,
+  DISTRICT_COURT_INDICTMENTS_NEW: districtCourtIndictmentsNew,
+  DISTRICT_COURT_INDICTMENTS_RECEIVED: districtCourtIndictmentsReceived,
+  DISTRICT_COURT_INDICTMENTS_IN_PROGRESS: districtCourtIndictmentsInProgress,
+  DISTRICT_COURT_INDICTMENTS_FINALIZING: districtCourtIndictmentsFinalizing,
+  DISTRICT_COURT_INDICTMENTS_COMPLETED: districtCourtIndictmentsCompleted,
   PRISON_ACTIVE: prisonActive,
   PRISON_DONE: prisonDone,
   PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN:

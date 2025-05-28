@@ -1,6 +1,7 @@
 import {
   InstitutionUser,
   isCourtOfAppealsUser,
+  isDistrictCourtUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
   isPublicProsecutionOfficeUser,
@@ -18,6 +19,69 @@ interface CaseTableGroup {
   title: string
   tables: CaseTableDescriptor[]
 }
+
+const districtCourtTableGroups: CaseTableGroup[] = [
+  {
+    title: 'Rannsóknarmál',
+    tables: [
+      {
+        type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS,
+        route: 'mal-i-vinnslu',
+        title: 'Rannsóknarmál í vinnslu',
+        description: 'Ný mál, móttekin mál og mál á dagskrá.',
+      },
+      {
+        type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED,
+        route: 'kaerd-mal',
+        title: 'Kærur til Landsréttar',
+        description:
+          'Úrskurðir sem búið er að kæra en á eftir að senda til Landsréttar.',
+      },
+      {
+        type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED,
+        route: 'afgreidd-mal',
+        title: 'Afgreidd rannsóknarmál',
+        description: 'Rannsóknarmál sem búið er að ljúka.',
+      },
+    ],
+  },
+  {
+    title: 'Sakamál',
+    tables: [
+      {
+        type: CaseTableType.DISTRICT_COURT_INDICTMENTS_NEW,
+        route: 'ny-sakamal',
+        title: 'Bíða úthlutunar',
+        description: 'Ný sakamál sem á eftir að úthluta.',
+      },
+      {
+        type: CaseTableType.DISTRICT_COURT_INDICTMENTS_RECEIVED,
+        route: 'mottekin-sakamal',
+        title: 'Móttekin sakamál',
+        description: 'Sakamál sem bíða þess að fyrirkall sé gefið út.',
+      },
+      {
+        type: CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS,
+        route: 'sakamal-i-vinnslu',
+        title: 'Sakamál í vinnslu',
+        description:
+          'Sakamál sem eru í frestum, á dagskrá eða búið er að dómtaka.',
+      },
+      {
+        type: CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING,
+        route: 'sakamal-i-fragangi',
+        title: 'Sakamál í frágangi',
+        description: 'Sakamál sem á eftir að senda til ríkissaksóknara.',
+      },
+      {
+        type: CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED,
+        route: 'afgreidd-sakamal',
+        title: 'Afgreidd sakamál',
+        description: 'Sakamál sem búið er að ljúka.',
+      },
+    ],
+  },
+]
 
 const courtOfAppealsTableGroups: CaseTableGroup[] = [
   {
@@ -127,6 +191,9 @@ const publicProsecutorsOfficeTableGroups: CaseTableGroup[] = [
 export const getCaseTableGroups = (
   user: InstitutionUser | undefined,
 ): CaseTableGroup[] => {
+  if (isDistrictCourtUser(user)) {
+    return districtCourtTableGroups
+  }
   if (isCourtOfAppealsUser(user)) {
     return courtOfAppealsTableGroups
   }
