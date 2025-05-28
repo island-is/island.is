@@ -18,8 +18,8 @@ import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { getTagConfig } from '../../lib/utils'
-import ActionDrawer from '../List/ActionDrawer'
 import CompareLists from '../../shared-components/compareLists'
+import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()

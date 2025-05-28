@@ -16,7 +16,7 @@ import { SignatureCollectionPaths } from '../../lib/paths'
 import Signees from '../../shared-components/signees'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { PaperSignees } from '../../shared-components/paperSignees'
-import ActionDrawer from './ActionDrawer'
+import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 
 const List = () => {
   const { formatMessage } = useLocale()

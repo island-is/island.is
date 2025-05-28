@@ -8,6 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import {
   Box,
+  Divider,
   GridColumn,
   GridContainer,
   GridRow,
@@ -17,6 +18,7 @@ import PaperUpload from './components/paperUpload'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import { format as formatNationalId } from 'kennitala'
 import Signees from '../../shared-components/signees'
+import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 
 export const List = () => {
   const { list, listStatus } = useLoaderData() as {
@@ -51,7 +53,10 @@ export const List = () => {
                 imgPosition="right"
                 imgHiddenBelow="sm"
                 marginBottom={3}
+                buttonGroup={<ActionDrawer />}
               />
+              <Divider />
+              <Box marginTop={9} />
               {!!list.collectors?.length && (
                 <Box marginBottom={5}>
                   <Text variant="h5">{formatMessage(m.collectors)}</Text>
@@ -66,26 +71,8 @@ export const List = () => {
                   ))}
                 </Box>
               )}
-              <Box marginBottom={5}>
-                <Text variant="h5">{formatMessage(m.candidateNationalId)}</Text>
-                <Text variant="medium">
-                  {formatNationalId(list.candidate.nationalId)}
-                </Text>
-              </Box>
               <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
               <PaperUpload listId={list.id} listStatus={listStatus} />
-              {/*<ActionExtendDeadline
-                listId={list.id}
-                endTime={list.endTime}
-                collectionType={SignatureCollectionCollectionType.Presidential}
-              />*/}
-              {/*<ActionReviewComplete
-                    collectionType={
-                      SignatureCollectionCollectionType.Presidential
-                    }
-                    listId={list.id}
-                    listStatus={listStatus}
-                  />*/}
             </>
           )}
         </GridColumn>

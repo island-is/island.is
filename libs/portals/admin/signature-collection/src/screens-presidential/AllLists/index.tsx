@@ -43,11 +43,8 @@ const Lists = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const {
-    allLists,
-    collectionStatus,
-    collection,
-  } = useLoaderData() as ListsLoaderReturn
+  const { allLists, collectionStatus, collection } =
+    useLoaderData() as ListsLoaderReturn
 
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
@@ -132,9 +129,7 @@ const Lists = () => {
           <IntroHeader
             title={formatMessage(m.signatureListsTitlePresidential)}
             intro={formatMessage(m.signatureListsIntro)}
-            img={
-              electionsCommitteeLogo
-            }
+            img={electionsCommitteeLogo}
             imgPosition="right"
             imgHiddenBelow="sm"
           />
@@ -217,7 +212,7 @@ const Lists = () => {
           collection.collectionType ===
             SignatureCollectionCollectionType.Presidential ? (
             <>
-              <Box marginBottom={2}>
+              <Box marginBottom={2} display="flex" justifyContent="flexEnd">
                 {filters.input.length > 0 ||
                 filters.area.length > 0 ||
                 filters.candidate.length > 0
@@ -333,11 +328,9 @@ const Lists = () => {
             </Box>
           )}
 
-          {lists?.length > 0 &&
-            collection.collectionType ===
-              SignatureCollectionCollectionType.Presidential && (
-              <ReviewCandidates candidates={collection?.candidates ?? []} />
-            )}
+          {lists?.length > 0 && (
+            <ReviewCandidates candidates={collection?.candidates ?? []} />
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

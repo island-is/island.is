@@ -6,18 +6,18 @@ import { municipalListsLoader, parliamentaryListsLoader, presidentialListsLoader
 import { parliamentaryListLoader, presidentialListLoader, municipalListLoader } from './loaders/List.loader'
 import { allowedScopes } from './lib/utils'
 
-/* parliamentary */
-const ParliamentaryRoot = lazy(() => import('./screens-parliamentary'))
+/* Parliamentary */
+const ParliamentaryRoot = lazy(() => import('./screens-parliamentary/AllConstituencies'))
 const ParliamentaryConstituency = lazy(() =>
   import('./screens-parliamentary/Constituency'),
 )
 const ParliamentaryList = lazy(() => import('./screens-parliamentary/List'))
 
-/* presidential */
+/* Presidential */
 const AllLists = lazy(() => import('./screens-presidential/AllLists'))
 const List = lazy(() => import('./screens-presidential/List'))
 
-/* municipal */
+/* Municipal */
 const AllMunicipalities = lazy(() => import('./screens-municipal/AllMunicipalities'))
 const Municipality = lazy(() => import('./screens-municipal/Municipality'))
 const MunicipalList = lazy(() => import('./screens-municipal/List'))
