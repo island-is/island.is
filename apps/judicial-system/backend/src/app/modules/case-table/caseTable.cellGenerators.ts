@@ -435,6 +435,45 @@ const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
   },
 }
 
+const courtOfAppealsDecision: CaseTableCellGenerator<StringValue> = {
+  // TODO: TAGS
+  includes: {
+    appealJudge1: {
+      model: User,
+      attributes: ['name'],
+    },
+  },
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    const initials = getInitials(c.appealJudge1?.name)
+
+    if (!initials) {
+      return generateCell()
+    }
+
+    return generateCell({ str: initials, sortValue: initials })
+  },
+}
+
+// TODO
+const created: CaseTableCellGenerator<StringValue> = {
+  // TODO
+  includes: {
+    appealJudge1: {
+      model: User,
+      attributes: ['name'],
+    },
+  },
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    const initials = getInitials(c.appealJudge1?.name)
+
+    if (!initials) {
+      return generateCell()
+    }
+
+    return generateCell({ str: initials, sortValue: initials })
+  },
+}
+
 const validFromTo: CaseTableCellGenerator<StringValue> = {
   attributes: [
     'type',
@@ -845,6 +884,8 @@ export const caseTableCellGenerators: Record<
   caseType,
   appealState,
   courtOfAppealsHead,
+  courtOfAppealsDecision, // TODO
+  created, //TODO
   validFromTo,
   rulingDate,
   requestCaseState,

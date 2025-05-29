@@ -1,12 +1,12 @@
 export interface CaseTableColumn {
   title: string
 }
-
 const caseNumber: CaseTableColumn = { title: 'Málsnúmer' }
 const defendants: CaseTableColumn = { title: 'Varnaraðili' }
 const caseType: CaseTableColumn = { title: 'Tegund' }
 const appealState: CaseTableColumn = { title: 'Staða' }
 const courtOfAppealsHead: CaseTableColumn = { title: 'Dómsformaður' }
+const courtOfAppealsDecision: CaseTableColumn = { title: 'Landsréttur' }
 const validFromTo: CaseTableColumn = { title: 'Gildistími' }
 const rulingDate: CaseTableColumn = { title: 'Úrskurðardagur' }
 const requestCaseState: CaseTableColumn = { title: 'Staða' }
@@ -27,6 +27,7 @@ const caseSentToCourtDate: CaseTableColumn = { title: 'Útgáfudagur' }
 const arraignmentDate: CaseTableColumn = { title: 'Fyrirtaka' }
 const indictmentArraignmentDate: CaseTableColumn = { title: 'Fyrirtaka' }
 const indictmentRulingDecision: CaseTableColumn = { title: 'Niðurstaða' }
+const created: CaseTableColumn = { title: 'Stofnað' }
 
 export const caseTableColumns = {
   caseNumber,
@@ -34,6 +35,7 @@ export const caseTableColumns = {
   caseType,
   appealState,
   courtOfAppealsHead,
+  courtOfAppealsDecision,
   validFromTo,
   rulingDate,
   requestCaseState,
@@ -52,6 +54,7 @@ export const caseTableColumns = {
   indictmentCaseState,
   indictmentArraignmentDate,
   indictmentRulingDecision,
+  created,
 }
 
 export type CaseTableColumnMap = typeof caseTableColumns
