@@ -45,8 +45,13 @@ import {
   TagValue,
 } from './dto/caseTable.response'
 
+// gets the element type if T is an array.
 type ElementType<T> = T extends (infer U)[] ? U : T
+
+// gets the non-null, non-undefined version of ElementType<T>.
 type DefinedObject<T> = NonNullable<ElementType<T>>
+
+// extracts keys from T where the corresponding value, after non-nullable, is an object.
 type ObjectKeys<T> = Extract<
   {
     [K in keyof T]: DefinedObject<T[K]> extends object ? K : never
@@ -426,6 +431,45 @@ const indictmentCaseState: CaseTableCellGenerator<TagValue> = {
 }
 
 const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
+  includes: {
+    appealJudge1: {
+      model: User,
+      attributes: ['name'],
+    },
+  },
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    const initials = getInitials(c.appealJudge1?.name)
+
+    if (!initials) {
+      return generateCell()
+    }
+
+    return generateCell({ str: initials, sortValue: initials })
+  },
+}
+
+const courtOfAppealsDecision: CaseTableCellGenerator<StringValue> = {
+  // TODO: TAGS
+  includes: {
+    appealJudge1: {
+      model: User,
+      attributes: ['name'],
+    },
+  },
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    const initials = getInitials(c.appealJudge1?.name)
+
+    if (!initials) {
+      return generateCell()
+    }
+
+    return generateCell({ str: initials, sortValue: initials })
+  },
+}
+
+// TODO
+const created: CaseTableCellGenerator<StringValue> = {
+  // TODO
   includes: {
     appealJudge1: {
       model: User,
@@ -839,6 +883,8 @@ export const caseTableCellGenerators: Record<
   caseType,
   appealState,
   courtOfAppealsHead,
+  courtOfAppealsDecision, // TODO
+  created, //TODO
   validFromTo,
   rulingDate,
   requestCaseState,

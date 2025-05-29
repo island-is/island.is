@@ -17,6 +17,17 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
+import {
+  prosecutorIndictmentCompletedWhereOptions,
+  prosecutorIndictmentInReviewWhereOptions,
+  prosecutorIndictmentWaitingForConfirmationWhereOptions,
+  prosecutorIndictmentWaitingInProgressWhereOptions,
+  prosecutorRequestCasesActiveWhereOptions,
+  prosecutorRequestCasesAppealedWhereOptions,
+  prosecutorRequestCasesCompletedWhereOptions,
+  prosecutorRequestCasesInProgressWhereOptions,
+} from './whereOptions'
+
 const buildSubpoenaExistsCondition = (exists = true) =>
   Sequelize.literal(`
     ${exists ? '' : 'NOT'} EXISTS (
@@ -411,4 +422,23 @@ export const caseTableWhereOptions: Record<
     prosecutorsOfficeIndictmentSentToPrisonAdminWhereOptions,
   [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED]: (_user) =>
     prosecutorsOfficeIndictmentAppealedWhereOptions,
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_IN_PROGRESS]: (user) =>
+    withUserFilter(prosecutorRequestCasesInProgressWhereOptions, user),
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_ACTIVE]: (user) =>
+    withUserFilter(prosecutorRequestCasesActiveWhereOptions, user),
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_APPEALED]: (user) =>
+    withUserFilter(prosecutorRequestCasesAppealedWhereOptions, user),
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_COMPLETED]: (user) =>
+    withUserFilter(prosecutorRequestCasesCompletedWhereOptions, user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_IN_REVIEW]: (user) =>
+    withUserFilter(prosecutorIndictmentInReviewWhereOptions, user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION]: (user) =>
+    withUserFilter(
+      prosecutorIndictmentWaitingForConfirmationWhereOptions,
+      user,
+    ),
+  [CaseTableType.PROSECUTOR_INDICTMENT_IN_PROGRESS]: (user) =>
+    withUserFilter(prosecutorIndictmentWaitingInProgressWhereOptions, user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_COMPLETED]: (user) =>
+    withUserFilter(prosecutorIndictmentCompletedWhereOptions, user),
 }
