@@ -51,8 +51,6 @@ export const InfoCard: React.FC<InfoCardProps> = ({
     detailData = detail?.slice(0, 12)
   }
 
-  console.log('size', title, size)
-
   return (
     <Box width={size === 'large' ? 'full' : undefined}>
       <LinkResolver href={to} className={styles.container}>
@@ -100,41 +98,35 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                     'row',
                   ]}
                   flexWrap="nowrap"
-                  alignItems={[
-                    'flexStart',
-                    'flexStart',
-                    'flexStart',
-                    'flexStart',
-                    'center',
-                  ]}
-                  justifyContent={
-                    size === 'small' ? 'spaceBetween' : 'flexStart'
-                  }
+                  alignItems="stretch"
+                  justifyContent={'spaceBetween'}
                 >
                   {detailData.map((item, index) => (
-                    <>
+                    <React.Fragment key={`${item.label}-${index}`}>
                       <Box
-                        borderColor="blue200"
-                        paddingRight={2}
-                        paddingLeft={2}
-                        paddingY={2}
                         display="flex"
-                        justifyContent="center"
-                        flexWrap="wrap"
                         flexDirection="column"
+                        justifyContent="center"
                         className={styles.detailItem}
-                        key={`${item.label}-${index}`}
                       >
                         <Text variant="small">{item.label}</Text>
                         <Text variant="h3" as="p">
                           {item.value}
                         </Text>
                       </Box>
-                      <div
-                        className={styles.detailDivider[size]}
-                        key={`divider-${index}`}
-                      />
-                    </>
+
+                      {/* Only show divider between items */}
+                      {index < detailData.length - 1 && (
+                        <Box
+                          display="flex"
+                          style={{ gap: 4 }}
+                          borderColor="blue200"
+                          borderRightWidth={
+                            size === 'large' ? 'standard' : undefined
+                          }
+                        />
+                      )}
+                    </React.Fragment>
                   ))}
                 </Box>
               )}
@@ -147,6 +139,10 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                   component="img"
                   src={img}
                   marginRight={isMobile ? 2 : 0}
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  width="full"
                 />
               </GridColumn>
             )}

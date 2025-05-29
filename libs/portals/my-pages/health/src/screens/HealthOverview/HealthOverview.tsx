@@ -5,13 +5,14 @@ import {
   GridContainer,
   GridRow,
   Icon,
-  Tag,
   Text,
   toast,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  InfoCard,
+  InfoCardGrid,
   InfoLine,
   InfoLineStack,
   formatDate,
@@ -22,8 +23,6 @@ import { Problem } from '@island.is/react-spa/shared'
 import subYears from 'date-fns/subYears'
 import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
-import InfoBox from '../../components/InfoBox/InfoBox'
-import InfoBoxItem from '../../components/InfoBox/InfoBoxItem'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { CONTENT_GAP_LG } from '../../utils/constants'
@@ -34,6 +33,7 @@ import {
   useGetHealthCenterQuery,
   useGetInsuranceOverviewQuery,
 } from './HealthOverview.generated'
+import AppointmentCard from '../../components/AppointmentCard/AppointmentCard'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -132,23 +132,68 @@ export const HealthOverview = () => {
             </Text>
           </>
         </GridColumn>
-        {!isMobile && !isTablet && (
-          <GridColumn span={'3/8'}>
-            {/* right: -4px;
-              height: 253px;
-              top: -116px; */}
-            <Box
-              position="absolute"
-              className={styles.image}
-              alt=""
-              component="img"
-              src={'./assets/images/jobs.svg'}
-              marginRight={isMobile ? 2 : 0}
-            />
-          </GridColumn>
-        )}
       </GridRow>
+      {/* If no appontments, hide */}
+      <Text variant="eyebrow" color="foregroundBrandSecondary" marginBottom={2}>
+        {formatMessage(messages.myAppointments)}
+      </Text>
+      <Box
+        display="flex"
+        rowGap={2}
+        columnGap={2}
+        flexWrap="wrap"
+        flexDirection="row"
+      >
+        <AppointmentCard
+          size="small"
+          title="Mæðravernd"
+          date="Fimmtudaginn, 03.04.2025"
+          time="11:40"
+          description="Tími hjá: Sigríður Gunnarsdóttir"
+          location={{
+            label: 'Heilsugæslan við Ásbrú',
+            href: HealthPaths.HealthCenter,
+          }}
+        />
+        <AppointmentCard
+          size="small"
+          title="Mæðravernd"
+          date="Fimmtudaginn, 03.04.2025"
+          time="11:40"
+          description="Tími hjá: Sigríður Gunnarsdóttir"
+          location={{
+            label: 'Heilsugæslan við Ásbrú',
+            href: HealthPaths.HealthCenter,
+          }}
+        />
+      </Box>
 
+      <Box>
+        <Text
+          variant="eyebrow"
+          color="foregroundBrandSecondary"
+          marginBottom={2}
+        >
+          {formatMessage(messages.myPregnancy)}
+        </Text>
+        <InfoCardGrid
+          cards={[
+            {
+              title: 'Meðgangan mín ',
+              description:
+                'Hér getur þú séð fundið allar upplýsingar sem tengjast meðgöngu þinni',
+              size: 'large',
+              to: HealthPaths.HealthOrganDonation,
+              detail: [
+                { label: 'Lengd meðgöngu', value: '19 vikur + 2 dagar' },
+                { label: 'Væntanlegur fæðingardagur.', value: '08.07.2025' },
+              ],
+              img: './assets/images/baby.svg',
+            },
+          ]}
+          size="large"
+        />
+      </Box>
       <Box marginTop={6}>
         {error ? (
           <Problem error={error} noBorder={false} />
@@ -272,70 +317,7 @@ export const HealthOverview = () => {
         columnGap="gutter"
         marginBottom={4}
       >
-        <InfoBox
-          button={{
-            action: () => console.log('action'),
-            label: 'Sjá allar tímabókanir',
-          }}
-          title="Næstu tímabókanir"
-          icon={{ icon: 'calendar' }}
-        >
-          <InfoBoxItem
-            title="Skimun fyrir leghálskrabbameini"
-            data={[
-              {
-                label: 'Fimmtudagur, 09.01.2025',
-                content: (
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    columnGap="p1"
-                  >
-                    <Icon
-                      icon="time"
-                      color="blue400"
-                      type="outline"
-                      size="small"
-                    />
-                    <Text variant="small">13:00</Text>
-                  </Box>
-                ),
-              },
-              {
-                label: 'Heilsugæslan Hlíðum',
-              },
-            ]}
-          />
-          <InfoBoxItem
-            title="Brjóstarannsókn"
-            data={[
-              {
-                label: 'Miðvikudagur, 27.11.2024',
-                content: (
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    columnGap="p1"
-                  >
-                    <Icon
-                      icon="time"
-                      color="blue400"
-                      type="outline"
-                      size="small"
-                    />
-                    <Text variant="small">13:00</Text>
-                  </Box>
-                ),
-              },
-              {
-                label: 'Brjóstamiðstöð',
-              },
-            ]}
-          />
-        </InfoBox>
-        <InfoBox
+        {/* <InfoBox
           button={{
             action: () => console.log('action'),
             label: 'Sjá allt',
@@ -364,7 +346,7 @@ export const HealthOverview = () => {
               },
             ]}
           />
-        </InfoBox>
+        </InfoBox> */}
       </Box>
       {/* FLÝTILEIÐIR TODO: Add correct path to each card */}
       <Box>

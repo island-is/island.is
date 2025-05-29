@@ -1546,4 +1546,12 @@ export const messages = defineMessages({
     defaultMessage: 'Mitt heilsuyfirlit',
     id: 'sp.health:my-health-overview',
   },
+  myAppointments: {
+    defaultMessage: 'Mínar tímabókanir',
+    id: 'sp.health:my-appointments',
+  },
+  myPregnancy: {
+    defaultMessage: 'Meðgangan mín',
+    id: 'sp.health:my-pregnancy',
+  },
 })

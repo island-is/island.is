@@ -13,8 +13,7 @@ export const boxContainer = style({
 
 export const image = style({
   minHeight: 150,
-  minWidth: 150,
-  maxHeight: 200,
+  maxHeight: 180,
 })
 
 export const icon = style({
@@ -26,23 +25,13 @@ export const detailDivider = styleVariants({
     height: 72,
     width: 1,
     backgroundColor: theme.color.blue200,
-    // ...themeUtils.responsiveStyle({
-    //   xs: {
-    //     height: 1,
-    //     width: '100%',
-    //   },
-    // }),
-    selectors: {
-      '&:last-of-type': {
-        height: 'unset',
-        width: 'unset',
-      },
-    },
+    alignSelf: 'center',
   },
   small: {
     height: 72,
     width: 1,
     backgroundColor: theme.color.blue200,
+    alignSelf: 'center',
     ...themeUtils.responsiveStyle({
       md: {
         height: 1,
@@ -51,27 +40,8 @@ export const detailDivider = styleVariants({
     }),
   },
 })
-
 export const detailItem = style({
-  flexGrow: 1,
-  //   ...themeUtils.responsiveStyle({
-  //     xs: {
-  //       borderBottomWidth: theme.border.width.standard,
-  //     },
-  //     xl: {
-  //       borderRightWidth: theme.border.width.standard,
-  //       borderBottom: 'unset',
-  //     },
-  //   }),
-  //   selectors: {
-  //     '&:last-of-type': {
-  //       borderRight: 'unset',
-  //       borderBottom: 'unset',
-  //     },
-  //   },
-})
-
-globalStyle(`${detailDivider}:last-of-type`, {
-  height: 0,
-  width: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
 })
