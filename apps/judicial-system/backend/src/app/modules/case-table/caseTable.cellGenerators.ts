@@ -142,21 +142,19 @@ const generateAppealStateTag = (
 
       return generateCell({ color: 'darkerBlue', text: 'Móttekið' })
     case CaseAppealState.COMPLETED:
-      return {
-        value: {
-          color:
-            c.appealRulingDecision === CaseAppealRulingDecision.ACCEPTING
-              ? 'mint'
-              : c.appealRulingDecision === CaseAppealRulingDecision.CHANGED ||
-                c.appealRulingDecision ===
-                  CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY ||
-                c.appealRulingDecision === CaseAppealRulingDecision.REPEAL ||
-                c.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
-              ? 'rose'
-              : 'blueberry',
-          text: getAppealResultTextByValue(c.appealRulingDecision),
-        },
-      }
+      return generateCell({
+        color:
+          c.appealRulingDecision === CaseAppealRulingDecision.ACCEPTING
+            ? 'mint'
+            : c.appealRulingDecision === CaseAppealRulingDecision.CHANGED ||
+              c.appealRulingDecision ===
+                CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY ||
+              c.appealRulingDecision === CaseAppealRulingDecision.REPEAL ||
+              c.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+            ? 'rose'
+            : 'blueberry',
+        text: getAppealResultTextByValue(c.appealRulingDecision),
+      })
     default:
       return generateCell()
   }
