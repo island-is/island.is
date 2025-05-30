@@ -209,8 +209,8 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     appealConclusion
     appealRulingDecision
     appealRulingModifiedHistory
-    appealValidToDate
     isAppealCustodyIsolation
+    appealValidToDate
     appealIsolationToDate
     requestAppealRulingNotToBePublished
     isRegisteredInPrisonSystem
@@ -224,8 +224,15 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     mergeCase {
       id
     }
-    caseRepresentatives {
+    civilClaimants {
+      id
       name
+      nationalId
+    }
+    caseRepresentatives {
+      nationalId
+      name
+      caseFileCategory
     }
   }
 }

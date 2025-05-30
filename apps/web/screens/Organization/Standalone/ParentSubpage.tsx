@@ -21,12 +21,15 @@ import {
   QueryGetOrganizationSubpageArgs,
   QueryGetOrganizationSubpageByIdArgs,
 } from '@island.is/web/graphql/schema'
-import { linkResolver, useLinkResolver } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useI18n } from '@island.is/web/i18n'
 import { StandaloneLayout } from '@island.is/web/layouts/organization/standalone'
 import type { Screen, ScreenContext } from '@island.is/web/types'
-import { CustomNextError } from '@island.is/web/units/errors'
+import {
+  CustomNextError,
+  CustomNextRedirect,
+} from '@island.is/web/units/errors'
 
 import {
   GET_NAMESPACE_QUERY,
@@ -145,7 +148,6 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
   locale,
   query,
   organizationPage,
-  res,
 }) => {
   const [organizationPageSlug, parentSubpageSlug, subpageSlug] = (query.slugs ??
     []) as string[]
@@ -264,17 +266,8 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
     )
   }
 
-  if (res && !subpageSlug) {
-    res.writeHead(302, {
-      Location: encodeURI(
-        linkResolver(
-          'organizationparentsubpagechild',
-          [organizationPageSlug, parentSubpageSlug, subpage.slug],
-          locale as ContentLanguage,
-        ).href,
-      ),
-    })
-    res.end()
+  if (!subpageSlug) {
+    throw new CustomNextRedirect(encodeURI(subpageLink.href))
   }
 
   const tableOfContentHeadings = getOrganizationParentSubpage.childLinks.map(
