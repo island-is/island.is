@@ -6,7 +6,6 @@ const defendants: CaseTableColumn = { title: 'Varnaraðili' }
 const caseType: CaseTableColumn = { title: 'Tegund' }
 const appealState: CaseTableColumn = { title: 'Staða' }
 const courtOfAppealsHead: CaseTableColumn = { title: 'Dómsformaður' }
-const courtOfAppealsDecision: CaseTableColumn = { title: 'Landsréttur' }
 const validFromTo: CaseTableColumn = { title: 'Gildistími' }
 const rulingDate: CaseTableColumn = { title: 'Úrskurðardagur' }
 const requestCaseState: CaseTableColumn = { title: 'Staða' }
@@ -35,7 +34,6 @@ export const caseTableColumns = {
   caseType,
   appealState,
   courtOfAppealsHead,
-  courtOfAppealsDecision,
   validFromTo,
   rulingDate,
   requestCaseState,
