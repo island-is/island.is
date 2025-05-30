@@ -13,6 +13,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import differenceInYears from 'date-fns/differenceInYears'
 import { HEALTH_CATEGORY_ID, LAW_AND_ORDER_CATEGORY_ID } from './document.types'
 import { getBirthday } from './helpers/getBirthday'
+import { Action } from './models/v2/actions.model'
 import { MailAction } from './models/v2/bulkMailAction.input'
 import { Category } from './models/v2/category.model'
 import {
@@ -20,11 +21,12 @@ import {
   DocumentPageNumber,
   PaginatedDocuments,
 } from './models/v2/document.model'
-import { Action } from './models/v2/actions'
 import { FileType } from './models/v2/documentContent.model'
 import { DocumentsInput } from './models/v2/documents.input'
 import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
 import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
+import { ReplyInput } from './models/v2/reply.input'
+import { Reply } from './models/v2/reply.model'
 import { Sender } from './models/v2/sender.model'
 import { Type } from './models/v2/type.model'
 
@@ -48,7 +50,6 @@ export class DocumentServiceV2 {
     const document = await this.documentService.getCustomersDocument(
       nationalId,
       documentId,
-      locale,
       includeDocument,
     )
 
@@ -90,6 +91,22 @@ export class DocumentServiceV2 {
       (action) => action.type !== 'alert' && action.type !== 'confirmation',
     )
 
+    const ticket = {
+      id: document.ticket?.id?.toString(),
+      authorId: document.ticket?.authorId?.toString(),
+      createdDate: document.ticket?.createdAt,
+      updatedDate: document.ticket?.updatedAt,
+      status: document.ticket?.status,
+      subject: document.ticket?.subject,
+      comments: document.ticket?.comments?.map((c) => ({
+        id: c.id?.toString(),
+        body: c.body,
+        createdDate: c.createdAt,
+        authorId: c.authorId?.toString(),
+        author: c.author,
+      })),
+    }
+
     return {
       ...document,
       publicationDate: document.date,
@@ -110,6 +127,10 @@ export class DocumentServiceV2 {
       actions: this.actionMapper(documentId, actions),
       confirmation: confirmation,
       alert: alert,
+      replyable: document.replyable,
+      closedForMoreReplies:
+        ticket.status?.toLowerCase() === 'closed' ? true : false,
+      ticket: ticket,
     }
   }
 
@@ -165,6 +186,8 @@ export class DocumentServiceV2 {
               id: d.senderNationalId,
             },
             isUrgent: d.urgent,
+            replyable: d.replyable,
+            ticket: undefined,
           }
         })
         .filter(isDefined) ?? []
@@ -387,6 +410,32 @@ export class DocumentServiceV2 {
           category: LOG_CATEGORY,
         })
         throw new Error('Invalid single document action')
+    }
+  }
+
+  async postReply(user: User, input: ReplyInput): Promise<Reply | null> {
+    try {
+      const res = await this.documentService.postTicket(
+        user.nationalId,
+        input.documentId,
+        {
+          body: input.body,
+          subject: input.subject,
+          requesterEmail: input.reguesterEmail,
+          requesterName: input.reguesterName,
+        },
+      )
+      if (!res.ticketId) {
+        return null
+      }
+      return { id: res.ticketId?.toString(), email: res.reqeusterEmail }
+    } catch (error) {
+      this.logger.error('Failed to post reply', {
+        category: LOG_CATEGORY,
+        error: error,
+        documentId: input.documentId,
+      })
+      throw error
     }
   }
 

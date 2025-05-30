@@ -20,6 +20,7 @@ import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { DocumentServiceV2 } from './documentV2.service'
 import { PostRequestPaperInput } from './dto/postRequestPaperInput'
+import { COURT_CASE_DOC_CATEGORY } from './helpers/constants'
 import { MailActionInput } from './models/v2/bulkMailAction.input'
 import { Category } from './models/v2/category.model'
 import { DocumentConfirmActionsInput } from './models/v2/confirmActions.input'
@@ -38,9 +39,10 @@ import {
   DocumentPdfRenderer,
   DocumentPdfRendererInput,
 } from './models/v2/pdfRenderer.model'
+import { ReplyInput } from './models/v2/reply.input'
+import { Reply } from './models/v2/reply.model'
 import { Sender } from './models/v2/sender.model'
 import { Type } from './models/v2/type.model'
-import { COURT_CASE_DOC_CATEGORY } from './helpers/constants'
 
 const LOG_CATEGORY = 'documents-resolver'
 
@@ -288,5 +290,18 @@ export class DocumentResolverV2 {
       })
       throw e
     }
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Mutation(() => Reply, {
+    nullable: true,
+    name: 'documentsV2Reply',
+  })
+  @Audit()
+  async postReply(
+    @CurrentUser() user: User,
+    @Args('input') input: ReplyInput,
+  ): Promise<Reply | null> {
+    return this.documentServiceV2.postReply(user, input)
   }
 }
