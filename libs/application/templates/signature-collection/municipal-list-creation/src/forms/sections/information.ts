@@ -9,6 +9,7 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { Application } from '@island.is/api/schema'
+import { IndividualDto } from '@island.is/clients/national-registry-v2'
 
 export const information = buildSection({
   id: 'listInformationSection',
@@ -29,8 +30,13 @@ export const information = buildSection({
           title: m.listMunicipality,
           width: 'full',
           readOnly: true,
-          //Todo: use value from externalData once available
-          defaultValue: () => 'Borgarbyggð',
+          defaultValue: ({ externalData }: Application) => {
+            const municipalIdentity = getValueViaPath<IndividualDto>(
+              externalData,
+              'municipalIdentity.data',
+            )
+            return municipalIdentity?.legalDomicile?.locality
+          },
         }),
         buildTextField({
           id: 'list.name',

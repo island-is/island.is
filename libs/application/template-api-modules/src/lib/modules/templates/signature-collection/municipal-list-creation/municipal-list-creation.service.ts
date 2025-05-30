@@ -98,6 +98,7 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
   }
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
+    console.log('AM I SUBMITTING??????')
     const answers = application.answers as CreateListSchema
     const municipalCollection = application.externalData.municipalCollection
       .data as Collection
@@ -125,6 +126,8 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
           500,
         )
       })
+
+    console.log('GOT MUNICIPAL RESULT', JSON.stringify(result))
 
     try {
       // Use the shared service to send an email using a custom email generator
