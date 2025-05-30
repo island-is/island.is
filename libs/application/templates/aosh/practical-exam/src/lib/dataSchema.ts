@@ -278,11 +278,14 @@ const ExamCategorySchema = z.object({
   doesntHaveToPayLicenseFee: z.boolean(),
   nationalId: z.string().optional(),
   medicalCertificate: z
-    .object({
-      content: z.string(),
-      name: z.string(),
-      type: z.string(),
-    })
+    .array(
+      z
+        .object({
+          key: z.string(),
+          name: z.string(),
+        })
+        .optional(),
+    )
     .optional(),
 })
 
