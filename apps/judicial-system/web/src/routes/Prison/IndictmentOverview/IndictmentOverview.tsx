@@ -86,7 +86,7 @@ const IndictmentOverview = () => {
     workingCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.RULING || isFine
 
-  const { title: pdfTitle, elementId: pdfElementId } =
+  const { pdfTitle, pdfElementId } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
       isFine,
       sentToPrisonAdminDate,

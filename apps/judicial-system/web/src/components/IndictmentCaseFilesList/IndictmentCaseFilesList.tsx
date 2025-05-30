@@ -175,15 +175,15 @@ export const getIdAndTitleForPdfButtonForRulingSentToPrisonPdf = (
 ) => {
   if (isFine) {
     return {
-      title: `Viðurlagaákvörðun til fullnustu ${formatDate(
+      pdfTitle: `Viðurlagaákvörðun til fullnustu ${formatDate(
         sentToPrisonAdminDate,
       )}.pdf`,
-      elementId: 'Viðurlagaákvörðun til fullnustu',
+      pdfElementId: 'Viðurlagaákvörðun til fullnustu',
     }
   } else {
     return {
-      title: `Dómur til fullnustu ${formatDate(sentToPrisonAdminDate)}.pdf`,
-      elementId: 'Dómur til fullnustu',
+      pdfTitle: `Dómur til fullnustu ${formatDate(sentToPrisonAdminDate)}.pdf`,
+      pdfElementId: 'Dómur til fullnustu',
     }
   }
 }
@@ -218,7 +218,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
     workingCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.RULING || isFine
 
-  const { title: pdfTitle, elementId: pdfElementId } =
+  const { pdfTitle, pdfElementId } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
       isFine,
       sentToPrisonAdminDate,
