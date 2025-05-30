@@ -231,6 +231,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.SECONDARY_SCHOOL]: () =>
     import('@island.is/application/templates/secondary-school'),
+  [ApplicationTypes.LEGAL_GAZETTE]: () =>
+    import('@island.is/application/templates/legal-gazette'),
 }
 
 export default templates

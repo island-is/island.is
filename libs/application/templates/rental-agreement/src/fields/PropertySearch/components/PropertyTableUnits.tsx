@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Checkbox, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -48,6 +49,8 @@ export const PropertyTableUnits = ({
   onUnitRoomsChange,
 }: PropertyUnitsProps) => {
   const { formatMessage } = useLocale()
+  const [isRoomsFocused, setIsRoomsFocused] = useState(false)
+  const [isUnitsFocused, setIsUnitsFocused] = useState(false)
 
   // Prevent scrolling from changing the number input value
   const preventScrollChange = (event: React.WheelEvent<HTMLInputElement>) => {
@@ -128,7 +131,11 @@ export const PropertyTableUnits = ({
                 name="propertySize"
                 min={0}
                 step={0.1}
-                value={unitSizeValue}
+                value={
+                  isUnitsFocused && unitSizeValue === 0 ? '' : unitSizeValue
+                }
+                onFocus={() => setIsUnitsFocused(true)}
+                onBlur={() => setIsUnitsFocused(false)}
                 onChange={onUnitSizeChange}
                 onWheel={preventScrollChange}
                 disabled={isUnitSizeDisabled}
@@ -148,7 +155,11 @@ export const PropertyTableUnits = ({
               type="number"
               name="numOfRooms"
               min={0}
-              value={numOfRoomsValue}
+              value={
+                isRoomsFocused && numOfRoomsValue === 0 ? '' : numOfRoomsValue
+              }
+              onFocus={() => setIsRoomsFocused(true)}
+              onBlur={() => setIsRoomsFocused(false)}
               onChange={onUnitRoomsChange}
               onWheel={preventScrollChange}
               disabled={isNumOfRoomsDisabled}
