@@ -49,6 +49,8 @@ export const PropertyTableUnits = ({
 }: PropertyUnitsProps) => {
   const { formatMessage } = useLocale()
 
+  console.log('Room value', propertyUsageDescription, numOfRoomsValue)
+
   // Prevent scrolling from changing the number input value
   const preventScrollChange = (event: React.WheelEvent<HTMLInputElement>) => {
     event.currentTarget.blur()
