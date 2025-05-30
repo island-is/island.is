@@ -19,6 +19,7 @@ import {
   PreregisterResponse,
   PreregistrationInput,
   IdentityDocumentTypes,
+  PassportsCollection,
 } from './passportsApi.types'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
@@ -223,6 +224,19 @@ export class PassportsService {
     } catch (e) {
       this.handleError(e)
       return { success: false }
+    }
+  }
+
+  async getAllIdentityDocuments(
+    user: User,
+    type?: IdentityDocumentTypes,
+  ): Promise<PassportsCollection> {
+    const userPassports = await this.getIdentityDocument(user, type)
+    const childPassports = await this.getIdentityDocumentChildren(user, type)
+
+    return {
+      userPassports,
+      childPassports,
     }
   }
 
