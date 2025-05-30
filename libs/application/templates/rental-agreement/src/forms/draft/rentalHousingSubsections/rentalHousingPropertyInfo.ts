@@ -7,18 +7,13 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { SubSection } from '@island.is/application/types'
+import { RentalHousingCategoryClass, applicationAnswers } from '../../../shared'
 import {
   getPropertyTypeOptions,
   getPropertyClassOptions,
   getPropertyClassGroupOptions,
-  extractApplicationAnswers,
 } from '../../../utils/utils'
-import {
-  Routes,
-  RentalHousingCategoryClass,
-  RentalHousingCategoryTypes,
-} from '../../../utils/enums'
-import { extractPropertyInfoData } from '../../../utils/summaryUtils'
+import { Routes, RentalHousingCategoryTypes } from '../../../utils/enums'
 import { registerProperty } from '../../../lib/messages'
 
 const messagesInfo = registerProperty.info
@@ -36,7 +31,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
         buildDescriptionField({
           id: 'registerProperty.propertyInfoAddress',
           title: ({ answers }) => {
-            const { searchResultLabel } = extractPropertyInfoData(answers)
+            const { searchResultLabel } = applicationAnswers(answers)
             return {
               ...messagesInfo.propertyAddressAnswer,
               values: { propertyAddress: searchResultLabel },
@@ -55,8 +50,8 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
             messagesInfo.tableHeaderNumberOfRooms,
           ],
           rows({ answers }) {
-            const { searchResultUnits } = extractPropertyInfoData(answers)
-            return searchResultUnits?.map((unit) => [
+            const { units } = applicationAnswers(answers)
+            return units?.map((unit) => [
               unit.propertyUsageDescription || '',
               unit.unitCode || '',
               unit.changedSize
@@ -101,10 +96,8 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           title: messagesCategory.classGroupLabel,
           placeholder: messagesCategory.classGroupPlaceholder,
           condition: (answers) => {
-            const { propertyClassOptions } = extractApplicationAnswers(answers)
-            return (
-              propertyClassOptions === RentalHousingCategoryClass.SPECIAL_GROUPS
-            )
+            const { categoryClass } = applicationAnswers(answers)
+            return categoryClass === RentalHousingCategoryClass.SPECIAL_GROUPS
           },
           options: getPropertyClassGroupOptions(),
         }),

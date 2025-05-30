@@ -219,6 +219,7 @@ import { VerdictsModule } from '@island.is/api/domains/verdicts'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
 import { HmsConfig } from '@island.is/clients/hms'
+import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 
 const environment = getConfig
 
@@ -395,6 +396,7 @@ const environment = getConfig
         FeatureFlagConfig,
         HmsConfig,
         HmsLoansClientConfig,
+        HmsRentalAgreementClientConfig,
         HousingBenefitsConfig,
         FinanceClientConfig,
         FinanceClientV2Config,
