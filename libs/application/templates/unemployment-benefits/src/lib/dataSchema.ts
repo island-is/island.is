@@ -23,7 +23,7 @@ const applicantInformationSchema = z
     postalCode: z.string(),
     email: z.string(),
     phoneNumber: z.string(),
-    password: z.string(),
+    password: z.string().min(4),
     otherAddressCheckbox: z.array(z.string()).optional(),
     otherAddress: z.string().optional(),
     otherPostcode: z.string().optional(),

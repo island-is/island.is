@@ -52,6 +52,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     onChange = () => undefined,
     clearOnChange,
     setOnChange,
+    thousandSeparator,
   } = field
   const { clearErrors, watch } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
@@ -115,6 +116,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           maxLength={maxLength}
           textarea={variant === 'textarea'}
           currency={variant === 'currency'}
+          thousandSeparator={thousandSeparator}
           type={
             variant !== 'textarea' && variant !== 'currency' ? variant : 'text'
           }

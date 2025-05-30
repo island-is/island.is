@@ -47,6 +47,7 @@ export const workingAbilitySubSection = buildSubSection({
           id: 'workingAbilityAlertMessage',
           message: employmentMessages.workingAbility.labels.partTimeInfoBox,
           alertType: 'info',
+          doesNotRequireAnswer: true,
           condition: needsMedicalReport,
         }),
         buildFileUploadField({

@@ -15,6 +15,7 @@ import {
   isEmployed,
   isEmployedAtAll,
   isEmployedPartTime,
+  isOccasionallyEmployed,
   isUnemployed,
 } from '../../../utils'
 
@@ -61,6 +62,7 @@ export const currentSituationSubSection = buildSubSection({
             employmentMessages.currentSituation.labels
               .reasonForUnemploymentDescription,
           titleVariant: 'h5',
+          marginTop: 2,
           condition: isUnemployed,
         }),
         buildTextField({
@@ -78,7 +80,8 @@ export const currentSituationSubSection = buildSubSection({
           title:
             employmentMessages.currentSituation.labels.partTimeJobDescription,
           titleVariant: 'h5',
-          condition: isEmployedPartTime,
+          marginTop: 2,
+          condition: hasEmployer,
         }),
         buildNationalIdWithNameField({
           id: 'currentSituation.currentJob.employer',
@@ -97,9 +100,11 @@ export const currentSituationSubSection = buildSubSection({
           title:
             employmentMessages.currentSituation.labels.partTimeJobPercentage,
           width: 'half',
+          variant: 'number',
+          suffix: '%',
           condition: hasEmployer,
         }),
-        buildTextField({
+        buildDateField({
           id: 'currentSituation.currentJob.startDate',
           width: 'half',
           title:
@@ -116,39 +121,62 @@ export const currentSituationSubSection = buildSubSection({
         buildTextField({
           id: 'currentSituation.currentJob.salary',
           width: 'half',
+          variant: 'currency',
           title: employmentMessages.currentSituation.labels.partTimeJobSalary,
           condition: isEmployedPartTime,
         }),
-        buildTextField({
+        buildDateField({
           id: 'currentSituation.currentJob.endDate',
           width: 'half',
           title: employmentMessages.currentSituation.labels.jobEndDate,
           condition: isEmployed,
+        }),
+        buildAlertMessageField({
+          id: 'currentSituation.occasionalJobAlert',
+          message:
+            employmentMessages.currentSituation.labels.occasionalJobInfoBox,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+          condition: isOccasionallyEmployed,
         }),
         buildDescriptionField({
           id: 'currentSituation.wantedJobDescription',
           title:
             employmentMessages.currentSituation.labels.wantedJobDescription,
           titleVariant: 'h5',
+          marginTop: 2,
           condition: isEmployedAtAll,
         }),
         buildTextField({
           id: 'currentSituation.wantedJobPercentage',
           title:
             employmentMessages.currentSituation.labels.partTimeJobPercentage,
+          variant: 'number',
+          suffix: '%',
           condition: isEmployedAtAll,
         }),
         buildAlertMessageField({
           id: 'currentSituation.wantedJobAlert',
           message: employmentMessages.currentSituation.labels.wantedJobInfoBox,
           alertType: 'info',
-          condition: isEmployedAtAll,
+          doesNotRequireAnswer: true,
+          condition: (answers) =>
+            isEmployedPartTime(answers) || isOccasionallyEmployed(answers),
+        }),
+        buildAlertMessageField({
+          id: 'currentSituation.wantedJobSecondAlert',
+          message:
+            employmentMessages.currentSituation.labels.wantedJobSecondInfoBox,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+          condition: isEmployed,
         }),
         buildDescriptionField({
           id: 'currentSituation.jobTimelineDescription',
           title:
             employmentMessages.currentSituation.labels.jobTimelineDescription,
           titleVariant: 'h5',
+          marginTop: 2,
           condition: isEmployedAtAll,
         }),
         buildDateField({
@@ -162,6 +190,7 @@ export const currentSituationSubSection = buildSubSection({
           message:
             employmentMessages.currentSituation.labels.jobTimelineInfoBox,
           alertType: 'info',
+          doesNotRequireAnswer: true,
           condition: isEmployedAtAll,
         }),
       ],

@@ -488,6 +488,7 @@ export interface TextField extends InputField {
   backgroundColor?: InputBackgroundColor
   format?: string | FormatInputValueFunction
   suffix?: string
+  thousandSeparator?: boolean
   rows?: number
   tooltip?: FormText
   onChange?: (...event: any[]) => void

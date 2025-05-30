@@ -49,7 +49,7 @@ export const application = defineMessages({
   firstSectionDescription: {
     id: 'vmst.ub.application:firstSectionDescription',
     defaultMessage:
-      'Eftirfarandi kafli snýr að því að safna upplýsingum um núverandi eða fyrrverandi atvinnustöðu þína svo hægt sé að reikna út hvort eða hve miklar atvinnuleysisbætur þú hefur rétt á.',
+      'Eftirfarandi kafli snýr að því að safna upplýsingum um núverandi eða fyrrverandi stöðu þína á atvinnumarkaði svo hægt sé að reikna út hvort eða hve miklar atvinnuleysisbætur þú hefur rétt á.',
     description: 'Description of first section page',
   },
   secondSectionTitle: {

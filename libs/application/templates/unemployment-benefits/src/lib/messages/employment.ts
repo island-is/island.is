@@ -189,6 +189,12 @@ export const employment = {
           'Athugaðu að atvinnuleysisbætur miðast við það hlutastarf sem þú velur. Ef þú velur 50% hlutastarf áttu rétt á 50% atvinnuleysisbótum. geta aldrei verið hærri en það starfshlutfall sem þú ert tilbúinn að ráða þig í',
         description: 'wanted job info box description',
       },
+      wantedJobSecondInfoBox: {
+        id: 'vmst.ub.application:employment.currentSituation.labels.wantedJobSecondInfoBox',
+        defaultMessage:
+          'Hafðu í huga að atvinnleysisbætur geta aldrei verið hærri en það starfshlutfall sem þú óskar eftir.',
+        description: 'wanted job info box description',
+      },
       jobTimelineDescription: {
         id: 'vmst.ub.application:employment.currentSituation.labels.jobTimelineDescription',
         defaultMessage: 'Hvenær getur þú hafið störf?',
@@ -298,12 +304,12 @@ export const employment = {
     general: defineMessages({
       sectionTitle: {
         id: 'vmst.ub.application:employment.employmentHistory.general.sectionTitle',
-        defaultMessage: 'Atvinnusaga þín',
+        defaultMessage: 'Atvinnusaga',
         description: 'applicant employment history section title',
       },
       pageTitle: {
         id: 'vmst.ub.application:employment.employmentHistory.general.pageTitle',
-        defaultMessage: 'Atvinnusaga þín',
+        defaultMessage: 'Atvinnusaga',
         description: 'Employment history page description',
       },
       pageDescription: {
@@ -316,7 +322,8 @@ export const employment = {
     labels: defineMessages({
       independentCheckbox: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.independentCheckbox',
-        defaultMessage: 'Ertu eða varstu sjálfstætt starfandi ?',
+        defaultMessage:
+          'Ertu eða varstu sjálfstætt starfandi á eigin kennitölu?',
         description: 'Independent checkbox label',
       },
       lastJobLabel: {
@@ -362,7 +369,7 @@ export const employment = {
       lastJobAlertInformation: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobAlertInformation',
         defaultMessage:
-          'Upplýsingarnar hér að ofan gefa ekki rétt á 100% bótahlutfalli. Til að hækka bótahlutfall geturðu bætt við starfi. Athugaðu að til að fá 100% bætur þarftu að hafa unnið 100% starf í samtals 12 mánuði innan síðustu þriggja ára.',
+          'Athugaðu að til að fá 100% bætur þarftu að hafa unnið 100% starf í samtals 12 mánuði innan síðustu þriggja ára. Við mælum með því að setja inn eins ítarlega atvinnusögu og hægt er. ',
         description: 'Last job alert information label',
       },
       addJob: {

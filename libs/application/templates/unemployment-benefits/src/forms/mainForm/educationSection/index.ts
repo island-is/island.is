@@ -7,6 +7,7 @@ import {
   buildSection,
   buildTextField,
   coreMessages,
+  getValueViaPath,
   NO,
   YES,
 } from '@island.is/application/core'
@@ -40,6 +41,7 @@ export const educationSection = buildSection({
         buildCheckboxField({
           id: 'education.typeOfEducation',
           title: educationMessages.labels.typeOfEducationLabel,
+          marginTop: 4,
           options: [
             {
               value: EducationType.CURRENT,
@@ -54,6 +56,9 @@ export const educationSection = buildSection({
               label: educationMessages.labels.lastTvelveMonthsEducationLabel,
             },
           ],
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'education.lastTwelveMonths') ===
+            YES,
         }),
         buildTextField({
           id: 'education.currentEducation.schoolName',

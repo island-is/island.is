@@ -5,15 +5,16 @@ import { FormValue } from '@island.is/application/types'
 export const isCurrentlyStudying = (answers: FormValue) => {
   const educationType = getValueViaPath<string>(
     answers,
-    'educationInformation.educationType',
+    'education.typeOfEducation',
   )
+  console.log(educationType)
   return educationType === EducationType.CURRENT
 }
 
 export const wasStudyingInTheLastYear = (answers: FormValue) => {
   const educationType = getValueViaPath<string>(
     answers,
-    'educationInformation.educationType',
+    'education.typeOfEducation',
   )
   return educationType === EducationType.LAST_YEAR
 }
@@ -21,7 +22,7 @@ export const wasStudyingInTheLastYear = (answers: FormValue) => {
 export const wasStudyingLastSemester = (answers: FormValue) => {
   const educationType = getValueViaPath<string>(
     answers,
-    'educationInformation.educationType',
+    'education.typeOfEducation',
   )
   return educationType === EducationType.LAST_SEMESTER
 }

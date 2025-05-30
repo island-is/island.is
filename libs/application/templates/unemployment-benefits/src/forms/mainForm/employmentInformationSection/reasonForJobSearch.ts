@@ -95,6 +95,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
           id: 'reasonForJobSearch.alertMessage',
           message: 'Fá þetta frá þjónustu',
           alertType: 'info',
+          doesNotRequireAnswer: true,
           condition: (_answers) => {
             // TODO: only show if reason for job search requires additional reason
             return true

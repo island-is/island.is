@@ -5,7 +5,6 @@ import {
   buildFieldsRepeaterField,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSubSection,
   buildTextField,
   coreMessages,
@@ -14,7 +13,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { employment as employmentMessages } from '../../../lib/messages'
-import { FormValue } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import { isIndependent, workOnOwnSSN } from '../../../utils'
 
 export const employmentHistorySubSection = buildSubSection({
@@ -57,12 +56,23 @@ export const employmentHistorySubSection = buildSubSection({
               .lastJobCompanyNationalId,
           width: 'half',
           readOnly: true,
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.answers,
+              'currentSituation.currentJob.employer.nationalId',
+            ) ?? '',
           condition: (answers) => !isIndependent(answers),
         }),
         buildTextField({
           id: 'employmentHistory.lastJob.companyName',
           title: employmentMessages.employmentHistory.labels.lastJobCompanyName,
           width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.answers,
+              'currentSituation.currentJob.employer.name',
+            ) ?? '',
           condition: (answers) => !isIndependent(answers),
         }),
         buildTextField({
@@ -70,7 +80,6 @@ export const employmentHistorySubSection = buildSubSection({
           id: 'employmentHistory.lastJob.title',
           title: employmentMessages.employmentHistory.labels.lastJobTitle,
           width: 'half',
-          readOnly: true,
           condition: (answers) => !isIndependent(answers),
         }),
         buildTextField({
@@ -79,12 +88,25 @@ export const employmentHistorySubSection = buildSubSection({
           width: 'half',
           variant: 'number',
           suffix: '%',
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.answers,
+              'currentSituation.currentJob.percentage',
+            ) ?? '',
           condition: (answers) => !isIndependent(answers),
         }),
         buildDateField({
           id: 'employmentHistory.lastJob.startDate',
           title: employmentMessages.employmentHistory.labels.lastJobStartDate,
           width: 'half',
+          defaultValue: (application: Application) => {
+            const startDate =
+              getValueViaPath<string>(
+                application.answers,
+                'currentSituation.currentJob.startDate',
+              ) ?? undefined
+            return startDate ? new Date(startDate) : undefined
+          },
           condition: (answers) => !isIndependent(answers),
         }),
         buildDateField({
@@ -94,44 +116,26 @@ export const employmentHistorySubSection = buildSubSection({
           condition: (answers) => !isIndependent(answers),
         }),
         /* IS INDEPENDENT */
-        buildRadioField({
-          id: 'employmentHistory.workOnOwnSSN',
-          title: employmentMessages.employmentHistory.labels.workOnOwnSSN,
-          width: 'half',
-          options: [
-            {
-              value: YES,
-              label: coreMessages.radioYes,
-            },
-            {
-              value: NO,
-              label: coreMessages.radioNo,
-            },
-          ],
-          condition: (answers) => isIndependent(answers),
-        }),
         buildAlertMessageField({
           id: 'employmentHistoryIndependentAlertMessage',
           message:
             employmentMessages.employmentHistory.labels.workOnOwnSSNAlert,
           alertType: 'info',
-          condition: (answers) =>
-            isIndependent(answers) && workOnOwnSSN(answers),
+          doesNotRequireAnswer: true,
+          condition: (answers) => isIndependent(answers),
         }),
         buildDescriptionField({
           id: 'employmentHistoryPreviousJobsDescription',
           title: employmentMessages.employmentHistory.labels.howLongOnOwnSSN,
           titleVariant: 'h5',
-          condition: (answers) =>
-            isIndependent(answers) && workOnOwnSSN(answers),
+          condition: (answers) => isIndependent(answers),
         }),
         // TODO: Get from service
         buildTextField({
           id: 'employmentHistory.ownSSNJob.title',
           title: employmentMessages.employmentHistory.labels.lastJobTitle,
           width: 'half',
-          condition: (answers) =>
-            isIndependent(answers) && workOnOwnSSN(answers),
+          condition: (answers) => isIndependent(answers),
         }),
         buildTextField({
           id: 'employmentHistory.ownSSNJob.percentage',
@@ -139,8 +143,7 @@ export const employmentHistorySubSection = buildSubSection({
           width: 'half',
           variant: 'number',
           suffix: '%',
-          condition: (answers) =>
-            isIndependent(answers) && workOnOwnSSN(answers),
+          condition: (answers) => isIndependent(answers),
         }),
         buildDateField({
           id: 'employmentHistory.ownSSNJob.startDate',
@@ -153,14 +156,14 @@ export const employmentHistorySubSection = buildSubSection({
           id: 'employmentHistory.ownSSNJob.endDate',
           title: employmentMessages.employmentHistory.labels.lastOldJobEndDate,
           width: 'half',
-          condition: (answers) =>
-            isIndependent(answers) && workOnOwnSSN(answers),
+          condition: (answers) => isIndependent(answers),
         }),
         buildAlertMessageField({
           id: 'employmentHistoryAlertMessage',
           message:
             employmentMessages.employmentHistory.labels.lastJobAlertInformation,
           alertType: 'warning',
+          doesNotRequireAnswer: true,
         }),
         /* OLD JOBS */
 
@@ -226,6 +229,7 @@ export const employmentHistorySubSection = buildSubSection({
           message:
             employmentMessages.employmentHistory.labels.eesAlertInformation,
           alertType: 'info',
+          doesNotRequireAnswer: true,
           condition: (answers: FormValue) => {
             const hasWorkedEes = getValueViaPath<string>(
               answers,
