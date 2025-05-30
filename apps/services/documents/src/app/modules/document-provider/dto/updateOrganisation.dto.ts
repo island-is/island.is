@@ -26,4 +26,9 @@ export class UpdateOrganisationDto {
   @IsString()
   @ApiPropertyOptional()
   phoneNumber?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  zendeskId?: string
 }
