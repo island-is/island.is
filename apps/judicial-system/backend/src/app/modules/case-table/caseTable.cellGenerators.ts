@@ -121,40 +121,69 @@ const generateAppealStateTag = (
   c: Case,
   user: TUser,
 ): CaseTableCell<TagValue> => {
+  const getCompletedColor = (): string => {
+    switch (c.appealRulingDecision) {
+      case CaseAppealRulingDecision.ACCEPTING:
+        return 'mint'
+      case CaseAppealRulingDecision.CHANGED:
+      case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
+      case CaseAppealRulingDecision.REPEAL:
+      case CaseAppealRulingDecision.DISCONTINUED:
+        return 'rose'
+      default:
+        return 'blueberry'
+    }
+  }
+
+  const getCompletedOrder = (): string => {
+    switch (c.appealRulingDecision) {
+      case CaseAppealRulingDecision.ACCEPTING:
+        return 'E'
+      case CaseAppealRulingDecision.REPEAL:
+        return 'F'
+      case CaseAppealRulingDecision.CHANGED:
+      case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
+        return 'G'
+      case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
+      case CaseAppealRulingDecision.DISMISSED_FROM_COURT:
+        return 'H'
+      case CaseAppealRulingDecision.REMAND:
+        return 'I'
+      case CaseAppealRulingDecision.DISCONTINUED:
+        return 'J'
+      default:
+        return 'K'
+    }
+  }
+
   switch (c.appealState) {
     case CaseAppealState.WITHDRAWN:
-      return generateCell({ color: 'red', text: 'Afturkallað' })
+      return generateCell({ color: 'red', text: 'Afturkallað' }, 'L')
     case CaseAppealState.APPEALED:
-      return generateCell({ color: 'red', text: 'Kært' })
+      return generateCell({ color: 'red', text: 'Kært' }, 'A')
     case CaseAppealState.RECEIVED:
       if (isCourtOfAppealsUser(user)) {
         if (!c.appealCaseNumber) {
-          return generateCell({ color: 'purple', text: 'Nýtt' })
+          return generateCell({ color: 'purple', text: 'Nýtt' }, 'B')
         }
 
         if (
           c.appealReceivedByCourtDate &&
           Date.now() >= c.appealReceivedByCourtDate.getTime() + getDays(1)
         ) {
-          return generateCell({ color: 'mint', text: 'Frestir liðnir' })
+          return generateCell({ color: 'mint', text: 'Frestir liðnir' }, 'D')
         }
       }
 
-      return generateCell({ color: 'darkerBlue', text: 'Móttekið' })
+      return generateCell({ color: 'darkerBlue', text: 'Móttekið' }, 'C')
     case CaseAppealState.COMPLETED:
-      return generateCell({
-        color:
-          c.appealRulingDecision === CaseAppealRulingDecision.ACCEPTING
-            ? 'mint'
-            : c.appealRulingDecision === CaseAppealRulingDecision.CHANGED ||
-              c.appealRulingDecision ===
-                CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY ||
-              c.appealRulingDecision === CaseAppealRulingDecision.REPEAL ||
-              c.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
-            ? 'rose'
-            : 'blueberry',
-        text: getAppealResultTextByValue(c.appealRulingDecision),
-      })
+      return generateCell(
+        {
+          color: getCompletedColor(),
+          text: getAppealResultTextByValue(c.appealRulingDecision),
+        },
+        getCompletedOrder(),
+      )
     default:
       return generateCell()
   }
@@ -167,50 +196,33 @@ const generateRequestCaseStateTag = (
   switch (c.state) {
     case CaseState.NEW:
     case CaseState.DRAFT:
-      return generateCell({ color: 'red', text: 'Drög' })
+      return generateCell({ color: 'red', text: 'Drög' }, 'A')
     case CaseState.SUBMITTED:
-      return generateCell({
-        color: 'purple',
-        text: isDistrictCourtUser(user) ? 'Nýtt' : 'Sent',
-      })
+      return generateCell(
+        { color: 'purple', text: isDistrictCourtUser(user) ? 'Nýtt' : 'Sent' },
+        'B',
+      )
     case CaseState.RECEIVED: {
       return DateLog.arraignmentDate(c.dateLogs)?.date
-        ? generateCell({ color: 'mint', text: 'Á dagskrá' })
-        : generateCell({ color: 'blueberry', text: 'Móttekið' })
+        ? generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
+        : generateCell({ color: 'blueberry', text: 'Móttekið' }, 'C')
     }
     case CaseState.ACCEPTED:
       return c.validToDate && c.validToDate < new Date()
-        ? generateCell({ color: 'darkerBlue', text: 'Lokið' })
-        : generateCell({
-            color: 'blue',
-            text: isRestrictionCase(c.type) ? 'Virkt' : 'Samþykkt',
-          })
+        ? generateCell({ color: 'darkerBlue', text: 'Lokið' }, 'G')
+        : generateCell(
+            {
+              color: 'blue',
+              text: isRestrictionCase(c.type) ? 'Virkt' : 'Samþykkt',
+            },
+            isRestrictionCase(c.type) ? 'F' : 'E',
+          )
     case CaseState.REJECTED:
-      return generateCell({ color: 'rose', text: 'Hafnað' })
+      return generateCell({ color: 'rose', text: 'Hafnað' }, 'H')
     case CaseState.DISMISSED:
-      return generateCell({ color: 'dark', text: 'Vísað frá' })
+      return generateCell({ color: 'dark', text: 'Vísað frá' }, 'I')
     default:
-      return generateCell({ color: 'white', text: 'Óþekkt' })
-  }
-}
-
-const generateReceivedIndictmentStateTag = (
-  indictmentDecision: IndictmentDecision | undefined,
-  courtDate: Date | undefined,
-): CaseTableCell<TagValue> => {
-  switch (indictmentDecision) {
-    case IndictmentDecision.POSTPONING:
-    case IndictmentDecision.SCHEDULING:
-    case IndictmentDecision.COMPLETING:
-      return generateCell({ color: 'mint', text: 'Á dagskrá' })
-    case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
-      return generateCell({ color: 'mint', text: 'Dómtekið' })
-    case IndictmentDecision.REDISTRIBUTING:
-      return generateCell({ color: 'blue', text: 'Endurúthlutun' })
-    default:
-      return courtDate
-        ? generateCell({ color: 'mint', text: 'Á dagskrá' })
-        : generateCell({ color: 'blueberry', text: 'Móttekið' })
+      return generateCell({ color: 'white', text: 'Óþekkt' }, 'J')
   }
 }
 
@@ -219,35 +231,20 @@ const generateIndictmentRulingDecisionTag = (
 ): CaseTableCell<TagValue> => {
   switch (indictmentRulingDecision) {
     case CaseIndictmentRulingDecision.FINE:
-      return generateCell({ color: 'mint', text: 'Viðurlagaákvörðun' })
+      return generateCell({ color: 'mint', text: 'Viðurlagaákvörðun' }, 'G')
     case CaseIndictmentRulingDecision.CANCELLATION:
-      return generateCell({ color: 'rose', text: 'Niðurfelling' })
+      return generateCell({ color: 'rose', text: 'Niðurfelling' }, 'H')
     case CaseIndictmentRulingDecision.MERGE:
-      return generateCell({ color: 'rose', text: 'Sameinað' })
+      return generateCell({ color: 'rose', text: 'Sameinað' }, 'I')
     case CaseIndictmentRulingDecision.DISMISSAL:
-      return generateCell({ color: 'blue', text: 'Frávísun' })
+      return generateCell({ color: 'blue', text: 'Frávísun' }, 'J')
     case CaseIndictmentRulingDecision.RULING:
-      return generateCell({ color: 'darkerBlue', text: 'Dómur' })
+      return generateCell({ color: 'darkerBlue', text: 'Dómur' }, 'K')
     case CaseIndictmentRulingDecision.WITHDRAWAL:
-      return generateCell({ color: 'rose', text: 'Afturkallað' })
+      return generateCell({ color: 'rose', text: 'Afturkallað' }, 'L')
     default:
-      return generateCell({ color: 'darkerBlue', text: 'Lokið' })
+      return generateCell({ color: 'darkerBlue', text: 'Lokið' }, 'M')
   }
-}
-
-const generateCompletedIndictmentStateTag = (
-  user: TUser,
-  indictmentRulingDecision: CaseIndictmentRulingDecision | undefined,
-  isInReview: boolean,
-): CaseTableCell<TagValue> => {
-  if (isPublicProsecutionOfficeUser(user)) {
-    return generateCell({
-      color: isInReview ? 'mint' : 'purple',
-      text: isInReview ? 'Í yfirlestri' : 'Nýtt',
-    })
-  }
-
-  return generateIndictmentRulingDecisionTag(indictmentRulingDecision)
 }
 
 const generateIndictmentCaseStateTag = (
@@ -263,28 +260,60 @@ const generateIndictmentCaseStateTag = (
 
   const courtDate = getIndictmentCourtDate(c)
 
+  const generateReceivedIndictmentStateTag = (): CaseTableCell<TagValue> => {
+    switch (indictmentDecision) {
+      case IndictmentDecision.POSTPONING:
+      case IndictmentDecision.SCHEDULING:
+      case IndictmentDecision.COMPLETING:
+        return generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
+      case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+        return generateCell({ color: 'mint', text: 'Dómtekið' }, 'E')
+      case IndictmentDecision.REDISTRIBUTING:
+        return generateCell({ color: 'blue', text: 'Endurúthlutun' }, 'F')
+      default:
+        return courtDate
+          ? generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
+          : generateCell({ color: 'blueberry', text: 'Móttekið' }, 'C')
+    }
+  }
+
+  const generateCompletedIndictmentStateTag = (): CaseTableCell<TagValue> => {
+    if (isPublicProsecutionOfficeUser(user)) {
+      const isInReview = Boolean(indictmentReviewerId)
+
+      return generateCell(
+        {
+          color: isInReview ? 'mint' : 'purple',
+          text: isInReview ? 'Í yfirlestri' : 'Nýtt',
+        },
+        isInReview ? 'H' : 'G',
+      )
+    }
+
+    return generateIndictmentRulingDecisionTag(indictmentRulingDecision)
+  }
+
   switch (state) {
     case CaseState.NEW:
     case CaseState.DRAFT:
     case CaseState.WAITING_FOR_CONFIRMATION:
-      return generateCell({ color: 'red', text: 'Drög' })
+      return generateCell({ color: 'red', text: 'Drög' }, 'A')
     case CaseState.SUBMITTED:
-      return generateCell({
-        color: 'purple',
-        text: isDistrictCourtUser(user) ? 'Nýtt' : 'Sent',
-      })
-    case CaseState.RECEIVED:
-      return generateReceivedIndictmentStateTag(indictmentDecision, courtDate)
-    case CaseState.COMPLETED:
-      return generateCompletedIndictmentStateTag(
-        user,
-        indictmentRulingDecision,
-        Boolean(indictmentReviewerId),
+      return generateCell(
+        {
+          color: 'purple',
+          text: isDistrictCourtUser(user) ? 'Nýtt' : 'Sent',
+        },
+        'B',
       )
+    case CaseState.RECEIVED:
+      return generateReceivedIndictmentStateTag()
+    case CaseState.COMPLETED:
+      return generateCompletedIndictmentStateTag()
     case CaseState.WAITING_FOR_CANCELLATION:
-      return generateCell({ color: 'rose', text: 'Afturkallað' })
+      return generateCell({ color: 'rose', text: 'Afturkallað' }, 'L')
     default:
-      return generateCell({ color: 'white', text: 'Óþekkt' })
+      return generateCell({ color: 'white', text: 'Óþekkt' }, 'N')
   }
 }
 
@@ -657,9 +686,12 @@ const rulingType: CaseTableCellGenerator<TagValue> = {
   generate: (c: Case): CaseTableCell<TagValue> => {
     switch (c.indictmentRulingDecision) {
       case CaseIndictmentRulingDecision.FINE:
-        return generateCell({ color: 'darkerBlue', text: 'Viðurlagaákvörðun' })
+        return generateCell(
+          { color: 'darkerBlue', text: 'Viðurlagaákvörðun' },
+          'Viðurlagaákvörðun',
+        )
       case CaseIndictmentRulingDecision.RULING:
-        return generateCell({ color: 'darkerBlue', text: 'Dómur' })
+        return generateCell({ color: 'darkerBlue', text: 'Dómur' }, 'Dómur')
       default:
         return generateCell()
     }
