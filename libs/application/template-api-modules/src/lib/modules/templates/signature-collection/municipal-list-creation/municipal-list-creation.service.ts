@@ -49,8 +49,8 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
     const currentCollection = await this.signatureCollectionClientService.getLatestCollectionForType(
       this.collectionType,
     )
-    //Todo: adjust this check to municipal once available
-    if (currentCollection.collectionType !== CollectionType.Parliamentary) {
+
+    if (currentCollection.collectionType !== CollectionType.LocalGovernmental) {
       throw new TemplateApiError(
         errorMessages.currentCollectionNotMunicipal,
         405,
@@ -115,7 +115,7 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
 
     const result = await this.signatureCollectionClientService
       //Todo: switch to municipal once available
-      .createParliamentaryCandidacy(input, auth)
+      .createMunicipalCandidacy(input, auth)
       .catch((error) => {
         throw new TemplateApiError(
           {
