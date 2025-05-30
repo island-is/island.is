@@ -116,6 +116,13 @@ export class PaymentFlowService {
         })),
       )
 
+      this.logger.info(
+        `[${paymentFlow.id}] Payment flow created [${paymentFlow.organisationId}]`,
+        {
+          charges: paymentInfo.charges.map((c) => c.chargeItemCode),
+        },
+      )
+
       return {
         urls: {
           is: `${environment.paymentsWeb.origin}/is/${paymentFlow.id}`,
@@ -165,19 +172,34 @@ export class PaymentFlowService {
 
       filteredChargeInformation.push({
         ...product,
-        priceAmount: price * matchingCharge.quantity,
+        priceAmount: price,
         quantity: matchingCharge.quantity,
       })
     }
 
     if (filteredChargeInformation.length !== charges.length) {
+      this.logger.error(
+        `[${organisationId}] Failed to create payment flow: charge item codes not found`,
+        {
+          charges: charges.map((c) => c.chargeItemCode),
+          filteredCharges: filteredChargeInformation.map(
+            (c) => c.chargeItemCode,
+          ),
+          missingCharges: charges.filter(
+            (c) =>
+              !filteredChargeInformation.some(
+                (i) => i.chargeItemCode === c.chargeItemCode,
+              ),
+          ),
+        },
+      )
       throw new BadRequestException(PaymentServiceCode.ChargeItemCodesNotFound)
     }
 
     return {
       firstProductTitle: filteredChargeInformation?.[0]?.chargeItemName ?? null,
       totalPrice: filteredChargeInformation.reduce(
-        (acc, charge) => acc + charge.priceAmount,
+        (acc, charge) => acc + charge.priceAmount * charge.quantity,
         0,
       ),
       catalogItems: filteredChargeInformation,

@@ -56,6 +56,7 @@ import {
   WorkMachines,
   SecondarySchool,
   LSH,
+  PracticalExams,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -466,6 +467,7 @@ export const serviceSetup = (services: {
       SeminarsVer,
       SecondarySchool,
       LSH,
+      PracticalExams,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

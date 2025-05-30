@@ -52,7 +52,10 @@ export const registerProperty = z
       .optional(),
   })
   .superRefine((data, ctx) => {
-    if (data?.searchresults?.units && data.searchresults.units.length < 1) {
+    if (
+      !data?.searchresults?.units ||
+      (data?.searchresults?.units && data.searchresults.units.length < 1)
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
@@ -70,6 +73,14 @@ export const registerProperty = z
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
           params: m.registerProperty.search.numOfRoomsMinimumError,
+          path: ['searchresults.units'],
+        })
+      }
+      if (totalRooms > 20) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.registerProperty.search.numOfRoomsMaximumError,
           path: ['searchresults.units'],
         })
       }

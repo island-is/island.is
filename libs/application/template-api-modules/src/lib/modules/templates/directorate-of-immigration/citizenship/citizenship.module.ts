@@ -7,12 +7,14 @@ import {
   DirectorateOfImmigrationClientModule,
   DirectorateOfImmigrationClientConfig,
 } from '@island.is/clients/directorate-of-immigration'
+import { NationalRegistryV3ApplicationsClientModule } from '@island.is/clients/national-registry-v3-applications'
 
 @Module({
   imports: [
     SharedTemplateAPIModule,
     DirectorateOfImmigrationClientModule,
     NationalRegistryClientModule,
+    NationalRegistryV3ApplicationsClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [DirectorateOfImmigrationClientConfig],

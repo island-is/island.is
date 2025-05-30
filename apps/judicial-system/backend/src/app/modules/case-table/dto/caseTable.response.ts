@@ -4,9 +4,14 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger'
 
+export class StringValue {
+  @ApiProperty({ type: String, description: 'The string value' })
+  readonly str!: string
+}
+
 export class StringGroupValue {
   @ApiProperty({ type: [String], description: 'The string values' })
-  readonly s!: string[]
+  readonly strList!: string[]
 }
 
 export class TagValue {
@@ -17,22 +22,45 @@ export class TagValue {
   readonly text!: string
 }
 
-export type CaseTableCellValue = StringGroupValue | TagValue
+export class TagPairValue {
+  @ApiProperty({ type: TagValue, description: 'The first tag value' })
+  readonly firstTag!: TagValue
+
+  @ApiPropertyOptional({ type: TagValue, description: 'The second tag value' })
+  readonly secondTag?: TagValue
+}
+
+export type CaseTableCellValue =
+  | StringValue
+  | StringGroupValue
+  | TagValue
+  | TagPairValue
 
 export class CaseTableCell {
   @ApiPropertyOptional({
     oneOf: [
+      { $ref: getSchemaPath(StringValue) },
       { $ref: getSchemaPath(StringGroupValue) },
       { $ref: getSchemaPath(TagValue) },
+      { $ref: getSchemaPath(TagPairValue) },
     ],
     description: 'The cell value',
   })
   readonly value?: CaseTableCellValue
+
+  @ApiPropertyOptional({ type: String, description: 'The cell sort value' })
+  readonly sortValue?: string
 }
 
 class CaseTableRow {
   @ApiProperty({ type: String, description: 'The row case id' })
   readonly caseId!: string
+
+  @ApiProperty({
+    type: Boolean,
+    description: 'Indicates if the case belongs to the current user',
+  })
+  readonly isMyCase!: boolean
 
   @ApiProperty({ type: [CaseTableCell], description: 'The row cells' })
   readonly cells!: CaseTableCell[]
