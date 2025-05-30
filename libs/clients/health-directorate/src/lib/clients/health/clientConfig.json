@@ -186,6 +186,75 @@
         "tags": ["Prescriptions"]
       }
     },
+    "/v1/me/prescriptions/documents/{productId}": {
+      "get": {
+        "description": "Get documents for product",
+        "operationId": "MePrescriptionController_getPrescribedItemDocuments_v1",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "The product id (Norrænt vörumerki)",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ProductDocumentDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HttpProblemResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["Prescriptions"]
+      }
+    },
     "/v1/me/prescriptions/{id}/renew": {
       "post": {
         "description": "Renew a user's prescription",
@@ -346,7 +415,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/DispensationHistoryDto"
+                    "$ref": "#/components/schemas/DispensationHistoryItemDto"
                   }
                 }
               }
@@ -614,6 +683,22 @@
           }
         },
         "tags": ["System"]
+      }
+    },
+    "/system/metrics": {
+      "get": {
+        "operationId": "SystemController_metrics",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["System"]
+      }
+    },
+    "/version": {
+      "get": {
+        "operationId": "VersionController_version",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["Version"]
       }
     },
     "/v1/donation-exceptions": {
@@ -921,7 +1006,8 @@
           "productStrength": { "type": "string" },
           "dispensedAmount": { "type": "number" },
           "dispensedAmountDisplay": { "type": "string" },
-          "numberOfPackages": { "type": "number" }
+          "numberOfPackages": { "type": "number" },
+          "dispensedPackagesDisplay": { "type": "string" }
         },
         "required": ["productId"]
       },
@@ -970,6 +1056,7 @@
           "dosageInstructions": { "type": "string" },
           "indication": { "type": "string" },
           "totalPrescribedAmount": { "type": "number" },
+          "totalDispensedAmount": { "type": "number" },
           "totalPrescribedAmountDisplay": { "type": "string" },
           "category": {
             "type": "string",
@@ -1012,6 +1099,15 @@
           "isFullyDispensed",
           "dispensations"
         ]
+      },
+      "ProductDocumentDto": {
+        "type": "object",
+        "properties": {
+          "typeId": { "type": "number" },
+          "path": { "type": "string" },
+          "name": { "type": "string" }
+        },
+        "required": ["typeId", "path", "name"]
       },
       "PrescriptionRenewalRequestDto": {
         "type": "object",

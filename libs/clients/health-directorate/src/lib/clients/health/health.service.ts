@@ -4,15 +4,17 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  DispensationDto,
-  Locale,
-  PrescriptionsApi,
-  ReferralsApi,
-  WaitingListsApi,
-  PrescribedItemDto,
-  ReferralDto,
-  WaitingListEntryDto,
   DispensationHistoryDto,
+  DispensationHistoryItemDto,
+  Locale,
+  PrescribedItemDto,
+  PrescriptionRenewalRequestDto,
+  PrescriptionsApi,
+  ProductDocumentDto,
+  ReferralDto,
+  ReferralsApi,
+  WaitingListEntryDto,
+  WaitingListsApi,
 } from './gen/fetch'
 
 const LOG_CATEGORY = 'health-directorate-health-api'
@@ -47,7 +49,7 @@ export class HealthDirectorateHealthService {
     auth: Auth,
     atcCode: string,
     locale: string,
-  ): Promise<Array<DispensationHistoryDto> | null> {
+  ): Promise<Array<DispensationHistoryItemDto> | null> {
     const dispensations = await this.prescriptionsApiWithAuth(auth)
       .mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1({
         atcCode,
@@ -105,6 +107,41 @@ export class HealthDirectorateHealthService {
     }
 
     return prescriptions
+  }
+
+  /* Endurnýjun lyfseðils */
+  public async postRenewalPrescription(
+    auth: Auth,
+    id: string,
+    input: PrescriptionRenewalRequestDto,
+  ) {
+    return await this.prescriptionsApiWithAuth(
+      auth,
+    ).mePrescriptionControllerRenewPrescriptionV1({
+      id,
+      prescriptionRenewalRequestDto: input,
+    })
+  }
+
+  /* Fylgiseðill */
+  public async getPrescriptionDocuments(
+    auth: Auth,
+    productId: string,
+  ): Promise<ProductDocumentDto[] | null> {
+    const pdf = await this.prescriptionsApiWithAuth(auth)
+      .mePrescriptionControllerGetPrescribedItemDocumentsV1({
+        productId: productId,
+      })
+      .catch(handle404)
+
+    if (!pdf) {
+      this.logger.debug('No prescription documents returned', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    return pdf
   }
 
   /* Tilvísanir */
