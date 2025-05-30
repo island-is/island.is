@@ -24,10 +24,24 @@
       },
       "outputs": ["{options.outputPath}"]
     },
-    "worker": {
+    "grant-import": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "services-cms-importer:build"
+        "buildTarget": "services-cms-importer:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/cms-importer/grant-import"
+        },
+        "args": ["--job", "grant-import"]
+      }
+    },
+    "energy-fund-import": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-cms-importer:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/cms-importer/energy-fund-import"
+        },
+        "args": ["--job", "energy-fund-import"]
       }
     },
     "lint": {
