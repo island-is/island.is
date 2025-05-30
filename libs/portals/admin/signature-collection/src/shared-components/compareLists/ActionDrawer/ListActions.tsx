@@ -32,10 +32,7 @@ const ListActions = () => {
 
       <Stack space={8}>
         <DownloadReports areas={[]} collectionId={''} />
-        <ActionLockList
-          listId={list?.id}
-          collectionType={SignatureCollectionCollectionType.Parliamentary}
-        />
+        <ActionLockList listId={list?.id} />
         <ActionReviewComplete
           listId={list?.id}
           listStatus={listStatus}
