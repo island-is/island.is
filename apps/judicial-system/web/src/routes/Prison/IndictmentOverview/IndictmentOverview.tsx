@@ -76,8 +76,12 @@ const IndictmentOverview = () => {
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+
+  const isFine =
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
   const isCompletedWithRuling =
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+    workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.RULING || isFine
 
   const displaySentToPrisonAdminFiles =
     (isCompletedWithRuling && sentToPrisonAdminDate) ||
@@ -210,14 +214,25 @@ const IndictmentOverview = () => {
                 caseFiles={sentToPrisonAdminFiles}
               />
             )}
+
             {isCompletedWithRuling && sentToPrisonAdminDate && (
               <PdfButton
                 caseId={workingCase.id}
-                title={`Dómur til fullnustu ${formatDate(
-                  sentToPrisonAdminDate,
-                )}.pdf`}
+                title={
+                  isFine
+                    ? `Viðurlagaákvörðun til fullnustu ${formatDate(
+                        sentToPrisonAdminDate,
+                      )}.pdf`
+                    : `Dómur til fullnustu ${formatDate(
+                        sentToPrisonAdminDate,
+                      )}.pdf`
+                }
                 pdfType="rulingSentToPrisonAdmin"
-                elementId={'Dómur til fullnustu'}
+                elementId={
+                  isFine
+                    ? 'Viðurlagaákvörðun til fullnustu'
+                    : 'Dómur til fullnustu'
+                }
                 renderAs="row"
               />
             )}
