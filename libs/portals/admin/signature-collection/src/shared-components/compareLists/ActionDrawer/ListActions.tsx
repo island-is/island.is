@@ -1,4 +1,4 @@
-import { Box, Button, Drawer, Stack, Text } from '@island.is/island-ui/core'
+import { Button, Drawer, Stack, Text } from '@island.is/island-ui/core'
 import { useLoaderData } from 'react-router-dom'
 import {
   SignatureCollectionCollectionType,
@@ -41,11 +41,7 @@ const ListActions = () => {
           listStatus={listStatus}
           collectionType={SignatureCollectionCollectionType.Parliamentary}
         />
-        <ActionExtendDeadline
-          listId={list?.id}
-          endTime={list?.endTime}
-          collectionType={SignatureCollectionCollectionType.Parliamentary}
-        />
+        <ActionExtendDeadline listId={list?.id} endTime={list?.endTime} />
         <RemoveCandidate />
       </Stack>
     </Drawer>

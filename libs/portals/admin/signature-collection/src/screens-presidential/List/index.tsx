@@ -14,16 +14,15 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import PaperUpload from './components/paperUpload'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import { format as formatNationalId } from 'kennitala'
 import Signees from '../../shared-components/signees'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
+import { PaperSignees } from '../../shared-components/paperSignees'
 
 export const List = () => {
-  const { list, listStatus } = useLoaderData() as {
+  const { list } = useLoaderData() as {
     list: SignatureCollectionList
-    listStatus: string
   }
   const { formatMessage } = useLocale()
 
@@ -72,7 +71,7 @@ export const List = () => {
                 </Box>
               )}
               <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
-              <PaperUpload listId={list.id} listStatus={listStatus} />
+              <PaperSignees listId={list.id} />
             </>
           )}
         </GridColumn>

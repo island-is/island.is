@@ -10,14 +10,11 @@ import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { m } from '../../lib/messages'
 import { useLoaderData } from 'react-router-dom'
-import {
-  SignatureCollectionList,
-} from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 import { PaperSignees } from './paperSignees'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import Signees from '../../shared-components/signees'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
-import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
 const List = () => {
   const { formatMessage } = useLocale()
@@ -62,28 +59,14 @@ const List = () => {
           </Box>
           <IntroHeader
             title={list?.title}
-            intro={
-              formatMessage(m.singleListIntro)
-            }
+            intro={formatMessage(m.singleListIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
-            img={
-              electionsCommitteeLogo
-            }
+            img={electionsCommitteeLogo}
           />
 
           <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
           <PaperSignees listId={list.id} />
-
-          {/*<ActionExtendDeadline
-            collectionType={SignatureCollectionCollectionType.Parliamentary}
-            listId={list.id}
-            endTime={list.endTime}
-          /><ActionReviewComplete
-              listId={list.id}
-              listStatus={listStatus}
-              collectionType={SignatureCollectionCollectionType.Parliamentary}
-            />*/}
         </GridColumn>
       </GridRow>
     </GridContainer>

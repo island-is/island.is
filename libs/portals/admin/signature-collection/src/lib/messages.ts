@@ -39,50 +39,9 @@ export const m = defineMessages({
     defaultMessage: 'Leita eftir nafni, kennitölu eða svæði',
     description: '',
   },
-  signatureCollectionInInitialReview: {
-    id: 'admin-portal.signature-collection:signatureCollectionInInitialReview',
-    defaultMessage:
-      'Tímabili söfnunnar hefur verið lokið. Opið er fyrir úrvinnslu.',
-    description: '',
-  },
-  signatureCollectionProcessing: {
-    id: 'admin-portal.signature-collection:signatureCollectionProcessing',
-    defaultMessage:
-      'Úrvinnslu hefur verið lokið á öllum listum. Hægt er að ljúka úrvinnslu á söfnuninni allri.',
-    description: '',
-  },
-  signatureCollectionProcessed: {
-    id: 'admin-portal.signature-collection:signatureCollectionProcessed',
-    defaultMessage:
-      'Úrvinnslu safnanna fyrir upphaflegan söfnunartíma hefur verið lokið. Hægt er að framlengja lista.',
-    description: '',
-  },
-  signatureCollectionActive: {
-    id: 'admin-portal.signature-collection:signatureCollectionActive',
-    defaultMessage:
-      'Söfnunin er opin. Til staðar eru listar sem hafa verið framlengdir. Einnig er hægt að framlengja fleiri lista.',
-    description: '',
-  },
-  signatureCollectionReviewDone: {
-    id: 'admin-portal.signature-collection:signatureCollectionReviewDone',
-    defaultMessage:
-      'Úrvinnslu er lokið á meðmælasöfnunum fyrir forsetaframboð 2024',
-    description: '',
-  },
-  signatureCollectionInReview: {
-    id: 'admin-portal.signature-collection:signatureCollectionInReview',
-    defaultMessage:
-      'Söfnunartíma lokið á þeim listum sem hafa verið framlengdir. Opið er fyrir úrvinnslu.',
-    description: '',
-  },
   filter: {
     id: 'admin-portal.signature-collection:filter',
     defaultMessage: 'Sía',
-    description: '',
-  },
-  filterBy: {
-    id: 'admin-portal.signature-collection:filterBy',
-    defaultMessage: 'Sía eftir',
     description: '',
   },
   countryArea: {
@@ -125,11 +84,6 @@ export const m = defineMessages({
     defaultMessage: 'Tókst að stofna meðmælasöfnun',
     description: '',
   },
-  createCollectionError: {
-    id: 'admin-portal.signature-collection:createCollectionError',
-    defaultMessage: 'Tókst ekki að stofna meðmælasöfnun',
-    description: '',
-  },
   createCollectionModalDescription: {
     id: 'admin-portal.signature-collection:createCollectionModalDescription',
     defaultMessage:
@@ -154,11 +108,6 @@ export const m = defineMessages({
   listEndTime: {
     id: 'admin-portal.signature-collection:listEndTime',
     defaultMessage: 'Lokadagur',
-    description: '',
-  },
-  editListEndTime: {
-    id: 'admin-portal.signature-collection:editListEndTime',
-    defaultMessage: 'Breyta',
     description: '',
   },
   collectionTitle: {

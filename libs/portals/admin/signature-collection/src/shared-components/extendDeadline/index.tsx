@@ -15,16 +15,13 @@ import { Modal } from '@island.is/react/components'
 import { useExtendDeadlineMutation } from './extendDeadline.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
-import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 const ActionExtendDeadline = ({
   listId,
   endTime,
-  collectionType,
 }: {
   listId: string
   endTime: string
-  collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
   const [modalChangeDateIsOpen, setModalChangeDateIsOpen] = useState(false)
@@ -36,15 +33,11 @@ const ActionExtendDeadline = ({
     setEndDate(endDate)
   }, [endDate, endTime])
 
-  const extendDeadline = async (
-    newEndDate: string,
-    collectionType: SignatureCollectionCollectionType,
-  ) => {
+  const extendDeadline = async (newEndDate: string) => {
     try {
       const res = await extendDeadlineMutation({
         variables: {
           input: {
-            collectionType,
             listId,
             newEndDate: newEndDate,
           },
@@ -111,7 +104,7 @@ const ActionExtendDeadline = ({
             <Button
               loading={loading}
               onClick={() => {
-                extendDeadline(endDate, collectionType)
+                extendDeadline(endDate)
                 setModalChangeDateIsOpen(false)
               }}
             >
