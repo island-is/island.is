@@ -3,10 +3,13 @@ import { fn, Op } from 'sequelize'
 import {
   CaseAppealState,
   CaseState,
+  completedIndictmentCaseStates,
   completedRequestCaseStates,
+  indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
+import { type User as TUser } from '@island.is/judicial-system/types'
 
 // Prosecutor Request Cases
 
@@ -42,9 +45,35 @@ export const prosecutorRequestCasesCompletedWhereOptions = {
   appeal_state: { [Op.not]: CaseAppealState.APPEALED },
 }
 
+const prosecutorIndictmentSharedWhereOptions = {
+  is_archived: false,
+  type: indictmentCases,
+}
+
 // Prosecutor Indictment Cases
-// note this has to be per user, disable "checkbox" in frontend
-export const prosecutorIndictmentInReviewWhereOptions = {}
-export const prosecutorIndictmentWaitingForConfirmationWhereOptions = {}
-export const prosecutorIndictmentWaitingInProgressWhereOptions = {}
-export const prosecutorIndictmentCompletedWhereOptions = {}
+
+// TODO: This is only for public prosecutor
+export const prosecutorIndictmentInReviewWhereOptions = (user: TUser) => ({
+  ...prosecutorIndictmentSharedWhereOptions,
+  indictment_reviewer_id: user.id,
+  indictment_review_decision: null,
+})
+
+export const prosecutorIndictmentWaitingForConfirmationWhereOptions = {
+  ...prosecutorIndictmentSharedWhereOptions,
+  state: [CaseState.WAITING_FOR_CONFIRMATION],
+}
+
+export const prosecutorIndictmentInProgressWhereOptions = {
+  ...prosecutorIndictmentSharedWhereOptions,
+  state: {
+    [Op.notIn]: [
+      ...completedIndictmentCaseStates,
+      CaseState.WAITING_FOR_CONFIRMATION,
+    ],
+  },
+}
+export const prosecutorIndictmentCompletedWhereOptions = {
+  ...prosecutorIndictmentSharedWhereOptions,
+  state: completedIndictmentCaseStates,
+}
