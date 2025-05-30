@@ -3648,6 +3648,7 @@ user-notification-birthday-worker:
     - '--no-experimental-fetch'
     - 'main.js'
     - '--job=worker'
+    - '--isBirthdayWorker'
   command:
     - 'node'
   enabled: true
