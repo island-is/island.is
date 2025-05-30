@@ -70,12 +70,9 @@ jobs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       NODE_IMAGE_VERSION: ${{ steps.nodejs_image.outputs.NODE_IMAGE_VERSION }}
-      LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
-      node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-      CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
     steps:
       - uses: actions/checkout@v4
@@ -97,7 +94,6 @@ jobs:
         id: git_nx_base
         uses: ./.github/actions/prerelease-checkout
 
-      # NOTE: checkout main
       - name: Checkout main branch
         if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
         run: |
@@ -133,7 +129,8 @@ jobs:
         id: docker_tags
         run: |
           set -euo pipefail
-          export DOCKER_BRANCH_TAG="$(echo "${GIT_BRANCH:0:45}" | tr "/." "-" )"
+          DOCKER_BRANCH_TAG="$(echo "${GIT_BRANCH:0:45}" | tr "/." "-" )"
+          export DOCKER_BRANCH_TAG
           SHA="${{ github.event.pull_request.head.sha }}"
           echo "SHA='$SHA' retrieved from event"
           if [[ "$SHA" == "" ]]; then
@@ -149,7 +146,7 @@ jobs:
 
       - name: Send Slack notification
         id: slack
-        if: ${{ startsWith( github.env.GIT_BASE_BRANCH, 'release/' ) }}
+        if: ${{ startsWith( env.GIT_BASE_BRANCH, 'release/' ) }}
         uses: 8398a7/action-slack@v3
         with:
           status: custom
@@ -210,16 +207,18 @@ jobs:
         id: build_map
         run: |
           set -euo pipefail
-          AFFECTED_TARGETS="$(yarn nx show projects --affected --base $BASE --head $HEAD --json | jq -r '. | join(",")')"
-          cd infra
-          ADDITIONAL_PROJECTS="$(yarn feature-env downstream --feature tmp --images $AFFECTED_TARGETS --chart islandis)"
-          cd ..
-          export ADDITIONAL_PROJECTS
+          AFFECTED_TARGETS="$(yarn nx show projects --affected --base "$NX_BASE" --head "$NX_HEAD" --json | jq -r 'join(",")')"
+          ADDITIONAL_PROJECTS="$( (cd infra && yarn feature-env downstream --feature tmp --images "$AFFECTED_TARGETS" --chart islandis) )"
           echo "Additional Projects: $ADDITIONAL_PROJECTS"
-          CHUNKS="$(ADDITIONAL_PROJECTS="$ADDITIONAL_PROJECTS" ./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
+          export ADDITIONAL_PROJECTS # Export for use in generate-docker-chunks.sh
+
+          # Split ADDITIONAL_PROJECTS into an array to correctly pass multiple arguments
+          # The ADDITIONAL_PROJECTS variable is exported for use by generate-docker-chunks.sh
+          # The script expects positional arguments to be the docker targets.
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
+            echo "BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
 
@@ -233,7 +232,7 @@ jobs:
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             # NOTE: validate the jq command to trigger failure
-            echo "$CHUNKS" | jq -r 'map(.projects) | join(",")'
+            echo "$CHUNKS" | jq -er 'map(.projects) | join(",")'
             IMAGES=$(echo "$CHUNKS" | jq -r 'map(.projects) | join(",")')
             echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
           fi
@@ -260,7 +259,7 @@ jobs:
       actions: read
       contents: read
     outputs:
-      json: ${{ steps.matrix-output.outputs.json }}
+      json: ${{ needs.prepare.outputs.BUILD_CHUNKS || '' }}
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
@@ -283,10 +282,12 @@ jobs:
           DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
           APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
           APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
-          echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
-          echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
-          echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
-          echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
+          {
+            echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS"
+            echo DOCKER_TYPE="$DOCKER_TYPE"
+            echo APP_HOME="$APP_HOME"
+            echo APP_DIST_HOME="$APP_DIST_HOME"
+          } >> "$GITHUB_ENV"
         continue-on-error: true
 
       - uses: actions/checkout@v4
@@ -440,10 +441,12 @@ jobs:
           echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
           echo Image tag is: ${{env.NODE_IMAGE_VERSION}}
           ./scripts/build-docker-container.sh "$DOCKER_TAG"
-          echo "COMMENT<<EOF" >> "$GITHUB_ENV"
-          echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> "$GITHUB_ENV"
-          docker run --rm "${DOCKER_REGISTRY}/helm-config:$DOCKER_TAG" ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME" >> "$GITHUB_ENV"
-          echo 'EOF' >> "$GITHUB_ENV"
+          {
+            echo "COMMENT<<EOF"
+            echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}"
+            docker run --rm "${DOCKER_REGISTRY}/helm-config:$DOCKER_TAG" ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME"
+            echo 'EOF'
+          } >> "$GITHUB_ENV"
         env:
           PUBLISH: 'true'
 
@@ -507,7 +510,7 @@ jobs:
           RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Install infra modules
-        if: steps.infra-node-modules.outputs.cache-hit != 'true'
+        id: install-infra-modules
         working-directory: monorepo/infra
         run: |
           corepack enable && CI=true yarn install --immutable
