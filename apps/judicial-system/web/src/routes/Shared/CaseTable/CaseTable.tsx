@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import {
   AlertMessage,
   Box,
+  Button,
   Checkbox,
   Tag,
   TagVariant,
@@ -221,6 +222,21 @@ const CaseTable: FC = () => {
   return (
     <CasesLayout>
       <PageHeader title="Málatafla" />
+      <Box marginBottom={5}>
+        <Button
+          colorScheme="default"
+          iconType="filled"
+          onClick={() => {
+            router.push('/malalistar')
+          }}
+          preTextIcon="arrowBack"
+          preTextIconType="filled"
+          type="button"
+          variant="text"
+        >
+          Tilbaka
+        </Button>
+      </Box>
       <div className={styles.logoContainer}>
         <Logo />
       </div>
