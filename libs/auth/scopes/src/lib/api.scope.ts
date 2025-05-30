@@ -28,6 +28,7 @@ export enum ApiScope {
   healthRightsStatus = '@island.is/health/rights-status',
   healthOrganDonation = '@island.is/health/organ-donation',
   healthVaccinations = '@island.is/health/vaccinations',
+  healthBlood = '@island.is/health/blood',
   workMachines = '@island.is/work-machines',
   vinnueftirlitid = '@island.is/applications/ver',
   vinnueftirlitidAccident = '@island.is/applications/ver:accidents',
