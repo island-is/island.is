@@ -17,9 +17,9 @@ import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import format from 'date-fns/format'
-import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import { getTagConfig } from '../../lib/utils'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
+import electionsCommittee from '../../../assets/electionsCommittee.svg'
 
 export const Constituency = () => {
   const { formatMessage } = useLocale()
@@ -69,7 +69,7 @@ export const Constituency = () => {
             }
             imgPosition="right"
             imgHiddenBelow="sm"
-            img={electionsCommitteeLogo}
+            img={electionsCommittee}
             buttonGroup={<ActionDrawer />}
           />
           <Divider />

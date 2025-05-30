@@ -14,7 +14,7 @@ import { SignatureCollectionList } from '@island.is/api/schema'
 import { PaperSignees } from './paperSignees'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import Signees from '../../shared-components/signees'
-import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import electionsCommittee from '../../../assets/electionsCommittee.svg'
 
 const List = () => {
   const { formatMessage } = useLocale()
@@ -62,7 +62,7 @@ const List = () => {
             intro={formatMessage(m.singleListIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
-            img={electionsCommitteeLogo}
+            img={electionsCommittee}
           />
 
           <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />

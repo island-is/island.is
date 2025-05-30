@@ -19,7 +19,6 @@ import { useLoaderData, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
-import electionsCommitteeLogo from '../../assets/electionsCommittee.svg'
 import { useState } from 'react'
 import { useSignatureCollectionSignatureLookupQuery } from './findSignature.generated'
 import { SkeletonSingleRow } from '../../shared-components/compareLists/skeleton'
@@ -28,6 +27,7 @@ import {
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
+import electionsCommittee from '../../../assets/electionsCommittee.svg'
 
 const ParliamentaryRoot = () => {
   const { formatMessage } = useLocale()
@@ -79,7 +79,7 @@ const ParliamentaryRoot = () => {
             intro={formatMessage(m.parliamentaryCollectionIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
-            img={electionsCommitteeLogo}
+            img={electionsCommittee}
           />
           <Box
             width="full"
