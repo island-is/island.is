@@ -1,9 +1,6 @@
 import { Button, Drawer, Stack, Text } from '@island.is/island-ui/core'
 import { useLoaderData } from 'react-router-dom'
-import {
-  SignatureCollectionCollectionType,
-  SignatureCollectionList,
-} from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 import ActionExtendDeadline from '../../../shared-components/extendDeadline'
 import ActionLockList from '../../../shared-components/lockList'
 import ActionReviewComplete from '../../../shared-components/completeListReview'
@@ -33,11 +30,7 @@ const ListActions = () => {
       <Stack space={8}>
         <DownloadReports areas={[]} collectionId={''} />
         <ActionLockList listId={list?.id} />
-        <ActionReviewComplete
-          listId={list?.id}
-          listStatus={listStatus}
-          collectionType={SignatureCollectionCollectionType.Parliamentary}
-        />
+        <ActionReviewComplete listId={list?.id} listStatus={listStatus} />
         <ActionExtendDeadline listId={list?.id} endTime={list?.endTime} />
         <RemoveCandidate />
       </Stack>
