@@ -2,7 +2,7 @@ import { AttachmentItem, ExternalData } from '@island.is/application/types'
 
 import { FormValue } from '@island.is/application/types'
 
-import { getValueViaPath, YES } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import { KeyValueItem } from '@island.is/application/types'
 import * as m from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
