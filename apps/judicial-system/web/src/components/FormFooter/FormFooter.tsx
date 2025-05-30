@@ -1,7 +1,6 @@
 import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
-import cn from 'classnames'
 import router from 'next/router'
 
 import {
