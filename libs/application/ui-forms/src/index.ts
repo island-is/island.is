@@ -1,5 +1,6 @@
 export * from './lib/payment'
 export {
+  applicantInformationArray,
   applicantInformationMultiField,
   applicantInformationSchema,
 } from './lib/applicantInformationMultiField'
