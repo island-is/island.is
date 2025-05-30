@@ -143,7 +143,7 @@ const FineCalculatorDetails = ({
                 {fine.law} {fine.title} x {fine.amountSelected}
               </Table.Data>
               <Table.Data align="right">
-                {formatCurrency(fine.price)}
+                {formatCurrency(fine.price * fine.amountSelected)}
               </Table.Data>
               <Table.Data align="right">
                 {formatCurrency(fine.price * QUARTER_OFF_FINE_MULTIPLIER)}
