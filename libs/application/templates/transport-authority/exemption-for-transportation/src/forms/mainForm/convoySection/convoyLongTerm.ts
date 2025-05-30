@@ -4,6 +4,7 @@ import {
 } from '@island.is/application/core'
 import { convoy } from '../../../lib/messages'
 import {
+  getRandomId,
   isExemptionTypeLongTerm,
   loadValidation,
   MAX_CNT_CONVOY,
@@ -46,6 +47,11 @@ export const ConvoyLongTermMultiField = buildMultiField({
       fields: {
         index: {
           component: 'hiddenInput',
+        },
+        convoyId: {
+          component: 'hiddenInput',
+          defaultValue: () => getRandomId(),
+          displayInTable: false,
         },
         vehicle: {
           component: 'vehiclePermnoWithInfo',

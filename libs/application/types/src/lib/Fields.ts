@@ -298,6 +298,7 @@ export interface BaseField extends FormItem {
     | { key: string; value: any }[]
     | ((
         optionValue: RepeaterOptionValue,
+        application: Application,
       ) => Promise<{ key: string; value: any }[]>)
 
   // TODO use something like this for non-schema validation?
@@ -764,7 +765,10 @@ export type TableRepeaterField = BaseField & {
      * if not provided it will be auto generated from the fields
      */
     rows?: string[]
-    format?: Record<string, (value: string, index: number) => string | StaticText>
+    format?: Record<
+      string,
+      (value: string, index: number) => string | StaticText
+    >
   }
   initActiveFieldIfEmpty?: boolean
 }

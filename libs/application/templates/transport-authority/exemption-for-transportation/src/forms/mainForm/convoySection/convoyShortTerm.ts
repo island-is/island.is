@@ -2,9 +2,14 @@ import {
   buildVehiclePermnoWithInfoField,
   buildMultiField,
   buildRadioField,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import { convoy } from '../../../lib/messages'
-import { isExemptionTypeShortTerm, loadValidation } from '../../../utils'
+import {
+  getRandomId,
+  isExemptionTypeShortTerm,
+  loadValidation,
+} from '../../../utils'
 import { DollyType } from '../../../shared'
 
 export const ConvoyShortTermMultiField = buildMultiField({
@@ -15,6 +20,10 @@ export const ConvoyShortTermMultiField = buildMultiField({
   title: convoy.general.pageTitle,
   description: convoy.general.description,
   children: [
+    buildHiddenInput({
+      id: 'convoy.items[0].convoyId',
+      defaultValue: getRandomId(),
+    }),
     buildVehiclePermnoWithInfoField({
       id: 'convoy.items[0].vehicle',
       width: 'full',

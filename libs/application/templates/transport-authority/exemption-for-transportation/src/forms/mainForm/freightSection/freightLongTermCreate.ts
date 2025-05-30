@@ -8,10 +8,11 @@ import { freight } from '../../../lib/messages'
 import {
   getExemptionRules,
   getFreightItems,
+  getRandomId,
   isExemptionTypeLongTerm,
   MAX_CNT_FREIGHT,
 } from '../../../utils'
-import { FreightHiddenInputs } from './freightHiddenInputs'
+import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
 
 export const FreightLongTermCreateSubSection = buildSubSection({
   id: 'freightLongTermCreateSubSection',
@@ -25,7 +26,7 @@ export const FreightLongTermCreateSubSection = buildSubSection({
       title: freight.create.pageTitle,
       description: freight.create.description,
       children: [
-        ...FreightHiddenInputs,
+        ...FreightCommonHiddenInputs('freight'),
         buildTableRepeaterField({
           id: 'freight.items',
           addItemButtonText: freight.labels.addItemButtonText,
@@ -37,13 +38,27 @@ export const FreightLongTermCreateSubSection = buildSubSection({
           editField: true,
           initActiveFieldIfEmpty: true,
           table: {
-            header: [
-              freight.labels.freightName,
-              freight.labels.freightLength,
-              freight.labels.freightWeight,
-            ],
+            format: {
+              length: (value) => {
+                return {
+                  ...freight.labels.valueAndMetersSuffix,
+                  values: { value },
+                }
+              },
+              weight: (value) => {
+                return {
+                  ...freight.labels.valueAndTonsSuffix,
+                  values: { value },
+                }
+              },
+            },
           },
           fields: {
+            freightId: {
+              component: 'hiddenInput',
+              defaultValue: () => getRandomId(),
+              displayInTable: false,
+            },
             name: {
               component: 'input',
               label: freight.labels.freightName,

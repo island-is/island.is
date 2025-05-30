@@ -56,13 +56,21 @@ export const freight = {
   pairing: defineMessages({
     subSectionTitle: {
       id: 'ta.eft.application:freight.pairing.subSectionTitle',
-      defaultMessage: 'Para vagnlest við farm {freightNumber}: {freightName}',
+      defaultMessage:
+        'Para vagnlestir við farm {freightNumber}: {freightName} {length}m/{weight}t',
       description: 'Title of pairing freight with convoy sub section',
     },
     pageTitle: {
       id: 'ta.eft.application:freight.pairing.pageTitle',
-      defaultMessage: 'Farmur {freightNumber}: {freightName}',
-      description: 'Title ofpairing freight with convoy page',
+      defaultMessage:
+        'Farmur {freightNumber}: {freightName} {length}m/{weight}t',
+      description: 'Title of pairing freight with convoy page',
+    },
+    description: {
+      id: 'ta.eft.application:freight.pairing.description',
+      defaultMessage:
+        'Hérna kemur útskýringartexti sem gerir þetta skýrt fyrir notandanum með mestu málin',
+      description: 'Description of pairing freight with convoy page',
     },
   }),
   labels: defineMessages({
@@ -86,10 +94,10 @@ export const freight = {
       defaultMessage: 'Þyngd farms',
       description: 'Freight weight label',
     },
-    withConvoySubtitle: {
-      id: 'ta.eft.application:freight.labels.withConvoySubtitle',
-      defaultMessage: 'Upplýsingar um vagnlest með farmi',
-      description: 'With convoy subtitle',
+    freightWithConvoySubtitle: {
+      id: 'ta.eft.application:freight.labels.freightWithConvoySubtitle',
+      defaultMessage: 'Upplýsingar um farm á vagnlest',
+      description: 'Freight with convoy subtitle',
     },
     heightWithConvoy: {
       id: 'ta.eft.application:freight.labels.heightWithConvoy',
@@ -121,6 +129,16 @@ export const freight = {
       defaultMessage: ' tonn',
       description: 'Tons suffix',
     },
+    valueAndMetersSuffix: {
+      id: 'ta.eft.application:freight.labels.valueAndMetersSuffix',
+      defaultMessage: '{value} metrar',
+      description: 'Value and meters suffix',
+    },
+    valueAndTonsSuffix: {
+      id: 'ta.eft.application:freight.labels.valueAndTonsSuffix',
+      defaultMessage: '{value} tonn',
+      description: 'Valud and tons suffix',
+    },
     addItemButtonText: {
       id: 'ta.eft.application:freight.labels.addItemButtonText',
       defaultMessage: 'Bæta við farmi',
@@ -140,6 +158,28 @@ export const freight = {
       id: 'ta.eft.application:freight.labels.editItemButtonTooltipText',
       defaultMessage: 'Breyta farmi',
       description: 'Edit item in freight table button tooltip text',
+    },
+    pairingConvoyListSubtitle: {
+      id: 'ta.eft.application:freight.labels.pairingConvoyListSubtitle',
+      defaultMessage:
+        'Óskað er eftir að flytja þennan farm á eftirfarandi vagnlestum:',
+      description: 'Freight pairing convoy list subtitle',
+    },
+    pairingConvoyList: {
+      id: 'ta.eft.application:freight.labels.pairingConvoyList',
+      defaultMessage: 'Vagnlest',
+      description: 'Freight pairing convoy list label',
+    },
+    pairingConvoyOption: {
+      id: 'ta.eft.application:freight.labels.pairingConvoyOption',
+      defaultMessage: 'Vagnlest {convoyNumber}: {vehicleAndTrailerPermno}',
+      description: 'Freight pairing convoy list label',
+    },
+    pairingFreightWithConvoySubtitle: {
+      id: 'ta.eft.application:freight.labels.pairingFreightWithConvoySubtitle',
+      defaultMessage:
+        'Upplýsingar um farm á vagnlest {convoyNumber}: {vehicleAndTrailerPermno}',
+      description: 'Freight pairing with convoy subtitle',
     },
   }),
   exemptionFor: defineMessages({

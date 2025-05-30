@@ -2,6 +2,7 @@ import {
   buildAlertMessageField,
   buildCheckboxField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildTextField,
   getValueViaPath,
@@ -11,9 +12,10 @@ import { ExemptionFor } from '../../../shared'
 import {
   formatNumber,
   getExemptionRules,
+  getRandomId,
   isExemptionTypeShortTerm,
 } from '../../../utils'
-import { FreightHiddenInputs } from './freightHiddenInputs'
+import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
 
 export const FreightShortTermCreateMultiField = buildMultiField({
   id: 'freightShortTermCreateMultiField',
@@ -23,11 +25,15 @@ export const FreightShortTermCreateMultiField = buildMultiField({
   title: freight.create.pageTitle,
   description: freight.create.description,
   children: [
-    ...FreightHiddenInputs,
+    ...FreightCommonHiddenInputs('freight'),
     buildDescriptionField({
       id: 'freight.subtitle',
       title: freight.labels.freightSubtitle,
       titleVariant: 'h5',
+    }),
+    buildHiddenInput({
+      id: 'freight.items[0].freightId',
+      defaultValue: getRandomId(),
     }),
     buildTextField({
       id: 'freight.items[0].name',
@@ -57,7 +63,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
     }),
     buildDescriptionField({
       id: 'freightWithConvoy.subtitle',
-      title: freight.labels.withConvoySubtitle,
+      title: freight.labels.freightWithConvoySubtitle,
       titleVariant: 'h5',
     }),
     buildTextField({

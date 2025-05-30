@@ -103,7 +103,12 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           // @ts-ignore make web strict
           onSelect={onSelect}
           clearOnChange={clearOnChange}
-          setOnChange={setOnChange}
+          setOnChange={
+            typeof setOnChange === 'function'
+              ? async (optionValue) =>
+                  await setOnChange(optionValue, application)
+              : setOnChange
+          }
           isClearable={isClearable}
         />
       </Box>

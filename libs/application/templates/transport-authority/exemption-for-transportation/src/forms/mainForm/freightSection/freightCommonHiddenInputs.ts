@@ -2,15 +2,15 @@ import { buildHiddenInput } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { getExemptionRulesLimitations, getExemptionType } from '../../../utils'
 
-export const FreightHiddenInputs = [
+export const FreightCommonHiddenInputs = (id: string) => [
   buildHiddenInput({
-    id: 'freight.exemptionPeriodType',
+    id: `${id}.exemptionPeriodType`,
     defaultValue: (application: Application) => {
       return getExemptionType(application.answers)
     },
   }),
   buildHiddenInput({
-    id: 'freight.limit.maxLength',
+    id: `${id}.limit.maxLength`,
     defaultValue: (application: Application) => {
       return getExemptionRulesLimitations(
         application.externalData,
@@ -19,7 +19,7 @@ export const FreightHiddenInputs = [
     },
   }),
   buildHiddenInput({
-    id: 'freight.limit.maxWeight',
+    id: `${id}.limit.maxWeight`,
     defaultValue: (application: Application) => {
       return getExemptionRulesLimitations(
         application.externalData,
@@ -28,7 +28,7 @@ export const FreightHiddenInputs = [
     },
   }),
   buildHiddenInput({
-    id: 'freight.limit.maxHeight',
+    id: `${id}.limit.maxHeight`,
     defaultValue: (application: Application) => {
       return getExemptionRulesLimitations(
         application.externalData,
@@ -37,7 +37,7 @@ export const FreightHiddenInputs = [
     },
   }),
   buildHiddenInput({
-    id: 'freight.limit.maxWidth',
+    id: `${id}.limit.maxWidth`,
     defaultValue: (application: Application) => {
       return getExemptionRulesLimitations(
         application.externalData,
@@ -46,7 +46,7 @@ export const FreightHiddenInputs = [
     },
   }),
   buildHiddenInput({
-    id: 'freight.limit.maxTotalLength',
+    id: `${id}.limit.maxTotalLength`,
     defaultValue: (application: Application) => {
       return getExemptionRulesLimitations(
         application.externalData,

@@ -137,7 +137,12 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           min={min}
           step={step}
           clearOnChange={clearOnChange}
-          setOnChange={setOnChange}
+          setOnChange={
+            typeof setOnChange === 'function'
+              ? async (optionValue) =>
+                  await setOnChange(optionValue, application)
+              : setOnChange
+          }
         />
       </Box>
     </Box>
