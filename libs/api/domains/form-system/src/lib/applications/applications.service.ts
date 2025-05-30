@@ -8,8 +8,8 @@ import {
   ApplicationsControllerCreateRequest,
   ApplicationsControllerFindAllByOrganizationRequest,
   ApplicationsControllerGetApplicationRequest,
+  ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
-  ApplicationsControllerSubmitScreenRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
@@ -17,11 +17,13 @@ import {
   CreateApplicationInput,
   GetApplicationInput,
   SubmitScreenInput,
+  UpdateApplicationInput,
 } from '../../dto/application.input'
 import {
   Application,
   ApplicationResponse,
 } from '../../models/applications.model'
+import { Screen } from '../../models/screen.model'
 import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 
 @Injectable()
@@ -30,7 +32,7 @@ export class ApplicationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private applicationsApi: ApplicationsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -102,9 +104,21 @@ export class ApplicationsService {
     )
   }
 
-  async submitScreen(auth: User, input: SubmitScreenInput): Promise<void> {
-    await this.applicationsApiWithAuth(auth).applicationsControllerSubmitScreen(
-      input as ApplicationsControllerSubmitScreenRequest,
+  async updateApplication(
+    auth: User,
+    input: UpdateApplicationInput,
+  ): Promise<void> {
+    await this.applicationsApiWithAuth(auth).applicationsControllerUpdate(
+      input as ApplicationsControllerUpdateRequest,
     )
+  }
+
+  async saveScreen(auth: User, input: SubmitScreenInput): Promise<Screen> {
+    const response = await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerSaveScreen(
+      input as ApplicationsControllerSaveScreenRequest,
+    )
+    return response
   }
 }
