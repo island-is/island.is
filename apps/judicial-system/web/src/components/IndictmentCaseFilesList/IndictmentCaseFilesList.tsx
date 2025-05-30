@@ -173,18 +173,13 @@ export const getIdAndTitleForPdfButtonForRulingSentToPrisonPdf = (
   isFine: boolean,
   sentToPrisonAdminDate?: Date,
 ) => {
-  if (isFine) {
-    return {
-      pdfTitle: `Viðurlagaákvörðun til fullnustu ${formatDate(
-        sentToPrisonAdminDate,
-      )}.pdf`,
-      pdfElementId: 'Viðurlagaákvörðun til fullnustu',
-    }
-  } else {
-    return {
-      pdfTitle: `Dómur til fullnustu ${formatDate(sentToPrisonAdminDate)}.pdf`,
-      pdfElementId: 'Dómur til fullnustu',
-    }
+  const baseTitle = isFine
+    ? 'Viðurlagaákvörðun til fullnustu'
+    : 'Dómur til fullnustu'
+
+  return {
+    pdfTitle: `${baseTitle} ${formatDate(sentToPrisonAdminDate)}.pdf`,
+    pdfElementId: baseTitle,
   }
 }
 
