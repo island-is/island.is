@@ -14,11 +14,11 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import { format as formatNationalId } from 'kennitala'
 import Signees from '../../shared-components/signees'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 import { PaperSignees } from '../../shared-components/paperSignees'
+import electionsCommittee from '../../../assets/electionsCommittee.svg'
 
 export const List = () => {
   const { list } = useLoaderData() as {
@@ -48,7 +48,7 @@ export const List = () => {
               <IntroHeader
                 title={list.title}
                 intro={formatMessage(m.singleListIntro)}
-                img={electionsCommitteeLogo}
+                img={electionsCommittee}
                 imgPosition="right"
                 imgHiddenBelow="sm"
                 marginBottom={3}
