@@ -1,22 +1,27 @@
 import { useLocale } from '@island.is/localization'
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Icon,
+  Tag,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useToggleListReviewMutation } from './toggleListReview.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { ListStatus } from '../../lib/utils'
-import ActionLockList from './lockList'
-import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
-const ActionReviewComplete = ({
+const CompleteListReview = ({
   listId,
   listStatus,
-  collectionType,
 }: {
   listId: string
   listStatus: string
-  collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
@@ -33,7 +38,6 @@ const ActionReviewComplete = ({
     variables: {
       input: {
         listId,
-        collectionType,
       },
     },
     onCompleted: () => {
@@ -51,26 +55,31 @@ const ActionReviewComplete = ({
   })
 
   return (
-    <Box marginTop={12}>
-      <Box display="flex" justifyContent="spaceBetween">
-        <ActionLockList
-          listId={listId}
-          listStatus={listStatus}
-          collectionType={collectionType}
-        />
-        <Button
-          iconType="outline"
-          variant="ghost"
-          icon={listReviewed ? 'reload' : 'checkmark'}
-          onClick={() => setModalSubmitReviewIsOpen(true)}
-          disabled={
-            listStatus === ListStatus.Active ||
-            listStatus === ListStatus.Extendable
-          }
-        >
-          {modalText}
-        </Button>
-      </Box>
+    <Box>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          <Box display="flex">
+            <Tag>
+              <Box display="flex" justifyContent="center">
+                <Icon icon="checkmark" type="outline" color="blue600" />
+              </Box>
+            </Tag>
+            <Box marginLeft={5}>
+              <Text variant="h4">{formatMessage(m.confirmListReviewed)}</Text>
+              <Text marginBottom={2}>
+                Þegar búið er að fara yfir meðmæli er hakað við hér.
+              </Text>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => setModalSubmitReviewIsOpen(true)}
+              >
+                {formatMessage(m.confirmListReviewed)}
+              </Button>
+            </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <Modal
         id="toggleReviewComplete"
         isVisible={modalSubmitReviewIsOpen}
@@ -102,4 +111,4 @@ const ActionReviewComplete = ({
   )
 }
 
-export default ActionReviewComplete
+export default CompleteListReview

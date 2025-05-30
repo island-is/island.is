@@ -1,6 +1,7 @@
 import {
   Box,
   Breadcrumbs,
+  Divider,
   GridColumn,
   GridContainer,
   GridRow,
@@ -11,15 +12,17 @@ import { signatureCollectionNavigation } from '../../lib/navigation'
 import { m } from '../../lib/messages'
 import { useLoaderData } from 'react-router-dom'
 import { SignatureCollectionList } from '@island.is/api/schema'
-import { PaperSignees } from './paperSignees'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import Signees from '../../shared-components/signees'
-import electionsCommittee from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import { PaperSignees } from '../../shared-components/paperSignees'
+import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 
 const List = () => {
   const { formatMessage } = useLocale()
   const { list } = useLoaderData() as {
     list: SignatureCollectionList
+    listStatus: string
   }
 
   return (
@@ -39,21 +42,17 @@ const List = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
-          <Box marginBottom={3}>
+          <Box marginBottom={3} display="flex" justifyContent="spaceBetween">
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage(m.parliamentaryCollectionTitle),
-                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
+                  title: formatMessage(m.municipalCollectionTitle),
+                  href: `/stjornbord${SignatureCollectionPaths.MunicipalRoot}`,
                 },
                 {
-                  title: list.area.name,
-                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryConstituency.replace(
-                    ':constituencyName',
-                    list.area.name,
-                  )}`,
+                  title: 'Sveitarfélag',
                 },
-                { title: list.candidate.name },
+                { title: list.title },
               ]}
             />
           </Box>
@@ -62,11 +61,14 @@ const List = () => {
             intro={formatMessage(m.singleListIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
-            img={electionsCommittee}
+            img={nationalRegistryLogo}
+            buttonGroup={<ActionDrawer />}
+            marginBottom={4}
           />
-
-          <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
-          <PaperSignees listId={list.id} />
+          <Divider />
+          <Box marginTop={9} />
+          <Signees numberOfSignatures={list?.numberOfSignatures ?? 0} />
+          <PaperSignees listId={list?.id} />
         </GridColumn>
       </GridRow>
     </GridContainer>

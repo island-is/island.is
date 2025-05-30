@@ -114,7 +114,7 @@ const CreateCollection = ({
       setNationalIdNotFound(false)
       setCanCreate(true)
     }
-  }, [nationalIdInput, modalIsOpen])
+  }, [nationalIdInput, modalIsOpen, candidateLookup])
 
   return (
     <Box>
