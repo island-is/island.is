@@ -117,6 +117,7 @@ export const attributes: (keyof Case)[] = [
   'indictmentReviewerId',
   'hasCivilClaims',
   'isCompletedWithoutRuling',
+  'isRegisteredInPrisonSystem',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -127,6 +128,7 @@ export interface LimitedAccessUpdateCase
     | 'defendantStatementDate'
     | 'openedByDefender'
     | 'appealRulingDecision'
+    | 'isRegisteredInPrisonSystem'
   > {}
 
 export const include: Includeable[] = [
@@ -322,6 +324,13 @@ export const include: Includeable[] = [
       { model: User, as: 'judge' },
       { model: Institution, as: 'prosecutorsOffice' },
     ],
+    separate: true,
+  },
+  {
+    model: Victim,
+    as: 'victims',
+    required: false,
+    order: [['created', 'ASC']],
     separate: true,
   },
 ]

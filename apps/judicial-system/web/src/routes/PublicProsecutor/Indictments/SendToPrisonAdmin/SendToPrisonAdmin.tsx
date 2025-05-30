@@ -2,7 +2,12 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams, useRouter } from 'next/navigation'
 
-import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
+import {
+  Box,
+  FileUploadStatus,
+  InputFileUpload,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 import {
@@ -19,6 +24,7 @@ import {
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useDefendants,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -41,6 +47,9 @@ const SendToPrisonAdmin: FC = () => {
     workingCase.id,
     defendantId,
   )
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
   const { updateDefendant, isUpdatingDefendant } = useDefendants()
   const { uploadFiles, removeUploadFile, addUploadFiles, updateUploadFile } =
     useUploadFiles()
@@ -87,7 +96,7 @@ const SendToPrisonAdmin: FC = () => {
     (files: File[]) => {
       addUploadFiles(files, {
         category: CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
-        status: 'done',
+        status: FileUploadStatus.done,
       })
     },
     [addUploadFiles],
@@ -122,18 +131,20 @@ const SendToPrisonAdmin: FC = () => {
         />
         <Box marginBottom={10}>
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            name="sentToPrisonAdminFileUpload"
+            files={uploadFiles.filter(
               (file) =>
                 file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
             )}
             accept="application/pdf"
-            header={formatMessage(core.uploadBoxTitle)}
+            title={formatMessage(core.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {
               fileEndings: '.pdf',
             })}
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
             onChange={handleFileUpload}
             onRemove={handleRemoveFile}
+            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
           />
         </Box>
       </FormContentContainer>

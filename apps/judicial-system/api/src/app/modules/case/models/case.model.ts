@@ -453,9 +453,6 @@ export class Case {
   @Field(() => CourtSessionType, { nullable: true })
   readonly courtSessionType?: CourtSessionType
 
-  @Field(() => String, { nullable: true })
-  readonly indictmentCompletedDate?: string
-
   @Field(() => Case, { nullable: true })
   readonly mergeCase?: Case
 
@@ -488,4 +485,7 @@ export class Case {
 
   @Field(() => Boolean, { nullable: true })
   readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isRegisteredInPrisonSystem?: boolean
 }

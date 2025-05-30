@@ -36,10 +36,12 @@ import {
   OccupationalLicenses,
   OfficialJournalOfIceland,
   OfficialJournalOfIcelandApplication,
+  LegalGazette,
   Passports,
   Payment,
   PaymentSchedule,
   Properties,
+  PropertySearch,
   RskCompanyInfo,
   RskProcuring,
   SeminarsVer,
@@ -54,6 +56,7 @@ import {
   WorkAccidents,
   WorkMachines,
   SecondarySchool,
+  PracticalExams,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -422,6 +425,7 @@ export const serviceSetup = (services: {
       Education,
       NationalRegistry,
       Properties,
+      PropertySearch,
       PaymentSchedule,
       CriminalRecord,
       RskCompanyInfo,
@@ -449,6 +453,7 @@ export const serviceSetup = (services: {
       OfficialJournalOfIceland,
       JudicialSystemServicePortal,
       OfficialJournalOfIcelandApplication,
+      LegalGazette,
       Frigg,
       HealthDirectorateOrganDonation,
       HealthDirectorateVaccination,
@@ -456,6 +461,7 @@ export const serviceSetup = (services: {
       WorkAccidents,
       SeminarsVer,
       SecondarySchool,
+      PracticalExams,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

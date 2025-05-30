@@ -6,6 +6,7 @@ import router from 'next/router'
 import {
   Accordion,
   Box,
+  FileUploadStatus,
   InputFileUpload,
   RadioButton,
   UploadFile,
@@ -38,6 +39,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useDefendants,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -55,6 +57,10 @@ const Completed: FC = () => {
     useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
+
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
 
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const [modalVisible, setModalVisible] =
@@ -118,7 +124,7 @@ const Completed: FC = () => {
       else {
         addUploadFiles(files, {
           category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-          status: 'done',
+          status: FileUploadStatus.done,
         })
       }
     },
@@ -199,18 +205,20 @@ const Completed: FC = () => {
               title={formatMessage(strings.criminalRecordUpdateTitle)}
             />
             <InputFileUpload
-              fileList={uploadFiles.filter(
+              name="criminalRecordUpdate"
+              files={uploadFiles.filter(
                 (file) =>
                   file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
               )}
               accept="application/pdf"
-              header={formatMessage(core.uploadBoxTitle)}
+              title={formatMessage(core.uploadBoxTitle)}
               buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
               description={formatMessage(core.uploadBoxDescription, {
                 fileEndings: '.pdf',
               })}
               onChange={handleCriminalRecordUpdateUpload}
               onRemove={handleRemoveFile}
+              onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
             />
           </Box>
         )}

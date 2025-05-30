@@ -113,9 +113,45 @@ const HeaderContainer = () => {
     api.logout()
   }
 
-  const handleChangeInstitution = () => {
-    router.push('/')
+  const handleSelectUser = async (userId?: string) => {
+    if (userId) {
+      await api.activate(userId)
+    } else {
+      router.push('/')
+    }
+
     setIsUserMenuOpen(false)
+  }
+
+  const renderSelectUser = () => {
+    if (!user || !eligibleUsers || eligibleUsers.length < 2) {
+      return null
+    }
+
+    const otherUser =
+      eligibleUsers.length === 2
+        ? eligibleUsers.find((u) => u.id !== user.id)
+        : null
+
+    return (
+      <Box marginTop={2}>
+        <Button
+          variant="text"
+          onClick={() => handleSelectUser(otherUser?.id)}
+          size="small"
+          preTextIcon="swapHorizontal"
+        >
+          {otherUser
+            ? otherUser.institution?.name
+            : 'Skipta um embætti / hlutverk'}
+        </Button>
+        {otherUser && (
+          <Text fontWeight="light" variant="small" marginTop={1}>
+            {capitalize(otherUser.title)}
+          </Text>
+        )}
+      </Box>
+    )
   }
 
   return (
@@ -131,19 +167,21 @@ const HeaderContainer = () => {
             marginLeft={[1, 1, 2, 4]}
             marginRight="auto"
           >
-            <Box marginLeft={[1, 1, 2, 4]}>
-              <Text variant="eyebrow">Dómsmálaráðuneytið</Text>
-              <Hidden above="sm">
-                <Text fontWeight="light" variant="eyebrow">
-                  Réttarvörslugátt
-                </Text>
-              </Hidden>
-              <Hidden below="md">
-                <Text fontWeight="light" variant="default">
-                  Réttarvörslugátt
-                </Text>
-              </Hidden>
-            </Box>
+            <Hidden below="sm">
+              <Box marginLeft={[1, 1, 2, 4]}>
+                <Text variant="eyebrow">Dómsmálaráðuneytið</Text>
+                <Hidden above="sm">
+                  <Text fontWeight="light" variant="eyebrow">
+                    Réttarvörslugátt
+                  </Text>
+                </Hidden>
+                <Hidden below="md">
+                  <Text fontWeight="light" variant="default">
+                    Réttarvörslugátt
+                  </Text>
+                </Hidden>
+              </Box>
+            </Hidden>
           </Box>
         </Inline>
       </Link>
@@ -205,18 +243,7 @@ const HeaderContainer = () => {
                         {isLawyerInLawyersRegistry ? lawyer.email : user.email}
                       </Text>
                     </Box>
-                    {eligibleUsers && eligibleUsers.length > 1 && (
-                      <Box marginTop={2}>
-                        <Button
-                          variant="text"
-                          onClick={handleChangeInstitution}
-                          size="small"
-                          preTextIcon="swapHorizontal"
-                        >
-                          Skipta um embætti
-                        </Button>
-                      </Box>
-                    )}
+                    {renderSelectUser()}
                   </Box>
                 </div>
                 <div className={styles.dropdownItem}>

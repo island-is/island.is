@@ -47,7 +47,7 @@ export class UserProfileService extends BaseTemplateApiService {
     auth,
     params,
   }: TemplateApiModuleActionProps<UserProfileParameters>): Promise<UserProfile> {
-    let { mobilePhoneNumber, email } = await this.userProfileApiWithAuth(auth)
+    const { mobilePhoneNumber, email } = await this.userProfileApiWithAuth(auth)
       .meUserProfileControllerFindUserProfile()
       .catch((error) => {
         if (isRunningOnEnvironment('local')) {
@@ -59,9 +59,11 @@ export class UserProfileService extends BaseTemplateApiService {
         throw error
       })
 
-    if (isRunningOnEnvironment('local')) {
-      email = 'mockEmail@island.is'
-      mobilePhoneNumber = '9999999'
+    if (isRunningOnEnvironment('local') && !mobilePhoneNumber && !email) {
+      return {
+        email: 'mockEmail@island.is',
+        mobilePhoneNumber: '9999999',
+      }
     }
 
     /// Temporary dependency on íslykill for bank info retrieval via FJS API.

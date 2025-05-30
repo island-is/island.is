@@ -3,6 +3,16 @@ import { Injectable } from '@nestjs/common'
 import { BirthdayIndividual, mapBirthdayIndividual } from './mappers'
 import { EinstaklingarApi, IslandIsApi, HjuskapurDTO } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import {
+  CohabitationDto,
+  formatCohabitationDtoV3FromHju,
+  formatCohabitationDtoV3FromSam,
+} from './types/cohabitation.dto'
+import {
+  formatResidenceEntryDto,
+  ResidenceEntryDto,
+} from './types/residence-history-entry.dto'
+
 @Injectable()
 export class NationalRegistryV3ApplicationsClientService {
   constructor(
@@ -32,11 +42,36 @@ export class NationalRegistryV3ApplicationsClientService {
     )
   }
 
-  async getCohabitationInfo(nationalId: string): Promise<HjuskapurDTO | null> {
-    const response = this.einstaklingarApi.einstaklingarKennitalaHjuskapurGet({
+  async getResidenceHistory(
+    nationalId: string,
+    auth: User,
+  ): Promise<ResidenceEntryDto[] | null> {
+    const res = await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaBusetusagaGet({
+      kennitala: nationalId,
+    })
+    return res
+      .map((x) => formatResidenceEntryDto(x))
+      .filter((x): x is ResidenceEntryDto => x !== null)
+  }
+
+  async getCohabitationInfo(
+    nationalId: string,
+    auth: User,
+  ): Promise<CohabitationDto | null> {
+    const res = await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaHjuskapurGet({
       kennitala: nationalId,
     })
 
-    return response
+    if (res.sambud?.sambud) {
+      return formatCohabitationDtoV3FromSam(res.sambud, res.hjuskapur)
+    } else if (res.hjuskapur && res.hjuskapur.kennitalaMaka) {
+      return formatCohabitationDtoV3FromHju(res.hjuskapur)
+    } else {
+      return null
+    }
   }
 }

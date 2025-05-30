@@ -4,6 +4,7 @@ import router from 'next/router'
 
 import {
   Box,
+  FileUploadStatus,
   Input,
   InputFileUpload,
   RadioButton,
@@ -36,6 +37,7 @@ import {
   formatDateForServer,
   UpdateCase,
   useCase,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -100,6 +102,9 @@ const Conclusion: FC = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
 
   const [selectedAction, setSelectedAction] = useState<IndictmentDecision>()
   const [postponementReason, setPostponementReason] = useState<string>()
@@ -263,12 +268,12 @@ const Conclusion: FC = () => {
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.COURT_RECORD &&
-                  file.status === 'done',
+                  file.status === FileUploadStatus.done,
               ) &&
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.RULING &&
-                  file.status === 'done',
+                  file.status === FileUploadStatus.done,
               )
             )
           case CaseIndictmentRulingDecision.CANCELLATION:
@@ -276,14 +281,14 @@ const Conclusion: FC = () => {
             return uploadFiles.some(
               (file) =>
                 file.category === CaseFileCategory.COURT_RECORD &&
-                file.status === 'done',
+                file.status === FileUploadStatus.done,
             )
           case CaseIndictmentRulingDecision.MERGE:
             return Boolean(
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.COURT_RECORD &&
-                  file.status === 'done',
+                  file.status === FileUploadStatus.done,
               ) &&
                 (workingCase.mergeCase?.id ||
                   validate([[mergeCaseNumber, ['empty', 'S-case-number']]])
@@ -572,11 +577,12 @@ const Conclusion: FC = () => {
               required={selectedAction === IndictmentDecision.COMPLETING}
             />
             <InputFileUpload
-              fileList={uploadFiles.filter(
+              name="court-records"
+              files={uploadFiles.filter(
                 (file) => file.category === CaseFileCategory.COURT_RECORD,
               )}
               accept="application/pdf"
-              header={formatMessage(strings.inputFieldLabel)}
+              title={formatMessage(strings.inputFieldLabel)}
               description={formatMessage(core.uploadBoxDescription, {
                 fileEndings: '.pdf',
               })}
@@ -591,6 +597,7 @@ const Conclusion: FC = () => {
               }}
               onRemove={(file) => handleRemove(file, removeUploadFile)}
               onRetry={(file) => handleRetry(file, updateUploadFile)}
+              onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
             />
           </Box>
         )}
@@ -607,11 +614,12 @@ const Conclusion: FC = () => {
                 required
               />
               <InputFileUpload
-                fileList={uploadFiles.filter(
+                name="ruling"
+                files={uploadFiles.filter(
                   (file) => file.category === CaseFileCategory.RULING,
                 )}
                 accept="application/pdf"
-                header={formatMessage(strings.inputFieldLabel)}
+                title={formatMessage(strings.inputFieldLabel)}
                 description={formatMessage(core.uploadBoxDescription, {
                   fileEndings: '.pdf',
                 })}
@@ -626,6 +634,7 @@ const Conclusion: FC = () => {
                 }}
                 onRemove={(file) => handleRemove(file, removeUploadFile)}
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
+                onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
               />
             </Box>
           )}

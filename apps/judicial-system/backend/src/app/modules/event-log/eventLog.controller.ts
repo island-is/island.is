@@ -14,7 +14,7 @@ export class EventLogController {
   @UseGuards(TokenGuard)
   @Post('event')
   @ApiCreatedResponse({ description: 'Logs an event to event log' })
-  logEvent(@Body() event: CreateEventLogDto): Promise<void> {
+  logEvent(@Body() event: CreateEventLogDto): Promise<boolean> {
     return this.eventLogService.create(event)
   }
 }
