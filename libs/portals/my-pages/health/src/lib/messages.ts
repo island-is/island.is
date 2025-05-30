@@ -288,6 +288,14 @@ export const messages = defineMessages({
     defaultMessage: 'Sjúkratrygging',
     id: 'sp.health:has-health-insurance',
   },
+  hasHealthInsuranceIntro: {
+    defaultMessage: 'Sjúkratryggingar Íslands lýsitexti',
+    id: 'sp.health:has-health-insurance',
+  },
+  healthCenter: {
+    defaultMessage: 'Heilsugæsla',
+    id: 'sp.health:health-center',
+  },
   healthCenterDescription: {
     defaultMessage:
       'Allir sjúkratryggðir á Íslandi eiga að vera skráðir á heilsugæslustöð. Hér fyrir neðan sérð þú á hvaða stöð eða hjá hvaða sjálfstætt starfandi heimilislækni þú ert skráð/ur.',
@@ -1026,12 +1034,16 @@ export const messages = defineMessages({
   },
   overviewIntro: {
     defaultMessage:
-      'Hér fyrir neðan eru þín gögn sem hafa verið sótt frá þjóðskrá. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
+      'Hér getur þú séð yfirlit yfir grunnupplýsingar þínar í Heilsu, tímabókanir, skráningar, stöðu á listum og mælingar.',
     id: 'sp.health:overview-intro',
   },
   overviewTitle: {
     defaultMessage: 'Yfirlit',
     id: 'sp.health:overview-title',
+  },
+  healthOverview: {
+    id: 'sp.health:health-overview',
+    defaultMessage: 'Heilsuyfirlit',
   },
   paymentDocument: {
     defaultMessage: 'Greiðsluskjal',
@@ -1062,6 +1074,10 @@ export const messages = defineMessages({
   payments: {
     defaultMessage: 'Greiðslur',
     id: 'sp.health:payments',
+  },
+  paymentsAndRights: {
+    defaultMessage: 'Greiðslur og réttindi',
+    id: 'sp.health:payments-and-rights',
   },
   paymentsIntro: {
     defaultMessage:
@@ -1521,5 +1537,21 @@ export const messages = defineMessages({
   yourPayment: {
     defaultMessage: 'Greiðsla þín',
     id: 'sp.health:your-payment',
+  },
+  basicInformation: {
+    defaultMessage: 'Grunnupplýsingar',
+    id: 'sp.health:basic-information',
+  },
+  myHealthOverview: {
+    defaultMessage: 'Mitt heilsuyfirlit',
+    id: 'sp.health:my-health-overview',
+  },
+  myAppointments: {
+    defaultMessage: 'Mínar tímabókanir',
+    id: 'sp.health:my-appointments',
+  },
+  myPregnancy: {
+    defaultMessage: 'Meðgangan mín',
+    id: 'sp.health:my-pregnancy',
   },
 })
