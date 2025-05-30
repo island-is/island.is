@@ -185,6 +185,7 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
+    higherPayments,
   } = getASFTEApplicationAnswers(application.answers)
   const { bankInfo, userProfileEmail } = getASFTEApplicationExternalData(
     application.externalData,
@@ -207,6 +208,8 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
         YES === personalAllowance ? +personalAllowanceUsage : 0,
       taxLevel: +taxLevel,
     },
+    livesAloneUserReply: YES === higherPayments,
+    livesAloneNationalRegistryData: livesAlone(application),
     period: {
       year: +selectedYear,
       month: getMonthNumber(selectedMonth),
@@ -432,6 +435,13 @@ export const shouldDistributeIncomeByMonth = (application: Application) => {
     (i) => i?.unevenIncomePerYear?.[0] === YES && i?.incomeCategory === INCOME,
   )
   return hasUnevenIncome
+}
+
+export const livesAlone = (application: Application) => {
+  const { cohabitants } = getASFTEApplicationExternalData(
+    application.externalData,
+  )
+  return cohabitants.length === 0
 }
 
 export const getMonthNumber = (monthName: string): number => {
