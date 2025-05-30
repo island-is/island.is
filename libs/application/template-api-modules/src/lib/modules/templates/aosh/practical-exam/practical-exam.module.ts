@@ -6,9 +6,11 @@ import {
   PracticalExamsClientModule,
   PracticalExamsClientConfig,
 } from '@island.is/clients/practical-exams-ver'
+import { AwsModule } from '@island.is/nest/aws'
 @Module({
   imports: [
     SharedTemplateAPIModule,
+    AwsModule,
     PracticalExamsClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
