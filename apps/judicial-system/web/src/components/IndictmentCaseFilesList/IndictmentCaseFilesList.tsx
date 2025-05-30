@@ -170,16 +170,20 @@ export const useSentToPrisonAdminDate = (workingCase: Case) => {
 }
 
 export const getIdAndTitleForPdfButtonForRulingSentToPrisonPdf = (
-  isFine: boolean,
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null,
   sentToPrisonAdminDate?: Date,
 ) => {
-  const baseTitle = isFine
-    ? 'Viðurlagaákvörðun til fullnustu'
-    : 'Dómur til fullnustu'
+  const baseTitle =
+    indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+      ? 'Viðurlagaákvörðun til fullnustu'
+      : 'Dómur til fullnustu'
 
   return {
     pdfTitle: `${baseTitle} ${formatDate(sentToPrisonAdminDate)}.pdf`,
     pdfElementId: baseTitle,
+    isCompletedWithRulingOrFine:
+      indictmentRulingDecision === CaseIndictmentRulingDecision.RULING ||
+      indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
   }
 }
 
@@ -207,15 +211,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const showFiles = Object.values(filteredFiles).some((f) => f.length > 0)
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
-  const isFine =
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-  const isCompletedWithRulingOrFine =
-    workingCase.indictmentRulingDecision ===
-      CaseIndictmentRulingDecision.RULING || isFine
 
-  const { pdfTitle, pdfElementId } =
+  const { pdfTitle, pdfElementId, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
-      isFine,
+      workingCase.indictmentRulingDecision,
       sentToPrisonAdminDate,
     )
 

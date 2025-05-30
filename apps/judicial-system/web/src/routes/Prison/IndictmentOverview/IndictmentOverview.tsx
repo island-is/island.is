@@ -80,15 +80,9 @@ const IndictmentOverview = () => {
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
 
-  const isFine =
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-  const isCompletedWithRulingOrFine =
-    workingCase.indictmentRulingDecision ===
-      CaseIndictmentRulingDecision.RULING || isFine
-
-  const { pdfTitle, pdfElementId } =
+  const { pdfTitle, pdfElementId, isCompletedWithRulingOrFine } =
     getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
-      isFine,
+      workingCase.indictmentRulingDecision ?? undefined,
       sentToPrisonAdminDate,
     )
 
