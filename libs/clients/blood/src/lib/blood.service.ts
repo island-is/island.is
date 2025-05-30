@@ -12,9 +12,7 @@ export class BloodClientService {
   }
 
   getBloodType = async (user: User): Promise<BloodTypeDto | null> => {
-    const bloodType = await this.bloodTypeWithAuth(user).apiNationalIdBloodGet({
-      nationalId: user.nationalId,
-    })
+    const bloodType = await this.bloodTypeWithAuth(user).apiBloodGet()
 
     if (!bloodType) {
       return null

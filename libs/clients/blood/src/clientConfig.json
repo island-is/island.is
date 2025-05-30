@@ -9,22 +9,10 @@
     "version": "v1"
   },
   "paths": {
-    "/api/{nationalId}/blood": {
+    "/api/blood": {
       "get": {
         "tags": ["Blood"],
         "summary": "Get blood information for national id",
-        "parameters": [
-          {
-            "name": "nationalId",
-            "in": "path",
-            "description": "National id",
-            "required": true,
-            "schema": {
-              "pattern": "^\\d{6}[A-Z0-9]{3}\\d{1}$",
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -80,7 +68,7 @@
         "properties": {
           "NationalId": {
             "type": "string",
-            "description": "Persion national id",
+            "description": "Person national id",
             "nullable": true
           },
           "Type": {
@@ -110,15 +98,6 @@
         },
         "additionalProperties": false
       }
-    },
-    "securitySchemes": {
-      "ApiKey": {
-        "type": "apiKey",
-        "description": "API Key Authentication",
-        "name": "X-Api-Key",
-        "in": "header"
-      }
     }
-  },
-  "security": [{ "ApiKey": [] }]
+  }
 }
