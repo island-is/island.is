@@ -1225,10 +1225,6 @@ export const m = defineMessages({
     id: 'service.portal:close-finance-detail',
     defaultMessage: 'Loka sundurliðun',
   },
-  islykill: {
-    id: 'service.portal:islykill',
-    defaultMessage: 'Íslykill',
-  },
   saveInfo: {
     id: 'service.portal:saveInfo',
     defaultMessage: 'Vista upplýsingar',

@@ -1,0 +1,5 @@
+export { BankinfoClientModule } from './lib/bankinfo.module'
+export { BankInfoClientConfig } from './lib/bankinfo.config'
+export { BankinfoClientService } from './lib/bankinfo.service'
+export * from './lib/bankinfo.utils'
+export * from '../gen/fetch'
