@@ -568,7 +568,7 @@ const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
       return generateCell()
     }
 
-    return generateCell({ str: initials, sortValue: initials })
+    return generateCell({ str: initials }, initials)
   },
 }
 
@@ -737,7 +737,9 @@ const punishmentType: CaseTableCellGenerator<TagValue> = {
       }
     }
 
-    return generateCell({ color: 'red', text: getPunishmentTypeLabel() })
+    const label = getPunishmentTypeLabel()
+
+    return generateCell({ color: 'red', text: label }, label)
   },
 }
 
@@ -791,7 +793,7 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
   },
   generate: (c: Case): CaseTableCell<TagValue> => {
     if (!c.defendants || c.defendants.length === 0) {
-      return generateCell({ color: 'red', text: 'Óþekkt' }) // This should never happen
+      return generateCell({ color: 'red', text: 'Óþekkt' }, 'C') // This should never happen
     }
 
     const dateOpened = DefendantEventLog.getDefendantEventLogTypeDate(
@@ -800,10 +802,10 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
     )
 
     if (dateOpened) {
-      return generateCell({ color: 'blue', text: 'Móttekið' })
+      return generateCell({ color: 'blue', text: 'Móttekið' }, 'B')
     }
 
-    return generateCell({ color: 'purple', text: 'Nýtt' })
+    return generateCell({ color: 'purple', text: 'Nýtt' }, 'A')
   },
 }
 
@@ -850,14 +852,14 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
     ] = getIndictmentVerdictAppealDeadlineStatus(verdictInfo, false)
 
     if (!indictmentVerdictViewedByAll) {
-      return generateCell({ color: 'red', text: 'Óbirt' })
+      return generateCell({ color: 'red', text: 'Óbirt' }, 'A')
     }
 
     if (indictmentVerdictAppealDeadlineExpired) {
-      return generateCell({ color: 'mint', text: 'Frestur liðinn' })
+      return generateCell({ color: 'mint', text: 'Frestur liðinn' }, 'B')
     }
 
-    return generateCell({ color: 'blue', text: 'Á fresti' })
+    return generateCell({ color: 'blue', text: 'Á fresti' }, 'C')
   },
 }
 
@@ -875,10 +877,7 @@ const indictmentReviewer: CaseTableCellGenerator<StringValue> = {
       return generateCell()
     }
 
-    return generateCell({
-      str: indictmentReviewerName,
-      sortValue: indictmentReviewerName,
-    })
+    return generateCell({ str: indictmentReviewerName }, indictmentReviewerName)
   },
 }
 
@@ -954,7 +953,11 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
       ? { color: 'red', text: 'Ákærði áfrýjar' }
       : undefined
 
-    return generateCell({ firstTag, secondTag })
+    const sortValue = secondTag
+      ? `${firstTag.text}${secondTag.text}`
+      : firstTag.text
+
+    return generateCell({ firstTag, secondTag }, sortValue)
   },
 }
 
