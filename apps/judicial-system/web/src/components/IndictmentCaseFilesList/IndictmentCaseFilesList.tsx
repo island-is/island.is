@@ -169,6 +169,25 @@ export const useSentToPrisonAdminDate = (workingCase: Case) => {
   }, [workingCase.defendants])
 }
 
+export const getIdAndTitleForPdfButtonForRulingSentToPrisonPdf = (
+  isFine: boolean,
+  sentToPrisonAdminDate?: Date,
+) => {
+  if (isFine) {
+    return {
+      title: `Viðurlagaákvörðun til fullnustu ${formatDate(
+        sentToPrisonAdminDate,
+      )}.pdf`,
+      elementId: 'Viðurlagaákvörðun til fullnustu',
+    }
+  } else {
+    return {
+      title: `Dómur til fullnustu ${formatDate(sentToPrisonAdminDate)}.pdf`,
+      elementId: 'Dómur til fullnustu',
+    }
+  }
+}
+
 const IndictmentCaseFilesList: FC<Props> = ({
   workingCase,
   displayGeneratedPDFs = true,
@@ -193,8 +212,18 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const showFiles = Object.values(filteredFiles).some((f) => f.length > 0)
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
-  const isCompletedWithRuling =
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+  const isFine =
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+  const isCompletedWithRulingOrFine =
+    workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.RULING || isFine
+
+  const { title: pdfTitle, elementId: pdfElementId } =
+    getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
+      isFine,
+      sentToPrisonAdminDate,
+    )
+
   const hasNoFiles = !showFiles && !displayGeneratedPDFs
 
   return (
@@ -365,14 +394,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
             onOpenFile={onOpen}
             shouldRender={permissions.canViewSentToPrisonAdminFiles}
           >
-            {isCompletedWithRuling && sentToPrisonAdminDate && (
+            {isCompletedWithRulingOrFine && sentToPrisonAdminDate && (
               <PdfButton
                 caseId={workingCase.id}
-                title={`Dómur til fullnustu ${formatDate(
-                  sentToPrisonAdminDate,
-                )}.pdf`}
+                title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId="Dómur til fullnustu"
+                elementId={pdfElementId}
                 renderAs="row"
               />
             )}
