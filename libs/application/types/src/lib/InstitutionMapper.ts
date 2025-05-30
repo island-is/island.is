@@ -4,12 +4,17 @@ import { InstitutionContentfulIds } from './InstitutionContentfulIds'
 import { InstitutionNationalIds } from './InstitutionNationalIds'
 
 export const institutionMapper = {
-  [ApplicationTypes.EXAMPLE]: {
+  [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
+    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
+    slug: InstitutionTypes.STAFRAENT_ISLAND,
+    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
@@ -25,11 +30,6 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
   },
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
-    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
-    slug: InstitutionTypes.STAFRAENT_ISLAND,
-    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
-  },
-  [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
@@ -424,6 +424,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
   },
+  [ApplicationTypes.PRACTICAL_EXAM]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
   [ApplicationTypes.SEMINAR_REGISTRATION]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
@@ -438,5 +443,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
     slug: InstitutionTypes.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
     contentfulId: InstitutionContentfulIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+  },
+  [ApplicationTypes.LEGAL_GAZETTE]: {
+    nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
+    slug: InstitutionTypes.DOMSMALARADUNEYTID,
+    contentfulId: InstitutionContentfulIds.DOMSMALARADUNEYTID,
   },
 }

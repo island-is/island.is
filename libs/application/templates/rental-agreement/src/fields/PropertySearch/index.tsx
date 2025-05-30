@@ -37,6 +37,8 @@ interface Props extends FieldBaseProps {
   errors?: Record<string, Record<string, string>>
 }
 
+const ERROR_ID = 'registerProperty'
+
 export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   field,
   errors,
@@ -289,6 +291,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       units: chosenUnits,
     })
     setCheckedUnits(updateCheckedUnits)
+    clearErrors(ERROR_ID)
   }
 
   const handleUnitSizeChange = (unit: Unit, value: number) => {
@@ -316,6 +319,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       })
       return newValues
     })
+    clearErrors(ERROR_ID)
   }
 
   const handleUnitRoomsChange = (unit: Unit, value: number) => {
@@ -343,6 +347,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       })
       return newValues
     })
+    clearErrors(ERROR_ID)
   }
 
   const handleAddressSelectionChange = (
