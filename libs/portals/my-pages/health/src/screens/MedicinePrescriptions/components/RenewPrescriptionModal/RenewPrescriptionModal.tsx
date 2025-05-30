@@ -7,6 +7,7 @@ import {
   GridRow,
   ModalBase,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/my-pages/core'
@@ -15,9 +16,9 @@ import cn from 'classnames'
 import React, { useState } from 'react'
 import { messages } from '../../../../lib/messages'
 import { HealthCenter } from '../../../../utils/mockData'
+import { PrescriptionItem } from '../../../../utils/types'
 import { usePostPrescriptionRenewalMutation } from '../../Prescriptions.generated'
 import * as styles from './RenewPrescriptionModal.css'
-import { PrescriptionItem } from '../../../../utils/types'
 
 interface Props {
   id: string
@@ -26,11 +27,6 @@ interface Props {
   isVisible: boolean
   setVisible: (isVisible: boolean) => void
   setActivePrescription: (prescription: PrescriptionItem | null) => void
-}
-
-interface RenewFormData {
-  healthcare?: HealthCenter
-  medicineInformation?: HealthDirectoratePrescription
 }
 
 const RenewPrescriptionModal: React.FC<Props> = ({
@@ -42,7 +38,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
   setActivePrescription,
 }) => {
   const { formatMessage } = useLocale()
-  const [error, setError] = useState()
+  const [error, setError] = useState<string>()
   const columnWidth = '7/12'
   const titleWidth = '5/12'
   const modulusCalculations = (index: number) => {
@@ -88,7 +84,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       activePrescription.category === undefined ||
       activePrescription.id === undefined
     ) {
-      // error
+      setError('Please select a valid prescription.')
     }
 
     postRenewal({
@@ -101,7 +97,27 @@ const RenewPrescriptionModal: React.FC<Props> = ({
         },
       },
     })
-    closeModal()
+      .catch(() => {
+        setError(
+          'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
+        )
+        toast.error(
+          'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
+        )
+      })
+      .then(() => {
+        if (renewalData) {
+          setError('')
+          closeModal()
+          toast.success(
+            'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæsly ef þörf er á frekari upplýsingum.',
+          )
+        } else if (renewalError) {
+          setError(
+            'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
+          )
+        }
+      })
   }
 
   return (
@@ -181,6 +197,8 @@ const RenewPrescriptionModal: React.FC<Props> = ({
                   <Button
                     size="small"
                     type="submit"
+                    loading={loading}
+                    disabled={loading}
                     onClick={() => submitForm()}
                   >
                     {formatMessage(messages.renew)}

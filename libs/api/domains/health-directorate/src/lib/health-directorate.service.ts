@@ -364,27 +364,7 @@ export class HealthDirectorateService {
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
           dispensationCount: item.dispensationCount,
-          dispensations: item.dispensations.map((item) => {
-            const quantity = item.productQuantity ?? 0
-
-            return {
-              id: item.productId,
-              name: item.productName,
-              quantity: [quantity.toString(), item.productUnit]
-                .filter((x) => isDefined(x))
-                .join(' '),
-              agentName: item.dispensingAgentName,
-              unit: item.productUnit,
-              type: item.productType,
-              indication: item.indication,
-              dosageInstructions: item.dosageInstructions,
-              issueDate: item.issueDate,
-              prescriberName: item.prescriberName,
-              expirationDate: item.expirationDate,
-              isExpired: item.isExpired,
-              date: item.dispensationDate,
-            }
-          }),
+          dispensations: item.dispensations.map(this.mapDispensationItem),
         }
       }) ?? []
 
@@ -407,27 +387,7 @@ export class HealthDirectorateService {
     }
 
     const dispensations: Array<MedicineHistoryDispensation> = data.map(
-      (item) => {
-        const quantity = item.productQuantity ?? 0
-
-        return {
-          id: item.productId,
-          name: item.productName,
-          quantity: [quantity.toString(), item.productUnit]
-            .filter((x) => isDefined(x))
-            .join(' '),
-          agentName: item.dispensingAgentName,
-          unit: item.productUnit,
-          type: item.productType,
-          indication: item.indication,
-          dosageInstructions: item.dosageInstructions,
-          issueDate: item.issueDate,
-          prescriberName: item.prescriberName,
-          expirationDate: item.expirationDate,
-          isExpired: item.isExpired,
-          date: item.dispensationDate,
-        }
-      },
+      this.mapDispensationItem,
     )
 
     return { dispensations }
@@ -451,5 +411,27 @@ export class HealthDirectorateService {
         medCardDrugId: input.medCardDrugId,
       }
     } else return null
+  }
+
+  private mapDispensationItem = (item: any): MedicineHistoryDispensation => {
+    const quantity = item.productQuantity ?? 0
+
+    return {
+      id: item.productId,
+      name: item.productName,
+      quantity: [quantity.toString(), item.productUnit]
+        .filter((x) => isDefined(x))
+        .join(' '),
+      agentName: item.dispensingAgentName,
+      unit: item.productUnit,
+      type: item.productType,
+      indication: item.indication,
+      dosageInstructions: item.dosageInstructions,
+      issueDate: item.issueDate,
+      prescriberName: item.prescriberName,
+      expirationDate: item.expirationDate,
+      isExpired: item.isExpired,
+      date: item.dispensationDate,
+    }
   }
 }
