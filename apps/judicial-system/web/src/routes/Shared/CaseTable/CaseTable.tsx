@@ -247,17 +247,19 @@ const CaseTable: FC = () => {
           <>
             <Box display="flex" alignItems="center">
               <SectionHeading title={table.title} />
-              {table.hasMyCasesFilter && (
-                <Box marginBottom={3} marginLeft={'auto'}>
-                  <Checkbox
-                    label="Mín mál"
-                    checked={showOnlyMyCases}
-                    onChange={(e) => {
-                      setShowOnlyMyCases(e.target.checked)
-                    }}
-                  />
-                </Box>
-              )}
+              {table.hasMyCasesFilter &&
+                caseTableData &&
+                caseTableData?.rowCount !== 0 && (
+                  <Box marginBottom={3} marginLeft={'auto'}>
+                    <Checkbox
+                      label="Mín mál"
+                      checked={showOnlyMyCases}
+                      onChange={(e) => {
+                        setShowOnlyMyCases(e.target.checked)
+                      }}
+                    />
+                  </Box>
+                )}
             </Box>
             {loading ? (
               <TableSkeleton />
