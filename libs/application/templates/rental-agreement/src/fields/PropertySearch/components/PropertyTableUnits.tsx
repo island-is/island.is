@@ -52,6 +52,8 @@ export const PropertyTableUnits = ({
   const [isRoomsFocused, setIsRoomsFocused] = useState(false)
   const [isUnitsFocused, setIsUnitsFocused] = useState(false)
 
+  console.log('Room value', propertyUsageDescription, numOfRoomsValue)
+
   // Prevent scrolling from changing the number input value
   const preventScrollChange = (event: React.WheelEvent<HTMLInputElement>) => {
     event.currentTarget.blur()
