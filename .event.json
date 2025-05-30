@@ -1,0 +1,20 @@
+{
+  "_localrun": "// Semi-standard way to target local runs",
+  "localrun": true,
+  "_inputs": "// Sample projects to use in e.g. docker.yml inputs",
+  "inputs": {
+    "projects": "web,air-discount-scheme-api"
+  },
+  "merge_group": {
+    "head": { "ref": "HEAD" },
+    "base": { "ref": "main" }
+  },
+  "pull_request": {
+    "_labels": "// Labels to run with. Add as needed during development/testing",
+    "labels": [{ "name": "my label" }, { "name": "ci debug" }],
+    "head": { "ref": "HEAD" },
+    "base": { "ref": "main" }
+  },
+  "head": { "ref": "HEAD" },
+  "base": { "ref": "main" }
+}
