@@ -15,6 +15,7 @@ import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { PaymentFlowFjsChargeConfirmation } from '../paymentFlow/models/paymentFlowFjsChargeConfirmation.model'
 import { PaymentFlowPaymentConfirmation } from '../paymentFlow/models/paymentFlowPaymentConfirmation.model'
+import { JwksModule } from '../jwks/jwks.module'
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { PaymentFlowPaymentConfirmation } from '../paymentFlow/models/paymentFlo
     ChargeFjsV2ClientModule,
     NationalRegistryV3ClientModule,
     CompanyRegistryClientModule,
+    JwksModule,
   ],
   controllers: [InvoicePaymentController],
   providers: [PaymentFlowService],

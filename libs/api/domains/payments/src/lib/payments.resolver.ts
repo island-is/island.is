@@ -1,5 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { ApolloError } from '@apollo/client'
 
 import { ScopesGuard } from '@island.is/auth-nest-tools'
 import {
@@ -17,12 +18,10 @@ import { ChargeCardInput } from './dto/chargeCard.input'
 import { ChargeCardResponse } from './dto/chargeCard.response'
 import { GetPaymentVerificationStatusResponse } from './dto/getVerificationStatus.response'
 import { CardVerificationCallbackInput } from './dto/cardVerificationCallback.input'
-import { ApolloError } from '@apollo/client'
-import { CreatePaymentFlowInput } from './dto/createPaymentFlow.input'
-import { CreatePaymentFlowResponse } from './dto/createPaymentFlow.response'
 import { CreateInvoiceResponse } from './dto/createInvoice.response'
 import { CreateInvoiceInput } from './dto/createInvoice.input'
 import { CardVerificationResponse } from './dto/cardVerificationCallback.response'
+import { GetJwksResponse } from './dto/getJwks.response'
 
 @UseGuards(ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -97,6 +96,15 @@ export class PaymentsResolver {
   ): Promise<CreateInvoiceResponse> {
     try {
       return this.paymentsService.createInvoice(input)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
+  @Query(() => GetJwksResponse, { name: 'paymentsGetJwks' })
+  async getJwks(): Promise<GetJwksResponse> {
+    try {
+      return this.paymentsService.getJwks()
     } catch (e) {
       throw new ApolloError(e.message)
     }
