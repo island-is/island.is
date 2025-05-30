@@ -146,7 +146,11 @@ const FineCalculatorDetails = ({
                 {formatCurrency(fine.price * fine.amountSelected)}
               </Table.Data>
               <Table.Data align="right">
-                {formatCurrency(fine.price * QUARTER_OFF_FINE_MULTIPLIER)}
+                {formatCurrency(
+                  fine.price *
+                    fine.amountSelected *
+                    QUARTER_OFF_FINE_MULTIPLIER,
+                )}
               </Table.Data>
               <Table.Data align="right">{fine.points}</Table.Data>
             </Table.Row>
