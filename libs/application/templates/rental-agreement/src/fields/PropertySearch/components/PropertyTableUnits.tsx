@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Checkbox, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
