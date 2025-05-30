@@ -8,9 +8,13 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { FormModes, UserProfileApi } from '@island.is/application/types'
+import * as m from '../../lib/messages'
+import { NationalRegistryApi, rentalAgreementsApi } from '../../dataProviders'
+import HmsLogo from '../../assets/HmsLogo'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
+  logo: HmsLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
@@ -24,10 +28,19 @@ export const Prerequisites = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: UserProfileApi,
-              title: 'User profile',
-              subTitle: 'User profile',
+              title: m.prereqMessages.userProfileTitle,
+              subTitle: m.prereqMessages.userProfileDescription,
             }),
-            // Add more data providers as needed
+            buildDataProviderItem({
+              provider: NationalRegistryApi,
+              title: m.prereqMessages.nationalRegistryTitle,
+              subTitle: m.prereqMessages.nationalRegistrySubtitle,
+            }),
+            buildDataProviderItem({
+              provider: rentalAgreementsApi,
+              title: m.prereqMessages.housingBenefitsTitle,
+              subTitle: m.prereqMessages.housingBenefitsDescription,
+            }),
           ],
           submitField: buildSubmitField({
             id: 'submit',

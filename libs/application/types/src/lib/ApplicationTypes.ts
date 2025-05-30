@@ -436,7 +436,7 @@ export const ApplicationConfigurations = {
     translation: 'ra.application',
   },
   [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
-    slug: 'uppsogn-leigusamnings',
+    slug: 'uppsogn-og-riftun-leigusamninga',
     translation: 'tra.application',
   },
   [ApplicationTypes.SEMINAR_REGISTRATION]: {

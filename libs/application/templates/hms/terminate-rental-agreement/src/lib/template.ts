@@ -18,17 +18,20 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
-
+import * as m from './messages'
+import { NationalRegistryApi, rentalAgreementsApi } from '../dataProviders'
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.TERMINATE_RENTAL_AGREEMENT, // TODO: Change to the correct type
-  name: 'terminate-rental-agreement template',
-  codeOwner: CodeOwners.NordaApplications, // TODO: Change to the correct code owner
-  institution: 'Stafrænt Ísland', // TODO: Change to the correct institution
-  translationNamespaces: [ApplicationConfigurations.TerminateRentalAgreement.translation], // TODO: Change to the correct translation namespace
+  type: ApplicationTypes.TERMINATE_RENTAL_AGREEMENT,
+  name: m.miscMessages.applicationName,
+  codeOwner: CodeOwners.NordaApplications,
+  institution: 'Húsnæðis og mannvirkjastofnun',
+  translationNamespaces: [
+    ApplicationConfigurations.TerminateRentalAgreement.translation,
+  ],
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -51,7 +54,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi],
+              api: [UserProfileApi, NationalRegistryApi, rentalAgreementsApi],
               delete: true,
             },
           ],

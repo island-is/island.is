@@ -6,8 +6,11 @@ import { chooseContractSection } from './chooseContractSection'
 import { unboundTerminationSection } from './unboundTerminationSection'
 import { boundTerminationSection } from './boundTerminationSection'
 import { cancelationSection } from './cancelationSection'
+import HmsLogo from '../../assets/HmsLogo'
+
 export const MainForm = buildForm({
   id: 'MainForm',
+  logo: HmsLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

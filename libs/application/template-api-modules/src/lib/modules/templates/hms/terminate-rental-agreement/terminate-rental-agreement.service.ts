@@ -3,6 +3,7 @@ import { SharedTemplateApiService } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
 import { NotificationsService } from '../../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { TemplateApiModuleActionProps } from '../../../..'
 
 @Injectable()
 export class TerminateRentalAgreementService extends BaseTemplateApiService {
@@ -12,7 +13,24 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
   ) {
     super(ApplicationTypes.TERMINATE_RENTAL_AGREEMENT)
   }
-  // TODO: Implement functions as needed
+
+  async getRentalAgreements({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    return [
+      {
+        id: 1,
+        name: 'Leigusamningur 1',
+        status: 'active',
+      },
+      {
+        id: 2,
+        name: 'Leigusamningur 2',
+        status: 'active',
+      },
+    ]
+  }
 
   async createApplication() {
     // TODO: Implement this
