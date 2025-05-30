@@ -11,7 +11,7 @@ import { mockGetProperties } from './mockedFasteign'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { getValueViaPath } from '@island.is/application/core'
-import { paymentForAppraisal } from './utls'
+import { paymentForAppraisal } from './utils'
 
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
@@ -101,15 +101,6 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
   }
 
   async createApplication() {
-    // TODO: Implement this
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    return {
-      id: 1337,
-    }
-  }
-
-  async completeApplication() {
     // TODO: Implement this
     await new Promise((resolve) => setTimeout(resolve, 2000))
 

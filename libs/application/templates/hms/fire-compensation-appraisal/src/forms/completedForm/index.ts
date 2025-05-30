@@ -2,6 +2,7 @@ import { buildForm } from '@island.is/application/core'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { FormModes } from '@island.is/application/types'
 import HmsLogo from '../../assets/HmsLogo'
+import * as m from '../../lib/messages'
 
 export const completedForm = buildForm({
   id: 'completedForm',
@@ -10,9 +11,9 @@ export const completedForm = buildForm({
   children: [
     buildFormConclusionSection({
       sectionTitle: '',
-      tabTitle: 'Congratulations',
-      alertTitle: 'Congratulations',
-      alertMessage: 'You have completed this boilerplate application',
+      tabTitle: m.completedMessages.tabTitle,
+      alertTitle: m.completedMessages.alertTitle,
+      alertMessage: m.completedMessages.alertMessage,
     }),
   ],
 })

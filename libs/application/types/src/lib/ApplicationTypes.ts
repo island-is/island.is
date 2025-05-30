@@ -451,6 +451,7 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: {
     slug: 'endurmat-brunabotamats',
     translation: 'fca.application',
+  },
   [ApplicationTypes.LEGAL_GAZETTE]: {
     slug: 'logbirtingarblad',
     translation: 'lg.application',

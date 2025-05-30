@@ -12,7 +12,7 @@ import {
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
-import { ChargeItemCode, CodeOwners } from '@island.is/shared/constants'
+import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
@@ -32,7 +32,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.FIRE_COMPENSATION_APPRAISAL,
-  name: 'Endurmat brunabótamats',
+  name: m.miscMessages.applicationName,
   codeOwner: CodeOwners.NordaApplications,
   institution: m.miscMessages.institutionName,
   translationNamespaces: [
@@ -103,7 +103,7 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.PAYMENT]: {
-            target: States.PAYMENT,
+            target: States.DONE,
           },
         },
       },
@@ -111,7 +111,7 @@ const template: ApplicationTemplate<
         onEntry: [
           defineTemplateApi({
             action: TemplateApiActions.calculateAmount,
-            order: 1,
+            order: 1, // This has to run first to fetch the propperties and calculate the amount on the backend before the payment is made
           }),
         ],
         organizationId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
@@ -131,7 +131,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
-              delete: true,
             },
           ],
         },
