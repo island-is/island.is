@@ -46,7 +46,7 @@ export class ApplicationsController {
   @ApiOperation({ summary: 'Create new application' })
   @ApiCreatedResponse({
     description: 'Create new application',
-    type: ApplicationResponseDto,
+    type: ApplicationDto,
   })
   @ApiParam({ name: 'slug', type: String })
   @ApiBody({ type: CreateApplicationDto })
@@ -56,11 +56,34 @@ export class ApplicationsController {
     @Body() createApplicationDto: CreateApplicationDto,
     @CurrentUser()
     user: User,
-  ): Promise<ApplicationResponseDto> {
+  ): Promise<ApplicationDto> {
     return await this.applicationsService.create(
       slug,
       createApplicationDto,
       user,
+    )
+  }
+
+  @ApiOperation({
+    summary: 'Get all unfinished applications of type slug belonging to user ',
+  })
+  @ApiOkResponse({
+    type: ApplicationResponseDto,
+    description:
+      'Get all unfinished applications of type slug belonging to user ',
+  })
+  @ApiParam({ name: 'slug', type: String })
+  @Get(':slug')
+  async findAllBySlugAndUser(
+    @Param('slug') slug: string,
+    @Query('isTest') isTest: boolean,
+    @CurrentUser()
+    user: User,
+  ): Promise<ApplicationResponseDto> {
+    return await this.applicationsService.findAllBySlugAndUser(
+      slug,
+      user,
+      isTest,
     )
   }
 

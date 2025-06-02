@@ -59,7 +59,7 @@ export class ApplicationsService {
     slug: string,
     createApplicationDto: CreateApplicationDto,
     user: User,
-  ): Promise<ApplicationResponseDto> {
+  ): Promise<ApplicationDto> {
     const form: Form = await this.getForm(slug)
 
     if (!form) {
@@ -80,15 +80,6 @@ export class ApplicationsService {
           user.delegationType ? user.delegationType.join(', ') : 'none'
         }' are not allowed for this form`,
       )
-    }
-
-    // Check if the user has applications for this form
-    const existingApplications = await this.findAllByUserAndForm(user, form.id)
-
-    if (existingApplications && existingApplications.length > 0) {
-      const responseDto = new ApplicationResponseDto()
-      responseDto.applications = existingApplications
-      return responseDto
     }
 
     let newApplicationId = ''
@@ -150,14 +141,8 @@ export class ApplicationsService {
 
       newApplicationId = newApplication.id
     })
-    // const applicationDto = await this.getApplication(newApplicationId)
-
-    const applicationResponseDto = new ApplicationResponseDto()
-    applicationResponseDto.application = await this.getApplication(
-      newApplicationId,
-    )
-
-    return applicationResponseDto
+    const applicationDto = await this.getApplication(newApplicationId)
+    return applicationDto
   }
 
   async update(
@@ -375,9 +360,49 @@ export class ApplicationsService {
     return applicationDto
   }
 
+  async findAllBySlugAndUser(
+    slug: string,
+    user: User,
+    isTest: boolean,
+  ): Promise<ApplicationResponseDto> {
+    const form: Form = await this.getForm(slug)
+
+    if (!form) {
+      throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    // Check if at least one of the user's delegationTypes is allowed for this form
+    if (
+      form.allowedDelegationTypes.length > 0 &&
+      (!user.delegationType || user.delegationType.length === 0
+        ? !form.allowedDelegationTypes.includes('Individual')
+        : !user.delegationType.some((type) =>
+            form.allowedDelegationTypes.includes(type),
+          ))
+    ) {
+      throw new BadRequestException(
+        `User delegationTypes '${
+          user.delegationType ? user.delegationType.join(', ') : 'none'
+        }' are not allowed for this form`,
+      )
+    }
+
+    // Check if the user has applications for this form
+    const existingApplications = await this.findAllByUserAndForm(
+      user,
+      form.id,
+      isTest,
+    )
+
+    const responseDto = new ApplicationResponseDto()
+    responseDto.applications = existingApplications
+    return responseDto
+  }
+
   private async findAllByUserAndForm(
     user: User,
     formId: string,
+    isTest: boolean,
   ): Promise<ApplicationDto[]> {
     const delegationType = user.delegationType
     const nationalId = delegationType ? user.actor?.nationalId : user.nationalId
@@ -427,6 +452,7 @@ export class ApplicationsService {
             formId,
             id: applicationIds,
             status: ApplicationStatus.IN_PROGRESS,
+            isTest: isTest,
           },
         })
       : []
