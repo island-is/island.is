@@ -8,6 +8,8 @@ import { registerProperty } from './schemas/propertySearchSchema'
 import { otherFees } from './schemas/otherFeesSchema'
 import { securityDeposit } from './schemas/securityDepositSchema'
 import { rentalAmount } from './schemas/rentalAmountSchema'
+import { getRentalPropertySize } from '../utils/utils'
+import { Unit } from '../utils/types'
 import * as m from './messages'
 
 const approveExternalData = z.boolean().refine((v) => v)
@@ -99,9 +101,28 @@ const rentalPeriod = z
     const start = data.startDate ? new Date(data.startDate) : ''
     const end = data.endDate ? new Date(data.endDate) : ''
     const isDefiniteChecked = data.isDefinite?.includes(YesOrNoEnum.YES)
+
+    if (start) {
+      const oneYearFromNow = new Date()
+      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1)
+
+      if (
+        start instanceof Date &&
+        !isNaN(start.getTime()) &&
+        start.getTime() > oneYearFromNow.getTime()
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['startDate'],
+          params: m.rentalPeriod.errorStartDateTooFarInFuture,
+        })
+      }
+    }
+
     if (!isDefiniteChecked) {
       return
     }
+
     if (!data.endDate || !data.endDate.trim().length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -125,12 +146,21 @@ const fireProtections = z
     fireExtinguisher: z.string().optional(),
     emergencyExits: z.string().optional(),
     fireBlanket: z.string().optional(),
-    propertySize: z.string().optional(),
+    propertySize: z
+      .array(
+        z.object({
+          size: z.number().optional(),
+          changedSize: z.number().optional(),
+        }),
+      )
+      .optional(),
   })
   .superRefine((data, ctx) => {
-    const propertySizeString = data.propertySize?.replace(',', '.') || ''
+    const propertySize = getRentalPropertySize(
+      (data.propertySize as Unit[]) || [],
+    )
     const numberOfSmokeDetectors = Number(data.smokeDetectors)
-    const requiredSmokeDetectors = Math.ceil(Number(propertySizeString) / 80)
+    const requiredSmokeDetectors = Math.ceil(Number(propertySize) / 80)
     if (
       data.smokeDetectors &&
       numberOfSmokeDetectors < requiredSmokeDetectors
@@ -149,15 +179,6 @@ const fireProtections = z
         message: 'Custom error message',
         params: m.housingFireProtections.fireExtinguisherNullError,
         path: ['fireExtinguisher'],
-      })
-    }
-
-    if (data.emergencyExits && Number(data.emergencyExits) < 1) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.housingFireProtections.emergencyExitNullError,
-        path: ['emergencyExits'],
       })
     }
   })
