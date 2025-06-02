@@ -31,6 +31,7 @@ import {
   TagPairValue,
   TagValue,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
@@ -234,7 +235,7 @@ const CaseTable: FC = () => {
           type="button"
           variant="text"
         >
-          Tilbaka
+          Til baka á yfirlitsskjá
         </Button>
       </Box>
       <div className={styles.logoContainer}>
@@ -247,19 +248,17 @@ const CaseTable: FC = () => {
           <>
             <Box display="flex" alignItems="center">
               <SectionHeading title={table.title} />
-              {table.hasMyCasesFilter &&
-                caseTableData &&
-                caseTableData?.rowCount !== 0 && (
-                  <Box marginBottom={3} marginLeft={'auto'}>
-                    <Checkbox
-                      label="Mín mál"
-                      checked={showOnlyMyCases}
-                      onChange={(e) => {
-                        setShowOnlyMyCases(e.target.checked)
-                      }}
-                    />
-                  </Box>
-                )}
+              {table.hasMyCasesFilter && isNonEmptyArray(caseTableData?.rows) && (
+                <Box marginBottom={3} marginLeft={'auto'}>
+                  <Checkbox
+                    label="Mín mál"
+                    checked={showOnlyMyCases}
+                    onChange={(e) => {
+                      setShowOnlyMyCases(e.target.checked)
+                    }}
+                  />
+                </Box>
+              )}
             </Box>
             {loading ? (
               <TableSkeleton />
