@@ -18,6 +18,7 @@ import { formatCitizenshipDto, CitizenshipDto } from './types/citizenship.dto'
 import { formatIndividualDto } from './types/individual.dto'
 import { IndividualDto } from './types/individual.dto'
 
+
 @Injectable()
 export class NationalRegistryV3ApplicationsClientService {
   constructor(

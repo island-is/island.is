@@ -40,16 +40,15 @@ export const formatCohabitationDtoV3FromSam = (
     return null
   }
 
-  const { sambudTexti: spouseName, kennitalaMaka: spouseNationalId } =
-    cohabitation
+  const { nafnMaka: spouseName, kennitalaMaka: spouseNationalId } = cohabitation
 
   return {
     cohabitationCode: hjuskapur?.hjuskaparKodi || '',
-    cohabitationCodeDescription: hjuskapur?.hjuskaparTexti || '',
+    cohabitationCodeDescription: cohabitation?.sambudTexti || '',
     spouseName: spouseName || '',
     spouseNationalId: spouseNationalId || '',
-    lastModified: hjuskapur?.dagsetningBreytt
-      ? new Date(hjuskapur.dagsetningBreytt)
+    lastModified: cohabitation?.dagsetningBreytt
+      ? new Date(cohabitation.dagsetningBreytt)
       : null,
   }
 }
