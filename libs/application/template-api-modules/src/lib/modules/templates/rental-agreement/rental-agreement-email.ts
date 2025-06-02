@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { EmailTemplateGenerator } from '../../../types'
-import { filterNonRepresentativesAndMapInfo } from './utils'
+import { filterNonRepresentativesAndMapInfo } from './utils/utils'
 import { applicationAnswers } from '@island.is/application/templates/rental-agreement'
 
 export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {

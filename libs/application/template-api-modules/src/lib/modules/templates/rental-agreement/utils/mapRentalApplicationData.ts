@@ -16,7 +16,7 @@ import {
   mapAppraisalUnits,
   mapPersonToArray,
   parseToNumber,
-} from '.'
+} from './utils'
 import {
   RentalAgreementAnswers,
   RentalHousingCategoryClass,
