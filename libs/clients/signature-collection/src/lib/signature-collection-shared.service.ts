@@ -95,18 +95,33 @@ export class SignatureCollectionSharedClientService {
       onlyActive,
       collectionType,
     }: GetListInput,
-    api: ListApi,
+    listApi: ListApi,
+    electionApi: ElectionApi,
   ): Promise<List[]> {
     let lists: Array<MedmaelalistiDTO>
     if (collectionType && collectionType === CollectionType.LocalGovernmental) {
-      lists = await api.medmaelalistarGet({})
-      lists.filter(
-        (list) =>
-          getCollectionTypeFromNumber(list.medmaelasofnun?.kosningID ?? 0) ===
-          CollectionType.LocalGovernmental,
+      const electionIds = (
+        await electionApi.kosningGet({
+          onlyActive: true,
+          hasSofnun: true,
+        })
       )
+        .filter(
+          (election) =>
+            getCollectionTypeFromNumber(election.kosningTegundNr) ===
+            CollectionType.LocalGovernmental,
+        )
+        .map((election) => election.id)
+      lists = []
+
+      for (const electionId of electionIds) {
+        const electionLists = await listApi.medmaelalistarGet({
+          kosningID: electionId,
+        })
+        lists.push(...electionLists)
+      }
     } else {
-      lists = await api.medmaelalistarGet({
+      lists = await listApi.medmaelalistarGet({
         sofnunID: collectionId ? parseInt(collectionId) : undefined,
         svaediID: areaId ? parseInt(areaId) : undefined,
         frambodID: candidateId ? parseInt(candidateId) : undefined,

@@ -63,6 +63,7 @@ export class SignatureCollectionClientService {
     return await this.sharedService.getLists(
       input,
       auth ? this.getApiWithAuth(this.listsApi, auth) : this.listsApi,
+      auth ? this.getApiWithAuth(this.electionsApi, auth) : this.electionsApi,
     )
   }
 

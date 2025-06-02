@@ -17,13 +17,45 @@ import { useLoaderData, useNavigate } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import StartAreaCollection from './StartAreaCollection'
+import { SignatureCollectionList } from '@island.is/api/schema'
 
 const AllMunicipalities = () => {
-  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+  const { allLists } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  console.log(collection)
+  const municipalityBuckets: Record<string, SignatureCollectionList> = {}
+  const areaCounts: Record<string, number> = {}
+  for (const list of allLists) {
+    const key = list?.area?.name
+    if (!key) {
+      continue
+    }
+
+    if (areaCounts[key]) {
+      areaCounts[key] += 1
+    } else {
+      areaCounts[key] = 1
+    }
+
+    // TODO: Map what needs to be mapped here for each collection.
+    // example of if collectors matter
+    if (!municipalityBuckets[key]) {
+      municipalityBuckets[key] = list
+    } else {
+      if (
+        municipalityBuckets[key].collectors?.length &&
+        list?.collectors?.length
+      ) {
+        municipalityBuckets[key]?.collectors?.push(...list.collectors)
+      } else if (list?.collectors?.length) {
+        municipalityBuckets[key].collectors = list.collectors
+      }
+    }
+  }
+  const municipalityLists = Object.keys(municipalityBuckets).map(
+    (municipalityBucketKey) => municipalityBuckets[municipalityBucketKey],
+  )
 
   return (
     <GridContainer>
@@ -64,18 +96,17 @@ const AllMunicipalities = () => {
             </Text>
           </Box>
           <Stack space={3}>
-            {collection?.areas.map((area) => {
-              const areaLists = allLists.filter(
-                (l) => l.area.name === area.name,
-              )
+            {municipalityLists.map((list) => {
               return (
                 <ActionCard
-                  key={area.id}
+                  key={list.area.id}
                   eyebrow={
                     formatMessage(m.totalListsPerConstituency) +
-                    areaLists.length
+                    (areaCounts[list.area.name]
+                      ? areaCounts[list.area.name].toString()
+                      : '0')
                   }
-                  heading={area.name}
+                  heading={list.area.name}
                   cta={{
                     label: formatMessage(m.viewMunicipality),
                     variant: 'text',
@@ -83,7 +114,7 @@ const AllMunicipalities = () => {
                       navigate(
                         SignatureCollectionPaths.SingleMunicipality.replace(
                           ':municipality',
-                          area.name,
+                          list.area.name,
                         ),
                       )
                     },
