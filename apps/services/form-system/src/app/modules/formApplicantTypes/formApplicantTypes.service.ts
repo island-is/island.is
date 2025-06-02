@@ -153,7 +153,10 @@ export class FormApplicantTypesService {
       case ApplicantTypesEnum.LEGAL_GUARDIAN:
         return 'LegalGuardian'
       default:
-        return 'Unknown'
+        // Fail fast when a new enum value is added but not handled
+        ;+throw new Error(
+          `Unhandled ApplicantTypesEnum value: ${applicantType}`,
+        )
     }
   }
 }

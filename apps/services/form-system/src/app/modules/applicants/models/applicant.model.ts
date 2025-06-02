@@ -10,7 +10,6 @@ import {
 } from 'sequelize-typescript'
 import { Application } from '../../applications/models/application.model'
 import { ApplicantTypesEnum } from '@island.is/form-system/shared'
-import { AuthDelegationType } from '@island.is/shared/types'
 
 @Table({ tableName: 'applicant' })
 export class Applicant extends Model<Applicant> {
@@ -71,10 +70,10 @@ export class Applicant extends Model<Applicant> {
   municipality?: string
 
   @Column({
-    type: DataType.ENUM(...Object.values(AuthDelegationType)),
+    type: DataType.STRING,
     allowNull: true,
   })
-  delegationType?: AuthDelegationType
+  delegationType?: string
 
   @Column({
     type: DataType.ENUM,
