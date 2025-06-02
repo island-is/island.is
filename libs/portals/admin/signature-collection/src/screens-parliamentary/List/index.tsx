@@ -1,6 +1,7 @@
 import {
   Box,
   Breadcrumbs,
+  Divider,
   GridColumn,
   GridContainer,
   GridRow,
@@ -15,6 +16,7 @@ import { PaperSignees } from './paperSignees'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import Signees from '../../shared-components/signees'
 import electionsCommittee from '../../../assets/electionsCommittee.svg'
+import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 
 const List = () => {
   const { formatMessage } = useLocale()
@@ -63,8 +65,10 @@ const List = () => {
             imgPosition="right"
             imgHiddenBelow="sm"
             img={electionsCommittee}
+            buttonGroup={<ActionDrawer />}
           />
-
+          <Divider />
+          <Box marginTop={9} />
           <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
           <PaperSignees listId={list.id} />
         </GridColumn>
