@@ -100,7 +100,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       message: (application) => {
         const rules = getExemptionRules(application.externalData)
         return {
-          ...freight.create.policeEscortAlertMessage,
+          ...freight.create.warningPoliceEscortAlertMessage,
           values: {
             maxLength: formatNumber(rules?.policeEscort.maxLength),
             maxHeight: formatNumber(rules?.policeEscort.maxHeight),

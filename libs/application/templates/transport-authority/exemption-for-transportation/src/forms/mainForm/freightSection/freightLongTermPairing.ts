@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildDescriptionField,
   buildHiddenInput,
@@ -6,6 +7,7 @@ import {
   buildSelectField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
   YES,
 } from '@island.is/application/core'
 import { freight } from '../../../lib/messages'
@@ -13,7 +15,10 @@ import { Application, SubSection } from '@island.is/application/types'
 import {
   getConvoyItem,
   getConvoyItems,
+  getConvoyShortName,
+  getExemptionRules,
   getFreightItem,
+  getFreightPairingItems,
   isConvoySelected,
   isExemptionTypeLongTerm,
   MAX_CNT_CONVOY,
@@ -76,44 +81,6 @@ const FreightPairingSubSection = (freightIndex: number) =>
               return freightItem?.freightId
             },
           }),
-          buildCheckboxField({
-            id: `freightLongTermPairingCheckbox.${freightIndex}.selectAll`,
-            large: false,
-            backgroundColor: 'white',
-            options: [
-              {
-                value: YES,
-                label: 'Velja allar vagnlestir',
-              },
-            ],
-            //TODOx can I make defaultValue get updated when page is opened, or do I need to save in answers?
-            // but then it might get buggy if this is checked, user goes back and adds a convoy, it will look like all is checked while it is not
-            // defaultValue: (application: Application) => {
-            //   const allConvoyIdList: string[] = getConvoyItems(
-            //     application.answers,
-            //   ).map((x) => x.convoyId)
-            //   const selectedConvoyIdList =
-            //     getValueViaPath<string[]>(
-            //       application.answers,
-            //       `freightPairing.${freightIndex}.convoyIdList`,
-            //     ) || []
-            //   const notAllSelected = allConvoyIdList.some(
-            //     (id) => !selectedConvoyIdList.includes(id),
-            //   )
-            //   return notAllSelected ? [] : [YES]
-            // },
-            marginBottom: 0,
-            setOnChange: async (_, application) => {
-              const convoyItems = getConvoyItems(application.answers)
-              console.log(convoyItems)
-              return [
-                {
-                  key: `freightPairing.${freightIndex}.convoyIdList`,
-                  value: convoyItems.map((x) => x.convoyId),
-                },
-              ]
-            },
-          }),
           buildSelectField({
             id: `freightPairing.${freightIndex}.convoyIdList`,
             title: freight.labels.pairingConvoyList,
@@ -127,16 +94,13 @@ const FreightPairingSubSection = (freightIndex: number) =>
                   ...freight.labels.pairingConvoyOption,
                   values: {
                     convoyNumber: freightIndex + 1,
-                    vehicleAndTrailerPermno:
-                      item.vehicle.permno +
-                      (item.trailer?.permno ? ' / ' + item.trailer.permno : ''),
+                    vehicleAndTrailerPermno: getConvoyShortName(item),
                   },
                 },
                 value: item.convoyId,
               }))
             },
           }),
-
           ...Array(MAX_CNT_CONVOY)
             .fill(null)
             .flatMap((_, convoyIndex) => {
@@ -164,11 +128,7 @@ const FreightPairingSubSection = (freightIndex: number) =>
                       ...freight.labels.pairingFreightWithConvoySubtitle,
                       values: {
                         convoyNumber: freightIndex + 1,
-                        vehicleAndTrailerPermno:
-                          convoyItem.vehicle.permno +
-                          (convoyItem.trailer?.permno
-                            ? ' / ' + convoyItem.trailer.permno
-                            : ''),
+                        vehicleAndTrailerPermno: getConvoyShortName(convoyItem),
                       },
                     }
                   },
@@ -255,7 +215,96 @@ const FreightPairingSubSection = (freightIndex: number) =>
                   required: true,
                   suffix: freight.labels.metersSuffix,
                 }),
-                //TODOx alertMessage policeEscortError
+                buildAlertMessageField({
+                  id: 'freight.alertValidation',
+                  title: freight.create.errorAlertMessageTitle,
+                  message: (application) => {
+                    // Empty list error
+                    const convoyIdList = getValueViaPath<string[]>(
+                      application.answers,
+                      `freightPairing.${freightIndex}.convoyIdList`,
+                    )
+                    const showEmptyListError = !convoyIdList?.length
+
+                    // Police escort error
+                    const freightPairingItems = getFreightPairingItems(
+                      application.answers,
+                      freightIndex,
+                    )
+                    const rules = getExemptionRules(application.externalData)
+                    const maxHeight = rules?.policeEscort.maxHeight
+                    const maxWidth = rules?.policeEscort.maxWidth
+                    const invalidConvoyIndex = freightPairingItems
+                      ? freightPairingItems.findIndex(
+                          (x) =>
+                            (x?.height &&
+                              maxHeight &&
+                              Number(x.height) > maxHeight) ||
+                            (x?.width &&
+                              maxWidth &&
+                              Number(x.width) > maxWidth),
+                        )
+                      : -1
+                    const convoyItem =
+                      invalidConvoyIndex !== -1
+                        ? getConvoyItem(application.answers, invalidConvoyIndex)
+                        : undefined
+                    const showPoliceEscortError = !!convoyItem
+
+                    if (showEmptyListError)
+                      return freight.pairing.errorEmptyListAlertMessage
+                    else if (showPoliceEscortError) {
+                      return {
+                        ...freight.pairing.errorPoliceEscortAlertMessage,
+                        values: {
+                          maxHeight,
+                          maxWidth,
+                          convoyNumber: invalidConvoyIndex + 1,
+                          vehicleAndTrailerPermno:
+                            getConvoyShortName(convoyItem),
+                        },
+                      }
+                    }
+                  },
+                  doesNotRequireAnswer: true,
+                  alertType: 'error',
+                  condition: (answers, externalData) => {
+                    // Empty list error
+                    const convoyIdList = getValueViaPath<string[]>(
+                      answers,
+                      `freightPairing.${freightIndex}.convoyIdList`,
+                    )
+                    const showEmptyListError = !convoyIdList?.length
+
+                    // Police escort error
+                    const freightPairingItems = getFreightPairingItems(
+                      answers,
+                      freightIndex,
+                    )
+                    const rules = getExemptionRules(externalData)
+                    const maxHeight = rules?.policeEscort.maxHeight
+                    const maxWidth = rules?.policeEscort.maxWidth
+                    const invalidConvoyIndex = freightPairingItems
+                      ? freightPairingItems.findIndex(
+                          (x) =>
+                            (x?.height &&
+                              maxHeight &&
+                              Number(x.height) > maxHeight) ||
+                            (x?.width &&
+                              maxWidth &&
+                              Number(x.width) > maxWidth),
+                        )
+                      : -1
+                    const convoyItem =
+                      invalidConvoyIndex !== -1
+                        ? getConvoyItem(answers, invalidConvoyIndex)
+                        : undefined
+                    const showPoliceEscortError = !!convoyItem
+
+                    return showEmptyListError || showPoliceEscortError
+                  },
+                  shouldBlockInSetBeforeSubmitCallback: true,
+                }),
                 buildDescriptionField({
                   id: `freightLongTermPairingDescription.${freightIndex}.${convoyIndex}.exemptionFor`,
                   condition: (answers) => {

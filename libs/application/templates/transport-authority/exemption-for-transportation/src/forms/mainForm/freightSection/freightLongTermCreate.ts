@@ -100,10 +100,10 @@ export const FreightLongTermCreateSubSection = buildSubSection({
             const showPoliceEscortError = invalidFreightIndex !== -1
 
             if (showEmptyListError)
-              return freight.create.errorEmptyListAlertMessageMessage
+              return freight.create.errorEmptyListAlertMessage
             else if (showPoliceEscortError)
               return {
-                ...freight.create.errorPoliceEscortAlertMessageMessage,
+                ...freight.create.errorPoliceEscortAlertMessage,
                 values: {
                   maxLength,
                   freightNumber: invalidFreightIndex + 1,

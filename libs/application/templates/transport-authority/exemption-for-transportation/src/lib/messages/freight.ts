@@ -30,8 +30,8 @@ export const freight = {
       defaultMessage: 'Lögreglufylgd',
       description: 'Alert title if police escort is required',
     },
-    policeEscortAlertMessage: {
-      id: 'ta.eft.application:freight.create.policeEscortAlertMessage',
+    warningPoliceEscortAlertMessage: {
+      id: 'ta.eft.application:freight.create.warningPoliceEscortAlertMessage',
       defaultMessage:
         'Þar sem heildarmælingar ná {maxLength} metra lengd og/eða {maxHeight} metra hæð og/eða {maxWidth} metra breidd þarfnast þessi flutningur lögreglufylgdar. Flutningsaðili ber sjálfur ábyrgð á að hafa samband við lögreglu varðandi samþykki og fyrirkomulag vegna viðkomandi undanþáguflutnings, í framhaldi af veittri undanþágu frá Samgöngustofu. ',
       description: 'Alert message if police escort is required',
@@ -41,16 +41,16 @@ export const freight = {
       defaultMessage: 'Athugið',
       description: 'Freight error alert title',
     },
-    errorEmptyListAlertMessageMessage: {
-      id: 'ta.eft.application:freight.create.errorEmptyListAlertMessageMessage',
+    errorEmptyListAlertMessage: {
+      id: 'ta.eft.application:freight.create.errorEmptyListAlertMessage',
       defaultMessage: 'Það verður að skrá amk einn farm',
       description: 'Error empty freight list alert message',
     },
-    errorPoliceEscortAlertMessageMessage: {
-      id: 'ta.eft.application:freight.create.errorPoliceEscortAlertMessageMessage',
+    errorPoliceEscortAlertMessage: {
+      id: 'ta.eft.application:freight.create.errorPoliceEscortAlertMessage',
       defaultMessage:
         'Farmur sem fer yfir {maxLength} metra lengd þarfnast lögreglufylgdar. Lögreglufylgd er aðeins í boði fyrir skammtímaundanþágu. Vinsamlegast fjarlægðu farm {freightNumber}: {freightName}.',
-      description: 'Error police escort alert message',
+      description: 'Error police escort alert message when creating freight',
     },
   }),
   pairing: defineMessages({
@@ -71,6 +71,18 @@ export const freight = {
       defaultMessage:
         'Hérna kemur útskýringartexti sem gerir þetta skýrt fyrir notandanum með mestu málin',
       description: 'Description of pairing freight with convoy page',
+    },
+    errorEmptyListAlertMessage: {
+      id: 'ta.eft.application:freight.pairing.errorEmptyListAlertMessage',
+      defaultMessage: 'Það verður að velja amk eina vagnlest',
+      description: 'Error empty convoy list alert message',
+    },
+    errorPoliceEscortAlertMessage: {
+      id: 'ta.eft.application:freight.pairing.errorPoliceEscortAlertMessage',
+      defaultMessage:
+        'Farmur sem fer yfir {maxHeight} metra hæð og/eða {maxWidth} metra breidd þarfnast lögreglufylgdar. Lögreglufylgd er aðeins í boði fyrir skammtímaundanþágu. Vinsamlegast fjarlægðu vagnlest {convoyNumber}: {vehicleAndTrailerPermno}.',
+      description:
+        'Error police escort alert message when pairing freight with convoy',
     },
   }),
   labels: defineMessages({

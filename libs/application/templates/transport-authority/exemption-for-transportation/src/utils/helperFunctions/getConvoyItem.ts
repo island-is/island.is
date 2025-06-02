@@ -29,3 +29,12 @@ export const isConvoySelected = (
     ) || []
   return convoyIdList.indexOf(convoyId) !== -1
 }
+
+export const getConvoyShortName = (
+  convoyItem: ExemptionForTransportationAnswers['convoy']['items'][0],
+) => {
+  return (
+    convoyItem.vehicle.permno +
+    (convoyItem.trailer?.permno ? ' / ' + convoyItem.trailer.permno : '')
+  )
+}

@@ -16,3 +16,15 @@ export const getFreightItem = (answers: FormValue, index: number) => {
     ExemptionForTransportationAnswers['freight']['items'][0]
   >(answers, `freight.items.${index}`)
 }
+
+export const getFreightPairingItems = (
+  answers: FormValue,
+  freightIndex: number,
+) => {
+  const freightPairing = getValueViaPath<
+    ExemptionForTransportationAnswers['freightPairing']
+  >(answers, 'freightPairing')
+
+  if (freightPairing && freightPairing[freightIndex])
+    return freightPairing[freightIndex]?.items || []
+}
