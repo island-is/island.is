@@ -1,3 +1,5 @@
+import { TerminateRentalAgreementModule } from './hms/terminate-rental-agreement/terminate-rental-agreement.module'
+import { TerminateRentalAgreementService } from './hms/terminate-rental-agreement/terminate-rental-agreement.service'
 import { ExampleFolderStructureAndConventionsModule } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.module'
 import { ExampleFolderStructureAndConventionsService } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.service'
 import { ExampleAuthDelegationModule } from './examples/example-auth-delegation/example-auth-delegation.module'
@@ -246,7 +248,8 @@ export const modules = [
   LegalGazetteTemplateModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
-]
+  TerminateRentalAgreementModule,
+            ]
 
 export const services = [
   ExampleCommonActionsService,
@@ -330,4 +333,5 @@ export const services = [
   LegalGazetteTemplateService,
   ExampleAuthDelegationService,
   RentalAgreementService,
-]
+  TerminateRentalAgreementService,
+            ]
