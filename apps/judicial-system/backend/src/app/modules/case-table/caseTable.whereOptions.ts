@@ -2,6 +2,7 @@ import { fn, literal, Op, Sequelize, where, WhereOptions } from 'sequelize'
 
 import {
   CaseAppealState,
+  CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseTableType,
@@ -142,12 +143,17 @@ const courtOfAppealsCompletedWhereOptions = {
   appeal_state: CaseAppealState.COMPLETED,
 }
 
-// Prison System Request Cases
+// Prison Staff Request Cases
 
 const prisonSharedWhereOptions = {
   is_archived: false,
-  type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
+  type: [
+    CaseType.CUSTODY,
+    CaseType.ADMISSION_TO_FACILITY,
+    CaseType.PAROLE_REVOCATION,
+  ],
   state: CaseState.ACCEPTED,
+  decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
 }
 
 const prisonActiveWhereOptions = {
@@ -161,6 +167,22 @@ const prisonDoneWhereOptions = {
 }
 
 // Prison Admin Indictments
+
+const prisonAdminSharedWhereOptions = {
+  is_archived: false,
+  type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
+  state: CaseState.ACCEPTED,
+}
+
+const prisonAdminActiveWhereOptions = {
+  ...prisonAdminSharedWhereOptions,
+  valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
+}
+
+const prisonAdminDoneWhereOptions = {
+  ...prisonAdminSharedWhereOptions,
+  valid_to_date: { [Op.lt]: fn('NOW') },
+}
 
 const prisonAdminIndictmentSharedWhereOptions = {
   is_archived: false,
@@ -388,27 +410,28 @@ export const caseTableWhereOptions: Record<
     withUserFilter(districtCourtIndictmentsFinalizingWhereOptions, user),
   [CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED]: (user) =>
     withUserFilter(districtCourtIndictmentsCompletedWhereOptions, user),
-  [CaseTableType.COURT_OF_APPEALS_IN_PROGRESS]: (_user) =>
+  [CaseTableType.COURT_OF_APPEALS_IN_PROGRESS]: () =>
     courtOfAppealsInProgressWhereOptions,
-  [CaseTableType.COURT_OF_APPEALS_COMPLETED]: (_user) =>
+  [CaseTableType.COURT_OF_APPEALS_COMPLETED]: () =>
     courtOfAppealsCompletedWhereOptions,
-  [CaseTableType.PRISON_ACTIVE]: (_user) => prisonActiveWhereOptions,
-  [CaseTableType.PRISON_DONE]: (_user) => prisonDoneWhereOptions,
-  [CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN]: (_user) =>
+  [CaseTableType.PRISON_ACTIVE]: () => prisonActiveWhereOptions,
+  [CaseTableType.PRISON_DONE]: () => prisonDoneWhereOptions,
+  [CaseTableType.PRISON_ADMIN_ACTIVE]: () => prisonAdminActiveWhereOptions,
+  [CaseTableType.PRISON_ADMIN_DONE]: () => prisonAdminDoneWhereOptions,
+  [CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN]: () =>
     prisonAdminIndictmentSentToPrisonAdminWhereOptions,
-  [CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING]: (_user) =>
+  [CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING]: () =>
     prisonAdminIndictmentRegisteredRulingWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_NEW]: (_user) =>
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_NEW]: () =>
     prosecutorsOfficeIndictmentNewWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW]: (_user) =>
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW]: () =>
     prosecutorsOfficeIndictmentInReviewWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_REVIEWED]: (_user) =>
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_REVIEWED]: () =>
     prosecutorsOfficeIndictmentReviewedWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED]: (
-    _user,
-  ) => prosecutorsOfficeIndictmentAppealPeriodExpiredWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN]: (_user) =>
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED]: () =>
+    prosecutorsOfficeIndictmentAppealPeriodExpiredWhereOptions,
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN]: () =>
     prosecutorsOfficeIndictmentSentToPrisonAdminWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED]: (_user) =>
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED]: () =>
     prosecutorsOfficeIndictmentAppealedWhereOptions,
 }
