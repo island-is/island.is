@@ -27,11 +27,6 @@ export const tableRepeaterSubsection = buildSubSection({
             'In the table repeater, you can use input, select, radio, checkbox, date, nationalIdWithName and phone as well as async select fields. The nationalIdWithName field can, just like the regular one, be set to enable company search. The async select fields can be used to load data from a remote source and they can also be set to update based on selections in other fields in the current form instance.',
         }),
         buildTableRepeaterField({
-          condition: (answers, externalData) => {
-            console.log('answers', answers)
-            console.log('externalData', externalData)
-            return true
-          },
           id: 'tableRepeater',
           title: 'Table Repeater Field',
           formTitle: 'Table Repeater Form Title', // Todo: doesn't work
