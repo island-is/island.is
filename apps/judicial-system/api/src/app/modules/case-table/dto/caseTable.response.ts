@@ -22,6 +22,12 @@ class StringValue {
 class StringGroupValue {
   @Field(() => [String], { description: 'The string values' })
   readonly strList!: string[]
+
+  @Field(() => Boolean, {
+    description: 'Indicates if the group should have a chech mark',
+    nullable: true,
+  })
+  readonly hasCheckMark?: boolean
 }
 
 @ObjectType()
