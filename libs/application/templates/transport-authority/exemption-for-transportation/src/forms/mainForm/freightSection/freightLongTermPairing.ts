@@ -171,8 +171,8 @@ const FreightPairingSubSection = (freightIndex: number) =>
                   title: freight.labels.heightWithConvoy,
                   backgroundColor: 'blue',
                   width: 'half',
-                  variant: 'number',
                   required: true,
+                  variant: 'number',
                   suffix: freight.labels.metersSuffix,
                 }),
                 buildTextField({
@@ -191,8 +191,8 @@ const FreightPairingSubSection = (freightIndex: number) =>
                   title: freight.labels.widthWithConvoy,
                   backgroundColor: 'blue',
                   width: 'half',
-                  variant: 'number',
                   required: true,
+                  variant: 'number',
                   suffix: freight.labels.metersSuffix,
                 }),
                 buildTextField({
@@ -211,8 +211,8 @@ const FreightPairingSubSection = (freightIndex: number) =>
                   title: freight.labels.totalLengthWithConvoy,
                   backgroundColor: 'blue',
                   width: 'full',
-                  variant: 'number',
                   required: true,
+                  variant: 'number',
                   suffix: freight.labels.metersSuffix,
                 }),
                 buildAlertMessageField({

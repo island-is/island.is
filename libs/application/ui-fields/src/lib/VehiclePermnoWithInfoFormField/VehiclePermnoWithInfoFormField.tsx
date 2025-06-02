@@ -38,6 +38,7 @@ export const VehiclePermnoWithInfoFormField: FC<
   const INPUT_MAX_LENGTH = 5
   const permnoField = `${field.id}.permno`
   const makeAndColorField = `${field.id}.makeAndColor`
+  const numberOfAxlesField = `${field.id}.numberOfAxles`
   const hasErrorField = `${field.id}.hasError`
 
   const { setValue } = useFormContext()
@@ -66,10 +67,14 @@ export const VehiclePermnoWithInfoFormField: FC<
           const permno = data?.vehicleBasicInfoByPermno?.permno
           const make = data?.vehicleBasicInfoByPermno?.make || ''
           const color = data?.vehicleBasicInfoByPermno?.color || ''
+          const numberOfAxles =
+            data?.vehicleBasicInfoByPermno?.numberOfAxles || 0
           if (permno) {
             setValue(makeAndColorField, `${make} ${color}`)
+            setValue(numberOfAxlesField, numberOfAxles)
           } else {
             setValue(makeAndColorField, '')
+            setValue(numberOfAxlesField, 0)
           }
         },
       },
@@ -107,6 +112,7 @@ export const VehiclePermnoWithInfoFormField: FC<
     setPermnoInput(permnoVal)
     if (permnoVal.length !== INPUT_MAX_LENGTH) {
       setValue(makeAndColorField, '')
+      setValue(numberOfAxlesField, 0)
       setValue(hasErrorField, false)
       setVehicleValidation(null)
     } else {

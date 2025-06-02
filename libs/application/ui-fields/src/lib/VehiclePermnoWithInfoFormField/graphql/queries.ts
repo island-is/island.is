@@ -4,6 +4,7 @@ export const GET_VEHICLE_BASIC_INFO_BY_PERMNO = `
       permno
       make
       color
+      numberOfAxles
     }
   } 
 `

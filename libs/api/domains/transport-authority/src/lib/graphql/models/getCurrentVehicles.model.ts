@@ -23,6 +23,9 @@ export class BasicVehicleInformation {
   @Field(() => String, { nullable: true })
   role?: string | null
 
+  @Field(() => Number, { nullable: true })
+  numberOfAxles?: number | null
+
   @Field(() => Boolean, { nullable: true })
   requireMileage?: boolean | null
 

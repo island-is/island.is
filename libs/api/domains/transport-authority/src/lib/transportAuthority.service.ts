@@ -475,6 +475,7 @@ export class TransportAuthorityApi {
         // Note: subModel (vehcom+speccom) has already been added to this field
         make: `${model} ${subModel}`,
         color: vehicle.color,
+        numberOfAxles: vehicle.technical?.axle?.axleno || 0,
       }
     } catch (e) {
       return null

@@ -87,12 +87,14 @@ const ConvoySchema = z.object({
       vehicle: z.object({
         permno: z.string().length(5),
         makeAndColor: z.string().min(1),
+        numberOfAxles: z.number(),
         hasError: z.boolean().refine((v) => v !== true),
       }),
       trailer: z
         .object({
           permno: z.string().optional(),
           makeAndColor: z.string().optional(),
+          numberOfAxles: z.number().optional(),
           hasError: z.boolean().optional(),
         })
         .refine(
@@ -109,6 +111,13 @@ const ConvoySchema = z.object({
           },
           { path: ['makeAndColor'] },
         )
+        .refine(
+          ({ permno, numberOfAxles }) => {
+            if (!permno) return true
+            return !!numberOfAxles
+          },
+          { path: ['numberOfAxles'] },
+        )
         .refine(({ permno, hasError }) => {
           if (!permno) return true
           return hasError !== true
@@ -121,7 +130,8 @@ const ConvoySchema = z.object({
 
 const FreightSchema = z
   .object({
-    // Note: we are only saving exemptionPeriodType and limit in answers to be able to display pretty zod error message
+    // Note: we are only saving exemptionPeriodType and limit in answers to be able to display
+    // pretty zod error message (without the usage of custom component)
     exemptionPeriodType: z.string(),
     limit: z
       .object({
@@ -268,7 +278,8 @@ const FreightSchema = z
 
 const FreightPairingSchema = z
   .object({
-    // Note: we are only saving exemptionPeriodType and limit in answers to be able to display pretty zod error message
+    // Note: we are only saving exemptionPeriodType and limit in answers to be able to display
+    // pretty zod error message (without the usage of custom component)
     exemptionPeriodType: z.string(),
     limit: z
       .object({
@@ -373,6 +384,13 @@ const FreightPairingSchema = z
     },
   )
 
+const AxleSpacingSchema = z.object({
+  convoyId: z.string(),
+  vehicle: z.array(z.string()),
+  dolly: z.array(z.string()).optional(),
+  trailer: z.array(z.string()),
+})
+
 const FileDocumentSchema = z.object({
   name: z.string(),
   key: z.string(),
@@ -463,6 +481,7 @@ export const ExemptionForTransportationSchema = z.object({
   freightPairing: z
     .array(FreightPairingSchema.optional().nullable())
     .optional(),
+  axleSpacing: z.array(AxleSpacingSchema),
   location: LocationSchema,
   supportingDocuments: z.object({
     files: z.array(FileDocumentSchema).optional(),

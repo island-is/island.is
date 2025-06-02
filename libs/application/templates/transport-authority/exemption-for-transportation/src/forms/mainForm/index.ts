@@ -22,8 +22,8 @@ export const MainForm = buildForm({
     exemptionPeriodSection,
     convoySection,
     freightSection,
-    axleSpacingSection,
-    vehicleSpacingSection,
+    axleSpacingSection, //TODOx only if exemptionFor weight
+    vehicleSpacingSection, //TODOx only if exemptionFor weight
     locationSection,
     supportingDocumentsSection,
     overviewSection,
