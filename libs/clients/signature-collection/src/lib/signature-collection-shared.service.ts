@@ -4,6 +4,7 @@ import {
   MedmaelalistarApi,
   KosningApi,
   MedmaelasofnunApi,
+  MedmaelalistiDTO,
 } from '../../gen/fetch'
 import { CanCreateInput, GetListInput } from './signature-collection.types'
 import {
@@ -87,14 +88,30 @@ export class SignatureCollectionSharedClientService {
   }
 
   async getLists(
-    { collectionId, areaId, candidateId, onlyActive }: GetListInput,
+    {
+      collectionId,
+      areaId,
+      candidateId,
+      onlyActive,
+      collectionType,
+    }: GetListInput,
     api: ListApi,
   ): Promise<List[]> {
-    const lists = await api.medmaelalistarGet({
-      sofnunID: collectionId ? parseInt(collectionId) : undefined,
-      svaediID: areaId ? parseInt(areaId) : undefined,
-      frambodID: candidateId ? parseInt(candidateId) : undefined,
-    })
+    let lists: Array<MedmaelalistiDTO>
+    if (collectionType && collectionType === CollectionType.LocalGovernmental) {
+      lists = await api.medmaelalistarGet({})
+      lists.filter(
+        (list) =>
+          getCollectionTypeFromNumber(list.medmaelasofnun?.kosningID ?? 0) ===
+          CollectionType.LocalGovernmental,
+      )
+    } else {
+      lists = await api.medmaelalistarGet({
+        sofnunID: collectionId ? parseInt(collectionId) : undefined,
+        svaediID: areaId ? parseInt(areaId) : undefined,
+        frambodID: candidateId ? parseInt(candidateId) : undefined,
+      })
+    }
 
     const listsMapped = lists.map((list) => mapList(list))
     return onlyActive ? listsMapped.filter((list) => list.active) : listsMapped
