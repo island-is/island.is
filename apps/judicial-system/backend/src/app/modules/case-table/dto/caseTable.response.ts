@@ -15,7 +15,7 @@ export class StringGroupValue {
 
   @ApiPropertyOptional({
     type: Boolean,
-    description: 'Indicates if the group should have a chech mark',
+    description: 'Indicates if the group should have a check mark',
   })
   readonly hasCheckMark?: boolean
 }

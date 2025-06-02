@@ -24,7 +24,7 @@ class StringGroupValue {
   readonly strList!: string[]
 
   @Field(() => Boolean, {
-    description: 'Indicates if the group should have a chech mark',
+    description: 'Indicates if the group should have a check mark',
     nullable: true,
   })
   readonly hasCheckMark?: boolean
