@@ -303,7 +303,7 @@ jobs:
           yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
             tee -a "$lints" | # Show output when running, but preserve pipe-chaining
             (grep -oP '(?<=✖ )(\d+)(?= problems)' || echo '0') | # Find number of problems
-            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d\n", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
             tee -a "$GITHUB_OUTPUT" # Finally create output
           echo "::group::Lints"
           cat "$lints"
