@@ -36,69 +36,8 @@ import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHe
 import { useCaseTableQuery } from './caseTable.generated'
 import * as styles from './CaseTable.css'
 
-const hasCellValue = (cell: CaseTableCell): boolean => {
-  return cell.value !== null && cell.value !== undefined
-}
-
-const compareString = (
-  a: string | undefined | null,
-  b: string | undefined | null,
-) => {
-  return compareLocaleIS(a, b)
-}
-
-const compareTag = (a: TagValue, b: TagValue) => {
-  return compareLocaleIS(a.text, b.text)
-}
-
-const compareTagPair = (a: TagPairValue, b: TagPairValue) => {
-  const comp = compareTag(a.firstTag, b.firstTag)
-
-  if (comp !== 0) {
-    return comp
-  }
-
-  const aSecondTag = a.secondTag
-  const bSecondTag = b.secondTag
-
-  if (!aSecondTag) {
-    return bSecondTag ? -1 : 0
-  } else if (!bSecondTag) {
-    return 1
-  }
-
-  return compareTag(aSecondTag, bSecondTag)
-}
-
 const compare = (a: CaseTableCell, b: CaseTableCell): number => {
-  if (!hasCellValue(a)) {
-    return hasCellValue(b) ? -1 : 0
-  } else if (!hasCellValue(b)) {
-    return 1
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const aValue = a.value!
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const bValue = b.value!
-
-  // Cannot compare different types
-  if (aValue.__typename !== bValue.__typename) {
-    return 0
-  }
-
-  switch (aValue.__typename) {
-    case 'StringValue':
-    case 'StringGroupValue':
-      return compareString(a.sortValue, b.sortValue)
-    case 'TagValue':
-      return compareTag(aValue, bValue as TagValue)
-    case 'TagPairValue':
-      return compareTagPair(aValue, bValue as TagPairValue)
-    // This should never happen, but if it does, we return 0
-    default:
-      return 0
-  }
+  return compareLocaleIS(a.sortValue, b.sortValue)
 }
 
 const renderString = (value: StringValue) => {
@@ -128,7 +67,7 @@ const renderStringGroup = (value: StringGroupValue) => {
   )
 }
 
-const renderTag = (value: { color: string; text: string }) => {
+const renderTag = (value: TagValue) => {
   return (
     <Tag variant={value.color as TagVariant} outlined disabled truncate>
       {value.text}
