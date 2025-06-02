@@ -29,6 +29,7 @@ export interface GenericRenewModalProps<T> {
   confirmLabel: string
   toggleClose?: boolean
   errorMessage?: string
+  loading?: boolean
 }
 
 const GenericRenewModal = <T extends { id?: string }>({
@@ -44,6 +45,7 @@ const GenericRenewModal = <T extends { id?: string }>({
   confirmLabel,
   toggleClose,
   errorMessage,
+  loading,
 }: GenericRenewModalProps<T>) => {
   const [modalVisible, setModalVisible] = useState<boolean>(isVisible)
   const [formError, setFormError] = useState<string>()
@@ -139,7 +141,13 @@ const GenericRenewModal = <T extends { id?: string }>({
                   <Button size="small" variant="ghost" onClick={closeModal}>
                     {cancelLabel}
                   </Button>
-                  <Button size="small" type="submit" onClick={submitForm}>
+                  <Button
+                    size="small"
+                    type="submit"
+                    onClick={submitForm}
+                    disabled={loading}
+                    loading={loading}
+                  >
                     {confirmLabel}
                   </Button>
                 </Box>

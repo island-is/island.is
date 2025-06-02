@@ -73,19 +73,23 @@ const Aids = ({ data }: Props) => {
   )
 
   const handleSubmit = async (item: RightsPortalAidOrNutrition) => {
-    await renewAidsAndNutrition({
+    const data = await renewAidsAndNutrition({
       variables: {
         input: {
           id: item.id,
         },
       },
-    }).then(() => {
-      if (postData?.rightsPortalRenewAidOrNutrition.success) {
-        toast.success(formatMessage(messages.renewalFormSuccess))
-      }
-      if (postData?.rightsPortalRenewAidOrNutrition.errorMessage)
-        toast.error(postData.rightsPortalRenewAidOrNutrition.errorMessage)
     })
+
+    const success = data?.data?.rightsPortalRenewAidOrNutrition?.success
+    const error = data?.data?.rightsPortalRenewAidOrNutrition?.errorMessage
+
+    if (success) {
+      toast.success(formatMessage(messages.renewalFormSuccess))
+    }
+    if (error) {
+      toast.error(formatMessage(messages.renewalFormError))
+    }
   }
 
   const getFields = (item: RightsPortalAidOrNutrition): ModalField[] => [
@@ -222,6 +226,7 @@ const Aids = ({ data }: Props) => {
           cancelLabel={formatMessage(m.buttonCancel)}
           confirmLabel={formatMessage(messages.renew)}
           errorMessage={formatMessage(messages.renewalFormError)}
+          loading={loading}
         />
       )}
     </Box>
