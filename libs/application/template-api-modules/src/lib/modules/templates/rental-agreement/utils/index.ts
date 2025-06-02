@@ -1,10 +1,16 @@
 import { ApplicantsInfo } from '@island.is/application/templates/rental-agreement'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { SecurityDepositType } from '@island.is/clients/hms-rental-agreement'
 
 export const parseToNumber = (value: string): number => {
   const parsed = parseInt(value, 10)
   return isNaN(parsed) ? 0 : parsed
+}
+
+export const formatPhoneNumber = (phone: string) => {
+  return phone
+    .trim()
+    .replace(/(^00354|^\+354)/g, '') // Remove country code
+    .replace(/\D/g, '') // Remove all non-digits
 }
 
 export const filterNonRepresentativesAndMapInfo = (
