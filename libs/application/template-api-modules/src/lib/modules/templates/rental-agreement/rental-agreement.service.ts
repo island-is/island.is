@@ -44,8 +44,6 @@ export class RentalAgreementService extends BaseTemplateApiService {
       mappedAnswers,
     )
 
-    console.log(leaseApplication)
-
     return await this.homeApiWithAuth(auth)
       .contractPost({
         leaseApplication,
