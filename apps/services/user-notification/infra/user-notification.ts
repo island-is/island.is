@@ -209,7 +209,12 @@ export const userNotificationBirthdayWorkerSetup = (services: {
     .codeOwner(CodeOwners.Juni)
     .db({ name: 'user-notification' })
     .command('node')
-    .args('--no-experimental-fetch', 'main.js', '--job=worker')
+    .args(
+      '--no-experimental-fetch',
+      'main.js',
+      '--job=worker',
+      '--isBirthdayWorker',
+    )
     .redis()
     .env({ ...getEnv(services) })
     .secrets({
