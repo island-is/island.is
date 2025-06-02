@@ -300,10 +300,8 @@ jobs:
           set -euo pipefail
           lints=$(mktemp -t lint-head.XXXXXX)
           echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
-          echo "::group::Lints"
           yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
             tee "$lints"
-          echo "::endgroup::"
           (grep -oP '(?<=✖ )(\d+)(?= problems)' "$lints" || echo '0') | # Find number of problems
             awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d\n", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
             tee -a "$GITHUB_OUTPUT" # Finally create output
@@ -322,10 +320,8 @@ jobs:
           set -euo pipefail
           lints=$(mktemp -t lint-base.XXXXXX)
           echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
-          echo "::group::Lints"
           yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
             tee "$lints"
-          echo "::endgroup::"
           (grep -oP '(?<=✖ )(\d+)(?= problems)' "$lints" || echo '0') | # Find number of problems
             awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d\n", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
             tee -a "$GITHUB_OUTPUT" # Finally create output
