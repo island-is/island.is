@@ -15,6 +15,9 @@ import { NudgeService } from '../services/nudge.service'
 import { ApplicationEvent } from './models/applicationEvent.model'
 import { ValidationService } from '../services/validation.service'
 import { Applicant } from '../applicants/models/applicant.model'
+import { Screen } from '../screens/models/screen.model'
+import { Field } from '../fields/models/field.model'
+import { Section } from '../sections/models/section.model'
 
 @Module({
   imports: [
@@ -27,6 +30,9 @@ import { Applicant } from '../applicants/models/applicant.model'
       Organization,
       FormUrl,
       OrganizationUrl,
+      Screen,
+      Field,
+      Section,
     ]),
   ],
   controllers: [ApplicationsController],
