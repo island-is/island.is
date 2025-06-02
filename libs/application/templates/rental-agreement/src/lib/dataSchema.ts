@@ -9,8 +9,9 @@ import { otherFees } from './schemas/otherFeesSchema'
 import { securityDeposit } from './schemas/securityDepositSchema'
 import { rentalAmount } from './schemas/rentalAmountSchema'
 import { getRentalPropertySize } from '../utils/utils'
-import { Unit } from '../utils/types'
+
 import * as m from './messages'
+import { PropertyUnit } from '../shared'
 
 const approveExternalData = z.boolean().refine((v) => v)
 
@@ -157,7 +158,7 @@ const fireProtections = z
   })
   .superRefine((data, ctx) => {
     const propertySize = getRentalPropertySize(
-      (data.propertySize as Unit[]) || [],
+      (data.propertySize as PropertyUnit[]) || [],
     )
     const numberOfSmokeDetectors = Number(data.smokeDetectors)
     const requiredSmokeDetectors = Math.ceil(Number(propertySize) / 80)
