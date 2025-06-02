@@ -27,6 +27,11 @@ export const tableRepeaterSubsection = buildSubSection({
             'In the table repeater, you can use input, select, radio, checkbox, date, nationalIdWithName and phone as well as async select fields. The nationalIdWithName field can, just like the regular one, be set to enable company search. The async select fields can be used to load data from a remote source and they can also be set to update based on selections in other fields in the current form instance.',
         }),
         buildTableRepeaterField({
+          condition: (answers, externalData) => {
+            console.log('answers', answers)
+            console.log('externalData', externalData)
+            return true
+          },
           id: 'tableRepeater',
           title: 'Table Repeater Field',
           formTitle: 'Table Repeater Form Title', // Todo: doesn't work
@@ -39,6 +44,7 @@ export const tableRepeaterSubsection = buildSubSection({
           getStaticTableData: (_application) => {
             // Possibility to populate the table with data from the answers or external data
             // Populated data will not be editable or deletable
+            // The prepopulated data will not be automatically run through the format function
             return [
               {
                 input: 'John Doe',
@@ -159,8 +165,11 @@ export const tableRepeaterSubsection = buildSubSection({
           },
           table: {
             // Format values for display in the table
+            // In the format function, you can use the value, index in the repeater and the application object
             format: {
-              input: (value) => `${value} - custom format`,
+              input: (value, _i, _application) => {
+                return `${value} - custom format`
+              },
               nationalIdWithName: (value) => {
                 return `${value} - custom format`
               },
