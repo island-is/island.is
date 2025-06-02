@@ -21,7 +21,7 @@ export const DownloadFileButtonFormField: FC<
     throw Error('No valid file data recieved!')
   }
   return (
-      <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+      <Box display="flex" justifyContent="spaceBetween" alignItems="center" paddingTop={2} paddingBottom={2}>
         <Button
           variant="utility"
           icon="document"

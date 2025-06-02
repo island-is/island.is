@@ -1,4 +1,5 @@
 import XLSX from 'xlsx'
+import { RateCategory } from './constants'
 // Replace data type with return type from function that combines samgöngustofu data and skatturinn data
 export const generateExcelSheet = (data: any): { 
     filename: string, 
@@ -25,7 +26,7 @@ export const generateExcelSheet = (data: any): {
         carTypes[i % carTypes.length],
         100000 + i * 1234,
         '',
-        Math.random() > 0.5 ? 'Daggjald' : 'Kilometragjald',
+        Math.random() > 0.5 ? RateCategory.DAYRATE : RateCategory.KMRATE
       ]),
     ]
 

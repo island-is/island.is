@@ -662,7 +662,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       },
       "RentalDayRateModel": {
         "type": "object",

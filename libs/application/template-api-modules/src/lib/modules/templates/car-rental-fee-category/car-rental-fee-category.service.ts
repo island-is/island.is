@@ -6,14 +6,11 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
-import subYears from 'date-fns/subYears'
 import { RskRentalDayRateClient } from '@island.is/clients-rental-day-rate'
 
 @Injectable()
 export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly notificationsService: NotificationsService,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly rentalDayRateClient: RskRentalDayRateClient
   ) {
@@ -43,7 +40,8 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
       entityId: auth.nationalId
     })
 
-    console.log('data', x)
+    console.log('samgöngustofan', x)
+    console.log('skattur', y)
 
     return {
       id: 1337,

@@ -8,7 +8,7 @@ import { getOverviewItems } from '../../utils/getOverviewItems'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
-  title: 'Overview',
+  title: 'Staðfesting',
   children: [
     buildMultiField({
       id: 'overviewSection',

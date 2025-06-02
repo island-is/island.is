@@ -8,7 +8,7 @@ import { UploadSelection } from '../../utils/constants'
 
 export const singleOrMultiSelection = buildSection({
   id: 'singleOrMultiSelectionSection',
-  title: 'Skrá gjald',
+  title: 'Fjöldi skráninga',
   children: [
     buildMultiField({
       id: 'singleOrMultiSelectionMultiField',
@@ -31,6 +31,7 @@ export const singleOrMultiSelection = buildSection({
               label: 'Skrá staka bíla',
               subLabel: 'Þú getur skráð upplýsingar um gjaldflokk og kílómetrastöðu beint í gegnum viðmótið.',
               value: UploadSelection.SINGLE,
+              disabled: true
             },
           ],
         }),

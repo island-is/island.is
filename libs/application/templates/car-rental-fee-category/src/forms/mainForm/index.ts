@@ -6,6 +6,7 @@ import { overviewSection } from './overview'
 import { singleOrMultiSelection } from './singleOrMultiSelection'
 import { multiUploadSection } from './multiUpload'
 import { tableViewSelectionSection } from './tableViewSelection'
+import { verifySection } from './verify'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -17,7 +18,7 @@ export const MainForm = buildForm({
     singleOrMultiSelection,
     multiUploadSection,
     tableViewSelectionSection,
-    // verifySection
+    verifySection,
     overviewSection
   ],
 })

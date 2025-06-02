@@ -1,32 +1,20 @@
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import {
-    InputFileUploadDeprecated,
-    Box,
-    Text,
-    fileToObjectDeprecated,
-    AlertMessage,
-    Stack,
-    InputFileUpload,
-  } from '@island.is/island-ui/core'
+  fileToObjectDeprecated,
+  InputFileUpload,
+} from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { FileRejection } from 'react-dropzone'
 import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
+import { FieldBaseProps } from '@island.is/application/types'
+import { CarCategoryError, CarCategoryRecord } from '../../utils/types'
+import { CategorySelection, RateCategory } from '../../utils/constants'
 
 const extensionToType = {
   [fileExtensionWhitelist['.csv']]: 'csv',
   [fileExtensionWhitelist['.xlsx']]: 'xlsx',
 } as const
-
-interface CarCategoryRecord {
-  vehicleId: string
-  mileage: number
-}
-
-interface CarCategoryError {
-  code: 1 | 2
-  message: string
-}
 
 const vehicleIndexTitle = [
   'permno',
@@ -35,6 +23,7 @@ const vehicleIndexTitle = [
   'okutaeki',
   'fastanumer',
 ]
+
 const mileageIndexTitle = ['kilometrastada', 'mileage', 'odometer']
 
 const errorMap: Record<number, string> = {
@@ -51,51 +40,86 @@ const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
 const parseFileToCarCategory = async (
   file: File,
   type: 'csv' | 'xlsx',
-): Promise<Array<CarCategoryRecord> | CarCategoryError> => {
+  rate: CategorySelection
+): Promise<Array<CarCategoryRecord> | Array<CarCategoryError>> => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
     : parseXlsx(file))
 
-    console.log('parsed: ', parsedLines)
+  console.log('parsed: ', parsedLines)
 
-    return []
+  const carNumberIndex = 0
+  const prevMilageIndex = 2
+  const currMilageIndex = 3
+  const rateCategoryIndex = 4
 
-  // const [header, ...values] = parsedLines
-  // const vehicleIndex = header.findIndex((l) =>
-  //   vehicleIndexTitle.includes(l.toLowerCase()),
-  // )
+  const [_, ...values] = parsedLines
 
-  // if (vehicleIndex < 0) {
-  //   return {
-  //     code: 1,
-  //     message: errorMap[1],
-  //   }
-  // }
+  const data: Array<CarCategoryRecord | CarCategoryError | undefined> =
+    values.map((row) => {
+      const carNr = row[carNumberIndex]
+      const prevMile = Number(sanitizeNumber(row[prevMilageIndex]))
+      const currMile = Number(sanitizeNumber(row[currMilageIndex]))
 
-  // const mileageIndex = header.findIndex((l) =>
-  //   mileageIndexTitle.includes(l.toLowerCase()),
-  // )
+      // Dont care about rows where either of these are not there
+      if (Number.isNaN(prevMile) || Number.isNaN(currMile)) return undefined
 
-  // if (mileageIndex < 0) {
-  //   return {
-  //     code: 2,
-  //     message: errorMap[2],
-  //   }
-  // }
+      if (prevMile > currMile) {
+        return {
+          code: 1,
+          message: 'New milage cannot be less than old milage!',
+          carNr,
+        }
+      }
 
-  // const uploadedOdometerStatuses: Array<CarCategoryRecord> = values
-  //   .map((row) => {
-  //     const mileage = Number(sanitizeNumber(row[mileageIndex]))
-  //     if (Number.isNaN(mileage)) {
-  //       return undefined
-  //     }
-  //     return {
-  //       vehicleId: row[vehicleIndex],
-  //       mileage,
-  //     }
-  //   })
-  //   .filter((x) => x !== null && x !== undefined)
-  // return uploadedOdometerStatuses
+      const category = row[rateCategoryIndex]
+      if (!category) return undefined
+      // need to check if the category is the same thing as what we should pass into this function
+      if (
+        category.toLowerCase() !== RateCategory.DAYRATE.toString().toLowerCase() ||
+        category.toLowerCase() !== RateCategory.KMRATE.toString().toLowerCase()
+      ) {
+        return {
+          code: 1,
+          message: 'Rate category is not valid, please maintain the correct spelling',
+          carNr,
+        }
+      }
+
+      // no change to the rate for this line, so we dont care about it
+      // maybe we should do this filter in the actual request to skatturinn
+      // so that this line stays in in the error generated file
+      if(category.toLowerCase() === rate.toString().toLowerCase())
+        return undefined
+
+      return {
+        vehicleId: carNr,
+        mileage: currMile,
+        rateCategory: category,
+      }
+    })
+
+  // Filter out undefined values first
+  const filteredData = data.filter(
+    (x): x is CarCategoryRecord | CarCategoryError => x !== undefined,
+  )
+
+  // Check if there are any errors
+  const hasErrors = filteredData.some(
+    (item): item is CarCategoryError => 'code' in item,
+  )
+
+  if (hasErrors) {
+    // Return only the error items
+    return filteredData.filter(
+      (item): item is CarCategoryError => 'code' in item,
+    )
+  }
+
+  // If no errors, return only the CarCategoryRecords
+  return filteredData.filter(
+    (item): item is CarCategoryRecord => 'vehicleId' in item,
+  )
 }
 
 const parseCsv = async (file: File) => {
@@ -163,26 +187,31 @@ const parseCsvString = (chunk: string): Promise<string[][]> => {
     parser.end()
   })
 }
-  
-export const UploadCarCategoryFile = () => {
+
+interface Props {
+  field: {
+    props: {
+      postParseAction: (records: CarCategoryRecord[]) => boolean
+      rateCategory: CategorySelection
+    }
+  }
+}
+
+export const UploadCarCategoryFile = ({ field }: Props & FieldBaseProps) => {
   const [uploadedFile, setUploadedFile] = useState<File | null>()
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(
     null,
   )
 
   const postCarCategories = async (file: File, type: 'xlsx' | 'csv') => {
-    const records = await parseFileToCarCategory(file, type)
+    const records = await parseFileToCarCategory(file, type, field.props.rateCategory)
 
-    if (!Array.isArray(records)) {
-      if (records.code === 1) {
-        setUploadErrorMessage('invalidPermNoColumn')
-      } else if (records.code === 2) {
-        setUploadErrorMessage(
-          'invalidMileageColumn',
-        )
-      } else {
-        setUploadErrorMessage('uploadFailed')
-      }
+    if (records.length > 0 && 'code' in records[0]) {
+      // We have errors, concatenate all error messages
+      const errorMessages = (records as CarCategoryError[])
+        .map((error) => error.message)
+        .join('. \n')
+      setUploadErrorMessage(errorMessages)
       return
     }
 
@@ -190,7 +219,11 @@ export const UploadCarCategoryFile = () => {
       setUploadErrorMessage('noDataInUploadedFile')
       return
     }
-    
+
+    // At this point records is guaranteed to be CarCategoryRecord[]
+    const success = field.props.postParseAction(records as CarCategoryRecord[])
+    console.log('does it work', success)
+
     // Send request to skatturinn with car data
   }
 
@@ -221,21 +254,19 @@ export const UploadCarCategoryFile = () => {
     }
   }
 
-
   return (
-      <InputFileUpload
-        files={uploadedFile ? [uploadedFile] : []}
-        title={'dragFileToUpload'}
-        name={'inputFileUploadName'}
-        description={'fileUploadAcceptedTypes'}
-        disabled={!!uploadErrorMessage}
-        buttonLabel={'selectFileToUpload'}
-        accept={['.csv', '.xlsx']}
-        multiple={false}
-        onRemove={handleOnInputFileUploadRemove}
-        onChange={handleOnInputFileUploadChange}
-        onUploadRejection={handleOnInputFileUploadError}
-        errorMessage={uploadErrorMessage ?? undefined}
-      />
+    <InputFileUpload
+      files={uploadedFile ? [uploadedFile] : []}
+      title={'Dragðu skjöl hingað til að hlaða upp'}
+      name={'inputFileUploadName'}
+      description={'Tekið er við skjölum með endingum: .csv, .xlsx'}
+      buttonLabel={'Hlaða upp skjali'}
+      accept={['.csv', '.xlsx']}
+      multiple={false}
+      onRemove={handleOnInputFileUploadRemove}
+      onChange={handleOnInputFileUploadChange}
+      onUploadRejection={handleOnInputFileUploadError}
+      errorMessage={uploadErrorMessage ?? undefined}
+    />
   )
 }

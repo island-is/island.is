@@ -440,7 +440,8 @@ export const buildDownloadFileButtonField = (
   data: Omit<DownloadFileButtonField, 'type' | 'component' | 'children'>,
 ): DownloadFileButtonField => {
   const {
-    getFileContent
+    getFileContent,
+    buttonTitle,
   } = data
 
   return {
@@ -448,6 +449,7 @@ export const buildDownloadFileButtonField = (
     children: undefined,
     type: FieldTypes.DOWNLOAD_FILE_BUTTON,
     component: FieldComponents.DOWNLOAD_FILE_BUTTON,
+    buttonTitle,
     getFileContent
   }
 }

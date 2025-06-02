@@ -1,5 +1,4 @@
 export {
     NationalRegistryUserApi,
     UserProfileApi,
-    
-  } from '@island.is/application/types'
+} from '@island.is/application/types'

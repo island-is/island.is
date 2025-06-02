@@ -8,7 +8,7 @@ import { CategorySelection } from '../../utils/constants'
 
 export const categorySelection = buildSection({
   id: 'categorySelectionSection',
-  title: 'Skrá gjald',
+  title: 'Gjald tegund',
   children: [
     buildMultiField({
       id: 'categorySelectionMultiField',
