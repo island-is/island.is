@@ -36,7 +36,7 @@ import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import CreateCollection from '../../shared-components/createCollection'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
-import electionsCommittee from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
 const Lists = () => {
   const { formatMessage } = useLocale()
@@ -128,7 +128,7 @@ const Lists = () => {
           <IntroHeader
             title={formatMessage(m.signatureListsTitlePresidential)}
             intro={formatMessage(m.signatureListsIntro)}
-            img={electionsCommittee}
+            img={nationalRegistryLogo}
             imgPosition="right"
             imgHiddenBelow="sm"
           />

@@ -523,11 +523,6 @@ export const m = defineMessages({
     defaultMessage: 'Ekki tókst að loka úrvinnslu',
     description: '',
   },
-  toggleCollectionProcessSuccess: {
-    id: 'admin-portal.signature-collection:toggleCollectionProcessSuccess',
-    defaultMessage: 'Úrvinnslu safnanna lokið',
-    description: '',
-  },
   toggleCollectionProcessError: {
     id: 'admin-portal.signature-collection:toggleCollectionProcessError',
     defaultMessage: 'Ekki tókst að loka úrvinnslu safnanna',

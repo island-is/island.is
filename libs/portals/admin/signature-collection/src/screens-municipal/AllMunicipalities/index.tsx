@@ -23,8 +23,6 @@ const AllMunicipalities = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  console.log(collection)
-
   return (
     <GridContainer>
       <GridRow direction="row">

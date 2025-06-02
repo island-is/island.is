@@ -18,7 +18,7 @@ import { format as formatNationalId } from 'kennitala'
 import Signees from '../../shared-components/signees'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 import { PaperSignees } from '../../shared-components/paperSignees'
-import electionsCommittee from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
 export const List = () => {
   const { list } = useLoaderData() as {
@@ -48,11 +48,11 @@ export const List = () => {
               <IntroHeader
                 title={list.title}
                 intro={formatMessage(m.singleListIntro)}
-                img={electionsCommittee}
+                img={nationalRegistryLogo}
                 imgPosition="right"
                 imgHiddenBelow="sm"
-                marginBottom={3}
                 buttonGroup={<ActionDrawer />}
+                marginBottom={4}
               />
               <Divider />
               <Box marginTop={9} />

@@ -70,6 +70,7 @@ export const Municipality = () => {
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
             buttonGroup={<ActionDrawer />}
+            marginBottom={4}
           />
           <Divider />
           <Box marginTop={9} />

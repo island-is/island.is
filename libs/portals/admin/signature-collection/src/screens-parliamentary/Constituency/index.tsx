@@ -19,7 +19,7 @@ import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import format from 'date-fns/format'
 import { getTagConfig } from '../../lib/utils'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
-import electionsCommittee from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
 export const Constituency = () => {
   const { formatMessage } = useLocale()
@@ -69,8 +69,9 @@ export const Constituency = () => {
             }
             imgPosition="right"
             imgHiddenBelow="sm"
-            img={electionsCommittee}
+            img={nationalRegistryLogo}
             buttonGroup={<ActionDrawer />}
+            marginBottom={4}
           />
           <Divider />
           <Box marginTop={9} />

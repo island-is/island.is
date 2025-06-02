@@ -31,7 +31,7 @@ const ActionCompleteCollectionProcessing = ({
         variables: { input: { collectionId, collectionType } },
       })
       if (res.data?.signatureCollectionAdminProcess.success) {
-        toast.success(formatMessage(m.toggleCollectionProcessSuccess))
+        toast.success(formatMessage(m.completeCollectionProcessing))
         setModalSubmitReviewIsOpen(false)
         revalidate()
       } else {
