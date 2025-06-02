@@ -180,6 +180,7 @@ const Completed: FC = () => {
     {
       label: 'Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti',
       value: InformationForDefendant.INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS,
+      tooltip: 'TODO',
     },
     {
       label: 'Þýðing skilorðsbundinnar refsingar og skilorðsrofs',
@@ -436,6 +437,7 @@ const Completed: FC = () => {
                                 checked={defendant?.informationForDefendant?.includes(
                                   checkbox.value,
                                 )}
+                                tooltip={checkbox?.tooltip}
                                 large
                                 filled
                                 onChange={(target) => {
@@ -474,7 +476,7 @@ const Completed: FC = () => {
           </Box>
         )}
         {features?.includes(Feature.SERVICE_PORTAL) && (
-          <Box marginBottom={5}>
+          <Box>
             <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
             <RulingInput
               workingCase={workingCase}
@@ -482,6 +484,7 @@ const Completed: FC = () => {
               rows={8}
               label="Dómsorð"
               placeholder="Hvert er dómsorðið?"
+              required
             />
           </Box>
         )}
