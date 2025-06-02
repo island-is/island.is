@@ -27,7 +27,7 @@ import {
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
-import electionsCommittee from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
 const ParliamentaryRoot = () => {
   const { formatMessage } = useLocale()
@@ -79,7 +79,7 @@ const ParliamentaryRoot = () => {
             intro={formatMessage(m.parliamentaryCollectionIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
-            img={electionsCommittee}
+            img={nationalRegistryLogo}
           />
           <Box
             width="full"
@@ -211,16 +211,13 @@ const ParliamentaryRoot = () => {
             })}
           </Stack>
           <CompareLists collectionId={collection?.id} />
-          {(collectionStatus === CollectionStatus.InitialActive ||
-            collectionStatus === CollectionStatus.InInitialReview) && (
-            <ActionCompleteCollectionProcessing
-              collectionType={SignatureCollectionCollectionType.Parliamentary}
-              collectionId={collection?.id}
-              canProcess={
-                !!allLists.length && allLists.every((l) => l.reviewed === true)
-              }
-            />
-          )}
+          <ActionCompleteCollectionProcessing
+            collectionType={SignatureCollectionCollectionType.Parliamentary}
+            collectionId={collection?.id}
+            canProcess={
+              !!allLists.length && allLists.every((l) => l.reviewed === true)
+            }
+          />
           {collectionStatus === CollectionStatus.Processed && (
             <Box marginTop={8}>
               <AlertMessage

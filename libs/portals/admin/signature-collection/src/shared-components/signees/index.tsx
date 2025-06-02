@@ -13,16 +13,19 @@ import format from 'date-fns/format'
 import { useEffect, useMemo, useState } from 'react'
 import { useLoaderData } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
-import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
+import {
+  SignatureCollectionSignature as Signature,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 import SortSignees from './sortSignees'
-import { FiltersSigneeType, pageSize } from '../../lib/utils'
+import { FiltersSigneeType, getTagConfig, pageSize } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import EditPage from './editPage'
 import FilterSignees from './filterSignees'
 
 const { Table, Head, Row, HeadData, Body, Data } = T
 
-const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
+const Signees = ({ list }: { list: SignatureCollectionList }) => {
   const { formatMessage } = useLocale()
 
   const { allSignees } = useLoaderData() as { allSignees: Signature[] }
@@ -61,7 +64,12 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
     <Box>
       <Box display="flex" justifyContent="spaceBetween">
         <Text variant="h4">{formatMessage(m.listSigneesHeader)}</Text>
-        <Tag variant="blue">{formatMessage(m.listOpen)}</Tag>
+        <Tag
+          variant={getTagConfig(list).variant}
+          outlined={getTagConfig(list).outlined}
+        >
+          {formatMessage({ id: getTagConfig(list).label })}
+        </Tag>
       </Box>
 
       <GridRow marginTop={2} marginBottom={2}>
@@ -75,11 +83,7 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
           />
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          <Box
-            display="flex"
-            justifyContent="flexEnd"
-            marginTop={[2, 2, 2, 0]}
-          >
+          <Box display="flex" justifyContent="flexEnd" marginTop={[2, 2, 2, 0]}>
             <SortSignees
               signees={signees}
               setSignees={setSignees}
@@ -113,8 +117,8 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
                 )
               : signees?.length > 0 && (
                   <Text variant="eyebrow" textAlign="right">
-                    {/* using numberOfSignatures coming from list info for true total number of signees */}
-                    {formatMessage(m.totalListResults)}: {numberOfSignatures}
+                    {formatMessage(m.totalListResults)}:{' '}
+                    {list.numberOfSignatures}
                   </Text>
                 )}
           </Box>

@@ -54,6 +54,11 @@ export const m = defineMessages({
     defaultMessage: 'Frambjóðandi',
     description: '',
   },
+  name: {
+    id: 'admin-portal.signature-collection:name',
+    defaultMessage: 'Nafn',
+    description: '',
+  },
   nationalId: {
     id: 'admin-portal.signature-collection:nationalId',
     defaultMessage: 'Kennitala',
@@ -163,6 +168,22 @@ export const m = defineMessages({
     defaultMessage: 'Skoða sveitarfélag',
     description: '',
   },
+  openMunicipalCollection: {
+    id: 'admin-portal.signature-collection:openMunicipalCollection',
+    defaultMessage: 'Opna fyrir meðmælasöfnun',
+    description: '',
+  },
+  openMunicipalCollectionDescription: {
+    id: 'admin-portal.signature-collection:openMunicipalCollectionDescription',
+    defaultMessage:
+      'Opnaðu fyrir meðmælasöfnun ef yfirkjörstjórn sveitarfélagsins hefur tekið þá ákvörðun að nýta sér rafræna meðmælakerfið.',
+    description: '',
+  },
+  confirmOpenMunicipalCollection: {
+    id: 'admin-portal.signature-collection:confirmOpenMunicipalCollection',
+    defaultMessage: 'Opna fyrir meðmælasöfnun',
+    description: '',
+  },
   noLists: {
     id: 'admin-portal.signature-collection:noLists',
     defaultMessage: 'Engin söfnun í gangi',
@@ -234,6 +255,26 @@ export const m = defineMessages({
   },
 
   // View list
+  listActionsTitle: {
+    id: 'admin-portal.signature-collection:listActionsTitle',
+    defaultMessage: 'Aðgerðir',
+    description: '',
+  },
+  listManagersTitle: {
+    id: 'admin-portal.signature-collection:listManagersTitle',
+    defaultMessage: 'Aðilar',
+    description: '',
+  },
+  listManagers: {
+    id: 'admin-portal.signature-collection:listManagers',
+    defaultMessage: 'Ábyrgðaraðilar',
+    description: '',
+  },
+  listSupervisors: {
+    id: 'admin-portal.signature-collection:listSupervisors',
+    defaultMessage: 'Umsjónaraðilar',
+    description: '',
+  },
   singleList: {
     id: 'admin-portal.signature-collection:singleList',
     defaultMessage: 'Meðmælasöfnun',
@@ -521,11 +562,6 @@ export const m = defineMessages({
   toggleReviewError: {
     id: 'admin-portal.signature-collection:toggleReviewError',
     defaultMessage: 'Ekki tókst að loka úrvinnslu',
-    description: '',
-  },
-  toggleCollectionProcessSuccess: {
-    id: 'admin-portal.signature-collection:toggleCollectionProcessSuccess',
-    defaultMessage: 'Úrvinnslu safnanna lokið',
     description: '',
   },
   toggleCollectionProcessError: {

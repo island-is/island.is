@@ -15,7 +15,8 @@ import { m } from '../../lib/messages'
 const RemoveCandidate = () => {
   const { formatMessage } = useLocale()
 
-  const [modalRemoveCandidateIsOpen, setModalRemoveCandidateIsOpen] = useState(false)
+  const [modalRemoveCandidateIsOpen, setModalRemoveCandidateIsOpen] =
+    useState(false)
   return (
     <Box>
       <GridRow>
@@ -27,7 +28,9 @@ const RemoveCandidate = () => {
               </Box>
             </Tag>
             <Box marginLeft={5}>
-              <Text variant="h4">{formatMessage(m.cancelCollectionButton)}</Text>
+              <Text variant="h4">
+                {formatMessage(m.cancelCollectionButton)}
+              </Text>
               <Text marginBottom={2}>
                 Texti sem útskýrir þessa aðgerð betur kemur hér.
               </Text>

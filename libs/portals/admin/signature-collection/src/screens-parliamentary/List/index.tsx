@@ -14,9 +14,9 @@ import { useLoaderData } from 'react-router-dom'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import Signees from '../../shared-components/signees'
-import electionsCommittee from '../../../assets/electionsCommittee.svg'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 import { PaperSignees } from '../../shared-components/paperSignees'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
 const List = () => {
   const { formatMessage } = useLocale()
@@ -64,12 +64,13 @@ const List = () => {
             intro={formatMessage(m.singleListIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
-            img={electionsCommittee}
+            img={nationalRegistryLogo}
             buttonGroup={<ActionDrawer />}
+            marginBottom={4}
           />
           <Divider />
           <Box marginTop={9} />
-          <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
+          <Signees list={list} />
           <PaperSignees listId={list.id} />
         </GridColumn>
       </GridRow>
