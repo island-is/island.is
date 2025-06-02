@@ -46,7 +46,15 @@ const districtCourtRequestCasesSharedWhereOptions = {
 
 const districtCourtRequestCasesInProgressWhereOptions = {
   ...districtCourtRequestCasesSharedWhereOptions,
-  state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED],
+  [Op.or]: [
+    { state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED] },
+    {
+      state: completedRequestCaseStates,
+      ruling_signature_date: null,
+      is_completed_without_ruling: null,
+      appeal_state: { [Op.not]: CaseAppealState.APPEALED },
+    },
+  ],
 }
 
 const districtCourtRequestCasesAppealedWhereOptions = {
@@ -58,6 +66,10 @@ const districtCourtRequestCasesAppealedWhereOptions = {
 const districtCourtRequestCasesCompletedWhereOptions = {
   ...districtCourtRequestCasesSharedWhereOptions,
   state: completedRequestCaseStates,
+  [Op.or]: [
+    { ruling_signature_date: { [Op.not]: null } },
+    { is_completed_without_ruling: { [Op.not]: null } },
+  ],
   appeal_state: { [Op.not]: CaseAppealState.APPEALED },
 }
 
