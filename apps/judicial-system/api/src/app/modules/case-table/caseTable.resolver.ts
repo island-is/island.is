@@ -27,7 +27,7 @@ export class CaseTableResolver {
   ) {}
 
   @Query(() => CaseTableResponse)
-  async caseTable(
+  caseTable(
     @Args('input', { type: () => CaseTableQueryInput })
     input: CaseTableQueryInput,
     @CurrentGraphQlUser() user: User,
