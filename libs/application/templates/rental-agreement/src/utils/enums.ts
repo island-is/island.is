@@ -96,3 +96,8 @@ export enum OtherFeesPayeeOptions {
   LANDLORD = 'Landlord',
   TENANT = 'Tenant',
 }
+
+export enum EmergencyExitOptions {
+  YES = '1',
+  NO = '0',
+}

@@ -6,6 +6,7 @@ import {
   Instructors,
   PaymentArrangement,
   Information,
+  shared,
 } from '@island.is/application/templates/aosh/practical-exam'
 import { FormValue } from '@island.is/application/types'
 import {
@@ -16,6 +17,7 @@ import {
   PaymentInfoRequest,
   PaymentOptions,
 } from './types'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 export const getExamLocation = (
   answers: FormValue,
@@ -61,9 +63,11 @@ export const mapCategoriesWithInstructor = (
       }
     })
 
-    const type = examCategories[index]?.medicalCertificate?.type || ''
-    const name = examCategories[index]?.medicalCertificate?.name || ''
-    const content = examCategories[index]?.medicalCertificate?.content || ''
+    const type =
+      examCategories[index]?.medicalCertificate?.[0]?.key.split('.')[1] || ''
+    const name = examCategories[index]?.medicalCertificate?.[0]?.name || ''
+    const content = examCategories[index]?.medicalCertificate?.[0]?.key || ''
+
     return {
       categoriesAndInstructors: catAndInstructor || [],
       medicalCertificate: {
@@ -99,6 +103,16 @@ export const mapPaymentArrangement = (
     paymentArrangement?.paymentOptions === PaymentOptions.cashOnDelivery
 
   if (isIndividual || !paymentArrangement) {
+    if (!chargeId) {
+      throw new TemplateApiError(
+        {
+          summary: shared.application.chargeCodeMissing,
+          title: shared.application.submissionErrorTitle,
+        },
+        400,
+      )
+    }
+
     return {
       payerNationalId: information.nationalId || '',
       payerName: information.name || '',
@@ -123,7 +137,7 @@ export const mapPaymentArrangement = (
 export const mapExaminees = (
   examinees: Examinees,
   examCategories: CategoryInstructorAndMedicalCertRequest[],
-): ExamineesRequest[] | undefined => {
+): ExamineesRequest[] => {
   return examinees.map((examinee, index) => {
     const { nationalId, email, phone, countryIssuer, licenseNumber } = examinee
     return {

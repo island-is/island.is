@@ -3,11 +3,15 @@ query CaseTable($input: CaseTableQueryInput!) {
     rowCount
     rows {
       caseId
+      isMyCase
       cells {
         value {
           __typename
+          ... on StringValue {
+            str
+          }
           ... on StringGroupValue {
-            s
+            strList
           }
           ... on TagValue {
             color
@@ -24,6 +28,7 @@ query CaseTable($input: CaseTableQueryInput!) {
             }
           }
         }
+        sortValue
       }
     }
   }

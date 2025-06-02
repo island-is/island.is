@@ -114,6 +114,10 @@ import {
   OfficialJournalOfIcelandClientConfig,
   OfficialJournalOfIcelandClientModule,
 } from '@island.is/clients/official-journal-of-iceland'
+import {
+  LegalGazetteClientConfig,
+  LegalGazetteClientModule,
+} from '@island.is/clients/legal-gazette'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
@@ -302,6 +306,7 @@ const environment = getConfig
     SocialInsuranceModule,
     HealthDirectorateClientModule,
     OfficialJournalOfIcelandClientModule,
+    LegalGazetteClientModule,
     DisabilityLicenseModule,
     FiskistofaModule,
     WatsonAssistantChatModule,
@@ -426,6 +431,7 @@ const environment = getConfig
         HealthDirectorateHealthClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
+        LegalGazetteClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
         PaymentsApiClientConfig,

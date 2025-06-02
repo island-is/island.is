@@ -6,6 +6,8 @@ import { applicationAnswers, RentalHousingCategoryClass } from '../../shared'
 import {
   getPropertyTypeOptions,
   getPropertyClassGroupOptions,
+  getEmergencyExitOptions,
+  getRentalPropertySize,
 } from '../../utils/utils'
 import { Routes, RentalHousingConditionInspector } from '../../utils/enums'
 import { getOptionLabel } from '../../utils/summaryUtils'
@@ -71,16 +73,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
     ?.reduce((total, unit) => total + (unit.numOfRooms || 0), 0)
     .toString()
 
-  const propertySize = units
-    ?.reduce(
-      (total, unit) =>
-        total +
-        (unit.changedSize && unit.changedSize !== 0
-          ? unit.changedSize
-          : unit.size || 0),
-      0,
-    )
-    .toString()
+  const propertySize = getRentalPropertySize(units).toString()
 
   return (
     <SummaryCard cardLabel={formatMessage(summary.propertyInfoHeader)}>
@@ -276,14 +269,20 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
-            label={summary.fireProtectionsExitsLabel}
-            value={emergencyExits || '-'}
+            label={summary.fireProtectionsFireBlanketLabel}
+            value={fireBlanket || '-'}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
-            label={summary.fireProtectionsFireBlanketLabel}
-            value={fireBlanket || '-'}
+            label={summary.fireProtectionsEmergencyExitsLabel}
+            value={
+              getOptionLabel(
+                emergencyExits || '',
+                getEmergencyExitOptions,
+                '',
+              ) || '-'
+            }
           />
         </GridColumn>
       </SummaryCardRow>

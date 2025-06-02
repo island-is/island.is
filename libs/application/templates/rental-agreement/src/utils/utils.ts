@@ -7,6 +7,7 @@ import { StateLifeCycle } from '@island.is/application/types'
 import {
   ApplicantsInfo,
   CostField,
+  PropertyUnit,
   RentalHousingCategoryClass,
 } from '../shared'
 import {
@@ -20,6 +21,7 @@ import {
   SecurityDepositAmountOptions,
   RentalPaymentMethodOptions,
   NextStepInReviewOptions,
+  EmergencyExitOptions,
 } from './enums'
 import * as m from '../lib/messages'
 
@@ -106,6 +108,16 @@ export const parseCurrency = (value: string): number | undefined => {
   const numeric = value.replace(/[^\d]/g, '')
   return numeric ? Number(numeric) : undefined
 }
+
+export const getRentalPropertySize = (units: PropertyUnit[]) =>
+  units.reduce(
+    (total, unit) =>
+      total +
+      (unit.changedSize && unit.changedSize !== 0
+        ? unit.changedSize
+        : unit.size || 0),
+    0,
+  )
 
 export const getPropertyTypeOptions = () => [
   {
@@ -270,5 +282,16 @@ export const getNextStepInReviewOptions = () => [
   {
     value: NextStepInReviewOptions.EDIT_APPLICATION,
     label: m.inReview.reviewInfo.nextStepToEditButtonText,
+  },
+]
+
+export const getEmergencyExitOptions = () => [
+  {
+    value: EmergencyExitOptions.YES,
+    label: m.housingFireProtections.typeRadioYesExit,
+  },
+  {
+    value: EmergencyExitOptions.NO,
+    label: m.housingFireProtections.typeRadioNoExit,
   },
 ]
