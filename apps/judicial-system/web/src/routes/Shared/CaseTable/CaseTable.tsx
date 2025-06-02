@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import {
   AlertMessage,
   Box,
+  Button,
   Checkbox,
   Icon,
   Tag,
@@ -31,6 +32,7 @@ import {
   TagPairValue,
   TagValue,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
@@ -150,6 +152,21 @@ const CaseTable: FC = () => {
   return (
     <CasesLayout>
       <PageHeader title="Málatafla" />
+      <Box marginBottom={5}>
+        <Button
+          colorScheme="default"
+          iconType="filled"
+          onClick={() => {
+            router.push('/malalistar')
+          }}
+          preTextIcon="arrowBack"
+          preTextIconType="filled"
+          type="button"
+          variant="text"
+        >
+          Til baka á yfirlitsskjá
+        </Button>
+      </Box>
       <div className={styles.logoContainer}>
         <Logo />
       </div>
@@ -160,7 +177,7 @@ const CaseTable: FC = () => {
           <>
             <Box display="flex" alignItems="center">
               <SectionHeading title={table.title} />
-              {table.hasMyCasesFilter && (
+              {table.hasMyCasesFilter && isNonEmptyArray(caseTableData?.rows) && (
                 <Box marginBottom={3} marginLeft={'auto'}>
                   <Checkbox
                     label="Mín mál"
