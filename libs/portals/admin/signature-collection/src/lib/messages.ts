@@ -126,6 +126,11 @@ export const m = defineMessages({
       'Hér er yfirlit yfir öll sveitarfélög á landinu. Hægt er að skoða öll þau sveitarfélög sem opnað hafa fyrir rafræna söfnun meðmæla.',
     description: '',
   },
+  numberOfSignatures: {
+    id: 'admin-portal.signature-collection:numberOfSignatures',
+    defaultMessage: 'Fjöldi framboða: ',
+    description: '',
+  },
   parliamentaryCollectionTitle: {
     id: 'admin-portal.signature-collection:parliamentaryCollectionTitle',
     defaultMessage: 'Alþingiskosningar',
@@ -151,6 +156,11 @@ export const m = defineMessages({
   viewConstituency: {
     id: 'admin-portal.signature-collection:viewConstituency',
     defaultMessage: 'Skoða kjördæmi',
+    description: '',
+  },
+  viewMunicipality: {
+    id: 'admin-portal.signature-collection:viewMunicipality',
+    defaultMessage: 'Skoða sveitarfélag',
     description: '',
   },
   noLists: {
@@ -574,6 +584,11 @@ export const m = defineMessages({
   },
   totalListsPerConstituency: {
     id: 'admin-portal.signature-collection:totalListsPerConstituency',
+    defaultMessage: 'Fjöldi lista: ',
+    description: '',
+  },
+  totalListsPerMunicipality: {
+    id: 'admin-portal.signature-collection:totalListsPerMunicipality',
     defaultMessage: 'Fjöldi lista: ',
     description: '',
   },

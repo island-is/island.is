@@ -326,7 +326,7 @@ const Lists = () => {
                 )}
             </Box>
           )}
-
+          <CompareLists collectionId={collection?.id} />
           {lists?.length > 0 && (
             <ReviewCandidates candidates={collection?.candidates ?? []} />
           )}

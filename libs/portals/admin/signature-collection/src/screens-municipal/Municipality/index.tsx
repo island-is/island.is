@@ -11,8 +11,9 @@ import {
   Stack,
   Text,
   Breadcrumbs,
+  Divider,
 } from '@island.is/island-ui/core'
-import { useLoaderData, useNavigate } from 'react-router-dom'
+import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
@@ -26,6 +27,11 @@ export const Municipality = () => {
   const navigate = useNavigate()
 
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+  const params = useParams()
+  const municipality = params.municipality ?? ''
+  const municipalityLists = allLists.filter(
+    (list) => list.area.name === municipality,
+  )
 
   return (
     <GridContainer>
@@ -49,9 +55,10 @@ export const Municipality = () => {
               items={[
                 {
                   title: formatMessage(m.municipalCollectionTitle),
+                  href: `/stjornbord${SignatureCollectionPaths.MunicipalRoot}`,
                 },
                 {
-                  title: 'Borgarbyggð',
+                  title: municipality,
                 },
               ]}
             />
@@ -64,24 +71,26 @@ export const Municipality = () => {
             img={nationalRegistryLogo}
             buttonGroup={<ActionDrawer />}
           />
+          <Divider />
+          <Box marginTop={9} />
           <GridRow>
             <GridColumn span="12/12">
-              <Box
-                display="flex"
-                justifyContent="flexEnd"
-                marginBottom={3}
-              >
+              <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
                 <Text variant="eyebrow">
                   {formatMessage(m.totalListResults) + ': ' + allLists.length}
                 </Text>
               </Box>
               <Stack space={3}>
-                {allLists.map((list) => (
+                {municipalityLists.map((list) => (
                   <ActionCard
                     key={list.id}
-                    eyebrow="Höfuðborgarsvæði"
+                    eyebrow={municipality}
                     heading={list.candidate.name}
-                    text={'Fjöldi framboða: 11'}
+                    text={
+                      formatMessage(m.totalListResults) +
+                      ': ' +
+                      municipality.length
+                    }
                     cta={{
                       label: formatMessage(m.viewList),
                       variant: 'text',
@@ -90,7 +99,7 @@ export const Municipality = () => {
                           replaceParams({
                             href: SignatureCollectionPaths.MunicipalList,
                             params: {
-                              municipality: 'borgarbyggd',
+                              municipality: municipality,
                               listId: list.id,
                             },
                           }),
@@ -98,7 +107,7 @@ export const Municipality = () => {
                       },
                     }}
                     tag={{
-                      ...getTagConfig(list)
+                      ...getTagConfig(list),
                     }}
                   />
                 ))}

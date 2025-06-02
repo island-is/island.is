@@ -120,11 +120,11 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
       </Box>
 
       <Box
-        background="blue100"
+        background="white"
         height="full"
-        padding={3}
+        padding={4}
         border="standard"
-        borderRadius="standard"
+        borderRadius="large"
       >
         <GridContainer>
           <GridRow marginBottom={2}>
@@ -137,6 +137,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
                 format="######-####"
                 required
                 defaultValue={nationalIdInput}
+                backgroundColor="blue"
                 onChange={(e) => {
                   setNationalIdInput(e.target.value.replace(/\W/g, ''))
                 }}
@@ -159,6 +160,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
                 label={formatMessage(m.paperNumber)}
                 value={page}
                 placeholder="Sláið inn"
+                backgroundColor="blue"
                 onChange={(e) => setPage(e.target.value)}
               />
             </GridColumn>
@@ -175,7 +177,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
               />
             </GridColumn>
           </GridRow>
-          <Box display={'flex'} justifyContent={'flexEnd'}>
+          <Box display="flex" justifyContent="flexEnd">
             <Button
               variant="ghost"
               size="small"

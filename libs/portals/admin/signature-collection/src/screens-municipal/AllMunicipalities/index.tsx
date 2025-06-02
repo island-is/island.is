@@ -16,13 +16,14 @@ import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import { replaceParams } from '@island.is/react-spa/shared'
 import StartAreaCollection from './StartAreaCollection'
 
 const AllMunicipalities = () => {
-  const { allLists } = useLoaderData() as ListsLoaderReturn
+  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+
+  console.log(collection)
 
   return (
     <GridContainer>
@@ -58,36 +59,43 @@ const AllMunicipalities = () => {
             img={nationalRegistryLogo}
           />
           <Box marginBottom={3} display="flex" justifyContent="flexEnd">
-            <Text variant="eyebrow">Samtals fjöldi: {allLists.length}</Text>
+            <Text variant="eyebrow">
+              {formatMessage(m.totalListResults) + ': ' + allLists.length}
+            </Text>
           </Box>
           <Stack space={3}>
-            {allLists.map((list) => (
-              <ActionCard
-                key={list.id}
-                eyebrow={'Höfuðborgarsvæði'}
-                heading={'Borgarbyggð'}
-                text={'Fjöldi framboða: 12'}
-                cta={{
-                  label: 'Skoða sveitarfélag',
-                  variant: 'text',
-                  onClick: () => {
-                    navigate(
-                      replaceParams({
-                        href: SignatureCollectionPaths.SingleMunicipality,
-                        params: {
-                          municipality: 'borgarbyggd',
-                        },
-                      }),
-                    )
-                  },
-                }}
-                tag={{
-                  label: 'Tag',
-                  variant: 'blue',
-                  renderTag: () => <StartAreaCollection />,
-                }}
-              />
-            ))}
+            {collection?.areas.map((area) => {
+              const areaLists = allLists.filter(
+                (l) => l.area.name === area.name,
+              )
+              return (
+                <ActionCard
+                  key={area.id}
+                  eyebrow={
+                    formatMessage(m.totalListsPerConstituency) +
+                    areaLists.length
+                  }
+                  heading={area.name}
+                  cta={{
+                    label: formatMessage(m.viewMunicipality),
+                    variant: 'text',
+                    onClick: () => {
+                      navigate(
+                        SignatureCollectionPaths.SingleMunicipality.replace(
+                          ':municipality',
+                          area.name,
+                        ),
+                      )
+                    },
+                  }}
+                  tag={{
+                    label: 'Tag',
+                    variant: 'blue',
+                    renderTag: () => <StartAreaCollection />,
+                  }}
+                />
+              )
+            })}
           </Stack>
         </GridColumn>
       </GridRow>

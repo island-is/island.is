@@ -99,7 +99,7 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <Box
             display="flex"
-            justifyContent="spaceBetween"
+            justifyContent="flexEnd"
             alignItems="flexEnd"
             height="full"
             marginTop={[1, 1, 1]}

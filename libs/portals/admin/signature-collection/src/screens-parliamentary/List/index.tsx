@@ -12,11 +12,11 @@ import { signatureCollectionNavigation } from '../../lib/navigation'
 import { m } from '../../lib/messages'
 import { useLoaderData } from 'react-router-dom'
 import { SignatureCollectionList } from '@island.is/api/schema'
-import { PaperSignees } from './paperSignees'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import Signees from '../../shared-components/signees'
 import electionsCommittee from '../../../assets/electionsCommittee.svg'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
+import { PaperSignees } from '../../shared-components/paperSignees'
 
 const List = () => {
   const { formatMessage } = useLocale()
