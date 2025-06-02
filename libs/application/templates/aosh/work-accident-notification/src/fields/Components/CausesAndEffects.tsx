@@ -14,11 +14,11 @@ import {
   Item,
   MultiSelectDropdownController,
   OptionWithKey,
-} from '../Components/MultiSelectDropdownController'
+} from './MultiSelectDropdownController'
 import { useLocale } from '@island.is/localization'
 import { causeAndConsequences } from '../../lib/messages'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Option } from '../Components/types'
+import { Option } from './types'
 import { MessageDescriptor } from 'react-intl'
 
 type CausesAndEffectsProps = {

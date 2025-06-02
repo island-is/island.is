@@ -4,9 +4,11 @@ import {
   buildDescriptionField,
   buildTextField,
   buildHiddenInputWithWatchedValue,
+  buildRadioField,
 } from '@island.is/application/core'
 import { Routes } from '../../../utils/enums'
 import { housingFireProtections } from '../../../lib/messages'
+import { getEmergencyExitOptions } from '../../../utils/utils'
 
 export const RentalHousingFireProtections = buildSubSection({
   id: Routes.FIREPROTECTIONS,
@@ -28,37 +30,47 @@ export const RentalHousingFireProtections = buildSubSection({
           title: housingFireProtections.smokeDetectorsLabel,
           placeholder: '0',
           width: 'half',
-          variant: 'number',
+          maxLength: 1,
+          format: '#',
+          min: 0,
+          max: 9,
         }),
         buildTextField({
           id: 'fireProtections.fireExtinguisher',
           title: housingFireProtections.fireExtinguisherLabel,
           placeholder: '0',
           width: 'half',
-          variant: 'number',
-        }),
-        buildDescriptionField({
-          id: 'fireProtections.exitFireBlanketRequirements',
-          description: housingFireProtections.exitFireBlanketRequirements,
-          space: 4,
-        }),
-        buildTextField({
-          id: 'fireProtections.emergencyExits',
-          title: housingFireProtections.exitsLabel,
-          placeholder: '0',
-          width: 'half',
-          variant: 'number',
+          maxLength: 1,
+          format: '#',
+          min: 0,
+          max: 9,
         }),
         buildTextField({
           id: 'fireProtections.fireBlanket',
           title: housingFireProtections.fireBlanketLabel,
           placeholder: '0',
           width: 'half',
-          variant: 'number',
+          maxLength: 1,
+          format: '#',
+          min: 0,
+          max: 9,
+        }),
+        buildDescriptionField({
+          id: 'fireProtections.exitRequirements',
+          title: housingFireProtections.exitsLabel,
+          titleVariant: 'h3',
+          description: housingFireProtections.exitRequirements,
+          space: 4,
+        }),
+        buildRadioField({
+          id: 'fireProtections.emergencyExits',
+          options: getEmergencyExitOptions(),
+          width: 'half',
+          space: 0,
         }),
         buildHiddenInputWithWatchedValue({
           id: 'fireProtections.propertySize',
-          watchValue: 'registerProperty.size',
+          watchValue: 'registerProperty.searchresults.units',
         }),
       ],
     }),
