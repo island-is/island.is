@@ -16,6 +16,18 @@ export class ApplicationEventDto {
   isFileEvent?: boolean
 }
 
+@ObjectType('FormSystemApplicationResponse')
+export class ApplicationResponse {
+  @Field(() => [Application], { nullable: 'itemsAndList' })
+  applications?: Application[]
+
+  @Field(() => Number, { nullable: true })
+  total?: number
+
+  @Field(() => [Option], { nullable: 'itemsAndList' })
+  organizations?: Option[]
+}
+
 @ObjectType('FormSystemApplication')
 export class Application {
   @Field(() => String)

@@ -5,10 +5,8 @@ import router from 'next/router'
 import { Box, Button, InputFileUpload } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
-import { Feature } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -20,6 +18,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -30,7 +29,6 @@ const CaseFiles = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { features } = useContext(FeatureContext)
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -39,6 +37,10 @@ const CaseFiles = () => {
     updateUploadFile,
     removeUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
+
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
 
   const {
     handleUploadCriminalRecord,
@@ -51,10 +53,6 @@ const CaseFiles = () => {
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
-  )
-
-  const isCriminalRecordsEndpointEnabled = features.includes(
-    Feature.CRIMINAL_RECORD_ENDPOINT,
   )
 
   return (
@@ -76,26 +74,24 @@ const CaseFiles = () => {
             title={formatMessage(strings.caseFiles.criminalRecordSection)}
             heading="h2"
           />
-          {isCriminalRecordsEndpointEnabled ? (
-            <Box marginBottom={3}>
-              <Button
-                variant="text"
-                onClick={() => {
-                  if (!workingCase.defendants) {
-                    return
-                  }
-                  handleUploadCriminalRecord(
-                    workingCase.defendants,
-                    addUploadFile,
-                    updateUploadFile,
-                  )
-                }}
-                size="small"
-              >
-                Sækja sakavottorð til sakaskrár
-              </Button>
-            </Box>
-          ) : null}
+          <Box marginBottom={3}>
+            <Button
+              variant="text"
+              onClick={() => {
+                if (!workingCase.defendants) {
+                  return
+                }
+                handleUploadCriminalRecord(
+                  workingCase.defendants,
+                  addUploadFile,
+                  updateUploadFile,
+                )
+              }}
+              size="small"
+            >
+              Sækja sakavottorð til sakaskrár
+            </Button>
+          </Box>
           <InputFileUpload
             name="criminalRecord"
             files={uploadFiles.filter(
@@ -112,6 +108,7 @@ const CaseFiles = () => {
                 updateUploadFile,
               )
             }
+            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
@@ -137,6 +134,7 @@ const CaseFiles = () => {
                 updateUploadFile,
               )
             }
+            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
@@ -160,6 +158,7 @@ const CaseFiles = () => {
                 updateUploadFile,
               )
             }
+            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />

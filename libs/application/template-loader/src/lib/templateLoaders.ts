@@ -219,6 +219,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/new-primary-school'),
   [ApplicationTypes.MACHINE_REGISTRATION]: () =>
     import('@island.is/application/templates/aosh/register-new-machine'),
+  [ApplicationTypes.PRACTICAL_EXAM]: () =>
+    import('@island.is/application/templates/aosh/practical-exam'),
   [ApplicationTypes.RENTAL_AGREEMENT]: () =>
     import('@island.is/application/templates/rental-agreement'),
   [ApplicationTypes.SEMINAR_REGISTRATION]: () =>
@@ -229,6 +231,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.SECONDARY_SCHOOL]: () =>
     import('@island.is/application/templates/secondary-school'),
+  [ApplicationTypes.LEGAL_GAZETTE]: () =>
+    import('@island.is/application/templates/legal-gazette'),
 }
 
 export default templates

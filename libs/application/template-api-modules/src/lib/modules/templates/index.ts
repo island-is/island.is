@@ -156,6 +156,10 @@ import { SecondarySchoolModule } from './secondary-school/secondary-school.modul
 import { SecondarySchoolService } from './secondary-school/secondary-school.service'
 import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.module'
 import { TrainingLicenseOnAWorkMachineTemplateService } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service'
+import { PracticalExamTemplateModule } from './aosh/practical-exam/practical-exam.module'
+import { PracticalExamTemplateService } from './aosh/practical-exam/practical-exam.service'
+import { LegalGazetteTemplateModule } from './legal-gazette/legal-gazette.module'
+import { LegalGazetteTemplateService } from './legal-gazette/legal-gazette.service'
 import { RentalAgreementModule } from './rental-agreement/rental-agreement.module'
 import { RentalAgreementService } from './rental-agreement/rental-agreement.service'
 
@@ -237,7 +241,9 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  PracticalExamTemplateModule,
   ExampleFolderStructureAndConventionsModule,
+  LegalGazetteTemplateModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
 ]
@@ -319,7 +325,9 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  PracticalExamTemplateService,
   ExampleFolderStructureAndConventionsService,
+  LegalGazetteTemplateService,
   ExampleAuthDelegationService,
   RentalAgreementService,
 ]
