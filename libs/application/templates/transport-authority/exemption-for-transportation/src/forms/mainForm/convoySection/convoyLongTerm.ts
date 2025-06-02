@@ -1,10 +1,13 @@
 import {
+  buildAlertMessageField,
   buildMultiField,
   buildTableRepeaterField,
 } from '@island.is/application/core'
 import { convoy } from '../../../lib/messages'
 import {
+  getConvoyItems,
   getRandomId,
+  hasDuplicateConvoyItems,
   isExemptionTypeLongTerm,
   loadValidation,
   MAX_CNT_CONVOY,
@@ -85,6 +88,34 @@ export const ConvoyLongTermMultiField = buildMultiField({
           displayInTable: false,
         },
       },
+    }),
+    buildAlertMessageField({
+      id: 'convoy.alertValidation',
+      title: convoy.error.alertTitle,
+      message: (application) => {
+        // Empty list error
+        const convoyItems = getConvoyItems(application.answers)
+        const showEmptyListError = !convoyItems?.length
+
+        // Duplicate error
+        const showDuplicateError = hasDuplicateConvoyItems(application.answers)
+
+        if (showEmptyListError) return convoy.error.emptyListErrorMessage
+        else if (showDuplicateError) return convoy.error.duplicateErrorMessage
+      },
+      doesNotRequireAnswer: true,
+      alertType: 'error',
+      condition: (answers) => {
+        // Empty list error
+        const convoyItems = getConvoyItems(answers)
+        const showEmptyListError = !convoyItems?.length
+
+        // Duplicate error
+        const showDuplicateError = hasDuplicateConvoyItems(answers)
+
+        return showEmptyListError || showDuplicateError
+      },
+      shouldBlockInSetBeforeSubmitCallback: true,
     }),
   ],
 })

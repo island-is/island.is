@@ -136,6 +136,17 @@ export const convoy = {
         'Það kom upp villa við að athuga hvort ökutæki sé leyfilegt',
       description: 'Convoy error validation failed alert message',
     },
+    emptyListErrorMessage: {
+      id: 'ta.eft.application:convoy.error.emptyListErrorMessage',
+      defaultMessage: 'Það verður að skrá a.m.k. eina vagnlest',
+      description: 'Convoy error empty list alert message',
+    },
+    duplicateErrorMessage: {
+      id: 'ta.eft.application:convoy.error.duplicateErrorMessage',
+      defaultMessage:
+        'Ekki má setja inn sömu samsetningu af ökutæki og eftirvagn oftar en einu sinni',
+      description: 'Convoy error duplicate alert message',
+    },
   }),
   dollyType: defineMessages({
     subtitle: {

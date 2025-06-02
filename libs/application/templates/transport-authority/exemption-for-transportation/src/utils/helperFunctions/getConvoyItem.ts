@@ -38,3 +38,22 @@ export const getConvoyShortName = (
     (convoyItem.trailer?.permno ? ' / ' + convoyItem.trailer.permno : '')
   )
 }
+
+export const hasDuplicateConvoyItems = (answers: FormValue) => {
+  const convoyItems = getConvoyItems(answers)
+
+  const keys: string[] = []
+  for (const item of convoyItems) {
+    const vehiclePermno = item.vehicle?.permno ?? ''
+    const trailerPermno = item.trailer?.permno ?? ''
+    const key = `${vehiclePermno}_${trailerPermno}`
+
+    if (keys.includes(key)) {
+      return true // Duplicate found
+    }
+
+    keys.push(key)
+  }
+
+  return false // No duplicates
+}

@@ -43,7 +43,7 @@ export const freight = {
     },
     errorEmptyListAlertMessage: {
       id: 'ta.eft.application:freight.create.errorEmptyListAlertMessage',
-      defaultMessage: 'Það verður að skrá amk einn farm',
+      defaultMessage: 'Það verður að skrá a.m.k. einn farm',
       description: 'Error empty freight list alert message',
     },
     errorPoliceEscortAlertMessage: {

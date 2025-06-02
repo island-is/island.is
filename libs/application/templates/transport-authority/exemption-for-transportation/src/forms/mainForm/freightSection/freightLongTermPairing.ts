@@ -216,7 +216,7 @@ const FreightPairingSubSection = (freightIndex: number) =>
                   suffix: freight.labels.metersSuffix,
                 }),
                 buildAlertMessageField({
-                  id: 'freight.alertValidation',
+                  id: 'freightPairing.alertValidation',
                   title: freight.create.errorAlertMessageTitle,
                   message: (application) => {
                     // Empty list error
