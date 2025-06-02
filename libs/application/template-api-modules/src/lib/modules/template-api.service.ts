@@ -15,6 +15,12 @@ export interface ApplicationApiAction<Params = unknown> {
   props: TemplateApiModuleActionProps<Params>
 }
 
+interface HttpError {
+  http?: {
+    status_code: number
+  }
+}
+
 @Injectable()
 export class TemplateAPIService {
   constructor(
@@ -67,17 +73,20 @@ export class TemplateAPIService {
         ? (error as TemplateApiError)
         : new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
 
-    if (
-      problemError?.problem?.status &&
-      problemError?.problem?.status >= 300 &&
-      problemError?.problem?.status < 500
-    ) {
-      this.logger.info(`PerformAction error`, {
-        stack: error?.stack,
-        templateId: action.templateId,
-        actionId: action.actionId,
-        applicationId: action.props.application.id,
-      })
+    const httpError = error as unknown as HttpError
+
+    if (httpError.http) {
+      if (
+        httpError.http.status_code >= 300 &&
+        httpError.http.status_code < 500
+      ) {
+        this.logger.info(`PerformAction error`, {
+          stack: error?.stack,
+          templateId: action.templateId,
+          actionId: action.actionId,
+          applicationId: action.props.application.id,
+        })
+      }
     } else if (
       problemError?.problem?.status &&
       problemError?.problem?.status >= 500
