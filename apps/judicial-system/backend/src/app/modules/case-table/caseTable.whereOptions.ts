@@ -18,34 +18,19 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
-  prosecutorIndictmentCompletedWhereOptions,
-  prosecutorIndictmentInProgressWhereOptions,
-  prosecutorIndictmentInReviewWhereOptions,
-  prosecutorIndictmentWaitingForConfirmationWhereOptions,
+  buildEventLogExistsCondition,
+  buildSubpoenaExistsCondition,
+} from './whereOptions/conditions'
+import {
+  getProsecutorIndictmentInProgressWhereOptions,
+  getProsecutorIndictmentWaitingForConfirmationWhereOptions,
+  getPublicProsecutorIndictmentCompletedWhereOptions,
+  getPublicProsecutorIndictmentInReviewWhereOptions,
   prosecutorRequestCasesActiveWhereOptions,
   prosecutorRequestCasesAppealedWhereOptions,
   prosecutorRequestCasesCompletedWhereOptions,
   prosecutorRequestCasesInProgressWhereOptions,
 } from './whereOptions'
-
-const buildSubpoenaExistsCondition = (exists = true) =>
-  Sequelize.literal(`
-    ${exists ? '' : 'NOT'} EXISTS (
-      SELECT 1
-      FROM subpoena
-      WHERE subpoena.case_id = "Case".id
-    )
-  `)
-
-const buildEventLogExistsCondition = (eventType: EventType, exists = true) =>
-  Sequelize.literal(`
-     ${exists ? '' : 'NOT'} EXISTS (
-        SELECT 1
-        FROM event_log
-        WHERE event_log.case_id = "Case".id
-          AND event_log.event_type = '${eventType}'
-      )
-    `)
 
 // District Court Request Cases
 
@@ -431,11 +416,12 @@ export const caseTableWhereOptions: Record<
   [CaseTableType.PROSECUTOR_REQUEST_CASES_COMPLETED]: (_user) =>
     prosecutorRequestCasesCompletedWhereOptions,
   [CaseTableType.PROSECUTOR_INDICTMENT_IN_REVIEW]: (user) =>
-    prosecutorIndictmentInReviewWhereOptions(user),
-  [CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION]: (_user) =>
-    prosecutorIndictmentWaitingForConfirmationWhereOptions,
-  [CaseTableType.PROSECUTOR_INDICTMENT_IN_PROGRESS]: (_user) =>
-    prosecutorIndictmentInProgressWhereOptions,
-  [CaseTableType.PROSECUTOR_INDICTMENT_COMPLETED]: (_user) =>
-    prosecutorIndictmentCompletedWhereOptions,
+    getPublicProsecutorIndictmentInReviewWhereOptions(user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION]: (user) =>
+    getProsecutorIndictmentWaitingForConfirmationWhereOptions(user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_IN_PROGRESS]: (user) =>
+    getProsecutorIndictmentInProgressWhereOptions(user),
+  // TODO: update this to: review decision completed
+  [CaseTableType.PROSECUTOR_INDICTMENT_COMPLETED]: (user) =>
+    getPublicProsecutorIndictmentCompletedWhereOptions(user),
 }

@@ -1,1 +1,1 @@
-export * from './prosecutor'
+export * from './publicProsecutor'
