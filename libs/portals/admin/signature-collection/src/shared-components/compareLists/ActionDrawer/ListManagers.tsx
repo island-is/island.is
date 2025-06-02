@@ -5,34 +5,37 @@ import {
   Text,
   Table as T,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../../lib/messages'
 
 const { Table, Row, Head, HeadData, Body, Data } = T
 
 const ListManagers = () => {
+  const { formatMessage } = useLocale()
   return (
     <Box>
       <Drawer
-        ariaLabel={''}
-        baseId={''}
+        ariaLabel="managersDrawer"
+        baseId="managersDrawer"
         disclosure={
-          <Box marginLeft={2}>
-            <Button variant="utility" icon="person" iconType="outline">
-              Aðilar
-            </Button>
-          </Box>
+          <Button variant="utility" icon="settings" iconType="outline">
+            {formatMessage(m.listManagersTitle)}
+          </Button>
         }
       >
         <Text variant="h2" marginTop={2} marginBottom={7}>
-          Aðilar
+          {formatMessage(m.listManagersTitle)}
         </Text>
         <Text variant="h4" marginBottom={3}>
-          Ábyrgðaraðilar
+          {formatMessage(m.listManagers)}
         </Text>
         <Table>
           <Head>
             <Row>
-              <HeadData style={{ width: '25%' }}>Kennitala</HeadData>
-              <HeadData>Nafn</HeadData>
+              <HeadData style={{ width: '25%' }}>
+                {formatMessage(m.nationalId)}
+              </HeadData>
+              <HeadData>{formatMessage(m.name)}</HeadData>
             </Row>
           </Head>
           <Body>
@@ -48,13 +51,15 @@ const ListManagers = () => {
         </Table>
 
         <Text variant="h4" marginTop={7} marginBottom={3}>
-          Umsjónaraðilar
+          {formatMessage(m.listSupervisors)}
         </Text>
         <Table>
           <Head>
             <Row>
-              <HeadData style={{ width: '25%' }}>Kennitala</HeadData>
-              <HeadData>Nafn</HeadData>
+              <HeadData style={{ width: '25%' }}>
+                {formatMessage(m.nationalId)}
+              </HeadData>
+              <HeadData>{formatMessage(m.name)}</HeadData>
             </Row>
           </Head>
           <Body>

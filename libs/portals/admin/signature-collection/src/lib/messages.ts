@@ -54,6 +54,11 @@ export const m = defineMessages({
     defaultMessage: 'Frambjóðandi',
     description: '',
   },
+  name: {
+    id: 'admin-portal.signature-collection:name',
+    defaultMessage: 'Nafn',
+    description: '',
+  },
   nationalId: {
     id: 'admin-portal.signature-collection:nationalId',
     defaultMessage: 'Kennitala',
@@ -250,6 +255,26 @@ export const m = defineMessages({
   },
 
   // View list
+  listActionsTitle: {
+    id: 'admin-portal.signature-collection:listActionsTitle',
+    defaultMessage: 'Aðgerðir',
+    description: '',
+  },
+  listManagersTitle: {
+    id: 'admin-portal.signature-collection:listManagersTitle',
+    defaultMessage: 'Aðilar',
+    description: '',
+  },
+  listManagers: {
+    id: 'admin-portal.signature-collection:listManagers',
+    defaultMessage: 'Ábyrgðaraðilar',
+    description: '',
+  },
+  listSupervisors: {
+    id: 'admin-portal.signature-collection:listSupervisors',
+    defaultMessage: 'Umsjónaraðilar',
+    description: '',
+  },
   singleList: {
     id: 'admin-portal.signature-collection:singleList',
     defaultMessage: 'Meðmælasöfnun',

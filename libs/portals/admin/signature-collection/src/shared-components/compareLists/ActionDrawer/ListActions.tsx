@@ -6,25 +6,28 @@ import ActionLockList from '../../../shared-components/lockList'
 import ActionReviewComplete from '../../../shared-components/completeListReview'
 import DownloadReports from '../../../shared-components/downloadReports'
 import RemoveCandidate from '../../../shared-components/removeCandidate'
+import { m } from '../../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 const ListActions = () => {
   const { list, listStatus } = useLoaderData() as {
     list: SignatureCollectionList
     listStatus: string
   }
+  const { formatMessage } = useLocale()
 
   return (
     <Drawer
-      ariaLabel={''}
-      baseId={''}
+      ariaLabel="actionsDrawer"
+      baseId="actionsDrawer"
       disclosure={
         <Button variant="utility" icon="settings" iconType="outline">
-          Aðgerðir
+          {formatMessage(m.listActionsTitle)}
         </Button>
       }
     >
-      <Text variant="h2" marginTop={2} marginBottom={8}>
-        Aðgerðir
+      <Text variant="h2" marginTop={2} marginBottom={6}>
+        {formatMessage(m.listActionsTitle)}
       </Text>
 
       <Stack space={8}>
