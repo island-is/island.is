@@ -7,15 +7,15 @@ import {
   buildSelectField,
   buildHiddenInput,
   YesOrNoEnum,
+  buildDisplayField,
+  formatText,
 } from '@island.is/application/core'
 import {
   getPaymentMethodOptions,
-  getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
 } from '../../../utils/utils'
 import {
   Routes,
-  RentalAmountIndexTypes,
   RentalAmountPaymentDateOptions,
   RentalPaymentMethodOptions,
 } from '../../../utils/enums'
@@ -25,6 +25,8 @@ import {
   rentalPaymentDateIsOther,
   rentalPaymentMethodIsBankTransfer,
   rentalPaymentMethodIsOther,
+  getIndexDateOptions,
+  getIndexRateForDate,
 } from '../../../utils/rentalPeriodUtils'
 import { rentalAmount } from '../../../lib/messages'
 
@@ -53,13 +55,6 @@ export const RentalPeriodAmount = buildSubSection({
           maxLength: 15,
           required: true,
         }),
-        buildSelectField({
-          id: 'rentalAmount.indexTypes',
-          title: rentalAmount.indexOptionsLabel,
-          options: getRentalAmountIndexTypes(),
-          defaultValue: RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
-          condition: rentalAmountConnectedToIndex,
-        }),
         buildCheckboxField({
           id: 'rentalAmount.isIndexConnected',
           clearOnChange: ['rentalAmount.indexTypes'],
@@ -70,6 +65,22 @@ export const RentalPeriodAmount = buildSubSection({
             },
           ],
           spacing: 0,
+        }),
+        buildSelectField({
+          id: 'rentalAmount.indexDate',
+          title: rentalAmount.indexDateLabel,
+          // TODO: Replace hardcoded with dynamic options from index api when available
+          options: getIndexDateOptions(),
+          condition: rentalAmountConnectedToIndex,
+          width: 'half',
+        }),
+        buildDisplayField({
+          id: 'rentalAmount.indexRate',
+          label: rentalAmount.indexRateLabel,
+          variant: 'text',
+          value: (answers) => getIndexRateForDate(answers),
+          condition: rentalAmountConnectedToIndex,
+          width: 'half',
         }),
 
         // Payment details

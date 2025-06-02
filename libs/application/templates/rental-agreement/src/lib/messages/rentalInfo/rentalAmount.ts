@@ -63,8 +63,13 @@ export const rentalAmount = defineMessages({
   },
   indexDateLabel: {
     id: 'ra.application:rentalAmount.indexDateLabel',
-    defaultMessage: 'Útgáfudagur vísitölu',
+    defaultMessage: 'Viðmið',
     description: 'Rental amount index type date label',
+  },
+  indexRateLabel: {
+    id: 'ra.application:rentalAmount.indexRateLabel',
+    defaultMessage: 'Vísitölugildi við upphaf samnings',
+    description: 'Rental amount index type rate label',
   },
   indexValueLabel: {
     id: 'ra.application:rentalAmount.indexValueLabel',
