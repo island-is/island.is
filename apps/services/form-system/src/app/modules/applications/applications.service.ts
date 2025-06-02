@@ -384,12 +384,8 @@ export class ApplicationsService {
     const delegatorNationalId = delegationType ? user.nationalId : null
 
     // 1. Find all applicants by nationalId
-    const applicantWhere: any = {
-      nationalId,
-    }
-
     const applicants = await this.applicantModel.findAll({
-      where: applicantWhere,
+      where: { nationalId },
       attributes: ['applicationId', 'nationalId'],
     })
 
