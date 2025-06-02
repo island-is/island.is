@@ -1,4 +1,7 @@
-import { ApplicantsInfo } from '@island.is/application/templates/rental-agreement'
+import {
+  ApplicantsInfo,
+  PropertyUnit,
+} from '@island.is/application/templates/rental-agreement'
 import { SecurityDepositType } from '@island.is/clients/hms-rental-agreement'
 
 export const parseToNumber = (value: string): number => {
@@ -26,7 +29,7 @@ export const filterNonRepresentativesAndMapInfo = (
     }))
 }
 
-export const mapPersonToArray = (person: any) => {
+export const mapPersonToArray = (person: ApplicantsInfo) => {
   return {
     nationalId: person.nationalIdWithName.nationalId,
     name: person.nationalIdWithName.name,
@@ -39,11 +42,11 @@ export const mapPersonToArray = (person: any) => {
   }
 }
 
-export const getPropertyId = (units: any[] | undefined) => {
+export const getPropertyId = (units: PropertyUnit[] | undefined) => {
   return units && units.length > 0 ? units[0].propertyCode ?? null : null
 }
 
-export const mapAppraisalUnits = (units: any[] | undefined) => {
+export const mapAppraisalUnits = (units: PropertyUnit[] | undefined) => {
   return units?.map((unit) => {
     const propertySize =
       unit.changedSize && unit.changedSize >= 3 ? unit.changedSize : unit.size
