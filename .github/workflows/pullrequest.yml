@@ -305,7 +305,7 @@ jobs:
             tee "$lints"
           echo "::endgroup::"
           (grep -oP '(?<=✖ )(\d+)(?= problems)' "$lints" || echo '0') | # Find number of problems
-            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d\n", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
             tee -a "$GITHUB_OUTPUT" # Finally create output
 
       # Checkout for linting base
@@ -327,7 +327,7 @@ jobs:
             tee "$lints"
           echo "::endgroup::"
           (grep -oP '(?<=✖ )(\d+)(?= problems)' "$lints" || echo '0') | # Find number of problems
-            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d\n", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
             tee -a "$GITHUB_OUTPUT" # Finally create output
 
       - name: No new lints
