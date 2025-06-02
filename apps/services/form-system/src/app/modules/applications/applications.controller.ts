@@ -46,7 +46,7 @@ export class ApplicationsController {
   @ApiOperation({ summary: 'Create new application' })
   @ApiCreatedResponse({
     description: 'Create new application',
-    type: ApplicationDto,
+    type: ApplicationResponseDto,
   })
   @ApiParam({ name: 'slug', type: String })
   @ApiBody({ type: CreateApplicationDto })
@@ -56,7 +56,7 @@ export class ApplicationsController {
     @Body() createApplicationDto: CreateApplicationDto,
     @CurrentUser()
     user: User,
-  ): Promise<ApplicationDto> {
+  ): Promise<ApplicationResponseDto> {
     return await this.applicationsService.create(
       slug,
       createApplicationDto,
@@ -122,4 +122,19 @@ export class ApplicationsController {
       isTest,
     )
   }
+
+  // @ApiOperation({ summary: 'Get all applications by user and formId' })
+  // @ApiOkResponse({
+  //   type: ApplicationResponseDto,
+  //   description: 'Get all applications by user and formId',
+  // })
+  // @ApiParam({ name: 'formId', type: String })
+  // @Get('nationalId/:nationalId/formId/:formId')
+  // async findAllByUserAndFormId(
+  //   @Param('formId') formId: string,
+  //   @CurrentUser()
+  //   user: User,
+  // ): Promise<ApplicationResponseDto> {
+  //   return await this.applicationsService.findAllByUserAndFormId(user, formId)
+  // }
 }
