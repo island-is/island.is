@@ -125,7 +125,7 @@ export const overviewAssetsAndDebts = [
         ).map((vehicle) => ({
           title: vehicle.description,
           description: [
-            m.propertyNumber.defaultMessage + ': ' + vehicle.assetNumber,
+            m.propertyNumberVehicle.defaultMessage + ': ' + vehicle.assetNumber,
             m.overviewMarketValue.defaultMessage +
               ': ' +
               (vehicle.marketValue
