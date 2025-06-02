@@ -26,6 +26,7 @@ import { RehabilitationPlan } from './review-groups/RehabilitationPlan'
 import { SelfAssessmentQuestionnaire } from './review-groups/SelfAssessmentQuestionnaire'
 import { SelfAssessmentQuestionsThree } from './review-groups/SelfAssessmentQuestionsThree'
 import { UnionSickPay } from './review-groups/UnionSickPay'
+import { SelfAssessmentQuestionsOne } from './review-groups/SelfAssessmentQuestionsOne'
 
 interface ReviewScreenProps {
   application: Application
@@ -173,6 +174,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <EmployeeSickPay {...childProps} />
       <UnionSickPay {...childProps} />
       <RehabilitationPlan />
+      <SelfAssessmentQuestionsOne {...childProps} />
       <SelfAssessmentQuestionsThree {...childProps} />
       <SelfAssessmentQuestionnaire {...childProps} />
       <Comment {...childProps} />

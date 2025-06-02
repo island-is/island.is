@@ -109,6 +109,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'rehabilitationPlanConfirmation',
   ) as string[]
 
+  const hadAssistance = getValueViaPath(
+    answers,
+    'selfAssessment.hadAssistance',
+  ) as YesOrNo
+
+  const highestLevelOfEducation = getValueViaPath(
+    answers,
+    'selfAssessment.highestLevelOfEducation',
+  ) as string
+
   const comment = getValueViaPath(answers, 'comment') as string
 
   const questionnaire = getValueViaPath(
@@ -161,6 +171,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     unionNationalId,
     unionSickPayFileUpload,
     rehabilitationPlanConfirmation,
+    hadAssistance,
+    highestLevelOfEducation,
     comment,
     questionnaire,
     mainProblem,
