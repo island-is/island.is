@@ -47,21 +47,6 @@ const compareString = (
   return compareLocaleIS(a, b)
 }
 
-const compareStringGroup = (a: StringGroupValue, b: StringGroupValue) => {
-  const aValue = a.strList
-  const bValue = b.strList
-
-  for (let i = 0; i < aValue.length; i++) {
-    if (aValue[i] === bValue[i]) {
-      continue
-    }
-
-    return compareLocaleIS(aValue[i], bValue[i])
-  }
-
-  return 0
-}
-
 const compareTag = (a: TagValue, b: TagValue) => {
   return compareLocaleIS(a.text, b.text)
 }
@@ -104,9 +89,8 @@ const compare = (a: CaseTableCell, b: CaseTableCell): number => {
 
   switch (aValue.__typename) {
     case 'StringValue':
-      return compareString(a.sortValue, b.sortValue)
     case 'StringGroupValue':
-      return compareStringGroup(aValue, bValue as StringGroupValue)
+      return compareString(a.sortValue, b.sortValue)
     case 'TagValue':
       return compareTag(aValue, bValue as TagValue)
     case 'TagPairValue':

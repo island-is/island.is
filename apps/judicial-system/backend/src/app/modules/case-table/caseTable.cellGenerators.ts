@@ -25,6 +25,8 @@ import {
   IndictmentSubtypeMap,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
+  isPrisonSystemUser,
+  isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isRestrictionCase,
   PunishmentType,
@@ -319,18 +321,109 @@ const generateRequestCaseType = (
   return [formatted, parentCaseId ? 'Framlenging' : ''].filter(Boolean)
 }
 
+const getAppealCaseNumberSortValue = (appealCaseNumber: string): string => {
+  const [num, year] = appealCaseNumber.split('/') // Assume the number is of the form xxxxx/yyyy
+
+  if (!num || !year) {
+    // Either the case does not yet have an appeal case number or it is malformed
+    // In both cases we return a default value
+    return '000000000'
+  }
+
+  // Assume year is 4 digits
+  // Assume num is no more than 5 digits
+  const number = num.padStart(5, '0')
+
+  return `${year}${number}`
+}
+
+const getCourtCaseNumberSortValue = (courtCaseNumber: string): string => {
+  // Assume the number starts with 'R-' or 'S-'
+  const [num, year] = courtCaseNumber.slice(2).split('/')
+
+  if (!num || !year) {
+    // Either the case does not yet have a court case number or it is malformed
+    // In both cases we return a default value
+    return '000000000'
+  }
+
+  // Assume year is 4 digits
+  // Assume num is no more than 5 digits
+  const number = num.padStart(5, '0')
+
+  return `${year}${number}`
+}
+
+const getPoliceCaseNumberSortValue = (policeCaseNumber: string): string => {
+  const [prefix, year, numParts] = policeCaseNumber.split('-')
+
+  if (!prefix || !year || !numParts) {
+    // Either the case does not yet have a police case number or it is malformed
+    // In both cases we return a default value
+    return '0000000000000000'
+  }
+
+  const [num, post] = numParts.split(' +') // Check for additional police case numbers
+
+  // Assume prefix 3 digits
+  // Assume year 4 digits
+  // Assume num is no more than 6 digits
+  // Assume no more than 999 additional police case numbers
+  const number = num.padStart(6, '0') // Assume its no more than 6 digits
+  const postfix = post ? post.padStart(3, '0') : '000'
+
+  return `${year}${prefix}${number}${postfix}`
+}
+
+const generateCaseNumberSortValue = (
+  appealCaseNumber: string,
+  courtCaseNumber: string,
+  policeCaseNumber: string,
+  user: TUser,
+): string | undefined => {
+  if (isProsecutionUser(user) || isDistrictCourtUser(user)) {
+    return `${getCourtCaseNumberSortValue(
+      courtCaseNumber,
+    )}${getPoliceCaseNumberSortValue(policeCaseNumber)}`
+  }
+
+  if (isPublicProsecutionOfficeUser(user) || isPrisonSystemUser(user)) {
+    return getCourtCaseNumberSortValue(courtCaseNumber)
+  }
+
+  if (isCourtOfAppealsUser(user)) {
+    return `${getAppealCaseNumberSortValue(
+      appealCaseNumber,
+    )}${getCourtCaseNumberSortValue(courtCaseNumber)}`
+  }
+
+  return undefined
+}
+
 const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
   attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
-  generate: (c: Case): CaseTableCell<StringGroupValue> =>
-    generateCell({
-      strList: [
-        c.appealCaseNumber ?? '',
-        c.courtCaseNumber ?? '',
-        c.policeCaseNumbers.length > 1
+  generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
+    const appealCaseNumber = c.appealCaseNumber ?? ''
+    const courtCaseNumber = c.courtCaseNumber ?? ''
+    const policeCaseNumber =
+      c.policeCaseNumbers.length > 0
+        ? c.policeCaseNumbers.length > 1
           ? `${c.policeCaseNumbers[0]} +${c.policeCaseNumbers.length - 1}`
-          : c.policeCaseNumbers[0],
-      ],
-    }),
+          : c.policeCaseNumbers[0]
+        : ''
+
+    const sortValue = generateCaseNumberSortValue(
+      appealCaseNumber,
+      courtCaseNumber,
+      policeCaseNumber,
+      user,
+    )
+
+    return generateCell(
+      { strList: [appealCaseNumber, courtCaseNumber, policeCaseNumber] },
+      sortValue,
+    )
+  },
 }
 
 const defendants: CaseTableCellGenerator<StringGroupValue> = {
@@ -342,31 +435,40 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
       separate: true,
     },
   },
-  generate: (c: Case): CaseTableCell<StringGroupValue> =>
-    c.defendants && c.defendants.length > 0
-      ? generateCell({
-          strList: [
-            c.defendants[0].name ?? '',
-            c.defendants.length > 1
-              ? `+ ${c.defendants.length - 1}`
-              : c.defendants[0].nationalId ?? '',
-          ],
-        })
-      : generateCell(),
+  generate: (c: Case): CaseTableCell<StringGroupValue> => {
+    if (!c.defendants || c.defendants.length === 0) {
+      return generateCell()
+    }
+
+    const strList = [
+      c.defendants[0].name ?? '',
+      c.defendants.length > 1
+        ? `+ ${c.defendants.length - 1}`
+        : c.defendants[0].nationalId ?? '',
+    ]
+
+    return generateCell({ strList }, strList.join(''))
+  },
 }
 
 export const caseType: CaseTableCellGenerator<StringGroupValue> = {
   attributes: ['type', 'decision', 'parentCaseId', 'indictmentSubtypes'],
   generate: (c: Case): CaseTableCell<StringGroupValue> => {
     if (c.type === CaseType.INDICTMENT) {
-      const display = generateIndictmentCaseType(c.indictmentSubtypes)
+      const indictmentType = generateIndictmentCaseType(c.indictmentSubtypes)
 
-      return display ? generateCell({ strList: display }) : generateCell()
+      return indictmentType
+        ? generateCell({ strList: indictmentType }, indictmentType.join(''))
+        : generateCell()
     }
 
-    return generateCell({
-      strList: generateRequestCaseType(c.type, c.decision, c.parentCaseId),
-    })
+    const requestType = generateRequestCaseType(
+      c.type,
+      c.decision,
+      c.parentCaseId,
+    )
+
+    return generateCell({ strList: requestType }, requestType.join(''))
   },
 }
 
@@ -531,8 +633,9 @@ const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
     const courtDate = getIndictmentCourtDate(c)
 
     const datePart = formatDate(courtDate, 'EEE d. MMMM yyyy')
+    const sortValue = formatDate(courtDate, 'yyyyMMddHHmm')
 
-    if (!datePart) {
+    if (!datePart || !sortValue) {
       // No date part, so we return undefined
       return generateCell()
     }
@@ -541,12 +644,13 @@ const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
 
     if (!timePart) {
       // This should never happen, but if it does, we return the court date only
-      return generateCell({ strList: [`${capitalize(datePart)}`] })
+      return generateCell({ strList: [`${capitalize(datePart)}`] }, sortValue)
     }
 
-    return generateCell({
-      strList: [`${capitalize(datePart)}`, `kl. ${timePart}`],
-    })
+    return generateCell(
+      { strList: [`${capitalize(datePart)}`, `kl. ${timePart}`] },
+      sortValue,
+    )
   },
 }
 
@@ -617,9 +721,7 @@ const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
           order: [['created', 'DESC']],
-          where: {
-            eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-          },
+          where: { eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN },
           separate: true,
         },
       },
@@ -650,9 +752,7 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
           order: [['created', 'DESC']],
-          where: {
-            eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-          },
+          where: { eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN },
           separate: true,
         },
       },
@@ -762,9 +862,7 @@ const sentToPrisonAdminDate: CaseTableCellGenerator<StringValue> = {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
           order: [['created', 'DESC']],
-          where: {
-            eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-          },
+          where: { eventType: DefendantEventType.SENT_TO_PRISON_ADMIN },
           separate: true,
         },
       },
