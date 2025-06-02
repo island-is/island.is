@@ -7,6 +7,7 @@ import {
   GridRow,
   Stack,
   Breadcrumbs,
+  FilterInput,
 } from '@island.is/island-ui/core'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useLocale } from '@island.is/localization'
@@ -17,9 +18,12 @@ import { useLoaderData, useNavigate } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import StartAreaCollection from './StartAreaCollection'
+import { useState } from 'react'
 
 const AllMunicipalities = () => {
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+  const [searchTerm, setSearchTerm] = useState('')
+
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
@@ -56,6 +60,25 @@ const AllMunicipalities = () => {
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
           />
+          <Box
+            width="full"
+            marginBottom={6}
+            display="flex"
+            justifyContent="spaceBetween"
+          >
+            <Box width="half">
+              {/* Todo: display search results */}
+              <FilterInput
+                name="searchSignee"
+                value={searchTerm}
+                onChange={(v) => {
+                  setSearchTerm(v)
+                }}
+                placeholder={formatMessage(m.searchNationalIdPlaceholder)}
+                backgroundColor="blue"
+              />
+            </Box>
+          </Box>
           <Box marginBottom={3} display="flex" justifyContent="flexEnd">
             <Text variant="eyebrow">
               {formatMessage(m.totalListResults) + ': ' + allLists.length}

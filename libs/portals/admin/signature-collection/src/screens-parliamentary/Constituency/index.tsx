@@ -109,11 +109,6 @@ export const Constituency = () => {
                     }}
                     tag={{
                       ...getTagConfig(list),
-                      renderTag: (cld) => (
-                        <Box display="flex" alignItems="center" columnGap={1}>
-                          {cld}
-                        </Box>
-                      ),
                     }}
                   />
                 ))}

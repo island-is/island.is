@@ -70,7 +70,7 @@ const List = () => {
           />
           <Divider />
           <Box marginTop={9} />
-          <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
+          <Signees list={list} />
           <PaperSignees listId={list.id} />
         </GridColumn>
       </GridRow>

@@ -46,9 +46,10 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
   }
 
   async parliamentaryCollection({ auth }: TemplateApiModuleActionProps) {
-    const latestCollection = await this.signatureCollectionClientService.getLatestCollectionForType(
-      this.collectionType,
-    )
+    const latestCollection =
+      await this.signatureCollectionClientService.getLatestCollectionForType(
+        this.collectionType,
+      )
     if (latestCollection.collectionType !== CollectionType.Parliamentary) {
       throw new TemplateApiError(
         errorMessages.currentCollectionNotParliamentary,

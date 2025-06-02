@@ -10,6 +10,7 @@ import {
   Pagination,
   Filter,
   FilterMultiChoice,
+  Breadcrumbs,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -27,6 +28,7 @@ import {
   CollectionStatus,
   FiltersOverview,
   countryAreas,
+  getTagConfig,
   pageSize,
 } from '../../lib/utils'
 import { format as formatNationalId } from 'kennitala'
@@ -125,6 +127,15 @@ const Lists = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
+          <Box marginBottom={2}>
+            <Breadcrumbs
+              items={[
+                {
+                  title: formatMessage(m.signatureListsTitlePresidential),
+                },
+              ]}
+            />
+          </Box>
           <IntroHeader
             title={formatMessage(m.signatureListsTitlePresidential)}
             intro={formatMessage(m.signatureListsIntro)}
@@ -245,15 +256,9 @@ const Lists = () => {
                           maxProgress: list.area.min,
                           withLabel: true,
                         }}
-                        tag={
-                          list.reviewed
-                            ? {
-                                label: formatMessage(m.confirmListReviewed),
-                                variant: 'mint',
-                                outlined: false,
-                              }
-                            : undefined
-                        }
+                        tag={{
+                          ...getTagConfig(list),
+                        }}
                         cta={{
                           label: formatMessage(m.viewList),
                           variant: 'text',

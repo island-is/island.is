@@ -2,12 +2,22 @@ import { PortalModule } from '@island.is/portals/core'
 import { lazy } from 'react'
 import { m } from './lib/messages'
 import { SignatureCollectionPaths } from './lib/paths'
-import { municipalListsLoader, parliamentaryListsLoader, presidentialListsLoader } from './loaders/AllLists.loader'
-import { parliamentaryListLoader, presidentialListLoader, municipalListLoader } from './loaders/List.loader'
+import {
+  municipalListsLoader,
+  parliamentaryListsLoader,
+  presidentialListsLoader,
+} from './loaders/AllLists.loader'
+import {
+  parliamentaryListLoader,
+  presidentialListLoader,
+  municipalListLoader,
+} from './loaders/List.loader'
 import { allowedScopes } from './lib/utils'
 
 /* Parliamentary */
-const ParliamentaryRoot = lazy(() => import('./screens-parliamentary/AllConstituencies'))
+const ParliamentaryRoot = lazy(() =>
+  import('./screens-parliamentary/AllConstituencies'),
+)
 const ParliamentaryConstituency = lazy(() =>
   import('./screens-parliamentary/Constituency'),
 )
@@ -18,7 +28,9 @@ const AllLists = lazy(() => import('./screens-presidential/AllLists'))
 const List = lazy(() => import('./screens-presidential/List'))
 
 /* Municipal */
-const AllMunicipalities = lazy(() => import('./screens-municipal/AllMunicipalities'))
+const AllMunicipalities = lazy(() =>
+  import('./screens-municipal/AllMunicipalities'),
+)
 const Municipality = lazy(() => import('./screens-municipal/Municipality'))
 const MunicipalList = lazy(() => import('./screens-municipal/List'))
 
@@ -32,25 +44,19 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.signatureListsTitle,
       path: SignatureCollectionPaths.ParliamentaryRoot,
-      element: (
-        <ParliamentaryRoot />
-      ),
+      element: <ParliamentaryRoot />,
       loader: parliamentaryListsLoader(props),
     },
     {
       name: m.signatureListsConstituencyTitle,
       path: SignatureCollectionPaths.ParliamentaryConstituency,
-      element: (
-        <ParliamentaryConstituency />
-      ),
+      element: <ParliamentaryConstituency />,
       loader: parliamentaryListsLoader(props),
     },
     {
       name: m.singleList,
       path: SignatureCollectionPaths.ParliamentaryConstituencyList,
-      element: (
-        <ParliamentaryList />
-      ),
+      element: <ParliamentaryList />,
       loader: parliamentaryListLoader(props),
     },
 
@@ -58,17 +64,13 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.signatureListsTitle,
       path: SignatureCollectionPaths.PresidentialLists,
-      element: (
-        <AllLists />
-      ),
+      element: <AllLists />,
       loader: presidentialListsLoader(props),
     },
     {
       name: m.singleList,
       path: SignatureCollectionPaths.PresidentialList,
-      element: (
-        <List />
-      ),
+      element: <List />,
       loader: presidentialListLoader(props),
     },
 

@@ -1,13 +1,12 @@
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { useLoaderData } from 'react-router-dom'
-import {
-  SignatureCollectionList,
-} from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import {
   Box,
+  Breadcrumbs,
   Divider,
   GridColumn,
   GridContainer,
@@ -19,6 +18,7 @@ import Signees from '../../shared-components/signees'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 import { PaperSignees } from '../../shared-components/paperSignees'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import { SignatureCollectionPaths } from '../../lib/paths'
 
 export const List = () => {
   const { list } = useLoaderData() as {
@@ -43,6 +43,19 @@ export const List = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
+          <Box marginBottom={2}>
+            <Breadcrumbs
+              items={[
+                {
+                  title: formatMessage(m.signatureListsTitlePresidential),
+                  href: `/stjornbord${SignatureCollectionPaths.PresidentialLists}`,
+                },
+                {
+                  title: list.title,
+                },
+              ]}
+            />
+          </Box>
           {!!list && (
             <>
               <IntroHeader
@@ -70,7 +83,7 @@ export const List = () => {
                   ))}
                 </Box>
               )}
-              <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
+              <Signees list={list} />
               <PaperSignees listId={list.id} />
             </>
           )}

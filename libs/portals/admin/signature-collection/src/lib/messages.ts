@@ -163,6 +163,22 @@ export const m = defineMessages({
     defaultMessage: 'Skoða sveitarfélag',
     description: '',
   },
+  openMunicipalCollection: {
+    id: 'admin-portal.signature-collection:openMunicipalCollection',
+    defaultMessage: 'Opna fyrir meðmælasöfnun',
+    description: '',
+  },
+  openMunicipalCollectionDescription: {
+    id: 'admin-portal.signature-collection:openMunicipalCollectionDescription',
+    defaultMessage:
+      'Opnaðu fyrir meðmælasöfnun ef yfirkjörstjórn sveitarfélagsins hefur tekið þá ákvörðun að nýta sér rafræna meðmælakerfið.',
+    description: '',
+  },
+  confirmOpenMunicipalCollection: {
+    id: 'admin-portal.signature-collection:confirmOpenMunicipalCollection',
+    defaultMessage: 'Opna fyrir meðmælasöfnun',
+    description: '',
+  },
   noLists: {
     id: 'admin-portal.signature-collection:noLists',
     defaultMessage: 'Engin söfnun í gangi',
