@@ -454,24 +454,27 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
   async getSpouseV3({
     auth,
-  }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouse | null> {
-    const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
-      auth.nationalId,
-    )
+  }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouseV3 | null> {
+    const cohabitationInfo =
+      await this.nationalRegistryV3Api.getCohabitationInfo(
+        auth.nationalId,
+        auth,
+      )
+
+    const spouseIndividual = cohabitationInfo
+      ? await this.getIndividual(cohabitationInfo.spouseNationalId, auth)
+      : undefined
     const spouseBirthPlace = cohabitationInfo
       ? await this.nationalRegistryApi.getBirthplace(
           cohabitationInfo.spouseNationalId,
         )
       : undefined
-    const spouseIndividual = cohabitationInfo
-      ? await this.getIndividual(cohabitationInfo.spouseNationalId)
-      : undefined
-
     return (
       cohabitationInfo && {
         nationalId: cohabitationInfo.spouseNationalId,
         name: cohabitationInfo.spouseName,
         maritalStatus: cohabitationInfo.cohabitationCode,
+        maritalDescription: cohabitationInfo?.cohabitationCodeDescription,
         lastModified: cohabitationInfo.lastModified,
         birthplace: spouseBirthPlace && {
           dateOfBirth: spouseBirthPlace.birthdate,
