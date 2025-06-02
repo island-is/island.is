@@ -8,10 +8,7 @@ import {
   BulletList,
   Button,
 } from '@island.is/island-ui/core'
-import {
-  extractOtherFeesData,
-  extractPropertyInfoData,
-} from '../../utils/summaryUtils'
+import { applicationAnswers } from '../../shared'
 import { Routes } from '../../utils/enums'
 import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSummary'
 import { ApplicantsSummary } from './ApplicantsSummary'
@@ -32,18 +29,18 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     smokeDetectors,
     fireExtinguisher,
     emergencyExits,
-    resultsDescription,
-    uploadedFiles,
-  } = extractPropertyInfoData(answers)
-
-  const { electricityCost, heatingCost, housingFund } =
-    extractOtherFeesData(answers)
+    conditionDescription,
+    files,
+    electricityCostPayee,
+    heatingCostPayee,
+    housingFundPayee,
+  } = applicationAnswers(answers)
 
   const isFireProtectionsPresent =
     smokeDetectors && fireExtinguisher && emergencyExits
-  const isConditionPresent =
-    resultsDescription || (uploadedFiles && uploadedFiles.length > 0)
-  const isOtherFeesPresent = electricityCost && heatingCost && housingFund
+  const isConditionPresent = conditionDescription || (files && files.length > 0)
+  const isOtherFeesPresent =
+    electricityCostPayee && heatingCostPayee && housingFundPayee
 
   const AlertMessageConditions = [
     {
