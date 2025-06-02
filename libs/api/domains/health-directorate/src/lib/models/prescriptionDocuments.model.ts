@@ -2,14 +2,14 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('HealthDirectoratePrescriptionDocument')
 export class Document {
-  @Field({ nullable: true })
-  id?: string
+  @Field()
+  id!: string
 
-  @Field({ nullable: true })
-  name?: string
+  @Field()
+  name!: string
 
-  @Field({ nullable: true })
-  url?: string
+  @Field()
+  url!: string
 }
 
 @ObjectType('HealthDirectoratePrescriptionDocuments')

@@ -1,34 +1,45 @@
 import { useMemo, useState } from 'react'
+import React from 'react'
 import { ConfigType } from './types'
 
-// Check if the date string is of the format dd.mm.yyyy
-// and return an object with day, month, and year
-const decunstructDateString = (dateString: string) => {
-  const pattern = /^(\d{2})\.(\d{2})\.(\d{4})$/
-  const match = dateString.match(pattern)
-  if (!match) return null
-  const [_, dayStr, monthStr, yearStr] = match
-  const day = parseInt(dayStr, 10)
-  const month = parseInt(monthStr, 10)
-  const year = parseInt(yearStr, 10)
-  return { day, month, year }
+const isReactElement = (value: unknown): value is React.ReactElement =>
+  React.isValidElement(value)
+
+const extractTextFromHtml = (html: string): string => {
+  const div = document.createElement('div')
+  div.innerHTML = html
+  const anchor = div.querySelector('a')
+  return (anchor?.textContent ?? div.textContent ?? '').trim()
 }
-const isValidDateString = (dateString: string): boolean => {
-  if (typeof dateString === 'number') return false
-  const dateStringFormatted = decunstructDateString(dateString)
-  if (!dateStringFormatted) return false
 
-  const date = new Date(
-    dateStringFormatted.year,
-    dateStringFormatted.month - 1,
-    dateStringFormatted.day,
-  )
+const extractComparableString = (value: unknown): string => {
+  if (isReactElement(value)) {
+    return value.props?.text?.toString?.() ?? ''
+  }
+  if (typeof value === 'string') {
+    if (/<a\s/i.test(value)) {
+      return extractTextFromHtml(value)
+    }
+    return value
+  }
+  return ''
+}
 
-  return (
-    date.getFullYear() === dateStringFormatted.year &&
-    date.getMonth() === dateStringFormatted.month - 1 &&
-    date.getDate() === dateStringFormatted.day
-  )
+// Matches known is dateformats
+const dateRegex = /\b(\d{1,2})\.(\d{1,2})\.(\d{4})\b/
+
+const parseDate = (value: unknown): Date | null => {
+  if (typeof value !== 'string') return null
+  const match = value.match(dateRegex)
+  if (!match) return null
+  const [, d, m, y] = match.map(Number)
+  const date = new Date(y, m - 1, d)
+  // Validate round-trip
+  return date.getFullYear() === y &&
+    date.getMonth() === m - 1 &&
+    date.getDate() === d
+    ? date
+    : null
 }
 
 export const useSortableData = <T extends Record<string, unknown>>(
@@ -38,40 +49,32 @@ export const useSortableData = <T extends Record<string, unknown>>(
   const [sortConfig, setSortConfig] = useState<ConfigType>(config)
 
   const sortedItems = useMemo(() => {
-    if (sortConfig.key === '') return items
+    if (!sortConfig.key) return items
 
     return [...items].sort((a, b) => {
-      const keyA = a[sortConfig.key as keyof T]
-      const keyB = b[sortConfig.key as keyof T]
-
-      if (keyA === undefined || keyB === undefined) {
-        return 0
-      }
+      const key = sortConfig.key as keyof T
+      const valueA = a[key]
+      const valueB = b[key]
 
       const multiplier = sortConfig.direction === 'ascending' ? 1 : -1
 
-      if (
-        isValidDateString(keyA as string) &&
-        isValidDateString(keyB as string)
-      ) {
-        const dayA = decunstructDateString(keyA as string)
-        const dayB = decunstructDateString(keyB as string)
-        if (!dayA || !dayB) return 0
-        const dateA = new Date(dayA.year, dayA.month - 1, dayA.day)
-        const dateB = new Date(dayB.year, dayB.month - 1, dayB.day)
-
+      // Handle date strings
+      const dateA = parseDate(valueA)
+      const dateB = parseDate(valueB)
+      if (dateA && dateB) {
         return (dateA.getTime() - dateB.getTime()) * multiplier
-      } else if (typeof keyA === 'string' && typeof keyB === 'string') {
-        return (
-          keyA.localeCompare(keyB, undefined, { numeric: true }) * multiplier
-        )
-      } else if (typeof keyA === 'number' && typeof keyB === 'number') {
-        return (keyA - keyB) * multiplier
-      } else if (keyA instanceof Date && keyB instanceof Date) {
-        return (keyA.getTime() - keyB.getTime()) * multiplier
-      } else {
-        return 0
       }
+
+      // Handle numbers
+      if (typeof valueA === 'number' && typeof valueB === 'number') {
+        return (valueA - valueB) * multiplier
+      }
+
+      // Handle strings and React elements
+      const strA = extractComparableString(valueA)
+      const strB = extractComparableString(valueB)
+
+      return strA.localeCompare(strB, undefined, { numeric: true }) * multiplier
     })
   }, [items, sortConfig])
 

@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType, GraphQLISODateTime } from '@nestjs/graphql'
 
 @ObjectType('HealthDirectorateMedicineHistoryDispensation')
 export class MedicineHistoryDispensation {
@@ -11,7 +11,7 @@ export class MedicineHistoryDispensation {
   @Field({ nullable: true })
   agentName?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   date?: Date
 
   @Field({ nullable: true })
@@ -32,13 +32,13 @@ export class MedicineHistoryDispensation {
   @Field({ nullable: true })
   dosageInstructions?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   issueDate?: Date
 
   @Field({ nullable: true })
   prescriberName?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   expirationDate?: Date
 
   @Field(() => Boolean, { nullable: true })
@@ -62,7 +62,7 @@ export class MedicineHistoryItem {
   @Field({ nullable: true })
   indication?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastDispensationDate?: Date
 
   @Field(() => Int, { nullable: true })

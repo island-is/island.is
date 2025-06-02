@@ -114,7 +114,9 @@ const MedicinePrescriptionHistory = () => {
                             type="outline"
                           />
                         ),
-                        date: formatDate(new Date(subItem.date)),
+                        date: subItem.date
+                          ? formatDate(new Date(subItem.date))
+                          : '',
 
                         medicine:
                           subItem?.name ??

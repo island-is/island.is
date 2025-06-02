@@ -4,7 +4,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import * as styles from './MobileTable.css'
 import cn from 'classnames'
-
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 export interface TableRow {
   title: string
   data: {
@@ -33,6 +34,7 @@ const MobileTableRow: React.FC<Props> = ({
   first,
 }) => {
   const [extended, setExtended] = useState(false)
+  const { formatMessage } = useLocale()
 
   const ref = useRef<HTMLDivElement>(null)
 
@@ -72,7 +74,9 @@ const MobileTableRow: React.FC<Props> = ({
         {!inner && (tableRow.children || tableRow.onExpandCallback) && (
           <Box marginLeft={1}>
             <Button
-              title="Expand"
+              title={
+                extended ? formatMessage(m.collapse) : formatMessage(m.expand)
+              }
               role="button"
               name="expand-button"
               circle

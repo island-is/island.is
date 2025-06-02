@@ -17,8 +17,6 @@ import {
   WaitingListsApi,
 } from './gen/fetch'
 
-const LOG_CATEGORY = 'health-directorate-health-api'
-
 @Injectable()
 export class HealthDirectorateHealthService {
   constructor(
@@ -58,10 +56,6 @@ export class HealthDirectorateHealthService {
       .catch(handle404)
 
     if (!dispensations) {
-      this.logger.debug(`No dispensations returned for atc code`, {
-        atcCode,
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
@@ -79,9 +73,6 @@ export class HealthDirectorateHealthService {
       .catch(handle404)
 
     if (!dispensations) {
-      this.logger.debug(`No grouped dispensations grouped returned`, {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
@@ -100,9 +91,6 @@ export class HealthDirectorateHealthService {
     })
 
     if (!prescriptions) {
-      this.logger.debug('No prescriptions returned', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
@@ -135,9 +123,6 @@ export class HealthDirectorateHealthService {
       .catch(handle404)
 
     if (!pdf) {
-      this.logger.debug('No prescription documents returned', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
@@ -152,10 +137,8 @@ export class HealthDirectorateHealthService {
     const referrals = await this.referralsApiWithAuth(auth)
       .meReferralControllerGetReferralsV1({ locale: this.mapLocale(locale) })
       .catch(handle404)
+
     if (!referrals) {
-      this.logger.debug('No referrals returned', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
@@ -174,9 +157,6 @@ export class HealthDirectorateHealthService {
       .catch(handle404)
 
     if (!waitlists) {
-      this.logger.debug('No waitlists returned', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 

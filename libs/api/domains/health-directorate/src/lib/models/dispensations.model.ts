@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType, GraphQLISODateTime } from '@nestjs/graphql'
 
 @ObjectType('HealthDirectorateDispensedItem')
 export class DispensedItem {
@@ -38,13 +38,13 @@ export class Dispensation {
   @Field({ nullable: true })
   agentName?: string
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   date!: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastDispensationDate?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   nextDispensationDate?: Date
 
   @Field()
