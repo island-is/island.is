@@ -100,3 +100,8 @@ export enum NextStepInReviewOptions {
   GO_TO_SIGNING = 'goToSigning',
   EDIT_APPLICATION = 'editApplication',
 }
+
+export enum EmergencyExitOptions {
+  YES = '1',
+  NO = '0',
+}

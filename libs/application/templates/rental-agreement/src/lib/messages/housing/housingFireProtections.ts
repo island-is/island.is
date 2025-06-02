@@ -20,7 +20,7 @@ export const housingFireProtections = defineMessages({
   smokeDetectorsFireExtinguisherRequirements: {
     id: 'ra.application:housingFireProtections.smokeDetectorsFireExtinguisherRequirements#markdown',
     defaultMessage:
-      'Nauðsynlegt er að hafa að minnsta kosti **1 CE merktan reykskynjara** á hverja 80m2 og **1 slökkvitæki** í eigninni.',
+      'Nauðsynlegt er að hafa að minnsta kosti **1 CE merktan reykskynjara** á hverja 80m2 og **1 slökkvitæki** í eigninni. Ekki er gerð krafa um eldvarnarteppi.',
     description: 'Smoke detector and fire extinguisher requirements',
   },
   smokeDetectorsLabel: {
@@ -33,21 +33,30 @@ export const housingFireProtections = defineMessages({
     defaultMessage: 'Slökkvitæki',
     description: 'Fire extinguisher label',
   },
-  exitFireBlanketRequirements: {
-    id: 'ra.application:housingFireProtections.exitFireBlanketRequirements',
-    defaultMessage:
-      'Flóttaleiðir þurfa að vera auðrataðar og greiðfærar en ekki er gerð krafa um eldvarnarteppi.',
-    description: 'Smoke detector and fire blanket requirements',
-  },
   exitsLabel: {
     id: 'ra.application:housingFireProtections.exitsLabel',
-    defaultMessage: 'Flóttaleiðir',
+    defaultMessage: 'Er flóttaleið til staðar?',
     description: 'Exits label',
+  },
+  exitRequirements: {
+    id: 'ra.application:housingFireProtections.exitFireBlanketRequirements',
+    defaultMessage: 'Flóttaleiðir þurfa að vera auðrataðar og greiðfærar.',
+    description: 'Exit requirements',
   },
   fireBlanketLabel: {
     id: 'ra.application:housingFireProtections.fireBlanketLabel',
     defaultMessage: 'Eldvarnarteppi',
     description: 'Fire blanket label',
+  },
+  typeRadioYesExit: {
+    id: 'ra.application:housingFireProtections.typeRadioYesExit',
+    defaultMessage: 'Já',
+    description: 'Label for yes - property has emergency exit',
+  },
+  typeRadioNoExit: {
+    id: 'ra.application:housingFireProtections.typeRadioNoExit',
+    defaultMessage: 'Nei',
+    description: 'Label for no - property does not have an emergency exit',
   },
 
   // dataSchema
@@ -60,10 +69,5 @@ export const housingFireProtections = defineMessages({
     id: 'ra.application:housingFireProtections.fireExtinguisherNullError',
     defaultMessage: 'Það þarf að vera a.m.k. eitt slökkvitæki í eigninni',
     description: 'Fire extinguisher 0 error',
-  },
-  emergencyExitNullError: {
-    id: 'ra.application:housingFireProtections.emergencyExitNullError',
-    defaultMessage: 'Það þarf að vera a.m.k. ein flóttaleið úr eigninni',
-    description: 'Emergency exit 0 error',
   },
 })

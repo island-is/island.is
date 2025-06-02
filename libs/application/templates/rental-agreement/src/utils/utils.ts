@@ -4,7 +4,7 @@ import is from 'date-fns/locale/is'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { EMAIL_REGEX, getValueViaPath } from '@island.is/application/core'
 import { Application, StateLifeCycle } from '@island.is/application/types'
-import { ApplicantsInfo, CostField } from './types'
+import { ApplicantsInfo, CostField, Unit } from './types'
 import {
   UserRole,
   RentalAmountIndexTypes,
@@ -18,6 +18,7 @@ import {
   SecurityDepositAmountOptions,
   RentalPaymentMethodOptions,
   NextStepInReviewOptions,
+  EmergencyExitOptions,
 } from './enums'
 import * as m from '../lib/messages'
 
@@ -104,6 +105,16 @@ export const parseCurrency = (value: string): number | undefined => {
   const numeric = value.replace(/[^\d]/g, '')
   return numeric ? Number(numeric) : undefined
 }
+
+export const getRentalPropertySize = (units: Unit[]) =>
+  units.reduce(
+    (total, unit) =>
+      total +
+      (unit.changedSize && unit.changedSize !== 0
+        ? unit.changedSize
+        : unit.size || 0),
+    0,
+  )
 
 export const extractApplicationAnswers = (answers: Application['answers']) => {
   return {
@@ -334,5 +345,16 @@ export const getUserRoleOptions = [
   {
     label: m.userRole.tenantOptionLabel,
     value: UserRole.TENANT,
+  },
+]
+
+export const getEmergencyExitOptions = () => [
+  {
+    value: EmergencyExitOptions.YES,
+    label: m.housingFireProtections.typeRadioYesExit,
+  },
+  {
+    value: EmergencyExitOptions.NO,
+    label: m.housingFireProtections.typeRadioNoExit,
   },
 ]
