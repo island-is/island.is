@@ -11,10 +11,15 @@ import { Audit } from '@island.is/nest/audit'
 import { ApiScope } from '@island.is/auth/scopes'
 import { BloodType } from './models/bloodType.model'
 import { BloodService } from './blood.service'
-
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 @Resolver(() => BloodType)
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/blood' })
+@FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
 export class BloodResolver {
   constructor(private readonly service: BloodService) {}
 

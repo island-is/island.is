@@ -12,7 +12,6 @@ export const BloodClientConfig = defineConfig<z.infer<typeof schema>>({
   schema,
   load(env) {
     return {
-      //TODO: GET CORRECT PROD XROAD PATH
       baseUrl: env.required(
         'XROAD_LSH_PATH',
         'IS-DEV/GOV/10022/Landspitali-Protected/external-patient-api-v1',
