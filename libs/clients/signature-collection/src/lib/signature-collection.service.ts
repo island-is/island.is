@@ -24,7 +24,12 @@ import { Slug } from './types/slug.dto'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import { ListSummary, mapListSummary } from './types/areaSummaryReport.dto'
-type Api = MedmaelalistarApi | MedmaelasofnunApi | MedmaeliApi | FrambodApi
+type Api =
+  | MedmaelalistarApi
+  | MedmaelasofnunApi
+  | MedmaeliApi
+  | FrambodApi
+  | KosningApi
 
 @Injectable()
 export class SignatureCollectionClientService {
@@ -138,6 +143,59 @@ export class SignatureCollectionClientService {
         medmaelalistar: filteredAreas.map((area) => ({
           svaediID: parseInt(area.id),
           listiNafn: `${owner.name} - ${area.name}`,
+        })),
+      },
+    })
+    return {
+      slug: getSlug(
+        candidacy.id ?? '',
+        candidacy.medmaelasofnun?.kosningTegund ?? '',
+      ),
+    }
+  }
+
+  async createMunicipalCandidacy(
+    { collectionId, owner, areas, collectionType }: CreateListInput,
+    auth: User,
+  ): Promise<Slug> {
+    const {
+      id,
+      isActive,
+      areas: collectionAreas,
+    } = await this.getLatestCollectionForType(collectionType)
+    // check if collectionId is current collection and current collection is open
+    if (collectionId !== id.toString() || !isActive) {
+      // TODO: create ApplicationTemplateError
+      throw new Error('Collection is not open')
+    }
+
+    const { canCreate, isOwner, partyBallotLetterInfo } = await this.getSignee(
+      auth,
+      collectionType,
+    )
+    if (!canCreate || isOwner) {
+      // TODO: create ApplicationTemplateError
+      throw new Error('User is already owner of lists')
+    }
+
+    const filteredAreas = areas
+      ? collectionAreas.filter((area) =>
+          areas.flatMap((a) => a.areaId).includes(area.id),
+        )
+      : collectionAreas
+
+    const candidacy = await this.getApiWithAuth(
+      this.candidateApi,
+      auth,
+    ).frambodPost({
+      frambodRequestDTO: {
+        sofnunID: parseInt(id),
+        kennitala: owner.nationalId.replace(/\D/g, ''),
+        simi: owner.phone,
+        netfang: owner.email,
+        medmaelalistar: filteredAreas.map((area) => ({
+          svaediID: parseInt(area.id),
+          listiNafn: `${partyBallotLetterInfo?.name}`,
         })),
       },
     })

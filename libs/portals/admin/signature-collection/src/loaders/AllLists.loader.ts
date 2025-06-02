@@ -19,23 +19,24 @@ export interface ListsLoaderReturn {
   collection: SignatureCollection
 }
 
-
-const createListsLoader = (collectionType: SignatureCollectionCollectionType): WrappedLoaderFn => 
+const createListsLoader =
+  (collectionType: SignatureCollectionCollectionType): WrappedLoaderFn =>
   ({ client }) => {
     return async (): Promise<{
       allLists: SignatureCollectionList[]
       collectionStatus: string
       collection: SignatureCollection
     }> => {
-      const { data: collectionStatusData } = await client.query<CollectionQuery>({
-        query: CollectionDocument,
-        fetchPolicy: 'network-only',
-        variables: {
-          input: {
-            collectionType,
+      const { data: collectionStatusData } =
+        await client.query<CollectionQuery>({
+          query: CollectionDocument,
+          fetchPolicy: 'network-only',
+          variables: {
+            input: {
+              collectionType,
+            },
           },
-        },
-      })
+        })
       const collection = collectionStatusData?.signatureCollectionAdminCurrent
       const { data } = await client.query<AllListsQuery>({
         query: AllListsDocument,
@@ -57,14 +58,16 @@ const createListsLoader = (collectionType: SignatureCollectionCollectionType): W
   }
 
 // Parliamentary Lists Loader
-export const parliamentaryListsLoader: WrappedLoaderFn = 
-  createListsLoader(SignatureCollectionCollectionType.Parliamentary)
+export const parliamentaryListsLoader: WrappedLoaderFn = createListsLoader(
+  SignatureCollectionCollectionType.Parliamentary,
+)
 
 // Presidential Lists Loader
-export const presidentialListsLoader: WrappedLoaderFn = 
-  createListsLoader(SignatureCollectionCollectionType.Presidential)
+export const presidentialListsLoader: WrappedLoaderFn = createListsLoader(
+  SignatureCollectionCollectionType.Presidential,
+)
 
 // Municipal Lists Loader
-export const municipalListsLoader: WrappedLoaderFn = 
-  createListsLoader(SignatureCollectionCollectionType.LocalGovernmental)
-
+export const municipalListsLoader: WrappedLoaderFn = createListsLoader(
+  SignatureCollectionCollectionType.LocalGovernmental,
+)

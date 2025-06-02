@@ -37,6 +37,7 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       auth,
       this.collectionType,
     )
+    console.log('Candidate', JSON.stringify(candidate))
 
     if (!candidate.hasPartyBallotLetter) {
       throw new TemplateApiError(errorMessages.partyBallotLetter, 405)
@@ -46,21 +47,35 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
   }
 
   async municipalCollection({ auth }: TemplateApiModuleActionProps) {
-    const currentCollection = await this.signatureCollectionClientService.getLatestCollectionForType(
+    const candidate = await this.signatureCollectionClientService.getSignee(
+      auth,
       this.collectionType,
     )
-    //Todo: adjust this check to municipal once available
-    if (currentCollection.collectionType !== CollectionType.Parliamentary) {
+
+    const currentCollection = (
+      await this.signatureCollectionClientService.currentCollection()
+    ).filter(
+      (collection) =>
+        collection.collectionType === this.collectionType &&
+        collection.areas.some((area) => area.id === candidate.area?.id),
+    )
+
+    console.log(JSON.stringify(currentCollection))
+
+    if (!currentCollection.length) {
       throw new TemplateApiError(
         errorMessages.currentCollectionNotMunicipal,
         405,
       )
     }
-    // Candidates are stored on user national id never the actors so should be able to check just the auth national id
 
+    // Candidates are stored on user national id never the actors so should be able to check just the auth national id
     if (
-      currentCollection.candidates.some(
-        (c) => c.nationalId.replace('-', '') === auth.nationalId,
+      currentCollection.some((collection) =>
+        collection.candidates.some(
+          (candidate) =>
+            candidate.nationalId.replace('-', '') === auth.nationalId,
+        ),
       )
     ) {
       throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
@@ -115,7 +130,7 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
 
     const result = await this.signatureCollectionClientService
       //Todo: switch to municipal once available
-      .createParliamentaryCandidacy(input, auth)
+      .createMunicipalCandidacy(input, auth)
       .catch((error) => {
         throw new TemplateApiError(
           {
