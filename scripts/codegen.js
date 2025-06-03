@@ -29,6 +29,8 @@ const fileExists = async (path) =>
 const main = async () => {
   const schemaExists = await fileExists(SCHEMA_PATH)
   const nxParallel = parseInt(process.env.NX_PARALLEL ?? '6', 10)
+  // NX_MAX_PARALLEL sets the parallelism for file system operations in Nx.
+  // Setting lower than the CPU parallelism to decrease probability of race conditions and disk I/O saturation
   const nxMaxParallel = Math.round(
     parseInt(process.env.NX_MAX_PARALLEL, 10) ?? nxParallel / 2,
   )
