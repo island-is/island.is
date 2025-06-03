@@ -7,9 +7,12 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { ServicesService } from './services.service'
-import { Translation } from '../../models/services.model'
+import { GoogleTranslation, Translation } from '../../models/services.model'
 import { UseGuards } from '@nestjs/common'
-import { GetTranslationInput } from '../../dto/service.input'
+import {
+  GetGoogleTranslationInput,
+  GetTranslationInput,
+} from '../../dto/service.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -26,5 +29,16 @@ export class ServicesResolver {
     @CurrentUser() user: User,
   ): Promise<Translation> {
     return this.formSystemServices.getTranslation(user, input)
+  }
+
+  @Mutation(() => GoogleTranslation, {
+    name: 'formSystemGoogleTranslation',
+  })
+  async getGoogleTranslation(
+    @Args('input', { type: () => GetGoogleTranslationInput })
+    input: GetGoogleTranslationInput,
+    @CurrentUser() user: User,
+  ): Promise<GoogleTranslation> {
+    return this.formSystemServices.getGoogleTranslation(user, input)
   }
 }

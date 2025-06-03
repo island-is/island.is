@@ -2,9 +2,12 @@ import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { ApolloError } from '@apollo/client'
 import { User } from '@island.is/auth-nest-tools'
-import { Translation } from '../../models/services.model'
+import { GoogleTranslation, Translation } from '../../models/services.model'
 import { handle4xx } from '../../utils/errorHandler'
-import { GetTranslationInput } from '../../dto/service.input'
+import {
+  GetGoogleTranslationInput,
+  GetTranslationInput,
+} from '../../dto/service.input'
 
 @Injectable()
 export class ServicesService {
@@ -72,6 +75,50 @@ export class ServicesService {
       } as Translation
     } catch (error) {
       handle4xx(error, this.handleError, 'failed to get translation')
+      return error
+    }
+  }
+
+  async getGoogleTranslation(
+    auth: User,
+    input: GetGoogleTranslationInput,
+  ): Promise<GoogleTranslation> {
+    const { FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY } = process.env
+    if (!FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY) {
+      throw new Error(
+        'Api key for Google translation service is not configured',
+      )
+    }
+
+    try {
+      const response = await fetch(
+        `https://translation.googleapis.com/language/translate/v2?key=${FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            q: input.q,
+            source: input.source,
+            target: input.target,
+            format: 'text',
+          }),
+        },
+      )
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch Google translation with status: ${response.status}`,
+        )
+      }
+
+      const result = await response.json()
+      return {
+        data: result.data.translations ?? [],
+      } as GoogleTranslation
+    } catch (error) {
+      handle4xx(error, this.handleError, 'failed to get Google translation')
       return error
     }
   }
