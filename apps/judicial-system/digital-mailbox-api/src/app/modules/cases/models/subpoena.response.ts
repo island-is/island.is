@@ -103,6 +103,7 @@ export class SubpoenaResponse {
           defendant.nationalId,
         ),
     )
+    // TODO: Change to latestSubpoena.type
     const subpoenaType = defendantInfo?.subpoenaType
 
     const intro = getIntro(defendantInfo?.gender, lang)

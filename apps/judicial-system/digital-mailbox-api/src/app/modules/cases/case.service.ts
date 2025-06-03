@@ -20,6 +20,7 @@ import { CasesResponse } from './models/cases.response'
 import { InternalCaseResponse } from './models/internal/internalCase.response'
 import { InternalCasesResponse } from './models/internal/internalCases.response'
 import { InternalDefendantResponse } from './models/internal/internalDefendant.response'
+import { RulingResponse } from './models/ruling.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import { caseModuleConfig } from './case.config'
 
@@ -77,6 +78,19 @@ export class CaseService {
       'digital-mailbox-api',
       AuditedAction.UPDATE_SUBPOENA,
       this.updateSubpoenaInfo(nationalId, caseId, updateSubpoena, lang),
+      nationalId,
+    )
+  }
+
+  async getRuling(
+    nationalId: string,
+    caseId: string,
+    lang?: string,
+  ): Promise<RulingResponse> {
+    return await this.auditTrailService.audit(
+      'digital-mailbox-api',
+      AuditedAction.GET_RULING,
+      this.getRulingInfo(nationalId, caseId, lang),
       nationalId,
     )
   }
@@ -159,6 +173,16 @@ export class CaseService {
       defendantNationalId,
       lang,
     )
+  }
+
+  private async getRulingInfo(
+    nationalId: string,
+    caseId: string,
+    lang?: string,
+  ): Promise<RulingResponse> {
+    const caseData = await this.fetchCase(caseId, nationalId)
+
+    return RulingResponse.fromInternalCaseResponse(caseData, lang)
   }
 
   private async fetchCases(

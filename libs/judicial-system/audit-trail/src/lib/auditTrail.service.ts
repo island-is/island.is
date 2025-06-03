@@ -72,6 +72,7 @@ export enum AuditedAction {
   UPDATE_VICTIM = 'UPDATE_VICTIM',
   DELETE_VICTIM = 'DELETE_VICTIM',
   GET_CASE_TABLE = 'GET_CASE_TABLE',
+  GET_RULING = 'GET_RULING',
 }
 
 @Injectable()
