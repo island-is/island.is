@@ -32,7 +32,7 @@ const main = async () => {
   // NX_MAX_PARALLEL sets the parallelism for file system operations in Nx.
   // Setting lower than the CPU parallelism to decrease probability of race conditions and disk I/O saturation
   const nxMaxParallel = Math.round(
-    parseInt(process.env.NX_MAX_PARALLEL, 10) ?? nxParallel / 2,
+    parseInt(process.env.NX_MAX_PARALLEL ?? nxParallel, 10) / 2,
   )
 
   if (!schemaExists) {
