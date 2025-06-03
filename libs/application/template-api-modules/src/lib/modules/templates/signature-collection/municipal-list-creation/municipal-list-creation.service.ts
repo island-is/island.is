@@ -11,7 +11,6 @@ import { errorMessages } from '@island.is/application/templates/signature-collec
 import { TemplateApiError } from '@island.is/nest/problem'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { CollectionType } from '@island.is/clients/signature-collection'
 import { CreateListSchema } from '@island.is/application/templates/signature-collection/municipal-list-creation'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { isCompany } from 'kennitala'

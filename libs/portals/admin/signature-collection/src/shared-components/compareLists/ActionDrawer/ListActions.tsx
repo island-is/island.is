@@ -34,7 +34,7 @@ const ListActions = () => {
         <DownloadReports areas={[]} collectionId={''} />
         <ActionLockList list={list} />
         <ActionReviewComplete listId={list?.id} listStatus={listStatus} />
-        <ActionExtendDeadline listId={list?.id} endTime={list?.endTime} />
+        <ActionExtendDeadline list={list} />
         <RemoveCandidate />
       </Stack>
     </Drawer>

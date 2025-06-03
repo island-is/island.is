@@ -15,30 +15,25 @@ import { Modal } from '@island.is/react/components'
 import { useExtendDeadlineMutation } from './extendDeadline.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
+import { SignatureCollectionList } from '@island.is/api/schema'
 
-const ActionExtendDeadline = ({
-  listId,
-  endTime,
-}: {
-  listId: string
-  endTime: string
-}) => {
+const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
   const { formatMessage } = useLocale()
   const [modalChangeDateIsOpen, setModalChangeDateIsOpen] = useState(false)
-  const [endDate, setEndDate] = useState(endTime)
+  const [endDate, setEndDate] = useState(list.endTime)
   const [extendDeadlineMutation, { loading }] = useExtendDeadlineMutation()
   const { revalidate } = useRevalidator()
 
   useEffect(() => {
     setEndDate(endDate)
-  }, [endDate, endTime])
+  }, [endDate, list.endTime])
 
   const extendDeadline = async (newEndDate: string) => {
     try {
       const res = await extendDeadlineMutation({
         variables: {
           input: {
-            listId,
+            listId: list.id,
             newEndDate: newEndDate,
           },
         },
@@ -95,7 +90,7 @@ const ActionExtendDeadline = ({
           <DatePicker
             locale="is"
             label={formatMessage(m.listEndTime)}
-            //selected={new Date(endDate)}
+            selected={new Date(endDate)}
             handleChange={(date) => setEndDate(new Date(date).toISOString())}
             placeholderText=""
             showTimeInput
