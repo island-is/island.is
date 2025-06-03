@@ -28,9 +28,9 @@ export class CmsService {
     })
   }
 
-  async fetchData(query: DocumentNode, variables?: Record<string, any>) {
+  async fetchData<T>(query: DocumentNode, variables?: Record<string, any>) {
     try {
-      return await this.client.request(query, variables)
+      return await this.client.request<T>(query, variables)
     } catch (error) {
       throw new HttpException(error.message, error.status)
     }
