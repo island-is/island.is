@@ -45,12 +45,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          {
-            "command": "yarn start --project services-auth-admin-api"
-          }
-        ],
-        "parallel": true
+        "command": "yarn start --project services-auth-admin-api"
       }
     },
     "codegen/backend-schema": {
