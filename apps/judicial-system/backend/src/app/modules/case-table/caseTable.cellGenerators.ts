@@ -399,7 +399,7 @@ const getPoliceCaseNumberSortValue = (policeCaseNumber: string): string => {
   const number = num.padStart(6, '0') // Assume its no more than 6 digits
   const postfix = post ? post.padStart(3, '0') : '000'
 
-  return `${year}${prefix}${number}${postfix}`
+  return `${prefix}${year}${number}${postfix}`
 }
 
 const generateCaseNumberSortValue = (
