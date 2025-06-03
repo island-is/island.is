@@ -15,4 +15,4 @@ export const EXEMPTION_REGIONS = [
 ]
 export const MAX_CNT_FREIGHT = 10
 export const MAX_CNT_CONVOY = 5
-export const MAX_CNT_AXLE = 15 //TODOx
+export const MAX_CNT_AXLE = 15

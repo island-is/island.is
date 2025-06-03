@@ -11,11 +11,12 @@ import { axleSpacing } from '../../../lib/messages'
 import {
   getConvoyItem,
   getExemptionType,
+  getFreightItems,
   isExemptionTypeShortTerm,
   MAX_CNT_AXLE,
   shouldUseSameSpacingForTrailer,
 } from '../../../utils'
-import { DollyType } from '../../../shared'
+import { DollyType, ExemptionFor } from '../../../shared'
 import { Application } from '@island.is/application/types'
 
 //TODOx repeat per convoy
@@ -24,6 +25,12 @@ const convoyIndex = 0
 export const axleSpacingSection = buildSection({
   id: 'axleSpacingSection',
   title: axleSpacing.general.sectionTitle,
+  condition: (answers) => {
+    const freightItems = getFreightItems(answers)
+    return freightItems.some((item) =>
+      item.exemptionFor?.includes(ExemptionFor.WEIGHT),
+    )
+  },
   children: [
     buildMultiField({
       id: 'axleSpacingMultiField',
